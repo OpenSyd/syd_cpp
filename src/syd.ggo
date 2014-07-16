@@ -1,0 +1,9 @@
+#File syd.ggo
+
+package "syd"
+version "Test db"
+
+option "config"	  	 	-	"Config file"				string  	no
+option "verbose"   	 	v       "Verbose"				flag		off
+option "verboseDB"   	 	-       "Verbose DB"				flag		off
+option "verboseQuery"  	 	-       "Verbose Query"				flag		off
