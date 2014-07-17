@@ -19,6 +19,7 @@
 // syd
 #include "sydCommon.h"
 #include "sydTest_ggo.h"
+#include "sydPatient-odb.hxx"
 
 // sqlite
 #include <stdio.h>
@@ -29,43 +30,69 @@
 #include <odb/transaction.hxx>
 #include <odb/sqlite/database.hxx>
 
-//#include "sydPatient.hxx"
-#include "sydPatient-odb.hxx"
+// clitk
+#include <clitkCommon.h>
 
 int main(int argc, char* argv[])
 {
   // Init command line
   GGO(sydTest, args_info);
 
+  // -------------------------------------------------------
   char * bdb = getenv ("SYD_DB");
   if (bdb == NULL) FATAL(std::endl << " please set SYD_DB environment variable." << std::endl);
   std::string mDatabaseFilename = std::string(bdb);
 
   odb::sqlite::database * db;
   try {
-    db = new odb::sqlite::database (mDatabaseFilename);
+    db = new odb::sqlite::database(mDatabaseFilename);
   }
   catch (const odb::exception& e)
     {
       std::cerr << e.what () << std::endl;
       return 1;
     }
+  // -------------------------------------------------------
+
+  odb::connection_ptr c(db->connection());
+  c->execute("PRAGMA foreign_keys=ON;");
+
 
   typedef odb::query<Patient> query;
   typedef odb::result<Patient> result;
+  std::vector<Patient> patients;
 
   {
     odb::transaction t (db->begin ());
-    result r (db->query<Patient> (query::SynfrizzId.like("8")));
+    result r (db->query<Patient> (query::SynfrizzId.like("%1%")));
     for (result::iterator i (r.begin ()); i != r.end (); ++i) {
-      std::cout << "Hello, patient Id=" << i->Id << " "
-                << i->Name << " " << i->SynfrizzId << " "
-                << i->Weight
+      Patient p;
+      i.load(p);
+      std::cout << "Hello, patient Id=" << p.Id << " "
+                << p.Name << " " << p.SynfrizzId << " "
+                << p.Weight
                 << std::endl;
+      patients.push_back(p);
     }
-    t.commit ();
+    Patient & p = patients[0];
+    p.BaseFolder = "totot TUTU";
+    DD(p);
+    t.commit();
   }
 
+  // -------------------------------------------------------
+  // Test write (update and insert or update)
+  DDS(patients);
+  {
+    odb::transaction t (db->begin());
+    Patient & p = patients[0];
+    DD(p);
+    db->update(p);
+    t.commit();
+  }
+
+
+  // -------------------------------------------------------
 
   /// OLD TEST
   exit(0);
@@ -102,7 +129,7 @@ int main(int argc, char* argv[])
   // Step
   DD("Step");
   int i=0;
-  while (r = sqlite3_step(ppStmt) != SQLITE_DONE) {
+  while ((r = sqlite3_step(ppStmt)) != SQLITE_DONE) {
     DD(i);
     if (r == SQLITE_BUSY) {
       DD("BUG busy");

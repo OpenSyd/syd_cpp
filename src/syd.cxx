@@ -17,13 +17,8 @@
   ===========================================================================**/
 
 // syd
-#include "sydCommon.h"
+#include "sydQuery.h"
 #include "syd_ggo.h"
-
-// odb
-#include <odb/database.hxx>
-#include <odb/transaction.hxx>
-#include <odb/sqlite/database.hxx>
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -31,22 +26,21 @@ int main(int argc, char* argv[])
   // Init command line
   GGO(syd, args_info);
 
-  char * bdb = getenv ("SYD_DB");
-  if (bdb == NULL) FATAL(std::endl << " please set SYD_DB environment variable." << std::endl);
-  std::string mDatabaseFilename = std::string(bdb);
+  // Start opening the db
+  syd::sydQuery syd;
+  syd.SetVerboseFlag(args_info.verbose_flag);
+  syd.SetVerboseDBFlag(args_info.verboseDB_flag);
+  syd.SetVerboseQueryFlag(args_info.verboseQuery_flag);
+  syd.OpenDatabase();
 
-  odb::sqlite::database * db;
-  try {
-    db = new odb::sqlite::database (mDatabaseFilename);
+  if (args_info.updateRoiSerie_given) {
+    syd.UpdateActivity(args_info.inputs[0], args_info.inputs[1]);
   }
-  catch (const odb::exception& e)
-    {
-      std::cerr << e.what () << std::endl;
-      exit(0);
-    }
 
-
-
+  if (args_info.updateSPECT_given) {
+    DD("TODO");
+    DD("ici spect");
+  }
 
 }
 // --------------------------------------------------------------------

@@ -16,6 +16,9 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SYDCOMMON_H
+#define SYDCOMMON_H
+
 // syd
 #include "sydDD.h"
 
@@ -24,26 +27,26 @@
 #include "gdcmStringFilter.h"
 #include "gdcmAttribute.h"
 
-// sqlite
-#include <sqlite3.h>
-
 namespace syd {
 
   //--------------------------------------------------------------------
-  // when everything goes wrong
-#define WHEREAMI "[ " << __FILE__  << " ] line " << __LINE__
-#define FATAL(a) { std::cerr << "ERROR in " << WHEREAMI << "."          \
-                             << std::endl << a << std::endl; exit(0); }
+//   // when everything goes wrong
+// #define WHEREAMI "[ " << __FILE__  << " ] line " << __LINE__
+// #define FATAL(a) { std::cerr << "************************" << std::endl \
+//                              << "ERROR in " << WHEREAMI << "."          \
+//                              << std::endl << a << std::endl; exit(0); }
+
+//   //--------------------------------------------------------------------
+//   // GGO with modified struct name
+// #define GGO(ggo_filename, args_info)                                    \
+//   args_info_##ggo_filename args_info;					\
+//   cmdline_parser_##ggo_filename##2(argc, argv, &args_info, 1, 1, 0);    \
+//   if (args_info.config_given)						\
+//     cmdline_parser_##ggo_filename##_configfile (args_info.config_arg, &args_info, 0, 0, 1); \
+//     else cmdline_parser_##ggo_filename(argc, argv, &args_info);
+
 
   //--------------------------------------------------------------------
-  // GGO with modified struct name
-#define GGO(ggo_filename, args_info)                                    \
-  args_info_##ggo_filename args_info;					\
-  cmdline_parser_##ggo_filename##2(argc, argv, &args_info, 1, 1, 0);    \
-  if (args_info.config_given)						\
-    cmdline_parser_##ggo_filename##_configfile (args_info.config_arg, &args_info, 0, 0, 1); \
-    else cmdline_parser_##ggo_filename(argc, argv, &args_info);
-
   void MakeDate(const std::string & date, const std::string & time, std::string & result);
 
   template<uint group, uint element>
@@ -56,14 +59,11 @@ namespace syd {
   template<uint group, uint element, class T>
   void ReadTagFromSeq(const gdcm::DataSet & ds, uint seqgroup, uint seqelement, T & value, int n=1);
 
-  void SQLAddValue(std::string & r, std::string col, std::string val, bool first=false);
-  void SQLAddFieldValue(std::string & r, std::string col, std::string val, bool first=false);
-
-  void PrepareQuery(sqlite3 * db, std::ostringstream & oss, sqlite3_stmt **ppStmt, bool verbose=false);
-  void UpdateQuery(sqlite3 * db, std::ostringstream & oss, bool verbose);
   void ConvertStringToDate(std::string s, tm & d);
   double DateDifferenceInHours(std::string end, std::string start);
 
 #include "sydCommon.txx"
 
 }
+
+#endif

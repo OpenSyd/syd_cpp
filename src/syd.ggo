@@ -7,3 +7,7 @@ option "config"	  	 	-	"Config file"				string  	no
 option "verbose"   	 	v       "Verbose"				flag		off
 option "verboseDB"   	 	-       "Verbose DB"				flag		off
 option "verboseQuery"  	 	-       "Verbose Query"				flag		off
+
+defgroup "cmd" groupdesc="an option of this group is required" required
+groupoption "updateRoiSerie" - "Update roi"       group="cmd" multiple
+groupoption "updateSPECT"    - "Update spect"     group="cmd" multiple

@@ -25,11 +25,10 @@
 class Study
 {
 public:
-  Study() { PatientId=0; }
 
-#pragma db id
-  unsigned int Id;
-  unsigned int PatientId;
+#pragma db id auto
+  unsigned long Id;
+  unsigned long PatientId;
 
   friend std::ostream& operator<<(std::ostream& os, const Study & s) {
     os << s.Id << " " << s.PatientId;

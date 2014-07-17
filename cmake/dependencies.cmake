@@ -12,7 +12,6 @@ endif(ITK_FOUND)
 
 #----------------------------------------------------------
 # this is required (even if gdcm is inside itk)
-
 # *********** FIXME : only needed on satyre ?
 
 if(ITK_USE_SYSTEM_GDCM)

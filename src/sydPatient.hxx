@@ -25,17 +25,17 @@
 class Patient
 {
 public:
-  Patient() { Name=""; SynfrizzId=""; }
 
-#pragma db id
-  unsigned int Id;
+#pragma db id auto
+  unsigned long Id;
 
   std::string Name;
   std::string SynfrizzId;
+  std::string BaseFolder;
   double Weight;
 
   friend std::ostream& operator<<(std::ostream& os, const Patient & p) {
-    os << p.SynfrizzId << " " << p.Name;
+    os << p.SynfrizzId << " " << p.Name << " " << p.BaseFolder;
     return os;
   }
 

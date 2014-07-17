@@ -48,63 +48,6 @@ void syd::ReadTagDouble(gdcm::StringFilter & sf, uint group, uint element, doubl
 
 
 // --------------------------------------------------------------------
-void syd::SQLAddValue(std::string & r, std::string col, std::string val, bool first)
-{
-  int n = r.find(")");
-  if (n == std::string::npos) {
-    std::cerr << "Error in request " << r << std::endl;
-    exit(0);
-  }
-  if (first) r.insert(n, col);
-  else r.insert(n, ", "+col);
-  n = r.find_last_of(")");
-  if (n == std::string::npos) {
-    std::cerr << "Error in request " << r << std::endl;
-    exit(0);
-  }
-  if (first) r.insert(n, val);
-  else r.insert(n, ", '"+val+"'");
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::SQLAddFieldValue(std::string & r, std::string col, std::string val, bool first)
-{
-  if (!first) r+=", ";
-  r += col + " = '" + val + "'";
-}
-// --------------------------------------------------------------------
-
-
-
-// --------------------------------------------------------------------
-void syd::PrepareQuery(sqlite3 * db, std::ostringstream & oss, sqlite3_stmt **ppStmt, bool verboseQuery)
-{
-  const char *pzTail;   //  OUT: Pointer to unused portion of zSql
-  int r = sqlite3_prepare_v2(db, oss.str().c_str(), -1, ppStmt, &pzTail);
-  if (r!= SQLITE_OK) FATAL(std::endl << "Error in the sql request '" << oss.str()
-                           << "'. The error is : " << sqlite3_errmsg(db) << std::endl);
-  if (verboseQuery) { std::cout << "SQL " << oss.str() << std::endl; }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::UpdateQuery(sqlite3 * db, std::ostringstream & oss, bool verbose)
-{
-  sqlite3_stmt *ppStmt;
-  syd::PrepareQuery(db, oss, &ppStmt);
-  int r = sqlite3_step(ppStmt);
-  if (r != SQLITE_DONE)
-    FATAL(std::endl << "Error in the sql request '" << oss.str()
-          << "'. The error is : " << sqlite3_errmsg(db) << std::endl);
-  if (verbose) { std::cout << "SQL " << oss.str() << std::endl; }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::ConvertStringToDate(std::string s, tm & d)
 {
   sscanf(s.c_str(),"%4d-%2d-%2d %2d:%2d",
