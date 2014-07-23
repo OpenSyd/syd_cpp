@@ -16,30 +16,35 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <odb/core.hxx>
 
 // --------------------------------------------------------------------
-#pragma db object
-class Study
+template<class T>
+void sydQuery::LoadVector(std::vector<T> & list, const odb::query<T> & q)
 {
-public:
-
-#pragma db id auto
-  unsigned long Id;
-  unsigned long PatientId;
-  std::string ReferenceCT;
-  unsigned long Number;
-  std::string InjectionDate;
-  double CalibrationActivity;
-  std::string CalibrationDate;
-  double InjectedQuantityInMBq;
-
-  friend std::ostream& operator<<(std::ostream& os, const Study & s) {
-    os << s.Id << " " << s.PatientId;
-    return os;
+  odb::transaction t (db->begin());
+  typedef odb::query<T> query;
+  typedef odb::result<T> result;
+  result r (db->query<T>(q));
+  for(auto i=r.begin(); i != r.end(); i++) {
+    T s;
+    i.load(s);
+    list.push_back(s);
   }
+  t.commit();
+}
+// --------------------------------------------------------------------
 
-};
+
+// --------------------------------------------------------------------
+template<class T>
+void sydQuery::Load(T & t, const odb::query<T> & q)
+{
+  std::vector<T> list;
+  LoadVector<T>(list, q);
+  if (list.size() != 1)
+    FATAL("I found " << list.size() << " results while expecting a single one."
+          << "The SQL was : " << std::endl
+          << mCurrentSQLQuery << std::endl);
+  t = list[0];
+}
 // --------------------------------------------------------------------

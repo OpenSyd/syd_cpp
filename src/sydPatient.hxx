@@ -30,7 +30,7 @@ public:
   unsigned long Id;
 
   std::string Name;
-  std::string SynfrizzId;
+  unsigned long  SynfrizzId;
   std::string BaseFolder;
   double Weight;
 

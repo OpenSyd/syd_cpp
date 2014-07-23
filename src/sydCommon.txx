@@ -43,6 +43,7 @@ void ReadTagFromSeq(const gdcm::DataSet & ds, uint seqgroup, uint seqelement, T 
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
 template<typename T>
 std::string toString(const T& value)
 {
@@ -50,3 +51,4 @@ std::string toString(const T& value)
     oss << value;
     return oss.str();
 }
+// --------------------------------------------------------------------

@@ -7,8 +7,9 @@ wrap_odb(sydLib sydSerie.hxx)
 wrap_odb(sydLib sydRoiStudy.hxx)
 wrap_odb(sydLib sydRoiType.hxx)
 wrap_odb(sydLib sydRoiSerie.hxx)
-add_library(sydLib sydCommon.cxx sydQuery.cxx
-  sydPatient-odb.cxx sydStudy-odb.cxx sydRoiStudy-odb.cxx
+wrap_odb(sydLib sydProperty.hxx)
+add_library(sydLib sydCommon.cxx sydEI.cxx
+  sydPatient-odb.cxx sydStudy-odb.cxx sydRoiStudy-odb.cxx sydProperty-odb.cxx
   sydSerie-odb.cxx sydRoiType-odb.cxx sydRoiSerie-odb.cxx)
 #----------------------------------------------------------
 
@@ -16,14 +17,34 @@ add_library(sydLib sydCommon.cxx sydQuery.cxx
 #----------------------------------------------------------
 wrap_ggo(sydTest_GGO_C sydTest.ggo)
 add_executable(sydTest sydTest.cxx sydTest_ggo.c)
-#message(status ${ITK_LIBRARIES})
 target_link_libraries(sydTest ${ITK_LIBRARIES} sydLib sqlite3 odb-sqlite odb)
 #----------------------------------------------------------
 
 
-#set(ODB_FILES sydPatient.hxx sydStudy.hxx)
-
-
+#----------------------------------------------------------
 wrap_ggo(syd syd.ggo)
-add_executable(syd syd.cxx syd_ggo.c)
+add_executable(syd syd.cxx syd_ggo.c sydQuery.cxx)
 target_link_libraries(syd ${ITK_LIBRARIES} sydLib sqlite3 odb-sqlite odb clitkCommon)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+find_package(Boost REQUIRED)
+if(Boost_FOUND)
+  include_directories(${Boost_INCLUDE_DIRS})
+else(Boost_FOUND)
+  message(FATAL_ERROR "Cannot build without Boost.  Please set Boost_DIR.")
+endif(Boost_FOUND)
+
+add_executable(sydTestCmdLine sydTestCmdLine.cxx)
+target_link_libraries(sydTestCmdLine ${ITK_LIBRARIES} sydLib sqlite3 odb-sqlite odb -lboost_program_options)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+add_library(sydTestLibExplicInst sydTestLibExplicInst.cxx)
+
+add_executable(sydTestExplicInst sydTestExplicInst.cxx)
+target_link_libraries(sydTestExplicInst sydTestLibExplicInst ${ITK_LIBRARIES} clitkCommon)
+
+#----------------------------------------------------------

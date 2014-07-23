@@ -27,24 +27,14 @@
 #include "gdcmStringFilter.h"
 #include "gdcmAttribute.h"
 
+// odb
+#include <odb/database.hxx>
+#include <odb/transaction.hxx>
+#include <odb/sqlite/database.hxx>
+#include <odb/sqlite/tracer.hxx>
+#include <odb/sqlite/statement.hxx>
+
 namespace syd {
-
-  //--------------------------------------------------------------------
-//   // when everything goes wrong
-// #define WHEREAMI "[ " << __FILE__  << " ] line " << __LINE__
-// #define FATAL(a) { std::cerr << "************************" << std::endl \
-//                              << "ERROR in " << WHEREAMI << "."          \
-//                              << std::endl << a << std::endl; exit(0); }
-
-//   //--------------------------------------------------------------------
-//   // GGO with modified struct name
-// #define GGO(ggo_filename, args_info)                                    \
-//   args_info_##ggo_filename args_info;					\
-//   cmdline_parser_##ggo_filename##2(argc, argv, &args_info, 1, 1, 0);    \
-//   if (args_info.config_given)						\
-//     cmdline_parser_##ggo_filename##_configfile (args_info.config_arg, &args_info, 0, 0, 1); \
-//     else cmdline_parser_##ggo_filename(argc, argv, &args_info);
-
 
   //--------------------------------------------------------------------
   void MakeDate(const std::string & date, const std::string & time, std::string & result);
@@ -61,6 +51,14 @@ namespace syd {
 
   void ConvertStringToDate(std::string s, tm & d);
   double DateDifferenceInHours(std::string end, std::string start);
+
+  void AbortIfFileNotExist(std::string file);
+  void AbortIfFileNotExist(std::string path, std::string file);
+
+  double MonoExpo(double A, double t, double lambda);
+
+
+static double Lambda_Indium = log(2.0)/(24.0 * 2.8047);
 
 #include "sydCommon.txx"
 

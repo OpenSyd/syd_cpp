@@ -2,6 +2,7 @@
 
 package "syd"
 version "Test db"
+description "SynfrizzId or roiname can be replaced by 'all'."
 
 option "config"	  	 	-	"Config file"				string  	no
 option "verbose"   	 	v       "Verbose"				flag		off
@@ -9,5 +10,13 @@ option "verboseDB"   	 	-       "Verbose DB"				flag		off
 option "verboseQuery"  	 	-       "Verbose Query"				flag		off
 
 defgroup "cmd" groupdesc="an option of this group is required" required
-groupoption "updateRoiSerie" - "Update roi"       group="cmd" multiple
-groupoption "updateSPECT"    - "Update spect"     group="cmd" multiple
+groupoption "insertRoi"               - "Param : SynfrizzId + studynb + roiname + mhd" group="cmd"
+groupoption "insertCT"                - "Param : SynfrizzId + studynb + mhd"           group="cmd"
+groupoption "insertSPECT"             - "Param : SynfrizzId + studynb + dcm + mhd"     group="cmd"
+groupoption "computeRoiTimeActivity"  - "Param : SynfrizzId + studynb + roiname"       group="cmd"
+groupoption "computeRoiCumulActivity" - "Param : SynfrizzId + studynb + roiname"       group="cmd"
+groupoption "computeRoiInfo"          - "Param : SynfrizzId + studynb + roiname"       group="cmd"
+groupoption "computeTiming"           - "Param : SynfrizzId + studynb"                 group="cmd"
+groupoption "dumpStudy"               - "Param : SynfrizzId   [studynb=0]"             group="cmd"
+groupoption "dumpStudy2"              - "Param : SynfrizzId   [studynb=0]"             group="cmd"
+groupoption "dumpCalibrationFactor"   - "Param : [SynfrizzId] [studynb=0]"             group="cmd"

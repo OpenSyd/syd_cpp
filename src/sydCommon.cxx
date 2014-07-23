@@ -16,8 +16,14 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+// clitk
+#include <clitkCommon.h>
+
 // syd
 #include "sydCommon.h"
+
+// itk
+#include <itksys/SystemTools.hxx>
 
 // --------------------------------------------------------------------
 void syd::MakeDate(const std::string & date, const std::string & time, std::string & result)
@@ -50,10 +56,12 @@ void syd::ReadTagDouble(gdcm::StringFilter & sf, uint group, uint element, doubl
 // --------------------------------------------------------------------
 void syd::ConvertStringToDate(std::string s, tm & d)
 {
-  sscanf(s.c_str(),"%4d-%2d-%2d %2d:%2d",
-         &d.tm_year,&d.tm_mon,&d.tm_mday,
-         &d.tm_hour,&d.tm_min);
+  // sscanf(s.c_str(),"%4d-%2d-%2d %2d:%2d",
+  //        &d.tm_year,&d.tm_mon,&d.tm_mday,
+  //        &d.tm_hour,&d.tm_min);
+  strptime(s.c_str(), "%Y-%m-%d %H:%M", &d);
   d.tm_sec = 0;
+  d.tm_isdst = 0; // important, if not set, is random, and error can occur
 }
 // --------------------------------------------------------------------
 
@@ -66,5 +74,27 @@ double syd::DateDifferenceInHours(std::string end, std::string start)
   syd::ConvertStringToDate(start, startDate);
   syd::ConvertStringToDate(end, endDate);
   return difftime(mktime(&endDate), mktime(&startDate))/3600.0;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::AbortIfFileNotExist(std::string file) {
+  bool exist = itksys::SystemTools::FileExists(file.c_str());
+  if (!exist) FATAL(std::endl << "The file '" << file << "' does not exist." << std::endl);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::AbortIfFileNotExist(std::string path, std::string file) {
+  AbortIfFileNotExist(path+std::string("/")+file);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::MonoExpo(double A, double t, double lambda) {
+  return A*exp(-lambda*t);
 }
 // --------------------------------------------------------------------

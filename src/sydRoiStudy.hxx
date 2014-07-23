@@ -22,22 +22,23 @@
 
 // --------------------------------------------------------------------
 #pragma db object
-class Study
+class RoiStudy
 {
 public:
 
 #pragma db id auto
   unsigned long Id;
-  unsigned long PatientId;
-  std::string ReferenceCT;
-  unsigned long Number;
-  std::string InjectionDate;
-  double CalibrationActivity;
-  std::string CalibrationDate;
-  double InjectedQuantityInMBq;
 
-  friend std::ostream& operator<<(std::ostream& os, const Study & s) {
-    os << s.Id << " " << s.PatientId;
+  unsigned long RoiTypeId;
+  unsigned long StudyId;
+  std::string MHDFilename;
+  double VolumeInCC;
+  double MassInGram;
+  double Density;
+
+  friend std::ostream& operator<<(std::ostream& os, const RoiStudy & p) {
+    os << p.Id << " " << p.RoiTypeId << " " << p.StudyId << " " << p.MHDFilename
+       << " " << p.VolumeInCC << " cc " << p.MassInGram << " g";
     return os;
   }
 
