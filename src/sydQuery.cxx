@@ -18,6 +18,7 @@
 
 // syd
 #include "sydQuery.h"
+#include "sydTimeActivityCurve.h"
 
 // itk
 #include <itksys/SystemTools.hxx>
@@ -35,6 +36,7 @@
 // std
 #include <stdio.h>
 #include <unistd.h>
+#include <algorithm>
 
 // --------------------------------------------------------------------
 // http://stackoverflow.com/questions/1607368/sql-query-logging-for-sqlite
@@ -52,6 +54,7 @@ syd::sydQuery::sydQuery()
   SetVerboseFlag(false);
   SetVerboseDBFlag(false);
   SetVerboseQueryFlag(false);
+  SetGaussianVariance(1.0);
 }
 // --------------------------------------------------------------------
 
@@ -155,6 +158,7 @@ RoiStudy syd::sydQuery::GetRoiStudy(Study study, std::string roiname)
   RoiStudy roistudy;
   typedef odb::query<RoiStudy> q;
   Load<RoiStudy>(roistudy, q::StudyId == study.Id && q::RoiTypeId == roitype.Id);
+
   return roistudy;
 }
 // --------------------------------------------------------------------
@@ -177,16 +181,115 @@ void syd::sydQuery::GetListOfPatients(std::string SynfrizzId, std::vector<unsign
 
 
 // --------------------------------------------------------------------
-void syd::sydQuery::GetListOfRois(std::string roiname, std::vector<std::string> & rois)
+void syd::sydQuery::GetStudies(std::string patients_arg, std::string studies_arg,
+                                  std::vector<Study> & studies)
 {
-  // if (roiname == "all") {
-  //   typedef odb::query<RoiType> q;
-  //   std::vector<RoiType> p;
-  //   LoadVector<RoiType>(p, q::Name != "");
-  //   for(auto i=p.begin(); i<p.end(); i++)
-  //     rois.push_back(i->Name);
-  // }
-  // else rois.push_back(roiname);
+  std::vector<Patient> patients;
+  typedef odb::query<Patient> q;
+
+  // All patients
+  if (patients_arg == "all") LoadVector<Patient>(patients, q::SynfrizzId != 0);
+  else {
+    if (patients_arg.find(" ") != std::string::npos) { // space exist, so consider multiple Ids
+      char *s = strtok((char *)patients_arg.c_str(), " "); // cast char * is needed to prevent warning. Warning : string modified
+      while (s) {
+        Patient p;
+        unsigned long id = atoi(s);
+        if (id != 0) { // do not consider id==0 or atoi error
+          Load<Patient>(p, q::SynfrizzId == id);
+          patients.push_back(p);
+        }
+        else {
+          std::cerr << "Warning patient '" << s << "' is ignored." << std::endl;
+        }
+        s = strtok(NULL, " ");
+      }
+    }
+    else {
+      Patient p;
+      Load<Patient>(p, q::SynfrizzId == atoi(patients_arg.c_str()));
+      patients.push_back(p);
+    }
+  }
+
+  // Get studies for thoses patients
+  studies.clear();
+  for(auto i=patients.begin(); i<patients.end(); i++)
+    GetStudies(i->Id, studies_arg, studies);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::sydQuery::GetStudies(unsigned long patientId, std::string studies_arg,
+                               std::vector<Study> & studies)
+{
+  typedef odb::query<Study> q;
+  if (studies_arg == "all") LoadVector<Study>(studies, (q::PatientId == patientId));
+  else {
+    FATAL("Sorry only studies = 'all' allow yet");
+    //LoadVector<Study>(studies, (q::Id == atoi(studies_arg.c_str()))); // only a single study here
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::sydQuery::GetRoiTypes(std::string rois_arg, std::vector<RoiType> & roitypes)
+{
+  typedef odb::query<RoiType> q;
+  if (rois_arg == "all") LoadVector<RoiType>(roitypes, q::Name != ""); // all
+  else {
+    if (rois_arg.find(" ") != std::string::npos) { // space exist, so consider multiple Ids
+      char *s = strtok((char *)rois_arg.c_str(), " "); // cast char * is needed to prevent warning. Warning : string modified
+      while (s) {
+        printf ("Token: %s\n", s);
+        RoiType p;
+        bool b = LoadFirstIfExist<RoiType>(p, q::Name == s);
+        if (b) roitypes.push_back(p);
+        s = strtok(NULL, " ");
+      }
+    }
+    else {
+      LoadVector<RoiType>(roitypes, q::Name.like(rois_arg));
+    }
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::sydQuery::GetRoiStudies(std::string patients_arg, std::string studies_arg, std::string rois_arg,
+                                  std::vector<RoiStudy> & roistudies)
+{
+  roistudies.clear();
+  std::vector<Study> studies;
+  GetStudies(patients_arg, studies_arg, studies);
+  std::vector<RoiType> roitypes;
+  GetRoiTypes(rois_arg, roitypes);
+
+  // Check
+  if (roitypes.size() == 0) {
+    std::cout << "No roi selected, nothing todo" << std::endl;
+  }
+
+  if (studies.size() == 0) {
+    std::cout << "No studies selected, nothing todo" << std::endl;
+  }
+
+  for(auto j=studies.begin(); j<studies.end(); j++) {
+    for(auto i=roitypes.begin(); i<roitypes.end(); i++) {
+      RoiStudy roistudy;
+      typedef odb::query<RoiStudy> q;
+      bool b = LoadFirstIfExist<RoiStudy>(roistudy, q::StudyId == j->Id && q::RoiTypeId == i->Id);
+      if (b) roistudies.push_back(roistudy);
+    }
+  }
+
+  if (roistudies.size() == 0) {
+    std::cout << "No roi for those studies selected, nothing todo" << std::endl;
+  }
+
 }
 // --------------------------------------------------------------------
 
@@ -198,7 +301,7 @@ RoiStudy syd::sydQuery::InsertRoi(Study study, std::string roiname, std::string 
   bool nomask = false;
   if (roiname == "WholeImage") nomask = true;
 
-   // Check mhd exist
+  // Check mhd exist
   if (!nomask) AbortIfFileNotExist(mDataPath, mhd);
 
   // Get RoiType from roi name
@@ -227,7 +330,8 @@ RoiStudy syd::sydQuery::InsertRoi(Study study, std::string roiname, std::string 
 
   // Verbose
   if (GetVerboseFlag()) {
-    std::cout << "Add RoiStudy " << r.Id << " " << r.RoiTypeId << " " << r.StudyId << " " << mhd ;
+    std::cout << "InsertRoi RoiStudy " << GetById<Patient>(study.PatientId).SynfrizzId << " "
+              << study.Number << " " << roiname << " " << mhd ;
     if (roistudies.size() == 1) std::cout << " (updated)";
     else std::cout << " (new)";
     std::cout << std::endl;
@@ -245,7 +349,7 @@ Serie syd::sydQuery::InsertSPECT(Study study, std::string dcm, std::string mhd)
   syd::AbortIfFileNotExist(mDataPath, dcm);
   syd::AbortIfFileNotExist(mDataPath, mhd);
 
-    // Open dicom
+  // Open dicom
   gdcm::Reader reader;
   reader.SetFileName(std::string(mDataPath+dcm).c_str());
   reader.Read();
@@ -360,9 +464,11 @@ Serie syd::sydQuery::InsertSPECT(Study study, std::string dcm, std::string mhd)
 
   // Verbose
   if (GetVerboseFlag()) {
-    if (update) std::cout << "Update ";
-    else std::cout << "Insert ";
-    std::cout << "serie " << serie.Id << " with " << dcm << std::endl;
+    std::cout << "InsertSPECT Serie " << GetById<Patient>(study.PatientId).SynfrizzId << " "
+              << study.Number << " " << serie.Id << " " << dcm ;
+    if (update) std::cout << " (updated)";
+    else std::cout << " (new)";
+    std::cout << std::endl;
   }
 
   return serie;
@@ -384,7 +490,8 @@ void syd::sydQuery::InsertCT(Study study, std::string mhd)
 
   // Verbose
   if (GetVerboseFlag()) {
-    std::cout << "Add CT " << mhd << " to study " << study.Id << std::endl;
+    std::cout << "InsertCT " << GetById<Patient>(study.PatientId).SynfrizzId << " "
+              << study.Number << " " << mhd << std::endl;
   }
 }
 // --------------------------------------------------------------------
@@ -395,8 +502,13 @@ void syd::sydQuery::ComputeRoiTimeActivity(Study study)
 {
   std::vector<RoiStudy> roistudies;
   LoadVector<RoiStudy>(roistudies, odb::query<RoiStudy>::StudyId == study.Id);
-  for(auto i=roistudies.begin(); i<roistudies.end(); i++)
+  for(auto i=roistudies.begin(); i<roistudies.end(); i++) {
+    if (GetVerboseFlag()) {
+      std::cout << GetById<Patient>(study.PatientId).SynfrizzId << " "
+                << study.Number << " " << GetById<RoiType>(i->RoiTypeId).Name << " ";
+    }
     ComputeRoiTimeActivity(*i);
+  }
 }
 // --------------------------------------------------------------------
 
@@ -450,14 +562,32 @@ void syd::sydQuery::ComputeRoiTimeActivity(RoiStudy roistudy)
     statisticsFilter->Update();
 
     res.clear();
-    res.push_back(statisticsFilter->GetCount(1));
+    res.push_back(statisticsFilter->GetCount(1)); // 0 = total counts
     double m = statisticsFilter->GetMean(1);
     // mean by pixel to convert into mean by cc (spacing is in mm, so x0.001)
     double vol = (spect->GetSpacing()[0]*spect->GetSpacing()[1]*spect->GetSpacing()[2]*0.001);
     m = m/vol;
-    res.push_back(m);
-    res.push_back(statisticsFilter->GetSigma(1)/vol);
-    res.push_back(statisticsFilter->GetSum(1));
+    res.push_back(m); // 1 = mean/vol
+    res.push_back(statisticsFilter->GetSigma(1)/vol); // 2 = sigma/vol
+    res.push_back(statisticsFilter->GetSum(1));       // 3 = sum
+    //    res.push_back(statisticsFilter->GetMaximum(1)/vol);
+
+    {
+      // To compute peakValue instead of maxValue, we Gauss filter the image before
+      auto gfilter = itk::DiscreteGaussianImageFilter<ImageType, ImageType>::New();
+      double * var = new double[3];
+      // var = (shrink factor / 2)^2
+      var[0] = var[1] = var[2] = GetGaussianVariance();
+      gfilter->SetVariance(var);
+      gfilter->SetUseImageSpacingOn(); // variance in voxel or mm
+      gfilter->SetInput(spect);
+      gfilter->Update();
+      spect = gfilter->GetOutput();
+
+      statisticsFilter->SetInput(spect);
+      statisticsFilter->Update();
+      res.push_back(statisticsFilter->GetMaximum(1)/vol); // 4 = max value (after Gaussian)
+    }
 
     results.push_back(res);
   }
@@ -506,6 +636,7 @@ void syd::sydQuery::ComputeRoiTimeActivity(RoiStudy roistudy)
     r.MeanActivity  = results[n][1] * s.PixelScale; // mean by cc
     r.StdActivity   = results[n][2] * s.PixelScale; // sigma
     r.TotalActivity = results[n][3] * s.PixelScale; // total in the whole roi
+    r.MaxActivity = results[n][4] * s.PixelScale; // max activity
     means.push_back(r.MeanActivity);
     tot.push_back(r.TotalActivity);
     db->update(r);
@@ -515,7 +646,7 @@ void syd::sydQuery::ComputeRoiTimeActivity(RoiStudy roistudy)
 
   // Verbose
   if (GetVerboseFlag()) {
-    std::cout << "Mean counts : ";
+    std::cout << "Total counts : ";
     //    for(auto i=0; i<means.size(); i++) std::cout << means[i] << " ";
     for(auto i=0; i<tot.size(); i++) std::cout << tot[i] << " ";
     std::cout << " (updated/new = " << nbOfUpdated << "/" << results.size()-nbOfUpdated << ")" << std::endl;
@@ -531,7 +662,7 @@ void syd::sydQuery::ComputeRoiInfo(Study study, std::string roiname)
     std::vector<RoiStudy> roistudies;
     LoadVector<RoiStudy>(roistudies, odb::query<RoiStudy>::StudyId == study.Id);
     for(auto i=roistudies.begin(); i<roistudies.end(); i++)
-        ComputeRoiInfo(*i);
+      ComputeRoiInfo(*i);
   }
   else {
     RoiStudy roistudy = GetRoiStudy(study, roiname);
@@ -563,11 +694,11 @@ void syd::sydQuery::ComputeRoiInfo(RoiStudy roistudy)
   MaskImageType::Pointer mask;
   if (!nomask) mask = clitk::readImage<MaskImageType>(f);
   else {
-      mask = MaskImageType::New();
-      mask->CopyInformation(ct);
-      mask->SetRegions(ct->GetLargestPossibleRegion());
-      mask->Allocate();
-      mask->FillBuffer(1);
+    mask = MaskImageType::New();
+    mask->CopyInformation(ct);
+    mask->SetRegions(ct->GetLargestPossibleRegion());
+    mask->Allocate();
+    mask->FillBuffer(1);
   }
 
   // crop ct like mask to allow statistic (and gain time because mask is smaller)
@@ -603,21 +734,213 @@ void syd::sydQuery::ComputeRoiInfo(RoiStudy roistudy)
 
 
 // --------------------------------------------------------------------
-void syd::sydQuery::ComputeRoiCumulActivity(RoiStudy roistudy)
+void syd::sydQuery::ComputeRoiCumulActivity(Study study, int n)
 {
-  DD("ComputeRoiActivity");
+  std::vector<RoiStudy> roistudies;
+  LoadVector<RoiStudy>(roistudies, odb::query<RoiStudy>::StudyId == study.Id);
+  for(auto i=roistudies.begin(); i<roistudies.end(); i++)
+    ComputeRoiCumulActivity(study, *i, n);
+}
+// --------------------------------------------------------------------
 
-  FATAL("TODO");
 
-  /*
-  // No need to check fov -> select first
-  std::vector<Serie> series; // list of 5 or 6 serie
-  {
-    typedef odb::query<Serie> q;
-    LoadVector<Serie>(series, q::StudyId == roistudy.StudyId && q::FOV == "fov1");
-    if (series.size() == 0) FATAL("Could not find series ? " << std::endl << mCurrentSQLQuery);
+// --------------------------------------------------------------------
+void syd::sydQuery::ComputeRoiCumulActivity(Study study, RoiStudy roistudy, int n)
+{
+  // Get all series for this patient/study
+  std::vector<Serie> series;
+  LoadVector<Serie>(series, odb::query<Serie>::StudyId == study.Id);
+
+  // Get all roiseries for this roistudy
+  std::vector<unsigned long> seriesId;
+  for(auto i=series.begin(); i<series.end(); i++) seriesId.push_back(i->Id);
+  std::map<unsigned long, Serie> seriesMap;
+  for(auto i=series.begin(); i<series.end(); i++) seriesMap[i->Id] = *i;
+  std::vector<RoiSerie> roiseries;
+  LoadVector<RoiSerie>(roiseries,
+                       (odb::query<RoiSerie>::RoiStudyId == roistudy.Id) &&
+                       (odb::query<RoiSerie>::SerieId.in_range(seriesId.begin(), seriesId.end())));
+
+  // Sort serie by time, then sort roiseries like serie.id
+  struct less_than_time {
+    inline bool operator() (const Serie & s1, const Serie & s2) {
+      return (s1.TimeFromInjectionInHours < s2.TimeFromInjectionInHours);
+    }
+  };
+  std::sort(seriesId.begin(), seriesId.end());
+  std::sort(series.begin(), series.end(), less_than_time());
+  struct less_than_serieId {
+    std::map<unsigned long, Serie> seriesMap;
+    less_than_serieId(std::map<unsigned long, Serie> &m):seriesMap(m) {}
+    inline bool operator() (const RoiSerie & s1, const RoiSerie & s2) {
+      return (seriesMap[s1.SerieId].TimeFromInjectionInHours < seriesMap[s2.SerieId].TimeFromInjectionInHours);
+    }
+  };
+  std::sort(roiseries.begin(), roiseries.end(), less_than_serieId(seriesMap));
+
+  // Get time + MeanActivity
+  std::vector<double> times;
+  for(auto i=series.begin(); i<series.end(); i++) times.push_back(i->TimeFromInjectionInHours);
+
+
+  // one for total, one for max
+  for(auto a=0; a<2; a++) {
+    std::vector<double> activities;
+    if (a==0) for(auto i=roiseries.begin(); i<roiseries.end(); i++) activities.push_back(i->TotalActivity);
+    if (a==1) for(auto i=roiseries.begin(); i<roiseries.end(); i++) activities.push_back(i->MaxActivity);
+
+    // Find time peak activity
+    int peakindex=0;
+    double peak = 0;
+    for(auto i=0; i<activities.size(); i++) {
+      if (activities[i] > peak) {
+        peakindex = i;
+        peak = activities[i];
+      }
+    }
+
+    int m = activities.size() - peakindex;
+    m = std::min(m, n);
+
+    // Check if at least 2 points
+    assert(m>1);
+
+    // Compute integral
+    double rms;
+    double lambda;
+    double A;
+    if (a==0) {
+      roistudy.CumulatedActivity = Tac_Integrate(times, activities, m, rms, A, lambda);
+      roistudy.FitLambda = lambda;
+      roistudy.FitA = A;
+      roistudy.FitRMS = rms;
+      roistudy.FitPeakTime = times[peakindex];
+    }
+    //    if (a==1) roistudy.CumulatedMaxActivity = Tac_Integrate(times, activities, m, rms, A, lambda);
   }
-  */
+
+
+  // Update
+  odb::transaction t (db->begin());
+  db->update(roistudy);
+  t.commit();
+
+  // Verbose
+  if (GetVerboseFlag()) {
+    Patient p;
+    Load<Patient>(p, odb::query<Patient>::Id == study.PatientId); // FIXME replace by GetFromId
+    RoiType r;
+    Load<RoiType>(r, odb::query<RoiType>::Id == roistudy.RoiTypeId);
+    std::cout << p.SynfrizzId << " " << study.Number << " "
+              << r.Name << " "
+              << roistudy.CumulatedActivity << " "
+              << roistudy.FitLambda << " "
+              << roistudy.FitA << " "
+              << roistudy.FitRMS << " "
+              << roistudy.FitPeakTime << std::endl;
+  }
+
+  // CHECK
+  if (0) {
+    // parallelogram part is not very precise.
+    // times.clear();
+    // times.resize(8);
+    // times = { 1, 2, 4, 6, 10, 11, 62, 130};
+    std::vector<double> ac;
+    double A = 1000;
+    for(auto i=0; i<times.size(); i++) {
+      ac.push_back(Tac_MonoExpo(A, Lambda_Indium, times[i]));
+    }
+    DDS(ac);
+    DD(A);
+    DD(Lambda_Indium);
+    double tot = Tac_Integrate(A, Lambda_Indium);
+    DD(tot);
+    int n=2;
+    double rms;
+    double lambda;
+    double tot2 = Tac_Integrate(times, ac, n, rms, A, lambda);
+
+    //for(auto i=0; i<times.size()-1; i++)
+    //  std::cout << i << " " << Tac_Integrate(A, lambda, times[i], times[i+1]) << std::endl;
+
+    DD(tot2);
+    DD(A);
+    DD(lambda);
+    DD(rms);
+
+    // start part
+    double st = Tac_Integrate(A, lambda, 0, times[0]);
+    DD(st);
+    double middle = Tac_Integrate(A, lambda, times[0], times.back());
+    DD(middle);
+    DD(tot-middle-st);
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::sydQuery::ComputeCumulActivityImage(Study study)
+{
+  // Get 6 mhd + vector of times
+
+  // Get all series for this patient/study
+  std::vector<Serie> series;
+  LoadVector<Serie>(series, odb::query<Serie>::StudyId == study.Id);
+
+  // Get time
+  std::vector<double> times;
+  for(auto i=series.begin(); i<series.end(); i++) times.push_back(i->TimeFromInjectionInHours);
+
+  // open the images
+  std::vector<ImageType::Pointer> spect;
+  for(auto i=series.begin(); i<series.end(); i++) {
+    std::string f = std::string (mDataPath+i->MHDFilename);
+    spect.push_back(clitk::readImage<ImageType>(f));
+  }
+
+  // create output image
+  auto output = clitk::NewImageLike<ImageType>(spect[0], true);
+
+  // Loop with 7 iterators ? to build the vector of activities ?
+  // No a single iterator use GetBufferPointer
+  itk::ImageRegionIterator<ImageType> iter(output, output->GetLargestPossibleRegion());
+  iter.GoToBegin();
+  int n = spect.size();
+  std::vector<double> activities(n);
+  double rms;
+  double A;
+  double lambda;
+  long t=0;
+  while (!iter.IsAtEnd()) {
+    int peakindex=0;
+    double peak = 0;
+    for(auto i=0; i<n; i++) {
+      activities[i] = spect[i]->GetBufferPointer()[t];
+      if (activities[i] > peak) {
+        peakindex = i;
+        peak = activities[i];
+      }
+    }
+    int m = activities.size() - peakindex;
+    m = std::min(m, 3); // 3 is fixed here
+    double v = Tac_Integrate(times, activities, m, rms, A, lambda);
+    if (isnan(v)) v = 0;
+    if (activities[peakindex] < 500) v = 0; // dont look at lower activity
+    if (v<0) v = 0; // no negative
+    if (v>1000000) v = 1000000; // no too high
+    iter.Set(v);
+    ++t;
+    ++iter;
+  }
+
+  // Compute output filename
+  std::string f = std::string(mDataPath+series[0].MHDFilename);
+  syd::replace(f, "spect1", "cumul");
+  if (GetVerboseFlag()) { std::cout << f << std::endl; }
+  clitk::writeImage<ImageType>(output, f);
+  // Also save A lambda rms image ?
 }
 // --------------------------------------------------------------------
 
@@ -659,6 +982,84 @@ void syd::sydQuery::ComputeTiming(Study study, Serie serie)
 
 
 // --------------------------------------------------------------------
+void syd::sydQuery::ComputeRoiCumulActivity2(unsigned long roistudyId, int n)
+{
+  // Get all objects associated with this roistudy
+  RoiStudy roistudy = GetById<RoiStudy>(roistudyId);
+  Study study = GetById<Study>(roistudy.StudyId);
+  Patient patient = GetById<Patient>(study.PatientId);
+  RoiType roitype = GetById<RoiType>(roistudy.RoiTypeId);
+
+  // Get all roiseries
+  std::vector<RoiSerie> roiseries;
+  LoadVector<RoiSerie>(roiseries, odb::query<RoiSerie>::RoiStudyId == roistudy.Id);
+
+  // Sort serie by time by time from injection
+  struct was_injected_before {
+    was_injected_before(sydQuery * s):q(s) {}
+    sydQuery * q;
+    inline bool operator() (const RoiSerie & s1, const RoiSerie & s2) {
+      double s1Time = (q->GetById<Serie>(s1.SerieId)).TimeFromInjectionInHours;
+      double s2Time = (q->GetById<Serie>(s2.SerieId)).TimeFromInjectionInHours;
+      return (s1Time < s2Time);
+    }
+  };
+  std::sort(roiseries.begin(), roiseries.end(), was_injected_before(this));
+
+  // Get times / activities values
+  std::vector<double> times;
+  std::vector<double> activities;
+  for(auto i=roiseries.begin(); i<roiseries.end(); i++) {
+    double t = GetById<Serie>(i->SerieId).TimeFromInjectionInHours;
+    times.push_back(t);
+    activities.push_back(i->TotalActivity);
+  }
+
+  // Find time peak activity
+  int peakindex=0;
+  double peak = 0;
+  for(auto i=0; i<activities.size(); i++) {
+    if (activities[i] > peak) {
+      peakindex = i;
+      peak = activities[i];
+    }
+  }
+
+  // m is the number of (final) points used for the exponential fit
+  int m = activities.size() - peakindex;
+  m = std::min(m, n);
+  assert(m>1);
+
+  // Compute integral
+  double rms;
+  double lambda;
+  double A;
+  roistudy.CumulatedActivity = Tac_Integrate(times, activities, m, rms, A, lambda);
+  roistudy.FitLambda = lambda;
+  roistudy.FitA = A;
+  roistudy.FitRMS = rms;
+  roistudy.FitPeakTime = times[peakindex];
+
+  // Update
+  odb::transaction t (db->begin());
+  db->update(roistudy);
+  t.commit();
+
+  // Verbose
+  if (GetVerboseFlag()) {
+    std::cout << patient.SynfrizzId << " " << study.Number << " "
+              << roitype.Name << " "
+              << roistudy.CumulatedActivity << " "
+              << roistudy.FitLambda << " "
+              << roistudy.FitA << " "
+              << roistudy.FitRMS << " "
+              << roistudy.FitPeakTime << std::endl;
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::sydQuery::DumpRoiInformation(unsigned long SynfrizzId,
                                        std::vector<std::string> roinames)
 {
@@ -692,7 +1093,7 @@ void syd::sydQuery::DumpRoiInformation(unsigned long SynfrizzId,
   //    RoiStudy s = syd.GetRoiStudy(SynfrizzId, *i)
   //}
 
-//  DumpRoiInformation(*i);
+  //  DumpRoiInformation(*i);
 }
 // --------------------------------------------------------------------
 
@@ -810,7 +1211,8 @@ void syd::sydQuery::DumpCalibrationFactor(Study study)
                  odb::query<RoiSerie>::RoiStudyId == roistudy.Id);
 
   // Compute theoretical MBq at time
-  double activity = MonoExpo(study.InjectedQuantityInMBq, serie.TimeFromInjectionInHours, Lambda_Indium);
+  double activity = Tac_MonoExpo(study.InjectedQuantityInMBq, Lambda_Indium,
+                                 serie.TimeFromInjectionInHours);
   double k = roiserie.TotalActivity/activity;
 
   //  Dump info
@@ -896,6 +1298,272 @@ void syd::sydQuery::DumpStudy2(Study study)
     std::cout << std::endl;
   }
 
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::sydQuery::DumpActivity(std::string arg, std::vector<int> & ids, std::string type)
+{
+  // all roitype lesion or organs
+  std::vector<RoiType> roitypes;
+  if (arg == "large-lesions") {
+    LoadVector<RoiType>(roitypes, odb::query<RoiType>::Name.like("LargeLesion%"));
+  }
+  else {
+    if (arg == "lesions") {
+      LoadVector<RoiType>(roitypes, odb::query<RoiType>::Name.like("Lesion%"));
+    }
+    else {
+      RoiType r;
+      Load<RoiType>(r, odb::query<RoiType>::Name == "LiverSphere"); roitypes.push_back(r);
+      Load<RoiType>(r, odb::query<RoiType>::Name == "HeartSphere"); roitypes.push_back(r);
+      Load<RoiType>(r, odb::query<RoiType>::Name == "SpleenSphere"); roitypes.push_back(r);
+      Load<RoiType>(r, odb::query<RoiType>::Name == "RKidneySphere"); roitypes.push_back(r);
+      Load<RoiType>(r, odb::query<RoiType>::Name == "LKidneySphere"); roitypes.push_back(r);
+      Load<RoiType>(r, odb::query<RoiType>::Name == "BoneMarrow"); roitypes.push_back(r);
+      Load<RoiType>(r, odb::query<RoiType>::Name == "Patient"); roitypes.push_back(r);
+    }
+  }
+  std::vector<unsigned long> roitypeid;
+  for(auto i=roitypes.begin(); i<roitypes.end(); i++) roitypeid.push_back(i->Id);
+
+  // dump header
+  int col1 = 4;
+  int col = 14;
+  std::cout << std::setw(col1) << "Pat";
+  std::cout.setf(std::ios::fixed, std::ios::floatfield); // set fixed floating format
+  for(auto i=roitypes.begin(); i<roitypes.end(); i++)
+    std::cout << std::setw(col) << i->Name;
+  std::cout << std::endl;
+
+  // Get Patient from study
+  std::vector<Patient> patients;
+  LoadVector<Patient>(patients, odb::query<Patient>::Id.in_range(ids.begin(), ids.end()));
+
+  Property prop;
+  Load<Property>(prop, odb::query<Property>::Name == "CalibrationFactor");
+  double k = atof(prop.Value.c_str());
+  k = 1.0/k;
+
+  // Loo pover patients
+  for(auto i=patients.begin(); i<patients.end(); i++) {
+    std::cout << std::setw(col1) << i->SynfrizzId;
+
+    // Get study
+    Study study = GetStudy(i->SynfrizzId, 0);
+
+    double ia = study.InjectedQuantityInMBq;
+    double totalAc = Tac_Integrate(ia, Lambda_Indium);
+
+    // Loop on roi
+    for(auto j=roitypes.begin(); j<roitypes.end(); j++) {
+      std::vector<RoiStudy> roistudies;
+      LoadVector<RoiStudy>(roistudies,
+                           (odb::query<RoiStudy>::StudyId == study.Id) &&
+                           (odb::query<RoiStudy>::RoiTypeId == j->Id));
+      if (roistudies.size() == 1) {
+        RoiStudy r = roistudies[0];
+        double v;
+        if (type == "total") v = (k*r.CumulatedActivity)/(ia*r.MassInGram);
+        //        if (type == "max")   v = (k*r.CumulatedMaxActivity)/(ia*r.Density);
+        std::cout << std::setw(col) << std::setprecision(1) << v*1000; // kBq.h/g / injectedMBq
+      }
+      else {
+        std::cout << std::setw(col) << "-";
+      }
+    }
+
+    std::cout << std::endl;
+  }
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::sydQuery::DumpEffectiveHalfLife(std::string arg, std::vector<int> & ids)
+{
+
+  // FIXME too similar to DumpActivity to be merged.
+
+  // all roitype lesion or organs
+  std::vector<RoiType> roitypes;
+  if (arg == "lesions") {
+    LoadVector<RoiType>(roitypes, odb::query<RoiType>::Name.like("%Lesion%"));
+  }
+  else {
+    RoiType r;
+    Load<RoiType>(r, odb::query<RoiType>::Name == "LiverSphere"); roitypes.push_back(r);
+    Load<RoiType>(r, odb::query<RoiType>::Name == "HeartSphere"); roitypes.push_back(r);
+    Load<RoiType>(r, odb::query<RoiType>::Name == "SpleenSphere"); roitypes.push_back(r);
+    Load<RoiType>(r, odb::query<RoiType>::Name == "RKidneySphere"); roitypes.push_back(r);
+    Load<RoiType>(r, odb::query<RoiType>::Name == "LKidneySphere"); roitypes.push_back(r);
+    Load<RoiType>(r, odb::query<RoiType>::Name == "BoneMarrow"); roitypes.push_back(r);
+    Load<RoiType>(r, odb::query<RoiType>::Name == "Patient"); roitypes.push_back(r);
+  }
+  std::vector<unsigned long> roitypeid;
+  for(auto i=roitypes.begin(); i<roitypes.end(); i++) roitypeid.push_back(i->Id);
+
+  // dump header
+  int col1 = 4;
+  int col = 14;
+  std::cout << std::setw(col1) << "Pat";
+  std::cout.setf(std::ios::fixed, std::ios::floatfield); // set fixed floating format
+  for(auto i=roitypes.begin(); i<roitypes.end(); i++)
+    std::cout << std::setw(col) << i->Name;
+  std::cout << std::endl;
+
+  // Get Patient from study
+  std::vector<Patient> patients;
+  LoadVector<Patient>(patients, odb::query<Patient>::Id.in_range(ids.begin(), ids.end()));
+
+  // Loop over patients
+  for(auto i=patients.begin(); i<patients.end(); i++) {
+    std::cout << std::setw(col1) << i->SynfrizzId;
+
+    // Get study
+    Study study = GetStudy(i->SynfrizzId, 0);
+
+    // Loop on roi
+    for(auto j=roitypes.begin(); j<roitypes.end(); j++) {
+      std::vector<RoiStudy> roistudies;
+      LoadVector<RoiStudy>(roistudies,
+                           (odb::query<RoiStudy>::StudyId == study.Id) &&
+                           (odb::query<RoiStudy>::RoiTypeId == j->Id));
+      if (roistudies.size() == 1) {
+        RoiStudy r = roistudies[0];
+        double v = log(2)/r.FitLambda;
+        std::cout << std::setw(col) << std::setprecision(3) << v; // hour
+      }
+      else {
+        std::cout << std::setw(col) << "-";
+      }
+    }
+
+    std::cout << std::endl;
+  }
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::sydQuery::DumpPatientRoisValue(std::string arg, std::vector<int> & ids, std::string type)
+{
+  // all roitype lesion or organs
+  std::vector<RoiType> roitypes;
+  if ((type == "LesionLiverRatio") || (type == "LesionLiverPeakRatio")) {
+    RoiType r;
+    Load<RoiType>(r, odb::query<RoiType>::Name == "LiverSphere"); roitypes.push_back(r);
+  }
+
+  if (arg == "large-lesions") {
+    LoadVector<RoiType>(roitypes, odb::query<RoiType>::Name.like("LargeLesion%"));
+  }
+  else {
+    if (arg == "alllesions") {
+      LoadVector<RoiType>(roitypes, odb::query<RoiType>::Name.like("%Lesion%"));
+    }
+    else {
+      if (arg == "lesions") {
+        LoadVector<RoiType>(roitypes, odb::query<RoiType>::Name.like("Lesion%"));
+      }
+      else {
+        RoiType r;
+        Load<RoiType>(r, odb::query<RoiType>::Name == "LiverSphere"); roitypes.push_back(r);
+        Load<RoiType>(r, odb::query<RoiType>::Name == "HeartSphere"); roitypes.push_back(r);
+        Load<RoiType>(r, odb::query<RoiType>::Name == "SpleenSphere"); roitypes.push_back(r);
+        Load<RoiType>(r, odb::query<RoiType>::Name == "RKidneySphere"); roitypes.push_back(r);
+        Load<RoiType>(r, odb::query<RoiType>::Name == "LKidneySphere"); roitypes.push_back(r);
+        Load<RoiType>(r, odb::query<RoiType>::Name == "BoneMarrow"); roitypes.push_back(r);
+        Load<RoiType>(r, odb::query<RoiType>::Name == "Patient"); roitypes.push_back(r);
+      }
+    }
+  }
+
+  std::vector<unsigned long> roitypeid;
+  for(auto i=roitypes.begin(); i<roitypes.end(); i++) roitypeid.push_back(i->Id);
+
+  // dump header
+  int col1 = 4;
+  int col = 14;
+  std::cout << std::setw(col1) << "Pat";
+  std::cout.setf(std::ios::fixed, std::ios::floatfield); // set fixed floating format
+  for(auto i=roitypes.begin(); i<roitypes.end(); i++) {
+    if (i->Name == "LiverSphere") {
+      if ((type == "LesionLiverRatio") || (type == "LesionLiverPeakRatio")) {}
+      else std::cout << std::setw(col) << i->Name;
+    }
+    else std::cout << std::setw(col) << i->Name;
+  }
+  std::cout << std::endl;
+
+  // Get Patient from study
+  std::vector<Patient> patients;
+  LoadVector<Patient>(patients, odb::query<Patient>::Id.in_range(ids.begin(), ids.end()));
+
+  Property prop;
+  Load<Property>(prop, odb::query<Property>::Name == "CalibrationFactor");
+  double k = atof(prop.Value.c_str());
+  k = 1.0/k;
+
+  // Loo pover patients
+  double livermeanactivity;
+  for(auto i=patients.begin(); i<patients.end(); i++) {
+    std::cout << std::setw(col1) << i->SynfrizzId;
+
+    // Get study
+    Study study = GetStudy(i->SynfrizzId, 0);
+
+    double ia = study.InjectedQuantityInMBq;
+    double totalAc = Tac_Integrate(ia, Lambda_Indium);
+
+    // Loop on roi
+    for(auto j=roitypes.begin(); j<roitypes.end(); j++) {
+      std::vector<RoiStudy> roistudies;
+      LoadVector<RoiStudy>(roistudies,
+                           (odb::query<RoiStudy>::StudyId == study.Id) &&
+                           (odb::query<RoiStudy>::RoiTypeId == j->Id));
+      if (roistudies.size() == 1) {
+        RoiStudy r = roistudies[0];
+        double v;
+
+        // specific case for LesionLiverRatio
+        if (j->Name == "LiverSphere") {
+          if ((type == "LesionLiverRatio") || (type == "LesionLiverPeakRatio")) {
+            livermeanactivity = (k*r.CumulatedActivity)/(ia*r.MassInGram)*1000;
+            // Do not write anything
+          }
+        }
+        else {
+          double meanactivity = (k*r.CumulatedActivity)/(ia*r.MassInGram)*1000; // kBq.h/g / injectedMBq
+          //          double peakactivity = (k*r.CumulatedMaxActivity)/(ia*r.Density)*1000;// kBq.h/g / injectedMBq
+          if (type == "total") v = meanactivity;
+          //          if (type == "max")   v = peakactivity;
+          if (type == "effHL") v =  log(2)/r.FitLambda;
+
+          if (type == "LesionLiverRatio") {
+            v = meanactivity/livermeanactivity;
+            std::cout << std::setw(col) << std::setprecision(3) << v;
+          }
+          else {
+            if (type == "LesionLiverPeakRatio") {
+              //              v = peakactivity/livermeanactivity;
+              std::cout << std::setw(col) << std::setprecision(3) << v;
+            }
+            else std::cout << std::setw(col) << std::setprecision(1) << v;
+          }
+        }
+      }
+      else {
+        std::cout << std::setw(col) << "-";
+      }
+    }
+
+    std::cout << std::endl;
+  }
 
 }
 // --------------------------------------------------------------------

@@ -55,10 +55,7 @@ namespace syd {
   void AbortIfFileNotExist(std::string file);
   void AbortIfFileNotExist(std::string path, std::string file);
 
-  double MonoExpo(double A, double t, double lambda);
-
-
-static double Lambda_Indium = log(2.0)/(24.0 * 2.8047);
+  bool replace(std::string& str, const std::string& from, const std::string& to);
 
 #include "sydCommon.txx"
 

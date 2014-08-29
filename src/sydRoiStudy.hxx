@@ -35,6 +35,11 @@ public:
   double VolumeInCC;
   double MassInGram;
   double Density;
+  double CumulatedActivity;
+  double FitLambda;
+  double FitA;
+  double FitRMS;
+  double FitPeakTime;
 
   friend std::ostream& operator<<(std::ostream& os, const RoiStudy & p) {
     os << p.Id << " " << p.RoiTypeId << " " << p.StudyId << " " << p.MHDFilename

@@ -48,3 +48,31 @@ void sydQuery::Load(T & t, const odb::query<T> & q)
   t = list[0];
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class T>
+bool sydQuery::LoadFirstIfExist(T & t, const odb::query<T> & q)
+{
+  std::vector<T> list;
+  LoadVector<T>(list, q);
+  if (list.size() == 0) return false;
+  t = list[0];
+  return true;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class T>
+T & sydQuery::GetById(unsigned long id)
+{
+  static std::vector<T> tabletypes;
+  static std::map<unsigned long, T> map;
+  if (tabletypes.size() == 0) {
+    LoadVector<T>(tabletypes, odb::query<T>::Id != -1); // all
+    for(auto i=tabletypes.begin(); i<tabletypes.end(); i++) map[i->Id] = *i;
+  }
+  return map[id];
+}
+// --------------------------------------------------------------------

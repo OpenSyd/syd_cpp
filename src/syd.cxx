@@ -31,6 +31,7 @@ int main(int argc, char* argv[])
   syd.SetVerboseFlag(args_info.verbose_flag);
   syd.SetVerboseDBFlag(args_info.verboseDB_flag);
   syd.SetVerboseQueryFlag(args_info.verboseQuery_flag);
+  syd.SetGaussianVariance(args_info.gauss_arg);
   syd.OpenDatabase();
 
   // --------------------------------------------------------------
@@ -82,10 +83,19 @@ int main(int argc, char* argv[])
 
   // --------------------------------------------------------------
   if (args_info.computeRoiCumulActivity_given) {
-    if (args_info.inputs_num <3) FATAL("Requires 3 params : SynfrizzId StudyNb roiname" << std::endl);
+    if (args_info.inputs_num <2) FATAL("Requires 3 params : patient roiname n" << std::endl);
+    std::vector<RoiStudy> roistudies;
+    syd.GetRoiStudies(args_info.inputs[0], "all", args_info.inputs[1], roistudies);
+    int n = atoi(args_info.inputs[2]);
+    for(auto i=roistudies.begin(); i<roistudies.end(); i++)
+      syd.ComputeRoiCumulActivity2(i->Id, n);
+  }
+
+  // --------------------------------------------------------------
+  if (args_info.computeCumulActivityImage_given) {
+    if (args_info.inputs_num <2) FATAL("Requires 3 params : SynfrizzId StudyNb" << std::endl);
     Study study = syd.GetStudy(args_info.inputs);
-    RoiStudy roistudy = syd.GetRoiStudy(study, args_info.inputs[2]);
-    syd.ComputeRoiCumulActivity(roistudy);
+    syd.ComputeCumulActivityImage(study);
   }
 
   // --------------------------------------------------------------
@@ -128,5 +138,34 @@ int main(int argc, char* argv[])
     }
   }
 
+  // --------------------------------------------------------------
+  if (args_info.dumpActivity_given) {
+    if (args_info.inputs_num <3) FATAL("Requires 2+n params : organs/lesions/all type patient_numbers" << std::endl);
+    std::string c = args_info.inputs[0];
+    unsigned long s = 0;
+    std::vector<int> ids;
+    for(auto i=2; i<args_info.inputs_num; i++) ids.push_back(atoi(args_info.inputs[i]));
+    syd.DumpActivity(c, ids, args_info.inputs[1]);
+  }
+
+  // --------------------------------------------------------------
+  if (args_info.dumpEffHalfLife_given) {
+    if (args_info.inputs_num <2) FATAL("Requires 2+n params : organs/lesions/all patient_numbers" << std::endl);
+    std::string c = args_info.inputs[0];
+    unsigned long s = 0;
+    std::vector<int> ids;
+    for(auto i=1; i<args_info.inputs_num; i++) ids.push_back(atoi(args_info.inputs[i]));
+    syd.DumpEffectiveHalfLife(c, ids);
+  }
+
+  // --------------------------------------------------------------
+  if (args_info.dump_given) {
+    if (args_info.inputs_num <3) FATAL("Requires 2+n params : organs/lesions/all type patient_numbers" << std::endl);
+    std::string c = args_info.inputs[0];
+    unsigned long s = 0;
+    std::vector<int> ids;
+    for(auto i=2; i<args_info.inputs_num; i++) ids.push_back(atoi(args_info.inputs[i]));
+    syd.DumpPatientRoisValue(c, ids, args_info.inputs[1]);
+  }
 }
 // --------------------------------------------------------------------

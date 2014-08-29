@@ -62,12 +62,25 @@ namespace syd {
     void SetVerboseQueryFlag(bool b) { mVerboseQueryFlag = b; }
     bool GetVerboseQueryFlag() const { return mVerboseQueryFlag; }
 
+    void SetGaussianVariance(double v) { mGaussVariance = v; }
+    double GetGaussianVariance() const { return mGaussVariance; }
+
     void OpenDatabase();
+
+    // request objects from string
+    void GetRoiStudies(std::string patients_arg, std::string studies_arg, std::string rois_arg,
+                       std::vector<RoiStudy> & roistudies);
+    void GetStudies(std::string patients_arg, std::string studies_arg, std::vector<Study> & studies);
+    void GetStudies(unsigned long patientId, std::string studies_arg, std::vector<Study> & studies);
+    void GetRoiTypes(std::string rois_arg, std::vector<RoiType> & roitypes);
 
     // Commands
     void ComputeRoiTimeActivity(RoiStudy roistudy);
     void ComputeRoiTimeActivity(Study study);
-    void ComputeRoiCumulActivity(RoiStudy roistudy);
+    void ComputeRoiCumulActivity(Study study, RoiStudy roistudy, int n);
+    void ComputeRoiCumulActivity(Study study, int n);
+    void ComputeRoiCumulActivity2(unsigned long roistudyId, int n);
+    void ComputeCumulActivityImage(Study study);
     void ComputeRoiInfo(RoiStudy r);
     void ComputeRoiInfo(Study study, std::string roiname);
     void ComputeTiming(Study study);
@@ -79,6 +92,9 @@ namespace syd {
     void DumpStudy2(Study study);
     void DumpCalibrationFactor(Study study);
     void DumpCalibrationFactor();
+    void DumpActivity(std::string arg, std::vector<int> & ids, std::string type);
+    void DumpEffectiveHalfLife(std::string arg, std::vector<int> & ids);
+    void DumpPatientRoisValue(std::string arg, std::vector<int> & ids, std::string type);
 
     // FIXME
     void DumpRoiInformation(unsigned long SynfrizzId, std::vector<std::string> roinames);
@@ -92,7 +108,6 @@ namespace syd {
     Study GetStudy(unsigned long SynfrizzId, unsigned long StudyNb);
     Study GetStudy(char ** inputs);
     void GetListOfPatients(std::string SynfrizzId, std::vector<unsigned long> & ids);
-    void GetListOfRois(std::string roiname, std::vector<std::string> & rois);
 
     // Image type
     typedef float PixelType;
@@ -108,12 +123,17 @@ namespace syd {
     std::string mDatabaseFilename;
     std::string mDataPath;
     odb::sqlite::database * db;
+    double mGaussVariance;
 
     // convenients fct
     template<class T>
     void LoadVector(std::vector<T> & list, const odb::query<T> & q);
     template<class T>
     void Load(T & t, const odb::query<T> & q);
+    template<class T>
+    bool LoadFirstIfExist(T & t, const odb::query<T> & q);
+    template<class T>
+    T & GetById(unsigned long id);
 
     // For tracing SQL queries
     std::string mCurrentSQLQuery;

@@ -8,7 +8,7 @@ wrap_odb(sydLib sydRoiStudy.hxx)
 wrap_odb(sydLib sydRoiType.hxx)
 wrap_odb(sydLib sydRoiSerie.hxx)
 wrap_odb(sydLib sydProperty.hxx)
-add_library(sydLib sydCommon.cxx sydEI.cxx
+add_library(sydLib sydCommon.cxx sydEI.cxx sydTimeActivityCurve.cxx
   sydPatient-odb.cxx sydStudy-odb.cxx sydRoiStudy-odb.cxx sydProperty-odb.cxx
   sydSerie-odb.cxx sydRoiType-odb.cxx sydRoiSerie-odb.cxx)
 #----------------------------------------------------------

@@ -8,15 +8,20 @@ option "config"	  	 	-	"Config file"				string  	no
 option "verbose"   	 	v       "Verbose"				flag		off
 option "verboseDB"   	 	-       "Verbose DB"				flag		off
 option "verboseQuery"  	 	-       "Verbose Query"				flag		off
+option "gauss"  	 	g       "Gauss Variance"			double default="2.0" no
 
 defgroup "cmd" groupdesc="an option of this group is required" required
-groupoption "insertRoi"               - "Param : SynfrizzId + studynb + roiname + mhd" group="cmd"
-groupoption "insertCT"                - "Param : SynfrizzId + studynb + mhd"           group="cmd"
-groupoption "insertSPECT"             - "Param : SynfrizzId + studynb + dcm + mhd"     group="cmd"
-groupoption "computeRoiTimeActivity"  - "Param : SynfrizzId + studynb + roiname"       group="cmd"
-groupoption "computeRoiCumulActivity" - "Param : SynfrizzId + studynb + roiname"       group="cmd"
-groupoption "computeRoiInfo"          - "Param : SynfrizzId + studynb + roiname"       group="cmd"
-groupoption "computeTiming"           - "Param : SynfrizzId + studynb"                 group="cmd"
-groupoption "dumpStudy"               - "Param : SynfrizzId   [studynb=0]"             group="cmd"
-groupoption "dumpStudy2"              - "Param : SynfrizzId   [studynb=0]"             group="cmd"
-groupoption "dumpCalibrationFactor"   - "Param : [SynfrizzId] [studynb=0]"             group="cmd"
+groupoption "insertRoi"                 - "Param : SynfrizzId + studynb + roiname + mhd" group="cmd"
+groupoption "insertCT"                  - "Param : SynfrizzId + studynb + mhd"           group="cmd"
+groupoption "insertSPECT"               - "Param : SynfrizzId + studynb + dcm + mhd"     group="cmd"
+groupoption "computeRoiTimeActivity"    - "Param : SynfrizzId + studynb + roiname"       group="cmd"
+groupoption "computeRoiCumulActivity"   - "Param : SynfrizzId + studynb + roiname + n"   group="cmd"
+groupoption "computeCumulActivityImage" - "Param : SynfrizzId + studynb"                 group="cmd"
+groupoption "computeRoiInfo"            - "Param : SynfrizzId + studynb + roiname"       group="cmd"
+groupoption "computeTiming"             - "Param : SynfrizzId + studynb"                 group="cmd"
+groupoption "dumpStudy"                 - "Param : SynfrizzId   [studynb=0]"             group="cmd"
+groupoption "dumpStudy2"                - "Param : SynfrizzId   [studynb=0]"             group="cmd"
+groupoption "dumpCalibrationFactor"     - "Param : [SynfrizzId] [studynb=0]"             group="cmd"
+groupoption "dumpActivity"              - "Param : organs/lesions/large-lesions/all type patients"     group="cmd"
+groupoption "dump"                      - "Param : organs/lesions/large-lesions/all type patients"     group="cmd"
+groupoption "dumpEffHalfLife"           - "Param : organs/lesions/large-lesions/all type patients"     group="cmd"

@@ -21,24 +21,29 @@
 #include <odb/core.hxx>
 
 // --------------------------------------------------------------------
+namespace syd {
+
 #pragma db object
-class RoiSerie
-{
-public:
+  class RoiSerie
+  {
+  public:
 
 #pragma db id auto
-  unsigned long Id;
+    unsigned long Id;
 
-  unsigned long SerieId;
-  unsigned long RoiStudyId;
-  double MeanActivity;
-  double TotalActivity;
-  double StdActivity;
+    unsigned long SerieId;
+    unsigned long RoiStudyId;
+    double MeanActivity;
+    double TotalActivity;
+    double StdActivity;
+    double MaxActivity;
 
-  friend std::ostream& operator<<(std::ostream& os, const RoiSerie & p) {
-    os << p.Id << " " << p.SerieId << " " << p.RoiStudyId << " " << p.TotalActivity;
-    return os;
-  }
+    friend std::ostream& operator<<(std::ostream& os, const RoiSerie & p) {
+      os << p.Id << " " << p.SerieId << " " << p.RoiStudyId << " " << p.TotalActivity;
+      return os;
+    }
 
-};
+  };
+
+} // end namespace syd
 // --------------------------------------------------------------------

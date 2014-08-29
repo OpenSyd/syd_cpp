@@ -24,3 +24,10 @@ CLITK_CROP_LIKE(float, 3, );
 #include <itkLabelStatisticsImageFilter.h>
 template class
 itk::LabelStatisticsImageFilter<itk::Image<float, 3>, itk::Image<unsigned char, 3> >;
+
+
+// Explicit Gaussian filter
+#include <itkDiscreteGaussianImageFilter.h>
+
+template class
+itk::DiscreteGaussianImageFilter< itk::Image<float, 3>, itk::Image<float, 3> >;

@@ -33,10 +33,19 @@
 // clitk
 #include <clitkCommon.h>
 
+#include <gsl/gsl_fit.h>
+
 int main(int argc, char* argv[])
 {
   // Init command line
   GGO(sydTest, args_info);
+
+
+  //int gsl_fit_linear (const double * x, const size_t xstride, const double * y, const size_t ystride, size_t n, double * c0, double * c1, double * cov00, double * cov01, double * cov11, double * sumsq)
+
+  //syd::sydQuery syd;
+
+  exit(0);
 
   // -------------------------------------------------------
   char * bdb = getenv ("SYD_DB");
