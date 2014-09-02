@@ -23,8 +23,8 @@ target_link_libraries(sydTest ${ITK_LIBRARIES} sydLib sqlite3 odb-sqlite odb)
 
 #----------------------------------------------------------
 wrap_ggo(syd syd.ggo)
-add_executable(syd syd.cxx syd_ggo.c sydQuery.cxx)
-target_link_libraries(syd ${ITK_LIBRARIES} sydLib sqlite3 odb-sqlite odb clitkCommon)
+add_executable(syd syd.cxx syd_ggo.c sydFit.cxx sydQuery.cxx sydCompute.cxx)
+target_link_libraries(syd ${ITK_LIBRARIES} sydLib sqlite3 odb-sqlite odb clitkCommon ${CERES_LIBRARIES})
 #----------------------------------------------------------
 
 

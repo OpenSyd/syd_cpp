@@ -33,13 +33,20 @@ endif(MSVC)
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpermissive")
 #----------------------------------------------------------
 
+#----------------------------------------------------------
+# dlib
+# set(DLIB_INCLUDE_DIRS "Indicate dlib src folder" CACHE PATH "dlib include")
+# include_directories(BEFORE ${DLIB_INCLUDE_DIRS})
+# ceres
+FIND_PACKAGE(Ceres REQUIRED)
+INCLUDE_DIRECTORIES(${CERES_INCLUDE_DIRS})
+
 
 #----------------------------------------------------------
 # cmake include
 include(${SYD_SOURCE_DIR}/cmake/common.cmake)
 include(${SYD_SOURCE_DIR}/cmake/dependencies.cmake)
 include(${SYD_SOURCE_DIR}/cmake/ODB.cmake)
-
 
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})

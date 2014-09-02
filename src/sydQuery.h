@@ -36,6 +36,7 @@
 #include "sydRoiSerie-odb.hxx"
 #include "sydSerie-odb.hxx"
 #include "sydProperty-odb.hxx"
+#include "sydFit.h"
 
 // clitk
 #include <clitkCommon.h>
@@ -53,6 +54,13 @@ namespace syd {
     sydQuery();
     ~sydQuery();
 
+    // Image type
+    typedef float PixelType;
+    typedef itk::Image<PixelType, 3> ImageType;
+    typedef unsigned char MaskPixelType;
+    typedef itk::Image<MaskPixelType, 3> MaskImageType;
+    typedef itk::LabelStatisticsImageFilter<ImageType, MaskImageType> StatisticsImageFilterType;
+
     void SetVerboseFlag(bool b) { mVerboseFlag = b; }
     bool GetVerboseFlag() const { return mVerboseFlag; }
 
@@ -62,11 +70,10 @@ namespace syd {
     void SetVerboseQueryFlag(bool b) { mVerboseQueryFlag = b; }
     bool GetVerboseQueryFlag() const { return mVerboseQueryFlag; }
 
-    void SetGaussianVariance(double v) { mGaussVariance = v; }
-    double GetGaussianVariance() const { return mGaussVariance; }
-
     void OpenDatabase();
 
+
+    // ------------------------------
     // request objects from string
     void GetRoiStudies(std::string patients_arg, std::string studies_arg, std::string rois_arg,
                        std::vector<RoiStudy> & roistudies);
@@ -74,20 +81,39 @@ namespace syd {
     void GetStudies(unsigned long patientId, std::string studies_arg, std::vector<Study> & studies);
     void GetRoiTypes(std::string rois_arg, std::vector<RoiType> & roitypes);
 
-    // Commands
+
+    // ------------------------------
+    // Get convenient function
+    void GetResampledMask(RoiStudy roistudy, ImageType::Pointer spect, MaskImageType::Pointer mask);
+    void GetSortedRoiSeries(RoiStudy roistudy, std::vector<RoiSerie> & roiseries);
+    void GetSortedSeries(Study study, std::vector<Serie> & series);
+
+    // ------------------------------
+    // Commands compute
+    void ComputeRoiCumulActivity(std::vector<RoiStudy> roistudies, int n);
+    void ComputeRoiCumulActivity(RoiStudy roistudy, int n);
+    void ComputeRoiFitActivityTest(std::vector<RoiStudy> roistudies, int n);
+    void ComputeRoiFitActivityTest(RoiStudy roistudy, int n);
+
+    void ComputeCumulActivityImage(std::vector<Study> studies, int n);
+    void ComputeCumulActivityImage(Study study, int n);
+
+    void ComputeRoiPeakCumulActivity(std::vector<RoiStudy> roistudies, double g);
+    void ComputeRoiPeakCumulActivity(RoiStudy roistudy, double g);
+
     void ComputeRoiTimeActivity(RoiStudy roistudy);
     void ComputeRoiTimeActivity(Study study);
-    void ComputeRoiCumulActivity(Study study, RoiStudy roistudy, int n);
-    void ComputeRoiCumulActivity(Study study, int n);
-    void ComputeRoiCumulActivity2(unsigned long roistudyId, int n);
-    void ComputeCumulActivityImage(Study study);
     void ComputeRoiInfo(RoiStudy r);
     void ComputeRoiInfo(Study study, std::string roiname);
     void ComputeTiming(Study study);
     void ComputeTiming(Study study, Serie serie);
+
+    // Command insert
     RoiStudy InsertRoi(Study study, std::string roiname, std::string mhd);
     void InsertCT(Study study, std::string mhd);
     Serie InsertSPECT(Study study, std::string dcm, std::string mhd);
+
+    // Command dump
     void DumpStudy(Study study);
     void DumpStudy2(Study study);
     void DumpCalibrationFactor(Study study);
@@ -109,13 +135,6 @@ namespace syd {
     Study GetStudy(char ** inputs);
     void GetListOfPatients(std::string SynfrizzId, std::vector<unsigned long> & ids);
 
-    // Image type
-    typedef float PixelType;
-    typedef itk::Image<PixelType, 3> ImageType;
-    typedef unsigned char MaskPixelType;
-    typedef itk::Image<MaskPixelType, 3> MaskImageType;
-    typedef itk::LabelStatisticsImageFilter<ImageType, MaskImageType> StatisticsImageFilterType;
-
   protected:
     bool mVerboseFlag;
     bool mVerboseQueryFlag;
@@ -123,7 +142,6 @@ namespace syd {
     std::string mDatabaseFilename;
     std::string mDataPath;
     odb::sqlite::database * db;
-    double mGaussVariance;
 
     // convenients fct
     template<class T>
@@ -137,6 +155,10 @@ namespace syd {
 
     // For tracing SQL queries
     std::string mCurrentSQLQuery;
+
+    // 'cache' for some computation
+    unsigned long mPreviousAASpectStudyId;
+    ImageType::Pointer mCachedAASpect;
 
   };
 

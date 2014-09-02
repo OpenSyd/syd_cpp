@@ -29,12 +29,13 @@ public:
 #pragma db id auto
   unsigned long Id;
   unsigned long PatientId;
-  std::string ReferenceCT;
+  std::string ReferenceCTFilename;
   unsigned long Number;
   std::string InjectionDate;
   double CalibrationActivity;
   std::string CalibrationDate;
   double InjectedQuantityInMBq;
+  std::string CumulatedActivityImageFilename;
 
   friend std::ostream& operator<<(std::ostream& os, const Study & s) {
     os << s.Id << " " << s.PatientId;
