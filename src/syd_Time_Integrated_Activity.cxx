@@ -16,22 +16,41 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-// syd
-#include "sydCommand.h"
+#include "syd_Time_Integrated_Activity.h"
 
 // --------------------------------------------------------------------
-syd::Command::
-Command(sydQuery & _db):db(_db)
+syd::Time_Integrated_Activity::
+Time_Integrated_Activity():With_Verbose_Flag()
 {
-  SetVerboseFlag(false);
+
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::Command::
-~Command()
+void syd::Time_Integrated_Activity::
+Set_Data(const std::vector<double> & _times,
+         const std::vector<double> & _activities,
+         const std::vector<double> & _std)
 {
+  times = &_times;
+  activities = &_activities;
+  std = &_std;
+}
+// --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+void syd::Time_Integrated_Activity::Integrate()
+{
+  DDS(*times);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::Time_Integrated_Activity::Get_Integrated_Activity()
+{
+  return 666;
 }
 // --------------------------------------------------------------------

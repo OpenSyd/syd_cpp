@@ -16,30 +16,32 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYD_COMMAND_H
-#define SYD_COMMAND_H
+#ifndef SYD_TIME_INTEGRATED_ACTIVITY_H
+#define SYD_TIME_INTEGRATED_ACTIVITY_H
 
 // syd
 #include "sydQuery.h"
+#include "syd_With_Verbose_Flag.h"
 
 namespace syd {
 
   // --------------------------------------------------------------------
-  class Command {
+  class Time_Integrated_Activity : public syd::With_Verbose_Flag {
 
   public:
-    Command(sydQuery & db);
-    ~Command();
+    Time_Integrated_Activity();
 
-    void SetVerboseFlag(bool b) { mVerboseFlag = b; }
-    bool GetVerboseFlag() const { return mVerboseFlag; }
+    void Set_Data(const std::vector<double> & times,
+                  const std::vector<double> & activities,
+                  const std::vector<double> & std);
 
-    virtual void SetArgs(char ** inputs, int n) = 0;
-    virtual void Run() = 0;
+    void Integrate();
+    double Get_Integrated_Activity();
 
   protected:
-    bool mVerboseFlag;
-    sydQuery & db;
+    const std::vector<double> * times;
+    const std::vector<double> * activities;
+    const std::vector<double> * std;
 
   };
   // --------------------------------------------------------------------

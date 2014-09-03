@@ -666,7 +666,8 @@ void syd::sydQuery::ComputeRoiCumulActivity(RoiStudy roistudy, int n)
 
   // Get all roiseries
   std::vector<RoiSerie> roiseries;
-  GetSortedRoiSeries(roistudy, roiseries);
+  //  GetSortedRoiSeries(roistudy, roiseries);
+  Get_RoiSeries_Sorted_by_Time(roistudy, roiseries);
 
   // Get times / activities values
   std::vector<double> times;
@@ -740,7 +741,8 @@ void syd::sydQuery::ComputeRoiFitActivityTest(RoiStudy roistudy, int n)
 
   // Get all roiseries
   std::vector<RoiSerie> roiseries;
-  GetSortedRoiSeries(roistudy, roiseries);
+  //  GetSortedRoiSeries(roistudy, roiseries);
+  Get_RoiSeries_Sorted_by_Time(roistudy, roiseries);
 
   // Get times / activities values
   std::vector<double> times;

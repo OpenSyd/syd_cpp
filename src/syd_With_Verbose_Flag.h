@@ -16,22 +16,29 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SYD_CLASS_WITH_VERBOSE_FLAG_H
+#define SYD_CLASS_WITH_VERBOSE_FLAG_H
+
 // syd
-#include "sydCommand.h"
+#include "sydCommon.h"
 
-// --------------------------------------------------------------------
-syd::Command::
-Command(sydQuery & _db):db(_db)
-{
-  SetVerboseFlag(false);
-}
-// --------------------------------------------------------------------
+namespace syd {
 
+  // --------------------------------------------------------------------
+  class With_Verbose_Flag {
 
-// --------------------------------------------------------------------
-syd::Command::
-~Command()
-{
+  public:
+    With_Verbose_Flag();
 
-}
-// --------------------------------------------------------------------
+    void Set_VerboseFlag(bool b);
+    bool Get_VerboseFlag() const;
+
+  protected:
+    bool m_VerboseFlag;
+
+  };
+  // --------------------------------------------------------------------
+
+} // end namespace
+
+#endif

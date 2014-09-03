@@ -322,7 +322,7 @@ void syd::sydQuery::GetResampledMask(RoiStudy roistudy, ImageType::Pointer spect
 
 
 // --------------------------------------------------------------------
-void syd::sydQuery::GetSortedRoiSeries(RoiStudy roistudy, std::vector<RoiSerie> & roiseries)
+void syd::sydQuery::Get_RoiSeries_Sorted_by_Time(RoiStudy roistudy, std::vector<RoiSerie> & roiseries)
 {
   // First load the series
   LoadVector<RoiSerie>(roiseries, odb::query<RoiSerie>::RoiStudyId == roistudy.Id);

@@ -18,6 +18,7 @@
 
 // syd
 #include "syd_ROI_Time_Integrated_Activity_Command.h"
+#include "syd_Time_Integrated_Activity.h"
 
 // --------------------------------------------------------------------
 syd::ROI_Time_Integrated_Activity_Command::
@@ -58,15 +59,52 @@ Run()
 void syd::ROI_Time_Integrated_Activity_Command::
 Run(RoiStudy roistudy)
 {
-   // Get all objects associated with this roistudy
-  Study study = db.GetById<Study>(roistudy.StudyId);
-  Patient patient = db.GetById<Patient>(study.PatientId);
-  RoiType roitype = db.GetById<RoiType>(roistudy.RoiTypeId);
 
-  DD(roistudy);
-  DD(study);
-  DD(patient);
-  DD(roitype);
+  // Get all roiseries for this study
+  std::vector<RoiSerie> roiseries;
+  db.Get_RoiSeries_Sorted_by_Time(roistudy, roiseries);
 
+  // Get times / activities values
+  // (LATER : read from a different db ?)
+  std::vector<double> times;
+  std::vector<double> activities;
+  std::vector<double> std;
+  for(auto i=roiseries.begin(); i<roiseries.end(); i++) {
+    double t = db.GetById<Serie>(i->SerieId).TimeFromInjectionInHours;
+    times.push_back(t);
+    activities.push_back(i->MeanActivity); // mean activity in the ROI
+    std.push_back(i->StdActivity);  // std deviation activity in the ROI
+  }
+
+  // Compute the integrated activity
+  syd::Time_Integrated_Activity a;
+  a.Set_Data(times, activities, std);
+  // a->Set_Number_Of_Points_For_Final_Fit(); // FIXME integrate / fit options
+  a.Integrate();
+
+  // Update the db (now : the same db, @LATER@ : a specific result db
+  /*ResultRoiStudy r = db_results.Get_ResultRoiStudy(roistudy);
+    r.IntegratedActivity = 0.0; // etc
+    db_results.Update(r);
+  */
+  roistudy.CumulatedActivity = a.Get_Integrated_Activity();
+  DD(roistudy.CumulatedActivity);
+
+  // Update
+  db.Update<RoiStudy>(roistudy);
+
+  // Verbose
+  if (GetVerboseFlag()) {
+    Study study = db.GetById<Study>(roistudy.StudyId);
+    Patient patient = db.GetById<Patient>(study.PatientId);
+    RoiType roitype = db.GetById<RoiType>(roistudy.RoiTypeId);
+    std::cout << patient.SynfrizzId << " " << study.Number << " "
+              << roitype.Name << " "
+              << roistudy.CumulatedActivity << " "
+              << roistudy.FitLambda << " "
+              << roistudy.FitA << " "
+              << roistudy.FitRMS << " "
+              << roistudy.FitPeakTime << std::endl;
+  }
 }
 // --------------------------------------------------------------------

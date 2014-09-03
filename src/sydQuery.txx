@@ -76,3 +76,14 @@ T & sydQuery::GetById(unsigned long id)
   return map[id];
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class T>
+void sydQuery::Update(T & t)
+{
+  odb::transaction transaction (db->begin());
+  db->update(t);
+  transaction.commit();
+}
+// --------------------------------------------------------------------

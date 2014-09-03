@@ -87,7 +87,7 @@ namespace syd {
     void GetResampledMask(RoiStudy roistudy, ImageType::Pointer spect,
                           MaskImageType::Pointer & initialmask,
                           MaskImageType::Pointer & resampledmask);
-    void GetSortedRoiSeries(RoiStudy roistudy, std::vector<RoiSerie> & roiseries);
+    void Get_RoiSeries_Sorted_by_Time(RoiStudy roistudy, std::vector<RoiSerie> & roiseries);
     void GetSortedSeries(Study study, std::vector<Serie> & series);
 
     // ------------------------------
@@ -128,7 +128,7 @@ namespace syd {
     void DumpRoiInformation(unsigned long SynfrizzId, std::vector<std::string> roinames);
     void DumpRoiInformation(RoiStudy roistudy);
 
-    // Call back for tracer
+    // Call back for tracer ====> GENERIC, to put in mother class
     void TraceCallback(const char* sql);
 
     // Convenient functions
@@ -137,7 +137,7 @@ namespace syd {
     Study GetStudy(char ** inputs);
     void GetListOfPatients(std::string SynfrizzId, std::vector<unsigned long> & ids);
 
-    // convenients fct (template)
+    // convenients fct (template) ====> GENERIC, to put in mother class
     template<class T>
     void LoadVector(std::vector<T> & list, const odb::query<T> & q);
     template<class T>
@@ -146,6 +146,9 @@ namespace syd {
     bool LoadFirstIfExist(T & t, const odb::query<T> & q);
     template<class T>
     T & GetById(unsigned long id);
+
+    template<class T>
+    void Update(T & t);
 
   protected:
     bool mVerboseFlag;
