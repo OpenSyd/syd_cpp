@@ -84,7 +84,9 @@ namespace syd {
 
     // ------------------------------
     // Get convenient function
-    void GetResampledMask(RoiStudy roistudy, ImageType::Pointer spect, MaskImageType::Pointer mask);
+    void GetResampledMask(RoiStudy roistudy, ImageType::Pointer spect,
+                          MaskImageType::Pointer & initialmask,
+                          MaskImageType::Pointer & resampledmask);
     void GetSortedRoiSeries(RoiStudy roistudy, std::vector<RoiSerie> & roiseries);
     void GetSortedSeries(Study study, std::vector<Serie> & series);
 

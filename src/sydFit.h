@@ -35,10 +35,17 @@ namespace syd {
   struct MonoExponentialResidual;
   struct BiExponentialResidual;
   struct BiExponentialResidual2;
+  struct BiExponentialResidual3;
+
+  void Fit(std::vector<double> & times, std::vector<double> & activities);
 
   void Fit(std::vector<double> & times,
            std::vector<double> & activities,
            std::vector<double> & variances);
+
+  void FitTest(std::vector<double> & times,
+               std::vector<double> & activities,
+               std::vector<double> & variances);
 
 }
 

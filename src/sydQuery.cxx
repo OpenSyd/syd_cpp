@@ -294,27 +294,29 @@ void syd::sydQuery::GetRoiStudies(std::string patients_arg, std::string studies_
 
 
 // --------------------------------------------------------------------
-void syd::sydQuery::GetResampledMask(RoiStudy roistudy, ImageType::Pointer spect, MaskImageType::Pointer mask)
+void syd::sydQuery::GetResampledMask(RoiStudy roistudy, ImageType::Pointer spect,
+                                     MaskImageType::Pointer & initialmask,
+                                     MaskImageType::Pointer & resampledmask)
 {
   RoiType roitype = GetById<RoiType>(roistudy.RoiTypeId);
-  bool nomask;
+  bool nomask = false;
   if (roitype.Name == "WholeImage") nomask = true;
   DD(roitype.Name);
 
   // read mask
   std::string f = std::string (mDataPath+roistudy.MHDFilename);
   DD(f);
-  if (!nomask) mask = clitk::readImage<MaskImageType>(f);
+  if (!nomask) initialmask = clitk::readImage<MaskImageType>(f);
   else { // create a "full" mask
-    mask = MaskImageType::New();
-    mask->CopyInformation(spect);
-    mask->SetRegions(spect->GetLargestPossibleRegion());
-    mask->Allocate();
-    mask->FillBuffer(1);
+    initialmask = MaskImageType::New();
+    initialmask->CopyInformation(spect);
+    initialmask->SetRegions(spect->GetLargestPossibleRegion());
+    initialmask->Allocate();
+    initialmask->FillBuffer(1);
   }
 
   // Resample mask like spect (with NN interpolation)
-  mask = clitk::ResampleImageLike<MaskImageType>(mask, spect, 0, 0); // O is BG, 0 is NN interpolation
+  resampledmask = clitk::ResampleImageLike<MaskImageType>(initialmask, spect, 0, 0); // O is BG, 0 is NN interpolation
 }
 // --------------------------------------------------------------------
 

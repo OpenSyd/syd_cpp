@@ -32,6 +32,7 @@ public:
   unsigned long RoiTypeId;
   unsigned long StudyId;
   std::string MHDFilename;
+  std::string PeakMHDFilename;
   double VolumeInCC;
   double MassInGram;
   double Density;

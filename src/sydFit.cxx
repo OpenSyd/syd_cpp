@@ -44,8 +44,13 @@ struct syd::BiExponentialResidual {
                                         const T* const B,
                                         const T* const lambda2,
                                         T* residual) const {
-    //    residual[0] = T(y_) - (A[0]*exp(-lambda[0] * T(x_)) + B[0]*exp(-lambda2[0] * T(x_)));
-    residual[0] = T(y_) - A[0]*(B[0]*exp(-lambda[0] * T(x_)) + (1.0-B[0])*exp(-lambda2[0] * T(x_)));
+    residual[0] = T(y_) - (A[0]*exp(-lambda[0] * T(x_)) + B[0]*exp(-lambda2[0] * T(x_)));
+    //    residual[0] = T(y_) - A[0]*(B[0]*exp(-lambda[0] * T(x_)) + (1.0-B[0])*exp(-lambda2[0] * T(x_)));
+
+    residual[0] = T(y_) - (
+                           A[0]*B[0]*exp(-lambda[0] * T(x_)) +
+                           A[0]*(1.0-B[0])*exp(-lambda2[0] * T(x_)));
+
     return true;
 
   }
@@ -63,9 +68,13 @@ struct syd::BiExponentialResidual2 {
                                         const T* const lambda,
                                         const T* const lambda2,
                                         T* residual) const {
+    // residual[0] = T(y_) -
+    //   ((lambda[0]*lambda2[0])/(A[0]*(lambda2[0]-lambda[0]))) *
+    //   (exp(-lambda[0]*T(x_)) - exp(-lambda2[0]*T(x_)));
+
     residual[0] = T(y_) -
-      ((lambda[0]*lambda2[0])/(A[0]*(lambda2[0]-lambda[0]))) *
-      (exp(-lambda[0]*T(x_)) - exp(-lambda2[0]*T(x_)));
+      (A[0]*exp(-lambda[0] * T(x_)) +
+       (A[0]*lambda[0]/(lambda[0]-lambda2[0]))*(exp(-lambda2[0]*T(x_)) - exp(-lambda[0]*T(x_))));
     return true;
 
   }
@@ -77,7 +86,54 @@ private:
 
 
 // --------------------------------------------------------------------
-void syd::Fit(std::vector<double> & times,
+struct syd::BiExponentialResidual3 {
+  BiExponentialResidual3(double x, double y): x_(x), y_(y) {}
+  template <typename T> bool operator()(const T* const A,
+                                        const T* const lambda,
+                                        const T* const lambda2,
+                                        T* residual) const {
+    // residual[0] = T(y_) -
+    //   ((lambda[0]*lambda2[0])/(A[0]*(lambda2[0]-lambda[0]))) *
+    //   (exp(-lambda[0]*T(x_)) - exp(-lambda2[0]*T(x_)));
+
+    // residual[0] = T(y_) -
+    //   (A[0]*exp(-lambda[0] * T(x_)) +
+    //    (A[0]*lambda[0]/(lambda[0]-lambda2[0]))*(exp(-lambda2[0]*T(x_)) - exp(-lambda[0]*T(x_))));
+
+    // residual[0] = T(y_) -
+    //   (
+
+    return true;
+
+  }
+private:
+  const double x_;
+  const double y_;
+};
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Fit(std::vector<double> & times, std::vector<double> & activities)
+{
+  std::vector<double> variances(times.size());
+  std::fill(variances.begin(), variances.end(), 0.0);
+  Fit(times, activities, variances);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Fit(std::vector<double> & times, std::vector<double> & activities,
+              std::vector<double> & variances) {
+
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitTest(std::vector<double> & times,
               std::vector<double> & activities,
               std::vector<double> & variances) {
 
@@ -105,33 +161,33 @@ void syd::Fit(std::vector<double> & times,
   // typedef to short the code
   // 1,1,1 ==> dimension of residual, dimension of parameters
   typedef ceres::AutoDiffCostFunction<MonoExponentialResidual, 1, 1, 1> CostFctType2;
-  typedef ceres::AutoDiffCostFunction<BiExponentialResidual2, 1, 1, 1, 1> CostFctType3;
+  typedef ceres::AutoDiffCostFunction<BiExponentialResidual3, 1, 1, 1, 1> CostFctType3;
   typedef ceres::AutoDiffCostFunction<BiExponentialResidual, 1, 1, 1, 1, 1> CostFctType4;
 
   // declare obj function
   ceres::Problem problem;
   for (int i = 0; i < kNumObservations; ++i) {
-    problem.AddResidualBlock(new CostFctType2(new MonoExponentialResidual(times[i], activities[i], variances[i])),
+    /*problem.AddResidualBlock(new CostFctType2(new MonoExponentialResidual(times[i], activities[i], variances[i])),
       NULL,
       &A, &lambda);
-    /*problem.AddResidualBlock(new CostFctType4(new BiExponentialResidual(times[i], activities[i])),
-      NULL,
-      &A, &lambda, &B, &lambda2);
     */
-    /*problem.AddResidualBlock(new CostFctType3(new BiExponentialResidual2(times[i], activities[i])),
+    problem.AddResidualBlock(new CostFctType4(new BiExponentialResidual(times[i], activities[i])),
                              NULL,
-                             &A, &lambda, &lambda2);
-    */
+                             &A, &lambda, &B, &lambda2);
+
+    /*problem.AddResidualBlock(new CostFctType3(new BiExponentialResidual3(times[i], activities[i])),
+                             NULL,
+                             &A, &lambda, &lambda2);*/
   }
 
   // Bounds (constraints)
-  problem.SetParameterLowerBound(&A, 0, 0); // A positive
-  // problem.SetParameterLowerBound(&B, 0, 0); // B positive
-  // //  problem.SetParameterUpperBound(&B, 0, 1); // B <=1.0
-  problem.SetParameterLowerBound(&lambda, 0, 0); // positive
+  // problem.SetParameterLowerBound(&A, 0, 0); // A positive
+  // // problem.SetParameterLowerBound(&B, 0, 0); // B positive
+  // // //  problem.SetParameterUpperBound(&B, 0, 1); // B <=1.0
+  // problem.SetParameterLowerBound(&lambda, 0, 0); // positive
   // problem.SetParameterLowerBound(&lambda2, 0, 0); // positive
-  // problem.SetParameterLowerBound(&lambda, 0, Lambda_Indium*0.9);
-  // problem.SetParameterUpperBound(&lambda, 0, Lambda_Indium*1.1);
+  // problem.SetParameterLowerBound(&lambda, 0, Lambda_Indium*0.99);
+  // problem.SetParameterUpperBound(&lambda, 0, Lambda_Indium*1.01);
 
   // Solve
   ceres::Solver::Options options;
@@ -150,8 +206,8 @@ void syd::Fit(std::vector<double> & times,
   DD(Lambda_Indium);
   std::cout << "A = " << A << std::endl
             << "lambda = " << lambda << std::endl
-            // << "B = " << B << std::endl
-            // << "lambda2 = " << lambda2 << std::endl
+            << "B = " << B << std::endl
+            << "lambda2 = " << lambda2 << std::endl
     ;
 
 }

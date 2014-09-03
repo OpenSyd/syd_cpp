@@ -507,16 +507,16 @@ void syd::sydQuery::ComputeCumulActivityImage(Study study, int nb)
     ImageType::Pointer s = clitk::readImage<ImageType>(f);
     spect.push_back(s);
 
-
-    auto gfilter = itk::DiscreteGaussianImageFilter<ImageType, ImageType>::New();
-    double * var = new double[3];
-    // var = (shrink factor / 2)^2
-    var[0] = var[1] = var[2] = 25; // 25 = 1CC
-    gfilter->SetVariance(var);
-    gfilter->SetUseImageSpacingOn(); // variance in voxel or mm
-    gfilter->SetInput(s);
-    gfilter->Update();
-    s = gfilter->GetOutput();
+    // needed or not ?
+    // auto gfilter = itk::DiscreteGaussianImageFilter<ImageType, ImageType>::New();
+    // double * var = new double[3];
+    // // var = (shrink factor / 2)^2
+    // var[0] = var[1] = var[2] = 25; // 25 = 1CC
+    // gfilter->SetVariance(var);
+    // gfilter->SetUseImageSpacingOn(); // variance in voxel or mm
+    // gfilter->SetInput(s);
+    // gfilter->Update();
+    // s = gfilter->GetOutput();
 
   }
 
@@ -528,8 +528,7 @@ void syd::sydQuery::ComputeCumulActivityImage(Study study, int nb)
   auto A_image = clitk::NewImageLike<ImageType>(spect[0], true);
   auto l_image = clitk::NewImageLike<ImageType>(spect[0], true);
 
-  // Loop with 7 iterators ? to build the vector of activities ?
-  // No a single iterator use GetBufferPointer
+  // Loop
   itk::ImageRegionIterator<ImageType> iter(output, output->GetLargestPossibleRegion());
   iter.GoToBegin();
   int n = spect.size();
@@ -584,6 +583,18 @@ void syd::sydQuery::ComputeCumulActivityImage(Study study, int nb)
   syd::replace(f, "spect1", "cumul");
   if (GetVerboseFlag()) { std::cout << f << std::endl; }
   clitk::writeImage<ImageType>(output, f);
+
+  // Update db
+  {
+    odb::transaction t (db->begin());
+    std::string g = f;
+    syd::replace(g, mDataPath, "");
+    DD(g);
+    study.CumulatedActivityImageFilename = g;
+    db->update(study);
+    t.commit();
+  }
+
 
   // debug image
   f = std::string(mDataPath+series[0].MHDFilename);
@@ -769,7 +780,7 @@ void syd::sydQuery::ComputeRoiFitActivityTest(RoiStudy roistudy, int n)
   DDS(variances);
 
   // Trial opti LM
-  Fit(times, activities, variances);
+  FitTest(times, activities, variances);
 
 }
 // --------------------------------------------------------------------
@@ -812,33 +823,88 @@ void syd::sydQuery::ComputeRoiPeakCumulActivity(RoiStudy roistudy, double gaussV
     gfilter->Update();
     aaSpect = gfilter->GetOutput();
 
+    // debug
+    clitk::writeImage<ImageType>(aaSpect, "smooth.mhd");
+
     // Put in 'cache'
     mPreviousAASpectStudyId = study.Id;
     mCachedAASpect = aaSpect;
   }
 
   // Load the current roi mask
+  MaskImageType::Pointer initialmask;
   MaskImageType::Pointer mask;
-  GetResampledMask(roistudy, aaSpect, mask);
+  GetResampledMask(roistudy, aaSpect, initialmask, mask);
 
-  // Now compute the peak activity = max value (of smoothed image)
-  typename StatisticsImageFilterType::Pointer statisticsFilter=StatisticsImageFilterType::New();
-  statisticsFilter->SetInput(aaSpect);
-  statisticsFilter->SetLabelInput(mask);
-  statisticsFilter->Update();
+  // Debug
+  clitk::writeImage<MaskImageType>(mask, "mm.mhd");
 
-  // Get the pixel volume
-  // mean by pixel to convert into mean by cc (spacing is in mm, so x0.001)
-  double vol = (aaSpect->GetSpacing()[0]*aaSpect->GetSpacing()[1]*aaSpect->GetSpacing()[2]*0.001);
+  // Find the max pixel in this ROI
+  double maxValue = 0;
+  typename ImageType::IndexType maxIndex;
+  {
+    itk::ImageRegionIteratorWithIndex<ImageType> iter(aaSpect, aaSpect->GetLargestPossibleRegion());
+    iter.GoToBegin();
+    MaskPixelType * m = mask->GetBufferPointer();
+    while (!iter.IsAtEnd()) {
+      if (*m != 0) { // inside the mask
+        if (iter.Get() > maxValue) {
+          maxIndex = iter.GetIndex();
+          maxValue = iter.Get();
+        }
+      }
+      ++m;
+      ++iter;
+    }
+  }
+  DD(maxValue);
+  DD(maxIndex);
+  typename ImageType::PointType p;
+  aaSpect->TransformIndexToPhysicalPoint(maxIndex, p);
+  DD(p);
 
-  // Store the maximal value
-  roistudy.PeakCumulatedActivityConcentration = statisticsFilter->GetMaximum(1)/vol; // 4 = max value (after Gaussian)
-  DD(roistudy.PeakCumulatedActivityConcentration);
+  // Change mask for a sphere centered on this max
+  double volume = 3000.0;
+  double radius = pow((volume/(4.0/3.0*M_PI)), 1.0/3.0);
+  DD(radius);
+  {
+    itk::ImageRegionIteratorWithIndex<MaskImageType> iter(initialmask, initialmask->GetLargestPossibleRegion());
+    iter.GoToBegin();
+    typename ImageType::PointType center;
+    mask->TransformIndexToPhysicalPoint(maxIndex, center);
+    typename ImageType::PointType p;
+    while (!iter.IsAtEnd()) {
+      initialmask->TransformIndexToPhysicalPoint(iter.GetIndex(), p);
+      double d = p.EuclideanDistanceTo(center);
+      if (d < radius) iter.Set(1);
+      else iter.Set(0);
+      ++iter;
+    }
+  }
+  clitk::writeImage<MaskImageType>(initialmask, "roipeak.mhd");
+  MaskImageType::Pointer a = clitk::ResampleImageLike<MaskImageType>(initialmask, aaSpect, 0, 0); // O is BG, 0 is NN interpolation
+  clitk::writeImage<MaskImageType>(a, "roipeak-resampled.mhd");
 
-  // Update
-  odb::transaction t (db->begin());
-  db->update(roistudy);
-  t.commit();
+  // Store the new mask as a new roi ?
+  //  FIXME
+  /// Compute output filename
+  std::string f = std::string(mDataPath+roistudy.MHDFilename);
+  syd::replace(f, ".mhd", "-Peak.mhd");
+  if (GetVerboseFlag()) { std::cout << f << std::endl; }
+  clitk::writeImage<MaskImageType>(initialmask, f);
+
+  // Update db
+  {
+    odb::transaction t (db->begin());
+    std::string f = std::string(roistudy.MHDFilename);
+    syd::replace(f, ".mhd", "-Peak.mhd");
+    roistudy.PeakMHDFilename = f;
+    db->update(roistudy);
+    t.commit();
+  }
+
+  // debug image
+
 
   // Verbose
   if (GetVerboseFlag()) {
