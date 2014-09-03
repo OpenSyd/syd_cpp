@@ -9,10 +9,13 @@ option "verbose"   	 	v       "Verbose"				flag		off
 option "verboseDB"   	 	-       "Verbose DB"				flag		off
 option "verboseQuery"  	 	-       "Verbose Query"				flag		off
 
+#option "completion"  	 	-       "Verbose completion"			string		no
+
 defgroup "cmd" groupdesc="an option of this group is required" required
 groupoption "insertRoi"                 - "Param : SynfrizzId + studynb + roiname + mhd" group="cmd"
 groupoption "insertCT"                  - "Param : SynfrizzId + studynb + mhd"           group="cmd"
 groupoption "insertSPECT"               - "Param : SynfrizzId + studynb + dcm + mhd"     group="cmd"
+
 groupoption "computeRoiTimeActivity"    - "Param : SynfrizzId + studynb + roiname"       group="cmd"
 groupoption "computeRoiCumulActivity"   - "Param : SynfrizzId + studynb + roiname + n"   group="cmd"
 groupoption "computeRoiFitActivityTest" - "Param : SynfrizzId + studynb + roiname + n"   group="cmd"
@@ -20,6 +23,9 @@ groupoption "computeRoiPeakCumulActivity"   - "Param : SynfrizzId + studynb + ro
 groupoption "computeCumulActivityImage" - "Param : SynfrizzId + studynb"                 group="cmd"
 groupoption "computeRoiInfo"            - "Param : SynfrizzId + studynb + roiname"       group="cmd"
 groupoption "computeTiming"             - "Param : SynfrizzId + studynb"                 group="cmd"
+
+groupoption "Compute_ROI_Time_Integrated_Activity"   - "Param : TODO"   group="cmd"
+
 groupoption "dumpStudy"                 - "Param : SynfrizzId   [studynb=0]"             group="cmd"
 groupoption "dumpStudy2"                - "Param : SynfrizzId   [studynb=0]"             group="cmd"
 groupoption "dumpCalibrationFactor"     - "Param : [SynfrizzId] [studynb=0]"             group="cmd"

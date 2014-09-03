@@ -137,15 +137,7 @@ namespace syd {
     Study GetStudy(char ** inputs);
     void GetListOfPatients(std::string SynfrizzId, std::vector<unsigned long> & ids);
 
-  protected:
-    bool mVerboseFlag;
-    bool mVerboseQueryFlag;
-    bool mVerboseDBFlag;
-    std::string mDatabaseFilename;
-    std::string mDataPath;
-    odb::sqlite::database * db;
-
-    // convenients fct
+    // convenients fct (template)
     template<class T>
     void LoadVector(std::vector<T> & list, const odb::query<T> & q);
     template<class T>
@@ -154,6 +146,14 @@ namespace syd {
     bool LoadFirstIfExist(T & t, const odb::query<T> & q);
     template<class T>
     T & GetById(unsigned long id);
+
+  protected:
+    bool mVerboseFlag;
+    bool mVerboseQueryFlag;
+    bool mVerboseDBFlag;
+    std::string mDatabaseFilename;
+    std::string mDataPath;
+    odb::sqlite::database * db;
 
     // For tracing SQL queries
     std::string mCurrentSQLQuery;
