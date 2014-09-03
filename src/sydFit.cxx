@@ -17,10 +17,11 @@
   ===========================================================================**/
 
 #include "sydFit.h"
+#include "syd_With_Verbose_Flag.h"
 
 // --------------------------------------------------------------------
-struct syd::MonoExponentialResidual {
-  MonoExponentialResidual(double x, double y, double w): x_(x), y_(y), w_(w) {}
+struct syd::MonoExponentialResidualWeighted {
+  MonoExponentialResidualWeighted(double x, double y, double w): x_(x), y_(y), w_(w) {}
   template <typename T> bool operator()(const T* const A,
                                         const T* const lambda,
                                         T* residual) const {
@@ -32,6 +33,23 @@ private:
   const double x_;
   const double y_;
   const double w_;
+};
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+struct syd::MonoExponentialResidual {
+  MonoExponentialResidual(double x, double y): x_(x), y_(y) {}
+  template <typename T> bool operator()(const T* const A,
+                                        const T* const lambda,
+                                        T* residual) const {
+    residual[0] = (T(y_) - A[0]*exp(-lambda[0] * T(x_)));
+    return true;
+
+  }
+private:
+  const double x_;
+  const double y_;
 };
 // --------------------------------------------------------------------
 
@@ -210,5 +228,73 @@ void syd::FitTest(std::vector<double> & times,
             << "lambda2 = " << lambda2 << std::endl
     ;
 
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Fit_Time_Activity::Fit_Time_Activity():With_Verbose_Flag()
+{
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Fit_Time_Activity::
+Set_Data(const std::vector<double> & _times,
+         const std::vector<double> & _activities,
+         const std::vector<double> & _std)
+{
+  times = &_times;
+  activities = &_activities;
+  std = &_std;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Fit_Time_Activity::
+Fit_With_Mono_Expo()
+{
+  int kNumObservations = times->size();
+  DD(kNumObservations);
+  m_Parameters.resize(2);
+  double & A = m_Parameters[0];
+  double & lambda = m_Parameters[1];
+  A = (*activities)[1];
+  lambda = Lambda_Indium;
+  DD(A);
+  DD(lambda);
+
+  // 1,1 ==> dimension of residual, dimension of parameters
+  typedef ceres::AutoDiffCostFunction<MonoExponentialResidual, 1, 1, 1> CostFctType;
+
+  // Declare the problem with residual blocks
+  ceres::Problem problem;
+  for (int i = 0; i < kNumObservations; ++i) {
+    problem.AddResidualBlock(new CostFctType(new MonoExponentialResidual((*times)[i], (*activities)[i])),
+                             NULL,
+                             &A, &lambda);
+  }
+
+  // Solve
+  ceres::Solver::Options options;
+  options.max_num_iterations = 100;
+  options.linear_solver_type = ceres::DENSE_QR;
+  options.minimizer_progress_to_stdout = false;
+  options.trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
+  options.logging_type = ceres::SILENT;
+  // may try Dogleg also
+
+  // Get the results
+  DD("here");
+  ceres::Solver::Summary summary;
+  Solve(options, &problem, &summary);
+  //  std::cout << summary.BriefReport() << "\n";
+  DD(A);
+  DD(lambda);
+
+  m_RMS = -1; // FIXME
 }
 // --------------------------------------------------------------------

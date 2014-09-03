@@ -35,13 +35,23 @@ namespace syd {
                   const std::vector<double> & activities,
                   const std::vector<double> & std);
 
+    void Set_Nb_Of_Points_For_Fit(int n) { m_Nb_Of_Points_For_Fit = n; }
+
+    static double Integrate_From_Zero_To_First_Point(const std::vector<double> & X, const std::vector<double> & Y);
+    static double Integrate_Parallelogram_method(const std::vector<double> & X, const std::vector<double> & Y,
+                                                 int start, int n);
+    static double Integrate_MonoExponential(double A, double lambda, double start, double end);
+    static double Integrate_MonoExponential(double A, double lambda);
+
     void Integrate();
     double Get_Integrated_Activity();
 
   protected:
+    int m_Nb_Of_Points_For_Fit;
     const std::vector<double> * times;
     const std::vector<double> * activities;
     const std::vector<double> * std;
+    double m_IntegratedActivity;
 
   };
   // --------------------------------------------------------------------

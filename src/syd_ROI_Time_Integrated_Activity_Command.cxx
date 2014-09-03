@@ -72,7 +72,7 @@ Run(RoiStudy roistudy)
   for(auto i=roiseries.begin(); i<roiseries.end(); i++) {
     double t = db.GetById<Serie>(i->SerieId).TimeFromInjectionInHours;
     times.push_back(t);
-    activities.push_back(i->MeanActivity); // mean activity in the ROI
+    activities.push_back(i->MeanActivity); // mean activity in the ROI //FIXME
     std.push_back(i->StdActivity);  // std deviation activity in the ROI
   }
 
