@@ -25,6 +25,7 @@ target_link_libraries(sydTest ${ITK_LIBRARIES} sydLib sqlite3 odb-sqlite odb)
 wrap_ggo(syd syd.ggo)
 add_executable(syd syd.cxx syd_ggo.c sydFit.cxx sydQuery.cxx sydCompute.cxx
   syd_Time_Integrated_Activity.cxx
+  syd_ROI_Peak_Command.cxx
   syd_ROI_Time_Integrated_Activity_Command.cxx sydCommand.cxx syd_With_Verbose_Flag.cxx )
 target_link_libraries(syd ${ITK_LIBRARIES} sydLib sqlite3 odb-sqlite odb clitkCommon ${CERES_LIBRARIES})
 #----------------------------------------------------------

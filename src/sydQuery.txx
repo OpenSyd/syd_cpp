@@ -87,3 +87,37 @@ void sydQuery::Update(T & t)
   transaction.commit();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class T>
+void sydQuery::Insert(T & t)
+{
+  odb::transaction transaction (db->begin());
+  db->persist(t);
+  db->update(t);
+  transaction.commit();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class T>
+typename T::Pointer sydQuery::Read_Image(std::string & filename)
+{
+  DD(filename);
+  std::string f(mDataPath+filename);
+  return clitk::readImage<T>(f);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class T>
+void sydQuery::Write_Image(typename T::Pointer & image, std::string & filename)
+{
+  DD(filename);
+  std::string f(mDataPath+filename);
+  clitk::writeImage<T>(image, f);
+}
+// --------------------------------------------------------------------

@@ -84,7 +84,7 @@ namespace syd {
 
     // ------------------------------
     // Get convenient function
-    void GetResampledMask(RoiStudy roistudy, ImageType::Pointer spect,
+    void Get_Resampled_Mask(RoiStudy roistudy, ImageType::Pointer spect,
                           MaskImageType::Pointer & initialmask,
                           MaskImageType::Pointer & resampledmask);
     void Get_RoiSeries_Sorted_by_Time(RoiStudy roistudy, std::vector<RoiSerie> & roiseries);
@@ -147,8 +147,14 @@ namespace syd {
     template<class T>
     T & GetById(unsigned long id);
 
+    template<class T> void Update(T & t);
+    template<class T> void Insert(T & t);
+
     template<class T>
-    void Update(T & t);
+    typename T::Pointer Read_Image(std::string & filename);
+    template<class T>
+    void Write_Image(typename T::Pointer & image, std::string & filename);
+
 
   protected:
     bool mVerboseFlag;

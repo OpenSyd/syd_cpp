@@ -25,6 +25,7 @@ groupoption "computeRoiInfo"            - "Param : SynfrizzId + studynb + roinam
 groupoption "computeTiming"             - "Param : SynfrizzId + studynb"                 group="cmd"
 
 groupoption "Compute_ROI_Time_Integrated_Activity"   - "Param : TODO"   group="cmd"
+groupoption "Compute_ROI_Peak"                       - "Param : TODO"   group="cmd"
 
 groupoption "dumpStudy"                 - "Param : SynfrizzId   [studynb=0]"             group="cmd"
 groupoption "dumpStudy2"                - "Param : SynfrizzId   [studynb=0]"             group="cmd"

@@ -20,6 +20,7 @@
 
 #include "sydQuery.h"
 #include "syd_ROI_Time_Integrated_Activity_Command.h"
+#include "syd_ROI_Peak_Command.h"
 #include "syd_ggo.h"
 
 // --------------------------------------------------------------------
@@ -27,15 +28,6 @@ int main(int argc, char* argv[])
 {
   // Init command line
   GGO(syd, args_info);
-
-  // --------------------------------------------------------------
-  /*if (args_info.completion_given) {// FIXME
-    std::cout << args_info.completion_arg << "Toto" << std::endl;
-    std::cout << args_info.completion_arg << "Titi" << std::endl;
-    exit(0);
-  }
-  */
-
 
   // Start opening the db
   syd::sydQuery syd;
@@ -151,8 +143,15 @@ int main(int argc, char* argv[])
 
 
   // --------------------------------------------------------------
-  if (args_info.Compute_ROI_Time_Integrated_Activity_given) {// FIXME
+  if (args_info.Compute_ROI_Time_Integrated_Activity_given) {
     syd::ROI_Time_Integrated_Activity_Command x(syd);
+    x.SetArgs(args_info.inputs, args_info.inputs_num);
+    x.Run();
+  }
+
+  // --------------------------------------------------------------
+  if (args_info.Compute_ROI_Peak_given) {
+    syd::ROI_Peak_Command x(syd);
     x.SetArgs(args_info.inputs, args_info.inputs_num);
     x.Run();
   }

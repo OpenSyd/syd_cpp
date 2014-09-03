@@ -16,19 +16,28 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYD_ROI_TIME_INTEGRATED_ACTIVITY_COMMAND_H
-#define SYD_ROI_TIME_INTEGRATED_ACTIVITY_COMMAND_H
+#ifndef SYD_ROI_PEAK_COMMAND_H
+#define SYD_ROI_PEAK_COMMAND_H
 
 // syd
 #include "sydCommand.h"
 
+// clitk
+#include <clitkImageCommon.h>
+
 namespace syd {
 
   // --------------------------------------------------------------------
-  class ROI_Time_Integrated_Activity_Command: public syd::Command {
+  class ROI_Peak_Command: public syd::Command {
 
   public:
-    ROI_Time_Integrated_Activity_Command(sydQuery & db);
+    ROI_Peak_Command(sydQuery & db);
+
+    // Image types
+    typedef float PixelType;
+    typedef itk::Image<PixelType, 3> ImageType;
+    typedef unsigned char MaskPixelType;
+    typedef itk::Image<MaskPixelType, 3> MaskImageType;
 
     void SetArgs(char ** inputs, int n);
     void Run();
@@ -36,6 +45,10 @@ namespace syd {
 
   protected:
     std::vector<RoiStudy> roistudies;
+    double m_Gaussian_Variance;
+    double m_Peak_Volume_In_CC;
+    ImageType::Pointer m_CachedAASpect;
+    unsigned long m_PreviousAASpectStudyId;
 
   };
   // --------------------------------------------------------------------

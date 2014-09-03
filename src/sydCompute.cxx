@@ -836,7 +836,7 @@ void syd::sydQuery::ComputeRoiPeakCumulActivity(RoiStudy roistudy, double gaussV
   // Load the current roi mask
   MaskImageType::Pointer initialmask;
   MaskImageType::Pointer mask;
-  GetResampledMask(roistudy, aaSpect, initialmask, mask);
+  Get_Resampled_Mask(roistudy, aaSpect, initialmask, mask);
 
   // Debug
   clitk::writeImage<MaskImageType>(mask, "mm.mhd");

@@ -294,9 +294,9 @@ void syd::sydQuery::GetRoiStudies(std::string patients_arg, std::string studies_
 
 
 // --------------------------------------------------------------------
-void syd::sydQuery::GetResampledMask(RoiStudy roistudy, ImageType::Pointer spect,
-                                     MaskImageType::Pointer & initialmask,
-                                     MaskImageType::Pointer & resampledmask)
+void syd::sydQuery::Get_Resampled_Mask(RoiStudy roistudy, ImageType::Pointer spect,
+                                       MaskImageType::Pointer & initialmask,
+                                       MaskImageType::Pointer & resampledmask)
 {
   RoiType roitype = GetById<RoiType>(roistudy.RoiTypeId);
   bool nomask = false;

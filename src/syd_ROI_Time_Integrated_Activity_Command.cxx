@@ -38,6 +38,7 @@ SetArgs(char ** inputs, int n)
 
   // Get all roistudies (patient / study=all / roi)
   db.GetRoiStudies(inputs[0], "all", inputs[1], roistudies);
+  DD(roistudies.size());
 
   // Get parameters for Fit
   //FIXME
@@ -59,7 +60,7 @@ Run()
 void syd::ROI_Time_Integrated_Activity_Command::
 Run(RoiStudy roistudy)
 {
-
+  DD(roistudy);
   // Get all roiseries for this study
   std::vector<RoiSerie> roiseries;
   db.Get_RoiSeries_Sorted_by_Time(roistudy, roiseries);
