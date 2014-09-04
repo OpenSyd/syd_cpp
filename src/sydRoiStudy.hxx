@@ -37,6 +37,7 @@ public:
   double MassInGram;
   double Density;
   double CumulatedActivity;
+  //double TimeIntegratedMeanActivity;
   double PeakCumulatedActivityConcentration;
   double FitLambda;
   double FitA;

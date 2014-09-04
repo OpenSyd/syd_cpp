@@ -21,6 +21,7 @@
 
 // clitk
 #include <clitkResampleImageWithOptionsFilter.h>
+#include <clitkCropLikeImageFilter.h>
 
 // itk
 #include <itkDiscreteGaussianImageFilter.h>
@@ -43,17 +44,12 @@ void syd::ROI_Peak_Command::
 SetArgs(char ** inputs, int n)
 {
   // FIXME check nb of args
-  DD(n);
 
   // Get all roistudies (patient / study=all / roi)
-  DD(inputs[0]);
-  DD(inputs[1]);
   db.GetRoiStudies(inputs[0], "all", inputs[1], roistudies);
-  DD(roistudies.size());
 
   // Get parameters
   m_Gaussian_Variance = atof(inputs[2]);
-  DD(m_Gaussian_Variance);
   assert(m_Gaussian_Variance > 0);
 }
 // --------------------------------------------------------------------
@@ -72,7 +68,6 @@ Run()
 void syd::ROI_Peak_Command::
 Run(RoiStudy roistudy)
 {
-  DD(roistudy);
   // Load the aaSpect image for this study (or retrive in cache)
   Study study = db.GetById<Study>(roistudy.StudyId);
   ImageType::Pointer aaSpect;
@@ -99,7 +94,7 @@ Run(RoiStudy roistudy)
     aaSpect = gfilter->GetOutput();
 
     // debug
-    clitk::writeImage<ImageType>(aaSpect, "smooth.mhd");
+    //clitk::writeImage<ImageType>(aaSpect, "smooth.mhd");
 
     // Put in 'cache'
     m_PreviousAASpectStudyId = study.Id;
@@ -112,7 +107,7 @@ Run(RoiStudy roistudy)
   db.Get_Resampled_Mask(roistudy, aaSpect, initialmask, mask);
 
   // Debug
-  clitk::writeImage<MaskImageType>(mask, "mm.mhd");
+  //clitk::writeImage<MaskImageType>(mask, "mm.mhd");
 
   // Find the max pixel in this ROI
   double maxValue = 0;
@@ -132,59 +127,68 @@ Run(RoiStudy roistudy)
       ++iter;
     }
   }
-  DD(maxValue);
-  DD(maxIndex);
   typename ImageType::PointType p;
   aaSpect->TransformIndexToPhysicalPoint(maxIndex, p);
-  DD(p);
 
-  // Change mask for a sphere centered on this max
+  // Get center
+  typename ImageType::PointType center;
+  mask->TransformIndexToPhysicalPoint(maxIndex, center);
+
+  // Create mask for a sphere centered on this max
   double volume = m_Peak_Volume_In_CC * 1000;
-  DD(volume);
   double radius = pow((volume/(4.0/3.0*M_PI)), 1.0/3.0);
-  DD(radius);
+
+  MaskImageType::Pointer peakmask = MaskImageType::New();
+  peakmask->CopyInformation(initialmask);
+  MaskImageType::RegionType region;
+  MaskImageType::SizeType size;
+  MaskImageType::PointType origin;
+  for(auto i=0; i<3; i++) {
+    size[i] = ((radius*2.0) / initialmask->GetSpacing()[i])+1;
+    origin[i] = center[i] - size[i]*initialmask->GetSpacing()[i]/2.0 + initialmask->GetSpacing()[i]/2.0;
+  }
+  region.SetSize(size);
+  peakmask->SetRegions(region);
+  peakmask->SetOrigin(origin);
+  peakmask->Allocate();
+
   {
-    itk::ImageRegionIteratorWithIndex<MaskImageType> iter(initialmask, initialmask->GetLargestPossibleRegion());
+    itk::ImageRegionIteratorWithIndex<MaskImageType> iter(peakmask, peakmask->GetLargestPossibleRegion());
     iter.GoToBegin();
-    typename ImageType::PointType center;
-    mask->TransformIndexToPhysicalPoint(maxIndex, center);
     typename ImageType::PointType p;
     while (!iter.IsAtEnd()) {
-      initialmask->TransformIndexToPhysicalPoint(iter.GetIndex(), p);
+      peakmask->TransformIndexToPhysicalPoint(iter.GetIndex(), p);
       double d = p.EuclideanDistanceTo(center);
       if (d < radius) iter.Set(1);
       else iter.Set(0);
       ++iter;
     }
   }
-  clitk::writeImage<MaskImageType>(initialmask, "roipeak.mhd");
-  MaskImageType::Pointer a = clitk::ResampleImageLike<MaskImageType>(initialmask, aaSpect, 0, 0); // O is BG, 0 is NN interpolation
-  clitk::writeImage<MaskImageType>(a, "roipeak-resampled.mhd");
+
+  //clitk::writeImage<MaskImageType>(initialmask, "roipeak.mhd");
+  MaskImageType::Pointer a = clitk::ResampleImageLike<MaskImageType>(peakmask, aaSpect, 0, 0); // O is BG, 0 is NN interpolation
+  //clitk::writeImage<MaskImageType>(a, "roipeak-resampled.mhd");
 
   // Store the new mask as a new roi
   std::string roiname = db.GetById<RoiType>(roistudy.RoiTypeId).Name;
   roiname = roiname+"-Peak";
-  DD(roiname);
 
   // Get or create the new roitype name
   RoiType peakroitype;
   if (!db.LoadFirstIfExist<RoiType>(peakroitype, odb::query<RoiType>::Name == roiname)) {
     // Create a new roi type
-    DD("not exist");
-    DD(roiname);
     peakroitype.Name = roiname;
     peakroitype.Description = "Computed";
     db.Insert<RoiType>(peakroitype);
   }
   else {
-    DD("already exist");
+    //DD("already exist");
   }
 
   // Write the image (in the db right folder)
   std::string filename = roistudy.MHDFilename;
   syd::replace(filename, ".mhd", "-Peak.mhd");
-  DD(filename);
-  db.Write_Image<MaskImageType>(initialmask, filename);
+  db.Write_Image<MaskImageType>(peakmask, filename);
 
   // Insert into db
   db.SetVerboseFlag(true);

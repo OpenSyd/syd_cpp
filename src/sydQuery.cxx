@@ -301,11 +301,9 @@ void syd::sydQuery::Get_Resampled_Mask(RoiStudy roistudy, ImageType::Pointer spe
   RoiType roitype = GetById<RoiType>(roistudy.RoiTypeId);
   bool nomask = false;
   if (roitype.Name == "WholeImage") nomask = true;
-  DD(roitype.Name);
 
   // read mask
   std::string f = std::string (mDataPath+roistudy.MHDFilename);
-  DD(f);
   if (!nomask) initialmask = clitk::readImage<MaskImageType>(f);
   else { // create a "full" mask
     initialmask = MaskImageType::New();
@@ -347,7 +345,6 @@ void syd::sydQuery::GetSortedSeries(Study study, std::vector<Serie> & series)
 {
   // First load the series
   LoadVector<Serie>(series, odb::query<Serie>::StudyId == study.Id);
-  DDS(series);
 
   // Sort serie by time by time from injection
   struct was_injected_before {
@@ -671,7 +668,8 @@ void syd::sydQuery::DumpActivity(std::string arg, std::vector<int> & ids, std::s
       if (roistudies.size() == 1) {
         RoiStudy r = roistudies[0];
         double v;
-        if (type == "total") v = (k*r.CumulatedActivity)/(ia*r.MassInGram);
+        //if (type == "total") v = (k*r.CumulatedActivity)/(ia*r.MassInGram);
+        if (type == "total") v = (k*r.CumulatedActivity)/(ia*r.Density);
         //        if (type == "max")   v = (k*r.CumulatedMaxActivity)/(ia*r.Density);
         std::cout << std::setw(col) << std::setprecision(1) << v*1000; // kBq.h/g / injectedMBq
       }

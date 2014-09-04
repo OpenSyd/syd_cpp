@@ -292,8 +292,8 @@ Fit_With_Mono_Expo()
   ceres::Solver::Summary summary;
   Solve(options, &problem, &summary);
   //  std::cout << summary.BriefReport() << "\n";
-  DD(A);
-  DD(lambda);
+  std::cout << "A = " << A << std::endl
+            << "lambda = " << lambda << std::endl;
 
   m_RMS = -1; // FIXME
 }

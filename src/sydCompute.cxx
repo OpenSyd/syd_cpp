@@ -589,7 +589,6 @@ void syd::sydQuery::ComputeCumulActivityImage(Study study, int nb)
     odb::transaction t (db->begin());
     std::string g = f;
     syd::replace(g, mDataPath, "");
-    DD(g);
     study.CumulatedActivityImageFilename = g;
     db->update(study);
     t.commit();

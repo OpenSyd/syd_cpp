@@ -105,7 +105,6 @@ void sydQuery::Insert(T & t)
 template<class T>
 typename T::Pointer sydQuery::Read_Image(std::string & filename)
 {
-  DD(filename);
   std::string f(mDataPath+filename);
   return clitk::readImage<T>(f);
 }
@@ -116,7 +115,6 @@ typename T::Pointer sydQuery::Read_Image(std::string & filename)
 template<class T>
 void sydQuery::Write_Image(typename T::Pointer & image, std::string & filename)
 {
-  DD(filename);
   std::string f(mDataPath+filename);
   clitk::writeImage<T>(image, f);
 }

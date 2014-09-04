@@ -66,24 +66,52 @@ Run(RoiStudy roistudy)
   db.Get_RoiSeries_Sorted_by_Time(roistudy, roiseries);
 
   // Get times / activities values
-  // (LATER : read from a different db ?)
+  // (FIXME : read from a different db ?)
   std::vector<double> times;
   std::vector<double> activities;
   std::vector<double> std;
+  double maxValue=0;
+  int maxIndex=0;
+  int j=0;
   for(auto i=roiseries.begin(); i<roiseries.end(); i++) {
     double t = db.GetById<Serie>(i->SerieId).TimeFromInjectionInHours;
     times.push_back(t);
     activities.push_back(i->MeanActivity); // mean activity in the ROI //FIXME
     std.push_back(i->StdActivity);  // std deviation activity in the ROI
+    if (i->MeanActivity > maxValue) {
+      maxValue = i->MeanActivity;
+      maxIndex = j;
+    }
+    j++;
   }
+  DD(maxIndex);
+  DD(maxValue);
+
+  // Check strictly decreasing
+  double previousValue = maxValue;
+  for(auto i=maxIndex; i<times.size(); i++) {
+    assert(roiseries[i].MeanActivity < previousValue);
+    previousValue = roiseries[i].MeanActivity;
+  }
+
+  // (DEBUG) Dump for gp
+  std::ofstream os;
+  clitk::openFileForWriting(os, "data.txt");
+  os << "0 0 0" << std::endl;
+  for(auto i=0; i<times.size(); i++) {
+    os << times[i] << " " << activities[i] << " " << std[i] << " "  << std::endl;
+  }
+  os.close();
 
   // Compute the integrated activity
   syd::Time_Integrated_Activity a;
   a.Set_Data(times, activities, std);
-  // a->Set_Number_Of_Points_For_Final_Fit(); // FIXME integrate / fit options
+  int n = times.size()-maxIndex;
+  DD(n);
+  a.Set_Nb_Of_Points_For_Fit(n); // FIXME integrate / fit options
   a.Integrate();
 
-  // Update the db (now : the same db, @LATER@ : a specific result db
+  // Update the db (now : the same db, FIXME : a specific result db
   /*ResultRoiStudy r = db_results.Get_ResultRoiStudy(roistudy);
     r.IntegratedActivity = 0.0; // etc
     db_results.Update(r);
