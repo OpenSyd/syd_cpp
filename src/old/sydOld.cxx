@@ -22,13 +22,13 @@
 #include "syd_ROI_Time_Integrated_Activity_Command.h"
 #include "syd_ROI_Peak_Command.h"
 #include "syd_Dump_ROI_Activity_Command.h"
-#include "syd_ggo.h"
+#include "sydOld_ggo.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init command line
-  GGO(syd, args_info);
+  GGO(sydOld, args_info);
 
   // Start opening the db
   syd::sydQuery syd;
