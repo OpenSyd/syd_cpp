@@ -242,7 +242,7 @@ void syd::sydQuery::GetRoiTypes(std::string rois_arg, std::vector<RoiType> & roi
     if (rois_arg.find(" ") != std::string::npos) { // space exist, so consider multiple Ids
       char *s = strtok((char *)rois_arg.c_str(), " "); // cast char * is needed to prevent warning. Warning : string modified
       while (s) {
-        printf ("Token: %s\n", s);
+        //        printf ("Token: %s\n", s);
         RoiType p;
         bool b = LoadFirstIfExist<RoiType>(p, q::Name == s);
         if (b) roitypes.push_back(p);
@@ -669,7 +669,7 @@ void syd::sydQuery::DumpActivity(std::string arg, std::vector<int> & ids, std::s
         RoiStudy r = roistudies[0];
         double v;
         //if (type == "total") v = (k*r.CumulatedActivity)/(ia*r.MassInGram);
-        if (type == "total") v = (k*r.CumulatedActivity)/(ia*r.Density);
+        if (type == "total") v = (k*r.TimeIntegratedMeanActivity)/(ia*r.Density);
         //        if (type == "max")   v = (k*r.CumulatedMaxActivity)/(ia*r.Density);
         std::cout << std::setw(col) << std::setprecision(1) << v*1000; // kBq.h/g / injectedMBq
       }
@@ -836,12 +836,12 @@ void syd::sydQuery::DumpPatientRoisValue(std::string arg, std::vector<int> & ids
         // specific case for LesionLiverRatio
         if (j->Name == "LiverSphere") {
           if ((type == "LesionLiverRatio") || (type == "LesionLiverPeakRatio")) {
-            livermeanactivity = (k*r.CumulatedActivity)/(ia*r.MassInGram)*1000;
+            livermeanactivity = (k*r.TimeIntegratedMeanActivity)/(ia*r.MassInGram)*1000;
             // Do not write anything
           }
         }
         else {
-          double meanactivity = (k*r.CumulatedActivity)/(ia*r.MassInGram)*1000; // kBq.h/g / injectedMBq
+          double meanactivity = (k*r.TimeIntegratedMeanActivity)/(ia*r.MassInGram)*1000; // kBq.h/g / injectedMBq
           //          double peakactivity = (k*r.CumulatedMaxActivity)/(ia*r.Density)*1000;// kBq.h/g / injectedMBq
           if (type == "total") v = meanactivity;
           //          if (type == "max")   v = peakactivity;

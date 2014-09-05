@@ -42,6 +42,7 @@ double syd::Tac_Integrate(const std::vector<double> & X,
   double b = Tac_Integrate_Parallelogram_method(X, Y, n);
 
   // Fit last n points
+  double c;
   std::vector<double> Xend;
   std::vector<double> Yend;
   for(unsigned int i=X.size()-n; i<X.size(); i++) {
@@ -54,7 +55,7 @@ double syd::Tac_Integrate(const std::vector<double> & X,
 
   double total = Tac_Integrate(A, lambda);
   double firstpart = Tac_Integrate(A, lambda, 0, X[X.size()-n]);
-  double c = total-firstpart;
+  c = total-firstpart;
 
   /*
    // Use last n points to fit

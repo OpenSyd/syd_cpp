@@ -36,7 +36,7 @@ namespace syd {
 
   protected:
     std::vector<RoiStudy> roistudies;
-
+    int m_Nb_Of_Points_For_Fit;
   };
   // --------------------------------------------------------------------
 

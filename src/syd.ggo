@@ -30,6 +30,6 @@ groupoption "Compute_ROI_Peak"                       - "Param : TODO"   group="c
 groupoption "dumpStudy"                 - "Param : SynfrizzId   [studynb=0]"             group="cmd"
 groupoption "dumpStudy2"                - "Param : SynfrizzId   [studynb=0]"             group="cmd"
 groupoption "dumpCalibrationFactor"     - "Param : [SynfrizzId] [studynb=0]"             group="cmd"
-groupoption "dumpActivity"              - "Param : organs/lesions/large-lesions/all type patients"     group="cmd"
+groupoption "Dump_Activity"              - "Param : TODO"     group="cmd"
 groupoption "dump"                      - "Param : organs/lesions/large-lesions/all type patients"     group="cmd"
 groupoption "dumpEffHalfLife"           - "Param : organs/lesions/large-lesions/all type patients"     group="cmd"

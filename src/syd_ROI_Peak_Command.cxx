@@ -44,6 +44,7 @@ void syd::ROI_Peak_Command::
 SetArgs(char ** inputs, int n)
 {
   // FIXME check nb of args
+  assert(n==4);
 
   // Get all roistudies (patient / study=all / roi)
   db.GetRoiStudies(inputs[0], "all", inputs[1], roistudies);
@@ -51,6 +52,7 @@ SetArgs(char ** inputs, int n)
   // Get parameters
   m_Gaussian_Variance = atof(inputs[2]);
   assert(m_Gaussian_Variance > 0);
+  m_Peak_Volume_In_CC = atof(inputs[3]);
 }
 // --------------------------------------------------------------------
 
@@ -59,7 +61,11 @@ SetArgs(char ** inputs, int n)
 void syd::ROI_Peak_Command::
 Run()
 {
-  for(auto i=roistudies.begin(); i<roistudies.end(); i++) Run(*i);
+  for(auto i=roistudies.begin(); i<roistudies.end(); i++) {
+    // Check if the region is not already a peak
+    RoiType r = db.GetById<RoiType>(i->RoiTypeId);
+    if (r.Name.find("Peak") == std::string::npos) Run(*i);
+  }
 }
 // --------------------------------------------------------------------
 

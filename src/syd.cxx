@@ -21,6 +21,7 @@
 #include "sydQuery.h"
 #include "syd_ROI_Time_Integrated_Activity_Command.h"
 #include "syd_ROI_Peak_Command.h"
+#include "syd_Dump_ROI_Activity_Command.h"
 #include "syd_ggo.h"
 
 // --------------------------------------------------------------------
@@ -195,13 +196,20 @@ int main(int argc, char* argv[])
   }
 
   // --------------------------------------------------------------
-  if (args_info.dumpActivity_given) {// FIXME
+  /*if (args_info.dumpActivity_given) {// FIXME
     if (args_info.inputs_num <3) FATAL("Requires 2+n params : organs/lesions/all type patient_numbers" << std::endl);
     std::string c = args_info.inputs[0];
     unsigned long s = 0;
     std::vector<int> ids;
     for(auto i=2; i<args_info.inputs_num; i++) ids.push_back(atoi(args_info.inputs[i]));
     syd.DumpActivity(c, ids, args_info.inputs[1]);
+    }*/
+
+  // --------------------------------------------------------------
+  if (args_info.Dump_Activity_given) {
+    syd::Dump_ROI_Activity_Command x(syd);
+    x.SetArgs(args_info.inputs, args_info.inputs_num);
+    x.Run();
   }
 
   // --------------------------------------------------------------

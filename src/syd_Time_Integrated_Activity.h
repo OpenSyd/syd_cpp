@@ -35,6 +35,9 @@ namespace syd {
                   const std::vector<double> & activities,
                   const std::vector<double> & std);
 
+    void Set_Data(const std::vector<double> & times,
+                  const std::vector<double> & activities);
+
     void Set_Nb_Of_Points_For_Fit(int n) { m_Nb_Of_Points_For_Fit = n; }
 
     static double Integrate_From_Zero_To_First_Point(const std::vector<double> & X, const std::vector<double> & Y);
@@ -43,8 +46,11 @@ namespace syd {
     static double Integrate_MonoExponential(double A, double lambda, double start, double end);
     static double Integrate_MonoExponential(double A, double lambda);
 
+    void Init();
+
     void Integrate();
     double Get_Integrated_Activity();
+    double Get_Parameter(int i) const { return m_Parameters[i]; }
 
   protected:
     int m_Nb_Of_Points_For_Fit;
@@ -52,6 +58,9 @@ namespace syd {
     const std::vector<double> * activities;
     const std::vector<double> * std;
     double m_IntegratedActivity;
+    std::vector<double> m_Parameters;
+    syd::Fit_Time_Activity f;
+
 
   };
   // --------------------------------------------------------------------

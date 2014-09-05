@@ -23,7 +23,7 @@
 syd::Command::
 Command(sydQuery & _db):db(_db)
 {
-  SetVerboseFlag(false);
+  SetVerboseFlag(db.GetVerboseFlag());
 }
 // --------------------------------------------------------------------
 

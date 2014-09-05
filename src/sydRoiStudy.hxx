@@ -36,8 +36,8 @@ public:
   double VolumeInCC;
   double MassInGram;
   double Density;
-  double CumulatedActivity;
-  //double TimeIntegratedMeanActivity;
+  //double CumulatedActivity;
+  double TimeIntegratedMeanActivity;
   double PeakCumulatedActivityConcentration;
   double FitLambda;
   double FitA;

@@ -24,6 +24,7 @@ syd::Time_Integrated_Activity::
 Time_Integrated_Activity():With_Verbose_Flag()
 {
   Set_Nb_Of_Points_For_Fit(2);
+  Init();
 }
 // --------------------------------------------------------------------
 
@@ -34,6 +35,8 @@ Set_Data(const std::vector<double> & _times,
          const std::vector<double> & _activities,
          const std::vector<double> & _std)
 {
+  assert(_times.size() == _activities.size());
+  assert(_times.size() == _stddev.size());
   times = &_times;
   activities = &_activities;
   std = &_std;
@@ -42,9 +45,30 @@ Set_Data(const std::vector<double> & _times,
 
 
 // --------------------------------------------------------------------
+void syd::Time_Integrated_Activity::
+Set_Data(const std::vector<double> & _times,
+         const std::vector<double> & _activities)
+{
+  std::vector<double> * a = new std::vector<double>(_times.size());
+  std::fill(a->begin(), a->end(), 1.0); // no std deviation
+  Set_Data(_times, _activities, *a);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Time_Integrated_Activity::Init()
+{
+  m_Parameters.resize(2);
+  f.Init();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Time_Integrated_Activity::Integrate()
 {
-  DDS(*times);
+  // DDS(*times);
 
   // FIXME : switch according to integration options
 
@@ -74,16 +98,20 @@ void syd::Time_Integrated_Activity::Integrate()
     Send.push_back(S[i]);
   }
   // Fitting process
-  syd::Fit_Time_Activity f;
+  // syd::Fit_Time_Activity f;
   f.Set_Data(Xend, Yend, Send);
   f.Fit_With_Mono_Expo();
   // Get Fit result
   double rms = f.Get_RMS();
   double A = f.Get_Parameter(0);
   double lambda = f.Get_Parameter(1);
-  DD(rms);
-  DD(A);
-  DD(lambda);
+
+  m_Parameters[0] = A;
+  m_Parameters[1] = lambda;
+
+  // DD(rms);
+  // DD(A);
+  // DD(lambda);
   // Integration
   double total = Integrate_MonoExponential(A, lambda);
   double firstpart = Integrate_MonoExponential(A, lambda, 0, X[X.size()-n]);

@@ -19,6 +19,7 @@
 // syd
 #include "sydQuery.h"
 #include "sydTimeActivityCurve.h"
+#include "syd_Time_Integrated_Activity.h"
 
 // itk
 #include <itksys/SystemTools.hxx>
@@ -505,19 +506,19 @@ void syd::sydQuery::ComputeCumulActivityImage(Study study, int nb)
   for(auto i=series.begin(); i<series.end(); i++) {
     std::string f = std::string (mDataPath+i->MHDFilename);
     ImageType::Pointer s = clitk::readImage<ImageType>(f);
-    spect.push_back(s);
 
     // needed or not ?
-    // auto gfilter = itk::DiscreteGaussianImageFilter<ImageType, ImageType>::New();
-    // double * var = new double[3];
-    // // var = (shrink factor / 2)^2
-    // var[0] = var[1] = var[2] = 25; // 25 = 1CC
-    // gfilter->SetVariance(var);
-    // gfilter->SetUseImageSpacingOn(); // variance in voxel or mm
-    // gfilter->SetInput(s);
-    // gfilter->Update();
-    // s = gfilter->GetOutput();
+    auto gfilter = itk::DiscreteGaussianImageFilter<ImageType, ImageType>::New();
+    double * var = new double[3];
+    // var = (shrink factor / 2)^2
+    var[0] = var[1] = var[2] = 25; // 25 = 1CC
+    gfilter->SetVariance(var);
+    gfilter->SetUseImageSpacingOn(); // variance in voxel or mm
+    gfilter->SetInput(s);
+    gfilter->Update();
+    s = gfilter->GetOutput();
 
+    spect.push_back(s);
   }
 
   // create output image
@@ -537,6 +538,10 @@ void syd::sydQuery::ComputeCumulActivityImage(Study study, int nb)
   double A;
   double lambda;
   long t=0;
+  syd::Time_Integrated_Activity a;
+  a.Init();
+  double minactivity = 200;
+  double previous_value = 0.0;
   while (!iter.IsAtEnd()) {
     int peakindex=0;
     double peak = 0;
@@ -549,31 +554,59 @@ void syd::sydQuery::ComputeCumulActivityImage(Study study, int nb)
     }
     int m = activities.size() - peakindex;
     m = std::min(m, nb);
-    double v = Tac_Integrate(times, activities, m, rms, A, lambda);
 
-    // Some sanity check (WARNING !)
-    double minactivity = 500;
-    double maxrms=1000;
-    double maxlambda = Lambda_Indium*1.5;
-    double minlambda = Lambda_Indium*0.5;
+    double v;
+    if (peak > minactivity) {
 
-    if (isnan(v)) v = -1;
-    if (activities[peakindex] < minactivity) v = -2; // dont look at lower activity
-    //    if (v<0) v = 0; // no negative
-    //if (v>1000000) v = 1000000; // no too high
-    //    DD(rms);
-    if (rms > maxrms) v = -3;
-    if (lambda > maxlambda) v = -4;
-    if (lambda < minlambda) v = -5;
-    if (isnan(rms)) v = -6;
+      // DDS(times);
+      // DDS(activities);
 
-    // debug image
-    rms_image->GetBufferPointer()[t] = rms;
-    A_image->GetBufferPointer()[t] = A;
-    l_image->GetBufferPointer()[t] = lambda;
+      if (0) {
+        a.Set_Data(times, activities); // no std
+        a.Set_Nb_Of_Points_For_Fit(m);
+        a.Integrate();
+        v = a.Get_Integrated_Activity();
+        A = a.Get_Parameter(0);
+        lambda = a.Get_Parameter(1);
+      }
+      else { // 10 xtimes faster (less robust)
+        v = Tac_Integrate(times, activities, m, rms, A, lambda);
+      }
+
+      // DD(v);
+      // DD(A);
+      // DD(lambda);
+
+      // Some sanity check (WARNING !)
+      double maxrms=1000;
+      double maxlambda = Lambda_Indium*2;
+      double minlambda = Lambda_Indium*0.25;
+
+      if (isnan(v)) v = -1;
+      if (activities[peakindex] < minactivity) v = -2; // dont look at lower activity
+      //    if (v<0) v = 0; // no negative
+      //if (v>1000000) v = 1000000; // no too high
+      //    DD(rms);
+      if (rms > maxrms) v = -3;
+      if (lambda > maxlambda) v = -4;
+      if (lambda < minlambda) v = -5;
+      if (isnan(rms)) v = -6;
+
+      // debug image
+      rms_image->GetBufferPointer()[t] = rms;
+      A_image->GetBufferPointer()[t] = A;
+      l_image->GetBufferPointer()[t] = lambda;
+    }
+    else v = -2;
+
+    // if (v<0) {
+    //   //v = previous_value; // if issue with computation, change by previous value
+    //   v = Tac_Integrate(times, activities, 0, rms, A, lambda);
+    //  }
 
     // Set value
     iter.Set(v);
+    previous_value = v;
     ++t;
     ++iter;
   }
@@ -696,7 +729,7 @@ void syd::sydQuery::ComputeRoiCumulActivity(RoiStudy roistudy, int n)
   double rms;
   double lambda;
   double A;
-  roistudy.CumulatedActivity = Tac_Integrate(times, activities, m, rms, A, lambda);
+  roistudy.TimeIntegratedMeanActivity = Tac_Integrate(times, activities, m, rms, A, lambda);
   roistudy.FitLambda = lambda;
   roistudy.FitA = A;
   roistudy.FitRMS = rms;
@@ -711,7 +744,7 @@ void syd::sydQuery::ComputeRoiCumulActivity(RoiStudy roistudy, int n)
   if (GetVerboseFlag()) {
     std::cout << patient.SynfrizzId << " " << study.Number << " "
               << roitype.Name << " "
-              << roistudy.CumulatedActivity << " "
+              << roistudy.TimeIntegratedMeanActivity << " "
               << roistudy.FitLambda << " "
               << roistudy.FitA << " "
               << roistudy.FitRMS << " "
@@ -914,7 +947,7 @@ void syd::sydQuery::ComputeRoiPeakCumulActivity(RoiStudy roistudy, double gaussV
     RoiType roitype = GetById<RoiType>(roistudy.RoiTypeId);
     std::cout << patient.SynfrizzId << " " << study.Number << " "
               << roitype.Name << " "
-              << roistudy.CumulatedActivity << " "
+              << roistudy.TimeIntegratedMeanActivity << " "
               << roistudy.PeakCumulatedActivityConcentration << " "
               << roistudy.FitLambda << " "
               << roistudy.FitA << " "

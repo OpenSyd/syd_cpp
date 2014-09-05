@@ -55,8 +55,13 @@ namespace syd {
 
     void Set_Data(const std::vector<double> & times,
                   const std::vector<double> & activities,
-                  const std::vector<double> & std);
+                  const std::vector<double> & stddev);
+    void Set_Data(const std::vector<double> & times,
+                  const std::vector<double> & activities);
     void Fit_With_Mono_Expo();
+
+    typedef ceres::AutoDiffCostFunction<MonoExponentialResidualWeighted, 1, 1, 1> CostFctType;
+    void Init();
 
     double Get_RMS() const { return m_RMS; }
     double Get_Parameter(int i) const { return m_Parameters[i]; }
@@ -64,10 +69,11 @@ namespace syd {
   protected:
     const std::vector<double> * times;
     const std::vector<double> * activities;
-    const std::vector<double> * std;
+    const std::vector<double> * stddev;
     double m_RMS;
     std::vector<double> m_Parameters;
-
+    ceres::Solver::Options options;
+    ceres::Solver::Summary summary;
   };
 
 }

@@ -34,15 +34,14 @@ void syd::ROI_Time_Integrated_Activity_Command::
 SetArgs(char ** inputs, int n)
 {
   // FIXME check nb of args
-  DD(n);
+  assert(n==3);
 
   // Get all roistudies (patient / study=all / roi)
   db.GetRoiStudies(inputs[0], "all", inputs[1], roistudies);
-  DD(roistudies.size());
+  //  DD(roistudies.size());
 
   // Get parameters for Fit
-  //FIXME
-
+  m_Nb_Of_Points_For_Fit = atoi(inputs[2]);
 }
 // --------------------------------------------------------------------
 
@@ -60,7 +59,6 @@ Run()
 void syd::ROI_Time_Integrated_Activity_Command::
 Run(RoiStudy roistudy)
 {
-  DD(roistudy);
   // Get all roiseries for this study
   std::vector<RoiSerie> roiseries;
   db.Get_RoiSeries_Sorted_by_Time(roistudy, roiseries);
@@ -84,8 +82,6 @@ Run(RoiStudy roistudy)
     }
     j++;
   }
-  DD(maxIndex);
-  DD(maxValue);
 
   // Check strictly decreasing
   double previousValue = maxValue;
@@ -95,29 +91,38 @@ Run(RoiStudy roistudy)
   }
 
   // (DEBUG) Dump for gp
-  std::ofstream os;
-  clitk::openFileForWriting(os, "data.txt");
-  os << "0 0 0" << std::endl;
-  for(auto i=0; i<times.size(); i++) {
-    os << times[i] << " " << activities[i] << " " << std[i] << " "  << std::endl;
+  if (1) {
+    std::ofstream os;
+    clitk::openFileForWriting(os, "data.txt");
+    os << "0 0 0" << std::endl;
+    for(auto i=0; i<times.size(); i++) {
+      os << times[i] << " " << activities[i] << " " << std[i] << " "  << std::endl;
+    }
+    os.close();
   }
-  os.close();
+
+  // Nb of points
+  if (m_Nb_Of_Points_For_Fit < 2) { // auto
+    int n = times.size()-maxIndex;
+    DD(n);
+    m_Nb_Of_Points_For_Fit = n;
+  }
 
   // Compute the integrated activity
   syd::Time_Integrated_Activity a;
   a.Set_Data(times, activities, std);
-  int n = times.size()-maxIndex;
-  DD(n);
-  a.Set_Nb_Of_Points_For_Fit(n); // FIXME integrate / fit options
+  a.Set_Nb_Of_Points_For_Fit(m_Nb_Of_Points_For_Fit); // FIXME integrate / fit options
   a.Integrate();
+  std::cout << "A = " << a.Get_Parameter(0) << std::endl
+            << "lambda = " << a.Get_Parameter(1) << std::endl;
 
   // Update the db (now : the same db, FIXME : a specific result db
   /*ResultRoiStudy r = db_results.Get_ResultRoiStudy(roistudy);
     r.IntegratedActivity = 0.0; // etc
     db_results.Update(r);
   */
-  roistudy.CumulatedActivity = a.Get_Integrated_Activity();
-  DD(roistudy.CumulatedActivity);
+  roistudy.TimeIntegratedMeanActivity = a.Get_Integrated_Activity();
+  // DD(roistudy.TimeIntegratedMeanActivity);
 
   // Update
   db.Update<RoiStudy>(roistudy);
@@ -129,7 +134,7 @@ Run(RoiStudy roistudy)
     RoiType roitype = db.GetById<RoiType>(roistudy.RoiTypeId);
     std::cout << patient.SynfrizzId << " " << study.Number << " "
               << roitype.Name << " "
-              << roistudy.CumulatedActivity << " "
+              << roistudy.TimeIntegratedMeanActivity << " "
               << roistudy.FitLambda << " "
               << roistudy.FitA << " "
               << roistudy.FitRMS << " "
