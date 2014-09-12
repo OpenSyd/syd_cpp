@@ -66,6 +66,9 @@ namespace syd {
     // Update an element of type T
     template<class T> void Update(T & t);
 
+    // Remove an element of type T
+    template<class T> void Erase(T & t);
+
     // Retrieve the element with a given id
     template<class T> T & GetById(IdType id);
 

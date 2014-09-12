@@ -21,6 +21,7 @@
 #include "sydCommon.h"
 #include "sydClinicalTrialDatabase.h"
 #include "sydInsertDicomCommand.h"
+#include "sydClearSeriesCommand.h"
 
 // easylogging : only once initialization (in the main)
 _INITIALIZE_EASYLOGGINGPP
@@ -37,25 +38,18 @@ int main(int argc, char* argv[])
   // Open the DBs. Use options or env variable to select the correct dbs
   syd::ClinicalTrialDatabase db;
   db.OpenDatabase();
-  // syd::DBRegistration dbr;
-  // dbr.OpenDatabase();
-  // syd::DBAnalysis dba;
-  // dba.OpenDatabase();
 
   // The options in the ggo group are considered in mutual exclusion, so a
   // single command will be performed.
   syd::DatabaseCommand * c;
   if (args_info.InsertDicom_given) c = new syd::InsertDicomCommand;
-  // if (args_info.AAA_given) c = syd::GetDatabaseCommand("AAA");
-  // if (args_info.AAA_given) c = syd::GetDatabaseCommand("AAA");
-  // if (args_info.AAA_given) c = syd::GetDatabaseCommand("AAA");
+  if (args_info.ClearSeries_given) c = new syd::ClearSeriesCommand;
 
   // Perform the command
   c->AddDatabase(&db);
-  // c->AddDatabase(dbr);
-  // c->AddDatabase(dba);
   c->SetArgs(args_info.inputs, args_info.inputs_num);
   c->Run();
 
+  // This is the end, my friend.
 }
 // --------------------------------------------------------------------

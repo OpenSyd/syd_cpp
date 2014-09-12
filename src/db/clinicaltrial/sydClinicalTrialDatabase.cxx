@@ -39,7 +39,7 @@ void syd::ClinicalTrialDatabase::OpenDatabase()
 
 
 // --------------------------------------------------------------------
-std::string syd::ClinicalTrialDatabase::GetFullPath(Patient & patient)
+std::string syd::ClinicalTrialDatabase::GetFullPath(const Patient & patient)
 {
   return get_folder()+patient.path;
 }
@@ -47,7 +47,7 @@ std::string syd::ClinicalTrialDatabase::GetFullPath(Patient & patient)
 
 
 // --------------------------------------------------------------------
-std::string syd::ClinicalTrialDatabase::GetFullPath(Study & study)
+std::string syd::ClinicalTrialDatabase::GetFullPath(const Study & study)
 {
   std::string p = GetFullPath(GetById<Patient>(study.patient_id));
   return p+study.path;
@@ -56,9 +56,12 @@ std::string syd::ClinicalTrialDatabase::GetFullPath(Study & study)
 
 
 // --------------------------------------------------------------------
-std::string syd::ClinicalTrialDatabase::GetFullPath(Serie & serie)
+std::string syd::ClinicalTrialDatabase::GetFullPath(const Serie & serie)
 {
-  std::string p = GetFullPath(GetById<Study>(serie.study_id));
+  //std::string p = GetFullPath(GetById<Study>(serie.study_id));
+  //return p+serie.path;
+
+  std::string p = GetFullPath(GetById<Patient>(serie.patient_id));
   return p+serie.path;
 }
 // --------------------------------------------------------------------
@@ -128,7 +131,7 @@ void syd::ClinicalTrialDatabase::AddStudy(const Patient & patient, std::string u
 
 
 // --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::CheckStudy(Study & study)
+void syd::ClinicalTrialDatabase::CheckStudy(const Study & study)
 {
   // Check the DB : single dicom_uid, path
   std::vector<Study> studies;
@@ -158,7 +161,7 @@ void syd::ClinicalTrialDatabase::CheckStudy(Study & study)
 
 
 // --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::CheckPatient(Patient & patient)
+void syd::ClinicalTrialDatabase::CheckPatient(const Patient & patient)
 {
   // Check the DB : single name, single path, single synfrizz_id
   std::vector<Patient> patients;
@@ -191,7 +194,7 @@ void syd::ClinicalTrialDatabase::CheckPatient(Patient & patient)
 
 
 // --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::CheckSerie(Serie & serie)
+void syd::ClinicalTrialDatabase::CheckSerie(const Serie & serie)
 {
   // Check the DB : single dicom_uid, path
   std::vector<Serie> series;
@@ -221,32 +224,75 @@ void syd::ClinicalTrialDatabase::CheckSerie(Serie & serie)
 
 
 // --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::AddSerie(const Study & study,
+void syd::ClinicalTrialDatabase::AddSerie(const Study & study, // FIXME not used
                                           std::string description,
                                           std::string uid,
+                                          std::string date,
                                           Serie & serie)
 {
   // Get the serie if already exist
-  if (GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid, serie)) return;
+  if (GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid, serie)) return; // FIXME CHANGE TO FATAL
 
   // Update the serie
-  serie.study_id = study.id;
+  // serie.study_id = study.id;
   serie.dicom_uid = uid;
   serie.dicom_description = description;
-  serie.acquisition_date = "";
+  serie.acquisition_date = date;
 
   // Create the path
-  serie.path = description+"__"+uid+PATH_SEPARATOR;
+  serie.path = date+"  "+description+PATH_SEPARATOR;
   std::string path = GetFullPath(serie);
 
   // Check the folder
   if (OFStandard::dirExists(path.c_str())) {
-    LOG(FATAL) << "Serie " << uid << " does not exist, but the folder "
-               << path << "exist. Abort.";
+    // LOG(FATAL) << "Serie " << uid << " does not exist, but the folder "
+    //            << path << "exist. Abort.";
+    VLOG(0) << "Path already exist " << path;
   }
-  syd::CreateDirectory(path);
+  else {
+    syd::CreateDirectory(path);
+    VLOG(0) << "Create path " << path;
+  }
 
   // Update the db
   Insert(serie);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ClinicalTrialDatabase::UpdateSerie(Serie & serie)
+{
+  // Create the path for the acquisition day
+  std::string day = serie.acquisition_date.substr(0,10);
+  std::string hour = serie.acquisition_date.substr(11,15);
+  DD(day);
+  std::string p = GetFullPath(GetById<Patient>(serie.patient_id))+PATH_SEPARATOR+day+PATH_SEPARATOR;
+  if (OFStandard::dirExists(p.c_str())) {
+    VLOG(1) << "Folder day date already exist " << p;
+  }
+  else {
+    syd::CreateDirectory(p);
+    VLOG(0) << "Create day path " << p;
+  }
+
+  // Create the filename (or folder)
+  if (serie.modality == "CT") {
+    serie.path = day+PATH_SEPARATOR+hour+"_"+serie.modality+"_"+serie.dicom_description;
+    std::string path = GetFullPath(serie);
+    if (OFStandard::dirExists(path.c_str())) {
+      VLOG(0) << "Path already exist " << path;
+    }
+    else {
+      syd::CreateDirectory(path);
+      VLOG(0) << "Create path " << path;
+    }
+  }
+  else {
+    serie.path = day+PATH_SEPARATOR+hour+"_"+serie.modality+"_"+serie.dicom_description+".dcm";
+  }
+
+  // Update the db
+  Update(serie);
 }
 // --------------------------------------------------------------------

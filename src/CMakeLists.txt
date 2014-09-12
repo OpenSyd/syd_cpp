@@ -29,7 +29,9 @@ include_directories(${DCMTK_INCLUDE_DIRS})
 
 #----------------------------------------------------------
 wrap_ggo(syd syd.ggo)
-add_executable(syd syd.cxx syd_ggo.c sydInsertDicomCommand.cxx)
+add_executable(syd syd.cxx syd_ggo.c
+  sydClearSeriesCommand.cxx
+  sydInsertDicomCommand.cxx)
 target_link_libraries(syd ${DCMTK_LIBRARIES} sydClinicalTrialDatabase sydCore sqlite3 odb-sqlite odb  z ${CERES_LIBRARIES})
 # ${ITK_LIBRARIES}
 #----------------------------------------------------------

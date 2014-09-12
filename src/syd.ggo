@@ -11,4 +11,5 @@ option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off
 #option "folder"                -       "DB folder"				string		no
 
 defgroup "cmd" groupdesc="an option of this group is required" required
-groupoption "InsertDicom"  	-       "Insert dicom into the db : need folder to search"		group="cmd"
+groupoption "InsertDicom"  	-       "<patient> <folders> Insert dicom in folders to the patient"      group="cmd"
+groupoption "ClearSeries"  	-       "<patient> ERASE all series for this patient"                     group="cmd"

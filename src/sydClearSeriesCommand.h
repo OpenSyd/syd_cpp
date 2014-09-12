@@ -16,41 +16,32 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDCLINICALTRIALDATABASE_H
-#define SYDCLINICALTRIALDATABASE_H
+#ifndef SYDCLEARSERIESCOMMAND_H
+#define SYDCLEARSERIESCOMMAND_H
 
 // syd
-#include "sydDatabase.h"
-#include "Patient-odb.hxx"
-#include "Study-odb.hxx"
-#include "Serie-odb.hxx"
-
-// inherit from syd::Database
+#include "sydDatabaseCommand.h"
+#include "sydClinicalTrialDatabase.h"
+#include "sydDicomCommon.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class ClinicalTrialDatabase: public Database {
-
+  class ClearSeriesCommand: public syd::DatabaseCommand
+  {
   public:
-    ClinicalTrialDatabase():Database() {}
-    virtual void OpenDatabase();
 
-    void AddPatient(std::string name, Patient & patient);
-    void AddStudy(const Patient & patient, std::string uid, std::string date, Study & study);
-    void AddSerie(const Study & study, std::string description, std::string uid, std::string date, Serie & s);
-    void UpdateSerie(Serie & serie);
+    virtual void SetArgs(char ** inputs, int n);
+    virtual void Run();
 
-    void CheckPatient(const Patient & patient);
-    void CheckSerie(const Serie & serie);
-    void CheckStudy(const Study & study);
-
-    std::string GetFullPath(const Patient & patient);
-    std::string GetFullPath(const Study & study);
-    std::string GetFullPath(const Serie & serie);
+  protected:
+    void Erase(Study & study);
+    syd::ClinicalTrialDatabase * db;
+    std::string patient_name_;
+    Patient patient_;
+  };
 
 
-  }; // end class
 } // end namespace
 // --------------------------------------------------------------------
 

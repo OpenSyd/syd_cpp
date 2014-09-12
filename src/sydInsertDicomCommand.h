@@ -33,13 +33,15 @@ namespace syd {
 
     virtual void SetArgs(char ** inputs, int n);
     virtual void Run();
-    void UpdateDicom(Patient & p, const DicomSerieInfo & d);
 
   protected:
-    std::map<std::string, DicomSerieInfo> map_series_;
+    void Run(std::string folder);
+    void UpdateDicom(Patient & p, const DicomSerieInfo & d);
+
     syd::ClinicalTrialDatabase * db;
     std::string patient_name_;
-    std::string folder_;
+    std::vector<std::string> folders_;
+    Patient patient_;
 
   };
 

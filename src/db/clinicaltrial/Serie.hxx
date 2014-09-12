@@ -30,11 +30,12 @@ public:
 
 #pragma db id auto
   IdType        id;
-  IdType        study_id;
+  IdType        patient_id;
   std::string   dicom_uid;
   std::string   dicom_description;
   std::string   path;
   std::string   acquisition_date;
+  std::string   modality;
 
   friend std::ostream& operator<<(std::ostream& os, const Serie & p) {
     os << p.id << " " << p.dicom_description;
