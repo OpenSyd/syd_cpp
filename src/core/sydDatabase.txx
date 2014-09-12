@@ -49,6 +49,17 @@ void syd::Database::Insert(T & r)
 
 // --------------------------------------------------------------------
 template<class T>
+void syd::Database::Update(T & r)
+{
+  odb::transaction t (db->begin());
+  db->update(r);
+  t.commit();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class T>
 T & syd::Database::GetById(IdType id)
 {
   static std::vector<T> tabletypes;

@@ -61,6 +61,8 @@ namespace syd {
 
   void CreateDirectory(std::string folder);
 
+  std::string GetDate(std::string date, std::string time);
+
 #include "sydCommon.txx"
 
 } // end namespace

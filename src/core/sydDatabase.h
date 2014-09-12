@@ -59,8 +59,13 @@ namespace syd {
     template<class T>
     void LoadVector(std::vector<T> & list,
                     const odb::query<T> & q= odb::query<T>::id != 0);
+
     // Insert a new element of type T
     template<class T> void Insert(T & t);
+
+    // Update an element of type T
+    template<class T> void Update(T & t);
+
     // Retrieve the element with a given id
     template<class T> T & GetById(IdType id);
 

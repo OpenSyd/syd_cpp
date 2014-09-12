@@ -30,7 +30,7 @@ public:
 
 #pragma db id auto
   IdType        id;
-  IdType        patient_id;
+  IdType        study_id;
   std::string   dicom_uid;
   std::string   dicom_description;
   std::string   path;

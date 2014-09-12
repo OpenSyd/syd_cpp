@@ -24,23 +24,20 @@ typedef unsigned int IdType;
 
 // --------------------------------------------------------------------
 #pragma db object
-class Patient
+class Study
 {
 public:
 
 #pragma db id auto
   IdType        id;
-  std::string   name;
-  IdType        synfrizz_id;
-  double        weight_in_kg;
-  std::string   dicom_patient_name;
+  IdType        patient_id;
+  std::string   dicom_uid;
+  std::string   dicom_description;
   std::string   path;
-  bool          was_treated;
-  std::string   injection_date;
-  std::string   injected_quantity_in_MBq;
+  std::string   date;
 
-  friend std::ostream& operator<<(std::ostream& os, const Patient & p) {
-    os << p.synfrizz_id << " " << p.name;
+  friend std::ostream& operator<<(std::ostream& os, const Study & p) {
+    os << p.id << " " << p.dicom_description;
     return os;
   }
 

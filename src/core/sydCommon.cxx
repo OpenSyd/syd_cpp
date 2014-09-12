@@ -38,3 +38,14 @@ void syd::CreateDirectory(std::string path)
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetDate(std::string date, std::string time)
+{
+  std::string result;
+  result= date.substr(0,4)+"-"+date.substr(4,2)+"-"+date.substr(6,2)+" "
+    + time.substr(0,2)+":"+time.substr(2,2);
+  return result;
+}
+// --------------------------------------------------------------------

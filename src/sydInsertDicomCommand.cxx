@@ -22,7 +22,7 @@
 // --------------------------------------------------------------------
 void syd::InsertDicomCommand::SetArgs(char ** inputs, int n)
 {
-  DD("TODO");
+  DD("TODO help options");
   if (n != 2) {
     LOG(FATAL) << "Two parameter are needed <patient> <foldername> (you provide " << n << ").";
   }
@@ -127,7 +127,7 @@ void syd::InsertDicomCommand::Run()
   for(auto i=map_series_.begin(); i!=map_series_.end(); i++) {
     UpdateDicom(patient, i->second);
   }
-  VLOG(0) << "Done. " << inputFiles.size() << " were updated in the db.";
+  VLOG(0) << "Done. " << map_series_.size() << " series were updated in the db.";
 }
 
 // --------------------------------------------------------------------
@@ -138,43 +138,73 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   DcmObject *dset = &dfile;
   dset = dfile.getDataset();
   dfile.loadFile(d.filenames_[0].c_str());
-  DD(patient);
 
   // Find the patient ID
   std::string PatientName = GetTagValue(dset, "PatientName");
   std::string PatientDicomId = GetTagValue(dset, "PatientID");
   VLOG(1) << "Found Patient " << PatientName << " " << PatientDicomId;
 
-  // TimePoint
+  // Study
+  std::string StudyInstanceUID = GetTagValue(dset, "StudyInstanceUID");
   std::string StudyTime = GetTagValue(dset, "StudyTime");
   std::string StudyDate = GetTagValue(dset, "StudyDate");
-  DD(StudyTime);
-  DD(StudyDate);
+  Study study;
+  std::string date = GetDate(StudyDate, StudyTime);
+  if (db->GetIfExist<Study>(odb::query<Study>::dicom_uid == StudyInstanceUID, study)) {
+    // already exist
+    db->CheckStudy(study);
+    VLOG(1) << "Study id=" << study.id << " at " << study.date << " already exist, updating.";
+  }
+  else {
+    db->AddStudy(patient, StudyInstanceUID, date, study);
+    VLOG(1) << "Create new study id=" << study.id << " at " << study.date;
+  }
 
   std::string SeriesTime = GetTagValue(dset, "SeriesTime");
   std::string SeriesDate = GetTagValue(dset, "SeriesDate");
-  DD(SeriesTime);
-  DD(SeriesDate);
 
   // Serie
   std::string SeriesDescription = GetTagValue(dset, "SeriesDescription");
   std::string SeriesInstanceUID = GetTagValue(dset, "SeriesInstanceUID");
-  VLOG(1) << "Serie " << SeriesInstanceUID;
 
   // Create the series
   Serie serie;
-  DD(serie);
   if (db->GetIfExist<Serie>(odb::query<Serie>::dicom_uid == SeriesInstanceUID, serie)) {
     // already exist
     db->CheckSerie(serie);
-    LOG(WARNING) << "Serie " << SeriesInstanceUID << " already exist, updating.";
+    VLOG(1) << "Serie id=" << serie.id << " at " << serie.acquisition_date << " already exist, updating.";
   }
-  else db->AddSerie(patient, SeriesDescription, SeriesInstanceUID, serie);
-  DD(serie);
-
+  else {
+    db->AddSerie(study, SeriesDescription, SeriesInstanceUID, serie);
+    VLOG(1) << "Create new serie=" << serie.id << " at " << serie.acquisition_date;
+  }
 
   // Update the fields
-  //  serie.acui
+  serie.acquisition_date = GetDate(SeriesDate, SeriesTime);
+
+  // Update the db
+  db->Update(serie);
+
+  // Now copy the files
+  VLOG(1) << "Copying files in the db folder " << db->GetFullPath(serie);
+
+  for(auto i=d.filenames_.begin(); i<d.filenames_.end(); i++) {
+    OFString filename;
+    OFStandard::getFilenameFromPath(filename, i->c_str());
+    std::string destination = db->GetFullPath(serie)+PATH_SEPARATOR+filename.c_str();
+
+    // Check if already exist
+    if (OFStandard::fileExists(destination.c_str())) {
+      VLOG(2) << "File already exist, skip copying " << filename;
+    }
+    else {
+      VLOG(2) << "Copying " << filename;
+      std::ifstream  src(i->c_str(), std::ios::binary);
+      std::ofstream  dst(destination,   std::ios::binary);
+      dst << src.rdbuf();
+    }
+  }
+
 
   /* What to do with the series ?
      --> Patient : create new folder (or already exist) = dicom (name + ID)

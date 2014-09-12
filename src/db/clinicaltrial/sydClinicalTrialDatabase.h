@@ -22,10 +22,10 @@
 // syd
 #include "sydDatabase.h"
 #include "Patient-odb.hxx"
+#include "Study-odb.hxx"
 #include "Serie-odb.hxx"
 
-// inherit from sydDB
-// specific functions such as : var env ; basefolder ; query
+// inherit from syd::Database
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -37,10 +37,16 @@ namespace syd {
     virtual void OpenDatabase();
 
     void AddPatient(std::string name, Patient & patient);
-    void AddSerie(Patient p, std::string description,
-                  std::string uid, Serie & s);
+    void AddStudy(const Patient & patient, std::string uid, std::string date, Study & study);
+    void AddSerie(const Study & study, std::string description, std::string uid, Serie & s);
+
     void CheckPatient(Patient & patient);
     void CheckSerie(Serie & serie);
+    void CheckStudy(Study & study);
+
+    std::string GetFullPath(Patient & patient);
+    std::string GetFullPath(Study & study);
+    std::string GetFullPath(Serie & serie);
 
 
   }; // end class

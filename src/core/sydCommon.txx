@@ -46,6 +46,15 @@ void InitVerboseOptions(ArgsInfoType & args_info)
   else enabled ="0";
   defaultConf.set(el::Level::Info, el::ConfigurationType::Enabled, enabled);
 
+  // Verbose warning (level = WARNING)
+  defaultConf.set(el::Level::Warning,
+                  el::ConfigurationType::Format, "%datetime WARNING %msg");
+  defaultConf.set(el::Level::Warning,
+                  el::ConfigurationType::MillisecondsWidth, "1");
+  if (args_info.verbose_arg) enabled = "1";
+  else enabled ="0";
+  defaultConf.set(el::Level::Warning, el::ConfigurationType::Enabled, enabled);
+
   // Auto spacing between <<
   //  el::Loggers::addFlag(el::LoggingFlag::AutoSpacing);
   // default logger uses default configurations
