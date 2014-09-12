@@ -16,30 +16,35 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <odb/core.hxx>
+#ifndef SYDINSERTDICOMCOMMAND_H
+#define SYDINSERTDICOMCOMMAND_H
+
+// syd
+#include "sydDatabaseCommand.h"
+#include "sydClinicalTrialDatabase.h"
+#include "sydDicomCommon.h"
 
 // --------------------------------------------------------------------
-#pragma db object
-  class RoiSerie
+namespace syd {
+
+  class InsertDicomCommand: public syd::DatabaseCommand
   {
   public:
 
-#pragma db id auto
-    unsigned long Id;
+    virtual void SetArgs(char ** inputs, int n);
+    virtual void Run();
+    void UpdateDicom(Patient & p, const DicomSerieInfo & d);
 
-    unsigned long SerieId;
-    unsigned long RoiStudyId;
-    double MeanActivity;
-    double TotalActivity;
-    double StdActivity;
-    double MaxActivity;
-
-    friend std::ostream& operator<<(std::ostream& os, const RoiSerie & p) {
-      os << p.Id << " " << p.SerieId << " " << p.RoiStudyId << " " << p.TotalActivity;
-      return os;
-    }
+  protected:
+    std::map<std::string, DicomSerieInfo> map_series_;
+    syd::ClinicalTrialDatabase * db;
+    std::string patient_name_;
+    std::string folder_;
 
   };
+
+
+} // end namespace
 // --------------------------------------------------------------------
+
+#endif

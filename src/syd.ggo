@@ -5,4 +5,10 @@ version "Test db"
 description "TODO"
 
 option "config"	  	 	-	"Config file"				string  	no
-option "verbose"   	 	v       "Verbose"				flag		off
+option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off
+#option "db"                    -       "DB filename"				string		no
+#option "folder"                -       "DB folder"				string		no
+
+defgroup "cmd" groupdesc="an option of this group is required" required
+groupoption "InsertDicom"  	-       "Insert dicom into the db : need folder to search"		group="cmd"

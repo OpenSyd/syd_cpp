@@ -16,30 +16,35 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <odb/core.hxx>
+#ifndef SYDCLINICALTRIALDATABASE_H
+#define SYDCLINICALTRIALDATABASE_H
+
+// syd
+#include "sydDatabase.h"
+#include "Patient-odb.hxx"
+#include "Serie-odb.hxx"
+
+// inherit from sydDB
+// specific functions such as : var env ; basefolder ; query
 
 // --------------------------------------------------------------------
-#pragma db object
-  class RoiSerie
-  {
+namespace syd {
+
+  class ClinicalTrialDatabase: public Database {
+
   public:
+    ClinicalTrialDatabase():Database() {}
+    virtual void OpenDatabase();
 
-#pragma db id auto
-    unsigned long Id;
+    void AddPatient(std::string name, Patient & patient);
+    void AddSerie(Patient p, std::string description,
+                  std::string uid, Serie & s);
+    void CheckPatient(Patient & patient);
+    void CheckSerie(Serie & serie);
 
-    unsigned long SerieId;
-    unsigned long RoiStudyId;
-    double MeanActivity;
-    double TotalActivity;
-    double StdActivity;
-    double MaxActivity;
 
-    friend std::ostream& operator<<(std::ostream& os, const RoiSerie & p) {
-      os << p.Id << " " << p.SerieId << " " << p.RoiStudyId << " " << p.TotalActivity;
-      return os;
-    }
-
-  };
+  }; // end class
+} // end namespace
 // --------------------------------------------------------------------
+
+#endif

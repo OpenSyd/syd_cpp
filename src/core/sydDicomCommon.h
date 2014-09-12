@@ -16,30 +16,31 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <odb/core.hxx>
+#ifndef SYDDICOMCOMMON_H
+#define SYDDICOMCOMMON_H
 
-// --------------------------------------------------------------------
-#pragma db object
-  class RoiSerie
-  {
+// syd
+#include "sydCommon.h"
+
+// dcmtk
+#include "dcmtk/config/osconfig.h"
+#include "dcmtk/dcmdata/dctk.h"
+#include "dcmtk/dcmdata/dcistrmf.h"
+
+//--------------------------------------------------------------------
+namespace syd {
+
+  std::string GetTagValue(DcmObject *dset, DcmTagKey & key);
+  DcmTagKey GetTagKey(std::string tagName);
+  std::string GetTagValue(DcmObject *dset, std::string tagName);
+
+  class DicomSerieInfo {
   public:
-
-#pragma db id auto
-    unsigned long Id;
-
-    unsigned long SerieId;
-    unsigned long RoiStudyId;
-    double MeanActivity;
-    double TotalActivity;
-    double StdActivity;
-    double MaxActivity;
-
-    friend std::ostream& operator<<(std::ostream& os, const RoiSerie & p) {
-      os << p.Id << " " << p.SerieId << " " << p.RoiStudyId << " " << p.TotalActivity;
-      return os;
-    }
-
+    std::string serie_UID_;
+    std::vector<std::string> filenames_;
   };
-// --------------------------------------------------------------------
+
+
+} // end namespace
+
+#endif

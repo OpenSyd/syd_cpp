@@ -20,26 +20,30 @@
 #include <iostream>
 #include <odb/core.hxx>
 
+typedef unsigned int IdType;
+
 // --------------------------------------------------------------------
 #pragma db object
-  class RoiSerie
-  {
-  public:
+class Patient
+{
+public:
 
 #pragma db id auto
-    unsigned long Id;
+  IdType        id;
+  std::string   name;
+  IdType        synfrizz_id;
+  double        weight_in_kg;
+  std::string   dicom_patient_name;
+  //  std::string   dicom_patient_id;
+  std::string   path;
+  bool          was_treated;
+  std::string   injection_date;
+  std::string   injected_quantity_in_MBq;
 
-    unsigned long SerieId;
-    unsigned long RoiStudyId;
-    double MeanActivity;
-    double TotalActivity;
-    double StdActivity;
-    double MaxActivity;
+  friend std::ostream& operator<<(std::ostream& os, const Patient & p) {
+    os << p.synfrizz_id << " " << p.name;
+    return os;
+  }
 
-    friend std::ostream& operator<<(std::ostream& os, const RoiSerie & p) {
-      os << p.Id << " " << p.SerieId << " " << p.RoiStudyId << " " << p.TotalActivity;
-      return os;
-    }
-
-  };
+};
 // --------------------------------------------------------------------

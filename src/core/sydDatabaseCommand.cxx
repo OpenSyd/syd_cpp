@@ -16,30 +16,12 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <odb/core.hxx>
+// syd
+#include "sydDatabaseCommand.h"
 
 // --------------------------------------------------------------------
-#pragma db object
-  class RoiSerie
-  {
-  public:
-
-#pragma db id auto
-    unsigned long Id;
-
-    unsigned long SerieId;
-    unsigned long RoiStudyId;
-    double MeanActivity;
-    double TotalActivity;
-    double StdActivity;
-    double MaxActivity;
-
-    friend std::ostream& operator<<(std::ostream& os, const RoiSerie & p) {
-      os << p.Id << " " << p.SerieId << " " << p.RoiStudyId << " " << p.TotalActivity;
-      return os;
-    }
-
-  };
+void syd::DatabaseCommand::AddDatabase(Database * db)
+{
+  databases_.push_back(db);
+}
 // --------------------------------------------------------------------

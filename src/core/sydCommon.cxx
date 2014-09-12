@@ -16,30 +16,25 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <odb/core.hxx>
+#include "sydCommon.h"
 
 // --------------------------------------------------------------------
-#pragma db object
-  class RoiSerie
-  {
-  public:
-
-#pragma db id auto
-    unsigned long Id;
-
-    unsigned long SerieId;
-    unsigned long RoiStudyId;
-    double MeanActivity;
-    double TotalActivity;
-    double StdActivity;
-    double MaxActivity;
-
-    friend std::ostream& operator<<(std::ostream& os, const RoiSerie & p) {
-      os << p.Id << " " << p.SerieId << " " << p.RoiStudyId << " " << p.TotalActivity;
-      return os;
-    }
-
-  };
+void syd::CreateDirectory(std::string path)
+{
+  // See http://stackoverflow.com/questions/675039/how-can-i-create-directory-tree-in-c-linux
+  typedef struct stat Stat;
+  Stat            st;
+  int             status = 0;
+  if (stat(path.c_str(), &st) != 0) {
+    /* Directory does not exist. EEXIST for race condition */
+    if (mkdir(path.c_str(), 0777) != 0 && errno != EEXIST)
+      status = -1;
+  }
+  else {
+    LOG(WARNING) << "The folder " << path << " already exist.";
+  }
+  if (status != 0) {
+    LOG(FATAL) << "Error while creating the folder " << path;
+  }
+}
 // --------------------------------------------------------------------

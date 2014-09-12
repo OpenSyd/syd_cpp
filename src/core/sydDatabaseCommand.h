@@ -16,30 +16,29 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <odb/core.hxx>
+#ifndef SYDDATABASECOMMAND_H
+#define SYDDATABASECOMMAND_H
+
+// syd
+#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
-#pragma db object
-  class RoiSerie
+namespace syd {
+
+  class DatabaseCommand
   {
   public:
 
-#pragma db id auto
-    unsigned long Id;
+    virtual void AddDatabase(Database * db);
+    virtual void SetArgs(char ** inputs, int n) = 0;
+    virtual void Run() = 0;
 
-    unsigned long SerieId;
-    unsigned long RoiStudyId;
-    double MeanActivity;
-    double TotalActivity;
-    double StdActivity;
-    double MaxActivity;
-
-    friend std::ostream& operator<<(std::ostream& os, const RoiSerie & p) {
-      os << p.Id << " " << p.SerieId << " " << p.RoiStudyId << " " << p.TotalActivity;
-      return os;
-    }
+  protected:
+    std::vector<syd::Database*> databases_;
 
   };
+
+} // end namespace
 // --------------------------------------------------------------------
+
+#endif
