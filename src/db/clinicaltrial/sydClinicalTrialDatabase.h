@@ -25,7 +25,6 @@
 #include "Serie-odb.hxx"
 
 // inherit from syd::Database
-
 // --------------------------------------------------------------------
 namespace syd {
 

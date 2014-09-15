@@ -1,45 +1,25 @@
 
-
 All tables have an `id` field (not shown here).
 
 
 Patient table
 ==============
-`name` -> or initials
-`dicom_patient_name`
-`dicom_patient_id`
-`folder`
-`weight_in_kg`
-`synfrizz_id` -> 0 if not synfrizz (for example, calibration fantom)
-`was_treated` boolean
-`injection_date` -> date in string format = 2013-02-12 10:16 (for Indium not Yttrium)
+`name`            -> patient initials. Must be unique
+`synfrizz_id`     -> 0 if not synfrizz (for example, calibration fantom)
+`path`            -> folder with the data (relative to DB folder)
+`weight_in_kg`    -> weight
+`was_treated`     -> boolean
+`injection_date`  -> date in string format = 2013-02-12 10:16 (for Indium not Yttrium)
 `injected_quantity_in_MBq` (for Indium not Yttrium)
-
-No "Study" table: a single 'study' by patient.
-
-
-TimePoint table
-===========
-`patient_id`
-`acquisition_date` -> date+hour in string format = 2013-02-12 10:16
-`time_from_injection_in_hours`
-`time_number`
 
 Serie table
 ===========
-`time_point_id`
-`ct_image_id`
-`spect_image_id`
-`description` ==> ct or spect ?
-
-For a given timepoint, several series could exist: several FOV, several reconstruction parameters. or warped version
-
-Image Table -> core ?
-===========
-`mhd_filename`
-`dicom_folder`
-md5 *FIXME* ?
-
+`patient_id`        -> patient
+`dicom_uid`         -> sop (for NM) or series (for CT) UID from the dicom
+`dicom_description` -> string with SeriesDescription and ImageID
+`path`              -> (sub)folder with the data, relative to patient folder
+`acquisition_date`  -> image acquisition date
+`modality`          -> CT or NM
 
 DB Creation/Evolution
 =====================
@@ -52,15 +32,7 @@ DB Creation/Evolution
 But *DELETE* the content of the db
 
 - how to modify the schema an existing DB of a given type ?
+Not implemented here. Need MANUAL change in both db (sql) and .hxx table file.
 
-Not
-  implemented here. Need MANUAL change in both db (sql) and .hxx table file.
-
-
+- use sqlitestudio
  ~/softs/sqlitestudio-2.1.5.bin -c /home/dsarrut/src/images/synfrizz/synfrizz.db
-
-
-Registration/warp DB = a Serie table *FIXME* --> à mettre dans autre db
-====================================
-
-With a single Serie by timepoint.

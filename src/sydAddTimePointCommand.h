@@ -16,32 +16,41 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <odb/core.hxx>
+#ifndef SYDADDTIMEPOINTCOMMAND_H
+#define SYDADDTIMEPOINTCOMMAND_H
 
-typedef unsigned int IdType;
+// syd
+#include "sydDatabaseCommand.h"
+#include "sydClinicalTrialDatabase.h"
+#include "sydTimePointsDatabase.h"
+#include "sydDicomCommon.h"
 
 // --------------------------------------------------------------------
-#pragma db object
-class Patient
-{
-public:
+namespace syd {
 
-#pragma db id auto
-  IdType        id;
-  std::string   name;
-  IdType        synfrizz_id;
-  double        weight_in_kg;
-  std::string   path;
-  bool          was_treated;
-  std::string   injection_date;
-  std::string   injected_quantity_in_MBq;
+  class AddTimePointCommand: public syd::DatabaseCommand
+  {
+  public:
 
-  friend std::ostream& operator<<(std::ostream& os, const Patient & p) {
-    os << p.synfrizz_id << " " << p.name;
-    return os;
-  }
+    AddTimePointCommand();
+    ~AddTimePointCommand();
 
-};
+    virtual void AddDatabase(syd::Database * d);
+    virtual void SetArgs(char ** inputs, int n);
+    virtual void Run();
+
+  protected:
+    void Run(std::string filename);
+
+    syd::ClinicalTrialDatabase * db_;
+    syd::TimePointsDatabase * tpdb_;
+    std::string patient_name_;
+    std::string filename_;
+    Patient patient_;
+  };
+
+
+} // end namespace
 // --------------------------------------------------------------------
+
+#endif

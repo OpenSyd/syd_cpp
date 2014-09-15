@@ -31,6 +31,9 @@ namespace syd {
   {
   public:
 
+    InsertDicomCommand();
+    ~InsertDicomCommand();
+    virtual void AddDatabase(syd::Database * d);
     virtual void SetArgs(char ** inputs, int n);
     virtual void Run();
 
@@ -38,7 +41,7 @@ namespace syd {
     void Run(std::string folder);
     void UpdateDicom(Patient & p, const DicomSerieInfo & d);
 
-    syd::ClinicalTrialDatabase * db;
+    syd::ClinicalTrialDatabase * db_;
     std::string patient_name_;
     std::vector<std::string> folders_;
     Patient patient_;

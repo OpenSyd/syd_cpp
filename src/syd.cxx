@@ -22,6 +22,7 @@
 #include "sydClinicalTrialDatabase.h"
 #include "sydInsertDicomCommand.h"
 #include "sydClearSeriesCommand.h"
+#include "sydAddTimePointCommand.h"
 
 // easylogging : only once initialization (in the main)
 _INITIALIZE_EASYLOGGINGPP
@@ -35,7 +36,7 @@ int main(int argc, char* argv[])
   // Init logging option (verbose)
   syd::InitVerboseOptions(args_info);
 
-  // Open the DBs. Use options or env variable to select the correct dbs
+  // Open the main DB. Use options or env variable to select the correct dbs
   syd::ClinicalTrialDatabase db;
   db.OpenDatabase();
 
@@ -44,6 +45,19 @@ int main(int argc, char* argv[])
   syd::DatabaseCommand * c;
   if (args_info.InsertDicom_given) c = new syd::InsertDicomCommand;
   if (args_info.ClearSeries_given) c = new syd::ClearSeriesCommand;
+  if (args_info.AddTimePoint_given) {
+    if (!args_info.tpdb_given) {
+      LOG(FATAL) << "Please, set --tpdb";
+    }
+    if (!args_info.tpdbfolder_given) {
+      LOG(FATAL) << "Please, set --tpdbfolder";
+    }
+    c = new syd::AddTimePointCommand;
+    // Open TimePoint DB if needed
+    syd::TimePointsDatabase * tpdb = new syd::TimePointsDatabase;
+    tpdb->OpenDatabase(std::string(args_info.tpdb_arg), std::string(args_info.tpdbfolder_arg));
+    c->AddDatabase(tpdb); // order to add db is important (tpdb must be first)
+  }
 
   // Perform the command
   c->AddDatabase(&db);

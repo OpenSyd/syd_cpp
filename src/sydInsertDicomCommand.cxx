@@ -20,6 +20,23 @@
 #include "sydInsertDicomCommand.h"
 
 // --------------------------------------------------------------------
+syd::InsertDicomCommand::InsertDicomCommand():DatabaseCommand()
+{
+  db_ = NULL;
+  patient_name_ = "noname";
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::InsertDicomCommand::~InsertDicomCommand()
+{
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::InsertDicomCommand::SetArgs(char ** inputs, int n)
 {
   if (n < 2) {
@@ -34,18 +51,30 @@ void syd::InsertDicomCommand::SetArgs(char ** inputs, int n)
 
 
 // --------------------------------------------------------------------
+void syd::InsertDicomCommand::AddDatabase(syd::Database * d)
+{
+  if (databases_.size() != 0) {
+    LOG(FATAL) << "InsertDicomCommand::AddDatabase: already a db.";
+  }
+  DatabaseCommand::AddDatabase(d);
+  db_ = static_cast<ClinicalTrialDatabase*>(d);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::InsertDicomCommand::Run()
 {
+  DD("run");
   // Check database
-  if (databases_.size() != 1) {
+  if (db_ == NULL) {
     LOG(FATAL) << "A (single) database of type ClinicalTrialDatabase "
                << "is needed in InsertDicomCommand. Aborting.";
   }
-  db = static_cast<ClinicalTrialDatabase*>(databases_[0]);
 
   // Get the new patient
-  if (db->GetIfExist<Patient>(odb::query<Patient>::name == patient_name_, patient_)) {
-    db->CheckPatient(patient_);
+  if (db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name_, patient_)) {
+    db_->CheckPatient(patient_);
   }
   else {
     LOG(FATAL) << "Error, the patient " << patient_name_ << " does not exist";
@@ -185,16 +214,16 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
 
   // Create the series
   Serie serie;
-  if (db->GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid, serie)) {
+  if (db_->GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid, serie)) {
     // already exist
-    db->CheckSerie(serie);
+    db_->CheckSerie(serie);
     VLOG(1) << "Serie id=" << serie.id << " at " << serie.acquisition_date << " already exist, updating.";
   }
   else {
     serie.path = "";
     serie.patient_id = patient.id;
     serie.dicom_uid = uid;
-    db->Insert(serie);
+    db_->Insert(serie);
     VLOG(1) << "Create new serie=" << serie.id << " at " << serie.acquisition_date;
   }
 
@@ -212,16 +241,16 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   serie.dicom_description = desc;
 
   // add to db (and create folder)
-  db->UpdateSerie(serie);
+  db_->UpdateSerie(serie);
 
   // Now copy the files
-  VLOG(1) << "Copying files in the db folder " << db->GetFullPath(serie);
+  VLOG(1) << "Copying files in the db folder " << db_->GetFullPath(serie);
 
   if (modality == "CT") {
     for(auto i=d.filenames_.begin(); i<d.filenames_.end(); i++) {
       OFString filename;
       OFStandard::getFilenameFromPath(filename, i->c_str());
-      std::string destination = db->GetFullPath(serie)+PATH_SEPARATOR+filename.c_str();
+      std::string destination = db_->GetFullPath(serie)+PATH_SEPARATOR+filename.c_str();
 
       // Check if already exist
       if (OFStandard::fileExists(destination.c_str())) {
@@ -239,7 +268,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
     if (d.filenames_.size() != 1) {
       LOG(FATAL) << "Error I found " << d.filenames_.size() << " files while expecting a single one for NM modality";
     }
-    std::string destination = db->GetFullPath(serie);
+    std::string destination = db_->GetFullPath(serie);
     std::ifstream  src(d.filenames_[0].c_str(), std::ios::binary);
     std::ofstream  dst(destination, std::ios::binary);
     dst << src.rdbuf();

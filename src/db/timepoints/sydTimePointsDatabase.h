@@ -16,32 +16,27 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <odb/core.hxx>
+#ifndef SYDTIMEPOINTSDATABASE_H
+#define SYDTIMEPOINTSDATABASE_H
 
-typedef unsigned int IdType;
+// syd
+#include "sydDatabase.h"
+#include "TimePoint-odb.hxx"
 
+// inherit from syd::Database
 // --------------------------------------------------------------------
-#pragma db object
-class Patient
-{
-public:
+namespace syd {
 
-#pragma db id auto
-  IdType        id;
-  std::string   name;
-  IdType        synfrizz_id;
-  double        weight_in_kg;
-  std::string   path;
-  bool          was_treated;
-  std::string   injection_date;
-  std::string   injected_quantity_in_MBq;
+  class TimePointsDatabase: public Database {
 
-  friend std::ostream& operator<<(std::ostream& os, const Patient & p) {
-    os << p.synfrizz_id << " " << p.name;
-    return os;
-  }
+  public:
+    TimePointsDatabase():Database() {}
 
-};
+
+
+
+  }; // end class
+} // end namespace
 // --------------------------------------------------------------------
+
+#endif
