@@ -47,115 +47,10 @@ std::string syd::ClinicalTrialDatabase::GetFullPath(const Patient & patient)
 
 
 // --------------------------------------------------------------------
-std::string syd::ClinicalTrialDatabase::GetFullPath(const Study & study)
-{
-  std::string p = GetFullPath(GetById<Patient>(study.patient_id));
-  return p+study.path;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 std::string syd::ClinicalTrialDatabase::GetFullPath(const Serie & serie)
 {
-  //std::string p = GetFullPath(GetById<Study>(serie.study_id));
-  //return p+serie.path;
-
   std::string p = GetFullPath(GetById<Patient>(serie.patient_id));
   return p+serie.path;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::AddPatient(std::string name, Patient & patient)
-{
-  // Get the patient if already exist
-  if (GetIfExist<Patient>(odb::query<Patient>::name == name, patient)) return;
-
-  // Create the patient
-  patient.name = name;
-  patient.weight_in_kg = 0.0;
-  patient.synfrizz_id = 0;
-  patient.was_treated = false;
-  patient.injection_date = "";
-  patient.injected_quantity_in_MBq = 0.0;
-
-  // Create the path
-  patient.path = name+PATH_SEPARATOR;
-  std::string path = GetFullPath(patient);
-
-  // Check the folder
-  if (OFStandard::dirExists(path.c_str())) {
-    LOG(FATAL) << "Patient " << name
-               << " does not exist, but the folder "
-               << path << " already exist. Abort.";
-  }
-
-  syd::CreateDirectory(path);
-
-  // Update the db
-  Insert(patient);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::AddStudy(const Patient & patient, std::string uid, std::string date, Study & study)
-{
-  // Get the study if already exist
-  if (GetIfExist<Study>(odb::query<Study>::dicom_uid == uid, study)) return;
-
-  // Create the study
-  study.patient_id = patient.id;
-  study.dicom_uid = uid;
-  study.date = date;
-  study.path = study.date+PATH_SEPARATOR;
-
-  // Create the path
-  std::string path = GetFullPath(study);
-
-  // Check the folder
-  if (OFStandard::dirExists(path.c_str())) {
-    LOG(FATAL) << "Study " << uid
-               << " does not exist, but the folder "
-               << path << " already exist. Abort.";
-  }
-
-  syd::CreateDirectory(path);
-
-  // Update the db
-  Insert(study);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::CheckStudy(const Study & study)
-{
-  // Check the DB : single dicom_uid, path
-  std::vector<Study> studies;
-  LoadVector<Study>(studies);
-  for(auto i=studies.begin(); i<studies.end(); i++) {
-    if (study.id != i->id) {
-      if (study.dicom_uid == i->dicom_uid) {
-        LOG(FATAL) << "Error in the DB ! Two studies (ids = " << study.id  << " and "
-                   << i->id << " have the same dicom_uid '" << i->dicom_uid;
-      }
-      if (GetFullPath(study) == GetFullPath(*i)) {
-        LOG(FATAL) << "Error in the DB ! Two studies (ids = " << study.id  << " and "
-                   << i->id << " have the same path '" << i->path;
-      }
-    }
-  }
-
-  // Check the path exist
-  std::string path = GetFullPath(study);
-  if (!OFStandard::dirExists(path.c_str())) {
-    LOG(FATAL) << "Error for study id " << study.id << " the folder " << path
-               << " does not exist.";
-  }
-
 }
 // --------------------------------------------------------------------
 
@@ -223,42 +118,6 @@ void syd::ClinicalTrialDatabase::CheckSerie(const Serie & serie)
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::AddSerie(const Study & study, // FIXME not used
-                                          std::string description,
-                                          std::string uid,
-                                          std::string date,
-                                          Serie & serie)
-{
-  // Get the serie if already exist
-  if (GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid, serie)) return; // FIXME CHANGE TO FATAL
-
-  // Update the serie
-  // serie.study_id = study.id;
-  serie.dicom_uid = uid;
-  serie.dicom_description = description;
-  serie.acquisition_date = date;
-
-  // Create the path
-  serie.path = date+"  "+description+PATH_SEPARATOR;
-  std::string path = GetFullPath(serie);
-
-  // Check the folder
-  if (OFStandard::dirExists(path.c_str())) {
-    // LOG(FATAL) << "Serie " << uid << " does not exist, but the folder "
-    //            << path << "exist. Abort.";
-    VLOG(0) << "Path already exist " << path;
-  }
-  else {
-    syd::CreateDirectory(path);
-    VLOG(0) << "Create path " << path;
-  }
-
-  // Update the db
-  Insert(serie);
-}
-// --------------------------------------------------------------------
-
 
 // --------------------------------------------------------------------
 void syd::ClinicalTrialDatabase::UpdateSerie(Serie & serie)
@@ -266,7 +125,6 @@ void syd::ClinicalTrialDatabase::UpdateSerie(Serie & serie)
   // Create the path for the acquisition day
   std::string day = serie.acquisition_date.substr(0,10);
   std::string hour = serie.acquisition_date.substr(11,15);
-  DD(day);
   std::string p = GetFullPath(GetById<Patient>(serie.patient_id))+PATH_SEPARATOR+day+PATH_SEPARATOR;
   if (OFStandard::dirExists(p.c_str())) {
     VLOG(1) << "Folder day date already exist " << p;

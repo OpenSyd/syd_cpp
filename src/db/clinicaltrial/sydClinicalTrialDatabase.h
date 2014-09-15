@@ -22,7 +22,6 @@
 // syd
 #include "sydDatabase.h"
 #include "Patient-odb.hxx"
-#include "Study-odb.hxx"
 #include "Serie-odb.hxx"
 
 // inherit from syd::Database
@@ -36,17 +35,12 @@ namespace syd {
     ClinicalTrialDatabase():Database() {}
     virtual void OpenDatabase();
 
-    void AddPatient(std::string name, Patient & patient);
-    void AddStudy(const Patient & patient, std::string uid, std::string date, Study & study);
-    void AddSerie(const Study & study, std::string description, std::string uid, std::string date, Serie & s);
     void UpdateSerie(Serie & serie);
 
     void CheckPatient(const Patient & patient);
     void CheckSerie(const Serie & serie);
-    void CheckStudy(const Study & study);
 
     std::string GetFullPath(const Patient & patient);
-    std::string GetFullPath(const Study & study);
     std::string GetFullPath(const Serie & serie);
 
 

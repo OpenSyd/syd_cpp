@@ -35,7 +35,6 @@ namespace syd {
     virtual void Run();
 
   protected:
-    void Erase(Study & study);
     syd::ClinicalTrialDatabase * db;
     std::string patient_name_;
     Patient patient_;

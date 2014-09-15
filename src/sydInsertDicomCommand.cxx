@@ -43,14 +43,12 @@ void syd::InsertDicomCommand::Run()
   }
   db = static_cast<ClinicalTrialDatabase*>(databases_[0]);
 
-  // Get or create the new patient
+  // Get the new patient
   if (db->GetIfExist<Patient>(odb::query<Patient>::name == patient_name_, patient_)) {
     db->CheckPatient(patient_);
   }
   else {
     LOG(FATAL) << "Error, the patient " << patient_name_ << " does not exist";
-    //VLOG(0) << "Create new patient " << patient_name_;
-    //db->AddPatient(patient_name_, patient_);
   }
 
   // Loop on given folders
@@ -172,31 +170,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   std::string modality = GetTagValue(dset, "Modality");
   if (modality != "CT") modality = "NM";
 
-  // Study
-  /*
-  std::string StudyInstanceUID = GetTagValue(dset, "StudyInstanceUID");
-  std::string StudyTime = GetTagValue(dset, "StudyTime");
-  std::string StudyDate = GetTagValue(dset, "StudyDate");
-  Study study;
-  std::string date = GetDate(StudyDate, StudyTime);
-  if (db->GetIfExist<Study>(odb::query<Study>::dicom_uid == StudyInstanceUID, study)) {
-    // already exist
-    db->CheckStudy(study);
-    if (study.patient_id != patient.id) {
-      LOG(FATAL) << "Error ! A similar study exist for a different patient." << std::endl
-                 << "  study uid is " << study.dicom_uid << " current patient is " << patient.name
-                 << " (id=" << patient.id << ") but already existing study linked with patient "
-                 << db->GetById<Patient>(study.patient_id).name << " (id=" << study.patient_id << ")";
-    }
-    VLOG(1) << "Study id=" << study.id << " at " << study.date << " already exist, updating.";
-  }
-  else {
-    db->AddStudy(patient, StudyInstanceUID, date, study);
-    VLOG(1) << "Create new study id=" << study.id << " at " << study.date;
-  }
-  */
-
-  // Serie!
+  // Serie
   std::string AcquisitionTime = GetTagValue(dset, "AcquisitionTime");
   std::string AcquisitionDate = GetTagValue(dset, "AcquisitionDate");
   std::string SeriesDescription = GetTagValue(dset, "SeriesDescription");
@@ -272,57 +246,5 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
     VLOG(2) << "Copy " << d.filenames_[0] << " to " << destination;
   }
 
-
-  /* What to do with the series ?
-     --> Patient : create new folder (or already exist) = dicom (name + ID)
-     --> TimePoint : create new folder (or already exist)
-         update time_from_injection_in_hours
-         update time_number
-     --> Serie : create new folder (or already exist) with serieid (or description ?)
-
-     SERIEUID ???
-
-         = Update(list of files)
-         Check modality CT or SPECT.
-         CT : create ct dicom folder + copy    --> if exist remove first or ask ?
-
-         Series Instance UID
-
-
-         SPECT
-         create spect dicom folder + copy --> if exist remove first or ask ?
-         update serie_description
-
-
-         SPECT
-         20120113 125546 SAVE_SPECT_KNITTED
-         (0020,000d) ?? (UI) [1.3.46.670589.28.1.1.148673388.2980821302365]         # 44,1 Study Instance UID
-         ==> (0008,1140) ?? (SQ)                                               # u/l,1 Referenced Image Sequence
-         (0020,000e) ?? (UI) [1.3.46.670589.5.2.10.2.4.46.678.1.9272.1326470117187]         # 52,1 Series Instance UID
-         (0020,000d) ?? (UI) [1.3.46.670589.28.1.1.148673388.2980821302365]         # 44,1 Study Instance UID
-         (0020,000e) ?? (UI) [1.3.46.670589.5.2.10.2.4.46.678.1.9272.1326470117015.45413770]         # 62,1 Series Instance UID
-         (0020,0052) ?? (UI) [1.3.46.670589.28.1.1.148673388.1326457423.502.2980821302365]         # 60,1 Frame of Reference UID
-
-
-         CT 20120113 125546 SAVE_CT_KNITTED
-         (0020,000d) ?? (UI) [1.3.46.670589.28.1.1.148673388.2980821302365]         # 44,1 Study Instance UID
-         (0020,000e) ?? (UI) [1.3.46.670589.5.2.10.2.4.46.678.1.9272.1326470117187]         # 52,1 Series Instance UID
-         (0020,0052) ?? (UI) [1.3.46.670589.28.1.1.148673388.1326457423.502.2980821302365]         # 60,1 Frame of Reference UID
-
-         CT 20120113 125546 LOC_XCT_-_1_
-         (0020,000d) ?? (UI) [1.3.46.670589.28.1.1.148673388.2980821302365]         # 44,1 Study Instance UID
-         (0020,000e) ?? (UI) [1.3.46.670589.28.1.1.148673388.1326457423.503.2980821302365]         # 60,1 Series Instance UID
-         (0020,0052) ?? (UI) [1.3.46.670589.28.1.1.148673388.1326457423.502.2980821302365]         # 60,1 Frame of Reference UID
-
-         CT 20120111 130141 SAVE_CT_KNITTED
-         (0020,000d) ?? (UI) [1.3.46.670589.28.1.1.148673388.2980700377783]         # 44,1 Study Instance UID
-         (0020,000e) ?? (UI) [1.3.46.670589.5.2.10.2.4.46.678.1.10996.1326294040328]         # 54,1 Series Instance UID
-         (0020,0052) ?? (UI) [1.3.46.670589.28.1.1.148673388.1326286676.372.2980700377783]         # 60,1 Frame of Reference UID
-
-         Study Instance UID -> "date"
-         in SPECT embedded Series Instance UID of the CT
-
-
-  */
 }
 // --------------------------------------------------------------------

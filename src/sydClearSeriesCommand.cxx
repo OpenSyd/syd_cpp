@@ -46,38 +46,10 @@ void syd::ClearSeriesCommand::Run()
   }
   db->CheckPatient(patient_);
 
-  // Get all studies for this patient
-  // std::vector<Study> studies;
-  // db->LoadVector<Study>(studies, odb::query<Study>::patient_id == patient_.id);
-
-  // Erase all studies
-  // for(auto i=studies.begin(); i<studies.end(); i++) Erase(*i);
-
   std::vector<Serie> series;
   db->LoadVector<Serie>(series, odb::query<Serie>::patient_id == patient_.id);
   int n = series.size();
   for(auto i=series.begin(); i<series.end(); i++) db->Erase(*i);
   VLOG(1) << "Delete all series ( " << n << ") for patient " << patient_.name;
-
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::ClearSeriesCommand::Erase(Study & study)
-{
-  /*
-  // Get all series for this study
-  std::vector<Serie> series;
-  db->LoadVector<Serie>(series, odb::query<Serie>::study_id == study.id);
-
-  int n = series.size();
-  for(auto i=series.begin(); i<series.end(); i++) {
-    db->Erase(*i);
-  }
-  VLOG(1) << "Delete study " << study.id << " with " << n << " series.";
-
-  db->Erase(study);
-  */
 }
 // --------------------------------------------------------------------
