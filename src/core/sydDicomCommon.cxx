@@ -53,6 +53,7 @@ std::string syd::GetTagValue(DcmObject *dset, DcmTagKey & key)
     DcmObject *dobj = stack.top();
     DcmElement * e = static_cast<DcmElement*>(dobj);
     e->getString(v);
+    if (v==NULL) return "";
     return std::string(v);
   }
   else { // not found EC_TagNotFound

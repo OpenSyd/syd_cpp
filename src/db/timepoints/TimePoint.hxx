@@ -30,9 +30,10 @@ public:
 
 #pragma db id auto
   IdType        id;
-  IdType        patient_id;
+  IdType        patient_id; // not strictly needed (can be retrive by serie_id)
+  IdType        serie_id;
   std::string   acquisition_date;
-  std::string   n; // number in the set of time points
+  //  std::string   n; // number in the set of time points FIXME
   std::string   ct_mhd;
   std::string   spect_mhd;
 

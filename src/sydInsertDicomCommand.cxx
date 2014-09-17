@@ -24,6 +24,15 @@ syd::InsertDicomCommand::InsertDicomCommand():DatabaseCommand()
 {
   db_ = NULL;
   patient_name_ = "noname";
+  set_rename_flag(false);
+
+  // We need to add the DatasetName tag to the dicom dictionary
+  DcmDictEntry * e = new DcmDictEntry(0x0011, 0x1012, EVR_LO, "DatasetName", 0, DcmVariableVM, NULL, true, NULL);
+  DcmDataDictionary &globalDataDict = dcmDataDict.wrlock();
+  globalDataDict.addEntry(e);
+
+  e = new DcmDictEntry(0x0020, 0x0013, EVR_IS, "InstanceNumber", 0, DcmVariableVM, NULL, true, NULL);
+  globalDataDict.addEntry(e);
 }
 // --------------------------------------------------------------------
 
@@ -65,7 +74,6 @@ void syd::InsertDicomCommand::AddDatabase(syd::Database * d)
 // --------------------------------------------------------------------
 void syd::InsertDicomCommand::Run()
 {
-  DD("run");
   // Check database
   if (db_ == NULL) {
     LOG(FATAL) << "A (single) database of type ClinicalTrialDatabase "
@@ -203,10 +211,25 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   std::string AcquisitionTime = GetTagValue(dset, "AcquisitionTime");
   std::string AcquisitionDate = GetTagValue(dset, "AcquisitionDate");
   std::string SeriesDescription = GetTagValue(dset, "SeriesDescription");
+  std::string StudyDescription = GetTagValue(dset, "StudyDescription");
   std::string SeriesInstanceUID = GetTagValue(dset, "SeriesInstanceUID");
   std::string SOPInstanceUID = GetTagValue(dset, "SOPInstanceUID");
+  std::string FrameOfReferenceUID = GetTagValue(dset, "FrameOfReferenceUID");
   std::string ImageID = GetTagValue(dset, "ImageID");
-  std::string date = GetDate(AcquisitionDate, AcquisitionTime);
+  std::string Manufacturer = GetTagValue(dset, "Manufacturer");
+  std::string ManufacturerModelName = GetTagValue(dset, "ManufacturerModelName");
+  std::string DatasetName = GetTagValue(dset, "DatasetName");
+  std::string TableTraverse = GetTagValue(dset, "TableTraverse");
+  std::string ContentDate = GetTagValue(dset, "ContentDate");
+  std::string ContentTime = GetTagValue(dset, "ContentTime");
+  std::string InstanceNumber = GetTagValue(dset, "InstanceNumber");
+
+  std::string rec_date="unknown";
+  if (ContentDate != "") {
+    if (ContentTime == "")  ContentTime = "000000";
+    rec_date = GetDate(ContentDate, ContentTime);
+  }
+  std::string acqui_date = GetDate(AcquisitionDate, AcquisitionTime);
 
   std::string uid;
   if (modality == "CT") uid = SeriesInstanceUID;
@@ -217,35 +240,34 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   if (db_->GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid, serie)) {
     // already exist
     db_->CheckSerie(serie);
-    VLOG(1) << "Serie id=" << serie.id << " at " << serie.acquisition_date << " already exist, updating.";
+    VLOG(1) << "Serie id=" << serie.id << " at " << acqui_date << " already exist, updating.";
   }
   else {
     serie.path = "";
     serie.patient_id = patient.id;
     serie.dicom_uid = uid;
     db_->Insert(serie);
-    VLOG(1) << "Create new serie=" << serie.id << " at " << serie.acquisition_date;
+    VLOG(1) << "Create new serie=" << serie.id << " at " << acqui_date;
   }
 
   // Update the fields
   serie.dicom_uid = uid;
-  serie.acquisition_date = GetDate(AcquisitionDate, AcquisitionTime);
+  serie.acquisition_date = acqui_date;
+  serie.reconstruction_date = rec_date;
   serie.modality = modality;
-  std::string desc;
-  if (SeriesDescription == ImageID) desc = ImageID;
-  else {
-    if (ImageID.size() == 0) desc = SeriesDescription;
-    else desc = SeriesDescription+"_"+ImageID;
-  }
-  std::replace(desc.begin(), desc.end(), ' ', '_');
-  serie.dicom_description = desc;
+  serie.dicom_frame_of_reference_uid = FrameOfReferenceUID;
+  serie.dicom_dataset_name = DatasetName;
+  serie.dicom_image_id = ImageID;
+  serie.dicom_series_desc = SeriesDescription;
+  serie.dicom_study_desc = StudyDescription;
+  serie.dicom_manufacturer = Manufacturer;
+  serie.dicom_manufacturer_model_name = ManufacturerModelName;
+  serie.dicom_instance_number = InstanceNumber;
 
   // add to db (and create folder)
   db_->UpdateSerie(serie);
 
-  // Now copy the files
-  VLOG(1) << "Copying files in the db folder " << db_->GetFullPath(serie);
-
+  // For CT modality, there are several files to copy
   if (modality == "CT") {
     for(auto i=d.filenames_.begin(); i<d.filenames_.end(); i++) {
       OFString filename;
@@ -254,10 +276,10 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
 
       // Check if already exist
       if (OFStandard::fileExists(destination.c_str())) {
-        VLOG(2) << "File already exist, skip copying " << filename;
+        VLOG(3) << "File already exist, skip copying " << filename;
       }
       else {
-        VLOG(2) << "Copying " << filename;
+        VLOG(3) << "Copying " << filename;
         std::ifstream  src(i->c_str(), std::ios::binary);
         std::ofstream  dst(destination,   std::ios::binary);
         dst << src.rdbuf();
@@ -269,11 +291,25 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
       LOG(FATAL) << "Error I found " << d.filenames_.size() << " files while expecting a single one for NM modality";
     }
     std::string destination = db_->GetFullPath(serie);
-    std::ifstream  src(d.filenames_[0].c_str(), std::ios::binary);
-    std::ofstream  dst(destination, std::ios::binary);
-    dst << src.rdbuf();
-    VLOG(2) << "Copy " << d.filenames_[0] << " to " << destination;
+    if (rename_flag_) {
+      VLOG(2) << "Rename " << d.filenames_[0] << " to " << destination;
+      if (OFStandard::fileExists(destination.c_str())) {
+        LOG(FATAL) << "Error the destination already exist : " << destination;
+      }
+      int result = rename(d.filenames_[0].c_str(), destination.c_str());
+      if (result != 0) {
+        LOG(FATAL) << "Error while renaming " << d.filenames_[0].c_str() << " to " << destination;
+      }
+    }
+    else {
+      VLOG(2) << "Copy " << d.filenames_[0] << " to " << destination;
+      std::ifstream  src(d.filenames_[0].c_str(), std::ios::binary);
+      std::ofstream  dst(destination, std::ios::binary);
+      dst << src.rdbuf();
+    }
   }
 
+  // Final check
+  db_->CheckSerie(serie);
 }
 // --------------------------------------------------------------------

@@ -32,13 +32,21 @@ public:
   IdType        id;
   IdType        patient_id;
   std::string   dicom_uid;
-  std::string   dicom_description;
+  std::string   dicom_dataset_name;
+  std::string   dicom_image_id;
+  std::string   dicom_study_desc;
+  std::string   dicom_series_desc;
+  std::string   dicom_frame_of_reference_uid;
+  std::string   dicom_manufacturer;
+  std::string   dicom_manufacturer_model_name;
+  std::string   dicom_instance_number;
   std::string   path;
   std::string   acquisition_date;
+  std::string   reconstruction_date;
   std::string   modality;
 
   friend std::ostream& operator<<(std::ostream& os, const Serie & p) {
-    os << p.id << " " << p.dicom_description;
+    os << p.id << " " << p.acquisition_date << " " << p.dicom_series_desc << " " << p.dicom_image_id;
     return os;
   }
 

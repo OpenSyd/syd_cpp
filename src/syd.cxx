@@ -21,6 +21,7 @@
 #include "sydCommon.h"
 #include "sydClinicalTrialDatabase.h"
 #include "sydInsertDicomCommand.h"
+#include "sydDumpSeriesCommand.h"
 #include "sydClearSeriesCommand.h"
 #include "sydAddTimePointCommand.h"
 
@@ -43,8 +44,13 @@ int main(int argc, char* argv[])
   // The options in the ggo group are considered in mutual exclusion, so a
   // single command will be performed.
   syd::DatabaseCommand * c;
-  if (args_info.InsertDicom_given) c = new syd::InsertDicomCommand;
+  if (args_info.InsertDicom_given) {
+    syd::InsertDicomCommand * a = new syd::InsertDicomCommand;
+    a->set_rename_flag(args_info.rename_flag);
+    c = a;
+  }
   if (args_info.ClearSeries_given) c = new syd::ClearSeriesCommand;
+  if (args_info.DumpSeries_given) c = new syd::DumpSeriesCommand;
   if (args_info.AddTimePoint_given) {
     if (!args_info.tpdb_given) {
       LOG(FATAL) << "Please, set --tpdb";

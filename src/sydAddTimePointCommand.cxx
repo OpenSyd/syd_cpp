@@ -99,6 +99,84 @@ void syd::AddTimePointCommand::Run(std::string filename)
 {
   DD(filename);
 
+  // open dcm files
+  DcmFileFormat dfile;
+  DcmObject *dset = &dfile;
+  dset = dfile.getDataset();
+
+  const E_TransferSyntax xfer = EXS_Unknown; // auto detection
+  const E_GrpLenEncoding groupLength = EGL_noChange;
+  const E_FileReadMode readMode = ERM_autoDetect;
+  const Uint32 maxReadLength = DCM_MaxReadLength;
+
+  OFCondition cond = dfile.loadFile(filename.c_str(), xfer, groupLength, maxReadLength, readMode);
+  if (cond.bad())  {
+    LOG(FATAL) << "Error : " << cond.text() << " while reading file "
+               << filename << " (not a Dicom ?)";
+  }
+
+  // get uid, retrive in the db (check)
+  std::string SOPInstanceUID = GetTagValue(dset, "SOPInstanceUID");
+  std::string modality = GetTagValue(dset, "Modality");
+  if ((modality != "OT") && (modality != "NM")) {
+    LOG(FATAL) << "Error the dicom is not OT or NM modality, but read " << modality;
+  }
+  DD(SOPInstanceUID);
+  Serie serie;
+  bool b = db_->GetIfExist<Serie>(odb::query<Serie>::dicom_uid == SOPInstanceUID, serie);
+  if (!b) {
+    LOG(FATAL) << "Error, the serie with uid = " << SOPInstanceUID << " does not exist in the db.";
+  }
+  DD(serie);
+
+  // Create or Update a new TimePoint
+  TimePoint timepoint;
+  b = tpdb_->GetIfExist<TimePoint>(odb::query<TimePoint>::serie_id == serie.id, timepoint);
+  if (!b) {  // the timepoint already exist
+    VLOG(1) << "Creating new TimePoint";
+    timepoint.patient_id = patient_.id;
+    timepoint.serie_id = serie.id;
+    tpdb_->Insert(timepoint);
+  }
+  else {
+    VLOG(1) << "TimePoint already exist, updating.";
+    // Check patient
+    if (patient_.id != timepoint.patient_id) {
+      LOG(FATAL) << "The dicom is linked to a different patient in the db. The id in the db is "
+                 << timepoint.patient_id  << " while the patient you ask (" << patient_name_
+                 << ") has id = " << patient_.id;
+    }
+    // Check serie
+    if (serie.id != timepoint.serie_id) {
+      LOG(FATAL) << "The dicom is linked to a different serie in the db. The id in the db is "
+                 << timepoint.serie_id  << " while the serie has id = " << serie.id;
+    }
+  }
+
+  // retrive associated ct -> check
+  //(0020,0052) UI [1.2.840.113619.2.280.2.1.12022013121509909.1675362126] #  54, 1 FrameOfReferenceUID
+  std::string FrameOfReferenceUID = GetTagValue(dset, "FrameOfReferenceUID");
+  DD(FrameOfReferenceUID);
+  //  b = db_->GetIfExist<Serie>(
+  std::vector<Serie> series;
+  db_->LoadVector<Serie>(series,
+                         odb::query<Serie>::dicom_frame_of_reference_uid == FrameOfReferenceUID &&
+                         odb::query<Serie>::modality == "CT");
+  DD(series.size());
+  DD(series[0]);
+
+
+  // get date
+  std::string AcquisitionTime = GetTagValue(dset, "AcquisitionTime");
+  std::string AcquisitionDate = GetTagValue(dset, "AcquisitionDate");
+  std::string date = GetDate(AcquisitionDate, AcquisitionTime);
+  timepoint.acquisition_date = date;
+
+  // convert mhd clitk ?
+
+
+  // Update DB
+  //  tpdb_->Update(timepoint);
 
 
 }

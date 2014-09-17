@@ -68,6 +68,7 @@ namespace syd {
 
     // Remove an element of type T
     template<class T> void Erase(T & t);
+    template<class T> void Erase(std::vector<T> & t);
 
     // Retrieve the element with a given id
     template<class T> T & GetById(IdType id);

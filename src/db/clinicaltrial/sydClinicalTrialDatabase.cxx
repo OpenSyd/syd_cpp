@@ -102,18 +102,27 @@ void syd::ClinicalTrialDatabase::CheckSerie(const Serie & serie)
       }
       if (GetFullPath(serie) == GetFullPath(*i)) {
         LOG(FATAL) << "Error in the DB ! Two series (ids = " << serie.id  << " and "
-                   << i->id << " have the same path '" << i->path;
+                   << i->id << " have the same path '" << i->path << "." << std::endl
+                   << i->dicom_uid;
       }
     }
   }
 
-  // Check the path exist
+  // Check the path or file exist
   std::string path = GetFullPath(serie);
-  if (!OFStandard::dirExists(path.c_str())) {
-    LOG(FATAL) << "Error for serie id " << serie.id << " the folder " << path
-               << " does not exist.";
+  if (serie.modality == "CT") {
+    if (!OFStandard::dirExists(path.c_str())) {
+      LOG(FATAL) << "Error for serie id " << serie.id << " the folder " << path
+                 << " does not exist.";
+    }
   }
+  else {
+    if (!OFStandard::fileExists(path.c_str())) {
+      LOG(FATAL) << "Error for serie id " << serie.id << " the file " << path
+                 << " does not exist.";
 
+    }
+  }
 }
 // --------------------------------------------------------------------
 
@@ -122,7 +131,34 @@ void syd::ClinicalTrialDatabase::CheckSerie(const Serie & serie)
 // --------------------------------------------------------------------
 void syd::ClinicalTrialDatabase::UpdateSerie(Serie & serie)
 {
-  // Create the path for the acquisition day
+
+  /*
+  std::string desc;
+  if (SeriesDescription == ImageID) desc = ImageID;
+  else {
+    if (ImageID.size() == 0) desc = SeriesDescription;
+    else desc = SeriesDescription+"__"+ImageID;
+  }
+  std::string DatasetName = GetTagValue(dset, "DatasetName");
+  if (DatasetName != "") desc = desc+"__"+DatasetName;
+  DD(DatasetName);
+  std::string TableTraverse = GetTagValue(dset, "TableTraverse");
+  if (TableTraverse != "") desc = desc+"_Table_"+TableTraverse;
+  std::string ContentDate = GetTagValue(dset, "ContentDate");
+  std::string ContentTime = GetTagValue(dset, "ContentTime");
+  if (ContentDate != "") {
+    std::string rec_date = GetDate(ContentDate, ContentTime);
+    desc = desc+"_Reconstructed_"+rec_date;
+  }
+  desc = desc+"_"+uid;
+  std::replace(desc.begin(), desc.end(), ' ', '_');
+  std::replace(desc.begin(), desc.end(), '(', '_');
+  std::replace(desc.begin(), desc.end(), ')', '_');
+  std::replace(desc.begin(), desc.end(), ':', '-');
+  serie.dicom_description = desc;
+  */
+
+  // Create or get the path for the acquisition day
   std::string day = serie.acquisition_date.substr(0,10);
   std::string hour = serie.acquisition_date.substr(11,15);
   std::string p = GetFullPath(GetById<Patient>(serie.patient_id))+PATH_SEPARATOR+day+PATH_SEPARATOR;
@@ -131,23 +167,29 @@ void syd::ClinicalTrialDatabase::UpdateSerie(Serie & serie)
   }
   else {
     syd::CreateDirectory(p);
-    VLOG(0) << "Create day path " << p;
+    VLOG(1) << "Create day path " << p;
   }
 
-  // Create the filename (or folder)
+  // Create the filename (for NM) or folder (for CT)
   if (serie.modality == "CT") {
-    serie.path = day+PATH_SEPARATOR+hour+"_"+serie.modality+"_"+serie.dicom_description;
+    serie.path = day+PATH_SEPARATOR+hour+"_"+serie.modality+"_"+serie.dicom_series_desc;
     std::string path = GetFullPath(serie);
     if (OFStandard::dirExists(path.c_str())) {
-      VLOG(0) << "Path already exist " << path;
+      VLOG(1) << "Path already exist " << path;
     }
     else {
       syd::CreateDirectory(path);
-      VLOG(0) << "Create path " << path;
+      VLOG(1) << "Create path " << path;
     }
   }
   else {
-    serie.path = day+PATH_SEPARATOR+hour+"_"+serie.modality+"_"+serie.dicom_description+".dcm";
+    /*serie.path = day+PATH_SEPARATOR+hour+"_"+serie.modality+"_"
+      +serie.dicom_series_desc
+      +serie.dicom_image_id
+      +serie.dicom_dataset_name
+      +serie.dicom_instance_number
+      +".dcm"; */
+    serie.path = day+PATH_SEPARATOR+hour+"_"+serie.dicom_uid+".dcm";
   }
 
   // Update the db

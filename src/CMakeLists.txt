@@ -39,6 +39,7 @@ include_directories(${DCMTK_INCLUDE_DIRS})
 wrap_ggo(syd syd.ggo)
 add_executable(syd syd.cxx syd_ggo.c
   sydClearSeriesCommand.cxx
+  sydDumpSeriesCommand.cxx
   sydAddTimePointCommand.cxx
   sydInsertDicomCommand.cxx)
 target_link_libraries(syd ${DCMTK_LIBRARIES}

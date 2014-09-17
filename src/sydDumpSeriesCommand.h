@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDINSERTDICOMCOMMAND_H
-#define SYDINSERTDICOMCOMMAND_H
+#ifndef SYDDUMPSERIESCOMMAND_H
+#define SYDDUMPSERIESCOMMAND_H
 
 // syd
 #include "sydDatabaseCommand.h"
@@ -27,28 +27,21 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  class InsertDicomCommand: public syd::DatabaseCommand
+  class DumpSeriesCommand: public syd::DatabaseCommand
   {
   public:
 
-    InsertDicomCommand();
-    ~InsertDicomCommand();
+    DumpSeriesCommand();
+    ~DumpSeriesCommand();
     virtual void AddDatabase(syd::Database * d);
     virtual void SetArgs(char ** inputs, int n);
     virtual void Run();
 
-    void set_rename_flag(bool b) { rename_flag_ = b; }
-
   protected:
-    void Run(std::string folder);
-    void UpdateDicom(Patient & p, const DicomSerieInfo & d);
-
     syd::ClinicalTrialDatabase * db_;
     std::string patient_name_;
-    std::vector<std::string> folders_;
     Patient patient_;
-    bool rename_flag_;
-
+    std::string pattern_;
   };
 
 

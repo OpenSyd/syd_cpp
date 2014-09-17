@@ -71,6 +71,17 @@ void syd::Database::Erase(T & r)
 
 // --------------------------------------------------------------------
 template<class T>
+void syd::Database::Erase(std::vector<T> & r)
+{
+  odb::transaction t (db->begin());
+  for(auto i=r.begin(); i<r.end(); i++) db->erase<T>(*i);
+  t.commit();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class T>
 T & syd::Database::GetById(IdType id)
 {
   static std::vector<T> tabletypes;
