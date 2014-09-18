@@ -24,7 +24,6 @@ syd::DumpSeriesCommand::DumpSeriesCommand():DatabaseCommand()
 {
   db_ = NULL;
   patient_name_ = "noname";
-
 }
 // --------------------------------------------------------------------
 

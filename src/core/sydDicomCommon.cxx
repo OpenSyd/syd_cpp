@@ -70,3 +70,29 @@ std::string syd::GetTagValue(DcmObject *dset, std::string tagName)
   return GetTagValue(dset, k);
 }
 //--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+bool syd::OpenDicomFile(std::string filename, bool contIfNotDicom, DcmFileFormat & dfile)
+{
+  const E_TransferSyntax xfer = EXS_Unknown; // auto detection
+  const E_GrpLenEncoding groupLength = EGL_noChange;
+  const E_FileReadMode readMode = ERM_autoDetect;
+  const Uint32 maxReadLength = DCM_MaxReadLength;
+
+  OFCondition cond = dfile.loadFile(filename.c_str(), xfer, groupLength, maxReadLength, readMode);
+  if (cond.bad())  {
+    if (contIfNotDicom) {
+      LOG(WARNING) << "Error : " << cond.text() << " while reading file "
+                   << filename << " (not a Dicom ?)";
+      return false;
+    }
+    else {
+      LOG(FATAL) << "Error : " << cond.text() << " while reading file "
+                   << filename << " (not a Dicom ?)";
+      return false; // no return;
+    }
+  }
+  return true;
+}
+//--------------------------------------------------------------------

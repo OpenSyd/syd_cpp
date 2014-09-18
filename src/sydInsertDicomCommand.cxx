@@ -98,12 +98,12 @@ void syd::InsertDicomCommand::Run()
 void syd::InsertDicomCommand::Run(std::string folder)
 {
   // Search for all the files in the directory
-  VLOG(0) << "Search for Dicom (*.dcm) in " << folder;
   OFList<OFString> inputFiles;
+  inputFiles.clear();
   OFString scanPattern = "*dcm";
   OFString dirPrefix = "";
   if (folder.empty()) {
-    LOG(FATAL) << "The 'folder' is void. Abort.";
+    LOG(FATAL) << "The 'foldername' is void. Abort.";
   }
   if (folder.at(0) != PATH_SEPARATOR)  { // the folder is not an absolute path
     char cCurrentPath[FILENAME_MAX];
@@ -111,15 +111,35 @@ void syd::InsertDicomCommand::Run(std::string folder)
       LOG(FATAL) << "Error while trying to get current working dir.";
     }
     folder = std::string(cCurrentPath)+"/"+folder;
+    //dirPrefix = OFString(cCurrentPath);
   }
+  VLOG(0) << "Search for Dicom (*.dcm) in " << folder;
   OFBool recurse = OFTrue;
   size_t found=0;
   if (OFStandard::dirExists(folder.c_str())) {
     found = OFStandard::searchDirectoryRecursively(folder.c_str(), inputFiles, scanPattern, dirPrefix, recurse);
   }
   else {
-    LOG(FATAL) << "The directory " << folder << " does not exist.";
+    LOG(WARNING) << "The directory " << folder << " does not exist.";
+    return;
   }
+  // Debug : inputFiles.push_back(*inputFiles.begin());
+  int n_before = inputFiles.size();
+
+  // I dont know why but sometimes, the recursive search find the same
+  // files several times. Here is a workaournd to remove duplicate
+  // files. To remove duplicate : conversion to set.
+  std::vector<OFString> v;
+  for(auto i=inputFiles.begin(); i!=inputFiles.end(); i++) v.push_back(*i);
+  std::set<OFString> s (v.begin(), v.end() );
+  v.assign( s.begin(), s.end() );
+  inputFiles.clear();
+  for(auto i=v.begin(); i<v.end(); i++) inputFiles.push_back(*i);
+  int n_after = inputFiles.size();
+  if (n_before != n_after) {
+    LOG(WARNING) << "Find duplicates files, I remove them.";
+  }
+
   if (inputFiles.size() > 0) {
     VLOG(0) << "Found " << inputFiles.size() << " files. Now parsing dicom ...";
   }
@@ -143,31 +163,16 @@ void syd::InsertDicomCommand::Run(std::string folder)
     VLOG_EVERY_N(n, 1) << ++i << "/10";
 
     DcmFileFormat dfile;
-    DcmObject *dset = &dfile;
-    dset = dfile.getDataset();
+    bool b = syd::OpenDicomFile(filename, true, dfile);
+    if (!b) continue;
+    DcmObject *dset = dfile.getDataset();
 
-    const E_TransferSyntax xfer = EXS_Unknown; // auto detection
-    const E_GrpLenEncoding groupLength = EGL_noChange;
-    const E_FileReadMode readMode = ERM_autoDetect;
-    const Uint32 maxReadLength = DCM_MaxReadLength;
-
-    OFCondition cond = dfile.loadFile(filename, xfer, groupLength, maxReadLength, readMode);
-    if (cond.bad())  {
-      LOG(WARNING) << "Error : " << cond.text() << " while reading file "
-                   << filename << " (not a Dicom ?)";
-      continue;
-    }
-
-    std::string seriesUID = GetTagValue(dset, seriesKey); //FIXME
-    std::string SOP_UID = GetTagValue(dset, SOPKey); //FIXME
-    std::string modality = GetTagValue(dset, modalityKey); //FIXME
+    std::string seriesUID = GetTagValue(dset, seriesKey);
+    std::string SOP_UID = GetTagValue(dset, SOPKey);
+    std::string modality = GetTagValue(dset, modalityKey);
     std::string k;
-    if (modality == "CT") {
-      k = seriesUID;
-    }
-    else {
-      k = SOP_UID;
-    }
+    if (modality == "CT") k = seriesUID;
+    else k = SOP_UID;
 
     if (map_series.find(k) != map_series.end()) { // already exist
       map_series[k].filenames_.push_back(filename);
@@ -203,6 +208,18 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   std::string PatientDicomId = GetTagValue(dset, "PatientID");
   VLOG(1) << "Found Patient " << PatientName << " " << PatientDicomId << " " << d.filenames_[0];
 
+  // Sanity check
+  int n = PatientName.find("^");
+  if (n != std::string::npos) {
+    std::string initials = PatientName[0] + PatientName.substr(n+1,1);
+    std::transform(initials.begin(), initials.end(), initials.begin(), ::tolower);
+    if (initials != patient_.name) {
+      LOG(FATAL) << "Error the patient in the dicom is " << PatientName
+                 << " (" << initials << "), while you ask for "
+                 << patient_.name;
+    }
+  }
+
   // Modality
   std::string modality = GetTagValue(dset, "Modality");
   if (modality != "CT") modality = "NM";
@@ -224,12 +241,19 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   std::string ContentTime = GetTagValue(dset, "ContentTime");
   std::string InstanceNumber = GetTagValue(dset, "InstanceNumber");
 
-  std::string rec_date="unknown";
+  std::string rec_date = "unknown";
   if (ContentDate != "") {
     if (ContentTime == "")  ContentTime = "000000";
     rec_date = GetDate(ContentDate, ContentTime);
   }
-  std::string acqui_date = GetDate(AcquisitionDate, AcquisitionTime);
+  std::string acqui_date = "unknown";
+  if (AcquisitionDate != "" && AcquisitionTime != "")
+    acqui_date = GetDate(AcquisitionDate, AcquisitionTime);
+  else {
+    VLOG(0) << "Unknown acquisition date, ignoring the dicom "
+            << d.filenames_[0].c_str();
+    return;
+  }
 
   std::string uid;
   if (modality == "CT") uid = SeriesInstanceUID;
@@ -263,6 +287,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   serie.dicom_manufacturer = Manufacturer;
   serie.dicom_manufacturer_model_name = ManufacturerModelName;
   serie.dicom_instance_number = InstanceNumber;
+  serie.number_of_files = d.filenames_.size();
 
   // add to db (and create folder)
   db_->UpdateSerie(serie);
@@ -279,16 +304,22 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
         VLOG(3) << "File already exist, skip copying " << filename;
       }
       else {
-        VLOG(3) << "Copying " << filename;
-        std::ifstream  src(i->c_str(), std::ios::binary);
-        std::ofstream  dst(destination,   std::ios::binary);
+        if (*i == destination) {
+          VLOG(3) << "Same source/destination ignoring file " << filename;
+        }
+        else {
+          VLOG(3) << "Copying " << filename;
+          std::ifstream  src(i->c_str(), std::ios::binary);
+          std::ofstream  dst(destination,   std::ios::binary);
         dst << src.rdbuf();
+        }
       }
     }
   }
   else {
     if (d.filenames_.size() != 1) {
-      LOG(FATAL) << "Error I found " << d.filenames_.size() << " files while expecting a single one for NM modality";
+      //DDS(d.filenames_);
+      LOG(WARNING) << "Error I found " << d.filenames_.size() << " files while expecting a single one for NM modality. I only consider the first one.";
     }
     std::string destination = db_->GetFullPath(serie);
     if (rename_flag_) {
@@ -302,14 +333,19 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
       }
     }
     else {
-      VLOG(2) << "Copy " << d.filenames_[0] << " to " << destination;
-      std::ifstream  src(d.filenames_[0].c_str(), std::ios::binary);
-      std::ofstream  dst(destination, std::ios::binary);
-      dst << src.rdbuf();
+      if (d.filenames_[0] == destination) {
+        VLOG(2) << "Same source/destination ignoring file " << destination;
+      }
+      else {
+        VLOG(2) << "Copy " << d.filenames_[0] << " to " << destination;
+        std::ifstream  src(d.filenames_[0].c_str(), std::ios::binary);
+        std::ofstream  dst(destination, std::ios::binary);
+        dst << src.rdbuf();
+      }
     }
   }
 
   // Final check
-  db_->CheckSerie(serie);
+  //  db_->CheckSerie(serie);
 }
 // --------------------------------------------------------------------

@@ -16,40 +16,37 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <odb/core.hxx>
+#ifndef SYDCHECKINTEGRITYCOMMAND_H
+#define SYDCHECKINTEGRITYCOMMAND_H
 
-typedef unsigned int IdType;
+// syd
+#include "sydDatabaseCommand.h"
+#include "sydClinicalTrialDatabase.h"
+#include "sydDicomCommon.h"
 
 // --------------------------------------------------------------------
-#pragma db object
-class Serie
-{
-public:
+namespace syd {
 
-#pragma db id auto
-  IdType        id;
-  IdType        patient_id;
-  std::string   dicom_uid;
-  std::string   dicom_dataset_name;
-  std::string   dicom_image_id;
-  std::string   dicom_study_desc;
-  std::string   dicom_series_desc;
-  std::string   dicom_frame_of_reference_uid;
-  std::string   dicom_manufacturer;
-  std::string   dicom_manufacturer_model_name;
-  std::string   dicom_instance_number;
-  int           number_of_files;
-  std::string   path;
-  std::string   acquisition_date;
-  std::string   reconstruction_date;
-  std::string   modality;
+  class CheckIntegrityCommand: public syd::DatabaseCommand
+  {
+  public:
 
-  friend std::ostream& operator<<(std::ostream& os, const Serie & p) {
-    os << p.id << " " << p.acquisition_date << " " << p.dicom_series_desc << " " << p.dicom_image_id;
-    return os;
-  }
+    CheckIntegrityCommand();
+    ~CheckIntegrityCommand();
 
-};
+    virtual void AddDatabase(syd::Database * d);
+    virtual void SetArgs(char ** inputs, int n);
+    virtual void Run();
+
+  protected:
+    void CheckFile(OFString filename);
+    syd::ClinicalTrialDatabase * db_;
+    std::string patient_name_;
+    Patient patient_;
+  };
+
+
+} // end namespace
 // --------------------------------------------------------------------
+
+#endif

@@ -22,6 +22,7 @@
 #include "sydClinicalTrialDatabase.h"
 #include "sydInsertDicomCommand.h"
 #include "sydDumpSeriesCommand.h"
+#include "sydCheckIntegrityCommand.h"
 #include "sydClearSeriesCommand.h"
 #include "sydAddTimePointCommand.h"
 
@@ -51,6 +52,11 @@ int main(int argc, char* argv[])
   }
   if (args_info.ClearSeries_given) c = new syd::ClearSeriesCommand;
   if (args_info.DumpSeries_given) c = new syd::DumpSeriesCommand;
+  if (args_info.CheckIntegrity_given) {
+    syd::CheckIntegrityCommand * a = new syd::CheckIntegrityCommand;
+    db.set_check_file_content_level(args_info.checkLevel_arg);
+    c = a;
+  }
   if (args_info.AddTimePoint_given) {
     if (!args_info.tpdb_given) {
       LOG(FATAL) << "Please, set --tpdb";

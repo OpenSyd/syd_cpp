@@ -10,10 +10,11 @@ option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off
 option "tpdb"                   -       "TimePoints DB filename"		string		no
 option "tpdbfolder"             -       "TimePointsDB folder"			string		no
 option "rename"   	 	r       "With InsertDicom : rename file instead of copy"      flag off
-
+option "checkLevel"   	 	c       "CheckLevel 0=basic, 1=content, 2=CT_content"      int default="1" no
 
 defgroup "cmd" groupdesc="an option of this group is required" required
 groupoption "InsertDicom"  	-       "<patient> <folders> Insert dicom in folders to the patient"      group="cmd"
 groupoption "ClearSeries"  	-       "<patient> ERASE all series for this patient (only in the db not on disk)"                     group="cmd"
 groupoption "AddTimePoint"  	-       "<patient> <dcm> add spect dcm to the db of timepoint"            group="cmd"
 groupoption "DumpSeries"  	-       "<patient> <date> <strings> write series for the patient, the date with dicom info containing the 'strings' (could have several string)"            group="cmd"
+groupoption "CheckIntegrity"  	-       "<patient> checks DB integrity"            group="cmd"

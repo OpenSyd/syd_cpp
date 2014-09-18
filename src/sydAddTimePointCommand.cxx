@@ -101,19 +101,8 @@ void syd::AddTimePointCommand::Run(std::string filename)
 
   // open dcm files
   DcmFileFormat dfile;
-  DcmObject *dset = &dfile;
-  dset = dfile.getDataset();
-
-  const E_TransferSyntax xfer = EXS_Unknown; // auto detection
-  const E_GrpLenEncoding groupLength = EGL_noChange;
-  const E_FileReadMode readMode = ERM_autoDetect;
-  const Uint32 maxReadLength = DCM_MaxReadLength;
-
-  OFCondition cond = dfile.loadFile(filename.c_str(), xfer, groupLength, maxReadLength, readMode);
-  if (cond.bad())  {
-    LOG(FATAL) << "Error : " << cond.text() << " while reading file "
-               << filename << " (not a Dicom ?)";
-  }
+  syd::OpenDicomFile(filename, false, dfile);
+  DcmObject *dset = dfile.getDataset();
 
   // get uid, retrive in the db (check)
   std::string SOPInstanceUID = GetTagValue(dset, "SOPInstanceUID");

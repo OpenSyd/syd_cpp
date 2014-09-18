@@ -34,6 +34,9 @@ void syd::ClinicalTrialDatabase::OpenDatabase()
 
   // Open
   Database::OpenDatabase(filename, folder);
+
+  // Init
+  set_check_file_content_level(0);
 }
 // --------------------------------------------------------------------
 
@@ -108,21 +111,95 @@ void syd::ClinicalTrialDatabase::CheckSerie(const Serie & serie)
     }
   }
 
-  // Check the path or file exist
-  std::string path = GetFullPath(serie);
-  if (serie.modality == "CT") {
-    if (!OFStandard::dirExists(path.c_str())) {
-      LOG(FATAL) << "Error for serie id " << serie.id << " the folder " << path
-                 << " does not exist.";
-    }
-  }
-  else {
-    if (!OFStandard::fileExists(path.c_str())) {
-      LOG(FATAL) << "Error for serie id " << serie.id << " the file " << path
-                 << " does not exist.";
+  // Different check according to modality
+  if (serie.modality == "CT") CheckSerie_CT(serie);
+  else CheckSerie_NM(serie);
+}
+// --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+void syd::ClinicalTrialDatabase::CheckSerie_CT(const Serie & serie)
+{
+  // Check the path exist
+  std::string path = GetFullPath(serie);
+  if (!OFStandard::dirExists(path.c_str())) {
+    LOG(FATAL) << "Error serie " << serie.id << " : the folder " << path << " does not exist.";
+  }
+
+  // Check file content (slow)
+  if (check_file_content_level_ == 0) return;
+
+  // Look in the folder
+  OFString scanPattern = "*dcm";
+  OFString dirPrefix = "";
+  OFBool recurse = OFFalse;
+  OFList<OFString> inputFiles;
+  size_t found =
+    OFStandard::searchDirectoryRecursively(path.c_str(), inputFiles, scanPattern, dirPrefix, recurse);
+
+  // Check the number of files
+  int n = inputFiles.size();
+  if (serie.number_of_files != n) {
+    LOG(FATAL) << "Error serie " << serie.id << " the number of files is supposed to be " << serie.number_of_files
+               << " but I found " << n << " files int the folder " << path;
+  }
+  if (check_file_content_level_ == 1) return;
+
+  for(auto i=inputFiles.begin(); i!=inputFiles.end(); i++) {
+    // Open the files
+    DcmFileFormat dfile;
+    syd::OpenDicomFile(i->c_str(), false, dfile);
+    DcmObject *dset = dfile.getDataset();
+
+    // Check modality
+    std::string modality = GetTagValue(dset, "Modality");
+    if (serie.modality != modality) {
+      LOG(FATAL) << "Error serie " << serie.id << " modality is supposed to be " << serie.modality
+                 << " but I read " << modality << " in the file " << path << " " << *i;
+    }
+
+    // Check uid
+    std::string uid = GetTagValue(dset, "SeriesInstanceUID");
+    if (serie.dicom_uid != uid) {
+      LOG(FATAL) << "Error serie " << serie.id << " uid is supposed to be " << serie.dicom_uid
+                 << " but I read " << uid << " in the file " << path << " " << *i;
     }
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ClinicalTrialDatabase::CheckSerie_NM(const Serie & serie)
+{
+  // Check if the file exist
+  std::string path = GetFullPath(serie);
+  if (!OFStandard::fileExists(path.c_str())) {
+    LOG(FATAL) << "Error serie " << serie.id << " : the file " << path << " does not exist.";
+  }
+
+  // Check file content (slow)
+  if (check_file_content_level_ == 0) return;
+  DcmFileFormat dfile;
+  syd::OpenDicomFile(path, false, dfile);
+  DcmObject *dset = dfile.getDataset();
+
+  // Check modality
+  std::string modality = GetTagValue(dset, "Modality");
+  if (modality != "CT") modality = "NM";
+  if (serie.modality != modality) {
+    LOG(FATAL) << "Error serie " << serie.id << " modality is supposed to be " << serie.modality
+               << " but I read " << modality << " in the file " << path;
+  }
+
+  // Check uid
+  std::string uid = GetTagValue(dset, "SOPInstanceUID");
+  if (serie.dicom_uid != uid) {
+    LOG(FATAL) << "Error serie " << serie.id << " uid is supposed to be " << serie.dicom_uid
+               << " but I read " << uid << " in the file " << path;
+  }
+
 }
 // --------------------------------------------------------------------
 
@@ -132,38 +209,12 @@ void syd::ClinicalTrialDatabase::CheckSerie(const Serie & serie)
 void syd::ClinicalTrialDatabase::UpdateSerie(Serie & serie)
 {
 
-  /*
-  std::string desc;
-  if (SeriesDescription == ImageID) desc = ImageID;
-  else {
-    if (ImageID.size() == 0) desc = SeriesDescription;
-    else desc = SeriesDescription+"__"+ImageID;
-  }
-  std::string DatasetName = GetTagValue(dset, "DatasetName");
-  if (DatasetName != "") desc = desc+"__"+DatasetName;
-  DD(DatasetName);
-  std::string TableTraverse = GetTagValue(dset, "TableTraverse");
-  if (TableTraverse != "") desc = desc+"_Table_"+TableTraverse;
-  std::string ContentDate = GetTagValue(dset, "ContentDate");
-  std::string ContentTime = GetTagValue(dset, "ContentTime");
-  if (ContentDate != "") {
-    std::string rec_date = GetDate(ContentDate, ContentTime);
-    desc = desc+"_Reconstructed_"+rec_date;
-  }
-  desc = desc+"_"+uid;
-  std::replace(desc.begin(), desc.end(), ' ', '_');
-  std::replace(desc.begin(), desc.end(), '(', '_');
-  std::replace(desc.begin(), desc.end(), ')', '_');
-  std::replace(desc.begin(), desc.end(), ':', '-');
-  serie.dicom_description = desc;
-  */
-
   // Create or get the path for the acquisition day
   std::string day = serie.acquisition_date.substr(0,10);
   std::string hour = serie.acquisition_date.substr(11,15);
   std::string p = GetFullPath(GetById<Patient>(serie.patient_id))+PATH_SEPARATOR+day+PATH_SEPARATOR;
   if (OFStandard::dirExists(p.c_str())) {
-    VLOG(1) << "Folder day date already exist " << p;
+    VLOG(2) << "Folder day date already exist " << p;
   }
   else {
     syd::CreateDirectory(p);
@@ -175,7 +226,7 @@ void syd::ClinicalTrialDatabase::UpdateSerie(Serie & serie)
     serie.path = day+PATH_SEPARATOR+hour+"_"+serie.modality+"_"+serie.dicom_series_desc;
     std::string path = GetFullPath(serie);
     if (OFStandard::dirExists(path.c_str())) {
-      VLOG(1) << "Path already exist " << path;
+      VLOG(2) << "Path already exist " << path;
     }
     else {
       syd::CreateDirectory(path);
@@ -183,12 +234,6 @@ void syd::ClinicalTrialDatabase::UpdateSerie(Serie & serie)
     }
   }
   else {
-    /*serie.path = day+PATH_SEPARATOR+hour+"_"+serie.modality+"_"
-      +serie.dicom_series_desc
-      +serie.dicom_image_id
-      +serie.dicom_dataset_name
-      +serie.dicom_instance_number
-      +".dcm"; */
     serie.path = day+PATH_SEPARATOR+hour+"_"+serie.dicom_uid+".dcm";
   }
 

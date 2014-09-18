@@ -34,6 +34,8 @@ namespace syd {
   DcmTagKey GetTagKey(std::string tagName);
   std::string GetTagValue(DcmObject *dset, std::string tagName);
 
+  bool OpenDicomFile(std::string filename, bool contIfNotDicom, DcmFileFormat & dfile);
+
   class DicomSerieInfo {
   public:
     std::string serie_UID_;

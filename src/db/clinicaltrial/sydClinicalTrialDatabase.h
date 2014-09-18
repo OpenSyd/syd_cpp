@@ -23,6 +23,7 @@
 #include "sydDatabase.h"
 #include "Patient-odb.hxx"
 #include "Serie-odb.hxx"
+#include "sydDicomCommon.h"
 
 // inherit from syd::Database
 // --------------------------------------------------------------------
@@ -36,12 +37,17 @@ namespace syd {
 
     void UpdateSerie(Serie & serie);
 
+    void set_check_file_content_level(int l) { check_file_content_level_ = l; }
     void CheckPatient(const Patient & patient);
     void CheckSerie(const Serie & serie);
+    void CheckSerie_CT(const Serie & serie);
+    void CheckSerie_NM(const Serie & serie);
 
     std::string GetFullPath(const Patient & patient);
     std::string GetFullPath(const Serie & serie);
 
+  protected:
+    int check_file_content_level_;
 
   }; // end class
 } // end namespace
