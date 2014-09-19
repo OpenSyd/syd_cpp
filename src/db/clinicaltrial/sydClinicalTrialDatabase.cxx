@@ -153,14 +153,14 @@ void syd::ClinicalTrialDatabase::CheckSerie_CT(const Serie & serie)
     DcmObject *dset = dfile.getDataset();
 
     // Check modality
-    std::string modality = GetTagValue(dset, "Modality");
+    std::string modality = GetTagValueString(dset, "Modality");
     if (serie.modality != modality) {
       LOG(FATAL) << "Error serie " << serie.id << " modality is supposed to be " << serie.modality
                  << " but I read " << modality << " in the file " << path << " " << *i;
     }
 
     // Check uid
-    std::string uid = GetTagValue(dset, "SeriesInstanceUID");
+    std::string uid = GetTagValueString(dset, "SeriesInstanceUID");
     if (serie.dicom_uid != uid) {
       LOG(FATAL) << "Error serie " << serie.id << " uid is supposed to be " << serie.dicom_uid
                  << " but I read " << uid << " in the file " << path << " " << *i;
@@ -186,7 +186,7 @@ void syd::ClinicalTrialDatabase::CheckSerie_NM(const Serie & serie)
   DcmObject *dset = dfile.getDataset();
 
   // Check modality
-  std::string modality = GetTagValue(dset, "Modality");
+  std::string modality = GetTagValueString(dset, "Modality");
   if (modality != "CT") modality = "NM";
   if (serie.modality != modality) {
     LOG(FATAL) << "Error serie " << serie.id << " modality is supposed to be " << serie.modality
@@ -194,7 +194,7 @@ void syd::ClinicalTrialDatabase::CheckSerie_NM(const Serie & serie)
   }
 
   // Check uid
-  std::string uid = GetTagValue(dset, "SOPInstanceUID");
+  std::string uid = GetTagValueString(dset, "SOPInstanceUID");
   if (serie.dicom_uid != uid) {
     LOG(FATAL) << "Error serie " << serie.id << " uid is supposed to be " << serie.dicom_uid
                << " but I read " << uid << " in the file " << path;
@@ -239,5 +239,34 @@ void syd::ClinicalTrialDatabase::UpdateSerie(Serie & serie)
 
   // Update the db
   Update(serie);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+odb::query<Serie> syd::ClinicalTrialDatabase::GetSeriesQueryFromPatterns(std::vector<std::string> patterns)
+{
+  typedef odb::query<Serie> QueryType;
+  QueryType q = (QueryType::id != 0); // required initialization.
+  for(auto i=patterns.begin(); i<patterns.end(); i++)
+    AndSeriesQueryFromPattern(q, *i);
+  return q;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ClinicalTrialDatabase::AndSeriesQueryFromPattern(odb::query<Serie> & q,
+                                                           std::string pattern)
+{
+  typedef odb::query<Serie> QueryType;
+  pattern = "%"+pattern+"%";
+  q = q &&
+    (QueryType::dicom_dataset_name.like(pattern) ||
+     QueryType::dicom_image_id.like(pattern) ||
+     QueryType::modality.like(pattern) ||
+     QueryType::dicom_series_desc.like(pattern) ||
+     QueryType::reconstruction_date.like(pattern) ||
+     QueryType::dicom_study_desc.like(pattern));
 }
 // --------------------------------------------------------------------

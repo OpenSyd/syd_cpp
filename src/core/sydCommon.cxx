@@ -49,3 +49,31 @@ std::string syd::GetDate(std::string date, std::string time)
   return result;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+unsigned long syd::toULong(std::string s)
+{
+  std::istringstream iss(s);
+  unsigned long i;
+  iss >> std::ws >> i >> std::ws;
+  if (!iss.eof()) {
+    LOG(FATAL) << "Error could not convert the string '" << s << "' into unsigned long.";
+  }
+  return i;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::toDouble(std::string s)
+{
+  std::istringstream iss(s);
+  double i;
+  iss >> std::ws >> i >> std::ws;
+  if (!iss.eof()) {
+    LOG(FATAL) << "Error could not convert the string '" << s << "' into double.";
+  }
+  return i;
+}
+// --------------------------------------------------------------------

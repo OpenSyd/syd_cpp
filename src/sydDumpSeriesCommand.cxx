@@ -44,7 +44,8 @@ void syd::DumpSeriesCommand::SetArgs(char ** inputs, int n)
                << n << " parameter(s)";
   }
   patient_name_ = inputs[0];
-  pattern_ = inputs[1];
+  for(auto i=1; i<n; i++)
+    patterns_.push_back(inputs[i]);
 }
 // --------------------------------------------------------------------
 
@@ -79,21 +80,17 @@ void syd::DumpSeriesCommand::Run()
   }
 
   // Create the query to retrieve the series
-  pattern_ = "%"+pattern_+"%";
   typedef odb::query<Serie> QueryType;
-  QueryType q;
-  q = (QueryType::dicom_dataset_name.like(pattern_) ||
-       QueryType::dicom_image_id.like(pattern_) ||
-       QueryType::modality.like(pattern_) ||
-       QueryType::dicom_series_desc.like(pattern_) ||
-       QueryType::dicom_study_desc.like(pattern_));
+  QueryType q = db_->GetSeriesQueryFromPatterns(patterns_);
   q = (QueryType::patient_id == patient_.id) && q;
   std::vector<Serie> series;
   db_->LoadVector<Serie>(series, q);
 
   // Now display results
   for(auto i=series.begin(); i<series.end(); i++) {
-    std::cout << i->id << " "
+    std::cout << patient_.name << " "
+              << patient_.synfrizz_id << " "
+              << i->id << " "
               << i->acquisition_date << " "
               << i->reconstruction_date << " "
               << i->dicom_study_desc << "\t"
@@ -104,5 +101,19 @@ void syd::DumpSeriesCommand::Run()
               << std::endl;
   }
 
+  // Cmd line for vv
+  if (0) {
+    std::cout << "vv ";
+    for(auto i=series.begin(); i<series.end(); i++) {
+      std::cout << db_->GetFullPath(*i) << " ";
+    }
+    std::cout << std::endl;
+  }
+
+  // Display ids
+  for(auto i=series.begin(); i<series.end(); i++) {
+    std::cout << i->id << " ";
+  }
+  std::cout << std::endl;
 }
 // --------------------------------------------------------------------

@@ -24,7 +24,7 @@
 #include "sydDumpSeriesCommand.h"
 #include "sydCheckIntegrityCommand.h"
 #include "sydClearSeriesCommand.h"
-#include "sydAddTimePointCommand.h"
+#include "sydInsertTimePointCommand.h"
 
 // easylogging : only once initialization (in the main)
 _INITIALIZE_EASYLOGGINGPP
@@ -57,14 +57,14 @@ int main(int argc, char* argv[])
     db.set_check_file_content_level(args_info.checkLevel_arg);
     c = a;
   }
-  if (args_info.AddTimePoint_given) {
+  if (args_info.InsertTimePoint_given) {
     if (!args_info.tpdb_given) {
       LOG(FATAL) << "Please, set --tpdb";
     }
     if (!args_info.tpdbfolder_given) {
       LOG(FATAL) << "Please, set --tpdbfolder";
     }
-    c = new syd::AddTimePointCommand;
+    c = new syd::InsertTimePointCommand;
     // Open TimePoint DB if needed
     syd::TimePointsDatabase * tpdb = new syd::TimePointsDatabase;
     tpdb->OpenDatabase(std::string(args_info.tpdb_arg), std::string(args_info.tpdbfolder_arg));

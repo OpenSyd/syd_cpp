@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDADDTIMEPOINTCOMMAND_H
-#define SYDADDTIMEPOINTCOMMAND_H
+#ifndef SYDINSERTTIMEPOINTCOMMAND_H
+#define SYDINSERTTIMEPOINTCOMMAND_H
 
 // syd
 #include "sydDatabaseCommand.h"
@@ -25,27 +25,31 @@
 #include "sydTimePointsDatabase.h"
 #include "sydDicomCommon.h"
 
+// itk
+#include <itkImageFileReader.h>
+#include <itkImageFileWriter.h>
+
 // --------------------------------------------------------------------
 namespace syd {
 
-  class AddTimePointCommand: public syd::DatabaseCommand
+  class InsertTimePointCommand: public syd::DatabaseCommand
   {
   public:
 
-    AddTimePointCommand();
-    ~AddTimePointCommand();
+    InsertTimePointCommand();
+    ~InsertTimePointCommand();
 
     virtual void AddDatabase(syd::Database * d);
     virtual void SetArgs(char ** inputs, int n);
     virtual void Run();
 
   protected:
-    void Run(std::string filename);
+    void Run(Serie serie);
 
     syd::ClinicalTrialDatabase * db_;
     syd::TimePointsDatabase * tpdb_;
     std::string patient_name_;
-    std::string filename_;
+    std::vector<IdType> serie_ids_;
     Patient patient_;
   };
 

@@ -127,9 +127,9 @@ void syd::CheckIntegrityCommand::CheckFile(OFString filename)
     LOG(FATAL) << "Could not open the file " << filename;
   }
   std::string k;
-  std::string seriesUID = GetTagValue(dset, "SeriesInstanceUID");
-  std::string SOP_UID = GetTagValue(dset, "SOPInstanceUID");
-  std::string modality = GetTagValue(dset, "Modality");
+  std::string seriesUID = GetTagValueString(dset, "SeriesInstanceUID");
+  std::string SOP_UID = GetTagValueString(dset, "SOPInstanceUID");
+  std::string modality = GetTagValueString(dset, "Modality");
   if (modality == "CT") k = seriesUID;
   else k = SOP_UID;
 

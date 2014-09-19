@@ -63,6 +63,9 @@ namespace syd {
 
   std::string GetDate(std::string date, std::string time);
 
+  unsigned long toULong(std::string);
+  double toDouble(std::string);
+
 #include "sydCommon.txx"
 
 } // end namespace

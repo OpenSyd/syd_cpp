@@ -30,11 +30,14 @@
 //--------------------------------------------------------------------
 namespace syd {
 
-  std::string GetTagValue(DcmObject *dset, DcmTagKey & key);
-  DcmTagKey GetTagKey(std::string tagName);
-  std::string GetTagValue(DcmObject *dset, std::string tagName);
-
   bool OpenDicomFile(std::string filename, bool contIfNotDicom, DcmFileFormat & dfile);
+
+  DcmTagKey GetTagKey(std::string tagName);
+  DcmElement * GetTagValue(DcmObject * dest, std::string tagName);
+  DcmElement * GetTagValue(DcmObject * dest, DcmTagKey & key);
+  std::string GetTagValueString(DcmObject *dset, std::string tagName);
+  ushort GetTagValueUShort(DcmObject *dset, std::string tagName);
+  double GetTagValueDouble(DcmObject *dset, std::string tagName);
 
   class DicomSerieInfo {
   public:

@@ -36,7 +36,54 @@ DcmTagKey syd::GetTagKey(std::string tagName)
 
 
 //--------------------------------------------------------------------
-std::string syd::GetTagValue(DcmObject *dset, DcmTagKey & key)
+std::string syd::GetTagValueString(DcmObject *dset, std::string tagName)
+{
+  char * v;
+  DcmElement * e = GetTagValue(dset, tagName);
+  if (e == NULL) return "";
+  e->getString(v);
+  //e->getUint16(d);
+  if (v==NULL) return "";
+  return std::string(v);
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+ushort syd::GetTagValueUShort(DcmObject *dset, std::string tagName)
+{
+  DcmElement * e = GetTagValue(dset, tagName);
+  if (e == NULL) return 0;
+  ushort d;
+  e->getUint16(d);
+  return d;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+double syd::GetTagValueDouble(DcmObject *dset, std::string tagName)
+{
+  DcmElement * e = GetTagValue(dset, tagName);
+  if (e == NULL) return 0;
+  double d;
+  e->getFloat64(d);
+  return d;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+DcmElement * syd::GetTagValue(DcmObject * dset, std::string tagName)
+{
+  DcmTagKey key = syd::GetTagKey(tagName);
+  return GetTagValue(dset, key);
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+DcmElement * syd::GetTagValue(DcmObject * dset, DcmTagKey & key)
 {
   // Search for the tag values from the key. Only the first instance is printed
   DcmStack stack;
@@ -51,23 +98,11 @@ std::string syd::GetTagValue(DcmObject *dset, DcmTagKey & key)
       // LOG(WARNING) << "Several values found for tag " << key.toString();
     }
     DcmObject *dobj = stack.top();
-    DcmElement * e = static_cast<DcmElement*>(dobj);
-    e->getString(v);
-    if (v==NULL) return "";
-    return std::string(v);
+    return static_cast<DcmElement*>(dobj);
   }
   else { // not found EC_TagNotFound
-    return "";
+    return NULL;
   }
-}
-//--------------------------------------------------------------------
-
-
-//--------------------------------------------------------------------
-std::string syd::GetTagValue(DcmObject *dset, std::string tagName)
-{
-  DcmTagKey k = GetTagKey(tagName);
-  return GetTagValue(dset, k);
 }
 //--------------------------------------------------------------------
 
@@ -95,4 +130,9 @@ bool syd::OpenDicomFile(std::string filename, bool contIfNotDicom, DcmFileFormat
   }
   return true;
 }
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+
 //--------------------------------------------------------------------

@@ -30,23 +30,16 @@ include_directories(${PROJECT_SOURCE_DIR}/src/db/timepoints)
 
 
 #----------------------------------------------------------
-find_package(DCMTK REQUIRED)
-include_directories(${DCMTK_INCLUDE_DIRS})
-#----------------------------------------------------------
-
-
-#----------------------------------------------------------
 wrap_ggo(syd syd.ggo)
 add_executable(syd syd.cxx syd_ggo.c
   sydClearSeriesCommand.cxx
   sydDumpSeriesCommand.cxx
   sydCheckIntegrityCommand.cxx
-  sydAddTimePointCommand.cxx
+  sydInsertTimePointCommand.cxx
   sydInsertDicomCommand.cxx)
 target_link_libraries(syd ${DCMTK_LIBRARIES}
   sydTimePointsDatabase
   sydClinicalTrialDatabase
   sydCore
-  sqlite3 odb-sqlite odb  z ${CERES_LIBRARIES})
-# ${ITK_LIBRARIES}
+  sqlite3 odb-sqlite odb  z ${CERES_LIBRARIES} ${ITK_LIBRARIES})
 #----------------------------------------------------------

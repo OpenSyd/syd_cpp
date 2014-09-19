@@ -41,7 +41,7 @@ namespace syd {
     syd::ClinicalTrialDatabase * db_;
     std::string patient_name_;
     Patient patient_;
-    std::string pattern_;
+    std::vector<std::string> patterns_;
   };
 
 

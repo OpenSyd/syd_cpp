@@ -46,6 +46,9 @@ namespace syd {
     std::string GetFullPath(const Patient & patient);
     std::string GetFullPath(const Serie & serie);
 
+    odb::query<Serie> GetSeriesQueryFromPatterns(std::vector<std::string> patterns);
+    void AndSeriesQueryFromPattern(odb::query<Serie> & q, std::string pattern);
+
   protected:
     int check_file_content_level_;
 

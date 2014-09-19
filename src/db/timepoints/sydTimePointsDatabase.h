@@ -31,9 +31,7 @@ namespace syd {
 
   public:
     TimePointsDatabase():Database() {}
-
-
-
+    ~TimePointsDatabase() {}
 
   }; // end class
 } // end namespace

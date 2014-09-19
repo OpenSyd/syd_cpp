@@ -153,9 +153,9 @@ void syd::InsertDicomCommand::Run(std::string folder)
   const char * filename = NULL;
   OFListIterator(OFString) if_iter = inputFiles.begin();
   OFListIterator(OFString) if_last = inputFiles.end();
-  DcmTagKey seriesKey = GetTagKey("SeriesInstanceUID");
-  DcmTagKey SOPKey = GetTagKey("SOPInstanceUID");
-  DcmTagKey modalityKey = GetTagKey("Modality");
+  //DcmTagKey seriesKey = GetTagKey("SeriesInstanceUID");
+  //DcmTagKey SOPKey = GetTagKey("SOPInstanceUID");
+  //DcmTagKey modalityKey = GetTagKey("Modality");
   int n = inputFiles.size()/10;
   int i=0;
   while (if_iter != if_last) {
@@ -167,9 +167,9 @@ void syd::InsertDicomCommand::Run(std::string folder)
     if (!b) continue;
     DcmObject *dset = dfile.getDataset();
 
-    std::string seriesUID = GetTagValue(dset, seriesKey);
-    std::string SOP_UID = GetTagValue(dset, SOPKey);
-    std::string modality = GetTagValue(dset, modalityKey);
+    std::string seriesUID = GetTagValueString(dset, "SeriesInstanceUID");
+    std::string SOP_UID = GetTagValueString(dset, "SOPInstanceUID");
+    std::string modality = GetTagValueString(dset, "Modality");
     std::string k;
     if (modality == "CT") k = seriesUID;
     else k = SOP_UID;
@@ -199,13 +199,16 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
 {
   // Read file header
   DcmFileFormat dfile;
-  DcmObject *dset = &dfile;
-  dset = dfile.getDataset();
-  dfile.loadFile(d.filenames_[0].c_str());
+  bool b = syd::OpenDicomFile(d.filenames_[0], true, dfile);
+  if (!b) {
+    LOG(FATAL) << "Could not open dicom " << d.filenames_[0];
+  }
+  DcmObject *dset = dfile.getDataset();
+
 
   // Find the patient ID
-  std::string PatientName = GetTagValue(dset, "PatientName");
-  std::string PatientDicomId = GetTagValue(dset, "PatientID");
+  std::string PatientName = GetTagValueString(dset, "PatientName");
+  std::string PatientDicomId = GetTagValueString(dset, "PatientID");
   VLOG(1) << "Found Patient " << PatientName << " " << PatientDicomId << " " << d.filenames_[0];
 
   // Sanity check
@@ -221,25 +224,25 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   }
 
   // Modality
-  std::string modality = GetTagValue(dset, "Modality");
+  std::string modality = GetTagValueString(dset, "Modality");
   if (modality != "CT") modality = "NM";
 
   // Serie
-  std::string AcquisitionTime = GetTagValue(dset, "AcquisitionTime");
-  std::string AcquisitionDate = GetTagValue(dset, "AcquisitionDate");
-  std::string SeriesDescription = GetTagValue(dset, "SeriesDescription");
-  std::string StudyDescription = GetTagValue(dset, "StudyDescription");
-  std::string SeriesInstanceUID = GetTagValue(dset, "SeriesInstanceUID");
-  std::string SOPInstanceUID = GetTagValue(dset, "SOPInstanceUID");
-  std::string FrameOfReferenceUID = GetTagValue(dset, "FrameOfReferenceUID");
-  std::string ImageID = GetTagValue(dset, "ImageID");
-  std::string Manufacturer = GetTagValue(dset, "Manufacturer");
-  std::string ManufacturerModelName = GetTagValue(dset, "ManufacturerModelName");
-  std::string DatasetName = GetTagValue(dset, "DatasetName");
-  std::string TableTraverse = GetTagValue(dset, "TableTraverse");
-  std::string ContentDate = GetTagValue(dset, "ContentDate");
-  std::string ContentTime = GetTagValue(dset, "ContentTime");
-  std::string InstanceNumber = GetTagValue(dset, "InstanceNumber");
+  std::string AcquisitionTime = GetTagValueString(dset, "AcquisitionTime");
+  std::string AcquisitionDate = GetTagValueString(dset, "AcquisitionDate");
+  std::string SeriesDescription = GetTagValueString(dset, "SeriesDescription");
+  std::string StudyDescription = GetTagValueString(dset, "StudyDescription");
+  std::string SeriesInstanceUID = GetTagValueString(dset, "SeriesInstanceUID");
+  std::string SOPInstanceUID = GetTagValueString(dset, "SOPInstanceUID");
+  std::string FrameOfReferenceUID = GetTagValueString(dset, "FrameOfReferenceUID");
+  std::string ImageID = GetTagValueString(dset, "ImageID");
+  std::string Manufacturer = GetTagValueString(dset, "Manufacturer");
+  std::string ManufacturerModelName = GetTagValueString(dset, "ManufacturerModelName");
+  std::string DatasetName = GetTagValueString(dset, "DatasetName");
+  std::string TableTraverse = GetTagValueString(dset, "TableTraverse");
+  std::string ContentDate = GetTagValueString(dset, "ContentDate");
+  std::string ContentTime = GetTagValueString(dset, "ContentTime");
+  std::string InstanceNumber = GetTagValueString(dset, "InstanceNumber");
 
   std::string rec_date = "unknown";
   if (ContentDate != "") {
