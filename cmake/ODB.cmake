@@ -10,7 +10,7 @@ macro(WRAP_ODB ODB_SRCS)
     set(ODB_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ODB_CXX} ${CMAKE_CURRENT_BINARY_DIR}/${ODB_IXX} ${CMAKE_CURRENT_BINARY_DIR}/${ODB_HXX})
     add_custom_command(OUTPUT ${ODB_OUTPUT}
       COMMAND odb
-      ARGS --std c++11 --database sqlite --generate-query  ${ODB_FILES_ABS}
+      ARGS --std c++11 --database sqlite --generate-query ${ODB_FILES_ABS}
       DEPENDS ${ODB_FILES_ABS}
       )
     set(${ODB_SRCS} ${${ODB_SRCS}} ${ODB_OUTPUT})

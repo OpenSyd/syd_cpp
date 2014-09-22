@@ -2,7 +2,7 @@
 SYD
 ===
 
-Toolkit. The goal is to manage a database of patient data, including images, to perform bash processes.
+Toolkit. The goal is to manage a database of patient data, including images, for performing TRT (Targeted Radionuclide Therapy) related tasks.
 
 DB management
 =============
@@ -37,11 +37,21 @@ For advanced optimisation algorithms.
   - ceres-solver :http://ceres-solver.org version 1.9.0
     (from git)
 
+* Already include : easylogging
+- http://easylogging.org
+- copy from git version 2014-08-06
+- 4a74f67ced8929b7617ac7fb6b547dd94b130d48
+
 * dcmtk
 For DICOM management.
 - http://dicom.offis.de/dcmtk.php.en
 - From git.
 - With option `DCMTK_WITH_TIFF=OFF` to avoid linking warning with ljpeg, ltiff.
+
+* itk
+For image processing.
+- http://www.itk.org
+- version 4.5.2
 
 * Optional : sqlitestudio
 * Optional : http://www.dcm4che.org *FIXME*

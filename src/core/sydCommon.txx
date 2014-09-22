@@ -61,3 +61,15 @@ void InitVerboseOptions(ArgsInfoType & args_info)
   el::Loggers::reconfigureLogger("default", defaultConf);
 }
 //--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+// Convert float, double ... to string
+template<class T>
+std::string toString(const T & t)
+{
+  std::ostringstream myStream;
+  myStream << t << std::flush;
+  return(myStream.str());
+}
+//--------------------------------------------------------------------

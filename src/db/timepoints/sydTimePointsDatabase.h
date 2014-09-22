@@ -22,6 +22,7 @@
 // syd
 #include "sydDatabase.h"
 #include "TimePoint-odb.hxx"
+#include "sydClinicalTrialDatabase.h"
 
 // inherit from syd::Database
 // --------------------------------------------------------------------
@@ -32,6 +33,17 @@ namespace syd {
   public:
     TimePointsDatabase():Database() {}
     ~TimePointsDatabase() {}
+
+    std::string GetFullPath(Patient patient);
+    std::string GetFullPathSPECT(TimePoint timepoint);
+
+    void UpdateAllTimePointNumbers(IdType patient_id);
+
+    void set_clinicaltrial_database(ClinicalTrialDatabase * d) { cdb_ = d; }
+
+  protected:
+    ClinicalTrialDatabase * cdb_;
+
 
   }; // end class
 } // end namespace

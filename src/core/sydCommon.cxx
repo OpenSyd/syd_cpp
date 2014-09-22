@@ -77,3 +77,106 @@ double syd::toDouble(std::string s)
   return i;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ConvertStringToDate(std::string s, tm & d)
+{
+  strptime(s.c_str(), "%Y-%m-%d %H:%M", &d);
+  d.tm_sec = 0;
+  d.tm_isdst = 0; // important, if not set, is random, and error can occur
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::RenameMHDFileIfExist(std::string old_path, std::string new_path, int verbose_level)
+{
+  // Check if not the same
+  if (old_path == new_path) return; // do nothing
+
+  // Check extension olf filename
+  size_t n = old_path.find_last_of(".");
+  std::string extension = old_path.substr(n+1);
+  if (extension != "mhd") {
+    LOG(FATAL) << "Error the filename must have mhd as extension : " << old_path;
+  }
+  std::string old_path_raw = old_path.substr(0,n)+".raw";
+
+  // Check extension new filename
+  n = new_path.find_last_of(".");
+  extension = new_path.substr(n+1);
+  if (extension != "mhd") {
+    LOG(FATAL) << "Error the new filename must have mhd as extension : " << new_path;
+  }
+  std::string new_path_raw = new_path.substr(0,n)+".raw";
+
+  if (!OFStandard::fileExists(old_path.c_str())) {
+    LOG(WARNING) << "Warning path not exist : " << old_path;
+  }
+  else {
+    if (!OFStandard::fileExists(old_path_raw.c_str())) {
+      LOG(WARNING) << "Warning path not exist : " << old_path_raw;
+      return;
+    }
+    VLOG(verbose_level) << "Rename " << old_path << " to " << new_path;
+
+    int result = rename(old_path.c_str(), new_path.c_str());
+    if (result != 0) {
+      LOG(FATAL) << "Error while renaming " << old_path << " to " << new_path;
+    }
+
+    // Change ElementDataFile
+    std::ifstream in(new_path);
+    std::ofstream out(new_path+"TMP");
+    OFString r;
+    OFStandard::getFilenameFromPath(r, old_path_raw.c_str());
+    DD(r);
+    std::string wordToReplace(r.c_str());
+    DD(wordToReplace);
+    OFStandard::getFilenameFromPath(r, new_path_raw.c_str());
+    std::string wordToReplaceWith(r.c_str());
+    DD(wordToReplaceWith);
+    size_t len = wordToReplace.length();
+    std::string line;
+    while (std::getline(in, line)) {
+      while (true) {
+        size_t pos = line.find(wordToReplace);
+        if (pos != std::string::npos)
+          line.replace(pos, len, wordToReplaceWith);
+        else
+          break;
+      }
+      out << line << '\n';
+    }
+    in.close();
+    out.close();
+    result = rename(std::string(new_path+"TMP").c_str(), new_path.c_str());
+    if (result != 0) {
+      LOG(FATAL) << "Error while renaming " << std::string(new_path+"TMP") << " to " << new_path;
+    }
+
+    VLOG(verbose_level) << "Rename " << old_path_raw << " to " << new_path_raw;
+    result = rename(old_path_raw.c_str(), new_path_raw.c_str());
+    if (result != 0) {
+      LOG(FATAL) << "Error while renaming " << old_path_raw << " to " << new_path_raw;
+    }
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::DateDifferenceInHours(std::string end, std::string start)
+{
+  tm startDate;
+  tm endDate;
+  DD(start);
+  DD(end);
+  syd::ConvertStringToDate(start, startDate);
+  syd::ConvertStringToDate(end, endDate);
+  double v = difftime(mktime(&endDate), mktime(&startDate))/3600.0;
+  DD(v);
+  return v;
+}
+// --------------------------------------------------------------------

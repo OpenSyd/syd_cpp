@@ -16,6 +16,9 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SERIE_H
+#define SERIE_H
+
 #include <string>
 #include <iostream>
 #include <odb/core.hxx>
@@ -53,3 +56,5 @@ public:
 
 };
 // --------------------------------------------------------------------
+
+#endif

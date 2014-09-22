@@ -26,6 +26,7 @@
 
 // syd
 #include "sydDD.h"
+#include "sydDicomCommon.h"
 
 // easylogging
 // The first macro is needed to prevent default log file to be created
@@ -56,15 +57,32 @@ namespace syd {
 
   //--------------------------------------------------------------------
 
+
+  //--------------------------------------------------------------------
   template<class ArgsInfoType>
   void InitVerboseOptions(ArgsInfoType & args_info);
+  //--------------------------------------------------------------------
 
+
+  //--------------------------------------------------------------------
   void CreateDirectory(std::string folder);
+  void RenameMHDFileIfExist(std::string old_path, std::string new_path, int verbose_level=2);
+  //--------------------------------------------------------------------
 
+
+  //--------------------------------------------------------------------
   std::string GetDate(std::string date, std::string time);
+  void ConvertStringToDate(std::string s, tm & d);
+  double DateDifferenceInHours(std::string end, std::string start);
+  //--------------------------------------------------------------------
 
+
+  //--------------------------------------------------------------------
   unsigned long toULong(std::string);
   double toDouble(std::string);
+  template<class T>
+  std::string toString(const T & t);
+  //--------------------------------------------------------------------
 
 #include "sydCommon.txx"
 

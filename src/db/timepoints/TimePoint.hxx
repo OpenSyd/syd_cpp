@@ -16,9 +16,14 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+// std
 #include <string>
 #include <iostream>
+#include <memory>
+
+// odb
 #include <odb/core.hxx>
+// #include "Serie.hxx"
 
 typedef unsigned int IdType;
 
@@ -30,15 +35,13 @@ public:
 
 #pragma db id auto
   IdType        id;
-  //  IdType        patient_id; // not strictly needed (can be retrive by serie_id)
+  IdType        patient_id; // not strictly needed (can be retrive by serie_id)
   IdType        serie_id;
-  //std::string   acquisition_date; // not strictly needed (can be retrive by serie_id)
-  //  std::string   n; // number in the set of time points FIXME
-  std::string   ct_mhd;
-  std::string   spect_mhd;
+  long          number;
+  double        time_from_injection_in_hours;
 
   friend std::ostream& operator<<(std::ostream& os, const TimePoint & p) {
-    os << p.id << " " << " " << p.ct_mhd << " " << p.spect_mhd;
+    os << p.id << " " << p.number << " " << p.time_from_injection_in_hours;
     return os;
   }
 
