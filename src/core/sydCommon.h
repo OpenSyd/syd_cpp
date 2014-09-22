@@ -66,7 +66,7 @@ namespace syd {
 
   //--------------------------------------------------------------------
   void CreateDirectory(std::string folder);
-  void RenameMHDFileIfExist(std::string old_path, std::string new_path, int verbose_level=2);
+  void RenameMHDImage(std::string old_path, std::string new_path, int verbose_level=2);
   //--------------------------------------------------------------------
 
 

@@ -52,12 +52,9 @@ bool date_before(std::string d1, std::string d2)
 // --------------------------------------------------------------------
 void syd::TimePointsDatabase::UpdateAllTimePointNumbers(IdType patient_id)
 {
-  DD("update");
-
   // Get all timepoint for this patient
   std::vector<TimePoint> timepoints;
   LoadVector<TimePoint>(timepoints, odb::query<TimePoint>::patient_id == patient_id);
-  DDS(timepoints);
 
   // Get corresponding series acquisition_date
   std::vector<Serie> series;
@@ -81,22 +78,20 @@ void syd::TimePointsDatabase::UpdateAllTimePointNumbers(IdType patient_id)
   for(auto i=0; i<timepoints.size(); i++) { // two loops needed !
     timepoints[indices[i]].number = i+1;
   }
-  DDS(old_paths);
-  DDS(timepoints);
 
   // Rename file (use a temporary filename to avoir overwriting the files)
   for(auto i=0; i<timepoints.size(); i++) {
     if (old_paths[i] != GetFullPathSPECT(timepoints[i])) {
       VLOG(2) << "Rename (old) " << old_paths[i] << " to (new) " << GetFullPathSPECT(timepoints[i]);
       std::string path = GetFullPathSPECT(timepoints[i])+"TMP.mhd";
-      syd::RenameMHDFileIfExist(old_paths[i], path, 3); // 2 is verbose level
+      syd::RenameMHDImage(old_paths[i], path, 3); // 2 is verbose level
     }
   }
   for(auto i=0; i<timepoints.size(); i++) {
     if (old_paths[i] != GetFullPathSPECT(timepoints[i])) {
       std::string pathTMP = GetFullPathSPECT(timepoints[i])+"TMP.mhd";
       std::string path = GetFullPathSPECT(timepoints[i]);
-      syd::RenameMHDFileIfExist(pathTMP, path, 3); // 2 is verbose level
+      syd::RenameMHDImage(pathTMP, path, 3); // 2 is verbose level
     }
   }
 
@@ -106,14 +101,5 @@ void syd::TimePointsDatabase::UpdateAllTimePointNumbers(IdType patient_id)
     db->update(timepoints[i]);
   }
   t.commit();
-
-
-  // CHECK mda5 ?
-
-  // sort according to date
-  // compute number
-  // compute path + rename
-
-
 }
 // --------------------------------------------------------------------

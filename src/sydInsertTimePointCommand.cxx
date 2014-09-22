@@ -18,6 +18,7 @@
 
 // syd
 #include "sydInsertTimePointCommand.h"
+#include "sydImage.h"
 
 // --------------------------------------------------------------------
 syd::InsertTimePointCommand::InsertTimePointCommand():DatabaseCommand()
@@ -66,7 +67,6 @@ void syd::InsertTimePointCommand::SetArgs(char ** inputs, int n)
   patient_name_ = inputs[0];
   for(auto i=1; i<n; i++) {
     IdType id = toULong(inputs[i]);
-    DD(id);
     serie_ids_.push_back(id);
   }
 }
@@ -113,9 +113,6 @@ void syd::InsertTimePointCommand::Run()
 // --------------------------------------------------------------------
 void syd::InsertTimePointCommand::Run(Serie serie)
 {
-  DD("------------------------------");
-  DD(serie);
-
   // Check modality
   if (serie.modality != "NM") {
     LOG(FATAL) << "Error the serie " << serie.id << " modality is " << serie.modality
@@ -133,33 +130,31 @@ void syd::InsertTimePointCommand::Run(Serie serie)
     tpdb_->Insert(timepoint);
   }
   else {
-    VLOG(1) << "TimePoint already exist, updating.";
+    VLOG(1) << "TimePoint " << timepoint.number << " ("
+            << timepoint.time_from_injection_in_hours
+            << " hours) already exist, deleting current image and updating.";
+    std::string path = tpdb_->GetFullPathSPECT(timepoint);
+    OFStandard::deleteFile(path.c_str());
+    size_t n = path.find_last_of(".");
+    std::string path_raw = path.substr(0,n)+".raw";
+    OFStandard::deleteFile(path_raw.c_str());
   }
 
-  // temporary set a number
+  // Set a temporary number (higher than the previous)
   std::vector<TimePoint> timepoints;
   tpdb_->LoadVector<TimePoint>(timepoints, odb::query<TimePoint>::patient_id == patient_.id);
   int max = 0;
   for(auto i=timepoints.begin(); i<timepoints.end(); i++) if (i->number > max) max = i->number;
-  DD(max);
   timepoint.number = max+1;
-
-  // Re get the timepoint because UpdateAllTimePointNumbers may have change data
-  // tpdb_->GetIfExist<TimePoint>(odb::query<TimePoint>::serie_id == serie.id, timepoint);
 
   // Update the time
   if (patient_.injection_date == "") {
     LOG(FATAL) << "Injection date for the patient " << patient_.name << " is missing.";
   }
   timepoint.time_from_injection_in_hours = syd::DateDifferenceInHours(serie.acquisition_date, patient_.injection_date);
-  DD(timepoint);
 
-  // update field
-  //timepoint.acquisition_date = serie.acquisition_date;
-  //  timepoint.spect_mhd = "toto.mhd";
-  //  DD(timepoint);
+  // Update field
   tpdb_->Update(timepoint);
-  DD(timepoint);
 
   // Retrieve corresponding CT
   std::vector<Serie> series;
@@ -170,95 +165,12 @@ void syd::InsertTimePointCommand::Run(Serie serie)
   DD(series.size());
   DD(series[0]);
 
-  // convert mhd clitk ?
-  std::string filename = db_->GetFullPath(serie);
-  DD(filename);
-  //FIXME to put in a function
-  typedef itk::Image<float, 3> ImageType;
-  typedef itk::ImageFileReader<ImageType> ReaderType;
-  typename ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName(filename.c_str());
-  try { reader->Update(); }
-  catch(itk::ExceptionObject & err) {
-    LOG(FATAL) << "Error while reading image [" << filename << "]";
-  }
-  ImageType::Pointer spect = reader->GetOutput();
+  // Convert the dicom to mhd
+  std::string dicom_filename = db_->GetFullPath(serie);
+  std::string mhd_filename   = tpdb_->GetFullPathSPECT(timepoint);
+  syd::ConvertDicomToImage(dicom_filename, mhd_filename);
 
-  // Open dicom header
-  DcmFileFormat dfile;
-  b = syd::OpenDicomFile(filename.c_str(), true, dfile);
-  DcmObject *dset = dfile.getDataset();
-  if (!b) {
-    LOG(FATAL) << "Could not open the file " << filename;
-  }
-
-  // Check nb of slices
-  ImageType::SizeType size = spect->GetLargestPossibleRegion().GetSize();
-  ushort nbslices = GetTagValueUShort(dset, "NumberOfSlices");
-  if (nbslices != size[2]) {
-    LOG(FATAL) << "Error image spacing is " << size
-               << " while in the dicom NumberOfSlices = " << nbslices;
-  }
-
-  // Remove meta information (if not : garbage in the mhd)
-  itk::MetaDataDictionary d;
-  spect->SetMetaDataDictionary(d);
-
-  // Correct for negative SpacingBetweenSlices
-  double s = GetTagValueDouble(dset, "SpacingBetweenSlices");
-  // change spacing z
-  ImageType::SpacingType spacing = spect->GetSpacing();
-  if (s<0) spacing[2] = -s;
-  else spacing[2] = s;
-  spect->SetSpacing(spacing);
-  // Direction
-  if (s<0) {
-    ImageType::DirectionType direction = spect->GetDirection();
-    direction.Fill(0.0);
-    direction(0,0) = 1; direction(1,1) = 1; direction(2,2) = -1;
-    spect->SetDirection(direction);
-  }
-
-  // Offset
-  std::string ImagePositionPatient = GetTagValueString(dset, "ImagePositionPatient");
-  if (ImagePositionPatient == "") {
-    LOG(FATAL) << "Error while reading tag ImagePositionPatient in the dicom " << filename;
-  }
-  int n = ImagePositionPatient.find("\\");
-  std::string sx = ImagePositionPatient.substr(0,n);
-  ImagePositionPatient = ImagePositionPatient.substr(n+1,ImagePositionPatient.size());
-  n = ImagePositionPatient.find("\\");
-  std::string sy = ImagePositionPatient.substr(0,n);
-  std::string sz = ImagePositionPatient.substr(n+1,ImagePositionPatient.size());
-  ImageType::PointType origin;
-  origin[0] = toDouble(sx);
-  origin[1] = toDouble(sy);
-  origin[2] = toDouble(sz);
-  spect->SetOrigin(origin);
-
-
-  // Write mhd
-  std::string mhd_filename = tpdb_->GetFullPathSPECT(timepoint);//"toto.mhd";
-  DD(mhd_filename);
-  // Check if already exsit (it should not !)
-  if (OFStandard::fileExists(mhd_filename.c_str())) {
-    LOG(FATAL) << "Error the file " << mhd_filename << " already exist, I could not create the temporay image.";
-  }
-
-  typedef itk::ImageFileWriter<ImageType> WriterType;
-  typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName(mhd_filename.c_str());
-  writer->SetInput(spect);
-  try { writer->Update(); }
-  catch(itk::ExceptionObject & err) {
-    LOG(FATAL) << "Error while writing image [" << mhd_filename << "]";
-  }
-
-  // Check
-  //  check that another serie with same acqui date exist
   // Find time order according to existing timepoint
   tpdb_->UpdateAllTimePointNumbers(patient_.id);
-
-  DD(timepoint);
 }
 // --------------------------------------------------------------------

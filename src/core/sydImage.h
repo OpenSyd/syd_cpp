@@ -16,39 +16,34 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDINSERTTIMEPOINTCOMMAND_H
-#define SYDINSERTTIMEPOINTCOMMAND_H
+#ifndef SYDIMAGE_H
+#define SYDIMAGE_H
 
 // syd
-#include "sydDatabaseCommand.h"
-#include "sydClinicalTrialDatabase.h"
-#include "sydTimePointsDatabase.h"
 #include "sydDicomCommon.h"
+
+// itk
+#include <itkImageFileReader.h>
+#include <itkImageFileWriter.h>
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class InsertTimePointCommand: public syd::DatabaseCommand
-  {
-  public:
+  //--------------------------------------------------------------------
+  void ConvertDicomToImage(std::string dicom_filename, std::string mhd_filename);
+  template<class ImageType>
+  void ConvertDicomToImage(DcmObject * dset, typename ImageType::Pointer image);
+  //--------------------------------------------------------------------
 
-    InsertTimePointCommand();
-    ~InsertTimePointCommand();
 
-    virtual void AddDatabase(syd::Database * d);
-    virtual void SetArgs(char ** inputs, int n);
-    virtual void Run();
+  //--------------------------------------------------------------------
+  template<class ImageType>
+  void WriteImage(typename ImageType::Pointer image, std::string filename);
+  template<class ImageType>
+  typename ImageType::Pointer ReadImage(std::string filename);
+  //--------------------------------------------------------------------
 
-  protected:
-    void Run(Serie serie);
-
-    syd::ClinicalTrialDatabase * db_;
-    syd::TimePointsDatabase * tpdb_;
-    std::string patient_name_;
-    std::vector<IdType> serie_ids_;
-    Patient patient_;
-  };
-
+#include "sydImage.txx"
 
 } // end namespace
 // --------------------------------------------------------------------
