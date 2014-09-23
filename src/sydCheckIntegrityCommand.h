@@ -1,4 +1,5 @@
 /*=========================================================================
+  Copyright 2014 <David Sarrut>
   Program:   syd
 
   Authors belong to:
@@ -14,23 +15,25 @@
 
   - BSD        See included LICENSE.txt file
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
-  ===========================================================================**/
 
-#ifndef SYDCHECKINTEGRITYCOMMAND_H
-#define SYDCHECKINTEGRITYCOMMAND_H
+  ============================================================================*/
+
+#ifndef SRC_SYDCHECKINTEGRITYCOMMAND_H_
+#define SRC_SYDCHECKINTEGRITYCOMMAND_H_
+
+// std
+#include <string>
 
 // syd
-#include "sydDatabaseCommand.h"
-#include "sydClinicalTrialDatabase.h"
-#include "sydDicomCommon.h"
+#include "core/sydDatabaseCommand.h"
+#include "db/clinicaltrial/sydClinicalTrialDatabase.h"
+#include "core/sydDicomCommon.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class CheckIntegrityCommand: public syd::DatabaseCommand
-  {
-  public:
-
+  class CheckIntegrityCommand: public syd::DatabaseCommand {
+   public:
     CheckIntegrityCommand();
     ~CheckIntegrityCommand();
 
@@ -38,15 +41,14 @@ namespace syd {
     virtual void SetArgs(char ** inputs, int n);
     virtual void Run();
 
-  protected:
+   protected:
     void CheckFile(OFString filename);
     syd::ClinicalTrialDatabase * db_;
     std::string patient_name_;
     Patient patient_;
   };
 
-
-} // end namespace
+}  // namespace syd
 // --------------------------------------------------------------------
 
-#endif
+#endif  // SRC_SYDCHECKINTEGRITYCOMMAND_H_

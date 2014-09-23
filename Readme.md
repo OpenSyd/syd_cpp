@@ -2,7 +2,8 @@
 SYD
 ===
 
-Toolkit. The goal is to manage a database of patient data, including images, for performing TRT (Targeted Radionuclide Therapy) related tasks.
+When doing image processing studies on a database of patient, it could be difficult to manage all the dicom files and clinical data associated with the study. This toolkit helps to manage a database of patient data and images.
+
 
 DB management
 =============

@@ -67,6 +67,7 @@ namespace syd {
   //--------------------------------------------------------------------
   void CreateDirectory(std::string folder);
   void RenameMHDImage(std::string old_path, std::string new_path, int verbose_level=2);
+  void DeleteMHDImage(std::string path);
   //--------------------------------------------------------------------
 
 
@@ -74,6 +75,7 @@ namespace syd {
   std::string GetDate(std::string date, std::string time);
   void ConvertStringToDate(std::string s, tm & d);
   double DateDifferenceInHours(std::string end, std::string start);
+  bool IsBefore(std::string d1, std::string d2);
   //--------------------------------------------------------------------
 
 

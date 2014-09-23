@@ -38,6 +38,7 @@ namespace syd {
     virtual void AddDatabase(syd::Database * d);
     virtual void SetArgs(char ** inputs, int n);
     virtual void Run();
+    void set_ct_selection_patterns(std::string s);
 
   protected:
     void Run(Serie serie);
@@ -47,10 +48,11 @@ namespace syd {
     std::string patient_name_;
     std::vector<IdType> serie_ids_;
     Patient patient_;
+    std::vector<std::string> ct_selection_patterns_;
   };
 
 
-} // end namespace
+}  // namespace syd
 // --------------------------------------------------------------------
 
 #endif

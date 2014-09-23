@@ -64,11 +64,13 @@ int main(int argc, char* argv[])
     if (!args_info.tpdbfolder_given) {
       LOG(FATAL) << "Please, set --tpdbfolder";
     }
-    c = new syd::InsertTimePointCommand;
+    syd::InsertTimePointCommand * a = new syd::InsertTimePointCommand;
     // Open TimePoint DB if needed
     syd::TimePointsDatabase * tpdb = new syd::TimePointsDatabase;
     tpdb->OpenDatabase(std::string(args_info.tpdb_arg), std::string(args_info.tpdbfolder_arg));
-    c->AddDatabase(tpdb); // order to add db is important (tpdb must be first)
+    a->AddDatabase(tpdb); // order to add db is important (tpdb must be first)
+    a->set_ct_selection_patterns(args_info.ct_arg);
+    c = a;
   }
 
   // Perform the command

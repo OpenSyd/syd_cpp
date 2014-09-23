@@ -38,16 +38,16 @@ std::string syd::TimePointsDatabase::GetFullPathSPECT(TimePoint timepoint)
 // --------------------------------------------------------------------
 
 
-bool date_before(std::string d1, std::string d2)
+// --------------------------------------------------------------------
+std::string syd::TimePointsDatabase::GetFullPathCT(TimePoint timepoint)
 {
-  tm D1;
-  tm D2;
-  syd::ConvertStringToDate(d1, D1);
-  syd::ConvertStringToDate(d2, D2);
-  double diff = difftime(mktime(&D1), mktime(&D2));
-  bool b = diff < 0;
-  return b;
+  Serie serie = cdb_->GetById<Serie>(timepoint.serie_id);
+  Patient patient = cdb_->GetById<Patient>(serie.patient_id);
+  std::string p = GetFullPath(patient);
+  return p+PATH_SEPARATOR+"ct"+toString(timepoint.number)+".mhd";
 }
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 void syd::TimePointsDatabase::UpdateAllTimePointNumbers(IdType patient_id)
@@ -64,16 +64,18 @@ void syd::TimePointsDatabase::UpdateAllTimePointNumbers(IdType patient_id)
 
   // Ordered indices
   std::vector<size_t> indices;
-  //  for(auto i: ordered<Serie>(series)) indices.push_back(i);
   for(auto i=0; i != series.size(); i++) indices.push_back(i);
   std::sort(begin(indices), end(indices),
-            [&series](size_t a, size_t b) { return date_before(series[a].acquisition_date, series[b].acquisition_date); }  );
+            [&series](size_t a, size_t b) { return syd::IsBefore(series[a].acquisition_date, series[b].acquisition_date); }  );
 
   // Set the new order for all the timepoints
-  std::vector<std::string> old_paths(timepoints.size());
+  std::vector<std::string> old_paths_spect(timepoints.size());
+  std::vector<std::string> old_paths_ct(timepoints.size());
   for(auto i=0; i<timepoints.size(); i++) {
     std::string s = GetFullPathSPECT(timepoints[i]);
-    old_paths[i] = s;
+    old_paths_spect[i] = s;
+    s = GetFullPathCT(timepoints[i]);
+    old_paths_ct[i] = s;
   }
   for(auto i=0; i<timepoints.size(); i++) { // two loops needed !
     timepoints[indices[i]].number = i+1;
@@ -81,17 +83,27 @@ void syd::TimePointsDatabase::UpdateAllTimePointNumbers(IdType patient_id)
 
   // Rename file (use a temporary filename to avoir overwriting the files)
   for(auto i=0; i<timepoints.size(); i++) {
-    if (old_paths[i] != GetFullPathSPECT(timepoints[i])) {
-      VLOG(2) << "Rename (old) " << old_paths[i] << " to (new) " << GetFullPathSPECT(timepoints[i]);
+    if (old_paths_spect[i] != GetFullPathSPECT(timepoints[i])) {
+      VLOG(3) << "Rename (old) " << old_paths_spect[i] << " to (new) " << GetFullPathSPECT(timepoints[i]);
       std::string path = GetFullPathSPECT(timepoints[i])+"TMP.mhd";
-      syd::RenameMHDImage(old_paths[i], path, 3); // 2 is verbose level
+      syd::RenameMHDImage(old_paths_spect[i], path, 4); // 4 is verbose level
+    }
+    if (old_paths_ct[i] != GetFullPathCT(timepoints[i])) {
+      VLOG(3) << "Rename (old) " << old_paths_ct[i] << " to (new) " << GetFullPathCT(timepoints[i]);
+      std::string path = GetFullPathCT(timepoints[i])+"TMP.mhd";
+      syd::RenameMHDImage(old_paths_ct[i], path, 4);
     }
   }
   for(auto i=0; i<timepoints.size(); i++) {
-    if (old_paths[i] != GetFullPathSPECT(timepoints[i])) {
+    if (old_paths_spect[i] != GetFullPathSPECT(timepoints[i])) {
       std::string pathTMP = GetFullPathSPECT(timepoints[i])+"TMP.mhd";
       std::string path = GetFullPathSPECT(timepoints[i]);
-      syd::RenameMHDImage(pathTMP, path, 3); // 2 is verbose level
+      syd::RenameMHDImage(pathTMP, path, 4);
+    }
+    if (old_paths_ct[i] != GetFullPathCT(timepoints[i])) {
+      std::string pathTMP = GetFullPathCT(timepoints[i])+"TMP.mhd";
+      std::string path = GetFullPathCT(timepoints[i]);
+      syd::RenameMHDImage(pathTMP, path, 4);
     }
   }
 

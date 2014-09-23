@@ -36,6 +36,7 @@ namespace syd {
 
     std::string GetFullPath(Patient patient);
     std::string GetFullPathSPECT(TimePoint timepoint);
+    std::string GetFullPathCT(TimePoint timepoint);
 
     void UpdateAllTimePointNumbers(IdType patient_id);
 

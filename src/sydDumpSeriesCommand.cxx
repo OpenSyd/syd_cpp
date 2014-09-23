@@ -86,18 +86,23 @@ void syd::DumpSeriesCommand::Run()
   std::vector<Serie> series;
   db_->LoadVector<Serie>(series, q);
 
+  // Sort by acquisition_date
+  std::sort(series.begin(), series.end(),
+            [&](Serie a, Serie b) { return syd::IsBefore(a.acquisition_date, b.acquisition_date); }  );
+
   // Now display results
-  for(auto i=series.begin(); i<series.end(); i++) {
+  for(auto i=0; i<series.size(); i++) {
+    Serie serie = series[i];
     std::cout << patient_.name << " "
               << patient_.synfrizz_id << " "
-              << i->id << " "
-              << i->acquisition_date << " "
-              << i->reconstruction_date << " "
-              << i->dicom_study_desc << "\t"
-              << i->dicom_series_desc << "\t"
-              << i->dicom_dataset_name << "\t"
-              << i->dicom_image_id << "\t"
-              << i->dicom_instance_number << "\t"
+              << serie.id << " "
+              << serie.acquisition_date << " "
+              << serie.reconstruction_date << " "
+              << serie.dicom_study_desc << "\t"
+              << serie.dicom_series_desc << "\t"
+              << serie.dicom_dataset_name << "\t"
+              << serie.dicom_image_id << "\t"
+              << serie.dicom_instance_number << "\t"
               << std::endl;
   }
 

@@ -25,6 +25,9 @@
 // itk
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
+#include <itkImageSeriesReader.h>
+#include <itkGDCMImageIO.h>
+#include <itkGDCMSeriesFileNames.h>
 
 // --------------------------------------------------------------------
 namespace syd {

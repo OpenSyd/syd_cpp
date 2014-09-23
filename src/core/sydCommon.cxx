@@ -91,7 +91,9 @@ void syd::ConvertStringToDate(std::string s, tm & d)
 
 // --------------------------------------------------------------------
 /*
-  Rename a mhd image, composed of 2 files XXX.mhd and XXX.raw.
+  Rename a mhd image, composed of 2 files XXX.mhd and XXX.raw. This
+  function moves the two files and change the header to be linked with
+  the renamed .raw file.
  */
 void syd::RenameMHDImage(std::string old_path, std::string new_path, int verbose_level)
 {
@@ -102,7 +104,7 @@ void syd::RenameMHDImage(std::string old_path, std::string new_path, int verbose
   size_t n = old_path.find_last_of(".");
   std::string extension = old_path.substr(n+1);
   if (extension != "mhd") {
-    LOG(FATAL) << "Error the filename must have mhd as extension : " << old_path;
+    LOG(FATAL) << "Rename MHD : Error the filename must have mhd as extension : " << old_path;
   }
   std::string old_path_raw = old_path.substr(0,n)+".raw";
 
@@ -110,22 +112,22 @@ void syd::RenameMHDImage(std::string old_path, std::string new_path, int verbose
   n = new_path.find_last_of(".");
   extension = new_path.substr(n+1);
   if (extension != "mhd") {
-    LOG(FATAL) << "Error the new filename must have mhd as extension : " << new_path;
+    LOG(FATAL) << "Rename MHD : Error the new filename must have mhd as extension : " << new_path;
   }
   std::string new_path_raw = new_path.substr(0,n)+".raw";
 
   // Check files
   if (!OFStandard::fileExists(old_path.c_str())) {
-    LOG(FATAL) << "Error path (mhd) not exist : " << old_path;
+    LOG(FATAL) << "Rename MHD : Error path (mhd) not exist : " << old_path;
   }
   if (!OFStandard::fileExists(old_path_raw.c_str())) {
-    LOG(FATAL) << "Error path (raw) not exist : " << old_path_raw;
+    LOG(FATAL) << "Rename MHD : Error path (raw) not exist : " << old_path_raw;
   }
   if (OFStandard::fileExists(new_path.c_str())) {
-    LOG(FATAL) << "Error path (mhd) to rename already exist : " << new_path;
+    LOG(FATAL) << "Rename MHD : Error path (mhd) to rename already exist : " << new_path;
   }
   if (OFStandard::fileExists(new_path_raw.c_str())) {
-    LOG(FATAL) << "Error path (raw) to rename already exist : " << new_path_raw;
+    LOG(FATAL) << "Rename MHD : Error path (raw) to rename already exist : " << new_path_raw;
   }
 
   // verbose
@@ -182,5 +184,24 @@ double syd::DateDifferenceInHours(std::string end, std::string start)
   syd::ConvertStringToDate(end, endDate);
   double v = difftime(mktime(&endDate), mktime(&startDate))/3600.0;
   return v;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::IsBefore(std::string d1, std::string d2)
+{
+  return (DateDifferenceInHours(d1,d2) < 0);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::DeleteMHDImage(std::string path)
+{
+  OFStandard::deleteFile(path.c_str());
+  size_t n = path.find_last_of(".");
+  std::string path_raw = path.substr(0,n)+".raw";
+  OFStandard::deleteFile(path_raw.c_str());
 }
 // --------------------------------------------------------------------
