@@ -188,7 +188,7 @@ void syd::InsertDicomCommand::Run(std::string folder)
   for(auto i=map_series.begin(); i!=map_series.end(); i++) {
     UpdateDicom(patient_, i->second);
   }
-  VLOG(0) << "Done. " << map_series.size() << " series were updated in the db.";
+  VLOG(0) << "Done. " << map_series.size() << " series were updated in the db for patient " << patient_.name << ".";
 }
 
 // --------------------------------------------------------------------

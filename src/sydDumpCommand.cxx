@@ -146,6 +146,7 @@ void syd::DumpCommand::DumpPatients(Patient patient)
   std::cout << patient.name << " "
             << patient.synfrizz_id << "\t"
             << patient.injection_date << "\t"
+            << (patient.was_treated ? "90Y":"no ") << "\t"
             << patient.injected_quantity_in_MBq << " MBq\t";
 
   // Get the number of images
