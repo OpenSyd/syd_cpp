@@ -60,7 +60,7 @@ namespace syd {
 
   //--------------------------------------------------------------------
   template<class ArgsInfoType>
-  void InitVerboseOptions(ArgsInfoType & args_info);
+  void init_logging_verbose_options(ArgsInfoType & args_info);
   //--------------------------------------------------------------------
 
 
@@ -84,7 +84,9 @@ namespace syd {
   double toDouble(std::string);
   template<class T>
   std::string toString(const T & t);
+  void SkipComment(std::istream & is);
   //--------------------------------------------------------------------
+
 
 #include "sydCommon.txx"
 

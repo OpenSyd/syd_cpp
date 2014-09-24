@@ -1,0 +1,11 @@
+#File sydDump.ggo
+
+package "sydDump"
+usage "sydDump <serie|patient|timepoint>  <patient_name | all>  <string patterns>"
+version "0.1"
+description "Dump information of databases.
+Displays 'Serie' or 'patient' or 'timepoint' information for the given patient name (or all if name is 'all') where fields contains all given string patterns. The databases are found within the init file $SYD_INIT_DB_FILE. If 'patient' is given, string patterns are ignored."
+
+option "config"	  	 	-	"Config file"				string  	no
+option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off

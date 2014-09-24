@@ -2,13 +2,26 @@
 SYD
 ===
 
+Target Radionuclide Therapy Toolkit (TRnT tk).
+
 When doing image processing studies on a database of patient, it could be difficult to manage all the dicom files and clinical data associated with the study. This toolkit helps to manage a database of patient data and images.
 
 
-DB management
-=============
+Modules
+=======
 
-todo
+Module DICOM DB management
+--------------------------
+
+From a set of DICOM foldes/files to a structured DB of patients with data and images in mhd/raw file format.
+
+Module registration / warping
+-----------------------------
+
+Module activity
+---------------
+
+
 
 Dependencies
 ============

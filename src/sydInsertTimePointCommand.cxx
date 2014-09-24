@@ -39,21 +39,14 @@ syd::InsertTimePointCommand::~InsertTimePointCommand()
 
 
 // --------------------------------------------------------------------
-void syd::InsertTimePointCommand::AddDatabase(syd::Database * d)
+void syd::InsertTimePointCommand::OpenCommandDatabases()
 {
-  if (databases_.size() == 0) { // first db
-    DatabaseCommand::AddDatabase(d);
-    tpdb_ = static_cast<TimePointsDatabase*>(d);
-  }
-  else {
-    if (databases_.size() == 1) { // second db
-      DatabaseCommand::AddDatabase(d);
-      db_ = static_cast<ClinicalTrialDatabase*>(d);
-    }
-    else {
-      LOG(FATAL) << "TimePointsDatabase::AddDatabase error. First provide TimePointsDatabase then ClinicalTrialDatabase.";
-    }
-  }
+  // Open the ones we want
+  db_ = new syd::ClinicalTrialDatabase();
+  db_->OpenDatabase(get_db_filename("Clinical"), get_db_folder("Clinical"));
+
+  tpdb_ = new syd::TimePointsDatabase();
+  tpdb_->OpenDatabase(get_db_filename("TimePoints"), get_db_folder("TimePoints"));
 }
 // --------------------------------------------------------------------
 
@@ -72,12 +65,12 @@ void syd::InsertTimePointCommand::set_ct_selection_patterns(std::string s)
 // --------------------------------------------------------------------
 void syd::InsertTimePointCommand::SetArgs(char ** inputs, int n)
 {
-  if (n < 2) {
-    LOG(FATAL) << "At least two parameters are needed : <patient> <series ids>, but you provide "
+  if (n < 1) {
+    LOG(FATAL) << "At least 1 parameters is needed, but you provide "
                << n << " parameter(s)";
   }
-  patient_name_ = inputs[0];
-  for(auto i=1; i<n; i++) {
+  //  patient_name_ = inputs[0];
+  for(auto i=0; i<n; i++) {
     IdType id = toULong(inputs[i]);
     serie_ids_.push_back(id);
   }
@@ -100,18 +93,18 @@ void syd::InsertTimePointCommand::Run()
   // Set DB pointer
   tpdb_->set_clinicaltrial_database(db_);
 
-  if (db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name_, patient_)) {
-    db_->CheckPatient(patient_);
-  }
-  else {
-    LOG(FATAL) << "Error, the patient " << patient_name_ << " does not exist";
-  }
+  // if (db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name_, patient_)) {
+  //   db_->CheckPatient(patient_);
+  // }
+  // else {
+  //   LOG(FATAL) << "Error, the patient " << patient_name_ << " does not exist";
+  // }
 
-  // Create folder if does not exist
-  std::string path = tpdb_->GetFullPath(patient_);
-  if (!OFStandard::dirExists(path.c_str())) {
-    LOG(FATAL) << "The directory " << path << " does not exist. Please create.";
-  }
+  // // Create folder if does not exist
+  // std::string path = tpdb_->GetFullPath(patient_);
+  // if (!OFStandard::dirExists(path.c_str())) {
+  //   LOG(FATAL) << "The directory " << path << " does not exist. Please create.";
+  // }
 
   // Insert all series
   for(auto i=serie_ids_.begin(); i<serie_ids_.end(); i++)  {
@@ -131,11 +124,25 @@ void syd::InsertTimePointCommand::Run(Serie serie)
                << " while expecting NM";
   }
 
+  // Get patient
+  if (db_->GetIfExist<Patient>(odb::query<Patient>::id == serie.patient_id, patient_)) {
+    db_->CheckPatient(patient_);
+  }
+  else {
+    LOG(FATAL) << "Error, the patient for this serie (" << serie << ") does not exist";
+  }
+
+  // Check folder if does not exist
+  std::string path = tpdb_->GetFullPath(patient_);
+  if (!OFStandard::dirExists(path.c_str())) {
+    LOG(FATAL) << "The directory " << path << " does not exist. Please create.";
+  }
+
   // Create or Update a new TimePoint
   TimePoint timepoint;
   bool b = tpdb_->GetIfExist<TimePoint>(odb::query<TimePoint>::serie_id == serie.id, timepoint);
   if (!b) {  // It does not exist, we create it
-    VLOG(1) << "Creating new TimePoint";
+    VLOG(1) << "Creating new TimePoint for date " << serie.acquisition_date;
     timepoint.patient_id = patient_.id;
     timepoint.serie_id = serie.id;
     timepoint.number=0;

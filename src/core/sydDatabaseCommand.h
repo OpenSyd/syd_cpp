@@ -29,16 +29,23 @@ namespace syd {
   {
   public:
 
-    virtual void AddDatabase(Database * db);
+    virtual void AddDatabase(Database * db); // FIXME to remove ?
     virtual void SetArgs(char ** inputs, int n) = 0;
     virtual void Run() = 0;
 
-  protected:
-    std::vector<syd::Database*> databases_;
+    void OpenDatabases();
+    std::string get_db_filename(std::string db);
+    std::string get_db_folder(std::string db);
 
+  protected:
+    virtual void OpenCommandDatabases() = 0;
+    std::vector<syd::Database*> databases_; // FIXME to remove
+    std::map<std::string, std::string> db_filenames_;
+    std::map<std::string, std::string> db_folders_;
+    std::string init_filename_;
   };
 
-} // end namespace
+}  // namespace syd
 // --------------------------------------------------------------------
 
-#endif
+#endif // SYDDATABASECOMMAND_H

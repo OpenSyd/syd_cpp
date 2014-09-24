@@ -33,13 +33,14 @@ namespace syd {
 
     InsertDicomCommand();
     ~InsertDicomCommand();
-    virtual void AddDatabase(syd::Database * d);
+
     virtual void SetArgs(char ** inputs, int n);
     virtual void Run();
 
     void set_rename_flag(bool b) { rename_flag_ = b; }
 
   protected:
+    virtual void OpenCommandDatabases();
     void Run(std::string folder);
     void UpdateDicom(Patient & p, const DicomSerieInfo & d);
 

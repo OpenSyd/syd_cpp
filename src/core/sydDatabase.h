@@ -50,8 +50,6 @@ namespace syd {
     // Accessors
     std::string get_folder() const { return folder_; }
 
-    //FIXME : verbose
-
     // Call back for SQL query to the DB. For debug purpose
     void TraceCallback(const char* sql);
 

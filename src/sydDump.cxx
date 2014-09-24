@@ -16,33 +16,29 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-// std
-#include <string>
-#include <iostream>
-#include <memory>
+// syd
+#include "sydDump_ggo.h"
+#include "core/sydCommon.h"
+#include "sydDumpCommand.h"
 
-// odb
-#include <odb/core.hxx>
-
-typedef unsigned int IdType;
+// easylogging : only once initialization (in the main)
+_INITIALIZE_EASYLOGGINGPP
 
 // --------------------------------------------------------------------
-#pragma db object
-class TimePoint
+int main(int argc, char* argv[])
 {
-public:
+  // Init command line
+  GGO(sydDump, args_info);
 
-#pragma db id auto
-  IdType        id;
-  IdType        patient_id; // not strictly needed (can be retrive by serie_id)
-  IdType        serie_id;
-  long          number;
-  double        time_from_injection_in_hours;
+  // Init logging option (verbose)
+  syd::init_logging_verbose_options(args_info);
 
-  friend std::ostream& operator<<(std::ostream& os, const TimePoint & p) {
-    os << p.id << " " << p.number << " " << p.time_from_injection_in_hours;
-    return os;
-  }
+  // Get the current db names/folders
+  syd::DumpCommand * c = new syd::DumpCommand;
+  c->OpenDatabases();
+  c->SetArgs(args_info.inputs, args_info.inputs_num);
+  c->Run();
 
-};
+  // This is the end, my friend.
+}
 // --------------------------------------------------------------------

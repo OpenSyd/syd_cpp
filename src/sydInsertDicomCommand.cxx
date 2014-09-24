@@ -46,10 +46,20 @@ syd::InsertDicomCommand::~InsertDicomCommand()
 
 
 // --------------------------------------------------------------------
+void syd::InsertDicomCommand::OpenCommandDatabases()
+{
+  // Open the ones we want
+  db_ = new syd::ClinicalTrialDatabase();
+  db_->OpenDatabase(get_db_filename("Clinical"), get_db_folder("Clinical"));
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::InsertDicomCommand::SetArgs(char ** inputs, int n)
 {
   if (n < 2) {
-    LOG(FATAL) << "Two parameters are needed <patient> <folders (could be multiple)>, but you provide "
+    LOG(FATAL) << "At least 2 parameters are needed, but you provide "
                << n << " parameter(s)";
   }
   patient_name_ = inputs[0];
@@ -60,24 +70,11 @@ void syd::InsertDicomCommand::SetArgs(char ** inputs, int n)
 
 
 // --------------------------------------------------------------------
-void syd::InsertDicomCommand::AddDatabase(syd::Database * d)
-{
-  if (databases_.size() != 0) {
-    LOG(FATAL) << "InsertDicomCommand::AddDatabase: already a db.";
-  }
-  DatabaseCommand::AddDatabase(d);
-  db_ = static_cast<ClinicalTrialDatabase*>(d);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::InsertDicomCommand::Run()
 {
   // Check database
   if (db_ == NULL) {
-    LOG(FATAL) << "A (single) database of type ClinicalTrialDatabase "
-               << "is needed in InsertDicomCommand. Aborting.";
+    LOG(FATAL) << "Error in InsertDicomCommand, could not find a ClinicalTrialDatabase.";
   }
 
   // Get the new patient
@@ -321,7 +318,6 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   }
   else {
     if (d.filenames_.size() != 1) {
-      //DDS(d.filenames_);
       LOG(WARNING) << "Error I found " << d.filenames_.size() << " files while expecting a single one for NM modality. I only consider the first one.";
     }
     std::string destination = db_->GetFullPath(serie);
@@ -347,8 +343,5 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
       }
     }
   }
-
-  // Final check
-  //  db_->CheckSerie(serie);
 }
 // --------------------------------------------------------------------

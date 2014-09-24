@@ -34,6 +34,7 @@ namespace syd {
   public:
     ClinicalTrialDatabase():Database() {}
     virtual void OpenDatabase();
+    virtual void OpenDatabase(std::string filename, std::string folder) { Database::OpenDatabase(filename, folder); }
 
     void UpdateSerie(Serie & serie);
 

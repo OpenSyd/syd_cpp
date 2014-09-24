@@ -1,0 +1,11 @@
+#File sydInsertDicom.ggo
+
+package "sydInsertDicom"
+usage "sydInsertDicom <patient_name>  <folders>"
+version "0.1"
+description "Insert some Dicom files read in the <folders> in the database, for patient <patient_name>."
+
+option "config"	  	 	-	"Config file"				      string  	no
+option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
+option "rename"   	 	r       "Rename file instead of copying (dangerous!)" flag      off

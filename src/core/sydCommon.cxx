@@ -205,3 +205,22 @@ void syd::DeleteMHDImage(std::string path)
   OFStandard::deleteFile(path_raw.c_str());
 }
 // --------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+// skip line which begin with a sharp '#'
+void syd::SkipComment(std::istream & is)
+{
+  char c;
+  char line[1024];
+  if (is.eof()) return;
+  is >> c ;
+  while (is && (c == '#')) {
+    is.getline (line, 1024);
+    is >> c;
+    if (is.eof()) return;
+  }
+  if (!(is.fail()) && c != '\n')
+    is.unget();
+}
+//------------------------------------------------------------------

@@ -18,7 +18,7 @@
 
 //--------------------------------------------------------------------
 template<class ArgsInfoType>
-void InitVerboseOptions(ArgsInfoType & args_info)
+void init_logging_verbose_options(ArgsInfoType & args_info)
 {
   // Load main default configuration
   el::Configurations defaultConf;
@@ -51,8 +51,8 @@ void InitVerboseOptions(ArgsInfoType & args_info)
                   el::ConfigurationType::Format, "%datetime WARNING %msg");
   defaultConf.set(el::Level::Warning,
                   el::ConfigurationType::MillisecondsWidth, "1");
-  if (args_info.verbose_arg) enabled = "1";
-  else enabled ="0";
+  if (args_info.verbose_arg == -1) enabled = "0";
+  else enabled ="1";
   defaultConf.set(el::Level::Warning, el::ConfigurationType::Enabled, enabled);
 
   // Auto spacing between <<
