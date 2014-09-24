@@ -49,7 +49,7 @@ syd::InsertDicomCommand::~InsertDicomCommand()
 void syd::InsertDicomCommand::OpenCommandDatabases()
 {
   // Open the ones we want
-  db_ = new syd::ClinicalTrialDatabase();
+  db_ = new syd::ClinicDatabase();
   db_->OpenDatabase(get_db_filename("Clinical"), get_db_folder("Clinical"));
 }
 // --------------------------------------------------------------------
@@ -74,7 +74,7 @@ void syd::InsertDicomCommand::Run()
 {
   // Check database
   if (db_ == NULL) {
-    LOG(FATAL) << "Error in InsertDicomCommand, could not find a ClinicalTrialDatabase.";
+    LOG(FATAL) << "Error in InsertDicomCommand, could not find a ClinicDatabase.";
   }
 
   // Get the new patient

@@ -17,10 +17,10 @@
   ===========================================================================**/
 
 // syd
-#include "sydClinicalTrialDatabase.h"
+#include "sydClinicDatabase.h"
 
 // --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::OpenDatabase()
+void syd::ClinicDatabase::OpenDatabase()
 {
   // Get DB filename
   char * bdb = getenv ("SYD_SYNFRIZZ_DB");
@@ -42,7 +42,7 @@ void syd::ClinicalTrialDatabase::OpenDatabase()
 
 
 // --------------------------------------------------------------------
-std::string syd::ClinicalTrialDatabase::GetFullPath(const Patient & patient)
+std::string syd::ClinicDatabase::GetFullPath(const Patient & patient)
 {
   return get_folder()+patient.path;
 }
@@ -50,7 +50,7 @@ std::string syd::ClinicalTrialDatabase::GetFullPath(const Patient & patient)
 
 
 // --------------------------------------------------------------------
-std::string syd::ClinicalTrialDatabase::GetFullPath(const Serie & serie)
+std::string syd::ClinicDatabase::GetFullPath(const Serie & serie)
 {
   std::string p = GetFullPath(GetById<Patient>(serie.patient_id));
   return p+serie.path;
@@ -59,7 +59,7 @@ std::string syd::ClinicalTrialDatabase::GetFullPath(const Serie & serie)
 
 
 // --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::CheckPatient(const Patient & patient)
+void syd::ClinicDatabase::CheckPatient(const Patient & patient)
 {
   // Check the DB : single name, single path, single synfrizz_id
   std::vector<Patient> patients;
@@ -92,7 +92,7 @@ void syd::ClinicalTrialDatabase::CheckPatient(const Patient & patient)
 
 
 // --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::CheckSerie(const Serie & serie)
+void syd::ClinicDatabase::CheckSerie(const Serie & serie)
 {
   // Check the DB : single dicom_uid, path
   std::vector<Serie> series;
@@ -119,7 +119,7 @@ void syd::ClinicalTrialDatabase::CheckSerie(const Serie & serie)
 
 
 // --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::CheckSerie_CT(const Serie & serie)
+void syd::ClinicDatabase::CheckSerie_CT(const Serie & serie)
 {
   // Check the path exist
   std::string path = GetFullPath(serie);
@@ -171,7 +171,7 @@ void syd::ClinicalTrialDatabase::CheckSerie_CT(const Serie & serie)
 
 
 // --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::CheckSerie_NM(const Serie & serie)
+void syd::ClinicDatabase::CheckSerie_NM(const Serie & serie)
 {
   // Check if the file exist
   std::string path = GetFullPath(serie);
@@ -206,7 +206,7 @@ void syd::ClinicalTrialDatabase::CheckSerie_NM(const Serie & serie)
 
 
 // --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::UpdateSerie(Serie & serie)
+void syd::ClinicDatabase::UpdateSerie(Serie & serie)
 {
 
   // Create or get the path for the acquisition day
@@ -244,7 +244,7 @@ void syd::ClinicalTrialDatabase::UpdateSerie(Serie & serie)
 
 
 // --------------------------------------------------------------------
-odb::query<Serie> syd::ClinicalTrialDatabase::GetSeriesQueryFromPatterns(std::vector<std::string> patterns)
+odb::query<Serie> syd::ClinicDatabase::GetSeriesQueryFromPatterns(std::vector<std::string> patterns)
 {
   typedef odb::query<Serie> QueryType;
   QueryType q = (QueryType::id != 0); // required initialization.
@@ -256,7 +256,7 @@ odb::query<Serie> syd::ClinicalTrialDatabase::GetSeriesQueryFromPatterns(std::ve
 
 
 // --------------------------------------------------------------------
-void syd::ClinicalTrialDatabase::AndSeriesQueryFromPattern(odb::query<Serie> & q,
+void syd::ClinicDatabase::AndSeriesQueryFromPattern(odb::query<Serie> & q,
                                                            std::string pattern)
 {
   typedef odb::query<Serie> QueryType;

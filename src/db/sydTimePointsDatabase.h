@@ -22,7 +22,7 @@
 // syd
 #include "sydDatabase.h"
 #include "TimePoint-odb.hxx"
-#include "sydClinicalTrialDatabase.h"
+#include "sydClinicDatabase.h"
 
 // inherit from syd::Database
 // --------------------------------------------------------------------
@@ -40,10 +40,10 @@ namespace syd {
 
     void UpdateAllTimePointNumbers(IdType patient_id);
 
-    void set_clinicaltrial_database(ClinicalTrialDatabase * d) { cdb_ = d; }
+    void set_Clinic_database(ClinicDatabase * d) { cdb_ = d; }
 
   protected:
-    ClinicalTrialDatabase * cdb_;
+    ClinicDatabase * cdb_;
 
 
   }; // end class

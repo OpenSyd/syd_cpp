@@ -21,12 +21,9 @@
 #ifndef SRC_SYDCHECKINTEGRITYCOMMAND_H_
 #define SRC_SYDCHECKINTEGRITYCOMMAND_H_
 
-// std
-#include <string>
-
 // syd
 #include "core/sydDatabaseCommand.h"
-#include "db/clinicaltrial/sydClinicalTrialDatabase.h"
+#include "db/sydClinicDatabase.h"
 #include "core/sydDicomCommon.h"
 
 // --------------------------------------------------------------------
@@ -37,13 +34,16 @@ namespace syd {
     CheckIntegrityCommand();
     ~CheckIntegrityCommand();
 
-    virtual void AddDatabase(syd::Database * d);
     virtual void SetArgs(char ** inputs, int n);
     virtual void Run();
 
+    void set_check_file_content_level(int l) { db_->set_check_file_content_level(l); }
+
    protected:
+    virtual void OpenCommandDatabases();
     void CheckFile(OFString filename);
-    syd::ClinicalTrialDatabase * db_;
+
+    syd::ClinicDatabase * db_;
     std::string patient_name_;
     Patient patient_;
   };

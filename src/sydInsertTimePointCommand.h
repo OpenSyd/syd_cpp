@@ -21,7 +21,7 @@
 
 // syd
 #include "sydDatabaseCommand.h"
-#include "sydClinicalTrialDatabase.h"
+#include "sydClinicDatabase.h"
 #include "sydTimePointsDatabase.h"
 #include "sydDicomCommon.h"
 
@@ -44,7 +44,7 @@ namespace syd {
     virtual void OpenCommandDatabases();
     void Run(Serie serie);
 
-    syd::ClinicalTrialDatabase * db_;
+    syd::ClinicDatabase * db_;
     syd::TimePointsDatabase * tpdb_;
     std::vector<IdType> serie_ids_;
     Patient patient_;

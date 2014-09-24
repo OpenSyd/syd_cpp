@@ -37,25 +37,23 @@ syd::CheckIntegrityCommand::~CheckIntegrityCommand()
 
 
 // --------------------------------------------------------------------
-void syd::CheckIntegrityCommand::SetArgs(char ** inputs, int n)
+void syd::CheckIntegrityCommand::OpenCommandDatabases()
 {
-  if (n < 1) { // FIXME
-    LOG(FATAL) << "SINGLE TYODO parameters are needed TODO, but you provide "
-               << n << " parameter(s)";
-  }
-  patient_name_ = inputs[0];
+  // Open the ones we want
+  db_ = new syd::ClinicDatabase();
+  db_->OpenDatabase(get_db_filename("Clinical"), get_db_folder("Clinical"));
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::CheckIntegrityCommand::AddDatabase(syd::Database * d)
+void syd::CheckIntegrityCommand::SetArgs(char ** inputs, int n)
 {
-  if (databases_.size() != 0) {
-    LOG(FATAL) << "CheckIntegrityCommand::AddDatabase: already a db.";
+  if (n != 1) {
+    LOG(FATAL) << "A single parameter is needed, but you provide "
+               << n << " parameter(s)";
   }
-  DatabaseCommand::AddDatabase(d);
-  db_ = static_cast<ClinicalTrialDatabase*>(d);
+  patient_name_ = inputs[0];
 }
 // --------------------------------------------------------------------
 
@@ -65,7 +63,7 @@ void syd::CheckIntegrityCommand::Run()
 {
   // Check database
   if (db_ == NULL) {
-    LOG(FATAL) << "A (single) database of type ClinicalTrialDatabase "
+    LOG(FATAL) << "A (single) database of type ClinicDatabase "
                << "is needed in CheckIntegrityCommand. Aborting.";
   }
 
@@ -88,7 +86,7 @@ void syd::CheckIntegrityCommand::Run()
   }
 
   // Part 2
-  VLOG(0) << "Part 2 : from files to DB";
+  VLOG(0) << "Part 2 : from files to DB (could be long)";
   // Search for all folders in patient folder
   std::string folder = db_->GetFullPath(patient_);
 

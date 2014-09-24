@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDCLINICALTRIALDATABASE_H
-#define SYDCLINICALTRIALDATABASE_H
+#ifndef SYDCLINICDATABASE_H
+#define SYDCLINICDATABASE_H
 
 // syd
 #include "sydDatabase.h"
@@ -29,10 +29,10 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  class ClinicalTrialDatabase: public Database {
+  class ClinicDatabase: public Database {
 
   public:
-    ClinicalTrialDatabase():Database() {}
+    ClinicDatabase():Database() {}
     virtual void OpenDatabase();
     virtual void OpenDatabase(std::string filename, std::string folder) { Database::OpenDatabase(filename, folder); }
 

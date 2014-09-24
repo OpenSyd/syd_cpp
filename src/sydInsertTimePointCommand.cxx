@@ -42,7 +42,7 @@ syd::InsertTimePointCommand::~InsertTimePointCommand()
 void syd::InsertTimePointCommand::OpenCommandDatabases()
 {
   // Open the ones we want
-  db_ = new syd::ClinicalTrialDatabase();
+  db_ = new syd::ClinicDatabase();
   db_->OpenDatabase(get_db_filename("Clinical"), get_db_folder("Clinical"));
 
   tpdb_ = new syd::TimePointsDatabase();
@@ -83,7 +83,7 @@ void syd::InsertTimePointCommand::Run()
 {
   // Check database
   if (db_ == NULL) {
-    LOG(FATAL) << "A ClinicalTrialDatabase is needed in InsertTimePointCommand. Aborting.";
+    LOG(FATAL) << "A ClinicDatabase is needed in InsertTimePointCommand. Aborting.";
   }
 
   if (tpdb_ == NULL) {
@@ -91,7 +91,7 @@ void syd::InsertTimePointCommand::Run()
   }
 
   // Set DB pointer
-  tpdb_->set_clinicaltrial_database(db_);
+  tpdb_->set_Clinic_database(db_);
 
   // if (db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name_, patient_)) {
   //   db_->CheckPatient(patient_);
@@ -142,14 +142,15 @@ void syd::InsertTimePointCommand::Run(Serie serie)
   TimePoint timepoint;
   bool b = tpdb_->GetIfExist<TimePoint>(odb::query<TimePoint>::serie_id == serie.id, timepoint);
   if (!b) {  // It does not exist, we create it
-    VLOG(1) << "Creating new TimePoint for date " << serie.acquisition_date;
+    VLOG(1) << "Creating new TimePoint for " << patient_.name << " date " << serie.acquisition_date;
     timepoint.patient_id = patient_.id;
     timepoint.serie_id = serie.id;
     timepoint.number=0;
     tpdb_->Insert(timepoint);
   }
   else {
-    VLOG(1) << "TimePoint " << timepoint.number << " "
+    VLOG(1) << "TimePoint " << patient_.name << " "
+            << timepoint.number << " "
             << serie.acquisition_date << " ("
             << timepoint.time_from_injection_in_hours
             << " hours) already exist, deleting current image and updating.";

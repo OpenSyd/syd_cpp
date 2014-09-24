@@ -21,7 +21,7 @@
 
 // syd
 #include "sydDatabaseCommand.h"
-#include "sydClinicalTrialDatabase.h"
+#include "sydClinicDatabase.h"
 #include "sydDicomCommon.h"
 
 // --------------------------------------------------------------------
@@ -44,7 +44,7 @@ namespace syd {
     void Run(std::string folder);
     void UpdateDicom(Patient & p, const DicomSerieInfo & d);
 
-    syd::ClinicalTrialDatabase * db_;
+    syd::ClinicDatabase * db_;
     std::string patient_name_;
     std::vector<std::string> folders_;
     Patient patient_;

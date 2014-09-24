@@ -2,7 +2,7 @@
 
 #----------------------------------------------------------
 # Old stuff to keep
-add_subdirectory(${SYD_SOURCE_DIR}/src/old ${PROJECT_BINARY_DIR}/src/old)
+#add_subdirectory(${SYD_SOURCE_DIR}/src/old ${PROJECT_BINARY_DIR}/src/old)
 #----------------------------------------------------------
 
 
@@ -14,18 +14,10 @@ include_directories(${PROJECT_SOURCE_DIR}/src/core)
 
 
 #----------------------------------------------------------
-# DB Clinical Trial
-add_subdirectory(${SYD_SOURCE_DIR}/src/db/clinicaltrial ${PROJECT_BINARY_DIR}/src/db/clinicaltrial)
-include_directories(${PROJECT_BINARY_DIR}/src/db/clinicaltrial)
-include_directories(${PROJECT_SOURCE_DIR}/src/db/clinicaltrial)
-#----------------------------------------------------------
-
-
-#----------------------------------------------------------
-# DB Time Points
-add_subdirectory(${SYD_SOURCE_DIR}/src/db/timepoints ${PROJECT_BINARY_DIR}/src/db/timepoints)
-include_directories(${PROJECT_BINARY_DIR}/src/db/timepoints)
-include_directories(${PROJECT_SOURCE_DIR}/src/db/timepoints)
+# DB
+add_subdirectory(${SYD_SOURCE_DIR}/src/db ${PROJECT_BINARY_DIR}/src/db)
+include_directories(${PROJECT_BINARY_DIR}/src/db)
+include_directories(${PROJECT_SOURCE_DIR}/src/db)
 #----------------------------------------------------------
 
 
@@ -33,7 +25,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src/db/timepoints)
 set(SYD_LIBS
   ${DCMTK_LIBRARIES}
   sydTimePointsDatabase
-  sydClinicalTrialDatabase
+  sydClinicDatabase
   sydCore
   sqlite3 odb-sqlite odb z
   ${CERES_LIBRARIES}
@@ -42,14 +34,14 @@ set(SYD_LIBS
 
 
 #----------------------------------------------------------
-wrap_ggo(syd syd.ggo)
-add_executable(syd syd.cxx syd_ggo.c
-  sydClearSeriesCommand.cxx
-  sydDumpSeriesCommand.cxx
-  sydCheckIntegrityCommand.cxx
-  sydInsertTimePointCommand.cxx
-  sydInsertDicomCommand.cxx)
-target_link_libraries(syd ${SYD_LIBS})
+# wrap_ggo(syd syd.ggo)
+# add_executable(syd syd.cxx syd_ggo.c
+#   sydClearSeriesCommand.cxx
+#   sydDumpSeriesCommand.cxx
+#   sydCheckIntegrityCommand.cxx
+#   sydInsertTimePointCommand.cxx
+#   sydInsertDicomCommand.cxx)
+# target_link_libraries(syd ${SYD_LIBS})
 #----------------------------------------------------------
 
 
@@ -71,4 +63,11 @@ target_link_libraries(sydInsertDicom ${SYD_LIBS})
 wrap_ggo(sydInsertTimePoint sydInsertTimePoint.ggo)
 add_executable(sydInsertTimePoint sydInsertTimePoint.cxx sydInsertTimePoint_ggo.c sydInsertTimePointCommand.cxx)
 target_link_libraries(sydInsertTimePoint ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydCheckIntegrity sydCheckIntegrity.ggo)
+add_executable(sydCheckIntegrity sydCheckIntegrity.cxx sydCheckIntegrity_ggo.c sydCheckIntegrityCommand.cxx)
+target_link_libraries(sydCheckIntegrity ${SYD_LIBS})
 #----------------------------------------------------------

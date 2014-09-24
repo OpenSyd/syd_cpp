@@ -40,7 +40,7 @@ syd::DumpCommand::~DumpCommand()
 void syd::DumpCommand::OpenCommandDatabases()
 {
   // Open the ones we want
-  db_ = new syd::ClinicalTrialDatabase();
+  db_ = new syd::ClinicDatabase();
   db_->OpenDatabase(get_db_filename("Clinical"), get_db_folder("Clinical"));
 
   tpdb_ = new syd::TimePointsDatabase();
@@ -52,13 +52,14 @@ void syd::DumpCommand::OpenCommandDatabases()
 // --------------------------------------------------------------------
 void syd::DumpCommand::SetArgs(char ** inputs, int n)
 {
-  if (n < 2) {
+  if (n == 1) patient_name_ = "all";
+  if (n < 1) {
     LOG(FATAL) << "At least 2 parameters are needed, but you provide "
                << n << " parameter(s)";
   }
   dump_type_ = inputs[0];
   std::transform(dump_type_.begin(), dump_type_.end(), dump_type_.begin(), ::tolower);
-  patient_name_ = inputs[1];
+  if (n > 1) patient_name_ = inputs[1];
   for(auto i=2; i<n; i++)
     patterns_.push_back(inputs[i]);
 }
@@ -70,7 +71,7 @@ void syd::DumpCommand::Run()
 {
   // Check database
   if (db_ == NULL) {
-    LOG(FATAL) << "Error in DumpCommand, could not find a ClinicalTrialDatabase.";
+    LOG(FATAL) << "Error in DumpCommand, could not find a ClinicDatabase.";
   }
 
   // Consider the patients
