@@ -33,12 +33,21 @@ int main(int argc, char* argv[])
   // Init logging option (verbose)
   syd::init_logging_verbose_options(args_info);
 
-  // Get the current db names/folders
-  syd::InsertTimepointCommand * c = new syd::InsertTimepointCommand;
+  // Check args
+  if (args_info.inputs_num < 3) {
+    LOG(FATAL) << "Error please, provide <db1> <db2> <serie ids> (see usage)";
+  }
+
+  // Get the current db names
+  std::string db1 = args_info.inputs[0];
+  std::string db2 = args_info.inputs[1];
+  syd::InsertTimepointCommand * c = new syd::InsertTimepointCommand(db1, db2);
+
+  // Execute the command
   c->set_ct_selection_patterns(args_info.ct_arg);
-  c->OpenDatabases();
-  c->SetArgs(args_info.inputs, args_info.inputs_num);
-  c->Run();
+  std::vector<std::string> serie_ids;
+  for(auto i=2; i<args_info.inputs_num; i++) serie_ids.push_back(args_info.inputs[i]);
+  c->InsertTimepoint(serie_ids);
 
   // This is the end, my friend.
 }

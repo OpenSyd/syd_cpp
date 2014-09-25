@@ -23,6 +23,7 @@
 syd::DatabaseCommand::DatabaseCommand()
 {
   init_filename_="";
+  OpenFileOfDatabaseNames();
 }
 // --------------------------------------------------------------------
 
@@ -36,7 +37,7 @@ syd::DatabaseCommand::~DatabaseCommand()
 
 
 // --------------------------------------------------------------------
-void syd::DatabaseCommand::OpenDatabases()
+void syd::DatabaseCommand::OpenFileOfDatabaseNames()
 {
   // Get the init filename that contains the list of db names/folders
   if (init_filename_ == "") { // look env var
@@ -61,9 +62,6 @@ void syd::DatabaseCommand::OpenDatabases()
     }
   }
   in.close();
-
-  // Call specific function to open the db
-  OpenCommandDatabases();
 }
 // --------------------------------------------------------------------
 

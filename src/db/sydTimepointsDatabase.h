@@ -40,6 +40,7 @@ namespace syd {
     std::string GetFullPathSPECT(Timepoint timepoint);
     std::string GetFullPathCT(Timepoint timepoint);
     std::string Print(Timepoint t);
+    std::string Print(Patient p);
     void UpdateAllTimepointNumbers(IdType patient_id);
     void set_clinic_database(ClinicDatabase * d) { cdb_ = d; }
 

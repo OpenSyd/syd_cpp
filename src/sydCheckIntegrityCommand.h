@@ -31,21 +31,17 @@ namespace syd {
 
   class CheckIntegrityCommand: public syd::DatabaseCommand {
    public:
-    CheckIntegrityCommand();
+    CheckIntegrityCommand(std::string db);
+    CheckIntegrityCommand(syd::ClinicDatabase * db);
     ~CheckIntegrityCommand();
-
-    virtual void SetArgs(char ** inputs, int n);
-    virtual void Run();
 
     void set_check_file_content_level(int l) { db_->set_check_file_content_level(l); }
 
-   protected:
-    virtual void OpenCommandDatabases();
-    void CheckFile(OFString filename);
+    void CheckIntegrity(std::string patient_name);
 
+   protected:
+    void CheckFile(OFString filename);
     syd::ClinicDatabase * db_;
-    std::string patient_name_;
-    Patient patient_;
   };
 
 }  // namespace syd

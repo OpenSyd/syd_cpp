@@ -16,37 +16,41 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SYDDUMPCLINICCOMMAND_H
+#define SYDDUMPCLINICCOMMAND_H
+
 // syd
-#include "sydCheckIntegrity_ggo.h"
-#include "core/sydCommon.h"
-#include "sydCheckIntegrityCommand.h"
-
-// easylogging : only once initialization (in the main)
-_INITIALIZE_EASYLOGGINGPP
+#include "sydDatabaseCommand.h"
+#include "sydClinicDatabase.h"
+#include "sydDicomCommon.h"
 
 // --------------------------------------------------------------------
-int main(int argc, char* argv[])
-{
-  // Init command line
-  GGO(sydCheckIntegrity, args_info);
+namespace syd {
 
-  // Init logging option (verbose)
-  syd::init_logging_verbose_options(args_info);
+  class DumpClinicCommand: public syd::DatabaseCommand
+  {
+  public:
 
-  // Check args
-  if (args_info.inputs_num < 2) {
-    LOG(FATAL) << "Error please, provide <db> <patient> (see usage)";
-  }
+    DumpClinicCommand(std::string db);
+    DumpClinicCommand(syd::ClinicDatabase * db);
+    ~DumpClinicCommand();
 
-  // Get the current db names
-  std::string db = args_info.inputs[0];
-  std::string patient = args_info.inputs[1];
+    // FIXME to remove
+    virtual void SetArgs(char ** inputs, int n) {}
+    virtual void Run() {}
 
-  // Get the current db names/folders
-  syd::CheckIntegrityCommand * c = new syd::CheckIntegrityCommand(db);
-  c->set_check_file_content_level(args_info.level_arg);
-  c->CheckIntegrity(patient);
+    virtual void Dump(std::string cmd, std::string patient_name, std::vector<std::string> & patterns);
 
-  // This is the end, my friend.
-}
+    void DumpTimepoints(Patient patient, std::vector<std::string> & patterns);
+
+  protected:
+    void Initialization();
+    virtual void OpenCommandDatabases() {} // FIXME to remove
+    syd::ClinicDatabase * db_;
+
+  }; // class DumpClinicCommand
+
+} // namespace syd
 // --------------------------------------------------------------------
+
+#endif

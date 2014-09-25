@@ -32,17 +32,17 @@ namespace syd {
   {
   public:
 
-    InsertTimepointCommand();
+    InsertTimepointCommand(std::string db1, std::string db2);
+    InsertTimepointCommand(syd::ClinicDatabase * db1, syd::TimepointsDatabase  * db2);
     ~InsertTimepointCommand();
-
-    virtual void SetArgs(char ** inputs, int n);
-    virtual void Run();
 
     void set_ct_selection_patterns(std::string s);
 
+    void InsertTimepoint(std::vector<std::string> serie_ids);
+    void InsertTimepoint(Serie serie);
+
   protected:
-    virtual void OpenCommandDatabases();
-    void Run(Serie serie);
+    void Initialization();
 
     syd::ClinicDatabase * db_;
     syd::TimepointsDatabase * tpdb_;

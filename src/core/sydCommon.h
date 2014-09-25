@@ -27,6 +27,7 @@
 // syd
 #include "sydDD.h"
 #include "sydDicomCommon.h"
+#include "md5.h"
 
 // easylogging
 // The first macro is needed to prevent default log file to be created

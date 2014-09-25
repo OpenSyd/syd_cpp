@@ -33,12 +33,21 @@ int main(int argc, char* argv[])
   // Init logging option (verbose)
   syd::init_logging_verbose_options(args_info);
 
+  // Check args
+  if (args_info.inputs_num < 3) {
+    LOG(FATAL) << "Error please, provide <db> <patient_name> <folders> (see usage)";
+  }
+
+  // Get the current db names
+  std::string db = args_info.inputs[0];
+  syd::InsertDicomCommand * c = new syd::InsertDicomCommand(db);
+
   // Get the current db names/folders
-  syd::InsertDicomCommand * c = new syd::InsertDicomCommand;
   c->set_rename_flag(args_info.rename_flag);
-  c->OpenDatabases();
-  c->SetArgs(args_info.inputs, args_info.inputs_num);
-  c->Run();
+  std::string patient_name = args_info.inputs[1];
+  std::vector<std::string> folders;
+  for(auto i=2; i<args_info.inputs_num; i++) folders.push_back(args_info.inputs[i]);
+  c->InsertDicom(patient_name, folders);
 
   // This is the end, my friend.
 }

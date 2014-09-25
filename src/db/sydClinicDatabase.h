@@ -36,7 +36,9 @@ namespace syd {
     ~ClinicDatabase() {}
 
     void UpdateSerie(Serie & serie);
+
     void set_check_file_content_level(int l) { check_file_content_level_ = l; }
+
     void CheckPatient(const Patient & patient);
     void CheckSerie(const Serie & serie);
     void CheckSerie_CT(const Serie & serie);
@@ -44,6 +46,10 @@ namespace syd {
 
     std::string GetFullPath(const Patient & patient);
     std::string GetFullPath(const Serie & serie);
+    void GetPatientsByName(std::string patient_name, std::vector<Patient> & patients);
+
+    std::string Print(Patient patient, int level=0);
+    std::string Print(Serie serie);
 
     odb::query<Serie> GetSeriesQueryFromPatterns(std::vector<std::string> patterns);
     void AndSeriesQueryFromPattern(odb::query<Serie> & q, std::string pattern);

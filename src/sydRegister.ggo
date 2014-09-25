@@ -1,9 +1,14 @@
 #File sydRegister.ggo
 
 package "sydRegister"
-usage "sydRegister <patient|all>  <a> <b>"
+usage "sydRegister <db1> <db2> <db3> <patient>  <a> <b>"
 version "0.1"
-description "Register ct timepoint a with ct timepoint b for patient p."
+description "Register ct of timepoints number 'a' and 'b' for the patient .
+- <db1> is the name of a ClinicDatabase.
+- <db2> is the name of the input TimepointsDatabase (non registered)
+- <db3> is the name of the output TimepointsDatabase (after registration)
+- <patient> is the name of the patient
+"
 
 option "config"	  	 	-	"Config file"				string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no

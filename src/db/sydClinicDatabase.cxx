@@ -46,6 +46,32 @@ std::string syd::ClinicDatabase::GetFullPath(const Serie & serie)
 
 
 // --------------------------------------------------------------------
+void syd::ClinicDatabase::GetPatientsByName(std::string patient_name,
+                                            std::vector<Patient> & patients)
+{
+  if (patient_name == "all" or patient_name == "") {
+    LoadVector<Patient>(patients);
+    // Sort by acquisition_date
+    std::sort(patients.begin(), patients.end(),
+              [&](Patient a, Patient b) { return syd::IsBefore(a.injection_date, b.injection_date); }  );
+  }
+  else { // Get only one patient
+    Patient patient;
+    if (!GetIfExist<Patient>(odb::query<Patient>::name == patient_name, patient)) {
+      LOG(FATAL) << "Error, the patient " << patient_name << " does not exist";
+    }
+    patients.push_back(patient);
+  }
+
+  // Error if not patient found
+  if (patients.size() == 0) {
+    LOG(FATAL) << "Error not patient found with '" << patient_name << "'.";
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::ClinicDatabase::CheckPatient(const Patient & patient)
 {
   // Check the DB : single name, single path, single synfrizz_id
@@ -243,8 +269,7 @@ odb::query<Serie> syd::ClinicDatabase::GetSeriesQueryFromPatterns(std::vector<st
 
 
 // --------------------------------------------------------------------
-void syd::ClinicDatabase::AndSeriesQueryFromPattern(odb::query<Serie> & q,
-                                                           std::string pattern)
+void syd::ClinicDatabase::AndSeriesQueryFromPattern(odb::query<Serie> & q, std::string pattern)
 {
   typedef odb::query<Serie> QueryType;
   pattern = "%"+pattern+"%";
@@ -255,5 +280,55 @@ void syd::ClinicDatabase::AndSeriesQueryFromPattern(odb::query<Serie> & q,
      QueryType::dicom_series_desc.like(pattern) ||
      QueryType::reconstruction_date.like(pattern) ||
      QueryType::dicom_study_desc.like(pattern));
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::ClinicDatabase::Print(Patient patient, int level)
+{
+  std::stringstream ss;
+  ss << patient.name << " "
+     << patient.synfrizz_id << "\t"
+     << patient.injection_date;
+  if (level > 0) {
+    ss << "\t"  << (patient.was_treated ? "90Y":"no ") << "\t"
+       << patient.injected_quantity_in_MBq << " MBq";
+  }
+  if (level > 1) {
+    // Get the number of series for this patient
+    std::vector<Serie> series;
+    LoadVector<Serie>(series, odb::query<Serie>::patient_id == patient.id);
+    int n = series.size();
+    int nb_ct = 0;
+    int nb_nm = 0;
+    ss << "\t";
+    for(auto i=series.begin(); i != series.end(); i++) {
+      if (i->modality == "CT") nb_ct++;
+      else nb_nm++;
+    }
+    ss << nb_ct << " CTs \t" << nb_nm << " NMs";
+  }
+  return ss.str();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::ClinicDatabase::Print(Serie serie)
+{
+  Patient patient = GetById<Patient>(serie.patient_id);
+  std::stringstream ss;
+  std::cout << patient.name << " "
+            << patient.synfrizz_id << " "
+            << serie.id << " "
+            << serie.acquisition_date << " "
+            << serie.reconstruction_date << " "
+            << serie.dicom_study_desc << "\t"
+            << serie.dicom_series_desc << "\t"
+            << serie.dicom_dataset_name << "\t"
+            << serie.dicom_image_id << "\t"
+            << serie.dicom_instance_number;
+    return ss.str();
 }
 // --------------------------------------------------------------------

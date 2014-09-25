@@ -20,10 +20,31 @@
 #include "sydRegisterCommand.h"
 
 // --------------------------------------------------------------------
-syd::RegisterCommand::RegisterCommand():DatabaseCommand()
+syd::RegisterCommand::RegisterCommand(ClinicDatabase * d1, TimepointsDatabase * d2, TimepointsDatabase * d3):
+  DatabaseCommand(), db_(d1), tpdb_(d2), reg_tpdb_(d3)
 {
-  db_ = NULL;
-  patient_name_ = "noname";
+  Initialization();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RegisterCommand::RegisterCommand(std::string d1, std::string d2, std::string d3):
+  DatabaseCommand()
+{
+  db_ = OpenNewDatabase<ClinicDatabase>(d1);
+  tpdb_ = OpenNewDatabase<TimepointsDatabase>(d2);
+  reg_tpdb_ = OpenNewDatabase<TimepointsDatabase>(d3);
+  Initialization();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::RegisterCommand::Initialization()
+{
+  tpdb_->set_clinic_database(db_);
+  reg_tpdb_->set_clinic_database(db_);
 }
 // --------------------------------------------------------------------
 
@@ -36,60 +57,34 @@ syd::RegisterCommand::~RegisterCommand()
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-void syd::RegisterCommand::OpenCommandDatabases()
-{
-  // Open the required db
-  db_ = OpenNewDatabase<ClinicDatabase>("Clinic");
-  tpdb_ = OpenNewDatabase<TimepointsDatabase>("Timepoints");
-  reg_tpdb_ = OpenNewDatabase<TimepointsDatabase>("RegistrationTimepoints");
-
-  tpdb_->set_clinic_database(db_);
-  reg_tpdb_->set_clinic_database(db_);
-}
-// --------------------------------------------------------------------
-
 
 // --------------------------------------------------------------------
-void syd::RegisterCommand::SetArgs(char ** inputs, int n)
-{
-  if (n < 3) {
-    LOG(FATAL) << "At least 3 parameters are needed, but you provide "
-               << n << " parameter(s)";
-  }
-  patient_name_ = inputs[0];
-  reference_number_ = atoi(inputs[1]);
-  moving_number_ = atoi(inputs[2]);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::RegisterCommand::Run()
+void syd::RegisterCommand::Run(std::string patient_name, int ref_number, int mov_number)
 {
   DD("run");
 
   // Get the patient
-  if (!db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name_, patient_)) {
-    LOG(FATAL) << "Error, the patient " << patient_name_ << " does not exist";
+  Patient patient;
+  if (!db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name, patient)) {
+    LOG(FATAL) << "Error, the patient " << patient_name << " does not exist";
   }
 
   // Get the timepoints
   Timepoint reference_timepoint;
-  bool b = tpdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == patient_.id &&
-                                        odb::query<Timepoint>::number == reference_number_,
+  bool b = tpdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == patient.id &&
+                                        odb::query<Timepoint>::number == ref_number,
                                         reference_timepoint);
   if (!b) {
     LOG(FATAL) << "Error could not find the (reference) timepoint number "
-               << reference_number_ << " for the patient " << patient_.name;
+               << ref_number << " for the patient " << patient.name;
   }
   Timepoint moving_timepoint;
-  b = tpdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == patient_.id &&
-                                        odb::query<Timepoint>::number == moving_number_,
+  b = tpdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == patient.id &&
+                                        odb::query<Timepoint>::number == mov_number,
                                         moving_timepoint);
   if (!b) {
     LOG(FATAL) << "Error could not find the (moving) timepoint number "
-               << moving_number_ << " for the patient " << patient_.name;
+               << mov_number << " for the patient " << patient.name;
   }
   DD(reference_timepoint);
   DD(moving_timepoint);
@@ -113,8 +108,23 @@ void syd::RegisterCommand::Run(Timepoint ref, Timepoint mov)
 
   // Update the fields
   ref_timepoint.copy(ref);
+  reg_tpdb_->Update(ref_timepoint);
+  // reg_tpdb_->UpdateAllTimepointNumbers(ref_timepoint.patientid);
 
-  DD(b);
+  // Copy the ref image (if not exist)
+  std::string f = reg_tpdb_->GetFullPathSPECT(ref_timepoint);
+  DD(f);
+
+  /*
+  MHDImage im_in = tpdb_->GetById<MHDImage>(ref._image_spect_id);
+  MHDImage im_out = reg_tpdb_->GetById<MHDImage>(ref_timepoint._image_spect_id);
+  if (im_in.md5 != im_out.md5) {
+    // need to copy
+    DD("copy");
+  }
+  */
+
+  // Verbose
   if (!b) {
     VLOG(1) << "Creating Timepoint " << reg_tpdb_->Print(ref_timepoint);
   }
@@ -122,10 +132,39 @@ void syd::RegisterCommand::Run(Timepoint ref, Timepoint mov)
     VLOG(1) << "Updating Timepoint " << reg_tpdb_->Print(ref_timepoint);
   }
 
-  // ref_timepoint.patient_id = serie.patient_id; // to remove FIXME
-  // ref_timepoint.serie_id = serie.id;
-  // ref_timepoint.number = ref.number;
-  // ref_timepoint.time_from_injection_in_hours = ref.time_from_injection_in_hours;
+
+  // mov timepoint
+  Timepoint mov_timepoint;
+  b = reg_tpdb_->GetOrInsert<Timepoint>(odb::query<Timepoint>::serie_id == mov.serie_id, mov_timepoint);
+
+  // Update the fields
+  mov_timepoint.copy(mov);
+  reg_tpdb_->Update(mov_timepoint);
+  // reg_tpdb_->UpdateAllTimepointNumbers(mov_timepoint.patientid);
+
+  // Copy the mov image (if not exist)
+  std::string f_mov = reg_tpdb_->GetFullPathSPECT(mov_timepoint);
+  DD(f_mov);
+
+  // Verbose
+  if (!b) {
+    VLOG(1) << "Creating Timepoint " << reg_tpdb_->Print(mov_timepoint);
+  }
+  else {
+    VLOG(1) << "Updating Timepoint " << reg_tpdb_->Print(mov_timepoint);
+  }
+
+  // trial md5
+  /*
+  std::string s = tpdb_->GetFullPathSPECT(ref);
+  DD(s);
+  typedef itk::Image<float, 3> ImageType;
+  ImageType::Pointer spect = syd::ReadImage<ImageType>(s);
+  std::string m = md5((const char*)spect->GetBufferPointer());
+  DD(m);
+  */
+
+
 
   // Check output folder or create
 

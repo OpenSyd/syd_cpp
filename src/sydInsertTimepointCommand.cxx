@@ -21,10 +21,28 @@
 #include "sydImage.h"
 
 // --------------------------------------------------------------------
-syd::InsertTimepointCommand::InsertTimepointCommand():DatabaseCommand()
+syd::InsertTimepointCommand::InsertTimepointCommand(std::string db1, std::string db2):DatabaseCommand()
 {
-  db_ = NULL;
-  tpdb_ = NULL;
+  db_ = OpenNewDatabase<ClinicDatabase>(db1);
+  tpdb_ = OpenNewDatabase<TimepointsDatabase>(db2);
+  Initialization();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::InsertTimepointCommand::InsertTimepointCommand(syd::ClinicDatabase * db1, syd::TimepointsDatabase  * db2):
+  db_(db1), tpdb_(db2)
+{
+  Initialization();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::InsertTimepointCommand::Initialization()
+{
+  tpdb_->set_clinic_database(db_);
   ct_selection_patterns_.clear();
 }
 // --------------------------------------------------------------------
@@ -34,17 +52,6 @@ syd::InsertTimepointCommand::InsertTimepointCommand():DatabaseCommand()
 syd::InsertTimepointCommand::~InsertTimepointCommand()
 {
 
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::InsertTimepointCommand::OpenCommandDatabases()
-{
-  // Open the required db
-  db_ = OpenNewDatabase<ClinicDatabase>("Clinic");
-  tpdb_ = OpenNewDatabase<TimepointsDatabase>("Timepoints");
-  tpdb_->set_clinic_database(db_);
 }
 // --------------------------------------------------------------------
 
@@ -61,44 +68,26 @@ void syd::InsertTimepointCommand::set_ct_selection_patterns(std::string s)
 
 
 // --------------------------------------------------------------------
-void syd::InsertTimepointCommand::SetArgs(char ** inputs, int n)
+void syd::InsertTimepointCommand::InsertTimepoint(std::vector<std::string> inputs)
 {
-  if (n < 1) {
-    LOG(FATAL) << "At least 1 parameters is needed, but you provide "
-               << n << " parameter(s)";
-  }
-  //  patient_name_ = inputs[0];
-  for(auto i=0; i<n; i++) {
+  // Convert serie to u long
+  std::vector<IdType> ids;
+  for(auto i=0; i<inputs.size(); i++) {
     IdType id = toULong(inputs[i]);
-    serie_ids_.push_back(id);
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::InsertTimepointCommand::Run()
-{
-  // Check database
-  if (db_ == NULL) {
-    LOG(FATAL) << "A ClinicDatabase is needed in InsertTimepointCommand. Aborting.";
-  }
-
-  if (tpdb_ == NULL) {
-    LOG(FATAL) << "A TimepointsDatabase is needed in InsertTimepointCommand. Aborting.";
+    ids.push_back(id);
   }
 
   // Insert all series
-  for(auto i=serie_ids_.begin(); i<serie_ids_.end(); i++)  {
-    Serie serie = db_->GetById<Serie>(*i);
-    Run(serie);
+  for(auto i: ids) {
+    Serie serie = db_->GetById<Serie>(i);
+    InsertTimepoint(serie);
   }
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::InsertTimepointCommand::Run(Serie serie)
+void syd::InsertTimepointCommand::InsertTimepoint(Serie serie)
 {
   // Check modality
   if (serie.modality != "NM") {

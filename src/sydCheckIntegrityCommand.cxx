@@ -20,10 +20,17 @@
 #include "sydCheckIntegrityCommand.h"
 
 // --------------------------------------------------------------------
-syd::CheckIntegrityCommand::CheckIntegrityCommand():DatabaseCommand()
+syd::CheckIntegrityCommand::CheckIntegrityCommand(std::string db):DatabaseCommand()
 {
-  db_ = NULL;
-  patient_name_ = "noname";
+  db_ = OpenNewDatabase<ClinicDatabase>(db);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::CheckIntegrityCommand::CheckIntegrityCommand(syd::ClinicDatabase * db):
+  db_(db)
+{
 }
 // --------------------------------------------------------------------
 
@@ -37,47 +44,21 @@ syd::CheckIntegrityCommand::~CheckIntegrityCommand()
 
 
 // --------------------------------------------------------------------
-void syd::CheckIntegrityCommand::OpenCommandDatabases()
+void syd::CheckIntegrityCommand::CheckIntegrity(std::string patient_name)
 {
-  // Open the ones we want
-  db_ = OpenNewDatabase<ClinicDatabase>("Clinical");
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::CheckIntegrityCommand::SetArgs(char ** inputs, int n)
-{
-  if (n != 1) {
-    LOG(FATAL) << "A single parameter is needed, but you provide "
-               << n << " parameter(s)";
-  }
-  patient_name_ = inputs[0];
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::CheckIntegrityCommand::Run()
-{
-  // Check database
-  if (db_ == NULL) {
-    LOG(FATAL) << "A (single) database of type ClinicDatabase "
-               << "is needed in CheckIntegrityCommand. Aborting.";
-  }
-
   // Get the new patient
-  if (db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name_, patient_)) {
-    db_->CheckPatient(patient_);
+  Patient patient;
+  if (db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name, patient)) {
+    db_->CheckPatient(patient);
   }
   else {
-    LOG(FATAL) << "Error, the patient " << patient_name_ << " does not exist";
+    LOG(FATAL) << "Error, the patient " << patient_name << " does not exist";
   }
 
   // Part 1
   VLOG(0) << "Part 1: from DB to files";
   std::vector<Serie> series;
-  db_->LoadVector<Serie>(series, odb::query<Serie>::patient_id == patient_.id);
+  db_->LoadVector<Serie>(series, odb::query<Serie>::patient_id == patient.id);
   VLOG(1) << "Found " << series.size() << " series. Checking ...";
   for(auto i=series.begin(); i<series.end(); i++) {
     VLOG(2) << "Checking serie " << i->id << " " << i->path;
@@ -87,7 +68,7 @@ void syd::CheckIntegrityCommand::Run()
   // Part 2
   VLOG(0) << "Part 2 : from files to DB (could be long)";
   // Search for all folders in patient folder
-  std::string folder = db_->GetFullPath(patient_);
+  std::string folder = db_->GetFullPath(patient);
 
   // For all folders, find dicom
   if (!OFStandard::dirExists(folder.c_str())) {

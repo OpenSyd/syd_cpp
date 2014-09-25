@@ -20,9 +20,26 @@
 #include "sydInsertDicomCommand.h"
 
 // --------------------------------------------------------------------
-syd::InsertDicomCommand::InsertDicomCommand():DatabaseCommand()
+syd::InsertDicomCommand::InsertDicomCommand(std::string db):DatabaseCommand()
 {
-  db_ = NULL;
+  db_ = OpenNewDatabase<ClinicDatabase>(db);
+  Initialization();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::InsertDicomCommand::InsertDicomCommand(syd::ClinicDatabase * db):
+  db_(db)
+{
+  Initialization();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::InsertDicomCommand::Initialization()
+{
   patient_name_ = "noname";
   set_rename_flag(false);
 
@@ -33,6 +50,11 @@ syd::InsertDicomCommand::InsertDicomCommand():DatabaseCommand()
 
   e = new DcmDictEntry(0x0020, 0x0013, EVR_IS, "InstanceNumber", 0, DcmVariableVM, NULL, true, NULL);
   globalDataDict.addEntry(e);
+
+  // try to remove warning from dcmtk (dont work)
+  //dcmtk::log4cplus::helpers::LogLog * loglog = dcmtk::log4cplus::helpers::LogLog::getLogLog();
+  //loglog->setQuietMode(true);
+  //loglog->setInternalDebugging(false);
 }
 // --------------------------------------------------------------------
 
@@ -46,53 +68,24 @@ syd::InsertDicomCommand::~InsertDicomCommand()
 
 
 // --------------------------------------------------------------------
-void syd::InsertDicomCommand::OpenCommandDatabases()
+void syd::InsertDicomCommand::InsertDicom(std::string patient_name, std::vector<std::string> & folders)
 {
-  // Open the ones we want
-  db_ = OpenNewDatabase<ClinicDatabase>("Clinical");
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::InsertDicomCommand::SetArgs(char ** inputs, int n)
-{
-  if (n < 2) {
-    LOG(FATAL) << "At least 2 parameters are needed, but you provide "
-               << n << " parameter(s)";
-  }
-  patient_name_ = inputs[0];
-  for(auto i=1; i<n; i++)
-    folders_.push_back(inputs[i]);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::InsertDicomCommand::Run()
-{
-  // Check database
-  if (db_ == NULL) {
-    LOG(FATAL) << "Error in InsertDicomCommand, could not find a ClinicDatabase.";
-  }
-
-  // Get the new patient
-  if (db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name_, patient_)) {
-    db_->CheckPatient(patient_);
-  }
-  else {
-    LOG(FATAL) << "Error, the patient " << patient_name_ << " does not exist";
-  }
-
   // Loop on given folders
-  for(auto i=0; i<folders_.size(); i++) Run(folders_[i]);
+  for(auto i:folders) InsertDicom(patient_name, i);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::InsertDicomCommand::Run(std::string folder)
+void syd::InsertDicomCommand::InsertDicom(std::string patient_name, std::string folder)
 {
+  // Get patient
+  Patient patient;
+  bool b = db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name, patient);
+  if (!b) {
+    LOG(FATAL) << "Error I could not find the patient '" << patient_name << "' in the db.";
+  }
+
   // Search for all the files in the directory
   OFList<OFString> inputFiles;
   inputFiles.clear();
@@ -149,9 +142,6 @@ void syd::InsertDicomCommand::Run(std::string folder)
   const char * filename = NULL;
   OFListIterator(OFString) if_iter = inputFiles.begin();
   OFListIterator(OFString) if_last = inputFiles.end();
-  //DcmTagKey seriesKey = GetTagKey("SeriesInstanceUID");
-  //DcmTagKey SOPKey = GetTagKey("SOPInstanceUID");
-  //DcmTagKey modalityKey = GetTagKey("Modality");
   int n = inputFiles.size()/10;
   int i=0;
   while (if_iter != if_last) {
@@ -185,10 +175,12 @@ void syd::InsertDicomCommand::Run(std::string folder)
 
   // For all series, update the DB
   for(auto i=map_series.begin(); i!=map_series.end(); i++) {
-    UpdateDicom(patient_, i->second);
+    UpdateDicom(patient, i->second);
   }
-  VLOG(0) << "Done. " << map_series.size() << " series were updated in the db for patient " << patient_.name << ".";
+  VLOG(0) << "Done. " << map_series.size() << " series were updated in the db for patient " << patient.name << ".";
 }
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInfo & d)
@@ -212,10 +204,10 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   if (n != std::string::npos) {
     std::string initials = PatientName[0] + PatientName.substr(n+1,1);
     std::transform(initials.begin(), initials.end(), initials.begin(), ::tolower);
-    if (initials != patient_.name) {
+    if (initials != patient.name) {
       LOG(FATAL) << "Error the patient in the dicom is " << PatientName
                  << " (" << initials << "), while you ask for "
-                 << patient_.name;
+                 << patient.name;
     }
   }
 

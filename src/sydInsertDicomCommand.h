@@ -31,25 +31,22 @@ namespace syd {
   {
   public:
 
-    InsertDicomCommand();
+    InsertDicomCommand(std::string db);
+    InsertDicomCommand(ClinicDatabase * c);
     ~InsertDicomCommand();
 
-    virtual void SetArgs(char ** inputs, int n);
-    virtual void Run();
-
     void set_rename_flag(bool b) { rename_flag_ = b; }
+    void InsertDicom(std::string patient_name, std::vector<std::string> & folders);
+    void InsertDicom(std::string patient_name, std::string folder);
 
   protected:
-    virtual void OpenCommandDatabases();
-    void Run(std::string folder);
+    void Initialization();
     void UpdateDicom(Patient & p, const DicomSerieInfo & d);
 
     syd::ClinicDatabase * db_;
     std::string patient_name_;
     std::vector<std::string> folders_;
-    Patient patient_;
     bool rename_flag_;
-
   };
 
 

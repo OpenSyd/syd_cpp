@@ -17,9 +17,9 @@
   ===========================================================================**/
 
 // syd
-#include "sydRegister_ggo.h"
+#include "sydDumpStudy_ggo.h"
 #include "core/sydCommon.h"
-#include "sydRegisterCommand.h"
+#include "sydDumpStudyCommand.h"
 
 // easylogging : only once initialization (in the main)
 _INITIALIZE_EASYLOGGINGPP
@@ -28,27 +28,24 @@ _INITIALIZE_EASYLOGGINGPP
 int main(int argc, char* argv[])
 {
   // Init command line
-  GGO(sydRegister, args_info);
+  GGO(sydDumpStudy, args_info);
 
   // Init logging option (verbose)
   syd::init_logging_verbose_options(args_info);
 
   // Check args
-  if (args_info.inputs_num < 6) {
-    LOG(FATAL) << "Error please, provide <db1> <db2> <db3> <patient> <a> <b> (see usage)";
+  if (args_info.inputs_num < 3) {
+    LOG(FATAL) << "Error please, provide <db1> <db2> <patient> (see usage)";
   }
 
-  // Get the dbs
+  // Get the current db names
   std::string db1 = args_info.inputs[0];
   std::string db2 = args_info.inputs[1];
-  std::string db3 = args_info.inputs[2];
-  syd::RegisterCommand * c = new syd::RegisterCommand(db1, db2, db3);
+  syd::DumpStudyCommand * c = new syd::DumpStudyCommand(db1, db2);
 
-  // Go
-  std::string patient_name = args_info.inputs[3];
-  int a = atoi(args_info.inputs[4]);
-  int b = atoi(args_info.inputs[5]);
-  c->Run(patient_name, a, b);
+  // Execute the command
+  std::string patient = args_info.inputs[2];
+  c->Dump(patient);
 
   // This is the end, my friend.
 }

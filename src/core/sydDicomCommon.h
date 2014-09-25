@@ -26,6 +26,7 @@
 #include "dcmtk/config/osconfig.h"
 #include "dcmtk/dcmdata/dctk.h"
 #include "dcmtk/dcmdata/dcistrmf.h"
+#include "dcmtk/oflog/helpers/loglog.h"
 
 //--------------------------------------------------------------------
 namespace syd {

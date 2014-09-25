@@ -1,9 +1,9 @@
 #File sydCheckIntegrity.ggo
 
 package "sydCheckIntegrity"
-usage "sydCheckIntegrity <patient_name>"
+usage "sydCheckIntegrity <db> <patient_name>"
 version "0.1"
-description "Check the integrity of the clinical database."
+description "Check the integrity of the patient in the a database."
 
 option "config"	  	 	-	"Config file"				string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no

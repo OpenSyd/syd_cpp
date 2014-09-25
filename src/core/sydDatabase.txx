@@ -18,6 +18,7 @@
 
 
 // --------------------------------------------------------------------
+// Warning : do not clear the list, append
 template<class T>
 void syd::Database::LoadVector(std::vector<T> & list, const odb::query<T> & q)
 {

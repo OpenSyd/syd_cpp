@@ -34,21 +34,13 @@ set(SYD_LIBS
 
 
 #----------------------------------------------------------
-# wrap_ggo(syd syd.ggo)
-# add_executable(syd syd.cxx syd_ggo.c
-#   sydClearSeriesCommand.cxx
-#   sydDumpSeriesCommand.cxx
-#   sydCheckIntegrityCommand.cxx
-#   sydInsertTimepointCommand.cxx
-#   sydInsertDicomCommand.cxx)
-# target_link_libraries(syd ${SYD_LIBS})
-#----------------------------------------------------------
+wrap_ggo(sydDumpClinic sydDumpClinic.ggo)
+add_executable(sydDumpClinic sydDumpClinic.cxx sydDumpClinic_ggo.c sydDumpClinicCommand.cxx)
+target_link_libraries(sydDumpClinic ${SYD_LIBS})
 
-
-#----------------------------------------------------------
-wrap_ggo(sydDump sydDump.ggo)
-add_executable(sydDump sydDump.cxx sydDump_ggo.c sydDumpCommand.cxx)
-target_link_libraries(sydDump ${SYD_LIBS})
+wrap_ggo(sydDumpStudy sydDumpStudy.ggo)
+add_executable(sydDumpStudy sydDumpStudy.cxx sydDumpStudy_ggo.c sydDumpStudyCommand.cxx)
+target_link_libraries(sydDumpStudy ${SYD_LIBS})
 #----------------------------------------------------------
 
 

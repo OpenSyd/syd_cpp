@@ -138,3 +138,22 @@ std::string syd::TimepointsDatabase::Print(Timepoint t)
   return ss.str();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::TimepointsDatabase::Print(Patient p)
+{
+  typedef odb::query<Timepoint> QueryType;
+  std::vector<Timepoint> timepoints;
+  LoadVector<Timepoint>(timepoints, QueryType::patient_id == p.id);
+  std::stringstream ss;
+  ss << cdb_->Print(p, 1) << "\t"
+     << timepoints.size() << "\t";
+  for(auto i=timepoints.begin(); i != timepoints.end(); i++) {
+    ss << i->time_from_injection_in_hours << " ";
+  }
+  ss << std::endl;
+
+  return ss.str();
+}
+// --------------------------------------------------------------------

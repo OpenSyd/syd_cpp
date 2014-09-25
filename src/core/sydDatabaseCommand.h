@@ -33,18 +33,12 @@ namespace syd {
     DatabaseCommand();
     ~DatabaseCommand();
 
-    virtual void SetArgs(char ** inputs, int n) = 0;
-    virtual void Run() = 0;
-    void OpenDatabases();
-    void CheckDatabases();
-
     std::string get_db_filename(std::string db);
     std::string get_db_folder(std::string db);
 
   protected:
-    virtual void OpenCommandDatabases() = 0;
-    template<class T>
-    T * OpenNewDatabase(std::string name);
+    void OpenFileOfDatabaseNames();
+    template<class T> T * OpenNewDatabase(std::string name);
     std::vector<syd::Database*> databases_;
     std::map<std::string, std::string> db_filenames_;
     std::map<std::string, std::string> db_folders_;
