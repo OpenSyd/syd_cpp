@@ -25,7 +25,7 @@ void syd::Database::LoadVector(std::vector<T> & list, const odb::query<T> & q)
   typedef odb::query<T> query;
   typedef odb::result<T> result;
   result r (db->query<T>(q));
-  for(auto i=r.begin(); i != r.end(); i++) {
+  for(auto i = r.begin(); i != r.end(); i++) {
     T s;
     i.load(s);
     list.push_back(s);
@@ -74,7 +74,7 @@ template<class T>
 void syd::Database::Erase(std::vector<T> & r)
 {
   odb::transaction t (db->begin());
-  for(auto i=r.begin(); i<r.end(); i++) db->erase<T>(*i);
+  for(auto i: r) db->erase<T>(*i);
   t.commit();
 }
 // --------------------------------------------------------------------
@@ -106,5 +106,19 @@ bool syd::Database::GetIfExist(odb::query<T> q, T & t)
   if (elements.size() == 0) return false;
   t = elements[0];
   return true;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class T>
+bool syd::Database::GetOrInsert(odb::query<T> q, T & t)
+{
+  bool b = GetIfExist<T>(q, t);
+  if (!b) { //Create
+    Insert(t);
+    return true;
+  }
+  return false;
 }
 // --------------------------------------------------------------------

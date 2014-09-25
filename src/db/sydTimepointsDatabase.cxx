@@ -17,10 +17,21 @@
   ===========================================================================**/
 
 // syd
-#include "sydTimePointsDatabase.h"
+#include "sydTimepointsDatabase.h"
+
+//static syd::TimepointsDatabase::Database::type_name_ = "TimepointsDatabase";
 
 // --------------------------------------------------------------------
-std::string syd::TimePointsDatabase::GetFullPath(Patient patient)
+syd::TimepointsDatabase::TimepointsDatabase(std::string name):
+  Database("TimepointsDatabase", name)
+{
+  cdb_ = NULL;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::TimepointsDatabase::GetFullPath(Patient patient)
 {
   return get_folder()+patient.path;
 }
@@ -28,7 +39,7 @@ std::string syd::TimePointsDatabase::GetFullPath(Patient patient)
 
 
 // --------------------------------------------------------------------
-std::string syd::TimePointsDatabase::GetFullPathSPECT(TimePoint timepoint)
+std::string syd::TimepointsDatabase::GetFullPathSPECT(Timepoint timepoint)
 {
   Serie serie = cdb_->GetById<Serie>(timepoint.serie_id);
   Patient patient = cdb_->GetById<Patient>(serie.patient_id);
@@ -39,7 +50,7 @@ std::string syd::TimePointsDatabase::GetFullPathSPECT(TimePoint timepoint)
 
 
 // --------------------------------------------------------------------
-std::string syd::TimePointsDatabase::GetFullPathCT(TimePoint timepoint)
+std::string syd::TimepointsDatabase::GetFullPathCT(Timepoint timepoint)
 {
   Serie serie = cdb_->GetById<Serie>(timepoint.serie_id);
   Patient patient = cdb_->GetById<Patient>(serie.patient_id);
@@ -50,11 +61,11 @@ std::string syd::TimePointsDatabase::GetFullPathCT(TimePoint timepoint)
 
 
 // --------------------------------------------------------------------
-void syd::TimePointsDatabase::UpdateAllTimePointNumbers(IdType patient_id)
+void syd::TimepointsDatabase::UpdateAllTimepointNumbers(IdType patient_id)
 {
   // Get all timepoint for this patient
-  std::vector<TimePoint> timepoints;
-  LoadVector<TimePoint>(timepoints, odb::query<TimePoint>::patient_id == patient_id);
+  std::vector<Timepoint> timepoints;
+  LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient_id);
 
   // Get corresponding series acquisition_date
   std::vector<Serie> series;
@@ -113,5 +124,17 @@ void syd::TimePointsDatabase::UpdateAllTimePointNumbers(IdType patient_id)
     db->update(timepoints[i]);
   }
   t.commit();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::TimepointsDatabase::Print(Timepoint t)
+{
+  Serie serie = cdb_->GetById<Serie>(t.serie_id);
+  Patient patient = cdb_->GetById<Patient>(serie.patient_id);
+  std::stringstream ss;
+  ss << patient.name << " " << t.id << " " << t.number << " " << serie.acquisition_date;
+  return ss.str();
 }
 // --------------------------------------------------------------------

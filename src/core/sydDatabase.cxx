@@ -30,7 +30,8 @@ void trace_callback( void* udp, const char* sql ) {
 
 
 // --------------------------------------------------------------------
-syd::Database::Database()
+syd::Database::Database(std::string type_name, std::string name):
+  type_name_(type_name), name_(name)
 {
   filename_ = "filename_not_set";
   folder_ = "folder_not_set";
@@ -61,25 +62,6 @@ void syd::Database::TraceCallback(const char* sql)
 
 
 // --------------------------------------------------------------------
-void syd::Database::OpenDatabase()
-{
-  // Get DB filename
-  char * bdb = getenv ("SYD_DB");
-  if (bdb == NULL) LOG(FATAL) << "please set SYD_DB environment variable.";
-  std::string filename = std::string(bdb);
-
-  // Get Database folder
-  char * b =getenv ("SYD_IMAGE_FOLDER");
-  if (b == NULL) LOG(FATAL) << "please set SYD_IMAGE_FOLDER environment variable.";
-  std::string folder = std::string(b)+"/";
-
-  // Open
-  OpenDatabase(filename, folder);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Database::OpenDatabase(std::string filename, std::string folder)
 {
   // Open the DB
@@ -100,8 +82,8 @@ void syd::Database::OpenDatabase(std::string filename, std::string folder)
   }
 
   // Verbose
-  VLOG(2) << "Openining the database " << filename_;
-  VLOG(2) << "With the folder " << folder_;
+  VLOG(3) << "Opening db " << name_ << " (" << type_name_ << ") : "
+          << filename_ << " " << folder_;
 
   // Install tracer
   odb::sqlite::connection_ptr c (db->connection ());

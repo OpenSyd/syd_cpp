@@ -40,8 +40,7 @@ syd::CheckIntegrityCommand::~CheckIntegrityCommand()
 void syd::CheckIntegrityCommand::OpenCommandDatabases()
 {
   // Open the ones we want
-  db_ = new syd::ClinicDatabase();
-  db_->OpenDatabase(get_db_filename("Clinical"), get_db_folder("Clinical"));
+  db_ = OpenNewDatabase<ClinicDatabase>("Clinical");
 }
 // --------------------------------------------------------------------
 

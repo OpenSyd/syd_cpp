@@ -1,9 +1,9 @@
-#File sydInsertTimePoint.ggo
+#File sydInsertTimepoint.ggo
 
-package "sydInsertTimePoint"
-usage "sydInsertTimePoint <serie_ids>"
+package "sydInsertTimepoint"
+usage "sydInsertTimepoint <serie_ids>"
 version "0.1"
-description "Insert some series into the TimePoint database, convert CT and SPECT dicom to mhd."
+description "Insert some series into the Timepoint database, convert CT and SPECT dicom to mhd."
 
 option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no

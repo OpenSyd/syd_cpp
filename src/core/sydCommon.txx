@@ -46,6 +46,14 @@ void init_logging_verbose_options(ArgsInfoType & args_info)
   else enabled ="0";
   defaultConf.set(el::Level::Info, el::ConfigurationType::Enabled, enabled);
 
+  // Verbose FATAL (level = FATAL)
+  defaultConf.set(el::Level::Fatal,
+                  el::ConfigurationType::Format, "%datetime FATAL %msg");
+  defaultConf.set(el::Level::Fatal,
+                  el::ConfigurationType::MillisecondsWidth, "1");
+  enabled = "1";
+  defaultConf.set(el::Level::Fatal, el::ConfigurationType::Enabled, enabled);
+
   // Verbose warning (level = WARNING)
   defaultConf.set(el::Level::Warning,
                   el::ConfigurationType::Format, "%datetime WARNING %msg");

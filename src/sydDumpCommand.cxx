@@ -40,11 +40,9 @@ syd::DumpCommand::~DumpCommand()
 void syd::DumpCommand::OpenCommandDatabases()
 {
   // Open the ones we want
-  db_ = new syd::ClinicDatabase();
-  db_->OpenDatabase(get_db_filename("Clinical"), get_db_folder("Clinical"));
-
-  tpdb_ = new syd::TimePointsDatabase();
-  tpdb_->OpenDatabase(get_db_filename("TimePoints"), get_db_folder("TimePoints"));
+  db_ = OpenNewDatabase<ClinicDatabase>("Clinic");
+  tpdb_ = OpenNewDatabase<TimepointsDatabase>("Timepoints");
+  tpdb_->set_clinic_database(db_);
 }
 // --------------------------------------------------------------------
 
@@ -114,22 +112,23 @@ void syd::DumpCommand::Run()
     //db_->CheckPatient(*i);
     if (dump_type_.find("serie") != std::string::npos) DumpSeries(*i);
     if (dump_type_.find("patient") != std::string::npos) DumpPatients(*i);
-    if (dump_type_.find("timepoint") != std::string::npos) DumpTimePoints(*i);
+    if (dump_type_.find("timepoint") != std::string::npos) DumpTimepoints(*i);
   }
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::DumpCommand::DumpTimePoints(Patient patient)
+void syd::DumpCommand::DumpTimepoints(Patient patient)
 {
-  typedef odb::query<TimePoint> QueryType;
-  std::vector<TimePoint> timepoints;
-  tpdb_->LoadVector<TimePoint>(timepoints, QueryType::patient_id == patient.id);
+  typedef odb::query<Timepoint> QueryType;
+  std::vector<Timepoint> timepoints;
+  tpdb_->LoadVector<Timepoint>(timepoints, QueryType::patient_id == patient.id);
 
   std::cout << patient.name << " "
             << patient.synfrizz_id << "\t"
             << patient.injection_date << "\t"
+            << (patient.was_treated ? "90Y":"no ") << "\t"
             << timepoints.size() << "\t";
   for(auto i=timepoints.begin(); i != timepoints.end(); i++) {
     std::cout << i->time_from_injection_in_hours << " ";

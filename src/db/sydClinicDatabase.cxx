@@ -20,23 +20,10 @@
 #include "sydClinicDatabase.h"
 
 // --------------------------------------------------------------------
-void syd::ClinicDatabase::OpenDatabase()
+syd::ClinicDatabase::ClinicDatabase(std::string name):
+  Database("ClinicDatabase", name)
 {
-  // Get DB filename
-  char * bdb = getenv ("SYD_SYNFRIZZ_DB");
-  if (bdb == NULL) LOG(FATAL) << " please set SYD_SYNFRIZZ_DB environment variable.";
-  std::string filename = std::string(bdb);
-
-  // Get Database folder
-  char * b =getenv ("SYD_SYNFRIZZ_IMAGE_FOLDER");
-  if (b == NULL) LOG(FATAL) << " please set SYD_SYNFRIZZ_IMAGE_FOLDER environment variable.";
-  std::string folder = std::string(b)+"/";
-
-  // Open
-  Database::OpenDatabase(filename, folder);
-
-  // Init
-  set_check_file_content_level(0);
+  set_check_file_content_level(1);
 }
 // --------------------------------------------------------------------
 

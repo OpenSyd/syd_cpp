@@ -24,8 +24,8 @@ include_directories(${PROJECT_SOURCE_DIR}/src/db)
 #----------------------------------------------------------
 set(SYD_LIBS
   ${DCMTK_LIBRARIES}
-  sydTimePointsDatabase
   sydClinicDatabase
+  sydTimepointsDatabase
   sydCore
   sqlite3 odb-sqlite odb z
   ${CERES_LIBRARIES}
@@ -39,7 +39,7 @@ set(SYD_LIBS
 #   sydClearSeriesCommand.cxx
 #   sydDumpSeriesCommand.cxx
 #   sydCheckIntegrityCommand.cxx
-#   sydInsertTimePointCommand.cxx
+#   sydInsertTimepointCommand.cxx
 #   sydInsertDicomCommand.cxx)
 # target_link_libraries(syd ${SYD_LIBS})
 #----------------------------------------------------------
@@ -60,9 +60,9 @@ target_link_libraries(sydInsertDicom ${SYD_LIBS})
 
 
 #----------------------------------------------------------
-wrap_ggo(sydInsertTimePoint sydInsertTimePoint.ggo)
-add_executable(sydInsertTimePoint sydInsertTimePoint.cxx sydInsertTimePoint_ggo.c sydInsertTimePointCommand.cxx)
-target_link_libraries(sydInsertTimePoint ${SYD_LIBS})
+wrap_ggo(sydInsertTimepoint sydInsertTimepoint.ggo)
+add_executable(sydInsertTimepoint sydInsertTimepoint.cxx sydInsertTimepoint_ggo.c sydInsertTimepointCommand.cxx)
+target_link_libraries(sydInsertTimepoint ${SYD_LIBS})
 #----------------------------------------------------------
 
 
@@ -70,4 +70,11 @@ target_link_libraries(sydInsertTimePoint ${SYD_LIBS})
 wrap_ggo(sydCheckIntegrity sydCheckIntegrity.ggo)
 add_executable(sydCheckIntegrity sydCheckIntegrity.cxx sydCheckIntegrity_ggo.c sydCheckIntegrityCommand.cxx)
 target_link_libraries(sydCheckIntegrity ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydRegister sydRegister.ggo)
+add_executable(sydRegister sydRegister.cxx sydRegister_ggo.c sydRegisterCommand.cxx)
+target_link_libraries(sydRegister ${SYD_LIBS})
 #----------------------------------------------------------

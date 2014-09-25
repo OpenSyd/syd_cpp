@@ -16,30 +16,20 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-// syd
-#include "sydInsertTimePoint_ggo.h"
-#include "core/sydCommon.h"
-#include "sydInsertTimePointCommand.h"
-
-// easylogging : only once initialization (in the main)
-_INITIALIZE_EASYLOGGINGPP
-
 // --------------------------------------------------------------------
-int main(int argc, char* argv[])
+template<class T>
+T * syd::DatabaseCommand::OpenNewDatabase(std::string name)
 {
-  // Init command line
-  GGO(sydInsertTimePoint, args_info);
+  // Create new database
+  T * t = new T(name);
 
-  // Init logging option (verbose)
-  syd::init_logging_verbose_options(args_info);
+  // Get the filename and foldername and open the db
+  t->OpenDatabase(get_db_filename(name), get_db_folder(name));
 
-  // Get the current db names/folders
-  syd::InsertTimePointCommand * c = new syd::InsertTimePointCommand;
-  c->set_ct_selection_patterns(args_info.ct_arg);
-  c->OpenDatabases();
-  c->SetArgs(args_info.inputs, args_info.inputs_num);
-  c->Run();
+  // Add to the list of db
+  databases_.push_back(t);
 
-  // This is the end, my friend.
+  // return created db
+  return t;
 }
 // --------------------------------------------------------------------

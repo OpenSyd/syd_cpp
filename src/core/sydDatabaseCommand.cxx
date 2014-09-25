@@ -20,9 +20,17 @@
 #include "sydDatabaseCommand.h"
 
 // --------------------------------------------------------------------
-void syd::DatabaseCommand::AddDatabase(Database * db)
+syd::DatabaseCommand::DatabaseCommand()
 {
-  databases_.push_back(db);
+  init_filename_="";
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::DatabaseCommand::~DatabaseCommand()
+{
+  // nothing yet
 }
 // --------------------------------------------------------------------
 
@@ -31,7 +39,7 @@ void syd::DatabaseCommand::AddDatabase(Database * db)
 void syd::DatabaseCommand::OpenDatabases()
 {
   // Get the init filename that contains the list of db names/folders
-  if (init_filename_ =="") { // look env var
+  if (init_filename_ == "") { // look env var
     char * init = getenv ("SYD_INIT_DB_FILE");
     if (init == NULL) LOG(FATAL) << "Error, please set SYD_INIT_DB_FILE environment variable.";
     init_filename_ = std::string(init);
@@ -69,6 +77,7 @@ std::string syd::DatabaseCommand::get_db_filename(std::string db)
   LOG(FATAL) << "Error could not find the database '" << db << "' in the list of databases info."
              << std::endl
              << "The db info ( " << init_filename_ << ") contains " << db_filenames_.size() << " values : " << s;
+  return ""; // (to avoid warning)
 }
 // --------------------------------------------------------------------
 
@@ -82,5 +91,6 @@ std::string syd::DatabaseCommand::get_db_folder(std::string db)
   LOG(FATAL) << "Error could not find the database '" << db << "' in the list of databases info."
              << std::endl
              << "The db info ( " << init_filename_ << ") contains " << db_folders_.size() << " values : " << s;
+  return ""; // (to avoid warning)
 }
 // --------------------------------------------------------------------

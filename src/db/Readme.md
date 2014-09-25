@@ -1,4 +1,3 @@
-
 All tables have an `id` field (not shown here).
 
 
@@ -20,6 +19,21 @@ Serie table
 `path`              -> (sub)folder with the data, relative to patient folder
 `acquisition_date`  -> image acquisition date
 `modality`          -> CT or NM
+
+Timepoint table
+==============
+`serie_id`          -> serie
+`patient_id`        -> patient (not strictly needed)
+`number`            -> order in the list of timepoint for the patient
+`time_from_injection_in_hours` -> computed from dicom date and injection_date
+
+Registration table
+==================
+`timepoint_id`
+`ref_number`
+`moving_number`
+
+
 
 DB Creation/Evolution
 =====================

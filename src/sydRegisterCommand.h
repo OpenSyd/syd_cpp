@@ -16,37 +16,43 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTIMEPOINTSDATABASE_H
-#define SYDTIMEPOINTSDATABASE_H
+#ifndef SYDREGISTERCOMMAND_H
+#define SYDREGISTERCOMMAND_H
 
 // syd
-#include "sydDatabase.h"
-#include "TimePoint-odb.hxx"
+#include "sydDatabaseCommand.h"
 #include "sydClinicDatabase.h"
+#include "sydTimepointsDatabase.h"
+#include "sydDicomCommon.h"
 
-// inherit from syd::Database
 // --------------------------------------------------------------------
 namespace syd {
 
-  class TimePointsDatabase: public Database {
-
+  class RegisterCommand: public syd::DatabaseCommand
+  {
   public:
-    TimePointsDatabase():Database() {}
-    ~TimePointsDatabase() {}
 
-    std::string GetFullPath(Patient patient);
-    std::string GetFullPathSPECT(TimePoint timepoint);
-    std::string GetFullPathCT(TimePoint timepoint);
+    RegisterCommand();
+    ~RegisterCommand();
 
-    void UpdateAllTimePointNumbers(IdType patient_id);
-
-    void set_Clinic_database(ClinicDatabase * d) { cdb_ = d; }
+    virtual void SetArgs(char ** inputs, int n);
+    virtual void Run();
 
   protected:
-    ClinicDatabase * cdb_;
+    virtual void OpenCommandDatabases();
+    void Run(Timepoint ref, Timepoint mov);
+
+    syd::ClinicDatabase * db_;
+    syd::TimepointsDatabase * tpdb_;
+    syd::TimepointsDatabase * reg_tpdb_;
+    std::string patient_name_;
+    Patient patient_;
+    int reference_number_;
+    int moving_number_;
+
+  };
 
 
-  }; // end class
 } // end namespace
 // --------------------------------------------------------------------
 

@@ -16,44 +16,30 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDDUMPCOMMAND_H
-#define SYDDUMPCOMMAND_H
-
 // syd
-#include "sydDatabaseCommand.h"
-#include "sydClinicDatabase.h"
-#include "sydTimepointsDatabase.h"
-#include "sydDicomCommon.h"
+#include "sydInsertTimepoint_ggo.h"
+#include "core/sydCommon.h"
+#include "sydInsertTimepointCommand.h"
+
+// easylogging : only once initialization (in the main)
+_INITIALIZE_EASYLOGGINGPP
 
 // --------------------------------------------------------------------
-namespace syd {
+int main(int argc, char* argv[])
+{
+  // Init command line
+  GGO(sydInsertTimepoint, args_info);
 
-  class DumpCommand: public syd::DatabaseCommand
-  {
-  public:
+  // Init logging option (verbose)
+  syd::init_logging_verbose_options(args_info);
 
-    DumpCommand();
-    ~DumpCommand();
+  // Get the current db names/folders
+  syd::InsertTimepointCommand * c = new syd::InsertTimepointCommand;
+  c->set_ct_selection_patterns(args_info.ct_arg);
+  c->OpenDatabases();
+  c->SetArgs(args_info.inputs, args_info.inputs_num);
+  c->Run();
 
-    virtual void SetArgs(char ** inputs, int n);
-    virtual void Run();
-
-    void DumpSeries(Patient patient);
-    void DumpPatients(Patient patient);
-    void DumpTimepoints(Patient patient);
-
-  protected:
-    virtual void OpenCommandDatabases();
-
-    syd::ClinicDatabase * db_;
-    syd::TimepointsDatabase * tpdb_;
-    std::string patient_name_;
-    std::string dump_type_;
-    std::vector<std::string> patterns_;
-  };
-
-
-} // end namespace
+  // This is the end, my friend.
+}
 // --------------------------------------------------------------------
-
-#endif

@@ -32,6 +32,7 @@
 // dcmtk
 #include "dcmtk/dcmdata/dctk.h"
 
+// Type of id of any table
 typedef unsigned int IdType;
 
 // --------------------------------------------------------------------
@@ -41,22 +42,21 @@ namespace syd {
   {
   public:
 
-    Database();
+    Database(std::string type_name, std::string name);
     ~Database();
 
     virtual void OpenDatabase(std::string filename, std::string folder);
-    virtual void OpenDatabase();
 
     // Accessors
+    std::string get_name() const { return name_; }
+    std::string get_type_name() const { return type_name_; }
     std::string get_folder() const { return folder_; }
 
     // Call back for SQL query to the DB. For debug purpose
     void TraceCallback(const char* sql);
 
     // Load the list of T corresponding to the sql query q
-    template<class T>
-    void LoadVector(std::vector<T> & list,
-                    const odb::query<T> & q= odb::query<T>::id != 0);
+    template<class T> void LoadVector(std::vector<T> & list, const odb::query<T> & q= odb::query<T>::id != 0);
 
     // Insert a new element of type T
     template<class T> void Insert(T & t);
@@ -68,13 +68,18 @@ namespace syd {
     template<class T> void Erase(T & t);
     template<class T> void Erase(std::vector<T> & t);
 
-    // Retrieve the element with a given id
+    // Retrieve the element with a given id (elements are cached)
     template<class T> T & GetById(IdType id);
 
-    template<class T>
-    bool GetIfExist(odb::query<T> q, T & t);
+    // Check if an element exist an if yes, retrieve it
+    template<class T> bool GetIfExist(odb::query<T> q, T & t);
+
+    // Get an element or insert a new one
+    template<class T> bool GetOrInsert(odb::query<T> q, T & t);
 
   protected:
+    std::string name_;
+    std::string type_name_;
     odb::sqlite::database * db;
     std::string filename_;
     std::string folder_;

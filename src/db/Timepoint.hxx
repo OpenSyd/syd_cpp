@@ -16,44 +16,40 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDDUMPCOMMAND_H
-#define SYDDUMPCOMMAND_H
+// std
+#include <string>
+#include <iostream>
+#include <memory>
 
-// syd
-#include "sydDatabaseCommand.h"
-#include "sydClinicDatabase.h"
-#include "sydTimepointsDatabase.h"
-#include "sydDicomCommon.h"
+// odb
+#include <odb/core.hxx>
+
+typedef unsigned int IdType;
 
 // --------------------------------------------------------------------
-namespace syd {
+#pragma db object
+class Timepoint
+{
+public:
 
-  class DumpCommand: public syd::DatabaseCommand
-  {
-  public:
+#pragma db id auto
+  IdType        id;
+  IdType        patient_id; // not strictly needed (can be retrive by serie_id)
+  IdType        serie_id;
+  long          number;
+  double        time_from_injection_in_hours;
 
-    DumpCommand();
-    ~DumpCommand();
+  friend std::ostream& operator<<(std::ostream& os, const Timepoint & p) {
+    os << p.id << " " << p.number << " " << p.time_from_injection_in_hours;
+    return os;
+  }
 
-    virtual void SetArgs(char ** inputs, int n);
-    virtual void Run();
+  void copy(Timepoint t) {
+    patient_id = t.patient_id;
+    serie_id = t.serie_id;
+    number = t.number;
+    time_from_injection_in_hours = t.time_from_injection_in_hours;
+  }
 
-    void DumpSeries(Patient patient);
-    void DumpPatients(Patient patient);
-    void DumpTimepoints(Patient patient);
-
-  protected:
-    virtual void OpenCommandDatabases();
-
-    syd::ClinicDatabase * db_;
-    syd::TimepointsDatabase * tpdb_;
-    std::string patient_name_;
-    std::string dump_type_;
-    std::vector<std::string> patterns_;
-  };
-
-
-} // end namespace
+};
 // --------------------------------------------------------------------
-
-#endif

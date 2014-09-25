@@ -22,18 +22,18 @@
 // syd
 #include "sydDatabaseCommand.h"
 #include "sydClinicDatabase.h"
-#include "sydTimePointsDatabase.h"
+#include "sydTimepointsDatabase.h"
 #include "sydDicomCommon.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class InsertTimePointCommand: public syd::DatabaseCommand
+  class InsertTimepointCommand: public syd::DatabaseCommand
   {
   public:
 
-    InsertTimePointCommand();
-    ~InsertTimePointCommand();
+    InsertTimepointCommand();
+    ~InsertTimepointCommand();
 
     virtual void SetArgs(char ** inputs, int n);
     virtual void Run();
@@ -45,7 +45,7 @@ namespace syd {
     void Run(Serie serie);
 
     syd::ClinicDatabase * db_;
-    syd::TimePointsDatabase * tpdb_;
+    syd::TimepointsDatabase * tpdb_;
     std::vector<IdType> serie_ids_;
     Patient patient_;
     std::vector<std::string> ct_selection_patterns_;

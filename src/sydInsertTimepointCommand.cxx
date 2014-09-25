@@ -17,11 +17,11 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertTimePointCommand.h"
+#include "sydInsertTimepointCommand.h"
 #include "sydImage.h"
 
 // --------------------------------------------------------------------
-syd::InsertTimePointCommand::InsertTimePointCommand():DatabaseCommand()
+syd::InsertTimepointCommand::InsertTimepointCommand():DatabaseCommand()
 {
   db_ = NULL;
   tpdb_ = NULL;
@@ -31,7 +31,7 @@ syd::InsertTimePointCommand::InsertTimePointCommand():DatabaseCommand()
 
 
 // --------------------------------------------------------------------
-syd::InsertTimePointCommand::~InsertTimePointCommand()
+syd::InsertTimepointCommand::~InsertTimepointCommand()
 {
 
 }
@@ -39,20 +39,18 @@ syd::InsertTimePointCommand::~InsertTimePointCommand()
 
 
 // --------------------------------------------------------------------
-void syd::InsertTimePointCommand::OpenCommandDatabases()
+void syd::InsertTimepointCommand::OpenCommandDatabases()
 {
-  // Open the ones we want
-  db_ = new syd::ClinicDatabase();
-  db_->OpenDatabase(get_db_filename("Clinical"), get_db_folder("Clinical"));
-
-  tpdb_ = new syd::TimePointsDatabase();
-  tpdb_->OpenDatabase(get_db_filename("TimePoints"), get_db_folder("TimePoints"));
+  // Open the required db
+  db_ = OpenNewDatabase<ClinicDatabase>("Clinic");
+  tpdb_ = OpenNewDatabase<TimepointsDatabase>("Timepoints");
+  tpdb_->set_clinic_database(db_);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::InsertTimePointCommand::set_ct_selection_patterns(std::string s)
+void syd::InsertTimepointCommand::set_ct_selection_patterns(std::string s)
 {
   std::istringstream iss(s);
   std::copy(std::istream_iterator<std::string>(iss),
@@ -63,7 +61,7 @@ void syd::InsertTimePointCommand::set_ct_selection_patterns(std::string s)
 
 
 // --------------------------------------------------------------------
-void syd::InsertTimePointCommand::SetArgs(char ** inputs, int n)
+void syd::InsertTimepointCommand::SetArgs(char ** inputs, int n)
 {
   if (n < 1) {
     LOG(FATAL) << "At least 1 parameters is needed, but you provide "
@@ -79,32 +77,16 @@ void syd::InsertTimePointCommand::SetArgs(char ** inputs, int n)
 
 
 // --------------------------------------------------------------------
-void syd::InsertTimePointCommand::Run()
+void syd::InsertTimepointCommand::Run()
 {
   // Check database
   if (db_ == NULL) {
-    LOG(FATAL) << "A ClinicDatabase is needed in InsertTimePointCommand. Aborting.";
+    LOG(FATAL) << "A ClinicDatabase is needed in InsertTimepointCommand. Aborting.";
   }
 
   if (tpdb_ == NULL) {
-    LOG(FATAL) << "A TimePointsDatabase is needed in InsertTimePointCommand. Aborting.";
+    LOG(FATAL) << "A TimepointsDatabase is needed in InsertTimepointCommand. Aborting.";
   }
-
-  // Set DB pointer
-  tpdb_->set_Clinic_database(db_);
-
-  // if (db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name_, patient_)) {
-  //   db_->CheckPatient(patient_);
-  // }
-  // else {
-  //   LOG(FATAL) << "Error, the patient " << patient_name_ << " does not exist";
-  // }
-
-  // // Create folder if does not exist
-  // std::string path = tpdb_->GetFullPath(patient_);
-  // if (!OFStandard::dirExists(path.c_str())) {
-  //   LOG(FATAL) << "The directory " << path << " does not exist. Please create.";
-  // }
 
   // Insert all series
   for(auto i=serie_ids_.begin(); i<serie_ids_.end(); i++)  {
@@ -116,7 +98,7 @@ void syd::InsertTimePointCommand::Run()
 
 
 // --------------------------------------------------------------------
-void syd::InsertTimePointCommand::Run(Serie serie)
+void syd::InsertTimepointCommand::Run(Serie serie)
 {
   // Check modality
   if (serie.modality != "NM") {
@@ -138,18 +120,18 @@ void syd::InsertTimePointCommand::Run(Serie serie)
     LOG(FATAL) << "The directory " << path << " does not exist. Please create.";
   }
 
-  // Create or Update a new TimePoint
-  TimePoint timepoint;
-  bool b = tpdb_->GetIfExist<TimePoint>(odb::query<TimePoint>::serie_id == serie.id, timepoint);
+  // Create or Update a new Timepoint
+  Timepoint timepoint;
+  bool b = tpdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::serie_id == serie.id, timepoint);
   if (!b) {  // It does not exist, we create it
-    VLOG(1) << "Creating new TimePoint for " << patient_.name << " date " << serie.acquisition_date;
+    VLOG(1) << "Creating new Timepoint for " << patient_.name << " date " << serie.acquisition_date;
     timepoint.patient_id = patient_.id;
     timepoint.serie_id = serie.id;
     timepoint.number=0;
     tpdb_->Insert(timepoint);
   }
   else {
-    VLOG(1) << "TimePoint " << patient_.name << " "
+    VLOG(1) << "Timepoint " << patient_.name << " "
             << timepoint.number << " "
             << serie.acquisition_date << " ("
             << timepoint.time_from_injection_in_hours
@@ -161,8 +143,8 @@ void syd::InsertTimePointCommand::Run(Serie serie)
   }
 
   // Set a temporary number (higher than the previous)
-  std::vector<TimePoint> timepoints;
-  tpdb_->LoadVector<TimePoint>(timepoints, odb::query<TimePoint>::patient_id == patient_.id);
+  std::vector<Timepoint> timepoints;
+  tpdb_->LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient_.id);
   int max = 0;
   for(auto i=timepoints.begin(); i<timepoints.end(); i++) if (i->number > max) max = i->number;
   timepoint.number = max+1;
@@ -243,6 +225,6 @@ void syd::InsertTimePointCommand::Run(Serie serie)
   syd::WriteImage<ImageType>(ct, ct_mhd_filename);
 
   // Find time order according to existing timepoint
-  tpdb_->UpdateAllTimePointNumbers(patient_.id);
+  tpdb_->UpdateAllTimepointNumbers(patient_.id);
 }
 // --------------------------------------------------------------------

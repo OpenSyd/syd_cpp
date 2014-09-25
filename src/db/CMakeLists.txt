@@ -1,4 +1,5 @@
 
+
 #----------------------------------------------------------
 wrap_odb(sydClinicDatabase Patient.hxx)
 wrap_odb(sydClinicDatabase Serie.hxx)
@@ -11,9 +12,9 @@ add_library(sydClinicDatabase
 
 
 #----------------------------------------------------------
-wrap_odb(sydTimePointsDatabase TimePoint.hxx)
+wrap_odb(sydTimepointsDatabase Timepoint.hxx)
 
-add_library(sydTimePointsDatabase
-  sydTimePointsDatabase.cxx
-  TimePoint-odb.cxx)
+add_library(sydTimepointsDatabase
+  sydTimepointsDatabase.cxx
+  Timepoint-odb.cxx)
 #----------------------------------------------------------

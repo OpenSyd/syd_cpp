@@ -16,33 +16,38 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-// std
-#include <string>
-#include <iostream>
-#include <memory>
+#ifndef SYDTIMEPOINTSDATABASE_H
+#define SYDTIMEPOINTSDATABASE_H
 
-// odb
-#include <odb/core.hxx>
+// syd
+#include "sydDatabase.h"
+#include "Timepoint-odb.hxx"
+#include "sydClinicDatabase.h"
 
-typedef unsigned int IdType;
-
+// Manage a list of Timepoint. Need a pointer to a ClinicDatabase
+// because each Timepoint is linked with a Serie and a Patient from
+// this ClinicDatabase;
 // --------------------------------------------------------------------
-#pragma db object
-class TimePoint
-{
-public:
+namespace syd {
 
-#pragma db id auto
-  IdType        id;
-  IdType        patient_id; // not strictly needed (can be retrive by serie_id)
-  IdType        serie_id;
-  long          number;
-  double        time_from_injection_in_hours;
+  class TimepointsDatabase: public Database {
 
-  friend std::ostream& operator<<(std::ostream& os, const TimePoint & p) {
-    os << p.id << " " << p.number << " " << p.time_from_injection_in_hours;
-    return os;
-  }
+  public:
+    TimepointsDatabase(std::string name);
+    ~TimepointsDatabase() {}
 
-};
+    std::string GetFullPath(Patient patient);
+    std::string GetFullPathSPECT(Timepoint timepoint);
+    std::string GetFullPathCT(Timepoint timepoint);
+    std::string Print(Timepoint t);
+    void UpdateAllTimepointNumbers(IdType patient_id);
+    void set_clinic_database(ClinicDatabase * d) { cdb_ = d; }
+
+  protected:
+    ClinicDatabase * cdb_;
+
+  }; // end class
+} // end namespace
 // --------------------------------------------------------------------
+
+#endif

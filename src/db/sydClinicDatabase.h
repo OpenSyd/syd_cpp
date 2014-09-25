@@ -32,12 +32,10 @@ namespace syd {
   class ClinicDatabase: public Database {
 
   public:
-    ClinicDatabase():Database() {}
-    virtual void OpenDatabase();
-    virtual void OpenDatabase(std::string filename, std::string folder) { Database::OpenDatabase(filename, folder); }
+    ClinicDatabase(std::string name);
+    ~ClinicDatabase() {}
 
     void UpdateSerie(Serie & serie);
-
     void set_check_file_content_level(int l) { check_file_content_level_ = l; }
     void CheckPatient(const Patient & patient);
     void CheckSerie(const Serie & serie);
@@ -52,6 +50,7 @@ namespace syd {
 
   protected:
     int check_file_content_level_;
+
 
   }; // end class
 } // end namespace
