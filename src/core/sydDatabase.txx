@@ -18,14 +18,29 @@
 
 
 // --------------------------------------------------------------------
+template<class DatabaseType>
+std::shared_ptr<DatabaseType> syd::Database::OpenDatabaseType(std::string name)
+{
+  std::shared_ptr<Database> d = syd::Database::OpenDatabase(name);
+  if (d->get_typename() != DatabaseType::typename_) {
+    LOG(FATAL) << "Error while attempting to read the database '" << name
+               << "' which is of type '" << d->get_typename()
+               << "' while expecting type '" << DatabaseType::typename_ << "'";
+  }
+  return std::dynamic_pointer_cast<DatabaseType>(d);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 // Warning : do not clear the list, append
 template<class T>
 void syd::Database::LoadVector(std::vector<T> & list, const odb::query<T> & q)
 {
-  odb::transaction transaction (db->begin());
+  odb::transaction transaction (db_->begin());
   typedef odb::query<T> query;
   typedef odb::result<T> result;
-  result r (db->query<T>(q));
+  result r (db_->query<T>(q));
   for(auto i = r.begin(); i != r.end(); i++) {
     T s;
     i.load(s);
@@ -40,9 +55,9 @@ void syd::Database::LoadVector(std::vector<T> & list, const odb::query<T> & q)
 template<class T>
 void syd::Database::Insert(T & r)
 {
-  odb::transaction t (db->begin());
-  db->persist(r);
-  db->update(r);
+  odb::transaction t (db_->begin());
+  db_->persist(r);
+  db_->update(r);
   t.commit();
 }
 // --------------------------------------------------------------------
@@ -52,8 +67,8 @@ void syd::Database::Insert(T & r)
 template<class T>
 void syd::Database::Update(T & r)
 {
-  odb::transaction t (db->begin());
-  db->update(r);
+  odb::transaction t (db_->begin());
+  db_->update(r);
   t.commit();
 }
 // --------------------------------------------------------------------
@@ -63,8 +78,8 @@ void syd::Database::Update(T & r)
 template<class T>
 void syd::Database::Erase(T & r)
 {
-  odb::transaction t (db->begin());
-  db->erase<T>(r);
+  odb::transaction t (db_->begin());
+  db_->erase<T>(r);
   t.commit();
 }
 // --------------------------------------------------------------------
@@ -74,8 +89,8 @@ void syd::Database::Erase(T & r)
 template<class T>
 void syd::Database::Erase(std::vector<T> & r)
 {
-  odb::transaction t (db->begin());
-  for(auto i: r) db->erase<T>(*i);
+  odb::transaction t (db_->begin());
+  for(auto i: r) db_->erase<T>(*i);
   t.commit();
 }
 // --------------------------------------------------------------------
@@ -83,16 +98,23 @@ void syd::Database::Erase(std::vector<T> & r)
 
 // --------------------------------------------------------------------
 template<class T>
-T & syd::Database::GetById(IdType id)
+T syd::Database::GetById(IdType id)
 {
-  static std::vector<T> tabletypes;
-  static std::map<IdType, T> map;
-  // The first time we build the map
-  if (tabletypes.size() == 0) {
-    LoadVector<T>(tabletypes, odb::query<T>::id != -1); // all
-    for(auto i=tabletypes.begin(); i<tabletypes.end(); i++) map[i->id] = *i;
+  odb::transaction transaction (db_->begin());
+  typedef odb::query<T> query;
+  typedef odb::result<T> result;
+  result r (db_->query<T>(odb::query<T>::id == id));
+  if (r.begin() != r.end()) {
+    T s;
+    r.begin().load(s);
+    transaction.commit();
+    return s;
   }
-  return map[id];
+  transaction.commit();
+  LOG(FATAL) << "Error element with id = " << id << " does not exist in "
+             << get_name() << " (" << get_typename() << ")";
+  T s;
+  return s; // fake return
 }
 // --------------------------------------------------------------------
 
@@ -101,12 +123,17 @@ T & syd::Database::GetById(IdType id)
 template<class T>
 bool syd::Database::GetIfExist(odb::query<T> q, T & t)
 {
-  // Check if already exist
-  std::vector<T> elements;
-  LoadVector<T>(elements, q);
-  if (elements.size() == 0) return false;
-  t = elements[0];
-  return true;
+  odb::transaction transaction (db_->begin());
+  typedef odb::query<T> query;
+  typedef odb::result<T> result;
+  result r (db_->query<T>(q));
+  bool b = false;
+  if (r.begin() != r.end()) {
+    b = true;
+    r.begin().load(t); // load the first element
+  }
+  transaction.commit();
+  return b;
 }
 // --------------------------------------------------------------------
 

@@ -30,20 +30,13 @@ void trace_callback( void* udp, const char* sql ) {
 
 
 // --------------------------------------------------------------------
-syd::Database::Database(std::string type_name, std::string name):
-  type_name_(type_name), name_(name)
+syd::Database::Database(std::string name):
+  name_(name)
 {
   filename_ = "filename_not_set";
   folder_ = "folder_not_set";
   current_sql_query_ = "no_query";
-  db = NULL;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Database::~Database()
-{
+  db_ = NULL;
 }
 // --------------------------------------------------------------------
 
@@ -62,12 +55,41 @@ void syd::Database::TraceCallback(const char* sql)
 
 
 // --------------------------------------------------------------------
-void syd::Database::OpenDatabase(std::string filename, std::string folder)
+void syd::Database::SetFileAndFolder(std::istringstream & f)
+{
+  if (!getline(f, filename_, ';')) {
+    LOG(FATAL) << "Error while parsing db params for filename. db is "
+               << get_name() << " (" << get_typename() << ") params = " << f.str();
+  }
+  if (!getline(f, folder_, ';')) {
+    LOG(FATAL) << "Error while parsing db params for folder. db is "
+               << get_name() << " (" << get_typename() << ") params = " << f.str();
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// static function
+std::shared_ptr<syd::Database> syd::Database::OpenDatabase(std::string name, std::string init_filename)
+{
+
+  syd::DatabaseFactory::OpenDatabaseFilenames(init_filename);
+  std::string type_name;
+  std::string param;
+  syd::DatabaseFactory::GetTypeAndParamFromName(name, type_name, param);
+  return syd::DatabaseFactory::Instance()->NewDatabase(type_name, name, param);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::OpenSqliteDatabase(std::string filename, std::string folder)
 {
   // Open the DB
   try {
-    db = new odb::sqlite::database(filename);
-    odb::connection_ptr c(db->connection());
+    db_ = new odb::sqlite::database(filename);
+    odb::connection_ptr c(db_->connection());
     c->execute("PRAGMA foreign_keys=ON;");
   }
   catch (const odb::exception& e) {
@@ -82,11 +104,11 @@ void syd::Database::OpenDatabase(std::string filename, std::string folder)
   }
 
   // Verbose
-  VLOG(3) << "Opening db " << name_ << " (" << type_name_ << ") : "
-          << filename_ << " " << folder_;
+  VLOG(3) << "Opening db " << get_name() << " (" << get_typename() << ") : "
+          << get_filename() << " " << folder_;
 
   // Install tracer
-  odb::sqlite::connection_ptr c (db->connection ());
+  odb::sqlite::connection_ptr c (db_->connection ());
   sqlite3* handle (c->handle ());
   sqlite3_trace (handle, trace_callback, this);
 }

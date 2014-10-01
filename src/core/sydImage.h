@@ -33,9 +33,9 @@
 namespace syd {
 
   //--------------------------------------------------------------------
-  void ConvertDicomToImage(std::string dicom_filename, std::string mhd_filename);
-  template<class ImageType>
-  void ConvertDicomToImage(DcmObject * dset, typename ImageType::Pointer image);
+  // return md5 of the raw image
+  std::string ConvertDicomSPECTFileToImage(std::string dicom_filename, std::string mhd_filename);
+  std::string ConvertDicomCTFolderToImage(std::string dicom_path, std::string mhd_filename);
   //--------------------------------------------------------------------
 
 
@@ -45,6 +45,15 @@ namespace syd {
   template<class ImageType>
   typename ImageType::Pointer ReadImage(std::string filename);
   //--------------------------------------------------------------------
+
+
+  //--------------------------------------------------------------------
+  void CopyMHDImage(std::string from, std::string to, int verbose_level=2);
+  void RenameMHDImage(std::string from, std::string to, int verbose_level=2);
+  void RenameOrCopyMHDImage(std::string from, std::string to, int verbose_level, bool erase);
+  void DeleteMHDImage(std::string filename);
+  //--------------------------------------------------------------------
+
 
 #include "sydImage.txx"
 

@@ -26,35 +26,30 @@
 
 // odb
 #include <odb/core.hxx>
-#include <odb/tr1/memory.hxx>
-
-using std::tr1::shared_ptr;
 
 // --------------------------------------------------------------------
 namespace syd {
+
 #pragma db object
-  class Timepoint
-  {
+  class RawImage {
   public:
 
 #pragma db id auto
     IdType        id;
-    IdType        patient_id;      // not necessary but useful. keep it.
-    IdType        spect_serie_id;  // not necessary but useful. keep it.
-    unsigned int  number;
-    double        time_from_injection_in_hours;
-    IdType        ct_image_id;
-    IdType        spect_image_id;
+    IdType        serie_id;
+    std::string   filename;
+    std::string   md5;
 
     // --------------------------------------------------
-    Timepoint() {}
-    ~Timepoint() {}
-    Timepoint(const Timepoint & other) { copy(other); }
+    // Constructor, Destructor
+    ~RawImage() {}
+    RawImage() {}
+    RawImage(const RawImage & other) { copy(other); }
     // --------------------------------------------------
 
 
     // --------------------------------------------------
-    Timepoint & operator= (const Timepoint & other) {
+    RawImage & operator= (const RawImage & other) {
       if (this != &other) { copy(other); }
       return *this;
     }
@@ -62,27 +57,23 @@ namespace syd {
 
 
     // --------------------------------------------------
-    friend std::ostream& operator<<(std::ostream& os, const Timepoint & p) {
-      os << p.id << " " << p.number << " " << p.time_from_injection_in_hours
-         << " spect=" << p.spect_image_id
-         << " ct=" << p.ct_image_id;
+    void copy(const RawImage & t) {
+      id = t.id;
+      serie_id = t.serie_id;
+      filename = t.filename;
+      md5 = t.md5;
+    }
+    // --------------------------------------------------
+
+
+    // --------------------------------------------------
+    friend std::ostream& operator<<(std::ostream& os, const RawImage & p) {
+      os << p.id << " " << p.filename << " " << p.serie_id;
       return os;
     }
     // --------------------------------------------------
 
 
-    // --------------------------------------------------
-    void copy(const Timepoint & t) {
-      id = t.id;
-      patient_id = t.patient_id;
-      spect_serie_id = t.spect_serie_id;
-      number = t.number;
-      time_from_injection_in_hours = t.time_from_injection_in_hours;
-      ct_image_id = t.ct_image_id;
-      spect_image_id = t.spect_image_id;
-    }
-    // --------------------------------------------------
-
-  }; // class Timepoint
+  }; // class RawImage
 } // namespace syd
 // --------------------------------------------------------------------

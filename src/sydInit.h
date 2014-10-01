@@ -16,36 +16,18 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDDUMPSTUDYCOMMAND_H
-#define SYDDUMPSTUDYCOMMAND_H
-
-// syd
-#include "sydDatabaseCommand.h"
 #include "sydClinicDatabase.h"
 #include "sydStudyDatabase.h"
-#include "sydDicomCommon.h"
 
-// --------------------------------------------------------------------
 namespace syd {
 
-  class DumpStudyCommand: public syd::DatabaseCommand
-  {
-  public:
+  // static
+  std::map<std::string, syd::FunctionType> syd::DatabaseFactory::factoryFunctionRegistry;
+  std::map<std::string, std::string> syd::DatabaseFactory::map_of_database_types_;
+  std::map<std::string, std::string> syd::DatabaseFactory::map_of_database_param_;
 
-    DumpStudyCommand(std::string db1, std::string db2);
-    DumpStudyCommand(syd::ClinicDatabase * db1, syd::StudyDatabase  * db2);
-    ~DumpStudyCommand();
-
-    virtual void Dump(std::string patient_name);
-
-  protected:
-    void Initialization();
-    syd::ClinicDatabase * cdb_;
-    syd::StudyDatabase * sdb_;
-
-  }; // class DumpStudyCommand
+  // Type of DB
+  SYD_DECLARE_DATABASE_TYPE(ClinicDatabase);
+  SYD_DECLARE_DATABASE_TYPE(StudyDatabase);
 
 } // namespace syd
-// --------------------------------------------------------------------
-
-#endif

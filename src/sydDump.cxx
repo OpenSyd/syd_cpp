@@ -16,39 +16,41 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTIMEPOINTSDATABASE_H
-#define SYDTIMEPOINTSDATABASE_H
-
 // syd
-#include "sydDatabase.h"
-#include "Timepoint-odb.hxx"
+#include "sydDump_ggo.h"
+#include "core/sydCommon.h"
 #include "sydClinicDatabase.h"
+#include "sydStudyDatabase.h"
 
-// Manage a list of Timepoint. Need a pointer to a ClinicDatabase
-// because each Timepoint is linked with a Serie and a Patient from
-// this ClinicDatabase;
+// easylogging : only once initialization (in the main)
+_INITIALIZE_EASYLOGGINGPP
+
+// syd : only once initialization (in the main)
+#include "sydInit.h"
+
 // --------------------------------------------------------------------
-namespace syd {
+int main(int argc, char* argv[])
+{
+  // Init command line
+  GGO(sydDump, args_info);
 
-  class TimepointsDatabase: public Database {
+  // Init logging option (verbose)
+  syd::init_logging_verbose_options(args_info);
 
-  public:
-    TimepointsDatabase(std::string name);
-    ~TimepointsDatabase() {}
+  // Check args
+  if (args_info.inputs_num < 1) {
+    LOG(FATAL) << "Error please, provide <db> <cmd|patient> (see usage)";
+  }
 
-    std::string GetFullPath(Patient patient);
-    std::string GetFullPathSPECT(Timepoint timepoint);
-    std::string GetFullPathCT(Timepoint timepoint);
-    std::string Print(Timepoint t);
-    std::string Print(Patient p);
-    void UpdateAllTimepointNumbers(IdType patient_id);
-    void set_clinic_database(ClinicDatabase * d) { cdb_ = d; }
+  // Get database
+  std::string dbname = args_info.inputs[0];
+  std::shared_ptr<syd::Database> dbg = syd::Database::OpenDatabase(dbname);
 
-  protected:
-    ClinicDatabase * cdb_;
+  // Generic Dump
+  std::vector<std::string> args;
+  for(auto i=1; i<args_info.inputs_num; i++) args.push_back(args_info.inputs[i]);
+  dbg->Dump(std::cout, args);
 
-  }; // end class
-} // end namespace
+  // This is the end, my friend.
+}
 // --------------------------------------------------------------------
-
-#endif

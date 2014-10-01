@@ -21,6 +21,7 @@
 
 // syd
 #include "sydCommon.h"
+#include "sydDatabaseFactory.h"
 
 // odb
 #include <odb/database.hxx>
@@ -32,25 +33,28 @@
 // dcmtk
 #include "dcmtk/dcmdata/dctk.h"
 
-// Type of id of any table
-typedef unsigned int IdType;
-
 // --------------------------------------------------------------------
 namespace syd {
 
-  class Database
-  {
+  class Database {
   public:
 
-    Database(std::string type_name, std::string name);
-    ~Database();
+    // Main static function to create a new database
+    static std::shared_ptr<Database> OpenDatabase(std::string name, std::string init_filename="");
 
-    virtual void OpenDatabase(std::string filename, std::string folder);
+    // This helper function allow to open a new database knowing his type (DatabaseType)
+    template<class DatabaseType>
+    static std::shared_ptr<DatabaseType> OpenDatabaseType(std::string name);
+
+    // Dump info
+    virtual void Dump(std::ostream & os, std::vector<std::string> & args) = 0;
+    virtual void CheckIntegrity(std::vector<std::string> & args) = 0;
 
     // Accessors
     std::string get_name() const { return name_; }
-    std::string get_type_name() const { return type_name_; }
+    virtual std::string get_typename() const = 0;
     std::string get_folder() const { return folder_; }
+    std::string get_filename() const { return filename_; }
 
     // Call back for SQL query to the DB. For debug purpose
     void TraceCallback(const char* sql);
@@ -68,8 +72,8 @@ namespace syd {
     template<class T> void Erase(T & t);
     template<class T> void Erase(std::vector<T> & t);
 
-    // Retrieve the element with a given id (elements are cached)
-    template<class T> T & GetById(IdType id);
+    // Retrieve the element with a given id
+    template<class T> T GetById(IdType id);
 
     // Check if an element exist an if yes, retrieve it
     template<class T> bool GetIfExist(odb::query<T> q, T & t);
@@ -78,13 +82,20 @@ namespace syd {
     template<class T> bool GetOrInsert(odb::query<T> q, T & t);
 
   protected:
-    std::string name_;
-    std::string type_name_;
-    odb::sqlite::database * db;
+    Database(std::string name);
+    virtual void OpenSqliteDatabase(std::string filename, std::string folder);
+
+    // help function to read filename/folder from a set of string
+    void SetFileAndFolder(std::istringstream & f);
+
+    odb::sqlite::database * db_;
     std::string filename_;
     std::string folder_;
+    std::string name_;
     std::string current_sql_query_;
   };
+
+
 
 #include "sydDatabase.txx"
 

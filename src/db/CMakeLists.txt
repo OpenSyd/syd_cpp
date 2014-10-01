@@ -11,10 +11,21 @@ add_library(sydClinicDatabase
 #----------------------------------------------------------
 
 
-#----------------------------------------------------------
-wrap_odb(sydTimepointsDatabase Timepoint.hxx)
+# #----------------------------------------------------------
+# wrap_odb(sydTimepointsDatabase Timepoint.hxx)
 
-add_library(sydTimepointsDatabase
-  sydTimepointsDatabase.cxx
-  Timepoint-odb.cxx)
+# add_library(sydTimepointsDatabase
+#   sydTimepointsDatabase.cxx
+#   Timepoint-odb.cxx)
+# #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_odb(sydStudyDatabase Timepoint.hxx)
+wrap_odb(sydStudyDatabase RawImage.hxx)
+
+add_library(sydStudyDatabase
+  sydStudyDatabase.cxx
+  Timepoint-odb.cxx
+  RawImage-odb.cxx)
 #----------------------------------------------------------

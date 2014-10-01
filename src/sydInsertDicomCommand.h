@@ -43,7 +43,7 @@ namespace syd {
     void Initialization();
     void UpdateDicom(Patient & p, const DicomSerieInfo & d);
 
-    syd::ClinicDatabase * db_;
+    std::shared_ptr<syd::ClinicDatabase> cdb_;
     std::string patient_name_;
     std::vector<std::string> folders_;
     bool rename_flag_;

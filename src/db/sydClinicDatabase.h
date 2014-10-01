@@ -25,41 +25,49 @@
 #include "Serie-odb.hxx"
 #include "sydDicomCommon.h"
 
-// inherit from syd::Database
+// This database manaage two tables : Patient and Serie
 // --------------------------------------------------------------------
 namespace syd {
 
   class ClinicDatabase: public Database {
 
   public:
-    ClinicDatabase(std::string name);
+    ClinicDatabase(std::string name, std::string param);
     ~ClinicDatabase() {}
 
+    SYD_INIT_DATABASE(ClinicDatabase);
+
+    // required function
+    virtual void Dump(std::ostream & os, std::vector<std::string> & args);
+    virtual void CheckIntegrity(std::vector<std::string> & args);
+
+    void GetAssociatedCTSerie(IdType serie_id, std::vector<std::string> & patterns, Serie & serie);
+    std::string GetSeriePath(IdType id);
+    std::string GetPatientPath(IdType id);
+    std::string GetPath(const Patient & patient);
+    std::string GetPath(const Serie & serie);
+    void GetPatientsByName(std::string patient_name, std::vector<Patient> & patients);
+    odb::query<Serie> GetSeriesQueryFromPatterns(std::vector<std::string> patterns);
+    void AndSeriesQueryFromPattern(odb::query<Serie> & q, std::string pattern);
     void UpdateSerie(Serie & serie);
 
+    // Function for checking integrity
     void set_check_file_content_level(int l) { check_file_content_level_ = l; }
-
+    void CheckIntegrity(const Patient & patient);
     void CheckPatient(const Patient & patient);
     void CheckSerie(const Serie & serie);
     void CheckSerie_CT(const Serie & serie);
     void CheckSerie_NM(const Serie & serie);
-
-    std::string GetFullPath(const Patient & patient);
-    std::string GetFullPath(const Serie & serie);
-    void GetPatientsByName(std::string patient_name, std::vector<Patient> & patients);
+    void CheckFile(OFString filename);
 
     std::string Print(Patient patient, int level=0);
     std::string Print(Serie serie);
 
-    odb::query<Serie> GetSeriesQueryFromPatterns(std::vector<std::string> patterns);
-    void AndSeriesQueryFromPattern(odb::query<Serie> & q, std::string pattern);
-
   protected:
     int check_file_content_level_;
+  }; // class ClinicDatabase
 
-
-  }; // end class
-} // end namespace
+} // namespace syd
 // --------------------------------------------------------------------
 
 #endif

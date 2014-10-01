@@ -1,11 +1,10 @@
 #File sydInsertTimepoint.ggo
 
 package "sydInsertTimepoint"
-usage "sydInsertTimepoint <db1> <db2> <serie_ids>"
+usage "sydInsertTimepoint <db1> <serie_ids>"
 version "0.1"
 description "Insert some series into the database, convert CT and SPECT dicom to mhd.
 - <db1> is the name of a ClinicDatabase.
-- <db2> is the name of a TimepointsDatabase.
 - <serie_ids> is the list of serie ids
 
 For all given series, CT and SPECT are converted from db1 DICOM to mhd and put in the db2.
@@ -15,3 +14,4 @@ option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
 option "ct"                     -       "String pattern to select CT when several CT series are associated to a SPECT"      string default="" no
+option "ignore"   	 	-       "Ignore dicom conversion (update fields only)"     flag	off

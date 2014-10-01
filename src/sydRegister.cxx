@@ -24,6 +24,9 @@
 // easylogging : only once initialization (in the main)
 _INITIALIZE_EASYLOGGINGPP
 
+// syd : only once initialization (in the main)
+#include "sydInit.h"
+
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -34,20 +37,20 @@ int main(int argc, char* argv[])
   syd::init_logging_verbose_options(args_info);
 
   // Check args
-  if (args_info.inputs_num < 6) {
-    LOG(FATAL) << "Error please, provide <db1> <db2> <db3> <patient> <a> <b> (see usage)";
+  if (args_info.inputs_num < 5) {
+    LOG(FATAL) << "Error please, provide <db1> <db2> <patient> <a> <b> (see usage)";
   }
 
   // Get the dbs
   std::string db1 = args_info.inputs[0];
   std::string db2 = args_info.inputs[1];
-  std::string db3 = args_info.inputs[2];
-  syd::RegisterCommand * c = new syd::RegisterCommand(db1, db2, db3);
+  syd::RegisterCommand * c = new syd::RegisterCommand(db1, db2);
 
   // Go
-  std::string patient_name = args_info.inputs[3];
-  int a = atoi(args_info.inputs[4]);
-  int b = atoi(args_info.inputs[5]);
+  std::string patient_name = args_info.inputs[2];
+  c->set_config_filename(args_info.elconfig_arg);
+  int a = atoi(args_info.inputs[3]);
+  int b = atoi(args_info.inputs[4]);
   c->Run(patient_name, a, b);
 
   // This is the end, my friend.

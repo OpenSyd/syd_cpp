@@ -21,18 +21,17 @@
 #include "sydImage.h"
 
 // --------------------------------------------------------------------
-syd::InsertTimepointCommand::InsertTimepointCommand(std::string db1, std::string db2):DatabaseCommand()
+syd::InsertTimepointCommand::InsertTimepointCommand(std::string db):DatabaseCommand()
 {
-  db_ = OpenNewDatabase<ClinicDatabase>(db1);
-  tpdb_ = OpenNewDatabase<TimepointsDatabase>(db2);
+  sdb_ = syd::Database::OpenDatabaseType<StudyDatabase>(db);
   Initialization();
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::InsertTimepointCommand::InsertTimepointCommand(syd::ClinicDatabase * db1, syd::TimepointsDatabase  * db2):
-  db_(db1), tpdb_(db2)
+syd::InsertTimepointCommand::InsertTimepointCommand(syd::StudyDatabase  * db):
+  DatabaseCommand(), sdb_(db)
 {
   Initialization();
 }
@@ -42,8 +41,9 @@ syd::InsertTimepointCommand::InsertTimepointCommand(syd::ClinicDatabase * db1, s
 // --------------------------------------------------------------------
 void syd::InsertTimepointCommand::Initialization()
 {
-  tpdb_->set_clinic_database(db_);
+  cdb_ = sdb_->get_clinical_database();
   ct_selection_patterns_.clear();
+  set_ignore_files_flag(false);
 }
 // --------------------------------------------------------------------
 
@@ -79,7 +79,7 @@ void syd::InsertTimepointCommand::InsertTimepoint(std::vector<std::string> input
 
   // Insert all series
   for(auto i: ids) {
-    Serie serie = db_->GetById<Serie>(i);
+    Serie serie = cdb_->GetById<Serie>(i);
     InsertTimepoint(serie);
   }
 }
@@ -87,7 +87,7 @@ void syd::InsertTimepointCommand::InsertTimepoint(std::vector<std::string> input
 
 
 // --------------------------------------------------------------------
-void syd::InsertTimepointCommand::InsertTimepoint(Serie serie)
+void syd::InsertTimepointCommand::InsertTimepoint(const Serie & serie)
 {
   // Check modality
   if (serie.modality != "NM") {
@@ -96,124 +96,57 @@ void syd::InsertTimepointCommand::InsertTimepoint(Serie serie)
   }
 
   // Get patient
-  if (db_->GetIfExist<Patient>(odb::query<Patient>::id == serie.patient_id, patient_)) {
-    db_->CheckPatient(patient_);
+  Patient patient;
+  if (cdb_->GetIfExist<Patient>(odb::query<Patient>::id == serie.patient_id, patient)) {
+    cdb_->CheckPatient(patient);
   }
   else {
     LOG(FATAL) << "Error, the patient for this serie (" << serie << ") does not exist";
   }
 
-  // Check folder if does not exist
-  std::string path = tpdb_->GetFullPath(patient_);
-  if (!OFStandard::dirExists(path.c_str())) {
-    LOG(FATAL) << "The directory " << path << " does not exist. Please create.";
-  }
-
-  // Create or Update a new Timepoint
+  // Create a new Timepoint or get the existing one
   Timepoint timepoint;
-  bool b = tpdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::serie_id == serie.id, timepoint);
+  bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::spect_serie_id == serie.id, timepoint);
+
   if (!b) {  // It does not exist, we create it
-    VLOG(1) << "Creating new Timepoint for " << patient_.name << " date " << serie.acquisition_date;
-    timepoint.patient_id = patient_.id;
-    timepoint.serie_id = serie.id;
+    VLOG(1) << "Creating new Timepoint for " << patient.name << " date " << serie.acquisition_date;
+    RawImage spect;
+    spect.serie_id = serie.id;
+    RawImage ct;
+    Serie ct_serie;
+    cdb_->GetAssociatedCTSerie(serie.id, ct_selection_patterns_, ct_serie);
+    ct.serie_id = ct_serie.id;
+    timepoint.patient_id = patient.id;
+    timepoint.spect_serie_id = serie.id;
     timepoint.number=0;
-    tpdb_->Insert(timepoint);
+    sdb_->InsertTimepoint(timepoint, spect, ct);
+    sdb_->UpdateImageFilenames(timepoint);
   }
   else {
-    VLOG(1) << "Timepoint " << patient_.name << " "
+    VLOG(1) << "Timepoint " << patient.name << " "
             << timepoint.number << " "
             << serie.acquisition_date << " ("
             << timepoint.time_from_injection_in_hours
             << " hours) already exist, deleting current image and updating.";
-    std::string path = tpdb_->GetFullPathSPECT(timepoint);
-    syd::DeleteMHDImage(path);
-    path = tpdb_->GetFullPathCT(timepoint);
-    syd::DeleteMHDImage(path);
+    if (!get_ignore_files_flag()) {
+      syd::DeleteMHDImage(sdb_->GetImagePath(timepoint.ct_image_id));
+      syd::DeleteMHDImage(sdb_->GetImagePath(timepoint.spect_image_id));
+    }
   }
-
-  // Set a temporary number (higher than the previous)
-  std::vector<Timepoint> timepoints;
-  tpdb_->LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient_.id);
-  int max = 0;
-  for(auto i=timepoints.begin(); i<timepoints.end(); i++) if (i->number > max) max = i->number;
-  timepoint.number = max+1;
 
   // Update the time
-  if (patient_.injection_date == "") {
-    LOG(FATAL) << "Injection date for the patient " << patient_.name << " is missing.";
-  }
-  timepoint.time_from_injection_in_hours = syd::DateDifferenceInHours(serie.acquisition_date, patient_.injection_date);
+  timepoint.patient_id = patient.id;
+  timepoint.spect_serie_id = serie.id;
+  timepoint.time_from_injection_in_hours = syd::DateDifferenceInHours(serie.acquisition_date, patient.injection_date);
+  sdb_->Update(timepoint);
 
-  // Update field
-  tpdb_->Update(timepoint);
-
-  // Convert the dicom to mhd (SPECT)
-  std::string dicom_filename = db_->GetFullPath(serie);
-  std::string mhd_filename   = tpdb_->GetFullPathSPECT(timepoint);
-  VLOG(2) << "Converting SPECT dicom to mhd (" << mhd_filename << ") ...";
-  syd::ConvertDicomToImage(dicom_filename, mhd_filename);
-
-  // Retrieve corresponding CT
-  std::vector<Serie> series;
-  db_->LoadVector<Serie>(series,
-                         odb::query<Serie>::dicom_frame_of_reference_uid ==
-                         serie.dicom_frame_of_reference_uid &&
-                         odb::query<Serie>::modality == "CT");
-
-  // Check how many series we found
-  if (series.size() == 0) {
-    LOG(FATAL) << "Error could not find corresponding ct series with dicom_frame_of_reference_uid = " << serie.dicom_frame_of_reference_uid;
+  // Convert dicom to image
+  if (!get_ignore_files_flag()) {
+    sdb_->ConvertDicomToImage(timepoint);
   }
 
-  // If we found several series with the dicom_frame_of_reference_uid
-  if (series.size() > 1) {
-    if (ct_selection_patterns_.size() == 0) {
-      LOG(FATAL) << "Error we found " << series.size() << " series with the correct dicom_frame_of_reference_uid."
-                 << std::endl
-                 << "Please use the ct_pattern option to select the one you want.";
-    }
-    VLOG(3) << "We found " << series.size() << " serie(s). Selection with the ct_pattern option...";
-    typedef odb::query<Serie> QueryType;
-    QueryType q = db_->GetSeriesQueryFromPatterns(ct_selection_patterns_);
-    q = (QueryType::dicom_frame_of_reference_uid == serie.dicom_frame_of_reference_uid &&
-         QueryType::modality == "CT" &&
-         QueryType::patient_id == patient_.id) && q;
-    series.clear();
-    db_->LoadVector<Serie>(series, q);
-  }
+  // Update the filenames according to (compute number, time_from_injection_in_hours etc)
+  sdb_->UpdateNumberAndRenameFiles(timepoint.patient_id);
 
-  if (series.size() != 1) {
-    LOG(FATAL) << "Error we found " << series.size() << " serie(s) with the dicom_frame_of_reference_uid and ct_pattern for this spect.";
-  }
-
-  Serie ct_serie = series[0];
-  std::string dicom_path = db_->GetFullPath(ct_serie);
-  std::string ct_mhd_filename   = tpdb_->GetFullPathCT(timepoint);
-
-  // read all dicom in the folder
-  typedef itk::Image<signed short, 3> ImageType;
-  typedef itk::ImageSeriesReader<ImageType> ReaderType;
-  typedef itk::GDCMImageIO ImageIOType;
-  typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
-  ImageIOType::Pointer gdcmIO = ImageIOType::New();
-  InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
-  inputNames->SetInputDirectory(dicom_path);
-  const ReaderType::FileNamesContainer & filenames = inputNames->GetInputFileNames();
-  VLOG(2) << "Converting CT dicom (with " << filenames.size() << " files) to mhd (" << ct_mhd_filename << ") ...";
-  ReaderType::Pointer reader = ReaderType::New();
-  reader->SetImageIO( gdcmIO );
-  reader->SetFileNames( filenames );
-  try { reader->Update(); }
-  catch (itk::ExceptionObject &excp) {
-    std::cerr << excp << std::endl;
-    LOG(FATAL) << "Error while reading the dicom serie in " << dicom_path << " ";
-  }
-
-  // convert to mhd
-  ImageType::Pointer ct = reader->GetOutput();
-  syd::WriteImage<ImageType>(ct, ct_mhd_filename);
-
-  // Find time order according to existing timepoint
-  tpdb_->UpdateAllTimepointNumbers(patient_.id);
 }
 // --------------------------------------------------------------------

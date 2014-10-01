@@ -24,6 +24,9 @@
 // easylogging : only once initialization (in the main)
 _INITIALIZE_EASYLOGGINGPP
 
+// syd : only once initialization (in the main)
+#include "sydInit.h"
+
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {

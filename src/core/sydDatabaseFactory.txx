@@ -16,33 +16,15 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <memory>
-#include <odb/core.hxx>
-
-typedef unsigned int IdType;
-
-// --------------------------------------------------------------------
-#pragma db object
-class Patient
+// ---------------------------------------------------------------------
+template<class T>
+DatabaseRegistrar<T>::DatabaseRegistrar(std::string type_name)
 {
-public:
-
-#pragma db id auto
-  IdType        id;
-  std::string   name;
-  IdType        synfrizz_id;
-  double        weight_in_kg;
-  std::string   path;
-  bool          was_treated;
-  std::string   injection_date;
-  std::string   injected_quantity_in_MBq;
-
-  friend std::ostream& operator<<(std::ostream& os, const Patient & p) {
-    os << p.synfrizz_id << " " << p.name;
-    return os;
-  }
-
-};
-// --------------------------------------------------------------------
+  // std::cout << "Registering new database type " << type_name;
+  // register the class factory function
+  syd::DatabaseFactory::Instance()->
+    RegisterFactoryFunction(type_name,
+                            [](std::string a,
+                               std::string b) -> Database * { return new T(a,b);});
+}
+// ---------------------------------------------------------------------

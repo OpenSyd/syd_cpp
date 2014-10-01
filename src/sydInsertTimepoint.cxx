@@ -24,6 +24,9 @@
 // easylogging : only once initialization (in the main)
 _INITIALIZE_EASYLOGGINGPP
 
+// syd : only once initialization (in the main)
+#include "sydInit.h"
+
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -34,19 +37,19 @@ int main(int argc, char* argv[])
   syd::init_logging_verbose_options(args_info);
 
   // Check args
-  if (args_info.inputs_num < 3) {
-    LOG(FATAL) << "Error please, provide <db1> <db2> <serie ids> (see usage)";
+  if (args_info.inputs_num < 2) {
+    LOG(FATAL) << "Error please, provide <db1> <serie ids> (see usage)";
   }
 
   // Get the current db names
-  std::string db1 = args_info.inputs[0];
-  std::string db2 = args_info.inputs[1];
-  syd::InsertTimepointCommand * c = new syd::InsertTimepointCommand(db1, db2);
+  std::string db = args_info.inputs[0];
+  syd::InsertTimepointCommand * c = new syd::InsertTimepointCommand(db);
 
   // Execute the command
   c->set_ct_selection_patterns(args_info.ct_arg);
+  c->set_ignore_files_flag(args_info.ignore_flag);
   std::vector<std::string> serie_ids;
-  for(auto i=2; i<args_info.inputs_num; i++) serie_ids.push_back(args_info.inputs[i]);
+  for(auto i=1; i<args_info.inputs_num; i++) serie_ids.push_back(args_info.inputs[i]);
   c->InsertTimepoint(serie_ids);
 
   // This is the end, my friend.

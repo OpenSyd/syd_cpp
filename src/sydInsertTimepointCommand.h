@@ -22,7 +22,7 @@
 // syd
 #include "sydDatabaseCommand.h"
 #include "sydClinicDatabase.h"
-#include "sydTimepointsDatabase.h"
+#include "sydStudyDatabase.h"
 #include "sydDicomCommon.h"
 
 // --------------------------------------------------------------------
@@ -32,22 +32,23 @@ namespace syd {
   {
   public:
 
-    InsertTimepointCommand(std::string db1, std::string db2);
-    InsertTimepointCommand(syd::ClinicDatabase * db1, syd::TimepointsDatabase  * db2);
+    InsertTimepointCommand(std::string db);
+    InsertTimepointCommand(syd::StudyDatabase * db);
     ~InsertTimepointCommand();
 
     void set_ct_selection_patterns(std::string s);
+    void set_ignore_files_flag(bool b) { ignore_files_flag_ = b; }
+    bool get_ignore_files_flag() { return ignore_files_flag_; }
 
     void InsertTimepoint(std::vector<std::string> serie_ids);
-    void InsertTimepoint(Serie serie);
+    void InsertTimepoint(const Serie & serie);
 
   protected:
     void Initialization();
 
-    syd::ClinicDatabase * db_;
-    syd::TimepointsDatabase * tpdb_;
-    std::vector<IdType> serie_ids_;
-    Patient patient_;
+    bool ignore_files_flag_;
+    std::shared_ptr<syd::ClinicDatabase> cdb_;
+    std::shared_ptr<syd::StudyDatabase>  sdb_;
     std::vector<std::string> ct_selection_patterns_;
   };
 

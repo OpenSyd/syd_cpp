@@ -89,90 +89,6 @@ void syd::ConvertStringToDate(std::string s, tm & d)
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-/*
-  Rename a mhd image, composed of 2 files XXX.mhd and XXX.raw. This
-  function moves the two files and change the header to be linked with
-  the renamed .raw file.
- */
-void syd::RenameMHDImage(std::string old_path, std::string new_path, int verbose_level)
-{
-  // Check if not the same
-  if (old_path == new_path) return; // do nothing
-
-  // Check extension old filename
-  size_t n = old_path.find_last_of(".");
-  std::string extension = old_path.substr(n+1);
-  if (extension != "mhd") {
-    LOG(FATAL) << "Rename MHD : Error the filename must have mhd as extension : " << old_path;
-  }
-  std::string old_path_raw = old_path.substr(0,n)+".raw";
-
-  // Check extension new filename
-  n = new_path.find_last_of(".");
-  extension = new_path.substr(n+1);
-  if (extension != "mhd") {
-    LOG(FATAL) << "Rename MHD : Error the new filename must have mhd as extension : " << new_path;
-  }
-  std::string new_path_raw = new_path.substr(0,n)+".raw";
-
-  // Check files
-  if (!OFStandard::fileExists(old_path.c_str())) {
-    LOG(FATAL) << "Rename MHD : Error path (mhd) not exist : " << old_path;
-  }
-  if (!OFStandard::fileExists(old_path_raw.c_str())) {
-    LOG(FATAL) << "Rename MHD : Error path (raw) not exist : " << old_path_raw;
-  }
-  if (OFStandard::fileExists(new_path.c_str())) {
-    LOG(FATAL) << "Rename MHD : Error path (mhd) to rename already exist : " << new_path;
-  }
-  if (OFStandard::fileExists(new_path_raw.c_str())) {
-    LOG(FATAL) << "Rename MHD : Error path (raw) to rename already exist : " << new_path_raw;
-  }
-
-  // verbose
-  VLOG(verbose_level) << "Rename header " << old_path << " to " << new_path;
-
-  // header part
-  // int result = rename(old_path.c_str(), new_path.c_str());
-  // if (result != 0) {
-  //   LOG(FATAL) << "Error while renaming " << old_path << " to " << new_path;
-  // }
-
-  // Change ElementDataFile in the header
-  std::ifstream in(old_path);
-  std::ofstream out(new_path);
-  OFString r;
-  OFStandard::getFilenameFromPath(r, old_path_raw.c_str());
-  std::string wordToReplace(r.c_str());
-  OFStandard::getFilenameFromPath(r, new_path_raw.c_str());
-  std::string wordToReplaceWith(r.c_str());
-  size_t len = wordToReplace.length();
-  std::string line;
-  while (std::getline(in, line)) {
-    while (true) {
-      size_t pos = line.find(wordToReplace);
-      if (pos != std::string::npos)
-        line.replace(pos, len, wordToReplaceWith);
-      else
-        break;
-    }
-    out << line << '\n';
-  }
-  in.close();
-  out.close();
-
-  // Delete old path
-  OFStandard::deleteFile(old_path.c_str());
-
-  // Rename .raw part
-  VLOG(verbose_level) << "Rename raw " << old_path_raw << " to " << new_path_raw;
-  int result = rename(old_path_raw.c_str(), new_path_raw.c_str());
-  if (result != 0) {
-    LOG(FATAL) << "Error while renaming " << old_path_raw << " to " << new_path_raw;
-  }
-}
-// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
@@ -192,17 +108,6 @@ double syd::DateDifferenceInHours(std::string end, std::string start)
 bool syd::IsBefore(std::string d1, std::string d2)
 {
   return (DateDifferenceInHours(d1,d2) < 0);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::DeleteMHDImage(std::string path)
-{
-  OFStandard::deleteFile(path.c_str());
-  size_t n = path.find_last_of(".");
-  std::string path_raw = path.substr(0,n)+".raw";
-  OFStandard::deleteFile(path_raw.c_str());
 }
 // --------------------------------------------------------------------
 

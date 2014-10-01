@@ -22,16 +22,16 @@
 // --------------------------------------------------------------------
 syd::DumpStudyCommand::DumpStudyCommand(std::string db1, std::string db2):DatabaseCommand()
 {
-  db_ = OpenNewDatabase<ClinicDatabase>(db1);
-  tpdb_ = OpenNewDatabase<TimepointsDatabase>(db2);
+  cdb_ = OpenNewDatabase<ClinicDatabase>(db1);
+  sdb_ = OpenNewDatabase<StudyDatabase>(db2);
   Initialization();
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::DumpStudyCommand::DumpStudyCommand(syd::ClinicDatabase * db1, syd::TimepointsDatabase  * db2):
-  db_(db1), tpdb_(db2)
+syd::DumpStudyCommand::DumpStudyCommand(syd::ClinicDatabase * db1, syd::StudyDatabase  * db2):
+  cdb_(db1), sdb_(db2)
 {
   Initialization();
 }
@@ -41,7 +41,7 @@ syd::DumpStudyCommand::DumpStudyCommand(syd::ClinicDatabase * db1, syd::Timepoin
 // --------------------------------------------------------------------
 void syd::DumpStudyCommand::Initialization()
 {
-  tpdb_->set_clinic_database(db_);
+  sdb_->set_clinic_database(cdb_);
 }
 // --------------------------------------------------------------------
 
@@ -59,9 +59,9 @@ void syd::DumpStudyCommand::Dump(std::string patient_name)
 {
   // Get the patients
   std::vector<Patient> patients;
-  db_->GetPatientsByName(patient_name, patients);
+  cdb_->GetPatientsByName(patient_name, patients);
 
   // Dump all patients
-  for(auto i:patients) std::cout << tpdb_->Print(i);
+  for(auto i:patients) std::cout << sdb_->Print(i) << std::endl;
 }
 // --------------------------------------------------------------------

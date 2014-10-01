@@ -16,20 +16,20 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-// --------------------------------------------------------------------
-template<class T>
-T * syd::DatabaseCommand::OpenNewDatabase(std::string name)
-{
-  // Create new database
-  T * t = new T(name);
+// // --------------------------------------------------------------------
+// template<class T>
+// T * syd::DatabaseCommand::OpenNewDatabase(std::string name)
+// {
+//   // Create new database
+//   T * t = new T(name);
 
-  // Get the filename and foldername and open the db
-  t->OpenDatabase(get_db_filename(name), get_db_folder(name));
+//   // Get the filename and foldername and open the db
+//   t->OpenDatabase(get_db_filename(name), get_db_folder(name));
 
-  // Add to the list of db
-  databases_.push_back(t);
+//   // Add to the list of db
+//   databases_.push_back(t);
 
-  // return created db
-  return t;
-}
-// --------------------------------------------------------------------
+//   // return created db
+//   return t;
+// }
+// // --------------------------------------------------------------------

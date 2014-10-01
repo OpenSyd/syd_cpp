@@ -5,6 +5,7 @@ add_library(sydCore
   sydCommon.cxx
   sydImage.cxx
   sydDatabase.cxx
+  sydDatabaseFactory.cxx
   sydDatabaseCommand.cxx
   sydDicomCommon.cxx)
 #----------------------------------------------------------

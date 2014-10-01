@@ -22,7 +22,7 @@
 // --------------------------------------------------------------------
 syd::InsertDicomCommand::InsertDicomCommand(std::string db):DatabaseCommand()
 {
-  db_ = OpenNewDatabase<ClinicDatabase>(db);
+  cdb_ = syd::Database::OpenDatabaseType<ClinicDatabase>(db);
   Initialization();
 }
 // --------------------------------------------------------------------
@@ -30,7 +30,7 @@ syd::InsertDicomCommand::InsertDicomCommand(std::string db):DatabaseCommand()
 
 // --------------------------------------------------------------------
 syd::InsertDicomCommand::InsertDicomCommand(syd::ClinicDatabase * db):
-  db_(db)
+  cdb_(db)
 {
   Initialization();
 }
@@ -81,7 +81,7 @@ void syd::InsertDicomCommand::InsertDicom(std::string patient_name, std::string 
 {
   // Get patient
   Patient patient;
-  bool b = db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name, patient);
+  bool b = cdb_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name, patient);
   if (!b) {
     LOG(FATAL) << "Error I could not find the patient '" << patient_name << "' in the db.";
   }
@@ -252,16 +252,16 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
 
   // Create the series
   Serie serie;
-  if (db_->GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid, serie)) {
+  if (cdb_->GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid, serie)) {
     // already exist
-    db_->CheckSerie(serie);
+    cdb_->CheckSerie(serie);
     VLOG(1) << "Serie id=" << serie.id << " at " << acqui_date << " already exist, updating.";
   }
   else {
     serie.path = "";
     serie.patient_id = patient.id;
     serie.dicom_uid = uid;
-    db_->Insert(serie);
+    cdb_->Insert(serie);
     VLOG(1) << "Create new serie=" << serie.id << " at " << acqui_date;
   }
 
@@ -281,14 +281,14 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   serie.number_of_files = d.filenames_.size();
 
   // add to db (and create folder)
-  db_->UpdateSerie(serie);
+  cdb_->UpdateSerie(serie);
 
   // For CT modality, there are several files to copy
   if (modality == "CT") {
     for(auto i=d.filenames_.begin(); i<d.filenames_.end(); i++) {
       OFString filename;
       OFStandard::getFilenameFromPath(filename, i->c_str());
-      std::string destination = db_->GetFullPath(serie)+PATH_SEPARATOR+filename.c_str();
+      std::string destination = cdb_->GetPath(serie)+PATH_SEPARATOR+filename.c_str();
 
       // Check if already exist
       if (OFStandard::fileExists(destination.c_str())) {
@@ -302,7 +302,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
           VLOG(3) << "Copying " << filename;
           std::ifstream  src(i->c_str(), std::ios::binary);
           std::ofstream  dst(destination,   std::ios::binary);
-        dst << src.rdbuf();
+          dst << src.rdbuf();
         }
       }
     }
@@ -311,7 +311,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
     if (d.filenames_.size() != 1) {
       LOG(WARNING) << "Error I found " << d.filenames_.size() << " files while expecting a single one for NM modality. I only consider the first one.";
     }
-    std::string destination = db_->GetFullPath(serie);
+    std::string destination = cdb_->GetPath(serie);
     if (rename_flag_) {
       VLOG(2) << "Rename " << d.filenames_[0] << " to " << destination;
       if (OFStandard::fileExists(destination.c_str())) {

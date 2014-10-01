@@ -59,6 +59,9 @@ namespace syd {
   //--------------------------------------------------------------------
 
 
+  // Type for id in the db
+  typedef unsigned int IdType;
+
   //--------------------------------------------------------------------
   template<class ArgsInfoType>
   void init_logging_verbose_options(ArgsInfoType & args_info);
@@ -67,8 +70,6 @@ namespace syd {
 
   //--------------------------------------------------------------------
   void CreateDirectory(std::string folder);
-  void RenameMHDImage(std::string old_path, std::string new_path, int verbose_level=2);
-  void DeleteMHDImage(std::string path);
   //--------------------------------------------------------------------
 
 

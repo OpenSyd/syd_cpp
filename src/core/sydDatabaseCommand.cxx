@@ -22,8 +22,8 @@
 // --------------------------------------------------------------------
 syd::DatabaseCommand::DatabaseCommand()
 {
-  init_filename_="";
-  OpenFileOfDatabaseNames();
+  // init_filename_="";
+  // OpenFileOfDatabaseNames();
 }
 // --------------------------------------------------------------------
 
@@ -36,59 +36,59 @@ syd::DatabaseCommand::~DatabaseCommand()
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-void syd::DatabaseCommand::OpenFileOfDatabaseNames()
-{
-  // Get the init filename that contains the list of db names/folders
-  if (init_filename_ == "") { // look env var
-    char * init = getenv ("SYD_INIT_DB_FILE");
-    if (init == NULL) LOG(FATAL) << "Error, please set SYD_INIT_DB_FILE environment variable.";
-    init_filename_ = std::string(init);
-  }
+// // --------------------------------------------------------------------
+// void syd::DatabaseCommand::OpenFileOfDatabaseNames()
+// {
+//   // Get the init filename that contains the list of db names/folders
+//   if (init_filename_ == "") { // look env var
+//     char * init = getenv ("SYD_INIT_DB_FILE");
+//     if (init == NULL) LOG(FATAL) << "Error, please set SYD_INIT_DB_FILE environment variable.";
+//     init_filename_ = std::string(init);
+//   }
 
-  // Read the file
-  std::ifstream in(init_filename_);
-  while (in) {
-    std::string name;
-    std::string filename;
-    std::string folder;
-    syd::SkipComment(in);
-    in >> name;
-    in >> filename;
-    in >> folder;
-    if (in) {
-      db_filenames_[name] = filename;
-      db_folders_[name] = folder;
-    }
-  }
-  in.close();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::string syd::DatabaseCommand::get_db_filename(std::string db)
-{
-  if (db_filenames_.find(db) != db_filenames_.end()) return db_filenames_[db];
-  std::string s;
-  for(auto i=db_filenames_.begin(); i != db_filenames_.end(); i++) s = s+i->first+" ";
-  LOG(FATAL) << "Error could not find the database '" << db << "' in the list of databases info."
-             << std::endl
-             << "The db info ( " << init_filename_ << ") contains " << db_filenames_.size() << " values : " << s;
-  return ""; // (to avoid warning)
-}
-// --------------------------------------------------------------------
+//   // Read the file
+//   std::ifstream in(init_filename_);
+//   while (in) {
+//     std::string name;
+//     std::string filename;
+//     std::string folder;
+//     syd::SkipComment(in);
+//     in >> name;
+//     in >> filename;
+//     in >> folder;
+//     if (in) {
+//       db_filenames_[name] = filename;
+//       db_folders_[name] = folder;
+//     }
+//   }
+//   in.close();
+// }
+// // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-std::string syd::DatabaseCommand::get_db_folder(std::string db)
-{
-  if (db_folders_.find(db) != db_folders_.end()) return db_folders_[db];
-  std::string s;
-  for(auto i=db_folders_.begin(); i != db_folders_.end(); i++) s = s+i->first+" ";
-  LOG(FATAL) << "Error could not find the database '" << db << "' in the list of databases info."
-             << std::endl
-             << "The db info ( " << init_filename_ << ") contains " << db_folders_.size() << " values : " << s;
-  return ""; // (to avoid warning)
-}
-// --------------------------------------------------------------------
+// // --------------------------------------------------------------------
+// std::string syd::DatabaseCommand::get_db_filename(std::string db)
+// {
+//   if (db_filenames_.find(db) != db_filenames_.end()) return db_filenames_[db];
+//   std::string s;
+//   for(auto i=db_filenames_.begin(); i != db_filenames_.end(); i++) s = s+i->first+" ";
+//   LOG(FATAL) << "Error could not find the database '" << db << "' in the list of databases info."
+//              << std::endl
+//              << "The db info ( " << init_filename_ << ") contains " << db_filenames_.size() << " values : " << s;
+//   return ""; // (to avoid warning)
+// }
+// // --------------------------------------------------------------------
+
+
+// // --------------------------------------------------------------------
+// std::string syd::DatabaseCommand::get_db_folder(std::string db)
+// {
+//   if (db_folders_.find(db) != db_folders_.end()) return db_folders_[db];
+//   std::string s;
+//   for(auto i=db_folders_.begin(); i != db_folders_.end(); i++) s = s+i->first+" ";
+//   LOG(FATAL) << "Error could not find the database '" << db << "' in the list of databases info."
+//              << std::endl
+//              << "The db info ( " << init_filename_ << ") contains " << db_folders_.size() << " values : " << s;
+//   return ""; // (to avoid warning)
+// }
+// // --------------------------------------------------------------------

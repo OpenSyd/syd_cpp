@@ -20,8 +20,8 @@
 #include "sydRegisterCommand.h"
 
 // --------------------------------------------------------------------
-syd::RegisterCommand::RegisterCommand(ClinicDatabase * d1, TimepointsDatabase * d2, TimepointsDatabase * d3):
-  DatabaseCommand(), db_(d1), tpdb_(d2), reg_tpdb_(d3)
+syd::RegisterCommand::RegisterCommand(StudyDatabase * d1, StudyDatabase * d2):
+  DatabaseCommand(), in_db_(d1), out_db_(d2)
 {
   Initialization();
 }
@@ -29,12 +29,11 @@ syd::RegisterCommand::RegisterCommand(ClinicDatabase * d1, TimepointsDatabase * 
 
 
 // --------------------------------------------------------------------
-syd::RegisterCommand::RegisterCommand(std::string d1, std::string d2, std::string d3):
+syd::RegisterCommand::RegisterCommand(std::string d1, std::string d2):
   DatabaseCommand()
 {
-  db_ = OpenNewDatabase<ClinicDatabase>(d1);
-  tpdb_ = OpenNewDatabase<TimepointsDatabase>(d2);
-  reg_tpdb_ = OpenNewDatabase<TimepointsDatabase>(d3);
+  in_db_ = syd::Database::OpenDatabaseType<StudyDatabase>(d1);
+  out_db_ = syd::Database::OpenDatabaseType<StudyDatabase>(d2);
   Initialization();
 }
 // --------------------------------------------------------------------
@@ -43,8 +42,12 @@ syd::RegisterCommand::RegisterCommand(std::string d1, std::string d2, std::strin
 // --------------------------------------------------------------------
 void syd::RegisterCommand::Initialization()
 {
-  tpdb_->set_clinic_database(db_);
-  reg_tpdb_->set_clinic_database(db_);
+  cdb_ = in_db_->get_clinical_database();
+  if (cdb_->get_name() != out_db_->get_clinical_database()->get_name()) {
+    LOG(FATAL) << "Error the associated clinical database of " << in_db_->get_name()
+               << " is different from the one in " << out_db_->get_name();
+  }
+  config_filename_ = "noconfigfile";
 }
 // --------------------------------------------------------------------
 
@@ -65,23 +68,23 @@ void syd::RegisterCommand::Run(std::string patient_name, int ref_number, int mov
 
   // Get the patient
   Patient patient;
-  if (!db_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name, patient)) {
+  if (!cdb_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name, patient)) {
     LOG(FATAL) << "Error, the patient " << patient_name << " does not exist";
   }
 
   // Get the timepoints
   Timepoint reference_timepoint;
-  bool b = tpdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == patient.id &&
-                                        odb::query<Timepoint>::number == ref_number,
-                                        reference_timepoint);
+  bool b = in_db_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == patient.id &&
+                                         odb::query<Timepoint>::number == ref_number,
+                                         reference_timepoint);
   if (!b) {
     LOG(FATAL) << "Error could not find the (reference) timepoint number "
                << ref_number << " for the patient " << patient.name;
   }
   Timepoint moving_timepoint;
-  b = tpdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == patient.id &&
-                                        odb::query<Timepoint>::number == mov_number,
-                                        moving_timepoint);
+  b = in_db_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == patient.id &&
+                                     odb::query<Timepoint>::number == mov_number,
+                                     moving_timepoint);
   if (!b) {
     LOG(FATAL) << "Error could not find the (moving) timepoint number "
                << mov_number << " for the patient " << patient.name;
@@ -96,90 +99,95 @@ void syd::RegisterCommand::Run(std::string patient_name, int ref_number, int mov
 
 
 // --------------------------------------------------------------------
-void syd::RegisterCommand::Run(Timepoint ref, Timepoint mov)
+void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
 {
-  // Get corresponding patient/serie
-  Serie serie = db_->GetById<Serie>(mov.serie_id);
-  DD(serie);
+  // A single timepoint by patient
+  if (in_ref.patient_id != in_mov.patient_id) {
+    LOG(FATAL) << "Error the two timepoints are associated with 2 different patients : " << in_ref
+               << " and " << in_mov;
+  }
 
-  // Check / copy for the reference image //FIXME
-  Timepoint ref_timepoint;
-  bool b = reg_tpdb_->GetOrInsert<Timepoint>(odb::query<Timepoint>::serie_id == ref.serie_id, ref_timepoint);
+  // Copy or update reference tp in the new db
+  Timepoint out_ref;
+  bool b = out_db_->GetIfExist<Timepoint>(odb::query<Timepoint>::spect_serie_id == in_ref.spect_serie_id, out_ref);
 
-  // Update the fields
-  ref_timepoint.copy(ref);
-  reg_tpdb_->Update(ref_timepoint);
-  // reg_tpdb_->UpdateAllTimepointNumbers(ref_timepoint.patientid);
+  if (!b) { // Does not exist, create
+    VLOG(1) << "Creating copy of " << in_db_->Print(in_ref);
+    RawImage in_spect(in_db_->GetById<RawImage>(in_ref.spect_image_id));
+    RawImage in_ct(in_db_->GetById<RawImage>(in_ref.ct_image_id));
+    RawImage out_spect(in_spect);
+    RawImage out_ct(in_ct);
+    out_ref.copy(in_ref);
+    out_db_->InsertTimepoint(out_ref, out_spect, out_ct);
+  }
+  else { // already exist, check md5
+    VLOG(1) << "Already existing ref timepoint, updating : " << out_db_->Print(out_ref);
+  }
 
-  // Copy the ref image (if not exist)
-  std::string f = reg_tpdb_->GetFullPathSPECT(ref_timepoint);
-  DD(f);
+  // Copy files (will check md5 before copy)
+  in_db_->CopyFilesTo(in_ref, out_db_, out_ref);
 
+  // Create new ot update moving tp in the new db
+  Timepoint out_mov;
+  b = out_db_->GetIfExist<Timepoint>(odb::query<Timepoint>::spect_serie_id == in_mov.spect_serie_id, out_mov);
+
+  if (!b) { // Does not exist, create
+    VLOG(1) << "Creating new moving tp of " << in_db_->Print(in_mov);
+    RawImage in_spect(in_db_->GetById<RawImage>(in_mov.spect_image_id));
+    RawImage in_ct(in_db_->GetById<RawImage>(in_mov.ct_image_id));
+    RawImage out_spect(in_spect);
+    RawImage out_ct(in_ct);
+    out_spect.md5 = ""; // no image yet
+    out_ct.md5 = "";    // no image yet
+    out_mov.copy(in_mov);
+    out_db_->InsertTimepoint(out_mov, out_spect, out_ct);
+  }
+
+
+  DD(out_mov);
   /*
-  MHDImage im_in = tpdb_->GetById<MHDImage>(ref._image_spect_id);
-  MHDImage im_out = reg_tpdb_->GetById<MHDImage>(ref_timepoint._image_spect_id);
-  if (im_in.md5 != im_out.md5) {
-    // need to copy
-    DD("copy");
-  }
-  */
+    if new : look into folder -> compute md5
 
-  // Verbose
-  if (!b) {
-    VLOG(1) << "Creating Timepoint " << reg_tpdb_->Print(ref_timepoint);
-  }
-  else {
-    VLOG(1) << "Updating Timepoint " << reg_tpdb_->Print(ref_timepoint);
-  }
+   */
 
+  // else { // already exist, updating
+  //   if (out_db_->FilesExist(out_mov)) { // check md5
+  //     if (out_db_->CheckMD5(out_mov)) {
+  //       VLOG(1) << "MD5 files ok, nothing to do.";
+  //     }
+  //     else {
+  //       VLOG(1) << "MD5 files are different : updating md5.";
+  //       out_db_->UpdateMD5(out_mov);
+  //     }
+  //   }
+  //   else { // else
+  //     VLOG(1) << "no images files yet.";
+  //   }
+  // }
 
-  // mov timepoint
-  Timepoint mov_timepoint;
-  b = reg_tpdb_->GetOrInsert<Timepoint>(odb::query<Timepoint>::serie_id == mov.serie_id, mov_timepoint);
-
-  // Update the fields
-  mov_timepoint.copy(mov);
-  reg_tpdb_->Update(mov_timepoint);
-  // reg_tpdb_->UpdateAllTimepointNumbers(mov_timepoint.patientid);
-
-  // Copy the mov image (if not exist)
-  std::string f_mov = reg_tpdb_->GetFullPathSPECT(mov_timepoint);
-  DD(f_mov);
-
-  // Verbose
-  if (!b) {
-    VLOG(1) << "Creating Timepoint " << reg_tpdb_->Print(mov_timepoint);
-  }
-  else {
-    VLOG(1) << "Updating Timepoint " << reg_tpdb_->Print(mov_timepoint);
-  }
-
-  // trial md5
-  /*
-  std::string s = tpdb_->GetFullPathSPECT(ref);
-  DD(s);
-  typedef itk::Image<float, 3> ImageType;
-  ImageType::Pointer spect = syd::ReadImage<ImageType>(s);
-  std::string m = md5((const char*)spect->GetBufferPointer());
-  DD(m);
-  */
-
-
-
-  // Check output folder or create
-
-
-  // Write elastix command
-  std::string ref_filename = tpdb_->GetFullPathCT(ref);
-  std::string mov_filename = tpdb_->GetFullPathCT(mov);
-  DD(ref_filename);
-  DD(mov_filename);
+  // Now two Timepoints have been created, display the elastix command
+  std::string in_ref_filename = in_db_->GetImagePath(in_ref.ct_image_id);
+  std::string in_mov_filename = in_db_->GetImagePath(in_mov.ct_image_id);
+  DD(in_ref_filename);
+  DD(in_mov_filename);
+  std::string output_path = out_db_->GetRegistrationOutputPath(out_ref, out_mov);
+  std::cout << "time elastix "
+            << " -f " << in_ref_filename
+            << " -m " << in_mov_filename
+            << " -p " << config_filename_
+            << " -out " << output_path << std::endl;
 
   // Write transformix command for DVF
+  std::cout << "transformix etc ... " << output_path << std::endl;
 
-  // Checkout image folder or create
+  // Write warp command for ct and spect
+  std::string in = in_db_->GetImagePath(in_mov.ct_image_id);
+  std::string out = out_db_->GetImagePath(out_mov.ct_image_id);
+  std::cout << "warp -r -m etc ... " << in << " " << out << " " << output_path << std::endl;
 
-  // Write warp command
+  in = in_db_->GetImagePath(in_mov.spect_image_id);
+  out = out_db_->GetImagePath(out_mov.spect_image_id);
+  std::cout << "warp -r -m etc ... " << in << " " << out << " " << output_path << std::endl;
 
 }
 // --------------------------------------------------------------------

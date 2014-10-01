@@ -22,7 +22,7 @@
 // syd
 #include "sydDatabaseCommand.h"
 #include "sydClinicDatabase.h"
-#include "sydTimepointsDatabase.h"
+#include "sydStudyDatabase.h"
 #include "sydDicomCommon.h"
 #include "sydImage.h"
 
@@ -33,23 +33,22 @@ namespace syd {
   {
   public:
 
-    RegisterCommand(ClinicDatabase * d1, TimepointsDatabase * d2, TimepointsDatabase * d3);
-    RegisterCommand(std::string d1, std::string d2, std::string d3);
+    RegisterCommand(std::string d1, std::string d2);
+    RegisterCommand(StudyDatabase * d1, StudyDatabase * d2);
     ~RegisterCommand();
 
     virtual void Run(std::string patient_name, int a, int b);
+
+    void set_config_filename(std::string s) { config_filename_ = s; }
 
   protected:
     void Initialization();
     void Run(Timepoint ref, Timepoint mov);
 
-    syd::ClinicDatabase * db_;
-    syd::TimepointsDatabase * tpdb_;
-    syd::TimepointsDatabase * reg_tpdb_;
-    // Patient patient_;
-    // int reference_number_;
-    // int moving_number_;
-
+    std::shared_ptr<syd::ClinicDatabase> cdb_;
+    std::shared_ptr<syd::StudyDatabase>  in_db_;
+    std::shared_ptr<syd::StudyDatabase>  out_db_;
+    std::string config_filename_;
   };
 
 
