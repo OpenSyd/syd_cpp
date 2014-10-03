@@ -1,11 +1,11 @@
-#File sydDumpClinic.ggo
+#File sydCreateDatabase.ggo
 
-package "sydDumpClinic"
-usage "sydDumpClinic <db> <cmd>  <patient>  [<patterns>]"
+package "sydCreateDatabase"
+usage "sydCreateDatabase TODO <db> <cmd | patient>  [<patterns>]"
 version "0.1"
-description "Dump information of a database of type ClinicDatabase.
+description "CreateDatabase information of a database of type ClinicDatabase.
 - <db> is the name of a ClinicDatabase.
-- <cmd> can be 'patient' or 'serie'.
+- <cmd> can be 'patient' or 'serie' if the db is a ClinicDatabase ; do not provide if it is a StudyDatabase
 - <patient> is the name of the patient or can be 'all' for listing all patients.
 - <patterns> only print information for data that match all those patterns.
 

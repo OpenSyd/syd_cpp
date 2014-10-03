@@ -560,3 +560,18 @@ void syd::ClinicDatabase::CheckFile(OFString filename)
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiType syd::ClinicDatabase::GetRoiType(std::string name)
+{
+  std::vector<RoiType> roitypes;
+  LoadVector<RoiType>(roitypes, odb::query<RoiType>::name == name);
+  if (roitypes.size() != 1) {
+    LOG(FATAL) << "Error while searching roi type named " << name
+               << " : I found " << roitypes.size()
+               << " roitypes(s) while expecting a single one";
+  }
+  return roitypes[0];
+}
+// --------------------------------------------------------------------

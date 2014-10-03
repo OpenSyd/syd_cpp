@@ -46,6 +46,21 @@ syd::StudyDatabase::~StudyDatabase()
 
 
 // --------------------------------------------------------------------
+void syd::StudyDatabase::CreateDatabase()
+{
+  DD("CreateDatabase");
+
+  // DD("here");
+  // odb::transaction t (db_->begin());
+  // odb::schema_catalog::create_schema (*db_);
+  // t.commit();
+
+  DD("done");
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::StudyDatabase::InsertTimepoint(Timepoint & t, RawImage & spect, RawImage & ct)
 {
   // Insert all elements and update id
@@ -234,9 +249,34 @@ std::string syd::StudyDatabase::GetPath(const Patient & p)
 
 
 // --------------------------------------------------------------------
+std::string syd::StudyDatabase::GetRoiPath(const Patient & p)
+{
+  return GetPath(p)+PATH_SEPARATOR+"roi"+PATH_SEPARATOR;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 std::string syd::StudyDatabase::GetOrCreatePath(const Patient & p)
 {
   std::string path = GetPath(p);
+  if (!OFStandard::dirExists(path.c_str())) {
+    VLOG(3) << "Creating folder " << path;
+    int ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (ret != 0) {
+      LOG(FATAL) << "Error while attempting to create " << path;
+    }
+  }
+  return path;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::StudyDatabase::GetOrCreateRoiPath(const Patient & p)
+{
+  GetOrCreatePath(p);
+  std::string path = GetRoiPath(p);
   if (!OFStandard::dirExists(path.c_str())) {
     VLOG(3) << "Creating folder " << path;
     int ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
@@ -365,137 +405,115 @@ void syd::StudyDatabase::Dump(std::ostream & os, std::vector<std::string> & args
 // --------------------------------------------------------------------
 
 
-/*
+// // --------------------------------------------------------------------
+// syd::Timepoint syd::StudyDatabase::GetTimepoint(const RawImage & image) {
+
+//   std::vector<Timepoint> timepoints;
+//   LoadVector<Timepoint>(timepoints,
+//                         odb::query<Timepoint>::ct_image_id == image.id ||
+//                         odb::query<Timepoint>::spect_image_id == image.id);
+//   if (timepoints.size() != 1) {
+//     LOG(FATAL) << "Error while searching timepoint associated with image " << image.id
+//                << " (" << image.filename << ") : I found "
+//                << timepoints.size() << " timepoint(s) while expecting a single one";
+//   }
+//   return timepoints[0];
+// }
+// // --------------------------------------------------------------------
+
+
 // --------------------------------------------------------------------
-// --------------------------------------------------------------------
-// --------------------------------------------------------------------
-// --------------------------------------------------------------------
-// --------------------------------------------------------------------
-// --------------------------------------------------------------------
-std::string syd::StudyDatabase::GetFullPath(Patient patient)
+Patient syd::StudyDatabase::GetPatient(const Timepoint & timepoint)
 {
-  return get_folder()+patient.path;
+  Patient patient(cdb_->GetById<Patient>(timepoint.patient_id));
+  return patient;
+}
+// --------------------------------------------------------------------
+
+
+// // --------------------------------------------------------------------
+// Patient syd::StudyDatabase::GetPatient(const RoiMaskImage & image) {
+
+//   Timepoint timepoint(GetTimepoint(r));
+//   Patient patient(cdb_->GetById<Patient>(timepoint.patient_id));
+//   return patient;
+// }
+// // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::StudyDatabase::GetImagePath(const RoiMaskImage & roi)
+{
+  Timepoint timepoint(GetById<Timepoint>(roi.timepoint_id));
+  Patient patient(GetPatient(timepoint));
+  RawImage raw(GetById<RawImage>(roi.mask_id));
+  std::string path = GetRoiPath(patient)+raw.filename;
+  return path;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::string syd::StudyDatabase::GetFullPathSPECT(Timepoint timepoint)
+void syd::StudyDatabase::InsertRoiMaskImage(const Timepoint & timepoint,
+                                            const RoiType & roitype,
+                                            RoiMaskImage & roi)
 {
-  Serie serie = cdb_->GetById<Serie>(timepoint.serie_id);
-  Patient patient = cdb_->GetById<Patient>(serie.patient_id);
-  std::string p = GetFullPath(patient);
-  return p+PATH_SEPARATOR+"spect"+toString(timepoint.number)+".mhd";
-}
-// --------------------------------------------------------------------
+  // Get associated raw image // FIXME relevant ?
+  RawImage ct(GetById<RawImage>(timepoint.ct_image_id));
 
+  // Create new RawImage associated with the roi
+  RawImage mask;
+  mask.serie_id = ct.serie_id; // FIXME relevant ?
+  mask.filename = roitype.name+toString(timepoint.number)+".mhd";
+  mask.md5 = "";
+  Insert(mask);
 
-// --------------------------------------------------------------------
-std::string syd::StudyDatabase::GetFullPathCT(Timepoint timepoint)
-{
-  Serie serie = cdb_->GetById<Serie>(timepoint.serie_id);
-  Patient patient = cdb_->GetById<Patient>(serie.patient_id);
-  std::string p = GetFullPath(patient);
-  return p+PATH_SEPARATOR+"ct"+toString(timepoint.number)+".mhd";
-}
-// --------------------------------------------------------------------
+  // Update roi
+  roi.mask_id = mask.id;
+  roi.timepoint_id = timepoint.id;
+  roi.roitype_id = roitype.id;
+  roi.volume_in_cc = 0.0;
+  Insert(roi);
 
-
-// --------------------------------------------------------------------
-void syd::StudyDatabase::UpdateAllTimepointNumbers(IdType patient_id)
-{
-  // Get all timepoint for this patient
-  std::vector<Timepoint> Study;
-  LoadVector<Timepoint>(Study, odb::query<Timepoint>::patient_id == patient_id);
-
-  // Get corresponding series acquisition_date
-  std::vector<Serie> series;
-  for(auto i=Study.begin(); i<Study.end(); i++) {
-    series.push_back(cdb_->GetById<Serie>(i->serie_id));
-  }
-
-  // Ordered indices
-  std::vector<size_t> indices;
-  for(auto i=0; i != series.size(); i++) indices.push_back(i);
-  std::sort(begin(indices), end(indices),
-            [&series](size_t a, size_t b) { return syd::IsBefore(series[a].acquisition_date, series[b].acquisition_date); }  );
-
-  // Set the new order for all the Study
-  std::vector<std::string> old_paths_spect(Study.size());
-  std::vector<std::string> old_paths_ct(Study.size());
-  for(auto i=0; i<Study.size(); i++) {
-    std::string s = GetFullPathSPECT(Study[i]);
-    old_paths_spect[i] = s;
-    s = GetFullPathCT(Study[i]);
-    old_paths_ct[i] = s;
-  }
-  for(auto i=0; i<Study.size(); i++) { // two loops needed !
-    Study[indices[i]].number = i+1;
-  }
-
-  // Rename file (use a temporary filename to avoir overwriting the files)
-  for(auto i=0; i<Study.size(); i++) {
-    if (old_paths_spect[i] != GetFullPathSPECT(Study[i])) {
-      VLOG(3) << "Rename (old) " << old_paths_spect[i] << " to (new) " << GetFullPathSPECT(Study[i]);
-      std::string path = GetFullPathSPECT(Study[i])+"TMP.mhd";
-      syd::RenameMHDImage(old_paths_spect[i], path, 4); // 4 is verbose level
-    }
-    if (old_paths_ct[i] != GetFullPathCT(Study[i])) {
-      VLOG(3) << "Rename (old) " << old_paths_ct[i] << " to (new) " << GetFullPathCT(Study[i]);
-      std::string path = GetFullPathCT(Study[i])+"TMP.mhd";
-      syd::RenameMHDImage(old_paths_ct[i], path, 4);
-    }
-  }
-  for(auto i=0; i<Study.size(); i++) {
-    if (old_paths_spect[i] != GetFullPathSPECT(Study[i])) {
-      std::string pathTMP = GetFullPathSPECT(Study[i])+"TMP.mhd";
-      std::string path = GetFullPathSPECT(Study[i]);
-      syd::RenameMHDImage(pathTMP, path, 4);
-    }
-    if (old_paths_ct[i] != GetFullPathCT(Study[i])) {
-      std::string pathTMP = GetFullPathCT(Study[i])+"TMP.mhd";
-      std::string path = GetFullPathCT(Study[i]);
-      syd::RenameMHDImage(pathTMP, path, 4);
+  // Create path if needed
+  Patient patient(GetPatient(timepoint));
+  std::string path = GetRoiPath(patient);
+  if (!OFStandard::dirExists(path.c_str())) {
+    VLOG(3) << "Creating folder " << path;
+    int ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    if (ret != 0) {
+      LOG(FATAL) << "Error while attempting to create " << path;
     }
   }
-
-  // Update the DB
-  odb::transaction t (db->begin());
-  for(auto i=0; i<Study.size(); i++) {
-    db->update(Study[i]);
-  }
-  t.commit();
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::string syd::StudyDatabase::Print(Timepoint t)
+void syd::StudyDatabase::UpdateMD5(RawImage & image)
 {
-  Serie serie = cdb_->GetById<Serie>(t.serie_id);
-  Patient patient = cdb_->GetById<Patient>(serie.patient_id);
-  std::stringstream ss;
-  ss << patient.name << " " << t.id << " " << t.number << " " << serie.acquisition_date;
-  return ss.str();
-}
-// --------------------------------------------------------------------
+  Serie serie(cdb_->GetById<Serie>(image.serie_id));
+  std::string m;
+  std::string path = GetImagePath(image.id);
+  if (!OFStandard::fileExists(path.c_str())) return;
 
-
-// --------------------------------------------------------------------
-std::string syd::StudyDatabase::Print(Patient p)
-{
-  typedef odb::query<Timepoint> QueryType;
-  std::vector<Timepoint> Study;
-  LoadVector<Timepoint>(Study, QueryType::patient_id == p.id);
-  std::stringstream ss;
-  ss << cdb_->Print(p, 1) << "\t"
-     << Study.size() << "\t";
-  for(auto i=Study.begin(); i != Study.end(); i++) {
-    ss << i->time_from_injection_in_hours << " ";
+  if (serie.modality == "CT") {
+    typedef itk::Image<signed short, 3> ImageType;
+    ImageType::Pointer im = ReadImage<ImageType>(path);
+    m = md5((char*)im->GetBufferPointer());
   }
-  ss << std::endl;
-
-  return ss.str();
+  if (serie.modality == "NM") {
+    typedef itk::Image<float, 3> ImageType;
+    ImageType::Pointer im = ReadImage<ImageType>(path);
+    m = md5((char*)im->GetBufferPointer());
+  }
+  if (m != image.md5) {
+    VLOG(2) << "Updating image " << image.filename;
+    image.md5 = m;
+    Update(image);
+  }
+  else {
+    VLOG(2) << "Image " << image.filename << " already up-to-date";
+  }
 }
 // --------------------------------------------------------------------
-*/

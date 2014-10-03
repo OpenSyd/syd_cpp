@@ -16,36 +16,40 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDDUMPSTUDYCOMMAND_H
-#define SYDDUMPSTUDYCOMMAND_H
+#ifndef SYDCROPCTCOMMAND_H
+#define SYDCROPCTCOMMAND_H
 
 // syd
 #include "sydDatabaseCommand.h"
 #include "sydClinicDatabase.h"
 #include "sydStudyDatabase.h"
 #include "sydDicomCommon.h"
+#include "sydImage.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class DumpStudyCommand: public syd::DatabaseCommand
+  class CropCTCommand: public syd::DatabaseCommand
   {
   public:
 
-    DumpStudyCommand(std::string db1, std::string db2);
-    DumpStudyCommand(syd::ClinicDatabase * db1, syd::StudyDatabase  * db2);
-    ~DumpStudyCommand();
+    CropCTCommand(std::string d);
+    CropCTCommand(StudyDatabase * d);
+    ~CropCTCommand();
 
-    virtual void Dump(std::string patient_name);
+    virtual void Run(std::string patient_name, std::string a);
 
   protected:
     void Initialization();
-    syd::ClinicDatabase * cdb_;
-    syd::StudyDatabase * sdb_;
+    void Run(const Timepoint & t);
 
-  }; // class DumpStudyCommand
+    std::shared_ptr<syd::ClinicDatabase> cdb_;
+    std::shared_ptr<syd::StudyDatabase>  sdb_;
 
-} // namespace syd
+  };
+
+
+} // end namespace
 // --------------------------------------------------------------------
 
 #endif

@@ -24,12 +24,13 @@
 #include "sydImage.h"
 #include "Timepoint-odb.hxx"
 #include "RawImage-odb.hxx"
+#include "RoiMaskImage-odb.hxx"
 #include "sydClinicDatabase.h"
 
-// Manage a list of timepoint with associated raw image. Uses 2 tables
-// (Timepoint and RawImage).  Need a pointer to a ClinicDatabase
-// because each image is linked with a Serie and a Patient from this
-// ClinicDatabase;
+// Manage a list of timepoint with associated raw image. Uses 3 tables
+// (Timepoint RawImage RoiMaskImage).  Need a pointer to a
+// ClinicDatabase because each image is linked with a Serie and a
+// Patient from this ClinicDatabase;
 // --------------------------------------------------------------------
 namespace syd {
 
@@ -44,14 +45,18 @@ namespace syd {
     // Dump information
     virtual void Dump(std::ostream & os, std::vector<std::string> & args);
     virtual void CheckIntegrity(std::vector<std::string> & args) { DD("todo"); exit(0); }
+    virtual void CreateDatabase();
 
     void InsertTimepoint(Timepoint & t, RawImage & spect, RawImage & ct);
+    void InsertRoiMaskImage(const Timepoint & timepoint, const RoiType & roitype, RoiMaskImage & roi);
+
     void CopyFilesTo(const Timepoint & in, std::shared_ptr<StudyDatabase> out_db, Timepoint & out);
     void CopyFilesTo(const RawImage & in, std::shared_ptr<StudyDatabase> out_db, RawImage & out);
 
     bool FilesExist(Timepoint t); // FIXME
     bool CheckMD5(Timepoint t); // FIXME
     void UpdateMD5(Timepoint t); //FIXME
+    void UpdateMD5(RawImage & image);
     std::string GetRegistrationOutputPath(Timepoint ref, Timepoint mov); // FIXME
 
     void UpdateNumberAndRenameFiles(IdType patient_id);
@@ -59,8 +64,16 @@ namespace syd {
 
     std::string GetPath(const Patient & p);
     std::string GetOrCreatePath(const Patient & p);
+    std::string GetRoiPath(const Patient & p);
+    std::string GetOrCreateRoiPath(const Patient & p);
     std::string GetPath(const RawImage & i);
     std::string GetImagePath(IdType id);
+    std::string GetImagePath(const RoiMaskImage & roi);
+    // Timepoint GetTimepoint(const RawImage & image);
+    // Patient GetPatient(const RawImage & image);
+    // Patient GetPatient(const RoiMaskImage & image);
+    Patient GetPatient(const Timepoint & timepoint);
+
     void UpdateImageFilenames(const Timepoint & t);
 
     std::string Print(const Timepoint & t);

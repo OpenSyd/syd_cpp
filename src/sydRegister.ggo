@@ -4,8 +4,8 @@ package "sydRegister"
 usage "sydRegister <db1> <db2> <patient>  <a> <b>"
 version "0.1"
 description "Register ct of timepoints number 'a' and 'b' for the patient .
-- <db1> is the name of the input TimepointsDatabase (non registered)
-- <db2> is the name of the output TimepointsDatabase (after registration)
+- <db1> is the name of the input StudyDatabase (non registered)
+- <db2> is the name of the output StudyDatabase (after registration)
 - <patient> is the name of the patient
 - <a> <b> 2 timepoint number to register
 "

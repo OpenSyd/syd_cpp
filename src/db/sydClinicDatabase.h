@@ -23,9 +23,10 @@
 #include "sydDatabase.h"
 #include "Patient-odb.hxx"
 #include "Serie-odb.hxx"
+#include "RoiType-odb.hxx"
 #include "sydDicomCommon.h"
 
-// This database manaage two tables : Patient and Serie
+// This database manaage the tables : Patient, Serie, RoiTypes
 // --------------------------------------------------------------------
 namespace syd {
 
@@ -49,6 +50,8 @@ namespace syd {
     void GetPatientsByName(std::string patient_name, std::vector<Patient> & patients);
     odb::query<Serie> GetSeriesQueryFromPatterns(std::vector<std::string> patterns);
     void AndSeriesQueryFromPattern(odb::query<Serie> & q, std::string pattern);
+    RoiType GetRoiType(std::string name);
+
     void UpdateSerie(Serie & serie);
 
     // Function for checking integrity

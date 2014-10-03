@@ -42,6 +42,13 @@ target_link_libraries(sydDump ${SYD_LIBS})
 
 
 #----------------------------------------------------------
+wrap_ggo(sydCreateDatabase sydCreateDatabase.ggo)
+add_executable(sydCreateDatabase sydCreateDatabase.cxx sydCreateDatabase_ggo.c)
+target_link_libraries(sydCreateDatabase ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 wrap_ggo(sydInsertDicom sydInsertDicom.ggo)
 add_executable(sydInsertDicom sydInsertDicom.cxx sydInsertDicom_ggo.c sydInsertDicomCommand.cxx)
 target_link_libraries(sydInsertDicom ${SYD_LIBS})
@@ -65,5 +72,12 @@ target_link_libraries(sydCheckIntegrity ${SYD_LIBS})
 #----------------------------------------------------------
 wrap_ggo(sydRegister sydRegister.ggo)
 add_executable(sydRegister sydRegister.cxx sydRegister_ggo.c sydRegisterCommand.cxx)
-target_link_libraries(sydRegister sydStudyDatabase ${SYD_LIBS})
+target_link_libraries(sydRegister ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydCropCT sydCropCT.ggo)
+add_executable(sydCropCT sydCropCT.cxx sydCropCT_ggo.c sydCropCTCommand.cxx)
+target_link_libraries(sydCropCT ${SYD_LIBS})
 #----------------------------------------------------------

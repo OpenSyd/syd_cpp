@@ -6,34 +6,48 @@ Target Radionuclide Therapy Toolkit (TRnT tk).
 
 When doing image processing studies on a database of patient, it could be difficult to manage all the dicom files and clinical data associated with the study. This toolkit helps to manage a database of patient data and images.
 
+NOT CLEAR : separate what is toolkit / what is synfrizz specific
+
 Tools
 =====
 
-- sydDumpClinic
-  - sydDumpClinic db patient all
-  - sydDumpClinic db serie zh
-- sydDumpStudy db tp all
+- sydDump db (cmd) patient
 - sydInsertDicom db zh dicom_folder/*
-- sydInsertTimepoint db tp 1234 (--ignore_file)
+- sydInsertTimepoint study_db 1234
+
 
 *FIXME* sydCreateDatabase sydClearTable
-
 
 
 
 Modules ?
 =======
 
-Module DICOM DB management
+Step1 : initial database creation
 --------------------------
 
-From a set of DICOM foldes/files to a structured DB of patients with data and images in mhd/raw file format.
+Create a DB of dicom images organised by patients. Store some searchable text information read from the dicom header. Store information not read from the dicom such as the injected activity or time of injection.
 
-Module registration / warping
------------------------------
+sydCreate ClinicalDatabase db *FIXME*
+sydInsertDicom --> warning patient 'name'
+sydDump
 
-Module activity
----------------
+*FIXME* how to modify the data (injection?)
+
+Step2:
+------
+
+Select spect, find associated dicom, convert to raw image (mhd).
+- sydDump for selection
+- sydInsertTimepoint for insertion/conversion
+
+Preprocess image (patient boundaries extraction, bg, crop).
+
+
+Register, warp, compute 'average', images.
+
+Associate ROIs
+
 
 
 

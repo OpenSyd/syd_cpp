@@ -16,36 +16,40 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDDUMPSERIESCOMMAND_H
-#define SYDDUMPSERIESCOMMAND_H
-
 // syd
-#include "sydDatabaseCommand.h"
-#include "sydClinicalTrialDatabase.h"
-#include "sydDicomCommon.h"
+#include "sydCropCT_ggo.h"
+#include "core/sydCommon.h"
+#include "sydCropCTCommand.h"
+
+// easylogging : only once initialization (in the main)
+_INITIALIZE_EASYLOGGINGPP
+
+// syd : only once initialization (in the main)
+#include "sydInit.h"
 
 // --------------------------------------------------------------------
-namespace syd {
+int main(int argc, char* argv[])
+{
+  // Init command line
+  GGO(sydCropCT, args_info);
 
-  class DumpSeriesCommand: public syd::DatabaseCommand
-  {
-  public:
+  // Init logging option (verbose)
+  syd::init_logging_verbose_options(args_info);
 
-    DumpSeriesCommand();
-    ~DumpSeriesCommand();
-    virtual void AddDatabase(syd::Database * d);
-    virtual void SetArgs(char ** inputs, int n);
-    virtual void Run();
+  // Check args
+  if (args_info.inputs_num < 3) {
+    LOG(FATAL) << "Error please, provide <db> <patient> <a> (see usage)";
+  }
 
-  protected:
-    syd::ClinicalTrialDatabase * db_;
-    std::string patient_name_;
-    Patient patient_;
-    std::vector<std::string> patterns_;
-  };
+  // Get the dbs
+  std::string db  = args_info.inputs[0];
+  syd::CropCTCommand * c = new syd::CropCTCommand(db);
 
+  // Go
+  std::string patient_name = args_info.inputs[1];
+  std::string a = args_info.inputs[2];
+  c->Run(patient_name, a);
 
-} // end namespace
+  // This is the end, my friend.
+}
 // --------------------------------------------------------------------
-
-#endif

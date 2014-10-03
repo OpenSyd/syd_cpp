@@ -29,6 +29,7 @@
 #include <odb/sqlite/database.hxx>
 #include <odb/sqlite/tracer.hxx>
 #include <odb/sqlite/statement.hxx>
+#include <odb/schema-catalog.hxx>
 
 // dcmtk
 #include "dcmtk/dcmdata/dctk.h"
@@ -46,9 +47,10 @@ namespace syd {
     template<class DatabaseType>
     static std::shared_ptr<DatabaseType> OpenDatabaseType(std::string name);
 
-    // Dump info
+    // Functions common to all databases
     virtual void Dump(std::ostream & os, std::vector<std::string> & args) = 0;
     virtual void CheckIntegrity(std::vector<std::string> & args) = 0;
+    virtual void CreateDatabase() { DD("TODO"); }
 
     // Accessors
     std::string get_name() const { return name_; }
