@@ -70,7 +70,7 @@ namespace syd {
 
     // --------------------------------------------------
     friend std::ostream& operator<<(std::ostream& os, const RoiMaskImage & p) {
-      os << p.id << " " << p.mask_id << " " << p.roitype_id << " " << p.volume_in_cc;
+      os << p.id << " " << p.mask_id << " " << p.timepoint_id << " " << p.roitype_id << " " << p.volume_in_cc;
       return os;
     }
     // --------------------------------------------------

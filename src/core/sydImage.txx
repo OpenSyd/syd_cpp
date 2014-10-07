@@ -47,3 +47,16 @@ typename ImageType::Pointer ReadImage(std::string filename)
   return reader->GetOutput();
 }
 //--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+std::string ComputeImageMD5(typename ImageType::Pointer image)
+{
+  unsigned int n = image->GetLargestPossibleRegion().GetNumberOfPixels();
+  MD5 md5;
+  md5.update((char*)image->GetBufferPointer(), n);
+  md5.finalize();
+  return md5.hexdigest();
+}
+//--------------------------------------------------------------------

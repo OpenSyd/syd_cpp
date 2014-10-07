@@ -109,7 +109,9 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
 
   // Copy or update reference tp in the new db
   Timepoint out_ref;
-  bool b = out_db_->GetIfExist<Timepoint>(odb::query<Timepoint>::spect_serie_id == in_ref.spect_serie_id, out_ref);
+  bool b = out_db_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == in_ref.patient_id &&
+                                          odb::query<Timepoint>::number == in_ref.number &&
+                                          odb::query<Timepoint>::spect_serie_id == in_ref.spect_serie_id, out_ref);
 
   if (!b) { // Does not exist, create
     VLOG(1) << "Creating copy of " << in_db_->Print(in_ref);
@@ -124,12 +126,14 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
     VLOG(1) << "Already existing ref timepoint, updating : " << out_db_->Print(out_ref);
   }
 
-  // Copy files (will check md5 before copy)
-  in_db_->CopyFilesTo(in_ref, out_db_, out_ref);
+  // Copy files (will check md5 before copy ; will update md5 if copy)
+  out_db_->CopyFilesFrom(in_db_, in_ref, out_ref);
 
   // Create new ot update moving tp in the new db
   Timepoint out_mov;
-  b = out_db_->GetIfExist<Timepoint>(odb::query<Timepoint>::spect_serie_id == in_mov.spect_serie_id, out_mov);
+  b = out_db_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == in_mov.patient_id &&
+                                     odb::query<Timepoint>::number == in_mov.number &&
+                                     odb::query<Timepoint>::spect_serie_id == in_mov.spect_serie_id, out_mov);
 
   if (!b) { // Does not exist, create
     VLOG(1) << "Creating new moving tp of " << in_db_->Print(in_mov);
@@ -144,36 +148,21 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
   }
 
 
-  DD(out_mov);
-  /*
-    if new : look into folder -> compute md5
-
-   */
-
-  // else { // already exist, updating
-  //   if (out_db_->FilesExist(out_mov)) { // check md5
-  //     if (out_db_->CheckMD5(out_mov)) {
-  //       VLOG(1) << "MD5 files ok, nothing to do.";
-  //     }
-  //     else {
-  //       VLOG(1) << "MD5 files are different : updating md5.";
-  //       out_db_->UpdateMD5(out_mov);
-  //     }
-  //   }
-  //   else { // else
-  //     VLOG(1) << "no images files yet.";
-  //   }
-  // }
-
   // Now two Timepoints have been created, display the elastix command
   std::string in_ref_filename = in_db_->GetImagePath(in_ref.ct_image_id);
   std::string in_mov_filename = in_db_->GetImagePath(in_mov.ct_image_id);
-  DD(in_ref_filename);
-  DD(in_mov_filename);
+
+  RoiMaskImage ref_roi(in_db_->GetRoiMaskImage(in_ref, "patient"));
+  RoiMaskImage mov_roi(in_db_->GetRoiMaskImage(in_mov, "patient"));
+  std::string in_ref_mask_filename = in_db_->GetImagePath(ref_roi);
+  std::string in_mov_mask_filename = in_db_->GetImagePath(mov_roi);
+
   std::string output_path = out_db_->GetRegistrationOutputPath(out_ref, out_mov);
   std::cout << "time elastix "
             << " -f " << in_ref_filename
+            << " -fMask " << in_ref_mask_filename
             << " -m " << in_mov_filename
+            << " -mMask " << in_mov_mask_filename
             << " -p " << config_filename_
             << " -out " << output_path << std::endl;
 

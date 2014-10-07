@@ -48,6 +48,7 @@ int main(int argc, char* argv[])
   // Execute the command
   c->set_ct_selection_patterns(args_info.ct_arg);
   c->set_ignore_files_flag(args_info.ignore_flag);
+  c->set_update_md5_flag(args_info.updateMD5_flag);
   std::vector<std::string> serie_ids;
   for(auto i=1; i<args_info.inputs_num; i++) serie_ids.push_back(args_info.inputs[i]);
   c->InsertTimepoint(serie_ids);

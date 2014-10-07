@@ -41,6 +41,22 @@ void syd::CreateDirectory(std::string path)
 
 
 // --------------------------------------------------------------------
+bool syd::FileExists(std::string filename)
+{
+  return OFStandard::fileExists(filename.c_str());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::DirExists(std::string folder)
+{
+  return OFStandard::dirExists(folder.c_str());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 std::string syd::GetDate(std::string date, std::string time)
 {
   std::string result;

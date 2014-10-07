@@ -62,7 +62,7 @@ void syd::ClinicDatabase::GetAssociatedCTSerie(IdType serie_id,
                  << "Please use the ct_pattern option to select the one you want.";
     }
     VLOG(3) << "We found " << ct_series.size()
-            << " serie(s). Selection with the ct_pattern option...";
+            << " ct series, so we try to select one with the ct_pattern option...";
     typedef odb::query<Serie> QueryType;
     QueryType q = GetSeriesQueryFromPatterns(patterns);
     q = (QueryType::dicom_frame_of_reference_uid == spect_serie.dicom_frame_of_reference_uid &&
@@ -180,7 +180,7 @@ void syd::ClinicDatabase::CheckPatient(const Patient & patient)
 
   // Check the path exist
   std::string path = GetPath(patient);
-  if (!OFStandard::dirExists(path.c_str())) {
+  if (!syd::DirExists(path)) {
     LOG(FATAL) << "Error for patient id " << patient.id << " the folder " << path
                << " does not exist.";
   }
@@ -220,7 +220,7 @@ void syd::ClinicDatabase::CheckSerie_CT(const Serie & serie)
 {
   // Check the path exist
   std::string path = GetPath(serie);
-  if (!OFStandard::dirExists(path.c_str())) {
+  if (!syd::DirExists(path)) {
     LOG(FATAL) << "Error serie " << serie.id << " : the folder " << path << " does not exist.";
   }
 
@@ -272,7 +272,7 @@ void syd::ClinicDatabase::CheckSerie_NM(const Serie & serie)
 {
   // Check if the file exist
   std::string path = GetPath(serie);
-  if (!OFStandard::fileExists(path.c_str())) {
+  if (!syd::FileExists(path)) {
     VLOG(0) << "CheckIntegrity : Error serie " << serie.id << " : the file " << path << " does not exist.";
   }
 
@@ -309,7 +309,7 @@ void syd::ClinicDatabase::UpdateSerie(Serie & serie)
   std::string day = serie.acquisition_date.substr(0,10);
   std::string hour = serie.acquisition_date.substr(11,15);
   std::string p = GetPath(GetById<Patient>(serie.patient_id))+PATH_SEPARATOR+day+PATH_SEPARATOR;
-  if (OFStandard::dirExists(p.c_str())) {
+  if (syd::DirExists(p)) {
     VLOG(2) << "Folder day date already exist " << p;
   }
   else {
@@ -321,7 +321,7 @@ void syd::ClinicDatabase::UpdateSerie(Serie & serie)
   if (serie.modality == "CT") {
     serie.path = day+PATH_SEPARATOR+hour+"_"+serie.modality+"_"+serie.dicom_series_desc;
     std::string path = GetPath(serie);
-    if (OFStandard::dirExists(path.c_str())) {
+    if (syd::DirExists(path)) {
       VLOG(2) << "Path already exist " << path;
     }
     else {
@@ -496,7 +496,7 @@ void syd::ClinicDatabase::CheckIntegrity(std::vector<std::string> & args)
 void syd::ClinicDatabase::CheckIntegrity(const Patient & patient)
 {
   // Part 1
-  VLOG(0) << "Part 1: from DB to files";
+  VLOG(0) << "Part 1: from series to files";
   std::vector<Serie> series;
   LoadVector<Serie>(series, odb::query<Serie>::patient_id == patient.id);
   VLOG(1) << "Found " << series.size() << " series. Checking ...";
@@ -506,12 +506,12 @@ void syd::ClinicDatabase::CheckIntegrity(const Patient & patient)
   }
 
   // Part 2
-  VLOG(0) << "Part 2 : from files to DB (could be long)";
+  VLOG(0) << "Part 2 : from files to series (could be long)";
   // Search for all folders in patient folder
   std::string folder = GetPath(patient);
 
   // For all folders, find dicom
-  if (!OFStandard::dirExists(folder.c_str())) {
+  if (!syd::DirExists(folder)) {
     LOG(FATAL) << "The folder " << folder << " does not exist.";
   }
   OFList<OFString> inputFiles;

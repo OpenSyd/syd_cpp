@@ -37,8 +37,8 @@ int main(int argc, char* argv[])
   syd::init_logging_verbose_options(args_info);
 
   // Check args
-  if (args_info.inputs_num < 2) {
-    LOG(FATAL) << "Error please, provide <db> <patient> (see usage)";
+  if (args_info.inputs_num < 1) {
+    LOG(FATAL) << "Error number of arguments, please see usage";
   }
 
   // Get database
@@ -49,17 +49,6 @@ int main(int argc, char* argv[])
   std::vector<std::string> args;
   for(auto i=1; i<args_info.inputs_num; i++) args.push_back(args_info.inputs[i]);
   dbg->CheckIntegrity(args);
-
-
-
-  // // Get the current db names
-  // std::string db = args_info.inputs[0];
-  // std::string patient = args_info.inputs[1];
-
-  // // Get the current db names/folders
-  // syd::CheckIntegrityCommand * c = new syd::CheckIntegrityCommand(db);
-  // c->set_check_file_content_level(args_info.level_arg);
-  // c->CheckIntegrity(patient);
 
   // This is the end, my friend.
 }

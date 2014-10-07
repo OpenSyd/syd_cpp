@@ -27,7 +27,7 @@ void syd::DatabaseFactory::OpenDatabaseFilenames(std::string init_filename)
   if (already_open) return;
 
   // Get the init filename that contains the list of db names/folders
-  if (!OFStandard::fileExists(init_filename.c_str())) {
+  if (!syd::FileExists(init_filename)) {
     char * init = getenv ("SYD_INIT_DB_FILE");
     if (init == NULL) LOG(FATAL) << "Error, please set SYD_INIT_DB_FILE environment variable.";
     init_filename = std::string(init);

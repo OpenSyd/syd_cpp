@@ -38,7 +38,9 @@ namespace syd {
 
     void set_ct_selection_patterns(std::string s);
     void set_ignore_files_flag(bool b) { ignore_files_flag_ = b; }
-    bool get_ignore_files_flag() { return ignore_files_flag_; }
+    bool get_ignore_files_flag() const { return ignore_files_flag_; }
+    void set_update_md5_flag(bool b) { update_md5_flag_ = b; }
+    bool get_update_md5_flag() const { return update_md5_flag_; }
 
     void InsertTimepoint(std::vector<std::string> serie_ids);
     void InsertTimepoint(const Serie & serie);
@@ -47,6 +49,7 @@ namespace syd {
     void Initialization();
 
     bool ignore_files_flag_;
+    bool update_md5_flag_;
     std::shared_ptr<syd::ClinicDatabase> cdb_;
     std::shared_ptr<syd::StudyDatabase>  sdb_;
     std::vector<std::string> ct_selection_patterns_;

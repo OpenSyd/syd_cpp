@@ -44,6 +44,8 @@ namespace syd {
   void WriteImage(typename ImageType::Pointer image, std::string filename);
   template<class ImageType>
   typename ImageType::Pointer ReadImage(std::string filename);
+  template<class ImageType>
+  std::string ComputeImageMD5(typename ImageType::Pointer image);
   //--------------------------------------------------------------------
 
 

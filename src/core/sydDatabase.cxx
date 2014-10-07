@@ -99,7 +99,7 @@ void syd::Database::OpenSqliteDatabase(std::string filename, std::string folder)
 
   // Check folder
   folder_ = folder+PATH_SEPARATOR;
-  if (!OFStandard::dirExists(folder.c_str())) {
+  if (!syd::DirExists(folder)) {
     LOG(FATAL) << "The folder '" << folder << "' does not exist.";
   }
 

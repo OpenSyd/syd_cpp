@@ -108,45 +108,68 @@ void syd::InsertTimepointCommand::InsertTimepoint(const Serie & serie)
   Timepoint timepoint;
   bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::spect_serie_id == serie.id, timepoint);
 
+  // Get associated ct serie
+  Serie ct_serie;
+  cdb_->GetAssociatedCTSerie(serie.id, ct_selection_patterns_, ct_serie);
+
+  // Get or create
   if (!b) {  // It does not exist, we create it
     VLOG(1) << "Creating new Timepoint for " << patient.name << " date " << serie.acquisition_date;
     RawImage spect;
-    spect.serie_id = serie.id;
     RawImage ct;
-    Serie ct_serie;
-    cdb_->GetAssociatedCTSerie(serie.id, ct_selection_patterns_, ct_serie);
-    ct.serie_id = ct_serie.id;
     timepoint.patient_id = patient.id;
-    timepoint.spect_serie_id = serie.id;
     timepoint.number=0;
     sdb_->InsertTimepoint(timepoint, spect, ct);
-    sdb_->UpdateImageFilenames(timepoint);
+    sdb_->UpdatePathAndRename(timepoint, false); // do not rename
   }
   else {
-    VLOG(1) << "Timepoint " << patient.name << " "
-            << timepoint.number << " "
-            << serie.acquisition_date << " ("
-            << timepoint.time_from_injection_in_hours
-            << " hours) already exist, deleting current image and updating.";
     if (!get_ignore_files_flag()) {
+      VLOG(1) << "Timepoint " << patient.name << " "
+              << timepoint.number << " "
+              << timepoint.id << " "
+              << serie.acquisition_date << " ("
+              << timepoint.time_from_injection_in_hours
+              << " hours) already exist, deleting current image and updating.";
       syd::DeleteMHDImage(sdb_->GetImagePath(timepoint.ct_image_id));
       syd::DeleteMHDImage(sdb_->GetImagePath(timepoint.spect_image_id));
     }
+    else {
+      VLOG(1) << "Timepoint " << patient.name << " "
+              << timepoint.number << " "
+              << timepoint.id << " "
+              << serie.acquisition_date << " ("
+              << timepoint.time_from_injection_in_hours
+              << " hours) already exist, updating (without copying dicom).";
+    }
   }
 
-  // Update the time
+  // Update timepoint information
   timepoint.patient_id = patient.id;
   timepoint.spect_serie_id = serie.id;
+  timepoint.ct_serie_id = ct_serie.id;
   timepoint.time_from_injection_in_hours = syd::DateDifferenceInHours(serie.acquisition_date, patient.injection_date);
+  RawImage spect = sdb_->GetById<RawImage>(timepoint.spect_image_id);
+  spect.pixel_type = "float";
+  spect.path = patient.name+PATH_SEPARATOR;
+  RawImage ct = sdb_->GetById<RawImage>(timepoint.ct_image_id);
+  ct.pixel_type = "short";
+  ct.path = patient.name+PATH_SEPARATOR;
+  sdb_->Update(spect);
+  sdb_->Update(ct);
   sdb_->Update(timepoint);
 
   // Convert dicom to image
   if (!get_ignore_files_flag()) {
     sdb_->ConvertDicomToImage(timepoint);
   }
+  else { // ignore dicom copy
+    if (get_update_md5_flag()) {
+      sdb_->UpdateMD5(spect);
+      sdb_->UpdateMD5(ct);
+    }
+  }
 
   // Update the filenames according to (compute number, time_from_injection_in_hours etc)
   sdb_->UpdateNumberAndRenameFiles(timepoint.patient_id);
-
 }
 // --------------------------------------------------------------------

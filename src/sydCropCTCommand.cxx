@@ -107,9 +107,11 @@ void syd::CropCTCommand::Run(const Timepoint & timepoint)
             << " of patient " << patient.name;
   }
 
+  sdb_->UpdateRoiMaskImage(roi);
+
   // Get filename
   RawImage ct(sdb_->GetById<RawImage>(timepoint.ct_image_id));
-  std::string input_filename = sdb_->GetImagePath(ct.id);
+  std::string input_filename = sdb_->GetImagePath(ct);
 
   // Get/Create ROI output folder
   std::string output_filename = sdb_->GetImagePath(roi);
@@ -126,6 +128,14 @@ void syd::CropCTCommand::Run(const Timepoint & timepoint)
             << " -m " << output_filename << " -p -1000" << std::endl;
 
   // Check md5 and update if needed
+  if (syd::FileExists(output_filename)) {
+    VLOG(1) << "Mask file exist, updating md5 " << output_filename;
+    RawImage mask(sdb_->GetById<RawImage>(roi.mask_id));
+    sdb_->UpdateMD5(mask);
+  }
+  else {
+    VLOG(1) << "Still no mask file : " << output_filename;
+  }
   sdb_->UpdateMD5(ct);
 }
 // --------------------------------------------------------------------

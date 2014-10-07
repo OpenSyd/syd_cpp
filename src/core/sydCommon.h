@@ -70,6 +70,8 @@ namespace syd {
 
   //--------------------------------------------------------------------
   void CreateDirectory(std::string folder);
+  bool FileExists(std::string filename);
+  bool DirExists(std::string folder);
   //--------------------------------------------------------------------
 
 

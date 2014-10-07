@@ -44,37 +44,37 @@ namespace syd {
 
     // Dump information
     virtual void Dump(std::ostream & os, std::vector<std::string> & args);
-    virtual void CheckIntegrity(std::vector<std::string> & args) { DD("todo"); exit(0); }
+    virtual void CheckIntegrity(std::vector<std::string> & args);
     virtual void CreateDatabase();
 
     void InsertTimepoint(Timepoint & t, RawImage & spect, RawImage & ct);
     void InsertRoiMaskImage(const Timepoint & timepoint, const RoiType & roitype, RoiMaskImage & roi);
+    void UpdateRoiMaskImage(RoiMaskImage & roi);
 
-    void CopyFilesTo(const Timepoint & in, std::shared_ptr<StudyDatabase> out_db, Timepoint & out);
-    void CopyFilesTo(const RawImage & in, std::shared_ptr<StudyDatabase> out_db, RawImage & out);
+    void ConvertDicomToImage(const Timepoint & t);
+    void CopyFilesFrom(std::shared_ptr<StudyDatabase> in_db, const Timepoint & in, Timepoint & out);
 
     bool FilesExist(Timepoint t); // FIXME
     bool CheckMD5(Timepoint t); // FIXME
-    void UpdateMD5(Timepoint t); //FIXME
-    void UpdateMD5(RawImage & image);
-    std::string GetRegistrationOutputPath(Timepoint ref, Timepoint mov); // FIXME
 
+    void UpdateMD5(RawImage & image);
+    void UpdatePathAndRename(const Timepoint & timepoint, bool rename_flag=true);
     void UpdateNumberAndRenameFiles(IdType patient_id);
-    void ConvertDicomToImage(const Timepoint & t);
+
+    void CheckIntegrity(const RawImage & image);
+    void CheckIntegrity(const Timepoint & timepoint);
+    void CheckIntegrity(const Patient & patient);
 
     std::string GetPath(const Patient & p);
     std::string GetOrCreatePath(const Patient & p);
     std::string GetRoiPath(const Patient & p);
     std::string GetOrCreateRoiPath(const Patient & p);
-    std::string GetPath(const RawImage & i);
-    std::string GetImagePath(IdType id);
-    std::string GetImagePath(const RoiMaskImage & roi);
-    // Timepoint GetTimepoint(const RawImage & image);
-    // Patient GetPatient(const RawImage & image);
-    // Patient GetPatient(const RoiMaskImage & image);
+    std::string GetRegistrationOutputPath(Timepoint ref, Timepoint mov);
+    std::string GetImagePath(const RawImage & image);
+    std::string GetImagePath(IdType id) { return GetImagePath(GetById<RawImage>(id)); }
+    std::string GetImagePath(const RoiMaskImage & roi) { return GetImagePath(GetById<RawImage>(roi.mask_id)); }
     Patient GetPatient(const Timepoint & timepoint);
-
-    void UpdateImageFilenames(const Timepoint & t);
+    RoiMaskImage GetRoiMaskImage(const Timepoint & timepoint, std::string roiname);
 
     std::string Print(const Timepoint & t);
     std::string Print(const RawImage & t);

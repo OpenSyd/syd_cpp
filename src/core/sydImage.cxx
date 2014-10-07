@@ -83,8 +83,7 @@ std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::s
   syd::WriteImage<ImageType>(image, mhd_filename);
 
   // Compute md5
-  std::string m = md5((char*)image->GetBufferPointer());
-  return m;
+  return ComputeImageMD5<ImageType>(image);
 }
 //--------------------------------------------------------------------
 
@@ -116,8 +115,7 @@ std::string syd::ConvertDicomCTFolderToImage(std::string dicom_path, std::string
   syd::WriteImage<ImageType>(ct, mhd_filename);
 
   // Compute md5
-  std::string m = md5((char*)ct->GetBufferPointer());
-  return m;
+  return ComputeImageMD5<ImageType>(ct);
 }
 //--------------------------------------------------------------------
 
@@ -153,21 +151,26 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
   std::string new_path_raw = new_path.substr(0,n)+".raw";
 
   // Check files
-  if (!OFStandard::fileExists(old_path.c_str())) {
+  if (!syd::FileExists(old_path)) {
     LOG(FATAL) << "Rename MHD : Error path (mhd) not exist : " << old_path;
   }
-  if (!OFStandard::fileExists(old_path_raw.c_str())) {
+  if (!syd::FileExists(old_path_raw)) {
     LOG(FATAL) << "Rename MHD : Error path (raw) not exist : " << old_path_raw;
   }
-  if (OFStandard::fileExists(new_path.c_str())) {
-    LOG(FATAL) << "Rename MHD : Error path (mhd) to rename already exist : " << new_path;
+  if (syd::FileExists(new_path)) {
+    LOG(WARNING) << "Rename MHD : path (mhd) to rename already exist : " << new_path;
   }
-  if (OFStandard::fileExists(new_path_raw.c_str())) {
-    LOG(FATAL) << "Rename MHD : Error path (raw) to rename already exist : " << new_path_raw;
+  if (syd::FileExists(new_path_raw)) {
+    LOG(WARNING) << "Rename MHD : path (raw) to rename already exist : " << new_path_raw;
   }
 
   // verbose
-  VLOG(verbose_level) << "Rename header " << old_path << " to " << new_path;
+  if (erase) {
+    VLOG(verbose_level) << "Rename header " << old_path << " to " << new_path;
+  }
+  else {
+    VLOG(verbose_level) << "Copy header " << old_path << " to " << new_path;
+  }
 
   // header part : change ElementDataFile in the header
   std::ifstream in(old_path);
@@ -179,10 +182,7 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
   std::string wordToReplaceWith(r.c_str());
   size_t len = wordToReplace.length();
   std::string line;
-  DD(wordToReplace);
-  DD(wordToReplaceWith);
   while (std::getline(in, line)) {
-    DD(line);
     while (line != "") {
       size_t pos = line.find(wordToReplace);
       if (pos != std::string::npos) {
@@ -196,7 +196,6 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
   }
   in.close();
   out.close();
-  DD("ici");
 
   // Delete old path
   if (erase) std::remove(old_path.c_str());

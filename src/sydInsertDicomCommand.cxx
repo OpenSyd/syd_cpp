@@ -105,7 +105,7 @@ void syd::InsertDicomCommand::InsertDicom(std::string patient_name, std::string 
   VLOG(0) << "Search for Dicom (*.dcm) in " << folder;
   OFBool recurse = OFTrue;
   size_t found=0;
-  if (OFStandard::dirExists(folder.c_str())) {
+  if (syd::DirExists(folder)) {
     found = OFStandard::searchDirectoryRecursively(folder.c_str(), inputFiles, scanPattern, dirPrefix, recurse);
   }
   else {
@@ -291,7 +291,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
       std::string destination = cdb_->GetPath(serie)+PATH_SEPARATOR+filename.c_str();
 
       // Check if already exist
-      if (OFStandard::fileExists(destination.c_str())) {
+      if (syd::FileExists(destination)) {
         VLOG(3) << "File already exist, skip copying " << filename;
       }
       else {
@@ -314,7 +314,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
     std::string destination = cdb_->GetPath(serie);
     if (rename_flag_) {
       VLOG(2) << "Rename " << d.filenames_[0] << " to " << destination;
-      if (OFStandard::fileExists(destination.c_str())) {
+      if (syd::FileExists(destination)) {
         LOG(FATAL) << "Error the destination already exist : " << destination;
       }
       int result = rename(d.filenames_[0].c_str(), destination.c_str());

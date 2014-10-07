@@ -40,7 +40,8 @@ namespace syd {
 #pragma db id auto
     IdType        id;
     IdType        patient_id;      // not necessary but useful. keep it.
-    IdType        spect_serie_id;  // not necessary but useful. keep it.
+    IdType        spect_serie_id;
+    IdType        ct_serie_id;
     unsigned int  number;
     double        time_from_injection_in_hours;
     IdType        ct_image_id;
@@ -76,6 +77,7 @@ namespace syd {
       id = t.id;
       patient_id = t.patient_id;
       spect_serie_id = t.spect_serie_id;
+      ct_serie_id = t.ct_serie_id;
       number = t.number;
       time_from_injection_in_hours = t.time_from_injection_in_hours;
       ct_image_id = t.ct_image_id;

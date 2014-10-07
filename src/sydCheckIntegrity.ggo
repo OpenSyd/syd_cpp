@@ -1,11 +1,14 @@
 #File sydCheckIntegrity.ggo
 
 package "sydCheckIntegrity"
-usage "sydCheckIntegrity <db> <patient_name>"
+usage "sydCheckIntegrity <db> <cmd>"
 version "0.1"
-description "Check the integrity of the patient in the a database."
+description "Check the integrity a database.
+- if <db> is a ClinicDatabase, <cmd> is a patient name or 'all
+- if <db> is a StudyDatabase, cmd can be 'patient', 'rawimage' or 'timepoint'
+  followed by patient names for the first, or by ids for rawimage/timepoint"
 
 option "config"	  	 	-	"Config file"				string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off
-option "level"   	 	c       "0=basic, 1=content, 2=CT_content"      int default="1" no
+option "level"   	 	c       "(for ClinicDatabase) 0=basic, 1=content, 2=CT_content"      int default="1" no

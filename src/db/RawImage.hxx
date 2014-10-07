@@ -36,9 +36,10 @@ namespace syd {
 
 #pragma db id auto
     IdType        id;
-    IdType        serie_id;
     std::string   filename;
+    std::string   path;
     std::string   md5;
+    std::string   pixel_type;
 
     // --------------------------------------------------
     // Constructor, Destructor
@@ -59,16 +60,17 @@ namespace syd {
     // --------------------------------------------------
     void copy(const RawImage & t) {
       id = t.id;
-      serie_id = t.serie_id;
       filename = t.filename;
+      path = t.path;
       md5 = t.md5;
+      pixel_type = t.pixel_type;
     }
     // --------------------------------------------------
 
 
     // --------------------------------------------------
     friend std::ostream& operator<<(std::ostream& os, const RawImage & p) {
-      os << p.id << " " << p.filename << " " << p.serie_id;
+      os << p.id << " " << p.filename << " " << p.pixel_type;
       return os;
     }
     // --------------------------------------------------
