@@ -89,6 +89,7 @@ namespace syd {
   template<class T>
   std::string toString(const T & t);
   void SkipComment(std::istream & is);
+  bool replace(std::string& str, const std::string& from, const std::string& to);
   //--------------------------------------------------------------------
 
 

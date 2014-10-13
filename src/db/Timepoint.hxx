@@ -66,7 +66,8 @@ namespace syd {
     friend std::ostream& operator<<(std::ostream& os, const Timepoint & p) {
       os << p.id << " " << p.number << " " << p.time_from_injection_in_hours
          << " spect=" << p.spect_image_id
-         << " ct=" << p.ct_image_id;
+         << " ct=" << p.ct_image_id
+         << " p=" << p.patient_id;
       return os;
     }
     // --------------------------------------------------

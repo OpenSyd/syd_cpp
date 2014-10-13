@@ -18,6 +18,7 @@
 
 #include "sydClinicDatabase.h"
 #include "sydStudyDatabase.h"
+#include "sydActivityDatabase.h"
 
 namespace syd {
 
@@ -29,5 +30,6 @@ namespace syd {
   // Type of DB
   SYD_DECLARE_DATABASE_TYPE(ClinicDatabase);
   SYD_DECLARE_DATABASE_TYPE(StudyDatabase);
+  SYD_DECLARE_DATABASE_TYPE(ActivityDatabase);
 
 } // namespace syd

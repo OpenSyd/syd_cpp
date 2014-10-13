@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDREGISTERCOMMAND_H
-#define SYDREGISTERCOMMAND_H
+#ifndef SYDINSERTROICOMMAND_H
+#define SYDINSERTROICOMMAND_H
 
 // syd
 #include "sydDatabaseCommand.h"
@@ -29,30 +29,29 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  class RegisterCommand: public syd::DatabaseCommand
+  class InsertRoiCommand: public syd::DatabaseCommand
   {
   public:
 
-    RegisterCommand(std::string d1, std::string d2);
-    RegisterCommand(StudyDatabase * d1, StudyDatabase * d2);
-    ~RegisterCommand();
+    InsertRoiCommand(std::string d);
+    InsertRoiCommand(StudyDatabase * d);
+    ~InsertRoiCommand();
 
-    virtual void Run(std::string patient_name, const std::vector<std::string> & arg);
-    virtual void Run(std::string patient_name, int a, int b);
+    void Run(std::vector<std::string> & arg);
+    void Run(const Patient & patient, const std::vector<std::string> & arg);
+    void Run(const Timepoint & timepoint, const RoiType & roitype, std::string filename);
 
-    void set_config_filename(std::string s) { config_filename_ = s; }
+    void set_move_flag(const bool b) { move_flag_ = b; }
+    bool get_move_flag() const { return move_flag_; }
 
   protected:
     void Initialization();
-    void Run(Timepoint ref, Timepoint mov);
+    void Run(const Timepoint & t);
+    bool move_flag_;
 
     std::shared_ptr<syd::ClinicDatabase> cdb_;
-    std::shared_ptr<syd::StudyDatabase>  in_db_;
-    std::shared_ptr<syd::StudyDatabase>  out_db_;
-    std::string config_filename_;
+    std::shared_ptr<syd::StudyDatabase>  sdb_;
   };
-
-
 } // end namespace
 // --------------------------------------------------------------------
 

@@ -24,3 +24,14 @@ add_library(sydStudyDatabase
   RawImage-odb.cxx
   RoiMaskImage-odb.cxx)
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_odb(sydActivityDatabase Activity.hxx)
+wrap_odb(sydActivityDatabase TimeActivity.hxx)
+
+add_library(sydActivityDatabase
+  sydActivityDatabase.cxx
+  Activity-odb.cxx
+  TimeActivity-odb.cxx)
+#----------------------------------------------------------

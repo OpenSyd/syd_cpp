@@ -42,6 +42,7 @@ syd::CropCTCommand::CropCTCommand(std::string d):
 void syd::CropCTCommand::Initialization()
 {
   cdb_ = sdb_->get_clinical_database();
+  set_ignore_md5_flag(false);
 }
 // --------------------------------------------------------------------
 
@@ -56,7 +57,7 @@ syd::CropCTCommand::~CropCTCommand()
 
 
 // --------------------------------------------------------------------
-void syd::CropCTCommand::Run(std::string patient_name, std::string a)
+void syd::CropCTCommand::Run(std::string patient_name, const std::vector<std::string> & arg)
 {
   std::vector<Patient> patients;
   cdb_->GetPatientsByName(patient_name, patients);
@@ -64,19 +65,21 @@ void syd::CropCTCommand::Run(std::string patient_name, std::string a)
   for(auto p:patients) {
     std::vector<Timepoint> timepoints;
     IdType pid = p.id;
-    if (a == "all") {
-      DD("todo");//      FIXME
+    if (arg.size() == 0 or (arg[0] == "all")) {
+      sdb_->LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == pid);
     }
     else {
-      int n = atoi(a.c_str());
-      Timepoint timepoint;
-      bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == pid &&
-                                           odb::query<Timepoint>::number == n, timepoint);
-      if (!b) {
-        LOG(WARNING) << "Error could not find number '" << n << "' for patient " << p;
-      }
-      else {
-        timepoints.push_back(timepoint);
+      for(auto i:arg) {
+        int n = atoi(i.c_str());
+        Timepoint timepoint;
+        bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == pid &&
+                                             odb::query<Timepoint>::number == n, timepoint);
+        if (!b) {
+          LOG(WARNING) << "Error could not find number '" << n << "' for patient " << p;
+        }
+        else {
+          timepoints.push_back(timepoint);
+        }
       }
     }
     // Loop for all number for this patient
@@ -98,7 +101,7 @@ void syd::CropCTCommand::Run(const Timepoint & timepoint)
   bool b = sdb_->GetIfExist<RoiMaskImage>(odb::query<RoiMaskImage>::roitype_id == roitype.id &&
                                           odb::query<RoiMaskImage>::timepoint_id == timepoint.id, roi);
   if (!b) {
-    sdb_->InsertRoiMaskImage(timepoint, roitype, roi);
+    roi = sdb_->NewRoiMaskImage(timepoint, roitype);
     VLOG(1) << "Creating new Roi '" << roitype.name << "' for timepoint " << timepoint.number
             << " of patient " << patient.name;
   }
@@ -106,7 +109,6 @@ void syd::CropCTCommand::Run(const Timepoint & timepoint)
     VLOG(1) << "Roi " << roitype.name << " already exist for timepoint " << timepoint.number
             << " of patient " << patient.name;
   }
-
   sdb_->UpdateRoiMaskImage(roi);
 
   // Get filename
@@ -117,7 +119,7 @@ void syd::CropCTCommand::Run(const Timepoint & timepoint)
   std::string output_filename = sdb_->GetImagePath(roi);
 
   // clitkExtractPatient : extract patient coutour
-  std::cout << "clitkExtractPatient -i " << input_filename << " -o " << output_filename << " --upper=-400" << std::endl;
+  std::cout << "clitkExtractPatient -i " << input_filename << " -o " << output_filename << " --upper=-600" << std::endl;
   //  std::cout << " (if lung does not belong to patient mask, try lower --upper)" << std::endl;
 
   // clitkCrop : reduce initial image size
@@ -128,14 +130,16 @@ void syd::CropCTCommand::Run(const Timepoint & timepoint)
             << " -m " << output_filename << " -p -1000" << std::endl;
 
   // Check md5 and update if needed
-  if (syd::FileExists(output_filename)) {
-    VLOG(1) << "Mask file exist, updating md5 " << output_filename;
-    RawImage mask(sdb_->GetById<RawImage>(roi.mask_id));
-    sdb_->UpdateMD5(mask);
+  if (!get_ignore_md5_flag()) {
+    if (syd::FileExists(output_filename)) {
+      VLOG(1) << "Mask file exist, updating md5 " << output_filename;
+      RawImage mask(sdb_->GetById<RawImage>(roi.mask_id));
+      sdb_->UpdateMD5(mask);
+    }
+    else {
+      VLOG(1) << "Still no mask file : " << output_filename;
+    }
+    sdb_->UpdateMD5(ct);
   }
-  else {
-    VLOG(1) << "Still no mask file : " << output_filename;
-  }
-  sdb_->UpdateMD5(ct);
 }
 // --------------------------------------------------------------------

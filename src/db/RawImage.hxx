@@ -36,6 +36,7 @@ namespace syd {
 
 #pragma db id auto
     IdType        id;
+    IdType        patient_id;
     std::string   filename;
     std::string   path;
     std::string   md5;
@@ -60,6 +61,7 @@ namespace syd {
     // --------------------------------------------------
     void copy(const RawImage & t) {
       id = t.id;
+      patient_id = t.patient_id;
       filename = t.filename;
       path = t.path;
       md5 = t.md5;
@@ -70,7 +72,7 @@ namespace syd {
 
     // --------------------------------------------------
     friend std::ostream& operator<<(std::ostream& os, const RawImage & p) {
-      os << p.id << " " << p.filename << " " << p.pixel_type;
+      os << p.id << " " << p.filename << " " << p.pixel_type << " " << p.patient_id;
       return os;
     }
     // --------------------------------------------------

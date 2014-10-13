@@ -115,12 +115,7 @@ void syd::InsertTimepointCommand::InsertTimepoint(const Serie & serie)
   // Get or create
   if (!b) {  // It does not exist, we create it
     VLOG(1) << "Creating new Timepoint for " << patient.name << " date " << serie.acquisition_date;
-    RawImage spect;
-    RawImage ct;
-    timepoint.patient_id = patient.id;
-    timepoint.number=0;
-    sdb_->InsertTimepoint(timepoint, spect, ct);
-    sdb_->UpdatePathAndRename(timepoint, false); // do not rename
+    timepoint = sdb_->NewTimepoint(serie, ct_serie);
   }
   else {
     if (!get_ignore_files_flag()) {
@@ -130,8 +125,8 @@ void syd::InsertTimepointCommand::InsertTimepoint(const Serie & serie)
               << serie.acquisition_date << " ("
               << timepoint.time_from_injection_in_hours
               << " hours) already exist, deleting current image and updating.";
-      syd::DeleteMHDImage(sdb_->GetImagePath(timepoint.ct_image_id));
-      syd::DeleteMHDImage(sdb_->GetImagePath(timepoint.spect_image_id));
+      //syd::DeleteMHDImage(sdb_->GetImagePath(timepoint.ct_image_id));
+      //syd::DeleteMHDImage(sdb_->GetImagePath(timepoint.spect_image_id));
     }
     else {
       VLOG(1) << "Timepoint " << patient.name << " "
@@ -144,26 +139,16 @@ void syd::InsertTimepointCommand::InsertTimepoint(const Serie & serie)
   }
 
   // Update timepoint information
-  timepoint.patient_id = patient.id;
-  timepoint.spect_serie_id = serie.id;
-  timepoint.ct_serie_id = ct_serie.id;
-  timepoint.time_from_injection_in_hours = syd::DateDifferenceInHours(serie.acquisition_date, patient.injection_date);
-  RawImage spect = sdb_->GetById<RawImage>(timepoint.spect_image_id);
-  spect.pixel_type = "float";
-  spect.path = patient.name+PATH_SEPARATOR;
-  RawImage ct = sdb_->GetById<RawImage>(timepoint.ct_image_id);
-  ct.pixel_type = "short";
-  ct.path = patient.name+PATH_SEPARATOR;
-  sdb_->Update(spect);
-  sdb_->Update(ct);
-  sdb_->Update(timepoint);
+  sdb_->UpdateTimepoint(serie, ct_serie, timepoint);
 
-  // Convert dicom to image
+  // Convert dicom to image (and compute md5)
   if (!get_ignore_files_flag()) {
     sdb_->ConvertDicomToImage(timepoint);
   }
-  else { // ignore dicom copy
+  else { // ignore dicom copy, only update md5
     if (get_update_md5_flag()) {
+      RawImage spect(sdb_->GetById<RawImage>(timepoint.spect_image_id));
+      RawImage ct(sdb_->GetById<RawImage>(timepoint.ct_image_id));
       sdb_->UpdateMD5(spect);
       sdb_->UpdateMD5(ct);
     }

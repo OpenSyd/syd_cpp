@@ -22,15 +22,14 @@
 // syd
 #include "sydDatabase.h"
 #include "sydImage.h"
+#include "sydClinicDatabase.h"
 #include "Timepoint-odb.hxx"
 #include "RawImage-odb.hxx"
 #include "RoiMaskImage-odb.hxx"
-#include "sydClinicDatabase.h"
 
-// Manage a list of timepoint with associated raw image. Uses 3 tables
-// (Timepoint RawImage RoiMaskImage).  Need a pointer to a
-// ClinicDatabase because each image is linked with a Serie and a
-// Patient from this ClinicDatabase;
+// Manage a list of timepoint with associated raw image. Need a
+// pointer to a ClinicDatabase because each image is linked with a
+// Serie and a Patient from this ClinicDatabase;
 // --------------------------------------------------------------------
 namespace syd {
 
@@ -47,15 +46,16 @@ namespace syd {
     virtual void CheckIntegrity(std::vector<std::string> & args);
     virtual void CreateDatabase();
 
-    void InsertTimepoint(Timepoint & t, RawImage & spect, RawImage & ct);
-    void InsertRoiMaskImage(const Timepoint & timepoint, const RoiType & roitype, RoiMaskImage & roi);
+    Timepoint NewTimepoint(const Serie & spect_serie, const Serie & ct_serie);
+    RoiMaskImage NewRoiMaskImage(const Timepoint & timepoint, const RoiType & roitype);
+    RawImage NewRawImage(const Patient & patient);
+
+    void UpdateTimepoint(const Serie & spect_serie, const Serie & ct_serie, Timepoint & t);
     void UpdateRoiMaskImage(RoiMaskImage & roi);
+    void UpdateAverageCTImage(RawImage & rawimage);
 
     void ConvertDicomToImage(const Timepoint & t);
     void CopyFilesFrom(std::shared_ptr<StudyDatabase> in_db, const Timepoint & in, Timepoint & out);
-
-    bool FilesExist(Timepoint t); // FIXME
-    bool CheckMD5(Timepoint t); // FIXME
 
     void UpdateMD5(RawImage & image);
     void UpdatePathAndRename(const Timepoint & timepoint, bool rename_flag=true);

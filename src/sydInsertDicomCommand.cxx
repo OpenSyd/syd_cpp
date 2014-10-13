@@ -86,6 +86,10 @@ void syd::InsertDicomCommand::InsertDicom(std::string patient_name, std::string 
     LOG(FATAL) << "Error I could not find the patient '" << patient_name << "' in the db.";
   }
 
+  // Create folder if needed
+  std::string path = cdb_->GetPath(patient);
+  if (!syd::DirExists(path)) syd::CreateDirectory(path);
+
   // Search for all the files in the directory
   OFList<OFString> inputFiles;
   inputFiles.clear();
@@ -254,7 +258,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   Serie serie;
   if (cdb_->GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid, serie)) {
     // already exist
-    cdb_->CheckSerie(serie);
+    // cdb_->CheckSerie(serie);
     VLOG(1) << "Serie id=" << serie.id << " at " << acqui_date << " already exist, updating.";
   }
   else {

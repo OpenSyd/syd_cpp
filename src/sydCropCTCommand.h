@@ -37,11 +37,15 @@ namespace syd {
     CropCTCommand(StudyDatabase * d);
     ~CropCTCommand();
 
-    virtual void Run(std::string patient_name, std::string a);
+    virtual void Run(std::string patient_name, const std::vector<std::string> & arg);
+
+    void set_ignore_md5_flag(bool b) { ignore_md5_flag_ = b; }
+    bool get_ignore_md5_flag() const { return ignore_md5_flag_; }
 
   protected:
     void Initialization();
     void Run(const Timepoint & t);
+    bool ignore_md5_flag_;
 
     std::shared_ptr<syd::ClinicDatabase> cdb_;
     std::shared_ptr<syd::StudyDatabase>  sdb_;

@@ -12,3 +12,4 @@ description "Crop the CT of timepoints number 'a' for the patient.
 option "config"   	 	-       "Config file for ggo"   		string		no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off
+option "ignore"   	 	-       "Ignore md5 check"                      flag		off

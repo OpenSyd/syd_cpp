@@ -223,23 +223,105 @@ void syd::StudyDatabase::CheckIntegrity(const RawImage & image)
 
 
 // --------------------------------------------------------------------
-void syd::StudyDatabase::InsertTimepoint(Timepoint & t, RawImage & spect, RawImage & ct)
+/*void syd::StudyDatabase::InsertTimepoint(Timepoint & t, RawImage & spect, RawImage & ct)
 {
+  //FIXME to remove
+  DD("TO remove");
+  exit(0);
   // Also create folder if needed
   Patient patient (GetPatient(t));
   std::string p = GetOrCreatePath(patient);
-  // Insert all elements and update id
-  spect.md5 = "";
-  spect.pixel_type = "float";
-  spect.path = p;
-  ct.md5 = "";
-  ct.pixel_type = "short";
-  ct.path = p;
+  // Insert all elements and update
   Insert(spect);
   Insert(ct);
   t.spect_image_id = spect.id;
   t.ct_image_id = ct.id;
   Insert(t);
+  // Update
+  UpdateTimepoint(t);
+}*/
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Timepoint syd::StudyDatabase::NewTimepoint(const Serie & spect_serie,
+                                                const Serie & ct_serie)
+{
+  Timepoint t;
+  // Also create folder if needed
+  Patient patient (cdb_->GetPatient(spect_serie));
+  GetOrCreatePath(patient);
+  t.patient_id = patient.id;
+  // set timepoint number to 0 (unknown)
+  t.number = 0;
+  // Create rawimage
+  RawImage spect = NewRawImage(patient);
+  RawImage ct = NewRawImage(patient);
+  Insert(spect);
+  Insert(ct);
+  t.spect_image_id = spect.id;
+  t.ct_image_id = ct.id;
+  Insert(t);
+  // Update
+  UpdateTimepoint(spect_serie, ct_serie, t);
+  return t;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RawImage syd::StudyDatabase::NewRawImage(const Patient & patient)
+{
+  RawImage rawimage;
+  rawimage.patient_id = patient.id;
+  rawimage.md5 = "";
+  Insert(rawimage);
+  return rawimage;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StudyDatabase::UpdateAverageCTImage(RawImage & rawimage)
+{
+  Patient patient(cdb_->GetById<Patient>(rawimage.patient_id));
+  rawimage.filename = "average.mhd";
+  rawimage.path = patient.name+PATH_SEPARATOR;
+  rawimage.pixel_type = "short";
+  Update(rawimage);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StudyDatabase::UpdateTimepoint(const Serie & spect_serie,
+                                         const Serie & ct_serie,
+                                         Timepoint & t)
+{
+  // Update timepoint information (but not number)
+  Patient patient (GetPatient(t));
+  t.patient_id = patient.id;
+  t.spect_serie_id = spect_serie.id;
+  t.ct_serie_id = ct_serie.id;
+  t.time_from_injection_in_hours =
+    syd::DateDifferenceInHours(spect_serie.acquisition_date, patient.injection_date);
+  // Get images
+  RawImage spect(GetById<RawImage>(t.spect_image_id));
+  RawImage ct(GetById<RawImage>(t.ct_image_id));
+  // Update everything (but not md5)
+  spect.patient_id = t.patient_id;
+  spect.pixel_type = "float";
+  spect.path = patient.name+PATH_SEPARATOR;
+  spect.filename = "spect"+toString(t.number)+".mhd";
+  ct.patient_id = t.patient_id;
+  ct.pixel_type = "short";
+  ct.path = patient.name+PATH_SEPARATOR;
+  ct.filename = "ct"+toString(t.number)+".mhd";
+  Update(spect);
+  Update(ct);
+  t.spect_image_id = spect.id;
+  t.ct_image_id = ct.id;
+  Update(t);
 }
 // --------------------------------------------------------------------
 
@@ -252,7 +334,7 @@ void syd::StudyDatabase::CopyFilesFrom(std::shared_ptr<StudyDatabase> in_db,
   // SPECT part
   RawImage in_spect(in_db->GetById<RawImage>(in.spect_image_id));
   RawImage out_spect(GetById<RawImage>(out.spect_image_id));
-  if (in_spect.md5 != out_spect.md5) {
+  if (in_spect.md5 != out_spect.md5 or !FileExists(GetImagePath(out_spect)) ) {
     std::string from(in_db->GetImagePath(in_spect));
     std::string to(GetImagePath(out_spect));
     VLOG(3) << "Copy image " << from << " to " << to;
@@ -267,7 +349,7 @@ void syd::StudyDatabase::CopyFilesFrom(std::shared_ptr<StudyDatabase> in_db,
   // CT part
   RawImage in_ct(in_db->GetById<RawImage>(in.ct_image_id));
   RawImage out_ct(GetById<RawImage>(out.ct_image_id));
-  if (in_ct.md5 != out_ct.md5) {
+  if (in_ct.md5 != out_ct.md5 or !FileExists(GetImagePath(out_ct)) ) {
     std::string from(in_db->GetImagePath(in_ct));
     std::string to(GetImagePath(out_ct));
     VLOG(3) << "Copy image " << from << " to " << to;
@@ -281,15 +363,6 @@ void syd::StudyDatabase::CopyFilesFrom(std::shared_ptr<StudyDatabase> in_db,
 }
 // --------------------------------------------------------------------
 
-
-bool syd::StudyDatabase::FilesExist(Timepoint t)
-{
-  DD("TODO");
-}
-bool syd::StudyDatabase::CheckMD5(Timepoint t)
-{
-  DD("TODO");
-}
 
 // --------------------------------------------------------------------
 void syd::StudyDatabase::UpdatePathAndRename(const Timepoint & timepoint, bool rename_flag)
@@ -331,7 +404,7 @@ void syd::StudyDatabase::UpdateNumberAndRenameFiles(IdType patient_id)
   // Get corresponding spect series acquisition_date
   std::vector<Serie> series;
   //std::vector<IdType> ids;
-  odb::query<Serie> q =odb::query<Serie>(false);
+  // odb::query<Serie> q =odb::query<Serie>(false);
   for(auto i=timepoints.begin(); i<timepoints.end(); i++) {
     series.push_back(cdb_->GetById<Serie>(i->spect_serie_id));
   }
@@ -574,12 +647,38 @@ syd::RoiMaskImage syd::StudyDatabase::GetRoiMaskImage(const Timepoint & timepoin
 
 
 // --------------------------------------------------------------------
-void syd::StudyDatabase::InsertRoiMaskImage(const Timepoint & timepoint,
-                                            const RoiType & roitype,
-                                            RoiMaskImage & roi)
+// void syd::StudyDatabase::InsertRoiMaskImage(const Timepoint & timepoint,
+//                                             const RoiType & roitype,
+//                                             RoiMaskImage & roi)
+// {
+//   DD("to remove !!");
+//   exit(0);
+//   // Create new RawImage associated with the roi
+//   RawImage mask;
+//   Insert(mask);
+
+//   // Insert roi
+//   roi.mask_id = mask.id;
+//   roi.timepoint_id = timepoint.id;
+//   roi.roitype_id = roitype.id;
+//   Insert(roi);
+
+//   UpdateRoiMaskImage(roi);
+// }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiMaskImage syd::StudyDatabase::NewRoiMaskImage(const Timepoint & timepoint,
+                                                      const RoiType & roitype)
 {
+  RoiMaskImage roi;
+
+  // Get patient
+  Patient patient(cdb_->GetById<Patient>(timepoint.patient_id));
+
   // Create new RawImage associated with the roi
-  RawImage mask;
+  RawImage mask = NewRawImage(patient);
   Insert(mask);
 
   // Insert roi
@@ -588,7 +687,7 @@ void syd::StudyDatabase::InsertRoiMaskImage(const Timepoint & timepoint,
   roi.roitype_id = roitype.id;
   Insert(roi);
 
-  UpdateRoiMaskImage(roi);
+  return roi;
 }
 // --------------------------------------------------------------------
 
@@ -602,6 +701,7 @@ void syd::StudyDatabase::UpdateRoiMaskImage(RoiMaskImage & roi)
   RoiType roitype(cdb_->GetById<RoiType>(roi.roitype_id));
   Patient patient(GetPatient(timepoint));
 
+  mask.patient_id = timepoint.patient_id;
   mask.filename = roitype.name+toString(timepoint.number)+".mhd";
   mask.md5 = "";
   mask.path = patient.name+PATH_SEPARATOR+std::string("roi")+PATH_SEPARATOR;
@@ -609,7 +709,7 @@ void syd::StudyDatabase::UpdateRoiMaskImage(RoiMaskImage & roi)
   Update(mask);
 
   // Update roi
-  roi.volume_in_cc = 0.0;
+  roi.volume_in_cc = 0.0; // FIXME to put elsewhere
   Update(roi);
 
   // Create path if needed

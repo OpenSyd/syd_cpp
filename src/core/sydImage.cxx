@@ -47,21 +47,6 @@ std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::s
   itk::MetaDataDictionary d;
   image->SetMetaDataDictionary(d);
 
-  // Correct for negative SpacingBetweenSlices
-  double s = GetTagValueDouble(dset, "SpacingBetweenSlices");
-  // change spacing z
-  typename ImageType::SpacingType spacing = image->GetSpacing();
-  if (s<0) spacing[2] = -s;
-  else spacing[2] = s;
-  image->SetSpacing(spacing);
-  // Direction
-  if (s<0) {
-    typename ImageType::DirectionType direction = image->GetDirection();
-    direction.Fill(0.0);
-    direction(0,0) = 1; direction(1,1) = 1; direction(2,2) = -1;
-    image->SetDirection(direction);
-  }
-
   // Offset
   std::string ImagePositionPatient = GetTagValueString(dset, "ImagePositionPatient");
   if (ImagePositionPatient == "") {
@@ -78,6 +63,30 @@ std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::s
   origin[1] = toDouble(sy);
   origin[2] = toDouble(sz);
   image->SetOrigin(origin);
+
+  // Correct for negative SpacingBetweenSlices
+  double s = GetTagValueDouble(dset, "SpacingBetweenSlices");
+  // change spacing z
+  typename ImageType::SpacingType spacing = image->GetSpacing();
+  if (s<0) spacing[2] = -s;
+  else spacing[2] = s;
+  image->SetSpacing(spacing);
+  // Direction
+  if (s<0) {
+    typename ImageType::DirectionType direction = image->GetDirection();
+    direction.Fill(0.0);
+    direction(0,0) = 1; direction(1,1) = 1; direction(2,2) = -1;
+    image->SetDirection(direction);
+
+    // Change orientation
+    itk::OrientImageFilter<ImageType,ImageType>::Pointer orienter =
+      itk::OrientImageFilter<ImageType,ImageType>::New();
+    orienter->UseImageDirectionOn();
+    orienter->SetDesiredCoordinateOrientation(itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIA);
+    orienter->SetInput(image);
+    orienter->Update();
+    image = orienter->GetOutput();
+  }
 
   // End write the result
   syd::WriteImage<ImageType>(image, mhd_filename);
@@ -174,7 +183,9 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
 
   // header part : change ElementDataFile in the header
   std::ifstream in(old_path);
-  std::ofstream out(new_path);
+  //  std::ofstream out(new_path);
+  std::vector<std::string> outlines;
+  // std::ofstream out;
   OFString r;
   OFStandard::getFilenameFromPath(r, old_path_raw.c_str());
   std::string wordToReplace(r.c_str());
@@ -182,6 +193,8 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
   std::string wordToReplaceWith(r.c_str());
   size_t len = wordToReplace.length();
   std::string line;
+  // Delete old path (before writing new)
+  if (erase) std::remove(old_path.c_str());
   while (std::getline(in, line)) {
     while (line != "") {
       size_t pos = line.find(wordToReplace);
@@ -192,14 +205,15 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
       else
         break;
     }
-    out << line << '\n';
+    outlines.push_back(line+"\n");
+    //out << line << '\n';
   }
   in.close();
-  out.close();
 
-  // Delete old path
-  if (erase) std::remove(old_path.c_str());
-  //OFStandard::deleteFile(old_path.c_str());
+  // Write
+  std::ofstream out(new_path);
+  for(auto i:outlines) out << i;
+  out.close();
 
   // Rename or copy .raw part
   if (erase) {
@@ -211,9 +225,29 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
   }
   else {
     VLOG(verbose_level) << "Copy raw " << old_path_raw << " to " << new_path_raw;
-    std::ifstream  src(old_path_raw.c_str(), std::ios::binary);
-    std::ofstream  dst(new_path_raw.c_str(), std::ios::binary);
-    dst << src.rdbuf();
+    // std::ifstream  src(old_path_raw.c_str(), std::ios::binary);
+    // std::ofstream  dst(new_path_raw.c_str(), std::ios::binary);
+    // dst << src.rdbuf();
+
+    // I need to do that way to avoid overwriting if old/new are the same files.
+    std::ifstream source(old_path_raw, std::ios::binary);
+
+    // file size
+    source.seekg(0, std::ios::end);
+    std::ifstream::pos_type size = source.tellg();
+    source.seekg(0);
+    // allocate memory for buffer
+    char* buffer = new char[size];
+
+    // copy file
+    source.read(buffer, size);
+    source.close();
+    std::ofstream dest(new_path_raw, std::ios::binary);
+    dest.write(buffer, size);
+
+    // clean up
+    delete[] buffer;
+    dest.close();
   }
 }
 // --------------------------------------------------------------------

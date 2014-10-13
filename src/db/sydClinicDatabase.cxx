@@ -117,6 +117,13 @@ std::string syd::ClinicDatabase::GetPath(const Serie & serie)
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+Patient syd::ClinicDatabase::GetPatient(const Serie & serie)
+{
+  return GetById<Patient>(serie.patient_id);
+}
+// --------------------------------------------------------------------
+
 
 
 // --------------------------------------------------------------------
@@ -375,7 +382,14 @@ void syd::ClinicDatabase::Dump(std::ostream & os, std::vector<std::string> & arg
   std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
 
   // Get the patients
-  std::string patient_name = args[1];
+  std::string patient_name;
+  if (args.size()<2) {
+    patient_name = "all";
+  }
+  else {
+    patient_name = args[1];
+  }
+
   std::vector<Patient> patients;
   GetPatientsByName(patient_name, patients);
 

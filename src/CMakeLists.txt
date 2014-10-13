@@ -27,6 +27,7 @@ set(SYD_LIBS
   ${DCMTK_LIBRARIES}
   sydClinicDatabase
   sydStudyDatabase
+  sydActivityDatabase
   sydCore
   sqlite3 odb-sqlite odb z
   ${CERES_LIBRARIES}
@@ -38,6 +39,21 @@ set(SYD_LIBS
 wrap_ggo(sydDump sydDump.ggo)
 add_executable(sydDump sydDump.cxx sydDump_ggo.c)
 target_link_libraries(sydDump ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydUpdate sydUpdate.ggo)
+add_executable(sydUpdate sydUpdate.cxx sydUpdate_ggo.c)
+target_link_libraries(sydUpdate ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydInsertAverageCT sydInsertAverageCT.ggo)
+add_executable(sydInsertAverageCT sydInsertAverageCT.cxx
+  sydInsertAverageCTCommand.cxx sydInsertAverageCT_ggo.c)
+target_link_libraries(sydInsertAverageCT ${SYD_LIBS})
 #----------------------------------------------------------
 
 
@@ -63,6 +79,13 @@ target_link_libraries(sydInsertTimepoint ${SYD_LIBS})
 
 
 #----------------------------------------------------------
+wrap_ggo(sydActivity sydActivity.ggo)
+add_executable(sydActivity sydActivity.cxx sydActivity_ggo.c sydActivityCommand.cxx)
+target_link_libraries(sydActivity ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 wrap_ggo(sydCheckIntegrity sydCheckIntegrity.ggo)
 add_executable(sydCheckIntegrity sydCheckIntegrity.cxx sydCheckIntegrity_ggo.c)
 target_link_libraries(sydCheckIntegrity ${SYD_LIBS})
@@ -80,4 +103,11 @@ target_link_libraries(sydRegister ${SYD_LIBS})
 wrap_ggo(sydCropCT sydCropCT.ggo)
 add_executable(sydCropCT sydCropCT.cxx sydCropCT_ggo.c sydCropCTCommand.cxx)
 target_link_libraries(sydCropCT ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydInsertRoi sydInsertRoi.ggo)
+add_executable(sydInsertRoi sydInsertRoi.cxx sydInsertRoi_ggo.c sydInsertRoiCommand.cxx)
+target_link_libraries(sydInsertRoi ${SYD_LIBS})
 #----------------------------------------------------------

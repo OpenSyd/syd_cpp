@@ -17,9 +17,10 @@
   ===========================================================================**/
 
 // syd
-#include "sydRegister_ggo.h"
+#include "sydUpdate_ggo.h"
 #include "core/sydCommon.h"
-#include "sydRegisterCommand.h"
+#include "sydClinicDatabase.h"
+#include "sydStudyDatabase.h"
 
 // easylogging : only once initialization (in the main)
 _INITIALIZE_EASYLOGGINGPP
@@ -27,31 +28,52 @@ _INITIALIZE_EASYLOGGINGPP
 // syd : only once initialization (in the main)
 #include "sydInit.h"
 
+using namespace syd;
+
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init command line
-  GGO(sydRegister, args_info);
+  GGO(sydUpdate, args_info);
 
   // Init logging option (verbose)
   syd::init_logging_verbose_options(args_info);
 
-  // Check args
-  if (args_info.inputs_num < 3) {
-    LOG(FATAL) << "Error please, provide <db1> <db2> <patient> [<n...>) (see usage)";
+  // Update rawimage.patient_id
+  std::string db_name = args_info.inputs[0];
+  DD(db_name);
+  std::shared_ptr<StudyDatabase> sdb =
+    Database::OpenDatabaseType<StudyDatabase>(db_name);
+
+  // Update patient id
+  if (1) {
+    std::vector<Timepoint> timepoints;
+    sdb->LoadVector<Timepoint>(timepoints);
+    for(auto i:timepoints) {
+      Patient patient(sdb->GetPatient(i));
+      std::cout << i << std::endl;
+      RawImage spect(sdb->GetById<RawImage>(i.spect_image_id));
+      RawImage ct(sdb->GetById<RawImage>(i.ct_image_id));
+      spect.patient_id = patient.id;
+      ct.patient_id = patient.id;
+      sdb->Update(spect);
+      sdb->Update(ct);
+    }
   }
 
-  // Get the dbs
-  std::string db1 = args_info.inputs[0];
-  std::string db2 = args_info.inputs[1];
-  syd::RegisterCommand * c = new syd::RegisterCommand(db1, db2);
-
-  // Go
-  std::string patient_name = args_info.inputs[2];
-  c->set_config_filename(args_info.elconfig_arg);
-  std::vector<std::string> arg;
-  for(auto i=3; i<args_info.inputs_num; i++) arg.push_back(args_info.inputs[i]);
-  c->Run(patient_name, arg);
+  // Update RoiMaskImage
+  if (0) {
+    std::vector<RoiMaskImage> rois;
+    sdb->LoadVector<RoiMaskImage>(rois);
+    for(auto i:rois) {
+      Timepoint t(sdb->GetById<Timepoint>(i.timepoint_id));
+      Patient patient(sdb->GetPatient(t));
+      std::cout << i << std::endl;
+      RawImage mask(sdb->GetById<RawImage>(i.mask_id));
+      mask.patient_id = patient.id;
+      sdb->Update(mask);
+    }
+  }
 
   // This is the end, my friend.
 }

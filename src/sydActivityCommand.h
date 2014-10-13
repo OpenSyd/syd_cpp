@@ -16,44 +16,40 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDREGISTERCOMMAND_H
-#define SYDREGISTERCOMMAND_H
+#ifndef SYDINSERTTIMEPOINTCOMMAND_H
+#define SYDINSERTTIMEPOINTCOMMAND_H
 
 // syd
 #include "sydDatabaseCommand.h"
-#include "sydClinicDatabase.h"
-#include "sydStudyDatabase.h"
+#include "sydActivityDatabase.h"
 #include "sydDicomCommon.h"
-#include "sydImage.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class RegisterCommand: public syd::DatabaseCommand
+  class ActivityCommand: public syd::DatabaseCommand
   {
   public:
 
-    RegisterCommand(std::string d1, std::string d2);
-    RegisterCommand(StudyDatabase * d1, StudyDatabase * d2);
-    ~RegisterCommand();
+    ActivityCommand(std::string db);
+    ActivityCommand(syd::ActivityDatabase * db);
+    ~ActivityCommand();
 
-    virtual void Run(std::string patient_name, const std::vector<std::string> & arg);
-    virtual void Run(std::string patient_name, int a, int b);
-
-    void set_config_filename(std::string s) { config_filename_ = s; }
+    void Run(std::vector<std::string> & args);
+    void Run(const Patient & patient, std::vector<std::string> & args);
+    void Run(const Timepoint & timepoint, std::vector<std::string> & args);
+    void UpdateActivityInRoi(const Timepoint & timepoint,
+                             const RoiMaskImage & roi,
+                             TimeActivity & timeactivity);
 
   protected:
     void Initialization();
-    void Run(Timepoint ref, Timepoint mov);
-
     std::shared_ptr<syd::ClinicDatabase> cdb_;
-    std::shared_ptr<syd::StudyDatabase>  in_db_;
-    std::shared_ptr<syd::StudyDatabase>  out_db_;
-    std::string config_filename_;
+    std::shared_ptr<syd::StudyDatabase>  sdb_;
+    std::shared_ptr<syd::ActivityDatabase>  adb_;
   };
 
-
-} // end namespace
+}  // namespace syd
 // --------------------------------------------------------------------
 
 #endif

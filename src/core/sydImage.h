@@ -28,6 +28,10 @@
 #include <itkImageSeriesReader.h>
 #include <itkGDCMImageIO.h>
 #include <itkGDCMSeriesFileNames.h>
+#include <itkAddImageFilter.h>
+#include <itkMultiplyImageFilter.h>
+#include <itkCastImageFilter.h>
+#include <itkOrientImageFilter.h>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -48,6 +52,11 @@ namespace syd {
   std::string ComputeImageMD5(typename ImageType::Pointer image);
   //--------------------------------------------------------------------
 
+
+  //--------------------------------------------------------------------
+  template<class ImageType>
+  typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filenames);
+  //--------------------------------------------------------------------
 
   //--------------------------------------------------------------------
   void CopyMHDImage(std::string from, std::string to, int verbose_level=2);

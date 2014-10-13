@@ -29,29 +29,25 @@
 
 // --------------------------------------------------------------------
 namespace syd {
-
 #pragma db object
-  class RoiMaskImage {
+  class Activity
+  {
   public:
 
 #pragma db id auto
     IdType        id;
-    IdType        mask_id;
-    IdType        timepoint_id;
-    IdType        roitype_id;
-    double        volume_in_cc;
-    double        density_in_g_cc;
+    IdType        patient_id;
+    IdType        average_ct_image_id;
 
     // --------------------------------------------------
-    // Constructor, Destructor
-    ~RoiMaskImage() {}
-    RoiMaskImage() {}
-    RoiMaskImage(const RoiMaskImage & other) { copy(other); }
+    Activity() {}
+    ~Activity() {}
+    Activity(const Activity & other) { copy(other); }
     // --------------------------------------------------
 
 
     // --------------------------------------------------
-    RoiMaskImage & operator= (const RoiMaskImage & other) {
+    Activity & operator= (const Activity & other) {
       if (this != &other) { copy(other); }
       return *this;
     }
@@ -59,25 +55,21 @@ namespace syd {
 
 
     // --------------------------------------------------
-    void copy(const RoiMaskImage & t) {
-      id = t.id;
-      mask_id = t.mask_id;
-      timepoint_id = t.timepoint_id;
-      roitype_id = t.roitype_id;
-      volume_in_cc = t.volume_in_cc;
-      density_in_g_cc = t.density_in_g_cc;
-    }
-    // --------------------------------------------------
-
-
-    // --------------------------------------------------
-    friend std::ostream& operator<<(std::ostream& os, const RoiMaskImage & p) {
-      os << p.id << " " << p.mask_id << " " << p.timepoint_id << " " << p.roitype_id << " " << p.volume_in_cc;
+    friend std::ostream& operator<<(std::ostream& os, const Activity & p) {
+      os << p.id << " " << p.patient_id << " " << p.average_ct_image_id;
       return os;
     }
     // --------------------------------------------------
 
 
-  }; // class RoiMaskImage
+    // --------------------------------------------------
+    void copy(const Activity & t) {
+      id = t.id;
+      patient_id = t.patient_id;
+      average_ct_image_id = t.average_ct_image_id;
+    }
+    // --------------------------------------------------
+
+  }; // class Activity
 } // namespace syd
 // --------------------------------------------------------------------

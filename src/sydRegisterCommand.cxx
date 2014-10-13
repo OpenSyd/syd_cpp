@@ -62,10 +62,35 @@ syd::RegisterCommand::~RegisterCommand()
 
 
 // --------------------------------------------------------------------
+void syd::RegisterCommand::Run(std::string patient_name, const std::vector<std::string> & args)
+{
+  std::vector<int> numbers;
+  if ((args.size() == 0) or (args[0] == "all")) {
+    Patient patient;
+    if (!cdb_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name, patient)) {
+      LOG(FATAL) << "Error, the patient " << patient_name << " does not exist";
+    }
+    std::vector<Timepoint> timepoints;
+    in_db_->LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient.id);
+    for(auto i:timepoints) {
+      numbers.push_back(i.number);
+    }
+  }
+  else {
+    for(auto i:args) {
+      numbers.push_back(atoi(i.c_str()));
+    }
+  }
+  for(auto i:numbers) {
+    if (i != 1) Run(patient_name, 1, i);
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::RegisterCommand::Run(std::string patient_name, int ref_number, int mov_number)
 {
-  DD("run");
-
   // Get the patient
   Patient patient;
   if (!cdb_->GetIfExist<Patient>(odb::query<Patient>::name == patient_name, patient)) {
@@ -83,14 +108,12 @@ void syd::RegisterCommand::Run(std::string patient_name, int ref_number, int mov
   }
   Timepoint moving_timepoint;
   b = in_db_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == patient.id &&
-                                     odb::query<Timepoint>::number == mov_number,
-                                     moving_timepoint);
+                                    odb::query<Timepoint>::number == mov_number,
+                                    moving_timepoint);
   if (!b) {
     LOG(FATAL) << "Error could not find the (moving) timepoint number "
                << mov_number << " for the patient " << patient.name;
   }
-  DD(reference_timepoint);
-  DD(moving_timepoint);
 
   // Create the command line to register
   Run(reference_timepoint, moving_timepoint);
@@ -119,8 +142,11 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
     RawImage in_ct(in_db_->GetById<RawImage>(in_ref.ct_image_id));
     RawImage out_spect(in_spect);
     RawImage out_ct(in_ct);
+    // out_db_->InsertTimepoint(out_ref, out_spect, out_ct);
+    Serie spect_serie(cdb_->GetById<Serie>(in_ref.spect_serie_id));
+    Serie ct_serie(cdb_->GetById<Serie>(in_ref.ct_serie_id));
+    out_ref = out_db_->NewTimepoint(spect_serie, ct_serie);
     out_ref.copy(in_ref);
-    out_db_->InsertTimepoint(out_ref, out_spect, out_ct);
   }
   else { // already exist, check md5
     VLOG(1) << "Already existing ref timepoint, updating : " << out_db_->Print(out_ref);
@@ -143,10 +169,13 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
     RawImage out_ct(in_ct);
     out_spect.md5 = ""; // no image yet
     out_ct.md5 = "";    // no image yet
+    //out_mov.copy(in_mov);
+    //out_db_->InsertTimepoint(out_mov, out_spect, out_ct);
+    Serie spect_serie(cdb_->GetById<Serie>(in_mov.spect_serie_id));
+    Serie ct_serie(cdb_->GetById<Serie>(in_mov.ct_serie_id));
+    out_mov = out_db_->NewTimepoint(spect_serie, ct_serie);
     out_mov.copy(in_mov);
-    out_db_->InsertTimepoint(out_mov, out_spect, out_ct);
   }
-
 
   // Now two Timepoints have been created, display the elastix command
   std::string in_ref_filename = in_db_->GetImagePath(in_ref.ct_image_id);
@@ -166,17 +195,86 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
             << " -p " << config_filename_
             << " -out " << output_path << std::endl;
 
-  // Write transformix command for DVF
-  std::cout << "transformix etc ... " << output_path << std::endl;
+  // Prepare param file to warp spect image
+  // Load output_path TransformParameters.0.txt
+  // Change (Size 480 304 798) (Spacing 1.0000000000 1.0000000000 1.0000000000) (Origin -239.5000000000 -129.5000000000 -1130.0000000000)
+  // AND PIXEL TYPE ! Float and default value
+  // write with another filename
+  std::string param=output_path+PATH_SEPARATOR+"TransformParameters.0.txt";
+  std::string param_transfo=output_path+PATH_SEPARATOR+"TransformParameters.0.spect.txt";
+  RawImage in_spect(in_db_->GetById<RawImage>(in_mov.spect_image_id));
+  RawImage in_ct(in_db_->GetById<RawImage>(in_mov.ct_image_id));
+  {
+    std::ifstream in(param);
+    std::ofstream out(param_transfo);
+    std::string line;
+    typedef float PixelType;
+    typedef itk::Image<PixelType, 3> ImageType;
+    ImageType::Pointer spect = ReadImage<ImageType>(in_db_->GetImagePath(in_spect));
+    while (in) {
+      std::getline(in, line);
+      syd::replace(line, "short", "float");
+      syd::replace(line, "(DefaultPixelValue -1000.000000)", "(DefaultPixelValue 0.0)");
+      if (line.find("(Size") != std::string::npos) {
+        std::stringstream ss;
+        ss  << "(Size " << spect->GetLargestPossibleRegion().GetSize()[0] << " "
+            << spect->GetLargestPossibleRegion().GetSize()[1] << " "
+            << spect->GetLargestPossibleRegion().GetSize()[2] << ")";
+        line = ss.str();
+      }
+      if (line.find("(Spacing") != std::string::npos) {
+        std::stringstream ss;
+        ss  << "(Spacing " << spect->GetSpacing()[0] << " "
+            << spect->GetSpacing()[1] << " "
+            << spect->GetSpacing()[2] << ")";
+        line = ss.str();
+      }
+      if (line.find("(Origin") != std::string::npos) {
+        std::stringstream ss;
+        ss  << "(Origin " << spect->GetOrigin()[0] << " "
+            << spect->GetOrigin()[1] << " "
+            << spect->GetOrigin()[2] << ")";
+        line = ss.str();
+      }
+     out << line << std::endl;
+    }
+    out.close();
+  }
 
-  // Write warp command for ct and spect
-  std::string in = in_db_->GetImagePath(in_mov.ct_image_id);
-  std::string out = out_db_->GetImagePath(out_mov.ct_image_id);
-  std::cout << "warp -r -m etc ... " << in << " " << out << " " << output_path << std::endl;
+  // Write transformix for spect
+  std::string spect_folder = "TEMP_spect"+toString(in_mov.number);
+  if (!syd::DirExists(spect_folder)) syd::CreateDirectory(spect_folder);
+  RawImage out_spect(out_db_->GetById<RawImage>(out_mov.spect_image_id));
+  std::string out_spect_filename = out_db_->GetImagePath(out_spect);
+  std::cout << "transformix -out " << spect_folder << " -tp " << param_transfo << " -in " << in_db_->GetImagePath(in_spect) << std::endl;
+  std::string result_spect_filename = spect_folder+"/result.mhd";
+  if (syd::FileExists(result_spect_filename)) {
+    syd::RenameMHDImage(result_spect_filename, out_spect_filename, 2);
+    out_db_->UpdateMD5(out_spect);
+  }
 
-  in = in_db_->GetImagePath(in_mov.spect_image_id);
-  out = out_db_->GetImagePath(out_mov.spect_image_id);
-  std::cout << "warp -r -m etc ... " << in << " " << out << " " << output_path << std::endl;
+  // if exist copy result
+  {
+    std::string result_ct_filename = output_path+PATH_SEPARATOR+"result.0.mhd";
+    RawImage out_ct(out_db_->GetById<RawImage>(out_mov.ct_image_id));
+    std::string out_ct_filename = out_db_->GetImagePath(out_ct);
+    if (syd::FileExists(result_ct_filename)) {
+      syd::RenameMHDImage(result_ct_filename, out_ct_filename, 2);
+      out_db_->UpdateMD5(out_ct);
+    }
+  }
+
+  // Write transformix for ct
+  std::string ct_folder = "TEMP_ct"+toString(in_mov.number);
+  if (!syd::DirExists(ct_folder)) syd::CreateDirectory(ct_folder);
+  RawImage out_ct(out_db_->GetById<RawImage>(out_mov.ct_image_id));
+  std::string out_ct_filename = out_db_->GetImagePath(out_ct);
+  std::cout << "transformix -out " << ct_folder << " -tp " << param << " -in " << in_db_->GetImagePath(in_ct) << std::endl;
+  std::string result_ct_filename = ct_folder+"/result.mhd";
+  if (syd::FileExists(result_ct_filename)) {
+    syd::RenameMHDImage(result_ct_filename, out_ct_filename, 2);
+    out_db_->UpdateMD5(out_ct);
+  }
 
 }
 // --------------------------------------------------------------------

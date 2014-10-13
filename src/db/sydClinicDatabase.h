@@ -51,6 +51,7 @@ namespace syd {
     odb::query<Serie> GetSeriesQueryFromPatterns(std::vector<std::string> patterns);
     void AndSeriesQueryFromPattern(odb::query<Serie> & q, std::string pattern);
     RoiType GetRoiType(std::string name);
+    Patient GetPatient(const Serie & serie);
 
     void UpdateSerie(Serie & serie);
 

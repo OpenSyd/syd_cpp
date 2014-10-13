@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   syd::init_logging_verbose_options(args_info);
 
   // Check args
-  if (args_info.inputs_num < 3) {
+  if (args_info.inputs_num < 2) {
     LOG(FATAL) << "Error please, provide <db> <patient> <a> (see usage)";
   }
 
@@ -47,8 +47,10 @@ int main(int argc, char* argv[])
 
   // Go
   std::string patient_name = args_info.inputs[1];
-  std::string a = args_info.inputs[2];
-  c->Run(patient_name, a);
+  std::vector<std::string> arg;
+  for(auto i=2; i<args_info.inputs_num; i++) arg.push_back(args_info.inputs[i]);
+  c->set_ignore_md5_flag(args_info.ignore_flag);
+  c->Run(patient_name, arg);
 
   // This is the end, my friend.
 }

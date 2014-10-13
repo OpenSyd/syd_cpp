@@ -17,9 +17,9 @@
   ===========================================================================**/
 
 // syd
-#include "sydRegister_ggo.h"
+#include "sydInsertRoi_ggo.h"
 #include "core/sydCommon.h"
-#include "sydRegisterCommand.h"
+#include "sydInsertRoiCommand.h"
 
 // easylogging : only once initialization (in the main)
 _INITIALIZE_EASYLOGGINGPP
@@ -31,27 +31,25 @@ _INITIALIZE_EASYLOGGINGPP
 int main(int argc, char* argv[])
 {
   // Init command line
-  GGO(sydRegister, args_info);
+  GGO(sydInsertRoi, args_info);
 
   // Init logging option (verbose)
   syd::init_logging_verbose_options(args_info);
 
   // Check args
-  if (args_info.inputs_num < 3) {
-    LOG(FATAL) << "Error please, provide <db1> <db2> <patient> [<n...>) (see usage)";
+  if (args_info.inputs_num < 2) {
+    LOG(FATAL) << "Error please, provide <db> <patient> ... (see usage)";
   }
 
   // Get the dbs
-  std::string db1 = args_info.inputs[0];
-  std::string db2 = args_info.inputs[1];
-  syd::RegisterCommand * c = new syd::RegisterCommand(db1, db2);
+  std::string db  = args_info.inputs[0];
+  syd::InsertRoiCommand * c = new syd::InsertRoiCommand(db);
 
   // Go
-  std::string patient_name = args_info.inputs[2];
-  c->set_config_filename(args_info.elconfig_arg);
   std::vector<std::string> arg;
-  for(auto i=3; i<args_info.inputs_num; i++) arg.push_back(args_info.inputs[i]);
-  c->Run(patient_name, arg);
+  for(auto i=1; i<args_info.inputs_num; i++) arg.push_back(args_info.inputs[i]);
+  c->set_move_flag(args_info.move_flag);
+  c->Run(arg);
 
   // This is the end, my friend.
 }
