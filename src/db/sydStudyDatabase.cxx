@@ -19,6 +19,9 @@
 // syd
 #include "sydStudyDatabase.h"
 
+// itk
+#include <itkLabelStatisticsImageFilter.h>
+
 // --------------------------------------------------------------------
 syd::StudyDatabase::StudyDatabase(std::string name, std::string param):Database(name)
 {
@@ -85,10 +88,13 @@ void syd::StudyDatabase::CheckIntegrity(std::vector<std::string> & args)
       LoadVector<RawImage>(rawimages);
     }
     else {
-      for(auto i=1; i<args.size(); i++) {
-        int id = atoi(args[i].c_str());
-        rawimages.push_back(GetById<RawImage>(id));
+      Patient patient;
+      std::string name = args[1];
+      bool b = cdb_->GetIfExist<Patient>(odb::query<Patient>::name == name, patient);
+      if (!b) {
+        LOG(FATAL) << "Error, could not find patient " << name;
       }
+      LoadVector<RawImage>(rawimages, odb::query<RawImage>::patient_id == patient.id);
     }
     for(auto i:rawimages) CheckIntegrity(i);
   }
@@ -99,10 +105,13 @@ void syd::StudyDatabase::CheckIntegrity(std::vector<std::string> & args)
       LoadVector<Timepoint>(timepoints);
     }
     else {
-      for(auto i=1; i<args.size(); i++) {
-        int id = atoi(args[i].c_str());
-        timepoints.push_back(GetById<Timepoint>(id));
+      Patient patient;
+      std::string name = args[1];
+      bool b = cdb_->GetIfExist<Patient>(odb::query<Patient>::name == name, patient);
+      if (!b) {
+        LOG(FATAL) << "Error, could not find patient " << name;
       }
+      LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient.id);
     }
     for(auto i:timepoints) CheckIntegrity(i);
   }
@@ -195,7 +204,8 @@ void syd::StudyDatabase::CheckIntegrity(const RawImage & image)
   // check if file (mhd) exist
   std::string path = GetImagePath(image);
   if (!syd::FileExists(path)) {
-    LOG(FATAL) << "Error in the db ('" << get_name() << "'), the file " << path << " do not exist.";
+    LOG(FATAL) << "Error in the db ('" << get_name() << "'), the file " << path << " do not exist ; "
+               << " for rawimage " << image;
   }
 
   // check if file md5 is the same
@@ -208,6 +218,12 @@ void syd::StudyDatabase::CheckIntegrity(const RawImage & image)
   }
   if (image.pixel_type == "short") {
     typedef signed short PixelType;
+    typedef itk::Image<PixelType, 3> ImageType;
+    ImageType::Pointer im = ReadImage<ImageType>(path);
+    m = ComputeImageMD5<ImageType>(im);
+  }
+  if (image.pixel_type == "uchar") {
+    typedef unsigned char PixelType;
     typedef itk::Image<PixelType, 3> ImageType;
     ImageType::Pointer im = ReadImage<ImageType>(path);
     m = ComputeImageMD5<ImageType>(im);
@@ -257,8 +273,6 @@ syd::Timepoint syd::StudyDatabase::NewTimepoint(const Serie & spect_serie,
   // Create rawimage
   RawImage spect = NewRawImage(patient);
   RawImage ct = NewRawImage(patient);
-  Insert(spect);
-  Insert(ct);
   t.spect_image_id = spect.id;
   t.ct_image_id = ct.id;
   Insert(t);
@@ -414,7 +428,6 @@ void syd::StudyDatabase::UpdateNumberAndRenameFiles(IdType patient_id)
   for(auto i=0; i != series.size(); i++) indices.push_back(i);
   std::sort(begin(indices), end(indices),
             [&series](size_t a, size_t b) { return syd::IsBefore(series[a].acquisition_date, series[b].acquisition_date); }  );
-
 
   // Change the numbers
   for(auto i=0; i<timepoints.size(); i++) { // two loops needed
@@ -599,15 +612,21 @@ std::string syd::StudyDatabase::Print(const Patient & p, int level)
 void syd::StudyDatabase::Dump(std::ostream & os, std::vector<std::string> & args)
 {
   // args
-  if (args.size() > 1) {
+  if (args.size() > 2) {
     std::string s;
     for(auto i:args) s=s+i+" ";
-    LOG(FATAL) << "Error, dump only require a single argument for a StudyDatabase, but you provide : "
+    LOG(FATAL) << "Error, dump require <= 2 args for StudyDatabase, but you provide : "
                << s;
   }
   std::string patient_name;
   if (args.size() == 0) patient_name = "all";
   else patient_name = args[0];
+
+  if (patient_name == "roi") {
+    args.erase(args.begin());
+    DumpRoi(os, args);
+    return;
+  }
 
   // Get the patients
   std::vector<Patient> patients;
@@ -615,6 +634,78 @@ void syd::StudyDatabase::Dump(std::ostream & os, std::vector<std::string> & args
 
   // Dump all patients
   for(auto i:patients) std::cout << Print(i) << std::endl;
+};
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StudyDatabase::DumpRoi(std::ostream & os, std::vector<std::string> & args)
+{
+  // no args = 1 line by patient, list all roi name (+total)
+  // if arg=roitype : 1 line by patient, roi properties
+
+  if (args.size() == 0) {
+    DumpRoi(os);
+    return;
+  }
+  std::string roiname = args[0];
+  RoiType roitype(cdb_->GetRoiType(roiname));
+
+  std::vector<Patient> patients;
+  cdb_->GetPatientsByName("all", patients);
+  syd::PrintTable ta;
+  ta.AddColumn("P", 3, 0);
+  ta.AddColumn("N", 3, 0);
+  ta.AddColumn("vol(cc)", 12, 3);
+  ta.AddColumn("d(g/cc)", 9, 3);
+  ta.Init();
+
+  for(auto p:patients) {
+    Timepoint timepoint;
+    bool b = GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == p.id and
+                                   odb::query<Timepoint>::number == 1,
+                                   timepoint);
+    ta << p.name << p.synfrizz_id;
+    RoiMaskImage roi;
+    b = b && GetIfExist<RoiMaskImage>(odb::query<RoiMaskImage>::timepoint_id == timepoint.id and
+                                      odb::query<RoiMaskImage>::roitype_id == roitype.id, roi);
+    if (b) {
+      ta << roi.volume_in_cc << roi.density_in_g_cc;
+    }
+    else ta << "-" << "-";
+  }
+  ta.Print(std::cout);
+};
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StudyDatabase::DumpRoi(std::ostream & os)
+{
+  // 1 line by patient, list all roi name (+total)
+  std::vector<Patient> patients;
+  cdb_->GetPatientsByName("all", patients);
+
+  for(auto p:patients) {
+    Timepoint timepoint;
+    bool b = GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == p.id and
+                                   odb::query<Timepoint>::number == 1,
+                                   timepoint);
+    std::vector<RoiMaskImage> rois;
+    LoadVector<RoiMaskImage>(rois, odb::query<RoiMaskImage>::timepoint_id == timepoint.id);
+    os << p.name << " " << p.synfrizz_id << " " << rois.size() << " ";
+    // sort roi by roitypeid
+    std::sort(begin(rois), end(rois),
+              [this](RoiMaskImage a, RoiMaskImage b) {
+                RoiType rta(cdb_->GetById<RoiType>(a.roitype_id));
+                RoiType rtb(cdb_->GetById<RoiType>(b.roitype_id));
+                return rta.id < rtb.id; }  );
+    for(auto r:rois) {
+      RoiType roitype(cdb_->GetById<RoiType>(r.roitype_id));
+      os << roitype.name << " ";
+    }
+    os << std::endl;
+  }
 };
 // --------------------------------------------------------------------
 
@@ -708,8 +799,7 @@ void syd::StudyDatabase::UpdateRoiMaskImage(RoiMaskImage & roi)
   mask.pixel_type = "uchar";
   Update(mask);
 
-  // Update roi
-  roi.volume_in_cc = 0.0; // FIXME to put elsewhere
+  roi.mask_id = mask.id;
   Update(roi);
 
   // Create path if needed
@@ -721,6 +811,57 @@ void syd::StudyDatabase::UpdateRoiMaskImage(RoiMaskImage & roi)
       LOG(FATAL) << "Error while attempting to create " << path;
     }
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StudyDatabase::UpdateRoiMaskImageVolume(RoiMaskImage & roi)
+{
+  // Get RawImage associated with the roi
+  RawImage mask (GetById<RawImage>(roi.mask_id));
+  Timepoint timepoint(GetById<Timepoint>(roi.timepoint_id));
+  RoiType roitype(cdb_->GetById<RoiType>(roi.roitype_id));
+  Patient patient(GetPatient(timepoint));
+
+  // Update roi
+  typedef itk::Image<uchar, 3> MaskImageType;
+  MaskImageType::Pointer imask = syd::ReadImage<MaskImageType>(GetImagePath(mask));
+
+  // density from average image if exist, or timepoint
+  RawImage rct;
+  bool b = GetIfExist<RawImage>(odb::query<RawImage>::patient_id == patient.id and
+                                odb::query<RawImage>::filename == "average.mhd", rct);
+  if (!b) {
+    //    LOG(FATAL) << "Error could not find an average ct for patient " << patient.name;
+    rct = GetById<RawImage>(timepoint.ct_image_id);
+    VLOG(2) << "Using the ct image of the timepoint " << rct.filename;
+  }
+  else {
+    VLOG(2) << "Average ct exists, I use it.";
+  }
+
+  typedef itk::Image<short, 3> CTImageType;
+  CTImageType::Pointer ict = syd::ReadImage<CTImageType>(GetImagePath(rct));
+
+  // need to resample/crop like
+  imask = syd::ResampleImageLike<MaskImageType>(imask, ict, 0, 0);
+
+  typedef itk::LabelStatisticsImageFilter<CTImageType, MaskImageType> FilterType;
+  typename FilterType::Pointer filter=FilterType::New();
+  filter->SetInput(ict);
+  filter->SetLabelInput(imask);
+  filter->Update();
+
+  // volume
+  double pixelVol = imask->GetSpacing()[0]*imask->GetSpacing()[1]*imask->GetSpacing()[2];
+  double vol = filter->GetCount(1) * pixelVol * 0.001; // in CC
+  double density = (filter->GetMean(1)/1000.0+1); // mean HU
+
+  roi.volume_in_cc = vol;
+  roi.density_in_g_cc = density;
+  Update(roi);
+
 }
 // --------------------------------------------------------------------
 

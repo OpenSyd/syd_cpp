@@ -157,3 +157,74 @@ bool syd::replace(std::string& str, const std::string& from, const std::string& 
     return true;
 }
 //------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+std::string syd::GetExtension(const std::string filename) {
+  size_t n = filename.find_last_of(".");
+  return filename.substr(n+1);
+}
+//------------------------------------------------------------------
+
+
+syd::PrintTable::PrintTable()
+{
+  Init();
+}
+
+void syd::PrintTable::AddColumn(std::string name, int w, int digit)
+{
+  headers.push_back(name);
+  width.push_back(w);
+  precision.push_back(digit);
+}
+
+void syd::PrintTable::Init()
+{
+  current_line = 0;
+  current_column = 0;
+}
+
+syd::PrintTable & syd::PrintTable::operator<<(const double & value)
+{
+  if (values.size() == current_line) {
+    std::vector<std::string> line(headers.size());
+    values.push_back(line);
+  }
+  std::stringstream ss;
+  ss << std::fixed << std::setprecision (precision[current_column]) << value;
+  values[current_line][current_column] = ss.str();
+  current_column++;
+  if (current_column == headers.size()) {
+    current_column = 0;
+    current_line++;
+  }
+  return *this;
+}
+
+syd::PrintTable & syd::PrintTable::operator<<(const std::string & value)
+{
+  if (values.size() == current_line) {
+    std::vector<std::string> line(headers.size());
+    values.push_back(line);
+  }
+  values[current_line][current_column] = value;
+  current_column++;
+  if (current_column == headers.size()) {
+    current_column = 0;
+    current_line++;
+  }
+  return *this;
+}
+
+void syd::PrintTable::Print(std::ostream & out)
+{
+  for(auto i=0; i<headers.size(); i++) out << std::setw(width[i]) << headers[i];
+  out << std::endl;
+  for(auto i=0; i<values.size(); i++) {
+    for(auto j=0; j<values[i].size(); j++) {
+      out << std::setw(width[j]) << std::fixed << std::setprecision (precision[j]) << values[i][j];
+    }
+    out << std::endl;
+  }
+}

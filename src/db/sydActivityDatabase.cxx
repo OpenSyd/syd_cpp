@@ -27,12 +27,12 @@ syd::ActivityDatabase::ActivityDatabase(std::string name, std::string param):Dat
   SetFileAndFolder(f);
   std::string cdb_name;
   if (!getline(f, cdb_name, ';')) {
-    LOG(FATAL) << "Error while parsing db cdb name for folder. db is "
+    LOG(FATAL) << "Error while parsing cdb name for folder. db is "
                << name << " (" << get_typename() << ") params = " << param;
   }
   std::string sdb_name;
   if (!getline(f, sdb_name, ';')) {
-    LOG(FATAL) << "Error while parsing db sdb name for folder. db is "
+    LOG(FATAL) << "Error while parsing sdb name for folder. db is "
                << name << " (" << get_typename() << ") params = " << param;
   }
 
@@ -90,7 +90,7 @@ syd::Activity syd::ActivityDatabase::NewActivity(const Patient & patient)
   //FIXME
   ct.path = patient.name+PATH_SEPARATOR;
   Insert(ct);
-  activity.average_ct_image_id = ct.id;
+  // activity.average_ct_image_id = ct.id;
   Insert(activity);
   return activity;
 }
@@ -101,8 +101,10 @@ syd::Activity syd::ActivityDatabase::NewActivity(const Patient & patient)
 syd::TimeActivity syd::ActivityDatabase::NewTimeActivity(const Timepoint & timepoint,
                                                          const RoiMaskImage & roi)
 {
+  Patient patient(sdb_->GetPatient(timepoint));
   TimeActivity ta;
   ta.timepoint_id = timepoint.id;
+  ta.patient_id = patient.id;
   ta.roi_id = roi.id;
   Insert(ta);
   return ta;
@@ -113,8 +115,55 @@ syd::TimeActivity syd::ActivityDatabase::NewTimeActivity(const Timepoint & timep
 // --------------------------------------------------------------------
 void syd::ActivityDatabase::Dump(std::ostream & os, std::vector<std::string> & args)
 {
-  DD("TODO");
-  DD("ActivityDatabase:: Dump");
-  DDS(args);
+  if (args.size() < 2) {
+    LOG(FATAL) << "Error need <patient> and <roiname>";
+  }
+
+  // patient
+  std::vector<Patient> patients;
+  cdb_->GetPatientsByName(args[0], patients);
+  if (patients.size() != 1) {
+    LOG(FATAL) << "Error, only one patient is needed, but find " << patients.size()
+               << " patients for name = " << args[0];
+  }
+  Patient patient(patients[0]);
+
+  // Get first timepoint
+  Timepoint timepoint;
+  bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::number == 1 and
+                                       odb::query<Timepoint>::patient_id == patient.id, timepoint);
+  if (!b) {
+    LOG(FATAL) << "Error no timepoint with number 1 for patient " << patient.name;
+  }
+
+  // Get roi
+  RoiMaskImage roi = sdb_->GetRoiMaskImage(timepoint, args[1]);
+
+  // Retrieve all timepoints and sort
+  std::vector<TimeActivity> timeactivities;
+  LoadVector<TimeActivity>(timeactivities, odb::query<TimeActivity>::patient_id == patient.id and
+                           odb::query<TimeActivity>::roi_id == roi.id);
+  std::sort(begin(timeactivities), end(timeactivities),
+            [this](TimeActivity a, TimeActivity b) {
+              Timepoint ta(sdb_->GetById<Timepoint>(a.timepoint_id));
+              Timepoint tb(sdb_->GetById<Timepoint>(b.timepoint_id));
+              return ta.number < tb.number; }  );
+
+  // Prepare to print
+  syd::PrintTable ta;
+  ta.AddColumn("Nb", 3, 0);
+  ta.AddColumn("t", 9, 1);
+  ta.AddColumn("m/cc", 10, 1);
+  ta.AddColumn("std/cc", 10, 2);
+  ta.Init();
+  for(auto i:timeactivities) {
+    Timepoint t(sdb_->GetById<Timepoint>(i.timepoint_id));
+    ta << t.number
+       << t.time_from_injection_in_hours
+       << i.mean_counts_by_cc
+       << i.std_counts_by_cc;
+  }
+  ta.Print(std::cout);
+
 };
 // --------------------------------------------------------------------

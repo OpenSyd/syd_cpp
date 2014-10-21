@@ -32,6 +32,10 @@
 #include <itkMultiplyImageFilter.h>
 #include <itkCastImageFilter.h>
 #include <itkOrientImageFilter.h>
+#include <itkResampleImageFilter.h>
+#include <itkAffineTransform.h>
+#include <itkNearestNeighborInterpolateImageFunction.h>
+#include <itkLinearInterpolateImageFunction.h>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -57,6 +61,18 @@ namespace syd {
   template<class ImageType>
   typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filenames);
   //--------------------------------------------------------------------
+
+
+  //--------------------------------------------------------------------
+  template<class ImageType>
+  typename ImageType::Pointer ResampleImageLike(const ImageType * input,
+                                                const itk::ImageBase<ImageType::ImageDimension> * like,
+                                                int interpolationType,
+                                                typename ImageType::PixelType defaultValue);
+  //--------------------------------------------------------------------
+
+
+
 
   //--------------------------------------------------------------------
   void CopyMHDImage(std::string from, std::string to, int verbose_level=2);

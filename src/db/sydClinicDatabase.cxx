@@ -378,7 +378,9 @@ void syd::ClinicDatabase::AndSeriesQueryFromPattern(odb::query<Serie> & q, std::
 void syd::ClinicDatabase::Dump(std::ostream & os, std::vector<std::string> & args)
 {
   // Get the command
-  std::string cmd = args[0];
+  std::string cmd;
+  if (args.size() == 0) cmd = "patient";
+  else cmd = args[0];
   std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
 
   // Get the patients

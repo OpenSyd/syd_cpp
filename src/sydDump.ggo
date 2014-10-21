@@ -1,16 +1,18 @@
 #File sydDump.ggo
 
 package "sydDump"
-usage "sydDump <db> <cmd | patient>  [<patterns>]"
+usage "sydDump <db> <arg>"
 version "0.1"
-description "Dump information of a database of type ClinicDatabase.
-- <db> is the name of a ClinicDatabase.
-- <cmd> can be 'patient' or 'serie' if the db is a ClinicDatabase ; do not provide if it is a StudyDatabase
-- <patient> is the name of the patient or can be 'all' for listing all patients.
-- <patterns> only print information for data that match all those patterns.
-
-The database is found within the init file $SYD_INIT_DB_FILE.
-If cmd='patient', patterns are ignored."
+description "Dump information of a database.
+- <db> is the name of a Database. Can be ClinicDatabase StudyDatabase ActivityDatabase
+- if db is a ClinicDatabase, <arg> is composed of <cmd> <patient> <pattern>
+  - <cmd> = can be 'patient' or 'serie'
+  - <patient> is the name of the patient or can be 'all' for listing all patients.
+  - <patterns> only print information for data that match all those patterns.
+- if the db is a StudyDatabase, <arg> is <patient> or 'roi'
+  - <patient> is the name of the patient or can be 'all' for listing all patients.
+  - 'roi' <roiname>
+"
 
 option "config"	  	 	-	"Config file"				string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no

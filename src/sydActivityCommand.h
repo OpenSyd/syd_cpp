@@ -35,6 +35,13 @@ namespace syd {
     ActivityCommand(syd::ActivityDatabase * db);
     ~ActivityCommand();
 
+    typedef float PixelType;
+    typedef signed short int CTPixelType;
+    typedef uchar MaskPixelType;
+    typedef itk::Image<PixelType, 3> ImageType;
+    typedef itk::Image<CTPixelType, 3> CTImageType;
+    typedef itk::Image<MaskPixelType, 3> MaskImageType;
+
     void Run(std::vector<std::string> & args);
     void Run(const Patient & patient, std::vector<std::string> & args);
     void Run(const Timepoint & timepoint, std::vector<std::string> & args);

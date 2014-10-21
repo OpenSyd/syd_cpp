@@ -19,6 +19,25 @@
 // syd
 #include "sydInsertRoiCommand.h"
 
+
+template <class T> unsigned int edit_distance(const T& s1, const T& s2)
+{
+  const size_t len1 = s1.size(), len2 = s2.size();
+  std::vector<std::vector<unsigned int> > d(len1 + 1, std::vector<unsigned int>(len2 + 1));
+
+  d[0][0] = 0;
+  for(unsigned int i = 1; i <= len1; ++i) d[i][0] = i;
+  for(unsigned int i = 1; i <= len2; ++i) d[0][i] = i;
+
+  for(unsigned int i = 1; i <= len1; ++i)
+    for(unsigned int j = 1; j <= len2; ++j)
+
+      d[i][j] = std::min( std::min(d[i - 1][j] + 1,d[i][j - 1] + 1),
+                          d[i - 1][j - 1] + (s1[i - 1] == s2[j - 1] ? 0 : 1) );
+  return d[len1][len2];
+}
+
+
 // --------------------------------------------------------------------
 syd::InsertRoiCommand::InsertRoiCommand(StudyDatabase * d):
   DatabaseCommand(), sdb_(d)
@@ -71,35 +90,48 @@ void syd::InsertRoiCommand::Run(std::vector<std::string> & arg)
 // --------------------------------------------------------------------
 void syd::InsertRoiCommand::Run(const Patient & patient, const std::vector<std::string> & arg)
 {
-  DD(patient);
-  DDS(arg);
-  // parse args
-  std::string filename; // FIXME change in vector
-  RoiType roitype; // FIXME change in vector
-  if (arg.size() == 2) { // only situation where the second arg could be a roiname
-    std::string roiname = arg[0];
-    filename = arg[1];
-    DD(roiname);
-    DD(filename);
+  if (arg.size() == 0) {
+    LOG(FATAL) << "Error, provide the roi filename (.mhd)";
+  }
+  std::string filename = arg[0];
+  std::string extension = syd::GetExtension(filename);
+  if (extension != "mhd") {
+    LOG(FATAL) << "Error the filename extension must be .mhd";
+  }
+  std::string roiname;
+  int timepoint_number=1;
+  if (arg.size() == 2) roiname = arg[1];
+  if (arg.size() == 3) timepoint_number = atoi(arg[2].c_str());
+
+  RoiType roitype;
+  if (roiname == "") { // no roiname, try to guess
+    std::vector<RoiType> allroitypes;
+    cdb_->LoadVector<RoiType>(allroitypes);
+    // get file basename
+    size_t n = filename.find_last_of(PATH_SEPARATOR);
+    std::string fn = filename.substr(n+1, filename.size());
+    uint min = 10000;
+    for(auto t:allroitypes) {
+      uint d = edit_distance<std::string>(fn, t.name);
+      // std::cout << fn << " " << t << " " << d << std::endl;
+      if (d<min) { roitype = t; min=d; }
+    }
+    VLOG(2) << "Guess roitype is " << roitype.name;
+  }
+  else {
     bool b = cdb_->GetIfExist<RoiType>(odb::query<RoiType>::name == roiname, roitype);
     if (!b) {
       LOG(FATAL) << "Could not find the roi type '" << roiname << "' into the db.";
     }
   }
-  else {
-    DD("TODO");
-    // FIXME find roitype from filename.
-    exit(0);
-  }
 
-  // at the end = patient mhdfilename roitype (tp ?) => RoiMaskImage
-  // Get the first timepoint
   Timepoint timepoint;
   bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == patient.id and
-                                       odb::query<Timepoint>::number == 1, timepoint);
+                                       odb::query<Timepoint>::number == timepoint_number, timepoint);
   if (!b) {
-    LOG(FATAL) << "Error, no timepoint number 1 for the patient " << patient.name;
+    LOG(FATAL) << "Error, no timepoint number " << timepoint_number << " for the patient " << patient.name;
   }
+
   Run(timepoint, roitype, filename);
 }
 // --------------------------------------------------------------------
@@ -123,16 +155,20 @@ void syd::InsertRoiCommand::Run(const Timepoint & timepoint,
     roimaskimage = sdb_->NewRoiMaskImage(timepoint, roitype);
   }
   else {
-    VLOG(1) << "Updating RoiMaskImage for patient " << patient.name
+    VLOG(1) << "Updating RoiMaskImage " << roimaskimage.id << " for patient " << patient.name
             << " and roitype " << roitype.name << " (previous file is "
             << sdb_->GetImagePath(roimaskimage);
   }
   // Update roimaskimage
   sdb_->UpdateRoiMaskImage(roimaskimage);
+  RawImage rawimage(sdb_->GetById<RawImage>(roimaskimage.mask_id));
+  sdb_->UpdateMD5(rawimage);
 
   // Mv or copy the filename
   std::string newfilename = sdb_->GetImagePath(roimaskimage);
-  DD(get_move_flag());
   syd::RenameOrCopyMHDImage(filename, newfilename, 2, get_move_flag());
+
+  // Update roimaskimage volume/density
+  sdb_->UpdateRoiMaskImageVolume(roimaskimage);
 }
 // --------------------------------------------------------------------

@@ -138,15 +138,11 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
 
   if (!b) { // Does not exist, create
     VLOG(1) << "Creating copy of " << in_db_->Print(in_ref);
-    RawImage in_spect(in_db_->GetById<RawImage>(in_ref.spect_image_id));
-    RawImage in_ct(in_db_->GetById<RawImage>(in_ref.ct_image_id));
-    RawImage out_spect(in_spect);
-    RawImage out_ct(in_ct);
-    // out_db_->InsertTimepoint(out_ref, out_spect, out_ct);
     Serie spect_serie(cdb_->GetById<Serie>(in_ref.spect_serie_id));
     Serie ct_serie(cdb_->GetById<Serie>(in_ref.ct_serie_id));
     out_ref = out_db_->NewTimepoint(spect_serie, ct_serie);
-    out_ref.copy(in_ref);
+    out_ref.number = in_ref.number;
+    out_db_->UpdateTimepoint(spect_serie, ct_serie, out_ref);
   }
   else { // already exist, check md5
     VLOG(1) << "Already existing ref timepoint, updating : " << out_db_->Print(out_ref);
@@ -160,21 +156,14 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
   b = out_db_->GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == in_mov.patient_id &&
                                      odb::query<Timepoint>::number == in_mov.number &&
                                      odb::query<Timepoint>::spect_serie_id == in_mov.spect_serie_id, out_mov);
-
   if (!b) { // Does not exist, create
     VLOG(1) << "Creating new moving tp of " << in_db_->Print(in_mov);
-    RawImage in_spect(in_db_->GetById<RawImage>(in_mov.spect_image_id));
-    RawImage in_ct(in_db_->GetById<RawImage>(in_mov.ct_image_id));
-    RawImage out_spect(in_spect);
-    RawImage out_ct(in_ct);
-    out_spect.md5 = ""; // no image yet
-    out_ct.md5 = "";    // no image yet
-    //out_mov.copy(in_mov);
-    //out_db_->InsertTimepoint(out_mov, out_spect, out_ct);
+
     Serie spect_serie(cdb_->GetById<Serie>(in_mov.spect_serie_id));
     Serie ct_serie(cdb_->GetById<Serie>(in_mov.ct_serie_id));
     out_mov = out_db_->NewTimepoint(spect_serie, ct_serie);
-    out_mov.copy(in_mov);
+    out_mov.number = in_mov.number;
+    out_db_->UpdateTimepoint(spect_serie, ct_serie, out_mov);
   }
 
   // Now two Timepoints have been created, display the elastix command

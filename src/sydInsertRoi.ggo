@@ -1,9 +1,14 @@
 #File sydInsertRoi.ggo
 
 package "sydInsertRoi"
-usage "sydInsertRoi <db> <TODO>"
+usage "sydInsertRoi <db> <patient> <file.mhd> <RoiName> <timepoint nb>"
 version "0.1"
-description "TODO"
+description "Inser the roi file.mhd of the type RoiName into the db
+- <patient>       patient to whom add the roi
+- <file.mhd>      filename of the mask. It is copied to the folder
+- <RoiName>       type of the roi (Liver, Heart etc). If omitted the name is guess from the filename
+- <timepoint nb>  the roi is linked to this timepoint number (=1 if omitted)
+"
 
 option "config"   	 	-       "Config file for ggo"   		string		no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no

@@ -98,3 +98,40 @@ typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filen
   return im1;
 }
 //--------------------------------------------------------------------
+
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+typename ImageType::Pointer ResampleImageLike(const ImageType * input,
+                                              const itk::ImageBase<ImageType::ImageDimension> * like,
+                                              int interpolationType,
+                                              typename ImageType::PixelType defaultValue)
+{
+  typedef itk::ResampleImageFilter<ImageType, ImageType> FilterType;
+  auto t = itk::AffineTransform<double, ImageType::ImageDimension>::New();
+  typename FilterType::Pointer filter = FilterType::New();
+  filter->SetTransform(t);
+  filter->SetSize(like->GetLargestPossibleRegion().GetSize());
+  filter->SetOutputSpacing(like->GetSpacing());
+  filter->SetOutputOrigin(like->GetOrigin());
+  filter->SetDefaultPixelValue(defaultValue);
+  filter->SetOutputDirection(like->GetDirection());
+
+  typename itk::InterpolateImageFunction<ImageType>::Pointer interpolator;
+  switch (interpolationType) {
+    case 0: { // NearestNeighbor
+      interpolator = itk::NearestNeighborInterpolateImageFunction<ImageType, double>::New();
+      break;
+    }
+    case 1: { // Linear
+      interpolator =  itk::LinearInterpolateImageFunction<ImageType, double>::New();
+      break;
+    }
+    }
+  filter->SetInput(input);
+  filter->SetInterpolator(interpolator);
+  filter->Update();
+  return filter->GetOutput();
+}
+//--------------------------------------------------------------------

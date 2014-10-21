@@ -17,6 +17,7 @@
   ===========================================================================**/
 
 // syd
+
 #include "sydImage.h"
 
 // --------------------------------------------------------------------
@@ -206,7 +207,6 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
         break;
     }
     outlines.push_back(line+"\n");
-    //out << line << '\n';
   }
   in.close();
 

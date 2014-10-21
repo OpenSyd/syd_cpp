@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
   // Check args
   if (args_info.inputs_num < 2) {
-    LOG(FATAL) << "Error please, provide <db1> <serie ids> (see usage)";
+    LOG(FATAL) << "Error please, provide <db> TODO";
   }
 
   // Get the current db names

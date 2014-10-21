@@ -72,6 +72,8 @@ namespace syd {
   void CreateDirectory(std::string folder);
   bool FileExists(std::string filename);
   bool DirExists(std::string folder);
+  std::string GetExtension(const std::string filename);
+
   //--------------------------------------------------------------------
 
 
@@ -92,6 +94,25 @@ namespace syd {
   bool replace(std::string& str, const std::string& from, const std::string& to);
   //--------------------------------------------------------------------
 
+
+  //--------------------------------------------------------------------
+  // FIXME : put in another file
+  class PrintTable {
+  public:
+    PrintTable();
+    void AddColumn(std::string name, int width, int digit);
+    void Init();
+    PrintTable & operator<<(const double & value);
+    PrintTable & operator<<(const std::string & value);
+    void Print(std::ostream & out);
+  protected:
+    std::vector<std::vector<std::string>> values;
+    std::vector<std::string> headers;
+    std::vector<int> width;
+    std::vector<int> precision;
+    int current_line;
+    int current_column;
+  };
 
 #include "sydCommon.txx"
 

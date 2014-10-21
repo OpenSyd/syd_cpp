@@ -61,16 +61,12 @@ syd::ActivityCommand::~ActivityCommand()
 // --------------------------------------------------------------------
 void syd::ActivityCommand::Run(std::vector<std::string> & args)
 {
-
   std::vector<Patient> patients;
   cdb_->GetPatientsByName(args[0], patients);
-  DDS(patients);
   args.erase(args.begin());
   for(auto p:patients) {
-    DD(p);
     Run(p, args);
   }
-  DD("done");
 }
 // --------------------------------------------------------------------
 
@@ -79,13 +75,15 @@ void syd::ActivityCommand::Run(std::vector<std::string> & args)
 void syd::ActivityCommand::Run(const Patient & patient, std::vector<std::string> & args)
 {
   std::vector<Timepoint> timepoints;
+  if (args.size() < 2) {
+    LOG(FATAL) << "Error, need timepoint number and roi name";
+  }
   std::string s = args[0];
   if (s == "all") {
     sdb_->LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient.id);
   }
   else {
     int n = atoi(s.c_str());
-    DD(n);
     Timepoint t;
     bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::number == n and
                                          odb::query<Timepoint>::patient_id == patient.id, t);
@@ -109,30 +107,33 @@ void syd::ActivityCommand::Run(const Timepoint & timepoint, std::vector<std::str
 {
   // Get patient
   Patient patient(sdb_->GetPatient(timepoint));
-  DD(patient);
+
+  // Retrieve reference timepoint
+  Timepoint reft;
+  bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::number == 1 and
+                                       odb::query<Timepoint>::patient_id == patient.id, reft);
+  if (!b) {
+    LOG(FATAL) << "Error not timepoint with number 1 for patient" << patient.name;
+  }
 
   // find all roitypes
   std::string roiname = args[0];
-  DD(roiname);
   std::vector<RoiType> roitypes;
   cdb_->LoadVector<RoiType>(roitypes, odb::query<RoiType>::name.like(roiname));
-  DDS(roitypes);
 
   // Get corresponding roimaskimage
   std::vector<RoiMaskImage> rois;
   for(auto rt:roitypes) {
     RoiMaskImage roi;
-    bool b = sdb_->GetIfExist<RoiMaskImage>(odb::query<RoiMaskImage>::timepoint_id == timepoint.id and
+    bool b = sdb_->GetIfExist<RoiMaskImage>(odb::query<RoiMaskImage>::timepoint_id == reft.id and
                                             odb::query<RoiMaskImage>::roitype_id == rt.id, roi);
     if (b) rois.push_back(roi);
   }
 
   // Loop on rois
   for(auto r:rois) {
-    DD(r);
     TimeActivity timeactivity;
-    RoiType roitype = sdb_->GetById<RoiType>(r.roitype_id);
-    DD(roitype);
+    RoiType roitype = cdb_->GetById<RoiType>(r.roitype_id);
     bool b = adb_->GetIfExist<TimeActivity>(odb::query<TimeActivity>::timepoint_id == timepoint.id and
                                             odb::query<TimeActivity>::roi_id == r.id,
                                             timeactivity);
@@ -141,7 +142,10 @@ void syd::ActivityCommand::Run(const Timepoint & timepoint, std::vector<std::str
               << timepoint.number << " roi= " <<  roitype.name;
       timeactivity = adb_->NewTimeActivity(timepoint, r);
     }
-    DD(timeactivity);
+    // not required FIXME
+    timeactivity.patient_id = patient.id;
+    timeactivity.roi_id = r.id;
+    timeactivity.timepoint_id = timepoint.id;
     UpdateActivityInRoi(timepoint, r, timeactivity);
   }
 }
@@ -153,37 +157,23 @@ void syd::ActivityCommand::UpdateActivityInRoi(const Timepoint & timepoint,
                                                const RoiMaskImage & roi,
                                                TimeActivity & timeactivity)
 {
-  DD("UpdateActivityInRoi");
-  DD(timepoint);
-  DD(roi);
-  DD(timeactivity);
-
-  // update fields (?) --> no check ! (FIXME)
-  //  timeactivity.timepoint_id = timepoint.id;
-  //timeactivity.roi_id = roi.id;
-
-  DD("to put in UpdateActivity");
-
-  /*
-  // load spect image
-  RawImage spect = adb_->GetById<RawImage>(timepoint.spect_image_id);
-  std::string fspect = adb_->GetImagePath(spect);
-  DD(fspect);
+  // Load spect image
+  RawImage ispect = sdb_->GetById<RawImage>(timepoint.spect_image_id);
+  std::string fspect = sdb_->GetImagePath(ispect);
   ImageType::Pointer spect = syd::ReadImage<ImageType>(fspect);
 
-  // load roi mask
-  std::string fmask = adb_->GetImagePath(roi);
-  DD(fmask);
+  // Load roi mask
+  std::string fmask = sdb_->GetImagePath(roi);
   MaskImageType::Pointer mask = syd::ReadImage<MaskImageType>(fmask);
 
   // in general spect and mask not the same spacing. Need to resample
-  // one of the two. FIXME
+  // one of the two.
 
-  // resample mask like the spect image (both spacing and crop)
+  // resample mask like the spect image (both spacing and crop).
+  // FIXME or reverse ... --> but need to store correct volume for
+  // the counts if resample, need to convert values in
+  // counts_concentration
   mask = syd::ResampleImageLike<MaskImageType>(mask, spect, 0, 0);
-
-  //FIXME or reverse ... --> but need to store correct volume for the counts
-  // if resample, need to convert values in counts_concentration
 
   // compute stats
   typedef itk::LabelStatisticsImageFilter<ImageType, MaskImageType> FilterType;
@@ -192,21 +182,17 @@ void syd::ActivityCommand::UpdateActivityInRoi(const Timepoint & timepoint,
   filter->SetLabelInput(mask);
   filter->Update();
 
-  // Should I update also roi values (vol + density ?) FIXME
+  // Should I update also roi values (vol + density) ? No.
   double pixelVol = spect->GetSpacing()[0]*spect->GetSpacing()[1]*spect->GetSpacing()[2];
-  DD(pixelVol);
-  DD(filter->GetCount(1));
   double vol = filter->GetCount(1) * pixelVol * 0.001; // in CC
-  DD(vol);
 
   // Store stats
-  timeactivity.counts_by_cc = filter->GetSum(1)/vol; // sum of counts in the roi
-  timeactivity.std_counts = filter->GetSigma(1)/vol; // std deviation of the counts by pixels
+  timeactivity.mean_counts_by_cc = filter->GetMean(1)/pixelVol; // mean counts by cc
+  timeactivity.std_counts_by_cc = filter->GetSigma(1)/pixelVol; // std deviation by cc
 
-  // Also peak here FIXME
+  // Also peak here ? no. Not here : prefer for integrated activity)
 
   // Update db
   adb_->Update(timeactivity);
-  */
 }
 // --------------------------------------------------------------------

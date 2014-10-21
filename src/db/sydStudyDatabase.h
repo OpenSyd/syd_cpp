@@ -43,6 +43,8 @@ namespace syd {
 
     // Dump information
     virtual void Dump(std::ostream & os, std::vector<std::string> & args);
+    virtual void DumpRoi(std::ostream & os, std::vector<std::string> & args);
+    virtual void DumpRoi(std::ostream & os);
     virtual void CheckIntegrity(std::vector<std::string> & args);
     virtual void CreateDatabase();
 
@@ -52,6 +54,7 @@ namespace syd {
 
     void UpdateTimepoint(const Serie & spect_serie, const Serie & ct_serie, Timepoint & t);
     void UpdateRoiMaskImage(RoiMaskImage & roi);
+    void UpdateRoiMaskImageVolume(RoiMaskImage & roi);
     void UpdateAverageCTImage(RawImage & rawimage);
 
     void ConvertDicomToImage(const Timepoint & t);
