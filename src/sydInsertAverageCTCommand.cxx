@@ -83,7 +83,7 @@ void syd::InsertAverageCTCommand::Run(Patient & patient)
 
   // Get timepoints for this patient
   std::vector<Timepoint> timepoints;
-  sdb_->LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient.id);
+  sdb_->LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == patient.id, timepoints);
 
   // sort by number
   std::sort(begin(timepoints), end(timepoints),

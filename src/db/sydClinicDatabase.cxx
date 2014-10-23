@@ -42,10 +42,9 @@ void syd::ClinicDatabase::GetAssociatedCTSerie(IdType serie_id,
   Patient patient = GetById<Patient>(spect_serie.patient_id);
 
   std::vector<Serie> ct_series;
-  LoadVector<Serie>(ct_series,
-                    odb::query<Serie>::dicom_frame_of_reference_uid ==
+  LoadVector<Serie>(odb::query<Serie>::dicom_frame_of_reference_uid ==
                     spect_serie.dicom_frame_of_reference_uid &&
-                    odb::query<Serie>::modality == "CT");
+                    odb::query<Serie>::modality == "CT", ct_series);
 
   // Check how many ct_series we found
   if (ct_series.size() == 0) {
@@ -69,7 +68,7 @@ void syd::ClinicDatabase::GetAssociatedCTSerie(IdType serie_id,
          QueryType::modality == "CT" &&
          QueryType::patient_id == patient.id) && q;
     ct_series.clear();
-    LoadVector<Serie>(ct_series, q);
+    LoadVector<Serie>(q, ct_series);
   }
 
   if (ct_series.size() != 1) {
@@ -425,7 +424,7 @@ void syd::ClinicDatabase::Dump(std::ostream & os, std::vector<std::string> & arg
       QueryType q = GetSeriesQueryFromPatterns(patterns);
       q = (QueryType::patient_id == patient.id) && q;
       std::vector<Serie> series;
-      LoadVector<Serie>(series, q);
+      LoadVector<Serie>(q, series);
 
       // Sort by acquisition_date
       std::sort(series.begin(), series.end(),
@@ -458,7 +457,7 @@ std::string syd::ClinicDatabase::Print(Patient patient, int level)
   if (level > 1) {
     // Get the number of series for this patient
     std::vector<Serie> series;
-    LoadVector<Serie>(series, odb::query<Serie>::patient_id == patient.id);
+    LoadVector<Serie>(odb::query<Serie>::patient_id == patient.id, series);
     int n = series.size();
     int nb_ct = 0;
     int nb_nm = 0;
@@ -514,7 +513,7 @@ void syd::ClinicDatabase::CheckIntegrity(const Patient & patient)
   // Part 1
   VLOG(0) << "Part 1: from series to files";
   std::vector<Serie> series;
-  LoadVector<Serie>(series, odb::query<Serie>::patient_id == patient.id);
+  LoadVector<Serie>(odb::query<Serie>::patient_id == patient.id, series);
   VLOG(1) << "Found " << series.size() << " series. Checking ...";
   for(auto i=series.begin(); i<series.end(); i++) {
     VLOG(2) << "Checking serie " << i->id << " " << i->path;
@@ -582,7 +581,7 @@ void syd::ClinicDatabase::CheckFile(OFString filename)
 syd::RoiType syd::ClinicDatabase::GetRoiType(std::string name)
 {
   std::vector<RoiType> roitypes;
-  LoadVector<RoiType>(roitypes, odb::query<RoiType>::name == name);
+  LoadVector<RoiType>(odb::query<RoiType>::name == name, roitypes);
   if (roitypes.size() != 1) {
     LOG(FATAL) << "Error while searching roi type named " << name
                << " : I found " << roitypes.size()

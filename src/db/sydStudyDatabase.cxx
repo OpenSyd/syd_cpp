@@ -94,7 +94,7 @@ void syd::StudyDatabase::CheckIntegrity(std::vector<std::string> & args)
       if (!b) {
         LOG(FATAL) << "Error, could not find patient " << name;
       }
-      LoadVector<RawImage>(rawimages, odb::query<RawImage>::patient_id == patient.id);
+      LoadVector<RawImage>(odb::query<RawImage>::patient_id == patient.id, rawimages);
     }
     for(auto i:rawimages) CheckIntegrity(i);
   }
@@ -111,7 +111,7 @@ void syd::StudyDatabase::CheckIntegrity(std::vector<std::string> & args)
       if (!b) {
         LOG(FATAL) << "Error, could not find patient " << name;
       }
-      LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient.id);
+      LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == patient.id, timepoints);
     }
     for(auto i:timepoints) CheckIntegrity(i);
   }
@@ -145,7 +145,7 @@ void syd::StudyDatabase::CheckIntegrity(const Patient & patient)
 {
   // Get all timepoints for this patient
   std::vector<Timepoint> timepoints;
-  LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient.id);
+  LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == patient.id, timepoints);
 
   // Order the  indices
   std::vector<size_t> indices;
@@ -413,7 +413,7 @@ void syd::StudyDatabase::UpdateNumberAndRenameFiles(IdType patient_id)
 
   // Get all timepoint for this patient
   std::vector<Timepoint> timepoints;
-  LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient.id);
+  LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == patient.id, timepoints);
 
   // Get corresponding spect series acquisition_date
   std::vector<Serie> series;
@@ -469,22 +469,36 @@ void syd::StudyDatabase::UpdateNumberAndRenameFiles(IdType patient_id)
 
 
 // --------------------------------------------------------------------
-void syd::StudyDatabase::ConvertDicomToImage(const Timepoint & t)
+void syd::StudyDatabase::ConvertCTDicomToImage(const Timepoint & t)
 {
-  // Spect part
-  RawImage spect(GetById<RawImage>(t.spect_image_id));
-  std::string dicom_filename = cdb_->GetSeriePath(t.spect_serie_id); // spect.serie_id
-  std::string mhd_filename = GetImagePath(spect);
-  VLOG(2) << "Converting SPECT dicom to mhd (" << mhd_filename << ") ...";
-  spect.md5 = syd::ConvertDicomSPECTFileToImage(dicom_filename, mhd_filename);
-  Update(spect);
-
   // CT part
   RawImage ct = GetById<RawImage>(t.ct_image_id);
   std::string dicom_path = cdb_->GetSeriePath(t.ct_serie_id);
   std::string ct_mhd_filename = GetImagePath(ct);
   ct.md5 = syd::ConvertDicomCTFolderToImage(dicom_path, ct_mhd_filename);
   Update(ct);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StudyDatabase::ConvertSpectDicomToImage(const Timepoint & t)
+{
+  // Spect part
+  RawImage spect(GetById<RawImage>(t.spect_image_id));
+  std::string dicom_filename = cdb_->GetSeriePath(t.spect_serie_id); // spect.serie_id
+  std::string mhd_filename = GetImagePath(spect);
+  spect.md5 = syd::ConvertDicomSPECTFileToImage(dicom_filename, mhd_filename);
+  Update(spect);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StudyDatabase::ConvertDicomToImage(const Timepoint & t)
+{
+  ConvertCTDicomToImage(t);
+  ConvertSpectDicomToImage(t);
 }
 // --------------------------------------------------------------------
 
@@ -598,7 +612,7 @@ std::string syd::StudyDatabase::Print(const Patient & p, int level)
   // Get all associated timepoints
   typedef odb::query<Timepoint> QueryType;
   std::vector<Timepoint> timepoints;
-  LoadVector<Timepoint>(timepoints, QueryType::patient_id == p.id);
+  LoadVector<Timepoint>(QueryType::patient_id == p.id, timepoints);
   ss << "\t" << timepoints.size() << "\t";
   for(auto i=timepoints.begin(); i != timepoints.end(); i++) {
     ss << i->time_from_injection_in_hours << " ";
@@ -692,7 +706,7 @@ void syd::StudyDatabase::DumpRoi(std::ostream & os)
                                    odb::query<Timepoint>::number == 1,
                                    timepoint);
     std::vector<RoiMaskImage> rois;
-    LoadVector<RoiMaskImage>(rois, odb::query<RoiMaskImage>::timepoint_id == timepoint.id);
+    LoadVector<RoiMaskImage>(odb::query<RoiMaskImage>::timepoint_id == timepoint.id, rois);
     os << p.name << " " << p.synfrizz_id << " " << rois.size() << " ";
     // sort roi by roitypeid
     std::sort(begin(rois), end(rois),
@@ -724,9 +738,9 @@ syd::RoiMaskImage syd::StudyDatabase::GetRoiMaskImage(const Timepoint & timepoin
   RoiType roitype(cdb_->GetRoiType(roiname));
   Patient patient(GetPatient(timepoint));
   std::vector<RoiMaskImage> roimaskimages;
-  LoadVector<RoiMaskImage>(roimaskimages,
-                           odb::query<RoiMaskImage>::timepoint_id == timepoint.id &&
-                           odb::query<RoiMaskImage>::roitype_id == roitype.id);
+  LoadVector<RoiMaskImage>(odb::query<RoiMaskImage>::timepoint_id == timepoint.id &&
+                           odb::query<RoiMaskImage>::roitype_id == roitype.id,
+                           roimaskimages);
   if (roimaskimages.size() != 1) {
     LOG(FATAL) << "Error while searching roi '" <<  roiname << "' associated with timepoint " << timepoint.number
                << " of " << patient.name << " : I found "
@@ -738,24 +752,45 @@ syd::RoiMaskImage syd::StudyDatabase::GetRoiMaskImage(const Timepoint & timepoin
 
 
 // --------------------------------------------------------------------
-// void syd::StudyDatabase::InsertRoiMaskImage(const Timepoint & timepoint,
-//                                             const RoiType & roitype,
-//                                             RoiMaskImage & roi)
-// {
-//   DD("to remove !!");
-//   exit(0);
-//   // Create new RawImage associated with the roi
-//   RawImage mask;
-//   Insert(mask);
+std::vector<syd::RoiMaskImage> syd::StudyDatabase::GetRoiMaskImages(const Timepoint & timepoint, std::string roiname)
+{
+  // Get patient
+  Patient patient(GetPatient(timepoint));
 
-//   // Insert roi
-//   roi.mask_id = mask.id;
-//   roi.timepoint_id = timepoint.id;
-//   roi.roitype_id = roitype.id;
-//   Insert(roi);
+  // Get all roitypes
+  std::vector<RoiType> roitypes;
+  if (roiname == "all") {
+    cdb_->LoadVector<RoiType>(roitypes);
+  }
+  else {
+    std::string pattern = "%"+roiname+"%";
+    cdb_->LoadVector<RoiType>(odb::query<RoiType>::name.like(pattern), roitypes);
+  }
 
-//   UpdateRoiMaskImage(roi);
-// }
+  // For each, retrieve RoiMaskImage
+  std::vector<syd::RoiMaskImage> r;
+  for(auto roitype:roitypes) {
+    std::vector<RoiMaskImage> roimaskimages;
+    LoadVector<RoiMaskImage>(odb::query<RoiMaskImage>::timepoint_id == timepoint.id &&
+                             odb::query<RoiMaskImage>::roitype_id == roitype.id,
+                             roimaskimages);
+    if (roimaskimages.size() > 1) {
+      LOG(FATAL) << "Error while searching roi '" <<  roiname << "' associated with timepoint " << timepoint.number
+                 << " of " << patient.name << " : I found "
+                 << roimaskimages.size() << " roi(s) while expecting a single one";
+    }
+    if (roimaskimages.size() != 0) r.push_back(roimaskimages[0]);
+  }
+  return r;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiType syd::StudyDatabase::GetRoiType(const RoiMaskImage & roimaskimage)
+{
+  return cdb_->GetById<RoiType>(roimaskimage.roitype_id);
+}
 // --------------------------------------------------------------------
 
 

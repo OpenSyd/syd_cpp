@@ -3,7 +3,10 @@
 package "sydActivity"
 usage "sydActivity <db> <cmd>"
 version "0.1"
-description "TODO"
+description "TODO
+- <cmd> can be :
+
+"
 
 option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no

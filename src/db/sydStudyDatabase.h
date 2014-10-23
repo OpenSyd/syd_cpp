@@ -57,6 +57,8 @@ namespace syd {
     void UpdateRoiMaskImageVolume(RoiMaskImage & roi);
     void UpdateAverageCTImage(RawImage & rawimage);
 
+    void ConvertCTDicomToImage(const Timepoint & t);
+    void ConvertSpectDicomToImage(const Timepoint & t);
     void ConvertDicomToImage(const Timepoint & t);
     void CopyFilesFrom(std::shared_ptr<StudyDatabase> in_db, const Timepoint & in, Timepoint & out);
 
@@ -78,6 +80,8 @@ namespace syd {
     std::string GetImagePath(const RoiMaskImage & roi) { return GetImagePath(GetById<RawImage>(roi.mask_id)); }
     Patient GetPatient(const Timepoint & timepoint);
     RoiMaskImage GetRoiMaskImage(const Timepoint & timepoint, std::string roiname);
+    std::vector<RoiMaskImage> GetRoiMaskImages(const Timepoint & timepoint, std::string roiname);
+    RoiType GetRoiType(const RoiMaskImage & roimaskimage);
 
     std::string Print(const Timepoint & t);
     std::string Print(const RawImage & t);

@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDINSERTTIMEPOINTCOMMAND_H
-#define SYDINSERTTIMEPOINTCOMMAND_H
+#ifndef SYDSTITCHSPECTCOMMAND_H
+#define SYDSTITCHSPECTCOMMAND_H
 
 // syd
 #include "sydDatabaseCommand.h"
@@ -28,37 +28,33 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  class InsertTimepointCommand: public syd::DatabaseCommand
+  class StitchSpectCommand: public syd::DatabaseCommand
   {
   public:
 
-    InsertTimepointCommand(std::string db);
-    InsertTimepointCommand(syd::StudyDatabase * db);
-    ~InsertTimepointCommand();
+    StitchSpectCommand(std::string db);
 
-    void set_ct_selection_patterns(std::string s);
-    void set_ignore_files_flag(bool b) { ignore_files_flag_ = b; }
-    bool get_ignore_files_flag() const { return ignore_files_flag_; }
-    void set_update_md5_flag(bool b) { update_md5_flag_ = b; }
-    bool get_update_md5_flag() const { return update_md5_flag_; }
-    void set_ignore_CT_flag(bool b) { ignore_CT_flag_ = b; }
-    bool get_ignore_CT_flag() const { return ignore_CT_flag_; }
-    void set_ignore_Spect_flag(bool b) { ignore_Spect_flag_ = b; }
-    bool get_ignore_Spect_flag() const { return ignore_Spect_flag_; }
+    typedef float PixelType;
+    typedef itk::Image<PixelType, 3> ImageType;
 
-    void InsertTimepoint(std::vector<std::string> serie_ids);
-    void InsertTimepoint(const Serie & serie);
+    double get_threshold_cumul() const { return threshold_cumul_; }
+    double get_skip_slices() const { return skip_slices_; }
+    void set_threshold_cumul(double v) { threshold_cumul_ = v; }
+    void set_skip_slices(double v) { skip_slices_ = v; }
+
+    StitchSpectCommand(syd::StudyDatabase * db);
+    ~StitchSpectCommand();
+
+    void StitchSpect(std::vector<std::string> serie_ids);
+    void StitchSpect(const Serie & serie);
 
   protected:
     void Initialization();
+    double threshold_cumul_;
+    double skip_slices_;
 
-    bool ignore_files_flag_;
-    bool ignore_CT_flag_;
-    bool ignore_Spect_flag_;
-    bool update_md5_flag_;
     std::shared_ptr<syd::ClinicDatabase> cdb_;
     std::shared_ptr<syd::StudyDatabase>  sdb_;
-    std::vector<std::string> ct_selection_patterns_;
   };
 
 

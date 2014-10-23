@@ -14,5 +14,7 @@ option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
 option "ct"                     -       "String pattern to select CT when several CT series are associated to a SPECT"      string default="" no
-option "ignore"   	 	-       "Ignore dicom conversion (update fields only)"     flag	off
+option "ignore"   	 	-       "Ignore dicom conversion (update fields only)"          flag	off
+option "ignoreCT"   	 	-       "Ignore CT dicom conversion (update fields only)"       flag	off
+option "ignoreSpect"   	 	-       "Ignore Spect dicom conversion (update fields only)"    flag	off
 option "updateMD5"   	 	-       "if ignore dicom copy, still update md5 in the db (trust mhd file)"     flag	off

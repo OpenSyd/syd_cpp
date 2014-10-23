@@ -111,3 +111,10 @@ wrap_ggo(sydInsertRoi sydInsertRoi.ggo)
 add_executable(sydInsertRoi sydInsertRoi.cxx sydInsertRoi_ggo.c sydInsertRoiCommand.cxx)
 target_link_libraries(sydInsertRoi ${SYD_LIBS})
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydStitchSpect sydStitchSpect.ggo)
+add_executable(sydStitchSpect sydStitchSpect.cxx sydStitchSpect_ggo.c sydStitchSpectCommand.cxx)
+target_link_libraries(sydStitchSpect ${SYD_LIBS})
+#----------------------------------------------------------

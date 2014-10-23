@@ -35,7 +35,7 @@ std::shared_ptr<DatabaseType> syd::Database::OpenDatabaseType(std::string name)
 // --------------------------------------------------------------------
 // Warning : do not clear the list, append
 template<class T>
-void syd::Database::LoadVector(std::vector<T> & list, const odb::query<T> & q)
+void syd::Database::LoadVector(const odb::query<T> & q, std::vector<T> & list)
 {
   odb::transaction transaction (db_->begin());
   typedef odb::query<T> query;
@@ -47,6 +47,16 @@ void syd::Database::LoadVector(std::vector<T> & list, const odb::query<T> & q)
     list.push_back(s);
   }
   transaction.commit();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// Warning : do not clear the list, append
+template<class T>
+void syd::Database::LoadVector(std::vector<T> & list)
+{
+  return LoadVector<T>(odb::query<T>::id != 0, list);
 }
 // --------------------------------------------------------------------
 

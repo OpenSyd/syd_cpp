@@ -36,6 +36,8 @@
 #include <itkAffineTransform.h>
 #include <itkNearestNeighborInterpolateImageFunction.h>
 #include <itkLinearInterpolateImageFunction.h>
+#include <itkImageSliceIteratorWithIndex.h>
+#include <itkImageSliceConstIteratorWithIndex.h>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -72,6 +74,11 @@ namespace syd {
   //--------------------------------------------------------------------
 
 
+  //--------------------------------------------------------------------
+  template<class ImageType>
+  typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType * s2,
+                                           double threshold_cumul, double skip_slices);
+  //--------------------------------------------------------------------
 
 
   //--------------------------------------------------------------------

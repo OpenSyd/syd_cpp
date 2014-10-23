@@ -32,6 +32,7 @@ std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::s
   }
 
   // Read the image data
+  VLOG(2) << "Converting SPECT dicom to mhd (" << mhd_filename << ") ...";
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
   ImageType::Pointer image = ReadImage<ImageType>(dicom_filename);
@@ -83,7 +84,7 @@ std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::s
     itk::OrientImageFilter<ImageType,ImageType>::Pointer orienter =
       itk::OrientImageFilter<ImageType,ImageType>::New();
     orienter->UseImageDirectionOn();
-    orienter->SetDesiredCoordinateOrientation(itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RIA);
+    orienter->SetDesiredCoordinateOrientation(itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
     orienter->SetInput(image);
     orienter->Update();
     image = orienter->GetOutput();

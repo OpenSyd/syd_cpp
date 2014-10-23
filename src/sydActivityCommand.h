@@ -43,11 +43,13 @@ namespace syd {
     typedef itk::Image<MaskPixelType, 3> MaskImageType;
 
     void Run(std::vector<std::string> & args);
-    void Run(const Patient & patient, std::vector<std::string> & args);
-    void Run(const Timepoint & timepoint, std::vector<std::string> & args);
-    void UpdateActivityInRoi(const Timepoint & timepoint,
-                             const RoiMaskImage & roi,
-                             TimeActivity & timeactivity);
+
+    void RunTimeActivity(std::vector<std::string> args);
+    void RunTimeActivity(const Patient & patient, std::vector<std::string> args);
+    void RunTimeActivity(const Timepoint & timepoint, std::vector<std::string> args);
+
+    void RunIntegratedActivity(std::vector<std::string> & args);
+    void RunIntegratedActivity(const Patient & patient, std::vector<std::string> & args);
 
   protected:
     void Initialization();

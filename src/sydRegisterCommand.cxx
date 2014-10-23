@@ -71,7 +71,7 @@ void syd::RegisterCommand::Run(std::string patient_name, const std::vector<std::
       LOG(FATAL) << "Error, the patient " << patient_name << " does not exist";
     }
     std::vector<Timepoint> timepoints;
-    in_db_->LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient.id);
+    in_db_->LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == patient.id, timepoints);
     for(auto i:timepoints) {
       numbers.push_back(i.number);
     }

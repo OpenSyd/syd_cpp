@@ -20,9 +20,6 @@
 #include "sydActivityCommand.h"
 #include "sydImage.h"
 
-// itk
-#include <itkLabelStatisticsImageFilter.h>
-
 // --------------------------------------------------------------------
 syd::ActivityCommand::ActivityCommand(std::string db):DatabaseCommand()
 {
@@ -61,18 +58,43 @@ syd::ActivityCommand::~ActivityCommand()
 // --------------------------------------------------------------------
 void syd::ActivityCommand::Run(std::vector<std::string> & args)
 {
+  if (args.size() == 0) {
+    LOG(FATAL) << "Error, please provide a <cmd> .... TODO";
+  }
+  // Switch according to command
+  std::string cmd = args[0];
+  args.erase(args.begin());
+
+  if (cmd == "ta") { //ta = timeactivity
+    RunTimeActivity(args);
+
+  }
+  if (cmd =="ia") { // integrated activity
+    RunIntegratedActivity(args);
+  }
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ActivityCommand::RunTimeActivity(std::vector<std::string> args)
+{
+  if (args.size() == 0) {
+    LOG(FATAL) << "Error, please provide a <patientname>";
+  }
   std::vector<Patient> patients;
   cdb_->GetPatientsByName(args[0], patients);
-  args.erase(args.begin());
+  args.erase(args.begin()); // (args is a copy)
   for(auto p:patients) {
-    Run(p, args);
+    RunTimeActivity(p, args);
   }
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::ActivityCommand::Run(const Patient & patient, std::vector<std::string> & args)
+void syd::ActivityCommand::RunTimeActivity(const Patient & patient, std::vector<std::string> args)
 {
   std::vector<Timepoint> timepoints;
   if (args.size() < 2) {
@@ -80,7 +102,7 @@ void syd::ActivityCommand::Run(const Patient & patient, std::vector<std::string>
   }
   std::string s = args[0];
   if (s == "all") {
-    sdb_->LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == patient.id);
+    sdb_->LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == patient.id, timepoints);
   }
   else {
     int n = atoi(s.c_str());
@@ -93,22 +115,22 @@ void syd::ActivityCommand::Run(const Patient & patient, std::vector<std::string>
     timepoints.push_back(t);
   }
 
-  // Remove first args
+  // Remove first args (args is a copy)
   args.erase(args.begin());
 
   // Loop over timepoints
-  for(auto t:timepoints) Run(t, args);
+  for(auto t:timepoints) RunTimeActivity(t, args);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::ActivityCommand::Run(const Timepoint & timepoint, std::vector<std::string> & args)
+void syd::ActivityCommand::RunTimeActivity(const Timepoint & timepoint, std::vector<std::string> args)
 {
   // Get patient
   Patient patient(sdb_->GetPatient(timepoint));
 
-  // Retrieve reference timepoint
+  // Retrieve reference timepoint (needed to load the mask at this ref timepoint)
   Timepoint reft;
   bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::number == 1 and
                                        odb::query<Timepoint>::patient_id == patient.id, reft);
@@ -119,7 +141,11 @@ void syd::ActivityCommand::Run(const Timepoint & timepoint, std::vector<std::str
   // find all roitypes
   std::string roiname = args[0];
   std::vector<RoiType> roitypes;
-  cdb_->LoadVector<RoiType>(roitypes, odb::query<RoiType>::name.like(roiname));
+  if (roiname == "all") cdb_->LoadVector<RoiType>(roitypes);
+  else cdb_->LoadVector<RoiType>(odb::query<RoiType>::name.like(roiname), roitypes);
+  if (roitypes.size() == 0) {
+    LOG(WARNING) << "I found no roi named : '" << roiname << "'";
+  }
 
   // Get corresponding roimaskimage
   std::vector<RoiMaskImage> rois;
@@ -138,7 +164,7 @@ void syd::ActivityCommand::Run(const Timepoint & timepoint, std::vector<std::str
                                             odb::query<TimeActivity>::roi_id == r.id,
                                             timeactivity);
     if (!b) {
-      VLOG(1) << "Creating new timeactivity for " << patient.name << " tp="
+      VLOG(2) << "Creating new timeactivity for " << patient.name << " tp="
               << timepoint.number << " roi= " <<  roitype.name;
       timeactivity = adb_->NewTimeActivity(timepoint, r);
     }
@@ -146,53 +172,37 @@ void syd::ActivityCommand::Run(const Timepoint & timepoint, std::vector<std::str
     timeactivity.patient_id = patient.id;
     timeactivity.roi_id = r.id;
     timeactivity.timepoint_id = timepoint.id;
-    UpdateActivityInRoi(timepoint, r, timeactivity);
+    // Compute and update activity
+    adb_->UpdateTimeActivityInRoi(timeactivity);
+
+    // Verbose if needed
+    VLOG(1) << patient.synfrizz_id << " " << patient.name << " " << roitype.name << " "
+            << timepoint.number  << " " << timepoint.time_from_injection_in_hours  << " "
+            << timeactivity.mean_counts_by_cc << " " << timeactivity.std_counts_by_cc;
   }
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::ActivityCommand::UpdateActivityInRoi(const Timepoint & timepoint,
-                                               const RoiMaskImage & roi,
-                                               TimeActivity & timeactivity)
+void syd::ActivityCommand::RunIntegratedActivity(std::vector<std::string> & args)
 {
-  // Load spect image
-  RawImage ispect = sdb_->GetById<RawImage>(timepoint.spect_image_id);
-  std::string fspect = sdb_->GetImagePath(ispect);
-  ImageType::Pointer spect = syd::ReadImage<ImageType>(fspect);
+  if (args.size() == 0) {
+    LOG(FATAL) << "Error, please provide a <patientname>";
+  }
+  std::vector<Patient> patients;
+  cdb_->GetPatientsByName(args[0], patients);
+  args.erase(args.begin());
+  for(auto p:patients) {
+    RunIntegratedActivity(p, args);
+  }
+}
+// --------------------------------------------------------------------
 
-  // Load roi mask
-  std::string fmask = sdb_->GetImagePath(roi);
-  MaskImageType::Pointer mask = syd::ReadImage<MaskImageType>(fmask);
 
-  // in general spect and mask not the same spacing. Need to resample
-  // one of the two.
+// --------------------------------------------------------------------
+void syd::ActivityCommand::RunIntegratedActivity(const Patient & patient, std::vector<std::string> & args)
+{
 
-  // resample mask like the spect image (both spacing and crop).
-  // FIXME or reverse ... --> but need to store correct volume for
-  // the counts if resample, need to convert values in
-  // counts_concentration
-  mask = syd::ResampleImageLike<MaskImageType>(mask, spect, 0, 0);
-
-  // compute stats
-  typedef itk::LabelStatisticsImageFilter<ImageType, MaskImageType> FilterType;
-  typename FilterType::Pointer filter=FilterType::New();
-  filter->SetInput(spect);
-  filter->SetLabelInput(mask);
-  filter->Update();
-
-  // Should I update also roi values (vol + density) ? No.
-  double pixelVol = spect->GetSpacing()[0]*spect->GetSpacing()[1]*spect->GetSpacing()[2];
-  double vol = filter->GetCount(1) * pixelVol * 0.001; // in CC
-
-  // Store stats
-  timeactivity.mean_counts_by_cc = filter->GetMean(1)/pixelVol; // mean counts by cc
-  timeactivity.std_counts_by_cc = filter->GetSigma(1)/pixelVol; // std deviation by cc
-
-  // Also peak here ? no. Not here : prefer for integrated activity)
-
-  // Update db
-  adb_->Update(timeactivity);
 }
 // --------------------------------------------------------------------

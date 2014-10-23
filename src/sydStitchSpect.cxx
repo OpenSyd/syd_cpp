@@ -17,9 +17,9 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertTimepoint_ggo.h"
+#include "sydStitchSpect_ggo.h"
 #include "core/sydCommon.h"
-#include "sydInsertTimepointCommand.h"
+#include "sydStitchSpectCommand.h"
 
 // easylogging : only once initialization (in the main)
 _INITIALIZE_EASYLOGGINGPP
@@ -31,7 +31,7 @@ _INITIALIZE_EASYLOGGINGPP
 int main(int argc, char* argv[])
 {
   // Init command line
-  GGO(sydInsertTimepoint, args_info);
+  GGO(sydStitchSpect, args_info);
 
   // Init logging option (verbose)
   syd::init_logging_verbose_options(args_info);
@@ -43,17 +43,14 @@ int main(int argc, char* argv[])
 
   // Get the current db names
   std::string db = args_info.inputs[0];
-  syd::InsertTimepointCommand * c = new syd::InsertTimepointCommand(db);
+  syd::StitchSpectCommand * c = new syd::StitchSpectCommand(db);
 
   // Execute the command
-  c->set_ct_selection_patterns(args_info.ct_arg);
-  c->set_ignore_files_flag(args_info.ignore_flag);
-  c->set_ignore_CT_flag(args_info.ignoreCT_flag);
-  c->set_ignore_Spect_flag(args_info.ignoreSpect_flag);
-  c->set_update_md5_flag(args_info.updateMD5_flag);
   std::vector<std::string> serie_ids;
+  c->set_threshold_cumul(args_info.thresholdCumul_arg);
+  c->set_skip_slices(args_info.skip_arg);
   for(auto i=1; i<args_info.inputs_num; i++) serie_ids.push_back(args_info.inputs[i]);
-  c->InsertTimepoint(serie_ids);
+  c->StitchSpect(serie_ids);
 
   // This is the end, my friend.
 }

@@ -161,12 +161,14 @@ void syd::InsertRoiCommand::Run(const Timepoint & timepoint,
   }
   // Update roimaskimage
   sdb_->UpdateRoiMaskImage(roimaskimage);
-  RawImage rawimage(sdb_->GetById<RawImage>(roimaskimage.mask_id));
-  sdb_->UpdateMD5(rawimage);
 
   // Mv or copy the filename
   std::string newfilename = sdb_->GetImagePath(roimaskimage);
   syd::RenameOrCopyMHDImage(filename, newfilename, 2, get_move_flag());
+
+  // update md5
+  RawImage rawimage(sdb_->GetById<RawImage>(roimaskimage.mask_id));
+  sdb_->UpdateMD5(rawimage);
 
   // Update roimaskimage volume/density
   sdb_->UpdateRoiMaskImageVolume(roimaskimage);

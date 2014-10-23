@@ -62,7 +62,8 @@ namespace syd {
     void TraceCallback(const char* sql);
 
     // Load the list of T corresponding to the sql query q
-    template<class T> void LoadVector(std::vector<T> & list, const odb::query<T> & q= odb::query<T>::id != 0);
+    template<class T> void LoadVector(const odb::query<T> & q, std::vector<T> & list);
+    template<class T> void LoadVector(std::vector<T> & list);
 
     // Insert a new element of type T
     template<class T> void Insert(T & t);

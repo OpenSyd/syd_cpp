@@ -66,7 +66,7 @@ void syd::CropCTCommand::Run(std::string patient_name, const std::vector<std::st
     std::vector<Timepoint> timepoints;
     IdType pid = p.id;
     if (arg.size() == 0 or (arg[0] == "all")) {
-      sdb_->LoadVector<Timepoint>(timepoints, odb::query<Timepoint>::patient_id == pid);
+      sdb_->LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == pid, timepoints);
     }
     else {
       for(auto i:arg) {

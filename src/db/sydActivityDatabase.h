@@ -25,6 +25,9 @@
 #include "Activity-odb.hxx"
 #include "TimeActivity-odb.hxx"
 
+// itk
+#include <itkLabelStatisticsImageFilter.h>
+
 // Manage a list of computation about activities and time-integrated
 // activities, associated to a StudyDatabase
 // --------------------------------------------------------------------
@@ -38,8 +41,15 @@ namespace syd {
 
     SYD_INIT_DATABASE(ActivityDatabase);
 
+    typedef float PixelType;
+    typedef itk::Image<PixelType, 3> ImageType;
+    typedef uchar MaskPixelType;
+    typedef itk::Image<MaskPixelType, 3> MaskImageType;
+
     // Dump information
     virtual void Dump(std::ostream & os, std::vector<std::string> & args);
+    void Dump(std::ostream & os, const Patient & patient, std::vector<std::string> & args);
+
     virtual void CheckIntegrity(std::vector<std::string> & args);
     virtual void CreateDatabase();
 
@@ -47,7 +57,7 @@ namespace syd {
     TimeActivity NewTimeActivity(const Timepoint & t, const RoiMaskImage & roi);
 
     void UpdateActivity(Activity & activity);
-    void UpdateTimeActivity(TimeActivity & timeactivity);
+    void UpdateTimeActivityInRoi(TimeActivity & timeactivity);
 
     std::shared_ptr<ClinicDatabase> get_clinical_database() { return cdb_; }
     std::shared_ptr<StudyDatabase> get_study_database() { return sdb_; }

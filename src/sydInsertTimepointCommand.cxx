@@ -44,6 +44,8 @@ void syd::InsertTimepointCommand::Initialization()
   cdb_ = sdb_->get_clinical_database();
   ct_selection_patterns_.clear();
   set_ignore_files_flag(false);
+  set_ignore_CT_flag(false);
+  set_ignore_Spect_flag(false);
 }
 // --------------------------------------------------------------------
 
@@ -143,7 +145,8 @@ void syd::InsertTimepointCommand::InsertTimepoint(const Serie & serie)
 
   // Convert dicom to image (and compute md5)
   if (!get_ignore_files_flag()) {
-    sdb_->ConvertDicomToImage(timepoint);
+    if (!get_ignore_CT_flag()) sdb_->ConvertCTDicomToImage(timepoint);
+    if (!get_ignore_Spect_flag()) sdb_->ConvertSpectDicomToImage(timepoint);
   }
   else { // ignore dicom copy, only update md5
     if (get_update_md5_flag()) {
