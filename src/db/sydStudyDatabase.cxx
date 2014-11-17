@@ -805,7 +805,7 @@ syd::RoiMaskImage syd::StudyDatabase::NewRoiMaskImage(const Timepoint & timepoin
 
   // Create new RawImage associated with the roi
   RawImage mask = NewRawImage(patient);
-  Insert(mask);
+  //Insert(mask); // already inserted !
 
   // Insert roi
   roi.mask_id = mask.id;

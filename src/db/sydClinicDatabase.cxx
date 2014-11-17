@@ -431,7 +431,10 @@ void syd::ClinicDatabase::Dump(std::ostream & os, std::vector<std::string> & arg
                 [&](Serie a, Serie b) { return syd::IsBefore(a.acquisition_date, b.acquisition_date); }  );
 
       // Print all series
-      for(auto i:series) os << Print(i) << std::endl;
+      for(auto i:series) {
+        os << Print(i) << std::endl;
+        os << i.path << std::endl;
+      }
 
       // Print serie ids
       os << patient.name << " " << patient.synfrizz_id << " (total " << series.size() << ") ";

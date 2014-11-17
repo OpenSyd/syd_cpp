@@ -59,7 +59,7 @@ syd::ActivityCommand::~ActivityCommand()
 void syd::ActivityCommand::Run(std::vector<std::string> & args)
 {
   if (args.size() == 0) {
-    LOG(FATAL) << "Error, please provide a <cmd> .... TODO";
+    LOG(FATAL) << "Error, please provide a <cmd>. See --help";
   }
   // Switch according to command
   std::string cmd = args[0];
@@ -69,10 +69,14 @@ void syd::ActivityCommand::Run(std::vector<std::string> & args)
     RunTimeActivity(args);
 
   }
-  if (cmd =="ia") { // integrated activity
-    RunIntegratedActivity(args);
+  else {
+    if (cmd =="ia") { // integrated activity
+      RunIntegratedActivity(args);
+    }
+    else {
+      LOG(FATAL) << "Error, please provide 'ta' or 'ia'. See --help";
+    }
   }
-
 }
 // --------------------------------------------------------------------
 
@@ -178,7 +182,7 @@ void syd::ActivityCommand::RunTimeActivity(const Timepoint & timepoint, std::vec
     // Verbose if needed
     VLOG(1) << patient.synfrizz_id << " " << patient.name << " " << roitype.name << " "
             << timepoint.number  << " " << timepoint.time_from_injection_in_hours  << " "
-            << timeactivity.mean_counts_by_cc << " " << timeactivity.std_counts_by_cc;
+            << timeactivity.mean_counts_by_mm3 << " " << timeactivity.std_counts_by_mm3;
   }
 }
 // --------------------------------------------------------------------

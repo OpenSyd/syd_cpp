@@ -42,8 +42,8 @@ namespace syd {
     IdType        timepoint_id;
     IdType        roi_id;
     IdType        patient_id;
-    double        mean_counts_by_cc;
-    double        std_counts_by_cc;
+    double        mean_counts_by_mm3;
+    double        std_counts_by_mm3;
 
     // --------------------------------------------------
     TimeActivity() {}
@@ -63,7 +63,7 @@ namespace syd {
     // --------------------------------------------------
     friend std::ostream& operator<<(std::ostream& os, const TimeActivity & p) {
       os << p.id << " " << p.timepoint_id << " " << p.roi_id << " "
-         << p.mean_counts_by_cc << " " << p.std_counts_by_cc;
+         << p.mean_counts_by_mm3 << " " << p.std_counts_by_mm3;
       return os;
     }
     // --------------------------------------------------
@@ -74,8 +74,8 @@ namespace syd {
       id = t.id;
       timepoint_id = t.timepoint_id;
       roi_id = t.roi_id;
-      mean_counts_by_cc = t.mean_counts_by_cc;
-      std_counts_by_cc = t.std_counts_by_cc;
+      mean_counts_by_mm3 = t.mean_counts_by_mm3;
+      std_counts_by_mm3 = t.std_counts_by_mm3;
     }
     // --------------------------------------------------
 

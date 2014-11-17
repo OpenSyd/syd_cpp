@@ -3,8 +3,11 @@
 package "sydActivity"
 usage "sydActivity <db> <cmd>"
 version "0.1"
-description "TODO
-- <cmd> can be :
+description "<cmd> can be :
+- ta <patient> <nb> <roiname> : for time activity computed for patient/timepoint/roiname.
+- ia : for integrated activity (NOT YET)
+
+- <timepoint> and <roiname> could be 'all'
 
 "
 

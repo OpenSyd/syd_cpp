@@ -188,8 +188,8 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const Patient & patient, std
       RoiMaskImage roi(roimaskimages[j]);
       if (i<tva[j].size()) {
         TimeActivity activity(tva[j][i]);
-        ta << activity.mean_counts_by_cc
-           << activity.std_counts_by_cc;
+        ta << activity.mean_counts_by_mm3
+           << activity.std_counts_by_mm3;
       }
       else {
         ta << "-" << "-";
@@ -245,8 +245,8 @@ void syd::ActivityDatabase::UpdateTimeActivityInRoi(TimeActivity & timeactivity)
   double vol = filter->GetCount(1) * pixelVol * 0.001; // in CC
 
   // Store stats
-  timeactivity.mean_counts_by_cc = filter->GetMean(1)/pixelVol; // mean counts by cc
-  timeactivity.std_counts_by_cc = filter->GetSigma(1)/pixelVol; // std deviation by cc
+  timeactivity.mean_counts_by_mm3 = filter->GetMean(1)/pixelVol; // mean counts by cc
+  timeactivity.std_counts_by_mm3 = filter->GetSigma(1)/pixelVol; // std deviation by cc
 
   // Also peak here ? no. Not here : prefer for integrated activity)
 
