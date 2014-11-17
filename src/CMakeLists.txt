@@ -118,3 +118,10 @@ wrap_ggo(sydStitchSpect sydStitchSpect.ggo)
 add_executable(sydStitchSpect sydStitchSpect.cxx sydStitchSpect_ggo.c sydStitchSpectCommand.cxx)
 target_link_libraries(sydStitchSpect ${SYD_LIBS})
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydConvertDicomSerie sydConvertDicomSerie.ggo)
+add_executable(sydConvertDicomSerie sydConvertDicomSerie.cxx sydConvertDicomSerie_ggo.c)
+target_link_libraries(sydConvertDicomSerie ${SYD_LIBS})
+#----------------------------------------------------------
