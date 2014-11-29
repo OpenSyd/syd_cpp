@@ -42,6 +42,7 @@ void syd::InsertDicomCommand::Initialization()
 {
   patient_name_ = "noname";
   set_rename_flag(false);
+  set_force_patient_name_flag(false);
 
   // We need to add the DatasetName tag to the dicom dictionary
   DcmDictEntry * e = new DcmDictEntry(0x0011, 0x1012, EVR_LO, "DatasetName", 0, DcmVariableVM, NULL, true, NULL);
@@ -209,9 +210,16 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
     std::string initials = PatientName[0] + PatientName.substr(n+1,1);
     std::transform(initials.begin(), initials.end(), initials.begin(), ::tolower);
     if (initials != patient.name) {
-      LOG(FATAL) << "Error the patient in the dicom is " << PatientName
-                 << " (" << initials << "), while you ask for "
-                 << patient.name;
+      if (force_patient_name_flag_) {
+        LOG(WARNING) << "Warning the patient in the dicom is " << PatientName
+                     << " (" << initials << "), while you ask for "
+                     << patient.name;
+      }
+      else {
+        LOG(FATAL) << "Error the patient in the dicom is " << PatientName
+                   << " (" << initials << "), while you ask for "
+                   << patient.name;
+      }
     }
   }
 
@@ -256,7 +264,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
 
   // Create the series
   Serie serie;
-  if (cdb_->GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid, serie)) {
+  if (cdb_->GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid and patient.id == odb::query<Serie>::patient_id, serie)) {
     // already exist
     // cdb_->CheckSerie(serie);
     VLOG(1) << "Serie id=" << serie.id << " at " << acqui_date << " already exist, updating.";

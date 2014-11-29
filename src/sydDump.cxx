@@ -39,7 +39,21 @@ int main(int argc, char* argv[])
 
   // Check args
   if (args_info.inputs_num < 1) {
-    LOG(FATAL) << "Error please, provide <db> <cmd|patient> (see usage)";
+    //LOG(FATAL) << "Error please, provide <db> <cmd|patient> (see usage)";
+
+    //    Display info for all dbs
+    syd::DatabaseFactory::OpenDatabaseFilenames();
+    for(auto i:syd::DatabaseFactory::map_of_database_types_) {
+      std::string param = syd::DatabaseFactory::map_of_database_param_[i.first];
+      std::istringstream f(param);
+      std::string filename;
+      getline(f, filename, ';');
+      std::string folder;
+      getline(f, folder, ';');
+      std::cout << "Database '" << i.first << "' of type " << i.second << std::endl
+                << "\t filename " << filename << " in folder " << folder << std::endl;
+    }
+    exit(0); // end
   }
 
   // Get database

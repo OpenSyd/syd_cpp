@@ -647,7 +647,42 @@ void syd::StudyDatabase::Dump(std::ostream & os, std::vector<std::string> & args
   cdb_->GetPatientsByName(patient_name, patients);
 
   // Dump all patients
-  for(auto i:patients) std::cout << Print(i) << std::endl;
+  //  for(auto i:patients) std::cout << Print(i) << std::endl;
+
+  syd::PrintTable ta;
+  ta.AddColumn("P", 3, 0);
+  ta.AddColumn("N", 10, 0);
+  ta.AddColumn("I", 17, 0);
+  ta.AddColumn("W", 7, 0);
+  ta.AddColumn("", 3, 0);
+  ta.AddColumn("IA", 10, 0);
+  ta.AddColumn("", 4, 0);
+  ta.AddColumn("T", 2, 0);
+  ta.AddColumn("n", 3, 0);
+  ta.AddColumn("tp", 35, 0);
+  ta.Init();
+
+  for(auto i:patients) {
+    ta << i.synfrizz_id << i.name << i.injection_date
+       << i.weight_in_kg << "kg" << i.injected_quantity_in_MBq << "MBq"
+       << (i.was_treated==true ? "Y":"N");
+    // Get all associated timepoints
+    std::stringstream ss;
+    typedef odb::query<Timepoint> QueryType;
+    std::vector<Timepoint> timepoints;
+    LoadVector<Timepoint>(QueryType::patient_id == i.id, timepoints);
+    //ss << "\t" << timepoints.size() << "\t";
+    for(auto t:timepoints) {
+      ss << std::fixed << std::setprecision(1) << t.time_from_injection_in_hours << " ";
+    }
+    ta << timepoints.size() << ss.str();
+
+    // Get all associated rois FIXME
+    //std::vector<RoiMaskImage> rois;
+    //LoadVector<RoiMaskImage>(QueryType::patient
+
+  }
+  ta.Print(std::cout);
 };
 // --------------------------------------------------------------------
 
@@ -672,6 +707,11 @@ void syd::StudyDatabase::DumpRoi(std::ostream & os, std::vector<std::string> & a
   ta.AddColumn("N", 3, 0);
   ta.AddColumn("vol(cc)", 12, 3);
   ta.AddColumn("d(g/cc)", 9, 3);
+  ta.AddColumn("w(g)", 9, 0);
+  if (roiname == "patient") {
+    ta.AddColumn("w kg", 5, 0);
+    ta.AddColumn("w/W", 9, 4);
+  }
   ta.Init();
 
   for(auto p:patients) {
@@ -684,9 +724,14 @@ void syd::StudyDatabase::DumpRoi(std::ostream & os, std::vector<std::string> & a
     b = b && GetIfExist<RoiMaskImage>(odb::query<RoiMaskImage>::timepoint_id == timepoint.id and
                                       odb::query<RoiMaskImage>::roitype_id == roitype.id, roi);
     if (b) {
-      ta << roi.volume_in_cc << roi.density_in_g_cc;
+      double w = roi.volume_in_cc*roi.density_in_g_cc;
+      ta << roi.volume_in_cc << roi.density_in_g_cc << w;
+      if (roiname == "patient") ta << p.weight_in_kg << w/1000.0/p.weight_in_kg;
     }
-    else ta << "-" << "-";
+    else {
+      ta << "-" << "-" << "-";
+      if (roiname == "patient") ta << "-" << "-";
+    }
   }
   ta.Print(std::cout);
 };
@@ -763,8 +808,8 @@ std::vector<syd::RoiMaskImage> syd::StudyDatabase::GetRoiMaskImages(const Timepo
     cdb_->LoadVector<RoiType>(roitypes);
   }
   else {
-    std::string pattern = "%"+roiname+"%";
-    cdb_->LoadVector<RoiType>(odb::query<RoiType>::name.like(pattern), roitypes);
+    // Pattern could contains '%' as wild card.
+    cdb_->LoadVector<RoiType>(odb::query<RoiType>::name.like(roiname), roitypes);
   }
 
   // For each, retrieve RoiMaskImage
@@ -888,6 +933,8 @@ void syd::StudyDatabase::UpdateRoiMaskImageVolume(RoiMaskImage & roi)
   filter->SetLabelInput(imask);
   filter->Update();
 
+  syd::WriteImage<MaskImageType>(imask, "bidon.mhd");
+
   // volume
   double pixelVol = imask->GetSpacing()[0]*imask->GetSpacing()[1]*imask->GetSpacing()[2];
   double vol = filter->GetCount(1) * pixelVol * 0.001; // in CC
@@ -896,7 +943,6 @@ void syd::StudyDatabase::UpdateRoiMaskImageVolume(RoiMaskImage & roi)
   roi.volume_in_cc = vol;
   roi.density_in_g_cc = density;
   Update(roi);
-
 }
 // --------------------------------------------------------------------
 

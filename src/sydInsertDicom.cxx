@@ -47,6 +47,7 @@ int main(int argc, char* argv[])
 
   // Get the current db names/folders
   c->set_rename_flag(args_info.rename_flag);
+  c->set_force_patient_name_flag(args_info.force_name_flag);
   std::string patient_name = args_info.inputs[1];
   std::vector<std::string> folders;
   for(auto i=2; i<args_info.inputs_num; i++) folders.push_back(args_info.inputs[i]);

@@ -63,6 +63,7 @@ namespace syd {
     // --------------------------------------------------
     friend std::ostream& operator<<(std::ostream& os, const TimeActivity & p) {
       os << p.id << " " << p.timepoint_id << " " << p.roi_id << " "
+         << p.patient_id << " "
          << p.mean_counts_by_mm3 << " " << p.std_counts_by_mm3;
       return os;
     }
@@ -74,6 +75,7 @@ namespace syd {
       id = t.id;
       timepoint_id = t.timepoint_id;
       roi_id = t.roi_id;
+      patient_id = t.patient_id;
       mean_counts_by_mm3 = t.mean_counts_by_mm3;
       std_counts_by_mm3 = t.std_counts_by_mm3;
     }

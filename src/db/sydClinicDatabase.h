@@ -48,6 +48,7 @@ namespace syd {
     std::string GetPath(const Patient & patient);
     std::string GetPath(const Serie & serie);
     void GetPatientsByName(std::string patient_name, std::vector<Patient> & patients);
+    Patient GetPatientByName(std::string patient_name);
     odb::query<Serie> GetSeriesQueryFromPatterns(std::vector<std::string> patterns);
     void AndSeriesQueryFromPattern(odb::query<Serie> & q, std::string pattern);
     RoiType GetRoiType(std::string name);

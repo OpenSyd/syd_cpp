@@ -125,3 +125,10 @@ wrap_ggo(sydConvertDicomSerie sydConvertDicomSerie.ggo)
 add_executable(sydConvertDicomSerie sydConvertDicomSerie.cxx sydConvertDicomSerie_ggo.c)
 target_link_libraries(sydConvertDicomSerie ${SYD_LIBS})
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydUpdateSpect sydUpdateSpect.ggo)
+add_executable(sydUpdateSpect sydUpdateSpect.cxx sydUpdateSpect_ggo.c)
+target_link_libraries(sydUpdateSpect ${SYD_LIBS})
+#----------------------------------------------------------

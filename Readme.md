@@ -6,7 +6,7 @@ Target Radionuclide Therapy Toolkit (TRnT tk).
 
 When doing image processing studies on a database of patient, it could be difficult to manage all the dicom files and clinical data associated with the study. This toolkit helps to manage a database of patient data and images.
 
-NOT CLEAR : separate what is toolkit / what is synfrizz specific
+*FIXME* NOT CLEAR : separate what is toolkit / what is synfrizz specific
 
 Tools
 =====
@@ -18,7 +18,9 @@ Tools
 
 *FIXME* sydCreateDatabase sydClearTable
 
-
+sydActivity           sydCreateDatabase     sydDumpClinic         sydInsertDicom        sydRegister
+sydCheckIntegrity     sydCropCT             sydDumpStudy          sydInsertRoi          sydStitchSpect
+sydConvertDicomSerie  sydDump               sydInsertAverageCT    sydInsertTimepoint    sydUpdate
 
 Modules ?
 =======

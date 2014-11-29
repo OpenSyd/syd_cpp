@@ -49,10 +49,49 @@ public:
   std::string   reconstruction_date;
   std::string   modality;
 
-  friend std::ostream& operator<<(std::ostream& os, const Serie & p) {
+  // --------------------------------------------------
+  Serie() {}
+  ~Serie() {}
+  Serie(const Serie & other) { copy(other); }
+  // --------------------------------------------------
+
+
+  // --------------------------------------------------
+  Serie & operator= (const Serie & other) {
+    if (this != &other) { copy(other); }
+    return *this;
+  }
+  // --------------------------------------------------
+
+
+  // --------------------------------------------------
+  void copy(const Serie & t) {
+    id = t.id;
+    patient_id = t.patient_id;
+    dicom_uid = t.dicom_uid;
+    dicom_dataset_name = t.dicom_dataset_name;
+    dicom_image_id = t.dicom_image_id;
+    dicom_study_desc = t.dicom_study_desc;
+    dicom_series_desc = t.dicom_series_desc;
+    dicom_frame_of_reference_uid = t.dicom_frame_of_reference_uid;
+    dicom_manufacturer = t.dicom_manufacturer;
+    dicom_manufacturer_model_name = t.dicom_manufacturer_model_name;
+    dicom_instance_number = t.dicom_instance_number;
+    number_of_files = t.number_of_files;
+    path = t.path;
+    acquisition_date = t.acquisition_date;
+    reconstruction_date = t.reconstruction_date;
+    modality = t.modality;
+  }
+  // --------------------------------------------------
+
+
+  // --------------------------------------------------
+    friend std::ostream& operator<<(std::ostream& os, const Serie & p) {
     os << p.id << " " << p.acquisition_date << " " << p.dicom_series_desc << " " << p.dicom_image_id;
     return os;
   }
+  // --------------------------------------------------
 
 };
 // --------------------------------------------------------------------

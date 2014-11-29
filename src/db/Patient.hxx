@@ -39,10 +39,42 @@ public:
   std::string   injection_date;
   std::string   injected_quantity_in_MBq;
 
+  // --------------------------------------------------
+  Patient() {}
+  ~Patient() {}
+  Patient(const Patient & other) { copy(other); }
+  // --------------------------------------------------
+
+
+  // --------------------------------------------------
+  Patient & operator= (const Patient & other) {
+    if (this != &other) { copy(other); }
+    return *this;
+  }
+  // --------------------------------------------------
+
+
+  // --------------------------------------------------
   friend std::ostream& operator<<(std::ostream& os, const Patient & p) {
     os << p.synfrizz_id << " " << p.name;
     return os;
   }
+  // --------------------------------------------------
+
+
+  // --------------------------------------------------
+  void copy(const Patient & t) {
+    id = t.id;
+    name = t.name;
+    synfrizz_id = t.synfrizz_id;
+    weight_in_kg = t.weight_in_kg;
+    path = t.path;
+    was_treated = t.was_treated;
+    injection_date = t.injection_date;
+    injected_quantity_in_MBq = t.injected_quantity_in_MBq;
+  }
+  // --------------------------------------------------
+
 
 };
 // --------------------------------------------------------------------

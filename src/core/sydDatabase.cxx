@@ -73,7 +73,6 @@ void syd::Database::SetFileAndFolder(std::istringstream & f)
 // static function
 std::shared_ptr<syd::Database> syd::Database::OpenDatabase(std::string name, std::string init_filename)
 {
-
   syd::DatabaseFactory::OpenDatabaseFilenames(init_filename);
   std::string type_name;
   std::string param;

@@ -4,13 +4,13 @@ package "sydDump"
 usage "sydDump <db> <arg>"
 version "0.1"
 description "Dump information of a database.
-- <db> is the name of a Database. Can be ClinicDatabase StudyDatabase ActivityDatabase
+- <db> is the name of a Database. Can be ClinicDatabase, StudyDatabase or ActivityDatabase
 - if db is a ClinicDatabase, <arg> is composed of <cmd> <patient> <pattern>
   - <cmd> = can be 'patient' or 'serie'
-  - <patient> is the name of the patient or can be 'all' for listing all patients.
+  - <patient> is the name of the patient or can be 'all'.
   - <patterns> only print information for data that match all those patterns.
 - if the db is a StudyDatabase, <arg> is <patient> or 'roi'
-  - <patient> is the name of the patient or can be 'all' for listing all patients.
+  - <patient> is the name of the patient or can be 'all'.
   - 'roi' <roiname>
 "
 

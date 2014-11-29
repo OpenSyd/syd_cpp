@@ -43,8 +43,8 @@ include(${SYD_SOURCE_DIR}/cmake/ODB.cmake)
 
 #----------------------------------------------------------
 # ceres
-find_package(Ceres REQUIRED)
-include_directories(${CERES_INCLUDE_DIRS})
+#find_package(Ceres REQUIRED)
+#include_directories(${CERES_INCLUDE_DIRS})
 #----------------------------------------------------------
 
 
@@ -64,21 +64,21 @@ include_directories(${DCMTK_INCLUDE_DIRS})
 
 #----------------------------------------------------------
 ## clitk : needed ?
-set(CLITK_INCLUDE_DIRS "Indicate clitk src folder" CACHE PATH "clitk include")
-set(CLITK_LIBRARY_DIRS "Indicate clitk build folder" CACHE PATH "clitk lib")
+# set(CLITK_INCLUDE_DIRS "Indicate clitk src folder" CACHE PATH "clitk include")
+# set(CLITK_LIBRARY_DIRS "Indicate clitk build folder" CACHE PATH "clitk lib")
 
-set(CLITK_LIBRARY_DIRS ${CLITK_LIBRARY_DIRS}/lib)
+# set(CLITK_LIBRARY_DIRS ${CLITK_LIBRARY_DIRS}/lib)
 
-set(CLITK_INCLUDE_DIRS_COMMON ${CLITK_INCLUDE_DIRS}/common)
-include_directories(BEFORE ${CLITK_INCLUDE_DIRS_COMMON})
+# set(CLITK_INCLUDE_DIRS_COMMON ${CLITK_INCLUDE_DIRS}/common)
+# include_directories(BEFORE ${CLITK_INCLUDE_DIRS_COMMON})
 
-set(CLITK_INCLUDE_DIRS_ITK ${CLITK_INCLUDE_DIRS}/itk)
-include_directories(BEFORE ${CLITK_INCLUDE_DIRS_ITK})
+# set(CLITK_INCLUDE_DIRS_ITK ${CLITK_INCLUDE_DIRS}/itk)
+# include_directories(BEFORE ${CLITK_INCLUDE_DIRS_ITK})
 
-set(CLITK_INCLUDE_DIRS_TOOLS ${CLITK_INCLUDE_DIRS}/tools)
-include_directories(BEFORE ${CLITK_INCLUDE_DIRS_TOOLS})
+# set(CLITK_INCLUDE_DIRS_TOOLS ${CLITK_INCLUDE_DIRS}/tools)
+# include_directories(BEFORE ${CLITK_INCLUDE_DIRS_TOOLS})
 
-link_directories(${CLITK_LIBRARY_DIRS})
+# link_directories(${CLITK_LIBRARY_DIRS})
 
 #----------------------------------------------------------
 

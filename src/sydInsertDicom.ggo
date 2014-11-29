@@ -9,3 +9,4 @@ option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
 option "rename"   	 	r       "Rename file instead of copying (dangerous!)" flag      off
+option "force_name"   	 	f       "Do not check patient name initial"           flag      off

@@ -142,8 +142,13 @@ void syd::ClinicDatabase::GetPatientsByName(std::string patient_name,
   if (patient_name == "all" or patient_name == "") {
     LoadVector<Patient>(patients);
     // Sort by acquisition_date
-    std::sort(patients.begin(), patients.end(),
-              [&](Patient a, Patient b) { return syd::IsBefore(a.injection_date, b.injection_date); }  );
+    // std::sort(patients.begin(), patients.end(),
+    //           [&](Patient a, Patient b) { return syd::IsBefore(a.injection_date, b.injection_date); }  );
+
+    // Sort by Synfrizz_Id
+    std::sort(begin(patients), end(patients),
+              [this](Patient a, Patient b) {
+                return a.synfrizz_id < b.synfrizz_id; }  );
   }
   else { // Get only one patient
     Patient patient;
@@ -157,6 +162,21 @@ void syd::ClinicDatabase::GetPatientsByName(std::string patient_name,
   if (patients.size() == 0) {
     LOG(FATAL) << "Error not patient found with '" << patient_name << "'.";
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+Patient syd::ClinicDatabase::GetPatientByName(std::string patient_name)
+{
+  if (patient_name == "all" or patient_name == "") {
+    LOG(FATAL) << "Error, please provide a patient name not 'all' or empty name.";
+  }
+  Patient patient;
+  if (!GetIfExist<Patient>(odb::query<Patient>::name == patient_name, patient)) {
+    LOG(FATAL) << "Error, the patient " << patient_name << " does not exist";
+  }
+  return patient;
 }
 // --------------------------------------------------------------------
 
@@ -452,6 +472,7 @@ std::string syd::ClinicDatabase::Print(Patient patient, int level)
   std::stringstream ss;
   ss << patient.name << " "
      << patient.synfrizz_id << "\t"
+     << patient.weight_in_kg << " kg\t"
      << patient.injection_date;
   if (level > 0) {
     ss << "\t"  << (patient.was_treated ? "90Y":"no ") << "\t"

@@ -115,23 +115,34 @@ syd::TimeActivity syd::ActivityDatabase::NewTimeActivity(const Timepoint & timep
 // --------------------------------------------------------------------
 void syd::ActivityDatabase::Dump(std::ostream & os, std::vector<std::string> & args)
 {
-  if (args.size() < 2) {
-    LOG(FATAL) << "Error need <patient> and <roiname>";
+  if (args.size() < 3) {
+    LOG(FATAL) << "Error need <cmd>, <patient> and <roiname>" << std::endl
+               << "   <cmd> can be 'mean_count_by_mm3' or '%IA/kg'";
+  }
+
+  // cmd
+  std::string cmd = args[0];
+  args.erase(args.begin());
+
+  if ((cmd != "mean_count_by_mm3") && (cmd != "%IA/kg")) {
+    LOG(FATAL) << "Error please provide 'mean_count_by_mm3' or '%IA/kg'";
   }
 
   // patient
   std::vector<Patient> patients;
   std::string patientname = args[0];
   cdb_->GetPatientsByName(patientname, patients);
+  args.erase(args.begin());
 
   // Loop on patient
-  for(auto patient:patients) Dump(os, patient, args);
+  for(auto patient:patients) Dump(os, cmd, patient, args);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::ActivityDatabase::Dump(std::ostream & os, const Patient & patient, std::vector<std::string> & args)
+void syd::ActivityDatabase::Dump(std::ostream & os, const std::string & cmd,
+                                 const Patient & patient, std::vector<std::string> & args)
 {
   // Get first timepoint
   Timepoint timepoint;
@@ -142,10 +153,12 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const Patient & patient, std
   }
 
   // Get roi
-  std::string roiname = args[1];
+  std::string roiname = args[0];
+  DD(roiname);
   std::vector<RoiMaskImage> roimaskimages =
     sdb_->GetRoiMaskImages(timepoint, roiname);
   if (roimaskimages.size() == 0) {
+    LOG(WARNING) << "No roimaskimage found with name '" << roiname << "'";
     return; //LOG(FATAL) << "No roimaskimage found with name '" << roiname << "'";
   }
   // Sort by id
@@ -156,7 +169,8 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const Patient & patient, std
   // Prepare to print
   syd::PrintTable ta;
   ta.AddColumn("Nb", 3, 0);
-  ta.AddColumn("t", 9, 1);
+  ta.AddColumn("t", 9, 2);
+  ta.AddColumn("%", 7, 2);
 
   // loop on roi to get all timeactivities
   int nb = 0;
@@ -174,22 +188,39 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const Patient & patient, std
     if (timeactivities.size() > nb) nb = timeactivities.size();
     tva.push_back(timeactivities);
     RoiType roitype(sdb_->GetRoiType(roi));
-    ta.AddColumn(roitype.name, 11, 1);
-    ta.AddColumn("std/cc", 7, 2);
+    if (cmd == "mean_count_by_mm3" ) {
+      ta.AddColumn(roitype.name, 11, 3);
+      ta.AddColumn("std", 7, 2);
+    }
+    if (cmd == "%IA/kg") {
+      ta.AddColumn(roitype.name, 16, 8);
+      ta.AddColumn("std", 16, 8);
+    }
   }
 
   // get mean activity
+  double k = (1.0/270199)*1000 * 1000; // 1000 is for g->kg and 1000 is for mm3 to cm3
+  double ia = syd::toDouble(patient.injected_quantity_in_MBq);
   ta.Init();
   for(auto i=0; i<nb; i++) {
     Timepoint t(sdb_->GetById<Timepoint>(tva[0][i].timepoint_id));
     ta << t.number
-       << t.time_from_injection_in_hours;
+       << t.time_from_injection_in_hours
+       << 100/(patient.weight_in_kg); // threshold
     for(auto j=0; j<roimaskimages.size(); j++) {
       RoiMaskImage roi(roimaskimages[j]);
       if (i<tva[j].size()) {
         TimeActivity activity(tva[j][i]);
-        ta << activity.mean_counts_by_mm3
-           << activity.std_counts_by_mm3;
+
+        if (cmd == "mean_count_by_mm3" ) {
+          ta << activity.mean_counts_by_mm3
+             << activity.std_counts_by_mm3;
+        }
+        if (cmd == "%IA/kg") {
+          double d = roi.density_in_g_cc;
+          ta << activity.mean_counts_by_mm3*d*k/ia*100
+             << activity.std_counts_by_mm3*d*k/ia*100;
+        }
       }
       else {
         ta << "-" << "-";
@@ -202,7 +233,9 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const Patient & patient, std
   RoiType roitype(sdb_->GetRoiType(roi));
   std::cout << "# " << patient.name << " " << patient.synfrizz_id << " "
             << roitype.name << " " << roi.volume_in_cc << " cc "
-            << roi.density_in_g_cc*roi.volume_in_cc << " g" << std::endl;
+            << roi.density_in_g_cc*roi.volume_in_cc << " g"
+            << "    threshold is " << 100/(patient.weight_in_kg) << "%"
+            << std::endl;
   ta.Print(std::cout);
 };
 // --------------------------------------------------------------------
@@ -245,8 +278,8 @@ void syd::ActivityDatabase::UpdateTimeActivityInRoi(TimeActivity & timeactivity)
   double vol = filter->GetCount(1) * pixelVol * 0.001; // in CC
 
   // Store stats
-  timeactivity.mean_counts_by_mm3 = filter->GetMean(1)/pixelVol; // mean counts by cc
-  timeactivity.std_counts_by_mm3 = filter->GetSigma(1)/pixelVol; // std deviation by cc
+  timeactivity.mean_counts_by_mm3 = filter->GetMean(1)/pixelVol; // mean counts by mm3
+  timeactivity.std_counts_by_mm3 = filter->GetSigma(1)/pixelVol; // std deviation by mm3
 
   // Also peak here ? no. Not here : prefer for integrated activity)
 

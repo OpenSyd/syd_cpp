@@ -48,7 +48,7 @@ namespace syd {
 
     // Dump information
     virtual void Dump(std::ostream & os, std::vector<std::string> & args);
-    void Dump(std::ostream & os, const Patient & patient, std::vector<std::string> & args);
+    void Dump(std::ostream & os, const std::string & cmd, const Patient & patient, std::vector<std::string> & args);
 
     virtual void CheckIntegrity(std::vector<std::string> & args);
     virtual void CreateDatabase();

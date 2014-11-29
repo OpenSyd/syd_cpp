@@ -36,6 +36,7 @@ namespace syd {
     ~InsertDicomCommand();
 
     void set_rename_flag(bool b) { rename_flag_ = b; }
+    void set_force_patient_name_flag(bool b) { force_patient_name_flag_ = b; }
     void InsertDicom(std::string patient_name, std::vector<std::string> & folders);
     void InsertDicom(std::string patient_name, std::string folder);
 
@@ -47,6 +48,7 @@ namespace syd {
     std::string patient_name_;
     std::vector<std::string> folders_;
     bool rename_flag_;
+    bool force_patient_name_flag_;
   };
 
 

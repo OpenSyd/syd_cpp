@@ -90,6 +90,27 @@ std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::s
     image = orienter->GetOutput();
   }
 
+  // Correct for pixel scale --> dont know why it does not work.
+  // DcmDictEntry * e = new DcmDictEntry(0x0011, 0x103b, EVR_UN, "PixelScale", 0, DcmVariableVM, NULL, true, NULL);
+  // DcmDataDictionary &globalDataDict = dcmDataDict.wrlock();
+  // globalDataDict.addEntry(e);
+  // DcmElement * ee = GetTagValue(dset, "PixelScale");
+  // double f;
+  // ee->getFloat64(f);
+  // DD(f);
+  /*
+  double scale = GetTagValueDouble(dset, "PixelScale");
+  DD(scale);
+  if (scale != 1.0 and scale != 0.0) {
+    typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> FilterType;
+    typename FilterType::Pointer filter = FilterType::New();
+    filter->SetInput(image);
+    filter->SetConstant(scale);
+    filter->Update();
+    image = filter->GetOutput();
+  }
+  */
+
   // End write the result
   syd::WriteImage<ImageType>(image, mhd_filename);
 

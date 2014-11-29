@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
     Database::OpenDatabaseType<StudyDatabase>(db_name);
 
   // Update patient id
-  if (1) {
+  if (0) {
     std::vector<Timepoint> timepoints;
     sdb->LoadVector<Timepoint>(timepoints);
     for(auto i:timepoints) {
