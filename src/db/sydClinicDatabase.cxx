@@ -396,42 +396,30 @@ void syd::ClinicDatabase::AndSeriesQueryFromPattern(odb::query<Serie> & q, std::
 // --------------------------------------------------------------------
 void syd::ClinicDatabase::Dump(std::ostream & os, std::vector<std::string> & args)
 {
-  // Get the command
+  // Get the command and the patient name
   std::string cmd;
-  if (args.size() == 0) cmd = "patient";
-  else cmd = args[0];
-  std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
+  std::string patient_name = "all";
+  std::vector<std::string> patterns;
+  if (args.size() == 0) {
+    cmd = "patient";
+  }
+  else { // at least one args
+    cmd = args[0];
+    std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
+    DD(cmd);
+    // Check cmd
+    if ((cmd.find("serie") == std::string::npos) &&
+        (cmd.find("patient") == std::string::npos)) {
+      LOG(FATAL) << "Error Dump for ClinicDatabase type must be 'serie' or 'patient'";
+    }
+
+    if (args.size() > 1) patient_name = args[1];
+    if (args.size() > 2) for(auto i=2; i<args.size(); i++) patterns.push_back(args[i]);
+  }
 
   // Get the patients
-  std::string patient_name;
-  if (args.size()<2) {
-    patient_name = "all";
-  }
-  else {
-    patient_name = args[1];
-  }
-
   std::vector<Patient> patients;
   GetPatientsByName(patient_name, patients);
-
-  // Get the patterns
-  std::vector<std::string> patterns;
-  for(auto i=2; i<args.size(); i++) patterns.push_back(args[i]);
-
-  // Warning if cmd is 'patient' because patterns is not used
-  if (cmd.find("patient") != std::string::npos) {
-    if (patterns.size() != 0) {
-      std::string p;
-      for(auto i=patterns.begin(); i != patterns.end(); i++) p = p+*i+" ";
-      LOG(WARNING) << "The string patterns you provide ('" << p << "') are ignored.";
-    }
-  }
-
-  // Check cmd
-  if ((cmd.find("serie") == std::string::npos) &&
-      (cmd.find("patient") == std::string::npos)) {
-    LOG(FATAL) << "Error Dump for ClinicDatabase type must be 'serie' or 'patient'";
-  }
 
   // cmd = patient : loop over patient to display
   if (cmd.find("patient")!= std::string::npos)
