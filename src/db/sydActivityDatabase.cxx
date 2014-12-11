@@ -124,8 +124,8 @@ void syd::ActivityDatabase::Dump(std::ostream & os, std::vector<std::string> & a
   std::string cmd = args[0];
   args.erase(args.begin());
 
-  if ((cmd != "mean_count_by_mm3") && (cmd != "%IA/kg")) {
-    LOG(FATAL) << "Error please provide 'mean_count_by_mm3' or '%IA/kg'";
+  if ((cmd != "mean_count_by_mm3") && (cmd != "%IA/kg") && (cmd != "%OA/kg") && (cmd != "%PA/kg")) {
+    LOG(FATAL) << "Error please provide 'mean_count_by_mm3' or '%IA/kg' or '%OA/kg' or '%PA/kg'";
   }
 
   // patient
@@ -154,7 +154,6 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const std::string & cmd,
 
   // Get roi
   std::string roiname = args[0];
-  DD(roiname);
   std::vector<RoiMaskImage> roimaskimages =
     sdb_->GetRoiMaskImages(timepoint, roiname);
   if (roimaskimages.size() == 0) {
@@ -188,6 +187,7 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const std::string & cmd,
     if (timeactivities.size() > nb) nb = timeactivities.size();
     tva.push_back(timeactivities);
     RoiType roitype(sdb_->GetRoiType(roi));
+
     if (cmd == "mean_count_by_mm3" ) {
       ta.AddColumn(roitype.name, 11, 3);
       ta.AddColumn("std", 7, 2);
@@ -196,19 +196,45 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const std::string & cmd,
       ta.AddColumn(roitype.name, 16, 8);
       ta.AddColumn("std", 16, 8);
     }
+    if (cmd == "%OA/kg") {
+      ta.AddColumn(roitype.name, 16, 8);
+      ta.AddColumn("std", 16, 8);
+    }
+    if (cmd == "%PA/kg") {
+      ta.AddColumn(roitype.name, 16, 8);
+      //ta.AddColumn("std", 16, 8);
+    }
   }
+
+  // get the roimask for 'patient' of the first timepoint
+  Timepoint t(sdb_->GetById<Timepoint>(tva[0][0].timepoint_id));
+  RoiMaskImage patientroi = sdb_->GetRoiMaskImage(t, "patient");
+  double td = patientroi.density_in_g_cc;
 
   // get mean activity
   double k = (1.0/270199)*1000 * 1000; // 1000 is for g->kg and 1000 is for mm3 to cm3
   double ia = syd::toDouble(patient.injected_quantity_in_MBq);
   ta.Init();
+
   for(auto i=0; i<nb; i++) {
     Timepoint t(sdb_->GetById<Timepoint>(tva[0][i].timepoint_id));
     ta << t.number
-       << t.time_from_injection_in_hours
-       << 100/(patient.weight_in_kg); // threshold
+       << t.time_from_injection_in_hours;
+    if (cmd == "%OA/kg")
+      ta << 100/(patientroi.volume_in_cc*td/1000); // threshold
+    else
+      ta << 100/(patient.weight_in_kg); // threshold
+
+    TimeActivity total_activity;
+    GetIfExist<TimeActivity>(odb::query<TimeActivity>::patient_id == patient.id and
+                             odb::query<TimeActivity>::roi_id == patientroi.id and
+                             odb::query<TimeActivity>::timepoint_id == t.id,
+                             total_activity);
+    double oa = total_activity.mean_counts_by_mm3*td*patientroi.volume_in_cc*td*k/1000.0;
+
     for(auto j=0; j<roimaskimages.size(); j++) {
       RoiMaskImage roi(roimaskimages[j]);
+      double d = roi.density_in_g_cc;
       if (i<tva[j].size()) {
         TimeActivity activity(tva[j][i]);
 
@@ -216,11 +242,22 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const std::string & cmd,
           ta << activity.mean_counts_by_mm3
              << activity.std_counts_by_mm3;
         }
+
         if (cmd == "%IA/kg") {
-          double d = roi.density_in_g_cc;
           ta << activity.mean_counts_by_mm3*d*k/ia*100
              << activity.std_counts_by_mm3*d*k/ia*100;
         }
+
+        if (cmd == "%OA/kg") {
+          ta << activity.mean_counts_by_mm3*d*k/oa*100
+             << activity.std_counts_by_mm3*d*k/oa*100;
+        }
+
+        if (cmd == "%PA/kg") {
+          ta << activity.peak_counts_by_mm3*d*k/ia*100;
+            //  << activity.std_counts_by_mm3*d*k/oa*100;
+        }
+
       }
       else {
         ta << "-" << "-";
@@ -264,7 +301,7 @@ void syd::ActivityDatabase::UpdateTimeActivityInRoi(TimeActivity & timeactivity)
   // FIXME or reverse ... --> but need to store correct volume for
   // the counts if resample, need to convert values in
   // counts_concentration
-  mask = syd::ResampleImageLike<MaskImageType>(mask, spect, 0, 0);
+  mask = syd::ResampleAndCropImageLike<MaskImageType>(mask, spect, 0, 0);
 
   // compute stats
   typedef itk::LabelStatisticsImageFilter<ImageType, MaskImageType> FilterType;
@@ -288,5 +325,70 @@ void syd::ActivityDatabase::UpdateTimeActivityInRoi(TimeActivity & timeactivity)
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+void syd::ActivityDatabase::UpdatePeakTimeActivityInRoi(TimeActivity & timeactivity)
+{
+  // Get corresponding timepoint and roi
+  Timepoint timepoint(sdb_->GetById<Timepoint>(timeactivity.timepoint_id));
+  RoiMaskImage roi(sdb_->GetById<RoiMaskImage>(timeactivity.roi_id));
+
+  // Load spect image
+  RawImage ispect = sdb_->GetById<RawImage>(timepoint.spect_image_id);
+  std::string fspect = sdb_->GetImagePath(ispect);
+  ImageType::Pointer spect = syd::ReadImage<ImageType>(fspect);
+
+  // Load roi mask
+  std::string fmask = sdb_->GetImagePath(roi);
+  MaskImageType::Pointer mask = syd::ReadImage<MaskImageType>(fmask);
+
+  // // Crop spect like mask
+  spect = syd::CropImageLike<ImageType>(spect, mask);
+  //syd::WriteImage<ImageType>(spect, "spect-crop.mhd");
+
+  // Compute mean
+  spect = syd::MeanFilterImage<ImageType>(spect, mean_radius_);
+  //syd::WriteImage<ImageType>(spect, fspect+"-mean.mhd"); // temporary
+
+  // Compute statistics
+  mask = syd::ResampleAndCropImageLike<MaskImageType>(mask, spect, 0, 0);
+
+  // compute stats (without LabelStatisticsImageFilter because we need the position of the max)
+  typedef itk::ImageRegionConstIteratorWithIndex<ImageType> IteratorType;
+  typedef itk::ImageRegionConstIteratorWithIndex<MaskImageType> MIteratorType;
+  IteratorType iters(spect, spect->GetLargestPossibleRegion());
+  MIteratorType iterm(mask, mask->GetLargestPossibleRegion());
+  iters.GoToBegin();
+  iterm.GoToBegin();
+  double max = 0.0;
+  ImageType::IndexType index;
+  while (!iters.IsAtEnd()) {
+    if (iterm.Get() == 1) { // inside the mask
+      if (iters.Get() > max) {
+        max = iters.Get();
+        index = iters.GetIndex();
+      }
+    }
+    ++iters;
+    ++iterm;
+  }
+  ImageType::PointType p;
+  spect->TransformIndexToPhysicalPoint(index, p);
+
+  // compute pixel volume in mm3
+  double pixelVol = spect->GetSpacing()[0]*spect->GetSpacing()[1]*spect->GetSpacing()[2];
+
+  // Store stats
+  timeactivity.peak_counts_by_mm3 = max/pixelVol; // max counts by mm3
+
+  // Get position of the max
+  std::ostringstream s;
+  s << p[0] << ";" << p[1] << ";" << p[2];
+  timeactivity.peak_position = s.str();
+
+  // Update db
+  Update(timeactivity);
+}
+// --------------------------------------------------------------------
 
 // --------------------------------------------------------------------

@@ -51,11 +51,16 @@ namespace syd {
     void RunIntegratedActivity(std::vector<std::string> & args);
     void RunIntegratedActivity(const Patient & patient, std::vector<std::string> & args);
 
+    void set_mean_radius(double v) { mean_radius_ = v;}
+
   protected:
     void Initialization();
-    std::shared_ptr<syd::ClinicDatabase> cdb_;
-    std::shared_ptr<syd::StudyDatabase>  sdb_;
+    std::shared_ptr<syd::ClinicDatabase>    cdb_;
+    std::shared_ptr<syd::StudyDatabase>     sdb_;
     std::shared_ptr<syd::ActivityDatabase>  adb_;
+    bool peakActivityFlag_;
+    double mean_radius_;
+
   };
 
 }  // namespace syd

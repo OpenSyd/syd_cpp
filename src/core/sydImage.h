@@ -38,6 +38,8 @@
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkImageSliceIteratorWithIndex.h>
 #include <itkImageSliceConstIteratorWithIndex.h>
+#include <itkConvolutionImageFilter.h>
+#include <itkRegionOfInterestImageFilter.h>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -62,15 +64,20 @@ namespace syd {
   //--------------------------------------------------------------------
   template<class ImageType>
   typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filenames);
+  template<class ImageType>
+  typename ImageType::Pointer ComputeMeanFilterKernel(const typename ImageType::SpacingType & spacing, double radius);
   //--------------------------------------------------------------------
 
 
   //--------------------------------------------------------------------
   template<class ImageType>
-  typename ImageType::Pointer ResampleImageLike(const ImageType * input,
-                                                const itk::ImageBase<ImageType::ImageDimension> * like,
-                                                int interpolationType,
-                                                typename ImageType::PixelType defaultValue);
+  typename ImageType::Pointer ResampleAndCropImageLike(const ImageType * input,
+                                                       const itk::ImageBase<ImageType::ImageDimension> * like,
+                                                       int interpolationType,
+                                                       typename ImageType::PixelType defaultValue);
+  template<class ImageType>
+  typename ImageType::Pointer CropImageLike(const ImageType * input,
+                                                const itk::ImageBase<ImageType::ImageDimension> * like);
   //--------------------------------------------------------------------
 
 

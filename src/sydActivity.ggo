@@ -5,6 +5,7 @@ usage "sydActivity <db> <cmd>"
 version "0.1"
 description "<cmd> can be :
 - ta <patient> <nb> <roiname> : for time activity computed for patient/timepoint/roiname.
+- pa <patient> <nb> <roiname> : for peak time activity computed for patient/timepoint/roiname.
 - ia : for integrated activity (NOT YET)
 
 - <timepoint> and <roiname> could be 'all'
@@ -14,3 +15,4 @@ description "<cmd> can be :
 option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
+option "radius"   	 	r       "Radius for peak value (in mm)"		      float     default="5" no

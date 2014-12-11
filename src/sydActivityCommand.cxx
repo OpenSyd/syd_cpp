@@ -43,6 +43,7 @@ void syd::ActivityCommand::Initialization()
 {
   cdb_ = adb_->get_clinical_database();
   sdb_ = adb_->get_study_database();
+  set_mean_radius(5);
 }
 // --------------------------------------------------------------------
 
@@ -61,22 +62,19 @@ void syd::ActivityCommand::Run(std::vector<std::string> & args)
   if (args.size() == 0) {
     LOG(FATAL) << "Error, please provide a <cmd>. See --help";
   }
+
+  // set the radius for peak computation
+  adb_->set_mean_radius(mean_radius_);
+
   // Switch according to command
   std::string cmd = args[0];
   args.erase(args.begin());
 
-  if (cmd == "ta") { //ta = timeactivity
-    RunTimeActivity(args);
+  if (cmd == "ta") { peakActivityFlag_ = false; RunTimeActivity(args); return; } // ta = timeactivity
+  if (cmd == "pa") { peakActivityFlag_ = true; RunTimeActivity(args); return; } // peak activity
+  if (cmd == "ia") { RunIntegratedActivity(args);  return; } // integrated activity
 
-  }
-  else {
-    if (cmd =="ia") { // integrated activity
-      RunIntegratedActivity(args);
-    }
-    else {
-      LOG(FATAL) << "Error, please provide 'ta' or 'ia'. See --help";
-    }
-  }
+  LOG(FATAL) << "Error, please provide 'ta' or 'ia' or 'pa'. See --help";
 }
 // --------------------------------------------------------------------
 
@@ -95,7 +93,6 @@ void syd::ActivityCommand::RunTimeActivity(std::vector<std::string> args)
   }
 }
 // --------------------------------------------------------------------
-
 
 // --------------------------------------------------------------------
 void syd::ActivityCommand::RunTimeActivity(const Patient & patient, std::vector<std::string> args)
@@ -176,13 +173,16 @@ void syd::ActivityCommand::RunTimeActivity(const Timepoint & timepoint, std::vec
     timeactivity.patient_id = patient.id;
     timeactivity.roi_id = r.id;
     timeactivity.timepoint_id = timepoint.id;
+
     // Compute and update activity
-    adb_->UpdateTimeActivityInRoi(timeactivity);
+    if (peakActivityFlag_ == false) adb_->UpdateTimeActivityInRoi(timeactivity);
+    else adb_->UpdatePeakTimeActivityInRoi(timeactivity);
 
     // Verbose if needed
     VLOG(1) << patient.synfrizz_id << " " << patient.name << " " << roitype.name << " "
             << timepoint.number  << " " << timepoint.time_from_injection_in_hours  << " "
-            << timeactivity.mean_counts_by_mm3 << " " << timeactivity.std_counts_by_mm3;
+            << timeactivity.mean_counts_by_mm3 << " " << timeactivity.std_counts_by_mm3 << " "
+            << timeactivity.peak_counts_by_mm3 << " " << timeactivity.peak_position;
   }
 }
 // --------------------------------------------------------------------

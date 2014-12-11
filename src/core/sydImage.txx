@@ -103,10 +103,10 @@ typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filen
 
 //--------------------------------------------------------------------
 template<class ImageType>
-typename ImageType::Pointer ResampleImageLike(const ImageType * input,
-                                              const itk::ImageBase<ImageType::ImageDimension> * like,
-                                              int interpolationType,
-                                              typename ImageType::PixelType defaultValue)
+typename ImageType::Pointer ResampleAndCropImageLike(const ImageType * input,
+                                                     const itk::ImageBase<ImageType::ImageDimension> * like,
+                                                     int interpolationType,
+                                                     typename ImageType::PixelType defaultValue)
 {
   typedef itk::ResampleImageFilter<ImageType, ImageType> FilterType;
   auto t = itk::AffineTransform<double, ImageType::ImageDimension>::New();
@@ -133,6 +133,34 @@ typename ImageType::Pointer ResampleImageLike(const ImageType * input,
   filter->SetInterpolator(interpolator);
   filter->Update();
   return filter->GetOutput();
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+typename ImageType::Pointer CropImageLike(const ImageType * input,
+                                          const itk::ImageBase<ImageType::ImageDimension> * like)
+{
+  typename ImageType::IndexType start;
+  input->TransformPhysicalPointToIndex(like->GetOrigin(), start);
+  typename ImageType::SizeType size;
+
+  for(auto i=0; i<3; i++) {
+    size[i] = (int)ceil((double)like->GetLargestPossibleRegion().GetSize()[i]*
+                        like->GetSpacing()[i]/input->GetSpacing()[i]);
+    // Could not be larger than the initial image
+    size[i] = std::min(size[i], input->GetLargestPossibleRegion().GetSize()[i]);
+  }
+  typename ImageType::RegionType r;
+  r.SetSize(size);
+  r.SetIndex(start);
+  typedef itk::RegionOfInterestImageFilter<ImageType,ImageType> CropFilterType;
+  auto crop = CropFilterType::New();
+  crop->SetInput(input);
+  crop->SetRegionOfInterest(r);
+  crop->Update();
+  return crop->GetOutput();
 }
 //--------------------------------------------------------------------
 
@@ -176,8 +204,8 @@ typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType *
   output->Allocate();
 
   // Resize 2 images like output
-  typename ImageType::Pointer rs1 = syd::ResampleImageLike<ImageType>(s1, output, 0,0);
-  typename ImageType::Pointer rs2 = syd::ResampleImageLike<ImageType>(s2, output, 0,0);
+  typename ImageType::Pointer rs1 = syd::ResampleAndCropImageLike<ImageType>(s1, output, 0,0);
+  typename ImageType::Pointer rs2 = syd::ResampleAndCropImageLike<ImageType>(s2, output, 0,0);
 
   if (0) {
     //typedef itk::ImageSliceConstIteratorWithIndex<ImageType> ConstIteratorType;
@@ -277,5 +305,119 @@ typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType *
   }
 
   return output;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+typename ImageType::Pointer ComputeMeanFilterKernel(const typename ImageType::SpacingType & spacing, double radius)
+{
+  // Some kind of cache to speed up a bit
+  static std::map<double, typename ImageType::Pointer> cache;
+  if (cache.find(radius) != cache.end()) {
+    return cache.find(radius)->second;
+  }
+
+  // Compute a kernel that corresponds to a sphere with 1 inside, 0
+  // outside and in between proportional to the intersection between
+  // the pixel and the sphere. Computed by Monte-Carlo because I don't
+  // know an equation that compute the intersection volume between a
+  // box and a sphere ...
+  auto kernel = ImageType::New();
+
+  // Size of the kernel in pixel (minimum 3 pixels)
+  typename ImageType::SizeType size;
+  size[0] = std::max((int)ceil(radius*2/spacing[0]), 3);
+  size[1] = std::max((int)ceil(radius*2/spacing[1]), 3);
+  size[2] = std::max((int)ceil(radius*2/spacing[2]), 3);
+
+  // Compute the region, such as the origin is at the center
+  typename ImageType::IndexType start;
+  start.Fill(0);
+  typename ImageType::RegionType region;
+  region.SetSize(size);
+  region.SetIndex(start);
+  kernel->SetRegions(region);
+  kernel->SetSpacing(spacing);
+  typename ImageType::PointType origin;
+  origin[0] = -(double)size[0]/2.0*spacing[0]+spacing[0]/2.0;
+  origin[1] = -(double)size[1]/2.0*spacing[1]+spacing[1]/2.0;
+  origin[2] = -(double)size[2]/2.0*spacing[2]+spacing[2]/2.0;
+  kernel->SetOrigin(origin);
+  kernel->Allocate();
+
+  // Fill the kernel
+  itk::ImageRegionIteratorWithIndex<ImageType> iter(kernel, region);
+  typename ImageType::PointType center;
+  center.Fill(0.0);
+  typename ImageType::PointType hh; // half a voxel
+  hh[0] = spacing[0]/2.0;
+  hh[1] = spacing[1]/2.0;
+  hh[2] = spacing[2]/2.0;
+  double h = hh.EuclideanDistanceTo(center); // distance of half a pixel to its center.
+  std::srand(time(NULL));
+  double sum = 0.0;
+  while (!iter.IsAtEnd()) {
+    typename ImageType::IndexType index = iter.GetIndex();
+    typename ImageType::PointType p;
+    kernel->TransformIndexToPhysicalPoint(index, p);
+    double d = p.EuclideanDistanceTo(center) + h;
+    if (d<radius) { // inside the sphere
+      iter.Set(1.0);
+      sum += 1.0;
+    }
+    else { // the box intersect the sphere. We randomly pick point in
+           // the box and compute the probability to be in/out the
+           // sphere
+      int n = 500; // number of samples
+      double w = 0.0;
+      for(auto i=0; i<n; i++) {
+        // random position inside the current pixel
+        typename ImageType::PointType pos;
+        pos[0] = p[0]+(((double)std::rand()/(double)RAND_MAX)-0.5)*spacing[0];
+        pos[1] = p[1]+(((double)std::rand()/(double)RAND_MAX)-0.5)*spacing[1];
+        pos[2] = p[2]+(((double)std::rand()/(double)RAND_MAX)-0.5)*spacing[2];
+        // distance to center
+        double distance = pos.EuclideanDistanceTo(center);
+        // lower/greater than radius
+        if (distance < radius) w += 1.0;
+      }
+      w = w/(double)n;
+      iter.Set(w);
+      sum += w;
+    }
+    ++iter;
+  }
+
+  // Normalize
+  iter.GoToBegin();
+  while (!iter.IsAtEnd()) {
+    iter.Set(iter.Get()/sum);
+    ++iter;
+  }
+
+  // Put in cache
+  cache[radius] = kernel;
+
+  return kernel;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+typename ImageType::Pointer MeanFilterImage(const ImageType * input, double radius)
+{
+  typename ImageType::Pointer kernel = syd::ComputeMeanFilterKernel<ImageType>(input->GetSpacing(), radius);
+  //  syd::WriteImage<ImageType>(kernel, "kernel.mhd");
+
+  // Perform the convolution
+  typedef itk::ConvolutionImageFilter<ImageType> FilterType;
+  auto filter = FilterType::New();
+  filter->SetInput(input);
+  filter->SetKernelImage(kernel);
+  filter->Update();
+  return filter->GetOutput();
 }
 //--------------------------------------------------------------------

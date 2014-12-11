@@ -54,33 +54,40 @@ int main(int argc, char* argv[])
   std::string patient_name = args_info.inputs[1];
 
   // Update SPECT images for the given patient
-  Patient patient = cdb->GetPatientByName(patient_name);
-  std::vector<Timepoint> timepoints;
-  sdb->LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == patient.id, timepoints);
+  std::vector<Patient> patients;
+  cdb->GetPatientsByName(patient_name, patients);
 
-  // Loop over all spect images
-  typedef float PixelType;
-  typedef itk::Image<PixelType, 3> ImageType;
-  for (auto t:timepoints) {
-    RawImage spect(sdb->GetById<RawImage>(t.spect_image_id));
-    std::string filename = sdb->GetImagePath(spect);
-    ImageType::Pointer spectimage = syd::ReadImage<ImageType>(filename);
-    VLOG(1) << "Updating " << filename;
 
-    // Multiply values
-    double scale = 1.0/4.0;
-    typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> FilterType;
-    typename FilterType::Pointer filter = FilterType::New();
-    filter->SetInput(spectimage);
-    filter->SetConstant(scale);
-    filter->Update();
+  // loop patient
+  for(auto patient:patients) {
+    std::vector<Timepoint> timepoints;
+    sdb->LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == patient.id, timepoints);
 
-    // Save
-    syd::WriteImage<ImageType>(filter->GetOutput(), filename);
+    // Loop over all spect images
+    typedef float PixelType;
+    typedef itk::Image<PixelType, 3> ImageType;
+    for (auto t:timepoints) {
+      RawImage spect(sdb->GetById<RawImage>(t.spect_image_id));
+      std::string filename = sdb->GetImagePath(spect);
+      ImageType::Pointer spectimage = syd::ReadImage<ImageType>(filename);
+      VLOG(1) << "Updating " << filename;
 
-    sdb->Update(spect);
+      // Multiply values (and trunc if lower than 0)
+      double scale = args_info.value_arg;
+      itk::ImageRegionIterator<ImageType> iter(spectimage,spectimage->GetLargestPossibleRegion());
+      while(!iter.IsAtEnd()) {
+        iter.Set(iter.Get()*scale);
+        if (iter.Get() < 0) iter.Set(0.0);
+        ++iter;
+      }
+
+      // Save
+      //    syd::WriteImage<ImageType>(filter->GetOutput(), filename);
+      syd::WriteImage<ImageType>(spectimage, filename);
+
+      sdb->UpdateMD5(spect);
+    }
   }
-
 
   // This is the end, my friend.
 }

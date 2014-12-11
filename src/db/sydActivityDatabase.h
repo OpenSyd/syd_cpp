@@ -58,13 +58,18 @@ namespace syd {
 
     void UpdateActivity(Activity & activity);
     void UpdateTimeActivityInRoi(TimeActivity & timeactivity);
+    void UpdatePeakTimeActivityInRoi(TimeActivity & timeactivity);
 
     std::shared_ptr<ClinicDatabase> get_clinical_database() { return cdb_; }
     std::shared_ptr<StudyDatabase> get_study_database() { return sdb_; }
 
+    void set_mean_radius(double v) { mean_radius_ = v; }
+    double get_mean_radius() const { return mean_radius_; }
+
   protected:
     std::shared_ptr<ClinicDatabase> cdb_;
     std::shared_ptr<StudyDatabase>  sdb_;
+    double mean_radius_;
 
   }; // end class
 

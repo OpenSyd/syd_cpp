@@ -44,6 +44,7 @@ int main(int argc, char* argv[])
   // Get the current db names
   std::string db = args_info.inputs[0];
   syd::ActivityCommand * c = new syd::ActivityCommand(db);
+  c->set_mean_radius(args_info.radius_arg);
 
   // Execute the command
   std::vector<std::string> args;

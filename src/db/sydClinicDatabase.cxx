@@ -406,7 +406,6 @@ void syd::ClinicDatabase::Dump(std::ostream & os, std::vector<std::string> & arg
   else { // at least one args
     cmd = args[0];
     std::transform(cmd.begin(), cmd.end(), cmd.begin(), ::tolower);
-    DD(cmd);
     // Check cmd
     if ((cmd.find("serie") == std::string::npos) &&
         (cmd.find("patient") == std::string::npos)) {

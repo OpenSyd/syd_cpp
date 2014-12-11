@@ -44,6 +44,8 @@ namespace syd {
     IdType        patient_id;
     double        mean_counts_by_mm3;
     double        std_counts_by_mm3;
+    double        peak_counts_by_mm3;
+    std::string   peak_position;
 
     // --------------------------------------------------
     TimeActivity() {}
@@ -64,7 +66,8 @@ namespace syd {
     friend std::ostream& operator<<(std::ostream& os, const TimeActivity & p) {
       os << p.id << " " << p.timepoint_id << " " << p.roi_id << " "
          << p.patient_id << " "
-         << p.mean_counts_by_mm3 << " " << p.std_counts_by_mm3;
+         << p.mean_counts_by_mm3 << " " << p.std_counts_by_mm3 << " "
+         << p.peak_counts_by_mm3 << " " << p.peak_position;
       return os;
     }
     // --------------------------------------------------
@@ -78,6 +81,8 @@ namespace syd {
       patient_id = t.patient_id;
       mean_counts_by_mm3 = t.mean_counts_by_mm3;
       std_counts_by_mm3 = t.std_counts_by_mm3;
+      peak_counts_by_mm3 = t.peak_counts_by_mm3;
+      peak_position = t.peak_position;
     }
     // --------------------------------------------------
 

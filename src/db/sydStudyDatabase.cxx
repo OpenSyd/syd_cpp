@@ -925,7 +925,7 @@ void syd::StudyDatabase::UpdateRoiMaskImageVolume(RoiMaskImage & roi)
   CTImageType::Pointer ict = syd::ReadImage<CTImageType>(GetImagePath(rct));
 
   // need to resample/crop like
-  imask = syd::ResampleImageLike<MaskImageType>(imask, ict, 0, 0);
+  imask = syd::ResampleAndCropImageLike<MaskImageType>(imask, ict, 0, 0);
 
   typedef itk::LabelStatisticsImageFilter<CTImageType, MaskImageType> FilterType;
   typename FilterType::Pointer filter=FilterType::New();
