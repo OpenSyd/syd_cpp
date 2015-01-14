@@ -300,3 +300,14 @@ void syd::RenameMHDImage(std::string from , std::string to, int verbose_level)
   RenameOrCopyMHDImage(from, to, verbose_level, true);
 }
 //--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+// Convert PointType
+std::string syd::PointToString(const itk::Point<double,3> & t)
+{
+  std::ostringstream myStream;
+  myStream << t[0] << ";" << t[1] << ";" << t[2] << std::flush;
+  return(myStream.str());
+}
+//--------------------------------------------------------------------

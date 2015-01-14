@@ -81,6 +81,7 @@ namespace syd {
     Patient GetPatient(const Timepoint & timepoint);
     RoiMaskImage GetRoiMaskImage(const Timepoint & timepoint, std::string roiname);
     std::vector<RoiMaskImage> GetRoiMaskImages(const Timepoint & timepoint, std::string roiname);
+    std::vector<RoiType> GetRoiTypes(std::string roiname);
     RoiType GetRoiType(const RoiMaskImage & roimaskimage);
 
     std::string Print(const Timepoint & t);

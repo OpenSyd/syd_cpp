@@ -16,24 +16,23 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDINSERTTIMEPOINTCOMMAND_H
-#define SYDINSERTTIMEPOINTCOMMAND_H
+#ifndef SYDACTIVITYCOMMANDBASE_H
+#define SYDACTIVITYCOMMANDBASE_H
 
 // syd
 #include "sydDatabaseCommand.h"
 #include "sydActivityDatabase.h"
-#include "sydDicomCommon.h"
+#include "sydActivity_ggo.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class ActivityCommand: public syd::DatabaseCommand
+  class ActivityCommandBase: public syd::DatabaseCommand
   {
   public:
 
-    ActivityCommand(std::string db);
-    ActivityCommand(syd::ActivityDatabase * db);
-    ~ActivityCommand();
+    ActivityCommandBase();
+    ~ActivityCommandBase();
 
     typedef float PixelType;
     typedef signed short int CTPixelType;
@@ -42,24 +41,22 @@ namespace syd {
     typedef itk::Image<CTPixelType, 3> CTImageType;
     typedef itk::Image<MaskPixelType, 3> MaskImageType;
 
-    void Run(std::vector<std::string> & args);
-
-    void RunTimeActivity(std::vector<std::string> args);
-    void RunTimeActivity(const Patient & patient, std::vector<std::string> args);
-    void RunTimeActivity(const Timepoint & timepoint, std::vector<std::string> args);
-
-    void RunIntegratedActivity(std::vector<std::string> & args);
-    void RunIntegratedActivity(const Patient & patient, std::vector<std::string> & args);
-
-    void set_mean_radius(double v) { mean_radius_ = v;}
+    void Initialize(std::shared_ptr<syd::ActivityDatabase> db,
+                    args_info_sydActivity & args_info);
+    void Run(std::vector<std::string> args);
+    void Run(const Patient & patient, std::vector<std::string> args);
 
   protected:
-    void Initialization();
+    virtual void SetOptions(args_info_sydActivity & args_info) = 0;
+    virtual void Run(const Patient & p, const RoiType & roitype,
+                     std::vector<std::string> & args) = 0;
+    void GetOrCreateTimeActivities(const Patient & patient,
+                                   const RoiType & roitype,
+                                   std::vector<Timepoint> & timepoints,
+                                   std::vector<TimeActivity> & timeactivities);
     std::shared_ptr<syd::ClinicDatabase>    cdb_;
     std::shared_ptr<syd::StudyDatabase>     sdb_;
     std::shared_ptr<syd::ActivityDatabase>  adb_;
-    bool peakActivityFlag_;
-    double mean_radius_;
 
   };
 

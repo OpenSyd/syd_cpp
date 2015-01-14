@@ -40,7 +40,7 @@ namespace syd {
 #pragma db id auto
     IdType        id;
     IdType        timepoint_id;
-    IdType        roi_id;
+    IdType        roi_mask_image_id;
     IdType        patient_id;
     double        mean_counts_by_mm3;
     double        std_counts_by_mm3;
@@ -64,7 +64,7 @@ namespace syd {
 
     // --------------------------------------------------
     friend std::ostream& operator<<(std::ostream& os, const TimeActivity & p) {
-      os << p.id << " " << p.timepoint_id << " " << p.roi_id << " "
+      os << p.id << " " << p.timepoint_id << " " << p.roi_mask_image_id << " "
          << p.patient_id << " "
          << p.mean_counts_by_mm3 << " " << p.std_counts_by_mm3 << " "
          << p.peak_counts_by_mm3 << " " << p.peak_position;
@@ -77,7 +77,7 @@ namespace syd {
     void copy(const TimeActivity & t) {
       id = t.id;
       timepoint_id = t.timepoint_id;
-      roi_id = t.roi_id;
+      roi_mask_image_id = t.roi_mask_image_id;
       patient_id = t.patient_id;
       mean_counts_by_mm3 = t.mean_counts_by_mm3;
       std_counts_by_mm3 = t.std_counts_by_mm3;

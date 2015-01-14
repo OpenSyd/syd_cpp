@@ -49,22 +49,22 @@ namespace syd {
     // Dump information
     virtual void Dump(std::ostream & os, std::vector<std::string> & args);
     void Dump(std::ostream & os, const std::string & cmd, const Patient & patient, std::vector<std::string> & args);
+    void DumpLambda(std::ostream & os, std::vector<Patient> & patients, std::vector<std::string> & args);
 
     virtual void CheckIntegrity(std::vector<std::string> & args);
     virtual void CreateDatabase();
 
-    Activity NewActivity(const Patient & patient);
+    Activity NewActivity(const Patient & patient, const RoiType & roitype);
     TimeActivity NewTimeActivity(const Timepoint & t, const RoiMaskImage & roi);
-
-    void UpdateActivity(Activity & activity);
-    void UpdateTimeActivityInRoi(TimeActivity & timeactivity);
-    void UpdatePeakTimeActivityInRoi(TimeActivity & timeactivity);
 
     std::shared_ptr<ClinicDatabase> get_clinical_database() { return cdb_; }
     std::shared_ptr<StudyDatabase> get_study_database() { return sdb_; }
 
     void set_mean_radius(double v) { mean_radius_ = v; }
     double get_mean_radius() const { return mean_radius_; }
+
+    double GetCountInPercentIAPerKG(Activity & activity, double v);
+    double GetCountInPercentIAPerKG(TimeActivity & timeactivity, double v);
 
   protected:
     std::shared_ptr<ClinicDatabase> cdb_;

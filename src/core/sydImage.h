@@ -66,6 +66,9 @@ namespace syd {
   typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filenames);
   template<class ImageType>
   typename ImageType::Pointer ComputeMeanFilterKernel(const typename ImageType::SpacingType & spacing, double radius);
+  template<class ImageType, class MaskImageType>
+  typename ImageType::PointType GetMaxPosition(const ImageType * input,
+                                               const MaskImageType * mask);
   //--------------------------------------------------------------------
 
 
@@ -93,6 +96,7 @@ namespace syd {
   void RenameMHDImage(std::string from, std::string to, int verbose_level=2);
   void RenameOrCopyMHDImage(std::string from, std::string to, int verbose_level, bool erase);
   void DeleteMHDImage(std::string filename);
+  std::string PointToString(const itk::Point<double,3> & t);
   //--------------------------------------------------------------------
 
 

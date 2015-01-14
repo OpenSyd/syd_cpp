@@ -43,8 +43,8 @@ include(${SYD_SOURCE_DIR}/cmake/ODB.cmake)
 
 #----------------------------------------------------------
 # ceres
-#find_package(Ceres REQUIRED)
-#include_directories(${CERES_INCLUDE_DIRS})
+find_package(Ceres REQUIRED)
+include_directories(${CERES_INCLUDE_DIRS})
 #----------------------------------------------------------
 
 

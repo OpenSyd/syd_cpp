@@ -37,9 +37,25 @@ namespace syd {
 #pragma db id auto
     IdType        id;
     IdType        patient_id;
+    IdType        roi_type_id;
+    std::string   peak_mean_position;
+    std::string   peak_std_position;
+    double        fit_lambda;
+    double        fit_A;
+    double        fit_error;
+    unsigned int  fit_nb_points;
+    std::string   fit_comment;
 
     // --------------------------------------------------
-    Activity() {}
+    Activity() {
+      peak_mean_position = "";
+      peak_std_position = "";
+      fit_lambda = 0.0;
+      fit_A = 0.0;
+      fit_error = 0.0;
+      fit_nb_points = 0;
+      fit_comment = "";
+    }
     ~Activity() {}
     Activity(const Activity & other) { copy(other); }
     // --------------------------------------------------
@@ -55,7 +71,7 @@ namespace syd {
 
     // --------------------------------------------------
     friend std::ostream& operator<<(std::ostream& os, const Activity & p) {
-      os << p.id << " " << p.patient_id;
+      os << p.id << " " << p.patient_id << " " << p.roi_type_id << " " << p.peak_mean_position << " " << p.fit_lambda;
       return os;
     }
     // --------------------------------------------------
@@ -65,6 +81,14 @@ namespace syd {
     void copy(const Activity & t) {
       id = t.id;
       patient_id = t.patient_id;
+      roi_type_id = t.roi_type_id;
+      peak_mean_position = t.peak_mean_position;
+      peak_std_position = t.peak_std_position;
+      fit_lambda = t.fit_lambda;
+      fit_A = t.fit_A;
+      fit_error = t.fit_error;
+      fit_nb_points = t.fit_nb_points;
+      fit_comment = t.fit_comment;
     }
     // --------------------------------------------------
 

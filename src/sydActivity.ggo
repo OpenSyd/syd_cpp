@@ -4,15 +4,16 @@ package "sydActivity"
 usage "sydActivity <db> <cmd>"
 version "0.1"
 description "<cmd> can be :
-- ta <patient> <nb> <roiname> : for time activity computed for patient/timepoint/roiname.
-- pa <patient> <nb> <roiname> : for peak time activity computed for patient/timepoint/roiname.
+- ca <patient> <roiname> <nb> : for count activity computed for patient/timepoint/roiname.
+- pa <patient> <roiname>      : for peak time activity computed for patient/timepoint/roiname.
+- la <patient> <roiname>      : for lambda estimation
 - ia : for integrated activity (NOT YET)
 
-- <timepoint> and <roiname> could be 'all'
+- <patient>, <roiname> and <nb> could be 'all'
 
 "
 
 option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
-option "radius"   	 	r       "Radius for peak value (in mm)"		      float     default="5" no
+option "radius"   	 	r       "Radius for peak value (in mm)"		      float     default="6.2035" no

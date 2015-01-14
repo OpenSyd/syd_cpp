@@ -421,3 +421,32 @@ typename ImageType::Pointer MeanFilterImage(const ImageType * input, double radi
   return filter->GetOutput();
 }
 //--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType, class MaskImageType>
+typename ImageType::PointType GetMaxPosition(const ImageType * input, const MaskImageType * mask)
+{
+  typedef itk::ImageRegionConstIteratorWithIndex<ImageType> IteratorType;
+  typedef itk::ImageRegionConstIteratorWithIndex<MaskImageType> MIteratorType;
+  IteratorType iters(input, input->GetLargestPossibleRegion());
+  MIteratorType iterm(mask, mask->GetLargestPossibleRegion());
+  iters.GoToBegin();
+  iterm.GoToBegin();
+  double max = 0.0;
+  typename ImageType::IndexType index;
+  while (!iters.IsAtEnd()) {
+    if (iterm.Get() == 1) { // inside the mask
+      if (iters.Get() > max) {
+        max = iters.Get();
+        index = iters.GetIndex();
+      }
+    }
+    ++iters;
+    ++iterm;
+  }
+  typename ImageType::PointType p;
+  input->TransformIndexToPhysicalPoint(index, p);
+  return p;
+}
+//--------------------------------------------------------------------

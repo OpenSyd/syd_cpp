@@ -803,14 +803,7 @@ std::vector<syd::RoiMaskImage> syd::StudyDatabase::GetRoiMaskImages(const Timepo
   Patient patient(GetPatient(timepoint));
 
   // Get all roitypes
-  std::vector<RoiType> roitypes;
-  if (roiname == "all") {
-    cdb_->LoadVector<RoiType>(roitypes);
-  }
-  else {
-    // Pattern could contains '%' as wild card.
-    cdb_->LoadVector<RoiType>(odb::query<RoiType>::name.like(roiname), roitypes);
-  }
+  std::vector<RoiType> roitypes = GetRoiTypes(roiname);
 
   // For each, retrieve RoiMaskImage
   std::vector<syd::RoiMaskImage> r;
@@ -835,6 +828,36 @@ std::vector<syd::RoiMaskImage> syd::StudyDatabase::GetRoiMaskImages(const Timepo
 syd::RoiType syd::StudyDatabase::GetRoiType(const RoiMaskImage & roimaskimage)
 {
   return cdb_->GetById<RoiType>(roimaskimage.roitype_id);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::vector<syd::RoiType> syd::StudyDatabase::GetRoiTypes(const std::string roiname)
+{
+  std::vector<RoiType> roitypes;
+  if (roiname == "all") { // select all roitypes
+    cdb_->LoadVector<RoiType>(roitypes);
+  }
+  else {
+    if (roiname == "organs") { // select only non 'lesions'
+      cdb_->LoadVector<RoiType>(!odb::query<RoiType>::name.like("%lesion%"), roitypes);
+    }
+    else {
+      std::istringstream iss(roiname); // consider all words in 'roiname' as a roitype
+      std::vector<std::string> r;
+      do {
+        std::string s;
+        iss >> s;
+        r.push_back(s);
+      } while (iss);
+      for (auto s:r) {
+        // Pattern could contains '%' as wild card.
+        cdb_->LoadVector<RoiType>(odb::query<RoiType>::name.like(s), roitypes); // add to the end of roitypes vector
+      }
+    }
+  }
+  return roitypes;
 }
 // --------------------------------------------------------------------
 

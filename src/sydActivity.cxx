@@ -17,9 +17,10 @@
   ===========================================================================**/
 
 // syd
-#include "sydActivity_ggo.h"
 #include "core/sydCommon.h"
-#include "sydActivityCommand.h"
+#include "sydActivityPeakCommand.h"
+#include "sydActivityCountCommand.h"
+#include "sydActivityLambdaCommand.h"
 
 // easylogging : only once initialization (in the main)
 _INITIALIZE_EASYLOGGINGPP
@@ -38,18 +39,45 @@ int main(int argc, char* argv[])
 
   // Check args
   if (args_info.inputs_num < 2) {
-    LOG(FATAL) << "Error please, provide <db> TODO";
+    LOG(FATAL) << "Error please, provide <db> <cmd>";
   }
 
   // Get the current db names
   std::string db = args_info.inputs[0];
-  syd::ActivityCommand * c = new syd::ActivityCommand(db);
-  c->set_mean_radius(args_info.radius_arg);
+
+  // Add all commands managed by this tool
+  std::map<std::string, syd::ActivityCommandBase*> tools;
+  tools["ca"] = new syd::ActivityCountCommand;
+  tools["pa"] = new syd::ActivityPeakCommand;
+  tools["la"] = new syd::ActivityLambdaCommand;
+
+  // Get the command
+  std::string cmd = args_info.inputs[1];
+  syd::ActivityCommandBase * tool;
+  auto t = tools.find(cmd);
+  if (t != tools.end()) { // found
+    tool = t->second;
+  }
+  else {
+    std::string list="";
+    for(auto t:tools) {
+      list += " "+t.first;
+    }
+    LOG(FATAL) << "Error, don't know the command '" << cmd
+               << "'. The current known commands are : " << list;
+  }
+
+  // Get the "free" arguments (minus db + cmd_name)
+  std::vector<std::string> args;
+  for(auto i=2; i<args_info.inputs_num; i++) args.push_back(args_info.inputs[i]);
+
+  // Init the command
+  std::shared_ptr<syd::ActivityDatabase> adb =
+    syd::Database::OpenDatabaseType<syd::ActivityDatabase>(db);
+  tool->Initialize(adb, args_info);
 
   // Execute the command
-  std::vector<std::string> args;
-  for(auto i=1; i<args_info.inputs_num; i++) args.push_back(args_info.inputs[i]);
-  c->Run(args);
+  tool->Run(args);
 
   // This is the end, my friend.
 }

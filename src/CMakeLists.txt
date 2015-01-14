@@ -80,7 +80,11 @@ target_link_libraries(sydInsertTimepoint ${SYD_LIBS})
 
 #----------------------------------------------------------
 wrap_ggo(sydActivity sydActivity.ggo)
-add_executable(sydActivity sydActivity.cxx sydActivity_ggo.c sydActivityCommand.cxx)
+add_executable(sydActivity sydActivity.cxx sydActivity_ggo.c
+  sydActivityCommandBase.cxx
+  sydActivityPeakCommand.cxx
+  sydActivityLambdaCommand.cxx
+  sydActivityCountCommand.cxx)
 target_link_libraries(sydActivity ${SYD_LIBS})
 #----------------------------------------------------------
 
