@@ -84,6 +84,7 @@ add_executable(sydActivity sydActivity.cxx sydActivity_ggo.c
   sydActivityCommandBase.cxx
   sydActivityPeakCommand.cxx
   sydActivityLambdaCommand.cxx
+  sydActivityTimeIntegratedCommand.cxx
   sydActivityCountCommand.cxx)
 target_link_libraries(sydActivity ${SYD_LIBS})
 #----------------------------------------------------------

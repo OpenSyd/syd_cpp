@@ -39,7 +39,57 @@ void syd::ActivityLambdaCommand::Run(const Patient & patient,
                                      const RoiType & roitype,
                                      std::vector<std::string> & args)
 {
-  bool usePeak = false;
+  bool usePeak;
+  syd::TimeActivityCurve tac;
+  GetTAC(patient, roitype, args, tac, usePeak);
+  DD(usePeak);
+  DD(tac.size());
+
+  // Compute
+  syd::TimeActivityCurveFitSolver a;
+  a.SetInput(&tac);
+  //  --> options, std, monoexpo, nb of samples etc
+  a.SetUseWeightedFit(!usePeak);
+  a.Run();
+
+  // Store output
+  Activity activity;
+  bool b = adb_->GetIfExist<Activity>(odb::query<Activity>::patient_id == patient.id and
+                                      odb::query<Activity>::roi_type_id == roitype.id, activity);
+  if (!b) activity = adb_->NewActivity(patient, roitype);
+
+  // Update the activity fields
+  UpdateActivityFit(activity, a);
+
+  // DEBUG
+  /*
+    RoiMaskImage roi = sdb_->GetById<RoiMaskImage>(timeactivities[0].roi_mask_image_id);
+    double d = roi.density_in_g_cc;
+    double k = (1.0/270199)*1000 * 1000; // FIXME to be changed
+    double ia = syd::toDouble(patient.injected_quantity_in_MBq);
+    double id = a.GetA()*d*k/ia*100;
+    std::cout << "replot  f(" << id << " , " << activity.fit_lambda << ",x);" << std::endl;
+    double half_life = log(2.0)/activity.fit_lambda;
+    double indium = log(2.0)/0.01029583;
+  */
+
+  // Verbose FIXME VLOG(1)
+  std::cout  << patient.synfrizz_id << " " << patient.name << " " << roitype.name << " "
+             << adb_->GetCountInPercentIAPerKG(activity, activity.fit_A)
+             << " " << activity.fit_lambda << " " << activity.fit_error << " "
+             << activity.fit_comment << " " << activity.fit_nb_points << std::endl;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ActivityLambdaCommand::GetTAC(const Patient & patient,
+                                        const RoiType & roitype,
+                                        std::vector<std::string> & args,
+                                        syd::TimeActivityCurve & tac,
+                                        bool & usePeak)
+{
+  usePeak = false;
   if (args.size() != 0) {
     if (args[0] == "peak") {
       usePeak = true;
@@ -58,8 +108,7 @@ void syd::ActivityLambdaCommand::Run(const Patient & patient,
   GetOrCreateTimeActivities(patient, roitype, fake, timeactivities);
   if (timeactivities.size() == 0) return;
 
-  // Create the TAC FIXME : with mean/peak ??
-  syd::TimeActivityCurve tac;
+  // Create the TAC
   for (auto ta:timeactivities) {
     double m,std;
     if (usePeak) {
@@ -72,44 +121,21 @@ void syd::ActivityLambdaCommand::Run(const Patient & patient,
     }
     Timepoint tp = sdb_->GetById<Timepoint>(ta.timepoint_id);
     double t = tp.time_from_injection_in_hours;
-    //    DD(m);
     tac.AddValue(t,m,std*std);
   }
+}
+// --------------------------------------------------------------------
 
-  // Compute
-  syd::TimeActivityCurveFitSolver a;
-  a.SetInput(&tac);
-  //  --> options, std, monoexpo, nb of samples etc
-  a.SetUseWeightedFit(!usePeak);
-  a.Run();
 
-  // Store output
-  Activity activity;
-  bool b = adb_->GetIfExist<Activity>(odb::query<Activity>::patient_id == patient.id and
-                                      odb::query<Activity>::roi_type_id == roitype.id, activity);
-  if (!b) activity = adb_->NewActivity(patient, roitype);
+// --------------------------------------------------------------------
+void syd::ActivityLambdaCommand::UpdateActivityFit(Activity & activity,
+                                                   syd::TimeActivityCurveFitSolver & a)
+{
   activity.fit_lambda = a.GetLambda();
-  activity.fit_A = a.GetA();
+  activity.fit_A = a.GetFitA();
   activity.fit_error = a.GetFitError();
   activity.fit_nb_points = a.GetFitNbPoints();
   activity.fit_comment = a.GetFitComment();
   adb_->Update(activity);
-
-  // DEBUG
-  // for(auto i=0; i<tac.size(); i++)
-  //   std::cout << tac.GetTime(i) << " " << tac.GetValue(i) << std::endl;
-  RoiMaskImage roi = sdb_->GetById<RoiMaskImage>(timeactivities[0].roi_mask_image_id);
-  double d = roi.density_in_g_cc;
-  double k = (1.0/270199)*1000 * 1000; // FIXME to be changed
-  double ia = syd::toDouble(patient.injected_quantity_in_MBq);
-  double id = a.GetA()*d*k/ia*100;
-   std::cout << "replot  f(" << id << " , " << activity.fit_lambda << ",x);" << std::endl;
-  double half_life = log(2.0)/activity.fit_lambda;
-  double indium = log(2.0)/0.01029583;
-
-  // Verbose FIXME VLOG(1)
-  std::cout  << patient.synfrizz_id << " " << patient.name << " " << roitype.name << " "
-             << activity.fit_A << " " << activity.fit_lambda << " " << activity.fit_error << " "
-             << activity.fit_comment << " " << activity.fit_nb_points << std::endl;
 }
 // --------------------------------------------------------------------

@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDACTIVITYLAMBDACOMMAND_H
-#define SYDACTIVITYLAMBDACOMMAND_H
+#ifndef SYDACTIVITYTIMEINTEGRATEDCOMMAND_H
+#define SYDACTIVITYTIMEINTEGRATEDCOMMAND_H
 
 // syd
 #include "sydActivityCommandBase.h"
@@ -27,24 +27,16 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  class ActivityLambdaCommand: public syd::ActivityCommandBase
+  class ActivityTimeIntegratedCommand: public syd::ActivityCommandBase
   {
   public:
 
-    ActivityLambdaCommand();
-    ~ActivityLambdaCommand();
+    ActivityTimeIntegratedCommand();
+    ~ActivityTimeIntegratedCommand();
 
+  protected:
     virtual void SetOptions(args_info_sydActivity & args_info);
-    virtual void Run(const Patient & p,
-                     const RoiType & roitype,
-                     std::vector<std::string> & args);
-    void GetTAC(const Patient & patient,
-                const RoiType & roitype,
-                std::vector<std::string> & args,
-                syd::TimeActivityCurve & tac,
-                bool & usePeak);
-    void UpdateActivityFit(Activity & activity,
-                           syd::TimeActivityCurveFitSolver & a);
+    virtual void Run(const Patient & p, const RoiType & roitype, std::vector<std::string> & args);
 
   };
 

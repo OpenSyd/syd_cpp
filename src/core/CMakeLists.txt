@@ -11,5 +11,6 @@ add_library(
   sydDicomCommon.cxx
   sydTimeActivityCurve.cxx
   sydTimeActivityCurveFitSolver.cxx
+  sydTimeActivityCurveIntegrate.cxx
   )
 #----------------------------------------------------------

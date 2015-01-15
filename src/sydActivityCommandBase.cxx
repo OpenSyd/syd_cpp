@@ -29,12 +29,20 @@ syd::ActivityCommandBase::ActivityCommandBase():DatabaseCommand()
 
 // --------------------------------------------------------------------
 void syd::ActivityCommandBase::Initialize(std::shared_ptr<syd::ActivityDatabase> db,
-                                              args_info_sydActivity & args_info)
+                                          args_info_sydActivity & args_info)
+{
+  Initialize(db);
+  SetOptions(args_info);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ActivityCommandBase::Initialize(std::shared_ptr<syd::ActivityDatabase> db)
 {
   adb_ = db;
   cdb_ = adb_->get_clinical_database();
   sdb_ = adb_->get_study_database();
-  SetOptions(args_info);
 }
 // --------------------------------------------------------------------
 

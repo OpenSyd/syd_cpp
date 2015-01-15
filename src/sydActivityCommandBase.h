@@ -43,6 +43,7 @@ namespace syd {
 
     void Initialize(std::shared_ptr<syd::ActivityDatabase> db,
                     args_info_sydActivity & args_info);
+    void Initialize(std::shared_ptr<syd::ActivityDatabase> db);
     void Run(std::vector<std::string> args);
     void Run(const Patient & patient, std::vector<std::string> args);
 

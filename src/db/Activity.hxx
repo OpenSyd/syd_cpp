@@ -45,6 +45,7 @@ namespace syd {
     double        fit_error;
     unsigned int  fit_nb_points;
     std::string   fit_comment;
+    double        time_integrated_counts_by_mm3;
 
     // --------------------------------------------------
     Activity() {
@@ -55,6 +56,7 @@ namespace syd {
       fit_error = 0.0;
       fit_nb_points = 0;
       fit_comment = "";
+      time_integrated_counts_by_mm3 = 0.0;
     }
     ~Activity() {}
     Activity(const Activity & other) { copy(other); }

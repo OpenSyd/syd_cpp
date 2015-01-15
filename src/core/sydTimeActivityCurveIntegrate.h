@@ -16,36 +16,36 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDACTIVITYLAMBDACOMMAND_H
-#define SYDACTIVITYLAMBDACOMMAND_H
+#ifndef SYDTIMEACTIVITYCURVEINTEGRATE_H
+#define SYDTIMEACTIVITYCURVEINTEGRATE_H
 
 // syd
-#include "sydActivityCommandBase.h"
-#include "sydDicomCommon.h"
+#include "sydTimeActivityCurve.h"
 #include "sydTimeActivityCurveFitSolver.h"
+
+// Ceres
+#include <ceres/ceres.h>
+#include <glog/logging.h>
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class ActivityLambdaCommand: public syd::ActivityCommandBase
+  class TimeActivityCurveIntegrate
   {
   public:
 
-    ActivityLambdaCommand();
-    ~ActivityLambdaCommand();
+    TimeActivityCurveIntegrate();
+    ~TimeActivityCurveIntegrate();
 
-    virtual void SetOptions(args_info_sydActivity & args_info);
-    virtual void Run(const Patient & p,
-                     const RoiType & roitype,
-                     std::vector<std::string> & args);
-    void GetTAC(const Patient & patient,
-                const RoiType & roitype,
-                std::vector<std::string> & args,
-                syd::TimeActivityCurve & tac,
-                bool & usePeak);
-    void UpdateActivityFit(Activity & activity,
-                           syd::TimeActivityCurveFitSolver & a);
+    void SetInput(TimeActivityCurve * tac);
+    void Run();
+    TimeActivityCurveFitSolver & GetSolver() { return solver; }
+    double GetIntegratedValue() { return integrated_value_; }
 
+  protected:
+    TimeActivityCurve * tac_;
+    TimeActivityCurveFitSolver solver;
+    double integrated_value_;
   };
 
 }  // namespace syd

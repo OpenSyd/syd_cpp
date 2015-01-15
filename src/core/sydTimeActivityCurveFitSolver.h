@@ -49,7 +49,7 @@ namespace syd {
     double GetFitError() const { return fit_error_; }
     double GetFitNbPoints() const { return nb_used_points_; }
     std::string GetFitComment() const { return comment_; }
-    double GetA() const { return A_; }
+    double GetFitA() const { return A_; }
     void SetUseWeightedFit(bool b) { useWeightedFit_ = b; }
 
   protected:
