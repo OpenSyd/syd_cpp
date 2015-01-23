@@ -842,6 +842,9 @@ std::vector<syd::RoiType> syd::StudyDatabase::GetRoiTypes(const std::string roin
   else {
     if (roiname == "organs") { // select only non 'lesions'
       cdb_->LoadVector<RoiType>(!odb::query<RoiType>::name.like("%lesion%"), roitypes);
+      // sort by roitype
+      std::sort(begin(roitypes), end(roitypes),
+                [this](RoiType a, RoiType b) { return a.id < b.id; }  );
     }
     else {
       std::istringstream iss(roiname); // consider all words in 'roiname' as a roitype

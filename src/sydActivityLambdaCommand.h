@@ -38,9 +38,9 @@ namespace syd {
     virtual void Run(const Patient & p,
                      const RoiType & roitype,
                      std::vector<std::string> & args);
-    void GetTAC(const Patient & patient,
+    bool GetTAC(const Patient & patient,
                 const RoiType & roitype,
-                std::vector<std::string> & args,
+                std::vector<std::string> args,
                 syd::TimeActivityCurve & tac,
                 bool & usePeak);
     void UpdateActivityFit(Activity & activity,

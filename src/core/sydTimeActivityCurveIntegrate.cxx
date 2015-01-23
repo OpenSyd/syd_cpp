@@ -55,6 +55,7 @@ void syd::TimeActivityCurveIntegrate::Run()
     (tac_->GetTime(0)-tac_->GetTime(1));
   double intercept = tac_->GetValue(0) - slope * tac_->GetTime(0);
   r = tac_->GetTime(0)*(tac_->GetValue(0) + intercept)/2.0;
+  // DD(r);
 
   // Fit
   solver.SetInput(tac_);
@@ -68,15 +69,23 @@ void syd::TimeActivityCurveIntegrate::Run()
     double d = tac_->GetTime(i+1)-tac_->GetTime(i);
     r = r + d*(a+b)/2.0;
   }
+  // DD(r);
 
   // Last part, from last point to infinity with the fit parameters
   double A = solver.GetFitA();
   double lambda = solver.GetLambda();
   double start = 0.0;
   double end = tac_->GetTime(last);
+  //  double maxpoint = 250; // 300 hours ?
   double ZeroToInf = A/lambda;
   double ZeroToLastPoint = -A/lambda * (exp(-lambda*end) - exp(-lambda*start));
+  //double ZeroToMaxPoint = -A/lambda * (exp(-lambda*maxpoint) - exp(-lambda*start));
   r = r + (ZeroToInf-ZeroToLastPoint);
+  //  r = r + (ZeroToInf-ZeroToLastPoint) - (ZeroToInf-ZeroToMaxPoint);
+  //r = r + ZeroToMaxPoint - ZeroToLastPoint;
+  //DD(r);
+  //DD(ZeroToMaxPoint);
+  //DD(log(2.0)/lambda);
   integrated_value_ = r;
 }
 // --------------------------------------------------------------------

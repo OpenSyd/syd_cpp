@@ -50,6 +50,7 @@ namespace syd {
     virtual void Dump(std::ostream & os, std::vector<std::string> & args);
     void Dump(std::ostream & os, const std::string & cmd, const Patient & patient, std::vector<std::string> & args);
     void DumpLambda(std::ostream & os, std::vector<Patient> & patients, std::vector<std::string> & args);
+    void DumpTimeIntegratedActivities(std::ostream & os, std::vector<Patient> & patients, std::vector<std::string> & args);
 
     virtual void CheckIntegrity(std::vector<std::string> & args);
     virtual void CreateDatabase();
@@ -63,8 +64,12 @@ namespace syd {
     void set_mean_radius(double v) { mean_radius_ = v; }
     double get_mean_radius() const { return mean_radius_; }
 
-    double GetCountInPercentIAPerKG(Activity & activity, double v);
-    double GetCountInPercentIAPerKG(TimeActivity & timeactivity, double v);
+    bool GetRoiMaskImage(Activity & activity, RoiMaskImage & roimask);
+    double Get_CountByMM3_in_MBqByCC(double v);
+    double Get_CountByMM3_in_MBqByKG(Activity & activity, double v);
+    double Get_CountByMM3_in_MBqByKG(TimeActivity & timeactivity, double v);
+    double Get_CountByMM3_in_PercentInjectedActivityByKG(Activity & activity, double v);
+    double Get_CountByMM3_in_PercentInjectedActivityByKG(TimeActivity & timeactivity, double v);
 
   protected:
     std::shared_ptr<ClinicDatabase> cdb_;

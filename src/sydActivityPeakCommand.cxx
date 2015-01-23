@@ -73,6 +73,7 @@ void syd::ActivityPeakCommand::Run(const Patient & patient,
 
     // Compute mean (and keep image)
     spect = syd::MeanFilterImage<ImageType>(spect, mean_radius_);
+    syd::WriteImage<ImageType>(spect, "mean.mhd");
     spects.push_back(spect);
 
     // Resample and crop the mask

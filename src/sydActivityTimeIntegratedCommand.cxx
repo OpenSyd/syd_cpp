@@ -48,7 +48,8 @@ void syd::ActivityTimeIntegratedCommand::Run(const Patient & patient,
   // Initialize the values for the tac
   bool usePeak;
   syd::TimeActivityCurve tac;
-  cmd->GetTAC(patient, roitype, args, tac, usePeak);
+  bool bb = cmd->GetTAC(patient, roitype, args, tac, usePeak);
+  if (!bb) return;
 
   // Compute integration
   syd::TimeActivityCurveIntegrate a;
@@ -62,6 +63,13 @@ void syd::ActivityTimeIntegratedCommand::Run(const Patient & patient,
                                       odb::query<Activity>::roi_type_id == roitype.id, activity);
   if (!b) activity = adb_->NewActivity(patient, roitype);
 
+  // Debug
+  /*
+  for(auto i=0; i<tac.size(); i++)
+    std::cout  << tac.GetTime(i) << " "
+               << adb_->Get_CountByMM3_in_PercentInjectedActivityByKG(activity, tac.GetValue(i)) << std::endl;
+  */
+
   // Update fields
   syd::TimeActivityCurveFitSolver & fit = a.GetSolver();
   activity.time_integrated_counts_by_mm3 = a.GetIntegratedValue();
@@ -69,7 +77,10 @@ void syd::ActivityTimeIntegratedCommand::Run(const Patient & patient,
 
   // Verbose FIXME VLOG(1)
   std::cout  << patient.synfrizz_id << " " << patient.name << " " << roitype.name << " "
-             << adb_->GetCountInPercentIAPerKG(activity, activity.time_integrated_counts_by_mm3)
+             << adb_->Get_CountByMM3_in_MBqByKG(activity, activity.time_integrated_counts_by_mm3) << " "
+             << adb_->Get_CountByMM3_in_PercentInjectedActivityByKG(activity, activity.fit_A)
+             << " " << activity.fit_lambda << " " << activity.fit_error << " "
+             << activity.fit_comment << " " << activity.fit_nb_points
              << " " << std::endl;
 }
 // --------------------------------------------------------------------

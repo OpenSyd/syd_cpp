@@ -105,20 +105,30 @@ syd::TimeActivity syd::ActivityDatabase::NewTimeActivity(const Timepoint & timep
 // --------------------------------------------------------------------
 void syd::ActivityDatabase::Dump(std::ostream & os, std::vector<std::string> & args)
 {
+  std::vector<std::string> cmds;
+  cmds.push_back("mean_count_by_mm3");
+  cmds.push_back("%IA/kg");
+  cmds.push_back("%OA/kg");
+  cmds.push_back("%PA/kg");
+  cmds.push_back("lambda");
+  cmds.push_back("tia");
+  std::string allcmds;
+  for(auto i:cmds) allcmds+=i+" ";
+
   if (args.size() < 3) {
     LOG(FATAL) << "Error need <cmd>, <patient> and <roiname>" << std::endl
-               << "   <cmd> can be 'mean_count_by_mm3' or '%IA/kg' or '%OA/kg' or ''%PA/kg' or 'lambda'";
+               << "   <cmd> can be " << allcmds;
   }
 
   // cmd
   std::string cmd = args[0];
   args.erase(args.begin());
+  bool found=false;
+  for(auto i:cmds) found = found or (i==cmd);
 
-  if ((cmd != "mean_count_by_mm3") and (cmd != "%IA/kg")
-      and (cmd != "%OA/kg") and (cmd != "%PA/kg")
-      and (cmd != "lambda")) {
-    LOG(FATAL) << "Error please provide 'mean_count_by_mm3' or '%IA/kg' or '%OA/kg' or '%PA/kg' or 'lambda' (you give '"
-               << cmd << "')";
+  if (!found) {
+    LOG(FATAL) << "Error ! Please set cmd among : " << allcmds << std::endl
+               << "(you provide '" << cmd << "')";
   }
 
   // patient
@@ -128,8 +138,9 @@ void syd::ActivityDatabase::Dump(std::ostream & os, std::vector<std::string> & a
   args.erase(args.begin());
 
   // Loop on patient
-  if (cmd == "lambda") DumpLambda(os, patients, args);
-  else for(auto patient:patients) Dump(os, cmd, patient, args);
+  if (cmd == "lambda") { DumpLambda(os, patients, args); return; }
+  if (cmd == "tia") { DumpTimeIntegratedActivities(os, patients, args); return; }
+  for(auto patient:patients) Dump(os, cmd, patient, args);
 }
 // --------------------------------------------------------------------
 
@@ -240,8 +251,8 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const std::string & cmd,
         if (cmd == "%IA/kg") {
           //          ta << activity.mean_counts_by_mm3*d*k/ia*100
           //   << activity.std_counts_by_mm3*d*k/ia*100;
-          ta << GetCountInPercentIAPerKG(activity, activity.mean_counts_by_mm3) //*d*k/ia*100;
-             << GetCountInPercentIAPerKG(activity, activity.std_counts_by_mm3); //
+          ta << Get_CountByMM3_in_PercentInjectedActivityByKG(activity, activity.mean_counts_by_mm3) //*d*k/ia*100;
+             << Get_CountByMM3_in_PercentInjectedActivityByKG(activity, activity.std_counts_by_mm3); //
         }
 
         if (cmd == "%OA/kg") {
@@ -251,7 +262,7 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const std::string & cmd,
 
         if (cmd == "%PA/kg") {
           //ta << activity.peak_counts_by_mm3*d*k/ia*100;
-          ta << GetCountInPercentIAPerKG(activity, activity.peak_counts_by_mm3);//*d*k/ia*100;
+          ta << Get_CountByMM3_in_PercentInjectedActivityByKG(activity, activity.peak_counts_by_mm3);//*d*k/ia*100;
           //  << activity.std_counts_by_mm3*d*k/oa*100;
         }
 
@@ -276,7 +287,9 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const std::string & cmd,
 
 
 // --------------------------------------------------------------------
-void syd::ActivityDatabase::DumpLambda(std::ostream & os, std::vector<Patient> & patients, std::vector<std::string> & args)
+void syd::ActivityDatabase::DumpLambda(std::ostream & os,
+                                       std::vector<Patient> & patients,
+                                       std::vector<std::string> & args)
 {
 
   // Get list of roitypes
@@ -293,10 +306,20 @@ void syd::ActivityDatabase::DumpLambda(std::ostream & os, std::vector<Patient> &
     ta.AddColumn("nb", 5, 0); // nb_point
   }
 
+  double ratio_threshold = 0.0; //FIXME
+
   // Loop on patients
   for(auto p:patients) {
     if (p.synfrizz_id != 0) {
       ta << p.synfrizz_id;
+
+      // Get roi=liver for this patient
+      RoiType liverroi = cdb_->GetRoiType("liver");
+      Activity liver;
+      GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
+                           odb::query<Activity>::roi_type_id == liverroi.id, liver);
+      double liver_activity = Get_CountByMM3_in_MBqByKG(liver, liver.time_integrated_counts_by_mm3);
+
       // Loop over roi
       for(auto r:roitypes) {
         Activity a;
@@ -304,7 +327,11 @@ void syd::ActivityDatabase::DumpLambda(std::ostream & os, std::vector<Patient> &
                                       odb::query<Activity>::roi_type_id == r.id, a);
         bool fit_is_ok = false;
         if (b) {
-          if (a.fit_lambda > 0.00001) {
+
+          // Conditional display of lambda, only if ratio with liver greater than a threshold
+          double ac = Get_CountByMM3_in_MBqByKG(a, a.time_integrated_counts_by_mm3);
+          if (ac/liver_activity > ratio_threshold) {
+            //if (a.fit_lambda > 0.00001) {
             ta << log(2.0)/a.fit_lambda;
             fit_is_ok = true;
           }
@@ -312,7 +339,7 @@ void syd::ActivityDatabase::DumpLambda(std::ostream & os, std::vector<Patient> &
         }
         else ta << "-";
         if (fit_is_ok) {
-          ta << GetCountInPercentIAPerKG(a, a.fit_A);//*d*k/ia*100;;
+          ta << Get_CountByMM3_in_PercentInjectedActivityByKG(a, a.fit_A);//*d*k/ia*100;;
           ta << a.fit_error;
           ta << a.fit_nb_points;
         } else ta << "-" << "-" << "-";
@@ -326,54 +353,137 @@ void syd::ActivityDatabase::DumpLambda(std::ostream & os, std::vector<Patient> &
 
 
 // --------------------------------------------------------------------
-double syd::ActivityDatabase::GetCountInPercentIAPerKG(TimeActivity & timeactivity, double v)
+void syd::ActivityDatabase::DumpTimeIntegratedActivities(std::ostream & os,
+                                                         std::vector<Patient> & patients,
+                                                         std::vector<std::string> & args)
 {
-   double k = (1.0/270199)*1000 * 1000; // 1000 is for g->kg and 1000 is for mm3 to cm3
+  // Get list of roitypes
+  std::string roiname = args[0];
+  std::vector<RoiType> roitypes = sdb_->GetRoiTypes(roiname);
 
-   // Get patient
-   Patient patient = cdb_->GetById<Patient>(timeactivity.patient_id);
+  // Prepare to print
+  syd::PrintTable ta;
+  ta.AddColumn("#P", 3, 0);
+  for(auto r:roitypes) {
+    ta.AddColumn(r.name, 12, 1); // time_integrated_counts_by_mm3
+    ta.AddColumn("ratio", 12, 1); // ratio over liver
+  }
 
-   // Get first timepoint
-   Timepoint timepoint = sdb_->GetById<Timepoint>(timeactivity.timepoint_id);
-   // Get roimaskimage for this roitype
-   RoiMaskImage roi = sdb_->GetById<RoiMaskImage>(timeactivity.roi_mask_image_id);
+  // Loop on patients
+  for(auto p:patients) {
+    if (p.synfrizz_id != 0) {
+      ta << p.synfrizz_id;
 
-   // Compute
-   double d = roi.density_in_g_cc;
-   double ia = syd::toDouble(patient.injected_quantity_in_MBq);
-   return v*d*k/ia*100;
+      // Get roi=liver for this patient
+      RoiType liverroi = cdb_->GetRoiType("liver");
+      Activity liver;
+      GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
+                           odb::query<Activity>::roi_type_id == liverroi.id, liver);
+      // Loop over roi
+      for(auto r:roitypes) {
+        Activity a;
+        bool b = GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
+                                      odb::query<Activity>::roi_type_id == r.id, a);
+        if (b) {
+          if (a.time_integrated_counts_by_mm3 > 0.0001) {
+            //            ta << Get_CountByMM3_in_PercentInjectedActivityByKG(a, a.time_integrated_counts_by_mm3);
+            //            double ac = Get_CountByMM3_in_MBqByKG(a, a.time_integrated_counts_by_mm3);
+            double ac = Get_CountByMM3_in_PercentInjectedActivityByKG(a, a.time_integrated_counts_by_mm3)/100;
+            ta << ac;
+            ta << ac/(Get_CountByMM3_in_PercentInjectedActivityByKG(liver, liver.time_integrated_counts_by_mm3)/100);
+          }
+          else { ta << "-"; ta << "-"; }
+        }
+        else { ta << "-"; ta << "-"; }
+      }
+    }
+  }
+  ta.Print(std::cout);
+};
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::ActivityDatabase::Get_CountByMM3_in_PercentInjectedActivityByKG(TimeActivity & timeactivity, double v)
+{
+  v = Get_CountByMM3_in_MBqByKG(timeactivity, v);
+  Patient patient = cdb_->GetById<Patient>(timeactivity.patient_id);
+  double ia = syd::toDouble(patient.injected_quantity_in_MBq);
+  return v/ia*100;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-double syd::ActivityDatabase::GetCountInPercentIAPerKG(Activity & activity, double v)
+double syd::ActivityDatabase::Get_CountByMM3_in_PercentInjectedActivityByKG(Activity & activity, double v)
 {
-   double k = (1.0/270199)*1000 * 1000; // 1000 is for g->kg and 1000 is for mm3 to cm3
+  v = Get_CountByMM3_in_MBqByKG(activity, v);
+  Patient patient = cdb_->GetById<Patient>(activity.patient_id);
+  double ia = syd::toDouble(patient.injected_quantity_in_MBq);
+  return v/ia*100;
+}
+// --------------------------------------------------------------------
 
-   // Get patient
-   Patient patient = cdb_->GetById<Patient>(activity.patient_id);
 
-   // Get first timepoint
-   Timepoint timepoint;
-   bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::number == 1 and
-                                        odb::query<Timepoint>::patient_id == patient.id, timepoint);
-   if (!b) {
-     // LOG(FATAL) << "Error no timepoint with number 1 for patient " << patient.name;
-     return 0.0;
-   }
-   // Get roimaskimage for this roitype
-   RoiMaskImage roi;
-   b = sdb_->GetIfExist<RoiMaskImage>(odb::query<RoiMaskImage>::timepoint_id == timepoint.id and
-                                      odb::query<RoiMaskImage>::roitype_id == activity.roi_type_id, roi);
-   if (!b) {
-     // LOG(FATAL) << "Error no roimaskimage for timepoint=" << timepoint.id << " and roitype=" << activity.roi_type_id;
-     return 0.0;
-   }
+// --------------------------------------------------------------------
+double syd::ActivityDatabase::Get_CountByMM3_in_MBqByKG(Activity & activity, double v)
+{
+  // Convert in MBq by cc
+  v = Get_CountByMM3_in_MBqByCC(v);
 
-   // Compute
-   double d = roi.density_in_g_cc;
-   double ia = syd::toDouble(patient.injected_quantity_in_MBq);
-   return v*d*k/ia*100;
+  // Get the density
+  RoiMaskImage roimask;
+  bool b = GetRoiMaskImage(activity, roimask);
+  if (!b) return 0.0;
+
+  // Compute the final value
+  double d = roimask.density_in_g_cc;
+  return v*d*1000;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::ActivityDatabase::Get_CountByMM3_in_MBqByKG(TimeActivity & timeactivity, double v)
+{
+  // Convert in MBq by cc
+  v = Get_CountByMM3_in_MBqByCC(v);
+
+  // Get the density
+  RoiMaskImage roimask = sdb_->GetById<RoiMaskImage>(timeactivity.roi_mask_image_id);
+
+  // Compute the final value
+  double d = roimask.density_in_g_cc;
+  return v*d*1000;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::ActivityDatabase::GetRoiMaskImage(Activity & activity, RoiMaskImage & roimask)
+{
+  // Get patient
+  Patient patient = cdb_->GetById<Patient>(activity.patient_id);
+
+  // Get first timepoint
+  Timepoint timepoint;
+  bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::number == 1 and
+                                       odb::query<Timepoint>::patient_id == patient.id, timepoint);
+  if (!b) return false;
+
+  // Get roimaskimage for this roitype
+  b = sdb_->GetIfExist<RoiMaskImage>(odb::query<RoiMaskImage>::timepoint_id == timepoint.id and
+                                     odb::query<RoiMaskImage>::roitype_id == activity.roi_type_id, roimask);
+  return b;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::ActivityDatabase::Get_CountByMM3_in_MBqByCC(double v)
+{
+  // Calibration factor is hard-coded : to be changed !
+  double k = (1.0/270199)*1000; // 1000 is for mm3 to cm3
+  return v*k;
 }
 // --------------------------------------------------------------------

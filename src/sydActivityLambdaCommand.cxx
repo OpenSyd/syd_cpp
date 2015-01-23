@@ -41,9 +41,8 @@ void syd::ActivityLambdaCommand::Run(const Patient & patient,
 {
   bool usePeak;
   syd::TimeActivityCurve tac;
-  GetTAC(patient, roitype, args, tac, usePeak);
-  DD(usePeak);
-  DD(tac.size());
+  bool bb = GetTAC(patient, roitype, args, tac, usePeak);
+  if (!bb) return;
 
   // Compute
   syd::TimeActivityCurveFitSolver a;
@@ -75,7 +74,7 @@ void syd::ActivityLambdaCommand::Run(const Patient & patient,
 
   // Verbose FIXME VLOG(1)
   std::cout  << patient.synfrizz_id << " " << patient.name << " " << roitype.name << " "
-             << adb_->GetCountInPercentIAPerKG(activity, activity.fit_A)
+             << adb_->Get_CountByMM3_in_PercentInjectedActivityByKG(activity, activity.fit_A)
              << " " << activity.fit_lambda << " " << activity.fit_error << " "
              << activity.fit_comment << " " << activity.fit_nb_points << std::endl;
 }
@@ -83,9 +82,9 @@ void syd::ActivityLambdaCommand::Run(const Patient & patient,
 
 
 // --------------------------------------------------------------------
-void syd::ActivityLambdaCommand::GetTAC(const Patient & patient,
+bool syd::ActivityLambdaCommand::GetTAC(const Patient & patient,
                                         const RoiType & roitype,
-                                        std::vector<std::string> & args,
+                                        std::vector<std::string> args,
                                         syd::TimeActivityCurve & tac,
                                         bool & usePeak)
 {
@@ -106,7 +105,7 @@ void syd::ActivityLambdaCommand::GetTAC(const Patient & patient,
   std::vector<TimeActivity> timeactivities;
   std::vector<Timepoint> fake;
   GetOrCreateTimeActivities(patient, roitype, fake, timeactivities);
-  if (timeactivities.size() == 0) return;
+  if (timeactivities.size() == 0) return false;
 
   // Create the TAC
   for (auto ta:timeactivities) {
@@ -123,6 +122,7 @@ void syd::ActivityLambdaCommand::GetTAC(const Patient & patient,
     double t = tp.time_from_injection_in_hours;
     tac.AddValue(t,m,std*std);
   }
+  return true;
 }
 // --------------------------------------------------------------------
 
