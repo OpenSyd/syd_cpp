@@ -1,0 +1,16 @@
+#File sydTestSpectImage.ggo
+
+package "sydTestSpectImage"
+usage "sydTestSpectImage : create time-integrated spect image"
+version "0.1"
+description "Provide <database> <patient_name> "
+
+option "config"	  	 	-	"Config file"				string  	no
+option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off
+option "minA"   	 	-       "Minimum activity"		        float     default="1000" no
+option "maxA"   	 	-       "Maximum activity"		        float     default="5000" no
+option "minHL"   	 	-       "Minimum Half-Life"		        float     default="50" no
+option "maxHL"   	 	-       "Maximum Half-Life"		        float     default="80" no
+option "noise"   	 	-       "Range noise"		                float     default="100" no
+## 67.3128 hours for 111Indium

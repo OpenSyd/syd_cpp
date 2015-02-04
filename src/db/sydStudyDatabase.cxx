@@ -664,7 +664,7 @@ void syd::StudyDatabase::Dump(std::ostream & os, std::vector<std::string> & args
 
   for(auto i:patients) {
     ta << i.synfrizz_id << i.name << i.injection_date
-       << i.weight_in_kg << "kg" << i.injected_quantity_in_MBq << "MBq"
+       << i.weight_in_kg << "kg" << i.injected_activity_in_MBq << "MBq"
        << (i.was_treated==true ? "Y":"N");
     // Get all associated timepoints
     std::stringstream ss;
@@ -778,6 +778,23 @@ Patient syd::StudyDatabase::GetPatient(const Timepoint & timepoint)
 
 
 // --------------------------------------------------------------------
+std::string syd::StudyDatabase::GetImagePath(IdType id)
+{
+  return GetImagePath(GetById<RawImage>(id));
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::StudyDatabase::GetImagePath(const RoiMaskImage & roi)
+{
+  return GetImagePath(GetById<RawImage>(roi.mask_id));
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
 syd::RoiMaskImage syd::StudyDatabase::GetRoiMaskImage(const Timepoint & timepoint, std::string roiname)
 {
   RoiType roitype(cdb_->GetRoiType(roiname));
@@ -861,6 +878,35 @@ std::vector<syd::RoiType> syd::StudyDatabase::GetRoiTypes(const std::string roin
     }
   }
   return roitypes;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StudyDatabase::GetTimepoints(const Patient & patient,
+                                       std::vector<Timepoint> & timepoints)
+{
+  LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == patient.id, timepoints);
+  // sort by time_from_injection_in_hours
+  DDS(timepoints);
+  std::sort(begin(timepoints), end(timepoints),
+            [this](Timepoint a, Timepoint b) {
+              return a.time_from_injection_in_hours < b.time_from_injection_in_hours; }  );
+  DDS(timepoints);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StudyDatabase::GetSpectImageFilenames(const Patient & patient,
+                                                std::vector<std::string> & filenames)
+{
+  std::vector<Timepoint> timepoints;
+  GetTimepoints(patient, timepoints);
+  for(auto t:timepoints) {
+    RawImage spect = GetById<RawImage>(t.spect_image_id);
+    filenames.push_back(GetImagePath(spect));
+  }
 }
 // --------------------------------------------------------------------
 

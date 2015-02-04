@@ -43,24 +43,35 @@ namespace syd {
     struct MonoExponentialResidualWeighted;
 
     void SetInput(TimeActivityCurve * tac);
+    void InitIncrementalRun();
     void Run();
+    void IncrementalRun();
 
-    double GetLambda() const { return lambda_; }
+    double GetFitLambda() const { return lambda_; }
     double GetFitError() const { return fit_error_; }
     double GetFitNbPoints() const { return nb_used_points_; }
+    int GetFitNbOfIterations() const;
     std::string GetFitComment() const { return comment_; }
     double GetFitA() const { return A_; }
     void SetUseWeightedFit(bool b) { useWeightedFit_ = b; }
+    ceres::Solver::Summary & GetSummary() { return ceres_summary_; }
 
   protected:
     double A_;
     double lambda_;
     double fit_error_;
     unsigned int nb_used_points_;
+    unsigned int fit_nb_iterations_;
     TimeActivityCurve * tac_;
     std::string comment_;
     bool useWeightedFit_;
 
+    // following variables for IncrementalRun
+    unsigned int kNumObservations_;
+    std::vector<MonoExponentialResidual*> residuals_;
+    typedef ceres::AutoDiffCostFunction<MonoExponentialResidual, 1, 1, 1> CostFctType1;
+    ceres::Solver::Options * ceres_options_;
+    ceres::Solver::Summary ceres_summary_;
   };
 
 }  // namespace syd

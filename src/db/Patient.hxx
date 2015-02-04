@@ -37,7 +37,7 @@ public:
   std::string   path;
   bool          was_treated;
   std::string   injection_date;
-  std::string   injected_quantity_in_MBq;
+  double        injected_activity_in_MBq;
 
   // --------------------------------------------------
   Patient() {}
@@ -71,7 +71,7 @@ public:
     path = t.path;
     was_treated = t.was_treated;
     injection_date = t.injection_date;
-    injected_quantity_in_MBq = t.injected_quantity_in_MBq;
+    injected_activity_in_MBq = t.injected_activity_in_MBq;
   }
   // --------------------------------------------------
 

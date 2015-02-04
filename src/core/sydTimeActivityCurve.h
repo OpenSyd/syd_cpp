@@ -39,6 +39,11 @@ namespace syd {
     double GetTime(unsigned int i) const { return times[i]; }
     double GetVariance(unsigned int i) const { return variances[i]; }
 
+    void SetValue(unsigned int i, double v) { values[i] = v; }
+    unsigned int FindMaxIndex();
+
+    friend std::ostream& operator<<(std::ostream& os, const TimeActivityCurve & p);
+
   protected:
     std::vector<double> times;
     std::vector<double> values;
@@ -48,7 +53,6 @@ namespace syd {
 
 }  // namespace syd
 
-std::ostream& operator<<(std::ostream& os, const syd::TimeActivityCurve & p);
 
 // --------------------------------------------------------------------
 

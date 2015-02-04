@@ -54,7 +54,7 @@ void syd::ActivityTimeIntegratedCommand::Run(const Patient & patient,
   // Compute integration
   syd::TimeActivityCurveIntegrate a;
   a.SetInput(&tac);
-  a.GetSolver().SetUseWeightedFit(!usePeak);
+  a.GetFitSolver().SetUseWeightedFit(!usePeak);
   a.Run();
 
   // Store output
@@ -71,7 +71,7 @@ void syd::ActivityTimeIntegratedCommand::Run(const Patient & patient,
   */
 
   // Update fields
-  syd::TimeActivityCurveFitSolver & fit = a.GetSolver();
+  syd::TimeActivityCurveFitSolver & fit = a.GetFitSolver();
   activity.time_integrated_counts_by_mm3 = a.GetIntegratedValue();
   cmd->UpdateActivityFit(activity, fit);
 

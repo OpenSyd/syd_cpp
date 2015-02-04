@@ -19,11 +19,18 @@
 // syd
 #include "sydTimeActivityCurveFitSolver.h"
 
+// std
+#include <limits>
+#include <cmath>
+#include <cfloat>
+
 // --------------------------------------------------------------------
 syd::TimeActivityCurveFitSolver::TimeActivityCurveFitSolver()
 {
+  google::InitGoogleLogging("TimeActivityCurveFitSolver"); // this is needed to ensure that solver is SILENT
   tac_ = NULL;
   useWeightedFit_ = true;
+  ceres_options_ = NULL;
 }
 // --------------------------------------------------------------------
 
@@ -44,6 +51,14 @@ void syd::TimeActivityCurveFitSolver::SetInput(TimeActivityCurve * tac)
 
 
 // --------------------------------------------------------------------
+int syd::TimeActivityCurveFitSolver::GetFitNbOfIterations() const
+{
+  return ceres_summary_.num_successful_steps;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 struct syd::TimeActivityCurveFitSolver::MonoExponentialResidual {
   MonoExponentialResidual(double x, double y): x_(x), y_(y) {}
   template <typename T> bool operator()(const T* const A,
@@ -57,6 +72,10 @@ private:
   const double x_;
   const double y_;
 };
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 struct syd::TimeActivityCurveFitSolver::MonoExponentialResidualWeighted {
   MonoExponentialResidualWeighted(double x, double y, double w): x_(x), y_(y), w_(w) {}
   template <typename T> bool operator()(const T* const A,
@@ -84,7 +103,7 @@ void syd::TimeActivityCurveFitSolver::Run()
   unsigned int kNumObservations = tac_->size();
   // DD(kNumObservations);
 
-  // get max value ?
+  // get max value ? // FIXME to chanbge by calling the function FindMaxIndex
   double max=0.0;
   int max_index;
   for (auto i = 0; i < kNumObservations; ++i) { // FIXME start at 0 or 1 ?
@@ -153,6 +172,7 @@ void syd::TimeActivityCurveFitSolver::Run()
   options.minimizer_progress_to_stdout = false;
   options.trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
   // may try Dogleg also
+  options.logging_type = ceres::SILENT;
 
   // Set comment FIXME
 
@@ -161,14 +181,14 @@ void syd::TimeActivityCurveFitSolver::Run()
   // output
   ceres::Solver::Summary summary;
   Solve(options, &problem, &summary);
-  // std::cout << summary.BriefReport() << "\n";
+  //std::cout << summary.BriefReport() << "\n";
   // std::cout << summary.FullReport() << "\n";
 
   /*
     bool Solver::Summary::IsSolutionUsable() const
     double Solver::Summary::final_cost -> is half the rms ???
-
   */
+
   double rms =0.0;
   for(auto i=0; i<val.size(); i++) {
     double m = A_*exp(-lambda_*times[i]);
@@ -183,5 +203,67 @@ void syd::TimeActivityCurveFitSolver::Run()
   // DD(A_);
   // DD(lambda_);
 
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimeActivityCurveFitSolver::IncrementalRun()
+{
+  //  DD("TimeActivityCurveFitSolver::IncrementalRun");
+
+  // FIXME Check tac
+  //DD(*tac_);
+
+  // Get the index of the max value in the curve
+  unsigned int max_index = tac_->FindMaxIndex();
+
+  // Fill the residuals (needed because the number can vary)
+  residuals_.clear();
+  for (auto i=max_index; i<tac_->size(); ++i) {
+    auto r = new MonoExponentialResidual(tac_->GetTime(i), tac_->GetValue(i));
+    residuals_.push_back(r);
+  }
+
+  // Build the problem
+  ceres::Problem problem;
+  for (auto i=0; i<residuals_.size(); ++i) {
+    problem.AddResidualBlock(new CostFctType1(residuals_[i]), NULL, &A_, &lambda_);
+  }
+
+  // Init  (needed  ?)
+  A_ = tac_->GetValue(0);
+  nb_used_points_ = residuals_.size();
+
+  // Bounds (constraints)
+  //problem.SetParameterLowerBound(&A_, 0, 0); // A positive
+  //  problem.SetParameterLowerBound(&B, 0, 0); // B positive
+  // // //  problem.SetParameterUpperBound(&B, 0, 1); // B <=1.0
+  //problem.SetParameterLowerBound(&lambda_, 0, 0); // positive
+  // problem.SetParameterLowerBound(&lambda2, 0, 0); // positive
+  // problem.SetParameterLowerBound(&lambda, 0, Lambda_Indium*0.99);
+  // problem.SetParameterUpperBound(&lambda, 0, Lambda_Indium*1.01);
+
+  // output
+  Solve(*ceres_options_, &problem, &ceres_summary_);
+  //std::cout << summary.BriefReport() << "\n";
+  //std::cout << summary.FullReport() << "\n";
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimeActivityCurveFitSolver::InitIncrementalRun()
+{
+  DD("InitIncrementalRun");
+  if (ceres_options_) delete ceres_options_;
+  ceres_options_ = new ceres::Solver::Options;
+  ceres_options_->max_num_iterations = 50;
+  ceres_options_->linear_solver_type = ceres::DENSE_QR;
+  ceres_options_->minimizer_progress_to_stdout = false;
+  ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
+  ceres_options_->logging_type = ceres::SILENT;
+  DD("Done");
 }
 // --------------------------------------------------------------------

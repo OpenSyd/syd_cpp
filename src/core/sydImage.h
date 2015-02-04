@@ -21,6 +21,7 @@
 
 // syd
 #include "sydDicomCommon.h"
+#include "sydTimeActivityCurveIntegrate.h"
 
 // itk
 #include <itkImageFileReader.h>
@@ -54,40 +55,56 @@ namespace syd {
   //--------------------------------------------------------------------
   template<class ImageType>
   void WriteImage(typename ImageType::Pointer image, std::string filename);
+
   template<class ImageType>
   typename ImageType::Pointer ReadImage(std::string filename);
+
+  template<class ImageType>
+  typename ImageType::Pointer CreateImageLike(typename itk::ImageBase<ImageType::ImageDimension> * like);
+
   template<class ImageType>
   std::string ComputeImageMD5(typename ImageType::Pointer image);
+
+  template<class ImageType>
+  typename itk::Image<float, ImageType::ImageDimension>::Pointer CastImageToFloat(ImageType * input);
   //--------------------------------------------------------------------
 
 
   //--------------------------------------------------------------------
   template<class ImageType>
-  typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filenames);
+  typename ImageType::Pointer
+  ComputeAverageImage(std::vector<std::string> & filenames);
+
   template<class ImageType>
-  typename ImageType::Pointer ComputeMeanFilterKernel(const typename ImageType::SpacingType & spacing, double radius);
+  typename ImageType::Pointer
+  ComputeMeanFilterKernel(const typename ImageType::SpacingType & spacing, double radius);
+
   template<class ImageType, class MaskImageType>
-  typename ImageType::PointType GetMaxPosition(const ImageType * input,
-                                               const MaskImageType * mask);
+  typename ImageType::PointType
+  GetMaxPosition(const ImageType * input,
+                 const MaskImageType * mask);
   //--------------------------------------------------------------------
 
 
   //--------------------------------------------------------------------
   template<class ImageType>
-  typename ImageType::Pointer ResampleAndCropImageLike(const ImageType * input,
-                                                       const itk::ImageBase<ImageType::ImageDimension> * like,
-                                                       int interpolationType,
-                                                       typename ImageType::PixelType defaultValue);
+  typename ImageType::Pointer
+  ResampleAndCropImageLike(const ImageType * input,
+                           const itk::ImageBase<ImageType::ImageDimension> * like,
+                           int interpolationType,
+                           typename ImageType::PixelType defaultValue);
   template<class ImageType>
-  typename ImageType::Pointer CropImageLike(const ImageType * input,
-                                                const itk::ImageBase<ImageType::ImageDimension> * like);
+  typename ImageType::Pointer
+  CropImageLike(const ImageType * input,
+                const itk::ImageBase<ImageType::ImageDimension> * like);
   //--------------------------------------------------------------------
 
 
   //--------------------------------------------------------------------
   template<class ImageType>
-  typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType * s2,
-                                           double threshold_cumul, double skip_slices);
+  typename ImageType::Pointer
+  StitchImages(const ImageType * s1, const ImageType * s2,
+               double threshold_cumul, double skip_slices);
   //--------------------------------------------------------------------
 
 

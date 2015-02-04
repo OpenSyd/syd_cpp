@@ -16,7 +16,6 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-
 // --------------------------------------------------------------------
 template<class ImageType>
 void WriteImage(typename ImageType::Pointer image, std::string filename)
@@ -58,6 +57,19 @@ std::string ComputeImageMD5(typename ImageType::Pointer image)
   md5.update((char*)image->GetBufferPointer(), n);
   md5.finalize();
   return md5.hexdigest();
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+typename ImageType::Pointer CreateImageLike(typename itk::ImageBase<ImageType::ImageDimension>* like)
+{
+  typename ImageType::Pointer output = ImageType::New();
+  output->CopyInformation(like);
+  output->SetRegions(like->GetLargestPossibleRegion());
+  output->Allocate();
+  return output;
 }
 //--------------------------------------------------------------------
 
@@ -407,7 +419,8 @@ typename ImageType::Pointer ComputeMeanFilterKernel(const typename ImageType::Sp
 
 //--------------------------------------------------------------------
 template<class ImageType>
-typename ImageType::Pointer MeanFilterImage(const ImageType * input, double radius)
+typename ImageType::Pointer
+MeanFilterImage(const ImageType * input, double radius)
 {
   typename ImageType::Pointer kernel = syd::ComputeMeanFilterKernel<ImageType>(input->GetSpacing(), radius);
   //  syd::WriteImage<ImageType>(kernel, "kernel.mhd");
@@ -425,7 +438,8 @@ typename ImageType::Pointer MeanFilterImage(const ImageType * input, double radi
 
 //--------------------------------------------------------------------
 template<class ImageType, class MaskImageType>
-typename ImageType::PointType GetMaxPosition(const ImageType * input, const MaskImageType * mask)
+typename ImageType::PointType
+GetMaxPosition(const ImageType * input, const MaskImageType * mask)
 {
   typedef itk::ImageRegionConstIteratorWithIndex<ImageType> IteratorType;
   typedef itk::ImageRegionConstIteratorWithIndex<MaskImageType> MIteratorType;
@@ -448,5 +462,20 @@ typename ImageType::PointType GetMaxPosition(const ImageType * input, const Mask
   typename ImageType::PointType p;
   input->TransformIndexToPhysicalPoint(index, p);
   return p;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+typename itk::Image<float, ImageType::ImageDimension>::Pointer
+CastImageToFloat(ImageType * input)
+{
+  typedef itk::Image<float, ImageType::ImageDimension> FloatImageType;
+  typedef itk::CastImageFilter<ImageType, FloatImageType> FilterType;
+  typename FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(input);
+  filter->Update();
+  return filter->GetOutput();
 }
 //--------------------------------------------------------------------

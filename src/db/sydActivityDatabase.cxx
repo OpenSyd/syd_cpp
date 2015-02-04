@@ -112,6 +112,8 @@ void syd::ActivityDatabase::Dump(std::ostream & os, std::vector<std::string> & a
   cmds.push_back("%PA/kg");
   cmds.push_back("lambda");
   cmds.push_back("tia");
+  cmds.push_back("MBq.h");
+  cmds.push_back("w"); // weight correlation
   std::string allcmds;
   for(auto i:cmds) allcmds+=i+" ";
 
@@ -139,7 +141,9 @@ void syd::ActivityDatabase::Dump(std::ostream & os, std::vector<std::string> & a
 
   // Loop on patient
   if (cmd == "lambda") { DumpLambda(os, patients, args); return; }
-  if (cmd == "tia") { DumpTimeIntegratedActivities(os, patients, args); return; }
+  if (cmd == "tia") { DumpTimeIntegratedActivities(os, patients, args, "%ID/kg"); return; }
+  if (cmd == "MBq.h") { DumpTimeIntegratedActivities(os, patients, args, "MBq.h"); return; }
+  if (cmd == "w") { DumpWeight(os, patients, args); return; }
   for(auto patient:patients) Dump(os, cmd, patient, args);
 }
 // --------------------------------------------------------------------
@@ -218,7 +222,7 @@ void syd::ActivityDatabase::Dump(std::ostream & os, const std::string & cmd,
 
   // get mean activity
   double k = (1.0/270199)*1000 * 1000; // 1000 is for g->kg and 1000 is for mm3 to cm3
-  double ia = syd::toDouble(patient.injected_quantity_in_MBq);
+  double ia = patient.injected_activity_in_MBq;
   ta.Init();
 
   for(auto i=0; i<nb; i++) {
@@ -355,7 +359,8 @@ void syd::ActivityDatabase::DumpLambda(std::ostream & os,
 // --------------------------------------------------------------------
 void syd::ActivityDatabase::DumpTimeIntegratedActivities(std::ostream & os,
                                                          std::vector<Patient> & patients,
-                                                         std::vector<std::string> & args)
+                                                         std::vector<std::string> & args,
+                                                         std::string unit)
 {
   // Get list of roitypes
   std::string roiname = args[0];
@@ -385,12 +390,21 @@ void syd::ActivityDatabase::DumpTimeIntegratedActivities(std::ostream & os,
         bool b = GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
                                       odb::query<Activity>::roi_type_id == r.id, a);
         if (b) {
-          if (a.time_integrated_counts_by_mm3 > 0.0001) {
+          if (a.time_integrated_counts_by_mm3 > 0.000001) {
             //            ta << Get_CountByMM3_in_PercentInjectedActivityByKG(a, a.time_integrated_counts_by_mm3);
             //            double ac = Get_CountByMM3_in_MBqByKG(a, a.time_integrated_counts_by_mm3);
-            double ac = Get_CountByMM3_in_PercentInjectedActivityByKG(a, a.time_integrated_counts_by_mm3)/100;
-            ta << ac;
-            ta << ac/(Get_CountByMM3_in_PercentInjectedActivityByKG(liver, liver.time_integrated_counts_by_mm3)/100);
+
+            if (unit == "MBq.h") {
+              double ac = a.time_integrated_counts_by_mm3;
+              ac = Get_CountByMM3_in_MBqByCC(ac);
+              ta << ac;
+              ta << ac/(Get_CountByMM3_in_MBqByCC(liver.time_integrated_counts_by_mm3));
+            }
+            else {
+              double ac = Get_CountByMM3_in_PercentInjectedActivityByKG(a, a.time_integrated_counts_by_mm3)/100;
+              ta << ac;
+              ta << ac/(Get_CountByMM3_in_PercentInjectedActivityByKG(liver, liver.time_integrated_counts_by_mm3)/100);
+            }
           }
           else { ta << "-"; ta << "-"; }
         }
@@ -404,11 +418,77 @@ void syd::ActivityDatabase::DumpTimeIntegratedActivities(std::ostream & os,
 
 
 // --------------------------------------------------------------------
+void syd::ActivityDatabase::DumpWeight(std::ostream & os,
+                                       std::vector<Patient> & patients,
+                                       std::vector<std::string> & args)
+{
+  // Get list of roitypes
+  RoiType liverroi(cdb_->GetRoiType("liver"));
+  //  DD(liverroi);
+
+  // Prepare to print
+  syd::PrintTable ta;
+  ta.AddColumn("#P", 3, 0);
+  ta.AddColumn("w", 10, 1); // weight_in_kg
+  ta.AddColumn("max", 10, 3); // max liver activity
+  ta.AddColumn("ti", 10, 4); // time integrated liver activity
+
+  // Loop on patients
+  //  DDS(patients);
+  for(auto patient:patients) {
+    if (patient.synfrizz_id != 0) {
+
+      // Get the first timepoint
+      Timepoint timepoint;
+      bool b = sdb_->GetIfExist<Timepoint>(odb::query<Timepoint>::number == 1 and
+                                           odb::query<Timepoint>::patient_id == patient.id,
+                                           timepoint);
+      if (!b) continue;
+
+      ta << patient.synfrizz_id;
+      ta << patient.weight_in_kg;
+
+      // Get the liver mask for this patient
+      RoiMaskImage liver = sdb_->GetRoiMaskImage(timepoint, "liver");
+      //      DD(liver);
+
+      // Get the list of activities
+      std::vector<TimeActivity> tactivities;
+      LoadVector<TimeActivity>(odb::query<TimeActivity>::patient_id == patient.id and
+                               odb::query<TimeActivity>::roi_mask_image_id == liver.id,
+                               tactivities);
+      //      DDS(tactivities);
+
+      // Get the max
+      double max = 0.0;
+      TimeActivity ac;
+      for(auto a:tactivities) {
+        if (a.mean_counts_by_mm3 > max) {
+          max = a.mean_counts_by_mm3;
+          ac = a;
+        }
+      }
+      ta << Get_CountByMM3_in_PercentInjectedActivityByKG(ac, max);
+
+      // Get activity
+      Activity activity;
+      GetIfExist<Activity>(odb::query<Activity>::patient_id == patient.id and
+                           odb::query<Activity>::roi_type_id == liverroi.id, activity);
+      ta << Get_CountByMM3_in_PercentInjectedActivityByKG(activity, activity.time_integrated_counts_by_mm3)/100;
+
+    }
+  }
+  ta.Print(std::cout);
+};
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 double syd::ActivityDatabase::Get_CountByMM3_in_PercentInjectedActivityByKG(TimeActivity & timeactivity, double v)
 {
   v = Get_CountByMM3_in_MBqByKG(timeactivity, v);
   Patient patient = cdb_->GetById<Patient>(timeactivity.patient_id);
-  double ia = syd::toDouble(patient.injected_quantity_in_MBq);
+  double ia = patient.injected_activity_in_MBq;
   return v/ia*100;
 }
 // --------------------------------------------------------------------
@@ -419,7 +499,7 @@ double syd::ActivityDatabase::Get_CountByMM3_in_PercentInjectedActivityByKG(Acti
 {
   v = Get_CountByMM3_in_MBqByKG(activity, v);
   Patient patient = cdb_->GetById<Patient>(activity.patient_id);
-  double ia = syd::toDouble(patient.injected_quantity_in_MBq);
+  double ia = patient.injected_activity_in_MBq;
   return v/ia*100;
 }
 // --------------------------------------------------------------------
@@ -483,7 +563,7 @@ bool syd::ActivityDatabase::GetRoiMaskImage(Activity & activity, RoiMaskImage & 
 double syd::ActivityDatabase::Get_CountByMM3_in_MBqByCC(double v)
 {
   // Calibration factor is hard-coded : to be changed !
-  double k = (1.0/270199)*1000; // 1000 is for mm3 to cm3
+  double k = (1.0/270199)*1000.0; // 1000 is for mm3 to cm3
   return v*k;
 }
 // --------------------------------------------------------------------

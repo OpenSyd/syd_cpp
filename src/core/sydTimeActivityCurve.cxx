@@ -51,12 +51,30 @@ void syd::TimeActivityCurve::SortByTime()
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------
-std::ostream& operator<<(std::ostream& os, const syd::TimeActivityCurve & p)
+// --------------------------------------------------------------------
+unsigned int syd::TimeActivityCurve::FindMaxIndex()
 {
-  os << "(" << p.size() << ") ";
-  for(auto i=0; i<p.size(); i++)
-    os << p.GetTime(i) << " " << p.GetValue(i) << " ; ";
-  return os;
+  double max=0.0;
+  unsigned int max_index;
+  for (auto i = 0; i < size(); ++i) {
+    if (GetValue(i) > max) {
+      max = GetValue(i);
+      max_index = i;
+    }
+  }
+  return max_index;
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+namespace syd {
+  std::ostream& operator<<(std::ostream& os, const TimeActivityCurve & p)
+  {
+    os << "(" << p.size() << ") ";
+    for(auto i=0; i<p.size(); i++)
+      os << p.GetTime(i) << " " << p.GetValue(i) << " ; ";
+    return os;
+  }
+}
+// --------------------------------------------------------------------

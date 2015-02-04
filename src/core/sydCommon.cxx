@@ -167,24 +167,34 @@ std::string syd::GetExtension(const std::string filename) {
 //------------------------------------------------------------------
 
 
+//------------------------------------------------------------------
 syd::PrintTable::PrintTable()
 {
   Init();
 }
+//------------------------------------------------------------------
 
+
+//------------------------------------------------------------------
 void syd::PrintTable::AddColumn(std::string name, int w, int digit)
 {
   headers.push_back(name);
   width.push_back(w);
   precision.push_back(digit);
 }
+//------------------------------------------------------------------
 
+
+//------------------------------------------------------------------
 void syd::PrintTable::Init()
 {
   current_line = 0;
   current_column = 0;
 }
+//------------------------------------------------------------------
 
+
+//------------------------------------------------------------------
 syd::PrintTable & syd::PrintTable::operator<<(const double & value)
 {
   if (values.size() == current_line) {
@@ -201,7 +211,10 @@ syd::PrintTable & syd::PrintTable::operator<<(const double & value)
   }
   return *this;
 }
+//------------------------------------------------------------------
 
+
+//------------------------------------------------------------------
 syd::PrintTable & syd::PrintTable::operator<<(const std::string & value)
 {
   if (values.size() == current_line) {
@@ -216,7 +229,10 @@ syd::PrintTable & syd::PrintTable::operator<<(const std::string & value)
   }
   return *this;
 }
+//------------------------------------------------------------------
 
+
+//------------------------------------------------------------------
 void syd::PrintTable::Print(std::ostream & out)
 {
   for(auto i=0; i<headers.size(); i++) out << std::setw(width[i]) << headers[i];
@@ -228,3 +244,24 @@ void syd::PrintTable::Print(std::ostream & out)
     out << std::endl;
   }
 }
+//------------------------------------------------------------------
+
+
+
+//------------------------------------------------------------------
+// https://www.ross.click/2011/02/creating-a-progress-bar-in-c-or-any-other-console-app/
+// Process has done i out of n rounds,
+// and we want a bar of width w and resolution r.
+void syd::loadbar(unsigned int x, unsigned int n, unsigned int w)
+{
+  if ( (x != n) && (x % (n/100+1) != 0) ) return;
+
+  float ratio  =  x/(float)n;
+  int   c      =  ratio * w;
+
+  std::cout << std::setw(3) << (int)(ratio*100) << "% [";
+  for (int x=0; x<c; x++) std::cout << "=";
+  for (int x=c; x<w; x++) std::cout << " ";
+  std::cout << "]\r" << std::flush;
+}
+//------------------------------------------------------------------

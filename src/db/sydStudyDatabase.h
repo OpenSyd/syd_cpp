@@ -45,7 +45,6 @@ namespace syd {
     virtual void Dump(std::ostream & os, std::vector<std::string> & args);
     virtual void DumpRoi(std::ostream & os, std::vector<std::string> & args);
     virtual void DumpRoi(std::ostream & os);
-    virtual void CheckIntegrity(std::vector<std::string> & args);
     virtual void CreateDatabase();
 
     Timepoint NewTimepoint(const Serie & spect_serie, const Serie & ct_serie);
@@ -66,24 +65,30 @@ namespace syd {
     void UpdatePathAndRename(const Timepoint & timepoint, bool rename_flag=true);
     void UpdateNumberAndRenameFiles(IdType patient_id);
 
+    virtual void CheckIntegrity(std::vector<std::string> & args);
     void CheckIntegrity(const RawImage & image);
     void CheckIntegrity(const Timepoint & timepoint);
     void CheckIntegrity(const Patient & patient);
 
+    // Query
     std::string GetPath(const Patient & p);
     std::string GetOrCreatePath(const Patient & p);
     std::string GetRoiPath(const Patient & p);
     std::string GetOrCreateRoiPath(const Patient & p);
     std::string GetRegistrationOutputPath(Timepoint ref, Timepoint mov);
     std::string GetImagePath(const RawImage & image);
-    std::string GetImagePath(IdType id) { return GetImagePath(GetById<RawImage>(id)); }
-    std::string GetImagePath(const RoiMaskImage & roi) { return GetImagePath(GetById<RawImage>(roi.mask_id)); }
+    std::string GetImagePath(IdType id);
+    std::string GetImagePath(const RoiMaskImage & roi);
     Patient GetPatient(const Timepoint & timepoint);
     RoiMaskImage GetRoiMaskImage(const Timepoint & timepoint, std::string roiname);
+    // FIXME put vector in args
     std::vector<RoiMaskImage> GetRoiMaskImages(const Timepoint & timepoint, std::string roiname);
     std::vector<RoiType> GetRoiTypes(std::string roiname);
     RoiType GetRoiType(const RoiMaskImage & roimaskimage);
+    void GetSpectImageFilenames(const Patient & patient, std::vector<std::string> & filenames);
+    void GetTimepoints(const Patient & patient, std::vector<Timepoint> & timepoints);
 
+    // Print
     std::string Print(const Timepoint & t);
     std::string Print(const RawImage & t);
     std::string Print(const Patient & p, int level=0);

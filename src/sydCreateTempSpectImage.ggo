@@ -1,0 +1,10 @@
+#File sydCreateTempSpectImage.ggo
+
+package "sydCreateTempSpectImage"
+usage "sydCreateTempSpectImage : write spect in %ID/g"
+version "0.1"
+description "Provide <database> <patient_name> <timepoint nb>"
+
+option "config"	  	 	-	"Config file"				string  	no
+option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off

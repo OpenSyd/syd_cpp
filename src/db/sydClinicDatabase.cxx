@@ -463,7 +463,7 @@ std::string syd::ClinicDatabase::Print(Patient patient, int level)
      << patient.injection_date;
   if (level > 0) {
     ss << "\t"  << (patient.was_treated ? "90Y":"no ") << "\t"
-       << patient.injected_quantity_in_MBq << " MBq";
+       << patient.injected_activity_in_MBq << " MBq";
   }
   if (level > 1) {
     // Get the number of series for this patient

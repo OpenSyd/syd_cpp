@@ -137,3 +137,28 @@ wrap_ggo(sydUpdateSpect sydUpdateSpect.ggo)
 add_executable(sydUpdateSpect sydUpdateSpect.cxx sydUpdateSpect_ggo.c)
 target_link_libraries(sydUpdateSpect ${SYD_LIBS})
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydCreateTempSpectImage sydCreateTempSpectImage.ggo)
+add_executable(sydCreateTempSpectImage sydCreateTempSpectImage.cxx sydCreateTempSpectImage_ggo.c)
+target_link_libraries(sydCreateTempSpectImage ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydCreateTimeIntegratedSpectImage sydCreateTimeIntegratedSpectImage.ggo)
+add_executable(sydCreateTimeIntegratedSpectImage
+  sydCreateTimeIntegratedSpectImage.cxx
+  sydCreateTimeIntegratedSpectImage_ggo.c)
+target_link_libraries(sydCreateTimeIntegratedSpectImage ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydTestSpectImage sydTestSpectImage.ggo)
+add_executable(sydTestSpectImage
+  sydTestSpectImage.cxx
+  sydTestSpectImage_ggo.c)
+target_link_libraries(sydTestSpectImage ${SYD_LIBS})
+#----------------------------------------------------------

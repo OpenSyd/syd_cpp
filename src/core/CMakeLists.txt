@@ -12,5 +12,6 @@ add_library(
   sydTimeActivityCurve.cxx
   sydTimeActivityCurveFitSolver.cxx
   sydTimeActivityCurveIntegrate.cxx
+  sydTimeIntegratedSpectImageFilter.cxx
   )
 #----------------------------------------------------------

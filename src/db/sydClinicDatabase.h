@@ -26,7 +26,7 @@
 #include "RoiType-odb.hxx"
 #include "sydDicomCommon.h"
 
-// This database manaage the tables : Patient, Serie, RoiTypes
+// This database manage the following set of tables : Patient, Serie, RoiTypes
 // --------------------------------------------------------------------
 namespace syd {
 
