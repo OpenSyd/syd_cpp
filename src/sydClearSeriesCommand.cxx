@@ -50,6 +50,6 @@ void syd::ClearSeriesCommand::Run()
   db->LoadVector<Serie>(series, odb::query<Serie>::patient_id == patient_.id);
   int n = series.size();
   db->Erase(series);
-  VLOG(1) << "Delete all series (" << n << ") for patient " << patient_.name;
+  ELOG(1) << "Delete all series (" << n << ") for patient " << patient_.name;
 }
 // --------------------------------------------------------------------

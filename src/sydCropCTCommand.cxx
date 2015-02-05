@@ -102,11 +102,11 @@ void syd::CropCTCommand::Run(const Timepoint & timepoint)
                                           odb::query<RoiMaskImage>::timepoint_id == timepoint.id, roi);
   if (!b) {
     roi = sdb_->NewRoiMaskImage(timepoint, roitype);
-    VLOG(1) << "Creating new Roi '" << roitype.name << "' for timepoint " << timepoint.number
+    ELOG(1) << "Creating new Roi '" << roitype.name << "' for timepoint " << timepoint.number
             << " of patient " << patient.name;
   }
   else {
-    VLOG(1) << "Roi " << roitype.name << " already exist for timepoint " << timepoint.number
+    ELOG(1) << "Roi " << roitype.name << " already exist for timepoint " << timepoint.number
             << " of patient " << patient.name;
   }
   sdb_->UpdateRoiMaskImage(roi);
@@ -132,12 +132,12 @@ void syd::CropCTCommand::Run(const Timepoint & timepoint)
   // Check md5 and update if needed
   if (!get_ignore_md5_flag()) {
     if (syd::FileExists(output_filename)) {
-      VLOG(1) << "Mask file exist, updating md5 " << output_filename;
+      ELOG(1) << "Mask file exist, updating md5 " << output_filename;
       RawImage mask(sdb_->GetById<RawImage>(roi.mask_id));
       sdb_->UpdateMD5(mask);
     }
     else {
-      VLOG(1) << "Still no mask file : " << output_filename;
+      ELOG(1) << "Still no mask file : " << output_filename;
     }
     sdb_->UpdateMD5(ct);
   }

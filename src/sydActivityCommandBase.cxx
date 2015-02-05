@@ -118,7 +118,7 @@ void syd::ActivityCommandBase::GetOrCreateTimeActivities(const Patient & patient
                                             timeactivity);
     if (!b) {
       Timepoint timepoint = sdb_->GetById<Timepoint>(roi.timepoint_id);
-      VLOG(2) << "Creating new timeactivity for " << patient.name << " tp="
+      ELOG(2) << "Creating new timeactivity for " << patient.name << " tp="
               << timepoint.number << " roi= " <<  roitype.name;
       timeactivity = adb_->NewTimeActivity(timepoint, roi);
     }

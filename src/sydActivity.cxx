@@ -24,7 +24,7 @@
 #include "sydActivityTimeIntegratedCommand.h"
 
 // easylogging : only once initialization (in the main)
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 // syd : only once initialization (in the main)
 #include "sydInit.h"

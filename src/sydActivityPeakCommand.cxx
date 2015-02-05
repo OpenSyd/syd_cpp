@@ -105,7 +105,7 @@ void syd::ActivityPeakCommand::Run(const Patient & patient,
                                       odb::query<Activity>::roi_type_id == roitype.id, activity);
   if (!b) {
     activity = adb_->NewActivity(patient, roitype);
-    VLOG(2) << "Creating activity object for patient " << patient.name;
+    ELOG(2) << "Creating activity object for patient " << patient.name;
   }
   activity.peak_mean_position = PointToString(mean_position);
   activity.peak_std_position = PointToString(std_position);
@@ -137,7 +137,7 @@ void syd::ActivityPeakCommand::Run(const Patient & patient,
   for (auto i=0; i<nb; i++) {
     TimeActivity ta = timeactivities[i];
     Timepoint timepoint = sdb_->GetById<Timepoint>(ta.timepoint_id);
-    VLOG(1) << patient.synfrizz_id << " " << patient.name << " " << roitype.name << " "
+    ELOG(1) << patient.synfrizz_id << " " << patient.name << " " << roitype.name << " "
             << timepoint.number  << " \t"
             << ta.peak_counts_by_mm3 << " \t " << ta.peak_position << " "
             << activity.peak_mean_position;

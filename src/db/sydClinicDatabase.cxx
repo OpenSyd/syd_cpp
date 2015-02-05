@@ -60,7 +60,7 @@ void syd::ClinicDatabase::GetAssociatedCTSerie(IdType serie_id,
                  << std::endl
                  << "Please use the ct_pattern option to select the one you want.";
     }
-    VLOG(3) << "We found " << ct_series.size()
+    ELOG(3) << "We found " << ct_series.size()
             << " ct series, so we try to select one with the ct_pattern option...";
     typedef odb::query<Serie> QueryType;
     QueryType q = GetSeriesQueryFromPatterns(patterns);
@@ -223,11 +223,11 @@ void syd::ClinicDatabase::CheckSerie(const Serie & serie)
   for(auto i=series.begin(); i<series.end(); i++) {
     if (serie.id != i->id) {
       if (serie.dicom_uid == i->dicom_uid) {
-        VLOG(0) << "CheckIntegrity : Error in the DB ! Two series (ids = " << serie.id  << " and "
+        ELOG(0) << "CheckIntegrity : Error in the DB ! Two series (ids = " << serie.id  << " and "
                    << i->id << " have the same dicom_uid '" << i->dicom_uid;
       }
       if (GetPath(serie) == GetPath(*i)) {
-        VLOG(0) << "CheckIntegrity : Error in the DB ! Two series (ids = " << serie.id  << " and "
+        ELOG(0) << "CheckIntegrity : Error in the DB ! Two series (ids = " << serie.id  << " and "
                    << i->id << " have the same path '" << i->path << "." << std::endl
                    << i->dicom_uid;
       }
@@ -264,7 +264,7 @@ void syd::ClinicDatabase::CheckSerie_CT(const Serie & serie)
   // Check the number of files
   int n = inputFiles.size();
   if (serie.number_of_files != n) {
-    VLOG(0) << "CheckIntegrity : Error serie " << serie.id << " the number of files is supposed to be " << serie.number_of_files
+    ELOG(0) << "CheckIntegrity : Error serie " << serie.id << " the number of files is supposed to be " << serie.number_of_files
                << " but I found " << n << " files int the folder " << path;
   }
   if (check_file_content_level_ == 1) return;
@@ -278,14 +278,14 @@ void syd::ClinicDatabase::CheckSerie_CT(const Serie & serie)
     // Check modality
     std::string modality = GetTagValueString(dset, "Modality");
     if (serie.modality != modality) {
-      VLOG(0) << "CheckIntegrity : Error serie " << serie.id << " modality is supposed to be " << serie.modality
+      ELOG(0) << "CheckIntegrity : Error serie " << serie.id << " modality is supposed to be " << serie.modality
                  << " but I read " << modality << " in the file " << path << " " << *i;
     }
 
     // Check uid
     std::string uid = GetTagValueString(dset, "SeriesInstanceUID");
     if (serie.dicom_uid != uid) {
-      VLOG(0) << "CheckIntegrity : Error serie " << serie.id << " uid is supposed to be " << serie.dicom_uid
+      ELOG(0) << "CheckIntegrity : Error serie " << serie.id << " uid is supposed to be " << serie.dicom_uid
                  << " but I read " << uid << " in the file " << path << " " << *i;
     }
   }
@@ -299,7 +299,7 @@ void syd::ClinicDatabase::CheckSerie_NM(const Serie & serie)
   // Check if the file exist
   std::string path = GetPath(serie);
   if (!syd::FileExists(path)) {
-    VLOG(0) << "CheckIntegrity : Error serie " << serie.id << " : the file " << path << " does not exist.";
+    ELOG(0) << "CheckIntegrity : Error serie " << serie.id << " : the file " << path << " does not exist.";
   }
 
   // Check file content (slow)
@@ -312,14 +312,14 @@ void syd::ClinicDatabase::CheckSerie_NM(const Serie & serie)
   std::string modality = GetTagValueString(dset, "Modality");
   if (modality != "CT") modality = "NM";
   if (serie.modality != modality) {
-    VLOG(0) << "CheckIntegrity : Error serie " << serie.id << " modality is supposed to be " << serie.modality
+    ELOG(0) << "CheckIntegrity : Error serie " << serie.id << " modality is supposed to be " << serie.modality
                << " but I read " << modality << " in the file " << path;
   }
 
   // Check uid
   std::string uid = GetTagValueString(dset, "SOPInstanceUID");
   if (serie.dicom_uid != uid) {
-    VLOG(0) << "CheckIntegrity : Error serie " << serie.id << " uid is supposed to be " << serie.dicom_uid
+    ELOG(0) << "CheckIntegrity : Error serie " << serie.id << " uid is supposed to be " << serie.dicom_uid
                << " but I read " << uid << " in the file " << path;
   }
 
@@ -336,11 +336,11 @@ void syd::ClinicDatabase::UpdateSerie(Serie & serie)
   std::string hour = serie.acquisition_date.substr(11,15);
   std::string p = GetPath(GetById<Patient>(serie.patient_id))+PATH_SEPARATOR+day+PATH_SEPARATOR;
   if (syd::DirExists(p)) {
-    VLOG(2) << "Folder day date already exist " << p;
+    ELOG(2) << "Folder day date already exist " << p;
   }
   else {
     syd::CreateDirectory(p);
-    VLOG(1) << "Create day path " << p;
+    ELOG(1) << "Create day path " << p;
   }
 
   // Create the filename (for NM) or folder (for CT)
@@ -348,11 +348,11 @@ void syd::ClinicDatabase::UpdateSerie(Serie & serie)
     serie.path = day+PATH_SEPARATOR+hour+"_"+serie.modality+"_"+serie.dicom_series_desc;
     std::string path = GetPath(serie);
     if (syd::DirExists(path)) {
-      VLOG(2) << "Path already exist " << path;
+      ELOG(2) << "Path already exist " << path;
     }
     else {
       syd::CreateDirectory(path);
-      VLOG(1) << "Create path " << path;
+      ELOG(1) << "Create path " << path;
     }
   }
   else {
@@ -522,17 +522,17 @@ void syd::ClinicDatabase::CheckIntegrity(std::vector<std::string> & args)
 void syd::ClinicDatabase::CheckIntegrity(const Patient & patient)
 {
   // Part 1
-  VLOG(0) << "Part 1: from series to files";
+  ELOG(0) << "Part 1: from series to files";
   std::vector<Serie> series;
   LoadVector<Serie>(odb::query<Serie>::patient_id == patient.id, series);
-  VLOG(1) << "Found " << series.size() << " series. Checking ...";
+  ELOG(1) << "Found " << series.size() << " series. Checking ...";
   for(auto i=series.begin(); i<series.end(); i++) {
-    VLOG(2) << "Checking serie " << i->id << " " << i->path;
+    ELOG(2) << "Checking serie " << i->id << " " << i->path;
     CheckSerie(*i);
   }
 
   // Part 2
-  VLOG(0) << "Part 2 : from files to series (could be long)";
+  ELOG(0) << "Part 2 : from files to series (could be long)";
   // Search for all folders in patient folder
   std::string folder = GetPath(patient);
 
@@ -547,16 +547,16 @@ void syd::ClinicDatabase::CheckIntegrity(const Patient & patient)
   OFBool recurse = OFTrue;
   size_t found =
     OFStandard::searchDirectoryRecursively(folder.c_str(), inputFiles, scanPattern, dirPrefix, recurse);
-  VLOG(1) << "Found " << inputFiles.size() << " files, checking...";
+  ELOG(1) << "Found " << inputFiles.size() << " files, checking...";
 
   // for all dicom check in db
   int n=0;
   int m = inputFiles.size()/10;
   for(auto i=inputFiles.begin(); i != inputFiles.end(); i++) {
-    VLOG_EVERY_N(m, 1) << ++n << "/10";
+    syd::loadbar(n, m);
     CheckFile(*i);
   }
-  VLOG(0) << "Done, everything seems correct.";
+  ELOG(0) << "Done, everything seems correct.";
 
 }
 // --------------------------------------------------------------------
@@ -582,7 +582,7 @@ void syd::ClinicDatabase::CheckFile(OFString filename)
   Serie serie;
   b = GetIfExist<Serie>(odb::query<Serie>::dicom_uid == k, serie);
   if (!b) {
-    VLOG(0) << "CheckIntegrity : Error the file " << filename << " contains a dicom which is not in the db.";
+    ELOG(0) << "CheckIntegrity : Error the file " << filename << " contains a dicom which is not in the db.";
   }
 }
 // --------------------------------------------------------------------

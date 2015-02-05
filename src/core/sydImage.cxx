@@ -32,7 +32,7 @@ std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::s
   }
 
   // Read the image data
-  VLOG(2) << "Converting SPECT dicom to mhd (" << mhd_filename << ") ...";
+  ELOG(2) << "Converting SPECT dicom to mhd (" << mhd_filename << ") ...";
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
   ImageType::Pointer image = ReadImage<ImageType>(dicom_filename);
@@ -132,7 +132,7 @@ std::string syd::ConvertDicomCTFolderToImage(std::string dicom_path, std::string
   InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
   inputNames->SetInputDirectory(dicom_path);
   const ReaderType::FileNamesContainer & filenames = inputNames->GetInputFileNames();
-  VLOG(2) << "Converting CT dicom (with " << filenames.size() << " files) to mhd (" << mhd_filename << ") ...";
+  ELOG(2) << "Converting CT dicom (with " << filenames.size() << " files) to mhd (" << mhd_filename << ") ...";
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetImageIO( gdcmIO );
   reader->SetFileNames( filenames );
@@ -198,10 +198,10 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
 
   // verbose
   if (erase) {
-    VLOG(verbose_level) << "Rename header " << old_path << " to " << new_path;
+    ELOG(verbose_level) << "Rename header " << old_path << " to " << new_path;
   }
   else {
-    VLOG(verbose_level) << "Copy header " << old_path << " to " << new_path;
+    ELOG(verbose_level) << "Copy header " << old_path << " to " << new_path;
   }
 
   // header part : change ElementDataFile in the header
@@ -239,14 +239,14 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
 
   // Rename or copy .raw part
   if (erase) {
-    VLOG(verbose_level) << "Rename raw " << old_path_raw << " to " << new_path_raw;
+    ELOG(verbose_level) << "Rename raw " << old_path_raw << " to " << new_path_raw;
     int result = std::rename(old_path_raw.c_str(), new_path_raw.c_str());
     if (result != 0) {
       LOG(FATAL) << "Error while renaming " << old_path_raw << " to " << new_path_raw;
     }
   }
   else {
-    VLOG(verbose_level) << "Copy raw " << old_path_raw << " to " << new_path_raw;
+    ELOG(verbose_level) << "Copy raw " << old_path_raw << " to " << new_path_raw;
     // std::ifstream  src(old_path_raw.c_str(), std::ios::binary);
     // std::ofstream  dst(new_path_raw.c_str(), std::ios::binary);
     // dst << src.rdbuf();

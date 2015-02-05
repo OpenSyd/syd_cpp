@@ -137,7 +137,7 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
                                           odb::query<Timepoint>::spect_serie_id == in_ref.spect_serie_id, out_ref);
 
   if (!b) { // Does not exist, create
-    VLOG(1) << "Creating copy of " << in_db_->Print(in_ref);
+    ELOG(1) << "Creating copy of " << in_db_->Print(in_ref);
     Serie spect_serie(cdb_->GetById<Serie>(in_ref.spect_serie_id));
     Serie ct_serie(cdb_->GetById<Serie>(in_ref.ct_serie_id));
     out_ref = out_db_->NewTimepoint(spect_serie, ct_serie);
@@ -145,7 +145,7 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
     out_db_->UpdateTimepoint(spect_serie, ct_serie, out_ref);
   }
   else { // already exist, check md5
-    VLOG(1) << "Already existing ref timepoint, updating : " << out_db_->Print(out_ref);
+    ELOG(1) << "Already existing ref timepoint, updating : " << out_db_->Print(out_ref);
   }
 
   // Copy files (will check md5 before copy ; will update md5 if copy)
@@ -157,7 +157,7 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
                                      odb::query<Timepoint>::number == in_mov.number &&
                                      odb::query<Timepoint>::spect_serie_id == in_mov.spect_serie_id, out_mov);
   if (!b) { // Does not exist, create
-    VLOG(1) << "Creating new moving tp of " << in_db_->Print(in_mov);
+    ELOG(1) << "Creating new moving tp of " << in_db_->Print(in_mov);
 
     Serie spect_serie(cdb_->GetById<Serie>(in_mov.spect_serie_id));
     Serie ct_serie(cdb_->GetById<Serie>(in_mov.ct_serie_id));

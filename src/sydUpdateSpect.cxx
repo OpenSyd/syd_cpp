@@ -23,7 +23,7 @@
 #include "sydStudyDatabase.h"
 
 // easylogging : only once initialization (in the main)
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 // syd : only once initialization (in the main)
 #include "sydInit.h"
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
       RawImage spect(sdb->GetById<RawImage>(t.spect_image_id));
       std::string filename = sdb->GetImagePath(spect);
       ImageType::Pointer spectimage = syd::ReadImage<ImageType>(filename);
-      VLOG(1) << "Updating " << filename;
+      ELOG(1) << "Updating " << filename;
 
       // Multiply values (and trunc if lower than 0)
       double scale = args_info.value_arg;

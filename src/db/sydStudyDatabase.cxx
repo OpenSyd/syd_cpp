@@ -171,11 +171,11 @@ void syd::StudyDatabase::CheckIntegrity(const Timepoint & timepoint)
 {
   // check p id exist
   Patient patient(GetPatient(timepoint));
-  VLOG(1) << "Timepoint " << timepoint.id << " for patient " << patient.name;
+  ELOG(1) << "Timepoint " << timepoint.id << " for patient " << patient.name;
 
   // check spect and ct serie id exist -> CheckIntegrity(serie) ?
   Serie spect_serie = cdb_->GetById<Serie>(timepoint.spect_serie_id);
-  VLOG(1) << "With spect serie " << spect_serie.id << " " << spect_serie.path;
+  ELOG(1) << "With spect serie " << spect_serie.id << " " << spect_serie.path;
   double d = DateDifferenceInHours(spect_serie.acquisition_date, patient.injection_date);
   if (d != timepoint.time_from_injection_in_hours) {
     LOG(WARNING) << "Error in the time_from_injection_in_hours : I found " << timepoint.time_from_injection_in_hours
@@ -186,7 +186,7 @@ void syd::StudyDatabase::CheckIntegrity(const Timepoint & timepoint)
 
   // check time_from_injection_in_hours
   Serie ct_serie = cdb_->GetById<Serie>(timepoint.ct_serie_id);
-  VLOG(1) << "With ct serie " << ct_serie.id << " " << ct_serie.path;
+  ELOG(1) << "With ct serie " << ct_serie.id << " " << ct_serie.path;
 
   // raw image exist
   RawImage spect(GetById<RawImage>(timepoint.spect_image_id));
@@ -232,7 +232,7 @@ void syd::StudyDatabase::CheckIntegrity(const RawImage & image)
     LOG(WARNING) << "*Error* md5 for image " << image.id << " " << path;
   }
   else {
-    VLOG(1) << "Correct md5 for image " << image.id << " " << path;
+    ELOG(1) << "Correct md5 for image " << image.id << " " << path;
   }
 }
 // --------------------------------------------------------------------
@@ -351,13 +351,13 @@ void syd::StudyDatabase::CopyFilesFrom(std::shared_ptr<StudyDatabase> in_db,
   if (in_spect.md5 != out_spect.md5 or !FileExists(GetImagePath(out_spect)) ) {
     std::string from(in_db->GetImagePath(in_spect));
     std::string to(GetImagePath(out_spect));
-    VLOG(3) << "Copy image " << from << " to " << to;
+    ELOG(3) << "Copy image " << from << " to " << to;
     syd::CopyMHDImage(from, to);
     out_spect.md5 = in_spect.md5;
     Update(out_spect);
   }
   else {
-    VLOG(3) << "Not copying files because same md5 for " << in_spect << " and " << out_spect;
+    ELOG(3) << "Not copying files because same md5 for " << in_spect << " and " << out_spect;
   }
 
   // CT part
@@ -366,13 +366,13 @@ void syd::StudyDatabase::CopyFilesFrom(std::shared_ptr<StudyDatabase> in_db,
   if (in_ct.md5 != out_ct.md5 or !FileExists(GetImagePath(out_ct)) ) {
     std::string from(in_db->GetImagePath(in_ct));
     std::string to(GetImagePath(out_ct));
-    VLOG(3) << "Copy image " << from << " to " << to;
+    ELOG(3) << "Copy image " << from << " to " << to;
     syd::CopyMHDImage(from, to);
     out_ct.md5 = in_ct.md5;
     Update(out_ct);
   }
   else {
-    VLOG(3) << "Not copying files because same md5 for " << in_ct << " and " << out_ct;
+    ELOG(3) << "Not copying files because same md5 for " << in_ct << " and " << out_ct;
   }
 }
 // --------------------------------------------------------------------
@@ -524,7 +524,7 @@ std::string syd::StudyDatabase::GetOrCreatePath(const Patient & p)
 {
   std::string path = GetPath(p);
   if (!syd::DirExists(path)) {
-    VLOG(3) << "Creating folder " << path;
+    ELOG(3) << "Creating folder " << path;
     int ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     if (ret != 0) {
       LOG(FATAL) << "Error while attempting to create " << path;
@@ -541,7 +541,7 @@ std::string syd::StudyDatabase::GetOrCreateRoiPath(const Patient & p)
   GetOrCreatePath(p);
   std::string path = GetRoiPath(p);
   if (!syd::DirExists(path)) {
-    VLOG(3) << "Creating folder " << path;
+    ELOG(3) << "Creating folder " << path;
     int ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     if (ret != 0) {
       LOG(FATAL) << "Error while attempting to create " << path;
@@ -566,7 +566,7 @@ std::string syd::StudyDatabase::GetRegistrationOutputPath(Timepoint ref, Timepoi
   Patient p(GetPatient(ref));
   std::string path = GetPath(p)+PATH_SEPARATOR+"output";
   if (!syd::DirExists(path)) {
-    VLOG(3) << "Creating folder " << path;
+    ELOG(3) << "Creating folder " << path;
     int ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     if (ret != 0) {
       LOG(FATAL) << "Error while attempting to create " << path;
@@ -574,7 +574,7 @@ std::string syd::StudyDatabase::GetRegistrationOutputPath(Timepoint ref, Timepoi
   }
   path = path+PATH_SEPARATOR+"ct"+toString(ref.number)+"-ct"+toString(mov.number);
   if (!syd::DirExists(path)) {
-    VLOG(3) << "Creating folder " << path;
+    ELOG(3) << "Creating folder " << path;
     int ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     if (ret != 0) {
       LOG(FATAL) << "Error while attempting to create " << path;
@@ -888,11 +888,9 @@ void syd::StudyDatabase::GetTimepoints(const Patient & patient,
 {
   LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == patient.id, timepoints);
   // sort by time_from_injection_in_hours
-  DDS(timepoints);
   std::sort(begin(timepoints), end(timepoints),
             [this](Timepoint a, Timepoint b) {
               return a.time_from_injection_in_hours < b.time_from_injection_in_hours; }  );
-  DDS(timepoints);
 }
 // --------------------------------------------------------------------
 
@@ -957,7 +955,7 @@ void syd::StudyDatabase::UpdateRoiMaskImage(RoiMaskImage & roi)
   // Create path if needed
   std::string path = GetRoiPath(patient);
   if (!syd::DirExists(path)) {
-    VLOG(3) << "Creating folder " << path;
+    ELOG(3) << "Creating folder " << path;
     int ret = mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
     if (ret != 0) {
       LOG(FATAL) << "Error while attempting to create " << path;
@@ -987,10 +985,10 @@ void syd::StudyDatabase::UpdateRoiMaskImageVolume(RoiMaskImage & roi)
   if (!b) {
     //    LOG(FATAL) << "Error could not find an average ct for patient " << patient.name;
     rct = GetById<RawImage>(timepoint.ct_image_id);
-    VLOG(2) << "Using the ct image of the timepoint " << rct.filename;
+    ELOG(2) << "Using the ct image of the timepoint " << rct.filename;
   }
   else {
-    VLOG(2) << "Average ct exists, I use it.";
+    ELOG(2) << "Average ct exists, I use it.";
   }
 
   typedef itk::Image<short, 3> CTImageType;
@@ -1041,12 +1039,12 @@ void syd::StudyDatabase::UpdateMD5(RawImage & image)
   }
 
   if (m != image.md5) {
-    VLOG(2) << "Updating image " << image.filename;
+    ELOG(2) << "Updating image " << image.filename;
     image.md5 = m;
     Update(image);
   }
   else {
-    VLOG(2) << "Image " << path << " already up-to-date";
+    ELOG(2) << "Image " << path << " already up-to-date";
   }
 }
 // --------------------------------------------------------------------

@@ -24,7 +24,7 @@
 #include "sydImage.h"
 
 // easylogging : only once initialization (in the main)
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 // syd : only once initialization (in the main)
 #include "sydInit.h"
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     RawImage spect(sdb->GetById<RawImage>(timepoint.spect_image_id));
     std::string filename = sdb->GetImagePath(spect);
     ImageType::Pointer spectimage = syd::ReadImage<ImageType>(filename);
-    VLOG(1) << "Loading " << filename;
+    ELOG(1) << "Loading " << filename;
 
     // open ct image
     typedef short CTPixelType;
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
     RawImage ct(sdb->GetById<RawImage>(timepoint.ct_image_id));
     std::string filename_ct = sdb->GetImagePath(ct);
     CTImageType::Pointer ctimage = syd::ReadImage<CTImageType>(filename_ct);
-    VLOG(1) << "Loading " << filename_ct;
+    ELOG(1) << "Loading " << filename_ct;
 
     // resample like spect
     ctimage = syd::ResampleAndCropImageLike<CTImageType>(ctimage, spectimage, 1, -1000);

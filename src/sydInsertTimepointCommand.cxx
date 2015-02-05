@@ -116,12 +116,12 @@ void syd::InsertTimepointCommand::InsertTimepoint(const Serie & serie)
 
   // Get or create
   if (!b) {  // It does not exist, we create it
-    VLOG(1) << "Creating new Timepoint for " << patient.name << " date " << serie.acquisition_date;
+    ELOG(1) << "Creating new Timepoint for " << patient.name << " date " << serie.acquisition_date;
     timepoint = sdb_->NewTimepoint(serie, ct_serie);
   }
   else {
     if (!get_ignore_files_flag()) {
-      VLOG(1) << "Timepoint " << patient.name << " "
+      ELOG(1) << "Timepoint " << patient.name << " "
               << timepoint.number << " "
               << timepoint.id << " "
               << serie.acquisition_date << " ("
@@ -131,7 +131,7 @@ void syd::InsertTimepointCommand::InsertTimepoint(const Serie & serie)
       //syd::DeleteMHDImage(sdb_->GetImagePath(timepoint.spect_image_id));
     }
     else {
-      VLOG(1) << "Timepoint " << patient.name << " "
+      ELOG(1) << "Timepoint " << patient.name << " "
               << timepoint.number << " "
               << timepoint.id << " "
               << serie.acquisition_date << " ("

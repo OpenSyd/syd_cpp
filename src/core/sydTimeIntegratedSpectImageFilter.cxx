@@ -23,6 +23,7 @@
 syd::TimeIntegratedSpectImageFilter::TimeIntegratedSpectImageFilter():Superclass()
 {
   isInitialised_ = false;
+  SetDebugFlag(false);
 }
 // --------------------------------------------------------------------
 
@@ -47,7 +48,6 @@ void syd::TimeIntegratedSpectImageFilter::AddInput(double time, ImageType::Point
 // --------------------------------------------------------------------
 void syd::TimeIntegratedSpectImageFilter::Initialise()
 {
-  DD("Initialise");
   if (isInitialised_) return;
 
   // Check size
@@ -63,14 +63,11 @@ void syd::TimeIntegratedSpectImageFilter::Initialise()
   std::copy(times_.begin(), times_.end(), temp_times.begin());
   std::vector<int> indices;
   for(auto i=0; i<spects_.size(); i++) indices.push_back(i);
-  DDS(indices);
   std::sort(begin(indices), end(indices), [&temp_times](size_t a, size_t b) { return temp_times[a] < temp_times[b]; }  );
-  DDS(indices);
   for(auto i=0; i<indices.size(); i++) {
     times_[i] = temp_times[indices[i]];
     spects_[i] = temp_spects[indices[i]];
   }
-  DDS(times_);
 
   // Check spect size
   RegionType region = spects_[0]->GetLargestPossibleRegion();
@@ -90,7 +87,6 @@ void syd::TimeIntegratedSpectImageFilter::Initialise()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedSpectImageFilter::Update()
 {
-  DD("Update");
   if (!isInitialised_) Initialise();
 
   // Solver and TAC
@@ -118,7 +114,7 @@ void syd::TimeIntegratedSpectImageFilter::Update()
   // number of pixel (needed for the progress bar)
   int n = region.GetSize()[0]*region.GetSize()[1]*region.GetSize()[2];
 
-  // DEBUG FIXME
+  // DEBUG
   int debug_lambda = AddDebugImage("fit_lambda");
   int debug_A = AddDebugImage("fit_A");
   int debug_first = AddDebugImage("fit_first");
@@ -135,7 +131,6 @@ void syd::TimeIntegratedSpectImageFilter::Update()
   // Loop over pixels
   int x=0;
   int nb = 0;
-  bool debug = false; // FIXME
   while (!iters[0].IsAtEnd()) {
     // Change the TAC value.
     bool toolow = false;
@@ -158,8 +153,8 @@ void syd::TimeIntegratedSpectImageFilter::Update()
       double v = solver.GetIntegratedValueWithConditions(); //FIXME -> to put in filter not in solver
       itero.Set(v);
 
-      // DEBUG //FIXME to remove  / change
-      if (debug) {
+      // DEBUG
+      if (debug_flag_) {
         debug_iterators[debug_lambda].Set(solver.GetFitSolver().GetFitLambda());
         debug_iterators[debug_A].Set(solver.GetFitSolver().GetFitA());
         debug_iterators[debug_first].Set(solver.GetTempFirstPartIntegration());
@@ -188,16 +183,14 @@ void syd::TimeIntegratedSpectImageFilter::Update()
     ++itero;
     ++x;
 
-    // DEBUG FIXME
-    if (debug) {
+    // DEBUG
+    if (debug_flag_) {
       for(auto i=0; i<debug_iterators.size(); i++) ++debug_iterators[i];
     }
   }
-  DD(nb);
-  DD((double)nb/(double)n);
 
-  // DEBUG FIXME
-  if (debug) {
+  // DEBUG
+  if (debug_flag_) {
     for(auto i=0; i<debug_images.size(); i++) syd::WriteImage<ImageType>(debug_images[i], debug_names[i]+".mhd");
   }
 

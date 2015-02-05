@@ -116,7 +116,7 @@ void syd::ActivityCountCommand::Run(TimeActivity & timeactivity)
   // Verbose
   Patient patient = cdb_->GetById<Patient>(timepoint.patient_id);
   RoiType roitype = cdb_->GetById<RoiType>(roi.roitype_id);
-  VLOG(1) << patient.synfrizz_id << " " << patient.name << " " << roitype.name << " "
+  ELOG(1) << patient.synfrizz_id << " " << patient.name << " " << roitype.name << " "
           << timepoint.number  << " \t"
           << timeactivity.mean_counts_by_mm3 << " \t " << timeactivity.std_counts_by_mm3;
 }

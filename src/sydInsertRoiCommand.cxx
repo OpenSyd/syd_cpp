@@ -116,7 +116,7 @@ void syd::InsertRoiCommand::Run(const Patient & patient, const std::vector<std::
       // std::cout << fn << " " << t << " " << d << std::endl;
       if (d<min) { roitype = t; min=d; }
     }
-    VLOG(2) << "Guess roitype is " << roitype.name;
+    ELOG(2) << "Guess roitype is " << roitype.name;
   }
   else {
     bool b = cdb_->GetIfExist<RoiType>(odb::query<RoiType>::name == roiname, roitype);
@@ -150,12 +150,12 @@ void syd::InsertRoiCommand::Run(const Timepoint & timepoint,
                                           odb::query<RoiMaskImage>::roitype_id == roitype.id,
                                           roimaskimage);
   if (!b) {
-    VLOG(1) << "Creating new RoiMaskImage for patient " << patient.name
+    ELOG(1) << "Creating new RoiMaskImage for patient " << patient.name
             << " and roitype " << roitype.name;
     roimaskimage = sdb_->NewRoiMaskImage(timepoint, roitype);
   }
   else {
-    VLOG(1) << "Updating RoiMaskImage " << roimaskimage.id << " for patient " << patient.name
+    ELOG(1) << "Updating RoiMaskImage " << roimaskimage.id << " for patient " << patient.name
             << " and roitype " << roitype.name << " (previous file is "
             << sdb_->GetImagePath(roimaskimage);
   }

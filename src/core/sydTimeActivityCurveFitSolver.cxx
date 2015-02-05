@@ -210,11 +210,6 @@ void syd::TimeActivityCurveFitSolver::Run()
 // --------------------------------------------------------------------
 void syd::TimeActivityCurveFitSolver::IncrementalRun()
 {
-  //  DD("TimeActivityCurveFitSolver::IncrementalRun");
-
-  // FIXME Check tac
-  //DD(*tac_);
-
   // Get the index of the max value in the curve
   unsigned int max_index = tac_->FindMaxIndex();
 
@@ -256,7 +251,6 @@ void syd::TimeActivityCurveFitSolver::IncrementalRun()
 // --------------------------------------------------------------------
 void syd::TimeActivityCurveFitSolver::InitIncrementalRun()
 {
-  DD("InitIncrementalRun");
   if (ceres_options_) delete ceres_options_;
   ceres_options_ = new ceres::Solver::Options;
   ceres_options_->max_num_iterations = 50;
@@ -264,6 +258,5 @@ void syd::TimeActivityCurveFitSolver::InitIncrementalRun()
   ceres_options_->minimizer_progress_to_stdout = false;
   ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
   ceres_options_->logging_type = ceres::SILENT;
-  DD("Done");
 }
 // --------------------------------------------------------------------

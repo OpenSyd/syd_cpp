@@ -106,7 +106,7 @@ void syd::StitchSpectCommand::StitchSpect(const Serie & serie)
       min_diff = diff;
     }
   }
-  VLOG(2) << "I found the timepoint " << timepoint.number << " for patient " << patient.name;
+  ELOG(2) << "I found the timepoint " << timepoint.number << " for patient " << patient.name;
 
   // Consider the dicom spect filename
   std::string dicom_filename = cdb_->GetSeriePath(serie.id);
@@ -126,7 +126,7 @@ void syd::StitchSpectCommand::StitchSpect(const Serie & serie)
   ImageType::Pointer output = syd::StitchImages<ImageType>(s1,s2, get_threshold_cumul(), get_skip_slices());
 
   // Insert into the db
-  VLOG(1) << "Updating spect image " << timepoint.number  << " for patient " << patient.name;
+  ELOG(1) << "Updating spect image " << timepoint.number  << " for patient " << patient.name;
   syd::WriteImage<ImageType>(output, spect_mhd_filename);
   sdb_->UpdateMD5(spect);
 

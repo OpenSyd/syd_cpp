@@ -107,7 +107,7 @@ void syd::InsertDicomCommand::InsertDicom(std::string patient_name, std::string 
     folder = std::string(cCurrentPath)+"/"+folder;
     //dirPrefix = OFString(cCurrentPath);
   }
-  VLOG(0) << "Search for Dicom (*.dcm) in " << folder;
+  ELOG(0) << "Search for Dicom (*.dcm) in " << folder;
   OFBool recurse = OFTrue;
   size_t found=0;
   if (syd::DirExists(folder)) {
@@ -135,10 +135,10 @@ void syd::InsertDicomCommand::InsertDicom(std::string patient_name, std::string 
   }
 
   if (inputFiles.size() > 0) {
-    VLOG(0) << "Found " << inputFiles.size() << " files. Now parsing dicom ...";
+    ELOG(0) << "Found " << inputFiles.size() << " files. Now parsing dicom ...";
   }
   else {
-    VLOG(0) << "No files found.";
+    ELOG(0) << "No files found.";
     return;
   }
 
@@ -151,7 +151,8 @@ void syd::InsertDicomCommand::InsertDicom(std::string patient_name, std::string 
   int i=0;
   while (if_iter != if_last) {
     filename = (*if_iter++).c_str();
-    VLOG_EVERY_N(n, 1) << ++i << "/10";
+    //VLOG_EVERY_N(n, 1) << ++i << "/10";
+    syd::loadbar(n, i);
 
     DcmFileFormat dfile;
     bool b = syd::OpenDicomFile(filename, true, dfile);
@@ -176,13 +177,13 @@ void syd::InsertDicomCommand::InsertDicom(std::string patient_name, std::string 
       map_series[k] = s;
     }
   }
-  VLOG(0) << "Found " << map_series.size() << " series. Now importing into the db..." ;
+  ELOG(0) << "Found " << map_series.size() << " series. Now importing into the db..." ;
 
   // For all series, update the DB
   for(auto i=map_series.begin(); i!=map_series.end(); i++) {
     UpdateDicom(patient, i->second);
   }
-  VLOG(0) << "Done. " << map_series.size() << " series were updated in the db for patient " << patient.name << ".";
+  ELOG(0) << "Done. " << map_series.size() << " series were updated in the db for patient " << patient.name << ".";
 }
 // --------------------------------------------------------------------
 
@@ -202,7 +203,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   // Find the patient ID
   std::string PatientName = GetTagValueString(dset, "PatientName");
   std::string PatientDicomId = GetTagValueString(dset, "PatientID");
-  VLOG(1) << "Found Patient " << PatientName << " " << PatientDicomId << " " << d.filenames_[0];
+  ELOG(1) << "Found Patient " << PatientName << " " << PatientDicomId << " " << d.filenames_[0];
 
   // Sanity check
   int n = PatientName.find("^");
@@ -253,7 +254,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   if (AcquisitionDate != "" && AcquisitionTime != "")
     acqui_date = GetDate(AcquisitionDate, AcquisitionTime);
   else {
-    VLOG(0) << "Unknown acquisition date, ignoring the dicom "
+    ELOG(0) << "Unknown acquisition date, ignoring the dicom "
             << d.filenames_[0].c_str();
     return;
   }
@@ -267,14 +268,14 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
   if (cdb_->GetIfExist<Serie>(odb::query<Serie>::dicom_uid == uid and patient.id == odb::query<Serie>::patient_id, serie)) {
     // already exist
     // cdb_->CheckSerie(serie);
-    VLOG(1) << "Serie id=" << serie.id << " at " << acqui_date << " already exist, updating.";
+    ELOG(1) << "Serie id=" << serie.id << " at " << acqui_date << " already exist, updating.";
   }
   else {
     serie.path = "";
     serie.patient_id = patient.id;
     serie.dicom_uid = uid;
     cdb_->Insert(serie);
-    VLOG(1) << "Create new serie=" << serie.id << " at " << acqui_date;
+    ELOG(1) << "Create new serie=" << serie.id << " at " << acqui_date;
   }
 
   // Update the fields
@@ -304,14 +305,14 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
 
       // Check if already exist
       if (syd::FileExists(destination)) {
-        VLOG(3) << "File already exist, skip copying " << filename;
+        ELOG(3) << "File already exist, skip copying " << filename;
       }
       else {
         if (*i == destination) {
-          VLOG(3) << "Same source/destination ignoring file " << filename;
+          ELOG(3) << "Same source/destination ignoring file " << filename;
         }
         else {
-          VLOG(3) << "Copying " << filename;
+          ELOG(3) << "Copying " << filename;
           std::ifstream  src(i->c_str(), std::ios::binary);
           std::ofstream  dst(destination,   std::ios::binary);
           dst << src.rdbuf();
@@ -325,7 +326,7 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
     }
     std::string destination = cdb_->GetPath(serie);
     if (rename_flag_) {
-      VLOG(2) << "Rename " << d.filenames_[0] << " to " << destination;
+      ELOG(2) << "Rename " << d.filenames_[0] << " to " << destination;
       if (syd::FileExists(destination)) {
         LOG(FATAL) << "Error the destination already exist : " << destination;
       }
@@ -336,10 +337,10 @@ void syd::InsertDicomCommand::UpdateDicom(Patient & patient, const DicomSerieInf
     }
     else {
       if (d.filenames_[0] == destination) {
-        VLOG(2) << "Same source/destination ignoring file " << destination;
+        ELOG(2) << "Same source/destination ignoring file " << destination;
       }
       else {
-        VLOG(2) << "Copy " << d.filenames_[0] << " to " << destination;
+        ELOG(2) << "Copy " << d.filenames_[0] << " to " << destination;
         std::ifstream  src(d.filenames_[0].c_str(), std::ios::binary);
         std::ofstream  dst(destination, std::ios::binary);
         dst << src.rdbuf();

@@ -27,7 +27,7 @@
 #include "sydInsertTimePointCommand.h"
 
 // easylogging : only once initialization (in the main)
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])

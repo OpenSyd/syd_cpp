@@ -20,18 +20,18 @@
 #define SYDTIMEINTEGRATEDSPECTIMAGEFILTER_H
 
 // syd
-#include "sydImage.h"
 #include "sydTimeActivityCurveIntegrate.h"
+#include "sydImage.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class TimeIntegratedSpectImageFilter: public itk::ImageSource<itk::Image<float, 3> > {
+  class TimeIntegratedSpectImageFilter: public itk::ImageSource<itk::Image<double, 3> > {
 
   public:
 
     // Types
-    typedef float PixelType;
+    typedef double PixelType;
     typedef itk::Image<PixelType, 3> ImageType;
     typedef ImageType::RegionType RegionType;
     typedef itk::ImageRegionIterator<ImageType> IteratorType;
@@ -44,6 +44,7 @@ namespace syd {
     TimeIntegratedSpectImageFilter();
     ~TimeIntegratedSpectImageFilter();
 
+    void SetDebugFlag(bool b) { debug_flag_ = b; }
     void AddInput(double time, ImageType::Pointer spect);
     void SetMinimumActivityValue(double min_value) { min_activity_value_ = min_value; }
     ImageType::Pointer GetOutput() { return output_; }
@@ -53,6 +54,7 @@ namespace syd {
 
   protected:
     bool isInitialised_;
+    bool debug_flag_;
     std::vector<ImageType::Pointer> spects_;
     std::vector<double> times_;
     double min_activity_value_;

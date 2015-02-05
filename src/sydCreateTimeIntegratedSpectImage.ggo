@@ -1,14 +1,20 @@
 #File sydCreateTimeIntegratedSpectImage.ggo
 
 package "sydCreateTimeIntegratedSpectImage"
-usage "sydCreateTimeIntegratedSpectImage : create time-integrated spect image"
+usage   "Build a time-integrated spect image"
 version "0.1"
-description "Provide <database> <patient_name> "
+description "Provide either --images & --times or <database> + <patient_name>
 
-option "config"	  	 	-	"Config file"				string  	no
-option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no
-option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off
+Example : sydCreateTimeIntegratedSpectImage --images 0.mhd,1.mhd,2.mhd,3.mhd,4.mhd,5.mhd --times 1.0,4.7,23.9,47.9,71.8,143.8
 
+Example : sydCreateTimeIntegratedSpectImage adb jm"
+
+option "config"	  	 	-	"Config file"				string  no
+option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int     no default ="0"
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag    off
+
+option "output"                 o       "Output image filename"                 string yes
+option "debug"                  d       "Output debug images"                   flag   off
 option "images"                 -       "Spect image filename"                  string no multiple
-option "times"                  -       "Time points in hours"                  float no multiple
-option "min"                    -       "Min activity value"                    float default = "10" no
+option "times"                  -       "Time points in hours"                  float  no multiple
+option "min"                    -       "Min activity value"                    float  no default = "10"

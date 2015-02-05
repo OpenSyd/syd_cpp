@@ -103,7 +103,7 @@ void syd::Database::OpenSqliteDatabase(std::string filename, std::string folder)
   }
 
   // Verbose
-  VLOG(3) << "Opening db " << get_name() << " (" << get_typename() << ") : "
+  ELOG(3) << "Opening db " << get_name() << " (" << get_typename() << ") : "
           << get_filename() << " " << folder_;
 
   // Install tracer

@@ -73,11 +73,11 @@ void syd::InsertAverageCTCommand::Run(Patient & patient)
   bool b = sdb_->GetIfExist<RawImage>(odb::query<RawImage>::patient_id == patient.id and
                                       odb::query<RawImage>::filename == "average.mhd", average);
   if (!b) {
-    VLOG(1) << "Create a new average image for patient " << patient.name;
+    ELOG(1) << "Create a new average image for patient " << patient.name;
     average = sdb_->NewRawImage(patient);
   }
   else {
-    VLOG(1) << "An average image already exist for " << patient.name << " : " << average;
+    ELOG(1) << "An average image already exist for " << patient.name << " : " << average;
   }
   sdb_->UpdateAverageCTImage(average);
 
