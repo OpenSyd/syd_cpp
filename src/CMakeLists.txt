@@ -8,17 +8,16 @@
 
 #----------------------------------------------------------
 # Syd Core
-add_subdirectory(${SYD_SOURCE_DIR}/src/core ${PROJECT_BINARY_DIR}/src/core)
 include_directories(${PROJECT_SOURCE_DIR}/src/core)
+add_subdirectory(${SYD_SOURCE_DIR}/src/core ${PROJECT_BINARY_DIR}/src/core)
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
-# DB
-
-add_subdirectory(${SYD_SOURCE_DIR}/src/db ${PROJECT_BINARY_DIR}/src/db)
+# Syd DB
 include_directories(${PROJECT_BINARY_DIR}/src/db)
 include_directories(${PROJECT_SOURCE_DIR}/src/db)
+add_subdirectory(${SYD_SOURCE_DIR}/src/db ${PROJECT_BINARY_DIR}/src/db)
 #----------------------------------------------------------
 
 

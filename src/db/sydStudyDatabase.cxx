@@ -22,6 +22,8 @@
 // itk
 #include <itkLabelStatisticsImageFilter.h>
 
+using namespace syd;
+
 // --------------------------------------------------------------------
 syd::StudyDatabase::StudyDatabase(std::string name, std::string param):Database(name)
 {

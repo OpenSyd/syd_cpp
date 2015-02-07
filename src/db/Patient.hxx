@@ -16,65 +16,68 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <string>
-#include <iostream>
-#include <memory>
-#include <odb/core.hxx>
+#ifndef SYDPATIENT_H
+#define SYDPATIENT_H
 
-typedef unsigned int IdType;
+// syd
+#include "sydCommon.h"
 
 // --------------------------------------------------------------------
+namespace syd {
+
 #pragma db object
-class Patient
-{
-public:
+  class Patient  {
+  public:
 
 #pragma db id auto
-  IdType        id;
-  std::string   name;
-  IdType        synfrizz_id;
-  double        weight_in_kg;
-  std::string   path;
-  bool          was_treated;
-  std::string   injection_date;
-  double        injected_activity_in_MBq;
+    IdType        id;
+    std::string   name;
+    IdType        synfrizz_id;
+    double        weight_in_kg;
+    std::string   path;
+    bool          was_treated;
+    std::string   injection_date;
+    double        injected_activity_in_MBq;
 
-  // --------------------------------------------------
-  Patient() {}
-  ~Patient() {}
-  Patient(const Patient & other) { copy(other); }
-  // --------------------------------------------------
-
-
-  // --------------------------------------------------
-  Patient & operator= (const Patient & other) {
-    if (this != &other) { copy(other); }
-    return *this;
-  }
-  // --------------------------------------------------
+    // --------------------------------------------------
+    Patient() {}
+    ~Patient() {}
+    Patient(const Patient & other) { copy(other); }
+    // --------------------------------------------------
 
 
-  // --------------------------------------------------
-  friend std::ostream& operator<<(std::ostream& os, const Patient & p) {
-    os << p.synfrizz_id << " " << p.name;
-    return os;
-  }
-  // --------------------------------------------------
+    // --------------------------------------------------
+    Patient & operator= (const Patient & other) {
+      if (this != &other) { copy(other); }
+      return *this;
+    }
+    // --------------------------------------------------
 
 
-  // --------------------------------------------------
-  void copy(const Patient & t) {
-    id = t.id;
-    name = t.name;
-    synfrizz_id = t.synfrizz_id;
-    weight_in_kg = t.weight_in_kg;
-    path = t.path;
-    was_treated = t.was_treated;
-    injection_date = t.injection_date;
-    injected_activity_in_MBq = t.injected_activity_in_MBq;
-  }
-  // --------------------------------------------------
+    // --------------------------------------------------
+    friend std::ostream& operator<<(std::ostream& os, const Patient & p) {
+      os << p.synfrizz_id << " " << p.name;
+      return os;
+    }
+    // --------------------------------------------------
 
 
-};
+    // --------------------------------------------------
+    void copy(const Patient & t) {
+      id = t.id;
+      name = t.name;
+      synfrizz_id = t.synfrizz_id;
+      weight_in_kg = t.weight_in_kg;
+      path = t.path;
+      was_treated = t.was_treated;
+      injection_date = t.injection_date;
+      injected_activity_in_MBq = t.injected_activity_in_MBq;
+    }
+    // --------------------------------------------------
+
+  }; // end of class
+
+}
 // --------------------------------------------------------------------
+
+#endif

@@ -19,6 +19,7 @@
 // syd
 #include "sydClinicDatabase.h"
 
+using namespace syd;
 
 // --------------------------------------------------------------------
 syd::ClinicDatabase::ClinicDatabase(std::string name, std::string param)
@@ -82,18 +83,18 @@ void syd::ClinicDatabase::GetAssociatedCTSerie(IdType serie_id,
 
 
 // --------------------------------------------------------------------
-std::string syd::ClinicDatabase::GetSeriePath(IdType id)
+std::string syd::ClinicDatabase::GetSeriePath(IdType serie_id)
 {
-  Serie serie = GetById<Serie>(id);
+  Serie serie = GetById<Serie>(serie_id);
   return GetPath(serie);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::string syd::ClinicDatabase::GetPatientPath(IdType id)
+std::string syd::ClinicDatabase::GetPatientPath(IdType patient_id)
 {
-  Patient patient = GetById<Patient>(id);
+  Patient patient = GetById<Patient>(patient_id);
   return GetPath(patient);
 }
 // --------------------------------------------------------------------
@@ -124,19 +125,8 @@ Patient syd::ClinicDatabase::GetPatient(const Serie & serie)
 // --------------------------------------------------------------------
 
 
-
 // --------------------------------------------------------------------
-// --------------------------------------------------------------------
-// --------------------------------------------------------------------
-// --------------------------------------------------------------------
-// --------------------------------------------------------------------
-// --------------------------------------------------------------------
-
-
-
-
-// --------------------------------------------------------------------
-void syd::ClinicDatabase::GetPatientsByName(std::string patient_name,
+void syd::ClinicDatabase::GetPatientsByName(const std::string & patient_name,
                                             std::vector<Patient> & patients)
 {
   if (patient_name == "all" or patient_name == "") {
@@ -167,7 +157,7 @@ void syd::ClinicDatabase::GetPatientsByName(std::string patient_name,
 
 
 // --------------------------------------------------------------------
-Patient syd::ClinicDatabase::GetPatientByName(std::string patient_name)
+Patient syd::ClinicDatabase::GetPatientByName(const std::string & patient_name)
 {
   if (patient_name == "all" or patient_name == "") {
     LOG(FATAL) << "Error, please provide a patient name not 'all' or empty name.";
@@ -589,7 +579,7 @@ void syd::ClinicDatabase::CheckFile(OFString filename)
 
 
 // --------------------------------------------------------------------
-syd::RoiType syd::ClinicDatabase::GetRoiType(std::string name)
+syd::RoiType syd::ClinicDatabase::GetRoiType(const std::string & name)
 {
   std::vector<RoiType> roitypes;
   LoadVector<RoiType>(odb::query<RoiType>::name == name, roitypes);

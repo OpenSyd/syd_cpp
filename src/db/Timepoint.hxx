@@ -16,25 +16,16 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-// std
-#include <string>
-#include <iostream>
-#include <memory>
+#ifndef SYDTIMEPOINT_H
+#define SYDTIMEPOINT_H
 
 // syd
 #include "sydCommon.h"
 
-// odb
-#include <odb/core.hxx>
-#include <odb/tr1/memory.hxx>
-
-using std::tr1::shared_ptr;
-
 // --------------------------------------------------------------------
 namespace syd {
 #pragma db object
-  class Timepoint
-  {
+  class Timepoint {
   public:
 
 #pragma db id auto
@@ -64,7 +55,8 @@ namespace syd {
 
     // --------------------------------------------------
     friend std::ostream& operator<<(std::ostream& os, const Timepoint & p) {
-      os << p.id << " " << p.number << " " << p.time_from_injection_in_hours
+      os << p.id << " " << p.number
+         << " " << p.time_from_injection_in_hours
          << " spect=" << p.spect_image_id
          << " ct=" << p.ct_image_id
          << " p=" << p.patient_id;
@@ -89,3 +81,4 @@ namespace syd {
   }; // class Timepoint
 } // namespace syd
 // --------------------------------------------------------------------
+#endif

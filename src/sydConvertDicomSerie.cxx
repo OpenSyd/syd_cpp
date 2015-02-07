@@ -28,6 +28,8 @@ INITIALIZE_EASYLOGGINGPP
 // syd : only once initialization (in the main)
 #include "sydInit.h"
 
+using namespace syd;
+
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {

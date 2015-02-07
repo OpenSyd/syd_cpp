@@ -38,26 +38,27 @@ namespace syd {
 
     SYD_INIT_DATABASE(ClinicDatabase);
 
-    // required function
-    virtual void Dump(std::ostream & os, std::vector<std::string> & args);
-    virtual void CheckIntegrity(std::vector<std::string> & args);
-
-    void GetAssociatedCTSerie(IdType serie_id, std::vector<std::string> & patterns, Serie & serie);
-    std::string GetSeriePath(IdType id);
-    std::string GetPatientPath(IdType id);
+    // Query the DB
+    std::string GetSeriePath(IdType serie_id);
+    std::string GetPatientPath(IdType patient_id);
     std::string GetPath(const Patient & patient);
     std::string GetPath(const Serie & serie);
-    void GetPatientsByName(std::string patient_name, std::vector<Patient> & patients);
-    Patient GetPatientByName(std::string patient_name);
+    void GetPatientsByName(const std::string & patient_name, std::vector<Patient> & patients);
+    Patient GetPatientByName(const std::string & patient_name);
+    RoiType GetRoiType(const std::string & name);
+    Patient GetPatient(const Serie & serie);
     odb::query<Serie> GetSeriesQueryFromPatterns(std::vector<std::string> patterns);
     void AndSeriesQueryFromPattern(odb::query<Serie> & q, std::string pattern);
-    RoiType GetRoiType(std::string name);
-    Patient GetPatient(const Serie & serie);
+    void GetAssociatedCTSerie(IdType serie_id,
+                              std::vector<std::string> & patterns,
+                              Serie & serie);
 
+    // Update and create new element
     void UpdateSerie(Serie & serie);
 
     // Function for checking integrity
     void set_check_file_content_level(int l) { check_file_content_level_ = l; }
+    virtual void CheckIntegrity(std::vector<std::string> & args);
     void CheckIntegrity(const Patient & patient);
     void CheckPatient(const Patient & patient);
     void CheckSerie(const Serie & serie);
@@ -65,13 +66,15 @@ namespace syd {
     void CheckSerie_NM(const Serie & serie);
     void CheckFile(OFString filename);
 
+    // Functions for Dump & Print
+    virtual void Dump(std::ostream & os, std::vector<std::string> & args);
     std::string Print(Patient patient, int level=0);
     std::string Print(Serie serie);
 
   protected:
     int check_file_content_level_;
-  }; // class ClinicDatabase
 
+  }; // class ClinicDatabase
 } // namespace syd
 // --------------------------------------------------------------------
 

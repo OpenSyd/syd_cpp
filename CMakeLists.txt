@@ -87,3 +87,13 @@ include_directories(${DCMTK_INCLUDE_DIRS})
 # Select what is compiled
 add_subdirectory(${SYD_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+enable_testing()
+#add_test( testname Exename arg1 arg2 ... )
+add_test(
+  NAME test_CreateTimeIntegratedSpectImage
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test/test_CreateTimeIntegratedSpectImage
+  COMMAND test_CreateTimeIntegratedSpectImage.sh)
+#----------------------------------------------------------

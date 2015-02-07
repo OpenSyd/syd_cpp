@@ -16,16 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-// std
-#include <string>
-#include <iostream>
-#include <memory>
-
 // syd
 #include "sydCommon.h"
-
-// odb
-#include <odb/core.hxx>
 
 // --------------------------------------------------------------------
 namespace syd {
