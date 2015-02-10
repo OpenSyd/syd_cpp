@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
     }
 
     // Save
-    syd::replace(filename, ".mhd", "-pcidg.mhd");
+    syd::Replace(filename, ".mhd", "-pcidg.mhd");
     DD(filename);
     syd::WriteImage<ImageType>(spectimage, filename);
   }

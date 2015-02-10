@@ -75,7 +75,7 @@ void syd::InsertTimepointCommand::InsertTimepoint(std::vector<std::string> input
   // Convert serie to u long
   std::vector<IdType> ids;
   for(auto i=0; i<inputs.size(); i++) {
-    IdType id = toULong(inputs[i]);
+    IdType id = ToULong(inputs[i]);
     ids.push_back(id);
   }
 

@@ -167,8 +167,8 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
   }
 
   // Now two Timepoints have been created, display the elastix command
-  std::string in_ref_filename = in_db_->GetImagePath(in_ref.ct_image_id);
-  std::string in_mov_filename = in_db_->GetImagePath(in_mov.ct_image_id);
+  std::string in_ref_filename = in_db_->GetImagePathFromRawImageId(in_ref.ct_image_id);
+  std::string in_mov_filename = in_db_->GetImagePathFromRawImageId(in_mov.ct_image_id);
 
   RoiMaskImage ref_roi(in_db_->GetRoiMaskImage(in_ref, "patient"));
   RoiMaskImage mov_roi(in_db_->GetRoiMaskImage(in_mov, "patient"));
@@ -202,8 +202,8 @@ void syd::RegisterCommand::Run(Timepoint in_ref, Timepoint in_mov)
     ImageType::Pointer spect = ReadImage<ImageType>(in_db_->GetImagePath(in_spect));
     while (in) {
       std::getline(in, line);
-      syd::replace(line, "short", "float");
-      syd::replace(line, "(DefaultPixelValue -1000.000000)", "(DefaultPixelValue 0.0)");
+      syd::Replace(line, "short", "float");
+      syd::Replace(line, "(DefaultPixelValue -1000.000000)", "(DefaultPixelValue 0.0)");
       if (line.find("(Size") != std::string::npos) {
         std::stringstream ss;
         ss  << "(Size " << spect->GetLargestPossibleRegion().GetSize()[0] << " "

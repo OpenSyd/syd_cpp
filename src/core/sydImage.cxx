@@ -61,9 +61,9 @@ std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::s
   std::string sy = ImagePositionPatient.substr(0,n);
   std::string sz = ImagePositionPatient.substr(n+1,ImagePositionPatient.size());
   typename ImageType::PointType origin;
-  origin[0] = toDouble(sx);
-  origin[1] = toDouble(sy);
-  origin[2] = toDouble(sz);
+  origin[0] = ToDouble(sx);
+  origin[1] = ToDouble(sy);
+  origin[2] = ToDouble(sz);
   image->SetOrigin(origin);
 
   // Correct for negative SpacingBetweenSlices

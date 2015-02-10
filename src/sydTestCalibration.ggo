@@ -1,0 +1,11 @@
+#File sydTestCalibration.ggo
+
+package "sydTestCalibration"
+usage "sydTestCalibration : info for calibration"
+version "0.1"
+description "Provide <database> <patient_name> "
+
+option "config"	  	 	-	"Config file"				string  	no
+option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int default ="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off
+option "maxt1"   	 	m       "Max time t1 (dont count if t1 > maxt1)" double default="50" no

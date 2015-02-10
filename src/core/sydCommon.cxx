@@ -68,7 +68,7 @@ std::string syd::GetDate(std::string date, std::string time)
 
 
 // --------------------------------------------------------------------
-unsigned long syd::toULong(std::string s)
+unsigned long syd::ToULong(std::string s)
 {
   std::istringstream iss(s);
   unsigned long i;
@@ -82,7 +82,7 @@ unsigned long syd::toULong(std::string s)
 
 
 // --------------------------------------------------------------------
-double syd::toDouble(std::string s)
+double syd::ToDouble(std::string s)
 {
   std::istringstream iss(s);
   double i;
@@ -105,6 +105,41 @@ void syd::ConvertStringToDate(std::string s, tm & d)
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+//http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
+// trim from start
+std::string & syd::ltrim(std::string &s)
+{
+        s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+        return s;
+}
+
+// trim from end
+std::string & syd::rtrim(std::string &s)
+{
+        s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+        return s;
+}
+
+// trim from both ends
+std::string & syd::trim(std::string &s)
+{
+        return ltrim(rtrim(s));
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::GetWords(const std::string & phrase, std::vector<std::string> & words) {
+  std::istringstream iss(phrase); // consider all words in 'phrase'
+  do {
+    std::string s;
+    iss >> s;
+    s = trim(s);
+    if (s != "") words.push_back(s);
+  } while (iss);
+}
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
@@ -149,7 +184,7 @@ void syd::SkipComment(std::istream & is)
 
 //------------------------------------------------------------------
 //http://stackoverflow.com/questions/3418231/replace-part-of-a-string-with-another-string
-bool syd::replace(std::string& str, const std::string& from, const std::string& to) {
+bool syd::Replace(std::string& str, const std::string& from, const std::string& to) {
     size_t start_pos = str.find(from);
     if(start_pos == std::string::npos)
         return false;

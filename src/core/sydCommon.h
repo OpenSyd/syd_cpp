@@ -57,10 +57,14 @@ namespace syd {
     else cmdline_parser_##ggo_filename(argc, argv, &args_info);
 
   //--------------------------------------------------------------------
-
-
   // Type for id in the db
   typedef unsigned int IdType;
+
+  //--------------------------------------------------------------------
+  static const double HalfLife_Indium_in_days = 2.8047;
+  static const double Lambda_Indium_in_days = log(2.0)/HalfLife_Indium_in_days;
+  static const double Lambda_Indium_in_hours = log(2.0)/(HalfLife_Indium_in_days*24.0);
+  static const double Lambda_Indium_in_sec = log(2.0)/(HalfLife_Indium_in_days*3600.0);
 
   //--------------------------------------------------------------------
   template<class ArgsInfoType>
@@ -86,19 +90,25 @@ namespace syd {
 
 
   //--------------------------------------------------------------------
-  unsigned long toULong(std::string);
-  double toDouble(std::string);
+  unsigned long ToULong(std::string);
+  double ToDouble(std::string);
   template<class T>
-  std::string toString(const T & t);
+  std::string ToString(const T & t);
   void SkipComment(std::istream & is);
-  bool replace(std::string& str, const std::string& from, const std::string& to);
+  bool Replace(std::string& str, const std::string& from, const std::string& to);
+  void GetWords(const std::string & phrase, std::vector<std::string> & words);
+  // trim from start
+  std::string &ltrim(std::string &s);
+  // trim from end
+  std::string &rtrim(std::string &s);
+  // trim from both ends
+  std::string &trim(std::string &s);
   //--------------------------------------------------------------------
 
 
   //--------------------------------------------------------------------
   void loadbar(unsigned int x, unsigned int n, unsigned int w=50);
   //--------------------------------------------------------------------
-
 
   //--------------------------------------------------------------------
   // FIXME : put in another file

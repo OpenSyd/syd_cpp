@@ -780,9 +780,17 @@ Patient syd::StudyDatabase::GetPatient(const Timepoint & timepoint)
 
 
 // --------------------------------------------------------------------
-std::string syd::StudyDatabase::GetImagePath(IdType id)
+std::string syd::StudyDatabase::GetImagePathFromRawImageId(IdType id)
 {
   return GetImagePath(GetById<RawImage>(id));
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::StudyDatabase::GetSpectImagePath(const Timepoint & timepoint)
+{
+  return GetImagePathFromRawImageId(timepoint.spect_image_id);
 }
 // --------------------------------------------------------------------
 
@@ -866,13 +874,8 @@ std::vector<syd::RoiType> syd::StudyDatabase::GetRoiTypes(const std::string roin
                 [this](RoiType a, RoiType b) { return a.id < b.id; }  );
     }
     else {
-      std::istringstream iss(roiname); // consider all words in 'roiname' as a roitype
       std::vector<std::string> r;
-      do {
-        std::string s;
-        iss >> s;
-        r.push_back(s);
-      } while (iss);
+      syd::GetWords(roiname, r); // consider all words in 'roiname' as a roitype
       for (auto s:r) {
         // Pattern could contains '%' as wild card.
         cdb_->LoadVector<RoiType>(odb::query<RoiType>::name.like(s), roitypes); // add to the end of roitypes vector
@@ -889,6 +892,33 @@ void syd::StudyDatabase::GetTimepoints(const Patient & patient,
                                        std::vector<Timepoint> & timepoints)
 {
   LoadVector<Timepoint>(odb::query<Timepoint>::patient_id == patient.id, timepoints);
+  // sort by time_from_injection_in_hours
+  std::sort(begin(timepoints), end(timepoints),
+            [this](Timepoint a, Timepoint b) {
+              return a.time_from_injection_in_hours < b.time_from_injection_in_hours; }  );
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StudyDatabase::GetTimepointsByNumber(const Patient & patient,
+                                       const std::string & query,
+                                       std::vector<Timepoint> & timepoints)
+{
+  if (query == "all" or query == "") {
+    GetTimepoints(patient, timepoints);
+  }
+  else {
+    std::vector<std::string> numbers;
+    syd::GetWords(query, numbers);
+    for(auto n:numbers) {
+      Timepoint timepoint;
+      bool b = GetIfExist<Timepoint>(odb::query<Timepoint>::patient_id == patient.id and
+                                     odb::query<Timepoint>::number == atoi(n.c_str()),
+                                     timepoint);
+      if (b) timepoints.push_back(timepoint);
+    }
+  }
   // sort by time_from_injection_in_hours
   std::sort(begin(timepoints), end(timepoints),
             [this](Timepoint a, Timepoint b) {

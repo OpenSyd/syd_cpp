@@ -41,6 +41,26 @@ namespace syd {
 
     SYD_INIT_DATABASE(StudyDatabase);
 
+    // Query
+    std::string GetPath(const Patient & p);
+    std::string GetOrCreatePath(const Patient & p);
+    std::string GetRoiPath(const Patient & p);
+    std::string GetOrCreateRoiPath(const Patient & p);
+    std::string GetRegistrationOutputPath(Timepoint ref, Timepoint mov);
+    std::string GetImagePath(const RawImage & image);
+    std::string GetImagePath(const RoiMaskImage & roi);
+    std::string GetImagePathFromRawImageId(IdType id);
+    std::string GetSpectImagePath(const Timepoint & timepoint);
+    Patient GetPatient(const Timepoint & timepoint);
+    RoiMaskImage GetRoiMaskImage(const Timepoint & timepoint, std::string roiname);
+    // FIXME put vector in args
+    std::vector<RoiMaskImage> GetRoiMaskImages(const Timepoint & timepoint, std::string roiname);
+    std::vector<RoiType> GetRoiTypes(std::string roiname);
+    RoiType GetRoiType(const RoiMaskImage & roimaskimage);
+    void GetSpectImageFilenames(const Patient & patient, std::vector<std::string> & filenames);
+    void GetTimepoints(const Patient & patient, std::vector<Timepoint> & timepoints);
+    void GetTimepointsByNumber(const Patient & patient, const std::string & query, std::vector<Timepoint> & timepoints);
+
     // Dump information
     virtual void Dump(std::ostream & os, std::vector<std::string> & args);
     virtual void DumpRoi(std::ostream & os, std::vector<std::string> & args);
@@ -69,24 +89,6 @@ namespace syd {
     void CheckIntegrity(const RawImage & image);
     void CheckIntegrity(const Timepoint & timepoint);
     void CheckIntegrity(const Patient & patient);
-
-    // Query
-    std::string GetPath(const Patient & p);
-    std::string GetOrCreatePath(const Patient & p);
-    std::string GetRoiPath(const Patient & p);
-    std::string GetOrCreateRoiPath(const Patient & p);
-    std::string GetRegistrationOutputPath(Timepoint ref, Timepoint mov);
-    std::string GetImagePath(const RawImage & image);
-    std::string GetImagePath(IdType id);
-    std::string GetImagePath(const RoiMaskImage & roi);
-    Patient GetPatient(const Timepoint & timepoint);
-    RoiMaskImage GetRoiMaskImage(const Timepoint & timepoint, std::string roiname);
-    // FIXME put vector in args
-    std::vector<RoiMaskImage> GetRoiMaskImages(const Timepoint & timepoint, std::string roiname);
-    std::vector<RoiType> GetRoiTypes(std::string roiname);
-    RoiType GetRoiType(const RoiMaskImage & roimaskimage);
-    void GetSpectImageFilenames(const Patient & patient, std::vector<std::string> & filenames);
-    void GetTimepoints(const Patient & patient, std::vector<Timepoint> & timepoints);
 
     // Print
     std::string Print(const Timepoint & t);

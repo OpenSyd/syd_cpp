@@ -37,6 +37,7 @@ namespace syd {
     double        time_from_injection_in_hours;
     IdType        ct_image_id;
     IdType        spect_image_id;
+    double        calibration_factor;
 
     // --------------------------------------------------
     Timepoint() {}
@@ -75,6 +76,7 @@ namespace syd {
       time_from_injection_in_hours = t.time_from_injection_in_hours;
       ct_image_id = t.ct_image_id;
       spect_image_id = t.spect_image_id;
+      calibration_factor = t.calibration_factor;
     }
     // --------------------------------------------------
 

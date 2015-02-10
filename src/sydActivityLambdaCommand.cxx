@@ -65,7 +65,7 @@ void syd::ActivityLambdaCommand::Run(const Patient & patient,
     RoiMaskImage roi = sdb_->GetById<RoiMaskImage>(timeactivities[0].roi_mask_image_id);
     double d = roi.density_in_g_cc;
     double k = (1.0/270199)*1000 * 1000; // FIXME to be changed
-    double ia = syd::toDouble(patient.injected_activity_in_MBq);
+    double ia = syd::ToDouble(patient.injected_activity_in_MBq);
     double id = a.GetA()*d*k/ia*100;
     std::cout << "replot  f(" << id << " , " << activity.fit_lambda << ",x);" << std::endl;
     double half_life = log(2.0)/activity.fit_lambda;

@@ -161,3 +161,21 @@ add_executable(sydTestSpectImage
   sydTestSpectImage_ggo.c)
 target_link_libraries(sydTestSpectImage ${SYD_LIBS})
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydTestCalibration sydTestCalibration.ggo)
+add_executable(sydTestCalibration
+  sydTestCalibration.cxx
+  sydTestCalibration_ggo.c)
+target_link_libraries(sydTestCalibration ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydSetCalibrationFactor sydSetCalibrationFactor.ggo)
+add_executable(sydSetCalibrationFactor
+  sydSetCalibrationFactor.cxx
+  sydSetCalibrationFactor_ggo.c)
+target_link_libraries(sydSetCalibrationFactor ${SYD_LIBS})
+#----------------------------------------------------------
