@@ -20,6 +20,9 @@
 template<class ArgsInfoType>
 void init_logging_verbose_options(ArgsInfoType & args_info)
 {
+  // this is needed to ensure that solver is SILENT
+  google::InitGoogleLogging("");
+
   // Load main default configuration
   el::Configurations defaultConf;
   defaultConf.setToDefault();

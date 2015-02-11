@@ -29,6 +29,15 @@
 #include "sydDicomCommon.h"
 #include "md5.h"
 
+// google logging
+#include <glog/logging.h>
+
+// google logging conflict with easylogging, so we need the following (ceres need glog)
+#undef CHECK_STREQ
+#undef DCHECK_STREQ
+#undef CHECK_STRNE
+#undef DCHECK_STRNE
+
 // easylogging
 // The first macro is needed to prevent default log file to be created
 #define _ELPP_NO_DEFAULT_LOG_FILE 1

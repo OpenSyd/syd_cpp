@@ -563,6 +563,7 @@ bool syd::ActivityDatabase::GetRoiMaskImage(Activity & activity, RoiMaskImage & 
 double syd::ActivityDatabase::Get_CountByMM3_in_MBqByCC(double v)
 {
   // Calibration factor is hard-coded : to be changed !
+  LOG(FATAL) << "OLD VERSION TO CHANGE";
   double k = (1.0/270199)*1000.0; // 1000 is for mm3 to cm3
   return v*k;
 }

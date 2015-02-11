@@ -27,7 +27,6 @@
 // --------------------------------------------------------------------
 syd::TimeActivityCurveFitSolver::TimeActivityCurveFitSolver()
 {
-  google::InitGoogleLogging("TimeActivityCurveFitSolver"); // this is needed to ensure that solver is SILENT
   tac_ = NULL;
   useWeightedFit_ = true;
   ceres_options_ = NULL;

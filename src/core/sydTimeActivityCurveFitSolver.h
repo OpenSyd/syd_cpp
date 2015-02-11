@@ -24,7 +24,6 @@
 
 // Ceres
 #include <ceres/ceres.h>
-#include <glog/logging.h>
 
 // syd
 #include "sydTimeActivityCurve.h"
