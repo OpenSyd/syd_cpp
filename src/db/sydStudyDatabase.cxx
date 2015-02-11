@@ -1080,3 +1080,12 @@ void syd::StudyDatabase::UpdateMD5(RawImage & image)
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double Convert_Counts_to_MBq(const Timepoint & timepoint, double v)
+{
+  double k = timepoint.calibration_factor;
+  return v/k;
+}
+// --------------------------------------------------------------------

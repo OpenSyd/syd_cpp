@@ -61,6 +61,9 @@ namespace syd {
     void GetTimepoints(const Patient & patient, std::vector<Timepoint> & timepoints);
     void GetTimepointsByNumber(const Patient & patient, const std::string & query, std::vector<Timepoint> & timepoints);
 
+    // other functions
+    double Convert_Counts_to_MBq(const Timepoint & timepoint, double v);
+
     // Dump information
     virtual void Dump(std::ostream & os, std::vector<std::string> & args);
     virtual void DumpRoi(std::ostream & os, std::vector<std::string> & args);
