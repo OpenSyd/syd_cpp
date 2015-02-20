@@ -37,20 +37,20 @@ int main(int argc, char* argv[])
   // Init logging option (verbose)
   syd::init_logging_verbose_options(args_info);
 
-  // Variables needed to for final units conversion
-  double calibration_factor = 1.0;
-  double injected_activity_in_MBq = 1.0;
-
   // User can provide images and times values
   typedef double PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
   typedef itk::Image<float, 3> FloatImageType;
   std::vector<std::string> filenames;
   std::vector<double> times;
+  std::vector<double> calibration_factors;
+  double scalingFactor = 1.0;
   if (args_info.images_given > 0) {
     for(auto i=0; i<args_info.images_given; i++) filenames.push_back(args_info.images_arg[i]);
     if (args_info.times_given != args_info.images_given) LOG(FATAL) << "You need to provide as many 'times' than 'images'";
     for(auto i=0; i<args_info.times_given; i++) times.push_back(args_info.times_arg[i]);
+    calibration_factors.resize(args_info.times_given);
+    for(auto i=0; i<calibration_factors.size(); i++) calibration_factors[i] = 1.0;
   }
   else {
     // Check args
@@ -71,9 +71,11 @@ int main(int argc, char* argv[])
     // Retrieve the list of n spects
     std::vector<Timepoint> timepoints;
     sdb->GetTimepoints(patient, timepoints);
+    scalingFactor = 1000000.0; // in million to avoid rounding error during computation
     for(auto t:timepoints) {
       RawImage spect = sdb->GetById<RawImage>(t.spect_image_id);
       filenames.push_back(sdb->GetImagePath(spect));
+      calibration_factors.push_back(1.0/t.calibration_factor/patient.injected_activity_in_MBq*scalingFactor);
     }
 
     // Get the list of times
@@ -82,9 +84,6 @@ int main(int argc, char* argv[])
     for(auto t:times) s = s+" "+syd::toString(t);
     ELOG(1) << "Times : " << s;
 
-    // Get values for units conversion
-    calibration_factor = adb->Get_CountByMM3_in_MBqByCC(1.0);
-    injected_activity_in_MBq = patient.injected_activity_in_MBq;
   }
 
   // Open images
@@ -96,30 +95,19 @@ int main(int argc, char* argv[])
   }
 
   // Start algorithm
-  /*
-    ImageType::Pointer tii =
-    syd::CreateTimeIntegratedSpectImage<ImageType>(spects, times);
-  */
   syd::TimeIntegratedSpectImageFilter::Pointer filter = syd::TimeIntegratedSpectImageFilter::New();
-  for(auto i=0; i<spects.size(); i++) filter->AddInput(times[i], spects[i]);
-  filter->SetMinimumActivityValue(args_info.min_arg);
+  for(auto i=0; i<spects.size(); i++) filter->AddInput(times[i], spects[i], calibration_factors[i]);
+  filter->SetMinimumActivityValue(args_info.min_arg*calibration_factors[0]);
   filter->SetDebugFlag(args_info.debug_flag);
+  filter->SetDefaultPixelValue(0.0);
+  filter->SetProgressBarFlag(!args_info.nopb_flag);
   filter->Initialise();
   filter->Update();
   ImageType::Pointer o = filter->GetOutput();
 
-  // Conversion from MBq.h/cc in MBq by injected
-  if (args_info.images_given == 0) {
-    ELOG(1) << "Conversion into MBq.h, k=" << calibration_factor << " and injected_activity_in_MBq = " << injected_activity_in_MBq;
-    double vol = o->GetSpacing()[0]*o->GetSpacing()[1]*o->GetSpacing()[2]/1000.0; // in cc
-    itk::ImageRegionIterator<ImageType> iter(o, o->GetLargestPossibleRegion());
-    while (!iter.IsAtEnd()) {
-      double v = iter.Get();
-      v = v*calibration_factor/1000.0/injected_activity_in_MBq; // unit is MBq.h so in millions of counts by MBq injected
-      //v = v*calibration_factor/injected_activity_in_MBq; // unit is kBq.h so in thousands of counts by MBq injected
-      iter.Set(v);
-      ++iter;
-    }
+  // If the image was scaled, we "unscale"
+  if (scalingFactor != 1.0) {
+    ScaleImage<ImageType>(o, 1.0/scalingFactor);
   }
 
   // Store results (convert to float)

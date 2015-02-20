@@ -479,3 +479,16 @@ CastImageToFloat(ImageType * input)
   return filter->GetOutput();
 }
 //--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+void ScaleImage(ImageType * input, double scale)
+{
+  itk::ImageRegionIterator<ImageType> iter(input, input->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd()) {
+    iter.Set(iter.Get()*scale);
+    ++iter;
+  }
+}
+//--------------------------------------------------------------------

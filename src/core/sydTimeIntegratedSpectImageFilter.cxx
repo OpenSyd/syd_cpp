@@ -24,6 +24,8 @@ syd::TimeIntegratedSpectImageFilter::TimeIntegratedSpectImageFilter():Superclass
 {
   isInitialised_ = false;
   SetDebugFlag(false);
+  SetDefaultPixelValue(0.0);
+  SetProgressBarFlag(true);
 }
 // --------------------------------------------------------------------
 
@@ -36,10 +38,11 @@ syd::TimeIntegratedSpectImageFilter::~TimeIntegratedSpectImageFilter()
 
 
 // --------------------------------------------------------------------
-void syd::TimeIntegratedSpectImageFilter::AddInput(double time, ImageType::Pointer spect)
+void syd::TimeIntegratedSpectImageFilter::AddInput(double time, ImageType::Pointer spect, double factor)
 {
   spects_.push_back(spect);
   times_.push_back(time);
+  factors_.push_back(factor);
   isInitialised_ = false;
 }
 // --------------------------------------------------------------------
@@ -103,6 +106,18 @@ void syd::TimeIntegratedSpectImageFilter::Update()
     iters.push_back(iter);
   }
 
+  // change pixel value for calibration
+  for(auto i=0; i<iters.size(); i++) {
+    if (factors_[i] != 1.0) {
+      while (!iters[i].IsAtEnd()) {
+        iters[i].Set(iters[i].Get()*factors_[i]);
+        ++iters[i];
+      }
+    }
+    iters[i].GoToBegin(); // reset to first pixels
+  }
+
+  // Initialise the TAC
   // Initialise the TAC
   for(auto i=0; i<spects_.size(); i++) tac.AddValue(times_[i], 0.0, 0.0);
 
@@ -136,14 +151,14 @@ void syd::TimeIntegratedSpectImageFilter::Update()
     bool toolow = false;
     double max=0.0;
     for(auto i=0; i<spects_.size(); i++) {
-      double v = iters[i].Get();
+      double v = iters[i].Get();//*factors_[i]; // take calibration factor into account
       tac.SetValue(i, v);
       if (v > max) max = v;
     }
     if (max < min_activity_value_) toolow = true;
 
     // Display progress bar
-    syd::loadbar(x, n);
+    if (progressBarFlag_) syd::loadbar(x, n);
 
     // Solver
     if (!toolow) { // do not try to fit if a value is too low
@@ -174,7 +189,7 @@ void syd::TimeIntegratedSpectImageFilter::Update()
       }
     }
     else {
-      itero.Set(-1.0);
+      itero.Set(defaultPixelValue_);
       debug_iterators[debug_mask].Set(0.0);
     }
 

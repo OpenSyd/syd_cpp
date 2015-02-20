@@ -83,6 +83,9 @@ namespace syd {
   typename ImageType::PointType
   GetMaxPosition(const ImageType * input,
                  const MaskImageType * mask);
+
+  template<class ImageType>
+  void ScaleImage(ImageType * input, double scale);
   //--------------------------------------------------------------------
 
 

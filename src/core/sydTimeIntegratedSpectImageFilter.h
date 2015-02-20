@@ -45,8 +45,10 @@ namespace syd {
     ~TimeIntegratedSpectImageFilter();
 
     void SetDebugFlag(bool b) { debug_flag_ = b; }
-    void AddInput(double time, ImageType::Pointer spect);
+    void AddInput(double time, ImageType::Pointer spect, double factor);
     void SetMinimumActivityValue(double min_value) { min_activity_value_ = min_value; }
+    void SetDefaultPixelValue(double d) { defaultPixelValue_ = d; }
+    void SetProgressBarFlag(bool b) { progressBarFlag_ = b; }
     ImageType::Pointer GetOutput() { return output_; }
 
     void Initialise();
@@ -55,10 +57,13 @@ namespace syd {
   protected:
     bool isInitialised_;
     bool debug_flag_;
+    bool progressBarFlag_;
     std::vector<ImageType::Pointer> spects_;
     std::vector<double> times_;
+    std::vector<double> factors_;
     double min_activity_value_;
     ImageType::Pointer output_;
+    ImageType::PixelType defaultPixelValue_;
 
     // debug images
     std::vector<ImageType::Pointer> debug_images;

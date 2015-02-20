@@ -12,9 +12,10 @@ Example : sydCreateTimeIntegratedSpectImage adb jm"
 option "config"	  	 	-	"Config file"				string  no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"      int     no default ="0"
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag    off
+option "nopb"   	 	n       "No progress bar"                       flag    off
 
 option "output"                 o       "Output image filename"                 string yes
 option "debug"                  d       "Output debug images"                   flag   off
 option "images"                 -       "Spect image filename"                  string no multiple
 option "times"                  -       "Time points in hours"                  float  no multiple
-option "min"                    -       "Min activity value"                    float  no default = "10"
+option "min"                    -       "Min activity value (in nb count)"      float  no default = "10"
