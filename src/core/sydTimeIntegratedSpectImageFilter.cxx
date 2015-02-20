@@ -221,6 +221,12 @@ int syd::TimeIntegratedSpectImageFilter::AddDebugImage(std::string name)
   debug_images.push_back(image);
   debug_iterators.push_back(iter);
   debug_names.push_back(name);
+  // Initialise to zero
+  while (!iter.IsAtEnd()) {
+    iter.Set(0.0);
+    ++iter;
+  }
+  iter.GoToBegin();
   return debug_images.size()-1;
 }
 // --------------------------------------------------------------------

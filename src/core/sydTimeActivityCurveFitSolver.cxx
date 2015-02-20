@@ -161,8 +161,8 @@ void syd::TimeActivityCurveFitSolver::Run()
   // // //  problem.SetParameterUpperBound(&B, 0, 1); // B <=1.0
   // problem.SetParameterLowerBound(&lambda, 0, 0); // positive
   // problem.SetParameterLowerBound(&lambda2, 0, 0); // positive
-  // problem.SetParameterLowerBound(&lambda, 0, Lambda_Indium*0.99);
-  // problem.SetParameterUpperBound(&lambda, 0, Lambda_Indium*1.01);
+  // problem.SetParameterLowerBound(&lambda_, 0, Lambda_Indium_in_hours*0.99);
+  // problem.SetParameterUpperBound(&lambda_, 0, Lambda_Indium_in_hours*1.01);
 
   // Solve
   ceres::Solver::Options options;
@@ -237,6 +237,8 @@ void syd::TimeActivityCurveFitSolver::IncrementalRun()
   // problem.SetParameterLowerBound(&lambda2, 0, 0); // positive
   // problem.SetParameterLowerBound(&lambda, 0, Lambda_Indium*0.99);
   // problem.SetParameterUpperBound(&lambda, 0, Lambda_Indium*1.01);
+  problem.SetParameterLowerBound(&lambda_, 0, Lambda_Indium_in_hours*0.5);
+  //  problem.SetParameterUpperBound(&lambda_, 0, Lambda_Indium_in_hours*1.5);
 
   // output
   Solve(*ceres_options_, &problem, &ceres_summary_);
