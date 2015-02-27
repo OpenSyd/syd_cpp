@@ -41,6 +41,7 @@ namespace syd {
     std::string   path;
     std::string   md5;
     std::string   pixel_type;
+    std::string   tag;
 
     // --------------------------------------------------
     // Constructor, Destructor
@@ -66,13 +67,15 @@ namespace syd {
       path = t.path;
       md5 = t.md5;
       pixel_type = t.pixel_type;
+      tag = t.tag;
     }
     // --------------------------------------------------
 
 
     // --------------------------------------------------
     friend std::ostream& operator<<(std::ostream& os, const RawImage & p) {
-      os << p.id << " " << p.filename << " " << p.pixel_type << " " << p.patient_id;
+      os << p.id << " " << p.filename << " " << p.pixel_type << " "
+         << p.patient_id << " " << p.tag;
       return os;
     }
     // --------------------------------------------------

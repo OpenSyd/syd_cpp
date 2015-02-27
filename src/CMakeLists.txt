@@ -118,6 +118,13 @@ target_link_libraries(sydInsertRoi ${SYD_LIBS})
 
 
 #----------------------------------------------------------
+wrap_ggo(sydInsertDoseImage sydInsertDoseImage.ggo)
+add_executable(sydInsertDoseImage sydInsertDoseImage.cxx sydInsertDoseImage_ggo.c)
+target_link_libraries(sydInsertDoseImage ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 wrap_ggo(sydStitchSpect sydStitchSpect.ggo)
 add_executable(sydStitchSpect sydStitchSpect.cxx sydStitchSpect_ggo.c sydStitchSpectCommand.cxx)
 target_link_libraries(sydStitchSpect ${SYD_LIBS})

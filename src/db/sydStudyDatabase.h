@@ -74,6 +74,20 @@ namespace syd {
     RoiMaskImage NewRoiMaskImage(const Timepoint & timepoint, const RoiType & roitype);
     RawImage NewRawImage(const Patient & patient);
 
+
+    /// Limitation : only float image pixeltype by default (FIXME)
+    /// filename as input, could be change to dose.mhd uncert/mhd ?
+    RawImage InsertDoseImage(const Patient & patient,
+                             std::string filename,
+                             std::string uncertainty,
+                             double scale);
+    RawImage InsertTagImage(const Patient & patient,
+                            std::string tag,
+                            std::string filename,
+                            double scale=1.0);
+
+
+
     void UpdateTimepoint(const Serie & spect_serie, const Serie & ct_serie, Timepoint & t);
     void UpdateRoiMaskImage(RoiMaskImage & roi);
     void UpdateRoiMaskImageVolume(RoiMaskImage & roi);

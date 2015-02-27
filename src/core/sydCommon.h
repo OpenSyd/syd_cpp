@@ -23,6 +23,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <cmath>
 
 // syd
 #include "sydDD.h"
@@ -86,7 +87,6 @@ namespace syd {
   bool FileExists(std::string filename);
   bool DirExists(std::string folder);
   std::string GetExtension(const std::string filename);
-
   //--------------------------------------------------------------------
 
 

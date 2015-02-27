@@ -1089,3 +1089,63 @@ double Convert_Counts_to_MBq(const Timepoint & timepoint, double v)
   return v/k;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+RawImage syd::StudyDatabase::InsertDoseImage(const Patient & patient,
+                                             std::string dose_fn,
+                                             std::string uncert_fn,
+                                             double scale)
+{
+  RawImage i = InsertTagImage(patient, "dose", dose_fn, scale);
+  InsertTagImage(patient, "uncertainty", uncert_fn);
+  return i;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+RawImage syd::StudyDatabase::InsertTagImage(const Patient & patient,
+                                            std::string tag,
+                                            std::string filename,
+                                            double scale)
+{
+  RawImage image;
+  bool b = GetIfExist<RawImage>(odb::query<RawImage>::patient_id == patient.id and
+                                odb::query<RawImage>::tag == tag, image);
+  if (b) {
+    LOG(WARNING) << "Already exist, we replace " << image;
+  }
+  else {
+    image = NewRawImage(patient);
+  }
+
+  // get only the filename
+  size_t p = filename.find_last_of(PATH_SEPARATOR);
+  std::string f = filename.substr(p+1, filename.size()-p-1);
+
+  // Create and insert the image in the db
+  image.path = patient.name+PATH_SEPARATOR;
+  image.filename = f;
+  image.pixel_type = "float";
+  image.tag = tag;
+  Insert(image);
+
+  // Copy the file
+  syd::CopyMHDImage(filename, GetImagePath(image));
+
+  // If needed we scale the value
+  if (scale != 1.0) {
+    typedef float PixelType;
+    typedef itk::Image<PixelType, 3> ImageType;
+    ImageType::Pointer im = syd::ReadImage<ImageType>(GetImagePath(image));
+    syd::ScaleImage<ImageType>(im, scale);
+    syd::WriteImage<ImageType>(im, GetImagePath(image));
+  }
+
+  // Update the md5
+  UpdateMD5(image);
+  //Update(image); -> already in UpdateMD5
+  return image;
+}
+// --------------------------------------------------------------------

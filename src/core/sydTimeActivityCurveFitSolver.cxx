@@ -237,7 +237,7 @@ void syd::TimeActivityCurveFitSolver::IncrementalRun()
   // problem.SetParameterLowerBound(&lambda2, 0, 0); // positive
   // problem.SetParameterLowerBound(&lambda, 0, Lambda_Indium*0.99);
   // problem.SetParameterUpperBound(&lambda, 0, Lambda_Indium*1.01);
-  problem.SetParameterLowerBound(&lambda_, 0, Lambda_Indium_in_hours*0.5);
+  problem.SetParameterLowerBound(&lambda_, 0, Lambda_Indium_in_hours*0.2);
   //  problem.SetParameterUpperBound(&lambda_, 0, Lambda_Indium_in_hours*1.5);
 
   // output
