@@ -82,12 +82,57 @@ struct syd::TimeActivityCurveFitSolver::MonoExponentialResidualWeighted {
                                         T* residual) const {
     residual[0] = 1.0/w_ * (T(y_) - A[0]*exp(-lambda[0] * T(x_)));
     return true;
-
   }
 private:
   const double x_;
   const double y_;
   const double w_;
+};
+// --------------------------------------------------------------------
+
+
+double syd::TwoExponential(const double A, const double K1, const double K2, const double x)
+{
+  return A*K1/(K2-K1)*exp(-syd::Lambda_Indium_in_hours*x)*( exp(-K1*x) - exp(-K2*x) );
+}
+
+// --------------------------------------------------------------------
+struct syd::TimeActivityCurveFitSolver::TwoExponentialResidual {
+  TwoExponentialResidual(double x, double y): x_(x), y_(y) {}
+  template <typename T> bool operator()(const T* const A,
+                                        const T* const K1,
+                                        const T* const K2,
+                                        T* residual) const {
+    //    residual[0] = (T(y_) - A[0]*exp(-lambda[0] * T(x_)));
+
+    //    residual[0] = (T(y_) - A[0] * (exp(-(Lambda_Indium_in_hours+K1[0])*T(x_)) - exp(-(Lambda_Indium_in_hours+K2[0])*T(x_))));
+
+    //residual[0] = (T(y_) - A[0] * (exp(-(Lambda_Indium_in_hours+K1[0])*T(x_)) - exp(-(Lambda_Indium_in_hours+K2[0])*T(x_))));
+    //    residual[0] = (T(y_) - A[0] * (exp(-(K1[0])*T(x_)) - exp(-(K2[0])*T(x_))));
+
+    //FIXME    // residual[0] = (T(y_) - A[0] * K1[0] / (K2[0]-K1[0]) *
+    //                (exp(-(Lambda_Indium_in_hours+K1[0])*T(x_)) - exp(-(Lambda_Indium_in_hours+K2[0])*T(x_))));
+
+    residual[0] = (T(y_) - A[0] * K1[0] / (K2[0]-K1[0]) *
+                   exp(-(Lambda_Indium_in_hours*T(x_))) *
+                   (exp(-K1[0]*T(x_)) - exp(-K2[0]*T(x_))));
+
+    /*    residual[0] = (T(y_) - TwoExponential(T(A[0]),
+                                          K1[0],
+                                          K2[0],
+                                          x_));*/
+
+    // residual[0] = (T(y_) - A[0] * K1[0] / (K2[0]-K1[0]) *
+    //                (exp(-(Lambda_Indium_in_hours+K1[0])*T(x_)) - exp(-(Lambda_Indium_in_hours+K2[0])*T(x_))));
+
+    //    residual[0] = (T(y_) - (A[0] * exp(-(Lambda_Indium_in_hours+K1[0])*T(x_)) + (100.0-A[0]) * exp(-(Lambda_Indium_in_hours+K2[0])*T(x_))));
+
+
+    return true;
+  }
+private:
+  const double x_;
+  const double y_;
 };
 // --------------------------------------------------------------------
 
@@ -254,10 +299,55 @@ void syd::TimeActivityCurveFitSolver::InitIncrementalRun()
 {
   if (ceres_options_) delete ceres_options_;
   ceres_options_ = new ceres::Solver::Options;
-  ceres_options_->max_num_iterations = 50;
+  ceres_options_->max_num_iterations = 500;
   ceres_options_->linear_solver_type = ceres::DENSE_QR;
   ceres_options_->minimizer_progress_to_stdout = false;
   ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
+  //ceres_options_->trust_region_strategy_type = ceres::DOGLEG;// (faster LM ?)
+  //ceres_options_->dogleg_type = ceres::SUBSPACE_DOGLEG;
   ceres_options_->logging_type = ceres::SILENT;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimeActivityCurveFitSolver::Run_f4a()
+{
+  DD("Run_f4a");
+  std::vector<TwoExponentialResidual*> residuals;
+  typedef ceres::AutoDiffCostFunction<TwoExponentialResidual, 1, 1, 1, 1> CostFctType;
+
+  // Fill the residuals
+  residuals.clear();
+  for (auto i=0; i<tac_->size(); ++i) {
+    auto r = new TwoExponentialResidual(tac_->GetTime(i), tac_->GetValue(i));
+    residuals.push_back(r);
+  }
+
+  // Build the problem
+  unsigned int max_index = tac_->FindMaxIndex();
+  A_ = 2*tac_->GetValue(max_index); // required ! (or could be index=0)
+  K1_ = 0.1;
+  K2_ = -0.001;
+  ceres::Problem problem;
+  for (auto i=0; i<residuals.size(); ++i) {
+    problem.AddResidualBlock(new CostFctType(residuals[i]), NULL, &A_, &K1_, &K2_);
+  }
+
+  // Bounds (constraints)
+  // problem.SetParameterLowerBound(&K1_, 0, 0); // A positive
+  // problem.SetParameterLowerBound(&K2_, 0, 0); // B positive
+  //  problem.SetParameterUpperBound(&K1_, 0, 0.05); // B <=1.0
+  //  problem.SetParameterUpperBound(&K2_, 0, 0.05); // positive
+  // problem.SetParameterLowerBound(&lambda2, 0, 0); // positive
+  // problem.SetParameterLowerBound(&lambda, 0, Lambda_Indium*0.99);
+  // problem.SetParameterUpperBound(&lambda, 0, Lambda_Indium*1.01);
+  //problem.SetParameterLowerBound(&lambda_, 0, Lambda_Indium_in_hours*0.2);
+  //  problem.SetParameterUpperBound(&lambda_, 0, Lambda_Indium_in_hours*1.5);
+
+  // output
+  Solve(*ceres_options_, &problem, &ceres_summary_);
+  std::cout << ceres_summary_.BriefReport() << "\n";
+  // std::cout << ceres_summary_.FullReport() << "\n";
 }
 // --------------------------------------------------------------------

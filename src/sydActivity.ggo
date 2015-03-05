@@ -4,11 +4,11 @@ package "sydActivity"
 usage "sydActivity <db> <cmd>"
 version "0.1"
 description "<cmd> can be :
-- ca <patient> <roiname> <nb> : for count activity computed for patient/timepoint/roiname.
-- pa <patient> <roiname>      : for peak time activity computed for patient/timepoint/roiname.
-- la <patient> <roiname>      : for lambda estimation
-- ia : for integrated activity (NOT YET)
-
+- ca    <patient> <roiname> <nb> : for count activity computed for patient/timepoint/roiname.
+- pa    <patient> <roiname>      : for peak time activity computed for patient/timepoint/roiname.
+- la    <patient> <roiname>      : for lambda estimation
+- dose  <patient> <roiname>      : mean dose in the roi
+- ia  : for integrated activity (NOT YET)
 - <patient>, <roiname> and <nb> could be 'all'
 
 "

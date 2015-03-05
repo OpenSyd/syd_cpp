@@ -1129,7 +1129,7 @@ RawImage syd::StudyDatabase::InsertTagImage(const Patient & patient,
   image.filename = f;
   image.pixel_type = "float";
   image.tag = tag;
-  Insert(image);
+  Update(image);
 
   // Copy the file
   syd::CopyMHDImage(filename, GetImagePath(image));

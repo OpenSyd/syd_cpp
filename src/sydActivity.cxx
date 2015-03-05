@@ -22,6 +22,7 @@
 #include "sydActivityCountCommand.h"
 #include "sydActivityLambdaCommand.h"
 #include "sydActivityTimeIntegratedCommand.h"
+#include "sydActivityDoseCommand.h"
 
 // easylogging : only once initialization (in the main)
 INITIALIZE_EASYLOGGINGPP
@@ -52,6 +53,7 @@ int main(int argc, char* argv[])
   tools["pa"] = new syd::ActivityPeakCommand;
   tools["la"] = new syd::ActivityLambdaCommand;
   tools["ia"] = new syd::ActivityTimeIntegratedCommand;
+  tools["dose"] = new syd::ActivityDoseCommand;
 
   // Get the command
   std::string cmd = args_info.inputs[1];

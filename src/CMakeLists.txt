@@ -84,7 +84,8 @@ add_executable(sydActivity sydActivity.cxx sydActivity_ggo.c
   sydActivityPeakCommand.cxx
   sydActivityLambdaCommand.cxx
   sydActivityTimeIntegratedCommand.cxx
-  sydActivityCountCommand.cxx)
+  sydActivityCountCommand.cxx
+  sydActivityDoseCommand.cxx)
 target_link_libraries(sydActivity ${SYD_LIBS})
 #----------------------------------------------------------
 
@@ -185,4 +186,13 @@ add_executable(sydSetCalibrationFactor
   sydSetCalibrationFactor.cxx
   sydSetCalibrationFactor_ggo.c)
 target_link_libraries(sydSetCalibrationFactor ${SYD_LIBS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydTestFit sydTestFit.ggo)
+add_executable(sydTestFit
+  sydTestFit.cxx
+  sydTestFit_ggo.c)
+target_link_libraries(sydTestFit ${SYD_LIBS})
 #----------------------------------------------------------

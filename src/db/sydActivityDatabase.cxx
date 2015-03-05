@@ -114,6 +114,7 @@ void syd::ActivityDatabase::Dump(std::ostream & os, std::vector<std::string> & a
   cmds.push_back("tia");
   cmds.push_back("MBq.h");
   cmds.push_back("w"); // weight correlation
+  cmds.push_back("dose");
   std::string allcmds;
   for(auto i:cmds) allcmds+=i+" ";
 
@@ -144,6 +145,7 @@ void syd::ActivityDatabase::Dump(std::ostream & os, std::vector<std::string> & a
   if (cmd == "tia") { DumpTimeIntegratedActivities(os, patients, args, "%ID/kg"); return; }
   if (cmd == "MBq.h") { DumpTimeIntegratedActivities(os, patients, args, "MBq.h"); return; }
   if (cmd == "w") { DumpWeight(os, patients, args); return; }
+  if (cmd == "dose") { DumpDose(os, patients, args); return; }
   for(auto patient:patients) Dump(os, cmd, patient, args);
 }
 // --------------------------------------------------------------------
@@ -418,6 +420,53 @@ void syd::ActivityDatabase::DumpTimeIntegratedActivities(std::ostream & os,
 
 
 // --------------------------------------------------------------------
+void syd::ActivityDatabase::DumpDose(std::ostream & os,
+                                     std::vector<Patient> & patients,
+                                     std::vector<std::string> & args)
+{
+  // Get list of roitypes
+  std::string roiname = args[0];
+  std::vector<RoiType> roitypes = sdb_->GetRoiTypes(roiname);
+
+  // Prepare to print
+  syd::PrintTable ta;
+  ta.AddColumn("#P", 3, 0);
+  for(auto r:roitypes) {
+    ta.AddColumn(r.name, 12, 5); // dose by injected MBq, in cGy
+    ta.AddColumn("ratio", 12, 4); // ratio over liver
+    // ta.AddColumn("uncert%", 12, 1); // % MC uncertainty
+  }
+
+  // Loop on patients
+  for(auto p:patients) {
+    if (p.synfrizz_id != 0) {
+      ta << p.synfrizz_id;
+
+      // Get roi=liver for this patient
+      RoiType liverroi = cdb_->GetRoiType("liver");
+      Activity liver;
+      GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
+                           odb::query<Activity>::roi_type_id == liverroi.id, liver);
+      // Loop over roi
+      for(auto r:roitypes) {
+        Activity a;
+        bool b = GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
+                                      odb::query<Activity>::roi_type_id == r.id, a);
+        if (b) {
+          ta << a.mean_dose*100
+             << a.mean_dose/liver.mean_dose;
+             // << a.mean_uncertainty*100;
+          }
+        else { ta << "-" << "-"; } // << "-"; }
+      }
+    }
+  }
+  ta.Print(std::cout);
+};
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::ActivityDatabase::DumpWeight(std::ostream & os,
                                        std::vector<Patient> & patients,
                                        std::vector<std::string> & args)
@@ -563,7 +612,7 @@ bool syd::ActivityDatabase::GetRoiMaskImage(Activity & activity, RoiMaskImage & 
 double syd::ActivityDatabase::Get_CountByMM3_in_MBqByCC(double v)
 {
   // Calibration factor is hard-coded : to be changed !
-  LOG(FATAL) << "OLD VERSION TO CHANGE";
+  LOG(FATAL) << "OLD CALIBRATION !! TO CHANGE";
   double k = (1.0/270199)*1000.0; // 1000 is for mm3 to cm3
   return v*k;
 }

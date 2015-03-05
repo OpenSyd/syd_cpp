@@ -46,6 +46,8 @@ namespace syd {
     unsigned int  fit_nb_points;
     std::string   fit_comment;
     double        time_integrated_counts_by_mm3;
+    double        mean_dose;
+    double        mean_uncertainty;
 
     // --------------------------------------------------
     Activity() {
@@ -57,6 +59,8 @@ namespace syd {
       fit_nb_points = 0;
       fit_comment = "";
       time_integrated_counts_by_mm3 = 0.0;
+      mean_dose = 0.0;
+      mean_uncertainty = 0.0;
     }
     ~Activity() {}
     Activity(const Activity & other) { copy(other); }
@@ -73,7 +77,8 @@ namespace syd {
 
     // --------------------------------------------------
     friend std::ostream& operator<<(std::ostream& os, const Activity & p) {
-      os << p.id << " " << p.patient_id << " " << p.roi_type_id << " " << p.peak_mean_position << " " << p.fit_lambda;
+      os << p.id << " " << p.patient_id << " " << p.roi_type_id << " " << p.peak_mean_position
+         << " " << p.fit_lambda << " dose=" << p.mean_dose;
       return os;
     }
     // --------------------------------------------------
@@ -91,6 +96,8 @@ namespace syd {
       fit_error = t.fit_error;
       fit_nb_points = t.fit_nb_points;
       fit_comment = t.fit_comment;
+      mean_dose = t.mean_dose;
+      mean_uncertainty = t.mean_uncertainty;
     }
     // --------------------------------------------------
 

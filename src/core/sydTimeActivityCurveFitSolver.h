@@ -31,6 +31,8 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  double TwoExponential(const double A, const double K1, const double K2, const double x);
+
   class TimeActivityCurveFitSolver
   {
   public:
@@ -40,11 +42,13 @@ namespace syd {
 
     struct MonoExponentialResidual;
     struct MonoExponentialResidualWeighted;
+    struct TwoExponentialResidual;
 
     void SetInput(TimeActivityCurve * tac);
     void InitIncrementalRun();
     void Run();
     void IncrementalRun();
+    void Run_f4a();
 
     double GetFitLambda() const { return lambda_; }
     double GetFitError() const { return fit_error_; }
@@ -54,6 +58,9 @@ namespace syd {
     double GetFitA() const { return A_; }
     void SetUseWeightedFit(bool b) { useWeightedFit_ = b; }
     ceres::Solver::Summary & GetSummary() { return ceres_summary_; }
+
+    double GetFitK1() const { return K1_; }
+    double GetFitK2() const { return K2_; }
 
   protected:
     double A_;
@@ -67,10 +74,13 @@ namespace syd {
 
     // following variables for IncrementalRun
     unsigned int kNumObservations_;
-    std::vector<MonoExponentialResidual*> residuals_;
-    typedef ceres::AutoDiffCostFunction<MonoExponentialResidual, 1, 1, 1> CostFctType1;
     ceres::Solver::Options * ceres_options_;
     ceres::Solver::Summary ceres_summary_;
+    std::vector<MonoExponentialResidual*> residuals_;
+    typedef ceres::AutoDiffCostFunction<MonoExponentialResidual, 1, 1, 1> CostFctType1;
+    double K1_;
+    double K2_;
+
   };
 
 }  // namespace syd

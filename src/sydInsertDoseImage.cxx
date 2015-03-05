@@ -55,9 +55,8 @@ int main(int argc, char* argv[])
 
   // Go
   syd::Patient patient = cdb->GetPatientByName(patient_name);
-  DD(patient);
   syd::RawImage im = db->InsertDoseImage(patient, dose_filename, uncert_filename, scale);
-  DD(im); // FIXME verbose output
+  ELOG(1) << "The dose '" << dose_filename << "' was inserted for patient " << patient.name;
 
   // This is the end, my friend.
 }
