@@ -91,42 +91,47 @@ private:
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
 double syd::TwoExponential(const double A, const double K1, const double K2, const double x)
 {
   return A*K1/(K2-K1)*exp(-syd::Lambda_Indium_in_hours*x)*( exp(-K1*x) - exp(-K2*x) );
 }
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 struct syd::TimeActivityCurveFitSolver::TwoExponentialResidual {
   TwoExponentialResidual(double x, double y): x_(x), y_(y) {}
-  template <typename T> bool operator()(const T* const A,
-                                        const T* const K1,
-                                        const T* const K2,
+  template <typename T> bool operator()(const T* const vA,
+                                        const T* const vK1,
+                                        const T* const vK2,
                                         T* residual) const {
-    //    residual[0] = (T(y_) - A[0]*exp(-lambda[0] * T(x_)));
+    const T y = T(y_);
+    const T x = T(x_);
+    const T A = vA[0];
+    const T K1 = vK1[0];
+    const T K2 = vK2[0];
 
-    //    residual[0] = (T(y_) - A[0] * (exp(-(Lambda_Indium_in_hours+K1[0])*T(x_)) - exp(-(Lambda_Indium_in_hours+K2[0])*T(x_))));
+    /* f4a
+       residual[0] = (y - (A * K1) / (K2-K1) *
+       exp(-(Lambda_Indium_in_hours*x)) *
+       (exp(-K1*x) - exp(-K2*x)));
+    */
 
-    //residual[0] = (T(y_) - A[0] * (exp(-(Lambda_Indium_in_hours+K1[0])*T(x_)) - exp(-(Lambda_Indium_in_hours+K2[0])*T(x_))));
-    //    residual[0] = (T(y_) - A[0] * (exp(-(K1[0])*T(x_)) - exp(-(K2[0])*T(x_))));
+    // f4b
+    /*residual[0] = (y -
+                   (A * exp(-(K1+Lambda_Indium_in_hours)*x) +
+                   (100.0-A) * exp(-(K2+Lambda_Indium_in_hours)*x)));*/
 
-    //FIXME    // residual[0] = (T(y_) - A[0] * K1[0] / (K2[0]-K1[0]) *
-    //                (exp(-(Lambda_Indium_in_hours+K1[0])*T(x_)) - exp(-(Lambda_Indium_in_hours+K2[0])*T(x_))));
+    // f3
+    residual[0] = (y -
+                   (A * exp(-(K2+Lambda_Indium_in_hours)*x) +
+                    K1 * exp(-Lambda_Indium_in_hours*x)));
 
-    residual[0] = (T(y_) - A[0] * K1[0] / (K2[0]-K1[0]) *
-                   exp(-(Lambda_Indium_in_hours*T(x_))) *
-                   (exp(-K1[0]*T(x_)) - exp(-K2[0]*T(x_))));
-
-    /*    residual[0] = (T(y_) - TwoExponential(T(A[0]),
-                                          K1[0],
-                                          K2[0],
-                                          x_));*/
-
-    // residual[0] = (T(y_) - A[0] * K1[0] / (K2[0]-K1[0]) *
-    //                (exp(-(Lambda_Indium_in_hours+K1[0])*T(x_)) - exp(-(Lambda_Indium_in_hours+K2[0])*T(x_))));
-
-    //    residual[0] = (T(y_) - (A[0] * exp(-(Lambda_Indium_in_hours+K1[0])*T(x_)) + (100.0-A[0]) * exp(-(Lambda_Indium_in_hours+K2[0])*T(x_))));
-
+    // f4c
+    /*residual[0] = (y -
+                   100.0 * (A)/(K1+A-K2)
+                   * (exp(-(Lambda_Indium_in_hours+K2)*x) - exp(-(Lambda_Indium_in_hours+A+K1)*x)));*/
 
     return true;
   }
@@ -326,9 +331,9 @@ void syd::TimeActivityCurveFitSolver::Run_f4a()
 
   // Build the problem
   unsigned int max_index = tac_->FindMaxIndex();
-  A_ = 2*tac_->GetValue(max_index); // required ! (or could be index=0)
-  K1_ = 0.1;
-  K2_ = -0.001;
+  A_ = -0.1;//2*tac_->GetValue(max_index); // required ! (or could be index=0)
+  K1_ = 0.01;//tac_->GetValue(max_index);
+  K2_ = 0.001;
   ceres::Problem problem;
   for (auto i=0; i<residuals.size(); ++i) {
     problem.AddResidualBlock(new CostFctType(residuals[i]), NULL, &A_, &K1_, &K2_);
@@ -336,11 +341,11 @@ void syd::TimeActivityCurveFitSolver::Run_f4a()
 
   // Bounds (constraints)
   // problem.SetParameterLowerBound(&K1_, 0, 0); // A positive
-  // problem.SetParameterLowerBound(&K2_, 0, 0); // B positive
+  problem.SetParameterLowerBound(&K2_, 0, 0); // B positive
   //  problem.SetParameterUpperBound(&K1_, 0, 0.05); // B <=1.0
   //  problem.SetParameterUpperBound(&K2_, 0, 0.05); // positive
   // problem.SetParameterLowerBound(&lambda2, 0, 0); // positive
-  // problem.SetParameterLowerBound(&lambda, 0, Lambda_Indium*0.99);
+  //  problem.SetParameterLowerBound(&K2, 0, Lambda_Indium*0.99);
   // problem.SetParameterUpperBound(&lambda, 0, Lambda_Indium*1.01);
   //problem.SetParameterLowerBound(&lambda_, 0, Lambda_Indium_in_hours*0.2);
   //  problem.SetParameterUpperBound(&lambda_, 0, Lambda_Indium_in_hours*1.5);

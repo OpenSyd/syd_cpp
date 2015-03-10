@@ -81,11 +81,12 @@ int main(int argc, char* argv[])
 
   // Build tac
   syd::TimeActivityCurve tac;
+  // tac.AddValue(0.0, 0.0, 0.0);
   for(auto i=0; i<n; i++) {
     Timepoint t = timepoints[i];
     TimeActivity ta = timeactivities[i];
-    double v = ta.mean_counts_by_mm3;
-    //    double v = ta.peak_counts_by_mm3;
+    //double v = ta.mean_counts_by_mm3;
+    double v = ta.peak_counts_by_mm3;
     v = v * 1000.0; // from mm3 to CC
     v = v / t.calibration_factor; // from count to MBq
     v = v * roimaskimage.density_in_g_cc * 1000.0; // by KG
@@ -117,11 +118,16 @@ int main(int argc, char* argv[])
   DD(solver.GetFitA());
   DD(solver.GetFitK1());
   DD(solver.GetFitK2());
-  std::cout << "plot 'a.txt' w l ; replot 'a.txt' w p ; replot 'a.txt' using 1:3 w p; l=0.010297405; "
+  std::cout << "plot 'a.txt' w l ; replot 'a.txt' w p ; "
+    //<< "replot 'a.txt' using 1:3 w p; "
+            << " l=0.010297405; "
             << "g(A,lambda,x)=A*exp(-lambda*x); replot g("
             << a << "," << l
             << ",x); "
-            << "f(A,K1,K2,x)=A*K1/(K2-K1)*exp(-l*x)*(exp(-K1*x)-exp((-K2*x))) ; replot f("
+    //<< "f(A,K1,K2,x)=A*K1/(K2-K1)*exp(-l*x)*(exp(-K1*x)-exp((-K2*x))) ; replot f(" // f4a
+    //<< "f(A,K1,K2,x)=A*exp(-(l+K1)*x) + (100-A)*exp(-(l+K2)*x) ; replot f(" // f4b
+            << "f(A,K1,K2,x)=A*exp(-(l+K2)*x) + K1*exp(-l*x) ; replot f("   // f3
+    //<< "f(A,K1,K2,x)=100 * (A)/(K1+A-K2) *(exp(-(l+K2)*x) - exp(-(l+A+K1)*x)) ; replot f("   // f4c
             << solver.GetFitA() << ","
             << solver.GetFitK1() << ","
             << solver.GetFitK2() << ",x);" << std::endl;
