@@ -53,6 +53,7 @@ namespace syd {
     void DumpTimeIntegratedActivities(std::ostream & os, std::vector<Patient> & patients, std::vector<std::string> & args, std::string unit);
     void DumpWeight(std::ostream & os, std::vector<Patient> & patients, std::vector<std::string> & args);
     void DumpDose(std::ostream & os, std::vector<Patient> & patients, std::vector<std::string> & args);
+    void DumpArticle(std::ostream & os, std::vector<Patient> & patients, std::vector<std::string> & args);
 
     virtual void CheckIntegrity(std::vector<std::string> & args);
     virtual void CreateDatabase();

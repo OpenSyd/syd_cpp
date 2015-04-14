@@ -115,6 +115,7 @@ void syd::ActivityDatabase::Dump(std::ostream & os, std::vector<std::string> & a
   cmds.push_back("MBq.h");
   cmds.push_back("w"); // weight correlation
   cmds.push_back("dose");
+  cmds.push_back("article");
   std::string allcmds;
   for(auto i:cmds) allcmds+=i+" ";
 
@@ -146,6 +147,7 @@ void syd::ActivityDatabase::Dump(std::ostream & os, std::vector<std::string> & a
   if (cmd == "MBq.h") { DumpTimeIntegratedActivities(os, patients, args, "MBq.h"); return; }
   if (cmd == "w") { DumpWeight(os, patients, args); return; }
   if (cmd == "dose") { DumpDose(os, patients, args); return; }
+  if (cmd == "article") { DumpArticle(os, patients, args); return; }
   for(auto patient:patients) Dump(os, cmd, patient, args);
 }
 // --------------------------------------------------------------------
@@ -433,17 +435,21 @@ void syd::ActivityDatabase::DumpDose(std::ostream & os,
   ta.AddColumn("#P", 3, 0);
   for(auto r:roitypes) {
     ta.AddColumn(r.name, 12, 5); // dose by injected MBq, in cGy
-    ta.AddColumn("ratio", 12, 4); // ratio over liver
+    // ta.AddColumn("ratio", 12, 4); // ratio over liver
     // ta.AddColumn("uncert%", 12, 1); // % MC uncertainty
   }
 
   // Loop on patients
+  double min=1000.0, max=0.0, median=0.0, mean=0.0;
+  std::vector<double> values;
+  std::vector<int> pat;
+  int n=0;
   for(auto p:patients) {
     if (p.synfrizz_id != 0) {
       ta << p.synfrizz_id;
 
       // Get roi=liver for this patient
-      RoiType liverroi = cdb_->GetRoiType("liver");
+      RoiType liverroi = cdb_->GetRoiType("liver_sphere");
       Activity liver;
       GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
                            odb::query<Activity>::roi_type_id == liverroi.id, liver);
@@ -453,15 +459,91 @@ void syd::ActivityDatabase::DumpDose(std::ostream & os,
         bool b = GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
                                       odb::query<Activity>::roi_type_id == r.id, a);
         if (b) {
-          ta << a.mean_dose*100
-             << a.mean_dose/liver.mean_dose;
-             // << a.mean_uncertainty*100;
+          double v = a.mean_dose*100;
+          ta << v;
+          // << a.mean_dose/liver.mean_dose
+          if (!std::isnan(v)) {
+            n++;
+            if (v < min) min = v;
+            if (v > max) max = v;
+            mean += v;
+            values.push_back(v);
+            pat.push_back(p.synfrizz_id);
           }
-        else { ta << "-" << "-"; } // << "-"; }
+        }
+        else { ta << "-"; }
       }
     }
   }
   ta.Print(std::cout);
+  mean = mean/(double)n;
+  std::sort(values.begin(), values.end());
+  for(auto i=0; i<values.size(); i++) std::cout << values[i] << std::endl;
+  DD(n);
+  DD(min);
+  DD(max);
+  DD(mean);
+  DD(values[n/2]);
+};
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ActivityDatabase::DumpArticle(std::ostream & os,
+                                     std::vector<Patient> & patients,
+                                     std::vector<std::string> & args)
+{
+  // Get list of roitypes
+  std::string roiname = args[0];
+  std::vector<RoiType> roitypes = sdb_->GetRoiTypes(roiname);
+
+   // Loop on patients
+  double min=1000.0, max=0.0, median=0.0, mean=0.0;
+  std::vector<double> values;
+  std::vector<int> pat;
+  int n=0;
+  for(auto p:patients) {
+    double maxpp=0.0;
+    if (p.synfrizz_id != 0) {
+      std::cout << std::setprecision(0) << p.synfrizz_id << " " << p.was_treated << " => ";
+
+      // Get roi=liver for this patient
+      RoiType liverroi = cdb_->GetRoiType("heart");
+      Activity liver;
+      GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
+                           odb::query<Activity>::roi_type_id == liverroi.id, liver);
+      // Loop over roi --> lesions
+      for(auto r:roitypes) {
+        Activity a;
+        bool b = GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
+                                      odb::query<Activity>::roi_type_id == r.id, a);
+        if (b) {
+          //  double v = std::min(3.0,a.mean_dose/liver.mean_dose/0.25); // ==> 4 grade, so /0.25
+          double v = a.mean_dose/liver.mean_dose; // ==> 4 grade, so /0.25
+          if (!std::isnan(v)) {
+            std::cout << std::setprecision(1) << v << " ";
+            n++;
+            if (v < min) min = v;
+            if (v > maxpp) maxpp = v;
+            if (v > max) max = v;
+            mean += v;
+            values.push_back(v);
+            pat.push_back(p.synfrizz_id);
+          }
+        }
+      }
+    }
+    if (maxpp > 1.0) std::cout << " ok ";
+    std::cout << std::endl;
+  }
+  mean = mean/(double)n;
+  std::sort(values.begin(), values.end());
+  // for(auto i=0; i<values.size(); i++) std::cout << values[i] << std::endl;
+  DD(n);
+  DD(min);
+  DD(max);
+  DD(mean);
+  DD(values[n/2]);
 };
 // --------------------------------------------------------------------
 
