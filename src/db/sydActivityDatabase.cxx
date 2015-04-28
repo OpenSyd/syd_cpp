@@ -384,7 +384,7 @@ void syd::ActivityDatabase::DumpTimeIntegratedActivities(std::ostream & os,
       ta << p.synfrizz_id;
 
       // Get roi=liver for this patient
-      RoiType liverroi = cdb_->GetRoiType("liver");
+      RoiType liverroi = cdb_->GetRoiType("liver_sphere");
       Activity liver;
       GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
                            odb::query<Activity>::roi_type_id == liverroi.id, liver);
@@ -442,7 +442,9 @@ void syd::ActivityDatabase::DumpDose(std::ostream & os,
   // Loop on patients
   double min=1000.0, max=0.0, median=0.0, mean=0.0;
   std::vector<double> values;
+  std::vector<std::string> rois;
   std::vector<int> pat;
+  double v_liver, v_heart;
   int n=0;
   for(auto p:patients) {
     if (p.synfrizz_id != 0) {
@@ -453,6 +455,15 @@ void syd::ActivityDatabase::DumpDose(std::ostream & os,
       Activity liver;
       GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
                            odb::query<Activity>::roi_type_id == liverroi.id, liver);
+      v_liver = liver.mean_dose*100;
+
+      // Get roi=heart for this patient
+      RoiType heartroi = cdb_->GetRoiType("heart_sphere");
+      Activity heart;
+      GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
+                           odb::query<Activity>::roi_type_id == heartroi.id, heart);
+      v_heart = heart.mean_dose*100;
+
       // Loop over roi
       for(auto r:roitypes) {
         Activity a;
@@ -468,6 +479,7 @@ void syd::ActivityDatabase::DumpDose(std::ostream & os,
             if (v > max) max = v;
             mean += v;
             values.push_back(v);
+            rois.push_back(r.name);
             pat.push_back(p.synfrizz_id);
           }
         }
@@ -477,8 +489,12 @@ void syd::ActivityDatabase::DumpDose(std::ostream & os,
   }
   ta.Print(std::cout);
   mean = mean/(double)n;
-  std::sort(values.begin(), values.end());
-  for(auto i=0; i<values.size(); i++) std::cout << values[i] << std::endl;
+  //  for(auto i=0; i<values.size(); i++) std::cout << rois[i] << " " << values[i] << std::endl;
+  for (auto i: sort_indexes(values)) {
+    std::cout << rois[i] << " " << values[i]
+              << " " << values[i] / v_heart
+              << " " << values[i] / v_liver << std::endl;
+  }
   DD(n);
   DD(min);
   DD(max);
@@ -494,40 +510,66 @@ void syd::ActivityDatabase::DumpArticle(std::ostream & os,
                                      std::vector<std::string> & args)
 {
   // Get list of roitypes
-  std::string roiname = args[0];
+  std::string dose_or_tia = args[0];
+  std::string roiname = args[1];
   std::vector<RoiType> roitypes = sdb_->GetRoiTypes(roiname);
 
    // Loop on patients
   double min=1000.0, max=0.0, median=0.0, mean=0.0;
   std::vector<double> values;
+  std::vector<std::string> rois;
   std::vector<int> pat;
+  double v_heart, v_liver;
   int n=0;
-  for(auto p:patients) {
+  for(auto p:patients) { //FIXME ONLY ONE PATIENT !!
+    // std::vector<Timepoint> tp;
+    // sdb_->GetTimepoints(p, tp);
+    // double calibration = 1.0;///tp[0].calibration_factor/p.injected_activity_in_MBq;
+    // DD(tp[0].calibration_factor);
+    // DD(calibration);
     double maxpp=0.0;
     if (p.synfrizz_id != 0) {
-      std::cout << std::setprecision(0) << p.synfrizz_id << " " << p.was_treated << " => ";
+      std::cout << std::setprecision(0) << p.synfrizz_id << " "
+                << p.was_treated << " => " << std::setprecision(5) ;
+
+      // Get roi=heart for this patient
+      RoiType heartroi = cdb_->GetRoiType("heart_sphere");
+      Activity heart;
+      GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
+                           odb::query<Activity>::roi_type_id == heartroi.id, heart);
+      if (dose_or_tia == "dose")
+        v_heart = heart.mean_dose;
+      else
+        v_heart = heart.time_integrated_counts_by_mm3;
 
       // Get roi=liver for this patient
-      RoiType liverroi = cdb_->GetRoiType("heart");
+      RoiType liverroi = cdb_->GetRoiType("liver_sphere");
       Activity liver;
       GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
                            odb::query<Activity>::roi_type_id == liverroi.id, liver);
+      if (dose_or_tia == "dose")
+        v_liver = liver.mean_dose;
+      else
+        v_liver = liver.time_integrated_counts_by_mm3;
+
       // Loop over roi --> lesions
       for(auto r:roitypes) {
         Activity a;
         bool b = GetIfExist<Activity>(odb::query<Activity>::patient_id == p.id and
                                       odb::query<Activity>::roi_type_id == r.id, a);
         if (b) {
-          //  double v = std::min(3.0,a.mean_dose/liver.mean_dose/0.25); // ==> 4 grade, so /0.25
-          double v = a.mean_dose/liver.mean_dose; // ==> 4 grade, so /0.25
+          double v;
+          if (dose_or_tia == "dose") v = a.mean_dose;
+          else v = a.time_integrated_counts_by_mm3;
           if (!std::isnan(v)) {
-            std::cout << std::setprecision(1) << v << " ";
+            std::cout << std::setprecision(8) << v << " ";
             n++;
             if (v < min) min = v;
             if (v > maxpp) maxpp = v;
             if (v > max) max = v;
             mean += v;
             values.push_back(v);
+            rois.push_back(r.name);
             pat.push_back(p.synfrizz_id);
           }
         }
@@ -537,8 +579,25 @@ void syd::ActivityDatabase::DumpArticle(std::ostream & os,
     std::cout << std::endl;
   }
   mean = mean/(double)n;
-  std::sort(values.begin(), values.end());
-  // for(auto i=0; i<values.size(); i++) std::cout << values[i] << std::endl;
+  DD(v_heart);
+  DD(v_liver);
+  for (auto i: sort_indexes(values)) {
+    int grade = 0;
+    if (values[i]/v_heart < 0.2) grade = 0;
+    if (values[i]/v_heart < 0.8) grade = 1;
+    if (values[i]/v_heart > 0.8 and values[i]/v_heart < 1.2 ) grade = 2;
+    if (values[i]/v_heart > 1.2 and values[i]/v_liver < 0.8 ) grade = 3;
+    if (values[i]/v_liver > 0.8 ) grade = 4;
+    std::string g;
+    if (grade == 0) g = "0";
+    if (grade == 1) g = "I";
+    if (grade == 2) g = "II";
+    if (grade == 3) g = "III";
+    if (grade == 4) g = "IV";
+    std::cout << std::setprecision(2) << rois[i] << " "
+              << values[i] << " " << values[i]/v_heart
+              << " " << values[i]/v_liver << " " << g << std::endl;
+  }
   DD(n);
   DD(min);
   DD(max);
