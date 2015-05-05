@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['current_5fsql_5fquery_5f',['current_sql_query_',['../classsyd_1_1Database.html#a2b15b8e9ae9f006c614137e17bf2ecb1',1,'syd::Database']]]
+  ['birth_5fdate',['birth_date',['../classext_1_1Patient.html#a30ccbb73926616ee6ad4385336e09bd2',1,'ext::Patient']]]
 ];

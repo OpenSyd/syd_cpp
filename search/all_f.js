@@ -1,10 +1,12 @@
 var searchData=
 [
-  ['table',['Table',['../singletonsyd_1_1Table.html',1,'syd']]],
-  ['table',['Table',['../singletonsyd_1_1Table.html#aa8a5467a969582e4dbc51ed78a3e3c89',1,'syd::Table']]],
-  ['table_5fname',['table_name',['../structsyd_1_1table__name.html',1,'syd']]],
-  ['tablebase',['TableBase',['../classsyd_1_1TableBase.html',1,'syd']]],
-  ['tablet',['TableT',['../classsyd_1_1TableT.html',1,'syd']]],
-  ['timeactivitycurveintegrate',['TimeActivityCurveIntegrate',['../classsyd_1_1TimeActivityCurveIntegrate.html',1,'syd']]],
-  ['tracecallback',['TraceCallback',['../classsyd_1_1Database.html#a3092120b7fcb17efcf54c3a9257bea66',1,'syd::Database']]]
+  ['schema_5fversion',['schema_version',['../structsyd_1_1schema__version.html',1,'syd']]],
+  ['searchtypeandparamfromname',['SearchTypeAndParamFromName',['../classsyd_1_1DatabaseFactory.html#a5c16e4d387807344d4896ad7e6967c66',1,'syd::DatabaseFactory']]],
+  ['singleton_5f',['singleton_',['../classsyd_1_1DatabaseManager.html#a9cc76c40442784a77603ca4daec00d56',1,'syd::DatabaseManager::singleton_()'],['../classsyd_1_1PluginManager.html#aa2bbdebb16cd6ba5a4b42461fe73d3da',1,'syd::PluginManager::singleton_()']]],
+  ['size',['size',['../classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27',1,'syd::DicomSerie']]],
+  ['spacing',['spacing',['../classsyd_1_1DicomSerie.html#ae0e66e018c7f715920c4a7d76caee495',1,'syd::DicomSerie']]],
+  ['study_5fid',['study_id',['../classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6',1,'syd::Patient']]],
+  ['studydatabase',['StudyDatabase',['../classsyd_1_1StudyDatabase.html',1,'syd']]],
+  ['studydatabase',['StudyDatabase',['../classsyd_1_1StudyDatabase.html#afdd4ef71bb48a56e002707d1b9be2115',1,'syd::StudyDatabase']]],
+  ['sydlog',['sydlog',['../namespacesydlog.html',1,'']]]
 ];

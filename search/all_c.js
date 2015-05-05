@@ -1,5 +1,10 @@
 var searchData=
 [
-  ['query',['Query',['../classsyd_1_1Database.html#abb1c7924d9b54436e3583327869a0ce8',1,'syd::Database::Query(const odb::query&lt; ElementType &gt; &amp;q, std::vector&lt; ElementType &gt; &amp;list)'],['../classsyd_1_1Database.html#aa5743b7a946dd7d14072826ee78c123b',1,'syd::Database::Query(std::vector&lt; ElementType &gt; &amp;list)'],['../singletonsyd_1_1Table.html#a38cfb9e472566cade251d6ee794e89c7',1,'syd::Table::Query(const odb::query&lt; ElementType &gt; &amp;q, std::vector&lt; ElementType &gt; &amp;list)'],['../singletonsyd_1_1Table.html#aa6d46eb4a17960d148ad503c1993e8ab',1,'syd::Table::Query(std::vector&lt; ElementType &gt; &amp;list)']]],
-  ['queryone',['QueryOne',['../classsyd_1_1Database.html#afb038fee20e3ec0fd2e66be617ff1931',1,'syd::Database::QueryOne(const odb::query&lt; ElementType &gt; &amp;q)'],['../classsyd_1_1Database.html#ae48c8104c0e15211a1b9ac8a2374c51c',1,'syd::Database::QueryOne(IdType id)'],['../singletonsyd_1_1Table.html#a57e059b8e4bb5f5b65d1bdefef05520c',1,'syd::Table::QueryOne(const odb::query&lt; ElementType &gt; &amp;q)'],['../singletonsyd_1_1Table.html#ac802c7c48ec415c54aa4ed774d2ebbba',1,'syd::Table::QueryOne(IdType id)']]]
+  ['path',['path',['../classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955',1,'syd::File']]],
+  ['patient',['Patient',['../classext_1_1Patient.html',1,'ext']]],
+  ['patient',['Patient',['../classsyd_1_1Patient.html',1,'syd']]],
+  ['patient',['patient',['../classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3',1,'syd::Injection']]],
+  ['pluginmanager',['PluginManager',['../classsyd_1_1PluginManager.html',1,'syd']]],
+  ['pluginmanager',['PluginManager',['../classsyd_1_1PluginManager.html#a9a8a769e102e882881af129d515c50bd',1,'syd::PluginManager']]],
+  ['printtable',['PrintTable',['../classsyd_1_1PrintTable.html',1,'syd']]]
 ];

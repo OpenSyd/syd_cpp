@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['open',['Open',['../classsyd_1_1Database.html#a4c9db67fc3cab47b49472be846e777b6',1,'syd::Database::Open()'],['../classsyd_1_1DatabaseCreator.html#a47c3fa91c6516869aadcc21bf8aab312',1,'syd::DatabaseCreator::Open()'],['../classsyd_1_1DatabaseManager.html#a2f48ab237f0b86143a1190a041dbcd38',1,'syd::DatabaseManager::Open()']]],
-  ['opendb',['OpenDB',['../classsyd_1_1DatabaseManager.html#a0065ed2a8e5f72427d6dacd3020f7dc1',1,'syd::DatabaseManager']]]
+  ['name',['name',['../classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987',1,'syd::Patient']]],
+  ['new',['New',['../classsyd_1_1DatabaseCreator.html#a16d066642a15833c82c490112d9495f2',1,'syd::DatabaseCreator::New()'],['../classsyd_1_1DatabaseManager.html#ac00bb1479ca71d0384330d2bf5216956',1,'syd::DatabaseManager::New()']]],
+  ['newdatabase',['NewDatabase',['../classsyd_1_1DatabaseFactory.html#af0f819476e0c0562906e3d150e22f1bb',1,'syd::DatabaseFactory']]]
 ];

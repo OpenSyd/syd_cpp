@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['schema_5fversion',['schema_version',['../structsyd_1_1schema__version.html',1,'syd']]],
-  ['searchtypeandparamfromname',['SearchTypeAndParamFromName',['../classsyd_1_1DatabaseFactory.html#a5c16e4d387807344d4896ad7e6967c66',1,'syd::DatabaseFactory']]],
-  ['singleton_5f',['singleton_',['../classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80',1,'syd::DatabaseManager::singleton_()'],['../classsyd_1_1PluginManager.html#a61058c3847b6fedd2ea2fedc926e6fec',1,'syd::PluginManager::singleton_()']]],
-  ['sydlog',['sydlog',['../namespacesydlog.html',1,'']]]
+  ['readdatabasefilenames',['ReadDatabaseFilenames',['../classsyd_1_1DatabaseFactory.html#a97e492d47f016d088aa43293da73fb4d',1,'syd::DatabaseFactory']]],
+  ['reconstruction_5fdate',['reconstruction_date',['../classsyd_1_1DicomSerie.html#a5f735f7a79bcb537b3479aa454d18f97',1,'syd::DicomSerie']]],
+  ['registerdatabasetype',['RegisterDatabaseType',['../classsyd_1_1DatabaseManager.html#ab9cf22c6994b076abfbbb16783c8ffae',1,'syd::DatabaseManager']]],
+  ['registerfactoryfunction',['RegisterFactoryFunction',['../classsyd_1_1DatabaseFactory.html#ae71d5dad879f1d000fcb264232be8e39',1,'syd::DatabaseFactory']]],
+  ['relative_5ffolder_5f',['relative_folder_',['../classsyd_1_1Database.html#a3bfdf90d2454ae4f4809947a03763349',1,'syd::Database']]]
 ];
