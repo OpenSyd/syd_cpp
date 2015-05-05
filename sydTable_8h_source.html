@@ -37,7 +37,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li class="current"><a href="files.html"><span>Files</span></a></li>
@@ -69,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -144,44 +143,49 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="singletonsyd_1_1Table.html#a38a829e372f7306c281f5b0c8a138a3a">IfExist</a>(IdType <span class="keywordtype">id</span>);</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="singletonsyd_1_1Table.html#a9ec14b0e2a3a002bb7858fc6904bddd9">Insert</a>(ElementType &amp; r);</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="singletonsyd_1_1Table.html#a9ec14b0e2a3a002bb7858fc6904bddd9">Insert</a>(ElementType &amp; r);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="singletonsyd_1_1Table.html#a9ec14b0e2a3a002bb7858fc6904bddd9">Insert</a>(std::vector&lt;ElementType*&gt; &amp; r);</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="singletonsyd_1_1Table.html#a38cfb9e472566cade251d6ee794e89c7">   76</a></span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classsyd_1_1Element.html">Element</a> * <a class="code" href="singletonsyd_1_1Table.html#a9ec14b0e2a3a002bb7858fc6904bddd9">Insert</a>(std::vector&lt;std::string&gt; &amp; arg) {</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      ElementType e;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      e.SetValues(arg);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      <a class="code" href="singletonsyd_1_1Table.html#a9ec14b0e2a3a002bb7858fc6904bddd9">Insert</a>(e);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">new</span> ElementType(e);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    }</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="singletonsyd_1_1Table.html#a5c12f9c7badbe7fb9fd0d78b2bc7fcb7">Update</a>(ElementType &amp; r);</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <a class="code" href="classsyd_1_1Database.html">syd::Database</a> * database_;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  };</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor">#include &quot;sydTable.txx&quot;</span></div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;} <span class="comment">// end namespace</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="singletonsyd_1_1Table.html#a38cfb9e472566cade251d6ee794e89c7">   76</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="singletonsyd_1_1Table.html#a5c12f9c7badbe7fb9fd0d78b2bc7fcb7">Update</a>(ElementType &amp; r);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="singletonsyd_1_1Table.html#a5c12f9c7badbe7fb9fd0d78b2bc7fcb7">Update</a>(std::vector&lt;ElementType*&gt; &amp; r);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno"><a class="line" href="singletonsyd_1_1Table.html#a69574cdd5d4cf87fd084c98bfcba8b2d">   85</a></span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classsyd_1_1Element.html">Element</a> * <a class="code" href="singletonsyd_1_1Table.html#a69574cdd5d4cf87fd084c98bfcba8b2d">Insert</a>(std::vector&lt;std::string&gt; &amp; arg) {</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      ElementType e;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      e.SetValues(arg);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;      <a class="code" href="singletonsyd_1_1Table.html#a9ec14b0e2a3a002bb7858fc6904bddd9">Insert</a>(e);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      <span class="keywordflow">return</span> <span class="keyword">new</span> ElementType(e);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <a class="code" href="classsyd_1_1Database.html">syd::Database</a> * database_;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  };</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#include &quot;sydTable.txx&quot;</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;} <span class="comment">// end namespace</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="singletonsyd_1_1Table_html_a1368cf6491863f8722fedc1c8ecc3695"><div class="ttname"><a href="singletonsyd_1_1Table.html#a1368cf6491863f8722fedc1c8ecc3695">syd::Table::DumpTable</a></div><div class="ttdeci">virtual void DumpTable(std::ostream &amp;os)</div><div class="ttdoc">Dump the content of the table (simple output) </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00180">sydTable.h:180</a></div></div>
 <div class="ttc" id="singletonsyd_1_1Table_html_aeba51d52ea2f31fb32710fc09d9bb15c"><div class="ttname"><a href="singletonsyd_1_1Table.html#aeba51d52ea2f31fb32710fc09d9bb15c">syd::Table::Count</a></div><div class="ttdeci">unsigned int Count(const odb::query&lt; ElementType &gt; &amp;q)</div><div class="ttdoc">Count the number of elements matching the query. </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00155">sydTable.h:155</a></div></div>
 <div class="ttc" id="classsyd_1_1Database_html"><div class="ttname"><a href="classsyd_1_1Database.html">syd::Database</a></div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00039">sydDatabase.h:39</a></div></div>
-<div class="ttc" id="singletonsyd_1_1Table_html_a9ec14b0e2a3a002bb7858fc6904bddd9"><div class="ttname"><a href="singletonsyd_1_1Table.html#a9ec14b0e2a3a002bb7858fc6904bddd9">syd::Table::Insert</a></div><div class="ttdeci">void Insert(ElementType &amp;r)</div><div class="ttdoc">---------—— TODO </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00195">sydTable.h:195</a></div></div>
+<div class="ttc" id="singletonsyd_1_1Table_html_a9ec14b0e2a3a002bb7858fc6904bddd9"><div class="ttname"><a href="singletonsyd_1_1Table.html#a9ec14b0e2a3a002bb7858fc6904bddd9">syd::Table::Insert</a></div><div class="ttdeci">void Insert(ElementType &amp;r)</div><div class="ttdoc">Insert a new element in the database. </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00195">sydTable.h:195</a></div></div>
 <div class="ttc" id="singletonsyd_1_1Table_html_a38a829e372f7306c281f5b0c8a138a3a"><div class="ttname"><a href="singletonsyd_1_1Table.html#a38a829e372f7306c281f5b0c8a138a3a">syd::Table::IfExist</a></div><div class="ttdeci">bool IfExist(IdType id)</div><div class="ttdoc">Check if the given id exist. </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00145">sydTable.h:145</a></div></div>
-<div class="ttc" id="singletonsyd_1_1Table_html_a5c12f9c7badbe7fb9fd0d78b2bc7fcb7"><div class="ttname"><a href="singletonsyd_1_1Table.html#a5c12f9c7badbe7fb9fd0d78b2bc7fcb7">syd::Table::Update</a></div><div class="ttdeci">void Update(ElementType &amp;r)</div><div class="ttdoc">Update an element of type T in the database. </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00218">sydTable.h:218</a></div></div>
+<div class="ttc" id="singletonsyd_1_1Table_html_a5c12f9c7badbe7fb9fd0d78b2bc7fcb7"><div class="ttname"><a href="singletonsyd_1_1Table.html#a5c12f9c7badbe7fb9fd0d78b2bc7fcb7">syd::Table::Update</a></div><div class="ttdeci">void Update(ElementType &amp;r)</div><div class="ttdoc">Update an element in the database. </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00242">sydTable.h:242</a></div></div>
 <div class="ttc" id="classsyd_1_1TableBase_html"><div class="ttname"><a href="classsyd_1_1TableBase.html">syd::TableBase</a></div><div class="ttdoc">Base class for the functions that are common to all tables. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableBase_8h_source.html#l00040">sydTableBase.h:40</a></div></div>
 <div class="ttc" id="singletonsyd_1_1Table_html_a17ef33eeb97738533c829b29e1ad77a7"><div class="ttname"><a href="singletonsyd_1_1Table.html#a17ef33eeb97738533c829b29e1ad77a7">syd::Table::GetNumberOfElements</a></div><div class="ttdeci">virtual unsigned int GetNumberOfElements()</div><div class="ttdoc">Compute the number of elements in this table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00064">sydTable.h:64</a></div></div>
 <div class="ttc" id="classsyd_1_1Element_html"><div class="ttname"><a href="classsyd_1_1Element.html">syd::Element</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydElement_8h_source.html#l00029">sydElement.h:29</a></div></div>
 <div class="ttc" id="singletonsyd_1_1Table_html_a38cfb9e472566cade251d6ee794e89c7"><div class="ttname"><a href="singletonsyd_1_1Table.html#a38cfb9e472566cade251d6ee794e89c7">syd::Table::Query</a></div><div class="ttdeci">void Query(const odb::query&lt; ElementType &gt; &amp;q, std::vector&lt; ElementType &gt; &amp;list)</div><div class="ttdoc">Perform a query on the database and return the found elements in the list. </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00076">sydTable.h:76</a></div></div>
 <div class="ttc" id="singletonsyd_1_1Table_html_a402e0912a4799f63452a74ec92ee1cf1"><div class="ttname"><a href="singletonsyd_1_1Table.html#a402e0912a4799f63452a74ec92ee1cf1">syd::Table::Delete</a></div><div class="ttdeci">virtual bool Delete(ElementType &amp;t)</div><div class="ttdoc">Delete the element with id. </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00040">sydTable.h:40</a></div></div>
 <div class="ttc" id="singletonsyd_1_1Table_html_a57e059b8e4bb5f5b65d1bdefef05520c"><div class="ttname"><a href="singletonsyd_1_1Table.html#a57e059b8e4bb5f5b65d1bdefef05520c">syd::Table::QueryOne</a></div><div class="ttdeci">ElementType QueryOne(const odb::query&lt; ElementType &gt; &amp;q)</div><div class="ttdoc">Get the unique element matching the query (fail if 0 or >1 elements) </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00113">sydTable.h:113</a></div></div>
+<div class="ttc" id="singletonsyd_1_1Table_html_a69574cdd5d4cf87fd084c98bfcba8b2d"><div class="ttname"><a href="singletonsyd_1_1Table.html#a69574cdd5d4cf87fd084c98bfcba8b2d">syd::Table::Insert</a></div><div class="ttdeci">virtual Element * Insert(std::vector&lt; std::string &gt; &amp;arg)</div><div class="ttdoc">---------—— TODO </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00085">sydTable.h:85</a></div></div>
 <div class="ttc" id="singletonsyd_1_1Table_html_aa8a5467a969582e4dbc51ed78a3e3c89"><div class="ttname"><a href="singletonsyd_1_1Table.html#aa8a5467a969582e4dbc51ed78a3e3c89">syd::Table::Table</a></div><div class="ttdeci">Table(syd::Database *db, odb::sqlite::database *d)</div><div class="ttdoc">Simple constructor, store the pointer to the db and the name of the table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTable_8h_source.html#l00034">sydTable.h:34</a></div></div>
-<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00051">sydCommon.h:51</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydActivityTimeIntegratedCommand_8h_source.html#l00028">sydActivityTimeIntegratedCommand.h:28</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

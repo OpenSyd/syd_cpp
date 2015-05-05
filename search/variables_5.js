@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['singleton_5f',['singleton_',['../classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80',1,'syd::DatabaseManager::singleton_()'],['../classsyd_1_1PluginManager.html#a61058c3847b6fedd2ea2fedc926e6fec',1,'syd::PluginManager::singleton_()']]]
+  ['relative_5ffolder_5f',['relative_folder_',['../classsyd_1_1Database.html#a3bfdf90d2454ae4f4809947a03763349',1,'syd::Database']]]
 ];

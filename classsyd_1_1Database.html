@@ -37,7 +37,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -72,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -118,17 +117,21 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#af978bbfce8839721d25735b6db020cb0">GetFilename</a> () const </td></tr>
 <tr class="memdesc:af978bbfce8839721d25735b6db020cb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the filename (.db file sqlite) <br /></td></tr>
 <tr class="separator:af978bbfce8839721d25735b6db020cb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e00984fe8da5f8f6f79352a143d2e22"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e00984fe8da5f8f6f79352a143d2e22"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a6e00984fe8da5f8f6f79352a143d2e22">GetImagesFolder</a> () const </td></tr>
-<tr class="memdesc:a6e00984fe8da5f8f6f79352a143d2e22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the folder that contains the associated images (if even) <br /></td></tr>
-<tr class="separator:a6e00984fe8da5f8f6f79352a143d2e22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a187e39f585c0ac3bd77dadfe92925980"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a187e39f585c0ac3bd77dadfe92925980"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980">GetRelativeDBFolder</a> () const </td></tr>
+<tr class="memdesc:a187e39f585c0ac3bd77dadfe92925980"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the folder that contains the associated images (relative) <br /></td></tr>
+<tr class="separator:a187e39f585c0ac3bd77dadfe92925980"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af43b76c8045344eaaa96eb1062ac4196"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af43b76c8045344eaaa96eb1062ac4196"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#af43b76c8045344eaaa96eb1062ac4196">GetAbsoluteDBFolder</a> () const </td></tr>
+<tr class="memdesc:af43b76c8045344eaaa96eb1062ac4196"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the folder that contains the associated images (absolute according to working directory) <br /></td></tr>
+<tr class="separator:af43b76c8045344eaaa96eb1062ac4196"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3092120b7fcb17efcf54c3a9257bea66"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3092120b7fcb17efcf54c3a9257bea66"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a3092120b7fcb17efcf54c3a9257bea66">TraceCallback</a> (const char *sql)</td></tr>
 <tr class="memdesc:a3092120b7fcb17efcf54c3a9257bea66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call back for SQL query to the DB. For debug purpose only. <br /></td></tr>
 <tr class="separator:a3092120b7fcb17efcf54c3a9257bea66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3a7c7fb4aac508e910acbfc732da3ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3a7c7fb4aac508e910acbfc732da3ce"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ad3a7c7fb4aac508e910acbfc732da3ce">GetLastSQLQuery</a> () const </td></tr>
-<tr class="memdesc:ad3a7c7fb4aac508e910acbfc732da3ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last SQL query. <br /></td></tr>
+<tr class="memdesc:ad3a7c7fb4aac508e910acbfc732da3ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last SQL query (set by TraceCallback) <br /></td></tr>
 <tr class="separator:ad3a7c7fb4aac508e910acbfc732da3ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb1c7924d9b54436e3583327869a0ce8"><td class="memTemplParams" colspan="2"><a class="anchor" id="abb1c7924d9b54436e3583327869a0ce8"></a>
 template&lt;class ElementType &gt; </td></tr>
@@ -165,19 +168,29 @@ template&lt;class ElementType &gt; </td></tr>
 <tr class="memitem:ab2a101f09483fe274fa12d3d769e0166"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ab2a101f09483fe274fa12d3d769e0166">Insert</a> (ElementType &amp;r)</td></tr>
 <tr class="memdesc:ab2a101f09483fe274fa12d3d769e0166"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new element of type ElementType in the database. <br /></td></tr>
 <tr class="separator:ab2a101f09483fe274fa12d3d769e0166"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51f09170409acdc2df53698d247f78a2"><td class="memTemplParams" colspan="2"><a class="anchor" id="a51f09170409acdc2df53698d247f78a2"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:a51f09170409acdc2df53698d247f78a2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a51f09170409acdc2df53698d247f78a2">Insert</a> (std::vector&lt; ElementType * &gt; &amp;r)</td></tr>
+<tr class="memdesc:a51f09170409acdc2df53698d247f78a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert several elements at a time. <br /></td></tr>
+<tr class="separator:a51f09170409acdc2df53698d247f78a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5a3efdb8ac081a77555fb2ac6d53f2c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5a3efdb8ac081a77555fb2ac6d53f2c"></a>
+virtual <a class="el" href="classsyd_1_1Element.html">Element</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ac5a3efdb8ac081a77555fb2ac6d53f2c">InsertFromArg</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>, std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+<tr class="memdesc:ac5a3efdb8ac081a77555fb2ac6d53f2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new element build from set of string //FIXME. <br /></td></tr>
+<tr class="separator:ac5a3efdb8ac081a77555fb2ac6d53f2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memTemplParams" colspan="2"><a class="anchor" id="aaff5f5c4be5b71c1e257c2cd9dc65a0e"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aaff5f5c4be5b71c1e257c2cd9dc65a0e">Update</a> (ElementType &amp;r)</td></tr>
+<tr class="memdesc:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update an element in the database. <br /></td></tr>
+<tr class="separator:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba327f0473f18e7d15d2e209cb8a8040"><td class="memTemplParams" colspan="2"><a class="anchor" id="aba327f0473f18e7d15d2e209cb8a8040"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:aba327f0473f18e7d15d2e209cb8a8040"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aba327f0473f18e7d15d2e209cb8a8040">Update</a> (std::vector&lt; ElementType * &gt; &amp;r)</td></tr>
+<tr class="memdesc:aba327f0473f18e7d15d2e209cb8a8040"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update a set of elements in the database. <br /></td></tr>
+<tr class="separator:aba327f0473f18e7d15d2e209cb8a8040"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2d43a829a24357b3e25ada612de2a0dd"><td class="memTemplParams" colspan="2">template&lt;class ElementType &gt; </td></tr>
 <tr class="memitem:a2d43a829a24357b3e25ada612de2a0dd"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">Delete</a> (IdType id)</td></tr>
 <tr class="memdesc:a2d43a829a24357b3e25ada612de2a0dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">--------------------------&mdash;&mdash; OLD  <a href="#a2d43a829a24357b3e25ada612de2a0dd">More...</a><br /></td></tr>
 <tr class="separator:a2d43a829a24357b3e25ada612de2a0dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84f54350b85498f93fa567b6409d5708"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a84f54350b85498f93fa567b6409d5708"></a>
-virtual <a class="el" href="classsyd_1_1Element.html">Element</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a84f54350b85498f93fa567b6409d5708">Insert</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>, std::vector&lt; std::string &gt; &amp;arg)</td></tr>
-<tr class="memdesc:a84f54350b85498f93fa567b6409d5708"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new element build from set of string. <br /></td></tr>
-<tr class="separator:a84f54350b85498f93fa567b6409d5708"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memTemplParams" colspan="2"><a class="anchor" id="aaff5f5c4be5b71c1e257c2cd9dc65a0e"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aaff5f5c4be5b71c1e257c2cd9dc65a0e">Update</a> (ElementType &amp;r)</td></tr>
-<tr class="memdesc:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update an element of type ElementType in the database. <br /></td></tr>
-<tr class="separator:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02a175da42634e22a01a486b3612afb1"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a02a175da42634e22a01a486b3612afb1">Dump</a> (const std::vector&lt; std::string &gt; &amp;args, std::ostream &amp;os)</td></tr>
 <tr class="memdesc:a02a175da42634e22a01a486b3612afb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete the element with id in the given table.  <a href="#a02a175da42634e22a01a486b3612afb1">More...</a><br /></td></tr>
 <tr class="separator:a02a175da42634e22a01a486b3612afb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -239,10 +252,14 @@ odb::sqlite::database *&#160;</td><td class="memItemRight" valign="bottom"><a cl
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a77db3d618e0dae2c9c7cb704d4dc9e8e">filename_</a></td></tr>
 <tr class="memdesc:a77db3d618e0dae2c9c7cb704d4dc9e8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Filename of the db. <br /></td></tr>
 <tr class="separator:a77db3d618e0dae2c9c7cb704d4dc9e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a555146ad9e3b4f75162d2e6123e25d6a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a555146ad9e3b4f75162d2e6123e25d6a"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a555146ad9e3b4f75162d2e6123e25d6a">images_folder_</a></td></tr>
-<tr class="memdesc:a555146ad9e3b4f75162d2e6123e25d6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main folder that contains images (read in the file) <br /></td></tr>
-<tr class="separator:a555146ad9e3b4f75162d2e6123e25d6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bfdf90d2454ae4f4809947a03763349"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3bfdf90d2454ae4f4809947a03763349"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a3bfdf90d2454ae4f4809947a03763349">relative_folder_</a></td></tr>
+<tr class="memdesc:a3bfdf90d2454ae4f4809947a03763349"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main folder that contains images (read in the file) <br /></td></tr>
+<tr class="separator:a3bfdf90d2454ae4f4809947a03763349"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77da2c570a7d805b45df1629a4159156"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a77da2c570a7d805b45df1629a4159156"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a77da2c570a7d805b45df1629a4159156">absolute_folder_</a></td></tr>
+<tr class="memdesc:a77da2c570a7d805b45df1629a4159156"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main folder that contains images (read in the file) <br /></td></tr>
+<tr class="separator:a77da2c570a7d805b45df1629a4159156"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aec7dbf391076b2154ef7557c62116107"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec7dbf391076b2154ef7557c62116107"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aec7dbf391076b2154ef7557c62116107">database_type_</a></td></tr>
 <tr class="memdesc:aec7dbf391076b2154ef7557c62116107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the database (read in the file) <br /></td></tr>
@@ -284,9 +301,9 @@ template&lt;class ElementType &gt; </div>
 <p>--------------------------&mdash;&mdash; OLD </p>
 <p>Delete the element with id </p>
 
-<p>Definition at line <a class="el" href="sydDatabase_8h_source.html#l00097">97</a> of file <a class="el" href="sydDatabase_8h_source.html">sydDatabase.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;{ GetTable&lt;ElementType&gt;()-&gt;<a class="code" href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">Delete</a>(<span class="keywordtype">id</span>); }</div>
-<div class="ttc" id="classsyd_1_1Database_html_a2d43a829a24357b3e25ada612de2a0dd"><div class="ttname"><a href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">syd::Database::Delete</a></div><div class="ttdeci">bool Delete(IdType id)</div><div class="ttdoc">--------------------------—— OLD </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00097">sydDatabase.h:97</a></div></div>
+<p>Definition at line <a class="el" href="sydDatabase_8h_source.html#l00119">119</a> of file <a class="el" href="sydDatabase_8h_source.html">sydDatabase.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;{ GetTable&lt;ElementType&gt;()-&gt;<a class="code" href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">Delete</a>(<span class="keywordtype">id</span>); }</div>
+<div class="ttc" id="classsyd_1_1Database_html_a2d43a829a24357b3e25ada612de2a0dd"><div class="ttname"><a href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">syd::Database::Delete</a></div><div class="ttdeci">bool Delete(IdType id)</div><div class="ttdoc">--------------------------—— OLD </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00119">sydDatabase.h:119</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -329,28 +346,29 @@ template&lt;class ElementType &gt; </div>
 <div class="fragment"><div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;{</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  <span class="keywordflow">if</span> (args.size() == 0) {</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    os &lt;&lt; <span class="stringliteral">&quot;Database type: &quot;</span> &lt;&lt; <a class="code" href="classsyd_1_1Database.html#a5897ddcdcf0b084514985ed072f05649">GetDatabaseType</a>() &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    os &lt;&lt; <span class="stringliteral">&quot;Database folder: &quot;</span> &lt;&lt; <a class="code" href="classsyd_1_1Database.html#a6e00984fe8da5f8f6f79352a143d2e22">GetImagesFolder</a>() &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    os &lt;&lt; <span class="stringliteral">&quot;Database folder: &quot;</span> &lt;&lt; <a class="code" href="classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980">GetRelativeDBFolder</a>() &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=<a class="code" href="classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc">map</a>.begin(); i != <a class="code" href="classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc">map</a>.end(); i++) {</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      <span class="keywordtype">int</span> n = i-&gt;second-&gt;GetNumberOfElements();</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      os &lt;&lt; <span class="stringliteral">&quot;Table &quot;</span> &lt;&lt; i-&gt;first &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt;  n;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      <span class="keywordflow">if</span> (n&gt;1) os &lt;&lt; <span class="stringliteral">&quot; elements.&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      <span class="keywordflow">else</span> os &lt;&lt; <span class="stringliteral">&quot; element.&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      os &lt;&lt; <span class="stringliteral">&quot;Table \t&quot;</span> &lt;&lt; std::setw(15) &lt;&lt; i-&gt;first &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt;  std::setw(10) &lt;&lt; n;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      <span class="keywordflow">if</span> (n&gt;1) os &lt;&lt; <span class="stringliteral">&quot; elements&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      <span class="keywordflow">else</span> os &lt;&lt; <span class="stringliteral">&quot; element&quot;</span> &lt;&lt; std::endl;</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    }</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  }</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="keywordflow">if</span> (args[0] == <span class="stringliteral">&quot;table&quot;</span>) {</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordflow">if</span> (args.size() &lt; 2) {</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;      LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Please provide the name of the table you want to dump.&quot;</span>;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    }</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <a class="code" href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">DumpTable</a>(args[1], os);</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  }</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  <a class="code" href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">DumpTable</a>(args[0], os); <span class="comment">// suppose it is a table name</span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;}</div>
-<div class="ttc" id="classsyd_1_1Database_html_a17a5646d64a28045ed507b94d9f52b90"><div class="ttname"><a href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">syd::Database::DumpTable</a></div><div class="ttdeci">virtual void DumpTable(const std::string &amp;table_name, std::ostream &amp;os)</div><div class="ttdoc">Dump all elements of a given table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8cxx_source.html#l00143">sydDatabase.cxx:143</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_a6e00984fe8da5f8f6f79352a143d2e22"><div class="ttname"><a href="classsyd_1_1Database.html#a6e00984fe8da5f8f6f79352a143d2e22">syd::Database::GetImagesFolder</a></div><div class="ttdeci">std::string GetImagesFolder() const </div><div class="ttdoc">Return the folder that contains the associated images (if even) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00055">sydDatabase.h:55</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_a47790f65453bd829d73e8e225bcda7bc"><div class="ttname"><a href="classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc">syd::Database::map</a></div><div class="ttdeci">MapOfTablesType map</div><div class="ttdoc">Map that contains the association between names and tables. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00174">sydDatabase.h:174</a></div></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    os &lt;&lt; std::flush;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  }</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  <span class="keywordflow">if</span> (args[0] == <span class="stringliteral">&quot;table&quot;</span>) {</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordflow">if</span> (args.size() &lt; 2) {</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Please provide the name of the table you want to dump.&quot;</span>;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    }</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <a class="code" href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">DumpTable</a>(args[1], os);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  }</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;  <a class="code" href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">DumpTable</a>(args[0], os); <span class="comment">// suppose it is a table name</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;}</div>
+<div class="ttc" id="classsyd_1_1Database_html_a17a5646d64a28045ed507b94d9f52b90"><div class="ttname"><a href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">syd::Database::DumpTable</a></div><div class="ttdeci">virtual void DumpTable(const std::string &amp;table_name, std::ostream &amp;os)</div><div class="ttdoc">Dump all elements of a given table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8cxx_source.html#l00144">sydDatabase.cxx:144</a></div></div>
+<div class="ttc" id="classsyd_1_1Database_html_a47790f65453bd829d73e8e225bcda7bc"><div class="ttname"><a href="classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc">syd::Database::map</a></div><div class="ttdeci">MapOfTablesType map</div><div class="ttdoc">Map that contains the association between names and tables. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00185">sydDatabase.h:185</a></div></div>
 <div class="ttc" id="classsyd_1_1Database_html_a5897ddcdcf0b084514985ed072f05649"><div class="ttname"><a href="classsyd_1_1Database.html#a5897ddcdcf0b084514985ed072f05649">syd::Database::GetDatabaseType</a></div><div class="ttdeci">std::string GetDatabaseType()</div><div class="ttdoc">Return the type of the db (read in the file) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00046">sydDatabase.h:46</a></div></div>
+<div class="ttc" id="classsyd_1_1Database_html_a187e39f585c0ac3bd77dadfe92925980"><div class="ttname"><a href="classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980">syd::Database::GetRelativeDBFolder</a></div><div class="ttdeci">std::string GetRelativeDBFolder() const </div><div class="ttdoc">Return the folder that contains the associated images (relative) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00055">sydDatabase.h:55</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -371,18 +389,18 @@ template&lt;class ElementType &gt; </div>
 <p>Dump all elements of a given table (query[0]) </p>
 <p>Return the (base) table with <a class="el" href="structsyd_1_1table__name.html">table_name</a> </p>
 
-<p>Definition at line <a class="el" href="sydDatabase_8cxx_source.html#l00151">151</a> of file <a class="el" href="sydDatabase_8cxx_source.html">sydDatabase.cxx</a>.</p>
-<div class="fragment"><div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;{</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  std::string str=table_name;</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  std::transform(str.begin(), str.end(),str.begin(), ::tolower);</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <span class="keyword">auto</span> it = <a class="code" href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">map_lowercase</a>.find(str);</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  <span class="keywordflow">if</span> (it == <a class="code" href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">map_lowercase</a>.end()) {</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Cannot find the table &#39;&quot;</span> &lt;&lt; table_name &lt;&lt; <span class="stringliteral">&quot;&#39;.&quot;</span>;</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="keywordflow">return</span> 0; <span class="comment">// to avoid warning</span></div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  }</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  <span class="keywordflow">return</span> it-&gt;second;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;}</div>
-<div class="ttc" id="classsyd_1_1Database_html_afcdf186672cdb2b65d601d8557a38bbc"><div class="ttname"><a href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">syd::Database::map_lowercase</a></div><div class="ttdeci">MapOfTablesType map_lowercase</div><div class="ttdoc">Copy of the map with the table name in lowercase (for comparison) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00177">sydDatabase.h:177</a></div></div>
+<p>Definition at line <a class="el" href="sydDatabase_8cxx_source.html#l00152">152</a> of file <a class="el" href="sydDatabase_8cxx_source.html">sydDatabase.cxx</a>.</p>
+<div class="fragment"><div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;{</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  std::string str=table_name;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  std::transform(str.begin(), str.end(),str.begin(), ::tolower);</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  <span class="keyword">auto</span> it = <a class="code" href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">map_lowercase</a>.find(str);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  <span class="keywordflow">if</span> (it == <a class="code" href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">map_lowercase</a>.end()) {</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Cannot find the table &#39;&quot;</span> &lt;&lt; table_name &lt;&lt; <span class="stringliteral">&quot;&#39;.&quot;</span>;</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordflow">return</span> 0; <span class="comment">// to avoid warning</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  }</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  <span class="keywordflow">return</span> it-&gt;second;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;}</div>
+<div class="ttc" id="classsyd_1_1Database_html_afcdf186672cdb2b65d601d8557a38bbc"><div class="ttname"><a href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">syd::Database::map_lowercase</a></div><div class="ttdeci">MapOfTablesType map_lowercase</div><div class="ttdoc">Copy of the map with the table name in lowercase (for comparison) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00188">sydDatabase.h:188</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>

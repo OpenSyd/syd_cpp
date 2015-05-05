@@ -8,12 +8,11 @@
 var indexSectionsWithContent =
 {
   0: "acdefgilmnopqrstu",
-  1: "delmpst",
+  1: "adelmpst",
   2: "s",
   3: "acdginopqrstu",
-  4: "cdfims",
-  5: "m",
-  6: "r"
+  4: "acdfmrs",
+  5: "m"
 };
 
 var indexSectionNames =
@@ -23,8 +22,7 @@ var indexSectionNames =
   2: "namespaces",
   3: "functions",
   4: "variables",
-  5: "typedefs",
-  6: "pages"
+  5: "typedefs"
 };
 
 function convertToId(search)

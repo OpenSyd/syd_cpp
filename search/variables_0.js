@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['current_5fsql_5fquery_5f',['current_sql_query_',['../classsyd_1_1Database.html#a2b15b8e9ae9f006c614137e17bf2ecb1',1,'syd::Database']]]
+  ['absolute_5ffolder_5f',['absolute_folder_',['../classsyd_1_1Database.html#a77da2c570a7d805b45df1629a4159156',1,'syd::Database']]]
 ];

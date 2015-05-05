@@ -37,7 +37,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li class="current"><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -100,7 +99,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -113,6 +112,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="textblock">Here is a list of all documented class members with links to the class documentation for each member:</div>
 
 <h3><a class="anchor" id="index_a"></a>- a -</h3><ul>
+<li>absolute_folder_
+: <a class="el" href="classsyd_1_1Database.html#a77da2c570a7d805b45df1629a4159156">syd::Database</a>
+</li>
 <li>AddTable()
 : <a class="el" href="classsyd_1_1Database.html#a68d9366cddb0614c95bef9322b3d8a0d">syd::Database</a>
 </li>
@@ -183,6 +185,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <h3><a class="anchor" id="index_g"></a>- g -</h3><ul>
+<li>GetAbsoluteDBFolder()
+: <a class="el" href="classsyd_1_1Database.html#af43b76c8045344eaaa96eb1062ac4196">syd::Database</a>
+</li>
 <li>GetDatabaseType()
 : <a class="el" href="classsyd_1_1Database.html#a5897ddcdcf0b084514985ed072f05649">syd::Database</a>
 </li>
@@ -191,9 +196,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>GetFilename()
 : <a class="el" href="classsyd_1_1Database.html#af978bbfce8839721d25735b6db020cb0">syd::Database</a>
-</li>
-<li>GetImagesFolder()
-: <a class="el" href="classsyd_1_1Database.html#a6e00984fe8da5f8f6f79352a143d2e22">syd::Database</a>
 </li>
 <li>GetInstance()
 : <a class="el" href="classsyd_1_1DatabaseFactory.html#a24063a2d613690fca9d59f9aefdec0e3">syd::DatabaseFactory</a>
@@ -209,6 +211,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>GetNumberOfElements()
 : <a class="el" href="singletonsyd_1_1Table.html#a17ef33eeb97738533c829b29e1ad77a7">syd::Table&lt; ElementType &gt;</a>
 </li>
+<li>GetRelativeDBFolder()
+: <a class="el" href="classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980">syd::Database</a>
+</li>
 <li>GetTable()
 : <a class="el" href="classsyd_1_1Database.html#a37b6ef2ef1cf5f2bcbcdf8a1caceac36">syd::Database</a>
 </li>
@@ -220,12 +225,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classsyd_1_1Database.html#a6544f36b101c2fc5caeda9976f8428c9">syd::Database</a>
 , <a class="el" href="singletonsyd_1_1Table.html#a38a829e372f7306c281f5b0c8a138a3a">syd::Table&lt; ElementType &gt;</a>
 </li>
-<li>images_folder_
-: <a class="el" href="classsyd_1_1Database.html#a555146ad9e3b4f75162d2e6123e25d6a">syd::Database</a>
-</li>
 <li>Insert()
-: <a class="el" href="classsyd_1_1Database.html#a84f54350b85498f93fa567b6409d5708">syd::Database</a>
+: <a class="el" href="classsyd_1_1Database.html#a51f09170409acdc2df53698d247f78a2">syd::Database</a>
 , <a class="el" href="singletonsyd_1_1Table.html#a9ec14b0e2a3a002bb7858fc6904bddd9">syd::Table&lt; ElementType &gt;</a>
+</li>
+<li>InsertFromArg()
+: <a class="el" href="classsyd_1_1Database.html#ac5a3efdb8ac081a77555fb2ac6d53f2c">syd::Database</a>
 </li>
 </ul>
 
@@ -294,6 +299,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>RegisterFactoryFunction()
 : <a class="el" href="classsyd_1_1DatabaseFactory.html#ae71d5dad879f1d000fcb264232be8e39">syd::DatabaseFactory</a>
+</li>
+<li>relative_folder_
+: <a class="el" href="classsyd_1_1Database.html#a3bfdf90d2454ae4f4809947a03763349">syd::Database</a>
 </li>
 </ul>
 

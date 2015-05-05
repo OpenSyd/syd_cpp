@@ -37,7 +37,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
-      <li><a href="pages.html"><span>Related&#160;Pages</span></a></li>
       <li><a href="namespaces.html"><span>Namespaces</span></a></li>
       <li><a href="annotated.html"><span>Classes</span></a></li>
       <li><a href="files.html"><span>Files</span></a></li>
@@ -65,7 +64,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -81,24 +80,26 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 <div class="textblock"><p>WARNING : NOTHING is useful yet. This is a sandbox.</p>
 <p>SYD could be a C++ toolkit to help perform image processing tasks on a database of medical images in the field of Target Radionuclide Therapy. It is primarily developed to manage SPECT/CT images and perform tasks such as computing activity or integrated activity in various ROIs.</p>
-<h1>Main concepts</h1>
-<p>This library is a toolkit, it means that you will need to code your own application (C++). Some (hopefully) convenient tools are given to facilitate the development.</p>
-<ul>
+<hr/>
+ <h1>Main concepts</h1>
+<p>This library is a <em>toolkit</em>, it means that you will need to code your own application (C++). Some (hopefully) convenient tools are given to facilitate the development.</p>
+<p>Key points:</p><ul>
 <li>The core of every study is a database.</li>
+<li>One study = one database.</li>
 <li>In syd, a database is a simple sqlite file, plus an additional folder that contains images. <b>a database = 1 file + 1 folder</b></li>
-<li>A database is composed of several <b>tables</b> such as Patient (with name, date of birth etc), Injection (date, radionuclide, activity etc). The structure of a database, i.e. the list of tables and the structure of the tables is defined in a <b>schema</b> or a database 'type'. An initial example of database schema, is given, but the user can extend it or create from scratch his own schema.</li>
+<li>A database is composed of several <b>tables</b> such as Patient (with name, date of birth etc), Injection (date, radionuclide, activity etc), Dicom images, etc. The structure of a database, i.e. the list of tables and the structure of the tables is defined in a <b>schema</b> or a database 'type'. An initial example of database schema, is given, but the user can extend it or create from scratch his own schema.</li>
 <li>A set of basic command line tools allow to perform basic operations such as creating a database, inserting/removing an element etc. Those basics tools a usually more used at the beginning of a study. We also recommand third party tools to navigate in the database with a GUI (sqlitestudio, sqlitbrowser etc).</li>
 <li>Other tools are specific to a database type and allow to perform some more advanced operation such as: extracting time-activity curves in a ROI, compute time-integrated activity etc.</li>
+<li>Syd contains some specific links to and from other dedicated software, for example for image registration (Elastix) or dose computation (Gate).</li>
 </ul>
-<p>SYD_PLUGIN</p>
 <h2>List of command line tools</h2>
-<p>Use <code>-h</code> to know how to use those tools. Verbose can be set with <code>-v x</code> option with x a number. Here is a list of tools common to all database type:</p>
+<p>Use <code>-h</code> to know how to use those tools. Verbose can be set with <code>-v x</code>, x being a number. Here is a list of tools common to all database type:</p>
 <ul>
-<li>sydCreateDatabase</li>
-<li>sydInsert</li>
-<li>sydDump</li>
+<li><a href="#sydCreateDatabase">sydCreateDatabase</a></li>
+<li><a href="#sydInsert">sydInsert</a></li>
+<li><a href="#sydDump">sydDump</a></li>
 </ul>
-<h2>Main steps</h2>
+<h2>Main steps TODO</h2>
 <ol type="1">
 <li>Create a database with <a href="#sydCreateDatabase">sydCreateDatabase</a></li>
 <li>Insert patients information with sydInsert</li>
@@ -116,9 +117,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <h3>sydCreateDatabase</h3>
 <p><a class="anchor" id="sydCreateDatabase"></a></p>
 <p><code>sydCreateDatabase StudyDB mydb.db mydb/</code></p>
-<p>Create a database of type <code>StudyDB</code> named <code>mydb.db</code> with images in the folder <code>mydb</code>. All the tables will be created (empty). Use <code>sydCreateDatabase -l</code> to get the list of available database type.</p>
+<p>Create a database of type <code>StudyDB</code> named <code>mydb.db</code> with images in the folder <code>mydb</code>. All the tables will be created (empty). Use <code>sydCreateDatabase -l</code> to get the list of available database type. <em>Warning</em> this command will erase all content of the file mydb.db if already exist.</p>
 <h3>sydInsert</h3>
-<p>[sydInsert]</p>
+<p><a class="anchor" id="sydInsert"></a></p>
+<p><code>sydInsert mydb.db Patient JohnFoo 1 82</code></p>
+<p>This example insert a new patient named JohnFoo. First number '1' indicate the number (id) of the patient in the study. It is of course unique (two patients cannot have the same id). The next number '82' is the weight of the patient. To know what list of parameters, just type <code>sydInsert mydb.db Patient</code> without additional arguments, it will display the help. More generally replace 'Patient' by the name of a table to display help.</p>
+<h3>sydDump</h3>
+<p><a class="anchor" id="sydDump"></a></p>
+<p><code>sydDump mydb.db</code> <code>sydDump mydb.db Patient</code> <code>sydDump mydb.db DicomSerie</code></p>
+<p>Display basic information about a database or a table.</p>
+<h3>sydInsertDicom</h3>
+<p>[sydInsertDicom]</p>
+<p><code>sydInsertDicom -v1 mydb.db JohnFoo folder\_with\_dicom/ -i Indium111 -f</code></p>
+<p>This tool search for dicom files into the given folder. Sort according to dicom series and copy the file to the database. Dicom must be associated with a patient and an injection.</p>
+<p><em>Patient identification</em>. We try to identify the patient with the dicom tag "PatientID". However, it is not rare that the same patient is associated with several PatientID, so this check is optional with the flag -f.</p>
+<h3>sydDumpDicom</h3>
+<p>[sydDumpDicom]</p>
+<p>TODO. option to print all tags.</p>
+<h3>sydInsertTimepoint</h3>
+<p><a class="anchor" id="sydInsertTimepoint"></a></p>
+<hr/>
+ <h1>Development</h1>
 <h2>Principal classes</h2>
 <ul>
 <li><a class="el" href="classsyd_1_1DatabaseManager.html" title="Manage a set of database type. Allow to open and create. ">syd::DatabaseManager</a></li>
@@ -131,6 +150,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <ul>
 <li><a class="el" href="classsyd_1_1PluginManager.html">syd::PluginManager</a></li>
 </ul>
+<h2>File storage strategy</h2>
+<p>Here a database does not store any files but only URL to files stored in a regular filesystem. Management of files is performed with the syd::File table. All file paths are <em>relative</em> to a common unique entry point (that can be a simple folder on a disk). Hash (or checksum) value of a file can be stored/used.</p>
+<p>TODO: mhd-img ?</p>
+<h2>DICOM strategy</h2>
+<p>The database can store dicom files, thanks to <a href="#sydInsertDicom">sydInsertDicom</a> tool. Dicom files are stored in two tables named syd::DicomSerie and syd::DicomFile. The basic organization of dicom is with Patient/Study/Series/SOP UID. Every dicom file can be uniquely identified with the SOP_UID (UID stands for unique identifier), stored in the syd::DicomFile table.</p>
+<p>WARNING: the table syd::DicomSerie can contain several elements with the same dicom_series_uid because this uid is not sufficient to unambiguously identify an image: for example for some manufacturers (i.e. GE), a two table-steps SPECT acquisition share the same Series_UID and each file has its unique SOP_UID. In this case we will consider two syd::DicomSerie elements in the database. However, when an image is composed of slices provided in several files we group all the slices under the same syd::DicomSerie.</p>
+<p>Note that every syd::DicomSerie only contains a subset of dicom information that ease the work, but not all the dicom tags (that could always be retrieved thanks to <a href="#sydDumpDicom">sydDumpDicom</a>). A syd::DicomSerie element contains information about the dicom, in particular:</p><ul>
+<li>the UIDS</li>
+<li>the acquisition and reconstruction date. Those dates are retrieved from the dicom tag "AcquisitionDate", "AcquisitionTime", and either</li>
+</ul>
 <h2>Standards tables and database schemas</h2>
 <p>The following classes are mapped to SQL tables in the sqlite databases.</p>
 <p>A syd::ClinicDatabase manages the following tables:</p><ul>
@@ -139,6 +168,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>syd::DicomSerie: contains link to dicom files about an image (CT or SPECT).</li>
 <li>syd::DicomSerieBuilder: to build a syd::DicomSerie object in the database by reading dicom files. Important note: dicom are identifying by the SeriesInstanceUID (unique id) for the CT images and by SOPInstanceUID for all other images.</li>
 </ul>
+<h2>notion of Timepoints</h2>
+<p>Table syd::Timepoint Tag</p>
 <h2>Helpers classes</h2>
 <ul>
 <li><a class="el" href="classsyd_1_1PrintTable.html" title="Helpers class to dump a table (line/column) of values, controling the precision and the column size...">syd::PrintTable</a>: to help dumping 2D table style information on screen</li>
