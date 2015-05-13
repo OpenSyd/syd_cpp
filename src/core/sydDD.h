@@ -26,6 +26,9 @@
 
 // DD = David's Debug
 
+#define DD_COLOR "\x1b[36m"
+#define DD_RESET "\x1b[0m"
+
 #ifdef _WIN32
 # define DD(a) { \
     std::ostringstream ossDD; \
@@ -34,12 +37,14 @@
     std::cout << ossDD.str() << std::endl; \
   }
 #else
-# define DD(a) std::cout << #a " = [ " << a << " ]" << std::endl;std::cout.flush();
+# define DD(a) std::cout << DD_COLOR << #a " = [ " << a << " ]" << DD_RESET << std::endl;std::cout.flush();
 #endif
-#define DDV(a,n) { std::cout << #a " = [ "; for(unsigned int _i_=0; _i_<n; _i_++) { std::cout << a[_i_] << " "; }; std::cout << " ]" << std::endl;std::cout.flush();}
+
+#define DDV(a,n) { std::cout << DD_COLOR << #a " = [ "; for(unsigned int _i_=0; _i_<n; _i_++) { std::cout << a[_i_] << " "; }; std::cout << " ]" << DD_RESET << std::endl;std::cout.flush();}
   template<class T>
     void _print_container(T const& a)
     { for(typename T::const_iterator i=a.begin();i!=a.end();++i) { std::cout << *i << " "; };}
-#define DDS(a) { std::cout << #a " = [ "; _print_container(a) ; std::cout << "]" << std::endl;std::cout.flush();}
+
+#define DDS(a) { std::cout << DD_COLOR << #a " = [ "; _print_container(a) ; std::cout << "]" << DD_RESET << std::endl;std::cout.flush();}
 
 #endif

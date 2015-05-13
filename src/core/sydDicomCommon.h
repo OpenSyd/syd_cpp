@@ -31,21 +31,30 @@
 //--------------------------------------------------------------------
 namespace syd {
 
-  bool OpenDicomFile(std::string filename, bool contIfNotDicom, DcmFileFormat & dfile);
+  /// Open a dicom file, return a DcmFileFormat that contains dicom
+  /// tag. Return false if could not open the file
+  bool OpenDicomFile(std::string filename, DcmFileFormat & dfile);
 
+  /// Return the key of a tag knowing his name
   DcmTagKey GetTagKey(std::string tagName);
+
+  /// Return the value of a tag from is name
   DcmElement * GetTagValue(DcmObject * dest, std::string tagName);
+
+  /// Return the value of a tag from is keya
   DcmElement * GetTagValue(DcmObject * dest, DcmTagKey & key);
+
+  /// Return the tag value as a string
   std::string GetTagValueString(DcmObject *dset, std::string tagName);
+
+  /// Return the tag value as a ushort
   ushort GetTagValueUShort(DcmObject *dset, std::string tagName);
+
+  /// Return the tag value as a double
   double GetTagValueDouble(DcmObject *dset, std::string tagName);
 
-  class DicomSerieInfo {
-  public:
-    std::string serie_UID_;
-    std::vector<std::string> filenames_;
-  };
-
+  /// Concat date and time (from dicom) to "2015-04-01 10:00"
+  std::string ConvertDicomDateToStringDate(std::string date, std::string time);
 
 } // end namespace
 

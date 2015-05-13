@@ -22,7 +22,7 @@ DatabaseRegistrar<T>::DatabaseRegistrar(std::string type_name)
 {
   // std::cout << "Registering new database type " << type_name;
   // register the class factory function
-  syd::DatabaseFactory::Instance()->
+  syd::DatabaseFactory::GetInstance()->
     RegisterFactoryFunction(type_name,
                             [](std::string a,
                                std::string b) -> Database * { return new T(a,b);});

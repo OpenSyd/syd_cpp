@@ -21,84 +21,166 @@
 
 // syd
 #include "sydCommon.h"
-#include "sydDatabaseFactory.h"
-
-// odb
-#include <odb/database.hxx>
-#include <odb/transaction.hxx>
-#include <odb/sqlite/database.hxx>
-#include <odb/sqlite/tracer.hxx>
-#include <odb/sqlite/statement.hxx>
-#include <odb/schema-catalog.hxx>
-
-// dcmtk
-#include "dcmtk/dcmdata/dctk.h"
+#include "sydTableBase.h"
+#include "core/sydDatabaseInformation-odb.hxx"
 
 // --------------------------------------------------------------------
 namespace syd {
 
+  // The following classes will be defined elsewhere
+  template<class TableElement> class Table;
+  template<class DatabaseSchema> class DatabaseCreator;
+
+  /// This is the base class of all databases. Manage a sqlite
+  /// database and an associated folder (containing images). Provide
+  /// convenient functions to perform basic queries. The database is
+  /// composed of a list of tables. Use DatabaseManager to Create or
+  /// Read a database.
   class Database {
+
+    // Only the class DatabaseCreator can acces to protected members such as Open and Create.
+    template<class DatabaseSchema> friend class DatabaseCreator;
+
   public:
+    /// Return the type of the db (read in the file)
+    std::string GetDatabaseSchema() { return database_schema_; }
 
-    // Main static function to create a new database
-    static std::shared_ptr<Database> OpenDatabase(std::string name, std::string init_filename="");
+    /// Return the filename (.db file sqlite)
+    std::string GetFilename() const { return filename_; }
 
-    // This helper function allow to open a new database knowing his type (DatabaseType)
-    template<class DatabaseType>
-    static std::shared_ptr<DatabaseType> OpenDatabaseType(std::string name);
+    /// Return the folder that contains the associated images (relative)
+    std::string GetRelativeDBFolder() const { return relative_folder_; }
 
-    // Functions common to all databases
-    virtual void Dump(std::ostream & os, std::vector<std::string> & args) = 0;
-    virtual void CheckIntegrity(std::vector<std::string> & args) = 0;
-    virtual void CreateDatabase() { DD("TODO"); }
+    /// Return the folder that contains the associated images (absolute according to working directory)
+    std::string GetAbsoluteDBFolder() const { return absolute_folder_; }
 
-    // Accessors
-    std::string get_name() const { return name_; }
-    virtual std::string get_typename() const = 0;
-    std::string get_folder() const { return folder_; }
-    std::string get_filename() const { return filename_; }
+    /// Perform a query on the database and return the found elements in the list
+    template<class TableElement>
+    void Query(const odb::query<TableElement> & q, std::vector<TableElement> & list);
 
-    // Call back for SQL query to the DB. For debug purpose
+    /// Retrieve all elements of the table
+    template<class TableElement>
+    void Query(std::vector<TableElement> & list);
+
+    /// Get the unique element matching the query (fail if 0 or >1 elements)
+    template<class TableElement>
+    TableElement QueryOne(const odb::query<TableElement> & q);
+
+    /// Get the unique element with the given id
+    template<class TableElement>
+    TableElement QueryOne(IdType id);
+
+    /// Count the number of elements matching the query
+    template<class TableElement>
+    unsigned int Count(const odb::query<TableElement> & q);
+
+    /// Check if the given id exist
+    template<class TableElement>
+    bool IfExist(IdType id);
+
+    /// Insert a new element of type TableElement in the database
+    template<class TableElement>
+    void Insert(TableElement & r);
+
+    /// Insert several elements at a time
+    template<class TableElement>
+    void Insert(std::vector<TableElement*>& r);
+
+    /// Insert a new element build from set of string
+    virtual TableElement * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
+
+    /// Execute native SQL statements
+    void ExecuteSQL(const std::string & statement);
+
+    /// Update an element in the database
+    template<class TableElement>
+    void Update(TableElement & r);
+
+    /// Update a set of elements in the database
+    template<class TableElement>
+    void Update(std::vector<TableElement*> & r);
+
+    /// Call back for SQL query to the DB. For debug purpose only
     void TraceCallback(const char* sql);
 
-    // Load the list of T corresponding to the sql query q
-    template<class T> void LoadVector(const odb::query<T> & q, std::vector<T> & list);
-    template<class T> void LoadVector(std::vector<T> & list);
+    /// Return the last SQL query (set by TraceCallback). For debug purpose only
+    std::string GetLastSQLQuery() const { return current_sql_query_; }
 
-    // Insert a new element of type T
-    template<class T> void Insert(T & t);
 
-    // Update an element of type T
-    template<class T> void Update(T & t);
+    /// -------------------------------- OLD
 
-    // Remove an element of type T
-    template<class T> void Erase(T & t);
-    template<class T> void Erase(std::vector<T> & t);
 
-    // Retrieve the element with a given id
-    template<class T> T GetById(IdType id);
+    /// Delete the element with id
+    template<class TableElement>
+    bool Delete(IdType id) { GetTable<TableElement>()->Delete(id); }
 
-    // Check if an element exist an if yes, retrieve it
-    template<class T> bool GetIfExist(odb::query<T> q, T & t);
 
-    // Get an element or insert a new one
-    template<class T> bool GetOrInsert(odb::query<T> q, T & t);
+    /// Delete the element with id in the given table
+    // bool Delete(const std::string & table_name, const IdType id);
 
-  protected:
-    Database(std::string name);
-    virtual void OpenSqliteDatabase(std::string filename, std::string folder);
+    /// Generic dump according to args
+    virtual void Dump(const std::vector<std::string> & args, std::ostream & os);
 
-    // help function to read filename/folder from a set of string
-    void SetFileAndFolder(std::istringstream & f);
+    /// Dump all elements of a given table
+    virtual void DumpTable(const std::string & table_name, std::ostream & os);
 
+    /// Dump all elements of a given table (query[0])
+    //    void DumpTable(const std::vector<std::string> & query, std::ostream & os);
+
+    /// Return the (base) table with table_name
+    TableBase * GetTable(const std::string & table_name);
+
+    /// Return the table that contains TableElement
+    template<class TableElement>
+    Table<TableElement> * GetTable();
+
+    std::string GetListOfTableNames();
+
+    // ----------------------------------------------------------------------------------
+    protected:
+    // Create an empty database
+    Database();
+
+    /// Main function to open a database
+    void Read(std::string filename);
+
+    /// Must be overwritten by concrete classes.
+    virtual void CreateTables() = 0;
+
+    /// Add a table type managed by this class
+    template<class TableElement>
+    void AddTable();
+
+    /// Type of the map that contains the association between names and tables
+    typedef std::map<std::string, TableBase*> MapOfTablesType;
+
+    /// Map that contains the association between names and tables
+    MapOfTablesType map;
+
+    /// Copy of the map with the table name in lowercase (for comparison)
+    MapOfTablesType map_lowercase;
+
+    /// Return the map that contains the association between names and tables
+    MapOfTablesType & GetMapOfTables() { return map; }
+
+    /// The sqlite database
     odb::sqlite::database * db_;
+
+    /// Filename of the db
     std::string filename_;
-    std::string folder_;
-    std::string name_;
+
+    /// Main folder that contains images (read in the file)
+    std::string relative_folder_;
+
+    /// Main folder that contains images (read in the file)
+    std::string absolute_folder_;
+
+    /// Type of the database (read in the file)
+    std::string database_schema_;
+
+    /// Store current sql query for debug purpose
     std::string current_sql_query_;
   };
-
-
 
 #include "sydDatabase.txx"
 

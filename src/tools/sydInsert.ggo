@@ -1,0 +1,10 @@
+#File sydInsert.ggo
+
+package "sydInsert"
+usage "sydInsert <db> <table> [<arg>]"
+version "0.2"
+description "Insert a new element in the table <table> of the db. The <args> is a list of strings depends on the table type."
+
+option "config"	  	 	-	"Config file"				string  	no
+option "verbose"   	 	v       "Verbosity level (0 for silence)"      int default ="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off

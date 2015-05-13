@@ -34,17 +34,33 @@ namespace syd {
 
 
   // ---------------------------------------------------------------------
+  /// Usually not for end-user. This singleton class manage a list of database types.
   class DatabaseFactory {
   public:
 
+    /// Create a new database according to the type_name
     static std::shared_ptr<Database> NewDatabase(std::string type_name,
                                                  std::string name,
                                                  std::string param);
+
+    /// Read a set of database filenames
+    static void ReadDatabaseFilenames(std::string init_filename="");
+
+    /// Return the pointer to the singleton
+    static DatabaseFactory * GetInstance();
+
+    /// Register a database type and the function used to create it
     void RegisterFactoryFunction(std::string type_name, FunctionType classFactoryFunction);
-    static DatabaseFactory * Instance();
+
+    /// Search the database 'name' in the list and return its type and all associated params
+    static void SearchTypeAndParamFromName(std::string name,
+                                           std::string & type_name,
+                                           std::string & param);
+
+  protected:
+    /// Set of correspondance between database type and function to create it
     static std::map<std::string, FunctionType> factoryFunctionRegistry;
-    static void OpenDatabaseFilenames(std::string init_filename="");
-    static void GetTypeAndParamFromName(std::string name, std::string & type_name, std::string & param);
+
     static std::map<std::string, std::string> map_of_database_types_;
     static std::map<std::string, std::string> map_of_database_param_;
   };
@@ -61,13 +77,14 @@ namespace syd {
 
 
 #define SYD_INIT_DATABASE(DATABASE_TYPE_NAME)                         \
-  virtual std::string get_typename() const { return typename_; }      \
+  virtual std::string GetType() const { return typename_; }      \
   static std::string typename_;                                       \
   static syd::DatabaseRegistrar<DATABASE_TYPE_NAME> registrar;
 
 #define SYD_DECLARE_DATABASE_TYPE(DATABASE_TYPE_NAME)                   \
   std::string syd::DATABASE_TYPE_NAME::typename_ = #DATABASE_TYPE_NAME; \
-  syd::DatabaseRegistrar<syd::DATABASE_TYPE_NAME> syd::DATABASE_TYPE_NAME::registrar(#DATABASE_TYPE_NAME);
+  syd::DatabaseRegistrar<syd::DATABASE_TYPE_NAME> \
+  syd::DATABASE_TYPE_NAME::registrar(#DATABASE_TYPE_NAME);
 
 #include "sydDatabaseFactory.txx"
 

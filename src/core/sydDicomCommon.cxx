@@ -108,31 +108,30 @@ DcmElement * syd::GetTagValue(DcmObject * dset, DcmTagKey & key)
 
 
 //--------------------------------------------------------------------
-bool syd::OpenDicomFile(std::string filename, bool contIfNotDicom, DcmFileFormat & dfile)
+bool syd::OpenDicomFile(std::string filename, DcmFileFormat & dfile)
 {
+  // remove debug output of dcmtk
+  OFLog::configure(OFLogger::OFF_LOG_LEVEL);
   const E_TransferSyntax xfer = EXS_Unknown; // auto detection
   const E_GrpLenEncoding groupLength = EGL_noChange;
   const E_FileReadMode readMode = ERM_autoDetect;
   const Uint32 maxReadLength = DCM_MaxReadLength;
-
-  OFCondition cond = dfile.loadFile(filename.c_str(), xfer, groupLength, maxReadLength, readMode);
-  if (cond.bad())  {
-    if (contIfNotDicom) {
-      LOG(WARNING) << "Error : " << cond.text() << " while reading file "
-                   << filename << " (not a Dicom ?)";
-      return false;
-    }
-    else {
-      LOG(FATAL) << "Error : " << cond.text() << " while reading file "
-                   << filename << " (not a Dicom ?)";
-      return false; // no return;
-    }
-  }
-  return true;
+  OFCondition cond =
+    dfile.loadFile(filename.c_str(), xfer, groupLength, maxReadLength, readMode);
+  return cond.good();
+  // error message in cond.text()
 }
 //--------------------------------------------------------------------
 
 
-//--------------------------------------------------------------------
-
-//--------------------------------------------------------------------
+// --------------------------------------------------------------------
+std::string syd::ConvertDicomDateToStringDate(std::string date, std::string time)
+{
+  std::string result;
+  if (date.empty()) return "";
+  result= date.substr(0,4)+"-"+date.substr(4,2)+"-"+date.substr(6,2);
+  if (time.empty()) return result;
+  result= result+" "+ time.substr(0,2)+":"+time.substr(2,2);
+  return result;
+}
+// --------------------------------------------------------------------

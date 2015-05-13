@@ -18,74 +18,137 @@
 
 
 // --------------------------------------------------------------------
-template<class DatabaseType>
-std::shared_ptr<DatabaseType> syd::Database::OpenDatabaseType(std::string name)
+template<class ElementType>
+Table<ElementType> * syd::Database::GetTable()
 {
-  std::shared_ptr<Database> d = syd::Database::OpenDatabase(name);
-  if (d->get_typename() != DatabaseType::typename_) {
-    LOG(FATAL) << "Error while attempting to read the database '" << name
-               << "' which is of type '" << d->get_typename()
-               << "' while expecting type '" << DatabaseType::typename_ << "'";
+  return (Table<ElementType>*)GetTable(ElementType::GetTableName());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class ElementType>
+void syd::Database::AddTable()
+{
+  if (db_ == NULL) {
+    LOG(FATAL) << "Could not AddTable, open a db before";
   }
-  return std::dynamic_pointer_cast<DatabaseType>(d);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-// Warning : do not clear the list, append
-template<class T>
-void syd::Database::LoadVector(const odb::query<T> & q, std::vector<T> & list)
-{
-  odb::transaction transaction (db_->begin());
-  typedef odb::query<T> query;
-  typedef odb::result<T> result;
-  result r (db_->query<T>(q));
-  for(auto i = r.begin(); i != r.end(); i++) {
-    T s;
-    i.load(s);
-    list.push_back(s);
+  std::string tablename = ElementType::GetTableName();
+  auto it = map.find(tablename);
+  if (it != map.end()) {
+    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
+               << "' already exist.";
   }
-  transaction.commit();
+  // Also check with uppercase and lowercase
+  std::string str = tablename;
+  std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+  it = map.find(str);
+  if (it != map.end()) {
+    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
+               << "' already exist.";
+  }
+  std::transform(str.begin(), str.end(),str.begin(), ::tolower);
+  it = map.find(str);
+  if (it != map.end()) {
+    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
+               << "' already exist.";
+  }
+  map[tablename] = new Table<ElementType>(this, db_);
+  map_lowercase[str] = map[tablename];
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-// Warning : do not clear the list, append
-template<class T>
-void syd::Database::LoadVector(std::vector<T> & list)
+template<class ElementType>
+void syd::Database::Query(const odb::query<ElementType> & q, std::vector<ElementType> & list) {
+  GetTable<ElementType>()->Query(q,list);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class ElementType>
+void syd::Database::Query(std::vector<ElementType> & list)
 {
-  return LoadVector<T>(odb::query<T>::id != 0, list);
+  GetTable<ElementType>()->Query(list);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class T>
-void syd::Database::Insert(T & r)
+template<class ElementType>
+ElementType syd::Database::QueryOne(const odb::query<ElementType> & q)
 {
-  odb::transaction t (db_->begin());
-  db_->persist(r);
-  db_->update(r);
-  t.commit();
+  return GetTable<ElementType>()->QueryOne(q);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class T>
-void syd::Database::Update(T & r)
+template<class ElementType>
+ElementType syd::Database::QueryOne(IdType id)
 {
-  odb::transaction t (db_->begin());
-  db_->update(r);
-  t.commit();
+  return GetTable<ElementType>()->QueryOne(id);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class T>
+template<class ElementType>
+unsigned int syd::Database::Count(const odb::query<ElementType> & q)
+{
+  return GetTable<ElementType>()->Count(q);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class ElementType>
+bool syd::Database::IfExist(IdType id)
+{
+  return GetTable<ElementType>()->IfExist(id);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class ElementType>
+void syd::Database::Insert(ElementType & r)
+{
+  GetTable<ElementType>()->Insert(r);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class ElementType>
+void syd::Database::Insert(std::vector<ElementType*> & r)
+{
+  GetTable<ElementType>()->Insert(r);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class ElementType>
+void syd::Database::Update(ElementType & r)
+{
+  GetTable<ElementType>()->Update(r);
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+template<class ElementType>
+void syd::Database::Update(std::vector<ElementType*> & r)
+{
+  GetTable<ElementType>()->Update(r);
+}
+// --------------------------------------------------------------------
+
+/*
+// --------------------------------------------------------------------
+template<class TableType>
 void syd::Database::Erase(T & r)
 {
   odb::transaction t (db_->begin());
@@ -96,7 +159,7 @@ void syd::Database::Erase(T & r)
 
 
 // --------------------------------------------------------------------
-template<class T>
+template<class TableType>
 void syd::Database::Erase(std::vector<T> & r)
 {
   odb::transaction t (db_->begin());
@@ -107,13 +170,13 @@ void syd::Database::Erase(std::vector<T> & r)
 
 
 // --------------------------------------------------------------------
-template<class T>
+template<class TableType>
 T syd::Database::GetById(IdType id)
 {
   odb::transaction transaction (db_->begin());
-  typedef odb::query<T> query;
+  typedef odb::query<TableType> query;
   typedef odb::result<T> result;
-  result r (db_->query<T>(odb::query<T>::id == id));
+  result r (db_->query<TableType>(odb::query<TableType>::id == id));
   if (r.begin() != r.end()) {
     T s;
     r.begin().load(s);
@@ -122,7 +185,7 @@ T syd::Database::GetById(IdType id)
   }
   transaction.commit();
   LOG(FATAL) << "Error element with id = " << id << " does not exist in "
-             << get_name() << " (" << get_typename() << ")";
+             << get_name() << " (" << GetType() << ")";
   T s;
   return s; // fake return
 }
@@ -130,13 +193,13 @@ T syd::Database::GetById(IdType id)
 
 
 // --------------------------------------------------------------------
-template<class T>
-bool syd::Database::GetIfExist(odb::query<T> q, T & t)
+template<class TableType>
+bool syd::Database::GetIfExist(odb::query<TableType> q, T & t)
 {
   odb::transaction transaction (db_->begin());
-  typedef odb::query<T> query;
+  typedef odb::query<TableType> query;
   typedef odb::result<T> result;
-  result r (db_->query<T>(q));
+  result r (db_->query<TableType>(q));
   bool b = false;
   if (r.begin() != r.end()) {
     b = true;
@@ -149,8 +212,8 @@ bool syd::Database::GetIfExist(odb::query<T> q, T & t)
 
 
 // --------------------------------------------------------------------
-template<class T>
-bool syd::Database::GetOrInsert(odb::query<T> q, T & t)
+template<class TableType>
+bool syd::Database::GetOrInsert(odb::query<TableType> q, T & t)
 {
   bool b = GetIfExist<T>(q, t);
   if (!b) { //Create
@@ -160,3 +223,4 @@ bool syd::Database::GetOrInsert(odb::query<T> q, T & t)
   return false;
 }
 // --------------------------------------------------------------------
+*/

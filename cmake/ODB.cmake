@@ -4,15 +4,16 @@ macro(WRAP_ODB ODB_SRCS)
   foreach(ODB_FILES ${ARGN})
     get_filename_component(ODB_BASEFILENAME ${ODB_FILES} NAME_WE)
     get_filename_component(ODB_FILES_ABS ${ODB_FILES} ABSOLUTE)
+    #DD(SCHEMA_NAME)
     set(ODB_CXX ${ODB_BASEFILENAME}-odb.cxx)
     set(ODB_IXX ${ODB_BASEFILENAME}-odb.ixx)
     set(ODB_HXX ${ODB_BASEFILENAME}-odb.hxx)
     set(ODB_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ODB_CXX} ${CMAKE_CURRENT_BINARY_DIR}/${ODB_IXX} ${CMAKE_CURRENT_BINARY_DIR}/${ODB_HXX})
     add_custom_command(OUTPUT ${ODB_OUTPUT}
       COMMAND odb
-      ARGS --std c++11 --database sqlite -I${PROJECT_SOURCE_DIR}/src/core --generate-schema --schema-format embedded --generate-query ${ODB_FILES_ABS}
-      DEPENDS ${ODB_FILES_ABS}
-      )
+      ARGS --std c++11 --database sqlite -I${PROJECT_SOURCE_DIR}/src/core --generate-schema --schema-format embedded --generate-query --sqlite-override-null --schema-name ${SCHEMA_NAME} ${ODB_FILES_ABS}
+      DEPENDS ${ODB_FILES_ABS})
+
     set(${ODB_SRCS} ${${ODB_SRCS}} ${ODB_OUTPUT})
     include_directories(${CMAKE_CURRENT_BINARY_DIR})
     include_directories(${CMAKE_CURRENT_SOURCE_DIR})

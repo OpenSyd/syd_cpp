@@ -20,8 +20,8 @@
 #define SYDIMAGE_H
 
 // syd
-#include "sydDicomCommon.h"
-#include "sydTimeActivityCurveIntegrate.h"
+#include "sydCommon.h"
+//#include "sydTimeActivityCurveIntegrate.h"
 
 // itk
 #include <itkImageFileReader.h>

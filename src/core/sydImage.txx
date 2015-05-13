@@ -80,9 +80,9 @@ typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filen
 {
   // Read image one after the other to limit a bit the used memory
   typename ImageType::Pointer im1 = syd::ReadImage<ImageType>(filenames[0]);
-  ELOG(2) << "Start with  " << filenames[0];
+  LOG(2) << "Start with  " << filenames[0];
   for(auto i=1; i<filenames.size(); i++) {
-    ELOG(2) << "Adding " << filenames[i];
+    LOG(2) << "Adding " << filenames[i];
     typedef itk::AddImageFilter<ImageType> FilterType;
     typename ImageType::Pointer im2 = syd::ReadImage<ImageType>(filenames[i]);
     typename FilterType::Pointer filter = FilterType::New();
@@ -94,7 +94,7 @@ typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filen
   }
 
   // Average
-  ELOG(2) << "Average";
+  LOG(2) << "Average";
   typedef float PixelType;
   typedef itk::Image<PixelType,3> OutputImageType;
   typedef itk::MultiplyImageFilter<ImageType, OutputImageType, OutputImageType> FilterType;

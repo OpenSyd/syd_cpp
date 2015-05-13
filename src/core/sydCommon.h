@@ -24,25 +24,10 @@
 #include <map>
 #include <vector>
 #include <cmath>
-
-// syd
-#include "sydDD.h"
-#include "sydDicomCommon.h"
-#include "md5.h"
+#include <sstream>
 
 // google logging
 #include <glog/logging.h>
-
-// google logging conflict with easylogging, so we need the following (ceres need glog)
-#undef CHECK_STREQ
-#undef DCHECK_STREQ
-#undef CHECK_STRNE
-#undef DCHECK_STRNE
-
-// easylogging
-// The first macro is needed to prevent default log file to be created
-#define _ELPP_NO_DEFAULT_LOG_FILE 1
-#include "easylogging++.h"
 
 // To get current working directory
 // http://stackoverflow.com/questions/143174/how-do-i-get-the-directory-that-a-program-is-running-from
@@ -54,7 +39,15 @@
     #define GetCurrentDir getcwd
  #endif
 
+// syd
+#include "sydDD.h"
+#include "sydLog.h"
+#include "sydDicomCommon.h" // needed for helpers functions (FileExists)
+#include "md5.h"
+
 //--------------------------------------------------------------------
+using namespace sydlog;
+
 namespace syd {
 
   //--------------------------------------------------------------------
@@ -67,18 +60,32 @@ namespace syd {
     else cmdline_parser_##ggo_filename(argc, argv, &args_info);
 
   //--------------------------------------------------------------------
+  // Static declaration To be include in main
+#define SYD_STATIC_INIT                                         \
+  syd::DatabaseManager * syd::DatabaseManager::singleton_;      \
+  syd::PluginManager * syd::PluginManager::singleton_;
+
+  //--------------------------------------------------------------------
+  // To init tools with GGO, log and help
+#define SYD_INIT(G, N)                       \
+  GGO(G, args_info);                         \
+  Log::SQLFlag() = args_info.verboseSQL_flag;           \
+  Log::LogLevel() = args_info.verbose_arg;              \
+  if (args_info.inputs_num < N) {                       \
+    cmdline_parser_##G##_print_help();           \
+    LOG(FATAL) << "Please provide at least "#N" params";   \
+  }
+
+  //--------------------------------------------------------------------
   // Type for id in the db
   typedef unsigned int IdType;
 
   //--------------------------------------------------------------------
+  // FIXME : to change
   static const double HalfLife_Indium_in_days = 2.8047;
   static const double Lambda_Indium_in_days = log(2.0)/HalfLife_Indium_in_days;
   static const double Lambda_Indium_in_hours = log(2.0)/(HalfLife_Indium_in_days*24.0);
   static const double Lambda_Indium_in_sec = log(2.0)/(HalfLife_Indium_in_days*3600.0);
-
-  //--------------------------------------------------------------------
-  template<class ArgsInfoType>
-  void init_logging_verbose_options(ArgsInfoType & args_info);
   //--------------------------------------------------------------------
 
 
@@ -87,14 +94,24 @@ namespace syd {
   bool FileExists(std::string filename);
   bool DirExists(std::string folder);
   std::string GetExtension(const std::string filename);
+  std::string GetFilenameFromPath(const std::string path);
+  void ConvertToAbsolutePath(std::string & folder);
+  bool GetWorkingDirectory(std::string & pwd);
+  bool EqualFiles(std::ifstream & in1, std::ifstream & in2);
+  bool EqualFiles(std::string in1, std::string in2);
+  void CopyFile(std::string src, std::string dst);
   //--------------------------------------------------------------------
 
 
   //--------------------------------------------------------------------
-  std::string GetDate(std::string date, std::string time);
+  std::string ConvertDateTime(std::string date, std::string time);
   void ConvertStringToDate(std::string s, tm & d);
   double DateDifferenceInHours(std::string end, std::string start);
-  bool IsBefore(std::string d1, std::string d2);
+  bool IsDateBefore(std::string d1, std::string d2);
+  bool IsDigits(const std::string &str);
+
+  /// A 'valid' date is something like "2015-04-01 10:00"
+  bool IsDateValid(std::string d);
   //--------------------------------------------------------------------
 
 
@@ -103,6 +120,8 @@ namespace syd {
   double ToDouble(std::string);
   template<class T>
   std::string ToString(const T & t);
+  template<class T, int N>
+  std::string ArrayToString(const std::array<T, N> & t);
   void SkipComment(std::istream & is);
   bool Replace(std::string& str, const std::string& from, const std::string& to);
   void GetWords(const std::string & phrase, std::vector<std::string> & words);
@@ -119,27 +138,8 @@ namespace syd {
   void loadbar(unsigned int x, unsigned int n, unsigned int w=50);
   //--------------------------------------------------------------------
 
-  //--------------------------------------------------------------------
-  // FIXME : put in another file
-  class PrintTable {
-  public:
-    PrintTable();
-    void AddColumn(std::string name, int width, int digit);
-    void Init();
-    PrintTable & operator<<(const double & value);
-    PrintTable & operator<<(const std::string & value);
-    void Print(std::ostream & out);
-  protected:
-    std::vector<std::vector<std::string>> values;
-    std::vector<std::string> headers;
-    std::vector<int> width;
-    std::vector<int> precision;
-    int current_line;
-    int current_column;
-  };
-
 #include "sydCommon.txx"
 
 } // end namespace
 
-#endif /* end #define CLITKCOMMON_H */
+#endif /* end #define SYDCOMMON_H */

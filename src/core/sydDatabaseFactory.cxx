@@ -20,7 +20,7 @@
 
 // --------------------------------------------------------------------
 // static function
-void syd::DatabaseFactory::OpenDatabaseFilenames(std::string init_filename)
+void syd::DatabaseFactory::ReadDatabaseFilenames(std::string init_filename)
 {
   static bool already_open=false;
 
@@ -70,9 +70,9 @@ void syd::DatabaseFactory::OpenDatabaseFilenames(std::string init_filename)
 
 
 // --------------------------------------------------------------------
-void syd::DatabaseFactory::GetTypeAndParamFromName(std::string name,
-                                                   std::string & type_name,
-                                                   std::string & param)
+void syd::DatabaseFactory::SearchTypeAndParamFromName(std::string name,
+                                                      std::string & type_name,
+                                                      std::string & param)
 {
   if (map_of_database_types_.find(name) == map_of_database_types_.end()) {
     std::string s;
@@ -88,13 +88,16 @@ void syd::DatabaseFactory::GetTypeAndParamFromName(std::string name,
 
 // --------------------------------------------------------------------
 // Static function
-std::shared_ptr<syd::Database> syd::DatabaseFactory::NewDatabase(std::string type_name,
-                                                            std::string name,
-                                                            std::string param) {
+std::shared_ptr<syd::Database>
+syd::DatabaseFactory::NewDatabase(std::string type_name,
+                                  std::string name,
+                                  std::string param) {
   Database * instance = nullptr;
   // find name in the registry and call factory method.
   auto it = factoryFunctionRegistry.find(type_name);
-  if (it != factoryFunctionRegistry.end()) instance = it->second(name, param);
+
+  if (it != factoryFunctionRegistry.end())
+    instance = it->second(name, param); // Construct the database
   else {
     std::string s;
     for(auto i:factoryFunctionRegistry) s=s+i.first+" ";
@@ -122,7 +125,7 @@ void syd::DatabaseFactory::RegisterFactoryFunction(std::string type_name, Functi
 
 // --------------------------------------------------------------------
 // Static function
-syd::DatabaseFactory * syd::DatabaseFactory::Instance()
+syd::DatabaseFactory * syd::DatabaseFactory::GetInstance()
 {
   static syd::DatabaseFactory factory;
   return &factory;
