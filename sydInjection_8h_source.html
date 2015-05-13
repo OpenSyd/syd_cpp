@@ -109,55 +109,52 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#define SYDINJECTION_H</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// syd</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydCommon.h&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;sydElement.h&quot;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &quot;sydPatient.h&quot;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesyd.html">syd</a> {</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydPatient.h&quot;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesyd.html">syd</a> {</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#pragma db object</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#pragma db object</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classsyd_1_1Injection.html">   37</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classsyd_1_1Injection.html">Injection</a> : <span class="keyword">public</span> <a class="code" href="classsyd_1_1Element.html">Element</a> {</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#pragma db id auto</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    IdType        id;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3">   44</a></span>&#160;    std::shared_ptr&lt;Patient&gt; <a class="code" href="classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3">patient</a>;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    std::string   radionuclide;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    std::string   date;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">double</span>        activity_in_MBq;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">static</span> std::string GetTableName() { <span class="keywordflow">return</span> <span class="stringliteral">&quot;Injection&quot;</span>; }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <a class="code" href="classsyd_1_1Injection.html">Injection</a>();</div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classsyd_1_1Injection.html">   35</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classsyd_1_1Injection.html">Injection</a> : <span class="keyword">public</span> <a class="code" href="classsyd_1_1TableElement.html">TableElement</a> {</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#pragma db id auto</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    IdType        id;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3">   42</a></span>&#160;    std::shared_ptr&lt;Patient&gt; <a class="code" href="classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3">patient</a>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    std::string   radionuclide;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    std::string   date;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keywordtype">double</span>        activity_in_MBq;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="comment">// ------------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    SET_TABLE_NAME(<span class="stringliteral">&quot;Injection&quot;</span>)</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <a class="code" href="classsyd_1_1Injection.html">Injection</a>();</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <a class="code" href="classsyd_1_1Injection.html">Injection</a>(<a class="code" href="classsyd_1_1Patient.html">Patient</a> &amp; p, const std::<span class="keywordtype">string</span> &amp; pradionuclide, const std::<span class="keywordtype">string</span> &amp; pdate, <span class="keywordtype">double</span> activity);</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    ~<a class="code" href="classsyd_1_1Injection.html">Injection</a>();</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="classsyd_1_1Injection.html">Injection</a>(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Injection.html">Injection</a> &amp; other);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <a class="code" href="classsyd_1_1Injection.html">Injection</a> &amp; operator= (<span class="keyword">const</span> <a class="code" href="classsyd_1_1Injection.html">Injection</a> &amp; other);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">void</span> copy(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Injection.html">Injection</a> &amp; t);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">virtual</span> std::string ToString() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> SetTableHeader(<a class="code" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp; table);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> DumpElement(<a class="code" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp; table);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="classsyd_1_1Injection.html">Injection</a>(const <a class="code" href="classsyd_1_1Injection.html">Injection</a> &amp; other);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <a class="code" href="classsyd_1_1Injection.html">Injection</a> &amp; operator= (const <a class="code" href="classsyd_1_1Injection.html">Injection</a> &amp; other);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">void</span> copy(const <a class="code" href="classsyd_1_1Injection.html">Injection</a> &amp; t);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    virtual std::<span class="keywordtype">string</span> <a class="code" href="classsyd_1_1Injection.html#a6f6132b6349cf9941d396f6a066d72f5">ToString</a>() const;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keywordtype">void</span> Set(<a class="code" href="classsyd_1_1Patient.html">Patient</a> &amp; p, const std::<span class="keywordtype">string</span> &amp; pradionuclide,</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;             const std::<span class="keywordtype">string</span> &amp; pdate, <span class="keywordtype">double</span> activity);</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <span class="keyword">const</span> <a class="code" href="classsyd_1_1Injection.html">Injection</a> &amp; p) {</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;      os &lt;&lt; p.id &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; p.<a class="code" href="classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3">patient</a>-&gt;name &lt;&lt; <span class="stringliteral">&quot; &quot;</span>  &lt;&lt; p.radionuclide &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; p.date &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; p.activity_in_MBq;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      <span class="keywordflow">return</span> os;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    }</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">bool</span> operator==(const <a class="code" href="classsyd_1_1Injection.html">Injection</a> &amp; p);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">bool</span> operator!=(const <a class="code" href="classsyd_1_1Injection.html">Injection</a> &amp; p) { <span class="keywordflow">return</span> !(*<span class="keyword">this</span> == p); }</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  }; <span class="comment">// end of class</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;} <span class="comment">// end of namespace</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  }; <span class="comment">// end of class</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;} <span class="comment">// end of namespace</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="classsyd_1_1Injection_html"><div class="ttname"><a href="classsyd_1_1Injection.html">syd::Injection</a></div><div class="ttdoc">Store information about a radionuclide injection (date, etc) </div><div class="ttdef"><b>Definition:</b> <a href="sydInjection_8h_source.html#l00037">sydInjection.h:37</a></div></div>
-<div class="ttc" id="classsyd_1_1PrintTable_html"><div class="ttname"><a href="classsyd_1_1PrintTable.html">syd::PrintTable</a></div><div class="ttdoc">Helpers class to dump a table (line/column) of values, controling the precision and the column size...</div><div class="ttdef"><b>Definition:</b> <a href="sydPrintTable_8h_source.html#l00029">sydPrintTable.h:29</a></div></div>
-<div class="ttc" id="classsyd_1_1Injection_html_ab90a36a2472597c5b7c172119f3c5ca3"><div class="ttname"><a href="classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3">syd::Injection::patient</a></div><div class="ttdeci">std::shared_ptr&lt; Patient &gt; patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydInjection_8h_source.html#l00044">sydInjection.h:44</a></div></div>
-<div class="ttc" id="classsyd_1_1Element_html"><div class="ttname"><a href="classsyd_1_1Element.html">syd::Element</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydElement_8h_source.html#l00029">sydElement.h:29</a></div></div>
-<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydActivityTimeIntegratedCommand_8h_source.html#l00028">sydActivityTimeIntegratedCommand.h:28</a></div></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classsyd_1_1TableElement_html"><div class="ttname"><a href="classsyd_1_1TableElement.html">syd::TableElement</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableElement_8h_source.html#l00029">sydTableElement.h:29</a></div></div>
+<div class="ttc" id="classsyd_1_1Injection_html"><div class="ttname"><a href="classsyd_1_1Injection.html">syd::Injection</a></div><div class="ttdoc">Store information about a radionuclide injection (date, etc) </div><div class="ttdef"><b>Definition:</b> <a href="sydInjection_8h_source.html#l00035">sydInjection.h:35</a></div></div>
+<div class="ttc" id="classsyd_1_1Injection_html_ab90a36a2472597c5b7c172119f3c5ca3"><div class="ttname"><a href="classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3">syd::Injection::patient</a></div><div class="ttdeci">std::shared_ptr&lt; Patient &gt; patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydInjection_8h_source.html#l00042">sydInjection.h:42</a></div></div>
+<div class="ttc" id="classsyd_1_1Patient_html"><div class="ttname"><a href="classsyd_1_1Patient.html">syd::Patient</a></div><div class="ttdoc">Store information about a patient (id, study_id, name etc). </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00032">sydPatient.h:32</a></div></div>
+<div class="ttc" id="classsyd_1_1Injection_html_a6f6132b6349cf9941d396f6a066d72f5"><div class="ttname"><a href="classsyd_1_1Injection.html#a6f6132b6349cf9941d396f6a066d72f5">syd::Injection::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydInjection_8cxx_source.html#l00092">sydInjection.cxx:92</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00051">sydCommon.h:51</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

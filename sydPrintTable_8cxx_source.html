@@ -180,19 +180,27 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">//------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keywordtype">void</span> syd::PrintTable::Print(std::ostream &amp; out)</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="keywordtype">void</span> syd::PrintTable::SkipLine()</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;{</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt;headers.size(); i++) out &lt;&lt; std::setw(width[i]) &lt;&lt; headers[i];</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  out &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt;values.size(); i++) {</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> j=0; j&lt;values[i].size(); j++) {</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;      out &lt;&lt; std::setw(width[j]) &lt;&lt; std::fixed &lt;&lt; std::setprecision (precision[j]) &lt;&lt; values[i][j];</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    }</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    out &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  }</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  out &lt;&lt; std::flush;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;}</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">//------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt;headers.size(); i++) *<span class="keyword">this</span> &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;}</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="comment">//------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">//------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="keywordtype">void</span> syd::PrintTable::Print(std::ostream &amp; out)</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;{</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt;headers.size(); i++) out &lt;&lt; std::setw(width[i]) &lt;&lt; headers[i];</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  out &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt;values.size(); i++) {</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> j=0; j&lt;values[i].size(); j++) {</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;      out &lt;&lt; std::setw(width[j]) &lt;&lt; std::fixed &lt;&lt; std::setprecision (precision[j]) &lt;&lt; values[i][j];</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    }</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    out &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  }</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  out &lt;&lt; std::flush;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;}</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;<span class="comment">//------------------------------------------------------------------</span></div>
 <div class="ttc" id="classsyd_1_1PrintTable_html"><div class="ttname"><a href="classsyd_1_1PrintTable.html">syd::PrintTable</a></div><div class="ttdoc">Helpers class to dump a table (line/column) of values, controling the precision and the column size...</div><div class="ttdef"><b>Definition:</b> <a href="sydPrintTable_8h_source.html#l00029">sydPrintTable.h:29</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

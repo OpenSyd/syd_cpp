@@ -109,7 +109,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;sydFile.h&quot;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;syd::File::File():Element()</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;syd::File::File():TableElement()</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="comment">// default value</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  filename = <span class="stringliteral">&quot;&quot;</span>;</div>
@@ -120,67 +120,69 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;syd::File::File(<span class="keyword">const</span> File &amp; other):Element(other) { copy(other); }</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;syd::File::File(<span class="keyword">const</span> File &amp; other):TableElement(other)</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  copy(other);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;}</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<a class="code" href="classsyd_1_1File.html">syd::File</a> &amp; syd::File::operator= (<span class="keyword">const</span> <a class="code" href="classsyd_1_1File.html">syd::File</a> &amp; other) {</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keywordflow">if</span> (<span class="keyword">this</span> != &amp;other) { copy(other); }</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;}</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keywordtype">void</span> syd::File::copy(<span class="keyword">const</span> <a class="code" href="classsyd_1_1File.html">syd::File</a> &amp; t) {</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordtype">id</span> = t.<a class="code" href="classsyd_1_1File.html#ab4f22625306b685f8b76b37622e4b0cc">id</a>;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  filename = t.<a class="code" href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">filename</a>;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  path = t.<a class="code" href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">path</a>;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  md5 = t.<a class="code" href="classsyd_1_1File.html#a6d6b67ab100513f076f4804c355b2f58">md5</a>;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;}</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keywordtype">void</span> syd::File::SetValues(std::vector&lt;std::string&gt; &amp; arg)</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;{</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;No SetValues for table &#39;File&#39;.&quot;</span>;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;}</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<a class="code" href="classsyd_1_1File.html">syd::File</a> &amp; syd::File::operator= (<span class="keyword">const</span> <a class="code" href="classsyd_1_1File.html">syd::File</a> &amp; other)</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;{</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordflow">if</span> (<span class="keyword">this</span> != &amp;other) { copy(other); }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keywordtype">void</span> syd::File::copy(<span class="keyword">const</span> <a class="code" href="classsyd_1_1File.html">syd::File</a> &amp; t)</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;{</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keywordtype">id</span> = t.<a class="code" href="classsyd_1_1File.html#ab4f22625306b685f8b76b37622e4b0cc">id</a>;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  filename = t.<a class="code" href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">filename</a>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  path = t.<a class="code" href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">path</a>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  md5 = t.<a class="code" href="classsyd_1_1File.html#a6d6b67ab100513f076f4804c355b2f58">md5</a>;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;std::string syd::File::ToString()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  std::stringstream ss ;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  ss &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; path &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; filename;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keywordflow">return</span> ss.str();</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keywordtype">void</span> syd::File::SetTableHeader(PrintTable &amp; table) {</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  table.AddColumn(<span class="stringliteral">&quot;#id&quot;</span>);</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  table.AddColumn(<span class="stringliteral">&quot;md5&quot;</span>,6);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  table.AddColumn(<span class="stringliteral">&quot;file&quot;</span>,50);</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  table.AddColumn(<span class="stringliteral">&quot;path&quot;</span>,50);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;}</div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="classsyd_1_1File.html#a826a7433c9812321553389b5779274fc">   62</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1File.html#a826a7433c9812321553389b5779274fc">syd::File::SetValues</a>(std::vector&lt;std::string&gt; &amp; arg)</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;{</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;No SetValues for table &#39;File&#39;.&quot;</span>;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;}</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="classsyd_1_1File.html#acdabec55ae8ca778984a23cf2326eb47">   70</a></span>&#160;std::string <a class="code" href="classsyd_1_1File.html#acdabec55ae8ca778984a23cf2326eb47">syd::File::ToString</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  std::stringstream ss ;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  ss &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;     &lt;&lt; path &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;     &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;     &lt;&lt; (md5 == <span class="stringliteral">&quot;&quot;</span> ? <span class="stringliteral">&quot;no_md5&quot;</span>:<span class="stringliteral">&quot;md5&quot;</span>);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keywordflow">return</span> ss.str();</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keywordtype">void</span> syd::File::DumpElement(PrintTable &amp; table) {</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  table &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; (md5==<span class="stringliteral">&quot;&quot;</span>? <span class="stringliteral">&quot;no&quot;</span>:<span class="stringliteral">&quot;yes&quot;</span>) &lt;&lt; filename &lt;&lt; path;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="keywordtype">bool</span> syd::File::operator==(<span class="keyword">const</span> <a class="code" href="classsyd_1_1File.html">File</a> &amp; p)</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;{</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="keywordflow">return</span> (<span class="keywordtype">id</span> == p.<a class="code" href="classsyd_1_1File.html#ab4f22625306b685f8b76b37622e4b0cc">id</a> and</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;          path == p.<a class="code" href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">filename</a> and</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;          md5 == p.<a class="code" href="classsyd_1_1File.html#a6d6b67ab100513f076f4804c355b2f58">md5</a>);</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;}</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="ttc" id="classsyd_1_1File_html_ab4f22625306b685f8b76b37622e4b0cc"><div class="ttname"><a href="classsyd_1_1File.html#ab4f22625306b685f8b76b37622e4b0cc">syd::File::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Main key (automated, unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00042">sydFile.h:42</a></div></div>
-<div class="ttc" id="classsyd_1_1File_html_a2224a82b7e7c7e1f3a3e1bca67845650"><div class="ttname"><a href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">syd::File::filename</a></div><div class="ttdeci">std::string filename</div><div class="ttdoc">File name. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00045">sydFile.h:45</a></div></div>
-<div class="ttc" id="classsyd_1_1File_html"><div class="ttname"><a href="classsyd_1_1File.html">syd::File</a></div><div class="ttdoc">Store information about a File linked to a database. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00037">sydFile.h:37</a></div></div>
-<div class="ttc" id="classsyd_1_1File_html_ab3ea1e8acafa37d8b286761980514955"><div class="ttname"><a href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">syd::File::path</a></div><div class="ttdeci">std::string path</div><div class="ttdoc">File (relative) path. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00048">sydFile.h:48</a></div></div>
-<div class="ttc" id="classsyd_1_1File_html_a6d6b67ab100513f076f4804c355b2f58"><div class="ttname"><a href="classsyd_1_1File.html#a6d6b67ab100513f076f4804c355b2f58">syd::File::md5</a></div><div class="ttdeci">std::string md5</div><div class="ttdoc">Associated md5 (not always computed) </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00051">sydFile.h:51</a></div></div>
+<div class="ttc" id="classsyd_1_1File_html_ab4f22625306b685f8b76b37622e4b0cc"><div class="ttname"><a href="classsyd_1_1File.html#ab4f22625306b685f8b76b37622e4b0cc">syd::File::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Main key (automated, unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00037">sydFile.h:37</a></div></div>
+<div class="ttc" id="classsyd_1_1File_html_a826a7433c9812321553389b5779274fc"><div class="ttname"><a href="classsyd_1_1File.html#a826a7433c9812321553389b5779274fc">syd::File::SetValues</a></div><div class="ttdeci">virtual void SetValues(std::vector&lt; std::string &gt; &amp;arg)</div><div class="ttdoc">Set basics values from a list of string. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8cxx_source.html#l00062">sydFile.cxx:62</a></div></div>
+<div class="ttc" id="classsyd_1_1File_html_a2224a82b7e7c7e1f3a3e1bca67845650"><div class="ttname"><a href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">syd::File::filename</a></div><div class="ttdeci">std::string filename</div><div class="ttdoc">File name. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00040">sydFile.h:40</a></div></div>
+<div class="ttc" id="classsyd_1_1File_html"><div class="ttname"><a href="classsyd_1_1File.html">syd::File</a></div><div class="ttdoc">Store information about a file linked to a database. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00032">sydFile.h:32</a></div></div>
+<div class="ttc" id="classsyd_1_1File_html_acdabec55ae8ca778984a23cf2326eb47"><div class="ttname"><a href="classsyd_1_1File.html#acdabec55ae8ca778984a23cf2326eb47">syd::File::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8cxx_source.html#l00070">sydFile.cxx:70</a></div></div>
+<div class="ttc" id="classsyd_1_1File_html_ab3ea1e8acafa37d8b286761980514955"><div class="ttname"><a href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">syd::File::path</a></div><div class="ttdeci">std::string path</div><div class="ttdoc">File (relative) path. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00043">sydFile.h:43</a></div></div>
+<div class="ttc" id="classsyd_1_1File_html_a6d6b67ab100513f076f4804c355b2f58"><div class="ttname"><a href="classsyd_1_1File.html#a6d6b67ab100513f076f4804c355b2f58">syd::File::md5</a></div><div class="ttdeci">std::string md5</div><div class="ttdoc">Associated md5 (not always computed) </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00046">sydFile.h:46</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

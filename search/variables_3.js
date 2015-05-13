@@ -1,10 +1,11 @@
 var searchData=
 [
-  ['database_5ftype',['database_type',['../classsyd_1_1DatabaseInformation.html#a27ee0b8f2de9bb385ad9e8c943a1c638',1,'syd::DatabaseInformation']]],
-  ['database_5ftype_5f',['database_type_',['../classsyd_1_1Database.html#aec7dbf391076b2154ef7557c62116107',1,'syd::Database']]],
+  ['database_5fschema',['database_schema',['../classsyd_1_1DatabaseInformation.html#a5b7f5b0e976828f869e1e05799ad4cbe',1,'syd::DatabaseInformation']]],
+  ['database_5fschema_5f',['database_schema_',['../classsyd_1_1Database.html#a1c81852eb09eb7655d69de6d3cb8496a',1,'syd::Database']]],
   ['db_5f',['db_',['../classsyd_1_1Database.html#aa519e62f5788d90095a74580d2054b9c',1,'syd::Database']]],
   ['db_5fmap_5f',['db_map_',['../classsyd_1_1DatabaseManager.html#ab68bf80bfa532ff5195b57f9dac6d76f',1,'syd::DatabaseManager']]],
-  ['db_5ftype_5fnames_5f',['db_type_names_',['../classsyd_1_1DatabaseManager.html#a60a0cc3854e59eeefca856834cae1207',1,'syd::DatabaseManager']]],
+  ['db_5fschema_5fnames_5f',['db_schema_names_',['../classsyd_1_1DatabaseManager.html#a36a07fe96512596848aea32b88e6ce75',1,'syd::DatabaseManager']]],
+  ['description',['description',['../classsyd_1_1Tag.html#ae5e88d42c16a98a98474cfdd7b5f2093',1,'syd::Tag']]],
   ['dicom_5fdescription',['dicom_description',['../classsyd_1_1DicomSerie.html#a20d09d10998b7cabd197c739ae492919',1,'syd::DicomSerie']]],
   ['dicom_5fframe_5fof_5freference_5fuid',['dicom_frame_of_reference_uid',['../classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2',1,'syd::DicomSerie']]],
   ['dicom_5finstance_5fnumber',['dicom_instance_number',['../classsyd_1_1DicomFile.html#a967d5da7f1971e134e050e86c4a6cd03',1,'syd::DicomFile']]],

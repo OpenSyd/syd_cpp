@@ -88,9 +88,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
 <a href="classsyd_1_1DicomSerie-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">syd::DicomSerie Class Reference</div>  </div>
@@ -107,7 +105,7 @@ Inheritance diagram for syd::DicomSerie:</div>
  <div class="center">
   <img src="classsyd_1_1DicomSerie.png" usemap="#syd::DicomSerie_map" alt=""/>
   <map id="syd::DicomSerie_map" name="syd::DicomSerie_map">
-<area href="classsyd_1_1Element.html" title="Base class for all element (row) in a table. " alt="syd::Element" shape="rect" coords="0,0,103,24"/>
+<area href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. " alt="syd::TableElement" shape="rect" coords="0,0,113,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -122,24 +120,14 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a3481e4cd3f03658172ca0883bf019f2c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3481e4cd3f03658172ca0883bf019f2c"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>copy</b> (const <a class="el" href="classsyd_1_1DicomSerie.html">DicomSerie</a> &amp;t)</td></tr>
 <tr class="separator:a3481e4cd3f03658172ca0883bf019f2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54c289095bbcdac7661b146144c2d7a7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a54c289095bbcdac7661b146144c2d7a7"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetTableHeader</b> (<a class="el" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp;table)</td></tr>
-<tr class="separator:a54c289095bbcdac7661b146144c2d7a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0c55baedc6d4be073a30a055d2fdeb1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad0c55baedc6d4be073a30a055d2fdeb1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>DumpElement</b> (<a class="el" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp;table)</td></tr>
-<tr class="separator:ad0c55baedc6d4be073a30a055d2fdeb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3308c7f3c69b87613457de887c32f024"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3308c7f3c69b87613457de887c32f024"></a>
-virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ToString</b> () const </td></tr>
+virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a3308c7f3c69b87613457de887c32f024">ToString</a> () const </td></tr>
+<tr class="memdesc:a3308c7f3c69b87613457de887c32f024"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use to write the element as a string (must be overloaded) <br /></td></tr>
 <tr class="separator:a3308c7f3c69b87613457de887c32f024"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd60020c612fa5274c2abe92086bcac7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acd60020c612fa5274c2abe92086bcac7"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetValues</b> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#acd60020c612fa5274c2abe92086bcac7">SetValues</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+<tr class="memdesc:acd60020c612fa5274c2abe92086bcac7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
 <tr class="separator:acd60020c612fa5274c2abe92086bcac7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:acf5969ddb15eadc5a4cd3df4719cd668"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf5969ddb15eadc5a4cd3df4719cd668"></a>
-static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetTableName</b> ()</td></tr>
-<tr class="separator:acf5969ddb15eadc5a4cd3df4719cd668"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -147,25 +135,28 @@ Public Attributes</h2></td></tr>
 IdType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a3d8ff81a9b685cd2fde770a0b2926ce5">id</a></td></tr>
 <tr class="memdesc:a3d8ff81a9b685cd2fde770a0b2926ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Id of the <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">DicomSerie</a>. <br /></td></tr>
 <tr class="separator:a3d8ff81a9b685cd2fde770a0b2926ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeff8ef7948cf11a76fcb5e1bee3227b5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeff8ef7948cf11a76fcb5e1bee3227b5"></a>
-std::shared_ptr&lt; <a class="el" href="classsyd_1_1Patient.html">syd::Patient</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>patient</b></td></tr>
+<tr class="memitem:aeff8ef7948cf11a76fcb5e1bee3227b5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classsyd_1_1Patient.html">syd::Patient</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#aeff8ef7948cf11a76fcb5e1bee3227b5">patient</a></td></tr>
+<tr class="memdesc:aeff8ef7948cf11a76fcb5e1bee3227b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, it must exist in the <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table.  <a href="#aeff8ef7948cf11a76fcb5e1bee3227b5">More...</a><br /></td></tr>
 <tr class="separator:aeff8ef7948cf11a76fcb5e1bee3227b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac1f43c2cc66a9b6c1ca6409c6b11278a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1f43c2cc66a9b6c1ca6409c6b11278a"></a>
 std::shared_ptr&lt; <a class="el" href="classsyd_1_1Injection.html">syd::Injection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#ac1f43c2cc66a9b6c1ca6409c6b11278a">injection</a></td></tr>
-<tr class="memdesc:ac1f43c2cc66a9b6c1ca6409c6b11278a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, it must exist in the <a class="el" href="classsyd_1_1Injection.html" title="Store information about a radionuclide injection (date, etc) ">Injection</a> table, but can be null. <br /></td></tr>
+<tr class="memdesc:ac1f43c2cc66a9b6c1ca6409c6b11278a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, it must exist in the <a class="el" href="classsyd_1_1Injection.html" title="Store information about a radionuclide injection (date, etc) ">Injection</a> table. <br /></td></tr>
 <tr class="separator:ac1f43c2cc66a9b6c1ca6409c6b11278a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05db952b76b7980cb12d9206ffa82dcb"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">acquisition_date</a></td></tr>
+<tr class="memdesc:a05db952b76b7980cb12d9206ffa82dcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Date when the image has been acquired.  <a href="#a05db952b76b7980cb12d9206ffa82dcb">More...</a><br /></td></tr>
 <tr class="separator:a05db952b76b7980cb12d9206ffa82dcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f735f7a79bcb537b3479aa454d18f97"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a5f735f7a79bcb537b3479aa454d18f97">reconstruction_date</a></td></tr>
+<tr class="memdesc:a5f735f7a79bcb537b3479aa454d18f97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Date when the image has been reconstructed.  <a href="#a5f735f7a79bcb537b3479aa454d18f97">More...</a><br /></td></tr>
 <tr class="separator:a5f735f7a79bcb537b3479aa454d18f97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acac09f9cf460c44347db1dda6a408a9d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acac09f9cf460c44347db1dda6a408a9d"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#acac09f9cf460c44347db1dda6a408a9d">dicom_study_uid</a></td></tr>
 <tr class="memdesc:acac09f9cf460c44347db1dda6a408a9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dicom StudyInstanceUID. <br /></td></tr>
 <tr class="separator:acac09f9cf460c44347db1dda6a408a9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b72e08967b219da005c658c03a79834"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a6b72e08967b219da005c658c03a79834">dicom_series_uid</a></td></tr>
+<tr class="memdesc:a6b72e08967b219da005c658c03a79834"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dicom SeriesInstanceUID.  <a href="#a6b72e08967b219da005c658c03a79834">More...</a><br /></td></tr>
 <tr class="separator:a6b72e08967b219da005c658c03a79834"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a47ab6d79a841303cad845b2f797fc2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">dicom_frame_of_reference_uid</a></td></tr>
-<tr class="memdesc:a2a47ab6d79a841303cad845b2f797fc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dicom SOPInstanceUID. Unique dicom file identifier. Same index than filenames.  <a href="#a2a47ab6d79a841303cad845b2f797fc2">More...</a><br /></td></tr>
+<tr class="memdesc:a2a47ab6d79a841303cad845b2f797fc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dicom FrameOfReferenceUID.  <a href="#a2a47ab6d79a841303cad845b2f797fc2">More...</a><br /></td></tr>
 <tr class="separator:a2a47ab6d79a841303cad845b2f797fc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0761ffcc3ce331e47ecece1aa5737ef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0761ffcc3ce331e47ecece1aa5737ef"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">dicom_modality</a></td></tr>
@@ -175,7 +166,9 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#afe4d4142678329f24f27999ca08ca0f1">dicom_manufacturer</a></td></tr>
 <tr class="memdesc:afe4d4142678329f24f27999ca08ca0f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dicom tags Manufacturer and ManufacturerModelName. <br /></td></tr>
 <tr class="separator:afe4d4142678329f24f27999ca08ca0f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20d09d10998b7cabd197c739ae492919"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a20d09d10998b7cabd197c739ae492919">dicom_description</a></td></tr>
+<tr class="memitem:a20d09d10998b7cabd197c739ae492919"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a20d09d10998b7cabd197c739ae492919"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a20d09d10998b7cabd197c739ae492919">dicom_description</a></td></tr>
+<tr class="memdesc:a20d09d10998b7cabd197c739ae492919"><td class="mdescLeft">&#160;</td><td class="mdescRight">Concatenation of several descriptions tag (SeriesDescription StudyDescription, ImageID, DatasetName) <br /></td></tr>
 <tr class="separator:a20d09d10998b7cabd197c739ae492919"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e26c46c6fd257e9b33d4f5ea04b3c27"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e26c46c6fd257e9b33d4f5ea04b3c27"></a>
 std::array&lt; int, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a></td></tr>
@@ -185,18 +178,12 @@ std::array&lt; int, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a
 std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#ae0e66e018c7f715920c4a7d76caee495">spacing</a></td></tr>
 <tr class="memdesc:ae0e66e018c7f715920c4a7d76caee495"><td class="mdescLeft">&#160;</td><td class="mdescRight">Image spacing aka size of the pixel (in mm) <br /></td></tr>
 <tr class="separator:ae0e66e018c7f715920c4a7d76caee495"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
-Friends</h2></td></tr>
-<tr class="memitem:a8441a6e41786b56b9698a3804d1ecacd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8441a6e41786b56b9698a3804d1ecacd"></a>
-std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;os, const <a class="el" href="classsyd_1_1DicomSerie.html">DicomSerie</a> &amp;p)</td></tr>
-<tr class="separator:a8441a6e41786b56b9698a3804d1ecacd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Store information about a dicom image (serie). </p>
-<p><a class="el" href="classsyd_1_1Element.html" title="Base class for all element (row) in a table. ">Element</a> of table '<a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">DicomSerie</a>' stored in a db. Contains information about a dicom image. </p>
+<p>Element of table '<a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">DicomSerie</a>' stored in a db. Contains information about a dicom image. </p>
 
-<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00040">40</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
+<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00037">37</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a class="anchor" id="a05db952b76b7980cb12d9206ffa82dcb"></a>
 <div class="memitem">
@@ -207,24 +194,11 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Date when the image has been acquired. Dicom tag = AcquisitionTime &amp; AcquisitionDate" </p>
+
+<p>Date when the image has been acquired. </p>
+<p>Dicom tag = AcquisitionTime &amp; AcquisitionDate </p>
 
 <p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00055">55</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a20d09d10998b7cabd197c739ae492919"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string syd::DicomSerie::dicom_description</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Concatenation of several descriptions tag (SeriesDescription StudyDescription, ImageID, DatasetName) </p>
-
-<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00099">99</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
 
 </div>
 </div>
@@ -238,10 +212,10 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
       </table>
 </div><div class="memdoc">
 
-<p>Dicom SOPInstanceUID. Unique dicom file identifier. Same index than filenames. </p>
-<p>Only filenames, no folder in the name. Same index than dicom_sop_uid; FIXME Dicom FrameOfReferenceUID to allow link between CT and SPECT image. "All images in a Series that share the same Frame of Reference UID shall be spatially related to each other.". Warning, sometimes CT and SPECT dot not share the same FrameOfReferenceUID even if they were acquired in the same session because, for example, of different table height. </p>
+<p>Dicom FrameOfReferenceUID. </p>
+<p>to allow link between CT and SPECT image. "All images in a Series that share the same Frame of Reference UID shall be spatially related to each other.". Warning, sometimes CT and SPECT dot not share the same FrameOfReferenceUID even if they were acquired in the same session because, for example, of different table height. </p>
 
-<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00089">89</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
+<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00075">75</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
 
 </div>
 </div>
@@ -254,9 +228,28 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Dicom SeriesInstanceUID. In general, slices of a same CT share the same SeriesInstanceUID. Sometimes SPECT acquisition at different table position share the same SeriesInstanceUID. </p>
+
+<p>Dicom SeriesInstanceUID. </p>
+<p>In general, slices of a same CT share the same SeriesInstanceUID. Sometimes SPECT acquisition at different table position share the same SeriesInstanceUID. </p>
 
 <p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00067">67</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aeff8ef7948cf11a76fcb5e1bee3227b5"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classsyd_1_1Patient.html">syd::Patient</a>&gt; syd::DicomSerie::patient</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Foreign key, it must exist in the <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table. </p>
+<p>Not strictly needed but convenient. </p>
+
+<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00047">47</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
 
 </div>
 </div>
@@ -269,7 +262,9 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Date when the image has been reconstructed. Dicom tag = ContentDate/Time or InstanceCreationDate/Tiem </p>
+
+<p>Date when the image has been reconstructed. </p>
+<p>Dicom tag = ContentDate/Time or InstanceCreationDate/Tiem </p>
 
 <p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00059">59</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
 

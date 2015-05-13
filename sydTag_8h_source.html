@@ -109,47 +109,51 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#define SYDTAG_H</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// syd</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydElement.h&quot;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydTableElement.h&quot;</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesyd.html">syd</a> {</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#pragma db object</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">class </span>Tag : <span class="keyword">public</span> <a class="code" href="classsyd_1_1Element.html">syd::Element</a> {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">class </span>Tag : <span class="keyword">public</span> <a class="code" href="classsyd_1_1TableElement.html">syd::TableElement</a> {</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#pragma db id auto</span></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    IdType <a class="code" href="classsyd_1_1Tag.html#a338e8bb4aae9d53a319c7baeaaeeaab8">id</a>;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#pragma db options(&quot;UNIQUE&quot;)</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    std::string name;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    std::string description;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">static</span> std::string GetTableName() { <span class="keywordflow">return</span> <span class="stringliteral">&quot;Tag&quot;</span>; }</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    Tag();</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    ~Tag();</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    Tag(<span class="keyword">const</span> Tag &amp; other);</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    Tag &amp; operator= (<span class="keyword">const</span> Tag &amp; other);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">void</span> copy(<span class="keyword">const</span> Tag &amp; t);</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordtype">void</span> SetTableHeader(PrintTable &amp; table);</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">void</span> DumpElement(PrintTable &amp; table);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetValues(std::vector&lt;std::string&gt; &amp; arg);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <span class="keyword">const</span> Tag &amp; t) {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;      os &lt;&lt; t.id &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; t.name &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; t.description;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      <span class="keywordflow">return</span> os;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    }</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    std::string <a class="code" href="classsyd_1_1Tag.html#a695c1bc16ac978e62893bf1618e77288">label</a>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classsyd_1_1Tag.html#ae5e88d42c16a98a98474cfdd7b5f2093">   42</a></span>&#160;    std::string <a class="code" href="classsyd_1_1Tag.html#ae5e88d42c16a98a98474cfdd7b5f2093">description</a>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">// ------------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    SET_TABLE_NAME(<span class="stringliteral">&quot;Tag&quot;</span>)</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <a class="code" href="classsyd_1_1Tag.html">Tag</a>();</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    ~<a class="code" href="classsyd_1_1Tag.html">Tag</a>();</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <a class="code" href="classsyd_1_1Tag.html">Tag</a>(const <a class="code" href="classsyd_1_1Tag.html">Tag</a> &amp; other);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <a class="code" href="classsyd_1_1Tag.html">Tag</a> &amp; operator= (const <a class="code" href="classsyd_1_1Tag.html">Tag</a> &amp; other);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">void</span> copy(const <a class="code" href="classsyd_1_1Tag.html">Tag</a> &amp; t);</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    virtual std::<span class="keywordtype">string</span> <a class="code" href="classsyd_1_1Tag.html#ad65b2739b72e184dd79ce30ca11183ca">ToString</a>() const;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    virtual <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Tag.html#a5e6ee33ac0333c1f2a1be6908fd84313">SetValues</a>(std::vector&lt;std::<span class="keywordtype">string</span>&gt; &amp; arg);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">bool</span> operator==(const <a class="code" href="classsyd_1_1Tag.html">Tag</a> &amp; p);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">bool</span> operator!=(const <a class="code" href="classsyd_1_1Tag.html">Tag</a> &amp; p) { <span class="keywordflow">return</span> !(*<span class="keyword">this</span> == p); }</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  }; <span class="comment">// end class</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  }; <span class="comment">// end class</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;}</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classsyd_1_1TableElement_html"><div class="ttname"><a href="classsyd_1_1TableElement.html">syd::TableElement</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableElement_8h_source.html#l00029">sydTableElement.h:29</a></div></div>
+<div class="ttc" id="classsyd_1_1Tag_html_a5e6ee33ac0333c1f2a1be6908fd84313"><div class="ttname"><a href="classsyd_1_1Tag.html#a5e6ee33ac0333c1f2a1be6908fd84313">syd::Tag::SetValues</a></div><div class="ttdeci">virtual void SetValues(std::vector&lt; std::string &gt; &amp;arg)</div><div class="ttdoc">Set basics values from a list of string. </div><div class="ttdef"><b>Definition:</b> <a href="sydTag_8cxx_source.html#l00066">sydTag.cxx:66</a></div></div>
+<div class="ttc" id="classsyd_1_1Tag_html_a695c1bc16ac978e62893bf1618e77288"><div class="ttname"><a href="classsyd_1_1Tag.html#a695c1bc16ac978e62893bf1618e77288">syd::Tag::label</a></div><div class="ttdeci">std::string label</div><div class="ttdoc">Label of the tag (name) </div><div class="ttdef"><b>Definition:</b> <a href="sydTag_8h_source.html#l00039">sydTag.h:39</a></div></div>
+<div class="ttc" id="classsyd_1_1Tag_html_ad65b2739b72e184dd79ce30ca11183ca"><div class="ttname"><a href="classsyd_1_1Tag.html#ad65b2739b72e184dd79ce30ca11183ca">syd::Tag::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydTag_8cxx_source.html#l00078">sydTag.cxx:78</a></div></div>
 <div class="ttc" id="classsyd_1_1Tag_html_a338e8bb4aae9d53a319c7baeaaeeaab8"><div class="ttname"><a href="classsyd_1_1Tag.html#a338e8bb4aae9d53a319c7baeaaeeaab8">syd::Tag::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Id of the Tag. </div><div class="ttdef"><b>Definition:</b> <a href="sydTag_8h_source.html#l00035">sydTag.h:35</a></div></div>
-<div class="ttc" id="classsyd_1_1Element_html"><div class="ttname"><a href="classsyd_1_1Element.html">syd::Element</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydElement_8h_source.html#l00029">sydElement.h:29</a></div></div>
-<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydActivityTimeIntegratedCommand_8h_source.html#l00028">sydActivityTimeIntegratedCommand.h:28</a></div></div>
+<div class="ttc" id="classsyd_1_1Tag_html_ae5e88d42c16a98a98474cfdd7b5f2093"><div class="ttname"><a href="classsyd_1_1Tag.html#ae5e88d42c16a98a98474cfdd7b5f2093">syd::Tag::description</a></div><div class="ttdeci">std::string description</div><div class="ttdoc">Description associated with the tag. </div><div class="ttdef"><b>Definition:</b> <a href="sydTag_8h_source.html#l00042">sydTag.h:42</a></div></div>
+<div class="ttc" id="classsyd_1_1Tag_html"><div class="ttname"><a href="classsyd_1_1Tag.html">syd::Tag</a></div><div class="ttdoc">Simple table to store a label and a description. </div><div class="ttdef"><b>Definition:</b> <a href="sydTag_8h_source.html#l00030">sydTag.h:30</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00051">sydCommon.h:51</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

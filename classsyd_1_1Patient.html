@@ -88,16 +88,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classsyd_1_1Patient-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">syd::Patient Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Store information about a patient (id, name etc)  
+<p>Store information about a patient (id, study_id, name etc).  
  <a href="classsyd_1_1Patient.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="sydPatient_8h_source.html">sydPatient.h</a>&gt;</code></p>
@@ -107,13 +106,19 @@ Inheritance diagram for syd::Patient:</div>
  <div class="center">
   <img src="classsyd_1_1Patient.png" usemap="#syd::Patient_map" alt=""/>
   <map id="syd::Patient_map" name="syd::Patient_map">
-<area href="classsyd_1_1Element.html" title="Base class for all element (row) in a table. " alt="syd::Element" shape="rect" coords="0,0,82,24"/>
-<area href="classext_1_1Patient.html" title="Example of extended version of a table Patient. " alt="ext::Patient" shape="rect" coords="0,112,82,136"/>
+<area href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. " alt="syd::TableElement" shape="rect" coords="0,0,113,24"/>
+<area href="classext_1_1Patient.html" title="Example of extended version of a table Patient. " alt="ext::Patient" shape="rect" coords="0,112,113,136"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a45b226b0ad64e089538e6fcbac28c173"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a45b226b0ad64e089538e6fcbac28c173"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>SET_TABLE_NAME</b> (&quot;Patient&quot;)</td></tr>
+<tr class="separator:a45b226b0ad64e089538e6fcbac28c173"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88f42dc79d951f560d2d88e062db1e81"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a88f42dc79d951f560d2d88e062db1e81"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>Patient</b> (std::string pname, IdType studyId, double weight)</td></tr>
+<tr class="separator:a88f42dc79d951f560d2d88e062db1e81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04a7937a6a631e0321a02e59561c3412"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04a7937a6a631e0321a02e59561c3412"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Patient</b> (const <a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;other)</td></tr>
 <tr class="separator:a04a7937a6a631e0321a02e59561c3412"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -124,26 +129,25 @@ Public Member Functions</h2></td></tr>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>copy</b> (const <a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;t)</td></tr>
 <tr class="separator:a6cc3e3401a4b4d70c7655aaf88bfff73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97e0d70f2296e0d8919cba4476c1e5d7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a97e0d70f2296e0d8919cba4476c1e5d7"></a>
-virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ToString</b> () const </td></tr>
+virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Patient.html#a97e0d70f2296e0d8919cba4476c1e5d7">ToString</a> () const </td></tr>
+<tr class="memdesc:a97e0d70f2296e0d8919cba4476c1e5d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use to write the element as a string (must be overloaded) <br /></td></tr>
 <tr class="separator:a97e0d70f2296e0d8919cba4476c1e5d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae65efbf1f167d4a804997f4964f560d7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae65efbf1f167d4a804997f4964f560d7"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetValues</b> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Patient.html#ae65efbf1f167d4a804997f4964f560d7">SetValues</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+<tr class="memdesc:ae65efbf1f167d4a804997f4964f560d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
 <tr class="separator:ae65efbf1f167d4a804997f4964f560d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e6a268de35b2ad68595e68646691dd3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e6a268de35b2ad68595e68646691dd3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetTableHeader</b> (<a class="el" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp;table)</td></tr>
-<tr class="separator:a9e6a268de35b2ad68595e68646691dd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a39957f85159974849e417f474dafe7fc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a39957f85159974849e417f474dafe7fc"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>DumpElement</b> (<a class="el" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp;table)</td></tr>
-<tr class="separator:a39957f85159974849e417f474dafe7fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae91978a87218b1f68d1a82c2965abc22"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae91978a87218b1f68d1a82c2965abc22"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Set</b> (std::string pname, IdType studyId, double weight)</td></tr>
+<tr class="separator:ae91978a87218b1f68d1a82c2965abc22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7aa109c488f7705c46d33e5b568c09ec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7aa109c488f7705c46d33e5b568c09ec"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;p)</td></tr>
+<tr class="separator:a7aa109c488f7705c46d33e5b568c09ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a458945b44e1e3c4375c09688617540ab"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a458945b44e1e3c4375c09688617540ab"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;p)</td></tr>
+<tr class="separator:a458945b44e1e3c4375c09688617540ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7caddb0110a734770fd46c91f80712e1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7caddb0110a734770fd46c91f80712e1"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>CheckIdentity</b> (std::string vdicom_patientid, std::string vdicom_name) const </td></tr>
 <tr class="separator:a7caddb0110a734770fd46c91f80712e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:affd6b2efcd4e86f99bcb1ff05891a4df"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="affd6b2efcd4e86f99bcb1ff05891a4df"></a>
-static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetTableName</b> ()</td></tr>
-<tr class="separator:affd6b2efcd4e86f99bcb1ff05891a4df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -153,32 +157,31 @@ IdType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 <tr class="separator:a24c91d398e03e6dfbe27b622bdda2cb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86d13a77573c136984d2ad7f137d8987"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a86d13a77573c136984d2ad7f137d8987"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987">name</a></td></tr>
-<tr class="memdesc:a86d13a77573c136984d2ad7f137d8987"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, name etc) ">Patient</a> name (unique) <br /></td></tr>
+<tr class="memdesc:a86d13a77573c136984d2ad7f137d8987"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> name (unique) <br /></td></tr>
 <tr class="separator:a86d13a77573c136984d2ad7f137d8987"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0daacb12fc62184d1e486019182a98a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0daacb12fc62184d1e486019182a98a6"></a>
 IdType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6">study_id</a></td></tr>
-<tr class="memdesc:a0daacb12fc62184d1e486019182a98a6"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, name etc) ">Patient</a> number in the study (unique) <br /></td></tr>
+<tr class="memdesc:a0daacb12fc62184d1e486019182a98a6"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> number in the study (unique) <br /></td></tr>
 <tr class="separator:a0daacb12fc62184d1e486019182a98a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2158bdcfc2510f8b507541b304f96f51"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2158bdcfc2510f8b507541b304f96f51"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Patient.html#a2158bdcfc2510f8b507541b304f96f51">weight_in_kg</a></td></tr>
-<tr class="memdesc:a2158bdcfc2510f8b507541b304f96f51"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, name etc) ">Patient</a> weight_in_kg. <br /></td></tr>
+<tr class="memdesc:a2158bdcfc2510f8b507541b304f96f51"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> weight_in_kg. <br /></td></tr>
 <tr class="separator:a2158bdcfc2510f8b507541b304f96f51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a193d9432bfeaaa0fa9dd39f85d397a55"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a193d9432bfeaaa0fa9dd39f85d397a55"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Patient.html#a193d9432bfeaaa0fa9dd39f85d397a55">dicom_patientid</a></td></tr>
-<tr class="memdesc:a193d9432bfeaaa0fa9dd39f85d397a55"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, name etc) ">Patient</a> dicom ID. Not unique because could be unknown. <br /></td></tr>
+<tr class="memdesc:a193d9432bfeaaa0fa9dd39f85d397a55"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> dicom ID. Not unique because could be unknown. <br /></td></tr>
 <tr class="separator:a193d9432bfeaaa0fa9dd39f85d397a55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
-Friends</h2></td></tr>
-<tr class="memitem:a164870ede33c6e6cfcfad6ef20f01401"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a164870ede33c6e6cfcfad6ef20f01401"></a>
-std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;os, const <a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;p)</td></tr>
-<tr class="separator:a164870ede33c6e6cfcfad6ef20f01401"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:ac0c09d5d50e391bf5d402bcd100d3c33"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac0c09d5d50e391bf5d402bcd100d3c33"></a>
+static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>mname</b> = &quot;Patient&quot;</td></tr>
+<tr class="separator:ac0c09d5d50e391bf5d402bcd100d3c33"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Store information about a patient (id, name etc) </p>
-<p><a class="el" href="singletonsyd_1_1Table.html">Table</a> "<a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, name etc) ">Patient</a> stored in a db. Contains id, name, id of the patient in a study, weight_in_kg, etc. </p>
+<div class="textblock"><p>Store information about a patient (id, study_id, name etc). </p>
 
-<p>Definition at line <a class="el" href="sydPatient_8h_source.html#l00039">39</a> of file <a class="el" href="sydPatient_8h_source.html">sydPatient.h</a>.</p>
+<p>Definition at line <a class="el" href="sydPatient_8h_source.html#l00032">32</a> of file <a class="el" href="sydPatient_8h_source.html">sydPatient.h</a>.</p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/std_db/<a class="el" href="sydPatient_8h_source.html">sydPatient.h</a></li>
 <li>src/std_db/<a class="el" href="sydPatient_8cxx_source.html">sydPatient.cxx</a></li>

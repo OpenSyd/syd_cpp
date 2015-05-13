@@ -90,14 +90,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
 <a href="classsyd_1_1Timepoint-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">syd::Timepoint Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Store information about a dicom image (serie).  
+<p>Store information about a timepoint.  
  <a href="classsyd_1_1Timepoint.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="sydTimepoint_8h_source.html">sydTimepoint.h</a>&gt;</code></p>
@@ -107,7 +106,7 @@ Inheritance diagram for syd::Timepoint:</div>
  <div class="center">
   <img src="classsyd_1_1Timepoint.png" usemap="#syd::Timepoint_map" alt=""/>
   <map id="syd::Timepoint_map" name="syd::Timepoint_map">
-<area href="classsyd_1_1Element.html" title="Base class for all element (row) in a table. " alt="syd::Element" shape="rect" coords="0,0,91,24"/>
+<area href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. " alt="syd::TableElement" shape="rect" coords="0,0,113,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -122,17 +121,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad443d06284dd1c4899bfe8419c4eb58a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad443d06284dd1c4899bfe8419c4eb58a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>copy</b> (const <a class="el" href="classsyd_1_1Timepoint.html">Timepoint</a> &amp;t)</td></tr>
 <tr class="separator:ad443d06284dd1c4899bfe8419c4eb58a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a685e8a490b50ab3184e4a105b2048258"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a685e8a490b50ab3184e4a105b2048258"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetTableHeader</b> (<a class="el" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp;table)</td></tr>
-<tr class="separator:a685e8a490b50ab3184e4a105b2048258"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a76af61190a7a3c63972f6e93d177f5bc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a76af61190a7a3c63972f6e93d177f5bc"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>DumpElement</b> (<a class="el" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp;table)</td></tr>
-<tr class="separator:a76af61190a7a3c63972f6e93d177f5bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad10fd146bef6314545eeeaa4a6948a5b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad10fd146bef6314545eeeaa4a6948a5b"></a>
-virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ToString</b> () const </td></tr>
+virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Timepoint.html#ad10fd146bef6314545eeeaa4a6948a5b">ToString</a> () const </td></tr>
+<tr class="memdesc:ad10fd146bef6314545eeeaa4a6948a5b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use to write the element as a string (must be overloaded) <br /></td></tr>
 <tr class="separator:ad10fd146bef6314545eeeaa4a6948a5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f1fd4067d33176c05f28c4dc92059b5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3f1fd4067d33176c05f28c4dc92059b5"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetValues</b> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Timepoint.html#a3f1fd4067d33176c05f28c4dc92059b5">SetValues</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+<tr class="memdesc:a3f1fd4067d33176c05f28c4dc92059b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
 <tr class="separator:a3f1fd4067d33176c05f28c4dc92059b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
@@ -145,10 +140,10 @@ static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetTabl
 Public Attributes</h2></td></tr>
 <tr class="memitem:ad4ccf963110e29b59769e6257253902e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad4ccf963110e29b59769e6257253902e"></a>
 IdType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Timepoint.html#ad4ccf963110e29b59769e6257253902e">id</a></td></tr>
-<tr class="memdesc:ad4ccf963110e29b59769e6257253902e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Id of the <a class="el" href="classsyd_1_1Timepoint.html" title="Store information about a dicom image (serie). ">Timepoint</a>. <br /></td></tr>
+<tr class="memdesc:ad4ccf963110e29b59769e6257253902e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Id of the <a class="el" href="classsyd_1_1Timepoint.html" title="Store information about a timepoint. ">Timepoint</a>. <br /></td></tr>
 <tr class="separator:ad4ccf963110e29b59769e6257253902e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a099408f0476aab384f4c8c16c49853a8"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classsyd_1_1Tag.html">syd::Tag</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Timepoint.html#a099408f0476aab384f4c8c16c49853a8">tag</a></td></tr>
-<tr class="memdesc:a099408f0476aab384f4c8c16c49853a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, it must exist in the <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, name etc) ">Patient</a> table.  <a href="#a099408f0476aab384f4c8c16c49853a8">More...</a><br /></td></tr>
+<tr class="memdesc:a099408f0476aab384f4c8c16c49853a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, it must exist in the <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table.  <a href="#a099408f0476aab384f4c8c16c49853a8">More...</a><br /></td></tr>
 <tr class="separator:a099408f0476aab384f4c8c16c49853a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a065c785a4ed134668fc728ce7865ace5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a065c785a4ed134668fc728ce7865ace5"></a>
 std::shared_ptr&lt; <a class="el" href="classsyd_1_1Injection.html">syd::Injection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>injection</b></td></tr>
@@ -160,18 +155,11 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>time_from_injection
 std::vector&lt; std::shared_ptr<br class="typebreak" />
 &lt; <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>dicoms</b></td></tr>
 <tr class="separator:a50bbdb4f69297bc523b6e0c2d303f9c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
-Friends</h2></td></tr>
-<tr class="memitem:adb0b19a4968d57ad322e1f72d821ce6e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb0b19a4968d57ad322e1f72d821ce6e"></a>
-std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;os, const <a class="el" href="classsyd_1_1Timepoint.html">Timepoint</a> &amp;tp)</td></tr>
-<tr class="separator:adb0b19a4968d57ad322e1f72d821ce6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Store information about a dicom image (serie). </p>
-<p><a class="el" href="classsyd_1_1Element.html" title="Base class for all element (row) in a table. ">Element</a> of table '<a class="el" href="classsyd_1_1Timepoint.html" title="Store information about a dicom image (serie). ">Timepoint</a>' stored in a db. FIXME </p>
+<div class="textblock"><p>Store information about a timepoint. </p>
 
-<p>Definition at line <a class="el" href="sydTimepoint_8h_source.html#l00036">36</a> of file <a class="el" href="sydTimepoint_8h_source.html">sydTimepoint.h</a>.</p>
+<p>Definition at line <a class="el" href="sydTimepoint_8h_source.html#l00031">31</a> of file <a class="el" href="sydTimepoint_8h_source.html">sydTimepoint.h</a>.</p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a class="anchor" id="a099408f0476aab384f4c8c16c49853a8"></a>
 <div class="memitem">
@@ -183,10 +171,10 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
       </table>
 </div><div class="memdoc">
 
-<p>Foreign key, it must exist in the <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, name etc) ">Patient</a> table. </p>
+<p>Foreign key, it must exist in the <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table. </p>
 <p>FIXME </p>
 
-<p>Definition at line <a class="el" href="sydTimepoint_8h_source.html#l00048">48</a> of file <a class="el" href="sydTimepoint_8h_source.html">sydTimepoint.h</a>.</p>
+<p>Definition at line <a class="el" href="sydTimepoint_8h_source.html#l00043">43</a> of file <a class="el" href="sydTimepoint_8h_source.html">sydTimepoint.h</a>.</p>
 
 </div>
 </div>

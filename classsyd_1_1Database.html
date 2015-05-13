@@ -91,11 +91,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pro-types">Protected Types</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classsyd_1_1Database-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">syd::Database Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>This is the base class of all databases.  
+ <a href="classsyd_1_1Database.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="sydDatabase_8h_source.html">sydDatabase.h</a>&gt;</code></p>
 <div class="dynheader">
@@ -112,18 +116,10 @@ Inheritance diagram for syd::Database:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad900f7cfa8531ecdf112c9a5919e6843"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad900f7cfa8531ecdf112c9a5919e6843"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ad900f7cfa8531ecdf112c9a5919e6843">Database</a> (std::string filename)</td></tr>
-<tr class="memdesc:ad900f7cfa8531ecdf112c9a5919e6843"><td class="mdescLeft">&#160;</td><td class="mdescRight">Open a database. <br /></td></tr>
-<tr class="separator:ad900f7cfa8531ecdf112c9a5919e6843"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5897ddcdcf0b084514985ed072f05649"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5897ddcdcf0b084514985ed072f05649"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a5897ddcdcf0b084514985ed072f05649">GetDatabaseType</a> ()</td></tr>
-<tr class="memdesc:a5897ddcdcf0b084514985ed072f05649"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of the db (read in the file) <br /></td></tr>
-<tr class="separator:a5897ddcdcf0b084514985ed072f05649"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c35fd3171e7d33bbd5963e48a892309"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c35fd3171e7d33bbd5963e48a892309"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a8c35fd3171e7d33bbd5963e48a892309">CreateTables</a> ()=0</td></tr>
-<tr class="memdesc:a8c35fd3171e7d33bbd5963e48a892309"><td class="mdescLeft">&#160;</td><td class="mdescRight">Must be overwritten (and called) <br /></td></tr>
-<tr class="separator:a8c35fd3171e7d33bbd5963e48a892309"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0fc42ac9795362e56b9dcb306670411"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0fc42ac9795362e56b9dcb306670411"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ae0fc42ac9795362e56b9dcb306670411">GetDatabaseSchema</a> ()</td></tr>
+<tr class="memdesc:ae0fc42ac9795362e56b9dcb306670411"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the type of the db (read in the file) <br /></td></tr>
+<tr class="separator:ae0fc42ac9795362e56b9dcb306670411"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af978bbfce8839721d25735b6db020cb0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af978bbfce8839721d25735b6db020cb0"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#af978bbfce8839721d25735b6db020cb0">GetFilename</a> () const </td></tr>
 <tr class="memdesc:af978bbfce8839721d25735b6db020cb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the filename (.db file sqlite) <br /></td></tr>
@@ -136,69 +132,73 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#af43b76c8045344eaaa96eb1062ac4196">GetAbsoluteDBFolder</a> () const </td></tr>
 <tr class="memdesc:af43b76c8045344eaaa96eb1062ac4196"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the folder that contains the associated images (absolute according to working directory) <br /></td></tr>
 <tr class="separator:af43b76c8045344eaaa96eb1062ac4196"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a88655c201112bc243bb5901d1c7f5753"><td class="memTemplParams" colspan="2"><a class="anchor" id="a88655c201112bc243bb5901d1c7f5753"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a88655c201112bc243bb5901d1c7f5753"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a88655c201112bc243bb5901d1c7f5753">Query</a> (const odb::query&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;q, std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;list)</td></tr>
+<tr class="memdesc:a88655c201112bc243bb5901d1c7f5753"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a query on the database and return the found elements in the list. <br /></td></tr>
+<tr class="separator:a88655c201112bc243bb5901d1c7f5753"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a335c44bc0b87923fc4e6fcfffbea5128"><td class="memTemplParams" colspan="2"><a class="anchor" id="a335c44bc0b87923fc4e6fcfffbea5128"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a335c44bc0b87923fc4e6fcfffbea5128"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a335c44bc0b87923fc4e6fcfffbea5128">Query</a> (std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;list)</td></tr>
+<tr class="memdesc:a335c44bc0b87923fc4e6fcfffbea5128"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve all elements of the table. <br /></td></tr>
+<tr class="separator:a335c44bc0b87923fc4e6fcfffbea5128"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9198e4041a08a896198b31c614afce80"><td class="memTemplParams" colspan="2"><a class="anchor" id="a9198e4041a08a896198b31c614afce80"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a9198e4041a08a896198b31c614afce80"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classsyd_1_1TableElement.html">TableElement</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a9198e4041a08a896198b31c614afce80">QueryOne</a> (const odb::query&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;q)</td></tr>
+<tr class="memdesc:a9198e4041a08a896198b31c614afce80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the unique element matching the query (fail if 0 or &gt;1 elements) <br /></td></tr>
+<tr class="separator:a9198e4041a08a896198b31c614afce80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69c332026a6a4b9630d4888460bfe9d6"><td class="memTemplParams" colspan="2"><a class="anchor" id="a69c332026a6a4b9630d4888460bfe9d6"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a69c332026a6a4b9630d4888460bfe9d6"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classsyd_1_1TableElement.html">TableElement</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a69c332026a6a4b9630d4888460bfe9d6">QueryOne</a> (IdType id)</td></tr>
+<tr class="memdesc:a69c332026a6a4b9630d4888460bfe9d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the unique element with the given id. <br /></td></tr>
+<tr class="separator:a69c332026a6a4b9630d4888460bfe9d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7b374de04f2d0ae8f7ac229666f39ac2"><td class="memTemplParams" colspan="2"><a class="anchor" id="a7b374de04f2d0ae8f7ac229666f39ac2"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a7b374de04f2d0ae8f7ac229666f39ac2"><td class="memTemplItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a7b374de04f2d0ae8f7ac229666f39ac2">Count</a> (const odb::query&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;q)</td></tr>
+<tr class="memdesc:a7b374de04f2d0ae8f7ac229666f39ac2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count the number of elements matching the query. <br /></td></tr>
+<tr class="separator:a7b374de04f2d0ae8f7ac229666f39ac2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6544f36b101c2fc5caeda9976f8428c9"><td class="memTemplParams" colspan="2"><a class="anchor" id="a6544f36b101c2fc5caeda9976f8428c9"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a6544f36b101c2fc5caeda9976f8428c9"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a6544f36b101c2fc5caeda9976f8428c9">IfExist</a> (IdType id)</td></tr>
+<tr class="memdesc:a6544f36b101c2fc5caeda9976f8428c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given id exist. <br /></td></tr>
+<tr class="separator:a6544f36b101c2fc5caeda9976f8428c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61dac5f978b137f770aa2c16c79425a6"><td class="memTemplParams" colspan="2"><a class="anchor" id="a61dac5f978b137f770aa2c16c79425a6"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a61dac5f978b137f770aa2c16c79425a6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a61dac5f978b137f770aa2c16c79425a6">Insert</a> (<a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &amp;r)</td></tr>
+<tr class="memdesc:a61dac5f978b137f770aa2c16c79425a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new element of type <a class="el" href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. ">TableElement</a> in the database. <br /></td></tr>
+<tr class="separator:a61dac5f978b137f770aa2c16c79425a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabcdfa71722de81107140ca936b688fb"><td class="memTemplParams" colspan="2"><a class="anchor" id="aabcdfa71722de81107140ca936b688fb"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:aabcdfa71722de81107140ca936b688fb"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aabcdfa71722de81107140ca936b688fb">Insert</a> (std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> * &gt; &amp;r)</td></tr>
+<tr class="memdesc:aabcdfa71722de81107140ca936b688fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert several elements at a time. <br /></td></tr>
+<tr class="separator:aabcdfa71722de81107140ca936b688fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a243a780a2047b3a4edf048254d29fff9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a243a780a2047b3a4edf048254d29fff9"></a>
+virtual <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a243a780a2047b3a4edf048254d29fff9">InsertFromArg</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>, std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+<tr class="memdesc:a243a780a2047b3a4edf048254d29fff9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new element build from set of string. <br /></td></tr>
+<tr class="separator:a243a780a2047b3a4edf048254d29fff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a178b5c492230b3e9873321ccd9a50401"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a178b5c492230b3e9873321ccd9a50401"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a178b5c492230b3e9873321ccd9a50401">ExecuteSQL</a> (const std::string &amp;statement)</td></tr>
+<tr class="memdesc:a178b5c492230b3e9873321ccd9a50401"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute native SQL statements. <br /></td></tr>
+<tr class="separator:a178b5c492230b3e9873321ccd9a50401"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00c09ce90754816d6c2cd8d329f241fc"><td class="memTemplParams" colspan="2"><a class="anchor" id="a00c09ce90754816d6c2cd8d329f241fc"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a00c09ce90754816d6c2cd8d329f241fc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a00c09ce90754816d6c2cd8d329f241fc">Update</a> (<a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &amp;r)</td></tr>
+<tr class="memdesc:a00c09ce90754816d6c2cd8d329f241fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update an element in the database. <br /></td></tr>
+<tr class="separator:a00c09ce90754816d6c2cd8d329f241fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0c3223b09bcb08e4184c3b7a584e202"><td class="memTemplParams" colspan="2"><a class="anchor" id="ad0c3223b09bcb08e4184c3b7a584e202"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:ad0c3223b09bcb08e4184c3b7a584e202"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ad0c3223b09bcb08e4184c3b7a584e202">Update</a> (std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> * &gt; &amp;r)</td></tr>
+<tr class="memdesc:ad0c3223b09bcb08e4184c3b7a584e202"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update a set of elements in the database. <br /></td></tr>
+<tr class="separator:ad0c3223b09bcb08e4184c3b7a584e202"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3092120b7fcb17efcf54c3a9257bea66"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3092120b7fcb17efcf54c3a9257bea66"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a3092120b7fcb17efcf54c3a9257bea66">TraceCallback</a> (const char *sql)</td></tr>
 <tr class="memdesc:a3092120b7fcb17efcf54c3a9257bea66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Call back for SQL query to the DB. For debug purpose only. <br /></td></tr>
 <tr class="separator:a3092120b7fcb17efcf54c3a9257bea66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad3a7c7fb4aac508e910acbfc732da3ce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad3a7c7fb4aac508e910acbfc732da3ce"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ad3a7c7fb4aac508e910acbfc732da3ce">GetLastSQLQuery</a> () const </td></tr>
-<tr class="memdesc:ad3a7c7fb4aac508e910acbfc732da3ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last SQL query (set by TraceCallback) <br /></td></tr>
+<tr class="memdesc:ad3a7c7fb4aac508e910acbfc732da3ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last SQL query (set by TraceCallback). For debug purpose only. <br /></td></tr>
 <tr class="separator:ad3a7c7fb4aac508e910acbfc732da3ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb1c7924d9b54436e3583327869a0ce8"><td class="memTemplParams" colspan="2"><a class="anchor" id="abb1c7924d9b54436e3583327869a0ce8"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:abb1c7924d9b54436e3583327869a0ce8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#abb1c7924d9b54436e3583327869a0ce8">Query</a> (const odb::query&lt; ElementType &gt; &amp;q, std::vector&lt; ElementType &gt; &amp;list)</td></tr>
-<tr class="memdesc:abb1c7924d9b54436e3583327869a0ce8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a query on the database and return the found elements in the list. <br /></td></tr>
-<tr class="separator:abb1c7924d9b54436e3583327869a0ce8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5743b7a946dd7d14072826ee78c123b"><td class="memTemplParams" colspan="2"><a class="anchor" id="aa5743b7a946dd7d14072826ee78c123b"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:aa5743b7a946dd7d14072826ee78c123b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aa5743b7a946dd7d14072826ee78c123b">Query</a> (std::vector&lt; ElementType &gt; &amp;list)</td></tr>
-<tr class="memdesc:aa5743b7a946dd7d14072826ee78c123b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve all elements of the table. <br /></td></tr>
-<tr class="separator:aa5743b7a946dd7d14072826ee78c123b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb038fee20e3ec0fd2e66be617ff1931"><td class="memTemplParams" colspan="2"><a class="anchor" id="afb038fee20e3ec0fd2e66be617ff1931"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:afb038fee20e3ec0fd2e66be617ff1931"><td class="memTemplItemLeft" align="right" valign="top">ElementType&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#afb038fee20e3ec0fd2e66be617ff1931">QueryOne</a> (const odb::query&lt; ElementType &gt; &amp;q)</td></tr>
-<tr class="memdesc:afb038fee20e3ec0fd2e66be617ff1931"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the unique element matching the query (fail if 0 or &gt;1 elements) <br /></td></tr>
-<tr class="separator:afb038fee20e3ec0fd2e66be617ff1931"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae48c8104c0e15211a1b9ac8a2374c51c"><td class="memTemplParams" colspan="2"><a class="anchor" id="ae48c8104c0e15211a1b9ac8a2374c51c"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:ae48c8104c0e15211a1b9ac8a2374c51c"><td class="memTemplItemLeft" align="right" valign="top">ElementType&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ae48c8104c0e15211a1b9ac8a2374c51c">QueryOne</a> (IdType id)</td></tr>
-<tr class="memdesc:ae48c8104c0e15211a1b9ac8a2374c51c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the unique element with the given id. <br /></td></tr>
-<tr class="separator:ae48c8104c0e15211a1b9ac8a2374c51c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4687ee53a246a9d72e66d8d828801b42"><td class="memTemplParams" colspan="2"><a class="anchor" id="a4687ee53a246a9d72e66d8d828801b42"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:a4687ee53a246a9d72e66d8d828801b42"><td class="memTemplItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a4687ee53a246a9d72e66d8d828801b42">Count</a> (const odb::query&lt; ElementType &gt; &amp;q)</td></tr>
-<tr class="memdesc:a4687ee53a246a9d72e66d8d828801b42"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count the number of elements matching the query. <br /></td></tr>
-<tr class="separator:a4687ee53a246a9d72e66d8d828801b42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6544f36b101c2fc5caeda9976f8428c9"><td class="memTemplParams" colspan="2"><a class="anchor" id="a6544f36b101c2fc5caeda9976f8428c9"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:a6544f36b101c2fc5caeda9976f8428c9"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a6544f36b101c2fc5caeda9976f8428c9">IfExist</a> (IdType id)</td></tr>
-<tr class="memdesc:a6544f36b101c2fc5caeda9976f8428c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given id exist. <br /></td></tr>
-<tr class="separator:a6544f36b101c2fc5caeda9976f8428c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2a101f09483fe274fa12d3d769e0166"><td class="memTemplParams" colspan="2"><a class="anchor" id="ab2a101f09483fe274fa12d3d769e0166"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:ab2a101f09483fe274fa12d3d769e0166"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ab2a101f09483fe274fa12d3d769e0166">Insert</a> (ElementType &amp;r)</td></tr>
-<tr class="memdesc:ab2a101f09483fe274fa12d3d769e0166"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new element of type ElementType in the database. <br /></td></tr>
-<tr class="separator:ab2a101f09483fe274fa12d3d769e0166"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51f09170409acdc2df53698d247f78a2"><td class="memTemplParams" colspan="2"><a class="anchor" id="a51f09170409acdc2df53698d247f78a2"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:a51f09170409acdc2df53698d247f78a2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a51f09170409acdc2df53698d247f78a2">Insert</a> (std::vector&lt; ElementType * &gt; &amp;r)</td></tr>
-<tr class="memdesc:a51f09170409acdc2df53698d247f78a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert several elements at a time. <br /></td></tr>
-<tr class="separator:a51f09170409acdc2df53698d247f78a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5a3efdb8ac081a77555fb2ac6d53f2c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5a3efdb8ac081a77555fb2ac6d53f2c"></a>
-virtual <a class="el" href="classsyd_1_1Element.html">Element</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ac5a3efdb8ac081a77555fb2ac6d53f2c">InsertFromArg</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>, std::vector&lt; std::string &gt; &amp;arg)</td></tr>
-<tr class="memdesc:ac5a3efdb8ac081a77555fb2ac6d53f2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new element build from set of string //FIXME. <br /></td></tr>
-<tr class="separator:ac5a3efdb8ac081a77555fb2ac6d53f2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memTemplParams" colspan="2"><a class="anchor" id="aaff5f5c4be5b71c1e257c2cd9dc65a0e"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aaff5f5c4be5b71c1e257c2cd9dc65a0e">Update</a> (ElementType &amp;r)</td></tr>
-<tr class="memdesc:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update an element in the database. <br /></td></tr>
-<tr class="separator:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba327f0473f18e7d15d2e209cb8a8040"><td class="memTemplParams" colspan="2"><a class="anchor" id="aba327f0473f18e7d15d2e209cb8a8040"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:aba327f0473f18e7d15d2e209cb8a8040"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aba327f0473f18e7d15d2e209cb8a8040">Update</a> (std::vector&lt; ElementType * &gt; &amp;r)</td></tr>
-<tr class="memdesc:aba327f0473f18e7d15d2e209cb8a8040"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update a set of elements in the database. <br /></td></tr>
-<tr class="separator:aba327f0473f18e7d15d2e209cb8a8040"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d43a829a24357b3e25ada612de2a0dd"><td class="memTemplParams" colspan="2">template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:a2d43a829a24357b3e25ada612de2a0dd"><td class="memTemplParams" colspan="2">template&lt;class TableElement &gt; </td></tr>
 <tr class="memitem:a2d43a829a24357b3e25ada612de2a0dd"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">Delete</a> (IdType id)</td></tr>
 <tr class="memdesc:a2d43a829a24357b3e25ada612de2a0dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">--------------------------&mdash;&mdash; OLD  <a href="#a2d43a829a24357b3e25ada612de2a0dd">More...</a><br /></td></tr>
 <tr class="separator:a2d43a829a24357b3e25ada612de2a0dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -212,14 +212,54 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="memitem:a07f35ca4a0789dcfb86fe304690c6b50"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsyd_1_1TableBase.html">TableBase</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a07f35ca4a0789dcfb86fe304690c6b50">GetTable</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>)</td></tr>
 <tr class="memdesc:a07f35ca4a0789dcfb86fe304690c6b50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dump all elements of a given table (query[0])  <a href="#a07f35ca4a0789dcfb86fe304690c6b50">More...</a><br /></td></tr>
 <tr class="separator:a07f35ca4a0789dcfb86fe304690c6b50"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37b6ef2ef1cf5f2bcbcdf8a1caceac36"><td class="memTemplParams" colspan="2"><a class="anchor" id="a37b6ef2ef1cf5f2bcbcdf8a1caceac36"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:a37b6ef2ef1cf5f2bcbcdf8a1caceac36"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="singletonsyd_1_1Table.html">Table</a>&lt; ElementType &gt; *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a37b6ef2ef1cf5f2bcbcdf8a1caceac36">GetTable</a> ()</td></tr>
-<tr class="memdesc:a37b6ef2ef1cf5f2bcbcdf8a1caceac36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the table that contains ElementType. <br /></td></tr>
-<tr class="separator:a37b6ef2ef1cf5f2bcbcdf8a1caceac36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33d5080feb07e76f626fd652814bafa8"><td class="memTemplParams" colspan="2"><a class="anchor" id="a33d5080feb07e76f626fd652814bafa8"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a33d5080feb07e76f626fd652814bafa8"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="singletonsyd_1_1Table.html">Table</a>&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a33d5080feb07e76f626fd652814bafa8">GetTable</a> ()</td></tr>
+<tr class="memdesc:a33d5080feb07e76f626fd652814bafa8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the table that contains <a class="el" href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. ">TableElement</a>. <br /></td></tr>
+<tr class="separator:a33d5080feb07e76f626fd652814bafa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b3b0d43ccd53b7d22abf53e0434beda"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b3b0d43ccd53b7d22abf53e0434beda"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetListOfTableNames</b> ()</td></tr>
 <tr class="separator:a6b3b0d43ccd53b7d22abf53e0434beda"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f8a659a4372e8bec6545c595bdd6d8e"><td class="memTemplParams" colspan="2"><a class="anchor" id="a0f8a659a4372e8bec6545c595bdd6d8e"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:a0f8a659a4372e8bec6545c595bdd6d8e"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="singletonsyd_1_1Table.html">Table</a>&lt; ElementType &gt; *&#160;</td><td class="memTemplItemRight" valign="bottom"><b>GetTable</b> ()</td></tr>
+<tr class="separator:a0f8a659a4372e8bec6545c595bdd6d8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb1c7924d9b54436e3583327869a0ce8"><td class="memTemplParams" colspan="2"><a class="anchor" id="abb1c7924d9b54436e3583327869a0ce8"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:abb1c7924d9b54436e3583327869a0ce8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Query</b> (const odb::query&lt; ElementType &gt; &amp;q, std::vector&lt; ElementType &gt; &amp;list)</td></tr>
+<tr class="separator:abb1c7924d9b54436e3583327869a0ce8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5743b7a946dd7d14072826ee78c123b"><td class="memTemplParams" colspan="2"><a class="anchor" id="aa5743b7a946dd7d14072826ee78c123b"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:aa5743b7a946dd7d14072826ee78c123b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Query</b> (std::vector&lt; ElementType &gt; &amp;list)</td></tr>
+<tr class="separator:aa5743b7a946dd7d14072826ee78c123b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb038fee20e3ec0fd2e66be617ff1931"><td class="memTemplParams" colspan="2"><a class="anchor" id="afb038fee20e3ec0fd2e66be617ff1931"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:afb038fee20e3ec0fd2e66be617ff1931"><td class="memTemplItemLeft" align="right" valign="top">ElementType&#160;</td><td class="memTemplItemRight" valign="bottom"><b>QueryOne</b> (const odb::query&lt; ElementType &gt; &amp;q)</td></tr>
+<tr class="separator:afb038fee20e3ec0fd2e66be617ff1931"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae48c8104c0e15211a1b9ac8a2374c51c"><td class="memTemplParams" colspan="2"><a class="anchor" id="ae48c8104c0e15211a1b9ac8a2374c51c"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:ae48c8104c0e15211a1b9ac8a2374c51c"><td class="memTemplItemLeft" align="right" valign="top">ElementType&#160;</td><td class="memTemplItemRight" valign="bottom"><b>QueryOne</b> (IdType id)</td></tr>
+<tr class="separator:ae48c8104c0e15211a1b9ac8a2374c51c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4687ee53a246a9d72e66d8d828801b42"><td class="memTemplParams" colspan="2"><a class="anchor" id="a4687ee53a246a9d72e66d8d828801b42"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:a4687ee53a246a9d72e66d8d828801b42"><td class="memTemplItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Count</b> (const odb::query&lt; ElementType &gt; &amp;q)</td></tr>
+<tr class="separator:a4687ee53a246a9d72e66d8d828801b42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2a101f09483fe274fa12d3d769e0166"><td class="memTemplParams" colspan="2"><a class="anchor" id="ab2a101f09483fe274fa12d3d769e0166"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:ab2a101f09483fe274fa12d3d769e0166"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Insert</b> (ElementType &amp;r)</td></tr>
+<tr class="separator:ab2a101f09483fe274fa12d3d769e0166"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51f09170409acdc2df53698d247f78a2"><td class="memTemplParams" colspan="2"><a class="anchor" id="a51f09170409acdc2df53698d247f78a2"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:a51f09170409acdc2df53698d247f78a2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Insert</b> (std::vector&lt; ElementType * &gt; &amp;r)</td></tr>
+<tr class="separator:a51f09170409acdc2df53698d247f78a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memTemplParams" colspan="2"><a class="anchor" id="aaff5f5c4be5b71c1e257c2cd9dc65a0e"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Update</b> (ElementType &amp;r)</td></tr>
+<tr class="separator:aaff5f5c4be5b71c1e257c2cd9dc65a0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba327f0473f18e7d15d2e209cb8a8040"><td class="memTemplParams" colspan="2"><a class="anchor" id="aba327f0473f18e7d15d2e209cb8a8040"></a>
+template&lt;class ElementType &gt; </td></tr>
+<tr class="memitem:aba327f0473f18e7d15d2e209cb8a8040"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Update</b> (std::vector&lt; ElementType * &gt; &amp;r)</td></tr>
+<tr class="separator:aba327f0473f18e7d15d2e209cb8a8040"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-types"></a>
 Protected Types</h2></td></tr>
@@ -231,12 +271,16 @@ typedef std::map&lt; std::string, <br class="typebreak" />
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a4c9db67fc3cab47b49472be846e777b6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4c9db67fc3cab47b49472be846e777b6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a4c9db67fc3cab47b49472be846e777b6">Open</a> ()</td></tr>
-<tr class="memdesc:a4c9db67fc3cab47b49472be846e777b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main function to open a database in the filename_. <br /></td></tr>
-<tr class="separator:a4c9db67fc3cab47b49472be846e777b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdb7a92bd1e821d19a0eb60538189b62"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afdb7a92bd1e821d19a0eb60538189b62"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#afdb7a92bd1e821d19a0eb60538189b62">Read</a> (std::string filename)</td></tr>
+<tr class="memdesc:afdb7a92bd1e821d19a0eb60538189b62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main function to open a database. <br /></td></tr>
+<tr class="separator:afdb7a92bd1e821d19a0eb60538189b62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c35fd3171e7d33bbd5963e48a892309"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c35fd3171e7d33bbd5963e48a892309"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a8c35fd3171e7d33bbd5963e48a892309">CreateTables</a> ()=0</td></tr>
+<tr class="memdesc:a8c35fd3171e7d33bbd5963e48a892309"><td class="mdescLeft">&#160;</td><td class="mdescRight">Must be overwritten by concrete classes. <br /></td></tr>
+<tr class="separator:a8c35fd3171e7d33bbd5963e48a892309"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68d9366cddb0614c95bef9322b3d8a0d"><td class="memTemplParams" colspan="2"><a class="anchor" id="a68d9366cddb0614c95bef9322b3d8a0d"></a>
-template&lt;class ElementType &gt; </td></tr>
+template&lt;class TableElement &gt; </td></tr>
 <tr class="memitem:a68d9366cddb0614c95bef9322b3d8a0d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a68d9366cddb0614c95bef9322b3d8a0d">AddTable</a> ()</td></tr>
 <tr class="memdesc:a68d9366cddb0614c95bef9322b3d8a0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a table type managed by this class. <br /></td></tr>
 <tr class="separator:a68d9366cddb0614c95bef9322b3d8a0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -271,17 +315,25 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a77da2c570a7d805b45df1629a4159156">absolute_folder_</a></td></tr>
 <tr class="memdesc:a77da2c570a7d805b45df1629a4159156"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main folder that contains images (read in the file) <br /></td></tr>
 <tr class="separator:a77da2c570a7d805b45df1629a4159156"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec7dbf391076b2154ef7557c62116107"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aec7dbf391076b2154ef7557c62116107"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aec7dbf391076b2154ef7557c62116107">database_type_</a></td></tr>
-<tr class="memdesc:aec7dbf391076b2154ef7557c62116107"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the database (read in the file) <br /></td></tr>
-<tr class="separator:aec7dbf391076b2154ef7557c62116107"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c81852eb09eb7655d69de6d3cb8496a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1c81852eb09eb7655d69de6d3cb8496a"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a1c81852eb09eb7655d69de6d3cb8496a">database_schema_</a></td></tr>
+<tr class="memdesc:a1c81852eb09eb7655d69de6d3cb8496a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the database (read in the file) <br /></td></tr>
+<tr class="separator:a1c81852eb09eb7655d69de6d3cb8496a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b15b8e9ae9f006c614137e17bf2ecb1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2b15b8e9ae9f006c614137e17bf2ecb1"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a2b15b8e9ae9f006c614137e17bf2ecb1">current_sql_query_</a></td></tr>
 <tr class="memdesc:a2b15b8e9ae9f006c614137e17bf2ecb1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store current sql query for debug purpose. <br /></td></tr>
 <tr class="separator:a2b15b8e9ae9f006c614137e17bf2ecb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a9a48d2e1a5d69e724593ea4b2be1576f"><td class="memTemplParams" colspan="2"><a class="anchor" id="a9a48d2e1a5d69e724593ea4b2be1576f"></a>
+template&lt;class DatabaseSchema &gt; </td></tr>
+<tr class="memitem:a9a48d2e1a5d69e724593ea4b2be1576f"><td class="memTemplItemLeft" align="right" valign="top">class&#160;</td><td class="memTemplItemRight" valign="bottom"><b>DatabaseCreator</b></td></tr>
+<tr class="separator:a9a48d2e1a5d69e724593ea4b2be1576f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This is the base class of all databases. Manage a sqlite database and an associated folder (containing images). Provide convenient functions to perform basic queries. The database is composed of a list of tables. </p>
+<div class="textblock"><p>This is the base class of all databases. </p>
+<p>Manage a sqlite database and an associated folder (containing images). Provide convenient functions to perform basic queries. The database is composed of a list of tables. Use <a class="el" href="classsyd_1_1DatabaseManager.html" title="Manage a set of database schema. Allow to read and create. ">DatabaseManager</a> to Create or Read a database. </p>
 
 <p>Definition at line <a class="el" href="sydDatabase_8h_source.html#l00039">39</a> of file <a class="el" href="sydDatabase_8h_source.html">sydDatabase.h</a>.</p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
@@ -289,7 +341,7 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class ElementType &gt; </div>
+template&lt;class TableElement &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -312,9 +364,9 @@ template&lt;class ElementType &gt; </div>
 <p>--------------------------&mdash;&mdash; OLD </p>
 <p>Delete the element with id </p>
 
-<p>Definition at line <a class="el" href="sydDatabase_8h_source.html#l00119">119</a> of file <a class="el" href="sydDatabase_8h_source.html">sydDatabase.h</a>.</p>
-<div class="fragment"><div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;{ GetTable&lt;ElementType&gt;()-&gt;<a class="code" href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">Delete</a>(<span class="keywordtype">id</span>); }</div>
-<div class="ttc" id="classsyd_1_1Database_html_a2d43a829a24357b3e25ada612de2a0dd"><div class="ttname"><a href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">syd::Database::Delete</a></div><div class="ttdeci">bool Delete(IdType id)</div><div class="ttdoc">--------------------------—— OLD </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00119">sydDatabase.h:119</a></div></div>
+<p>Definition at line <a class="el" href="sydDatabase_8h_source.html#l00115">115</a> of file <a class="el" href="sydDatabase_8h_source.html">sydDatabase.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;{ GetTable&lt;TableElement&gt;()-&gt;<a class="code" href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">Delete</a>(<span class="keywordtype">id</span>); }</div>
+<div class="ttc" id="classsyd_1_1Database_html_a2d43a829a24357b3e25ada612de2a0dd"><div class="ttname"><a href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">syd::Database::Delete</a></div><div class="ttdeci">bool Delete(IdType id)</div><div class="ttdoc">--------------------------—— OLD </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00115">sydDatabase.h:115</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -353,35 +405,33 @@ template&lt;class ElementType &gt; </div>
 <p>Delete the element with id in the given table. </p>
 <p>Generic dump according to args </p>
 
-<p>Reimplemented in <a class="el" href="classsyd_1_1ClinicDatabase.html#a80720799d9f63f00c353d0b994ece804">syd::ClinicDatabase</a>.</p>
-
-<p>Definition at line <a class="el" href="sydDatabase_8cxx_source.html#l00117">117</a> of file <a class="el" href="sydDatabase_8cxx_source.html">sydDatabase.cxx</a>.</p>
-<div class="fragment"><div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;{</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  <span class="keywordflow">if</span> (args.size() == 0) {</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    os &lt;&lt; <span class="stringliteral">&quot;Database type: &quot;</span> &lt;&lt; <a class="code" href="classsyd_1_1Database.html#a5897ddcdcf0b084514985ed072f05649">GetDatabaseType</a>() &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    os &lt;&lt; <span class="stringliteral">&quot;Database folder: &quot;</span> &lt;&lt; <a class="code" href="classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980">GetRelativeDBFolder</a>() &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=<a class="code" href="classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc">map</a>.begin(); i != <a class="code" href="classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc">map</a>.end(); i++) {</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;      <span class="keywordtype">int</span> n = i-&gt;second-&gt;GetNumberOfElements();</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;      os &lt;&lt; <span class="stringliteral">&quot;Table \t&quot;</span> &lt;&lt; std::setw(15) &lt;&lt; i-&gt;first &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt;  std::setw(10) &lt;&lt; n;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      <span class="keywordflow">if</span> (n&gt;1) os &lt;&lt; <span class="stringliteral">&quot; elements&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      <span class="keywordflow">else</span> os &lt;&lt; <span class="stringliteral">&quot; element&quot;</span> &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    }</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    os &lt;&lt; std::flush;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  }</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  <span class="keywordflow">if</span> (args[0] == <span class="stringliteral">&quot;table&quot;</span>) {</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordflow">if</span> (args.size() &lt; 2) {</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;      LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Please provide the name of the table you want to dump.&quot;</span>;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    }</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <a class="code" href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">DumpTable</a>(args[1], os);</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  }</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;  <a class="code" href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">DumpTable</a>(args[0], os); <span class="comment">// suppose it is a table name</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;}</div>
-<div class="ttc" id="classsyd_1_1Database_html_a17a5646d64a28045ed507b94d9f52b90"><div class="ttname"><a href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">syd::Database::DumpTable</a></div><div class="ttdeci">virtual void DumpTable(const std::string &amp;table_name, std::ostream &amp;os)</div><div class="ttdoc">Dump all elements of a given table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8cxx_source.html#l00144">sydDatabase.cxx:144</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_a47790f65453bd829d73e8e225bcda7bc"><div class="ttname"><a href="classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc">syd::Database::map</a></div><div class="ttdeci">MapOfTablesType map</div><div class="ttdoc">Map that contains the association between names and tables. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00185">sydDatabase.h:185</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_a5897ddcdcf0b084514985ed072f05649"><div class="ttname"><a href="classsyd_1_1Database.html#a5897ddcdcf0b084514985ed072f05649">syd::Database::GetDatabaseType</a></div><div class="ttdeci">std::string GetDatabaseType()</div><div class="ttdoc">Return the type of the db (read in the file) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00046">sydDatabase.h:46</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_a187e39f585c0ac3bd77dadfe92925980"><div class="ttname"><a href="classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980">syd::Database::GetRelativeDBFolder</a></div><div class="ttdeci">std::string GetRelativeDBFolder() const </div><div class="ttdoc">Return the folder that contains the associated images (relative) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00055">sydDatabase.h:55</a></div></div>
+<p>Definition at line <a class="el" href="sydDatabase_8cxx_source.html#l00119">119</a> of file <a class="el" href="sydDatabase_8cxx_source.html">sydDatabase.cxx</a>.</p>
+<div class="fragment"><div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;{</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  <span class="keywordflow">if</span> (args.size() == 0) {</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    os &lt;&lt; <span class="stringliteral">&quot;Database schema: &quot;</span> &lt;&lt; <a class="code" href="classsyd_1_1Database.html#ae0fc42ac9795362e56b9dcb306670411">GetDatabaseSchema</a>() &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    os &lt;&lt; <span class="stringliteral">&quot;Database folder: &quot;</span> &lt;&lt; <a class="code" href="classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980">GetRelativeDBFolder</a>() &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=<a class="code" href="classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc">map</a>.begin(); i != <a class="code" href="classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc">map</a>.end(); i++) {</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      <span class="keywordtype">int</span> n = i-&gt;second-&gt;GetNumberOfElements();</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;      os &lt;&lt; <span class="stringliteral">&quot;Table \t&quot;</span> &lt;&lt; std::setw(15) &lt;&lt; i-&gt;first &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt;  std::setw(10) &lt;&lt; n;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;      <span class="keywordflow">if</span> (n&gt;1) os &lt;&lt; <span class="stringliteral">&quot; elements&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;      <span class="keywordflow">else</span> os &lt;&lt; <span class="stringliteral">&quot; element&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    }</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    os &lt;&lt; std::flush;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  }</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  <span class="keywordflow">if</span> (args[0] == <span class="stringliteral">&quot;table&quot;</span>) {</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordflow">if</span> (args.size() &lt; 2) {</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;      LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Please provide the name of the table you want to dump.&quot;</span>;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    }</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <a class="code" href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">DumpTable</a>(args[1], os);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  }</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;  <a class="code" href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">DumpTable</a>(args[0], os); <span class="comment">// suppose it is a table name</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;}</div>
+<div class="ttc" id="classsyd_1_1Database_html_a17a5646d64a28045ed507b94d9f52b90"><div class="ttname"><a href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">syd::Database::DumpTable</a></div><div class="ttdeci">virtual void DumpTable(const std::string &amp;table_name, std::ostream &amp;os)</div><div class="ttdoc">Dump all elements of a given table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8cxx_source.html#l00146">sydDatabase.cxx:146</a></div></div>
+<div class="ttc" id="classsyd_1_1Database_html_ae0fc42ac9795362e56b9dcb306670411"><div class="ttname"><a href="classsyd_1_1Database.html#ae0fc42ac9795362e56b9dcb306670411">syd::Database::GetDatabaseSchema</a></div><div class="ttdeci">std::string GetDatabaseSchema()</div><div class="ttdoc">Return the type of the db (read in the file) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00046">sydDatabase.h:46</a></div></div>
+<div class="ttc" id="classsyd_1_1Database_html_a47790f65453bd829d73e8e225bcda7bc"><div class="ttname"><a href="classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc">syd::Database::map</a></div><div class="ttdeci">MapOfTablesType map</div><div class="ttdoc">Map that contains the association between names and tables. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00158">sydDatabase.h:158</a></div></div>
+<div class="ttc" id="classsyd_1_1Database_html_a187e39f585c0ac3bd77dadfe92925980"><div class="ttname"><a href="classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980">syd::Database::GetRelativeDBFolder</a></div><div class="ttdeci">std::string GetRelativeDBFolder() const </div><div class="ttdoc">Return the folder that contains the associated images (relative) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00052">sydDatabase.h:52</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
@@ -402,18 +452,18 @@ template&lt;class ElementType &gt; </div>
 <p>Dump all elements of a given table (query[0]) </p>
 <p>Return the (base) table with <a class="el" href="structsyd_1_1table__name.html">table_name</a> </p>
 
-<p>Definition at line <a class="el" href="sydDatabase_8cxx_source.html#l00152">152</a> of file <a class="el" href="sydDatabase_8cxx_source.html">sydDatabase.cxx</a>.</p>
-<div class="fragment"><div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;{</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  std::string str=table_name;</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  std::transform(str.begin(), str.end(),str.begin(), ::tolower);</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  <span class="keyword">auto</span> it = <a class="code" href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">map_lowercase</a>.find(str);</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  <span class="keywordflow">if</span> (it == <a class="code" href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">map_lowercase</a>.end()) {</div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Cannot find the table &#39;&quot;</span> &lt;&lt; table_name &lt;&lt; <span class="stringliteral">&quot;&#39;.&quot;</span>;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordflow">return</span> 0; <span class="comment">// to avoid warning</span></div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;  }</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  <span class="keywordflow">return</span> it-&gt;second;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;}</div>
-<div class="ttc" id="classsyd_1_1Database_html_afcdf186672cdb2b65d601d8557a38bbc"><div class="ttname"><a href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">syd::Database::map_lowercase</a></div><div class="ttdeci">MapOfTablesType map_lowercase</div><div class="ttdoc">Copy of the map with the table name in lowercase (for comparison) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00188">sydDatabase.h:188</a></div></div>
+<p>Definition at line <a class="el" href="sydDatabase_8cxx_source.html#l00154">154</a> of file <a class="el" href="sydDatabase_8cxx_source.html">sydDatabase.cxx</a>.</p>
+<div class="fragment"><div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;{</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  std::string str=table_name;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;  std::transform(str.begin(), str.end(),str.begin(), ::tolower);</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;  <span class="keyword">auto</span> it = <a class="code" href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">map_lowercase</a>.find(str);</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;  <span class="keywordflow">if</span> (it == <a class="code" href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">map_lowercase</a>.end()) {</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Cannot find the table &#39;&quot;</span> &lt;&lt; table_name &lt;&lt; <span class="stringliteral">&quot;&#39;.&quot;</span>;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keywordflow">return</span> 0; <span class="comment">// to avoid warning</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;  }</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  <span class="keywordflow">return</span> it-&gt;second;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;}</div>
+<div class="ttc" id="classsyd_1_1Database_html_afcdf186672cdb2b65d601d8557a38bbc"><div class="ttname"><a href="classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc">syd::Database::map_lowercase</a></div><div class="ttdeci">MapOfTablesType map_lowercase</div><div class="ttdoc">Copy of the map with the table name in lowercase (for comparison) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00161">sydDatabase.h:161</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>

@@ -88,16 +88,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="#friends">Friends</a> &#124;
 <a href="classsyd_1_1DicomFile-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">syd::DicomFile Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
-<p>Store information about a dicom image (serie).  
+<p>Store information about a dicom file (unique dicom identifier dicom_sop_uid).  
  <a href="classsyd_1_1DicomFile.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="sydDicomFile_8h_source.html">sydDicomFile.h</a>&gt;</code></p>
@@ -107,7 +105,7 @@ Inheritance diagram for syd::DicomFile:</div>
  <div class="center">
   <img src="classsyd_1_1DicomFile.png" usemap="#syd::DicomFile_map" alt=""/>
   <map id="syd::DicomFile_map" name="syd::DicomFile_map">
-<area href="classsyd_1_1Element.html" title="Base class for all element (row) in a table. " alt="syd::Element" shape="rect" coords="0,0,94,24"/>
+<area href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. " alt="syd::TableElement" shape="rect" coords="0,0,113,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -122,34 +120,24 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a5de2920d8cd16819477cf301da283eec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5de2920d8cd16819477cf301da283eec"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>copy</b> (const <a class="el" href="classsyd_1_1DicomFile.html">DicomFile</a> &amp;t)</td></tr>
 <tr class="separator:a5de2920d8cd16819477cf301da283eec"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad639eb305545e6e97134f5853e20fb01"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad639eb305545e6e97134f5853e20fb01"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetTableHeader</b> (<a class="el" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp;table)</td></tr>
-<tr class="separator:ad639eb305545e6e97134f5853e20fb01"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae75ea67dacdcc4c1531127af0ea0a4ff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae75ea67dacdcc4c1531127af0ea0a4ff"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>DumpElement</b> (<a class="el" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp;table)</td></tr>
-<tr class="separator:ae75ea67dacdcc4c1531127af0ea0a4ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6305e19960a2bd2bb13b9c60773f4b14"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6305e19960a2bd2bb13b9c60773f4b14"></a>
-virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ToString</b> () const </td></tr>
+virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomFile.html#a6305e19960a2bd2bb13b9c60773f4b14">ToString</a> () const </td></tr>
+<tr class="memdesc:a6305e19960a2bd2bb13b9c60773f4b14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use to write the element as a string (must be overloaded) <br /></td></tr>
 <tr class="separator:a6305e19960a2bd2bb13b9c60773f4b14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acc606b421cdb546e4424016f32bd3c9e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acc606b421cdb546e4424016f32bd3c9e"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetValues</b> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomFile.html#acc606b421cdb546e4424016f32bd3c9e">SetValues</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+<tr class="memdesc:acc606b421cdb546e4424016f32bd3c9e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
 <tr class="separator:acc606b421cdb546e4424016f32bd3c9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a7370d31be3d3674d6dab119ba5ee9467"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7370d31be3d3674d6dab119ba5ee9467"></a>
-static std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetTableName</b> ()</td></tr>
-<tr class="separator:a7370d31be3d3674d6dab119ba5ee9467"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a0b17a0e5d72f453236311fd5ecdcaf88"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0b17a0e5d72f453236311fd5ecdcaf88"></a>
 IdType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomFile.html#a0b17a0e5d72f453236311fd5ecdcaf88">id</a></td></tr>
-<tr class="memdesc:a0b17a0e5d72f453236311fd5ecdcaf88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Id of the <a class="el" href="classsyd_1_1DicomFile.html" title="Store information about a dicom image (serie). ">DicomFile</a>. <br /></td></tr>
+<tr class="memdesc:a0b17a0e5d72f453236311fd5ecdcaf88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Id of the <a class="el" href="classsyd_1_1DicomFile.html" title="Store information about a dicom file (unique dicom identifier dicom_sop_uid). ">DicomFile</a>. <br /></td></tr>
 <tr class="separator:a0b17a0e5d72f453236311fd5ecdcaf88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae2977269943fbe575502d0d0c5c4451c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae2977269943fbe575502d0d0c5c4451c"></a>
 std::shared_ptr&lt; <a class="el" href="classsyd_1_1File.html">syd::File</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomFile.html#ae2977269943fbe575502d0d0c5c4451c">file</a></td></tr>
-<tr class="memdesc:ae2977269943fbe575502d0d0c5c4451c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, it must exist in the <a class="el" href="classsyd_1_1File.html" title="Store information about a File linked to a database. ">File</a> table. <br /></td></tr>
+<tr class="memdesc:ae2977269943fbe575502d0d0c5c4451c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, it must exist in the <a class="el" href="classsyd_1_1File.html" title="Store information about a file linked to a database. ">File</a> table. <br /></td></tr>
 <tr class="separator:ae2977269943fbe575502d0d0c5c4451c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f4aebe327d27124ec6e76d7913abbd3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9f4aebe327d27124ec6e76d7913abbd3"></a>
 std::shared_ptr&lt; <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomFile.html#a9f4aebe327d27124ec6e76d7913abbd3">dicom_serie</a></td></tr>
@@ -161,20 +149,14 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <tr class="separator:a21f7d2f4305a088e8195f3002fec2bc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a967d5da7f1971e134e050e86c4a6cd03"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a967d5da7f1971e134e050e86c4a6cd03"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomFile.html#a967d5da7f1971e134e050e86c4a6cd03">dicom_instance_number</a></td></tr>
-<tr class="memdesc:a967d5da7f1971e134e050e86c4a6cd03"><td class="mdescLeft">&#160;</td><td class="mdescRight">FIXME. <br /></td></tr>
+<tr class="memdesc:a967d5da7f1971e134e050e86c4a6cd03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dicom InstanceNumber. <br /></td></tr>
 <tr class="separator:a967d5da7f1971e134e050e86c4a6cd03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
-Friends</h2></td></tr>
-<tr class="memitem:a659cb4f1da5ec06a8852827d06680b67"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a659cb4f1da5ec06a8852827d06680b67"></a>
-std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operator&lt;&lt;</b> (std::ostream &amp;os, const <a class="el" href="classsyd_1_1DicomFile.html">DicomFile</a> &amp;p)</td></tr>
-<tr class="separator:a659cb4f1da5ec06a8852827d06680b67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Store information about a dicom image (serie). </p>
-<p><a class="el" href="classsyd_1_1Element.html" title="Base class for all element (row) in a table. ">Element</a> of table '<a class="el" href="classsyd_1_1DicomFile.html" title="Store information about a dicom image (serie). ">DicomFile</a>' stored in a db. Contains information about a dicom image. </p>
+<div class="textblock"><p>Store information about a dicom file (unique dicom identifier dicom_sop_uid). </p>
+<p>Also contains a link to the <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">DicomSerie</a> it belongs to. </p>
 
-<p>Definition at line <a class="el" href="sydDicomFile_8h_source.html#l00038">38</a> of file <a class="el" href="sydDicomFile_8h_source.html">sydDicomFile.h</a>.</p>
+<p>Definition at line <a class="el" href="sydDicomFile_8h_source.html#l00033">33</a> of file <a class="el" href="sydDicomFile_8h_source.html">sydDicomFile.h</a>.</p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/std_db/<a class="el" href="sydDicomFile_8h_source.html">sydDicomFile.h</a></li>
 <li>src/std_db/<a class="el" href="sydDicomFile_8cxx_source.html">sydDicomFile.cxx</a></li>

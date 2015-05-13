@@ -110,121 +110,61 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;sydStudyDatabase.h&quot;</span></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;sydDatabaseManager.h&quot;</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydPluginManager.h&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">// FIXME to put in a init</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<a class="code" href="classsyd_1_1DatabaseManager.html">syd::DatabaseManager</a> * <a class="code" href="classsyd_1_1DatabaseManager.html#a9cc76c40442784a77603ca4daec00d56">syd::DatabaseManager::singleton_</a>;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<a class="code" href="classsyd_1_1PluginManager.html">syd::PluginManager</a> * <a class="code" href="classsyd_1_1PluginManager.html#aa2bbdebb16cd6ba5a4b42461fe73d3da">syd::PluginManager::singleton_</a>;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;sydTimepointBuilder.h&quot;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">// syd init</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;SYD_STATIC_INIT</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keywordtype">int</span> main(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>* argv[])</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="comment">// Init command line</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  GGO(sydInsertTimepoint, args_info);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="comment">// Init</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  SYD_INIT(sydInsertTimepoint, 3);</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="comment">// Init logging option (verbose)</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  Log::SQLFlag() = args_info.verboseSQL_flag;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  Log::LogLevel() = args_info.verbose_arg;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="comment">// Load plugin</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <a class="code" href="classsyd_1_1PluginManager.html#a9d0d3a5c5108268ff18157d96d8070e3">syd::PluginManager::GetInstance</a>()-&gt;Load();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <a class="code" href="classsyd_1_1DatabaseManager.html">syd::DatabaseManager</a>* m = <a class="code" href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">syd::DatabaseManager::GetInstance</a>();</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="comment">// Check args</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keywordflow">if</span> (args_info.inputs_num &lt; 4) {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    cmdline_parser_sydInsertTimepoint_print_help();</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Please provide at least 4 params&quot;</span>;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  }</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="comment">// Declare ClinicDatabase</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <a class="code" href="classsyd_1_1PluginManager.html#a9d0d3a5c5108268ff18157d96d8070e3">syd::PluginManager::GetInstance</a>()-&gt;Load();</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <a class="code" href="classsyd_1_1DatabaseManager.html">syd::DatabaseManager</a>* m = <a class="code" href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">syd::DatabaseManager::GetInstance</a>();</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="comment">// Get the database</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  std::string dbname = args_info.inputs[0];</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <a class="code" href="classsyd_1_1StudyDatabase.html">syd::StudyDatabase</a> * db = m-&gt;<a class="code" href="classsyd_1_1DatabaseManager.html#a0065ed2a8e5f72427d6dacd3020f7dc1">OpenDB</a>&lt;<a class="code" href="classsyd_1_1StudyDatabase.html">syd::StudyDatabase</a>&gt;(dbname);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="comment">// Get the patient</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  std::string name = args_info.inputs[1];</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <a class="code" href="classsyd_1_1Patient.html">syd::Patient</a> patient;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  db-&gt;<a class="code" href="classsyd_1_1ClinicDatabase.html#ab95924550c2872e33323c445a16b0126">QueryPatientByNameOrStudyId</a>(name, patient);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="comment">// Get the injection</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  std::string inj_name = args_info.inputs[2];</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <a class="code" href="classsyd_1_1Injection.html">syd::Injection</a> injection;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  db-&gt;<a class="code" href="classsyd_1_1ClinicDatabase.html#a7ff8da0675799b883c175be5a63b1b11">QueryInjectionByNameOrId</a>(patient, inj_name, injection);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="comment">// Get the tag</span></div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <a class="code" href="classsyd_1_1Tag.html">syd::Tag</a> tag = db-&gt;<a class="code" href="classsyd_1_1Database.html#afb038fee20e3ec0fd2e66be617ff1931">QueryOne</a>&lt;<a class="code" href="classsyd_1_1Tag.html">syd::Tag</a>&gt;(odb::query&lt;syd::Tag&gt;::name == args_info.inputs[3]);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="comment">// Get the database</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  std::string dbname = args_info.inputs[0];</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <a class="code" href="classsyd_1_1StudyDatabase.html">syd::StudyDatabase</a> * db = m-&gt;<a class="code" href="classsyd_1_1DatabaseManager.html#ab61ef523e66be29ede3eef5d5c1b96c3">Read</a>&lt;<a class="code" href="classsyd_1_1StudyDatabase.html">syd::StudyDatabase</a>&gt;(dbname);</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="comment">// Get the tag</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <a class="code" href="classsyd_1_1Tag.html">syd::Tag</a> tag = db-&gt;<a class="code" href="classsyd_1_1Database.html#a9198e4041a08a896198b31c614afce80">QueryOne</a>&lt;<a class="code" href="classsyd_1_1Tag.html">syd::Tag</a>&gt;(odb::query&lt;syd::Tag&gt;::label == args_info.inputs[1]);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="comment">// Get the list of dicoms ids</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  std::vector&lt;syd::DicomSerie&gt; dicoms;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=2; i&lt;args_info.inputs_num; i++) {</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    syd::IdType <span class="keywordtype">id</span> = atoi(args_info.inputs[i]);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordflow">if</span> (db-&gt;<a class="code" href="classsyd_1_1Database.html#a6544f36b101c2fc5caeda9976f8428c9">IfExist</a>&lt;<a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a>&gt;(<span class="keywordtype">id</span>)) {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;      <a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> d = db-&gt;<a class="code" href="classsyd_1_1Database.html#a9198e4041a08a896198b31c614afce80">QueryOne</a>&lt;<a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a>&gt;(id);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;      dicoms.push_back(d);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;      LOG(WARNING) &lt;&lt; <span class="stringliteral">&quot;Could not find the DicomSerie with id.&quot;</span> &lt;&lt; id;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    }</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  }</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="comment">// Insert all the dicoms. The builder guess if this is a new timepoint or not.</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <a class="code" href="classsyd_1_1TimepointBuilder.html">syd::TimepointBuilder</a> b(db);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  b.SetTag(tag);</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:dicoms) {</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    b.InsertDicomSerie(d);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  }</div>
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="comment">// Get the list of dicoms ids</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  std::vector&lt;syd::DicomSerie&gt; dicoms;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=4; i&lt;args_info.inputs_num; i++) {</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    syd::IdType <span class="keywordtype">id</span> = atoi(args_info.inputs[i]);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordflow">if</span> (db-&gt;<a class="code" href="classsyd_1_1Database.html#a6544f36b101c2fc5caeda9976f8428c9">IfExist</a>&lt;<a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a>&gt;(<span class="keywordtype">id</span>)) {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      <a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> d = db-&gt;<a class="code" href="classsyd_1_1Database.html#afb038fee20e3ec0fd2e66be617ff1931">QueryOne</a>&lt;<a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a>&gt;(id);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      <span class="keywordflow">if</span> (d.patient-&gt;id != patient.<a class="code" href="classsyd_1_1Patient.html#a24c91d398e03e6dfbe27b622bdda2cb0">id</a>) {</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;The patient of the DicomSerie n°&quot;</span> &lt;&lt; <span class="keywordtype">id</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                   &lt;&lt; <span class="stringliteral">&quot; is &#39;&quot;</span> &lt;&lt; d.patient-&gt;name &lt;&lt; <span class="stringliteral">&quot;&#39; while you ask for patient &#39;&quot;</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                   &lt;&lt; patient.<a class="code" href="classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987">name</a> &lt;&lt; <span class="stringliteral">&quot;&#39;.&quot;</span>;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      }</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      dicoms.push_back(d);</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    }</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;      LOG(WARNING) &lt;&lt; <span class="stringliteral">&quot;Could not find the DicomSerie with id &quot;</span> &lt;&lt; id;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    }</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  }</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="comment">// Decompose the dicoms into groups of dicoms</span></div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  std::sort(dicoms.begin(), dicoms.end(),</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            [&amp;dicoms](<a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> a, <a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> b) { <span class="keywordflow">return</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                syd::IsDateBefore(a.<a class="code" href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">acquisition_date</a>, b.acquisition_date); }  );</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="comment">// Split the dicoms in group</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  std::vector&lt;std::vector&lt;syd::DicomSerie&gt;&gt; sets;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="keywordtype">int</span> i=-1;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  std::string previous_date = <span class="stringliteral">&quot;0000-00-00 00:00&quot;</span>;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordtype">double</span> max_diff = args_info.max_diff_arg;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:dicoms) {</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordtype">double</span> diff = max_diff+1;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">if</span> (i!=-1) diff = syd::DateDifferenceInHours(d.<a class="code" href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">acquisition_date</a>, previous_date);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">if</span> (diff &lt; max_diff) {</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;      sets[i].push_back(d);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    }</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;      std::vector&lt;syd::DicomSerie&gt; l;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;      l.push_back(d);</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;      previous_date = d.<a class="code" href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">acquisition_date</a>;</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;      sets.push_back(l);</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;      i++;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    }</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  }</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="comment">// Create a timepoint</span></div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> s:sets) {</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    <a class="code" href="classsyd_1_1Timepoint.html">syd::Timepoint</a> tp = db-&gt;<a class="code" href="classsyd_1_1StudyDatabase.html#a2ea5ed478bf275965621309f506d5b12">InsertTimepoint</a>(injection, tag, s, args_info.replace_flag);</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    LOG(1) &lt;&lt; <span class="stringliteral">&quot;Inserting timepoint: &quot;</span> &lt;&lt; tp;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  }</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="comment">// This is the end, my friend.</span></div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;}</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="ttc" id="classsyd_1_1ClinicDatabase_html_a7ff8da0675799b883c175be5a63b1b11"><div class="ttname"><a href="classsyd_1_1ClinicDatabase.html#a7ff8da0675799b883c175be5a63b1b11">syd::ClinicDatabase::QueryInjectionByNameOrId</a></div><div class="ttdeci">bool QueryInjectionByNameOrId(const Patient &amp;patient, const std::string &amp;arg, Injection &amp;p, bool fatalIfNotFound=true)</div><div class="ttdoc">Return the patient injection where radionuclide match the arg. </div><div class="ttdef"><b>Definition:</b> <a href="sydClinicDatabase_8cxx_source.html#l00085">sydClinicDatabase.cxx:85</a></div></div>
-<div class="ttc" id="classsyd_1_1DatabaseManager_html_a9cc76c40442784a77603ca4daec00d56"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#a9cc76c40442784a77603ca4daec00d56">syd::DatabaseManager::singleton_</a></div><div class="ttdeci">static DatabaseManager * singleton_</div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8h_source.html#l00060">sydDatabaseManager.h:60</a></div></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="comment">// This is the end, my friend.</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;}</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
 <div class="ttc" id="classsyd_1_1StudyDatabase_html"><div class="ttname"><a href="classsyd_1_1StudyDatabase.html">syd::StudyDatabase</a></div><div class="ttdoc">FIXME. </div><div class="ttdef"><b>Definition:</b> <a href="sydStudyDatabase_8h_source.html#l00031">sydStudyDatabase.h:31</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_a05db952b76b7980cb12d9206ffa82dcb"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">syd::DicomSerie::acquisition_date</a></div><div class="ttdeci">std::string acquisition_date</div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00055">sydDicomSerie.h:55</a></div></div>
-<div class="ttc" id="classsyd_1_1Injection_html"><div class="ttname"><a href="classsyd_1_1Injection.html">syd::Injection</a></div><div class="ttdoc">Store information about a radionuclide injection (date, etc) </div><div class="ttdef"><b>Definition:</b> <a href="sydInjection_8h_source.html#l00037">sydInjection.h:37</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_a6544f36b101c2fc5caeda9976f8428c9"><div class="ttname"><a href="classsyd_1_1Database.html#a6544f36b101c2fc5caeda9976f8428c9">syd::Database::IfExist</a></div><div class="ttdeci">bool IfExist(IdType id)</div><div class="ttdoc">Check if the given id exist. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00124">sydDatabase.h:124</a></div></div>
+<div class="ttc" id="classsyd_1_1TimepointBuilder_html"><div class="ttname"><a href="classsyd_1_1TimepointBuilder.html">syd::TimepointBuilder</a></div><div class="ttdoc">This class is used to create a Timepoint. </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepointBuilder_8h_source.html#l00031">sydTimepointBuilder.h:31</a></div></div>
+<div class="ttc" id="classsyd_1_1Database_html_a6544f36b101c2fc5caeda9976f8428c9"><div class="ttname"><a href="classsyd_1_1Database.html#a6544f36b101c2fc5caeda9976f8428c9">syd::Database::IfExist</a></div><div class="ttdeci">bool IfExist(IdType id)</div><div class="ttdoc">Check if the given id exist. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00109">sydDatabase.h:109</a></div></div>
 <div class="ttc" id="classsyd_1_1PluginManager_html_a9d0d3a5c5108268ff18157d96d8070e3"><div class="ttname"><a href="classsyd_1_1PluginManager.html#a9d0d3a5c5108268ff18157d96d8070e3">syd::PluginManager::GetInstance</a></div><div class="ttdeci">static PluginManager * GetInstance()</div><div class="ttdoc">Retrieve the unique instance (singleton) </div><div class="ttdef"><b>Definition:</b> <a href="sydPluginManager_8cxx_source.html#l00026">sydPluginManager.cxx:26</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_afb038fee20e3ec0fd2e66be617ff1931"><div class="ttname"><a href="classsyd_1_1Database.html#afb038fee20e3ec0fd2e66be617ff1931">syd::Database::QueryOne</a></div><div class="ttdeci">ElementType QueryOne(const odb::query&lt; ElementType &gt; &amp;q)</div><div class="ttdoc">Get the unique element matching the query (fail if 0 or >1 elements) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00097">sydDatabase.h:97</a></div></div>
-<div class="ttc" id="classsyd_1_1DatabaseManager_html_a0065ed2a8e5f72427d6dacd3020f7dc1"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#a0065ed2a8e5f72427d6dacd3020f7dc1">syd::DatabaseManager::OpenDB</a></div><div class="ttdeci">DatabaseType * OpenDB(std::string filename)</div><div class="ttdoc">Open and retrieve a database of the given type. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8h_source.html#l00039">sydDatabaseManager.h:39</a></div></div>
-<div class="ttc" id="classsyd_1_1ClinicDatabase_html_ab95924550c2872e33323c445a16b0126"><div class="ttname"><a href="classsyd_1_1ClinicDatabase.html#ab95924550c2872e33323c445a16b0126">syd::ClinicDatabase::QueryPatientByNameOrStudyId</a></div><div class="ttdeci">bool QueryPatientByNameOrStudyId(const std::string &amp;arg, Patient &amp;p, bool fatalIfNotFound=true)</div><div class="ttdoc">Return the patient name. Stop if not found. </div><div class="ttdef"><b>Definition:</b> <a href="sydClinicDatabase_8cxx_source.html#l00045">sydClinicDatabase.cxx:45</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html_a86d13a77573c136984d2ad7f137d8987"><div class="ttname"><a href="classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987">syd::Patient::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">Patient name (unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00048">sydPatient.h:48</a></div></div>
-<div class="ttc" id="classsyd_1_1StudyDatabase_html_a2ea5ed478bf275965621309f506d5b12"><div class="ttname"><a href="classsyd_1_1StudyDatabase.html#a2ea5ed478bf275965621309f506d5b12">syd::StudyDatabase::InsertTimepoint</a></div><div class="ttdeci">syd::Timepoint InsertTimepoint(syd::Injection &amp;injection, syd::Tag &amp;tag, std::vector&lt; syd::DicomSerie &gt; &amp;dicoms, bool replaceTimepointFlag)</div><div class="ttdoc">Insert a new Timepoint. </div><div class="ttdef"><b>Definition:</b> <a href="sydStudyDatabase_8cxx_source.html#l00054">sydStudyDatabase.cxx:54</a></div></div>
-<div class="ttc" id="classsyd_1_1PluginManager_html"><div class="ttname"><a href="classsyd_1_1PluginManager.html">syd::PluginManager</a></div><div class="ttdef"><b>Definition:</b> <a href="sydPluginManager_8h_source.html#l00029">sydPluginManager.h:29</a></div></div>
-<div class="ttc" id="classsyd_1_1Timepoint_html"><div class="ttname"><a href="classsyd_1_1Timepoint.html">syd::Timepoint</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8h_source.html#l00036">sydTimepoint.h:36</a></div></div>
+<div class="ttc" id="classsyd_1_1Database_html_a9198e4041a08a896198b31c614afce80"><div class="ttname"><a href="classsyd_1_1Database.html#a9198e4041a08a896198b31c614afce80">syd::Database::QueryOne</a></div><div class="ttdeci">TableElement QueryOne(const odb::query&lt; TableElement &gt; &amp;q)</div><div class="ttdoc">Get the unique element matching the query (fail if 0 or >1 elements) </div></div>
 <div class="ttc" id="classsyd_1_1DatabaseManager_html_a0fb6ff33f3f40fa6819dbfa69c71141f"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">syd::DatabaseManager::GetInstance</a></div><div class="ttdeci">static DatabaseManager * GetInstance()</div><div class="ttdoc">Retrieve the unique instance (singleton) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8cxx_source.html#l00024">sydDatabaseManager.cxx:24</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html"><div class="ttname"><a href="classsyd_1_1Patient.html">syd::Patient</a></div><div class="ttdoc">Store information about a patient (id, name etc) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00039">sydPatient.h:39</a></div></div>
-<div class="ttc" id="classsyd_1_1PluginManager_html_aa2bbdebb16cd6ba5a4b42461fe73d3da"><div class="ttname"><a href="classsyd_1_1PluginManager.html#aa2bbdebb16cd6ba5a4b42461fe73d3da">syd::PluginManager::singleton_</a></div><div class="ttdeci">static PluginManager * singleton_</div><div class="ttdef"><b>Definition:</b> <a href="sydPluginManager_8h_source.html#l00046">sydPluginManager.h:46</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html"><div class="ttname"><a href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00040">sydDicomSerie.h:40</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html_a24c91d398e03e6dfbe27b622bdda2cb0"><div class="ttname"><a href="classsyd_1_1Patient.html#a24c91d398e03e6dfbe27b622bdda2cb0">syd::Patient::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Main key (automated, unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00044">sydPatient.h:44</a></div></div>
-<div class="ttc" id="classsyd_1_1Tag_html"><div class="ttname"><a href="classsyd_1_1Tag.html">syd::Tag</a></div><div class="ttdoc">FIXME. </div><div class="ttdef"><b>Definition:</b> <a href="sydTag_8h_source.html#l00030">sydTag.h:30</a></div></div>
-<div class="ttc" id="classsyd_1_1DatabaseManager_html"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html">syd::DatabaseManager</a></div><div class="ttdoc">Manage a set of database type. Allow to open and create. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8h_source.html#l00030">sydDatabaseManager.h:30</a></div></div>
+<div class="ttc" id="classsyd_1_1DicomSerie_html"><div class="ttname"><a href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00037">sydDicomSerie.h:37</a></div></div>
+<div class="ttc" id="classsyd_1_1Tag_html"><div class="ttname"><a href="classsyd_1_1Tag.html">syd::Tag</a></div><div class="ttdoc">Simple table to store a label and a description. </div><div class="ttdef"><b>Definition:</b> <a href="sydTag_8h_source.html#l00030">sydTag.h:30</a></div></div>
+<div class="ttc" id="classsyd_1_1DatabaseManager_html_ab61ef523e66be29ede3eef5d5c1b96c3"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#ab61ef523e66be29ede3eef5d5c1b96c3">syd::DatabaseManager::Read</a></div><div class="ttdeci">Database * Read(const std::string &amp;filename)</div><div class="ttdoc">Open and read a database (automatically find the correct schema) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8cxx_source.html#l00035">sydDatabaseManager.cxx:35</a></div></div>
+<div class="ttc" id="classsyd_1_1DatabaseManager_html"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html">syd::DatabaseManager</a></div><div class="ttdoc">Manage a set of database schema. Allow to read and create. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8h_source.html#l00030">sydDatabaseManager.h:30</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

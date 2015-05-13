@@ -1,8 +1,14 @@
 var searchData=
 [
-  ['ifexist',['IfExist',['../classsyd_1_1Database.html#a6544f36b101c2fc5caeda9976f8428c9',1,'syd::Database::IfExist()'],['../singletonsyd_1_1Table.html#a38a829e372f7306c281f5b0c8a138a3a',1,'syd::Table::IfExist()']]],
-  ['insert',['Insert',['../classsyd_1_1Database.html#ab2a101f09483fe274fa12d3d769e0166',1,'syd::Database::Insert(ElementType &amp;r)'],['../classsyd_1_1Database.html#a51f09170409acdc2df53698d247f78a2',1,'syd::Database::Insert(std::vector&lt; ElementType * &gt; &amp;r)'],['../singletonsyd_1_1Table.html#a9ec14b0e2a3a002bb7858fc6904bddd9',1,'syd::Table::Insert(ElementType &amp;r)'],['../singletonsyd_1_1Table.html#a390eb4d4d70be3dbc24062442ebeea63',1,'syd::Table::Insert(std::vector&lt; ElementType * &gt; &amp;r)'],['../singletonsyd_1_1Table.html#a69574cdd5d4cf87fd084c98bfcba8b2d',1,'syd::Table::Insert(std::vector&lt; std::string &gt; &amp;arg)']]],
-  ['insertfromarg',['InsertFromArg',['../classsyd_1_1Database.html#ac5a3efdb8ac081a77555fb2ac6d53f2c',1,'syd::Database::InsertFromArg()'],['../classsyd_1_1ClinicDatabase.html#ab102f97ade417d697fefca983e0de7c7',1,'syd::ClinicDatabase::InsertFromArg()'],['../classsyd_1_1StudyDatabase.html#a13afba379392ce9ccbda20e47eb1e0ef',1,'syd::StudyDatabase::InsertFromArg()']]],
-  ['insertinjection',['InsertInjection',['../classsyd_1_1ClinicDatabase.html#a25a05b6f32566886be3320e9f77dc60d',1,'syd::ClinicDatabase']]],
-  ['inserttimepoint',['InsertTimepoint',['../classsyd_1_1StudyDatabase.html#a2ea5ed478bf275965621309f506d5b12',1,'syd::StudyDatabase']]]
+  ['getabsolutedbfolder',['GetAbsoluteDBFolder',['../classsyd_1_1Database.html#af43b76c8045344eaaa96eb1062ac4196',1,'syd::Database']]],
+  ['getabsolutefolder',['GetAbsoluteFolder',['../classsyd_1_1ClinicDatabase.html#a279f734460ea7f96df2eccda432a1bc0',1,'syd::ClinicDatabase::GetAbsoluteFolder(const DicomSerie &amp;serie)'],['../classsyd_1_1ClinicDatabase.html#a25c07b8905fdd2ede5642d05def55449',1,'syd::ClinicDatabase::GetAbsoluteFolder(const Patient &amp;patient)']]],
+  ['getdatabaseschema',['GetDatabaseSchema',['../classsyd_1_1Database.html#ae0fc42ac9795362e56b9dcb306670411',1,'syd::Database']]],
+  ['getdatabaseschemas',['GetDatabaseSchemas',['../classsyd_1_1DatabaseManager.html#a402555b6cdc2639dbff8cd1f69bc13c4',1,'syd::DatabaseManager']]],
+  ['getfilename',['GetFilename',['../classsyd_1_1Database.html#af978bbfce8839721d25735b6db020cb0',1,'syd::Database']]],
+  ['getinstance',['GetInstance',['../classsyd_1_1DatabaseFactory.html#a24063a2d613690fca9d59f9aefdec0e3',1,'syd::DatabaseFactory::GetInstance()'],['../classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f',1,'syd::DatabaseManager::GetInstance()'],['../classsyd_1_1PluginManager.html#a9d0d3a5c5108268ff18157d96d8070e3',1,'syd::PluginManager::GetInstance()']]],
+  ['getlastsqlquery',['GetLastSQLQuery',['../classsyd_1_1Database.html#ad3a7c7fb4aac508e910acbfc732da3ce',1,'syd::Database']]],
+  ['getmapoftables',['GetMapOfTables',['../classsyd_1_1Database.html#aa1d82736549398f655f191ef4e34e05e',1,'syd::Database']]],
+  ['getnumberofelements',['GetNumberOfElements',['../singletonsyd_1_1Table.html#a3355865c9b92b4606ca5253fce833200',1,'syd::Table']]],
+  ['getrelativedbfolder',['GetRelativeDBFolder',['../classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980',1,'syd::Database']]],
+  ['gettable',['GetTable',['../classsyd_1_1Database.html#a07f35ca4a0789dcfb86fe304690c6b50',1,'syd::Database::GetTable(const std::string &amp;table_name)'],['../classsyd_1_1Database.html#a33d5080feb07e76f626fd652814bafa8',1,'syd::Database::GetTable()']]]
 ];

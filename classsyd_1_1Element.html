@@ -88,9 +88,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#friends">Friends</a> &#124;
 <a href="classsyd_1_1Element-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">syd::Element Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
+<div class="title">syd::Element Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -104,38 +105,50 @@ Inheritance diagram for syd::Element:</div>
  <div class="center">
   <img src="classsyd_1_1Element.png" usemap="#syd::Element_map" alt=""/>
   <map id="syd::Element_map" name="syd::Element_map">
-<area href="classsyd_1_1DicomFile.html" title="Store information about a dicom image (serie). " alt="syd::DicomFile" shape="rect" coords="0,56,103,80"/>
+<area href="classsyd_1_1DicomFile.html" title="Store information about a dicom file (unique dicom identifier dicom_sop_uid). " alt="syd::DicomFile" shape="rect" coords="0,56,103,80"/>
 <area href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). " alt="syd::DicomSerie" shape="rect" coords="113,56,216,80"/>
-<area href="classsyd_1_1File.html" title="Store information about a File linked to a database. " alt="syd::File" shape="rect" coords="226,56,329,80"/>
+<area href="classsyd_1_1File.html" title="Store information about a file linked to a database. " alt="syd::File" shape="rect" coords="226,56,329,80"/>
 <area href="classsyd_1_1Injection.html" title="Store information about a radionuclide injection (date, etc) " alt="syd::Injection" shape="rect" coords="339,56,442,80"/>
-<area href="classsyd_1_1Patient.html" title="Store information about a patient (id, name etc) " alt="syd::Patient" shape="rect" coords="452,56,555,80"/>
-<area href="classsyd_1_1Tag.html" title="FIXME. " alt="syd::Tag" shape="rect" coords="565,56,668,80"/>
-<area href="classsyd_1_1Timepoint.html" title="Store information about a dicom image (serie). " alt="syd::Timepoint" shape="rect" coords="678,56,781,80"/>
+<area href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). " alt="syd::Patient" shape="rect" coords="452,56,555,80"/>
+<area href="classsyd_1_1Tag.html" title="Simple table to store a label and a description. " alt="syd::Tag" shape="rect" coords="565,56,668,80"/>
+<area href="classsyd_1_1Timepoint.html" title="Store information about a timepoint. " alt="syd::Timepoint" shape="rect" coords="678,56,781,80"/>
 <area href="classext_1_1Patient.html" title="Example of extended version of a table Patient. " alt="ext::Patient" shape="rect" coords="452,112,555,136"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acca4b0abaed88642885230a1d933389f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acca4b0abaed88642885230a1d933389f"></a>
-virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ToString</b> () const </td></tr>
-<tr class="separator:acca4b0abaed88642885230a1d933389f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8712c191786ef1df11ddf829b4e1ab09"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8712c191786ef1df11ddf829b4e1ab09"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetValues</b> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
-<tr class="separator:a8712c191786ef1df11ddf829b4e1ab09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae69865c0227188ced92e274237331565"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae69865c0227188ced92e274237331565"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>SetTableHeader</b> (<a class="el" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp;table)=0</td></tr>
-<tr class="separator:ae69865c0227188ced92e274237331565"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37258f6692eae64dc73587281b79dfb5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a37258f6692eae64dc73587281b79dfb5"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>DumpElement</b> (<a class="el" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp;table)=0</td></tr>
-<tr class="separator:a37258f6692eae64dc73587281b79dfb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe26248979523e1773d5f89918d7feff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afe26248979523e1773d5f89918d7feff"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Element.html#afe26248979523e1773d5f89918d7feff">Element</a> ()</td></tr>
+<tr class="memdesc:afe26248979523e1773d5f89918d7feff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
+<tr class="separator:afe26248979523e1773d5f89918d7feff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c6427ccabf3f92c4c614a38e4d2ee74"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5c6427ccabf3f92c4c614a38e4d2ee74"></a>
+virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Element.html#a5c6427ccabf3f92c4c614a38e4d2ee74">~Element</a> ()</td></tr>
+<tr class="memdesc:a5c6427ccabf3f92c4c614a38e4d2ee74"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor. <br /></td></tr>
+<tr class="separator:a5c6427ccabf3f92c4c614a38e4d2ee74"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04d04bffe7780012c090d33fd39f7337"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04d04bffe7780012c090d33fd39f7337"></a>
+virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Element.html#a04d04bffe7780012c090d33fd39f7337">ToString</a> () const </td></tr>
+<tr class="memdesc:a04d04bffe7780012c090d33fd39f7337"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use to write the element as a string. <br /></td></tr>
+<tr class="separator:a04d04bffe7780012c090d33fd39f7337"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a929524448250577108d5f727117cb28f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a929524448250577108d5f727117cb28f"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Element.html#a929524448250577108d5f727117cb28f">SetValues</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+<tr class="memdesc:a929524448250577108d5f727117cb28f"><td class="mdescLeft">&#160;</td><td class="mdescRight">FIXME. <br /></td></tr>
+<tr class="separator:a929524448250577108d5f727117cb28f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
+Friends</h2></td></tr>
+<tr class="memitem:a9638d477f664fbc5cf950fe31adea16e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9638d477f664fbc5cf950fe31adea16e"></a>
+std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Element.html#a9638d477f664fbc5cf950fe31adea16e">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="classsyd_1_1Element.html">Element</a> &amp;p)</td></tr>
+<tr class="memdesc:a9638d477f664fbc5cf950fe31adea16e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default function to print an element (must be inline here). <br /></td></tr>
+<tr class="separator:a9638d477f664fbc5cf950fe31adea16e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Base class for all element (row) in a table. </p>
 
 <p>Definition at line <a class="el" href="sydElement_8h_source.html#l00029">29</a> of file <a class="el" href="sydElement_8h_source.html">sydElement.h</a>.</p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/core/<a class="el" href="sydElement_8h_source.html">sydElement.h</a></li>
+<li>src/core/<a class="el" href="sydElement_8cxx_source.html">sydElement.cxx</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

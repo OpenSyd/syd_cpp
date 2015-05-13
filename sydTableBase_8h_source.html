@@ -110,7 +110,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// syd</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydCommon.h&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;sydElement.h&quot;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;sydTableElement.h&quot;</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">// odb</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;odb/database.hxx&gt;</span></div>
@@ -130,7 +130,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <a class="code" href="classsyd_1_1TableBase.html">TableBase</a>(odb::sqlite::database * d):db_(d) {}</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">//    virtual bool Delete(IdType id) = 0;</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classsyd_1_1Element.html">Element</a> * Insert(std::vector&lt;std::string&gt; &amp; arg) = 0;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classsyd_1_1TableElement.html">TableElement</a> * Insert(std::vector&lt;std::string&gt; &amp; arg) = 0;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> DumpTable(std::ostream &amp; os) = 0;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> GetNumberOfElements() = 0;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
@@ -142,9 +142,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classsyd_1_1TableElement_html"><div class="ttname"><a href="classsyd_1_1TableElement.html">syd::TableElement</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableElement_8h_source.html#l00029">sydTableElement.h:29</a></div></div>
 <div class="ttc" id="classsyd_1_1TableBase_html"><div class="ttname"><a href="classsyd_1_1TableBase.html">syd::TableBase</a></div><div class="ttdoc">Base class for the functions that are common to all tables. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableBase_8h_source.html#l00040">sydTableBase.h:40</a></div></div>
-<div class="ttc" id="classsyd_1_1Element_html"><div class="ttname"><a href="classsyd_1_1Element.html">syd::Element</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydElement_8h_source.html#l00029">sydElement.h:29</a></div></div>
-<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydActivityTimeIntegratedCommand_8h_source.html#l00028">sydActivityTimeIntegratedCommand.h:28</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00051">sydCommon.h:51</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -96,55 +96,59 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
+<p>This class search for dicom file in folder and insert the <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">DicomSerie</a> and <a class="el" href="classsyd_1_1DicomFile.html" title="Store information about a dicom file (unique dicom identifier dicom_sop_uid). ">DicomFile</a> in the db.  
+ <a href="classsyd_1_1DicomSerieBuilder.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="sydDicomSerieBuilder_8h_source.html">sydDicomSerieBuilder.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae16a38204bfa580f1aa493fbb52a238c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae16a38204bfa580f1aa493fbb52a238c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#ae16a38204bfa580f1aa493fbb52a238c">DicomSerieBuilder</a> ()</td></tr>
-<tr class="memdesc:ae16a38204bfa580f1aa493fbb52a238c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
-<tr class="separator:ae16a38204bfa580f1aa493fbb52a238c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a289bd50e125bf00c69df06a37918766c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a289bd50e125bf00c69df06a37918766c"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>DicomSerieBuilder</b> (<a class="el" href="classsyd_1_1ClinicDatabase.html">syd::ClinicDatabase</a> *db)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a289bd50e125bf00c69df06a37918766c">DicomSerieBuilder</a> (<a class="el" href="classsyd_1_1ClinicDatabase.html">syd::ClinicDatabase</a> *db)</td></tr>
+<tr class="memdesc:a289bd50e125bf00c69df06a37918766c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
 <tr class="separator:a289bd50e125bf00c69df06a37918766c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a542aee8e90dbec6f9b8178ee4ed64f87"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a542aee8e90dbec6f9b8178ee4ed64f87"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a542aee8e90dbec6f9b8178ee4ed64f87">~DicomSerieBuilder</a> ()</td></tr>
 <tr class="memdesc:a542aee8e90dbec6f9b8178ee4ed64f87"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor (empty) <br /></td></tr>
 <tr class="separator:a542aee8e90dbec6f9b8178ee4ed64f87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a77d75ac7a88747fcd7164c659519d100"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a77d75ac7a88747fcd7164c659519d100"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetDatabase</b> (<a class="el" href="classsyd_1_1ClinicDatabase.html">syd::ClinicDatabase</a> *db)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a77d75ac7a88747fcd7164c659519d100">SetDatabase</a> (<a class="el" href="classsyd_1_1ClinicDatabase.html">syd::ClinicDatabase</a> *db)</td></tr>
+<tr class="memdesc:a77d75ac7a88747fcd7164c659519d100"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the pointer to the database. <br /></td></tr>
 <tr class="separator:a77d75ac7a88747fcd7164c659519d100"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa0b6413d9308ff2dc037b3668225b997"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa0b6413d9308ff2dc037b3668225b997"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetFolder</b> (const std::string &amp;folder)</td></tr>
-<tr class="separator:aa0b6413d9308ff2dc037b3668225b997"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac06a3ae2579671e575652c94416fd29a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac06a3ae2579671e575652c94416fd29a"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetOverwriteFilesFlag</b> (bool b)</td></tr>
-<tr class="separator:ac06a3ae2579671e575652c94416fd29a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f9de27336f7e989ec2bbf0770e09536"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3f9de27336f7e989ec2bbf0770e09536"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a3f9de27336f7e989ec2bbf0770e09536">SetInjection</a> (<a class="el" href="classsyd_1_1Injection.html">syd::Injection</a> &amp;injection)</td></tr>
+<tr class="memdesc:a3f9de27336f7e989ec2bbf0770e09536"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the injection (required) <br /></td></tr>
+<tr class="separator:a3f9de27336f7e989ec2bbf0770e09536"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a196085ea3b89d5e60f74b89d4ce45d9c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a196085ea3b89d5e60f74b89d4ce45d9c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetForcePatientFlag</b> (bool b)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a196085ea3b89d5e60f74b89d4ce45d9c">SetForcePatientFlag</a> (bool b)</td></tr>
+<tr class="memdesc:a196085ea3b89d5e60f74b89d4ce45d9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Don't stop even if the patient in the dicom seems different from the patient in the injection. <br /></td></tr>
 <tr class="separator:a196085ea3b89d5e60f74b89d4ce45d9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a45640576f7574f74ee75386641781f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2a45640576f7574f74ee75386641781f"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetPatient</b> (<a class="el" href="classsyd_1_1Patient.html">syd::Patient</a> &amp;p)</td></tr>
-<tr class="separator:a2a45640576f7574f74ee75386641781f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae93fe7d149175742f888f749a43cbcd3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae93fe7d149175742f888f749a43cbcd3"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetInjection</b> (std::string)</td></tr>
-<tr class="separator:ae93fe7d149175742f888f749a43cbcd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af47afa5b86ff7c68f0dc1f7d57c0dca9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af47afa5b86ff7c68f0dc1f7d57c0dca9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetUseInjectionFlag</b> (bool b)</td></tr>
-<tr class="separator:af47afa5b86ff7c68f0dc1f7d57c0dca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aed3c392fd42f7376ccb065f1ea3878ab"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed3c392fd42f7376ccb065f1ea3878ab"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SearchForFilesInFolder</b> (OFList&lt; OFString &gt; &amp;inputFiles)</td></tr>
-<tr class="separator:aed3c392fd42f7376ccb065f1ea3878ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34eaad879bfe1c2d4457a6cf16dd708e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a34eaad879bfe1c2d4457a6cf16dd708e"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>InsertDicomFile</b> (std::string filename)</td></tr>
-<tr class="separator:a34eaad879bfe1c2d4457a6cf16dd708e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c28e9a23ae8338fb9b7d1e8b951714a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c28e9a23ae8338fb9b7d1e8b951714a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a6c28e9a23ae8338fb9b7d1e8b951714a">SearchForFilesInFolder</a> (std::string folder, OFList&lt; OFString &gt; &amp;inputFiles)</td></tr>
+<tr class="memdesc:a6c28e9a23ae8338fb9b7d1e8b951714a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a list of files to be considered as dicom. <br /></td></tr>
+<tr class="separator:a6c28e9a23ae8338fb9b7d1e8b951714a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cf4632987b4a1c16ed3012c816a9cdf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8cf4632987b4a1c16ed3012c816a9cdf"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a8cf4632987b4a1c16ed3012c816a9cdf">InsertDicom</a> (std::string filename)</td></tr>
+<tr class="memdesc:a8cf4632987b4a1c16ed3012c816a9cdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a DicomSerie/DicomFile (still not inserted into the db, use UpdateDicomSerie for that) <br /></td></tr>
+<tr class="separator:a8cf4632987b4a1c16ed3012c816a9cdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8f052f20cc9c9213656eb2bd3e8151d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa8f052f20cc9c9213656eb2bd3e8151d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#aa8f052f20cc9c9213656eb2bd3e8151d">UpdateSeries</a> ()</td></tr>
+<tr class="memdesc:aa8f052f20cc9c9213656eb2bd3e8151d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert the created DicomSerie/DicomFile into the db. <br /></td></tr>
+<tr class="separator:aa8f052f20cc9c9213656eb2bd3e8151d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:ae16a38204bfa580f1aa493fbb52a238c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae16a38204bfa580f1aa493fbb52a238c"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#ae16a38204bfa580f1aa493fbb52a238c">DicomSerieBuilder</a> ()</td></tr>
+<tr class="memdesc:ae16a38204bfa580f1aa493fbb52a238c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protected constructor. No need to use directly. <br /></td></tr>
+<tr class="separator:ae16a38204bfa580f1aa493fbb52a238c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5241df657fde48ecb6f094dd22538d61"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5241df657fde48ecb6f094dd22538d61"></a>
 <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a5241df657fde48ecb6f094dd22538d61">CreateDicomSerie</a> (const std::string &amp;filename, DcmObject *dset)</td></tr>
 <tr class="memdesc:a5241df657fde48ecb6f094dd22538d61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do not check if the serie already exist. <br /></td></tr>
 <tr class="separator:a5241df657fde48ecb6f094dd22538d61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9807add9115f208fed5305bb59ac4821"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9807add9115f208fed5305bb59ac4821"></a>
 <a class="el" href="classsyd_1_1DicomFile.html">syd::DicomFile</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a9807add9115f208fed5305bb59ac4821">CreateDicomFile</a> (const std::string &amp;filename, DcmObject *dset, <a class="el" href="classsyd_1_1DicomSerie.html">DicomSerie</a> *serie)</td></tr>
-<tr class="memdesc:a9807add9115f208fed5305bb59ac4821"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do not check if the <a class="el" href="classsyd_1_1DicomFile.html" title="Store information about a dicom image (serie). ">DicomFile</a> and the file already exist. <br /></td></tr>
+<tr class="memdesc:a9807add9115f208fed5305bb59ac4821"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do not check if the <a class="el" href="classsyd_1_1DicomFile.html" title="Store information about a dicom file (unique dicom identifier dicom_sop_uid). ">DicomFile</a> and the file already exist. <br /></td></tr>
 <tr class="separator:a9807add9115f208fed5305bb59ac4821"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa968938af868cbb0fd15de3cee2519d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa968938af868cbb0fd15de3cee2519d"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#aaa968938af868cbb0fd15de3cee2519d">UpdateDicomSerie</a> (<a class="el" href="classsyd_1_1DicomSerie.html">DicomSerie</a> *serie, const std::string &amp;filename, DcmObject *dset)</td></tr>
@@ -153,33 +157,21 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memitem:ad66e263af393d89708df9350f38cfbd1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad66e263af393d89708df9350f38cfbd1"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>GuessDicomSerieForThisFile</b> (const std::string &amp;filename, DcmObject *dset, <a class="el" href="classsyd_1_1DicomSerie.html">DicomSerie</a> **serie)</td></tr>
 <tr class="separator:ad66e263af393d89708df9350f38cfbd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8f052f20cc9c9213656eb2bd3e8151d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa8f052f20cc9c9213656eb2bd3e8151d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>UpdateSeries</b> ()</td></tr>
-<tr class="separator:aa8f052f20cc9c9213656eb2bd3e8151d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
-Protected Member Functions</h2></td></tr>
 <tr class="memitem:a2d53861c0668aba492dfbd3b82c07fac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2d53861c0668aba492dfbd3b82c07fac"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>DicomFileAlreadyExist</b> (const std::string &amp;sop_uid)</td></tr>
 <tr class="separator:a2d53861c0668aba492dfbd3b82c07fac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a1938d1084222fdda6210c622cef67ead"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1938d1084222fdda6210c622cef67ead"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>folder_</b></td></tr>
-<tr class="separator:a1938d1084222fdda6210c622cef67ead"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a171ac5732f7a59f6d51042e9f262ec75"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a171ac5732f7a59f6d51042e9f262ec75"></a>
+<a class="el" href="classsyd_1_1ClinicDatabase.html">syd::ClinicDatabase</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>db_</b></td></tr>
+<tr class="separator:a171ac5732f7a59f6d51042e9f262ec75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad28a6b000653c7cadbaddf40319206b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad28a6b000653c7cadbaddf40319206b2"></a>
 <a class="el" href="classsyd_1_1Patient.html">syd::Patient</a>&#160;</td><td class="memItemRight" valign="bottom"><b>patient_</b></td></tr>
 <tr class="separator:ad28a6b000653c7cadbaddf40319206b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a639dde418c521f0e743bc1f15efa3874"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a639dde418c521f0e743bc1f15efa3874"></a>
 <a class="el" href="classsyd_1_1Injection.html">syd::Injection</a>&#160;</td><td class="memItemRight" valign="bottom"><b>injection_</b></td></tr>
 <tr class="separator:a639dde418c521f0e743bc1f15efa3874"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a171ac5732f7a59f6d51042e9f262ec75"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a171ac5732f7a59f6d51042e9f262ec75"></a>
-<a class="el" href="classsyd_1_1ClinicDatabase.html">syd::ClinicDatabase</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>db_</b></td></tr>
-<tr class="separator:a171ac5732f7a59f6d51042e9f262ec75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe9ead5cf4e1d420ec23fff263cf6790"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abe9ead5cf4e1d420ec23fff263cf6790"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>overwriteFilesFlag_</b></td></tr>
-<tr class="separator:abe9ead5cf4e1d420ec23fff263cf6790"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf9cba20898526815f1abe6110a26ed2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf9cba20898526815f1abe6110a26ed2"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>forcePatientFlag_</b></td></tr>
 <tr class="separator:adf9cba20898526815f1abe6110a26ed2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -206,9 +198,10 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>nb_of_skip_files</b></
 <tr class="separator:aaa37bcbcf3fb0fd3db9cf8b30134a0e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This class search for dicom series in folder and insert the dicom serie in the db. Replace if an element with the same dicom_uid already exists (if SetReplaceSerieFlag(true)). <a class="el" href="classsyd_1_1A.html">A</a> check on the patient name/id is performed (could be forced with SetForcePatientFlag(true)). In the given serie, filenames is a space separated list of files (without folder) </p>
+<div class="textblock"><p>This class search for dicom file in folder and insert the <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">DicomSerie</a> and <a class="el" href="classsyd_1_1DicomFile.html" title="Store information about a dicom file (unique dicom identifier dicom_sop_uid). ">DicomFile</a> in the db. </p>
+<p><a class="el" href="classsyd_1_1A.html">A</a> check on the patient name/id is performed (could be forced with SetForcePatientFlag(true)). </p>
 
-<p>Definition at line <a class="el" href="sydDicomSerieBuilder_8h_source.html#l00038">38</a> of file <a class="el" href="sydDicomSerieBuilder_8h_source.html">sydDicomSerieBuilder.h</a>.</p>
+<p>Definition at line <a class="el" href="sydDicomSerieBuilder_8h_source.html#l00032">32</a> of file <a class="el" href="sydDicomSerieBuilder_8h_source.html">sydDicomSerieBuilder.h</a>.</p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/std_db/<a class="el" href="sydDicomSerieBuilder_8h_source.html">sydDicomSerieBuilder.h</a></li>
 <li>src/std_db/<a class="el" href="sydDicomSerieBuilder_8cxx_source.html">sydDicomSerieBuilder.cxx</a></li>

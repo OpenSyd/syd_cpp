@@ -109,60 +109,49 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#define SYDTIMEPOINT_H</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// syd</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydElement.h&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;sydInjection.h&quot;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &quot;sydDicomSerie.h&quot;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &quot;sydTag.h&quot;</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesyd.html">syd</a> {</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#pragma db object</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classsyd_1_1Timepoint.html">   36</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a> : <span class="keyword">public</span> <a class="code" href="classsyd_1_1Element.html">syd::Element</a> {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#pragma db id auto</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    IdType <a class="code" href="classsyd_1_1Timepoint.html#ad4ccf963110e29b59769e6257253902e">id</a>;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">// -&gt; get patient from injection</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="comment">//std::shared_ptr&lt;syd::Patient&gt; patient_;</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classsyd_1_1Timepoint.html#a099408f0476aab384f4c8c16c49853a8">   48</a></span>&#160;    std::shared_ptr&lt;syd::Tag&gt; <a class="code" href="classsyd_1_1Timepoint.html#a099408f0476aab384f4c8c16c49853a8">tag</a>;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    std::shared_ptr&lt;syd::Injection&gt; injection;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">double</span> time_from_injection_in_hours;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    std::vector&lt;std::shared_ptr&lt;syd::DicomSerie&gt;&gt; dicoms;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">static</span> std::string GetTableName() { <span class="keywordflow">return</span> <span class="stringliteral">&quot;Timepoint&quot;</span>; }</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a>();</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    ~<a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a>();</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a>(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a> &amp; other);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a> &amp; operator= (<span class="keyword">const</span> <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a> &amp; other);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> copy(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a> &amp; t);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">void</span> SetTableHeader(<a class="code" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp; table);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">void</span> DumpElement(<a class="code" href="classsyd_1_1PrintTable.html">PrintTable</a> &amp; table);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">virtual</span> std::string ToString() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> SetValues(std::vector&lt;std::string&gt; &amp; arg);</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <span class="keyword">const</span> <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a> &amp; tp) {</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;      os &lt;&lt; tp.<a class="code" href="classsyd_1_1Timepoint.html#ad4ccf963110e29b59769e6257253902e">id</a> &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; tp.injection-&gt;patient-&gt;name &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; tp.injection-&gt;radionuclide</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;         &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; tp.<a class="code" href="classsyd_1_1Timepoint.html#a099408f0476aab384f4c8c16c49853a8">tag</a>-&gt;name &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; tp.time_from_injection_in_hours</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;         &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; tp.dicoms.size();</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <span class="keywordflow">return</span> os;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  }; <span class="comment">// end class</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;}</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="classsyd_1_1PrintTable_html"><div class="ttname"><a href="classsyd_1_1PrintTable.html">syd::PrintTable</a></div><div class="ttdoc">Helpers class to dump a table (line/column) of values, controling the precision and the column size...</div><div class="ttdef"><b>Definition:</b> <a href="sydPrintTable_8h_source.html#l00029">sydPrintTable.h:29</a></div></div>
-<div class="ttc" id="classsyd_1_1Timepoint_html_a099408f0476aab384f4c8c16c49853a8"><div class="ttname"><a href="classsyd_1_1Timepoint.html#a099408f0476aab384f4c8c16c49853a8">syd::Timepoint::tag</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Tag &gt; tag</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8h_source.html#l00048">sydTimepoint.h:48</a></div></div>
-<div class="ttc" id="classsyd_1_1Element_html"><div class="ttname"><a href="classsyd_1_1Element.html">syd::Element</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydElement_8h_source.html#l00029">sydElement.h:29</a></div></div>
-<div class="ttc" id="classsyd_1_1Timepoint_html"><div class="ttname"><a href="classsyd_1_1Timepoint.html">syd::Timepoint</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8h_source.html#l00036">sydTimepoint.h:36</a></div></div>
-<div class="ttc" id="classsyd_1_1Timepoint_html_ad4ccf963110e29b59769e6257253902e"><div class="ttname"><a href="classsyd_1_1Timepoint.html#ad4ccf963110e29b59769e6257253902e">syd::Timepoint::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Id of the Timepoint. </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8h_source.html#l00041">sydTimepoint.h:41</a></div></div>
-<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydActivityTimeIntegratedCommand_8h_source.html#l00028">sydActivityTimeIntegratedCommand.h:28</a></div></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydDicomSerie.h&quot;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;sydTag.h&quot;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesyd.html">syd</a> {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#pragma db object</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keyword">class </span>Timepoint : <span class="keyword">public</span> <a class="code" href="classsyd_1_1TableElement.html">syd::TableElement</a> {</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#pragma db id auto</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    IdType <a class="code" href="classsyd_1_1Timepoint.html#ad4ccf963110e29b59769e6257253902e">id</a>;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="comment">// -&gt; get patient from injection</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="comment">//std::shared_ptr&lt;syd::Patient&gt; patient_;</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="line" href="classsyd_1_1Timepoint.html#a099408f0476aab384f4c8c16c49853a8">   43</a></span>&#160;    std::shared_ptr&lt;syd::Tag&gt; <a class="code" href="classsyd_1_1Timepoint.html#a099408f0476aab384f4c8c16c49853a8">tag</a>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    std::shared_ptr&lt;syd::Injection&gt; injection;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordtype">double</span> time_from_injection_in_hours;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    std::vector&lt;std::shared_ptr&lt;syd::DicomSerie&gt;&gt; dicoms;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">static</span> std::string GetTableName() { <span class="keywordflow">return</span> <span class="stringliteral">&quot;Timepoint&quot;</span>; }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a>();</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    ~<a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a>();</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a>(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a> &amp; other);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a> &amp; operator= (<span class="keyword">const</span> <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a> &amp; other);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keywordtype">void</span> copy(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Timepoint.html">Timepoint</a> &amp; t);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">virtual</span> std::string <a class="code" href="classsyd_1_1Timepoint.html#ad10fd146bef6314545eeeaa4a6948a5b">ToString</a>() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Timepoint.html#a3f1fd4067d33176c05f28c4dc92059b5">SetValues</a>(std::vector&lt;std::string&gt; &amp; arg);</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  }; <span class="comment">// end class</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;}</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classsyd_1_1TableElement_html"><div class="ttname"><a href="classsyd_1_1TableElement.html">syd::TableElement</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableElement_8h_source.html#l00029">sydTableElement.h:29</a></div></div>
+<div class="ttc" id="classsyd_1_1Timepoint_html_ad10fd146bef6314545eeeaa4a6948a5b"><div class="ttname"><a href="classsyd_1_1Timepoint.html#ad10fd146bef6314545eeeaa4a6948a5b">syd::Timepoint::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8cxx_source.html#l00072">sydTimepoint.cxx:72</a></div></div>
+<div class="ttc" id="classsyd_1_1Timepoint_html_a099408f0476aab384f4c8c16c49853a8"><div class="ttname"><a href="classsyd_1_1Timepoint.html#a099408f0476aab384f4c8c16c49853a8">syd::Timepoint::tag</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Tag &gt; tag</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8h_source.html#l00043">sydTimepoint.h:43</a></div></div>
+<div class="ttc" id="classsyd_1_1Timepoint_html"><div class="ttname"><a href="classsyd_1_1Timepoint.html">syd::Timepoint</a></div><div class="ttdoc">Store information about a timepoint. </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8h_source.html#l00031">sydTimepoint.h:31</a></div></div>
+<div class="ttc" id="classsyd_1_1Timepoint_html_a3f1fd4067d33176c05f28c4dc92059b5"><div class="ttname"><a href="classsyd_1_1Timepoint.html#a3f1fd4067d33176c05f28c4dc92059b5">syd::Timepoint::SetValues</a></div><div class="ttdeci">virtual void SetValues(std::vector&lt; std::string &gt; &amp;arg)</div><div class="ttdoc">Set basics values from a list of string. </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8cxx_source.html#l00064">sydTimepoint.cxx:64</a></div></div>
+<div class="ttc" id="classsyd_1_1Timepoint_html_ad4ccf963110e29b59769e6257253902e"><div class="ttname"><a href="classsyd_1_1Timepoint.html#ad4ccf963110e29b59769e6257253902e">syd::Timepoint::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Id of the Timepoint. </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8h_source.html#l00036">sydTimepoint.h:36</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00051">sydCommon.h:51</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
