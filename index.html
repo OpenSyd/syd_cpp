@@ -38,6 +38,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div id="navrow1" class="tabs">
     <ul class="tablist">
       <li class="current"><a href="index.html"><span>Main&#160;Page</span></a></li>
+      <li><a href="namespaces.html"><span>Namespaces</span></a></li>
+      <li><a href="annotated.html"><span>Classes</span></a></li>
+      <li><a href="files.html"><span>Files</span></a></li>
       <li>
         <div id="MSearchBox" class="MSearchBoxInactive">
         <span class="left">
@@ -76,7 +79,169 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="title">SYD Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
-</div><!-- contents -->
+<div class="textblock"><p>WARNING : NOTHING is useful yet. This is a sandbox.</p>
+<p>SYD could be a C++ toolkit to help perform image processing tasks on a database of medical images in the field of Target Radionuclide Therapy. It is primarily developed to manage SPECT/CT images and perform tasks such as computing activity or integrated activity in various ROIs.</p>
+<hr/>
+ <h1>Main concepts</h1>
+<p>This library is a <em>toolkit</em>, it means that you will need to code your own application (C++). Some (hopefully) convenient tools are given to facilitate the development.</p>
+<p>Key points:</p><ul>
+<li>The core of every study is a database.</li>
+<li>One study = one database.</li>
+<li>In syd, a database is a simple sqlite file, plus an additional folder that contains images. <b>a database = 1 file + 1 folder</b></li>
+<li>A database is composed of several <b>tables</b> such as Patient (with name, date of birth etc), Injection (date, radionuclide, activity etc), Dicom images, etc. The structure of a database, i.e. the list of tables and the structure of the tables is defined in a <b>schema</b> or a database 'type'. An initial example of database schema, is given, but the user can extend it or create from scratch his own schema.</li>
+<li>A set of basic command line tools allow to perform basic operations such as creating a database, inserting/removing an element etc. Those basics tools a usually more used at the beginning of a study. We also recommand third party tools to navigate in the database with a GUI (sqlitestudio, sqlitbrowser etc).</li>
+<li>Other tools are specific to a database type and allow to perform some more advanced operation such as: extracting time-activity curves in a ROI, compute time-integrated activity etc.</li>
+<li>Syd contains some specific links to and from other dedicated software, for example for image registration (Elastix) or dose computation (Gate).</li>
+</ul>
+<p>Three main steps:</p><ul>
+<li>define a database schema (list of tables) ; at compile time only</li>
+<li>populate the database (insert patient, images etc)</li>
+<li>perform computation on images</li>
+</ul>
+<p>Modules</p><ul>
+<li>core: table and database definition<ul>
+<li>generic</li>
+<li>bulk insertion</li>
+</ul>
+</li>
+<li>std_db: tables specific to patient, injection, dicom, tp<ul>
+<li>File management</li>
+<li>Tag management</li>
+<li>Patient</li>
+<li>Injection (need Patient)</li>
+<li>DicomSerie, DicomFile, Timepoint (need injection, patient)</li>
+</ul>
+</li>
+<li>cmd lines tools</li>
+<li>logging</li>
+<li>exception/error handling</li>
+</ul>
+<h2>List of command line tools</h2>
+<p>Use <code>-h</code> to know how to use those tools. Verbose can be set with <code>-v x</code>, x being a number. Here is a list of tools common to all database type:</p>
+<ul>
+<li><a href="#sydCreateDatabase">sydCreateDatabase</a></li>
+<li><a href="#sydInsert">sydInsert</a></li>
+<li><a href="#sydDump">sydDump</a></li>
+</ul>
+<ol type="1">
+<li>Create a database with <a href="#sydCreateDatabase">sydCreateDatabase</a></li>
+<li>Insert patients information with sydInsert</li>
+<li>Insert injection information with sydInsert</li>
+<li>Insert dicom in the database with sydInsertDicom</li>
+<li>Select some dicom to insert timepoint with sydInsertTimepoint</li>
+<li>Convert dicom image of timepoints to mhd image with sydInsertImage</li>
+<li>Perform image registration with elastix and insert resulting deformed image with XXXX</li>
+</ol>
+<ol type="1">
+<li>Insert ROIs (masks) into the database with XXX</li>
+<li>Perform various computation and stored results in the db</li>
+</ol>
+<p>At any step, you can print some database information with sydDump.</p>
+<h3>sydCreateDatabase</h3>
+<p><a class="anchor" id="sydCreateDatabase"></a> </p><pre class="fragment">sydCreateDatabase StudyDB mydb.db mydb/
+</pre><p>Create a database of type <code>StudyDB</code> named <code>mydb.db</code> with images in the folder <code>mydb</code>. All the tables will be created (empty). Use <code>sydCreateDatabase -l</code> to get the list of available database type. <em>Warning</em> this command will erase all content of the file mydb.db if already exist.</p>
+<h3>sydInsert</h3>
+<p><a class="anchor" id="sydInsert"></a> </p><pre class="fragment">sydInsert mydb.db Patient JohnFoo 1 82
+</pre><p>This example insert a new patient named JohnFoo. First number '1' indicate the number (id) of the patient in the study. It is of course unique (two patients cannot have the same id). The next number '82' is the weight of the patient. To know what list of parameters, just type <code>sydInsert mydb.db Patient</code> without additional arguments, it will display the help. More generally replace 'Patient' by the name of a table to display help.</p>
+<h3>sydDump</h3>
+<p><a class="anchor" id="sydDump"></a> </p><pre class="fragment">sydDump mydb.db
+sydDump mydb.db Patient
+sydDump mydb.db DicomSerie
+</pre><p>Display basic information about a database or a table.</p>
+<h3>sydInsertDicom</h3>
+<p><a class="anchor" id="sydInsertDicom"></a> </p><pre class="fragment">sydInsertDicom -v1 mydb.db JohnFoo folder\_with\_dicom/ -i Indium111 -f
+</pre><p>This tool search for dicom files into the given folder. Sort according to dicom series and copy the file to the database. Dicom must be associated with a patient and an injection.</p>
+<p><em>Patient identification</em>. We try to identify the patient with the dicom tag "PatientID". However, it is not rare that the same patient is associated with several PatientID, so this check is optional with the flag -f.</p>
+<h3>sydDumpDicom</h3>
+<p><a class="anchor" id="sydDumpDicom"></a></p>
+<p>TODO. option to print all tags.</p>
+<h3>sydInsertTimepoint</h3>
+<p><a class="anchor" id="sydInsertTimepoint"></a></p>
+<p>Use to create Timepoint. You need to provide: the patient, the injection, a tag and a list of DicomSerie ids.</p>
+<ul>
+<li>The patient can be the name or the study_id.</li>
+<li>The injection can be the id or the radionuclide name (there is an error if several injection match the name).</li>
+<li>The tag is used to group together all timepoints of all patients. It is useful for example to group timepoints by type of - reconstruction parameters.</li>
+<li>The list of DicomSerie ids will be parsed and group to <pre class="fragment">  sydInsert bidon.db Tag "study1" "Timepoint list with reconstruction 10 subsets"
+  sydDumpDicom bidon.db jm IRACSCRR -r
+  sydInsertTimepoint -v5 bidon.db jm Indium study1 156 85 105 118 128 132 144 156
+</pre></li>
+</ul>
+<hr/>
+ <h1>Development</h1>
+<h2>Main classes</h2>
+<ul>
+<li><a class="el" href="classsyd_1_1DatabaseManager.html" title="Manage a set of database schema. Allow to read and create. ">syd::DatabaseManager</a></li>
+<li><a class="el" href="classsyd_1_1Database.html" title="This is the base class of all databases. ">syd::Database</a></li>
+<li><a class="el" href="classsyd_1_1Table.html" title="This class is used to encapsulate common functions for a database table that manage some TableElement...">syd::Table</a></li>
+<li><a class="el" href="classsyd_1_1TableBase.html" title="Base class for the functions that are common to all tables. ">syd::TableBase</a></li>
+</ul>
+<h3>Database CRUD (Create Read Update Delete)</h3>
+<p>The schema of a database is defined at compile time by C++ classes, thanks to <a href="http://www.codesynthesis.com/products/odb/doc/manual.xhtml">odb</a>. Database types can be known at runtime via plugins. Schema can be modified (under some conditions). Main classes are: <a class="el" href="classsyd_1_1PluginManager.html">syd::PluginManager</a> and <a class="el" href="classsyd_1_1DatabaseManager.html" title="Manage a set of database schema. Allow to read and create. ">syd::DatabaseManager</a>.</p>
+<ul>
+<li>Create <pre class="fragment">  syd::PluginManager::GetInstance()-&gt;Load();
+  syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
+  syd::CreateDirectory("test");
+  syd::Database * db = m-&gt;Create("StudyDB", "test.db", "test");
+</pre> "StudyDB" is the name of the database schema. <pre class="fragment">syd::StudyDatabase * db = m-&gt;Create&lt;syd::StudyDatabase&gt;("test.db", "test");
+</pre></li>
+<li>Read <pre class="fragment">  // Without specifiyng the db type (pointer to a generic database)
+  syd::Database * dbref = m-&gt;Read("test.db");
+  // or if the db type is known
+  syd::StudyDatabase * dbref = m-&gt;Read&lt;syd::StudyDatabase&gt;("test.db");
+</pre></li>
+<li>Update <pre class="fragment">  // TODO
+</pre></li>
+<li>Delete <pre class="fragment">  // Just delete the file+folder
+</pre></li>
+</ul>
+<h3>Table CRUD (Create Read Update Delete)</h3>
+<p>The example is given with the table <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">syd::Patient</a>, but it is similar for other table type</p><ul>
+<li><p class="startli">Create </p><pre class="fragment">  syd::Patient p; // create an element of the table Patient
+  p.name = "toto";
+  db-&gt;Insert(p);
+</pre><p class="startli">The patient p is inserted and saved in the db after. The id of the patient is automatically chosen <em>after</em> the insertion.</p>
+</li>
+<li><p class="startli">Read </p><pre class="fragment">  syd::Patient p = db-&gt;QueryOne(odb::query&lt;syd::Patient&gt;::name == "toto");
+</pre><p class="startli">or </p><pre class="fragment">std::vector&lt;syd::Patient&gt; patients;
+db-&gt;Query(patients); // all patients;
+</pre><p> or </p><pre class="fragment">db-&gt;Query(odb::query&lt;syd::Patient&gt;::weight_in_kg &gt; 40, patients); // all patients with weight &gt; 40 kg
+</pre></li>
+<li>Update <pre class="fragment">  // Let p be a patient (from a previous query)
+  p.weight_in_kg = 100; // change the weight (not yet save in the db)
+  db-&gt;Update(p); // now it is save in the db
+</pre></li>
+<li>Delete <pre class="fragment">  db-&gt;Delete(p);
+</pre></li>
+</ul>
+<h2>File storage strategy</h2>
+<p>A database does not store the files directly but only URL to files stored in the regular filesystem. Management of files is performed with the <a class="el" href="classsyd_1_1File.html" title="Store information about a file linked to a database. ">syd::File</a> table. All file paths are <em>relative</em> to a common unique entry point (that can be a simple folder on a disk). Hash (or checksum) value of a file can be stored/used.</p>
+<p>TODO: mhd-img ?</p>
+<h2>DICOM strategy</h2>
+<p>The database can store dicom files, thanks to <a href="#sydInsertDicom">sydInsertDicom</a> tool. Dicom files are stored in two tables named <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">syd::DicomSerie</a> and <a class="el" href="classsyd_1_1DicomFile.html" title="Store information about a dicom file (unique dicom identifier dicom_sop_uid). ">syd::DicomFile</a>. The basic organization of dicom is with Patient/Study/Series/SOP UID. Every dicom file can be uniquely identified with the SOP_UID (UID stands for unique identifier), stored in the <a class="el" href="classsyd_1_1DicomFile.html" title="Store information about a dicom file (unique dicom identifier dicom_sop_uid). ">syd::DicomFile</a> table.</p>
+<p>WARNING: the table <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">syd::DicomSerie</a> can contain several elements with the same dicom_series_uid because this uid is not sufficient to unambiguously identify an image: for example for some manufacturers (i.e. GE), a two table-steps SPECT acquisition share the same Series_UID and each file has its unique SOP_UID. In this case we will consider two <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">syd::DicomSerie</a> elements in the database. However, when an image is composed of slices provided in several files we group all the slices under the same <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">syd::DicomSerie</a>.</p>
+<p>Note that every <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">syd::DicomSerie</a> only contains a subset of dicom information that ease the work, but not all the dicom tags (that could always be retrieved thanks to <a href="#sydDumpDicom">sydDumpDicom</a>). A <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">syd::DicomSerie</a> element contains information about the dicom, in particular:</p><ul>
+<li>the UIDS</li>
+<li>the acquisition and reconstruction date. Those dates are retrieved from the dicom tag "AcquisitionDate", "AcquisitionTime", and either</li>
+</ul>
+<p>This is done with the sydDicomSerieBuilder class. See <a class="el" href="sydInsertDicom_8cxx_source.html">sydInsertDicom.cxx</a> as example.</p>
+<h2>Standards tables and database schemas</h2>
+<p>The following classes are mapped to SQL tables in the sqlite databases.</p>
+<p>A <a class="el" href="classsyd_1_1ClinicDatabase.html" title="This database manages three tables : Patient, Injection. ">syd::ClinicDatabase</a> manages the following tables:</p><ul>
+<li><a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">syd::Patient</a>: contains patient's info such as name (initials), weight, etc. A patient has several identifier: 'id' is the db one, 'name' is usually two letters initials, 'study_id' is the number of the patient in the current study (a patient could belong to a single study, just duplicate db for several study), 'dicom_id' is the id in the dicom file.</li>
+<li><a class="el" href="classsyd_1_1Injection.html" title="Store information about a radionuclide injection (date, etc) ">syd::Injection</a>: contains information about injection (quantity in MBq, date, type of radionuclide, etc). A patient may be linked to several injections.</li>
+<li><a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">syd::DicomSerie</a>: contains link to dicom files about an image (CT or SPECT).</li>
+<li><a class="el" href="classsyd_1_1DicomSerieBuilder.html" title="This class search for dicom file in folder and insert the DicomSerie and DicomFile in the db...">syd::DicomSerieBuilder</a>: to build a <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">syd::DicomSerie</a> object in the database by reading dicom files. Important note: dicom are identifying by the SeriesInstanceUID (unique id) for the CT images and by SOPInstanceUID for all other images.</li>
+</ul>
+<h2>Notion of Timepoints</h2>
+<p>Table <a class="el" href="classsyd_1_1Timepoint.html" title="Store information about a timepoint. ">syd::Timepoint</a> Tag</p>
+<h2>Helpers classes</h2>
+<ul>
+<li><a class="el" href="classsyd_1_1PrintTable.html" title="Helpers class to dump a table (line/column) of values, controling the precision and the column size...">syd::PrintTable</a>: to help dumping 2D table style information on screen</li>
+<li>syd::Log</li>
+<li><a class="el" href="sydCommon_8h_source.html">sydCommon.h</a> </li>
+</ul>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

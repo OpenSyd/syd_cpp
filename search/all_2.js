@@ -2,8 +2,8 @@ var searchData=
 [
   ['clinicdatabase',['ClinicDatabase',['../classext_1_1ClinicDatabase.html',1,'ext']]],
   ['clinicdatabase',['ClinicDatabase',['../classsyd_1_1ClinicDatabase.html',1,'syd']]],
-  ['count',['Count',['../classsyd_1_1Database.html#a7b374de04f2d0ae8f7ac229666f39ac2',1,'syd::Database::Count()'],['../singletonsyd_1_1Table.html#ae30d8070066d80a75a2a30d2f8476fc0',1,'syd::Table::Count()']]],
-  ['create',['Create',['../singletonsyd_1_1DatabaseCreator.html#aca7129dd380e42f426cf174aaacd3c5d',1,'syd::DatabaseCreator::Create()'],['../classsyd_1_1DatabaseManager.html#a4028cf34868d1e660a944aae4be63fd5',1,'syd::DatabaseManager::Create()']]],
+  ['count',['Count',['../classsyd_1_1Database.html#a7b374de04f2d0ae8f7ac229666f39ac2',1,'syd::Database::Count()'],['../classsyd_1_1Table.html#ae30d8070066d80a75a2a30d2f8476fc0',1,'syd::Table::Count()']]],
+  ['create',['Create',['../classsyd_1_1DatabaseCreator.html#aca7129dd380e42f426cf174aaacd3c5d',1,'syd::DatabaseCreator::Create()'],['../classsyd_1_1DatabaseManager.html#a4028cf34868d1e660a944aae4be63fd5',1,'syd::DatabaseManager::Create()']]],
   ['createdicomfile',['CreateDicomFile',['../classsyd_1_1DicomSerieBuilder.html#a9807add9115f208fed5305bb59ac4821',1,'syd::DicomSerieBuilder']]],
   ['createdicomserie',['CreateDicomSerie',['../classsyd_1_1DicomSerieBuilder.html#a5241df657fde48ecb6f094dd22538d61',1,'syd::DicomSerieBuilder']]],
   ['createtables',['CreateTables',['../classsyd_1_1Database.html#a8c35fd3171e7d33bbd5963e48a892309',1,'syd::Database::CreateTables()'],['../classext_1_1ClinicDatabase.html#a890c002dbbb3476a73da87100fbc8752',1,'ext::ClinicDatabase::CreateTables()'],['../classsyd_1_1ClinicDatabase.html#abd4f73f70495217e4ca6ec07776a375a',1,'syd::ClinicDatabase::CreateTables()'],['../classsyd_1_1StudyDatabase.html#ac8c57ecbadcbe0987e405f876ec41edf',1,'syd::StudyDatabase::CreateTables()']]],
