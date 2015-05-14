@@ -23,6 +23,15 @@ add_subdirectory(${SYD_SOURCE_DIR}/src/core)
 
 
 #----------------------------------------------------------
+# Syd standard tools
+# include_directories(${PROJECT_BINARY_DIR}/src/tools)
+# include_directories(${PROJECT_SOURCE_DIR}/src/tools)
+add_subdirectory(${SYD_SOURCE_DIR}/src/tools)
+# ${PROJECT_BINARY_DIR}/src/tools)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 # Syd standard DB
 add_subdirectory(${SYD_SOURCE_DIR}/src/std_db)
 
@@ -30,11 +39,9 @@ add_subdirectory(${SYD_SOURCE_DIR}/src/std_db)
 
 
 #----------------------------------------------------------
-# Syd standard tools
-# include_directories(${PROJECT_BINARY_DIR}/src/tools)
-# include_directories(${PROJECT_SOURCE_DIR}/src/tools)
-add_subdirectory(${SYD_SOURCE_DIR}/src/tools)
-# ${PROJECT_BINARY_DIR}/src/tools)
+# if(BUILD_TESTING)
+#   add_subdirectory(test)
+# endif(BUILD_TESTING)
 #----------------------------------------------------------
 
 

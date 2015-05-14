@@ -35,18 +35,6 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpermissive")
 
 
 #----------------------------------------------------------
-# define the set of libraries (needed in test folder)
-set(SYD_LIBS
-  ${DCMTK_LIBRARIES}
-  sydCore
-  sydCommonSchema
-  odb-sqlite odb sqlite3 z
-  ${CERES_LIBRARIES}
-  ${ITK_LIBRARIES})
-#----------------------------------------------------------
-
-
-#----------------------------------------------------------
 # cmake include
 include(${SYD_SOURCE_DIR}/cmake/common.cmake)
 include(${SYD_SOURCE_DIR}/cmake/dependencies.cmake)
@@ -90,6 +78,24 @@ include_directories(${DCMTK_INCLUDE_DIRS})
 
 
 #----------------------------------------------------------
+# define the set of libraries (needed in test folder)
+set(SYD_LIBS
+  ${DCMTK_LIBRARIES}
+  sydCore
+  sydCommonSchema
+  odb-sqlite odb sqlite3 z
+  ${CERES_LIBRARIES}
+  ${ITK_LIBRARIES})
+#----------------------------------------------------------
+
+
+# ----------------------------------------------------------
+# Select what is compiled
+add_subdirectory(${SYD_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
+#----------------------------------------------------------
+
+
+# #----------------------------------------------------------
 include(CTest)
 if(BUILD_TESTING)
   enable_testing()
@@ -99,11 +105,6 @@ if(BUILD_TESTING)
 endif(BUILD_TESTING)
 #----------------------------------------------------------
 
-
-# ----------------------------------------------------------
-# Select what is compiled
-add_subdirectory(${SYD_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src)
-#----------------------------------------------------------
 
 
 # #----------------------------------------------------------
