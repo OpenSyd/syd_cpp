@@ -31,42 +31,6 @@ syd::File::File():TableElement()
 
 
 // --------------------------------------------------
-syd::File::File(const File & other):TableElement(other)
-{
-  copy(other);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-syd::File & syd::File::operator= (const syd::File & other)
-{
-  if (this != &other) { copy(other); }
-  return *this;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::File::copy(const syd::File & t)
-{
-  id = t.id;
-  filename = t.filename;
-  path = t.path;
-  md5 = t.md5;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::File::SetValues(std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "No SetValues for table 'File'.";
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 std::string syd::File::ToString() const
 {
   std::stringstream ss ;

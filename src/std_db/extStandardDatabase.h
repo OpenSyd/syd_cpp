@@ -16,11 +16,11 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef EXTCLINICDATABASE_H
-#define EXTCLINICDATABASE_H
+#ifndef EXTSTANDARDDATABASE_H
+#define EXTSTANDARDDATABASE_H
 
 // syd
-#include "sydClinicDatabase.h"
+#include "sydStandardDatabase.h"
 
 // ext
 #include "extPatient-odb.hxx"
@@ -28,20 +28,20 @@
 // --------------------------------------------------------------------
 namespace ext {
 
-  /// Example of extended version of a ClinicDatabase
-  class ClinicDatabase: public syd::ClinicDatabase {
+  /// Example of extended version of a StandardDatabase
+  class StandardDatabase: public syd::StandardDatabase {
   public:
     /// Required constructor overloading
-    //    ClinicDatabase(std::string file):syd::ClinicDatabase(file) { }
+    //    StandardDatabase(std::string file):syd::StandardDatabase(file) { }
 
     /// Required CreateTables overloading
     virtual void CreateTables() {
-      LOG(0) << "I am a extclinicdatabase_h";
+      LOG(0) << "I am a extStandarddatabase_h";
       AddTable<ext::Patient>();
       //AddTable<syd::Injection>("Toto");
     }
 
-  }; // class ext::ClinicDatabase
+  }; // class ext::StandardDatabase
 } // namespace ext
 
 // --------------------------------------------------------------------

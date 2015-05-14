@@ -21,7 +21,7 @@
 #include "sydTable.h"
 
 // --------------------------------------------------------------------
-syd::TimepointBuilder::TimepointBuilder(syd::StudyDatabase * db):syd::TimepointBuilder()
+syd::TimepointBuilder::TimepointBuilder(syd::StandardDatabase * db):syd::TimepointBuilder()
 {
   SetDatabase(db);
 }

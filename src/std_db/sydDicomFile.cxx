@@ -29,43 +29,6 @@ syd::DicomFile::DicomFile():TableElement()
 
 
 // --------------------------------------------------------------------
-syd::DicomFile::~DicomFile() {}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::DicomFile::DicomFile(const syd::DicomFile & other) { copy(other); }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-syd::DicomFile & syd::DicomFile::operator= (const syd::DicomFile & other) {
-  if (this != &other) { copy(other); }
-  return *this;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::DicomFile::copy(const syd::DicomFile & t) {
-  id = t.id;
-  file = t.file;
-  dicom_serie = t.dicom_serie;
-  dicom_sop_uid = t.dicom_sop_uid;
-  dicom_instance_number = t.dicom_instance_number;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::DicomFile::SetValues(std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "Could not insert a DicomFile with this function. TODO.";
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------------------------
 std::string syd::DicomFile::ToString() const
 {
   std::stringstream ss ;

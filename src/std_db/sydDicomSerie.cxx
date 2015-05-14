@@ -27,61 +27,6 @@ syd::DicomSerie::DicomSerie():TableElement()
 
 
 // --------------------------------------------------------------------
-syd::DicomSerie::~DicomSerie()
-{
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::DicomSerie::DicomSerie(const syd::DicomSerie & other) { copy(other); }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-syd::DicomSerie & syd::DicomSerie::operator= (const syd::DicomSerie & other) {
-  if (this != &other) { copy(other); }
-  return *this;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::DicomSerie::copy(const syd::DicomSerie & t) {
-  id = t.id;
-  patient = t.patient;
-  injection = t.injection;
-
-  dicom_study_uid = t.dicom_study_uid;
-  dicom_series_uid = t.dicom_series_uid;
-  //  dicom_sop_uid = t.dicom_sop_uid;
-  //  dicom_dataset_uid = t.dicom_dataset_uid;
-  //  dicom_instance_number = t.dicom_instance_number;
-  dicom_frame_of_reference_uid = t.dicom_frame_of_reference_uid;
-
-  acquisition_date = t.acquisition_date;
-  reconstruction_date = t.reconstruction_date;
-
-  dicom_modality = t.dicom_modality;
-  dicom_manufacturer = t.dicom_manufacturer;
-  dicom_description = t.dicom_description;
-
-  //  filenames = t.filenames;
-  size = t.size;
-  spacing = t.spacing;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::DicomSerie::SetValues(std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "Could not insert a DicomSerie with this function. Try sydInsertDicom.";
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------------------------
 std::string syd::DicomSerie::ToString() const
 {
   std::stringstream ss ;

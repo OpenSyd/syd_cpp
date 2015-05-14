@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
   // Get the database
   std::string dbname = args_info.inputs[0];
-  syd::ClinicDatabase * db = m->Read<syd::ClinicDatabase>(dbname);
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
   // Get the patient
   std::string name = args_info.inputs[1];

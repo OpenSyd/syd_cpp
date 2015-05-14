@@ -20,7 +20,7 @@
 #define SYDDICOMSERIEBUILDER_H
 
 // syd
-#include "sydClinicDatabase.h"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -33,13 +33,13 @@ namespace syd {
 
   public:
     /// Constructor.
-    DicomSerieBuilder(syd::ClinicDatabase * db);
+    DicomSerieBuilder(syd::StandardDatabase * db);
 
     /// Destructor (empty)
     ~DicomSerieBuilder() {}
 
     /// Set the pointer to the database
-    void SetDatabase(syd::ClinicDatabase * db) { db_ = db; }
+    void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
 
     /// Set the injection (required)
     void SetInjection(syd::Injection & injection);
@@ -62,7 +62,7 @@ namespace syd {
     /// Protected constructor. No need to use directly.
     DicomSerieBuilder();
 
-    syd::ClinicDatabase * db_;
+    syd::StandardDatabase * db_;
     syd::Patient patient_;
     syd::Injection injection_;
     bool forcePatientFlag_;

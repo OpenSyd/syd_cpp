@@ -93,13 +93,8 @@ namespace syd {
     // ------------------------------------------------------------------------
     SET_TABLE_NAME("DicomSerie")
     DicomSerie();
-    ~DicomSerie();
-    DicomSerie(const DicomSerie & other);
-    DicomSerie & operator= (const DicomSerie & other);
-    void copy(const DicomSerie & t);
 
     virtual std::string ToString() const;
-    virtual void SetValues(std::vector<std::string> & arg);
 
   }; // end class
 }

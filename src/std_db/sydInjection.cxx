@@ -27,24 +27,6 @@ syd::Injection::Injection():syd::TableElement()
 
 
 // --------------------------------------------------------------------
-syd::Injection::Injection(Patient & p,
-                          const std::string & pradionuclide,
-                          const std::string & pdate,
-                          double activity):syd::Injection()
-{
-  Set(p, pradionuclide, pdate, activity);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Injection::~Injection()
-{
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Injection::Set(Patient & p,
                          const std::string & pradionuclide,
                          const std::string & pdate,
@@ -59,33 +41,6 @@ void syd::Injection::Set(Patient & p,
   activity_in_MBq = activity;
 }
 // --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Injection::Injection(const syd::Injection & other)
-{
-  copy(other);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-syd::Injection & syd::Injection::operator= (const syd::Injection & other) {
-  if (this != &other) { copy(other); }
-  return *this;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Injection::copy(const syd::Injection & t) {
-  id = t.id;
-  radionuclide = t.radionuclide;
-  date = t.date;
-  activity_in_MBq = t.activity_in_MBq;
-  patient = t.patient;
-}
-// --------------------------------------------------
 
 
 // --------------------------------------------------

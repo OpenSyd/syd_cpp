@@ -20,7 +20,7 @@
 #define SYDTIMEPOINTBUILDER_H
 
 // syd
-#include "sydStudyDatabase.h"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -32,12 +32,12 @@ namespace syd {
 
   public:
     /// Constructor.
-    TimepointBuilder(syd::StudyDatabase * db);
+    TimepointBuilder(syd::StandardDatabase * db);
 
     /// Destructor (empty)
     ~TimepointBuilder() {}
 
-    void SetDatabase(syd::StudyDatabase * db) { db_ = db; }
+    void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
 
     enum GuessState { GuessFound, GuessNotFound, GuessError };
 
@@ -53,7 +53,7 @@ namespace syd {
 
   protected:
     TimepointBuilder();
-    syd::StudyDatabase * db_;
+    syd::StandardDatabase * db_;
     syd::Tag tag_;
     double intra_timepoint_min_hour_diff_;
     double intra_timepoint_max_hour_diff_;

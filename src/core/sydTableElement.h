@@ -39,7 +39,7 @@ namespace syd {
     virtual std::string ToString() const;
 
     /// Set basics values from a list of string
-    virtual void SetValues(std::vector<std::string> & arg);
+    virtual void Set(std::vector<std::string> & arg);
 
   }; // end of class
 

@@ -53,14 +53,9 @@ namespace syd {
     // ------------------------------------------------------------------------
     SET_TABLE_NAME("Patient");
     Patient();
-    Patient(std::string pname, IdType studyId, double weight);
-    virtual ~Patient();
-    Patient(const Patient & other);
-    Patient & operator= (const Patient & other);
-    virtual void copy(const Patient & t);
 
     virtual std::string ToString() const;
-    virtual void SetValues(std::vector<std::string> & arg);
+    virtual void Set(std::vector<std::string> & arg);
     void Set(std::string pname, IdType studyId, double weight);
 
     bool operator==(const Patient & p);
@@ -68,8 +63,6 @@ namespace syd {
 
     bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
 
-
-    static std::string mname;
   }; // end of class
 }
 // --------------------------------------------------------------------

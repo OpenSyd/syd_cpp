@@ -29,41 +29,7 @@ syd::Tag::Tag():syd::TableElement()
 
 
 // --------------------------------------------------------------------
-syd::Tag::~Tag()
-{
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Tag::Tag(const syd::Tag & other)
-{
-  copy(other);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------
-syd::Tag & syd::Tag::operator= (const syd::Tag & other)
-{
-  if (this != &other) { copy(other); }
-  return *this;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Tag::copy(const syd::Tag & t)
-{
-  id = t.id;
-  label = t.label;
-  description = t.description;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Tag::SetValues(std::vector<std::string> & arg)
+void syd::Tag::Set(std::vector<std::string> & arg)
 {
   if (arg.size() == 0) {
     LOG(FATAL) << "Could not insert a Tag without argument, at least set the 'label'.";

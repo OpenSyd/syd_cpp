@@ -53,13 +53,8 @@ namespace syd {
     // ------------------------------------------------------------------------
     SET_TABLE_NAME("DicomFile")
     DicomFile();
-    ~DicomFile();
-    DicomFile(const DicomFile & other);
-    DicomFile & operator= (const DicomFile & other);
-    void copy(const DicomFile & t);
 
     virtual std::string ToString() const;
-    virtual void SetValues(std::vector<std::string> & arg);
 
   }; // end class
 }

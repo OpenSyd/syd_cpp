@@ -21,7 +21,7 @@
 #include "sydTable.h"
 
 // --------------------------------------------------------------------
-syd::DicomSerieBuilder::DicomSerieBuilder(syd::ClinicDatabase * db):syd::DicomSerieBuilder()
+syd::DicomSerieBuilder::DicomSerieBuilder(syd::StandardDatabase * db):syd::DicomSerieBuilder()
 {
   SetDatabase(db);
 }

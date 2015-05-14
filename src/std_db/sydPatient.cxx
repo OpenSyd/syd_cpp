@@ -19,8 +19,6 @@
 // syd
 #include "sydPatient.h"
 
-std::string syd::Patient::mname = "Patient";
-
 // --------------------------------------------------
 syd::Patient::Patient():TableElement()
 {
@@ -30,21 +28,6 @@ syd::Patient::Patient():TableElement()
   study_id = 0; // must be unique
   weight_in_kg = 0;
   dicom_patientid = "unknown_dicom_id";
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-syd::Patient::Patient(std::string pname, IdType studyId, double weight):Patient()
-{
-  Set(pname, studyId, weight);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-syd::Patient::~Patient()
-{
 }
 // --------------------------------------------------
 
@@ -61,44 +44,10 @@ void syd::Patient::Set(std::string pname, IdType studyId, double weight)
 
 
 // --------------------------------------------------
-syd::Patient::Patient(const Patient & other):TableElement(other)
+void syd::Patient::Set(std::vector<std::string> & arg)
 {
-  copy(other);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-syd::Patient & syd::Patient::operator= (const syd::Patient & other)
-{
-  if (this != &other) { copy(other); }
-  return *this;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Patient::copy(const syd::Patient & t) {
-  id = t.id;
-  name = t.name;
-  study_id = t.study_id;
-  weight_in_kg = t.weight_in_kg;
-  dicom_patientid = t.dicom_patientid;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Patient::SetValues(std::vector<std::string> & arg)
-{
-  if (arg.size() < 2) {
-    LOG(FATAL) << "Provide <name> <study_id> <weight_in_kg> <dicom_patientid>. ";
-  }
-  if (arg[0] == "all") {
-    LOG(FATAL) << "A patient name cannot be 'all', this is a reserved word for query.";
-  }
-  name = arg[0];
-  study_id = atoi(arg[1].c_str());
+  if (arg.size() > 0) name = arg[0];
+  if (arg.size() > 1) study_id = atoi(arg[1].c_str());
   if (arg.size() > 2) weight_in_kg = atof(arg[2].c_str());
   if (arg.size() > 3) dicom_patientid = arg[3];
 }

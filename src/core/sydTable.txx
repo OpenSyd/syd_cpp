@@ -273,10 +273,10 @@ void syd::Table<TableElement>::Update(std::vector<TableElement*> & r)
 // --------------------------------------------------------------------
 /// default impltementation of insert, must be overloaded
 template<class TableElement>
-TableElement * syd::Table<TableElement>::Insert(std::vector<std::string> & arg)
+TableElement * syd::Table<TableElement>::InsertFromArg(std::vector<std::string> & arg)
 {
   TableElement e;
-  e.SetValues(arg);
+  e.Set(arg);
   Insert(e);
   return new TableElement(e);
 }

@@ -31,8 +31,8 @@ std::string syd::TableElement::ToString() const
 
 
 // --------------------------------------------------------------------
-void syd::TableElement::SetValues(std::vector<std::string> & arg)
+void syd::TableElement::Set(std::vector<std::string> & arg)
 {
-  LOG(FATAL) << "The function 'SetValue' must be implemented for this table.";
+  LOG(FATAL) << "The function 'Set' must be implemented for this table.";
 }
 // --------------------------------------------------------------------

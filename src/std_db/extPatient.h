@@ -35,18 +35,24 @@ namespace ext {
     /// Additional column 'birth_date'
     std::string   birth_date;
 
-    /// Required copy overloading to consider the new column
-    // virtual void copy(const ext::Patient & t) {
-    //   syd::Patient::copy(t);
-    //   birth_date = t.birth_date;
-    // }
 
-    /// --------------------------------------------------
-    friend std::ostream& operator<<(std::ostream& os, const Patient & p)  {
-      os << "(extPatient) " << p.id << p.study_id << " " << p.name << " " << p.birth_date;
-      return os;
+    SET_TABLE_NAME("extPatient")
+
+    /// Required constructor
+    Patient():syd::Patient() { birth_date = "birth_date"; }
+
+    /// Required constructor
+    //    Patient(std::string pname, syd::IdType studyId, double weight):syd::Patient(pname, studyId, weight) { birth_date = "birth_date";}
+
+
+    std::string ToString() const
+    {
+      std::stringstream ss ;
+      ss << syd::Patient::ToString() << " "
+         << birth_date;
+      return ss.str();
     }
-    // --------------------------------------------------
+
 
   }; // end of class
 }

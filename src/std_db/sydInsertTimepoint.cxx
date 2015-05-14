@@ -18,7 +18,7 @@
 
 // syd
 #include "sydInsertTimepoint_ggo.h"
-#include "sydStudyDatabase.h"
+#include "sydStandardDatabase.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydTimepointBuilder.h"
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
   // Get the database
   std::string dbname = args_info.inputs[0];
-  syd::StudyDatabase * db = m->Read<syd::StudyDatabase>(dbname);
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
   // Get the tag
   syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == args_info.inputs[1]);

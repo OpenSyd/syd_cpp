@@ -19,7 +19,7 @@
 // syd
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydStudyDatabase.h"
+#include "sydStandardDatabase.h"
 #include "sydCommonDatabase.h"
 
 // syd init
@@ -43,30 +43,34 @@ int main(int argc, char* argv[])
   // Create the database
   LOG(0) << "Creating database";
   if (!syd::DirExists("test")) syd::CreateDirectory("test");
-  syd::Database * db = m->Create("StudyDB", "test.db", "test");
+  syd::Database * db = m->Create("StandardDatabase", "test.db", "test");
 
   // Insert some (fake) patients
   {
-    syd::Patient p("toto", 1, 90);
+    syd::Patient p;
+    p.Set("toto", 1, 90);
     db->Insert(p);
     syd::Patient t;
   }
 
   {
-    syd::Patient p("titi", 2, 86);
+    syd::Patient p;
+    p.Set("titi", 2, 86);
     db->Insert(p);
   }
 
   // Insert some injections
   {
     syd::Patient p = db->QueryOne<syd::Patient>(odb::query<syd::Patient>::study_id == 1);
-    syd::Injection i(p, "Indium111", "2024-27-08 18:00", 200.0);
+    syd::Injection i;
+    i.Set(p, "Indium111", "2024-27-08 18:00", 200.0);
     db->Insert(i);
   }
 
   {
     syd::Patient p = db->QueryOne<syd::Patient>(odb::query<syd::Patient>::study_id == 1);
-    syd::Injection i(p, "Yttrium90", "2034-27-08 18:00", 180.0);
+    syd::Injection i;
+    i.Set(p, "Yttrium90", "2034-27-08 18:00", 180.0);
     db->Insert(i);
   }
 
@@ -83,7 +87,7 @@ int main(int argc, char* argv[])
 
   // Compare table
   // (echo .dump | sqlite3 test1.db)
-  syd::Database * dbref = m->Read<syd::StudyDatabase>("test.ref.db");
+  syd::Database * dbref = m->Read<syd::StandardDatabase>("test.ref.db");
   bool b = syd::CompareTable<syd::Patient>(db, dbref);
   if (!b) { LOG(FATAL) << "Table Patient is different between test.db and test.ref.db"; }
   LOG(0) << "Table Patient is ok.";

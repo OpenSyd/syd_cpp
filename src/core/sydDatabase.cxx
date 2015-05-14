@@ -110,7 +110,7 @@ void syd::Database::TraceCallback(const char* sql)
 
 // --------------------------------------------------------------------
 syd::TableElement * syd::Database::InsertFromArg(const std::string & table_name, std::vector<std::string> & arg) {
-  return GetTable(table_name)->Insert(arg);
+  return GetTable(table_name)->InsertFromArg(arg);
 }
 // --------------------------------------------------------------------
 

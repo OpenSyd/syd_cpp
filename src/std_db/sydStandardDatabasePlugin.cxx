@@ -1,12 +1,12 @@
 
-#include "extClinicDatabase.h"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 extern "C"
 {
   void RegisterDatabaseSchema(syd::DatabaseManager * m) {
-    auto *c = m->RegisterDatabaseSchema<ext::ClinicDatabase>("extClinicDB");
-    c->AddSchemaName("extClinicSchema");
+    auto *c = m->RegisterDatabaseSchema<syd::StandardDatabase>("StandardDatabase");
+    c->AddSchemaName("StandardSchema");
   }
 }
 // --------------------------------------------------------------------

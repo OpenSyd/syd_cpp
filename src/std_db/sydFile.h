@@ -48,13 +48,8 @@ namespace syd {
     // ------------------------------------------------------------------------
     SET_TABLE_NAME("File")
     File();
-    virtual ~File() {}
-    File(const File & other);
-    File & operator= (const File & other);
-    virtual void copy(const File & t);
 
     virtual std::string ToString() const;
-    virtual void SetValues(std::vector<std::string> & arg);
 
     bool operator==(const File & p);
     bool operator!=(const File & p) { return !(*this == p); }

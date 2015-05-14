@@ -20,7 +20,7 @@
 #include "sydDumpTimepoint_ggo.h"
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
-#include "sydStudyDatabase.h"
+#include "sydStandardDatabase.h"
 
 // Init syd
 SYD_STATIC_INIT
@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
   // Get the database
   std::string dbname = args_info.inputs[0];
-  syd::StudyDatabase * db = m->Read<syd::StudyDatabase>(dbname);
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
   // Prepare the list of arguments
   std::vector<std::string> args;

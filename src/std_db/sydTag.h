@@ -44,17 +44,12 @@ namespace syd {
     // ------------------------------------------------------------------------
     SET_TABLE_NAME("Tag")
     Tag();
-    ~Tag();
-    Tag(const Tag & other);
-    Tag & operator= (const Tag & other);
-    void copy(const Tag & t);
 
     virtual std::string ToString() const;
-    virtual void SetValues(std::vector<std::string> & arg);
+    virtual void Set(std::vector<std::string> & arg);
 
     bool operator==(const Tag & p);
     bool operator!=(const Tag & p) { return !(*this == p); }
-
 
   }; // end class
 }

@@ -26,12 +26,7 @@
 namespace syd {
 
 #pragma db object
-  /// Store information about a radionuclide injection (date, etc)
-  /**
-      Element of table stored in a db. Contains information about a
-      patient injection of a radionuclide (quantity, date, type of
-      radionuclide)
-  */
+  /// Store information about a radionuclide injection (date, etc).
   class Injection : public TableElement {
   public:
 
@@ -48,15 +43,10 @@ namespace syd {
     // ------------------------------------------------------------------------
     SET_TABLE_NAME("Injection")
     Injection();
-    Injection(Patient & p, const std::string & pradionuclide, const std::string & pdate, double activity);
-    ~Injection();
-    Injection(const Injection & other);
-    Injection & operator= (const Injection & other);
-    void copy(const Injection & t);
 
     virtual std::string ToString() const;
-    void Set(Patient & p, const std::string & pradionuclide,
-             const std::string & pdate, double activity);
+    virtual void Set(std::vector<std::string> & arg) { DD("TODO"); }
+    void Set(Patient & p, const std::string & pradionuclide, const std::string & pdate, double activity);
 
     bool operator==(const Injection & p);
     bool operator!=(const Injection & p) { return !(*this == p); }

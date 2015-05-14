@@ -76,7 +76,7 @@ namespace syd {
     void Update(std::vector<TableElement*> & r);
 
     /// default impltementation of insert, must be overloaded
-    virtual TableElement * Insert(std::vector<std::string> & arg);
+    virtual TableElement * InsertFromArg(std::vector<std::string> & arg);
 
   protected:
     syd::Database * database_;
