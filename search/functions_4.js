@@ -1,7 +1,7 @@
 var searchData=
 [
   ['getabsolutedbfolder',['GetAbsoluteDBFolder',['../classsyd_1_1Database.html#af43b76c8045344eaaa96eb1062ac4196',1,'syd::Database']]],
-  ['getabsolutefolder',['GetAbsoluteFolder',['../classsyd_1_1ClinicDatabase.html#a279f734460ea7f96df2eccda432a1bc0',1,'syd::ClinicDatabase::GetAbsoluteFolder(const DicomSerie &amp;serie)'],['../classsyd_1_1ClinicDatabase.html#a25c07b8905fdd2ede5642d05def55449',1,'syd::ClinicDatabase::GetAbsoluteFolder(const Patient &amp;patient)']]],
+  ['getabsolutefolder',['GetAbsoluteFolder',['../classsyd_1_1StandardDatabase.html#a375ab875d08fc5bac7c5106464c374b7',1,'syd::StandardDatabase::GetAbsoluteFolder(const DicomSerie &amp;serie)'],['../classsyd_1_1StandardDatabase.html#a86b73359a953d98c2ad536713eebb190',1,'syd::StandardDatabase::GetAbsoluteFolder(const Patient &amp;patient)']]],
   ['getdatabaseschema',['GetDatabaseSchema',['../classsyd_1_1Database.html#ae0fc42ac9795362e56b9dcb306670411',1,'syd::Database']]],
   ['getdatabaseschemas',['GetDatabaseSchemas',['../classsyd_1_1DatabaseManager.html#a402555b6cdc2639dbff8cd1f69bc13c4',1,'syd::DatabaseManager']]],
   ['getfilename',['GetFilename',['../classsyd_1_1Database.html#af978bbfce8839721d25735b6db020cb0',1,'syd::Database']]],

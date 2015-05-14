@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['weight_5fin_5fkg',['weight_in_kg',['../classsyd_1_1Patient.html#a2158bdcfc2510f8b507541b304f96f51',1,'syd::Patient']]]
+  ['_7edicomseriebuilder',['~DicomSerieBuilder',['../classsyd_1_1DicomSerieBuilder.html#a542aee8e90dbec6f9b8178ee4ed64f87',1,'syd::DicomSerieBuilder']]],
+  ['_7etimepointbuilder',['~TimepointBuilder',['../classsyd_1_1TimepointBuilder.html#a7636ae4fa2a58b48fae1cb206bec40ed',1,'syd::TimepointBuilder']]]
 ];

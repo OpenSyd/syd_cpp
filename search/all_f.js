@@ -1,16 +1,16 @@
 var searchData=
 [
-  ['schema_5fversion',['schema_version',['../structsyd_1_1schema__version.html',1,'syd']]],
-  ['searchforfilesinfolder',['SearchForFilesInFolder',['../classsyd_1_1DicomSerieBuilder.html#a6c28e9a23ae8338fb9b7d1e8b951714a',1,'syd::DicomSerieBuilder']]],
-  ['searchtypeandparamfromname',['SearchTypeAndParamFromName',['../classsyd_1_1DatabaseFactory.html#a5c16e4d387807344d4896ad7e6967c66',1,'syd::DatabaseFactory']]],
-  ['set',['Set',['../classsyd_1_1TableElement.html#aa34ff1762fabeb75706625d6f6ce6ad8',1,'syd::TableElement::Set()'],['../classsyd_1_1Injection.html#a9b2bfd3bde6377d7e6adc4414065fd2f',1,'syd::Injection::Set()'],['../classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db',1,'syd::Patient::Set()']]],
-  ['setdatabase',['SetDatabase',['../classsyd_1_1DicomSerieBuilder.html#a77d75ac7a88747fcd7164c659519d100',1,'syd::DicomSerieBuilder']]],
-  ['setforcepatientflag',['SetForcePatientFlag',['../classsyd_1_1DicomSerieBuilder.html#a196085ea3b89d5e60f74b89d4ce45d9c',1,'syd::DicomSerieBuilder']]],
-  ['setinjection',['SetInjection',['../classsyd_1_1DicomSerieBuilder.html#a3f9de27336f7e989ec2bbf0770e09536',1,'syd::DicomSerieBuilder']]],
-  ['singleton_5f',['singleton_',['../classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80',1,'syd::DatabaseManager::singleton_()'],['../classsyd_1_1PluginManager.html#a61058c3847b6fedd2ea2fedc926e6fec',1,'syd::PluginManager::singleton_()']]],
-  ['size',['size',['../classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27',1,'syd::DicomSerie']]],
-  ['spacing',['spacing',['../classsyd_1_1DicomSerie.html#ae0e66e018c7f715920c4a7d76caee495',1,'syd::DicomSerie']]],
-  ['study_5fid',['study_id',['../classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6',1,'syd::Patient']]],
-  ['studydatabase',['StudyDatabase',['../classsyd_1_1StudyDatabase.html',1,'syd']]],
-  ['sydlog',['sydlog',['../namespacesydlog.html',1,'']]]
+  ['table',['Table',['../classsyd_1_1Table.html',1,'syd']]],
+  ['table',['Table',['../classsyd_1_1Table.html#a3d595f43e77610d4226adee7f48abb4d',1,'syd::Table']]],
+  ['table_5fname',['table_name',['../structsyd_1_1table__name.html',1,'syd']]],
+  ['tablebase',['TableBase',['../classsyd_1_1TableBase.html',1,'syd']]],
+  ['tableelement',['TableElement',['../classsyd_1_1TableElement.html',1,'syd']]],
+  ['tablet',['TableT',['../classsyd_1_1TableT.html',1,'syd']]],
+  ['tag',['tag',['../classsyd_1_1Timepoint.html#a099408f0476aab384f4c8c16c49853a8',1,'syd::Timepoint']]],
+  ['tag',['Tag',['../classsyd_1_1Tag.html',1,'syd']]],
+  ['timepoint',['Timepoint',['../classsyd_1_1Timepoint.html',1,'syd']]],
+  ['timepointbuilder',['TimepointBuilder',['../classsyd_1_1TimepointBuilder.html',1,'syd']]],
+  ['timepointbuilder',['TimepointBuilder',['../classsyd_1_1TimepointBuilder.html#a60097dc12be23df67c5463ed971f24e3',1,'syd::TimepointBuilder']]],
+  ['tostring',['ToString',['../classsyd_1_1TableElement.html#a39b333a92fca265a33bbfc5fcc17c784',1,'syd::TableElement::ToString()'],['../classsyd_1_1DicomFile.html#a6305e19960a2bd2bb13b9c60773f4b14',1,'syd::DicomFile::ToString()'],['../classsyd_1_1DicomSerie.html#a3308c7f3c69b87613457de887c32f024',1,'syd::DicomSerie::ToString()'],['../classsyd_1_1File.html#acdabec55ae8ca778984a23cf2326eb47',1,'syd::File::ToString()'],['../classsyd_1_1Injection.html#a6f6132b6349cf9941d396f6a066d72f5',1,'syd::Injection::ToString()'],['../classsyd_1_1Patient.html#a97e0d70f2296e0d8919cba4476c1e5d7',1,'syd::Patient::ToString()'],['../classsyd_1_1Tag.html#ad65b2739b72e184dd79ce30ca11183ca',1,'syd::Tag::ToString()'],['../classsyd_1_1Timepoint.html#ad10fd146bef6314545eeeaa4a6948a5b',1,'syd::Timepoint::ToString()']]],
+  ['tracecallback',['TraceCallback',['../classsyd_1_1Database.html#a3092120b7fcb17efcf54c3a9257bea66',1,'syd::Database']]]
 ];

@@ -227,9 +227,9 @@ db-&gt;Query(patients); // all patients;
 <p>This is done with the sydDicomSerieBuilder class. See <a class="el" href="sydInsertDicom_8cxx_source.html">sydInsertDicom.cxx</a> as example.</p>
 <h2>Standards tables and database schemas</h2>
 <p>The following classes are mapped to SQL tables in the sqlite databases.</p>
-<p>A <a class="el" href="classsyd_1_1ClinicDatabase.html" title="This database manages three tables : Patient, Injection. ">syd::ClinicDatabase</a> manages the following tables:</p><ul>
+<p>A syd::ClinicDatabase manages the following tables:</p><ul>
 <li><a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">syd::Patient</a>: contains patient's info such as name (initials), weight, etc. A patient has several identifier: 'id' is the db one, 'name' is usually two letters initials, 'study_id' is the number of the patient in the current study (a patient could belong to a single study, just duplicate db for several study), 'dicom_id' is the id in the dicom file.</li>
-<li><a class="el" href="classsyd_1_1Injection.html" title="Store information about a radionuclide injection (date, etc) ">syd::Injection</a>: contains information about injection (quantity in MBq, date, type of radionuclide, etc). A patient may be linked to several injections.</li>
+<li><a class="el" href="classsyd_1_1Injection.html" title="Store information about a radionuclide injection (date, etc). ">syd::Injection</a>: contains information about injection (quantity in MBq, date, type of radionuclide, etc). A patient may be linked to several injections.</li>
 <li><a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">syd::DicomSerie</a>: contains link to dicom files about an image (CT or SPECT).</li>
 <li><a class="el" href="classsyd_1_1DicomSerieBuilder.html" title="This class search for dicom file in folder and insert the DicomSerie and DicomFile in the db...">syd::DicomSerieBuilder</a>: to build a <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">syd::DicomSerie</a> object in the database by reading dicom files. Important note: dicom are identifying by the SeriesInstanceUID (unique id) for the CT images and by SOPInstanceUID for all other images.</li>
 </ul>

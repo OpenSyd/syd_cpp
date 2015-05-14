@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['reconstruction_5fdate',['reconstruction_date',['../classsyd_1_1DicomSerie.html#a5f735f7a79bcb537b3479aa454d18f97',1,'syd::DicomSerie']]],
-  ['relative_5ffolder_5f',['relative_folder_',['../classsyd_1_1Database.html#a3bfdf90d2454ae4f4809947a03763349',1,'syd::Database']]]
+  ['singleton_5f',['singleton_',['../classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80',1,'syd::DatabaseManager::singleton_()'],['../classsyd_1_1PluginManager.html#a61058c3847b6fedd2ea2fedc926e6fec',1,'syd::PluginManager::singleton_()']]],
+  ['size',['size',['../classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27',1,'syd::DicomSerie']]],
+  ['spacing',['spacing',['../classsyd_1_1DicomSerie.html#ae0e66e018c7f715920c4a7d76caee495',1,'syd::DicomSerie']]],
+  ['study_5fid',['study_id',['../classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6',1,'syd::Patient']]]
 ];
