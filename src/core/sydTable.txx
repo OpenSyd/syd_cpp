@@ -29,7 +29,6 @@ syd::Table<TableElement>::Table(syd::Database * db, odb::sqlite::database * d)
 template<class TableElement>
 bool syd::Table<TableElement>::Delete(TableElement & elem)
 {
-  DD("Delete to do : should I check before ?");
   try {
     odb::transaction t (db_->begin());
     db_->erase<TableElement>(elem);

@@ -114,6 +114,9 @@ namespace syd {
     template<class TableElement>
     bool Delete(IdType id) { GetTable<TableElement>()->Delete(id); }
 
+    template<class TableElement>
+    void Delete(TableElement & e) { GetTable<TableElement>()->Delete(e); }
+
 
     /// Delete the element with id in the given table
     // bool Delete(const std::string & table_name, const IdType id);

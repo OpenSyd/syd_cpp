@@ -34,14 +34,14 @@ int main(int argc, char* argv[])
 
   std::string pwd;
   syd::GetWorkingDirectory(pwd);
-  std::cout << "Working dir is " << pwd << std::endl;
+  LOG(1) << "Working dir is " << pwd;
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
 
   // Create the database
-  LOG(0) << "Creating database";
+  LOG(1) << "Creating database";
   if (!syd::DirExists("test")) syd::CreateDirectory("test");
   syd::Database * db = m->Create("StandardDatabase", "test.db", "test");
 
