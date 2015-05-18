@@ -40,7 +40,15 @@ void syd::PluginManager::Load()
   if (!env) {
     LOG(FATAL) << "Could not find SYD_PLUGIN. Please set this variable to the folder to look for plugins.";
   }
-  LoadInFolder(std::string(env));
+  std::vector<std::string> ll;
+  std::string senv(env);
+  std::stringstream ss (senv);
+  std::string tok;
+  char delimiter = ':';
+  while(std::getline(ss, tok, delimiter)) {
+    ll.push_back(tok);
+  }
+  for(auto l:ll) LoadInFolder(l);
 }
 // --------------------------------------------------------------------
 
