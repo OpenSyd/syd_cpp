@@ -43,7 +43,7 @@ namespace syd {
 
   }; // end of class
 
-#define SET_TABLE_NAME(name) static std::string GetTableName() { return #name; }
+#define SET_TABLE_NAME(name) static std::string GetTableName() { return name; }
 
 } // end namespace
 // --------------------------------------------------------------------
