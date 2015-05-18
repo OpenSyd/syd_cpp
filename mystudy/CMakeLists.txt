@@ -11,8 +11,8 @@ cmake_minimum_required(VERSION 2.8)
 #     cmake_policy(SET CMP0003 NEW)
 # endif(COMMAND cmake_policy)
 
-# # Policy for shared library on OSX
-# cmake_policy(SET CMP0042 NEW) # CMake 3.0
+# Policy for shared library on OSX
+cmake_policy(SET CMP0042 NEW) # CMake 3.0
 
 # if(NOT DEFINED SYD_SOURCE_DIR)
 #   set(SYD_SOURCE_DIR ${PROJECT_SOURCE_DIR})
