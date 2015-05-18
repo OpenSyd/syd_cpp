@@ -23,6 +23,9 @@
 #include "sydPrintTable.h"
 #include "sydDatabase.h"
 #include "sydTable.h"
+#include "sydDatabaseManager.h"
+
+// syd tables
 #include "sydPatient-odb.hxx"
 #include "sydInjection-odb.hxx"
 #include "sydDicomSerie-odb.hxx"
@@ -30,7 +33,6 @@
 #include "sydFile-odb.hxx"
 #include "sydTag-odb.hxx"
 #include "sydTimepoint-odb.hxx"
-#include "sydDatabaseManager.h"
 
 // --------------------------------------------------------------------
 namespace syd {
