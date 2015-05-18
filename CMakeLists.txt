@@ -5,6 +5,7 @@ project(syd)
 
 
 #----------------------------------------------------------
+# cmake policies
 cmake_minimum_required(VERSION 2.8)
 cmake_policy(VERSION 2.8)
 if(COMMAND cmake_policy)
@@ -14,10 +15,25 @@ endif(COMMAND cmake_policy)
 # Policy for shared library on OSX
 cmake_policy(SET CMP0042 NEW) # CMake 3.0
 
-if(NOT DEFINED SYD_SOURCE_DIR)
-  set(SYD_SOURCE_DIR ${PROJECT_SOURCE_DIR})
-endif(NOT DEFINED SYD_SOURCE_DIR)
+
 #----------------------------------------------------------
+## Default to release
+IF (NOT CMAKE_BUILD_TYPE)
+  SET (CMAKE_BUILD_TYPE Release)
+ENDIF (NOT CMAKE_BUILD_TYPE)
+
+
+#----------------------------------------------------------
+#if(NOT DEFINED SYD_SOURCE_DIR)
+set(SYD_SOURCE_DIR ${PROJECT_SOURCE_DIR})
+set(SYD_BUILD_DIR ${PROJECT_BINARY_DIR})
+#endif(NOT DEFINED SYD_SOURCE_DIR)
+#----------------------------------------------------------
+
+
+SET(SYD_VERSION_MAJOR "0")
+SET(SYD_VERSION_MINOR "1")
+SET(SYD_VERSION_PATCH "0")
 
 
 #----------------------------------------------------------
@@ -83,3 +99,25 @@ if(BUILD_TESTING)
   add_subdirectory(test)
 endif(BUILD_TESTING)
 #----------------------------------------------------------
+
+
+SET(SYD_LIBRARIES
+  sydCore
+  sydStandardDatabase
+  ${DCMTK_LIBRARIES}
+  sydCommonSchema
+  odb-sqlite odb sqlite3 z
+  ${CERES_LIBRARIES}
+  ${ITK_LIBRARIES})
+
+
+SET(SYD_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
+SET(SYD_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
+
+LIST(APPEND SYD_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/core")
+LIST(APPEND SYD_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/std_db")
+
+# Generate SYDConfig.cmake for the build tree.
+SET (SYD_USE_FILE "${SYD_SOURCE_DIR}/cmake/UseSYD.cmake")
+SET (SYD_LIBRARY_DIRS ${SYD_LIBRARY_PATH})
+CONFIGURE_FILE (cmake/SYDConfig.cmake.in SYDConfig.cmake @ONLY)
