@@ -82,7 +82,9 @@ int main(int argc, char* argv[])
   if (folder_absolute.back() == PATH_SEPARATOR) folder_absolute.substr(0, folder_absolute.size()-1);
   syd::Replace(folder_absolute, syd::GetFilenameFromPath(folder_absolute), "");
   if (folder_absolute != dbname_absolute) {
-    LOG(FATAL) << "The database file and the image folder must be in the same directory. Here '" << dbname << "' is in '" << dbname_absolute << "' while the folder '" << folder << "' is in '" << folder_absolute;
+    LOG(FATAL) << "The database file and the image folder must be in the same directory. Here '"
+               << dbname << "' is in '" << dbname_absolute
+               << "' while the folder '" << folder << "' is in '" << folder_absolute;
   }
 
   // Create the database

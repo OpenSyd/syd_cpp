@@ -26,7 +26,7 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// Base clase for classes that create a Database
+  /// Base classe for classes that create a Database
   class DatabaseCreatorBase {
 
   public:
