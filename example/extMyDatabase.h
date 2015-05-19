@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef EXTSTANDARDDATABASE_H
-#define EXTSTANDARDDATABASE_H
+#ifndef EXTMYDATABASE_H
+#define EXTMYDATABASE_H
 
 // syd
 #include "sydStandardDatabase.h"
@@ -34,29 +34,18 @@
 // --------------------------------------------------------------------
 namespace ext {
 
-  /// Example of extended version of a StandardDatabase
-  class extendedDatabase: public syd::StandardDatabase {
+  /// Example of extended version of a StandardDatabase that
+  /// potentially include standard tables, extended tables and new
+  /// tables.
+  class MyDatabase: public syd::StandardDatabase {
   public:
 
-    /// Overload CreateTables (required)
-    virtual void CreateTables() {
-      // Include all needed tables here.
+    /// Overload CreateTables to insert the new tables (required)
+    virtual void CreateTables();
 
-      // This is the new "Patient" table that replace the standard one
-      AddTable<ext::Patient>();
-
-      // Insert all standard tables
-      AddTable<syd::File>();
-      // AddTable<syd::Tag>();
-      // AddTable<syd::Injection>();
-      // AddTable<syd::DicomSerie>();
-      // AddTable<syd::DicomFile>();
-      // AddTable<syd::Timepoint>();
-    }
-
-  }; // class extendedDatabase
+  }; // class MyDatabase
 } // namespace ext
 
 // --------------------------------------------------------------------
 
-#endif
+#endif // EXTMYDATABASE_H
