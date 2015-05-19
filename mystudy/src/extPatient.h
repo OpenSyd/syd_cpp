@@ -34,19 +34,38 @@ namespace ext {
   public:
 
     /// Additional column 'birth_date'
-    std::string birth_date;
+    std::string   birth_date;
 
-    // Set the table name
+    // Set the different table name (must be like in the odb pragma)
     SET_TABLE_NAME("Patient")
 
     /// Required constructor
-    Patient();
+    Patient():syd::Patient() { birth_date = "birth_date"; }
 
-    /// Overload function to allow to take birth_date into account
-    virtual void Set(std::vector<std::string> & arg);
+    /// Overload function to allow sydInsert birth_date
+    virtual void Set(std::vector<std::string> & arg) {
+      if (arg.size() < 2) {
+        LOG(FATAL) << "To insert patient, please set <name> <study_id> [<weight_in_kg> <dicom_patientid> <birth_date>]";
+      }
+      syd::Patient::Set(arg);
+      if (arg.size() > 4) {
+        std::string pdate = arg[4];
+        if (!syd::IsDateValid(arg[4])) {
+          LOG(FATAL) << "Error while using extPatient::Set, the date is not valid: " << pdate;
+        }
+        birth_date = pdate;
+      }
+    }
 
     /// Overload function to print birth_date
-    std::string ToString() const;
+    std::string ToString() const
+    {
+      std::stringstream ss ;
+      ss << syd::Patient::ToString() << " "
+         << birth_date;
+      return ss.str();
+    }
+
 
   }; // end of class
 }

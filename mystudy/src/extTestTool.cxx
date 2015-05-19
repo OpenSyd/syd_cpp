@@ -16,21 +16,39 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+// syd
+#include "sydPluginManager.h"
+#include "sydDatabaseManager.h"
+#include "extTestTool_ggo.h"
+#include "extendedDatabase.h"
 
-#include "extMyDatabase.h"
+// Init syd
+SYD_STATIC_INIT
 
 // --------------------------------------------------------------------
-/// Overload CreateTables (required)
-void ext::MyDatabase::CreateTables() {
-  // This is the new "Patient" table that replace the standard one
-  AddTable<ext::Patient>();
+int main(int argc, char* argv[])
+{
+  // Init command line
+  SYD_INIT(extTestTool, 1);
 
-  // Insert all other standard tables
-  AddTable<syd::File>();
-  AddTable<syd::Tag>();
-  AddTable<syd::Injection>();
-  AddTable<syd::DicomSerie>();
-  AddTable<syd::DicomFile>();
-      AddTable<syd::Timepoint>();
+  // Load plugin
+  syd::PluginManager::GetInstance()->Load();
+  syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
+
+  // Get the database
+  std::string dbname = args_info.inputs[0];
+  ext::extendedDatabase * db = m->Read<ext::extendedDatabase>(dbname);
+
+  syd::File file;
+  DD(file);
+  db->Insert(file);
+
+  // Print content
+  std::vector<ext::Patient> patients;
+  db->Query(patients);
+  std::cout << "There are " << patients.size() << " extPatient in the db." << std::endl;
+  for(auto p:patients) std::cout << p << std::endl;
+
+  // This is the end, my friend.
 }
 // --------------------------------------------------------------------
