@@ -1,7 +1,7 @@
 var searchData=
 [
   ['database',['Database',['../classsyd_1_1Database.html',1,'syd']]],
-  ['databasecreator',['DatabaseCreator',['../classsyd_1_1DatabaseCreator.html',1,'syd']]],
+  ['databasecreator',['DatabaseCreator',['../singletonsyd_1_1DatabaseCreator.html',1,'syd']]],
   ['databasecreatorbase',['DatabaseCreatorBase',['../classsyd_1_1DatabaseCreatorBase.html',1,'syd']]],
   ['databasefactory',['DatabaseFactory',['../classsyd_1_1DatabaseFactory.html',1,'syd']]],
   ['databaseinformation',['DatabaseInformation',['../classsyd_1_1DatabaseInformation.html',1,'syd']]],

@@ -8,7 +8,7 @@ var searchData=
   ['getinstance',['GetInstance',['../classsyd_1_1DatabaseFactory.html#a24063a2d613690fca9d59f9aefdec0e3',1,'syd::DatabaseFactory::GetInstance()'],['../classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f',1,'syd::DatabaseManager::GetInstance()'],['../classsyd_1_1PluginManager.html#a9d0d3a5c5108268ff18157d96d8070e3',1,'syd::PluginManager::GetInstance()']]],
   ['getlastsqlquery',['GetLastSQLQuery',['../classsyd_1_1Database.html#ad3a7c7fb4aac508e910acbfc732da3ce',1,'syd::Database']]],
   ['getmapoftables',['GetMapOfTables',['../classsyd_1_1Database.html#aa1d82736549398f655f191ef4e34e05e',1,'syd::Database']]],
-  ['getnumberofelements',['GetNumberOfElements',['../classsyd_1_1Table.html#a3355865c9b92b4606ca5253fce833200',1,'syd::Table']]],
+  ['getnumberofelements',['GetNumberOfElements',['../singletonsyd_1_1Table.html#a3355865c9b92b4606ca5253fce833200',1,'syd::Table']]],
   ['getrelativedbfolder',['GetRelativeDBFolder',['../classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980',1,'syd::Database']]],
   ['gettable',['GetTable',['../classsyd_1_1Database.html#a07f35ca4a0789dcfb86fe304690c6b50',1,'syd::Database::GetTable(const std::string &amp;table_name)'],['../classsyd_1_1Database.html#a33d5080feb07e76f626fd652814bafa8',1,'syd::Database::GetTable()']]]
 ];

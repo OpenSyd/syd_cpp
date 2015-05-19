@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['table',['Table',['../classsyd_1_1Table.html',1,'syd']]],
-  ['table',['Table',['../classsyd_1_1Table.html#a3d595f43e77610d4226adee7f48abb4d',1,'syd::Table']]],
+  ['table',['Table',['../singletonsyd_1_1Table.html',1,'syd']]],
+  ['table',['Table',['../singletonsyd_1_1Table.html#a3d595f43e77610d4226adee7f48abb4d',1,'syd::Table']]],
   ['table_5fname',['table_name',['../structsyd_1_1table__name.html',1,'syd']]],
   ['tablebase',['TableBase',['../classsyd_1_1TableBase.html',1,'syd']]],
   ['tableelement',['TableElement',['../classsyd_1_1TableElement.html',1,'syd']]],
