@@ -72,7 +72,8 @@ int main(int argc, char* argv[])
 
   // Set the folder in the db_info table
   if (!syd::DirExists(folder)) {
-    LOG(WARNING) << "The folder '" << folder << "' does not exist.";
+    LOG(WARNING) << "The folder '" << folder << "' does not exist, I create it.";
+    syd::CreateDirectory(folder);
   }
   std::string dbname_absolute = dbname;
   syd::ConvertToAbsolutePath(dbname_absolute);
