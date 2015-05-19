@@ -1,13 +1,13 @@
 
-#include "extendedDatabase.h"
+#include "extMyDatabase.h"
 
 // --------------------------------------------------------------------
 extern "C"
 {
   void RegisterDatabaseSchema(syd::DatabaseManager * m) {
-    auto *c = m->RegisterDatabaseSchema<ext::extendedDatabase>("extendedDB");
+    auto *c = m->RegisterDatabaseSchema<ext::MyDatabase>("MyDatabase");
     c->AddSchemaName("StandardSchema");
-    c->AddSchemaName("extendedStandardSchema");
+    c->AddSchemaName("MySchema");
   }
 }
 // --------------------------------------------------------------------

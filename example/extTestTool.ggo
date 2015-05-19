@@ -3,7 +3,7 @@
 package "extTestTool"
 usage "extTestTool <db>"
 version "0.1"
-description "Test a database of type extendedDB"
+description "Test a MyDatabase"
 
 option "config"	    -   "Config file"				string no
 option "verbose"    v   "Verbosity level (0 for silence)"       int default ="0" no
