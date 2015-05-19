@@ -20,7 +20,7 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "extTestTool_ggo.h"
-#include "extendedDatabase.h"
+#include "extMyDatabase.h"
 
 // Init syd
 SYD_STATIC_INIT
@@ -37,11 +37,15 @@ int main(int argc, char* argv[])
 
   // Get the database
   std::string dbname = args_info.inputs[0];
-  ext::extendedDatabase * db = m->Read<ext::extendedDatabase>(dbname);
+  ext::MyDatabase * db = m->Read<ext::MyDatabase>(dbname);
 
+  // Create standard file
   syd::File file;
-  DD(file);
   db->Insert(file);
+
+  // Create extended Patien
+  ext::Patient patient;
+  db->Insert(patient);
 
   // Print content
   std::vector<ext::Patient> patients;
