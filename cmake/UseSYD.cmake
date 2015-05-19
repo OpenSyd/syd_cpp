@@ -4,9 +4,18 @@
 # obtained from SYDConfig.cmake.
 
 #----------------------------------------------------------
+# Helping macro
+macro(DD in)
+    message(${in}=${${in}})
+endmacro(DD)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 # Find ITK (required)
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
+message(STATUS "Trying to find ITK - ok")
 
 #----------------------------------------------------------
 # Add include directories needed to use SYD.
@@ -17,26 +26,18 @@ include_directories(BEFORE ${SYD_INCLUDE_DIRS})
 link_directories(${SYD_LIBRARY_DIRS})
 
 #----------------------------------------------------------
-# Helping macro
-macro(DD in)
-    message(${in}=${${in}})
-endmacro(DD)
-#----------------------------------------------------------
-
-
-#----------------------------------------------------------
 # To compile odb files // FIXME use include (?)
 macro(WRAP_ODB ODB_SRCS)
   foreach(ODB_FILES ${ARGN})
     get_filename_component(ODB_BASEFILENAME ${ODB_FILES} NAME_WE)
     get_filename_component(ODB_FILES_ABS ${ODB_FILES} ABSOLUTE)
-    DD(SCHEMA_NAME)
-    DD(ODB_FILES_ABS)
-    DD(ODB_BASEFILENAME)
     set(ODB_CXX ${ODB_BASEFILENAME}-odb.cxx)
     set(ODB_IXX ${ODB_BASEFILENAME}-odb.ixx)
     set(ODB_HXX ${ODB_BASEFILENAME}-odb.hxx)
-    set(ODB_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${ODB_CXX} ${CMAKE_CURRENT_BINARY_DIR}/${ODB_IXX} ${CMAKE_CURRENT_BINARY_DIR}/${ODB_HXX})
+    set(ODB_OUTPUT
+      ${CMAKE_CURRENT_BINARY_DIR}/${ODB_CXX}
+      ${CMAKE_CURRENT_BINARY_DIR}/${ODB_IXX}
+      ${CMAKE_CURRENT_BINARY_DIR}/${ODB_HXX})
     if(EXISTS ${ODB_FILES_ABS})
       add_custom_command(OUTPUT ${ODB_OUTPUT}
         COMMAND odb
@@ -46,7 +47,6 @@ macro(WRAP_ODB ODB_SRCS)
       message(FATAL_ERROR "Error odb cannot file the following file: " ${ODB_FILES_ABS})
     endif()
     set(${ODB_SRCS} ${${ODB_SRCS}} ${ODB_OUTPUT})
-    DD(ODB_OUTPUT)
     include_directories(${CMAKE_CURRENT_BINARY_DIR})
     include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   endforeach(ODB_FILES)
@@ -55,16 +55,16 @@ endmacro(WRAP_ODB)
 #----------------------------------------------------------
 
 
-
 #----------------------------------------------------------
 # activate c++0x or c++11
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpermissive")
+#----------------------------------------------------------
 
 
 #----------------------------------------------------------
 # Need thoses directories to include odb generated files
-include_directories(${SYD_BUILD_DIR}/src/)
-include_directories(${SYD_BUILD_DIR}/src/std_db)
+include_directories(${SYD_BINARY_DIR}/src/)
+include_directories(${SYD_BINARY_DIR}/src/std_db)
 
 
 # ----------------------------------------------------------
@@ -109,3 +109,4 @@ macro(WRAP_GGO GGO_SRCS)
     endif("${GCCVER}" VERSION_GREATER "4.5.2")
   endif(CMAKE_COMPILER_IS_GNUCXX)
 endmacro(WRAP_GGO)
+# ----------------------------------------------------------

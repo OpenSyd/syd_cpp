@@ -24,7 +24,7 @@ add_library(sydStandardDatabase SHARED
   sydTimepointBuilder.cxx
   )
 ## to declare dependencies
-target_link_libraries(sydStandardDatabase ${SYD_LIBS})
+target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})
 
 # Specific tool for DicomSerie
 wrap_ggo(sydInsertDicom sydInsertDicom.ggo)

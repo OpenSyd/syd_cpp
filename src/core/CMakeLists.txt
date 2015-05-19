@@ -14,7 +14,6 @@ add_library(sydCommonSchema SHARED
 target_link_libraries(sydCommonSchema
   ${DCMTK_LIBRARIES}
   odb-sqlite odb sqlite3 z
-  ${CERES_LIBRARIES}
   ${ITK_LIBRARIES})
 
 #----------------------------------------------------------
@@ -37,7 +36,6 @@ target_link_libraries(sydCore
   ${DCMTK_LIBRARIES}
   sydCommonSchema
   odb-sqlite odb sqlite3 z
-  ${CERES_LIBRARIES}
   ${ITK_LIBRARIES})
 
 #----------------------------------------------------------

@@ -69,7 +69,7 @@ void syd::PluginManager::LoadInFolder(const std::string & folder)
                                                    dirPrefix, recurse);
     }
   else {
-    LOG(FATAL) << "(plugin) The directory " << absolute_folder << " does not exist.";
+    LOG(WARNING) << "(syd plugin) The directory " << absolute_folder << " does not exist.";
   }
 
   for(auto f=inputFiles.begin(); f != inputFiles.end(); f++) {

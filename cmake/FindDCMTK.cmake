@@ -131,15 +131,15 @@ set(_SAVED_DCMTK_DIR ${DCMTK_DIR})
 #
 # Step1: Attempt to find a version of DCMTK providing a DCMTKConfig.cmake file.
 #
-message(STATUS "Trying to find DCMTK expecting DCMTKConfig.cmake")
+#message(STATUS "Trying to find DCMTK")
 find_package(DCMTK QUIET NO_MODULE)
 if(DCMTK_FOUND
     AND NOT "x" STREQUAL "x${DCMTK_LIBRARIES}"
     AND NOT "x" STREQUAL "x${DCMTK_INCLUDE_DIRS}")
-  message(STATUS "Trying to find DCMTK expecting DCMTKConfig.cmake - ok")
+  message(STATUS "Trying to find DCMTK - ok")
   return()
 else()
-  message(STATUS "Trying to find DCMTK expecting DCMTKConfig.cmake - failed")
+  message(STATUS "Trying to find DCMTK - failed")
 endif()
 
 message(STATUS "Trying to find DCMTK relying on FindDCMTK.cmake")
