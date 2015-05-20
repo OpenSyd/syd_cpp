@@ -29,13 +29,14 @@ SYD_STATIC_INIT
 template<class TableElement>
 void testInsert(syd::Database * db, TableElement & p)
 {
+  LOG(1) << "Table " << TableElement::GetTableName() << ", insert: " << p << " ...";
   db->Insert(p);
   TableElement q = db->QueryOne<TableElement>(p.id);
   bool b = (p == q);
   if (!b) {
     LOG(FATAL) << "Error table " << TableElement::GetTableName() << " during insert.";
   }
-  LOG(1) << "Table " << TableElement::GetTableName() << ", insert: " << p;
+  LOG(1) << p << "inserted.";
 }
 // --------------------------------------------------------------------
 
@@ -44,13 +45,14 @@ void testInsert(syd::Database * db, TableElement & p)
 template<class TableElement>
 void testUpdate(syd::Database * db, TableElement & p, TableElement & r)
 {
+  LOG(1) << "Table " << TableElement::GetTableName() << ", update: " << p << " ...";
   db->Update(p);
   TableElement q = db->QueryOne<TableElement>(p.id);
   bool b = (p == q and p == r);
   if (!b) {
     LOG(FATAL) << "Error table " << TableElement::GetTableName() << " during update.";
   }
-  LOG(1) << "Table " << TableElement::GetTableName() << ", update: " << p;
+  LOG(1) << p << " updated.";
 }
 // --------------------------------------------------------------------
 
@@ -59,6 +61,7 @@ void testUpdate(syd::Database * db, TableElement & p, TableElement & r)
 template<class TableElement>
 void testDelete(syd::Database * db, TableElement & p)
 {
+  LOG(1) << "Table " << TableElement::GetTableName() << ", delete: " << p << " ...";
   std::vector<TableElement> l;
   db->Query(l);
   int before = l.size();
@@ -69,7 +72,7 @@ void testDelete(syd::Database * db, TableElement & p)
   if (!b) {
     LOG(FATAL) << "Error table " << TableElement::GetTableName() << " during delete.";
   }
-  LOG(1) << "Table " << TableElement::GetTableName() << ", delete: " << p;
+  LOG(1) << p << " deleted.";
 }
 // --------------------------------------------------------------------
 
@@ -104,19 +107,85 @@ int main(int argc, char* argv[])
   p.weight_in_kg = 123;
   p.study_id = 16;
   p.dicom_patientid = "xxx";
-  syd::Patient r = p;
-  testUpdate(db, p, r);
+  syd::Patient pp = p;
+  testUpdate(db, p, pp);
   testDelete(db, p);
+  db->Insert(p); // re-insert patient (because use later)
+
+  // Radionuclide
+  syd::Radionuclide r;
+  r.Set("Indium111", 67.313);
+  testInsert(db, r);
+  r.name = "Indium-111";
+  syd::Radionuclide rr = r;
+  testUpdate(db, r, rr);
+  testDelete(db, r);
+  db->Insert(r);
 
   // Injection
   syd::Injection i;
-  db->Insert(p); // re-insert because deleted
-  i.Set(p, "Indium", "2014-02-01 12:34", 123.45);
+  i.Set(p, r, "2014-02-01 12:34", 123.45);
   testInsert(db, i);
   i.activity_in_MBq = 666;
   syd::Injection j = i;
   testUpdate(db, i, j);
   testDelete(db, i);
+  testInsert(db, i);
+
+  // File
+  syd::File f;
+  f.filename = "toto";
+  f.path = "/home/yes/";
+  f.md5 = "XXXXX";
+  testInsert(db, f);
+  f.filename = "bidon";
+  syd::File ff = f;
+  testUpdate(db, f, ff);
+  testDelete(db, f);
+  testInsert(db, f);
+
+  // Tag
+  syd::Tag t;
+  t.label = "mytag";
+  t.description = "this is a tag";
+  testInsert(db, t);
+  t.label = "bidon";
+  syd::Tag tt = t;
+  testUpdate(db, t, tt);
+  testDelete(db, t);
+
+  // DicomSerie
+  syd::DicomSerie ds;
+  ds.patient = std::make_shared<syd::Patient>(p);
+  ds.injection = std::make_shared<syd::Injection>(i);
+  ds.acquisition_date = "2214-02-01 12:34";
+  ds.reconstruction_date = "1014-02-01 12:34";
+  ds.dicom_study_uid = "XXYY";
+  ds.dicom_series_uid = "RTRTRTRTRRT";
+  ds.dicom_frame_of_reference_uid = "ZERTAERT";
+  ds.dicom_modality = "CT";
+  ds.dicom_manufacturer = "bidon";
+  ds.dicom_description = "this is a description";
+  ds.size[0] = 1 ; ds.size[1] = 2 ; ds.size[2] = 3;
+  ds.spacing[0] = 1.2 ; ds.spacing[1] = 2.3 ; ds.spacing[2] = 3.2;
+  testInsert(db, ds);
+  ds.dicom_modality = "NM";
+  syd::DicomSerie dds = ds;
+  testUpdate(db, ds, dds);
+  testDelete(db, ds);
+  testInsert(db, ds); // re-insert
+
+  // DicomFile
+  syd::DicomFile df;
+  df.file = std::make_shared<syd::File>(f);
+  df.dicom_serie = std::make_shared<syd::DicomSerie>(ds);
+  df.dicom_sop_uid = "AERTARIAZOERIPEOIR";
+  df.dicom_instance_number = 12;
+  testInsert(db, df);
+  df.dicom_sop_uid = "bidon";
+  syd::DicomFile ddf = df;
+  testUpdate(db, df, ddf);
+  testDelete(db, df);
 
   // This is the end, my friend.
   return EXIT_SUCCESS;

@@ -40,3 +40,16 @@ std::string syd::DicomFile::ToString() const
   return ss.str();
 }
 // --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------
+bool syd::DicomFile::operator==(const DicomFile & p)
+{
+  return (id == p.id and
+          *file == *p.file and
+          *dicom_serie == *p.dicom_serie and
+          dicom_sop_uid == p.dicom_sop_uid and
+          dicom_instance_number == p.dicom_instance_number);
+}
+// --------------------------------------------------

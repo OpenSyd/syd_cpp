@@ -96,6 +96,9 @@ namespace syd {
 
     virtual std::string ToString() const;
 
+    bool operator==(const DicomSerie & p);
+    bool operator!=(const DicomSerie & p) { return !(*this == p); }
+
   }; // end class
 }
 // --------------------------------------------------------------------

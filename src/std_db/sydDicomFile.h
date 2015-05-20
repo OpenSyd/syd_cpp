@@ -56,6 +56,9 @@ namespace syd {
 
     virtual std::string ToString() const;
 
+    bool operator==(const DicomFile & p);
+    bool operator!=(const DicomFile & p) { return !(*this == p); }
+
   }; // end class
 }
 // --------------------------------------------------------------------

@@ -68,7 +68,7 @@ bool syd::Injection::operator==(const Injection & p)
 {
   return (id == p.id and
           *patient == *p.patient and
-          radionuclide == p.radionuclide and
+          *radionuclide == *p.radionuclide and
           date == p.date and
           activity_in_MBq == p.activity_in_MBq);
 }

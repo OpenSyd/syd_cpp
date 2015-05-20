@@ -47,7 +47,8 @@ std::string syd::File::ToString() const
 bool syd::File::operator==(const File & p)
 {
   return (id == p.id and
-          path == p.filename and
+          filename == p.filename and
+          path == p.path and
           md5 == p.md5);
 }
 // --------------------------------------------------
