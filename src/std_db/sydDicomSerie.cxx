@@ -32,7 +32,7 @@ std::string syd::DicomSerie::ToString() const
   std::stringstream ss ;
   ss << id << " "
      << patient->name << " "
-     << (injection==NULL ? "-":injection->radionuclide) << " "
+     << (injection==NULL ? "-":injection->radionuclide->name) << " "
      << dicom_modality << " "
      << acquisition_date << " "
      << reconstruction_date << " "

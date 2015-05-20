@@ -21,6 +21,7 @@
 
 // syd
 #include "sydPatient.h"
+#include "sydRadionuclide.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -31,14 +32,19 @@ namespace syd {
   public:
 
 #pragma db id auto
-    IdType        id;
+    IdType id;
 
-    /// Foreign key, it must exist in the Patient table
+    /// Foreign key, linked to Patient table
     std::shared_ptr<Patient> patient;
 
-    std::string   radionuclide;
-    std::string   date;
-    double        activity_in_MBq;
+    /// Foreign key, linked to Radionuclide table
+    std::shared_ptr<Radionuclide> radionuclide;
+
+    /// Date of the injection
+    std::string date;
+
+    /// Injected activity in MBq
+    double activity_in_MBq;
 
     // ------------------------------------------------------------------------
     SET_TABLE_NAME("Injection")
@@ -46,12 +52,13 @@ namespace syd {
 
     virtual std::string ToString() const;
     virtual void Set(std::vector<std::string> & arg) { DD("TODO"); }
-    void Set(Patient & p, const std::string & pradionuclide, const std::string & pdate, double activity);
+    void Set(Patient & p, Radionuclide & pr, const std::string & pdate, double activity);
 
     bool operator==(const Injection & p);
     bool operator!=(const Injection & p) { return !(*this == p); }
 
   }; // end of class
+
 } // end of namespace
 // --------------------------------------------------------------------
 

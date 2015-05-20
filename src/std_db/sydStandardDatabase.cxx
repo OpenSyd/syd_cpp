@@ -24,6 +24,7 @@ void syd::StandardDatabase::CreateTables()
 {
   //  syd::Database::CreateTables();
   AddTable<syd::Patient>();
+  AddTable<syd::Radionuclide>();
   AddTable<syd::File>();
   AddTable<syd::Tag>();
 
@@ -79,34 +80,34 @@ void syd::StandardDatabase::QueryPatientsByNameOrStudyId(const std::string & arg
 
 // --------------------------------------------------------------------
 bool syd::StandardDatabase::QueryInjectionByNameOrId(const Patient & patient,
-                                                   const std::string & arg,
-                                                   Injection & p, bool fatalIfNotFound)
+                                                     const std::string & arg,
+                                                     Injection & p, bool fatalIfNotFound)
 {
-  // Check if name
   bool found = false;
   std::string s = "%"+arg+"%";
-  odb::query<Injection> q = odb::query<Injection>::radionuclide.like(s) and
+  odb::query<Injection> q =
+    odb::query<Injection>::radionuclide->name.like(s) and
     odb::query<Injection>::patient->id == patient.id;
-  if (Count<Injection>(q) == 1) p = QueryOne(q);
-  else {
-    q = odb::query<Injection>::id == atoi(arg.c_str());
-    int n = Count<Injection>(q);
-    if (n == 1) {
-      p = QueryOne(q);
-      found = true;
-    }
-    else {
-      if (fatalIfNotFound) {
-        if (n > 1) {
-          LOG(FATAL) << "Several injections match '" << arg
-                     << "' for the patient '" << patient.name << "', abort.";
-        }
-        LOG(FATAL) << "Could not find injection with name or id equal to '"
-                   << arg << "' for the patient " << patient.name << ".";
-      }
-    }
+  std::vector<syd::Injection> injections;
+  Query(q, injections);
+
+  auto n = injections.size();
+
+  if (n == 1) {
+    p = injections[0];
+    return true;
   }
-  return found;
+
+  if (fatalIfNotFound and n > 1) {
+    LOG(FATAL) << "Several injections match '" << arg
+               << "' for the patient '" << patient.name << "', abort.";
+  }
+  if (fatalIfNotFound and n==0) {
+    LOG(FATAL) << "Could not find injection with name or id equal to '"
+               << arg << "' for the patient " << patient.name << ".";
+  }
+
+  return false;
 }
 // --------------------------------------------------------------------
 
@@ -153,9 +154,13 @@ syd::Injection * syd::StandardDatabase::InsertInjection(std::vector<std::string>
     }
   }
 
+  // Get Radionuclide
+  syd::Radionuclide radionuclide;
+  radionuclide = QueryOne<syd::Radionuclide>(odb::query<Radionuclide>::name.like(arg[1]));
+
   // Create the new injection
   Injection * injection = new Injection;
-  injection->radionuclide = arg[1];
+  injection->radionuclide = std::make_shared<Radionuclide>(radionuclide);
   injection->date = date;
   injection->activity_in_MBq = atof(arg[3].c_str());
   // This is how to insert the link to the patient object
@@ -190,7 +195,8 @@ void syd::StandardDatabase::DumpDicom(std::ostream & os,
                or odb::query<DicomSerie>::dicom_modality.like(s)
                or odb::query<DicomSerie>::acquisition_date.like(s)
                or odb::query<DicomSerie>::reconstruction_date.like(s)
-               or odb::query<DicomSerie>::injection->radionuclide.like(s));
+               //  or odb::query<DicomSerie>::injection.radionuclide.name.like(s)
+               );
   }
 
   // Sort by acquisition_date then reconstruction_date
@@ -211,7 +217,7 @@ void syd::StandardDatabase::DumpDicom(std::ostream & os,
           << s.acquisition_date
           << s.dicom_modality
           << s.reconstruction_date
-          << s.injection->radionuclide
+          << s.injection->radionuclide->name
           << s.dicom_description;
     previous = s.acquisition_date;
   }

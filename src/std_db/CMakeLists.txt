@@ -3,6 +3,7 @@
 # Standard database : StandardDatabase
 set(SCHEMA_NAME StandardDatabaseSchema)
 wrap_odb(sydStandardDatabase sydPatient.h)
+wrap_odb(sydStandardDatabase sydRadionuclide.h)
 wrap_odb(sydStandardDatabase sydFile.h)
 wrap_odb(sydStandardDatabase sydInjection.h)
 wrap_odb(sydStandardDatabase sydDicomSerie.h)
@@ -14,6 +15,7 @@ add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
   sydStandardDatabasePlugin.cxx
   sydPatient-odb.cxx sydPatient.cxx
+  sydRadionuclide-odb.cxx sydRadionuclide.cxx
   sydFile-odb.cxx sydFile.cxx
   sydTag-odb.cxx sydTag.cxx
   sydInjection-odb.cxx sydInjection.cxx

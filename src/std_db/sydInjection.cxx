@@ -28,12 +28,12 @@ syd::Injection::Injection():syd::TableElement()
 
 // --------------------------------------------------------------------
 void syd::Injection::Set(Patient & p,
-                         const std::string & pradionuclide,
+                         Radionuclide & pr,
                          const std::string & pdate,
                          double activity)
 {
   patient = std::make_shared<syd::Patient>(p);
-  radionuclide = pradionuclide;
+  radionuclide = std::make_shared<syd::Radionuclide>(pr);
   if (!IsDateValid(pdate)) {
     LOG(FATAL) << "Error while using Injection::Set, the date is not valid: " << pdate;
   }
@@ -49,10 +49,13 @@ std::string syd::Injection::ToString() const
   std::string name;
   if (patient == NULL) name = "patient_not_set";
   else name = patient->name;
+  std::string r;
+  if (radionuclide == NULL) r = "radionuclide_not_set";
+  else r = radionuclide->name;
   std::stringstream ss ;
   ss << id << " "
      << name << " "
-     << radionuclide  << " "
+     << r  << " "
      << date << " "
      << activity_in_MBq;
   return ss.str();

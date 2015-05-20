@@ -27,6 +27,7 @@
 
 // syd tables
 #include "sydPatient-odb.hxx"
+#include "sydRadionuclide-odb.hxx"
 #include "sydInjection-odb.hxx"
 #include "sydDicomSerie-odb.hxx"
 #include "sydDicomFile-odb.hxx"
