@@ -73,7 +73,10 @@ void syd::PluginManager::LoadInFolder(const std::string & folder)
   }
 
   for(auto f=inputFiles.begin(); f != inputFiles.end(); f++) {
-    Load(f->c_str());
+    std::string s(f->c_str());
+    std::string fn=GetFilenameFromPath(s);
+    if (fn != "libsydCommonSchema.so" and
+        fn != "libsydCore.a") Load(s);
   }
 }
 // --------------------------------------------------------------------
