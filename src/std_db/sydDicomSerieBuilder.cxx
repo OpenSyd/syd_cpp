@@ -274,8 +274,14 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie * serie,
   }
   if (!b) {
     // if the patient has no dicom id, we set it (and update the db)
-    LOG(1) << "The dicom_id of the patient " << patient_ << " has been updated to " << patientID;
+    LOG(1) << "The dicom_id of the patient " << patient_ << " has been updated to "
+           << patientID << " (dicom name is " << patientName << ")";
     patient_.dicom_patientid = patientID;
+    bool a = patient_.CheckIdentity(patientID, patientName);
+    if (!a) {
+      LOG(FATAL) << "Patient name dont match ? patient is " << patient_ << std::endl
+                 << " while dicom is " << patientName;
+    }
     db_->Update<Patient>(patient_);
   }
   serie->patient = std::make_shared<syd::Patient>(patient_);
