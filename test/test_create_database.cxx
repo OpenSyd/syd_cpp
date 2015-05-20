@@ -61,16 +61,22 @@ int main(int argc, char* argv[])
 
   // Insert some injections
   {
+    syd::Radionuclide r;
+    r.Set("Indium111", 67.313);
+    db->Insert(r);
     syd::Patient p = db->QueryOne<syd::Patient>(odb::query<syd::Patient>::study_id == 1);
     syd::Injection i;
-    i.Set(p, "Indium111", "2024-27-08 18:00", 200.0);
+    i.Set(p, r, "2024-27-08 18:00", 200.0);
     db->Insert(i);
   }
 
   {
+    syd::Radionuclide r;
+    r.Set("Yttrium90", 64.053);
+    db->Insert(r);
     syd::Patient p = db->QueryOne<syd::Patient>(odb::query<syd::Patient>::study_id == 1);
     syd::Injection i;
-    i.Set(p, "Yttrium90", "2034-27-08 18:00", 180.0);
+    i.Set(p, r, "2034-27-08 18:00", 180.0);
     db->Insert(i);
   }
 

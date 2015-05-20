@@ -5,10 +5,10 @@ include_directories(${SYD_INCLUDE_DIRS})
 
 #----------------------------------------------------------
 # test create database
-add_executable(test_sydCreateDatabase test_sydCreateDatabase.cxx)
-target_link_libraries(test_sydCreateDatabase sydStandardDatabase)
-add_test(NAME test_sydCreateDatabase
-  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_sydCreateDatabase
+add_executable(test_create_database test_create_database.cxx)
+target_link_libraries(test_create_database sydStandardDatabase)
+add_test(NAME test_create_database
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_create_database
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
 #----------------------------------------------------------
