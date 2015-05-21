@@ -27,7 +27,7 @@ DatabaseCreator<DatabaseSchema> * syd::DatabaseManager::RegisterDatabaseSchema(c
   DatabaseCreator<DatabaseSchema> * c = new DatabaseCreator<DatabaseSchema>;
   db_map_[schema] = c;
   db_schema_names_.push_back(schema);
-  LOG(10) << "The database schema '" << schema << "' is registered.";
+  LOG(5) << "The database schema '" << schema << "' is registered.";
   return c;
 }
 // --------------------------------------------------------------------
@@ -35,13 +35,14 @@ DatabaseCreator<DatabaseSchema> * syd::DatabaseManager::RegisterDatabaseSchema(c
 
 // --------------------------------------------------------------------
 template<class DatabaseSchema>
-DatabaseSchema * syd::DatabaseManager::Read(const std::string & filename)
+DatabaseSchema * syd::DatabaseManager::Read(const std::string & filename) throw()
 {
   syd::Database * db = Read(filename);
   // Check it the db inherit (or is) a DatabaseSchema;
   if (dynamic_cast<DatabaseSchema*>(db) == 0) {
-    LOG(FATAL) << "Error the db '" << filename << "' does not contains the required schema. The schema in the file is '"
-               << db->GetDatabaseSchema()  << "'.";
+    EXCEPTION("Error the db '" << filename
+               << "' does not contains the required schema. The schema in the file is '"
+               << db->GetDatabaseSchema()  << "'.");
   }
   return static_cast<DatabaseSchema*>(db);
 }

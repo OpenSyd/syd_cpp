@@ -21,6 +21,7 @@
 
 // syd
 #include "sydCommon.h"
+#include "sydException.h"
 #include "sydTableBase.h"
 #include "core/sydDatabaseInformation-odb.hxx"
 

@@ -28,9 +28,6 @@
 #include <stdio.h>
 #include <iostream>
 
-// Needed if include <glog/logging.h> before
-#undef LOG
-
 namespace sydlog {
   /// Must be negative to always being displayed
   static int FATAL = -666;
@@ -76,6 +73,10 @@ typedef Log FILELog;
 
 /// ----------------------------------------------------------------------------
 /// Main LOG macros
+
+// Needed if include <glog/logging.h> before
+#undef LOG
+
 #define LOG(level)                        \
   if (level > Log::LogLevel()) ;          \
   else Log().Get(level)

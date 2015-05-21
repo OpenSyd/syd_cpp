@@ -37,7 +37,12 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
 
   // Load the database
-  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(dbname);
+  syd::Database * db;
+  try {
+    db = syd::DatabaseManager::GetInstance()->Read(dbname);
+  } catch (syd::Exception & e) {
+    LOG(FATAL) << e.what();
+  }
 
   // Prepare the list of arguments
   std::vector<std::string> args;

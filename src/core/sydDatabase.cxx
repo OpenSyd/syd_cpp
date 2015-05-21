@@ -42,6 +42,8 @@ void syd::Database::Read(std::string filename)
 {
   filename_ = filename;
 
+  DD("Read Database");
+  DD(filename);
   // Open the DB
   try {
     LOG(4) << "Opening database '" << filename_ << "'.";
@@ -50,7 +52,8 @@ void syd::Database::Read(std::string filename)
     c->execute("PRAGMA foreign_keys=ON;");
   }
   catch (const odb::exception& e) {
-    LOG(FATAL) << "Cannot open db '" << filename_ << "' : " << e.what();
+    //    LOG(FATAL) << "Cannot open db '" << filename_ << "' : " << e.what();
+    throw syd::Exception("titi");
   }
 
   // Set the folder by reading the 'folder' value in the db_info table.

@@ -81,7 +81,7 @@ namespace syd {
   typedef unsigned int IdType;
 
   //--------------------------------------------------------------------
-  // FIXME : to change
+  // FIXME : to remove
   static const double HalfLife_Indium_in_days = 2.8047;
   static const double Lambda_Indium_in_days = log(2.0)/HalfLife_Indium_in_days;
   static const double Lambda_Indium_in_hours = log(2.0)/(HalfLife_Indium_in_days*24.0);
