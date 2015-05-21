@@ -41,13 +41,11 @@ int main(int argc, char* argv[])
 
   // Get the patient
   std::string name = args_info.inputs[1];
-  syd::Patient patient;
-  db->QueryPatientByNameOrStudyId(name, patient);
+  syd::Patient patient = db->QueryPatientByNameOrStudyId(name);
 
   // Get the injection
   std::string inj = args_info.inputs[2];
-  syd::Injection injection;
-  db->QueryInjectionByNameOrId(patient, inj, injection);
+  syd::Injection injection = db->QueryInjectionByNameOrId(patient, inj);
 
   // Get the list of folders to look for
   std::vector<std::string> folders;

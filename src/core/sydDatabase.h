@@ -43,6 +43,8 @@ namespace syd {
     template<class DatabaseSchema> friend class DatabaseCreator;
 
   public:
+
+    // ------------------------------------------------------------------------
     /// Return the type of the db (read in the file)
     std::string GetDatabaseSchema() { return database_schema_; }
 
@@ -54,7 +56,25 @@ namespace syd {
 
     /// Return the folder that contains the associated images (absolute according to working directory)
     std::string GetAbsoluteDBFolder() const { return absolute_folder_; }
+    /// @} // end of group basic_information
+    // ------------------------------------------------------------------------
 
+
+    // ------------------------------------------------------------------------
+    /// Insert a new element of type TableElement in the database
+    template<class TableElement>
+    void Insert(TableElement & r);
+
+    /// Insert several elements at a time
+    template<class TableElement>
+    void Insert(std::vector<TableElement*>& r);
+
+    /// Insert a new element build from set of string
+    virtual TableElement * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
+    // ------------------------------------------------------------------------
+
+
+    // ------------------------------------------------------------------------
     /// Perform a query on the database and return the found elements in the list
     template<class TableElement>
     void Query(const odb::query<TableElement> & q, std::vector<TableElement> & list);
@@ -70,6 +90,9 @@ namespace syd {
     /// Get the unique element with the given id
     template<class TableElement>
     TableElement QueryOne(IdType id);
+    // ------------------------------------------------------------------------
+
+
 
     /// Count the number of elements matching the query
     template<class TableElement>
@@ -78,17 +101,6 @@ namespace syd {
     /// Check if the given id exist
     template<class TableElement>
     bool IfExist(IdType id);
-
-    /// Insert a new element of type TableElement in the database
-    template<class TableElement>
-    void Insert(TableElement & r);
-
-    /// Insert several elements at a time
-    template<class TableElement>
-    void Insert(std::vector<TableElement*>& r);
-
-    /// Insert a new element build from set of string
-    virtual TableElement * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
 
     /// Update an element in the database
     template<class TableElement>

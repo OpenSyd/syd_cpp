@@ -50,17 +50,11 @@ namespace syd {
     syd::Injection * InsertInjection(std::vector<std::string> & arg);
 
     /// Return the patient by name or study_id. Stop if not found.
-    bool QueryPatientByNameOrStudyId(const std::string & arg,
-                                     Patient & p, bool fatalIfNotFound=true);
-
-    /// Return all the patients by name (can be 'all') or study_id. Stop if not found.
-    void QueryPatientsByNameOrStudyId(const std::string & arg,
-                                      std::vector<Patient> & patients);
+    syd::Patient QueryPatientByNameOrStudyId(const std::string & arg);
 
     /// Return the injection for the given patient where radionuclide match the arg.
-    bool QueryInjectionByNameOrId(const Patient & patient,
-                                  const std::string & arg,
-                                  Injection & p, bool fatalIfNotFound=true);
+    syd::Injection QueryInjectionByNameOrId(const Patient & patient,
+                                            const std::string & arg);
 
     /// Return the folder where the dicomserie are stored
     std::string GetAbsoluteFolder(const DicomSerie & serie);

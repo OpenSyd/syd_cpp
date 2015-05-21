@@ -39,75 +39,48 @@ void syd::StandardDatabase::CreateTables()
 
 
 // --------------------------------------------------------------------
-bool syd::StandardDatabase::QueryPatientByNameOrStudyId(const std::string & arg,
-                                                      Patient & p, bool fatalIfNotFound)
+syd::Patient syd::StandardDatabase::QueryPatientByNameOrStudyId(const std::string & arg)
 {
   // Check if name
-  bool found = false;
-  odb::query<Patient> q = odb::query<Patient>::name == arg;
-  if (Count<Patient>(q) == 1) p = QueryOne(q);
-  else {
-    q = odb::query<Patient>::study_id == atoi(arg.c_str());
-    if (Count<Patient>(q) == 1) {
-      p = QueryOne(q);
-      found = true;
-    }
-    else {
-      if (fatalIfNotFound) {
-        LOG(FATAL) << "Could not find patient with name or study_id equal to '"
-                   << arg << "'.";
-      }
-    }
+  odb::query<Patient> q =
+    odb::query<Patient>::name == arg or
+    odb::query<Patient>::study_id == atoi(arg.c_str());
+  try {
+    Patient p = QueryOne(q);
+    return p;
   }
-  return found;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::StandardDatabase::QueryPatientsByNameOrStudyId(const std::string & arg,
-                                                       std::vector<syd::Patient> & patients)
-{
-  if (arg == "all") Query<Patient>(patients);
-  else {
-    Patient p;
-    bool b = QueryPatientByNameOrStudyId(arg, p, false);
-    if (b) patients.push_back(p);
+  catch(std::exception & e) {
+    LOG(FATAL) << "Could not find patient with name or study_id equal to '" << arg << "'."
+               << std::endl << e.what();
   }
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-bool syd::StandardDatabase::QueryInjectionByNameOrId(const Patient & patient,
-                                                     const std::string & arg,
-                                                     Injection & p, bool fatalIfNotFound)
+syd::Injection syd::StandardDatabase::QueryInjectionByNameOrId(const Patient & patient,
+                                                               const std::string & arg)
 {
   bool found = false;
   std::string s = "%"+arg+"%";
   odb::query<Injection> q =
-    odb::query<Injection>::radionuclide->name.like(s) and
-    odb::query<Injection>::patient->id == patient.id;
+    odb::query<Injection>::patient->id == patient.id and
+    (odb::query<Injection>::radionuclide->name.like(s) or odb::query<Injection>::radionuclide->id == atoi(arg.c_str()));
   std::vector<syd::Injection> injections;
-  Query(q, injections);
-
-  auto n = injections.size();
-
-  if (n == 1) {
-    p = injections[0];
-    return true;
+  try {
+    Query(q, injections);
   }
-
-  if (fatalIfNotFound and n > 1) {
+  catch(std::exception & e) {
+    LOG(FATAL) << "Fatal error in QueryInjectionByNameOrId. " << e.what();
+  }
+  auto n = injections.size();
+  if (n == 1) return injections[0]; // success
+  if (n>1) {
     LOG(FATAL) << "Several injections match '" << arg
                << "' for the patient '" << patient.name << "', abort.";
   }
-  if (fatalIfNotFound and n==0) {
-    LOG(FATAL) << "Could not find injection with name or id equal to '"
-               << arg << "' for the patient " << patient.name << ".";
-  }
-
-  return false;
+  LOG(FATAL) << "Could not find injection with name or id equal to '"
+             << arg << "' for the patient " << patient.name << ".";
 }
 // --------------------------------------------------------------------
 
@@ -140,8 +113,7 @@ syd::Injection * syd::StandardDatabase::InsertInjection(std::vector<std::string>
   }
 
   // Get the patient and create the Injection
-  Patient p;
-  QueryPatientByNameOrStudyId(arg[0], p);
+  Patient p = QueryPatientByNameOrStudyId(arg[0]);
 
   // Check other injections for this patient
   std::vector<Injection> injections;

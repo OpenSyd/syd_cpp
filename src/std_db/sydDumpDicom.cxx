@@ -41,8 +41,7 @@ int main(int argc, char* argv[])
 
   // Get the patient
   std::string name = args_info.inputs[1];
-  syd::Patient patient;
-  db->QueryPatientByNameOrStudyId(name, patient);
+  syd::Patient patient = db->QueryPatientByNameOrStudyId(name);
 
   // Prepare the list of arguments
   std::vector<std::string> patterns;

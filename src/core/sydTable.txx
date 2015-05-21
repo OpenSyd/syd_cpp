@@ -27,6 +27,54 @@ syd::Table<TableElement>::Table(syd::Database * db, odb::sqlite::database * d)
 
 // --------------------------------------------------------------------
 template<class TableElement>
+void syd::Table<TableElement>::Insert(TableElement & r)
+{
+  try {
+    odb::transaction t (db_->begin());
+    db_->persist(r);
+    db_->update(r);
+    t.commit();
+  }
+  catch (const odb::exception& e) {
+    TableElement te;
+    EXCEPTION("Cannot insert the element: "
+              << r.ToString() << std::endl
+              << " in the table '" << te.GetTableName()
+              << "'. Maybe a element with same unique field already exist or a foreign constraint is not fulfill ?" << std::endl
+              << "The error is: "  << e.what()
+              << std::endl << "And last sql query is: "
+              << std::endl << database_->GetLastSQLQuery());
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Table<TableElement>::Insert(std::vector<TableElement*> & r)
+{
+  try {
+    odb::transaction t (db_->begin());
+    for(auto x:r) {
+      db_->persist(*x);
+      db_->update(*x);
+    }
+    t.commit();
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Cannot insert " << r.size() << " elements in the table '"
+              << TableElement::GetTableName()
+              << "'. Maybe a element with same unique field already exist or a foreign constraint is not fulfill ?" << std::endl
+              << "The error is: "  << e.what()
+              << std::endl << "And last sql query is: "
+              << std::endl << database_->GetLastSQLQuery());
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
 bool syd::Table<TableElement>::Delete(TableElement & elem)
 {
   try {
@@ -174,54 +222,6 @@ void syd::Table<TableElement>::DumpTable(std::ostream & os)
   if (elements.size() == 0) return;
   for(auto e:elements) {
     os << e << std::endl;
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Table<TableElement>::Insert(TableElement & r)
-{
-  try {
-    odb::transaction t (db_->begin());
-    db_->persist(r);
-    db_->update(r);
-    t.commit();
-  }
-  catch (const odb::exception& e) {
-    TableElement te;
-    EXCEPTION("Cannot insert the element: "
-              << r.ToString() << std::endl
-              << " in the table '" << te.GetTableName()
-              << "'. Maybe a element with same unique field already exist or a foreign constraint is not fulfill ?" << std::endl
-              << "The error is: "  << e.what()
-              << std::endl << "And last sql query is: "
-              << std::endl << database_->GetLastSQLQuery());
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Table<TableElement>::Insert(std::vector<TableElement*> & r)
-{
-  try {
-    odb::transaction t (db_->begin());
-    for(auto x:r) {
-      db_->persist(*x);
-      db_->update(*x);
-    }
-    t.commit();
-  }
-  catch (const odb::exception& e) {
-    EXCEPTION("Cannot insert " << r.size() << " elements in the table '"
-              << TableElement::GetTableName()
-              << "'. Maybe a element with same unique field already exist or a foreign constraint is not fulfill ?" << std::endl
-              << "The error is: "  << e.what()
-              << std::endl << "And last sql query is: "
-              << std::endl << database_->GetLastSQLQuery());
   }
 }
 // --------------------------------------------------------------------
