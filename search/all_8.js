@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['map',['map',['../classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc',1,'syd::Database']]],
-  ['map_5flowercase',['map_lowercase',['../classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc',1,'syd::Database']]],
-  ['mapoftablestype',['MapOfTablesType',['../classsyd_1_1Database.html#a4c238d025c31d11c79b830e9cbc8d643',1,'syd::Database']]],
-  ['md5',['MD5',['../classMD5.html',1,'MD5'],['../classsyd_1_1File.html#a6d6b67ab100513f076f4804c355b2f58',1,'syd::File::md5()']]]
+  ['label',['label',['../classsyd_1_1Tag.html#a695c1bc16ac978e62893bf1618e77288',1,'syd::Tag']]],
+  ['line_5f',['line_',['../classsyd_1_1Exception.html#ab369e00ec51535fa182901feaed7d726',1,'syd::Exception']]],
+  ['log',['Log',['../classLog.html',1,'']]]
 ];

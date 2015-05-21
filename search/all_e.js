@@ -1,16 +1,9 @@
 var searchData=
 [
-  ['schema_5fversion',['schema_version',['../structsyd_1_1schema__version.html',1,'syd']]],
-  ['searchforfilesinfolder',['SearchForFilesInFolder',['../classsyd_1_1DicomSerieBuilder.html#a6c28e9a23ae8338fb9b7d1e8b951714a',1,'syd::DicomSerieBuilder']]],
-  ['searchtypeandparamfromname',['SearchTypeAndParamFromName',['../classsyd_1_1DatabaseFactory.html#a5c16e4d387807344d4896ad7e6967c66',1,'syd::DatabaseFactory']]],
-  ['set',['Set',['../classsyd_1_1TableElement.html#aa34ff1762fabeb75706625d6f6ce6ad8',1,'syd::TableElement::Set()'],['../classsyd_1_1Injection.html#a9b2bfd3bde6377d7e6adc4414065fd2f',1,'syd::Injection::Set()'],['../classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db',1,'syd::Patient::Set()'],['../classsyd_1_1Tag.html#ab6a87fb402f4eee020f34a6c04d5c562',1,'syd::Tag::Set()']]],
-  ['setdatabase',['SetDatabase',['../classsyd_1_1DicomSerieBuilder.html#a4b646aef129eef190679fc971ec5c1d2',1,'syd::DicomSerieBuilder']]],
-  ['setforcepatientflag',['SetForcePatientFlag',['../classsyd_1_1DicomSerieBuilder.html#a196085ea3b89d5e60f74b89d4ce45d9c',1,'syd::DicomSerieBuilder']]],
-  ['setinjection',['SetInjection',['../classsyd_1_1DicomSerieBuilder.html#a3f9de27336f7e989ec2bbf0770e09536',1,'syd::DicomSerieBuilder']]],
-  ['singleton_5f',['singleton_',['../classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80',1,'syd::DatabaseManager::singleton_()'],['../classsyd_1_1PluginManager.html#a61058c3847b6fedd2ea2fedc926e6fec',1,'syd::PluginManager::singleton_()']]],
-  ['size',['size',['../classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27',1,'syd::DicomSerie']]],
-  ['spacing',['spacing',['../classsyd_1_1DicomSerie.html#ae0e66e018c7f715920c4a7d76caee495',1,'syd::DicomSerie']]],
-  ['standarddatabase',['StandardDatabase',['../classsyd_1_1StandardDatabase.html',1,'syd']]],
-  ['study_5fid',['study_id',['../classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6',1,'syd::Patient']]],
-  ['sydlog',['sydlog',['../namespacesydlog.html',1,'']]]
+  ['radionuclide',['Radionuclide',['../classsyd_1_1Radionuclide.html',1,'syd']]],
+  ['radionuclide',['radionuclide',['../classsyd_1_1Injection.html#a764de179e59dfa3fbbb02c9774b36385',1,'syd::Injection']]],
+  ['read',['Read',['../classsyd_1_1Database.html#afdb7a92bd1e821d19a0eb60538189b62',1,'syd::Database::Read()'],['../singletonsyd_1_1DatabaseCreator.html#a424813db8d2967e116849c124a7e2b52',1,'syd::DatabaseCreator::Read()'],['../classsyd_1_1DatabaseManager.html#ab61ef523e66be29ede3eef5d5c1b96c3',1,'syd::DatabaseManager::Read(const std::string &amp;filename)'],['../classsyd_1_1DatabaseManager.html#a650f64cf4a5a5700ccdf1cc9b5a946aa',1,'syd::DatabaseManager::Read(const std::string &amp;filename)']]],
+  ['reconstruction_5fdate',['reconstruction_date',['../classsyd_1_1DicomSerie.html#a5f735f7a79bcb537b3479aa454d18f97',1,'syd::DicomSerie']]],
+  ['registerdatabaseschema',['RegisterDatabaseSchema',['../classsyd_1_1DatabaseManager.html#a156cd31db7574dd358caea3024d78d33',1,'syd::DatabaseManager']]],
+  ['relative_5ffolder_5f',['relative_folder_',['../classsyd_1_1Database.html#a3bfdf90d2454ae4f4809947a03763349',1,'syd::Database']]]
 ];

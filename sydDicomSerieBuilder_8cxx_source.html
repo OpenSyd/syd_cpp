@@ -361,143 +361,149 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  }</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;  <span class="keywordflow">if</span> (!b) {</div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="comment">// if the patient has no dicom id, we set it (and update the db)</span></div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    LOG(1) &lt;&lt; <span class="stringliteral">&quot;The dicom_id of the patient &quot;</span> &lt;&lt; patient_ &lt;&lt; <span class="stringliteral">&quot; has been updated to &quot;</span> &lt;&lt; patientID;</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    patient_.dicom_patientid = patientID;</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    db_-&gt;Update&lt;<a class="code" href="classsyd_1_1Patient.html">Patient</a>&gt;(patient_);</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  }</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#aeff8ef7948cf11a76fcb5e1bee3227b5">patient</a> = std::make_shared&lt;syd::Patient&gt;(patient_);</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#ac1f43c2cc66a9b6c1ca6409c6b11278a">injection</a> = std::make_shared&lt;syd::Injection&gt;(injection_);</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;  <span class="comment">// Modality</span></div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">dicom_modality</a> = GetTagValueString(dset, <span class="stringliteral">&quot;Modality&quot;</span>);</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;  <span class="comment">// UID</span></div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#acac09f9cf460c44347db1dda6a408a9d">dicom_study_uid</a> = GetTagValueString(dset, <span class="stringliteral">&quot;StudyInstanceUID&quot;</span>);</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a6b72e08967b219da005c658c03a79834">dicom_series_uid</a> = GetTagValueString(dset, <span class="stringliteral">&quot;SeriesInstanceUID&quot;</span>);</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">dicom_frame_of_reference_uid</a> = GetTagValueString(dset, <span class="stringliteral">&quot;FrameOfReferenceUID&quot;</span>);</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  <span class="comment">//  serie-&gt;dicom_dataset_uid = GetTagValueString(dset, &quot;DatasetUID&quot;);</span></div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    LOG(1) &lt;&lt; <span class="stringliteral">&quot;The dicom_id of the patient &quot;</span> &lt;&lt; patient_ &lt;&lt; <span class="stringliteral">&quot; has been updated to &quot;</span></div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;           &lt;&lt; patientID &lt;&lt; <span class="stringliteral">&quot; (dicom name is &quot;</span> &lt;&lt; patientName &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>;</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    patient_.dicom_patientid = patientID;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="keywordtype">bool</span> a = patient_.CheckIdentity(patientID, patientName);</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="keywordflow">if</span> (!a) {</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;      LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Patient name dont match ? patient is &quot;</span> &lt;&lt; patient_ &lt;&lt; std::endl</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                 &lt;&lt; <span class="stringliteral">&quot; while dicom is &quot;</span> &lt;&lt; patientName;</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    }</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    db_-&gt;Update&lt;<a class="code" href="classsyd_1_1Patient.html">Patient</a>&gt;(patient_);</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;  }</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#aeff8ef7948cf11a76fcb5e1bee3227b5">patient</a> = std::make_shared&lt;syd::Patient&gt;(patient_);</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#ac1f43c2cc66a9b6c1ca6409c6b11278a">injection</a> = std::make_shared&lt;syd::Injection&gt;(injection_);</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  <span class="comment">// Modality</span></div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">dicom_modality</a> = GetTagValueString(dset, <span class="stringliteral">&quot;Modality&quot;</span>);</div>
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;</div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;  <span class="comment">// Date</span></div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">acquisition_date</a> = acquisition_date;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a5f735f7a79bcb537b3479aa454d18f97">reconstruction_date</a> = reconstruction_date;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;</div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  <span class="comment">// Description. We merge the tag because it is never consistant</span></div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;  std::string SeriesDescription = GetTagValueString(dset, <span class="stringliteral">&quot;SeriesDescription&quot;</span>);</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  std::string StudyDescription = GetTagValueString(dset, <span class="stringliteral">&quot;StudyDescription&quot;</span>);</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;  std::string ImageID = GetTagValueString(dset, <span class="stringliteral">&quot;ImageID&quot;</span>);</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;  std::string DatasetName = GetTagValueString(dset, <span class="stringliteral">&quot;DatasetName&quot;</span>);</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;  std::string description = SeriesDescription+<span class="stringliteral">&quot; &quot;</span>+StudyDescription</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    +<span class="stringliteral">&quot; &quot;</span>+ImageID+<span class="stringliteral">&quot; &quot;</span>+DatasetName;</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a20d09d10998b7cabd197c739ae492919">dicom_description</a> = description;</div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;  <span class="comment">// Device</span></div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  std::string Manufacturer = GetTagValueString(dset, <span class="stringliteral">&quot;Manufacturer&quot;</span>);</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;  std::string ManufacturerModelName = GetTagValueString(dset, <span class="stringliteral">&quot;ManufacturerModelName&quot;</span>);</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;  std::string device=Manufacturer+<span class="stringliteral">&quot; &quot;</span>+ManufacturerModelName;</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#afe4d4142678329f24f27999ca08ca0f1">dicom_manufacturer</a> = device;</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;  <span class="comment">// UID</span></div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#acac09f9cf460c44347db1dda6a408a9d">dicom_study_uid</a> = GetTagValueString(dset, <span class="stringliteral">&quot;StudyInstanceUID&quot;</span>);</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a6b72e08967b219da005c658c03a79834">dicom_series_uid</a> = GetTagValueString(dset, <span class="stringliteral">&quot;SeriesInstanceUID&quot;</span>);</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">dicom_frame_of_reference_uid</a> = GetTagValueString(dset, <span class="stringliteral">&quot;FrameOfReferenceUID&quot;</span>);</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  <span class="comment">//  serie-&gt;dicom_dataset_uid = GetTagValueString(dset, &quot;DatasetUID&quot;);</span></div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;  <span class="comment">// Date</span></div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">acquisition_date</a> = acquisition_date;</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a5f735f7a79bcb537b3479aa454d18f97">reconstruction_date</a> = reconstruction_date;</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;  <span class="comment">// Description. We merge the tag because it is never consistant</span></div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;  std::string SeriesDescription = GetTagValueString(dset, <span class="stringliteral">&quot;SeriesDescription&quot;</span>);</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;  std::string StudyDescription = GetTagValueString(dset, <span class="stringliteral">&quot;StudyDescription&quot;</span>);</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;  std::string ImageID = GetTagValueString(dset, <span class="stringliteral">&quot;ImageID&quot;</span>);</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;  std::string DatasetName = GetTagValueString(dset, <span class="stringliteral">&quot;DatasetName&quot;</span>);</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;  std::string description = SeriesDescription+<span class="stringliteral">&quot; &quot;</span>+StudyDescription</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    +<span class="stringliteral">&quot; &quot;</span>+ImageID+<span class="stringliteral">&quot; &quot;</span>+DatasetName;</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a20d09d10998b7cabd197c739ae492919">dicom_description</a> = description;</div>
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;  <span class="comment">// Image size</span></div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;  <span class="keywordtype">int</span> rows = GetTagValueUShort(dset, <span class="stringliteral">&quot;Rows&quot;</span>);</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;  <span class="keywordtype">int</span> columns = GetTagValueUShort(dset, <span class="stringliteral">&quot;Columns&quot;</span>);</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a>[0] = columns;</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a>[1] = rows;</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a>[2] = 0;</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;  <span class="keywordtype">int</span> slice = atoi(GetTagValueString(dset, <span class="stringliteral">&quot;NumberOfFrames&quot;</span>).c_str());</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a>[2] = slice;</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;  <span class="comment">// other (needed ?)</span></div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;  <span class="comment">// std::string TableTraverse = GetTagValueString(dset, &quot;TableTraverse&quot;);</span></div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;  <span class="comment">// std::string InstanceNumber = GetTagValueString(dset, &quot;InstanceNumber&quot;);</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;}</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;  <span class="comment">// Device</span></div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;  std::string Manufacturer = GetTagValueString(dset, <span class="stringliteral">&quot;Manufacturer&quot;</span>);</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;  std::string ManufacturerModelName = GetTagValueString(dset, <span class="stringliteral">&quot;ManufacturerModelName&quot;</span>);</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;  std::string device=Manufacturer+<span class="stringliteral">&quot; &quot;</span>+ManufacturerModelName;</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#afe4d4142678329f24f27999ca08ca0f1">dicom_manufacturer</a> = device;</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;  <span class="comment">// Image size</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;  <span class="keywordtype">int</span> rows = GetTagValueUShort(dset, <span class="stringliteral">&quot;Rows&quot;</span>);</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;  <span class="keywordtype">int</span> columns = GetTagValueUShort(dset, <span class="stringliteral">&quot;Columns&quot;</span>);</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a>[0] = columns;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a>[1] = rows;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a>[2] = 0;</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;  <span class="keywordtype">int</span> slice = atoi(GetTagValueString(dset, <span class="stringliteral">&quot;NumberOfFrames&quot;</span>).c_str());</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a>[2] = slice;</div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00331"></a><span class="lineno"><a class="line" href="classsyd_1_1DicomSerieBuilder.html#a9807add9115f208fed5305bb59ac4821">  331</a></span>&#160;<span class="comment"></span><a class="code" href="classsyd_1_1DicomFile.html">syd::DicomFile</a> * <a class="code" href="classsyd_1_1DicomSerieBuilder.html#a9807add9115f208fed5305bb59ac4821">syd::DicomSerieBuilder::CreateDicomFile</a>(<span class="keyword">const</span> std::string &amp; filename,</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;                                                         DcmObject * dset,</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;                                                         <a class="code" href="classsyd_1_1DicomSerie.html">DicomSerie</a> * serie)</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;{</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;  <span class="comment">// First create the file</span></div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;  <a class="code" href="classsyd_1_1File.html">syd::File</a> * file = <span class="keyword">new</span> <a class="code" href="classsyd_1_1File.html">syd::File</a>;</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;  std::string f = GetFilenameFromPath(filename);</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;  file-&gt;<a class="code" href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">filename</a> = f;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;  std::string p = db_-&gt;GetAbsoluteFolder(*serie);</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;  std::string rp = p;</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;  syd::Replace(rp, db_-&gt;GetAbsoluteDBFolder()+PATH_SEPARATOR, <span class="stringliteral">&quot;&quot;</span>); <span class="comment">// Get relative folder</span></div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;  file-&gt;<a class="code" href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">path</a> = rp;</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;  files_to_copy.push_back(filename);</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;  destination_folders.push_back(p);</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;  <span class="comment">// file-&gt;md5 FIXME later</span></div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;  <span class="comment">// Then create the dicomfile</span></div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;  <a class="code" href="classsyd_1_1DicomFile.html">syd::DicomFile</a> * dicomfile = <span class="keyword">new</span> <a class="code" href="classsyd_1_1DicomFile.html">syd::DicomFile</a>;</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;  dicomfile-&gt;<a class="code" href="classsyd_1_1DicomFile.html#ae2977269943fbe575502d0d0c5c4451c">file</a> = std::shared_ptr&lt;syd::File&gt;(file);</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;  dicomfile-&gt;<a class="code" href="classsyd_1_1DicomFile.html#a9f4aebe327d27124ec6e76d7913abbd3">dicom_serie</a> = std::shared_ptr&lt;syd::DicomSerie&gt;(serie);</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;  std::string sop_uid = GetTagValueString(dset, <span class="stringliteral">&quot;SOPInstanceUID&quot;</span>);</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;  dicomfile-&gt;<a class="code" href="classsyd_1_1DicomFile.html#a21f7d2f4305a088e8195f3002fec2bc6">dicom_sop_uid</a> = sop_uid;</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;  <span class="keywordtype">int</span> instance_number = atoi(GetTagValueString(dset, <span class="stringliteral">&quot;InstanceNumber&quot;</span>).c_str());</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;  dicomfile-&gt;<a class="code" href="classsyd_1_1DicomFile.html#a967d5da7f1971e134e050e86c4a6cd03">dicom_instance_number</a> = instance_number;</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;  <span class="comment">// Update the nb of slices</span></div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a>[2]++;</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;  <span class="keywordflow">return</span> dicomfile;</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;}</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00365"></a><span class="lineno"><a class="line" href="classsyd_1_1DicomSerieBuilder.html#aa8f052f20cc9c9213656eb2bd3e8151d">  365</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1DicomSerieBuilder.html#aa8f052f20cc9c9213656eb2bd3e8151d">syd::DicomSerieBuilder::UpdateSeries</a>()</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;{</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;  <span class="comment">// Gather the syd::Files to update</span></div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;  std::vector&lt;syd::File*&gt; files;</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:dicomfiles_to_insert) {</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    files.push_back(d-&gt;file.get());</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;  }</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;  db_-&gt;Insert(files);</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;  <span class="comment">// Copy files</span></div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;  <span class="keywordtype">int</span> nb_of_skip_copy=0;</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;  <span class="keywordtype">int</span> n = files_to_copy.size();</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt;files_to_copy.size(); i++) {</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    std::string f = syd::GetFilenameFromPath(files_to_copy[i]);</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    std::string destination = destination_folders[i]+PATH_SEPARATOR+f;</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    <span class="keywordflow">if</span> (syd::FileExists(destination)) {</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;      LOG(3) &lt;&lt; <span class="stringliteral">&quot;Destination file already exist, ignoring&quot;</span>;</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;      nb_of_skip_copy++;</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;      <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    }</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    LOG(2) &lt;&lt; <span class="stringliteral">&quot;Copying &quot;</span> &lt;&lt; f &lt;&lt; <span class="stringliteral">&quot; to &quot;</span> &lt;&lt; destination_folders[i] &lt;&lt; std::endl;</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    syd::CopyFile(files_to_copy[i].c_str(), destination);</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    syd::loadbar(i,n);</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;  }</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;  <span class="comment">// Update the database</span></div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;  db_-&gt;Insert(series_to_insert);</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;  db_-&gt;Insert(dicomfiles_to_insert);</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;  <span class="comment">// Log</span></div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;  LOG(1) &lt;&lt; files.size() &lt;&lt; <span class="stringliteral">&quot; Files have been added in the db&quot;</span>;</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;  LOG(1) &lt;&lt; dicomfiles_to_insert.size() &lt;&lt; <span class="stringliteral">&quot; DicomFiles have been added in the db&quot;</span>;</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;  LOG(1) &lt;&lt; series_to_insert.size() &lt;&lt; <span class="stringliteral">&quot; DicomSeries has been added in the db&quot;</span>;</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;  <span class="keywordflow">if</span> (nb_of_skip_files != 0) {</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    LOG(1) &lt;&lt; nb_of_skip_files &lt;&lt; <span class="stringliteral">&quot; dicom already exist in the db and have been skipped.&quot;</span>;</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;  }</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;  <span class="keywordflow">if</span> (nb_of_skip_copy != 0) {</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    LOG(1) &lt;&lt; nb_of_skip_copy &lt;&lt; <span class="stringliteral">&quot; files already exist in the db folder and have not been copied.&quot;</span>;</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;  }</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;  LOG(1) &lt;&lt; files_to_copy.size()-nb_of_skip_copy &lt;&lt; <span class="stringliteral">&quot; files have been copied.&quot;</span>;</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;  <span class="comment">// Once done, clear vectors</span></div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;  series_to_insert.clear();</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;  dicomfiles_to_insert.clear();</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;  files.clear();</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;  files_to_copy.clear();</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;  destination_folders.clear();</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;  nb_of_skip_files = 0;</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;}</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;  <span class="comment">// other (needed ?)</span></div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;  <span class="comment">// std::string TableTraverse = GetTagValueString(dset, &quot;TableTraverse&quot;);</span></div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;  <span class="comment">// std::string InstanceNumber = GetTagValueString(dset, &quot;InstanceNumber&quot;);</span></div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;}</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00337"></a><span class="lineno"><a class="line" href="classsyd_1_1DicomSerieBuilder.html#a9807add9115f208fed5305bb59ac4821">  337</a></span>&#160;<span class="comment"></span><a class="code" href="classsyd_1_1DicomFile.html">syd::DicomFile</a> * <a class="code" href="classsyd_1_1DicomSerieBuilder.html#a9807add9115f208fed5305bb59ac4821">syd::DicomSerieBuilder::CreateDicomFile</a>(<span class="keyword">const</span> std::string &amp; filename,</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;                                                         DcmObject * dset,</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                                                         <a class="code" href="classsyd_1_1DicomSerie.html">DicomSerie</a> * serie)</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;{</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;  <span class="comment">// First create the file</span></div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;  <a class="code" href="classsyd_1_1File.html">syd::File</a> * file = <span class="keyword">new</span> <a class="code" href="classsyd_1_1File.html">syd::File</a>;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;  std::string f = GetFilenameFromPath(filename);</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;  file-&gt;<a class="code" href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">filename</a> = f;</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;  std::string p = db_-&gt;GetAbsoluteFolder(*serie);</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;  std::string rp = p;</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;  syd::Replace(rp, db_-&gt;GetAbsoluteDBFolder()+PATH_SEPARATOR, <span class="stringliteral">&quot;&quot;</span>); <span class="comment">// Get relative folder</span></div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;  file-&gt;<a class="code" href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">path</a> = rp;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;  files_to_copy.push_back(filename);</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;  destination_folders.push_back(p);</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;  <span class="comment">// file-&gt;md5 FIXME later</span></div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;  <span class="comment">// Then create the dicomfile</span></div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;  <a class="code" href="classsyd_1_1DicomFile.html">syd::DicomFile</a> * dicomfile = <span class="keyword">new</span> <a class="code" href="classsyd_1_1DicomFile.html">syd::DicomFile</a>;</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;  dicomfile-&gt;<a class="code" href="classsyd_1_1DicomFile.html#ae2977269943fbe575502d0d0c5c4451c">file</a> = std::shared_ptr&lt;syd::File&gt;(file);</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;  dicomfile-&gt;<a class="code" href="classsyd_1_1DicomFile.html#a9f4aebe327d27124ec6e76d7913abbd3">dicom_serie</a> = std::shared_ptr&lt;syd::DicomSerie&gt;(serie);</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;  std::string sop_uid = GetTagValueString(dset, <span class="stringliteral">&quot;SOPInstanceUID&quot;</span>);</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;  dicomfile-&gt;<a class="code" href="classsyd_1_1DicomFile.html#a21f7d2f4305a088e8195f3002fec2bc6">dicom_sop_uid</a> = sop_uid;</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;  <span class="keywordtype">int</span> instance_number = atoi(GetTagValueString(dset, <span class="stringliteral">&quot;InstanceNumber&quot;</span>).c_str());</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;  dicomfile-&gt;<a class="code" href="classsyd_1_1DicomFile.html#a967d5da7f1971e134e050e86c4a6cd03">dicom_instance_number</a> = instance_number;</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;  <span class="comment">// Update the nb of slices</span></div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;  serie-&gt;<a class="code" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a>[2]++;</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;  <span class="keywordflow">return</span> dicomfile;</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;}</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00371"></a><span class="lineno"><a class="line" href="classsyd_1_1DicomSerieBuilder.html#aa8f052f20cc9c9213656eb2bd3e8151d">  371</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1DicomSerieBuilder.html#aa8f052f20cc9c9213656eb2bd3e8151d">syd::DicomSerieBuilder::UpdateSeries</a>()</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;{</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;  <span class="comment">// Gather the syd::Files to update</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;  std::vector&lt;syd::File*&gt; files;</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:dicomfiles_to_insert) {</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    files.push_back(d-&gt;file.get());</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;  }</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;  db_-&gt;Insert(files);</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;  <span class="comment">// Copy files</span></div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;  <span class="keywordtype">int</span> nb_of_skip_copy=0;</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;  <span class="keywordtype">int</span> n = files_to_copy.size();</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt;files_to_copy.size(); i++) {</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    std::string f = syd::GetFilenameFromPath(files_to_copy[i]);</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    std::string destination = destination_folders[i]+PATH_SEPARATOR+f;</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <span class="keywordflow">if</span> (syd::FileExists(destination)) {</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;      LOG(3) &lt;&lt; <span class="stringliteral">&quot;Destination file already exist, ignoring&quot;</span>;</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;      nb_of_skip_copy++;</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;      <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    }</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    LOG(2) &lt;&lt; <span class="stringliteral">&quot;Copying &quot;</span> &lt;&lt; f &lt;&lt; <span class="stringliteral">&quot; to &quot;</span> &lt;&lt; destination_folders[i] &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    syd::CopyFile(files_to_copy[i].c_str(), destination);</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    syd::loadbar(i,n);</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;  }</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;  <span class="comment">// Update the database</span></div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;  db_-&gt;Insert(series_to_insert);</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;  db_-&gt;Insert(dicomfiles_to_insert);</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;  <span class="comment">// Log</span></div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;  LOG(1) &lt;&lt; files.size() &lt;&lt; <span class="stringliteral">&quot; Files have been added in the db&quot;</span>;</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;  LOG(1) &lt;&lt; dicomfiles_to_insert.size() &lt;&lt; <span class="stringliteral">&quot; DicomFiles have been added in the db&quot;</span>;</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;  LOG(1) &lt;&lt; series_to_insert.size() &lt;&lt; <span class="stringliteral">&quot; DicomSeries has been added in the db&quot;</span>;</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;  <span class="keywordflow">if</span> (nb_of_skip_files != 0) {</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    LOG(1) &lt;&lt; nb_of_skip_files &lt;&lt; <span class="stringliteral">&quot; dicom already exist in the db and have been skipped.&quot;</span>;</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;  }</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;  <span class="keywordflow">if</span> (nb_of_skip_copy != 0) {</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    LOG(1) &lt;&lt; nb_of_skip_copy &lt;&lt; <span class="stringliteral">&quot; files already exist in the db folder and have not been copied.&quot;</span>;</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;  }</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;  LOG(1) &lt;&lt; files_to_copy.size()-nb_of_skip_copy &lt;&lt; <span class="stringliteral">&quot; files have been copied.&quot;</span>;</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;  <span class="comment">// Once done, clear vectors</span></div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;  series_to_insert.clear();</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;  dicomfiles_to_insert.clear();</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;  files.clear();</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;  files_to_copy.clear();</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;  destination_folders.clear();</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;  nb_of_skip_files = 0;</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;}</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_a2a47ab6d79a841303cad845b2f797fc2"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">syd::DicomSerie::dicom_frame_of_reference_uid</a></div><div class="ttdeci">std::string dicom_frame_of_reference_uid</div><div class="ttdoc">Dicom FrameOfReferenceUID. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00075">sydDicomSerie.h:75</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerieBuilder_html_a4b646aef129eef190679fc971ec5c1d2"><div class="ttname"><a href="classsyd_1_1DicomSerieBuilder.html#a4b646aef129eef190679fc971ec5c1d2">syd::DicomSerieBuilder::SetDatabase</a></div><div class="ttdeci">void SetDatabase(syd::StandardDatabase *db)</div><div class="ttdoc">Set the pointer to the database. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerieBuilder_8h_source.html#l00042">sydDicomSerieBuilder.h:42</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomFile_html_a9f4aebe327d27124ec6e76d7913abbd3"><div class="ttname"><a href="classsyd_1_1DicomFile.html#a9f4aebe327d27124ec6e76d7913abbd3">syd::DicomFile::dicom_serie</a></div><div class="ttdeci">std::shared_ptr&lt; syd::DicomSerie &gt; dicom_serie</div><div class="ttdoc">Foreign key, it must exist in the DicomSerie table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00044">sydDicomFile.h:44</a></div></div>
@@ -505,7 +511,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="classsyd_1_1DicomSerieBuilder_html"><div class="ttname"><a href="classsyd_1_1DicomSerieBuilder.html">syd::DicomSerieBuilder</a></div><div class="ttdoc">This class search for dicom file in folder and insert the DicomSerie and DicomFile in the db...</div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerieBuilder_8h_source.html#l00032">sydDicomSerieBuilder.h:32</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_a05db952b76b7980cb12d9206ffa82dcb"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">syd::DicomSerie::acquisition_date</a></div><div class="ttdeci">std::string acquisition_date</div><div class="ttdoc">Date when the image has been acquired. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00055">sydDicomSerie.h:55</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomFile_html_a21f7d2f4305a088e8195f3002fec2bc6"><div class="ttname"><a href="classsyd_1_1DicomFile.html#a21f7d2f4305a088e8195f3002fec2bc6">syd::DicomFile::dicom_sop_uid</a></div><div class="ttdeci">std::string dicom_sop_uid</div><div class="ttdoc">Dicom SOPInstanceUID. Unique dicom file identifier. Unique in db. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00048">sydDicomFile.h:48</a></div></div>
-<div class="ttc" id="classsyd_1_1Injection_html"><div class="ttname"><a href="classsyd_1_1Injection.html">syd::Injection</a></div><div class="ttdoc">Store information about a radionuclide injection (date, etc). </div><div class="ttdef"><b>Definition:</b> <a href="sydInjection_8h_source.html#l00030">sydInjection.h:30</a></div></div>
+<div class="ttc" id="classsyd_1_1Injection_html"><div class="ttname"><a href="classsyd_1_1Injection.html">syd::Injection</a></div><div class="ttdoc">Store information about a radionuclide injection (date, etc). </div><div class="ttdef"><b>Definition:</b> <a href="sydInjection_8h_source.html#l00031">sydInjection.h:31</a></div></div>
 <div class="ttc" id="classsyd_1_1File_html_a2224a82b7e7c7e1f3a3e1bca67845650"><div class="ttname"><a href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">syd::File::filename</a></div><div class="ttdeci">std::string filename</div><div class="ttdoc">File name. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00040">sydFile.h:40</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_a20d09d10998b7cabd197c739ae492919"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a20d09d10998b7cabd197c739ae492919">syd::DicomSerie::dicom_description</a></div><div class="ttdeci">std::string dicom_description</div><div class="ttdoc">Concatenation of several descriptions tag (SeriesDescription StudyDescription, ImageID, DatasetName) </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00085">sydDicomSerie.h:85</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomFile_html_ae2977269943fbe575502d0d0c5c4451c"><div class="ttname"><a href="classsyd_1_1DicomFile.html#ae2977269943fbe575502d0d0c5c4451c">syd::DicomFile::file</a></div><div class="ttdeci">std::shared_ptr&lt; syd::File &gt; file</div><div class="ttdoc">Foreign key, it must exist in the File table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00041">sydDicomFile.h:41</a></div></div>
@@ -513,12 +519,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="classsyd_1_1DicomSerieBuilder_html_a8cf4632987b4a1c16ed3012c816a9cdf"><div class="ttname"><a href="classsyd_1_1DicomSerieBuilder.html#a8cf4632987b4a1c16ed3012c816a9cdf">syd::DicomSerieBuilder::InsertDicom</a></div><div class="ttdeci">void InsertDicom(std::string filename)</div><div class="ttdoc">Create a DicomSerie/DicomFile (still not inserted into the db, use UpdateDicomSerie for that) ...</div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerieBuilder_8cxx_source.html#l00112">sydDicomSerieBuilder.cxx:112</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_ac1f43c2cc66a9b6c1ca6409c6b11278a"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#ac1f43c2cc66a9b6c1ca6409c6b11278a">syd::DicomSerie::injection</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Injection &gt; injection</div><div class="ttdoc">Foreign key, it must exist in the Injection table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00051">sydDicomSerie.h:51</a></div></div>
 <div class="ttc" id="classsyd_1_1File_html_ab3ea1e8acafa37d8b286761980514955"><div class="ttname"><a href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">syd::File::path</a></div><div class="ttdeci">std::string path</div><div class="ttdoc">File (relative) path. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00043">sydFile.h:43</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerieBuilder_html_a9807add9115f208fed5305bb59ac4821"><div class="ttname"><a href="classsyd_1_1DicomSerieBuilder.html#a9807add9115f208fed5305bb59ac4821">syd::DicomSerieBuilder::CreateDicomFile</a></div><div class="ttdeci">syd::DicomFile * CreateDicomFile(const std::string &amp;filename, DcmObject *dset, DicomSerie *serie)</div><div class="ttdoc">Do not check if the DicomFile and the file already exist. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerieBuilder_8cxx_source.html#l00331">sydDicomSerieBuilder.cxx:331</a></div></div>
-<div class="ttc" id="classsyd_1_1Injection_html_ab90a36a2472597c5b7c172119f3c5ca3"><div class="ttname"><a href="classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3">syd::Injection::patient</a></div><div class="ttdeci">std::shared_ptr&lt; Patient &gt; patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydInjection_8h_source.html#l00037">sydInjection.h:37</a></div></div>
+<div class="ttc" id="classsyd_1_1DicomSerieBuilder_html_a9807add9115f208fed5305bb59ac4821"><div class="ttname"><a href="classsyd_1_1DicomSerieBuilder.html#a9807add9115f208fed5305bb59ac4821">syd::DicomSerieBuilder::CreateDicomFile</a></div><div class="ttdeci">syd::DicomFile * CreateDicomFile(const std::string &amp;filename, DcmObject *dset, DicomSerie *serie)</div><div class="ttdoc">Do not check if the DicomFile and the file already exist. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerieBuilder_8cxx_source.html#l00337">sydDicomSerieBuilder.cxx:337</a></div></div>
+<div class="ttc" id="classsyd_1_1Injection_html_ab90a36a2472597c5b7c172119f3c5ca3"><div class="ttname"><a href="classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3">syd::Injection::patient</a></div><div class="ttdeci">std::shared_ptr&lt; Patient &gt; patient</div><div class="ttdoc">Foreign key, linked to Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydInjection_8h_source.html#l00038">sydInjection.h:38</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerieBuilder_html_a6c28e9a23ae8338fb9b7d1e8b951714a"><div class="ttname"><a href="classsyd_1_1DicomSerieBuilder.html#a6c28e9a23ae8338fb9b7d1e8b951714a">syd::DicomSerieBuilder::SearchForFilesInFolder</a></div><div class="ttdeci">void SearchForFilesInFolder(std::string folder, OFList&lt; OFString &gt; &amp;inputFiles)</div><div class="ttdoc">Return a list of files to be considered as dicom. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerieBuilder_8cxx_source.html#l00066">sydDicomSerieBuilder.cxx:66</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_ae0761ffcc3ce331e47ecece1aa5737ef"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">syd::DicomSerie::dicom_modality</a></div><div class="ttdeci">std::string dicom_modality</div><div class="ttdoc">Modality as indicated in the dicom tag Modality. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00078">sydDicomSerie.h:78</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_a6b72e08967b219da005c658c03a79834"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a6b72e08967b219da005c658c03a79834">syd::DicomSerie::dicom_series_uid</a></div><div class="ttdeci">std::string dicom_series_uid</div><div class="ttdoc">Dicom SeriesInstanceUID. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00067">sydDicomSerie.h:67</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerieBuilder_html_aa8f052f20cc9c9213656eb2bd3e8151d"><div class="ttname"><a href="classsyd_1_1DicomSerieBuilder.html#aa8f052f20cc9c9213656eb2bd3e8151d">syd::DicomSerieBuilder::UpdateSeries</a></div><div class="ttdeci">void UpdateSeries()</div><div class="ttdoc">Insert the created DicomSerie/DicomFile into the db. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerieBuilder_8cxx_source.html#l00365">sydDicomSerieBuilder.cxx:365</a></div></div>
+<div class="ttc" id="classsyd_1_1DicomSerieBuilder_html_aa8f052f20cc9c9213656eb2bd3e8151d"><div class="ttname"><a href="classsyd_1_1DicomSerieBuilder.html#aa8f052f20cc9c9213656eb2bd3e8151d">syd::DicomSerieBuilder::UpdateSeries</a></div><div class="ttdeci">void UpdateSeries()</div><div class="ttdoc">Insert the created DicomSerie/DicomFile into the db. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerieBuilder_8cxx_source.html#l00371">sydDicomSerieBuilder.cxx:371</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerieBuilder_html_ae16a38204bfa580f1aa493fbb52a238c"><div class="ttname"><a href="classsyd_1_1DicomSerieBuilder.html#ae16a38204bfa580f1aa493fbb52a238c">syd::DicomSerieBuilder::DicomSerieBuilder</a></div><div class="ttdeci">DicomSerieBuilder()</div><div class="ttdoc">Protected constructor. No need to use directly. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerieBuilder_8cxx_source.html#l00032">sydDicomSerieBuilder.cxx:32</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_a5f735f7a79bcb537b3479aa454d18f97"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a5f735f7a79bcb537b3479aa454d18f97">syd::DicomSerie::reconstruction_date</a></div><div class="ttdeci">std::string reconstruction_date</div><div class="ttdoc">Date when the image has been reconstructed. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00059">sydDicomSerie.h:59</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_a4e26c46c6fd257e9b33d4f5ea04b3c27"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">syd::DicomSerie::size</a></div><div class="ttdeci">std::array&lt; int, 3 &gt; size</div><div class="ttdoc">Image size (in pixels) </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00088">sydDicomSerie.h:88</a></div></div>
@@ -530,9 +536,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="classsyd_1_1DicomSerie_html"><div class="ttname"><a href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00037">sydDicomSerie.h:37</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerieBuilder_html_a5241df657fde48ecb6f094dd22538d61"><div class="ttname"><a href="classsyd_1_1DicomSerieBuilder.html#a5241df657fde48ecb6f094dd22538d61">syd::DicomSerieBuilder::CreateDicomSerie</a></div><div class="ttdeci">syd::DicomSerie * CreateDicomSerie(const std::string &amp;filename, DcmObject *dset)</div><div class="ttdoc">Do not check if the serie already exist. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerieBuilder_8cxx_source.html#l00229">sydDicomSerieBuilder.cxx:229</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_afe4d4142678329f24f27999ca08ca0f1"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#afe4d4142678329f24f27999ca08ca0f1">syd::DicomSerie::dicom_manufacturer</a></div><div class="ttdeci">std::string dicom_manufacturer</div><div class="ttdoc">Dicom tags Manufacturer and ManufacturerModelName. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00081">sydDicomSerie.h:81</a></div></div>
-<div class="ttc" id="classsyd_1_1StandardDatabase_html"><div class="ttname"><a href="classsyd_1_1StandardDatabase.html">syd::StandardDatabase</a></div><div class="ttdoc">This database manages a set of &#39;standard&#39; tables: Patient, Injection etc. </div><div class="ttdef"><b>Definition:</b> <a href="sydStandardDatabase_8h_source.html#l00041">sydStandardDatabase.h:41</a></div></div>
+<div class="ttc" id="classsyd_1_1StandardDatabase_html"><div class="ttname"><a href="classsyd_1_1StandardDatabase.html">syd::StandardDatabase</a></div><div class="ttdoc">This database manages a set of &#39;standard&#39; tables: Patient, Injection etc. </div><div class="ttdef"><b>Definition:</b> <a href="sydStandardDatabase_8h_source.html#l00042">sydStandardDatabase.h:42</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_aeff8ef7948cf11a76fcb5e1bee3227b5"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#aeff8ef7948cf11a76fcb5e1bee3227b5">syd::DicomSerie::patient</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Patient &gt; patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00047">sydDicomSerie.h:47</a></div></div>
-<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00051">sydCommon.h:51</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00049">sydCommon.h:49</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

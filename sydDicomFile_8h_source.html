@@ -137,11 +137,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    virtual std::<span class="keywordtype">string</span> <a class="code" href="classsyd_1_1DicomFile.html#a6305e19960a2bd2bb13b9c60773f4b14">ToString</a>() const;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  }; <span class="comment">// end class</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;}</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">bool</span> operator==(const <a class="code" href="classsyd_1_1DicomFile.html">DicomFile</a> &amp; p);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="keywordtype">bool</span> operator!=(const <a class="code" href="classsyd_1_1DicomFile.html">DicomFile</a> &amp; p) { <span class="keywordflow">return</span> !(*<span class="keyword">this</span> == p); }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  }; <span class="comment">// end class</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;}</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="classsyd_1_1TableElement_html"><div class="ttname"><a href="classsyd_1_1TableElement.html">syd::TableElement</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableElement_8h_source.html#l00029">sydTableElement.h:29</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomFile_html_a9f4aebe327d27124ec6e76d7913abbd3"><div class="ttname"><a href="classsyd_1_1DicomFile.html#a9f4aebe327d27124ec6e76d7913abbd3">syd::DicomFile::dicom_serie</a></div><div class="ttdeci">std::shared_ptr&lt; syd::DicomSerie &gt; dicom_serie</div><div class="ttdoc">Foreign key, it must exist in the DicomSerie table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00044">sydDicomFile.h:44</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomFile_html_a21f7d2f4305a088e8195f3002fec2bc6"><div class="ttname"><a href="classsyd_1_1DicomFile.html#a21f7d2f4305a088e8195f3002fec2bc6">syd::DicomFile::dicom_sop_uid</a></div><div class="ttdeci">std::string dicom_sop_uid</div><div class="ttdoc">Dicom SOPInstanceUID. Unique dicom file identifier. Unique in db. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00048">sydDicomFile.h:48</a></div></div>
@@ -150,7 +153,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="classsyd_1_1DicomFile_html"><div class="ttname"><a href="classsyd_1_1DicomFile.html">syd::DicomFile</a></div><div class="ttdoc">Store information about a dicom file (unique dicom identifier dicom_sop_uid). </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00033">sydDicomFile.h:33</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomFile_html_a6305e19960a2bd2bb13b9c60773f4b14"><div class="ttname"><a href="classsyd_1_1DicomFile.html#a6305e19960a2bd2bb13b9c60773f4b14">syd::DicomFile::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8cxx_source.html#l00032">sydDicomFile.cxx:32</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomFile_html_a967d5da7f1971e134e050e86c4a6cd03"><div class="ttname"><a href="classsyd_1_1DicomFile.html#a967d5da7f1971e134e050e86c4a6cd03">syd::DicomFile::dicom_instance_number</a></div><div class="ttdeci">int dicom_instance_number</div><div class="ttdoc">Dicom InstanceNumber. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00051">sydDicomFile.h:51</a></div></div>
-<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00051">sydCommon.h:51</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00049">sydCommon.h:49</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

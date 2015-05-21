@@ -119,9 +119,9 @@ virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class=
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#a9b2bfd3bde6377d7e6adc4414065fd2f">Set</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
 <tr class="memdesc:a9b2bfd3bde6377d7e6adc4414065fd2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
 <tr class="separator:a9b2bfd3bde6377d7e6adc4414065fd2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adae6a6164eef212eddb2aed74cf645d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adae6a6164eef212eddb2aed74cf645d9"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Set</b> (<a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;p, const std::string &amp;pradionuclide, const std::string &amp;pdate, double activity)</td></tr>
-<tr class="separator:adae6a6164eef212eddb2aed74cf645d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a329f0902410cda5cfb999b3ec447fb02"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a329f0902410cda5cfb999b3ec447fb02"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Set</b> (<a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;p, <a class="el" href="classsyd_1_1Radionuclide.html">Radionuclide</a> &amp;pr, const std::string &amp;pdate, double activity)</td></tr>
+<tr class="separator:a329f0902410cda5cfb999b3ec447fb02"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e32238e9925ffb3588991042fef461a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e32238e9925ffb3588991042fef461a"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classsyd_1_1Injection.html">Injection</a> &amp;p)</td></tr>
 <tr class="separator:a2e32238e9925ffb3588991042fef461a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -136,22 +136,25 @@ IdType&#160;</td><td class="memItemRight" valign="bottom"><b>id</b></td></tr>
 <tr class="separator:a10f0afbf52e0a6a9edbec960f580b2d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab90a36a2472597c5b7c172119f3c5ca3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab90a36a2472597c5b7c172119f3c5ca3"></a>
 std::shared_ptr&lt; <a class="el" href="classsyd_1_1Patient.html">Patient</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3">patient</a></td></tr>
-<tr class="memdesc:ab90a36a2472597c5b7c172119f3c5ca3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, it must exist in the <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table. <br /></td></tr>
+<tr class="memdesc:ab90a36a2472597c5b7c172119f3c5ca3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, linked to <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table. <br /></td></tr>
 <tr class="separator:ab90a36a2472597c5b7c172119f3c5ca3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a219a48fa6279638cb06c4cfacd4eb71f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a219a48fa6279638cb06c4cfacd4eb71f"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>radionuclide</b></td></tr>
-<tr class="separator:a219a48fa6279638cb06c4cfacd4eb71f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a764de179e59dfa3fbbb02c9774b36385"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a764de179e59dfa3fbbb02c9774b36385"></a>
+std::shared_ptr&lt; <a class="el" href="classsyd_1_1Radionuclide.html">Radionuclide</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#a764de179e59dfa3fbbb02c9774b36385">radionuclide</a></td></tr>
+<tr class="memdesc:a764de179e59dfa3fbbb02c9774b36385"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, linked to <a class="el" href="classsyd_1_1Radionuclide.html" title="Store information about a radionuclide. ">Radionuclide</a> table. <br /></td></tr>
+<tr class="separator:a764de179e59dfa3fbbb02c9774b36385"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6a2df3f3ec09b09e689d23fa213910f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae6a2df3f3ec09b09e689d23fa213910f"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><b>date</b></td></tr>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#ae6a2df3f3ec09b09e689d23fa213910f">date</a></td></tr>
+<tr class="memdesc:ae6a2df3f3ec09b09e689d23fa213910f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Date of the injection. <br /></td></tr>
 <tr class="separator:ae6a2df3f3ec09b09e689d23fa213910f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4e30c1941a345da70d8935ed18bfc31"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4e30c1941a345da70d8935ed18bfc31"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>activity_in_MBq</b></td></tr>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#ab4e30c1941a345da70d8935ed18bfc31">activity_in_MBq</a></td></tr>
+<tr class="memdesc:ab4e30c1941a345da70d8935ed18bfc31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Injected activity in MBq. <br /></td></tr>
 <tr class="separator:ab4e30c1941a345da70d8935ed18bfc31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Store information about a radionuclide injection (date, etc). </p>
 
-<p>Definition at line <a class="el" href="sydInjection_8h_source.html#l00030">30</a> of file <a class="el" href="sydInjection_8h_source.html">sydInjection.h</a>.</p>
+<p>Definition at line <a class="el" href="sydInjection_8h_source.html#l00031">31</a> of file <a class="el" href="sydInjection_8h_source.html">sydInjection.h</a>.</p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/dsarrut/src/syd/syd/src/std_db/<a class="el" href="sydInjection_8h_source.html">sydInjection.h</a></li>
 <li>/home/dsarrut/src/syd/syd/src/std_db/<a class="el" href="sydInjection_8cxx_source.html">sydInjection.cxx</a></li>

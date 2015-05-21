@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['operator_3c_3c',['operator&lt;&lt;',['../classsyd_1_1TableElement.html#a5b58e0f954079a1cb6d59cc60d9d7982',1,'syd::TableElement']]]
+  ['name',['name',['../classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987',1,'syd::Patient']]]
 ];

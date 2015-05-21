@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['name',['name',['../classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987',1,'syd::Patient']]]
+  ['map',['map',['../classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc',1,'syd::Database']]],
+  ['map_5flowercase',['map_lowercase',['../classsyd_1_1Database.html#afcdf186672cdb2b65d601d8557a38bbc',1,'syd::Database']]],
+  ['md5',['md5',['../classsyd_1_1File.html#a6d6b67ab100513f076f4804c355b2f58',1,'syd::File']]],
+  ['message_5f',['message_',['../classsyd_1_1Exception.html#ac6975c3b1f61d9d2ad11b86894ba1c89',1,'syd::Exception']]]
 ];

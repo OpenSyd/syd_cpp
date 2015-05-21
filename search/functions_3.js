@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['executesql',['ExecuteSQL',['../classsyd_1_1Database.html#a178b5c492230b3e9873321ccd9a50401',1,'syd::Database']]]
+  ['exception',['Exception',['../classsyd_1_1Exception.html#a4549fd1ecacac41c13064f32aee113fc',1,'syd::Exception']]]
 ];

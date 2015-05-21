@@ -158,11 +158,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    virtual std::<span class="keywordtype">string</span> <a class="code" href="classsyd_1_1DicomSerie.html#a3308c7f3c69b87613457de887c32f024">ToString</a>() const;</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  }; <span class="comment">// end class</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;}</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">bool</span> operator==(const <a class="code" href="classsyd_1_1DicomSerie.html">DicomSerie</a> &amp; p);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordtype">bool</span> operator!=(const <a class="code" href="classsyd_1_1DicomSerie.html">DicomSerie</a> &amp; p) { <span class="keywordflow">return</span> !(*<span class="keyword">this</span> == p); }</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  }; <span class="comment">// end class</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_a2a47ab6d79a841303cad845b2f797fc2"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">syd::DicomSerie::dicom_frame_of_reference_uid</a></div><div class="ttdeci">std::string dicom_frame_of_reference_uid</div><div class="ttdoc">Dicom FrameOfReferenceUID. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00075">sydDicomSerie.h:75</a></div></div>
 <div class="ttc" id="classsyd_1_1TableElement_html"><div class="ttname"><a href="classsyd_1_1TableElement.html">syd::TableElement</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableElement_8h_source.html#l00029">sydTableElement.h:29</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_a05db952b76b7980cb12d9206ffa82dcb"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">syd::DicomSerie::acquisition_date</a></div><div class="ttdeci">std::string acquisition_date</div><div class="ttdoc">Date when the image has been acquired. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00055">sydDicomSerie.h:55</a></div></div>
@@ -179,7 +182,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="classsyd_1_1DicomSerie_html_afe4d4142678329f24f27999ca08ca0f1"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#afe4d4142678329f24f27999ca08ca0f1">syd::DicomSerie::dicom_manufacturer</a></div><div class="ttdeci">std::string dicom_manufacturer</div><div class="ttdoc">Dicom tags Manufacturer and ManufacturerModelName. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00081">sydDicomSerie.h:81</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_a3308c7f3c69b87613457de887c32f024"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a3308c7f3c69b87613457de887c32f024">syd::DicomSerie::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8cxx_source.html#l00030">sydDicomSerie.cxx:30</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomSerie_html_aeff8ef7948cf11a76fcb5e1bee3227b5"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#aeff8ef7948cf11a76fcb5e1bee3227b5">syd::DicomSerie::patient</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Patient &gt; patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00047">sydDicomSerie.h:47</a></div></div>
-<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00051">sydCommon.h:51</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00049">sydCommon.h:49</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

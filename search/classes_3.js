@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['log',['Log',['../classLog.html',1,'']]]
+  ['injection',['Injection',['../classsyd_1_1Injection.html',1,'syd']]]
 ];

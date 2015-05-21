@@ -116,7 +116,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="keyword">const</span> DcmDictEntry *dicent = globalDataDict.findEntry(tagName.c_str());</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keywordflow">if</span> (dicent == NULL) {</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    dcmDataDict.unlock();</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Unrecognized tag name: &#39;&quot;</span> &lt;&lt; tagName &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Unrecognized tag name: &#39;&quot;</span> &lt;&lt; tagName &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span>);</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  }</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  dcmDataDict.unlock();</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keywordflow">return</span> dicent-&gt;getKey();</div>
@@ -180,7 +180,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="keywordflow">if</span> (dset-&gt;search(key, stack, ESM_fromHere, OFTrue) == EC_Normal) {</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> n = stack.card();</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="keywordflow">if</span> (n==0) {</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Tag value not found for &#39;&quot;</span>&lt;&lt; key.toString() &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span>;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      EXCEPTION(<span class="stringliteral">&quot;Tag value not found for &#39;&quot;</span>&lt;&lt; key.toString() &lt;&lt; <span class="stringliteral">&quot;&#39;&quot;</span>);</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    }</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">if</span> (n&gt;1) {</div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      <span class="comment">// DD(n);</span></div>

@@ -2,6 +2,7 @@ var searchData=
 [
   ['database_5fschema',['database_schema',['../classsyd_1_1DatabaseInformation.html#a5b7f5b0e976828f869e1e05799ad4cbe',1,'syd::DatabaseInformation']]],
   ['database_5fschema_5f',['database_schema_',['../classsyd_1_1Database.html#a1c81852eb09eb7655d69de6d3cb8496a',1,'syd::Database']]],
+  ['date',['date',['../classsyd_1_1Injection.html#ae6a2df3f3ec09b09e689d23fa213910f',1,'syd::Injection']]],
   ['db_5f',['db_',['../classsyd_1_1Database.html#aa519e62f5788d90095a74580d2054b9c',1,'syd::Database']]],
   ['db_5fmap_5f',['db_map_',['../classsyd_1_1DatabaseManager.html#ab68bf80bfa532ff5195b57f9dac6d76f',1,'syd::DatabaseManager']]],
   ['db_5fschema_5fnames_5f',['db_schema_names_',['../classsyd_1_1DatabaseManager.html#a36a07fe96512596848aea32b88e6ce75',1,'syd::DatabaseManager']]],

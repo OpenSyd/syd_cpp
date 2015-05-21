@@ -123,7 +123,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    LOG(WARNING) &lt;&lt; <span class="stringliteral">&quot;The folder &quot;</span> &lt;&lt; path &lt;&lt; <span class="stringliteral">&quot; already exist.&quot;</span>;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  }</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keywordflow">if</span> (status != 0) {</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Error while creating the folder &quot;</span> &lt;&lt; path;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Error while creating the folder &quot;</span> &lt;&lt; path);</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  }</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;}</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
@@ -205,13 +205,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="keywordtype">void</span> syd::ConvertToAbsolutePath(std::string &amp; folder)</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;{</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordflow">if</span> (folder.empty()) {</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;The &#39;foldername&#39; is void. Abort.&quot;</span>;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;The &#39;foldername&#39; is void. Abort.&quot;</span>);</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  }</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="keywordflow">if</span> (folder.at(0) != PATH_SEPARATOR)  { <span class="comment">// the folder is not an absolute path</span></div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordtype">char</span> cCurrentPath[FILENAME_MAX];</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keywordflow">if</span> (!GetCurrentDir(cCurrentPath, <span class="keyword">sizeof</span>(cCurrentPath)))  {</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Error while trying to get current working dir.&quot;</span>;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;      EXCEPTION(<span class="stringliteral">&quot;Error while trying to get current working dir.&quot;</span>);</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    }</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    folder = std::string(cCurrentPath)+<span class="stringliteral">&quot;/&quot;</span>+folder;</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="comment">//dirPrefix = OFString(cCurrentPath);</span></div>
@@ -237,7 +237,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> i;</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  iss &gt;&gt; std::ws &gt;&gt; i &gt;&gt; std::ws;</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  <span class="keywordflow">if</span> (!iss.eof()) {</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Error could not convert the string &#39;&quot;</span> &lt;&lt; s &lt;&lt; <span class="stringliteral">&quot;&#39; into unsigned long.&quot;</span>;</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Error could not convert the string &#39;&quot;</span> &lt;&lt; s &lt;&lt; <span class="stringliteral">&quot;&#39; into unsigned long.&quot;</span>);</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  }</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  <span class="keywordflow">return</span> i;</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;}</div>
@@ -251,7 +251,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;  <span class="keywordtype">double</span> i;</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  iss &gt;&gt; std::ws &gt;&gt; i &gt;&gt; std::ws;</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  <span class="keywordflow">if</span> (!iss.eof()) {</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Error could not convert the string &#39;&quot;</span> &lt;&lt; s &lt;&lt; <span class="stringliteral">&quot;&#39; into double.&quot;</span>;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Error could not convert the string &#39;&quot;</span> &lt;&lt; s &lt;&lt; <span class="stringliteral">&quot;&#39; into double.&quot;</span>);</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  }</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  <span class="keywordflow">return</span> i;</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;}</div>

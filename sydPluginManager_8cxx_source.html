@@ -127,7 +127,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;{</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keywordtype">char</span> * env = getenv (<span class="stringliteral">&quot;SYD_PLUGIN&quot;</span>);</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keywordflow">if</span> (!env) {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Could not find SYD_PLUGIN. Please set this variable to the folder to look for plugins.&quot;</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Could not find SYD_PLUGIN. Please set this variable to the folder to look for plugins.&quot;</span>);</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  }</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  std::vector&lt;std::string&gt; ll;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  std::string senv(env);</div>
@@ -158,46 +158,49 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                                                   dirPrefix, recurse);</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    LOG(WARNING) &lt;&lt; <span class="stringliteral">&quot;(syd plugin) The directory &quot;</span> &lt;&lt; absolute_folder &lt;&lt; <span class="stringliteral">&quot; does not exist.&quot;</span>;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    LOG(WARNING) &lt;&lt; <span class="stringliteral">&quot;(syd plugin) The directory &quot;</span> &lt;&lt; absolute_folder &lt;&lt; <span class="stringliteral">&quot; in SYD_PLUGIN does not exist.&quot;</span>;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  }</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> f=inputFiles.begin(); f != inputFiles.end(); f++) {</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    Load(f-&gt;c_str());</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  }</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    std::string s(f-&gt;c_str());</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    std::string fn=GetFilenameFromPath(s);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keywordflow">if</span> (fn != <span class="stringliteral">&quot;libsydCommonSchema.so&quot;</span> and</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        fn != <span class="stringliteral">&quot;libsydCore.a&quot;</span>) Load(s);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  }</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;}</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;<span class="keywordtype">void</span> syd::PluginManager::Load(<span class="keyword">const</span> std::string &amp; filename)</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;{</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  std::string ext = GetExtension(filename);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  <span class="keywordflow">if</span> (ext != <span class="stringliteral">&quot;so&quot;</span> and ext != <span class="stringliteral">&quot;dylib&quot;</span> and ext != <span class="stringliteral">&quot;DLL&quot;</span> and ext != <span class="stringliteral">&quot;dll&quot;</span>) {</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    LOG(10) &lt;&lt; <span class="stringliteral">&quot;(plugin) ignoring the file &#39;&quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot;&#39;.&quot;</span>;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  }</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="keywordtype">void</span> * plugin;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  plugin = dlopen(filename.c_str(), RTLD_NOW);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordflow">if</span> (!plugin) {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    LOG(10) &lt;&lt; <span class="stringliteral">&quot;(plugin) The file &#39;&quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot;&#39; is not a plugin.&quot;</span>;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  }</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  RegisterDatabaseSchemaFunction db_creator;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  db_creator = (RegisterDatabaseSchemaFunction) dlsym(plugin, <span class="stringliteral">&quot;RegisterDatabaseSchema&quot;</span>);</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  <span class="keywordtype">char</span> * result = dlerror();</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="keywordflow">if</span> (result) {</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    LOG(10) &lt;&lt; <span class="stringliteral">&quot;(plugin) The lib &quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot; does not contain a valid plugin for syd.&quot;</span>;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  }</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <a class="code" href="classsyd_1_1DatabaseManager.html">syd::DatabaseManager</a> * m = <a class="code" href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">syd::DatabaseManager::GetInstance</a>();</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  db_creator(m);</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;}</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keywordtype">void</span> syd::PluginManager::Load(<span class="keyword">const</span> std::string &amp; filename)</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;{</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  std::string ext = GetExtension(filename);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="keywordflow">if</span> (ext != <span class="stringliteral">&quot;so&quot;</span> and ext != <span class="stringliteral">&quot;dylib&quot;</span> and ext != <span class="stringliteral">&quot;DLL&quot;</span> and ext != <span class="stringliteral">&quot;dll&quot;</span>) {</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    LOG(10) &lt;&lt; <span class="stringliteral">&quot;(syd plugin) ignoring the file &#39;&quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot;&#39;.&quot;</span>;</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  }</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordtype">void</span> * plugin;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  plugin = dlopen(filename.c_str(), RTLD_NOW);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  <span class="keywordflow">if</span> (!plugin) {</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    LOG(10) &lt;&lt; <span class="stringliteral">&quot;(syd plugin) The file &#39;&quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot;&#39; is not a plugin.&quot;</span>;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  }</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  RegisterDatabaseSchemaFunction db_creator;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  db_creator = (RegisterDatabaseSchemaFunction) dlsym(plugin, <span class="stringliteral">&quot;RegisterDatabaseSchema&quot;</span>);</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="keywordtype">char</span> * result = dlerror();</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <span class="keywordflow">if</span> (result) {</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    LOG(10) &lt;&lt; <span class="stringliteral">&quot;(plugin) The lib &quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot; does not contain a valid plugin for syd.&quot;</span>;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  }</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <a class="code" href="classsyd_1_1DatabaseManager.html">syd::DatabaseManager</a> * m = <a class="code" href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">syd::DatabaseManager::GetInstance</a>();</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  db_creator(m);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;}</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
 <div class="ttc" id="classsyd_1_1PluginManager_html_a9d0d3a5c5108268ff18157d96d8070e3"><div class="ttname"><a href="classsyd_1_1PluginManager.html#a9d0d3a5c5108268ff18157d96d8070e3">syd::PluginManager::GetInstance</a></div><div class="ttdeci">static PluginManager * GetInstance()</div><div class="ttdoc">Retrieve the unique instance (singleton) </div><div class="ttdef"><b>Definition:</b> <a href="sydPluginManager_8cxx_source.html#l00026">sydPluginManager.cxx:26</a></div></div>
 <div class="ttc" id="classsyd_1_1PluginManager_html"><div class="ttname"><a href="classsyd_1_1PluginManager.html">syd::PluginManager</a></div><div class="ttdef"><b>Definition:</b> <a href="sydPluginManager_8h_source.html#l00028">sydPluginManager.h:28</a></div></div>
 <div class="ttc" id="classsyd_1_1PluginManager_html_a61058c3847b6fedd2ea2fedc926e6fec"><div class="ttname"><a href="classsyd_1_1PluginManager.html#a61058c3847b6fedd2ea2fedc926e6fec">syd::PluginManager::singleton_</a></div><div class="ttdeci">static PluginManager * singleton_</div><div class="ttdoc">Unique instance (singleton). </div><div class="ttdef"><b>Definition:</b> <a href="sydPluginManager_8h_source.html#l00045">sydPluginManager.h:45</a></div></div>
 <div class="ttc" id="classsyd_1_1PluginManager_html_a9a8a769e102e882881af129d515c50bd"><div class="ttname"><a href="classsyd_1_1PluginManager.html#a9a8a769e102e882881af129d515c50bd">syd::PluginManager::PluginManager</a></div><div class="ttdeci">PluginManager()</div><div class="ttdoc">Purposely protected, only a single instance possible. </div><div class="ttdef"><b>Definition:</b> <a href="sydPluginManager_8h_source.html#l00040">sydPluginManager.h:40</a></div></div>
-<div class="ttc" id="classsyd_1_1DatabaseManager_html_a0fb6ff33f3f40fa6819dbfa69c71141f"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">syd::DatabaseManager::GetInstance</a></div><div class="ttdeci">static DatabaseManager * GetInstance()</div><div class="ttdoc">Retrieve the unique instance (singleton) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8cxx_source.html#l00024">sydDatabaseManager.cxx:24</a></div></div>
+<div class="ttc" id="classsyd_1_1DatabaseManager_html_a0fb6ff33f3f40fa6819dbfa69c71141f"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">syd::DatabaseManager::GetInstance</a></div><div class="ttdeci">static DatabaseManager * GetInstance()</div><div class="ttdoc">Retrieve the unique instance (singleton) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8cxx_source.html#l00025">sydDatabaseManager.cxx:25</a></div></div>
 <div class="ttc" id="classsyd_1_1DatabaseManager_html"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html">syd::DatabaseManager</a></div><div class="ttdoc">Manage a set of database schema. Allow to read and create. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8h_source.html#l00030">sydDatabaseManager.h:30</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

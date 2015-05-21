@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['schema_5fversion',['schema_version',['../structsyd_1_1schema__version.html',1,'syd']]],
-  ['standarddatabase',['StandardDatabase',['../classsyd_1_1StandardDatabase.html',1,'syd']]]
+  ['patient',['Patient',['../classsyd_1_1Patient.html',1,'syd']]],
+  ['pluginmanager',['PluginManager',['../classsyd_1_1PluginManager.html',1,'syd']]],
+  ['printtable',['PrintTable',['../classsyd_1_1PrintTable.html',1,'syd']]]
 ];

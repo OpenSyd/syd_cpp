@@ -108,96 +108,98 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">// syd</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;sydDatabaseManager.h&quot;</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;sydDatabaseSchemaName-odb.hxx&quot;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno"><a class="line" href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">   24</a></span>&#160;<a class="code" href="classsyd_1_1DatabaseManager.html">syd::DatabaseManager</a> * <a class="code" href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">syd::DatabaseManager::GetInstance</a>()</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80">singleton_</a> == NULL) {</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <a class="code" href="classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80">singleton_</a> = <span class="keyword">new</span> <a class="code" href="classsyd_1_1DatabaseManager.html#ae413dafcfccd2b1c6660f870abcd19a0">DatabaseManager</a>;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  }</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80">singleton_</a>;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classsyd_1_1DatabaseManager.html#ab61ef523e66be29ede3eef5d5c1b96c3">   35</a></span>&#160;<a class="code" href="classsyd_1_1Database.html">syd::Database</a> * <a class="code" href="classsyd_1_1DatabaseManager.html#ab61ef523e66be29ede3eef5d5c1b96c3">syd::DatabaseManager::Read</a>(<span class="keyword">const</span> std::string &amp; filename)</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;{</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  odb::sqlite::database * db;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    LOG(5) &lt;&lt; <span class="stringliteral">&quot;Opening database &#39;&quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot;&#39; to get typename.&quot;</span>;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    db = <span class="keyword">new</span> odb::sqlite::database(filename);</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    odb::connection_ptr c(db-&gt;connection());</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordflow">catch</span> (<span class="keyword">const</span> odb::exception&amp; e) {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Cannot open db &#39;&quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot;&#39; : &quot;</span> &lt;&lt; e.what();</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  }</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  std::string db_schema_name;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="comment">// Try to get the tabletype name</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    odb::transaction transaction (db-&gt;begin());</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    odb::query&lt;syd::DatabaseInformation&gt; q;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">typedef</span> odb::result&lt;syd::DatabaseInformation&gt; result;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    result r(db-&gt;query&lt; <a class="code" href="classsyd_1_1DatabaseInformation.html">syd::DatabaseInformation</a> &gt;(q));</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <a class="code" href="classsyd_1_1DatabaseInformation.html">syd::DatabaseInformation</a> s;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordflow">if</span> (r.begin() == r.end()) {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;      LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Cannot find schema_version name in the db ?&quot;</span>;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="comment">// We only consider the *last* element here. The table</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="comment">// schema_version can contains several schema names, but only the</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="comment">// last defined the database type.</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=r.begin(); i != r.end(); i++) {</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;      r.begin().load(s);</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    }</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    transaction.commit();</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    db_schema_name = s.<a class="code" href="classsyd_1_1DatabaseInformation.html#a5b7f5b0e976828f869e1e05799ad4cbe">database_schema</a>;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    LOG(5) &lt;&lt; <span class="stringliteral">&quot;Database type is &#39;&quot;</span> &lt;&lt; db_schema_name &lt;&lt; <span class="stringliteral">&quot;&#39;.&quot;</span>;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  }</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  <span class="keywordflow">catch</span> (<span class="keyword">const</span> odb::exception&amp; e) {</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Cannot find the db typename in &#39;&quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot;&#39;.&quot;</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;               &lt;&lt; std::endl &lt;&lt; <span class="stringliteral">&quot;A table name &#39;schema_version&#39; must be in the db. &quot;</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;               &lt;&lt; <span class="stringliteral">&quot;odb error is: &quot;</span> &lt;&lt; e.what();</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  }</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keyword">auto</span> it = db_map_.find(db_schema_name);</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keywordflow">if</span> (it == db_map_.end()) {</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;The database type &#39;&quot;</span> &lt;&lt; db_schema_name &lt;&lt; <span class="stringliteral">&quot;&#39; is not found.&quot;</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;               &lt;&lt; std::endl</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;               &lt;&lt; <span class="stringliteral">&quot;Try to insert this typename via plugin.&quot;</span>;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  }</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  <span class="keywordflow">return</span> it-&gt;second-&gt;Read(filename);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;}</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="classsyd_1_1DatabaseManager.html#a4028cf34868d1e660a944aae4be63fd5">   86</a></span>&#160;<a class="code" href="classsyd_1_1Database.html">syd::Database</a> * <a class="code" href="classsyd_1_1DatabaseManager.html#a4028cf34868d1e660a944aae4be63fd5">syd::DatabaseManager::Create</a>(<span class="keyword">const</span> std::string &amp; db_schema_name,</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                                             <span class="keyword">const</span> std::string &amp; filename,</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                                             <span class="keyword">const</span> std::string &amp; folder)</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;{</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="keyword">auto</span> it = db_map_.find(db_schema_name);</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="keyword">auto</span> &amp; list = GetDatabaseSchemas();</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keywordflow">if</span> (it == db_map_.end()) {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    std::stringstream os;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=list.begin(); i != list.end(); i++) {</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      os &lt;&lt; *i &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;The database type &#39;&quot;</span> &lt;&lt; db_schema_name &lt;&lt; <span class="stringliteral">&quot;&#39; is not found.&quot;</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;               &lt;&lt; std::endl</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;               &lt;&lt; <span class="stringliteral">&quot;Known type are: &quot;</span> &lt;&lt; os.str() &lt;&lt; std::endl</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;               &lt;&lt; <span class="stringliteral">&quot;Try to insert this typename via plugin.&quot;</span>;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  }</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;  <span class="keywordflow">return</span> it-&gt;second-&gt;Create(db_schema_name, filename, folder);</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;}</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="ttc" id="classsyd_1_1Database_html"><div class="ttname"><a href="classsyd_1_1Database.html">syd::Database</a></div><div class="ttdoc">This is the base class of all databases. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00039">sydDatabase.h:39</a></div></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;sydException.h&quot;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">   25</a></span>&#160;<a class="code" href="classsyd_1_1DatabaseManager.html">syd::DatabaseManager</a> * <a class="code" href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">syd::DatabaseManager::GetInstance</a>()</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  <span class="keywordflow">if</span> (<a class="code" href="classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80">singleton_</a> == NULL) {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <a class="code" href="classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80">singleton_</a> = <span class="keyword">new</span> <a class="code" href="classsyd_1_1DatabaseManager.html#ae413dafcfccd2b1c6660f870abcd19a0">DatabaseManager</a>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="comment">//    std::set_terminate(syd::terminateHandler);</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  }</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keywordflow">return</span> <a class="code" href="classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80">singleton_</a>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;}</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classsyd_1_1DatabaseManager.html#ab61ef523e66be29ede3eef5d5c1b96c3">   37</a></span>&#160;<a class="code" href="classsyd_1_1Database.html">syd::Database</a> * <a class="code" href="classsyd_1_1DatabaseManager.html#ab61ef523e66be29ede3eef5d5c1b96c3">syd::DatabaseManager::Read</a>(<span class="keyword">const</span> std::string &amp; filename)</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;{</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  odb::sqlite::database * db;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  LOG(5) &lt;&lt; <span class="stringliteral">&quot;Opening database &#39;&quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot;&#39; to get the type of db.&quot;</span>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    db = <span class="keyword">new</span> odb::sqlite::database(filename);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    odb::connection_ptr c(db-&gt;connection());</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  <span class="keywordflow">catch</span> (<span class="keyword">const</span> std::exception&amp; e) {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Cannot open db &#39;&quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot;&#39; : &quot;</span> &lt;&lt; e.what());</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  }</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  std::string db_schema_name;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="comment">// Try to get the tabletype name</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    odb::transaction transaction (db-&gt;begin());</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    odb::query&lt;syd::DatabaseInformation&gt; q;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">typedef</span> odb::result&lt;syd::DatabaseInformation&gt; result;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    result r(db-&gt;query&lt; <a class="code" href="classsyd_1_1DatabaseInformation.html">syd::DatabaseInformation</a> &gt;(q));</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <a class="code" href="classsyd_1_1DatabaseInformation.html">syd::DatabaseInformation</a> s;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordflow">if</span> (r.begin() == r.end()) {</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;      EXCEPTION(<span class="stringliteral">&quot;Cannot find schema_version name in the db &quot;</span> &lt;&lt; filename);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    }</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    <span class="comment">// We only consider the *last* element here. The table</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="comment">// schema_version can contains several schema names, but only the</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="comment">// last defined the database type.</span></div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=r.begin(); i != r.end(); i++) {</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;      r.begin().load(s);</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    transaction.commit();</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    db_schema_name = s.<a class="code" href="classsyd_1_1DatabaseInformation.html#a5b7f5b0e976828f869e1e05799ad4cbe">database_schema</a>;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    LOG(5) &lt;&lt; <span class="stringliteral">&quot;Database type is &#39;&quot;</span> &lt;&lt; db_schema_name &lt;&lt; <span class="stringliteral">&quot;&#39;.&quot;</span>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  }</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="keywordflow">catch</span> (<span class="keyword">const</span> odb::exception&amp; e) {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Cannot find the db typename in &#39;&quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot;&#39;.&quot;</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;              &lt;&lt; std::endl &lt;&lt; <span class="stringliteral">&quot;A table name &#39;schema_version&#39; must be in the db. &quot;</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;odb error is: &quot;</span> &lt;&lt; e.what());</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="keyword">auto</span> it = db_map_.find(db_schema_name);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keywordflow">if</span> (it == db_map_.end()) {</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;The database type &#39;&quot;</span> &lt;&lt; db_schema_name &lt;&lt; <span class="stringliteral">&quot;&#39; read in &quot;</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;              &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot; is not found. &quot;</span> &lt;&lt; std::endl</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;Try to insert this typename via plugin.&quot;</span>);</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  }</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keywordflow">return</span> it-&gt;second-&gt;Read(filename);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;}</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="classsyd_1_1DatabaseManager.html#a4028cf34868d1e660a944aae4be63fd5">   88</a></span>&#160;<a class="code" href="classsyd_1_1Database.html">syd::Database</a> * <a class="code" href="classsyd_1_1DatabaseManager.html#a4028cf34868d1e660a944aae4be63fd5">syd::DatabaseManager::Create</a>(<span class="keyword">const</span> std::string &amp; db_schema_name,</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                                             <span class="keyword">const</span> std::string &amp; filename,</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                                             <span class="keyword">const</span> std::string &amp; folder)</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;{</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keyword">auto</span> it = db_map_.find(db_schema_name);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keyword">auto</span> &amp; list = GetDatabaseSchemas();</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keywordflow">if</span> (it == db_map_.end()) {</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    std::stringstream os;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=list.begin(); i != list.end(); i++) {</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;      os &lt;&lt; *i &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    }</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;The database type &#39;&quot;</span> &lt;&lt; db_schema_name &lt;&lt; <span class="stringliteral">&quot;&#39; is not found.&quot;</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;              &lt;&lt; std::endl</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;Known type are: &quot;</span> &lt;&lt; os.str() &lt;&lt; std::endl</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;Try to insert this typename via plugin.&quot;</span>);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  }</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  <span class="keywordflow">return</span> it-&gt;second-&gt;Create(db_schema_name, filename, folder);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;}</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="ttc" id="classsyd_1_1Database_html"><div class="ttname"><a href="classsyd_1_1Database.html">syd::Database</a></div><div class="ttdoc">This is the base class of all databases. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00040">sydDatabase.h:40</a></div></div>
 <div class="ttc" id="classsyd_1_1DatabaseManager_html_a0895025425a301b23f7149e45f44ad80"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#a0895025425a301b23f7149e45f44ad80">syd::DatabaseManager::singleton_</a></div><div class="ttdeci">static DatabaseManager * singleton_</div><div class="ttdoc">Unique instance (singleton). </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8h_source.html#l00060">sydDatabaseManager.h:60</a></div></div>
-<div class="ttc" id="classsyd_1_1DatabaseManager_html_a4028cf34868d1e660a944aae4be63fd5"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#a4028cf34868d1e660a944aae4be63fd5">syd::DatabaseManager::Create</a></div><div class="ttdeci">Database * Create(const std::string &amp;db_schema_name, const std::string &amp;filename, const std::string &amp;folder)</div><div class="ttdoc">Create a new empty database of the given db_schema_name. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8cxx_source.html#l00086">sydDatabaseManager.cxx:86</a></div></div>
+<div class="ttc" id="classsyd_1_1DatabaseManager_html_a4028cf34868d1e660a944aae4be63fd5"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#a4028cf34868d1e660a944aae4be63fd5">syd::DatabaseManager::Create</a></div><div class="ttdeci">Database * Create(const std::string &amp;db_schema_name, const std::string &amp;filename, const std::string &amp;folder)</div><div class="ttdoc">Create a new empty database of the given db_schema_name. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8cxx_source.html#l00088">sydDatabaseManager.cxx:88</a></div></div>
 <div class="ttc" id="classsyd_1_1DatabaseInformation_html"><div class="ttname"><a href="classsyd_1_1DatabaseInformation.html">syd::DatabaseInformation</a></div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseInformation_8h_source.html#l00033">sydDatabaseInformation.h:33</a></div></div>
 <div class="ttc" id="classsyd_1_1DatabaseManager_html_ae413dafcfccd2b1c6660f870abcd19a0"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#ae413dafcfccd2b1c6660f870abcd19a0">syd::DatabaseManager::DatabaseManager</a></div><div class="ttdeci">DatabaseManager()</div><div class="ttdoc">Purposely protected, only a single instance possible. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8h_source.html#l00055">sydDatabaseManager.h:55</a></div></div>
-<div class="ttc" id="classsyd_1_1DatabaseManager_html_a0fb6ff33f3f40fa6819dbfa69c71141f"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">syd::DatabaseManager::GetInstance</a></div><div class="ttdeci">static DatabaseManager * GetInstance()</div><div class="ttdoc">Retrieve the unique instance (singleton) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8cxx_source.html#l00024">sydDatabaseManager.cxx:24</a></div></div>
-<div class="ttc" id="classsyd_1_1DatabaseManager_html_ab61ef523e66be29ede3eef5d5c1b96c3"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#ab61ef523e66be29ede3eef5d5c1b96c3">syd::DatabaseManager::Read</a></div><div class="ttdeci">Database * Read(const std::string &amp;filename)</div><div class="ttdoc">Open and read a database (automatically find the correct schema) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8cxx_source.html#l00035">sydDatabaseManager.cxx:35</a></div></div>
+<div class="ttc" id="classsyd_1_1DatabaseManager_html_a0fb6ff33f3f40fa6819dbfa69c71141f"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f">syd::DatabaseManager::GetInstance</a></div><div class="ttdeci">static DatabaseManager * GetInstance()</div><div class="ttdoc">Retrieve the unique instance (singleton) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8cxx_source.html#l00025">sydDatabaseManager.cxx:25</a></div></div>
+<div class="ttc" id="classsyd_1_1DatabaseManager_html_ab61ef523e66be29ede3eef5d5c1b96c3"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html#ab61ef523e66be29ede3eef5d5c1b96c3">syd::DatabaseManager::Read</a></div><div class="ttdeci">Database * Read(const std::string &amp;filename)</div><div class="ttdoc">Open and read a database (automatically find the correct schema) </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8cxx_source.html#l00037">sydDatabaseManager.cxx:37</a></div></div>
 <div class="ttc" id="classsyd_1_1DatabaseManager_html"><div class="ttname"><a href="classsyd_1_1DatabaseManager.html">syd::DatabaseManager</a></div><div class="ttdoc">Manage a set of database schema. Allow to read and create. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseManager_8h_source.html#l00030">sydDatabaseManager.h:30</a></div></div>
 <div class="ttc" id="classsyd_1_1DatabaseInformation_html_a5b7f5b0e976828f869e1e05799ad4cbe"><div class="ttname"><a href="classsyd_1_1DatabaseInformation.html#a5b7f5b0e976828f869e1e05799ad4cbe">syd::DatabaseInformation::database_schema</a></div><div class="ttdeci">std::string database_schema</div><div class="ttdoc">Typename of the database. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabaseInformation_8h_source.html#l00040">sydDatabaseInformation.h:40</a></div></div>
 </div><!-- fragment --></div><!-- contents -->

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['newdatabase',['NewDatabase',['../classsyd_1_1DatabaseFactory.html#af0f819476e0c0562906e3d150e22f1bb',1,'syd::DatabaseFactory']]]
+  ['pluginmanager',['PluginManager',['../classsyd_1_1PluginManager.html#a9a8a769e102e882881af129d515c50bd',1,'syd::PluginManager']]]
 ];

@@ -1,7 +1,8 @@
 var searchData=
 [
-  ['read',['Read',['../classsyd_1_1Database.html#afdb7a92bd1e821d19a0eb60538189b62',1,'syd::Database::Read()'],['../singletonsyd_1_1DatabaseCreator.html#a424813db8d2967e116849c124a7e2b52',1,'syd::DatabaseCreator::Read()'],['../classsyd_1_1DatabaseManager.html#ab61ef523e66be29ede3eef5d5c1b96c3',1,'syd::DatabaseManager::Read(const std::string &amp;filename)'],['../classsyd_1_1DatabaseManager.html#a650f64cf4a5a5700ccdf1cc9b5a946aa',1,'syd::DatabaseManager::Read(const std::string &amp;filename)']]],
-  ['readdatabasefilenames',['ReadDatabaseFilenames',['../classsyd_1_1DatabaseFactory.html#a97e492d47f016d088aa43293da73fb4d',1,'syd::DatabaseFactory']]],
-  ['registerdatabaseschema',['RegisterDatabaseSchema',['../classsyd_1_1DatabaseManager.html#a156cd31db7574dd358caea3024d78d33',1,'syd::DatabaseManager']]],
-  ['registerfactoryfunction',['RegisterFactoryFunction',['../classsyd_1_1DatabaseFactory.html#ae71d5dad879f1d000fcb264232be8e39',1,'syd::DatabaseFactory']]]
+  ['searchforfilesinfolder',['SearchForFilesInFolder',['../classsyd_1_1DicomSerieBuilder.html#a6c28e9a23ae8338fb9b7d1e8b951714a',1,'syd::DicomSerieBuilder']]],
+  ['set',['Set',['../classsyd_1_1TableElement.html#aa34ff1762fabeb75706625d6f6ce6ad8',1,'syd::TableElement::Set()'],['../classsyd_1_1Injection.html#a9b2bfd3bde6377d7e6adc4414065fd2f',1,'syd::Injection::Set()'],['../classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db',1,'syd::Patient::Set()'],['../classsyd_1_1Radionuclide.html#ad5f2010ab002a40f5944abb7f96d909b',1,'syd::Radionuclide::Set()'],['../classsyd_1_1Tag.html#ab6a87fb402f4eee020f34a6c04d5c562',1,'syd::Tag::Set()']]],
+  ['setdatabase',['SetDatabase',['../classsyd_1_1DicomSerieBuilder.html#a4b646aef129eef190679fc971ec5c1d2',1,'syd::DicomSerieBuilder']]],
+  ['setforcepatientflag',['SetForcePatientFlag',['../classsyd_1_1DicomSerieBuilder.html#a196085ea3b89d5e60f74b89d4ce45d9c',1,'syd::DicomSerieBuilder']]],
+  ['setinjection',['SetInjection',['../classsyd_1_1DicomSerieBuilder.html#a3f9de27336f7e989ec2bbf0770e09536',1,'syd::DicomSerieBuilder']]]
 ];
