@@ -46,8 +46,8 @@ Database* syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
     t.commit ();
   }
   catch (const odb::exception& e) {
-    LOG(FATAL) << "Cannot create the database '" << filename << "' of type '"
-               << dbtype << "', error is: " << e.what();
+    EXCEPTION("Cannot create the database '" << filename << "' of type '"
+              << dbtype << "', error is: " << e.what());
   }
 
   // Insert the information
@@ -60,7 +60,7 @@ Database* syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
     db.update(s);
     t.commit();
   } catch (const odb::exception& e) {
-    LOG(FATAL) << "Error " << e.what();
+    EXCEPTION("Error while trying to insert basic database information (sydCommonSchema) in the db. Error is:" << e.what());
   }
 
   return Read(filename);

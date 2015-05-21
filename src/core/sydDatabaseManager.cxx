@@ -26,7 +26,7 @@ syd::DatabaseManager * syd::DatabaseManager::GetInstance()
 {
   if (singleton_ == NULL) {
     singleton_ = new DatabaseManager;
-    std::set_terminate(syd::terminateHandler);
+    //    std::set_terminate(syd::terminateHandler);
   }
   return singleton_;
 }
@@ -34,10 +34,10 @@ syd::DatabaseManager * syd::DatabaseManager::GetInstance()
 
 
 // --------------------------------------------------------------------
-syd::Database * syd::DatabaseManager::Read(const std::string & filename)  throw()
+syd::Database * syd::DatabaseManager::Read(const std::string & filename)
 {
   odb::sqlite::database * db;
-  LOG(3) << "Opening database '" << filename << "' to get the type of db.";
+  LOG(5) << "Opening database '" << filename << "' to get the type of db.";
   try {
     db = new odb::sqlite::database(filename);
     odb::connection_ptr c(db->connection());
@@ -87,7 +87,7 @@ syd::Database * syd::DatabaseManager::Read(const std::string & filename)  throw(
 // --------------------------------------------------------------------
 syd::Database * syd::DatabaseManager::Create(const std::string & db_schema_name,
                                              const std::string & filename,
-                                             const std::string & folder) throw()
+                                             const std::string & folder)
 {
   auto it = db_map_.find(db_schema_name);
   auto & list = GetDatabaseSchemas();

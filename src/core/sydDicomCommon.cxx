@@ -27,7 +27,7 @@ DcmTagKey syd::GetTagKey(std::string tagName)
   const DcmDictEntry *dicent = globalDataDict.findEntry(tagName.c_str());
   if (dicent == NULL) {
     dcmDataDict.unlock();
-    LOG(FATAL) << "Unrecognized tag name: '" << tagName << "'";
+    EXCEPTION("Unrecognized tag name: '" << tagName << "'");
   }
   dcmDataDict.unlock();
   return dicent->getKey();
@@ -91,7 +91,7 @@ DcmElement * syd::GetTagValue(DcmObject * dset, DcmTagKey & key)
   if (dset->search(key, stack, ESM_fromHere, OFTrue) == EC_Normal) {
     unsigned long n = stack.card();
     if (n==0) {
-      LOG(FATAL) << "Tag value not found for '"<< key.toString() << "'";
+      EXCEPTION("Tag value not found for '"<< key.toString() << "'");
     }
     if (n>1) {
       // DD(n);

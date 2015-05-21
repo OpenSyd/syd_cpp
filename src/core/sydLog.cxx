@@ -88,7 +88,8 @@ std::string NowTime()
 
   char result[100] = {0};
   static DWORD first = GetTickCount();
-  std::sprintf(result, "%s.%02ld", buffer, (long)(GetTickCount() - first) % 1000);
+  //  std::sprintf(result, "%s.%02ld", buffer, (long)(GetTickCount() - first) % 1000);
+  std::sprintf(result, "%s", buffer);
   return result;
 }
 #else
@@ -103,7 +104,8 @@ std::string NowTime()
   struct timeval tv;
   gettimeofday(&tv, 0);
   char result[100] = {0};
-  std::sprintf(result, "%s.%03ld", buffer, (long)tv.tv_usec / 1000);
+  //  std::sprintf(result, "%s.%03ld", buffer, (long)tv.tv_usec / 1000);
+  std::sprintf(result, "%s", buffer);
   return result;
 }
 #endif //WIN32

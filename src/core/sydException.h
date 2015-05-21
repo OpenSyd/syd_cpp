@@ -38,7 +38,7 @@ namespace syd {
   public:
 
     /// Standard constructor
-    Exception(const std::string& message) throw();
+    Exception(const std::string& message);
 
     /// Main class to get the error message
     virtual const char* what() const noexcept;

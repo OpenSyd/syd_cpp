@@ -30,6 +30,7 @@ Table<ElementType> * syd::Database::GetTable()
 template<class ElementType>
 void syd::Database::AddTable()
 {
+  // No exception handling here, fatal error if fail.
   if (db_ == NULL) {
     LOG(FATAL) << "Could not AddTable, open a db before";
   }

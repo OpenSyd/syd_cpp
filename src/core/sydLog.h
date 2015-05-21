@@ -74,9 +74,7 @@ typedef Log FILELog;
 /// ----------------------------------------------------------------------------
 /// Main LOG macros
 
-// Needed if include <glog/logging.h> before
 #undef LOG
-
 #define LOG(level)                        \
   if (level > Log::LogLevel()) ;          \
   else Log().Get(level)

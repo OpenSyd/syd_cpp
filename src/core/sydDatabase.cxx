@@ -41,19 +41,15 @@ syd::Database::Database()
 void syd::Database::Read(std::string filename)
 {
   filename_ = filename;
-
-  DD("Read Database");
-  DD(filename);
   // Open the DB
+  LOG(5) << "Opening database '" << filename_ << "'.";
   try {
-    LOG(4) << "Opening database '" << filename_ << "'.";
     db_ = new odb::sqlite::database(filename_);
     odb::connection_ptr c(db_->connection());
     c->execute("PRAGMA foreign_keys=ON;");
   }
   catch (const odb::exception& e) {
-    //    LOG(FATAL) << "Cannot open db '" << filename_ << "' : " << e.what();
-    throw syd::Exception("titi");
+    EXCEPTION("Cannot open db '" << filename_ << "' : " << e.what());
   }
 
   // Set the folder by reading the 'folder' value in the db_info table.
@@ -70,13 +66,13 @@ void syd::Database::Read(std::string filename)
     transaction.commit();
   }
   catch (const odb::exception& e) {
-    LOG(FATAL) << "Could not get the folder name ?" << e.what();
+    EXCEPTION("Could not read the folder name in the database ?" << e.what());
   }
 
   // Now consider the folder according to the filename path and check it exists
   std::string pwd;
   if (!syd::GetWorkingDirectory(pwd))  {
-    LOG(FATAL) << "Error while trying to get current working dir.";
+    EXCEPTION("Error while trying to get current working dir.");
   }
   if (filename_[0] != PATH_SEPARATOR) {
     pwd = pwd+PATH_SEPARATOR+filename_;
@@ -85,7 +81,7 @@ void syd::Database::Read(std::string filename)
   }
   absolute_folder_ = pwd+PATH_SEPARATOR+relative_folder_;
   if (!syd::DirExists(absolute_folder_)) {
-    LOG(FATAL) << "The folder '" << absolute_folder_ << "' does not exist.";
+    EXCEPTION("The folder '" << absolute_folder_ << "' does not exist.");
   }
 
   // Install tracer
@@ -112,7 +108,9 @@ void syd::Database::TraceCallback(const char* sql)
 
 
 // --------------------------------------------------------------------
-syd::TableElement * syd::Database::InsertFromArg(const std::string & table_name, std::vector<std::string> & arg) {
+syd::TableElement * syd::Database::InsertFromArg(const std::string & table_name,
+                                                 std::vector<std::string> & arg)
+{
   return GetTable(table_name)->InsertFromArg(arg);
 }
 // --------------------------------------------------------------------
@@ -131,13 +129,6 @@ void syd::Database::Dump(const std::vector<std::string> & args, std::ostream & o
       else os << " element" << std::endl;
     }
     os << std::flush;
-    return;
-  }
-  if (args[0] == "table") {
-    if (args.size() < 2) {
-      LOG(FATAL) << "Please provide the name of the table you want to dump.";
-    }
-    DumpTable(args[1], os);
     return;
   }
   DumpTable(args[0], os); // suppose it is a table name
@@ -160,8 +151,8 @@ syd::TableBase * syd::Database::GetTable(const std::string & table_name)
   std::transform(str.begin(), str.end(),str.begin(), ::tolower);
   auto it = map_lowercase.find(str);
   if (it == map_lowercase.end()) {
-    LOG(FATAL) << "Cannot find the table '" << table_name << "'.";
-    return 0; // to avoid warning
+    EXCEPTION("Cannot find the table '" << table_name << "'." << std::endl
+              << "Existing tables are: " << GetListOfTableNames());
   }
   return it->second;
 }
@@ -176,21 +167,5 @@ std::string syd::Database::GetListOfTableNames()
     os << i->first << " ";
   }
   return os.str();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::ExecuteSQL(const std::string & statement)
-{
-  try {
-    odb::transaction t (db_->begin());
-    db_->execute(statement);
-    t.commit();
-  }
-  catch (const odb::exception& e) {
-    LOG(FATAL) << "Could not execute native SQL: " << statement
-               << std::endl << e.what();
-  }
 }
 // --------------------------------------------------------------------

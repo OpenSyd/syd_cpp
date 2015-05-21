@@ -30,6 +30,7 @@ int main(int argc, char* argv[])
   // Init command line
   SYD_INIT(sydDump, 1);
 
+  std::set_terminate(syd::terminateHandler);
   // Get db name
   std::string dbname = args_info.inputs[0];
 

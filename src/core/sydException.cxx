@@ -17,9 +17,10 @@
   ===========================================================================**/
 
 #include "sydException.h"
+#include <typeinfo>
 
 // --------------------------------------------------------------------
-syd::Exception::Exception(const std::string& message) throw()
+syd::Exception::Exception(const std::string& message)
   :std::exception(), message_(message)
 {
   file_ = "unknown_file";
@@ -32,7 +33,13 @@ syd::Exception::Exception(const std::string& message) throw()
 // --------------------------------------------------------------------
 const char* syd::Exception::what() const noexcept
 {
-  return message_.c_str();
+  std::ostringstream os;
+  os << message_ << std::endl
+     << "In file: " << file_
+     << ":" << function_
+     << ":" << line_;
+  std::string * s = new std::string(os.str());
+  return s->c_str();
 }
 // --------------------------------------------------------------------
 
@@ -46,14 +53,10 @@ void syd::terminateHandler()
     try {
       std::rethrow_exception(exptr);
     }
-    catch (syd::Exception &ex) {
+    // catch (syd::Exception & ex) { // --> this work on linux (gcc) but not on osx (clang). Don't know why.
+    catch (std::exception & ex) {
       LOG(FATAL) << ex.what() << std::endl
-                 << "Exception not caught: " << ex.file_
-                 << ":" << ex.function_
-                 << ":" << ex.line_;
-    }
-    catch (std::exception &ex) {
-      LOG(FATAL) << "(std exception): " << ex.what();
+                 << "(Exception may be caught by a try catch)";
     }
     catch (...) {
       LOG(FATAL) << "Terminated due to unknown exception.";

@@ -26,9 +26,6 @@
 #include <cmath>
 #include <sstream>
 
-// google logging
-#include <glog/logging.h>
-
 // To get current working directory
 // http://stackoverflow.com/questions/143174/how-do-i-get-the-directory-that-a-program-is-running-from
 #ifdef WINDOWS
@@ -42,6 +39,7 @@
 // syd
 #include "sydDD.h"
 #include "sydLog.h"
+#include "sydException.h"
 #include "sydDicomCommon.h" // needed for helpers functions (FileExists)
 #include "md5.h"
 
@@ -77,15 +75,8 @@ namespace syd {
   }
 
   //--------------------------------------------------------------------
-  // Type for id in the db
-  typedef unsigned int IdType;
-
-  //--------------------------------------------------------------------
-  // FIXME : to remove
-  static const double HalfLife_Indium_in_days = 2.8047;
-  static const double Lambda_Indium_in_days = log(2.0)/HalfLife_Indium_in_days;
-  static const double Lambda_Indium_in_hours = log(2.0)/(HalfLife_Indium_in_days*24.0);
-  static const double Lambda_Indium_in_sec = log(2.0)/(HalfLife_Indium_in_days*3600.0);
+  /// Type for id in the db
+  typedef long unsigned int IdType;
   //--------------------------------------------------------------------
 
 

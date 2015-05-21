@@ -34,7 +34,7 @@ void syd::CreateDirectory(std::string path)
     LOG(WARNING) << "The folder " << path << " already exist.";
   }
   if (status != 0) {
-    LOG(FATAL) << "Error while creating the folder " << path;
+    EXCEPTION("Error while creating the folder " << path);
   }
 }
 // --------------------------------------------------------------------
@@ -116,13 +116,13 @@ void syd::CopyFile(std::string src, std::string dst)
 void syd::ConvertToAbsolutePath(std::string & folder)
 {
   if (folder.empty()) {
-    LOG(FATAL) << "The 'foldername' is void. Abort.";
+    EXCEPTION("The 'foldername' is void. Abort.");
   }
 
   if (folder.at(0) != PATH_SEPARATOR)  { // the folder is not an absolute path
     char cCurrentPath[FILENAME_MAX];
     if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))  {
-      LOG(FATAL) << "Error while trying to get current working dir.";
+      EXCEPTION("Error while trying to get current working dir.");
     }
     folder = std::string(cCurrentPath)+"/"+folder;
     //dirPrefix = OFString(cCurrentPath);
@@ -148,7 +148,7 @@ unsigned long syd::ToULong(std::string s)
   unsigned long i;
   iss >> std::ws >> i >> std::ws;
   if (!iss.eof()) {
-    LOG(FATAL) << "Error could not convert the string '" << s << "' into unsigned long.";
+    EXCEPTION("Error could not convert the string '" << s << "' into unsigned long.");
   }
   return i;
 }
@@ -162,7 +162,7 @@ double syd::ToDouble(std::string s)
   double i;
   iss >> std::ws >> i >> std::ws;
   if (!iss.eof()) {
-    LOG(FATAL) << "Error could not convert the string '" << s << "' into double.";
+    EXCEPTION("Error could not convert the string '" << s << "' into double.");
   }
   return i;
 }

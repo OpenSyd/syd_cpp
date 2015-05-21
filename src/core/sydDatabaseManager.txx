@@ -35,7 +35,7 @@ DatabaseCreator<DatabaseSchema> * syd::DatabaseManager::RegisterDatabaseSchema(c
 
 // --------------------------------------------------------------------
 template<class DatabaseSchema>
-DatabaseSchema * syd::DatabaseManager::Read(const std::string & filename) throw()
+DatabaseSchema * syd::DatabaseManager::Read(const std::string & filename)
 {
   syd::Database * db = Read(filename);
   // Check it the db inherit (or is) a DatabaseSchema;

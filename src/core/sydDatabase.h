@@ -90,9 +90,6 @@ namespace syd {
     /// Insert a new element build from set of string
     virtual TableElement * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
 
-    /// Execute native SQL statements
-    void ExecuteSQL(const std::string & statement);
-
     /// Update an element in the database
     template<class TableElement>
     void Update(TableElement & r);
