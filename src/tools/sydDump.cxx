@@ -30,7 +30,6 @@ int main(int argc, char* argv[])
   // Init command line
   SYD_INIT(sydDump, 1);
 
-  std::set_terminate(syd::terminateHandler);
   // Get db name
   std::string dbname = args_info.inputs[0];
 
@@ -38,12 +37,7 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
 
   // Load the database
-  syd::Database * db;
-  try {
-    db = syd::DatabaseManager::GetInstance()->Read(dbname);
-  } catch (syd::Exception & e) {
-    LOG(FATAL) << e.what();
-  }
+  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(dbname);
 
   // Prepare the list of arguments
   std::vector<std::string> args;

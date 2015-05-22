@@ -26,7 +26,7 @@ syd::DatabaseManager * syd::DatabaseManager::GetInstance()
 {
   if (singleton_ == NULL) {
     singleton_ = new DatabaseManager;
-    //    std::set_terminate(syd::terminateHandler);
+    std::set_terminate(syd::terminateHandler);
   }
   return singleton_;
 }

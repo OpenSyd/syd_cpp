@@ -53,7 +53,11 @@ void syd::terminateHandler()
     try {
       std::rethrow_exception(exptr);
     }
-    // catch (syd::Exception & ex) { // --> this work on linux (gcc) but not on osx (clang). Don't know why.
+    catch (syd::Exception & ex) {
+      // --> this work on linux (gcc) but not on osx (clang). Don't know why.
+      LOG(FATAL) << ex.what() << std::endl
+                 << "(Exception may be caught by a try catch)";
+    }
     catch (std::exception & ex) {
       LOG(FATAL) << ex.what() << std::endl
                  << "(Exception may be caught by a try catch)";

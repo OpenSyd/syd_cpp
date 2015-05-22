@@ -36,14 +36,12 @@ void syd::Table<TableElement>::Insert(TableElement & r)
     t.commit();
   }
   catch (const odb::exception& e) {
-    TableElement te;
     EXCEPTION("Cannot insert the element: "
               << r.ToString() << std::endl
-              << " in the table '" << te.GetTableName()
+              << " in the table '" << syd::Table<TableElement>::GetTableName()
               << "'. Maybe a element with same unique field already exist or a foreign constraint is not fulfill ?" << std::endl
-              << "The error is: "  << e.what()
-              << std::endl << "And last sql query is: "
-              << std::endl << database_->GetLastSQLQuery());
+              << "The odb exception is: "  << e.what()
+              << std::endl << "And last sql query is: " << database_->GetLastSQLQuery());
   }
 }
 // --------------------------------------------------------------------
@@ -65,7 +63,7 @@ void syd::Table<TableElement>::Insert(std::vector<TableElement*> & r)
     EXCEPTION("Cannot insert " << r.size() << " elements in the table '"
               << TableElement::GetTableName()
               << "'. Maybe a element with same unique field already exist or a foreign constraint is not fulfill ?" << std::endl
-              << "The error is: "  << e.what()
+              << "The odb exception is: "  << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << database_->GetLastSQLQuery());
   }
@@ -87,7 +85,7 @@ bool syd::Table<TableElement>::Delete(TableElement & elem)
     TableElement te;
     EXCEPTION("Error while deleting element "
               << elem << " in the table '" << te.GetTableName()
-              << "', message is: " << e.what()
+              << "', odb exception is: " << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << database_->GetLastSQLQuery());
 
@@ -128,7 +126,7 @@ void syd::Table<TableElement>::Query(const odb::query<TableElement> & q,
   }
   catch (const odb::exception& e) {
     EXCEPTION("Error in sql query for the table '" << TableElement::GetTableName()
-              << "', message is: " << e.what()
+              << "', odb exception is: " << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << database_->GetLastSQLQuery());
   }
@@ -204,7 +202,7 @@ unsigned int syd::Table<TableElement>::Count(const odb::query<TableElement> & q)
   }
   catch (const odb::exception& e) {
     EXCEPTION("Error in sql query for the table '" << TableElement::GetTableName()
-              << "', message is: " << e.what()
+              << "', odb exception is: " << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << database_->GetLastSQLQuery());
   }
