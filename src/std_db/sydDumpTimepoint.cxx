@@ -44,8 +44,20 @@ int main(int argc, char* argv[])
   for(auto i=1; i<args_info.inputs_num; i++)
     args.push_back(args_info.inputs[i]);
 
+  // FIXME : only select timepoint of a given tag + patient
+
   // Dump
-  db->DumpTimepoint(args, std::cout, args_info.verboseResult_flag);
+  //  db->DumpTimepoint(args, std::cout, args_info.verboseResult_flag);
+  std::vector<syd::Timepoint> timepoints;
+  db->Query(timepoints);
+
+  for(auto t:timepoints) {
+    DD(t);
+    for(auto d:t.dicoms) {
+      std::cout << "\t " << *d << std::endl;
+    }
+  }
+
 
   // This is the end, my friend.
 }

@@ -47,18 +47,19 @@ int main(int argc, char* argv[])
   std::vector<syd::DicomSerie> dicoms;
   for(auto i=2; i<args_info.inputs_num; i++) {
     syd::IdType id = atoi(args_info.inputs[i]);
-    if (db->IfExist<syd::DicomSerie>(id)) {
+    try {
       syd::DicomSerie d = db->QueryOne<syd::DicomSerie>(id);
       dicoms.push_back(d);
     }
-    else {
-      LOG(WARNING) << "Could not find the DicomSerie with id." << id;
+    catch(syd::Exception & e) {
+      LOG(WARNING) << "Could not find the DicomSerie with id = " << id;
     }
   }
 
   // Insert all the dicoms. The builder guess if this is a new timepoint or not.
   syd::TimepointBuilder b(db);
   b.SetTag(tag);
+  b.SetIntraTimepointMaxHourDiff(args_info.max_diff_arg);
   for(auto d:dicoms) {
     b.InsertDicomSerie(d);
   }

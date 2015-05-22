@@ -75,8 +75,8 @@ std::string syd::Timepoint::ToString() const
   ss << id << " "
      << injection->patient->name << " "
      << tag->label << " "
-     << injection->radionuclide << " "
-     << time_from_injection_in_hours << " "
+     << injection->radionuclide->name << " "
+     << time_from_injection_in_hours << "h "
      << dicoms.size();
   return ss.str();
 }

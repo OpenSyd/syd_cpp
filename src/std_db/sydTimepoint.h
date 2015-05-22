@@ -44,11 +44,12 @@ namespace syd {
     std::shared_ptr<syd::Injection> injection;
     double time_from_injection_in_hours;
     std::vector<std::shared_ptr<syd::DicomSerie>> dicoms;
+    //    std::vector<std::shared_ptr<syd::Image>> images;
 
     // --------------------------------------------------
-    static std::string GetTableName() { return "Timepoint"; }
+    SET_TABLE_NAME("Timepoint")
     Timepoint();
-    ~Timepoint();
+    ~Timepoint(); // FIXME
     Timepoint(const Timepoint & other);
     Timepoint & operator= (const Timepoint & other);
     void copy(const Timepoint & t);

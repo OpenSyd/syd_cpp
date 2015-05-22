@@ -39,15 +39,21 @@ namespace syd {
 
     void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
 
-    enum GuessState { GuessFound, GuessNotFound, GuessError };
+    enum GuessState { GuessTimepointFound,
+                      GuessNotThisTimepoint,
+                      GuessSeveralTimepointsFound,
+                      GuessDicomSerieAlreadyExist,
+                      GuessCreateNewTimepoint };
 
     void SetTag(syd::Tag & tag);
+    void SetIntraTimepointMaxHourDiff(double a) { intra_timepoint_min_hour_diff_ = a; }
     void InsertDicomSerie(syd::DicomSerie & dicom);
-    GuessState GuessTimepointForThisDicomSerie(syd::DicomSerie & dicom, syd::Timepoint & tp);
-    GuessState GuessIfDicomCanBeInThisTimepoint(syd::DicomSerie & dicom, syd::Timepoint & timepoint);
+    GuessState GuessTimepointForThisDicomSerie(syd::DicomSerie & dicom,
+                                               std::vector<syd::Timepoint> & tp);
+    GuessState GuessIfDicomCanBeInThisTimepoint(syd::DicomSerie & dicom,
+                                                syd::Timepoint & timepoint);
     syd::Timepoint CreateTimepoint(syd::DicomSerie & dicom);
     void AddDicom(syd::Timepoint & timepoint, syd::DicomSerie & dicom);
-
 
     void Update();
 

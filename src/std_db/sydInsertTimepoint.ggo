@@ -14,7 +14,7 @@ description "Create a new timepoint
 option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
-option "max_diff"    	        m       "Consider dicoms in the same group if acquisition time difference is lower than this value (in hours)." double    default="1.0" no
+option "max_diff"    	        m       "Consider dicoms in the same group if acquisition time difference is lower than this value (in hours)." double    default="0.2" no
 option "replace"    	        r       "Is true : replace tp even if already exist in the db"           flag      off
 
 
