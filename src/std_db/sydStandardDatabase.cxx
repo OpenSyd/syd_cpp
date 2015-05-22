@@ -39,7 +39,7 @@ void syd::StandardDatabase::CreateTables()
 
 
 // --------------------------------------------------------------------
-syd::Patient syd::StandardDatabase::QueryPatientByNameOrStudyId(const std::string & arg)
+syd::Patient syd::StandardDatabase::FindPatientByNameOrStudyId(const std::string & arg)
 {
   // Check if name
   odb::query<Patient> q =
@@ -59,7 +59,7 @@ syd::Patient syd::StandardDatabase::QueryPatientByNameOrStudyId(const std::strin
 
 
 // --------------------------------------------------------------------
-syd::Injection syd::StandardDatabase::QueryInjectionByNameOrId(const Patient & patient,
+syd::Injection syd::StandardDatabase::FindInjectionByNameOrId(const Patient & patient,
                                                                const std::string & arg)
 {
   bool found = false;
@@ -114,7 +114,7 @@ syd::Injection * syd::StandardDatabase::InsertInjection(std::vector<std::string>
   }
 
   // Get the patient and create the Injection
-  Patient p = QueryPatientByNameOrStudyId(arg[0]);
+  Patient p = FindPatientByNameOrStudyId(arg[0]);
 
   // Check other injections for this patient
   std::vector<Injection> injections;
