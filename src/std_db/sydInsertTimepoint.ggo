@@ -1,12 +1,10 @@
 #File sydInsertTimepoint.ggo
 
 package "sydInsertTimepoint"
-usage "sydInsertTimepoint TODO <db> <patient> <injection> <tag> <dicom_ids>"
+usage "sydInsertTimepoint <db> <tag> <list of dicom_ids>"
 version "0.2"
 description "Create a new timepoint
 - <db>            name of the database
-- <patient>       name or study_id of the patient
-- <injection>     id of the injection
 - <tag>           name for the group of timepoints
 - <dicom_ids>     list of dicom id to insert
 "
@@ -14,12 +12,4 @@ description "Create a new timepoint
 option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
-option "max_diff"    	        m       "Consider dicoms in the same group if acquisition time difference is lower than this value (in hours)." double    default="0.2" no
-option "replace"    	        r       "Is true : replace tp even if already exist in the db"           flag      off
-
-
-# option "patient"    	        p       "Patient name or study_id (could be omit if injection)"             string    no
-# option "injection"    	        i       "Injection id (could be omit if a single injection exist)"          string    no
-# option "no_injection"    	n       "Do not associate an Injection with the dicom"                      flag      off
-# option "forcePatient"    	f       "If true : do not check patient name initial"                       flag      off
-# option "overwriteFiles"    	-       "If true : overwrite dicom files even if already exist in the db"   flag      off
+option "max_diff"    	        m       "Consider dicoms in the same group if acquisition time difference is lower than this value (in hours)." double    default="1.0" no

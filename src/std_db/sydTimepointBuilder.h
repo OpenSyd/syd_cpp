@@ -37,33 +37,48 @@ namespace syd {
     /// Destructor (empty)
     ~TimepointBuilder() {}
 
-    void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
-
+    /// States when guessing if a dicom belong to a timepoint
     enum GuessState { GuessTimepointFound,
                       GuessNotThisTimepoint,
                       GuessSeveralTimepointsFound,
                       GuessDicomSerieAlreadyExist,
                       GuessCreateNewTimepoint };
 
+    /// Set the current tag associated with the timepoint
     void SetTag(syd::Tag & tag);
-    void SetIntraTimepointMaxHourDiff(double a) { intra_timepoint_min_hour_diff_ = a; }
+
+    /// Max time difference between dicom in a timepoint. Used to
+    /// guess if a dicom belong to an already existing timepoint, or
+    /// if we should create a new one.
+    void SetIntraTimepointMaxHourDiff(double a) { intra_timepoint_max_hour_diff_ = a; }
+
+    /// Try to insert this dicom in a timepoint (heuristic)
     void InsertDicomSerie(syd::DicomSerie & dicom);
+
+    /// Try to guess if the the dicomserie belong to an existing timepoint.
     GuessState GuessTimepointForThisDicomSerie(syd::DicomSerie & dicom,
                                                std::vector<syd::Timepoint> & tp);
+
+    /// Try to guess if the dicomserie could be in this timepoint
     GuessState GuessIfDicomCanBeInThisTimepoint(syd::DicomSerie & dicom,
                                                 syd::Timepoint & timepoint);
+
+    /// Create a new timepoint from the current dicomserie
     syd::Timepoint CreateTimepoint(syd::DicomSerie & dicom);
+
+    /// Add the dicom to the given timepoint
     void AddDicom(syd::Timepoint & timepoint, syd::DicomSerie & dicom);
 
-    void Update();
-
   protected:
+    /// Protected constructor. No need to use directly.
     TimepointBuilder();
+
+    /// Set the pointer to the database
+    void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
+
     syd::StandardDatabase * db_;
     syd::Tag tag_;
-    double intra_timepoint_min_hour_diff_;
     double intra_timepoint_max_hour_diff_;
-    double inter_timepoint_min_hour_diff_;
 
   }; // class TimepointBuilder
 } // namespace syd
