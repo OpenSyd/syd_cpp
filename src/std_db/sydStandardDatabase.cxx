@@ -45,14 +45,15 @@ syd::Patient syd::StandardDatabase::QueryPatientByNameOrStudyId(const std::strin
   odb::query<Patient> q =
     odb::query<Patient>::name == arg or
     odb::query<Patient>::study_id == atoi(arg.c_str());
+  Patient p;
   try {
-    Patient p = QueryOne(q);
-    return p;
+    p = QueryOne(q);
   }
   catch(std::exception & e) {
     LOG(FATAL) << "Could not find patient with name or study_id equal to '" << arg << "'."
                << std::endl << e.what();
   }
+  return p;
 }
 // --------------------------------------------------------------------
 
