@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     patterns.push_back(args_info.inputs[i]);
 
   // Dump
-  db->DumpDicom(std::cout, patient, patterns, args_info.max_arg);
+  db->DumpDicom(std::cout, patient, patterns, args_info.max_diff_arg);
 
   // This is the end, my friend.
 }
