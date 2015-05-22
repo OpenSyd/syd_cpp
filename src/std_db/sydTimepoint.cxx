@@ -81,3 +81,19 @@ std::string syd::Timepoint::ToString() const
   return ss.str();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------
+bool syd::Timepoint::operator==(const Timepoint & p)
+{
+  bool b = (id == p.id and
+            *injection == *p.injection and
+            *tag == *p.tag and
+            time_from_injection_in_hours == p.time_from_injection_in_hours);
+  b = b and (dicoms.size() == p.dicoms.size());
+  for(auto i=0; i<dicoms.size(); i++) {
+    b = b and (*dicoms[i] == *p.dicoms[i]);
+  }
+  return b;
+}
+// --------------------------------------------------

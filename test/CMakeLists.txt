@@ -18,3 +18,12 @@ target_link_libraries(test_tables sydStandardDatabase)
 add_test(NAME test_tables
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_tables
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
+
+
+#----------------------------------------------------------
+# test create timepoint
+add_executable(test_insert_timepoints test_insert_timepoints.cxx)
+target_link_libraries(test_insert_timepoints sydStandardDatabase)
+add_test(NAME test_insert_timepoints
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_insert_timepoints
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)

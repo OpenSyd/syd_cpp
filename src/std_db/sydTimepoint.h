@@ -56,6 +56,9 @@ namespace syd {
     virtual std::string ToString() const;
     virtual void SetValues(std::vector<std::string> & arg);
 
+    bool operator==(const Timepoint & p);
+    bool operator!=(const Timepoint & p) { return !(*this == p); }
+
   }; // end class
 }
 // --------------------------------------------------------------------
