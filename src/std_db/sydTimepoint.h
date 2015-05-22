@@ -35,24 +35,25 @@ namespace syd {
     /// Id of the Timepoint
     IdType id;
 
-    /// Foreign key, it must exist in the Patient table
-    // -> get patient from injection
-    //std::shared_ptr<syd::Patient> patient_;
-
-    /// FIXME
+    /// Associated tag
     std::shared_ptr<syd::Tag> tag;
+
+    /// Associated injection
     std::shared_ptr<syd::Injection> injection;
+
+    /// Time from the injection (in hours) of the first dicoms.
     double time_from_injection_in_hours;
+
+    /// List of associated dicoms. In general one CT and one SPECT (or
+    /// PET), but several SPECT bed position image can be associated.
     std::vector<std::shared_ptr<syd::DicomSerie>> dicoms;
+
     //    std::vector<std::shared_ptr<syd::Image>> images;
 
     // --------------------------------------------------
     SET_TABLE_NAME("Timepoint")
     Timepoint();
-    ~Timepoint(); // FIXME
-    Timepoint(const Timepoint & other);
-    Timepoint & operator= (const Timepoint & other);
-    void copy(const Timepoint & t);
+
     virtual std::string ToString() const;
     virtual void SetValues(std::vector<std::string> & arg);
 

@@ -28,39 +28,6 @@ syd::Timepoint::Timepoint():syd::TableElement()
 
 
 // --------------------------------------------------------------------
-syd::Timepoint::~Timepoint() {}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Timepoint::Timepoint(const syd::Timepoint & other)
-{
-  copy(other);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------
-syd::Timepoint & syd::Timepoint::operator= (const syd::Timepoint & other) {
-  if (this != &other) { copy(other); }
-  return *this;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Timepoint::copy(const syd::Timepoint & tp)
-{
-  id = tp.id;
-  tag = tp.tag;
-  injection = tp.injection;
-  time_from_injection_in_hours = tp.time_from_injection_in_hours;
-  dicoms = tp.dicoms;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Timepoint::SetValues(std::vector<std::string> & arg)
 {
   LOG(FATAL) << "Could not insert a Timepoint with this function. Try sydInsertTimePoint.";
