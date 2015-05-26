@@ -1,0 +1,14 @@
+#File sydInsertImage.ggo
+
+package "sydInsertImage"
+usage "TODO TODO TODO TODO sydInsertImage <db> <tag> <list of dicom_ids>"
+version "0.2"
+description "Create a new Image
+- <db>            name of the database
+- <tag>           name for the group of Images
+- <dicom_ids>     list of dicom id to insert
+"
+
+option "config"	  	 	-	"Config file"				      string  	no
+option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
