@@ -24,7 +24,7 @@ add_library(sydCore
   sydLog.cxx
   sydDatabaseInformation.cxx
   sydPrintTable.cxx
-  sydImage.cxx
+  sydImageUtils.cxx
   sydPluginManager.cxx
   sydException.cxx
   sydDatabase.cxx

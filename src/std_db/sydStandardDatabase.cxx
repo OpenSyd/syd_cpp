@@ -34,6 +34,7 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::DicomFile>();
 
   AddTable<syd::Timepoint>();
+  AddTable<syd::Image>();
 }
 // --------------------------------------------------------------------
 
@@ -82,6 +83,7 @@ syd::Injection syd::StandardDatabase::FindInjectionByNameOrId(const Patient & pa
   }
   LOG(FATAL) << "Could not find injection with name or id equal to '"
              << arg << "' for the patient " << patient.name << ".";
+  return injections[0];// never here, to avoid warning
 }
 // --------------------------------------------------------------------
 

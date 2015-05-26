@@ -17,8 +17,7 @@
   ===========================================================================**/
 
 // syd
-
-#include "sydImage.h"
+#include "sydImageUtils.h"
 
 // --------------------------------------------------------------------
 std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::string mhd_filename)

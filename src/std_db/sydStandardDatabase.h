@@ -34,6 +34,7 @@
 #include "sydFile-odb.hxx"
 #include "sydTag-odb.hxx"
 #include "sydTimepoint-odb.hxx"
+#include "sydImage-odb.hxx"
 
 // --------------------------------------------------------------------
 namespace syd {

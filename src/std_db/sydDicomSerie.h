@@ -84,7 +84,7 @@ namespace syd {
     /// StudyDescription, ImageID, DatasetName)
     std::string dicom_description;
 
-    /// Image size (in pixels)
+    /// Image size (in pixels). It is an array because the size is fixed.
     std::array<int, 3> size;
 
     /// Image spacing aka size of the pixel (in mm)
