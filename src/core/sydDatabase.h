@@ -51,8 +51,8 @@ namespace syd {
     /// Return the filename (.db file sqlite)
     std::string GetFilename() const { return filename_; }
 
-    /// Return the folder that contains the associated images (relative)
-    std::string GetRelativeDBFolder() const { return relative_folder_; }
+    /// Return the folder that contains the associated images (relative to the current path)
+    std::string GetDBFolder() const { return relative_folder_; }
 
     /// Return the folder that contains the associated images (absolute according to working directory)
     std::string GetAbsoluteDBFolder() const { return absolute_folder_; }

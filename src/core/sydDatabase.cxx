@@ -121,7 +121,7 @@ void syd::Database::Dump(const std::vector<std::string> & args, std::ostream & o
 {
   if (args.size() == 0) {
     os << "Database schema: " << GetDatabaseSchema() << std::endl;
-    os << "Database folder: " << GetRelativeDBFolder() << std::endl;
+    os << "Database folder: " << GetDBFolder() << std::endl;
     for(auto i=map.begin(); i != map.end(); i++) {
       int n = i->second->GetNumberOfElements();
       os << "Table \t" << std::setw(15) << i->first << " " <<  std::setw(10) << n;
