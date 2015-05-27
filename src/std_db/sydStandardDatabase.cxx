@@ -40,6 +40,50 @@ void syd::StandardDatabase::CreateTables()
 
 
 // --------------------------------------------------------------------
+std::string syd::StandardDatabase::GetAbsoluteFolder(const DicomSerie & serie)
+{
+  Patient patient = QueryOne<Patient>(serie.patient->id);
+  std::string f = GetAbsoluteFolder(patient);
+  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create patient dir
+  std::string d = serie.acquisition_date;
+  //  syd::Replace(d, " ", "_");
+  // remove the hour and keep y m d
+  d = d.substr(0, 10);
+  f = f+PATH_SEPARATOR+d;
+  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create date dir
+  f = f+PATH_SEPARATOR+serie.dicom_modality;
+  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create modality dir
+  return f;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::StandardDatabase::GetAbsoluteFolder(const Patient & patient)
+{
+  return GetAbsoluteDBFolder()+PATH_SEPARATOR+GetRelativeFolder(patient);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::StandardDatabase::GetRelativeFolder(const Patient & patient)
+{
+  return patient.name;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::StandardDatabase::GetAbsolutePath(const File & file)
+{
+  std::string f = GetAbsoluteDBFolder()+PATH_SEPARATOR+file.path+PATH_SEPARATOR+file.filename;
+  return f;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::Patient syd::StandardDatabase::FindPatientByNameOrStudyId(const std::string & arg)
 {
   // Check if name
@@ -65,9 +109,9 @@ syd::Injection syd::StandardDatabase::FindInjectionByNameOrId(const Patient & pa
 {
   bool found = false;
   std::string s = "%"+arg+"%";
-  odb::query<Injection> q =
-    odb::query<Injection>::patient->id == patient.id and
-    (odb::query<Injection>::radionuclide->name.like(s) or odb::query<Injection>::radionuclide->id == atoi(arg.c_str()));
+  typedef odb::query<Injection> Q;
+  Q q = Q::patient->id == patient.id and
+    (Q::radionuclide->name.like(s) or Q::radionuclide->id == atoi(arg.c_str()));
   std::vector<syd::Injection> injections;
   try {
     Query(q, injections);
@@ -201,35 +245,6 @@ void syd::StandardDatabase::DumpDicom(std::ostream & os,
   // List of ids
   for(auto s:series) os << s.id << " ";
   os << std::endl;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::string syd::StandardDatabase::GetAbsoluteFolder(const DicomSerie & serie)
-{
-  Patient patient = QueryOne<Patient>(serie.patient->id);
-  std::string f = GetAbsoluteFolder(patient);
-  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create patient dir
-  std::string d = serie.acquisition_date;
-  //  syd::Replace(d, " ", "_");
-  // remove the hour and keep y m d
-  d = d.substr(0, 10);
-  f = f+PATH_SEPARATOR+d;
-  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create date dir
-  f = f+PATH_SEPARATOR+serie.dicom_modality;
-  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create modality dir
-  return f;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::string syd::StandardDatabase::GetAbsoluteFolder(const Patient & patient)
-{
-  std::string f = GetAbsoluteDBFolder();
-  f = f+PATH_SEPARATOR+patient.name;
-  return f;
 }
 // --------------------------------------------------------------------
 

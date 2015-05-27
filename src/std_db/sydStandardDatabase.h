@@ -63,6 +63,12 @@ namespace syd {
     /// Return the folder where the patient images are stored
     std::string GetAbsoluteFolder(const Patient & patient);
 
+    /// Return the folder where the patient images are stored (relative to the database folder)
+    std::string GetRelativeFolder(const Patient & patient);
+
+    /// Return the absolute path of the file
+    std::string GetAbsolutePath(const File & file);
+
     // /// Simple default Dump overwritten here to select special case DumpDicom.
     // virtual void Dump(const std::vector<std::string> & args, std::ostream & os);
 
