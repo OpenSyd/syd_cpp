@@ -53,10 +53,10 @@ namespace syd {
 
     /// Create a DicomSerie/DicomFile (still not inserted into the db,
     /// use UpdateDicomSerie for that)
-    void InsertDicom(std::string filename);
+    void CreateDicomSerieFromFile(std::string filename);
 
     /// Insert the created DicomSerie/DicomFile into the db
-    void UpdateSeries();
+    void InsertDicomSeries();
 
   protected:
     /// Protected constructor. No need to use directly.

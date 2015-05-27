@@ -109,7 +109,7 @@ void syd::DicomSerieBuilder::SearchForFilesInFolder(std::string folder, OFList<O
 
 
 // --------------------------------------------------------------------
-void syd::DicomSerieBuilder::InsertDicom(std::string filename)
+void syd::DicomSerieBuilder::CreateDicomSerieFromFile(std::string filename)
 {
   // Open the file
   DcmFileFormat dfile;
@@ -368,7 +368,7 @@ syd::DicomFile * syd::DicomSerieBuilder::CreateDicomFile(const std::string & fil
 
 
 // --------------------------------------------------------------------
-void syd::DicomSerieBuilder::UpdateSeries()
+void syd::DicomSerieBuilder::InsertDicomSeries()
 {
   // Gather the syd::Files to update
   std::vector<syd::File*> files;
