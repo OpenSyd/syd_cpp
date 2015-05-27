@@ -63,12 +63,12 @@ int main(int argc, char* argv[])
     LOG(1) << "Searching for dicom series in " << files.size() << " files ...";
     for(auto f:files) {
       syd::loadbar(i,n);
-      b.InsertDicom(f.c_str());
+      b.CreateDicomSerieFromFile(f.c_str());
       ++i;
     }
   }
   LOG(1) << "Copying files to db ...";
-  b.UpdateSeries();
+  b.InsertDicomSeries();
 
   // This is the end, my friend.
 }
