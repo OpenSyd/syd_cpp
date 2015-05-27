@@ -20,29 +20,30 @@
 #include "sydImageUtils.h"
 
 // --------------------------------------------------------------------
-std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::string mhd_filename)
+itk::Image<float,3>::Pointer
+syd::ReadDicomFromSingleFile(std::string filename)
 {
   // Open the dicom
   DcmFileFormat dfile;
-  bool b = syd::OpenDicomFile(dicom_filename.c_str(), dfile);
+  bool b = syd::OpenDicomFile(filename.c_str(), dfile);
   if (!b) {
-    LOG(FATAL) << "Could not open the dicom file '" << dicom_filename
-               << "' maybe this is not a dicom ?";
+    EXCEPTION("Could not open the dicom file '" << filename
+              << "' maybe this is not a dicom ?");
   }
   DcmObject *dset = dfile.getDataset();
 
   // Read the image data
-  LOG(2) << "Converting SPECT dicom to mhd (" << mhd_filename << ") ...";
+  LOG(2) << "Converting dicom file (" << filename << ") to itk image.";
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
-  ImageType::Pointer image = ReadImage<ImageType>(dicom_filename);
+  ImageType::Pointer image = ReadImage<ImageType>(filename);
 
   // Check nb of slices
   typename ImageType::SizeType size = image->GetLargestPossibleRegion().GetSize();
   ushort nbslices = GetTagValueUShort(dset, "NumberOfSlices");
   if (nbslices != size[2]) {
-    LOG(FATAL) << "Error image spacing is " << size
-               << " while in the dicom NumberOfSlices = " << nbslices;
+    EXCEPTION("Error image spacing is " << size
+              << " while in the dicom NumberOfSlices = " << nbslices);
   }
 
   // Remove meta information (if not : garbage in the mhd)
@@ -52,7 +53,7 @@ std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::s
   // Offset
   std::string ImagePositionPatient = GetTagValueString(dset, "ImagePositionPatient");
   if (ImagePositionPatient == "") {
-    LOG(FATAL) << "Error while reading tag ImagePositionPatient in the dicom ";
+    EXCEPTION("Error while reading tag ImagePositionPatient in the dicom ");
   }
   int n = ImagePositionPatient.find("\\");
   std::string sx = ImagePositionPatient.substr(0,n);
@@ -75,6 +76,7 @@ std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::s
   image->SetSpacing(spacing);
   // Direction
   if (s<0) {
+    LOG(2) << "Negative spacing, I flip the image.";
     typename ImageType::DirectionType direction = image->GetDirection();
     direction.Fill(0.0);
     direction(0,0) = 1; direction(1,1) = 1; direction(2,2) = -1;
@@ -112,42 +114,39 @@ std::string syd::ConvertDicomSPECTFileToImage(std::string dicom_filename, std::s
   */
 
   // End write the result
-  syd::WriteImage<ImageType>(image, mhd_filename);
+  // syd::WriteImage<ImageType>(image, mhd_filename);
 
-  // Compute md5
-  return ComputeImageMD5<ImageType>(image);
+  // // Compute md5
+  // return ComputeImageMD5<ImageType>(image);
+  return image;
 }
 //--------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------
-std::string syd::ConvertDicomCTFolderToImage(std::string dicom_path, std::string mhd_filename)
+itk::Image<short,3>::Pointer
+syd::ReadDicomSerieFromFolder(std::string folder, std::string serie_uid)
 {
-  // read all dicom in the folder
-  typedef itk::Image<signed short, 3> ImageType;
-  typedef itk::ImageSeriesReader<ImageType> ReaderType;
-  typedef itk::GDCMImageIO ImageIOType;
-  typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
-  ImageIOType::Pointer gdcmIO = ImageIOType::New();
-  InputNamesGeneratorType::Pointer inputNames = InputNamesGeneratorType::New();
-  inputNames->SetInputDirectory(dicom_path);
-  const ReaderType::FileNamesContainer & filenames = inputNames->GetInputFileNames();
-  LOG(2) << "Converting CT dicom (with " << filenames.size() << " files) to mhd (" << mhd_filename << ") ...";
-  ReaderType::Pointer reader = ReaderType::New();
-  reader->SetImageIO( gdcmIO );
-  reader->SetFileNames( filenames );
-  try { reader->Update(); }
-  catch (itk::ExceptionObject &excp) {
-    std::cerr << excp << std::endl;
-    LOG(FATAL) << "Error while reading the dicom serie in " << dicom_path << " ";
+  typedef short PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+
+  // Read itk image
+  try {
+    typedef itk::ImageSeriesReader<ImageType> ReaderType;
+    typedef itk::GDCMImageIO ImageIOType;
+    typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
+    InputNamesGeneratorType::Pointer nameGenerator = InputNamesGeneratorType::New();
+    nameGenerator->SetInputDirectory(folder);
+    const std::vector<std::string> & temp = nameGenerator->GetFileNames(serie_uid);
+    typename ReaderType::Pointer reader = ReaderType::New();
+    LOG(2) << "Looking for " << temp.size() << " files of serie " << serie_uid << " in " << folder << ".";
+    reader->SetFileNames(temp );
+    reader->Update();
+    return reader->GetOutput();
   }
-
-  // convert to mhd and write
-  ImageType::Pointer ct = reader->GetOutput();
-  syd::WriteImage<ImageType>(ct, mhd_filename);
-
-  // Compute md5
-  return ComputeImageMD5<ImageType>(ct);
+  catch (itk::ExceptionObject &excp) {
+   EXCEPTION("Error while reading the dicom serie in " << folder << ", itk exception is: " << excp);
+  }
 }
 //--------------------------------------------------------------------
 

@@ -53,8 +53,8 @@ namespace syd {
     // FIXME
     std::vector<std::shared_ptr<syd::File>> files; // several or single ?
 
-    // FIXME
-    std::vector<std::shared_ptr<syd::File>> dicoms; // dicom that serve to compute this image (could be zero)
+    // FIXME -> needed ?
+    std::vector<std::shared_ptr<syd::DicomSerie>> dicoms; // dicom that serve to compute this image (could be zero)
 
     std::string type; // mhd etc. Needed ?
 

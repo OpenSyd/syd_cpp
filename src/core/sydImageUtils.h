@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDIMAGE_H
-#define SYDIMAGE_H
+#ifndef SYDIMAGEUTILS_H
+#define SYDIMAGEUTILS_H
 
 // syd
 #include "sydCommon.h"
@@ -46,9 +46,8 @@
 namespace syd {
 
   //--------------------------------------------------------------------
-  // return md5 of the raw image
-  std::string ConvertDicomSPECTFileToImage(std::string dicom_filename, std::string mhd_filename);
-  std::string ConvertDicomCTFolderToImage(std::string dicom_path, std::string mhd_filename);
+  itk::Image<float, 3>::Pointer ReadDicomFromSingleFile(std::string filename);
+  itk::Image<short, 3>::Pointer ReadDicomSerieFromFolder(std::string folder, std::string serie_uid);
   //--------------------------------------------------------------------
 
 

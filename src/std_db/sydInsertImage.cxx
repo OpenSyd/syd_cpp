@@ -50,13 +50,20 @@ int main(int argc, char* argv[])
   syd::DicomSerie dicomserie= db->QueryOne<syd::DicomSerie>(id);
   DD(dicomserie);
 
+
+  syd::Tag tag = db->QueryOne<syd::Tag>(3);
+  DD(tag);
+
   // FIXME
   syd::ImageBuilder b(db);
-  //  b.SetTag(tag);
-  //b.SetPatient(patient);
+  b.SetTag(tag);
+  b.SetPatient(patient);
 
   syd::Image image = b.CreateImageFromDicomSerie(dicomserie);
   DD(image);
+
+  // syd::Image image2 = b.CreateImageFromFile(filename);
+  // DD(image2);
 
   //  b.InsertImage(image); // copy in the db
   //b.MoveImage(image, path, filename); -> Move File ?

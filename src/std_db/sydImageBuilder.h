@@ -22,6 +22,9 @@
 // syd
 #include "sydStandardDatabase.h"
 
+// itk
+#include <itkImageBase.h>
+
 // --------------------------------------------------------------------
 namespace syd {
 
@@ -37,8 +40,14 @@ namespace syd {
     /// Destructor (empty)
     ~ImageBuilder() {}
 
+    void SetTag(syd::Tag & tag) { tag_ = tag; }
+    void SetPatient(syd::Patient & patient) { patient_ = patient; }
+
     /// TODO
     syd::Image CreateImageFromDicomSerie(const syd::DicomSerie & dicomserie);
+
+    template<class ImageType>
+    void UpdateImageInfo(syd::Image & image, typename ImageType::Pointer & itk_image);
 
   protected:
     /// Protected constructor. No need to use directly.
@@ -48,8 +57,13 @@ namespace syd {
     void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
 
     syd::StandardDatabase * db_;
+    syd::Tag tag_;
+    syd::Patient patient_;
 
   }; // class ImageBuilder
+
+#include "sydImageBuilder.txx"
+
 } // namespace syd
 // --------------------------------------------------------------------
 

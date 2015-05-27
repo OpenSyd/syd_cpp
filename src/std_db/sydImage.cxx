@@ -22,6 +22,8 @@
 // --------------------------------------------------------------------
 syd::Image::Image():TableElement()
 {
+  for(auto &s:size) s = 0;
+  for(auto &s:spacing) s = 1.0;
 }
 // --------------------------------------------------------------------
 
@@ -29,11 +31,20 @@ syd::Image::Image():TableElement()
 // --------------------------------------------------------------------
 std::string syd::Image::ToString() const
 {
+  std::string name;
+  if (patient == NULL) name = "patient_not_set";
+  else name = patient->name;
+  std::string t;
+  if (tag == NULL) t = "tag_not_set";
+  else t = tag->label;
   std::stringstream ss ;
   ss << id << " "
-     << patient->name << " ";
+     << name << " ";
+  if (files.size() == 0) ss << "(no files) ";
   for(auto f:files) ss << f->filename << " ";
-  ss << tag->label;
+  ss << t << " " << type << " " << pixel_type << " "
+     << size[0] << "x" << size[1] << "x" << size[2] << " "
+     << spacing[0] << "x" << spacing[1] << "x" << spacing[2];
   return ss.str();
 }
 // --------------------------------------------------------------------
