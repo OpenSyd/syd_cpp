@@ -57,7 +57,6 @@ int main(int argc, char* argv[])
   std::string dbname = args_info.inputs[1];
   std::string folder = args_info.inputs[2];
 
-  /*
   if (syd::FileExists(dbname) and !args_info.overwrite_flag) {
     LOG(FATAL) << "Database not created: the file '" << dbname << "' already exists.";
   }
@@ -70,7 +69,6 @@ int main(int argc, char* argv[])
       LOG(FATAL) << "Error while renaming " << dbname << " to " << b;
     }
   }
-  */
 
   // Set the folder in the db_info table
   if (!syd::DirExists(folder)) {
