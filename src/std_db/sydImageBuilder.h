@@ -46,21 +46,14 @@ namespace syd {
     /// Create & Insert a new Image from this DicomSerie
     syd::Image InsertImageFromDicomSerie(const syd::DicomSerie & dicomserie);
 
+    /// Create & Insert new images for all dicom in this
+    /// timepoint. Warning to not check if some images are already
+    /// associated with this timepoint.
+    void InsertImagesFromTimepoint(syd::Timepoint & timepoint);
+
     /// Update image information from this itk image (type, size, spacing)
     template<class ImageType>
     void UpdateImageInfo(syd::Image & image, typename ImageType::Pointer & itk_image);
-
-
-    void ConvertImageFromDicomSerie(const syd::DicomSerie & dicomserie, std::string & output);
-    void InsertAllImagesInTimepoint(syd::Timepoint & timepoint);
-    void InsertAllImagesInTimepoints(const syd::Patient & patient, const syd::Tag & tag);
-
-
-    /// TODO
-    syd::Image CreateImageFromDicomSerie(const syd::DicomSerie & dicomserie);
-
-    void CreateImagesInTimepoint(syd::Timepoint & timepoint);
-
 
   protected:
     /// Protected constructor. No need to use directly.

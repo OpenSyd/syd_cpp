@@ -33,13 +33,18 @@ syd::ImageBuilder::ImageBuilder(syd::StandardDatabase * db):syd::ImageBuilder()
 syd::ImageBuilder::ImageBuilder()
 {
   db_ = NULL;
+  tag_.label = "unamed_tag";
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::Image syd::ImageBuilder::CreateImageFromDicomSerie(const syd::DicomSerie & dicomserie)
+syd::Image syd::ImageBuilder::InsertImageFromDicomSerie(const syd::DicomSerie & dicomserie)
 {
+  if (tag.label == "unamed_tag") {
+    EXCEPTION("Error in ImageBuilder, use SetImageTag before");
+  }
+
   // Get the files
   std::vector<syd::DicomFile> dicom_files;
   db_->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie->id == dicomserie.id, dicom_files);
@@ -116,22 +121,17 @@ syd::Image syd::ImageBuilder::CreateImageFromDicomSerie(const syd::DicomSerie & 
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilder::CreateImagesInTimepoint(syd::Timepoint & timepoint)
+void syd::ImageBuilder::InsertImagesFromTimepoint(syd::Timepoint & timepoint)
 {
-  DD("CreateImagesInTimepoint");
-  DD(timepoint);
-
   // loop create all images
   for(auto d:timepoint.dicoms) {
-    syd::Image image = CreateImageFromDicomSerie(*d);
-    DD(image);
+    // Create new image
+    syd::Image image = InsertImageFromDicomSerie(*d);
     // Associate image with timepoint
     timepoint.images.push_back(std::make_shared<syd::Image>(image));
   }
-
-  DD(timepoint);
   db_->Update(timepoint);
-  DD(timepoint);
+  LOG(1) << "Timpoint (" << timepoint << ") updated with " << timepoint.dicoms.size() << " images.";
 }
 // --------------------------------------------------------------------
 
