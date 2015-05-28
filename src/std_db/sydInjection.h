@@ -34,6 +34,7 @@ namespace syd {
 #pragma db id auto
     IdType id;
 
+    //#pragma db on_delete(cascade) FIXME
     /// Foreign key, linked to Patient table
     std::shared_ptr<Patient> patient;
 

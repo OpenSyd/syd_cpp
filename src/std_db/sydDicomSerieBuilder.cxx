@@ -131,8 +131,11 @@ void syd::DicomSerieBuilder::CreateDicomSerieFromFile(std::string filename)
     }
     syd::DicomFile f = db_->QueryOne<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_sop_uid == sop_uid);
     LOG(2) << "Dicom already exist, we remove first both DicomSerie and DicomFile: " << f.file->filename;
+    LOG(WARNING) << "On cascade not yet implemented. Fail if some FK contrainst (Timepoint exist).";
     db_->Delete(f);
     db_->Delete(*f.dicom_serie);
+    // FIXME --> also erase all other table refering to dicomserie (timepoint)
+    // to be done with on cascade !
   }
 
   // Test if a serie already exist in the database
