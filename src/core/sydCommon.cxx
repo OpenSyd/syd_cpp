@@ -127,8 +127,49 @@ void syd::ConvertToAbsolutePath(std::string & folder)
     folder = std::string(cCurrentPath)+"/"+folder;
     //dirPrefix = OFString(cCurrentPath);
   }
+
+  RemoveBackPathSeparator(folder);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::RemoveBackPathSeparator(std::string & folder)
+{
+  // remove PATH_SEPARATOR at the end
+  while (folder.back() == PATH_SEPARATOR) folder = folder.substr(0, folder.size()-1);
+}
+// --------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+std::string syd::GetFilenameFromPath(const std::string path) {
+  if (path.back() == PATH_SEPARATOR) {
+    LOG(FATAL) << "Cannot get the filename of '" << path << "' because it ends with a " << PATH_SEPARATOR;
+  }
+  size_t n = path.find_last_of(PATH_SEPARATOR);
+  std::string p = path.substr(n+1);
+  RemoveBackPathSeparator(p);
+  return p;
+}
+//------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetPathFromFilename(std::string & path)
+{
+  if (path.back() == PATH_SEPARATOR) {
+    LOG(FATAL) << "Cannot get the path of '" << path << "' because it ends with a " << PATH_SEPARATOR;
+  }
+  size_t n = path.find_last_of(PATH_SEPARATOR);
+  if (n == std::string::npos) {
+    LOG(FATAL) << "Cannot get the path of '" << path << "' because not " << PATH_SEPARATOR << " was found.";
+  }
+  std::string p = path.substr(0,n);
+  return p;
+}
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 std::string syd::ConvertDateTime(std::string date, std::string time)
@@ -303,14 +344,6 @@ bool syd::Replace(std::string& str, const std::string& from, const std::string& 
 std::string syd::GetExtension(const std::string filename) {
   size_t n = filename.find_last_of(".");
   return filename.substr(n+1);
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-std::string syd::GetFilenameFromPath(const std::string path) {
-  size_t n = path.find_last_of(PATH_SEPARATOR);
-  return path.substr(n+1);
 }
 //------------------------------------------------------------------
 

@@ -87,6 +87,8 @@ namespace syd {
   std::string GetExtension(const std::string filename);
   std::string GetFilenameFromPath(const std::string path);
   void ConvertToAbsolutePath(std::string & folder);
+  void RemoveBackPathSeparator(std::string & folder);
+  std::string GetPathFromFilename(std::string & path);
   bool GetWorkingDirectory(std::string & pwd);
   bool EqualFiles(std::ifstream & in1, std::ifstream & in2);
   bool EqualFiles(std::string in1, std::string in2);

@@ -79,9 +79,8 @@ int main(int argc, char* argv[])
   syd::ConvertToAbsolutePath(dbname_absolute);
   std::string folder_absolute = folder;
   syd::ConvertToAbsolutePath(folder_absolute);
-  syd::Replace(dbname_absolute, syd::GetFilenameFromPath(dbname_absolute), "");
-  if (folder_absolute.back() == PATH_SEPARATOR) folder_absolute.substr(0, folder_absolute.size()-1);
-  syd::Replace(folder_absolute, syd::GetFilenameFromPath(folder_absolute), "");
+  dbname_absolute = syd::GetPathFromFilename(dbname_absolute);
+  folder_absolute = syd::GetPathFromFilename(folder_absolute);
   if (folder_absolute != dbname_absolute) {
     LOG(FATAL) << "The database file and the image folder must be in the same directory. Here '"
                << dbname << "' is in '" << dbname_absolute
