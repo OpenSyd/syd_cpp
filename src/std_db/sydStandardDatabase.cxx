@@ -245,6 +245,16 @@ void syd::StandardDatabase::DumpDicom(std::ostream & os,
   // List of ids
   for(auto s:series) os << s.id << " ";
   os << std::endl;
+
+  // List of files
+  if (Log::LogLevel() > 1) {
+    for(auto s:series) {
+      std::vector<syd::DicomFile> f;
+      Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == s.id, f);
+      os << s.id << " " << GetAbsolutePath(*f[0].file) << " ";
+      os << std::endl;
+    }
+  }
 }
 // --------------------------------------------------------------------
 
