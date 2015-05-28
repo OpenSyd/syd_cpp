@@ -22,6 +22,7 @@
 // syd
 #include "sydDicomSerie.h"
 #include "sydTag.h"
+#include "sydImage.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -48,7 +49,7 @@ namespace syd {
     /// PET), but several SPECT bed position image can be associated.
     std::vector<std::shared_ptr<syd::DicomSerie>> dicoms;
 
-    //    std::vector<std::shared_ptr<syd::Image>> images;
+    std::vector<std::shared_ptr<syd::Image>> images;
 
     // --------------------------------------------------
     SET_TABLE_NAME("Timepoint")

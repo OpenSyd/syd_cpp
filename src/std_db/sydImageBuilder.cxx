@@ -40,13 +40,6 @@ syd::ImageBuilder::ImageBuilder()
 // --------------------------------------------------------------------
 syd::Image syd::ImageBuilder::CreateImageFromDicomSerie(const syd::DicomSerie & dicomserie)
 {
-  // Check patient and dicomserie
-  if (dicomserie.patient->id != patient_.id) {
-    EXCEPTION("In CreateImageFromDicomSerie, the patient from the dicomserie is different from the patient: "
-              << std::endl << "Patient in dicom: " << dicomserie.patient
-              << std::endl << "Set patient: " << patient_);
-  }
-
   // Get the files
   std::vector<syd::DicomFile> dicom_files;
   db_->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie->id == dicomserie.id, dicom_files);
@@ -58,16 +51,19 @@ syd::Image syd::ImageBuilder::CreateImageFromDicomSerie(const syd::DicomSerie & 
     dicom_filenames.push_back(db_->GetAbsolutePath(*f.file));
   }
 
+  // Get patient
+  syd::Patient patient = *dicomserie.patient;
+
   // Create image first to get the id
   syd::Image image;
-  image.patient = std::make_shared<syd::Patient>(patient_);
+  image.patient = std::make_shared<syd::Patient>(patient);
   image.tag = std::make_shared<syd::Tag>(tag_);
   image.dicoms.push_back(std::make_shared<syd::DicomSerie>(dicomserie));
   image.type = "mhd";
   db_->Insert(image);
 
   // Define filename, path
-  std::string path = db_->GetAbsoluteFolder(patient_);
+  std::string path = db_->GetAbsoluteFolder(patient);
   std::ostringstream oss;
   oss << dicomserie.dicom_modality << "_" << image.id << ".mhd";
   std::string filename = oss.str();
@@ -94,27 +90,21 @@ syd::Image syd::ImageBuilder::CreateImageFromDicomSerie(const syd::DicomSerie & 
       UpdateImageInfo<ImageType>(image, itk_image);
       md5 = ComputeImageMD5<ImageType>(itk_image);
     }
-    DD(image);
 
     // Create File and Image object
     syd::File mhd;
     mhd.filename = filename;
-    mhd.path = db_->GetRelativeFolder(patient_);
+    mhd.path = db_->GetRelativeFolder(patient);
     syd::Replace(filename, ".mhd", ".raw");
     syd::File raw;
     raw.filename = filename;
-    raw.path = db_->GetRelativeFolder(patient_);
+    raw.path = db_->GetRelativeFolder(patient);
     raw.md5 = md5;
     db_->Insert(mhd);
     db_->Insert(raw);
-
     image.files.push_back(std::make_shared<syd::File>(mhd));
     image.files.push_back(std::make_shared<syd::File>(raw)); // must be after file insertion
-    DD(image);
-
-    DD("before update");
     db_->Update(image);
-    DD("after update");
   } catch (syd::Exception & e) {
     db_->Delete(image);
     EXCEPTION("Error during CreateImageFromDicomSerie: " << e.what() << " (I remove the image " << image << ")");
@@ -124,6 +114,26 @@ syd::Image syd::ImageBuilder::CreateImageFromDicomSerie(const syd::DicomSerie & 
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+void syd::ImageBuilder::CreateImagesInTimepoint(syd::Timepoint & timepoint)
+{
+  DD("CreateImagesInTimepoint");
+  DD(timepoint);
+
+  // loop create all images
+  for(auto d:timepoint.dicoms) {
+    syd::Image image = CreateImageFromDicomSerie(*d);
+    DD(image);
+    // Associate image with timepoint
+    timepoint.images.push_back(std::make_shared<syd::Image>(image));
+  }
+
+  DD(timepoint);
+  db_->Update(timepoint);
+  DD(timepoint);
+}
+// --------------------------------------------------------------------
 
 /* from file ?
    itk::ImageIOBase::Pointer imageIO =

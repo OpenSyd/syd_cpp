@@ -45,22 +45,47 @@ int main(int argc, char* argv[])
     db->FindPatientByNameOrStudyId(args_info.inputs[1]);
   DD(patient);
 
-  // Get the dicomserie
-  syd::IdType id = atoi(args_info.inputs[2]);
-  syd::DicomSerie dicomserie= db->QueryOne<syd::DicomSerie>(id);
-  DD(dicomserie);
-
-
   syd::Tag tag = db->QueryOne<syd::Tag>(3);
   DD(tag);
 
+  // Get the dicomserie
+  syd::IdType id = atoi(args_info.inputs[2]);
+  //  syd::DicomSerie dicomserie= db->QueryOne<syd::DicomSerie>(id);
+  // DD(dicomserie);
+  syd::Timepoint tp= db->QueryOne<syd::Timepoint>(id);
+  DD(tp);
+
+
   // FIXME
   syd::ImageBuilder b(db);
-  b.SetTag(tag);
-  b.SetPatient(patient);
+  b.SetImageTag(tag);
+  //  b.SetPatient(patient);
 
-  syd::Image image = b.CreateImageFromDicomSerie(dicomserie);
-  DD(image);
+  //  syd::Image image = b.CreateImageFromDicomSerie(dicomserie);
+  b.CreateImagesInTimepoint(tp);
+  //  DD(image);
+
+  // even more basic : -> in the builder API
+  // sydConvertImageFromDicom a.db 123 toto.mhd| or nothing -> insert in this case
+  // sydInsertImage jm toto.mhd [456 = tp]
+  // sydStichImage jm 123 123 (image)
+  // sydDeleteImage jm 123 -> tables images+File and files
+
+  // sydInsertImage a.db -d 123  => dicom_id
+  // sydInsertImage a.db -t 456  => timepoint_id
+  // sydInsertImage a.db <patient> <tag>  => all tp of the patients
+
+
+
+  // image name : from dicom = id of the Image
+  // image name : from timepoint = ?
+
+  // CreateImageFromDicomSerie( dicomserie id); -> create also create the File
+  // CreateImagesInTimepoint( timepoint id);
+  // CreateImagesInAllTimepoints( patient tag);
+
+  // InsertImage(image, files) -> also insert File ? not possible
+
 
   // syd::Image image2 = b.CreateImageFromFile(filename);
   // DD(image2);

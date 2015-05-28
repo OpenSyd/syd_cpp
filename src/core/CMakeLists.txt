@@ -28,6 +28,7 @@ add_library(sydCore
   sydPluginManager.cxx
   sydException.cxx
   sydDatabase.cxx
+  sydTestUtils.cxx
   sydDatabaseManager.cxx
   sydDicomCommon.cxx
   sydTableElement.cxx

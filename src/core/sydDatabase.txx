@@ -18,23 +18,23 @@
 
 
 // --------------------------------------------------------------------
-template<class ElementType>
-Table<ElementType> * syd::Database::GetTable()
+template<class TableElement>
+Table<TableElement> * syd::Database::GetTable()
 {
-  return (Table<ElementType>*)GetTable(ElementType::GetTableName());
+  return (Table<TableElement>*)GetTable(TableElement::GetTableName());
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class ElementType>
+template<class TableElement>
 void syd::Database::AddTable()
 {
   // No exception handling here, fatal error if fail.
   if (db_ == NULL) {
     LOG(FATAL) << "Could not AddTable, open a db before";
   }
-  std::string tablename = ElementType::GetTableName();
+  std::string tablename = TableElement::GetTableName();
   auto it = map.find(tablename);
   if (it != map.end()) {
     LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
@@ -54,96 +54,96 @@ void syd::Database::AddTable()
     LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
                << "' already exist.";
   }
-  map[tablename] = new Table<ElementType>(this, db_);
+  map[tablename] = new Table<TableElement>(this, db_);
   map_lowercase[str] = map[tablename];
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class ElementType>
-void syd::Database::Query(const odb::query<ElementType> & q, std::vector<ElementType> & list) {
-  GetTable<ElementType>()->Query(q,list);
+template<class TableElement>
+void syd::Database::Query(const odb::query<TableElement> & q, std::vector<TableElement> & list) {
+  GetTable<TableElement>()->Query(q,list);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class ElementType>
-void syd::Database::Query(std::vector<ElementType> & list)
+template<class TableElement>
+void syd::Database::Query(std::vector<TableElement> & list)
 {
-  GetTable<ElementType>()->Query(list);
+  GetTable<TableElement>()->Query(list);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class ElementType>
-ElementType syd::Database::QueryOne(const odb::query<ElementType> & q)
+template<class TableElement>
+TableElement syd::Database::QueryOne(const odb::query<TableElement> & q)
 {
-  return GetTable<ElementType>()->QueryOne(q);
+  return GetTable<TableElement>()->QueryOne(q);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class ElementType>
-ElementType syd::Database::QueryOne(IdType id)
+template<class TableElement>
+TableElement syd::Database::QueryOne(IdType id)
 {
-  return GetTable<ElementType>()->QueryOne(id);
+  return GetTable<TableElement>()->QueryOne(id);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class ElementType>
-unsigned int syd::Database::Count(const odb::query<ElementType> & q)
+template<class TableElement>
+unsigned int syd::Database::Count(const odb::query<TableElement> & q)
 {
-  return GetTable<ElementType>()->Count(q);
+  return GetTable<TableElement>()->Count(q);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class ElementType>
+template<class TableElement>
 bool syd::Database::IfExist(IdType id)
 {
-  return GetTable<ElementType>()->IfExist(id);
+  return GetTable<TableElement>()->IfExist(id);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class ElementType>
-void syd::Database::Insert(ElementType & r)
+template<class TableElement>
+void syd::Database::Insert(TableElement & r)
 {
-  GetTable<ElementType>()->Insert(r);
+  GetTable<TableElement>()->Insert(r);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class ElementType>
-void syd::Database::Insert(std::vector<ElementType*> & r)
+template<class TableElement>
+void syd::Database::Insert(std::vector<TableElement*> & r)
 {
-  GetTable<ElementType>()->Insert(r);
+  GetTable<TableElement>()->Insert(r);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class ElementType>
-void syd::Database::Update(ElementType & r)
+template<class TableElement>
+void syd::Database::Update(TableElement & r)
 {
-  GetTable<ElementType>()->Update(r);
+  GetTable<TableElement>()->Update(r);
 }
 // --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
-template<class ElementType>
-void syd::Database::Update(std::vector<ElementType*> & r)
+template<class TableElement>
+void syd::Database::Update(std::vector<TableElement*> & r)
 {
-  GetTable<ElementType>()->Update(r);
+  GetTable<TableElement>()->Update(r);
 }
 // --------------------------------------------------------------------
 
@@ -225,3 +225,26 @@ bool syd::Database::GetOrInsert(odb::query<TableType> q, T & t)
 }
 // --------------------------------------------------------------------
 */
+
+
+//--------------------------------------------------------------------
+template<class TableElement>
+bool syd::Database::TableIsEqual(syd::Database * db)
+{
+  std::vector<TableElement> elements1;
+  std::vector<TableElement> elements2;
+  Query(elements1);
+  db->Query(elements2);
+
+  if (elements1.size() != elements2.size()) {
+    return false;
+  }
+
+  for(auto i=0; i<elements1.size(); i++) {
+    if (elements1[i] != elements2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+//--------------------------------------------------------------------

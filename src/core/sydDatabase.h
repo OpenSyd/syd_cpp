@@ -54,9 +54,8 @@ namespace syd {
     /// Return the folder that contains the associated images (relative to the current path)
     std::string GetDBFolder() const { return relative_folder_; }
 
-    /// Return the folder that contains the associated images (absolute according to working directory)
+    /// Return the folder that contains the associated images (absolute)
     std::string GetAbsoluteDBFolder() const { return absolute_folder_; }
-    /// @} // end of group basic_information
     // ------------------------------------------------------------------------
 
 
@@ -69,7 +68,7 @@ namespace syd {
     template<class TableElement>
     void Insert(std::vector<TableElement*>& r);
 
-    /// Insert a new element build from set of string
+    /// Insert a new element build from set of string // FIXME ? Useful ? Change name  ?
     virtual TableElement * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
     // ------------------------------------------------------------------------
 
@@ -93,7 +92,7 @@ namespace syd {
     // ------------------------------------------------------------------------
 
 
-
+    // ------------------------------------------------------------------------
     /// Count the number of elements matching the query
     template<class TableElement>
     unsigned int Count(const odb::query<TableElement> & q);
@@ -101,7 +100,10 @@ namespace syd {
     /// Check if the given id exist
     template<class TableElement>
     bool IfExist(IdType id);
+    // ------------------------------------------------------------------------
 
+
+    // ------------------------------------------------------------------------
     /// Update an element in the database
     template<class TableElement>
     void Update(TableElement & r);
@@ -109,12 +111,23 @@ namespace syd {
     /// Update a set of elements in the database
     template<class TableElement>
     void Update(std::vector<TableElement*> & r);
+    // ------------------------------------------------------------------------
 
+
+
+    // ------------------------------------------------------------------------
     /// Call back for SQL query to the DB. For debug purpose only
     void TraceCallback(const char* sql);
 
     /// Return the last SQL query (set by TraceCallback). For debug purpose only
     std::string GetLastSQLQuery() const { return current_sql_query_; }
+    // ------------------------------------------------------------------------
+
+
+    //FIXME
+    void CopyDatabaseTo(std::string file, std::string folder);
+    template<class TableElement>
+    bool TableIsEqual(syd::Database * db1);
 
 
     /// -------------------------------- OLD

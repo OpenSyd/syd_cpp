@@ -40,14 +40,27 @@ namespace syd {
     /// Destructor (empty)
     ~ImageBuilder() {}
 
-    void SetTag(syd::Tag & tag) { tag_ = tag; }
-    void SetPatient(syd::Patient & patient) { patient_ = patient; }
+    /// The resulting images will be associated with this tag
+    void SetImageTag(syd::Tag & tag) { tag_ = tag; }
+
+    /// Create & Insert a new Image from this DicomSerie
+    syd::Image InsertImageFromDicomSerie(const syd::DicomSerie & dicomserie);
+
+    /// Update image information from this itk image (type, size, spacing)
+    template<class ImageType>
+    void UpdateImageInfo(syd::Image & image, typename ImageType::Pointer & itk_image);
+
+
+    void ConvertImageFromDicomSerie(const syd::DicomSerie & dicomserie, std::string & output);
+    void InsertAllImagesInTimepoint(syd::Timepoint & timepoint);
+    void InsertAllImagesInTimepoints(const syd::Patient & patient, const syd::Tag & tag);
+
 
     /// TODO
     syd::Image CreateImageFromDicomSerie(const syd::DicomSerie & dicomserie);
 
-    template<class ImageType>
-    void UpdateImageInfo(syd::Image & image, typename ImageType::Pointer & itk_image);
+    void CreateImagesInTimepoint(syd::Timepoint & timepoint);
+
 
   protected:
     /// Protected constructor. No need to use directly.
@@ -58,7 +71,6 @@ namespace syd {
 
     syd::StandardDatabase * db_;
     syd::Tag tag_;
-    syd::Patient patient_;
 
   }; // class ImageBuilder
 
