@@ -42,6 +42,9 @@ namespace syd {
     /// Delete the element
     virtual bool Delete(TableElement & t);
 
+    /// Delete n elements
+    virtual bool Delete(std::vector<TableElement> & ve);
+
     /// Dump the content of the table (simple output)
     virtual void DumpTable(std::ostream & os);
 

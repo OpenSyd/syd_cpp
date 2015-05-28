@@ -97,6 +97,30 @@ bool syd::Table<TableElement>::Delete(TableElement & elem)
 
 // --------------------------------------------------------------------
 template<class TableElement>
+bool syd::Table<TableElement>::Delete(std::vector<TableElement> & ve)
+{
+  try {
+    odb::transaction t (db_->begin());
+    for(auto x:ve) db_->erase(x);
+    t.commit();
+    return true;
+  }
+  catch (const odb::exception& e) {
+    TableElement te;
+    EXCEPTION("Error while deleting " << ve.size() << " elements in the table '"
+              << te.GetTableName()
+              << "', odb exception is: " << e.what()
+              << std::endl << "And last sql query is: "
+              << std::endl << database_->GetLastSQLQuery());
+
+  }
+  return false;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
 unsigned int syd::Table<TableElement>::GetNumberOfElements()
 {
   std::vector<TableElement> list;
