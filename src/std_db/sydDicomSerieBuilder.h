@@ -48,6 +48,9 @@ namespace syd {
     /// from the patient in the injection
     void SetForcePatientFlag(bool b) { forcePatientFlag_ = b; }
 
+    /// If the file already exist in the db, we delete it and insert a new one
+    void SetForceUpdateFlag(bool b) { forceUpdateFlag_ = b; }
+
     /// Return a list of files to be considered as dicom
     void SearchForFilesInFolder(std::string folder, OFList<OFString> & inputFiles);
 
@@ -67,6 +70,7 @@ namespace syd {
     syd::Injection injection_;
     bool forcePatientFlag_;
     bool useInjectionFlag_;
+    bool forceUpdateFlag_;
 
     std::vector<syd::DicomSerie*> series_to_insert;
     std::vector<syd::DicomSerie*> series_to_update;

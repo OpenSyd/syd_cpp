@@ -48,6 +48,7 @@ syd::DicomSerieBuilder::DicomSerieBuilder()
   db_ = NULL;
   useInjectionFlag_ = false;
   forcePatientFlag_ = false;
+  forceUpdateFlag_ = false;
   nb_of_skip_files = 0;
 }
 // --------------------------------------------------------------------
@@ -123,9 +124,15 @@ void syd::DicomSerieBuilder::CreateDicomSerieFromFile(std::string filename)
   // Test if this dicom file already exist in the db
   std::string sop_uid = GetTagValueString(dset, "SOPInstanceUID");
   if (DicomFileAlreadyExist(sop_uid)) {
-    LOG(2) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
-    nb_of_skip_files++;
-    return;
+    if (!forceUpdateFlag_) {
+      LOG(2) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
+      nb_of_skip_files++;
+      return;
+    }
+    syd::DicomFile f = db_->QueryOne<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_sop_uid == sop_uid);
+    LOG(2) << "Dicom already exist, we remove first both DicomSerie and DicomFile: " << f.file->filename;
+    db_->Delete(f);
+    db_->Delete(*f.dicom_serie);
   }
 
   // Test if a serie already exist in the database
@@ -263,7 +270,7 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie * serie,
   // Patient, injection (do not check here that injection is really associated with the patient)
   std::string patientID = GetTagValueString(dset, "PatientID");
   std::string patientName = GetTagValueString(dset, "PatientName");
-  LOG(2) << "Check patient dicom_patientid is the same than the given patient";
+  LOG(3) << "Check patient dicom_patientid is the same than the given patient";
   bool b = patient_.CheckIdentity(patientID, patientName);
   if (!b and !forcePatientFlag_ and patient_.dicom_patientid != "unknown_dicom_id") {
     LOG(FATAL) << "Patient do not seems to be the same. You ask for " << patient_.name

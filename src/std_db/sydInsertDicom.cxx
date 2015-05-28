@@ -55,6 +55,7 @@ int main(int argc, char* argv[])
   syd::DicomSerieBuilder b(db);
   b.SetInjection(injection);
   b.SetForcePatientFlag(args_info.forcePatient_flag);
+  b.SetForceUpdateFlag(args_info.forceUpdate_flag);
   for(auto f:folders) {
     OFList<OFString> files;
     b.SearchForFilesInFolder(f, files);

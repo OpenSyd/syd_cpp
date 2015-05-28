@@ -14,3 +14,4 @@ option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
 option "forcePatient"    	f       "If true : do not check patient name initial" flag      off
+option "forceUpdate"    	u       "Force reinsert even if dicom already exist"  flag      off
