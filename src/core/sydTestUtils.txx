@@ -16,21 +16,17 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDCOMMONDATABASE_H
-#define SYDCOMMONDATABASE_H
-
-// syd
-#include "sydDatabase.h"
 
 //--------------------------------------------------------------------
-namespace syd {
-
-
-  template<class ElementType>
-  bool CompareTable(syd::Database * db1, syd::Database * db2);
-
-  #include "sydCommonDatabase.txx"
-
-} // end namespace
-
-#endif /* end #define SYDCOMMONDATABASE_H_H */
+template<class TableElement>
+void TestTableEquality(syd::Database * db, syd::Database * dbref)
+{
+  bool bc = db->TableIsEqual<TableElement>(dbref);
+  if (!bc) {
+    LOG(FATAL) << "Table " << TableElement::GetTableName()
+               << " is different between " << db->GetFilename()
+               << " and " << dbref->GetFilename();
+  }
+  LOG(0) << "Table " << TableElement::GetTableName() << " is ok.";
+}
+//--------------------------------------------------------------------

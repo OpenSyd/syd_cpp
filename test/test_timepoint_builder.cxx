@@ -17,10 +17,7 @@
   ===========================================================================**/
 
 // syd
-#include "sydDatabaseManager.h"
-#include "sydPluginManager.h"
-#include "sydStandardDatabase.h"
-#include "sydCommonDatabase.h"
+#include "sydTestUtils.h"
 #include "sydTimepointBuilder.h"
 
 // syd init
@@ -29,28 +26,27 @@ SYD_STATIC_INIT
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  // Log (redirect to file)
-  Log::SQLFlag() = false;
-  Log::LogLevel() = 10;
-
-  std::string pwd;
-  syd::GetWorkingDirectory(pwd);
-  LOG(1) << "Working dir is " << pwd;
-
-  // Load plugin
-  syd::PluginManager::GetInstance()->Load();
+  // Init
+  syd::TestInitialisation();
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
+
+  // Make a copy if the initial db
+  std::string init_dbname = "test.db";
+  std::string dbname = "test-work.db";
+  std::string ref_dbname = "test-ref-tp.db";
+  std::string ref_folder = "test-ref-tp-data";
+  syd::CopyFile(init_dbname, dbname);
 
   // Load the database (with dicom)
   LOG(1) << "Loading database";
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>("test-dicom.db");
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
   // Get tag
-  syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == "study3D");
+  syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == "study1");
 
   // Get dicoms
   std::vector<syd::DicomSerie> dicoms;
-  std::vector<syd::IdType> id = {339, 356, 365, 376, 401, 408, 427, 434, 456, 463, 310, 311, 378, 410, 437};
+  std::vector<syd::IdType> id = {1, 2};
   for(auto i:id) {
     syd::DicomSerie d = db->QueryOne<syd::DicomSerie>(i);
     dicoms.push_back(d);
@@ -65,20 +61,14 @@ int main(int argc, char* argv[])
   }
 
   // Create reference is needed
-  if (argc > 1) {
-    if (std::string(argv[1]) == "create_ref") {
-      LOG(0) << "Creating reference output...";
-      syd::CopyFile("test-dicom.db", "test-dicom.ref.db");
-    }
-    else {
-      LOG(WARNING) << "Ignoring parameter " << argv[0];
-    }
-  }
+  TestCreateReferenceDB(argc, argv, db, ref_dbname, ref_folder);
 
   // Compare table
-  syd::Database * dbref = m->Read<syd::StandardDatabase>("test-dicom.ref.db");
-  bool r = syd::CompareTable<syd::Timepoint>(db, dbref);
-  if (!r) { LOG(FATAL) << "Table Timepoint is different between test-dicom.db and test-dicom.ref.db"; }
+  syd::StandardDatabase * dbref = m->Read<syd::StandardDatabase>(ref_dbname);
+  bool bc = db->TableIsEqual<syd::Timepoint>(dbref);
+  if (!bc) {
+    LOG(FATAL) << "Table Timepoint is different between " << dbname << " and " << ref_dbname;
+  }
   LOG(0) << "Table Timepoint is ok.";
 
   // This is the end, my friend.

@@ -22,8 +22,17 @@ add_test(NAME test_tables
 
 #----------------------------------------------------------
 # test create timepoint
-add_executable(test_insert_timepoints test_insert_timepoints.cxx)
-target_link_libraries(test_insert_timepoints sydStandardDatabase)
-add_test(NAME test_insert_timepoints
-  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_insert_timepoints
+add_executable(test_timepoint_builder test_timepoint_builder.cxx)
+target_link_libraries(test_timepoint_builder sydStandardDatabase)
+add_test(NAME test_timepoint_builder
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_timepoint_builder
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
+
+
+#----------------------------------------------------------
+# test image builder
+add_executable(test_image_builder test_image_builder.cxx)
+target_link_libraries(test_image_builder sydStandardDatabase)
+add_test(NAME test_image_builder
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_image_builder
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)

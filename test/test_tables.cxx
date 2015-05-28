@@ -17,10 +17,8 @@
   ===========================================================================**/
 
 // syd
-#include "sydDatabaseManager.h"
-#include "sydPluginManager.h"
+#include "sydTestUtils.h"
 #include "sydStandardDatabase.h"
-#include "sydCommonDatabase.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -80,22 +78,15 @@ void testDelete(syd::Database * db, TableElement & p)
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  // Log (redirect to file)
-  Log::SQLFlag() = false;
-  Log::LogLevel() = 10;
-
-  std::string pwd;
-  syd::GetWorkingDirectory(pwd);
-  LOG(1) << "Working dir is " << pwd;
-
-  // Load plugin
-  syd::PluginManager::GetInstance()->Load();
+  // Init
+  syd::TestInitialisation();
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
 
   // Create the database
-  LOG(1) << "Creating database";
-  if (!syd::DirExists("test")) syd::CreateDirectory("test");
-  syd::Database * db = m->Create("StandardDatabase", "test.db", "test");
+  std::string dbname = "test-work.db";
+  std::string folder = "test-data";
+  LOG(1) << "Creating database " << dbname;
+  syd::Database * db = m->Create("StandardDatabase", dbname, folder);
 
   // Test CRUD - Create Read Update Delete
 

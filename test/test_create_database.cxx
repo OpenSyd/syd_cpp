@@ -17,10 +17,8 @@
   ===========================================================================**/
 
 // syd
-#include "sydDatabaseManager.h"
-#include "sydPluginManager.h"
+#include "sydTestUtils.h"
 #include "sydStandardDatabase.h"
-#include "sydCommonDatabase.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -28,22 +26,17 @@ SYD_STATIC_INIT
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  // Log (redirect to file)
-  Log::SQLFlag() = false;
-  Log::LogLevel() = 10;
-
-  std::string pwd;
-  syd::GetWorkingDirectory(pwd);
-  LOG(1) << "Working dir is " << pwd;
-
-  // Load plugin
-  syd::PluginManager::GetInstance()->Load();
+  // Init
+  syd::TestInitialisation();
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
 
   // Create the database
-  LOG(1) << "Creating database";
-  if (!syd::DirExists("test")) syd::CreateDirectory("test");
-  syd::Database * db = m->Create("StandardDatabase", "test.db", "test");
+  std::string dbname = "test-work.db";
+  std::string folder = "test-data";
+  std::string ref_dbname = "test-ref.db";
+  std::string ref_folder = "test-ref-data";
+  LOG(1) << "Creating database " << dbname;
+  syd::Database * db = m->Create("StandardDatabase", dbname, folder);
 
   // Insert some (fake) patients
   {
@@ -81,26 +74,12 @@ int main(int argc, char* argv[])
   }
 
   // Create reference is needed
-  if (argc > 1) {
-    if (std::string(argv[1]) == "create_ref") {
-      LOG(0) << "Creating reference output...";
-      syd::CopyFile("test.db", "test.ref.db");
-    }
-    else {
-      LOG(WARNING) << "Ignoring parameter " << argv[0];
-    }
-  }
+  TestCreateReferenceDB(argc, argv, db, ref_dbname, ref_folder);
 
   // Compare table
-  // (echo .dump | sqlite3 test1.db)
-  syd::Database * dbref = m->Read<syd::StandardDatabase>("test.ref.db");
-  bool b = syd::CompareTable<syd::Patient>(db, dbref);
-  if (!b) { LOG(FATAL) << "Table Patient is different between test.db and test.ref.db"; }
-  LOG(0) << "Table Patient is ok.";
-
-  b = syd::CompareTable<syd::Injection>(db, dbref);
-  if (!b) { LOG(FATAL) << "Table Injection is different between test.db and test.ref.db"; }
-  LOG(0) << "Table Patient is ok.";
+  syd::Database * dbref = m->Read<syd::StandardDatabase>(ref_dbname);
+  syd::TestTableEquality<syd::Patient>(db, dbref);
+  syd::TestTableEquality<syd::Injection>(db, dbref);
 
   // This is the end, my friend.
   return EXIT_SUCCESS;
