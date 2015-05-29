@@ -1,7 +1,7 @@
 
 #----------------------------------------------------------
 # Standard database : StandardDatabase
-set(SCHEMA_NAME StandardDatabaseSchema)
+set(SCHEMA_NAME StandardDatabase)
 wrap_odb(sydStandardDatabase sydPatient.h)
 wrap_odb(sydStandardDatabase sydRadionuclide.h)
 wrap_odb(sydStandardDatabase sydFile.h)

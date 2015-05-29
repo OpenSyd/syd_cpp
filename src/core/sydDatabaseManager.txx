@@ -28,6 +28,7 @@ DatabaseCreator<DatabaseSchema> * syd::DatabaseManager::RegisterDatabaseSchema(c
   db_map_[schema] = c;
   db_schema_names_.push_back(schema);
   LOG(5) << "The database schema '" << schema << "' is registered.";
+  c->AddSchemaName(schema);
   return c;
 }
 // --------------------------------------------------------------------
