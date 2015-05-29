@@ -41,7 +41,7 @@ syd::ImageBuilder::ImageBuilder()
 // --------------------------------------------------------------------
 syd::Image syd::ImageBuilder::InsertImageFromDicomSerie(const syd::DicomSerie & dicomserie)
 {
-  if (tag.label == "unamed_tag") {
+  if (tag_.label == "unamed_tag") {
     EXCEPTION("Error in ImageBuilder, use SetImageTag before");
   }
 
@@ -131,7 +131,7 @@ void syd::ImageBuilder::InsertImagesFromTimepoint(syd::Timepoint & timepoint)
     timepoint.images.push_back(std::make_shared<syd::Image>(image));
   }
   db_->Update(timepoint);
-  LOG(1) << "Timpoint (" << timepoint << ") updated with " << timepoint.dicoms.size() << " images.";
+  //  LOG(1) << "Timpoint (" << timepoint << ") updated with " << timepoint.dicoms.size() << " images."; // FIXME not here
 }
 // --------------------------------------------------------------------
 

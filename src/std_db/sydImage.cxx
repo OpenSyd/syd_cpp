@@ -45,6 +45,8 @@ std::string syd::Image::ToString() const
   ss << t << " " << type << " " << pixel_type << " "
      << size[0] << "x" << size[1] << "x" << size[2] << " "
      << spacing[0] << "x" << spacing[1] << "x" << spacing[2];
+  if (dicoms.size() > 0) ss << " " << dicoms[0]->dicom_modality << " ";
+  for(auto d:dicoms) ss << d->id << " ";
   return ss.str();
 }
 // --------------------------------------------------------------------

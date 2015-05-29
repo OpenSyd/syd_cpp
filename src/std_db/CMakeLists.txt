@@ -41,6 +41,11 @@ wrap_ggo(sydDumpDicom sydDumpDicom.ggo)
 add_executable(sydDumpDicom sydDumpDicom.cxx sydDumpDicom_ggo.c)
 target_link_libraries(sydDumpDicom sydStandardDatabase)
 
+# Create images
+wrap_ggo(sydInsertImageFromDicom sydInsertImageFromDicom.ggo)
+add_executable(sydInsertImageFromDicom sydInsertImageFromDicom.cxx sydInsertImageFromDicom_ggo.c)
+target_link_libraries(sydInsertImageFromDicom sydStandardDatabase)
+
 # Create Timepoints
 wrap_ggo(sydInsertTimepoint sydInsertTimepoint.ggo)
 add_executable(sydInsertTimepoint sydInsertTimepoint.cxx sydInsertTimepoint_ggo.c)
@@ -51,8 +56,4 @@ wrap_ggo(sydDumpTimepoint sydDumpTimepoint.ggo)
 add_executable(sydDumpTimepoint sydDumpTimepoint.cxx sydDumpTimepoint_ggo.c)
 target_link_libraries(sydDumpTimepoint sydStandardDatabase)
 
-# Search for Timepoint
-wrap_ggo(sydInsertImage sydInsertImage.ggo)
-add_executable(sydInsertImage sydInsertImage.cxx sydInsertImage_ggo.c)
-target_link_libraries(sydInsertImage sydStandardDatabase)
 #----------------------------------------------------------

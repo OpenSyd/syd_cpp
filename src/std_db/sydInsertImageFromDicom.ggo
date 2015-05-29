@@ -1,11 +1,11 @@
-#File sydInsertImage.ggo
+#File sydInsertImageFromDicom.ggo
 
-package "sydInsertImage"
-usage "TODO TODO TODO TODO sydInsertImage <db> <tag> <list of dicom_ids>"
+package "sydInsertImageFromDicom"
+usage "sydInsertImageFromDicom <db> <tag> <list of dicom_ids>"
 version "0.2"
-description "Create a new Image
+description "Create a new (mhd) Image for each given dicom
 - <db>            name of the database
-- <tag>           name for the group of Images
+- <tag>           name for the tag associated with images
 - <dicom_ids>     list of dicom id to insert
 "
 
