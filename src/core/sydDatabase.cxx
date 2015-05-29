@@ -216,3 +216,12 @@ void syd::Database::CopyDatabaseTo(std::string file, std::string folder)
 
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Delete(const std::string & table_name, std::vector<syd::IdType> & ids)
+{
+  DD("delete");
+  GetTable(table_name)->Delete(ids);
+}
+// --------------------------------------------------------------------

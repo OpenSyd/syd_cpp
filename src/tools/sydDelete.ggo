@@ -1,0 +1,14 @@
+#File sydDelete.ggo
+
+package "sydDelete"
+usage "sydDelete <db> <table> <list_of_ids>"
+version "0.2"
+description "Delete the given elements in a table.
+- <db>            name of the database
+- <table>         name of the table
+- <ids>           list of elements id to delete
+"
+
+option "config"	  	 	-	"Config file"				string  	no
+option "verbose"   	 	v       "Verbosity level (0 for silence)"      int default ="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off

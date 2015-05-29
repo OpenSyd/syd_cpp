@@ -121,6 +121,19 @@ bool syd::Table<TableElement>::Delete(std::vector<TableElement> & ve)
 
 // --------------------------------------------------------------------
 template<class TableElement>
+bool syd::Table<TableElement>::Delete(std::vector<syd::IdType> & ids)
+{
+  std::vector<TableElement> ve;
+  odb::query<TableElement> q = odb::query<TableElement>::id == ids[0];
+  for(auto i:ids) q = q or odb::query<TableElement>::id == i;
+  Query(q, ve);
+  return Delete(ve);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
 unsigned int syd::Table<TableElement>::GetNumberOfElements()
 {
   std::vector<TableElement> list;

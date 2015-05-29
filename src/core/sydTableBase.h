@@ -44,6 +44,7 @@ namespace syd {
     virtual TableElement * InsertFromArg(std::vector<std::string> & arg) = 0;
     virtual void DumpTable(std::ostream & os) = 0;
     virtual unsigned int GetNumberOfElements() = 0;
+    virtual bool Delete(std::vector<syd::IdType> & ids) = 0;
 
   protected:
     odb::sqlite::database * db_;

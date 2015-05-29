@@ -45,6 +45,9 @@ namespace syd {
     /// Delete n elements
     virtual bool Delete(std::vector<TableElement> & ve);
 
+    /// Delete n elements
+    virtual bool Delete(std::vector<syd::IdType> & ids);
+
     /// Dump the content of the table (simple output)
     virtual void DumpTable(std::ostream & os);
 
