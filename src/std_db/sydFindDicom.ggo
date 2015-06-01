@@ -1,12 +1,17 @@
 #File sydDump.ggo
 
-package "sydDumpDicom"
-usage "sydDumpDicom <db> <patient> <pattern>"
+package "sydFindDicom"
+usage "sydFindDicom <db> <patient> <pattern>"
 version "0.3"
-description "Dump information on dicom of the given patient, that match pattern in the dicom description:
+description "Dump information about the dicoms of the given patient that match pattern in the dicom description:
 - <db>            name of the database
 - <patient>       name or study_id of the patient, or 'all' for all patients
-- <pattern>       list of string.
+- <pattern>       list of words.
+
+Use verbose to display additional info:
+- v0 : only list of ids
+- v1 : table of find dicom
+- v2 : list of files
 "
 
 option "config"	    -   "Config file"				string no

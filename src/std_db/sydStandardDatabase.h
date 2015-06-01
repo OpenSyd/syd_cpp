@@ -57,6 +57,11 @@ namespace syd {
     syd::Injection FindInjectionByNameOrId(const Patient & patient,
                                            const std::string & arg);
 
+    /// Return dicom series that match the patterns
+    void FindDicom(const syd::Patient & patient,
+                   const std::vector<std::string> & patterns,
+                   std::vector<syd::DicomSerie> & series);
+
     /// Return the folder where the dicomserie are stored
     std::string GetAbsoluteFolder(const DicomSerie & serie);
 
@@ -71,12 +76,6 @@ namespace syd {
 
     // /// Simple default Dump overwritten here to select special case DumpDicom.
     // virtual void Dump(const std::vector<std::string> & args, std::ostream & os);
-
-    /// Specific Dump for Dicom
-    void DumpDicom(std::ostream & os,
-                   syd::Patient & patient,
-                   const std::vector<std::string> & patterns,
-                   double max_time_diff);
 
     /// Insert a new Timepoint
     syd::Timepoint InsertTimepoint(syd::Injection & injection,

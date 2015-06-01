@@ -191,21 +191,10 @@ syd::Injection * syd::StandardDatabase::InsertInjection(std::vector<std::string>
 
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::DumpDicom(std::ostream & os,
-                                    syd::Patient & patient,
-                                    const std::vector<std::string> & patterns,
-                                    double max_time_diff)
+void syd::StandardDatabase::FindDicom(const syd::Patient & patient,
+                                      const std::vector<std::string> & patterns,
+                                      std::vector<syd::DicomSerie> & series)
 {
-  // init the table to output results
-  syd::PrintTable table;
-  table.AddColumn("#id", 4);
-  table.AddColumn("date", 18);
-  table.AddColumn("mod", 4);
-  table.AddColumn("recon", 18);
-  table.AddColumn("inj",12);
-  table.AddColumn("desc",110);
-  table.Init();
-
   // Build the query
   odb::query<DicomSerie> q = odb::query<DicomSerie>::patient->id == patient.id;
   for(auto p:patterns) {
@@ -223,38 +212,7 @@ void syd::StandardDatabase::DumpDicom(std::ostream & os,
     "," + odb::query<DicomSerie>::reconstruction_date;
 
   // Perform the query
-  std::vector<syd::DicomSerie> series;
   Query<DicomSerie>(q, series);
-  if (series.size() == 0) return;
-
-  // Dump all information
-  std::string previous = series[0].acquisition_date;
-  for(auto s:series) {
-    double diff = syd::DateDifferenceInHours(s.acquisition_date, previous);
-    if (diff > max_time_diff) table.SkipLine();
-    table << s.id
-          << s.acquisition_date
-          << s.dicom_modality
-          << s.reconstruction_date
-          << s.injection->radionuclide->name
-          << s.dicom_description;
-    previous = s.acquisition_date;
-  }
-  table.Print(os);
-
-  // List of ids
-  for(auto s:series) os << s.id << " ";
-  os << std::endl;
-
-  // List of files
-  if (Log::LogLevel() > 1) {
-    for(auto s:series) {
-      std::vector<syd::DicomFile> f;
-      Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == s.id, f);
-      os << s.id << " " << GetAbsolutePath(*f[0].file) << " ";
-      os << std::endl;
-    }
-  }
 }
 // --------------------------------------------------------------------
 

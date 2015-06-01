@@ -37,9 +37,9 @@ add_executable(sydInsertDicom sydInsertDicom.cxx sydInsertDicom_ggo.c)
 target_link_libraries(sydInsertDicom sydStandardDatabase)
 
 # Search for Dicom
-wrap_ggo(sydDumpDicom sydDumpDicom.ggo)
-add_executable(sydDumpDicom sydDumpDicom.cxx sydDumpDicom_ggo.c)
-target_link_libraries(sydDumpDicom sydStandardDatabase)
+wrap_ggo(sydFindDicom sydFindDicom.ggo)
+add_executable(sydFindDicom sydFindDicom.cxx sydFindDicom_ggo.c)
+target_link_libraries(sydFindDicom sydStandardDatabase)
 
 # Create images
 wrap_ggo(sydInsertImageFromDicom sydInsertImageFromDicom.ggo)
