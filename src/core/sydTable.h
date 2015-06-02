@@ -39,14 +39,26 @@ namespace syd {
     /// Compute the number of elements in this table
     virtual unsigned int GetNumberOfElements();
 
+
+
+    // delete a single element
+    virtual void Delete(syd::IdType id);
+    virtual void Delete(TableElement & t);
+    virtual void Delete(std::vector<syd::IdType> & ids);
+    virtual void Delete(std::vector<TableElement> & ve);
+
+
+
     /// Delete the element
-    virtual bool Delete(TableElement & t);
 
     /// Delete n elements
-    virtual bool Delete(std::vector<TableElement> & ve);
 
     /// Delete n elements
-    virtual bool Delete(std::vector<syd::IdType> & ids);
+
+    //    void Erase(syd::IdType id);
+    //    void Erase(TableElement & elem);
+    void Erase(TableElementBase * elem);
+
 
     /// Dump the content of the table (simple output)
     virtual void DumpTable(std::ostream & os);

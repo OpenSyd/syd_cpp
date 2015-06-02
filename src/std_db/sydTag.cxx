@@ -20,7 +20,7 @@
 #include "sydTag.h"
 
 // --------------------------------------------------------------------
-syd::Tag::Tag():syd::TableElement()
+syd::Tag::Tag():syd::TableElementBase()
 {
   label = "unamed_tag";
   description = "no_description";

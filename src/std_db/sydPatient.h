@@ -20,7 +20,7 @@
 #define SYDPATIENT_H
 
 // syd
-#include "sydTableElement.h"
+#include "sydTableElementBase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -29,7 +29,7 @@ namespace syd {
 
 #pragma db object
   /// Store information about a patient (id, study_id, name etc).
-  class Patient: public syd::TableElement {
+  class Patient: public syd::TableElementBase {
   public:
 
 #pragma db id auto

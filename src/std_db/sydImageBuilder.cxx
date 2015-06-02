@@ -111,7 +111,7 @@ syd::Image syd::ImageBuilder::InsertImageFromDicomSerie(const syd::DicomSerie & 
     image.files.push_back(std::make_shared<syd::File>(raw)); // must be after file insertion
     db_->Update(image);
   } catch (syd::Exception & e) {
-    db_->Delete(image);
+    db_->Delete<syd::Image>(image);
     EXCEPTION("Error during CreateImageFromDicomSerie: " << e.what() << " (I remove the image " << image << ")");
   }
 

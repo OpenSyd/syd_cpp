@@ -108,7 +108,7 @@ void syd::Database::TraceCallback(const char* sql)
 
 
 // --------------------------------------------------------------------
-syd::TableElement * syd::Database::InsertFromArg(const std::string & table_name,
+syd::TableElementBase * syd::Database::InsertFromArg(const std::string & table_name,
                                                  std::vector<std::string> & arg)
 {
   return GetTable(table_name)->InsertFromArg(arg);
@@ -219,9 +219,104 @@ void syd::Database::CopyDatabaseTo(std::string file, std::string folder)
 
 
 // --------------------------------------------------------------------
+// void syd::Database::Delete(const std::string & table_name, TableElementBase & elem)
+// {
+//   DD("delete single elem");
+//   GetTable(table_name)->Delete(elem);
+//   OnDelete(table_name, elem);
+// }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Delete(const std::string & table_name, syd::IdType id)
+{
+  DD("delete single from id");
+  GetTable(table_name)->Delete(id);
+  // TableElementBase elem = GetTable(table_name)->QueryOne(id);
+  // DD(elem);
+  // Delete(table_name, elem);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::AddToDeleteList(const std::string & table_name, syd::IdType id)
+{
+  DD("delete single");
+  // map_of_elements_to_delete[table_name].push_back(id);
+  // OnDelete(table_name, id);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Database::Delete(const std::string & table_name, std::vector<syd::IdType> & ids)
 {
-  DD("delete");
+  DD("Delete ids");
   GetTable(table_name)->Delete(ids);
+  // for(auto i:ids) AddToDeleteList(table_name, id);
+  DeleteCurrentList();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// void syd::Database::OnDelete(const std::string & table_name, IdType id)
+// {
+//   DD("nothing");
+// }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::OnDelete(const std::string & table_name, TableElementBase * elem)
+{
+  DD("nothing"); // to be overloaded
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::DeleteCurrentList()
+{
+  DD("----------------------------------");
+  DD("Delete current list");
+  odb::transaction t (db_->begin());
+  for(auto it=map_of_elements_to_delete.begin();
+      it!=map_of_elements_to_delete.end(); ++it) {
+    std::string table_name = it->first;
+    DD(table_name);
+    int n = it->second.size();
+    DD(n);
+    if (n==0) continue;
+    for(auto elem:it->second) {
+      DD(elem);
+      DD(*elem);
+      GetTable(table_name)->Erase(elem);
+    }
+  //
+  //   for(auto x:ve) db_->erase(x);
+  //   t.commit();
+
+    //    odb::transaction t (db_->begin());
+    //db_->erase<TableElementBase>(elem);
+    t.commit();
+  }
+
+  for(auto it=map_of_elements_to_delete.begin();
+      it!=map_of_elements_to_delete.end(); ++it) {
+    std::string table_name = it->first;
+    DD(table_name);
+    int n = it->second.size();
+    DD(n);
+    if (n==0) continue;
+    for(auto elem:it->second) {
+      OnDelete(table_name, elem);
+    }
+  }
+
+
+  DD("need commit");
 }
 // --------------------------------------------------------------------

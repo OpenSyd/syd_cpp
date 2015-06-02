@@ -20,14 +20,14 @@
 #define SYDTAG_H
 
 // syd
-#include "sydTableElement.h"
+#include "sydTableElementBase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db object
   /// Simple table to store a label and a description
-  class Tag : public syd::TableElement {
+  class Tag : public syd::TableElementBase {
   public:
 
 #pragma db id auto

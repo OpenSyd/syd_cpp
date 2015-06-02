@@ -20,7 +20,7 @@
 #include "sydTimepoint.h"
 
 // --------------------------------------------------------------------
-syd::Timepoint::Timepoint():syd::TableElement()
+syd::Timepoint::Timepoint():syd::TableElementBase()
 {
   time_from_injection_in_hours = 0.0;
 }

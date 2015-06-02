@@ -20,7 +20,7 @@
 #include "sydDicomFile.h"
 
 // --------------------------------------------------------------------
-syd::DicomFile::DicomFile():TableElement()
+syd::DicomFile::DicomFile():TableElementBase()
 {
   dicom_sop_uid = "";
   dicom_instance_number = 0;

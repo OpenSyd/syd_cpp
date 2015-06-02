@@ -20,7 +20,7 @@
 #include "sydDicomSerie.h"
 
 // --------------------------------------------------------------------
-syd::DicomSerie::DicomSerie():TableElement()
+syd::DicomSerie::DicomSerie():TableElementBase()
 {
 }
 // --------------------------------------------------------------------

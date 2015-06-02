@@ -20,7 +20,7 @@
 #include "sydRadionuclide.h"
 
 // --------------------------------------------------------------------
-syd::Radionuclide::Radionuclide():syd::TableElement()
+syd::Radionuclide::Radionuclide():syd::TableElementBase()
 {
 }
 // --------------------------------------------------------------------

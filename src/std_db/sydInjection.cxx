@@ -20,7 +20,7 @@
 #include "sydInjection.h"
 
 // --------------------------------------------------------------------
-syd::Injection::Injection():syd::TableElement()
+syd::Injection::Injection():syd::TableElementBase()
 {
 }
 // --------------------------------------------------------------------

@@ -30,7 +30,7 @@ namespace syd {
   /// Store information about a dicom file (unique dicom identifier
   /// dicom_sop_uid). Also contains a link to the DicomSerie it
   /// belongs to.
-  class DicomFile : public syd::TableElement {
+  class DicomFile : public syd::TableElementBase {
   public:
 
 #pragma db id auto

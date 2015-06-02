@@ -16,36 +16,21 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDELEMENT_H
-#define SYDELEMENT_H
-
 // syd
-#include "sydCommon.h"
+#include "sydTableElementBase.h"
 
 // --------------------------------------------------------------------
-namespace syd {
-
-  /// Base class for all element (row) in a table
-  class TableElement {
-  public:
-
-    /// Default function to print an element (must be inline here).
-    friend std::ostream& operator<<(std::ostream& os, const TableElement & p) {
-      os << p.ToString();
-      return os;
-    }
-
-    /// Use to write the element as a string (must be overloaded)
-    virtual std::string ToString() const;
-
-    /// Set basics values from a list of string
-    virtual void Set(std::vector<std::string> & arg);
-
-  }; // end of class
-
-#define SET_TABLE_NAME(name) static std::string GetTableName() { return name; }
-
-} // end namespace
+std::string syd::TableElementBase::ToString() const
+{
+  LOG(FATAL) << "The function 'ToString' must be implemented for this table: ";
+  return ""; // avoid warning
+}
 // --------------------------------------------------------------------
 
-#endif
+
+// --------------------------------------------------------------------
+void syd::TableElementBase::Set(std::vector<std::string> & arg)
+{
+  LOG(FATAL) << "The function 'Set' must be implemented for this table.";
+}
+// --------------------------------------------------------------------

@@ -21,7 +21,7 @@
 
 // syd
 #include "sydCommon.h"
-#include "sydTableElement.h"
+#include "sydTableElementBase.h"
 
 // odb
 #include <odb/database.hxx>
@@ -41,10 +41,24 @@ namespace syd {
   public:
     TableBase(odb::sqlite::database * d):db_(d) {}
 
-    virtual TableElement * InsertFromArg(std::vector<std::string> & arg) = 0;
+    virtual TableElementBase * InsertFromArg(std::vector<std::string> & arg) = 0;
     virtual void DumpTable(std::ostream & os) = 0;
     virtual unsigned int GetNumberOfElements() = 0;
-    virtual bool Delete(std::vector<syd::IdType> & ids) = 0;
+
+
+
+    // current
+    virtual void Delete(syd::IdType id) = 0;
+    virtual void Delete(std::vector<syd::IdType> & ids) = 0;
+
+    // TODO
+
+    //    virtual TableElementBase QueryOne(IdType i) = 0;
+    //    virtual TableElementBase & QueryOne(IdType i) = 0;
+    // virtual bool Delete(TableElementBase & elem) = 0;
+    //    virtual void Erase(syd::IdType id) = 0; // without commit
+    virtual void Erase(TableElementBase * elem) = 0; // without commit
+
 
   protected:
     odb::sqlite::database * db_;

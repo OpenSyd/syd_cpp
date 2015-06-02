@@ -21,7 +21,7 @@
 
 #include "sydCommon.h"
 #include "sydPrintTable.h"
-#include "sydTableElement.h"
+#include "sydTableElementBase.h"
 
 namespace syd {
 

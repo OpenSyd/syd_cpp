@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
   DDS(ids);
 
   // Delete
-  db->Delete(tablename, ids);
+  db->Delete(tablename, ids); // FIXME
   LOG(1) << "Deletion done: ";
 
   // This is the end, my friend.

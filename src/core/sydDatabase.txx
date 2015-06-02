@@ -28,6 +28,52 @@ Table<TableElement> * syd::Database::GetTable()
 
 // --------------------------------------------------------------------
 template<class TableElement>
+void syd::Database::Delete(IdType id)
+{
+  GetTable<TableElement>()->Delete(id);
+  // TableElement elem = QueryOne<TableElement>(id);
+  // return Delete(TableElement::GetTableName(), elem);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Database::Delete(TableElement & e)
+{
+  GetTable<TableElement>()->Delete(e);
+  //  return Delete(TableElement::GetTableName(), e);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+int syd::Database::Delete(std::vector<TableElement> & ve)
+{
+  // for(auto e:ve) n += AddToDeleteList(TableElement::GetTableName(), e);
+  GetTable<TableElement>()->Delete(ve);
+  DeleteCurrentList();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+int syd::Database::Delete(std::vector<IdType> & ids)
+{
+  GetTable<TableElement>()->Delete(ids);
+  DeleteCurrentList();
+  // for(auto id:ids) n += AddToDeleteList(TableElement::GetTableName(), id);
+  // return DeleteCurrentList();
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
 void syd::Database::AddTable()
 {
   // No exception handling here, fatal error if fail.
@@ -90,6 +136,7 @@ TableElement syd::Database::QueryOne(const odb::query<TableElement> & q)
 template<class TableElement>
 TableElement syd::Database::QueryOne(IdType id)
 {
+  //  return dynamic_cast<TableElement&>(GetTable<TableElement>()->QueryOne(id));
   return GetTable<TableElement>()->QueryOne(id);
 }
 // --------------------------------------------------------------------

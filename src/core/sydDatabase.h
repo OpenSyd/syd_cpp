@@ -29,7 +29,7 @@
 namespace syd {
 
   // The following classes will be defined elsewhere
-  template<class TableElement> class Table;
+  template<class TableElementBase> class Table;
   template<class DatabaseSchema> class DatabaseCreator;
 
   /// This is the base class of all databases. Manage a sqlite
@@ -69,7 +69,7 @@ namespace syd {
     void Insert(std::vector<TableElement*>& r);
 
     /// Insert a new element build from set of string // FIXME ? Useful ? Change name  ?
-    virtual TableElement * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
+    virtual TableElementBase * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
     // ------------------------------------------------------------------------
 
 
@@ -130,22 +130,32 @@ namespace syd {
     bool TableIsEqual(syd::Database * db1);
 
 
+    /// FIXME single delete
+    template<class TableElement> void Delete(IdType id);         // --> Table->Delete(id); (will call table->Delete(e);
+    template<class TableElement> void Delete(TableElement & e);  // --> Table->Delete(e); -> real delete
+    virtual void Delete(const std::string & table_name, syd::IdType id); // --> will call Table->Delete(e);
+
+    /// FIXME multiple delete
+    template<class TableElement> int Delete(std::vector<TableElement> & ve); //-> reference DeleteCurrentList
+    template<class TableElement> int Delete(std::vector<IdType> & ids);      // -> will call Table->Delete(ve)
+    virtual void Delete(const std::string & table_name, std::vector<syd::IdType> & ids); // -> will call Table->Delete(ve)
+
+
+    virtual void OnDelete(const std::string & table_name, TableElementBase * elem);
+
+
+
+
+    void AddToDeleteList(const std::string & table_name, syd::IdType id);
+    //    virtual void OnDelete(const std::string & table_name, IdType id);
+    //    virtual void OnDelete(const std::string & table_name, IdType id);
+
+    virtual void DeleteCurrentList(); // effective delete the list
+    std::map<std::string, std::vector<TableElementBase*>> map_of_elements_to_delete;
+
+
+
     /// -------------------------------- OLD
-
-    /// Delete the element with id
-    template<class TableElement>
-    bool Delete(IdType id) { GetTable<TableElement>()->Delete(id); }
-
-    /// Delete the given element
-    template<class TableElement>
-    void Delete(TableElement & e) { GetTable<TableElement>()->Delete(e); }
-
-    /// Delete all the elements
-    template<class TableElement>
-    void Delete(std::vector<TableElement> & ve) { GetTable<TableElement>()->Delete(ve); }
-
-    /// Delete a list of elements for the given table
-    virtual void Delete(const std::string & table_name, std::vector<syd::IdType> & ids);
 
     /// Delete the element with id in the given table
     // bool Delete(const std::string & table_name, const IdType id);

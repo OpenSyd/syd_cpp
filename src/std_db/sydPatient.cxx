@@ -20,7 +20,7 @@
 #include "sydPatient.h"
 
 // --------------------------------------------------
-syd::Patient::Patient():TableElement()
+syd::Patient::Patient():TableElementBase()
 {
   // default value
   id = 0; // will be changed when persist

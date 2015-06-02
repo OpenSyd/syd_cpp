@@ -29,7 +29,7 @@ namespace syd {
 
 #pragma db object
   /// Store information about a timepoint.
-  class Timepoint : public syd::TableElement {
+  class Timepoint : public syd::TableElementBase {
   public:
 
 #pragma db id auto

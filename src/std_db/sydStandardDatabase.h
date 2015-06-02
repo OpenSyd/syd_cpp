@@ -45,7 +45,7 @@ namespace syd {
   public:
 
     /// Generic element insertion.
-    virtual TableElement * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
+    virtual TableElementBase * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
 
     /// Insert a new Injection (check patient before etc)
     syd::Injection * InsertInjection(std::vector<std::string> & arg);
@@ -86,6 +86,17 @@ namespace syd {
     /// Specific Dump for Timepoint
     virtual void DumpTimepoint(const std::vector<std::string> & args, std::ostream & os, bool verboseFlag=false);
 
+    /// Delete a list of elements for the given table
+    //    virtual void Delete(const std::string & table_name, std::vector<syd::IdType> & ids);
+
+    // template<class TableElement>
+    // void Delete(TableElementBase & e) { DD("standard delete db"); GetTable<TableElement>()->Delete(e); }
+
+
+    //    virtual void OnDelete(const std::string & table_name, IdType id); //TableElementBase & e);
+    virtual void OnDelete(const std::string & table_name, TableElementBase * e);
+    void OnDeleteImage(syd::Image & e);
+    void OnDeleteFile(syd::File & e);
 
   protected:
     /// Insert the tables

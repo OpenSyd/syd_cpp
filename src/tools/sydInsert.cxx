@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
   syd::Database * db = syd::DatabaseManager::GetInstance()->Read(dbname);
 
   // Insert
-  syd::TableElement * e = db->InsertFromArg(tablename, args);
+  syd::TableElementBase * e = db->InsertFromArg(tablename, args);
   LOG(1) << "Insertion done: " << e->ToString();
 
   // This is the end, my friend.

@@ -20,7 +20,7 @@
 #include "sydImage.h"
 
 // --------------------------------------------------------------------
-syd::Image::Image():TableElement()
+syd::Image::Image():TableElementBase()
 {
   for(auto &s:size) s = 0;
   for(auto &s:spacing) s = 1.0;

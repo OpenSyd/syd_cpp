@@ -20,7 +20,7 @@
 #define SYDFILE_H
 
 // syd
-#include "sydTableElement.h"
+#include "sydTableElementBase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -29,7 +29,7 @@ namespace syd {
 
 #pragma db object
   /// Store information about a file linked to a database.
-  class File: public syd::TableElement {
+  class File: public syd::TableElementBase {
   public:
 
 #pragma db id auto

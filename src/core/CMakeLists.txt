@@ -31,7 +31,7 @@ add_library(sydCore
   sydTestUtils.cxx
   sydDatabaseManager.cxx
   sydDicomCommon.cxx
-  sydTableElement.cxx
+  sydTableElementBase.cxx
 )
 
 target_link_libraries(sydCore

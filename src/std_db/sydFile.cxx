@@ -20,7 +20,7 @@
 #include "sydFile.h"
 
 // --------------------------------------------------
-syd::File::File():TableElement()
+syd::File::File():TableElementBase()
 {
   // default value
   filename = "";

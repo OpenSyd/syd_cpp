@@ -27,7 +27,7 @@ namespace syd {
 
 #pragma db object
   /// Store information about a radionuclide
-  class Radionuclide : public TableElement {
+  class Radionuclide : public TableElementBase {
   public:
 
 #pragma db id auto

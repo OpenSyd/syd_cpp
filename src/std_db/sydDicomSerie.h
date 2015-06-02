@@ -34,7 +34,7 @@ namespace syd {
   /// Store information about a dicom image (serie). Element of table
   /// 'DicomSerie' stored in a db. Contains information about a dicom
   /// image.
-  class DicomSerie : public syd::TableElement {
+  class DicomSerie : public syd::TableElementBase {
   public:
 
 #pragma db id auto

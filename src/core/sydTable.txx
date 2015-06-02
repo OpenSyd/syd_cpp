@@ -73,63 +73,118 @@ void syd::Table<TableElement>::Insert(std::vector<TableElement*> & r)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-bool syd::Table<TableElement>::Delete(TableElement & elem)
+void syd::Table<TableElement>::Delete(std::vector<TableElement> & ve)
 {
-  try {
-    odb::transaction t (db_->begin());
-    db_->erase<TableElement>(elem);
-    t.commit();
-    return true;
-  }
-  catch (const odb::exception& e) {
-    TableElement te;
-    EXCEPTION("Error while deleting element "
-              << elem << " in the table '" << te.GetTableName()
-              << "', odb exception is: " << e.what()
-              << std::endl << "And last sql query is: "
-              << std::endl << database_->GetLastSQLQuery());
+  DD("table delete vector");
 
+  for(auto e:ve) {
+    DD(e);
+    //    DD("todo : ondelete");
+    TableElement * a = new TableElement(e);
+    database_->map_of_elements_to_delete[e.GetTableName()].push_back(a);//std::make_shared<TableElement>(e));
   }
-  return false;
+
+  // return true;
+  // try {
+  //   odb::transaction t (db_->begin());
+  //   for(auto x:ve) db_->erase(x);
+  //   t.commit();
+  //   return true;
+  // }
+  // catch (const odb::exception& e) {
+  //   TableElement te;
+  //   EXCEPTION("Error while deleting " << ve.size() << " elements in the table '"
+  //             << te.GetTableName()
+  //             << "', odb exception is: " << e.what()
+  //             << std::endl << "And last sql query is: "
+  //             << std::endl << database_->GetLastSQLQuery());
+  // }
+  // return false;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class TableElement>
-bool syd::Table<TableElement>::Delete(std::vector<TableElement> & ve)
+void syd::Table<TableElement>::Delete(std::vector<syd::IdType> & ids)
 {
-  try {
-    odb::transaction t (db_->begin());
-    for(auto x:ve) db_->erase(x);
-    t.commit();
-    return true;
-  }
-  catch (const odb::exception& e) {
-    TableElement te;
-    EXCEPTION("Error while deleting " << ve.size() << " elements in the table '"
-              << te.GetTableName()
-              << "', odb exception is: " << e.what()
-              << std::endl << "And last sql query is: "
-              << std::endl << database_->GetLastSQLQuery());
-
-  }
-  return false;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-bool syd::Table<TableElement>::Delete(std::vector<syd::IdType> & ids)
-{
+  DD("Table delete ids");
   std::vector<TableElement> ve;
   odb::query<TableElement> q = odb::query<TableElement>::id == ids[0];
   for(auto i:ids) q = q or odb::query<TableElement>::id == i;
   Query(q, ve);
-  return Delete(ve);
+  DDS(ve);
+  Delete(ve);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// template<class TableElement>
+// void syd::Table<TableElement>::Erase(syd::IdType id)
+// {
+//   DD("Erase id");
+//   DD(GetTableName());
+//   DD(id);
+// }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Table<TableElement>::Erase(TableElementBase * elem)
+{
+  DD("Erase elem");
+  DD(GetTableName());
+  DD(*elem);
+
+  db_->erase(*dynamic_cast<TableElement*>(elem));
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Table<TableElement>::Delete(syd::IdType id)
+{
+  DD("table delete id");
+  DD(id);
+  DD(syd::Table<TableElement>::GetTableName());
+  TableElement e = QueryOne(odb::query<TableElement>::id == id);
+  Delete(e);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void  syd::Table<TableElement>::Delete(TableElement & elem)
+{
+  DD("real table delete single elem (no call back)");
+  DD(TableElement::GetTableName());
+  DD(elem);
+  try {
+    odb::transaction t (db_->begin());
+    db_->erase<TableElement>(dynamic_cast<TableElement&>(elem));
+    t.commit();
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Error while deleting element "
+              << elem << " in the table '" << TableElement::GetTableName()
+              << "', odb exception is: " << e.what()
+              << std::endl << "And last sql query is: "
+              << std::endl << database_->GetLastSQLQuery());
+
+  }
+  // Callback
+  DD("Call back On delete todo");
+  database_->OnDelete(elem.GetTableName(), new TableElement(elem));
+  //return true;
+}
+// --------------------------------------------------------------------
+
+
 
 
 // --------------------------------------------------------------------

@@ -28,13 +28,13 @@ namespace syd {
 
 #pragma db object
   /// Store information about a radionuclide injection (date, etc).
-  class Injection : public TableElement {
+  class Injection : public TableElementBase {
   public:
 
 #pragma db id auto
     IdType id;
 
-    //#pragma db on_delete(cascade) FIXME
+    //#pragma db on_delete(cascade)
     /// Foreign key, linked to Patient table
     std::shared_ptr<Patient> patient;
 

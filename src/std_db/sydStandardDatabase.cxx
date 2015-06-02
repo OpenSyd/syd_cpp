@@ -133,7 +133,7 @@ syd::Injection syd::StandardDatabase::FindInjectionByNameOrId(const Patient & pa
 
 
 // --------------------------------------------------------------------
-syd::TableElement * syd::StandardDatabase::InsertFromArg(const std::string & table_name,
+syd::TableElementBase * syd::StandardDatabase::InsertFromArg(const std::string & table_name,
                                                   std::vector<std::string> & arg)
 {
   if (table_name == syd::Injection::GetTableName()) return InsertInjection(arg);
@@ -734,5 +734,51 @@ syd::RoiType syd::StandardDatabase::GetRoiType(const std::string & name)
 }
 // --------------------------------------------------------------------
 
-
 */
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::OnDelete(const std::string & table_name, TableElementBase * e)
+{
+  DD("OnDelete StandardDatabase");
+  DD(table_name);
+  //  DD(id);
+  DD(*e);
+
+  // Patient
+  // Radionuclide
+  // File
+  // Tag
+  // Injection
+  // DicomSerie
+  // DicomFile
+  // Timepoint
+  // Image
+  if (table_name == syd::Image::GetTableName()) OnDeleteImage(*dynamic_cast<syd::Image*>(e));
+  if (table_name == syd::File::GetTableName()) OnDeleteFile(*dynamic_cast<syd::File*>(e));
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::OnDeleteImage(syd::Image & e)
+{
+  DD("Delete image");
+  for(auto f:e.files) { // could be replaced by delete(vector)
+    DD(*f);
+    Delete(*f);
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::OnDeleteFile(syd::File & e)
+{
+  DD("Delete file");
+  std::string f = GetAbsolutePath(e);
+  DD(f);
+  if (std::remove(f.c_str()) != 0) {
+     EXCEPTION("While deleting the File " << e << ", could not delete the file " << f);
+  }
+}
+// --------------------------------------------------------------------
