@@ -37,10 +37,14 @@ namespace syd {
     /// Id of the DicomFile
     IdType id;
 
-    /// Foreign key, it must exist in the File table
+    /// Foreign key, it must exist in the File table. The DicomFile is
+    /// deleted if the File is deleted.
+#pragma db on_delete(cascade)
     std::shared_ptr<syd::File> file;
 
-    /// Foreign key, it must exist in the DicomSerie table
+#pragma db on_delete(cascade)
+    /// Foreign key, it must exist in the DicomSerie table. The
+    /// DicomFile is deleted if the DicomSerie is deleted.
     std::shared_ptr<syd::DicomSerie> dicom_serie;
 
 #pragma db options("UNIQUE")

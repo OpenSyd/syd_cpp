@@ -739,11 +739,7 @@ syd::RoiType syd::StandardDatabase::GetRoiType(const std::string & name)
 // --------------------------------------------------------------------
 void syd::StandardDatabase::OnDelete(const std::string & table_name, TableElementBase * e)
 {
-  DD("OnDelete StandardDatabase");
-  DD(table_name);
-  //  DD(id);
-  DD(*e);
-
+  // When an element is deleted we could need to perform some operations
   // Patient
   // Radionuclide
   // File
@@ -755,6 +751,7 @@ void syd::StandardDatabase::OnDelete(const std::string & table_name, TableElemen
   // Image
   if (table_name == syd::Image::GetTableName()) OnDeleteImage(*dynamic_cast<syd::Image*>(e));
   if (table_name == syd::File::GetTableName()) OnDeleteFile(*dynamic_cast<syd::File*>(e));
+  if (table_name == syd::Tag::GetTableName()) OnDeleteTag(*dynamic_cast<syd::Tag*>(e));
 }
 // --------------------------------------------------------------------
 
@@ -762,10 +759,10 @@ void syd::StandardDatabase::OnDelete(const std::string & table_name, TableElemen
 // --------------------------------------------------------------------
 void syd::StandardDatabase::OnDeleteImage(syd::Image & e)
 {
-  DD("Delete image");
-  for(auto f:e.files) { // could be replaced by delete(vector)
-    DD(*f);
-    Delete(*f);
+  // When an Image is deleted, we also delete the associated Files
+  for(auto f:e.files) {
+    AddToDeleteList(*f);
+    //    OnDelete(TableElement::GetTableName(), e);
   }
 }
 // --------------------------------------------------------------------
@@ -774,11 +771,39 @@ void syd::StandardDatabase::OnDeleteImage(syd::Image & e)
 // --------------------------------------------------------------------
 void syd::StandardDatabase::OnDeleteFile(syd::File & e)
 {
-  DD("Delete file");
+  // When a File is deleted, we also delete the file on disk
   std::string f = GetAbsolutePath(e);
-  DD(f);
   if (std::remove(f.c_str()) != 0) {
-     EXCEPTION("While deleting the File " << e << ", could not delete the file " << f);
+    LOG(WARNING) << "While deleting the File " << e << ", could not delete the file " << f;
+    //     EXCEPTION("While deleting the File " << e << ", could not delete the file " << f);
   }
+
+  // We also look for images to be deleted. Not automatic
+  // (on_delete(cascade)) because vector or Files in Images. (This is
+  // auto for DicomFile);
+  // Manual search because dont know how to do
+  std::vector<syd::Image> images_temp;
+  std::vector<syd::Image> images;
+  Query<syd::Image>(images_temp);
+  for(auto i:images_temp) {
+    for(auto f:i.files) {
+      if (f->id == e.id) images.push_back(i);
+    }
+  }
+  DDS(images);
+  for(auto i:images) AddToDeleteList(i);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::OnDeleteTag(syd::Tag & e)
+{
+  // LOG(WARNING) << "
+  // When a Tag is deleted, we also delete the image that contains the tag
+  // std::vector<syd::Image> images;
+  // Query<syd::Image>(odb::query<syd::Image>::tag == e.id, images);
+  // DDS(images);
+  // for(auto i:images) AddToDeleteList(i);
 }
 // --------------------------------------------------------------------

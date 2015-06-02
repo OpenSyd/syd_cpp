@@ -241,12 +241,12 @@ void syd::Database::Delete(const std::string & table_name, syd::IdType id)
 
 
 // --------------------------------------------------------------------
-void syd::Database::AddToDeleteList(const std::string & table_name, syd::IdType id)
-{
-  DD("delete single");
-  // map_of_elements_to_delete[table_name].push_back(id);
-  // OnDelete(table_name, id);
-}
+// void syd::Database::AddToDeleteList(const std::string & table_name, syd::IdType id)
+// {
+//   DD("delete single");
+//   // map_of_elements_to_delete[table_name].push_back(id);
+//   // OnDelete(table_name, id);
+// }
 // --------------------------------------------------------------------
 
 
@@ -281,42 +281,55 @@ void syd::Database::OnDelete(const std::string & table_name, TableElementBase * 
 void syd::Database::DeleteCurrentList()
 {
   DD("----------------------------------");
+  DD("----------------------------------");
   DD("Delete current list");
+
+  odb::connection_ptr c (db_->connection ());
+  c->execute ("PRAGMA foreign_keys=ON");
+  // odb::transaction t (db_->begin ());
+  //   t.commit ();
+
   odb::transaction t (db_->begin());
+
+  for(auto it=list_of_elements_to_delete.begin();
+      it != list_of_elements_to_delete.end(); ++it) {
+    std::string table_name = it->first;
+    GetTable(table_name)->Erase(it->second);
+  }
+
+   t.commit();
+
+  /*
+
   for(auto it=map_of_elements_to_delete.begin();
       it!=map_of_elements_to_delete.end(); ++it) {
     std::string table_name = it->first;
     DD(table_name);
     int n = it->second.size();
-    DD(n);
     if (n==0) continue;
     for(auto elem:it->second) {
-      DD(elem);
       DD(*elem);
       GetTable(table_name)->Erase(elem);
     }
-  //
-  //   for(auto x:ve) db_->erase(x);
-  //   t.commit();
-
-    //    odb::transaction t (db_->begin());
-    //db_->erase<TableElementBase>(elem);
     t.commit();
   }
+  */
 
-  for(auto it=map_of_elements_to_delete.begin();
-      it!=map_of_elements_to_delete.end(); ++it) {
-    std::string table_name = it->first;
-    DD(table_name);
-    int n = it->second.size();
-    DD(n);
-    if (n==0) continue;
-    for(auto elem:it->second) {
-      OnDelete(table_name, elem);
-    }
-  }
+  // DD("----------------------------------");
+  // DD("----------------------------------");
+  // DD("OnDelete");
+  // for(auto it=map_of_elements_to_delete.begin();
+  //     it!=map_of_elements_to_delete.end(); ++it) {
+  //   std::string table_name = it->first;
+  //   DD(table_name);
+  //   int n = it->second.size();
+  //   if (n==0) continue;
+  //   for(auto elem:it->second) {
+  //     OnDelete(table_name, elem);
+  //   }
+  // }
 
 
-  DD("need commit");
+  DD("end");
 }
 // --------------------------------------------------------------------

@@ -42,12 +42,16 @@ namespace syd {
     IdType id;
 
 #pragma db not_null
+#pragma db on_delete(cascade)
     /// Foreign key, it must exist in the Patient table. Not strictly
-    /// needed but convenient.
+    /// needed (because included in injection) but convenient. The
+    /// DicomSerie is deleted if the patient is deleted.
     std::shared_ptr<syd::Patient> patient;
 
 #pragma db not_null
-    /// Foreign key, it must exist in the Injection table.
+#pragma db on_delete(cascade)
+    /// Foreign key, it must exist in the Injection table. The
+    /// DicomSerie is deleted if the injection is deleted.
     std::shared_ptr<syd::Injection> injection;
 
     /// Date when the image has been acquired. Dicom tag =

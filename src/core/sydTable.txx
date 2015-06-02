@@ -80,8 +80,10 @@ void syd::Table<TableElement>::Delete(std::vector<TableElement> & ve)
   for(auto e:ve) {
     DD(e);
     //    DD("todo : ondelete");
-    TableElement * a = new TableElement(e);
-    database_->map_of_elements_to_delete[e.GetTableName()].push_back(a);//std::make_shared<TableElement>(e));
+    //    TableElement * a = new TableElement(e);
+    //    database_->map_of_elements_to_delete[e.GetTableName()].push_back(a);//std::make_shared<TableElement>(e));
+    database_->AddToDeleteList(e);//.GetTableName(), a);
+    //    OnDelete(TableElement::GetTableName(), e);
   }
 
   // return true;
@@ -135,11 +137,9 @@ template<class TableElement>
 void syd::Table<TableElement>::Erase(TableElementBase * elem)
 {
   DD("Erase elem");
-  DD(GetTableName());
+  //  DD(GetTableName());
   DD(*elem);
-
   db_->erase(*dynamic_cast<TableElement*>(elem));
-
 }
 // --------------------------------------------------------------------
 
@@ -177,10 +177,11 @@ void  syd::Table<TableElement>::Delete(TableElement & elem)
               << std::endl << database_->GetLastSQLQuery());
 
   }
+  //return true;
+
   // Callback
   DD("Call back On delete todo");
   database_->OnDelete(elem.GetTableName(), new TableElement(elem));
-  //return true;
 }
 // --------------------------------------------------------------------
 

@@ -36,10 +36,14 @@ namespace syd {
     /// Id of the Timepoint
     IdType id;
 
-    /// Associated tag
+    /// Associated tag. The Timepoint is deleted if the tag is
+    /// deleted.
+#pragma db on_delete(cascade) // FIXME
     std::shared_ptr<syd::Tag> tag;
 
-    /// Associated injection
+    /// Associated injection. The Timepoint is deleted if the
+    /// injection is deleted.
+#pragma db on_delete(cascade) // FIXME
     std::shared_ptr<syd::Injection> injection;
 
     /// Time from the injection (in hours) of the first dicoms.
@@ -47,9 +51,9 @@ namespace syd {
 
     /// List of associated dicoms. In general one CT and one SPECT (or
     /// PET), but several SPECT bed position image can be associated.
-    std::vector<std::shared_ptr<syd::DicomSerie>> dicoms;
+    std::vector<std::shared_ptr<syd::DicomSerie>> dicoms; // FIXME
 
-    std::vector<std::shared_ptr<syd::Image>> images;
+    std::vector<std::shared_ptr<syd::Image>> images; // FIXME
 
     // --------------------------------------------------
     SET_TABLE_NAME("Timepoint")

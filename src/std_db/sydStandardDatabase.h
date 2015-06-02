@@ -97,6 +97,8 @@ namespace syd {
     virtual void OnDelete(const std::string & table_name, TableElementBase * e);
     void OnDeleteImage(syd::Image & e);
     void OnDeleteFile(syd::File & e);
+    void OnDeleteTag(syd::Tag & e);
+
 
   protected:
     /// Insert the tables

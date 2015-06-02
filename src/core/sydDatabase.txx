@@ -69,7 +69,55 @@ int syd::Database::Delete(std::vector<IdType> & ids)
 }
 // --------------------------------------------------------------------
 
+
+// struct comp
+// {
+//     comp(TableElementBase const * s) : _s(s) { }
+
+//     bool operator () (std::pair<std::string, TableElementBase*> const& p)
+//     {
+//       return (p.second == _s);
+//     }
+
+//     TableElementBase const * _s;
+// };
+
+
 // --------------------------------------------------------------------
+template<class TableElement>
+void syd::Database::AddToDeleteList(TableElement & elem)
+{
+  DD("AddToDeleteList from elem");
+  TableElementBase * e = new TableElement(elem);
+  //  map_of_elements_to_delete[TableElement::GetTableName()].push_back(e);
+
+  auto p = std::make_pair(TableElement::GetTableName(), e);
+
+  //  auto result = std::find(list_of_elements_to_delete.begin(), list_of_elements_to_delete.end(), syd::comp(e));
+  bool found = false;
+  auto iter = list_of_elements_to_delete.begin();
+  while (!found and iter != list_of_elements_to_delete.end()) {
+    if (iter->first == TableElement::GetTableName()) {
+      DD(*iter->second);
+      DD(*e);
+      TableElement * a = dynamic_cast<TableElement*>(iter->second);
+      TableElement * b = dynamic_cast<TableElement*>(e);
+      if (a->id == b->id) found = true;
+    }
+    ++iter;
+  }
+  DD(found);
+
+  if (found) {
+    LOG(WARNING) << "Already in list " << e;
+  }
+  else {
+    list_of_elements_to_delete.push_back(p);
+    OnDelete(TableElement::GetTableName(), e);
+  }
+}
+// --------------------------------------------------------------------
+
 
 
 // --------------------------------------------------------------------

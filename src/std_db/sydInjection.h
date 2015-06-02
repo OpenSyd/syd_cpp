@@ -34,11 +34,14 @@ namespace syd {
 #pragma db id auto
     IdType id;
 
-    //#pragma db on_delete(cascade)
-    /// Foreign key, linked to Patient table
+    /// Foreign key, linked to Patient table. If patient is deleted,
+    /// also delete injection.
+#pragma db on_delete(cascade)
     std::shared_ptr<Patient> patient;
 
-    /// Foreign key, linked to Radionuclide table
+    /// Foreign key, linked to Radionuclide table. If radionuclide is
+    /// deleted also delete injection.
+#pragma db on_delete(cascade)
     std::shared_ptr<Radionuclide> radionuclide;
 
     /// Date of the injection

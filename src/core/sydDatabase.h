@@ -130,28 +130,28 @@ namespace syd {
     bool TableIsEqual(syd::Database * db1);
 
 
-    /// FIXME single delete
-    template<class TableElement> void Delete(IdType id);         // --> Table->Delete(id); (will call table->Delete(e);
-    template<class TableElement> void Delete(TableElement & e);  // --> Table->Delete(e); -> real delete
-    virtual void Delete(const std::string & table_name, syd::IdType id); // --> will call Table->Delete(e);
+    /// Single delete
+    template<class TableElement> void Delete(IdType id);
+    template<class TableElement> void Delete(TableElement & e);
+    virtual void Delete(const std::string & table_name, syd::IdType id);
 
-    /// FIXME multiple delete
-    template<class TableElement> int Delete(std::vector<TableElement> & ve); //-> reference DeleteCurrentList
-    template<class TableElement> int Delete(std::vector<IdType> & ids);      // -> will call Table->Delete(ve)
-    virtual void Delete(const std::string & table_name, std::vector<syd::IdType> & ids); // -> will call Table->Delete(ve)
+    /// Multiple delete
+    template<class TableElement> int Delete(std::vector<TableElement> & ve);
+    template<class TableElement> int Delete(std::vector<IdType> & ids);
+    virtual void Delete(const std::string & table_name, std::vector<syd::IdType> & ids);
 
-
+    /// --> cannot be template because overload in std db
     virtual void OnDelete(const std::string & table_name, TableElementBase * elem);
-
-
-
-
-    void AddToDeleteList(const std::string & table_name, syd::IdType id);
-    //    virtual void OnDelete(const std::string & table_name, IdType id);
-    //    virtual void OnDelete(const std::string & table_name, IdType id);
 
     virtual void DeleteCurrentList(); // effective delete the list
     std::map<std::string, std::vector<TableElementBase*>> map_of_elements_to_delete;
+
+    std::vector<std::pair<std::string, TableElementBase*>> list_of_elements_to_delete;
+
+    //    void AddToDeleteList(const std::string & table_name, TableElementBase * elem);
+
+    template<class TableElement>
+    void AddToDeleteList(TableElement & elem);
 
 
 
