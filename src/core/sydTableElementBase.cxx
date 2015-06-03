@@ -41,7 +41,6 @@ void syd::TableElementBase::Set(std::vector<std::string> & arg)
 // --------------------------------------------------------------------
 void syd::TableElementBase::OnDelete(syd::Database * db)
 {
-  DD("OnDelete");
-
+  // By default, do nothing
 }
 // --------------------------------------------------------------------

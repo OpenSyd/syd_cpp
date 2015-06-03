@@ -91,6 +91,7 @@ int main(int argc, char* argv[])
   // Test CRUD - Create Read Update Delete
 
   // Patient
+  LOG(1) << "---------------------------- Patient";
   syd::Patient p;
   p.Set("toto", 1, 90);
   testInsert(db, p);
@@ -104,6 +105,7 @@ int main(int argc, char* argv[])
   db->Insert(p); // re-insert patient (because use later)
 
   // Radionuclide
+  LOG(1) << "---------------------------- Radionuclide";
   syd::Radionuclide r;
   r.Set("Indium111", 67.313);
   testInsert(db, r);
@@ -114,6 +116,7 @@ int main(int argc, char* argv[])
   db->Insert(r);
 
   // Injection
+  LOG(1) << "---------------------------- Injection";
   syd::Injection i;
   i.Set(p, r, "2014-02-01 12:34", 123.45);
   testInsert(db, i);
@@ -124,6 +127,7 @@ int main(int argc, char* argv[])
   testInsert(db, i);
 
   // File
+  LOG(1) << "---------------------------- File";
   syd::File f;
   f.filename = "toto";
   f.path = "/home/yes/";
@@ -136,6 +140,7 @@ int main(int argc, char* argv[])
   testInsert(db, f);
 
   // Tag
+  LOG(1) << "---------------------------- Tag";
   syd::Tag t;
   t.label = "mytag";
   t.description = "this is a tag";
@@ -146,6 +151,7 @@ int main(int argc, char* argv[])
   testDelete(db, t);
 
   // DicomSerie
+  LOG(1) << "---------------------------- DicomSerie";
   syd::DicomSerie ds;
   ds.patient = std::make_shared<syd::Patient>(p);
   ds.injection = std::make_shared<syd::Injection>(i);
@@ -167,6 +173,7 @@ int main(int argc, char* argv[])
   testInsert(db, ds); // re-insert
 
   // DicomFile
+  LOG(1) << "---------------------------- DicomFile";
   syd::DicomFile df;
   df.file = std::make_shared<syd::File>(f);
   df.dicom_serie = std::make_shared<syd::DicomSerie>(ds);
