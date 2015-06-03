@@ -18,6 +18,10 @@
 
 // syd
 #include "sydDicomSerie.h"
+#include "sydDicomFile.h"
+#include "sydDatabase.h"
+#include "sydTable.h"
+#include "sydDicomFile-odb.hxx"
 
 // --------------------------------------------------------------------
 syd::DicomSerie::DicomSerie():TableElementBase()
@@ -61,5 +65,17 @@ bool syd::DicomSerie::operator==(const DicomSerie & p)
           size == p.size and
           spacing == p.spacing);
 
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomSerie::OnDelete(syd::Database * db)
+{
+  DD("DicomSerie OnDelete");
+  DD(id);
+  std::vector<syd::DicomFile> dicomfiles;
+  db->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == id, dicomfiles);
+  for(auto i:dicomfiles) db->AddToDeleteList(i);
 }
 // --------------------------------------------------

@@ -25,6 +25,8 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  class Database;
+
   /// Base class for all element (row) in a table
   class TableElementBase {
   public:
@@ -40,6 +42,9 @@ namespace syd {
 
     /// Set basics values from a list of string
     virtual void Set(std::vector<std::string> & arg);
+
+
+    virtual void OnDelete(syd::Database * db);
 
   }; // end of class
 

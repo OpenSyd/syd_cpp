@@ -39,26 +39,14 @@ namespace syd {
     /// Compute the number of elements in this table
     virtual unsigned int GetNumberOfElements();
 
+    /// Add the record with the given id to the list of records to be deleted
+    virtual void AddToDeleteList(syd::IdType id);
 
+    /// Add the records with the given ids to the list of records to be deleted
+    virtual void AddToDeleteList(std::vector<syd::IdType> & ids);
 
-    // delete a single element
-    virtual void Delete(syd::IdType id);
-    virtual void Delete(TableElement & t);
-    virtual void Delete(std::vector<syd::IdType> & ids);
-    virtual void Delete(std::vector<TableElement> & ve);
-
-
-
-    /// Delete the element
-
-    /// Delete n elements
-
-    /// Delete n elements
-
-    //    void Erase(syd::IdType id);
-    //    void Erase(TableElement & elem);
-    void Erase(TableElementBase * elem);
-
+    /// Add all records to the list of records to be deleted
+    virtual void AddAllToDeleteList();
 
     /// Dump the content of the table (simple output)
     virtual void DumpTable(std::ostream & os);
@@ -95,6 +83,9 @@ namespace syd {
 
     /// default impltementation of insert, must be overloaded
     virtual TableElement * InsertFromArg(std::vector<std::string> & arg);
+
+    /// Prepare to erase a record (without commit)
+    virtual void Erase(TableElementBase * elem);
 
   protected:
     syd::Database * database_;

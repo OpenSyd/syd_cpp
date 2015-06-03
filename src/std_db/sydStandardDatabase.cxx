@@ -739,19 +739,33 @@ syd::RoiType syd::StandardDatabase::GetRoiType(const std::string & name)
 // --------------------------------------------------------------------
 void syd::StandardDatabase::OnDelete(const std::string & table_name, TableElementBase * e)
 {
+  syd::Database::OnDelete(table_name, e);
   // When an element is deleted we could need to perform some operations
-  // Patient
-  // Radionuclide
-  // File
-  // Tag
-  // Injection
-  // DicomSerie
-  // DicomFile
-  // Timepoint
-  // Image
+  // Patient        -> delete injection (-> serie
+  // Radionuclide   -> also delete injections
+  // x File           -> erase file on disk => search for Image, search for DicomFile ?
+  // x Tag            -> do nothing (allow null tag)
+  // Injection      -> also delete dicomserie, timepoint
+  // x DicomSerie     -> also delete the associated DicomFiles
+  // x DicomFile      -> also delete the File, also delete the serie ?
+  // Timepoint      *TODO*
+  // x Image          -> also delete associated Files
+
+  /*
+
   if (table_name == syd::Image::GetTableName()) OnDeleteImage(*dynamic_cast<syd::Image*>(e));
   if (table_name == syd::File::GetTableName()) OnDeleteFile(*dynamic_cast<syd::File*>(e));
-  if (table_name == syd::Tag::GetTableName()) OnDeleteTag(*dynamic_cast<syd::Tag*>(e));
+  if (table_name == syd::DicomFile::GetTableName()) OnDeleteDicomFile(*dynamic_cast<syd::DicomFile*>(e));
+  if (table_name == syd::DicomSerie::GetTableName()) OnDeleteDicomSerie(*dynamic_cast<syd::DicomSerie*>(e));
+  //  if (table_name == syd::File::GetTableName()) OnDeleteInjection(*dynamic_cast<syd::Injection*>(e));
+  // if (table_name == syd::Tag::GetTableName()) OnDeleteTag(*dynamic_cast<syd::Tag*>(e));
+
+  */
+
+  //  e->OnDelete(*this);
+
+
+
 }
 // --------------------------------------------------------------------
 
@@ -760,10 +774,26 @@ void syd::StandardDatabase::OnDelete(const std::string & table_name, TableElemen
 void syd::StandardDatabase::OnDeleteImage(syd::Image & e)
 {
   // When an Image is deleted, we also delete the associated Files
-  for(auto f:e.files) {
-    AddToDeleteList(*f);
-    //    OnDelete(TableElement::GetTableName(), e);
-  }
+  for(auto f:e.files) AddToDeleteList(*f);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::OnDeleteDicomFile(syd::DicomFile & e)
+{
+  AddToDeleteList(*e.file);
+  AddToDeleteList(*e.dicom_serie);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::OnDeleteDicomSerie(syd::DicomSerie & e)
+{
+  std::vector<syd::DicomFile> dicomfiles;
+  Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == e.id, dicomfiles);
+  for(auto i:dicomfiles) AddToDeleteList(i);
 }
 // --------------------------------------------------------------------
 
@@ -773,15 +803,9 @@ void syd::StandardDatabase::OnDeleteFile(syd::File & e)
 {
   // When a File is deleted, we also delete the file on disk
   std::string f = GetAbsolutePath(e);
-  if (std::remove(f.c_str()) != 0) {
-    LOG(WARNING) << "While deleting the File " << e << ", could not delete the file " << f;
-    //     EXCEPTION("While deleting the File " << e << ", could not delete the file " << f);
-  }
+  list_of_files_to_delete.push_back(f);
 
-  // We also look for images to be deleted. Not automatic
-  // (on_delete(cascade)) because vector or Files in Images. (This is
-  // auto for DicomFile);
-  // Manual search because dont know how to do
+  // We also look for images to be deleted. Manual search because dont know how to do
   std::vector<syd::Image> images_temp;
   std::vector<syd::Image> images;
   Query<syd::Image>(images_temp);
@@ -790,8 +814,13 @@ void syd::StandardDatabase::OnDeleteFile(syd::File & e)
       if (f->id == e.id) images.push_back(i);
     }
   }
-  DDS(images);
   for(auto i:images) AddToDeleteList(i);
+
+
+  // We also look for DicomFiles to be deleted.
+  std::vector<syd::DicomFile> dicomfiles;
+  Query<syd::DicomFile>(odb::query<syd::DicomFile>::file == e.id, dicomfiles);
+  for(auto i:dicomfiles) AddToDeleteList(i);
 }
 // --------------------------------------------------------------------
 
@@ -805,5 +834,29 @@ void syd::StandardDatabase::OnDeleteTag(syd::Tag & e)
   // Query<syd::Image>(odb::query<syd::Image>::tag == e.id, images);
   // DDS(images);
   // for(auto i:images) AddToDeleteList(i);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::DeleteCurrentList()
+{
+  if (delete_dry_run_flag_) {
+    for(auto f:list_of_files_to_delete) {
+      LOG(2) << "File would have been deleted: " << f;
+    }
+  }
+  else {
+    for(auto f:list_of_files_to_delete) {
+      if (std::remove(f.c_str()) != 0) {
+        LOG(WARNING) << "Could not delete the file " << f;
+      }
+      else {
+        LOG(2) << "Deleting file " << f;
+      }
+    }
+  }
+  list_of_files_to_delete.clear();
+  syd::Database::DeleteCurrentList();
 }
 // --------------------------------------------------------------------

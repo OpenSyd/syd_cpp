@@ -86,23 +86,30 @@ namespace syd {
     /// Specific Dump for Timepoint
     virtual void DumpTimepoint(const std::vector<std::string> & args, std::ostream & os, bool verboseFlag=false);
 
-    /// Delete a list of elements for the given table
-    //    virtual void Delete(const std::string & table_name, std::vector<syd::IdType> & ids);
 
-    // template<class TableElement>
-    // void Delete(TableElementBase & e) { DD("standard delete db"); GetTable<TableElement>()->Delete(e); }
-
-
-    //    virtual void OnDelete(const std::string & table_name, IdType id); //TableElementBase & e);
+    /// What to do when a element is planned to be deleted
     virtual void OnDelete(const std::string & table_name, TableElementBase * e);
-    void OnDeleteImage(syd::Image & e);
-    void OnDeleteFile(syd::File & e);
-    void OnDeleteTag(syd::Tag & e);
 
+    /// What to do when an Image will be deleted
+    void OnDeleteImage(syd::Image & e);
+
+    /// What to do when a File will be deleted
+    void OnDeleteFile(syd::File & e);
+
+    /// What to do when a Tag will be deleted
+    void OnDeleteTag(syd::Tag & e);
+    void OnDeleteDicomFile(syd::DicomFile & e);
+    void OnDeleteDicomSerie(syd::DicomSerie & e);
+
+    /// Overload to also delete the files
+    virtual void DeleteCurrentList();
 
   protected:
     /// Insert the tables
     virtual void CreateTables();
+
+    /// List of filenames that will be deleted
+    std::vector<std::string> list_of_files_to_delete;
 
   }; // class StandardDatabase
 

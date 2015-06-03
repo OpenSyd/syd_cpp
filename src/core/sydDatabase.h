@@ -114,7 +114,6 @@ namespace syd {
     // ------------------------------------------------------------------------
 
 
-
     // ------------------------------------------------------------------------
     /// Call back for SQL query to the DB. For debug purpose only
     void TraceCallback(const char* sql);
@@ -124,38 +123,50 @@ namespace syd {
     // ------------------------------------------------------------------------
 
 
+    // ------------------------------------------------------------------------
+    void SetDeleteDryRunFlag(bool b) { delete_dry_run_flag_ = b; }
+
+    /// Delete a single record
+    template<class TableElement> void Delete(IdType id);
+
+    /// Delete a single record
+    template<class TableElement> void Delete(TableElement & e);
+
+    /// Delete a single record
+    virtual void Delete(const std::string & table_name, syd::IdType id);
+
+    /// Delete several records
+    template<class TableElement> int Delete(std::vector<TableElement> & ve);
+
+    /// Delete several records
+    template<class TableElement> int Delete(std::vector<IdType> & ids);
+
+    /// Delete several records
+    virtual void Delete(const std::string & table_name, std::vector<syd::IdType> & ids);
+
+    /// Delete all records
+    virtual void DeleteAll(const std::string & table_name);
+
+    /// Callback called when a record is deleted. Do nothing here, be could be overloaded.
+    virtual void OnDelete(const std::string & table_name, TableElementBase * elem);
+
+    /// Add an element to the list of element to be delete
+    template<class TableElement>
+    void AddToDeleteList(TableElement & elem);
+
+    /// Effectively delete current list of elements to be deleted
+    virtual void DeleteCurrentList();
+    // ------------------------------------------------------------------------
+
+
+
+    /// -------------------------------- OLD
+
     //FIXME
     void CopyDatabaseTo(std::string file, std::string folder);
     template<class TableElement>
     bool TableIsEqual(syd::Database * db1);
 
-
-    /// Single delete
-    template<class TableElement> void Delete(IdType id);
-    template<class TableElement> void Delete(TableElement & e);
-    virtual void Delete(const std::string & table_name, syd::IdType id);
-
-    /// Multiple delete
-    template<class TableElement> int Delete(std::vector<TableElement> & ve);
-    template<class TableElement> int Delete(std::vector<IdType> & ids);
-    virtual void Delete(const std::string & table_name, std::vector<syd::IdType> & ids);
-
-    /// --> cannot be template because overload in std db
-    virtual void OnDelete(const std::string & table_name, TableElementBase * elem);
-
-    virtual void DeleteCurrentList(); // effective delete the list
-    std::map<std::string, std::vector<TableElementBase*>> map_of_elements_to_delete;
-
-    std::vector<std::pair<std::string, TableElementBase*>> list_of_elements_to_delete;
-
-    //    void AddToDeleteList(const std::string & table_name, TableElementBase * elem);
-
-    template<class TableElement>
-    void AddToDeleteList(TableElement & elem);
-
-
-
-    /// -------------------------------- OLD
 
     /// Delete the element with id in the given table
     // bool Delete(const std::string & table_name, const IdType id);
@@ -222,6 +233,13 @@ namespace syd {
 
     /// Store current sql query for debug purpose
     std::string current_sql_query_;
+
+    /// Store the list of elements (with their types) that will be deleted
+    std::vector<std::pair<std::string, TableElementBase*>> list_of_elements_to_delete_;
+
+    /// Flag to not delete
+    bool delete_dry_run_flag_;
+
   };
 
 #include "sydDatabase.txx"

@@ -41,18 +41,21 @@ int main(int argc, char* argv[])
 
   // Get the table name
   std::string tablename = args_info.inputs[1];
-  DD(tablename);
+
+  // Set option
+  db->SetDeleteDryRunFlag(args_info.dry_run_flag);
 
   // Get the list of ids
-  //FIXME if no ids --> delete all ? or if ids = all
-  std::vector<syd::IdType> ids;
-  for(auto i=2; i<args_info.inputs_num; i++)
-    ids.push_back(atoi(args_info.inputs[i]));
-  DDS(ids);
-
-  // Delete
-  db->Delete(tablename, ids); // FIXME
-  LOG(1) << "Deletion done: ";
+  if (args_info.inputs[2] == std::string("all")) {
+    db->DeleteAll(tablename);
+  }
+  else {
+    std::vector<syd::IdType> ids;
+    for(auto i=2; i<args_info.inputs_num; i++) {
+      ids.push_back(atoi(args_info.inputs[i]));
+    }
+    db->Delete(tablename, ids);
+  }
 
   // This is the end, my friend.
 }

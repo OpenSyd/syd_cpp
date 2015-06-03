@@ -36,14 +36,10 @@ namespace syd {
     /// Id of the Timepoint
     IdType id;
 
-    /// Associated tag. The Timepoint is deleted if the tag is
-    /// deleted.
-#pragma db on_delete(cascade) // FIXME
+    /// Associated tag.
     std::shared_ptr<syd::Tag> tag;
 
-    /// Associated injection. The Timepoint is deleted if the
-    /// injection is deleted.
-#pragma db on_delete(cascade) // FIXME
+    /// Associated injection.
     std::shared_ptr<syd::Injection> injection;
 
     /// Time from the injection (in hours) of the first dicoms.

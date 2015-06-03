@@ -73,62 +73,35 @@ void syd::Table<TableElement>::Insert(std::vector<TableElement*> & r)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-void syd::Table<TableElement>::Delete(std::vector<TableElement> & ve)
+void syd::Table<TableElement>::AddToDeleteList(std::vector<syd::IdType> & ids)
 {
-  DD("table delete vector");
-
-  for(auto e:ve) {
-    DD(e);
-    //    DD("todo : ondelete");
-    //    TableElement * a = new TableElement(e);
-    //    database_->map_of_elements_to_delete[e.GetTableName()].push_back(a);//std::make_shared<TableElement>(e));
-    database_->AddToDeleteList(e);//.GetTableName(), a);
-    //    OnDelete(TableElement::GetTableName(), e);
-  }
-
-  // return true;
-  // try {
-  //   odb::transaction t (db_->begin());
-  //   for(auto x:ve) db_->erase(x);
-  //   t.commit();
-  //   return true;
-  // }
-  // catch (const odb::exception& e) {
-  //   TableElement te;
-  //   EXCEPTION("Error while deleting " << ve.size() << " elements in the table '"
-  //             << te.GetTableName()
-  //             << "', odb exception is: " << e.what()
-  //             << std::endl << "And last sql query is: "
-  //             << std::endl << database_->GetLastSQLQuery());
-  // }
-  // return false;
+  std::vector<TableElement> ve;
+  odb::query<TableElement> q = odb::query<TableElement>::id == ids[0];
+  for(auto i:ids) q = q or odb::query<TableElement>::id == i;
+  Query(q, ve);
+  for(auto e:ve) database_->AddToDeleteList(e);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class TableElement>
-void syd::Table<TableElement>::Delete(std::vector<syd::IdType> & ids)
+void syd::Table<TableElement>::AddToDeleteList(syd::IdType id)
 {
-  DD("Table delete ids");
-  std::vector<TableElement> ve;
-  odb::query<TableElement> q = odb::query<TableElement>::id == ids[0];
-  for(auto i:ids) q = q or odb::query<TableElement>::id == i;
-  Query(q, ve);
-  DDS(ve);
-  Delete(ve);
+  TableElement e = QueryOne(odb::query<TableElement>::id == id);
+  database_->AddToDeleteList(e);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-// template<class TableElement>
-// void syd::Table<TableElement>::Erase(syd::IdType id)
-// {
-//   DD("Erase id");
-//   DD(GetTableName());
-//   DD(id);
-// }
+template<class TableElement>
+void syd::Table<TableElement>::AddAllToDeleteList()
+{
+  std::vector<TableElement> ve;
+  Query(ve);
+  for(auto e:ve) database_->AddToDeleteList(e);
+}
 // --------------------------------------------------------------------
 
 
@@ -136,56 +109,9 @@ void syd::Table<TableElement>::Delete(std::vector<syd::IdType> & ids)
 template<class TableElement>
 void syd::Table<TableElement>::Erase(TableElementBase * elem)
 {
-  DD("Erase elem");
-  //  DD(GetTableName());
-  DD(*elem);
   db_->erase(*dynamic_cast<TableElement*>(elem));
 }
 // --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Table<TableElement>::Delete(syd::IdType id)
-{
-  DD("table delete id");
-  DD(id);
-  DD(syd::Table<TableElement>::GetTableName());
-  TableElement e = QueryOne(odb::query<TableElement>::id == id);
-  Delete(e);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void  syd::Table<TableElement>::Delete(TableElement & elem)
-{
-  DD("real table delete single elem (no call back)");
-  DD(TableElement::GetTableName());
-  DD(elem);
-  try {
-    odb::transaction t (db_->begin());
-    db_->erase<TableElement>(dynamic_cast<TableElement&>(elem));
-    t.commit();
-  }
-  catch (const odb::exception& e) {
-    EXCEPTION("Error while deleting element "
-              << elem << " in the table '" << TableElement::GetTableName()
-              << "', odb exception is: " << e.what()
-              << std::endl << "And last sql query is: "
-              << std::endl << database_->GetLastSQLQuery());
-
-  }
-  //return true;
-
-  // Callback
-  DD("Call back On delete todo");
-  database_->OnDelete(elem.GetTableName(), new TableElement(elem));
-}
-// --------------------------------------------------------------------
-
-
 
 
 // --------------------------------------------------------------------

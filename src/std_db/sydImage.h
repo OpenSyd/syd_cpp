@@ -49,17 +49,13 @@ public:
   std::shared_ptr<syd::Patient> patient;
 
   /// Associated Tag. FIXME : or a vector ? Delete image or not ???
-#pragma db on_delete(set_null)
   std::shared_ptr<syd::Tag> tag;
 
-  /// List of associated files. The Image is deleted if a File is
-  /// deleted.
-#pragma db on_delete(cascade)
+  /// List of associated files.
   std::vector<std::shared_ptr<syd::File>> files;
 
   // FIXME -> needed ?. dicoms that serve to compute this image (could
-  // be empty). The image is not deleted if the dicom is deleted.
-#pragma db on_delete(set_null)
+  // be empty).
   std::vector<std::shared_ptr<syd::DicomSerie>> dicoms;
 
   std::string type; // mhd etc. Needed ?

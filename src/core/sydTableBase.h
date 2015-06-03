@@ -39,29 +39,34 @@ namespace syd {
   /// Base class for the functions that are common to all tables
   class TableBase {
   public:
+
+    /// Constructor, must give the linked database.
     TableBase(odb::sqlite::database * d):db_(d) {}
 
+    /// Insert simple record from list of strings (pure virtual)
     virtual TableElementBase * InsertFromArg(std::vector<std::string> & arg) = 0;
+
+    /// Simple dump records from the table
     virtual void DumpTable(std::ostream & os) = 0;
+
+    /// Count the number of elements of a table. (to be changed)
     virtual unsigned int GetNumberOfElements() = 0;
 
+    /// Add the record with the given id to the list of records to be deleted
+    virtual void AddToDeleteList(syd::IdType id) = 0;
 
+    /// Add all records to the list of records to be deleted
+    virtual void AddAllToDeleteList() = 0;
 
-    // current
-    virtual void Delete(syd::IdType id) = 0;
-    virtual void Delete(std::vector<syd::IdType> & ids) = 0;
+    /// Add the records with the given ids to the list of records to be deleted
+    virtual void AddToDeleteList(std::vector<syd::IdType> & ids) = 0;
 
-    // TODO
-
-    //    virtual TableElementBase QueryOne(IdType i) = 0;
-    //    virtual TableElementBase & QueryOne(IdType i) = 0;
-    // virtual bool Delete(TableElementBase & elem) = 0;
-    //    virtual void Erase(syd::IdType id) = 0; // without commit
-    virtual void Erase(TableElementBase * elem) = 0; // without commit
-
+    /// Prepare to erase a record (without commit)
+    virtual void Erase(TableElementBase * elem) = 0;
 
   protected:
     odb::sqlite::database * db_;
+
   };
 
 } // end namespace

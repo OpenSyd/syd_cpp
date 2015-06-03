@@ -18,6 +18,7 @@
 
 // syd
 #include "sydTableElementBase.h"
+#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
 std::string syd::TableElementBase::ToString() const
@@ -32,5 +33,15 @@ std::string syd::TableElementBase::ToString() const
 void syd::TableElementBase::Set(std::vector<std::string> & arg)
 {
   LOG(FATAL) << "The function 'Set' must be implemented for this table.";
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+void syd::TableElementBase::OnDelete(syd::Database * db)
+{
+  DD("OnDelete");
+
 }
 // --------------------------------------------------------------------

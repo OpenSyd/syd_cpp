@@ -30,9 +30,9 @@ Table<TableElement> * syd::Database::GetTable()
 template<class TableElement>
 void syd::Database::Delete(IdType id)
 {
-  GetTable<TableElement>()->Delete(id);
-  // TableElement elem = QueryOne<TableElement>(id);
-  // return Delete(TableElement::GetTableName(), elem);
+  TableElement e = QueryOne(odb::query<TableElement>::id == id);
+  AddToDeleteList(e);
+  DeleteCurrentList();
 }
 // --------------------------------------------------------------------
 
@@ -41,8 +41,8 @@ void syd::Database::Delete(IdType id)
 template<class TableElement>
 void syd::Database::Delete(TableElement & e)
 {
-  GetTable<TableElement>()->Delete(e);
-  //  return Delete(TableElement::GetTableName(), e);
+  AddToDeleteList(e);
+  DeleteCurrentList();
 }
 // --------------------------------------------------------------------
 
@@ -51,8 +51,7 @@ void syd::Database::Delete(TableElement & e)
 template<class TableElement>
 int syd::Database::Delete(std::vector<TableElement> & ve)
 {
-  // for(auto e:ve) n += AddToDeleteList(TableElement::GetTableName(), e);
-  GetTable<TableElement>()->Delete(ve);
+  for(auto e:ve) AddToDeleteList(e);
   DeleteCurrentList();
 }
 // --------------------------------------------------------------------
@@ -62,57 +61,40 @@ int syd::Database::Delete(std::vector<TableElement> & ve)
 template<class TableElement>
 int syd::Database::Delete(std::vector<IdType> & ids)
 {
-  GetTable<TableElement>()->Delete(ids);
+  std::vector<TableElement> ve;
+  odb::query<TableElement> q = odb::query<TableElement>::id == ids[0];
+  for(auto i:ids) q = q or odb::query<TableElement>::id == i;
+  Query(q, ve);
   DeleteCurrentList();
-  // for(auto id:ids) n += AddToDeleteList(TableElement::GetTableName(), id);
-  // return DeleteCurrentList();
 }
 // --------------------------------------------------------------------
-
-
-// struct comp
-// {
-//     comp(TableElementBase const * s) : _s(s) { }
-
-//     bool operator () (std::pair<std::string, TableElementBase*> const& p)
-//     {
-//       return (p.second == _s);
-//     }
-
-//     TableElementBase const * _s;
-// };
 
 
 // --------------------------------------------------------------------
 template<class TableElement>
 void syd::Database::AddToDeleteList(TableElement & elem)
 {
-  DD("AddToDeleteList from elem");
+  // Create a pointer to the element
   TableElementBase * e = new TableElement(elem);
-  //  map_of_elements_to_delete[TableElement::GetTableName()].push_back(e);
-
   auto p = std::make_pair(TableElement::GetTableName(), e);
 
   //  auto result = std::find(list_of_elements_to_delete.begin(), list_of_elements_to_delete.end(), syd::comp(e));
+
+  // Very slow & bad loop. To be improve (map)
   bool found = false;
-  auto iter = list_of_elements_to_delete.begin();
-  while (!found and iter != list_of_elements_to_delete.end()) {
+  auto iter = list_of_elements_to_delete_.begin();
+  while (!found and iter != list_of_elements_to_delete_.end()) {
     if (iter->first == TableElement::GetTableName()) {
-      DD(*iter->second);
-      DD(*e);
       TableElement * a = dynamic_cast<TableElement*>(iter->second);
       TableElement * b = dynamic_cast<TableElement*>(e);
       if (a->id == b->id) found = true;
     }
     ++iter;
   }
-  DD(found);
 
-  if (found) {
-    LOG(WARNING) << "Already in list " << e;
-  }
-  else {
-    list_of_elements_to_delete.push_back(p);
+  // Only raise OnDelete is not already in the list
+  if (!found) {
+    list_of_elements_to_delete_.push_back(p);
     OnDelete(TableElement::GetTableName(), e);
   }
 }
@@ -184,7 +166,6 @@ TableElement syd::Database::QueryOne(const odb::query<TableElement> & q)
 template<class TableElement>
 TableElement syd::Database::QueryOne(IdType id)
 {
-  //  return dynamic_cast<TableElement&>(GetTable<TableElement>()->QueryOne(id));
   return GetTable<TableElement>()->QueryOne(id);
 }
 // --------------------------------------------------------------------
