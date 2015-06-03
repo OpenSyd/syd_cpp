@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -96,7 +96,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 
-<p>This class is used to encapsulate common functions for a database table that manage some <a class="el" href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. ">TableElement</a>.  
+<p>This class is used to encapsulate common functions for a database table that manage some TableElement.  
  <a href="singletonsyd_1_1Table.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="sydTable_8h_source.html">sydTable.h</a>&gt;</code></p>
@@ -120,32 +120,40 @@ Public Member Functions</h2></td></tr>
 virtual unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a3355865c9b92b4606ca5253fce833200">GetNumberOfElements</a> ()</td></tr>
 <tr class="memdesc:a3355865c9b92b4606ca5253fce833200"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the number of elements in this table. <br /></td></tr>
 <tr class="separator:a3355865c9b92b4606ca5253fce833200"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d2caba02d7c22e3127e53ba23ad0371"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d2caba02d7c22e3127e53ba23ad0371"></a>
-virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a1d2caba02d7c22e3127e53ba23ad0371">Delete</a> (<a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &amp;t)</td></tr>
-<tr class="memdesc:a1d2caba02d7c22e3127e53ba23ad0371"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete the element. <br /></td></tr>
-<tr class="separator:a1d2caba02d7c22e3127e53ba23ad0371"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4aeccf0c707ced6a100213124181818"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae4aeccf0c707ced6a100213124181818"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#ae4aeccf0c707ced6a100213124181818">AddToDeleteList</a> (syd::IdType id)</td></tr>
+<tr class="memdesc:ae4aeccf0c707ced6a100213124181818"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the record with the given id to the list of records to be deleted. <br /></td></tr>
+<tr class="separator:ae4aeccf0c707ced6a100213124181818"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa9ee1031084dedebc0989772f347eee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aaa9ee1031084dedebc0989772f347eee"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#aaa9ee1031084dedebc0989772f347eee">AddToDeleteList</a> (std::vector&lt; syd::IdType &gt; &amp;ids)</td></tr>
+<tr class="memdesc:aaa9ee1031084dedebc0989772f347eee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the records with the given ids to the list of records to be deleted. <br /></td></tr>
+<tr class="separator:aaa9ee1031084dedebc0989772f347eee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afea502dc0534956e5de063b2b2bed179"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afea502dc0534956e5de063b2b2bed179"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#afea502dc0534956e5de063b2b2bed179">AddAllToDeleteList</a> ()</td></tr>
+<tr class="memdesc:afea502dc0534956e5de063b2b2bed179"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add all records to the list of records to be deleted. <br /></td></tr>
+<tr class="separator:afea502dc0534956e5de063b2b2bed179"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a179ebf56384410f5c93c6f9873d3a5f3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a179ebf56384410f5c93c6f9873d3a5f3"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a179ebf56384410f5c93c6f9873d3a5f3">DumpTable</a> (std::ostream &amp;os)</td></tr>
 <tr class="memdesc:a179ebf56384410f5c93c6f9873d3a5f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dump the content of the table (simple output) <br /></td></tr>
 <tr class="separator:a179ebf56384410f5c93c6f9873d3a5f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9b0730762f8b56bd7a01ebd63a35301"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9b0730762f8b56bd7a01ebd63a35301"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#ab9b0730762f8b56bd7a01ebd63a35301">Query</a> (const odb::query&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;q, std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;list)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#ab9b0730762f8b56bd7a01ebd63a35301">Query</a> (const odb::query&lt; TableElement &gt; &amp;q, std::vector&lt; TableElement &gt; &amp;list)</td></tr>
 <tr class="memdesc:ab9b0730762f8b56bd7a01ebd63a35301"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a query on the database and return the found elements in the list. <br /></td></tr>
 <tr class="separator:ab9b0730762f8b56bd7a01ebd63a35301"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd17fca0f798dfa91de832a3fc9e9688"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acd17fca0f798dfa91de832a3fc9e9688"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#acd17fca0f798dfa91de832a3fc9e9688">Query</a> (std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;list)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#acd17fca0f798dfa91de832a3fc9e9688">Query</a> (std::vector&lt; TableElement &gt; &amp;list)</td></tr>
 <tr class="memdesc:acd17fca0f798dfa91de832a3fc9e9688"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve all elements of the table. <br /></td></tr>
 <tr class="separator:acd17fca0f798dfa91de832a3fc9e9688"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ce4cadd334ec49731683731f22daeaf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1ce4cadd334ec49731683731f22daeaf"></a>
-<a class="el" href="classsyd_1_1TableElement.html">TableElement</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a1ce4cadd334ec49731683731f22daeaf">QueryOne</a> (const odb::query&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;q)</td></tr>
+TableElement&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a1ce4cadd334ec49731683731f22daeaf">QueryOne</a> (const odb::query&lt; TableElement &gt; &amp;q)</td></tr>
 <tr class="memdesc:a1ce4cadd334ec49731683731f22daeaf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the unique element matching the query (fail if 0 or &gt;1 elements) <br /></td></tr>
 <tr class="separator:a1ce4cadd334ec49731683731f22daeaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aea56dc1166b741d8bf9dcc868d34ab9d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aea56dc1166b741d8bf9dcc868d34ab9d"></a>
-<a class="el" href="classsyd_1_1TableElement.html">TableElement</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#aea56dc1166b741d8bf9dcc868d34ab9d">QueryOne</a> (IdType id)</td></tr>
+TableElement&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#aea56dc1166b741d8bf9dcc868d34ab9d">QueryOne</a> (IdType id)</td></tr>
 <tr class="memdesc:aea56dc1166b741d8bf9dcc868d34ab9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the unique element with the given id. <br /></td></tr>
 <tr class="separator:aea56dc1166b741d8bf9dcc868d34ab9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae30d8070066d80a75a2a30d2f8476fc0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae30d8070066d80a75a2a30d2f8476fc0"></a>
-unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#ae30d8070066d80a75a2a30d2f8476fc0">Count</a> (const odb::query&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;q)</td></tr>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#ae30d8070066d80a75a2a30d2f8476fc0">Count</a> (const odb::query&lt; TableElement &gt; &amp;q)</td></tr>
 <tr class="memdesc:ae30d8070066d80a75a2a30d2f8476fc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count the number of elements matching the query. <br /></td></tr>
 <tr class="separator:ae30d8070066d80a75a2a30d2f8476fc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51a4c1cd75a3f25e97ff07d6a6bef65a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a51a4c1cd75a3f25e97ff07d6a6bef65a"></a>
@@ -153,28 +161,33 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sing
 <tr class="memdesc:a51a4c1cd75a3f25e97ff07d6a6bef65a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given id exist. <br /></td></tr>
 <tr class="separator:a51a4c1cd75a3f25e97ff07d6a6bef65a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3d9068330665067560afa1880184af49"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d9068330665067560afa1880184af49"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a3d9068330665067560afa1880184af49">Insert</a> (<a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &amp;r)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a3d9068330665067560afa1880184af49">Insert</a> (TableElement &amp;r)</td></tr>
 <tr class="memdesc:a3d9068330665067560afa1880184af49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new element in the database. <br /></td></tr>
 <tr class="separator:a3d9068330665067560afa1880184af49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a125de91558186d88f3a8d4cf08237fc4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a125de91558186d88f3a8d4cf08237fc4"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a125de91558186d88f3a8d4cf08237fc4">Insert</a> (std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> * &gt; &amp;r)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a125de91558186d88f3a8d4cf08237fc4">Insert</a> (std::vector&lt; TableElement * &gt; &amp;r)</td></tr>
 <tr class="memdesc:a125de91558186d88f3a8d4cf08237fc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a set of elements in the database. <br /></td></tr>
 <tr class="separator:a125de91558186d88f3a8d4cf08237fc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1eb7ce2f387186a6dd04c224c4686c36"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1eb7ce2f387186a6dd04c224c4686c36"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a1eb7ce2f387186a6dd04c224c4686c36">Update</a> (<a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &amp;r)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a1eb7ce2f387186a6dd04c224c4686c36">Update</a> (TableElement &amp;r)</td></tr>
 <tr class="memdesc:a1eb7ce2f387186a6dd04c224c4686c36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update an element in the database. <br /></td></tr>
 <tr class="separator:a1eb7ce2f387186a6dd04c224c4686c36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada6f3e337ae44b84cad13a4af8ee307b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ada6f3e337ae44b84cad13a4af8ee307b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#ada6f3e337ae44b84cad13a4af8ee307b">Update</a> (std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> * &gt; &amp;r)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#ada6f3e337ae44b84cad13a4af8ee307b">Update</a> (std::vector&lt; TableElement * &gt; &amp;r)</td></tr>
 <tr class="memdesc:ada6f3e337ae44b84cad13a4af8ee307b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update a set of elements in the database. <br /></td></tr>
 <tr class="separator:ada6f3e337ae44b84cad13a4af8ee307b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76455628822facdf68fc311bb70ca1af"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a76455628822facdf68fc311bb70ca1af"></a>
-virtual <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a76455628822facdf68fc311bb70ca1af">InsertFromArg</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+virtual TableElement *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#a76455628822facdf68fc311bb70ca1af">InsertFromArg</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
 <tr class="memdesc:a76455628822facdf68fc311bb70ca1af"><td class="mdescLeft">&#160;</td><td class="mdescRight">default impltementation of insert, must be overloaded <br /></td></tr>
 <tr class="separator:a76455628822facdf68fc311bb70ca1af"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af755f9eae76b6e9109c5a5d6c4801745"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af755f9eae76b6e9109c5a5d6c4801745"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="singletonsyd_1_1Table.html#af755f9eae76b6e9109c5a5d6c4801745">Erase</a> (<a class="el" href="classsyd_1_1TableElementBase.html">TableElementBase</a> *elem)</td></tr>
+<tr class="memdesc:af755f9eae76b6e9109c5a5d6c4801745"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare to erase a record (without commit) <br /></td></tr>
+<tr class="separator:af755f9eae76b6e9109c5a5d6c4801745"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classsyd_1_1TableBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsyd_1_1TableBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsyd_1_1TableBase.html">syd::TableBase</a></td></tr>
 <tr class="memitem:a83f95f9ca0b522d2f3a1c85b87c06d22 inherit pub_methods_classsyd_1_1TableBase"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a83f95f9ca0b522d2f3a1c85b87c06d22"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TableBase</b> (odb::sqlite::database *d)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableBase.html#a83f95f9ca0b522d2f3a1c85b87c06d22">TableBase</a> (odb::sqlite::database *d)</td></tr>
+<tr class="memdesc:a83f95f9ca0b522d2f3a1c85b87c06d22 inherit pub_methods_classsyd_1_1TableBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor, must give the linked database. <br /></td></tr>
 <tr class="separator:a83f95f9ca0b522d2f3a1c85b87c06d22 inherit pub_methods_classsyd_1_1TableBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
@@ -197,7 +210,7 @@ odb::sqlite::database *&#160;</td><td class="memItemRight" valign="bottom"><b>db
 <div class="textblock"><h3>template&lt;class TableElement&gt;<br />
 class syd::Table&lt; TableElement &gt;</h3>
 
-<p>This class is used to encapsulate common functions for a database table that manage some <a class="el" href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. ">TableElement</a>. </p>
+<p>This class is used to encapsulate common functions for a database table that manage some TableElement. </p>
 
 <p>Definition at line <a class="el" href="sydDatabase_8h_source.html#l00032">32</a> of file <a class="el" href="sydDatabase_8h_source.html">sydDatabase.h</a>.</p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>

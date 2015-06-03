@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,7 +105,7 @@ Inheritance diagram for syd::File:</div>
  <div class="center">
   <img src="classsyd_1_1File.png" usemap="#syd::File_map" alt=""/>
   <map id="syd::File_map" name="syd::File_map">
-<area href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. " alt="syd::TableElement" shape="rect" coords="0,0,113,24"/>
+<area href="classsyd_1_1TableElementBase.html" title="Base class for all element (row) in a table. " alt="syd::TableElementBase" shape="rect" coords="0,0,141,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -121,11 +121,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const
 <tr class="memitem:a147db43430b31c6451ce3925ab9ef7c1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a147db43430b31c6451ce3925ab9ef7c1"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classsyd_1_1File.html">File</a> &amp;p)</td></tr>
 <tr class="separator:a147db43430b31c6451ce3925ab9ef7c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classsyd_1_1TableElement"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsyd_1_1TableElement')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsyd_1_1TableElement.html">syd::TableElement</a></td></tr>
-<tr class="memitem:aa34ff1762fabeb75706625d6f6ce6ad8 inherit pub_methods_classsyd_1_1TableElement"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa34ff1762fabeb75706625d6f6ce6ad8"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableElement.html#aa34ff1762fabeb75706625d6f6ce6ad8">Set</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
-<tr class="memdesc:aa34ff1762fabeb75706625d6f6ce6ad8 inherit pub_methods_classsyd_1_1TableElement"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
-<tr class="separator:aa34ff1762fabeb75706625d6f6ce6ad8 inherit pub_methods_classsyd_1_1TableElement"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0c829e347d24c59d0e9b19dfdc913b0a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0c829e347d24c59d0e9b19dfdc913b0a"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnDelete</b> (<a class="el" href="classsyd_1_1Database.html">syd::Database</a> *db)</td></tr>
+<tr class="separator:a0c829e347d24c59d0e9b19dfdc913b0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classsyd_1_1TableElementBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsyd_1_1TableElementBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsyd_1_1TableElementBase.html">syd::TableElementBase</a></td></tr>
+<tr class="memitem:a292aac278da3d6d223382d626c2c37a6 inherit pub_methods_classsyd_1_1TableElementBase"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a292aac278da3d6d223382d626c2c37a6"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableElementBase.html#a292aac278da3d6d223382d626c2c37a6">Set</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+<tr class="memdesc:a292aac278da3d6d223382d626c2c37a6 inherit pub_methods_classsyd_1_1TableElementBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
+<tr class="separator:a292aac278da3d6d223382d626c2c37a6 inherit pub_methods_classsyd_1_1TableElementBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>

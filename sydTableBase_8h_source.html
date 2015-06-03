@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -110,7 +110,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// syd</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydCommon.h&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;sydTableElement.h&quot;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;sydTableElementBase.h&quot;</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">// odb</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;odb/database.hxx&gt;</span></div>
@@ -127,22 +127,41 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
 <div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="classsyd_1_1TableBase.html">   40</a></span>&#160;  <span class="keyword">class </span><a class="code" href="classsyd_1_1TableBase.html">TableBase</a> {</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <a class="code" href="classsyd_1_1TableBase.html">TableBase</a>(odb::sqlite::database * d):db_(d) {}</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classsyd_1_1TableElement.html">TableElement</a> * InsertFromArg(std::vector&lt;std::string&gt; &amp; arg) = 0;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> DumpTable(std::ostream &amp; os) = 0;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> GetNumberOfElements() = 0;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    odb::sqlite::database * db_;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  };</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classsyd_1_1TableBase.html#a83f95f9ca0b522d2f3a1c85b87c06d22">   44</a></span>&#160;    <a class="code" href="classsyd_1_1TableBase.html#a83f95f9ca0b522d2f3a1c85b87c06d22">TableBase</a>(odb::sqlite::database * d):db_(d) {}</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">virtual</span> <a class="code" href="classsyd_1_1TableElementBase.html">TableElementBase</a> * <a class="code" href="classsyd_1_1TableBase.html#a30181635027ac40160b5c0bb61affbfa">InsertFromArg</a>(std::vector&lt;std::string&gt; &amp; arg) = 0;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1TableBase.html#a6bce9eec0912d02d1911869dc93c0d0c">DumpTable</a>(std::ostream &amp; os) = 0;</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;} <span class="comment">// end namespace</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="classsyd_1_1TableBase.html#a13b3574ca33638f68f8922ac02a004e8">GetNumberOfElements</a>() = 0;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="classsyd_1_1TableElement_html"><div class="ttname"><a href="classsyd_1_1TableElement.html">syd::TableElement</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableElement_8h_source.html#l00029">sydTableElement.h:29</a></div></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1TableBase.html#a79be91f92e3742f0856e8d4998137e93">AddToDeleteList</a>(syd::IdType <span class="keywordtype">id</span>) = 0;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1TableBase.html#a6f6be226cb0d952ec077de1106d673cd">AddAllToDeleteList</a>() = 0;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1TableBase.html#a79be91f92e3742f0856e8d4998137e93">AddToDeleteList</a>(std::vector&lt;syd::IdType&gt; &amp; ids) = 0;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1TableBase.html#a1e263b19d4f8f98fef0b6fab2dd79398">Erase</a>(<a class="code" href="classsyd_1_1TableElementBase.html">TableElementBase</a> * elem) = 0;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    odb::sqlite::database * db_;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  };</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;} <span class="comment">// end namespace</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classsyd_1_1TableBase_html_a6f6be226cb0d952ec077de1106d673cd"><div class="ttname"><a href="classsyd_1_1TableBase.html#a6f6be226cb0d952ec077de1106d673cd">syd::TableBase::AddAllToDeleteList</a></div><div class="ttdeci">virtual void AddAllToDeleteList()=0</div><div class="ttdoc">Add all records to the list of records to be deleted. </div></div>
+<div class="ttc" id="classsyd_1_1TableBase_html_a13b3574ca33638f68f8922ac02a004e8"><div class="ttname"><a href="classsyd_1_1TableBase.html#a13b3574ca33638f68f8922ac02a004e8">syd::TableBase::GetNumberOfElements</a></div><div class="ttdeci">virtual unsigned int GetNumberOfElements()=0</div><div class="ttdoc">Count the number of elements of a table. (to be changed) </div></div>
+<div class="ttc" id="classsyd_1_1TableBase_html_a1e263b19d4f8f98fef0b6fab2dd79398"><div class="ttname"><a href="classsyd_1_1TableBase.html#a1e263b19d4f8f98fef0b6fab2dd79398">syd::TableBase::Erase</a></div><div class="ttdeci">virtual void Erase(TableElementBase *elem)=0</div><div class="ttdoc">Prepare to erase a record (without commit) </div></div>
 <div class="ttc" id="classsyd_1_1TableBase_html"><div class="ttname"><a href="classsyd_1_1TableBase.html">syd::TableBase</a></div><div class="ttdoc">Base class for the functions that are common to all tables. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableBase_8h_source.html#l00040">sydTableBase.h:40</a></div></div>
+<div class="ttc" id="classsyd_1_1TableElementBase_html"><div class="ttname"><a href="classsyd_1_1TableElementBase.html">syd::TableElementBase</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableElementBase_8h_source.html#l00031">sydTableElementBase.h:31</a></div></div>
+<div class="ttc" id="classsyd_1_1TableBase_html_a79be91f92e3742f0856e8d4998137e93"><div class="ttname"><a href="classsyd_1_1TableBase.html#a79be91f92e3742f0856e8d4998137e93">syd::TableBase::AddToDeleteList</a></div><div class="ttdeci">virtual void AddToDeleteList(syd::IdType id)=0</div><div class="ttdoc">Add the record with the given id to the list of records to be deleted. </div></div>
+<div class="ttc" id="classsyd_1_1TableBase_html_a83f95f9ca0b522d2f3a1c85b87c06d22"><div class="ttname"><a href="classsyd_1_1TableBase.html#a83f95f9ca0b522d2f3a1c85b87c06d22">syd::TableBase::TableBase</a></div><div class="ttdeci">TableBase(odb::sqlite::database *d)</div><div class="ttdoc">Constructor, must give the linked database. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableBase_8h_source.html#l00044">sydTableBase.h:44</a></div></div>
+<div class="ttc" id="classsyd_1_1TableBase_html_a6bce9eec0912d02d1911869dc93c0d0c"><div class="ttname"><a href="classsyd_1_1TableBase.html#a6bce9eec0912d02d1911869dc93c0d0c">syd::TableBase::DumpTable</a></div><div class="ttdeci">virtual void DumpTable(std::ostream &amp;os)=0</div><div class="ttdoc">Simple dump records from the table. </div></div>
+<div class="ttc" id="classsyd_1_1TableBase_html_a30181635027ac40160b5c0bb61affbfa"><div class="ttname"><a href="classsyd_1_1TableBase.html#a30181635027ac40160b5c0bb61affbfa">syd::TableBase::InsertFromArg</a></div><div class="ttdeci">virtual TableElementBase * InsertFromArg(std::vector&lt; std::string &gt; &amp;arg)=0</div><div class="ttdoc">Insert simple record from list of strings (pure virtual) </div></div>
 <div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00049">sydCommon.h:49</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

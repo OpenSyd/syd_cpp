@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -89,6 +89,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classsyd_1_1TimepointBuilder-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -103,10 +104,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:abe73ff4ec2dbd20eab7f27fd6e914147"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abe73ff4ec2dbd20eab7f27fd6e914147"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>GuessState</b> { <b>GuessFound</b>, 
-<b>GuessNotFound</b>, 
-<b>GuessError</b>
+<tr class="memitem:abe73ff4ec2dbd20eab7f27fd6e914147"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abe73ff4ec2dbd20eab7f27fd6e914147"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TimepointBuilder.html#abe73ff4ec2dbd20eab7f27fd6e914147">GuessState</a> { <br />
+&#160;&#160;<b>GuessTimepointFound</b>, 
+<b>GuessNotThisTimepoint</b>, 
+<b>GuessSeveralTimepointsFound</b>, 
+<b>GuessDicomSerieAlreadyExist</b>, 
+<br />
+&#160;&#160;<b>GuessCreateNewTimepoint</b>
+<br />
  }</td></tr>
+<tr class="memdesc:abe73ff4ec2dbd20eab7f27fd6e914147"><td class="mdescLeft">&#160;</td><td class="mdescRight">States when guessing if a dicom belong to a timepoint. <br /></td></tr>
 <tr class="separator:abe73ff4ec2dbd20eab7f27fd6e914147"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -119,30 +126,44 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TimepointBuilder.html#a7636ae4fa2a58b48fae1cb206bec40ed">~TimepointBuilder</a> ()</td></tr>
 <tr class="memdesc:a7636ae4fa2a58b48fae1cb206bec40ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor (empty) <br /></td></tr>
 <tr class="separator:a7636ae4fa2a58b48fae1cb206bec40ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aafe6992d0b26cdd16ec013198c536632"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aafe6992d0b26cdd16ec013198c536632"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetDatabase</b> (<a class="el" href="classsyd_1_1StandardDatabase.html">syd::StandardDatabase</a> *db)</td></tr>
-<tr class="separator:aafe6992d0b26cdd16ec013198c536632"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adcbd3a3815654f758313379ac57ddda1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adcbd3a3815654f758313379ac57ddda1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>SetTag</b> (<a class="el" href="classsyd_1_1Tag.html">syd::Tag</a> &amp;tag)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TimepointBuilder.html#adcbd3a3815654f758313379ac57ddda1">SetTag</a> (<a class="el" href="classsyd_1_1Tag.html">syd::Tag</a> &amp;tag)</td></tr>
+<tr class="memdesc:adcbd3a3815654f758313379ac57ddda1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the current tag associated with the timepoint. <br /></td></tr>
 <tr class="separator:adcbd3a3815654f758313379ac57ddda1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0ee4dc0dd4bbde1404d76d3078dc93b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TimepointBuilder.html#aa0ee4dc0dd4bbde1404d76d3078dc93b">SetIntraTimepointMaxHourDiff</a> (double a)</td></tr>
+<tr class="memdesc:aa0ee4dc0dd4bbde1404d76d3078dc93b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max time difference between dicom in a timepoint.  <a href="#aa0ee4dc0dd4bbde1404d76d3078dc93b">More...</a><br /></td></tr>
+<tr class="separator:aa0ee4dc0dd4bbde1404d76d3078dc93b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a78edc063d6d7a92ad9441a8de16e8fdf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78edc063d6d7a92ad9441a8de16e8fdf"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>InsertDicomSerie</b> (<a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TimepointBuilder.html#a78edc063d6d7a92ad9441a8de16e8fdf">InsertDicomSerie</a> (<a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom)</td></tr>
+<tr class="memdesc:a78edc063d6d7a92ad9441a8de16e8fdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to insert this dicom in a timepoint (heuristic) <br /></td></tr>
 <tr class="separator:a78edc063d6d7a92ad9441a8de16e8fdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aadeb210005e74086fdc316d48e676b32"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aadeb210005e74086fdc316d48e676b32"></a>
-GuessState&#160;</td><td class="memItemRight" valign="bottom"><b>GuessTimepointForThisDicomSerie</b> (<a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom, <a class="el" href="classsyd_1_1Timepoint.html">syd::Timepoint</a> &amp;tp)</td></tr>
-<tr class="separator:aadeb210005e74086fdc316d48e676b32"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5772b14334b1a28dab40e64814727699"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5772b14334b1a28dab40e64814727699"></a>
+<a class="el" href="classsyd_1_1TimepointBuilder.html#abe73ff4ec2dbd20eab7f27fd6e914147">GuessState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TimepointBuilder.html#a5772b14334b1a28dab40e64814727699">GuessTimepointForThisDicomSerie</a> (<a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom, std::vector&lt; <a class="el" href="classsyd_1_1Timepoint.html">syd::Timepoint</a> &gt; &amp;tp)</td></tr>
+<tr class="memdesc:a5772b14334b1a28dab40e64814727699"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to guess if the the dicomserie belong to an existing timepoint. <br /></td></tr>
+<tr class="separator:a5772b14334b1a28dab40e64814727699"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab36aa70f0fe170e889975205180f4db1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab36aa70f0fe170e889975205180f4db1"></a>
-GuessState&#160;</td><td class="memItemRight" valign="bottom"><b>GuessIfDicomCanBeInThisTimepoint</b> (<a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom, <a class="el" href="classsyd_1_1Timepoint.html">syd::Timepoint</a> &amp;timepoint)</td></tr>
+<a class="el" href="classsyd_1_1TimepointBuilder.html#abe73ff4ec2dbd20eab7f27fd6e914147">GuessState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TimepointBuilder.html#ab36aa70f0fe170e889975205180f4db1">GuessIfDicomCanBeInThisTimepoint</a> (<a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom, <a class="el" href="classsyd_1_1Timepoint.html">syd::Timepoint</a> &amp;timepoint)</td></tr>
+<tr class="memdesc:ab36aa70f0fe170e889975205180f4db1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Try to guess if the dicomserie could be in this timepoint. <br /></td></tr>
 <tr class="separator:ab36aa70f0fe170e889975205180f4db1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b48ce792f01b4e91c30e48dc0a9de08"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0b48ce792f01b4e91c30e48dc0a9de08"></a>
-<a class="el" href="classsyd_1_1Timepoint.html">syd::Timepoint</a>&#160;</td><td class="memItemRight" valign="bottom"><b>CreateTimepoint</b> (<a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom)</td></tr>
+<a class="el" href="classsyd_1_1Timepoint.html">syd::Timepoint</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TimepointBuilder.html#a0b48ce792f01b4e91c30e48dc0a9de08">CreateTimepoint</a> (<a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom)</td></tr>
+<tr class="memdesc:a0b48ce792f01b4e91c30e48dc0a9de08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a new timepoint from the current dicomserie. <br /></td></tr>
 <tr class="separator:a0b48ce792f01b4e91c30e48dc0a9de08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a352ad37c953ac5cecf8efc1c3aea46ed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a352ad37c953ac5cecf8efc1c3aea46ed"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>AddDicom</b> (<a class="el" href="classsyd_1_1Timepoint.html">syd::Timepoint</a> &amp;timepoint, <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TimepointBuilder.html#a352ad37c953ac5cecf8efc1c3aea46ed">AddDicom</a> (<a class="el" href="classsyd_1_1Timepoint.html">syd::Timepoint</a> &amp;timepoint, <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom)</td></tr>
+<tr class="memdesc:a352ad37c953ac5cecf8efc1c3aea46ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the dicom to the given timepoint. <br /></td></tr>
 <tr class="separator:a352ad37c953ac5cecf8efc1c3aea46ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ae7c83a2a19fca7ffd1e84382a47b54"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ae7c83a2a19fca7ffd1e84382a47b54"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Update</b> ()</td></tr>
-<tr class="separator:a0ae7c83a2a19fca7ffd1e84382a47b54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
+Protected Member Functions</h2></td></tr>
+<tr class="memitem:a5a0b4815713a130a7a937333fd1ac35f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5a0b4815713a130a7a937333fd1ac35f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TimepointBuilder.html#a5a0b4815713a130a7a937333fd1ac35f">TimepointBuilder</a> ()</td></tr>
+<tr class="memdesc:a5a0b4815713a130a7a937333fd1ac35f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protected constructor. No need to use directly. <br /></td></tr>
+<tr class="separator:a5a0b4815713a130a7a937333fd1ac35f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafe6992d0b26cdd16ec013198c536632"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aafe6992d0b26cdd16ec013198c536632"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TimepointBuilder.html#aafe6992d0b26cdd16ec013198c536632">SetDatabase</a> (<a class="el" href="classsyd_1_1StandardDatabase.html">syd::StandardDatabase</a> *db)</td></tr>
+<tr class="memdesc:aafe6992d0b26cdd16ec013198c536632"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the pointer to the database. <br /></td></tr>
+<tr class="separator:aafe6992d0b26cdd16ec013198c536632"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -152,22 +173,47 @@ Protected Attributes</h2></td></tr>
 <tr class="memitem:a269e285510d583c8becf39834a389e3e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a269e285510d583c8becf39834a389e3e"></a>
 <a class="el" href="classsyd_1_1Tag.html">syd::Tag</a>&#160;</td><td class="memItemRight" valign="bottom"><b>tag_</b></td></tr>
 <tr class="separator:a269e285510d583c8becf39834a389e3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbaecfe419aa4912bf4d7a6ee3e343ec"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afbaecfe419aa4912bf4d7a6ee3e343ec"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>intra_timepoint_min_hour_diff_</b></td></tr>
-<tr class="separator:afbaecfe419aa4912bf4d7a6ee3e343ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6fe2eca384e6d7edc180d72fe6ecfd79"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6fe2eca384e6d7edc180d72fe6ecfd79"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><b>intra_timepoint_max_hour_diff_</b></td></tr>
 <tr class="separator:a6fe2eca384e6d7edc180d72fe6ecfd79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a751c7f91e564be51bb0fdc676fffa9af"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a751c7f91e564be51bb0fdc676fffa9af"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>inter_timepoint_min_hour_diff_</b></td></tr>
-<tr class="separator:a751c7f91e564be51bb0fdc676fffa9af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class is used to create a <a class="el" href="classsyd_1_1Timepoint.html" title="Store information about a timepoint. ">Timepoint</a>. </p>
 <p>A <a class="el" href="classsyd_1_1Timepoint.html" title="Store information about a timepoint. ">Timepoint</a> is defined with an injection, a patient, some tag, some associated dicom series and images. </p>
 
 <p>Definition at line <a class="el" href="sydTimepointBuilder_8h_source.html#l00031">31</a> of file <a class="el" href="sydTimepointBuilder_8h_source.html">sydTimepointBuilder.h</a>.</p>
-</div><hr/>The documentation for this class was generated from the following files:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="aa0ee4dc0dd4bbde1404d76d3078dc93b"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void syd::TimepointBuilder::SetIntraTimepointMaxHourDiff </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>a</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Max time difference between dicom in a timepoint. </p>
+<p>Used to guess if a dicom belong to an already existing timepoint, or if we should create a new one. </p>
+
+<p>Definition at line <a class="el" href="sydTimepointBuilder_8h_source.html#l00053">53</a> of file <a class="el" href="sydTimepointBuilder_8h_source.html">sydTimepointBuilder.h</a>.</p>
+<div class="fragment"><div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;{ intra_timepoint_max_hour_diff_ = a; }</div>
+</div><!-- fragment -->
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/dsarrut/src/syd/syd/src/std_db/<a class="el" href="sydTimepointBuilder_8h_source.html">sydTimepointBuilder.h</a></li>
 <li>/home/dsarrut/src/syd/syd/src/std_db/<a class="el" href="sydTimepointBuilder_8cxx_source.html">sydTimepointBuilder.cxx</a></li>
 </ul>

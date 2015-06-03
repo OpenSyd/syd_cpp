@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -107,88 +107,106 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">// syd</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;sydPatient.h&quot;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;syd::Patient::Patient():TableElement()</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;  <span class="comment">// default value</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  <span class="keywordtype">id</span> = 0; <span class="comment">// will be changed when persist</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  name = <span class="stringliteral">&quot;anonymous&quot;</span>; <span class="comment">// must be unique</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  study_id = 0; <span class="comment">// must be unique</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  weight_in_kg = 0;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  dicom_patientid = <span class="stringliteral">&quot;unknown_dicom_id&quot;</span>;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">syd::Patient::Set</a>(std::string pname, IdType studyId, <span class="keywordtype">double</span> weight)</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="comment">// default value</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  name = pname;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  study_id = studyId;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  weight_in_kg = weight;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;}</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">   47</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">syd::Patient::Set</a>(std::vector&lt;std::string&gt; &amp; arg)</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;{</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordflow">if</span> (arg.size() &lt; 2) {</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;To insert patient, please set &lt;name&gt; &lt;study_id&gt; [&lt;weight_in_kg&gt; &lt;dicom_patientid&gt;]&quot;</span>;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  }</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  name = arg[0];</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  study_id = atoi(arg[1].c_str());</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keywordflow">if</span> (arg.size() &gt; 2) weight_in_kg = atof(arg[2].c_str());</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keywordflow">if</span> (arg.size() &gt; 3) dicom_patientid = arg[3];</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00061"></a><span class="lineno"><a class="line" href="classsyd_1_1Patient.html#a97e0d70f2296e0d8919cba4476c1e5d7">   61</a></span>&#160;std::string <a class="code" href="classsyd_1_1Patient.html#a97e0d70f2296e0d8919cba4476c1e5d7">syd::Patient::ToString</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  std::stringstream ss ;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  ss &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;     &lt;&lt; study_id &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;     &lt;&lt; name &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;     &lt;&lt; weight_in_kg &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;     &lt;&lt; dicom_patientid;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keywordflow">return</span> ss.str();</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keywordtype">bool</span> syd::Patient::operator==(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Patient.html">Patient</a> &amp; p)</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;{</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keywordflow">return</span> (<span class="keywordtype">id</span> == p.<a class="code" href="classsyd_1_1Patient.html#a24c91d398e03e6dfbe27b622bdda2cb0">id</a> and</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;          name == p.<a class="code" href="classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987">name</a> and</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          study_id == p.<a class="code" href="classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6">study_id</a> and</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;          weight_in_kg == p.<a class="code" href="classsyd_1_1Patient.html#a2158bdcfc2510f8b507541b304f96f51">weight_in_kg</a>);</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;}</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keywordtype">bool</span> syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdicom_name)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keywordflow">if</span> (dicom_patientid != vdicom_patientid) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="comment">// Try to guess initials. Consider the first letter and the first after the symbol &#39;^&#39;</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="keywordtype">int</span> n = vdicom_name.find(<span class="stringliteral">&quot;^&quot;</span>);</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  <span class="keywordflow">if</span> (n != std::string::npos) {</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    std::string initials = vdicom_name[0] + vdicom_name.substr(n+1,1);</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    std::transform(initials.begin(), initials.end(), initials.begin(), ::tolower);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    <span class="comment">// Check only 2 first letters</span></div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    <span class="keywordflow">if</span> (initials[0] == name[0] and initials[1] == name[1]) <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// do not consider ok with a patient name not having a &#39;^&#39; inside</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;}</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;sydDatabase.h&quot;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;sydTable.h&quot;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydInjection.h&quot;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;sydInjection-odb.hxx&quot;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;syd::Patient::Patient():TableElementBase()</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="comment">// default value</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keywordtype">id</span> = 0; <span class="comment">// will be changed when persist</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  name = <span class="stringliteral">&quot;anonymous&quot;</span>; <span class="comment">// must be unique</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  study_id = 0; <span class="comment">// must be unique</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  weight_in_kg = 0;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;  dicom_patientid = <span class="stringliteral">&quot;unknown_dicom_id&quot;</span>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;}</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">syd::Patient::Set</a>(std::string pname, IdType studyId, <span class="keywordtype">double</span> weight)</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;{</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="comment">// default value</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  name = pname;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  study_id = studyId;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  weight_in_kg = weight;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;}</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">   51</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">syd::Patient::Set</a>(std::vector&lt;std::string&gt; &amp; arg)</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;{</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keywordflow">if</span> (arg.size() &lt; 2) {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;To insert patient, please set &lt;name&gt; &lt;study_id&gt; [&lt;weight_in_kg&gt; &lt;dicom_patientid&gt;]&quot;</span>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  }</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  name = arg[0];</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  study_id = atoi(arg[1].c_str());</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  <span class="keywordflow">if</span> (arg.size() &gt; 2) weight_in_kg = atof(arg[2].c_str());</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keywordflow">if</span> (arg.size() &gt; 3) dicom_patientid = arg[3];</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;}</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="classsyd_1_1Patient.html#a97e0d70f2296e0d8919cba4476c1e5d7">   65</a></span>&#160;std::string <a class="code" href="classsyd_1_1Patient.html#a97e0d70f2296e0d8919cba4476c1e5d7">syd::Patient::ToString</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  std::stringstream ss ;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  ss &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;     &lt;&lt; study_id &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;     &lt;&lt; name &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;     &lt;&lt; weight_in_kg &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;     &lt;&lt; dicom_patientid;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="keywordflow">return</span> ss.str();</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;}</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="keywordtype">bool</span> syd::Patient::operator==(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Patient.html">Patient</a> &amp; p)</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;{</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <span class="keywordflow">return</span> (<span class="keywordtype">id</span> == p.<a class="code" href="classsyd_1_1Patient.html#a24c91d398e03e6dfbe27b622bdda2cb0">id</a> and</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          name == p.<a class="code" href="classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987">name</a> and</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;          study_id == p.<a class="code" href="classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6">study_id</a> and</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;          weight_in_kg == p.<a class="code" href="classsyd_1_1Patient.html#a2158bdcfc2510f8b507541b304f96f51">weight_in_kg</a>);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;}</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="keywordtype">bool</span> syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdicom_name)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  <span class="keywordflow">if</span> (dicom_patientid != vdicom_patientid) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="comment">// Try to guess initials. Consider the first letter and the first after the symbol &#39;^&#39;</span></div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordtype">int</span> n = vdicom_name.find(<span class="stringliteral">&quot;^&quot;</span>);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keywordflow">if</span> (n != std::string::npos) {</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    std::string initials = vdicom_name[0] + vdicom_name.substr(n+1,1);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    std::transform(initials.begin(), initials.end(), initials.begin(), ::tolower);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="comment">// Check only 2 first letters</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keywordflow">if</span> (initials[0] == name[0] and initials[1] == name[1]) <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  }</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  <span class="keywordflow">return</span> <span class="keyword">false</span>; <span class="comment">// do not consider ok with a patient name not having a &#39;^&#39; inside</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;}</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="keywordtype">void</span> syd::Patient::OnDelete(<a class="code" href="classsyd_1_1Database.html">syd::Database</a> * db)</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;{</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  std::vector&lt;syd::Injection&gt; injections;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  db-&gt;<a class="code" href="classsyd_1_1Database.html#a88655c201112bc243bb5901d1c7f5753">Query</a>&lt;<a class="code" href="classsyd_1_1Injection.html">syd::Injection</a>&gt;(odb::query&lt;syd::Injection&gt;::patient == id, injections);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i:injections) db-&gt;<a class="code" href="classsyd_1_1Database.html#ad960fa82b5d3536bbf6f525ad38431fd">AddToDeleteList</a>(i);</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;}</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
 <div class="ttc" id="classsyd_1_1Patient_html_a2158bdcfc2510f8b507541b304f96f51"><div class="ttname"><a href="classsyd_1_1Patient.html#a2158bdcfc2510f8b507541b304f96f51">syd::Patient::weight_in_kg</a></div><div class="ttdeci">double weight_in_kg</div><div class="ttdoc">Patient weight_in_kg. </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00048">sydPatient.h:48</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html_a97e0d70f2296e0d8919cba4476c1e5d7"><div class="ttname"><a href="classsyd_1_1Patient.html#a97e0d70f2296e0d8919cba4476c1e5d7">syd::Patient::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8cxx_source.html#l00061">sydPatient.cxx:61</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html_aedc75248ef2491a8fb2379ec805a03db"><div class="ttname"><a href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">syd::Patient::Set</a></div><div class="ttdeci">virtual void Set(std::vector&lt; std::string &gt; &amp;arg)</div><div class="ttdoc">Set basics values from a list of string. </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8cxx_source.html#l00047">sydPatient.cxx:47</a></div></div>
+<div class="ttc" id="classsyd_1_1Patient_html_a97e0d70f2296e0d8919cba4476c1e5d7"><div class="ttname"><a href="classsyd_1_1Patient.html#a97e0d70f2296e0d8919cba4476c1e5d7">syd::Patient::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8cxx_source.html#l00065">sydPatient.cxx:65</a></div></div>
+<div class="ttc" id="classsyd_1_1Database_html"><div class="ttname"><a href="classsyd_1_1Database.html">syd::Database</a></div><div class="ttdoc">This is the base class of all databases. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00040">sydDatabase.h:40</a></div></div>
+<div class="ttc" id="classsyd_1_1Injection_html"><div class="ttname"><a href="classsyd_1_1Injection.html">syd::Injection</a></div><div class="ttdoc">Store information about a radionuclide injection (date, etc). </div><div class="ttdef"><b>Definition:</b> <a href="sydInjection_8h_source.html#l00031">sydInjection.h:31</a></div></div>
+<div class="ttc" id="classsyd_1_1Database_html_a88655c201112bc243bb5901d1c7f5753"><div class="ttname"><a href="classsyd_1_1Database.html#a88655c201112bc243bb5901d1c7f5753">syd::Database::Query</a></div><div class="ttdeci">void Query(const odb::query&lt; TableElement &gt; &amp;q, std::vector&lt; TableElement &gt; &amp;list)</div><div class="ttdoc">Perform a query on the database and return the found elements in the list. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00142">sydDatabase.h:142</a></div></div>
+<div class="ttc" id="classsyd_1_1Database_html_ad960fa82b5d3536bbf6f525ad38431fd"><div class="ttname"><a href="classsyd_1_1Database.html#ad960fa82b5d3536bbf6f525ad38431fd">syd::Database::AddToDeleteList</a></div><div class="ttdeci">void AddToDeleteList(TableElement &amp;elem)</div><div class="ttdoc">Add an element to the list of element to be delete. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00076">sydDatabase.h:76</a></div></div>
+<div class="ttc" id="classsyd_1_1Patient_html_aedc75248ef2491a8fb2379ec805a03db"><div class="ttname"><a href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">syd::Patient::Set</a></div><div class="ttdeci">virtual void Set(std::vector&lt; std::string &gt; &amp;arg)</div><div class="ttdoc">Set basics values from a list of string. </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8cxx_source.html#l00051">sydPatient.cxx:51</a></div></div>
 <div class="ttc" id="classsyd_1_1Patient_html_a86d13a77573c136984d2ad7f137d8987"><div class="ttname"><a href="classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987">syd::Patient::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">Patient name (unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00041">sydPatient.h:41</a></div></div>
 <div class="ttc" id="classsyd_1_1Patient_html_a0daacb12fc62184d1e486019182a98a6"><div class="ttname"><a href="classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6">syd::Patient::study_id</a></div><div class="ttdeci">IdType study_id</div><div class="ttdoc">Patient number in the study (unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00045">sydPatient.h:45</a></div></div>
 <div class="ttc" id="classsyd_1_1Patient_html"><div class="ttname"><a href="classsyd_1_1Patient.html">syd::Patient</a></div><div class="ttdoc">Store information about a patient (id, study_id, name etc). </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00032">sydPatient.h:32</a></div></div>

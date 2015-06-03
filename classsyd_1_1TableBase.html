@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -112,17 +112,37 @@ Inheritance diagram for syd::TableBase:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a83f95f9ca0b522d2f3a1c85b87c06d22"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a83f95f9ca0b522d2f3a1c85b87c06d22"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>TableBase</b> (odb::sqlite::database *d)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableBase.html#a83f95f9ca0b522d2f3a1c85b87c06d22">TableBase</a> (odb::sqlite::database *d)</td></tr>
+<tr class="memdesc:a83f95f9ca0b522d2f3a1c85b87c06d22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor, must give the linked database. <br /></td></tr>
 <tr class="separator:a83f95f9ca0b522d2f3a1c85b87c06d22"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab4a2b73e010a162adffd49c5ae3a072a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab4a2b73e010a162adffd49c5ae3a072a"></a>
-virtual <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>InsertFromArg</b> (std::vector&lt; std::string &gt; &amp;arg)=0</td></tr>
-<tr class="separator:ab4a2b73e010a162adffd49c5ae3a072a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30181635027ac40160b5c0bb61affbfa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a30181635027ac40160b5c0bb61affbfa"></a>
+virtual <a class="el" href="classsyd_1_1TableElementBase.html">TableElementBase</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableBase.html#a30181635027ac40160b5c0bb61affbfa">InsertFromArg</a> (std::vector&lt; std::string &gt; &amp;arg)=0</td></tr>
+<tr class="memdesc:a30181635027ac40160b5c0bb61affbfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert simple record from list of strings (pure virtual) <br /></td></tr>
+<tr class="separator:a30181635027ac40160b5c0bb61affbfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6bce9eec0912d02d1911869dc93c0d0c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6bce9eec0912d02d1911869dc93c0d0c"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>DumpTable</b> (std::ostream &amp;os)=0</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableBase.html#a6bce9eec0912d02d1911869dc93c0d0c">DumpTable</a> (std::ostream &amp;os)=0</td></tr>
+<tr class="memdesc:a6bce9eec0912d02d1911869dc93c0d0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simple dump records from the table. <br /></td></tr>
 <tr class="separator:a6bce9eec0912d02d1911869dc93c0d0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a13b3574ca33638f68f8922ac02a004e8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a13b3574ca33638f68f8922ac02a004e8"></a>
-virtual unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>GetNumberOfElements</b> ()=0</td></tr>
+virtual unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableBase.html#a13b3574ca33638f68f8922ac02a004e8">GetNumberOfElements</a> ()=0</td></tr>
+<tr class="memdesc:a13b3574ca33638f68f8922ac02a004e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count the number of elements of a table. (to be changed) <br /></td></tr>
 <tr class="separator:a13b3574ca33638f68f8922ac02a004e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79be91f92e3742f0856e8d4998137e93"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79be91f92e3742f0856e8d4998137e93"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableBase.html#a79be91f92e3742f0856e8d4998137e93">AddToDeleteList</a> (syd::IdType id)=0</td></tr>
+<tr class="memdesc:a79be91f92e3742f0856e8d4998137e93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the record with the given id to the list of records to be deleted. <br /></td></tr>
+<tr class="separator:a79be91f92e3742f0856e8d4998137e93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f6be226cb0d952ec077de1106d673cd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f6be226cb0d952ec077de1106d673cd"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableBase.html#a6f6be226cb0d952ec077de1106d673cd">AddAllToDeleteList</a> ()=0</td></tr>
+<tr class="memdesc:a6f6be226cb0d952ec077de1106d673cd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add all records to the list of records to be deleted. <br /></td></tr>
+<tr class="separator:a6f6be226cb0d952ec077de1106d673cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ef77a67343ecca67a9cc683cbf5c358"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ef77a67343ecca67a9cc683cbf5c358"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableBase.html#a6ef77a67343ecca67a9cc683cbf5c358">AddToDeleteList</a> (std::vector&lt; syd::IdType &gt; &amp;ids)=0</td></tr>
+<tr class="memdesc:a6ef77a67343ecca67a9cc683cbf5c358"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add the records with the given ids to the list of records to be deleted. <br /></td></tr>
+<tr class="separator:a6ef77a67343ecca67a9cc683cbf5c358"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1e263b19d4f8f98fef0b6fab2dd79398"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e263b19d4f8f98fef0b6fab2dd79398"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableBase.html#a1e263b19d4f8f98fef0b6fab2dd79398">Erase</a> (<a class="el" href="classsyd_1_1TableElementBase.html">TableElementBase</a> *elem)=0</td></tr>
+<tr class="memdesc:a1e263b19d4f8f98fef0b6fab2dd79398"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare to erase a record (without commit) <br /></td></tr>
+<tr class="separator:a1e263b19d4f8f98fef0b6fab2dd79398"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>

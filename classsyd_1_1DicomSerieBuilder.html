@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -123,18 +123,22 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a196085ea3b89d5e60f74b89d4ce45d9c">SetForcePatientFlag</a> (bool b)</td></tr>
 <tr class="memdesc:a196085ea3b89d5e60f74b89d4ce45d9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Don't stop even if the patient in the dicom seems different from the patient in the injection. <br /></td></tr>
 <tr class="separator:a196085ea3b89d5e60f74b89d4ce45d9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ce762c5153064e5e0bcb7bdf3267588"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ce762c5153064e5e0bcb7bdf3267588"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a8ce762c5153064e5e0bcb7bdf3267588">SetForceUpdateFlag</a> (bool b)</td></tr>
+<tr class="memdesc:a8ce762c5153064e5e0bcb7bdf3267588"><td class="mdescLeft">&#160;</td><td class="mdescRight">If the file already exist in the db, we delete it and insert a new one. <br /></td></tr>
+<tr class="separator:a8ce762c5153064e5e0bcb7bdf3267588"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c28e9a23ae8338fb9b7d1e8b951714a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c28e9a23ae8338fb9b7d1e8b951714a"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a6c28e9a23ae8338fb9b7d1e8b951714a">SearchForFilesInFolder</a> (std::string folder, OFList&lt; OFString &gt; &amp;inputFiles)</td></tr>
 <tr class="memdesc:a6c28e9a23ae8338fb9b7d1e8b951714a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a list of files to be considered as dicom. <br /></td></tr>
 <tr class="separator:a6c28e9a23ae8338fb9b7d1e8b951714a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cf4632987b4a1c16ed3012c816a9cdf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8cf4632987b4a1c16ed3012c816a9cdf"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a8cf4632987b4a1c16ed3012c816a9cdf">InsertDicom</a> (std::string filename)</td></tr>
-<tr class="memdesc:a8cf4632987b4a1c16ed3012c816a9cdf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a DicomSerie/DicomFile (still not inserted into the db, use UpdateDicomSerie for that) <br /></td></tr>
-<tr class="separator:a8cf4632987b4a1c16ed3012c816a9cdf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8f052f20cc9c9213656eb2bd3e8151d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa8f052f20cc9c9213656eb2bd3e8151d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#aa8f052f20cc9c9213656eb2bd3e8151d">UpdateSeries</a> ()</td></tr>
-<tr class="memdesc:aa8f052f20cc9c9213656eb2bd3e8151d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert the created DicomSerie/DicomFile into the db. <br /></td></tr>
-<tr class="separator:aa8f052f20cc9c9213656eb2bd3e8151d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a317bcc5f43fc7d7355c7b95b4a089e79"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a317bcc5f43fc7d7355c7b95b4a089e79"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a317bcc5f43fc7d7355c7b95b4a089e79">CreateDicomSerieFromFile</a> (std::string filename)</td></tr>
+<tr class="memdesc:a317bcc5f43fc7d7355c7b95b4a089e79"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a DicomSerie/DicomFile (still not inserted into the db, use UpdateDicomSerie for that) <br /></td></tr>
+<tr class="separator:a317bcc5f43fc7d7355c7b95b4a089e79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26fb59fedcd861f317bb67619d07236f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26fb59fedcd861f317bb67619d07236f"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerieBuilder.html#a26fb59fedcd861f317bb67619d07236f">InsertDicomSeries</a> ()</td></tr>
+<tr class="memdesc:a26fb59fedcd861f317bb67619d07236f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert the created DicomSerie/DicomFile into the db. <br /></td></tr>
+<tr class="separator:a26fb59fedcd861f317bb67619d07236f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -178,6 +182,9 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>forcePatientFlag_</b>
 <tr class="memitem:a579020a00a378424c04c338fd0781466"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a579020a00a378424c04c338fd0781466"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>useInjectionFlag_</b></td></tr>
 <tr class="separator:a579020a00a378424c04c338fd0781466"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33408239b583beef9a4141ff041f8ced"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a33408239b583beef9a4141ff041f8ced"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>forceUpdateFlag_</b></td></tr>
+<tr class="separator:a33408239b583beef9a4141ff041f8ced"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4077d870f99fdd52e402951d54d3920"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad4077d870f99fdd52e402951d54d3920"></a>
 std::vector&lt; <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>series_to_insert</b></td></tr>
 <tr class="separator:ad4077d870f99fdd52e402951d54d3920"><td class="memSeparator" colspan="2">&#160;</td></tr>

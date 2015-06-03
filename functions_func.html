@@ -72,6 +72,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li class="current"><a href="functions_func.html"><span>Functions</span></a></li>
       <li><a href="functions_vars.html"><span>Variables</span></a></li>
       <li><a href="functions_type.html"><span>Typedefs</span></a></li>
+      <li><a href="functions_enum.html"><span>Enumerations</span></a></li>
       <li><a href="functions_rela.html"><span>Related&#160;Functions</span></a></li>
     </ul>
   </div>
@@ -81,8 +82,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
       <li><a href="#index_c"><span>c</span></a></li>
       <li><a href="#index_d"><span>d</span></a></li>
       <li><a href="#index_e"><span>e</span></a></li>
+      <li><a href="#index_f"><span>f</span></a></li>
       <li><a href="#index_g"><span>g</span></a></li>
       <li><a href="#index_i"><span>i</span></a></li>
+      <li><a href="#index_o"><span>o</span></a></li>
       <li><a href="#index_p"><span>p</span></a></li>
       <li><a href="#index_q"><span>q</span></a></li>
       <li><a href="#index_r"><span>r</span></a></li>
@@ -99,7 +102,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -112,13 +115,31 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 &#160;
 
 <h3><a class="anchor" id="index_a"></a>- a -</h3><ul>
+<li>AddAllToDeleteList()
+: <a class="el" href="singletonsyd_1_1Table.html#afea502dc0534956e5de063b2b2bed179">syd::Table&lt; TableElement &gt;</a>
+, <a class="el" href="classsyd_1_1TableBase.html#a6f6be226cb0d952ec077de1106d673cd">syd::TableBase</a>
+</li>
+<li>AddDicom()
+: <a class="el" href="classsyd_1_1TimepointBuilder.html#a352ad37c953ac5cecf8efc1c3aea46ed">syd::TimepointBuilder</a>
+</li>
+<li>AddFileToDelete()
+: <a class="el" href="classsyd_1_1StandardDatabase.html#ac8106f1ee3ea67c9ab2938ba64e74402">syd::StandardDatabase</a>
+</li>
 <li>AddTable()
 : <a class="el" href="classsyd_1_1Database.html#a68d9366cddb0614c95bef9322b3d8a0d">syd::Database</a>
+</li>
+<li>AddToDeleteList()
+: <a class="el" href="classsyd_1_1Database.html#ad960fa82b5d3536bbf6f525ad38431fd">syd::Database</a>
+, <a class="el" href="singletonsyd_1_1Table.html#ae4aeccf0c707ced6a100213124181818">syd::Table&lt; TableElement &gt;</a>
+, <a class="el" href="classsyd_1_1TableBase.html#a79be91f92e3742f0856e8d4998137e93">syd::TableBase</a>
 </li>
 </ul>
 
 
 <h3><a class="anchor" id="index_c"></a>- c -</h3><ul>
+<li>CopyDatabaseTo()
+: <a class="el" href="classsyd_1_1Database.html#aa2cabb55b481fbc01a1c163050ef2e0e">syd::Database</a>
+</li>
 <li>Count()
 : <a class="el" href="classsyd_1_1Database.html#a7b374de04f2d0ae8f7ac229666f39ac2">syd::Database</a>
 , <a class="el" href="singletonsyd_1_1Table.html#ae30d8070066d80a75a2a30d2f8476fc0">syd::Table&lt; TableElement &gt;</a>
@@ -133,9 +154,15 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>CreateDicomSerie()
 : <a class="el" href="classsyd_1_1DicomSerieBuilder.html#a5241df657fde48ecb6f094dd22538d61">syd::DicomSerieBuilder</a>
 </li>
+<li>CreateDicomSerieFromFile()
+: <a class="el" href="classsyd_1_1DicomSerieBuilder.html#a317bcc5f43fc7d7355c7b95b4a089e79">syd::DicomSerieBuilder</a>
+</li>
 <li>CreateTables()
 : <a class="el" href="classsyd_1_1Database.html#a8c35fd3171e7d33bbd5963e48a892309">syd::Database</a>
 , <a class="el" href="classsyd_1_1StandardDatabase.html#ae4ffa486bc3e326adb11af8c72f3d49f">syd::StandardDatabase</a>
+</li>
+<li>CreateTimepoint()
+: <a class="el" href="classsyd_1_1TimepointBuilder.html#a0b48ce792f01b4e91c30e48dc0a9de08">syd::TimepointBuilder</a>
 </li>
 </ul>
 
@@ -145,8 +172,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classsyd_1_1DatabaseManager.html#ae413dafcfccd2b1c6660f870abcd19a0">syd::DatabaseManager</a>
 </li>
 <li>Delete()
-: <a class="el" href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">syd::Database</a>
-, <a class="el" href="singletonsyd_1_1Table.html#a1d2caba02d7c22e3127e53ba23ad0371">syd::Table&lt; TableElement &gt;</a>
+: <a class="el" href="classsyd_1_1Database.html#ac3631460676cc92206d8d020e20a92b4">syd::Database</a>
+</li>
+<li>DeleteAll()
+: <a class="el" href="classsyd_1_1Database.html#acf596bd4b3d3fbaebb574e03ae193cca">syd::Database</a>
+</li>
+<li>DeleteCurrentList()
+: <a class="el" href="classsyd_1_1Database.html#ae959826c7c1da0f71f6cc0ffa97b5897">syd::Database</a>
+, <a class="el" href="classsyd_1_1StandardDatabase.html#a8a3df3669acf19e505c8d41e16ccb8db">syd::StandardDatabase</a>
 </li>
 <li>DicomSerieBuilder()
 : <a class="el" href="classsyd_1_1DicomSerieBuilder.html#a998a6d9cd0af011a9368826f9523701d">syd::DicomSerieBuilder</a>
@@ -154,12 +187,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>Dump()
 : <a class="el" href="classsyd_1_1Database.html#a02a175da42634e22a01a486b3612afb1">syd::Database</a>
 </li>
-<li>DumpDicom()
-: <a class="el" href="classsyd_1_1StandardDatabase.html#ad0c71fe46a47c22c7e02075fc7622954">syd::StandardDatabase</a>
-</li>
 <li>DumpTable()
 : <a class="el" href="classsyd_1_1Database.html#a17a5646d64a28045ed507b94d9f52b90">syd::Database</a>
 , <a class="el" href="singletonsyd_1_1Table.html#a179ebf56384410f5c93c6f9873d3a5f3">syd::Table&lt; TableElement &gt;</a>
+, <a class="el" href="classsyd_1_1TableBase.html#a6bce9eec0912d02d1911869dc93c0d0c">syd::TableBase</a>
 </li>
 <li>DumpTimepoint()
 : <a class="el" href="classsyd_1_1StandardDatabase.html#adab85886b6543bdabad0745925c16d33">syd::StandardDatabase</a>
@@ -168,8 +199,25 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 
 <h3><a class="anchor" id="index_e"></a>- e -</h3><ul>
+<li>Erase()
+: <a class="el" href="singletonsyd_1_1Table.html#af755f9eae76b6e9109c5a5d6c4801745">syd::Table&lt; TableElement &gt;</a>
+, <a class="el" href="classsyd_1_1TableBase.html#a1e263b19d4f8f98fef0b6fab2dd79398">syd::TableBase</a>
+</li>
 <li>Exception()
 : <a class="el" href="classsyd_1_1Exception.html#a4549fd1ecacac41c13064f32aee113fc">syd::Exception</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_f"></a>- f -</h3><ul>
+<li>FindDicom()
+: <a class="el" href="classsyd_1_1StandardDatabase.html#ac1641ebd102e066ef4464dcb4c71546c">syd::StandardDatabase</a>
+</li>
+<li>FindInjectionByNameOrId()
+: <a class="el" href="classsyd_1_1StandardDatabase.html#aa60e70ed6b091a73674006549cc9faee">syd::StandardDatabase</a>
+</li>
+<li>FindPatientByNameOrStudyId()
+: <a class="el" href="classsyd_1_1StandardDatabase.html#a6411c81bc94c71fed34b4175a91de6b2">syd::StandardDatabase</a>
 </li>
 </ul>
 
@@ -181,11 +229,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>GetAbsoluteFolder()
 : <a class="el" href="classsyd_1_1StandardDatabase.html#a375ab875d08fc5bac7c5106464c374b7">syd::StandardDatabase</a>
 </li>
+<li>GetAbsolutePath()
+: <a class="el" href="classsyd_1_1StandardDatabase.html#a8294dabe5dac1a10c78855f953fabeb0">syd::StandardDatabase</a>
+</li>
 <li>GetDatabaseSchema()
 : <a class="el" href="classsyd_1_1Database.html#ae0fc42ac9795362e56b9dcb306670411">syd::Database</a>
 </li>
 <li>GetDatabaseSchemas()
 : <a class="el" href="classsyd_1_1DatabaseManager.html#a402555b6cdc2639dbff8cd1f69bc13c4">syd::DatabaseManager</a>
+</li>
+<li>GetDBFolder()
+: <a class="el" href="classsyd_1_1Database.html#a4f68db6f86aac8de58c524e513682a0c">syd::Database</a>
 </li>
 <li>GetFilename()
 : <a class="el" href="classsyd_1_1Database.html#af978bbfce8839721d25735b6db020cb0">syd::Database</a>
@@ -202,12 +256,19 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </li>
 <li>GetNumberOfElements()
 : <a class="el" href="singletonsyd_1_1Table.html#a3355865c9b92b4606ca5253fce833200">syd::Table&lt; TableElement &gt;</a>
+, <a class="el" href="classsyd_1_1TableBase.html#a13b3574ca33638f68f8922ac02a004e8">syd::TableBase</a>
 </li>
-<li>GetRelativeDBFolder()
-: <a class="el" href="classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980">syd::Database</a>
+<li>GetRelativeFolder()
+: <a class="el" href="classsyd_1_1StandardDatabase.html#a727a82c28c03be8042c90355839ef151">syd::StandardDatabase</a>
 </li>
 <li>GetTable()
 : <a class="el" href="classsyd_1_1Database.html#a07f35ca4a0789dcfb86fe304690c6b50">syd::Database</a>
+</li>
+<li>GuessIfDicomCanBeInThisTimepoint()
+: <a class="el" href="classsyd_1_1TimepointBuilder.html#ab36aa70f0fe170e889975205180f4db1">syd::TimepointBuilder</a>
+</li>
+<li>GuessTimepointForThisDicomSerie()
+: <a class="el" href="classsyd_1_1TimepointBuilder.html#a5772b14334b1a28dab40e64814727699">syd::TimepointBuilder</a>
 </li>
 </ul>
 
@@ -217,23 +278,43 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classsyd_1_1Database.html#a6544f36b101c2fc5caeda9976f8428c9">syd::Database</a>
 , <a class="el" href="singletonsyd_1_1Table.html#a51a4c1cd75a3f25e97ff07d6a6bef65a">syd::Table&lt; TableElement &gt;</a>
 </li>
+<li>ImageBuilder()
+: <a class="el" href="classsyd_1_1ImageBuilder.html#a8b75f33398b7c537910e7f2ff9b5db2e">syd::ImageBuilder</a>
+</li>
 <li>Insert()
 : <a class="el" href="classsyd_1_1Database.html#a61dac5f978b137f770aa2c16c79425a6">syd::Database</a>
 , <a class="el" href="singletonsyd_1_1Table.html#a3d9068330665067560afa1880184af49">syd::Table&lt; TableElement &gt;</a>
 </li>
-<li>InsertDicom()
-: <a class="el" href="classsyd_1_1DicomSerieBuilder.html#a8cf4632987b4a1c16ed3012c816a9cdf">syd::DicomSerieBuilder</a>
+<li>InsertDicomSerie()
+: <a class="el" href="classsyd_1_1TimepointBuilder.html#a78edc063d6d7a92ad9441a8de16e8fdf">syd::TimepointBuilder</a>
+</li>
+<li>InsertDicomSeries()
+: <a class="el" href="classsyd_1_1DicomSerieBuilder.html#a26fb59fedcd861f317bb67619d07236f">syd::DicomSerieBuilder</a>
 </li>
 <li>InsertFromArg()
-: <a class="el" href="classsyd_1_1Database.html#a243a780a2047b3a4edf048254d29fff9">syd::Database</a>
-, <a class="el" href="classsyd_1_1StandardDatabase.html#a7e7eef662e85fc2c104145b18f08a7cf">syd::StandardDatabase</a>
+: <a class="el" href="classsyd_1_1Database.html#a06c1142dc6f35b7784eba87bdf30e4cc">syd::Database</a>
+, <a class="el" href="classsyd_1_1StandardDatabase.html#a26ab3bde285e08d936e5582ab837423c">syd::StandardDatabase</a>
 , <a class="el" href="singletonsyd_1_1Table.html#a76455628822facdf68fc311bb70ca1af">syd::Table&lt; TableElement &gt;</a>
+, <a class="el" href="classsyd_1_1TableBase.html#a30181635027ac40160b5c0bb61affbfa">syd::TableBase</a>
+</li>
+<li>InsertImageFromDicomSerie()
+: <a class="el" href="classsyd_1_1ImageBuilder.html#a54abc573cfb4c4a4b3ad2e05cb45adf6">syd::ImageBuilder</a>
+</li>
+<li>InsertImagesFromTimepoint()
+: <a class="el" href="classsyd_1_1ImageBuilder.html#ab897de028edbc3d78d5e24820aaeeef0">syd::ImageBuilder</a>
 </li>
 <li>InsertInjection()
 : <a class="el" href="classsyd_1_1StandardDatabase.html#a0f802d0161aab1a4b63ea74a854bf640">syd::StandardDatabase</a>
 </li>
 <li>InsertTimepoint()
 : <a class="el" href="classsyd_1_1StandardDatabase.html#ac2a561d9c1e80e6e04cb37db1bb8e405">syd::StandardDatabase</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_o"></a>- o -</h3><ul>
+<li>OnDelete()
+: <a class="el" href="classsyd_1_1Database.html#a9403ea635b64f87acd5db2a0566d3efa">syd::Database</a>
 </li>
 </ul>
 
@@ -250,18 +331,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classsyd_1_1Database.html#a88655c201112bc243bb5901d1c7f5753">syd::Database</a>
 , <a class="el" href="singletonsyd_1_1Table.html#ab9b0730762f8b56bd7a01ebd63a35301">syd::Table&lt; TableElement &gt;</a>
 </li>
-<li>QueryInjectionByNameOrId()
-: <a class="el" href="classsyd_1_1StandardDatabase.html#a56d9aa1dc04d18097f765eca9f109519">syd::StandardDatabase</a>
-</li>
 <li>QueryOne()
 : <a class="el" href="classsyd_1_1Database.html#a9198e4041a08a896198b31c614afce80">syd::Database</a>
 , <a class="el" href="singletonsyd_1_1Table.html#a1ce4cadd334ec49731683731f22daeaf">syd::Table&lt; TableElement &gt;</a>
-</li>
-<li>QueryPatientByNameOrStudyId()
-: <a class="el" href="classsyd_1_1StandardDatabase.html#a036b3cc5eff02d796370189fef8d6f4d">syd::StandardDatabase</a>
-</li>
-<li>QueryPatientsByNameOrStudyId()
-: <a class="el" href="classsyd_1_1StandardDatabase.html#a02f3306153033cbad57f6ed387b09bdb">syd::StandardDatabase</a>
 </li>
 </ul>
 
@@ -286,17 +358,31 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classsyd_1_1Injection.html#a9b2bfd3bde6377d7e6adc4414065fd2f">syd::Injection</a>
 , <a class="el" href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">syd::Patient</a>
 , <a class="el" href="classsyd_1_1Radionuclide.html#ad5f2010ab002a40f5944abb7f96d909b">syd::Radionuclide</a>
-, <a class="el" href="classsyd_1_1TableElement.html#aa34ff1762fabeb75706625d6f6ce6ad8">syd::TableElement</a>
+, <a class="el" href="classsyd_1_1TableElementBase.html#a292aac278da3d6d223382d626c2c37a6">syd::TableElementBase</a>
 , <a class="el" href="classsyd_1_1Tag.html#ab6a87fb402f4eee020f34a6c04d5c562">syd::Tag</a>
 </li>
 <li>SetDatabase()
 : <a class="el" href="classsyd_1_1DicomSerieBuilder.html#a4b646aef129eef190679fc971ec5c1d2">syd::DicomSerieBuilder</a>
+, <a class="el" href="classsyd_1_1ImageBuilder.html#ade90fd7812b5c5a0fd2f2b12940bc823">syd::ImageBuilder</a>
+, <a class="el" href="classsyd_1_1TimepointBuilder.html#aafe6992d0b26cdd16ec013198c536632">syd::TimepointBuilder</a>
 </li>
 <li>SetForcePatientFlag()
 : <a class="el" href="classsyd_1_1DicomSerieBuilder.html#a196085ea3b89d5e60f74b89d4ce45d9c">syd::DicomSerieBuilder</a>
 </li>
+<li>SetForceUpdateFlag()
+: <a class="el" href="classsyd_1_1DicomSerieBuilder.html#a8ce762c5153064e5e0bcb7bdf3267588">syd::DicomSerieBuilder</a>
+</li>
+<li>SetImageTag()
+: <a class="el" href="classsyd_1_1ImageBuilder.html#a7e9a16356edaec932c5e7049559c91a6">syd::ImageBuilder</a>
+</li>
 <li>SetInjection()
 : <a class="el" href="classsyd_1_1DicomSerieBuilder.html#a3f9de27336f7e989ec2bbf0770e09536">syd::DicomSerieBuilder</a>
+</li>
+<li>SetIntraTimepointMaxHourDiff()
+: <a class="el" href="classsyd_1_1TimepointBuilder.html#aa0ee4dc0dd4bbde1404d76d3078dc93b">syd::TimepointBuilder</a>
+</li>
+<li>SetTag()
+: <a class="el" href="classsyd_1_1TimepointBuilder.html#adcbd3a3815654f758313379ac57ddda1">syd::TimepointBuilder</a>
 </li>
 </ul>
 
@@ -305,6 +391,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>Table()
 : <a class="el" href="singletonsyd_1_1Table.html#a3d595f43e77610d4226adee7f48abb4d">syd::Table&lt; TableElement &gt;</a>
 </li>
+<li>TableBase()
+: <a class="el" href="classsyd_1_1TableBase.html#a83f95f9ca0b522d2f3a1c85b87c06d22">syd::TableBase</a>
+</li>
 <li>TimepointBuilder()
 : <a class="el" href="classsyd_1_1TimepointBuilder.html#a60097dc12be23df67c5463ed971f24e3">syd::TimepointBuilder</a>
 </li>
@@ -312,10 +401,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 : <a class="el" href="classsyd_1_1DicomFile.html#a6305e19960a2bd2bb13b9c60773f4b14">syd::DicomFile</a>
 , <a class="el" href="classsyd_1_1DicomSerie.html#a3308c7f3c69b87613457de887c32f024">syd::DicomSerie</a>
 , <a class="el" href="classsyd_1_1File.html#acdabec55ae8ca778984a23cf2326eb47">syd::File</a>
+, <a class="el" href="classsyd_1_1Image.html#a95a4a4f328ecdece5e24781997060a2c">syd::Image</a>
 , <a class="el" href="classsyd_1_1Injection.html#a6f6132b6349cf9941d396f6a066d72f5">syd::Injection</a>
 , <a class="el" href="classsyd_1_1Patient.html#a97e0d70f2296e0d8919cba4476c1e5d7">syd::Patient</a>
 , <a class="el" href="classsyd_1_1Radionuclide.html#aca61af30b589bfcf10d9bb9413a016a5">syd::Radionuclide</a>
-, <a class="el" href="classsyd_1_1TableElement.html#a39b333a92fca265a33bbfc5fcc17c784">syd::TableElement</a>
+, <a class="el" href="classsyd_1_1TableElementBase.html#a549fa9d37bdf15e87de2516c2584e538">syd::TableElementBase</a>
 , <a class="el" href="classsyd_1_1Tag.html#ad65b2739b72e184dd79ce30ca11183ca">syd::Tag</a>
 , <a class="el" href="classsyd_1_1Timepoint.html#ad10fd146bef6314545eeeaa4a6948a5b">syd::Timepoint</a>
 </li>
@@ -333,8 +423,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <li>UpdateDicomSerie()
 : <a class="el" href="classsyd_1_1DicomSerieBuilder.html#aaa968938af868cbb0fd15de3cee2519d">syd::DicomSerieBuilder</a>
 </li>
-<li>UpdateSeries()
-: <a class="el" href="classsyd_1_1DicomSerieBuilder.html#aa8f052f20cc9c9213656eb2bd3e8151d">syd::DicomSerieBuilder</a>
+<li>UpdateImageInfo()
+: <a class="el" href="classsyd_1_1ImageBuilder.html#a1bdfb5c6103c5a2deca613ba7f11ab76">syd::ImageBuilder</a>
 </li>
 </ul>
 
@@ -349,6 +439,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <h3><a class="anchor" id="index_~"></a>- ~ -</h3><ul>
 <li>~DicomSerieBuilder()
 : <a class="el" href="classsyd_1_1DicomSerieBuilder.html#a542aee8e90dbec6f9b8178ee4ed64f87">syd::DicomSerieBuilder</a>
+</li>
+<li>~ImageBuilder()
+: <a class="el" href="classsyd_1_1ImageBuilder.html#a4e4574a0cc9b4e5413f5497b609b8b2b">syd::ImageBuilder</a>
 </li>
 <li>~TimepointBuilder()
 : <a class="el" href="classsyd_1_1TimepointBuilder.html#a7636ae4fa2a58b48fae1cb206bec40ed">syd::TimepointBuilder</a>

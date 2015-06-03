@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,7 +105,7 @@ Inheritance diagram for syd::DicomSerie:</div>
  <div class="center">
   <img src="classsyd_1_1DicomSerie.png" usemap="#syd::DicomSerie_map" alt=""/>
   <map id="syd::DicomSerie_map" name="syd::DicomSerie_map">
-<area href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. " alt="syd::TableElement" shape="rect" coords="0,0,113,24"/>
+<area href="classsyd_1_1TableElementBase.html" title="Base class for all element (row) in a table. " alt="syd::TableElementBase" shape="rect" coords="0,0,141,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -121,11 +121,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const
 <tr class="memitem:a55d6fc163acb2da074af357bb066d130"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a55d6fc163acb2da074af357bb066d130"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classsyd_1_1DicomSerie.html">DicomSerie</a> &amp;p)</td></tr>
 <tr class="separator:a55d6fc163acb2da074af357bb066d130"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classsyd_1_1TableElement"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsyd_1_1TableElement')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsyd_1_1TableElement.html">syd::TableElement</a></td></tr>
-<tr class="memitem:aa34ff1762fabeb75706625d6f6ce6ad8 inherit pub_methods_classsyd_1_1TableElement"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa34ff1762fabeb75706625d6f6ce6ad8"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableElement.html#aa34ff1762fabeb75706625d6f6ce6ad8">Set</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
-<tr class="memdesc:aa34ff1762fabeb75706625d6f6ce6ad8 inherit pub_methods_classsyd_1_1TableElement"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
-<tr class="separator:aa34ff1762fabeb75706625d6f6ce6ad8 inherit pub_methods_classsyd_1_1TableElement"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf5fb707659f77a761d265b3e9ab4dce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf5fb707659f77a761d265b3e9ab4dce"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnDelete</b> (<a class="el" href="classsyd_1_1Database.html">syd::Database</a> *db)</td></tr>
+<tr class="separator:adf5fb707659f77a761d265b3e9ab4dce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classsyd_1_1TableElementBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsyd_1_1TableElementBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsyd_1_1TableElementBase.html">syd::TableElementBase</a></td></tr>
+<tr class="memitem:a292aac278da3d6d223382d626c2c37a6 inherit pub_methods_classsyd_1_1TableElementBase"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a292aac278da3d6d223382d626c2c37a6"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableElementBase.html#a292aac278da3d6d223382d626c2c37a6">Set</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+<tr class="memdesc:a292aac278da3d6d223382d626c2c37a6 inherit pub_methods_classsyd_1_1TableElementBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
+<tr class="separator:a292aac278da3d6d223382d626c2c37a6 inherit pub_methods_classsyd_1_1TableElementBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -170,11 +173,11 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <tr class="separator:a20d09d10998b7cabd197c739ae492919"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e26c46c6fd257e9b33d4f5ea04b3c27"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4e26c46c6fd257e9b33d4f5ea04b3c27"></a>
 std::array&lt; int, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a></td></tr>
-<tr class="memdesc:a4e26c46c6fd257e9b33d4f5ea04b3c27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Image size (in pixels) <br /></td></tr>
+<tr class="memdesc:a4e26c46c6fd257e9b33d4f5ea04b3c27"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsyd_1_1Image.html" title="Store information about a dicom image (serie). ">Image</a> size (in pixels). It is an array because the size is fixed. <br /></td></tr>
 <tr class="separator:a4e26c46c6fd257e9b33d4f5ea04b3c27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae0e66e018c7f715920c4a7d76caee495"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0e66e018c7f715920c4a7d76caee495"></a>
 std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#ae0e66e018c7f715920c4a7d76caee495">spacing</a></td></tr>
-<tr class="memdesc:ae0e66e018c7f715920c4a7d76caee495"><td class="mdescLeft">&#160;</td><td class="mdescRight">Image spacing aka size of the pixel (in mm) <br /></td></tr>
+<tr class="memdesc:ae0e66e018c7f715920c4a7d76caee495"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classsyd_1_1Image.html" title="Store information about a dicom image (serie). ">Image</a> spacing aka size of the pixel (in mm) <br /></td></tr>
 <tr class="separator:ae0e66e018c7f715920c4a7d76caee495"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -245,7 +248,7 @@ std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"
 </div><div class="memdoc">
 
 <p>Foreign key, it must exist in the <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table. </p>
-<p>Not strictly needed but convenient. </p>
+<p>Not strictly needed (because included in injection) but convenient. </p>
 
 <p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00047">47</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
 

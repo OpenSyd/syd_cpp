@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.8"/>
-<title>SYD: /home/dsarrut/src/syd/syd/src/core/sydImage.h Source File</title>
+<title>SYD: /home/dsarrut/src/syd/syd/src/std_db/sydImage.h Source File</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_aebb8dcc11953d78e620bbef0b9e2183.html">core</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_40c8400cf14446053e88477274b709c6.html">std_db</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -108,114 +108,75 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#ifndef SYDIMAGE_H</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#define SYDIMAGE_H</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// syd</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydCommon.h&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="comment">//#include &quot;sydTimeActivityCurveIntegrate.h&quot;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">// itk</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;itkImageFileReader.h&gt;</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;itkImageFileWriter.h&gt;</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#include &lt;itkImageSeriesReader.h&gt;</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &lt;itkGDCMImageIO.h&gt;</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#include &lt;itkGDCMSeriesFileNames.h&gt;</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#include &lt;itkAddImageFilter.h&gt;</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#include &lt;itkMultiplyImageFilter.h&gt;</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &lt;itkCastImageFilter.h&gt;</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &lt;itkOrientImageFilter.h&gt;</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#include &lt;itkResampleImageFilter.h&gt;</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;itkAffineTransform.h&gt;</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#include &lt;itkNearestNeighborInterpolateImageFunction.h&gt;</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#include &lt;itkLinearInterpolateImageFunction.h&gt;</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;itkImageSliceIteratorWithIndex.h&gt;</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#include &lt;itkImageSliceConstIteratorWithIndex.h&gt;</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#include &lt;itkConvolutionImageFilter.h&gt;</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#include &lt;itkRegionOfInterestImageFilter.h&gt;</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesyd.html">syd</a> {</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="comment">// return md5 of the raw image</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  std::string ConvertDicomSPECTFileToImage(std::string dicom_filename, std::string mhd_filename);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  std::string ConvertDicomCTFolderToImage(std::string dicom_path, std::string mhd_filename);</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// std</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">// syd</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &quot;sydPatient.h&quot;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &quot;sydInjection.h&quot;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &quot;sydFile.h&quot;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#include &quot;sydTag.h&quot;</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &quot;sydDicomSerie.h&quot;</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesyd.html">syd</a> {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#pragma db object</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  <span class="keyword">class </span>Image : <span class="keyword">public</span> <a class="code" href="classsyd_1_1TableElementBase.html">syd::TableElementBase</a> {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#pragma db id auto</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    IdType <a class="code" href="classsyd_1_1Image.html#a35e297098d3995274bd949f80f25e62f">id</a>;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#pragma db not_null</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#pragma db on_delete(cascade)</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    std::shared_ptr&lt;syd::Patient&gt; <a class="code" href="classsyd_1_1Image.html#a420355ce71198e76971a33a879660948">patient</a>;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#a37d85a4a7a671ac715708a36a76bfdc9">   52</a></span>&#160;    std::shared_ptr&lt;syd::Tag&gt; <a class="code" href="classsyd_1_1Image.html#a37d85a4a7a671ac715708a36a76bfdc9">tag</a>;</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType&gt;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <span class="keywordtype">void</span> WriteImage(<span class="keyword">typename</span> ImageType::Pointer image, std::string filename);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType&gt;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keyword">typename</span> ImageType::Pointer ReadImage(std::string filename);</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType&gt;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <span class="keyword">typename</span> ImageType::Pointer CreateImageLike(<span class="keyword">typename</span> itk::ImageBase&lt;ImageType::ImageDimension&gt; * like);</div>
+<div class="line"><a name="l00055"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#a1bb0c11a702b6785c61fb2b5a96454dc">   55</a></span>&#160;    std::vector&lt;std::shared_ptr&lt;syd::File&gt;&gt; <a class="code" href="classsyd_1_1Image.html#a1bb0c11a702b6785c61fb2b5a96454dc">files</a>;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="comment">// FIXME -&gt; needed ?. dicoms that serve to compute this image (could</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="comment">// be empty).</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    std::vector&lt;std::shared_ptr&lt;syd::DicomSerie&gt;&gt; dicoms;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    std::string type; <span class="comment">// mhd etc. Needed ?</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    std::string pixel_type; <span class="comment">// float, uint, Needed ?</span></div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType&gt;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  std::string ComputeImageMD5(<span class="keyword">typename</span> ImageType::Pointer image);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType&gt;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keyword">typename</span> itk::Image&lt;float, ImageType::ImageDimension&gt;::Pointer CastImageToFloat(ImageType * input);</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">short</span> <span class="keywordtype">int</span> dimension; <span class="comment">// Needed ?</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#a031de1ce9b22c6da197c1edcfa5b3003">   68</a></span>&#160;    std::array&lt;int, 3&gt; <a class="code" href="classsyd_1_1Image.html#a031de1ce9b22c6da197c1edcfa5b3003">size</a>; <span class="comment">// Needed ?</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#a54846c845d83e5ff4eaba7609713655a">   71</a></span>&#160;    std::array&lt;double, 3&gt; <a class="code" href="classsyd_1_1Image.html#a54846c845d83e5ff4eaba7609713655a">spacing</a>; <span class="comment">// Needed</span></div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType&gt;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keyword">typename</span> ImageType::Pointer</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  ComputeAverageImage(std::vector&lt;std::string&gt; &amp; filenames);</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType&gt;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="keyword">typename</span> ImageType::Pointer</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  ComputeMeanFilterKernel(<span class="keyword">const</span> <span class="keyword">typename</span> ImageType::SpacingType &amp; spacing, <span class="keywordtype">double</span> radius);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="comment">// ------------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    SET_TABLE_NAME(<span class="stringliteral">&quot;Image&quot;</span>)</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <a class="code" href="classsyd_1_1Image.html">Image</a>();</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    virtual std::<span class="keywordtype">string</span> <a class="code" href="classsyd_1_1Image.html#a95a4a4f328ecdece5e24781997060a2c">ToString</a>() const;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keywordtype">bool</span> operator==(const <a class="code" href="classsyd_1_1Image.html">Image</a> &amp; p);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordtype">bool</span> operator!=(const <a class="code" href="classsyd_1_1Image.html">Image</a> &amp; p) { <span class="keywordflow">return</span> !(*<span class="keyword">this</span> == p); }</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType, <span class="keyword">class</span> MaskImageType&gt;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keyword">typename</span> ImageType::PointType</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  GetMaxPosition(<span class="keyword">const</span> ImageType * input,</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                 <span class="keyword">const</span> MaskImageType * mask);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType&gt;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keywordtype">void</span> ScaleImage(ImageType * input, <span class="keywordtype">double</span> scale);</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType&gt;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  <span class="keyword">typename</span> ImageType::Pointer</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  ResampleAndCropImageLike(<span class="keyword">const</span> ImageType * input,</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                           <span class="keyword">const</span> itk::ImageBase&lt;ImageType::ImageDimension&gt; * like,</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                           <span class="keywordtype">int</span> interpolationType,</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                           <span class="keyword">typename</span> ImageType::PixelType defaultValue);</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType&gt;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keyword">typename</span> ImageType::Pointer</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;  CropImageLike(<span class="keyword">const</span> ImageType * input,</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                <span class="keyword">const</span> itk::ImageBase&lt;ImageType::ImageDimension&gt; * like);</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  <span class="keyword">template</span>&lt;<span class="keyword">class</span> ImageType&gt;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="keyword">typename</span> ImageType::Pointer</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  StitchImages(<span class="keyword">const</span> ImageType * s1, <span class="keyword">const</span> ImageType * s2,</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;               <span class="keywordtype">double</span> threshold_cumul, <span class="keywordtype">double</span> skip_slices);</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="keywordtype">void</span> CopyMHDImage(std::string from, std::string to, <span class="keywordtype">int</span> verbose_level=2);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keywordtype">void</span> RenameMHDImage(std::string from, std::string to, <span class="keywordtype">int</span> verbose_level=2);</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;  <span class="keywordtype">void</span> RenameOrCopyMHDImage(std::string from, std::string to, <span class="keywordtype">int</span> verbose_level, <span class="keywordtype">bool</span> erase);</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordtype">void</span> DeleteMHDImage(std::string filename);</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  std::string PointToString(<span class="keyword">const</span> itk::Point&lt;double,3&gt; &amp; t);</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="preprocessor">#include &quot;sydImage.txx&quot;</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;} <span class="comment">// end namespace</span></div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnDelete(<a class="code" href="classsyd_1_1Database.html">syd::Database</a> * db);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  }; <span class="comment">// end class</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;}</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classsyd_1_1Image_html_a54846c845d83e5ff4eaba7609713655a"><div class="ttname"><a href="classsyd_1_1Image.html#a54846c845d83e5ff4eaba7609713655a">syd::Image::spacing</a></div><div class="ttdeci">std::array&lt; double, 3 &gt; spacing</div><div class="ttdoc">Image spacing aka size of the pixel (in mm) </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00071">sydImage.h:71</a></div></div>
+<div class="ttc" id="classsyd_1_1Database_html"><div class="ttname"><a href="classsyd_1_1Database.html">syd::Database</a></div><div class="ttdoc">This is the base class of all databases. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00040">sydDatabase.h:40</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a031de1ce9b22c6da197c1edcfa5b3003"><div class="ttname"><a href="classsyd_1_1Image.html#a031de1ce9b22c6da197c1edcfa5b3003">syd::Image::size</a></div><div class="ttdeci">std::array&lt; int, 3 &gt; size</div><div class="ttdoc">Image size (in pixels) </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00068">sydImage.h:68</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a35e297098d3995274bd949f80f25e62f"><div class="ttname"><a href="classsyd_1_1Image.html#a35e297098d3995274bd949f80f25e62f">syd::Image::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Id of the Image. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00044">sydImage.h:44</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a1bb0c11a702b6785c61fb2b5a96454dc"><div class="ttname"><a href="classsyd_1_1Image.html#a1bb0c11a702b6785c61fb2b5a96454dc">syd::Image::files</a></div><div class="ttdeci">std::vector&lt; std::shared_ptr&lt; syd::File &gt; &gt; files</div><div class="ttdoc">List of associated files. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00055">sydImage.h:55</a></div></div>
+<div class="ttc" id="classsyd_1_1TableElementBase_html"><div class="ttname"><a href="classsyd_1_1TableElementBase.html">syd::TableElementBase</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableElementBase_8h_source.html#l00031">sydTableElementBase.h:31</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a37d85a4a7a671ac715708a36a76bfdc9"><div class="ttname"><a href="classsyd_1_1Image.html#a37d85a4a7a671ac715708a36a76bfdc9">syd::Image::tag</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Tag &gt; tag</div><div class="ttdoc">Associated Tag. FIXME : or a vector ? Delete image or not ??? </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00052">sydImage.h:52</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html"><div class="ttname"><a href="classsyd_1_1Image.html">syd::Image</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00039">sydImage.h:39</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a420355ce71198e76971a33a879660948"><div class="ttname"><a href="classsyd_1_1Image.html#a420355ce71198e76971a33a879660948">syd::Image::patient</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Patient &gt; patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00049">sydImage.h:49</a></div></div>
 <div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00049">sydCommon.h:49</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a95a4a4f328ecdece5e24781997060a2c"><div class="ttname"><a href="classsyd_1_1Image.html#a95a4a4f328ecdece5e24781997060a2c">syd::Image::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8cxx_source.html#l00036">sydImage.cxx:36</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -89,6 +89,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classsyd_1_1StandardDatabase-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">syd::StandardDatabase Class Reference</div>  </div>
@@ -111,26 +112,26 @@ Inheritance diagram for syd::StandardDatabase:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7e7eef662e85fc2c104145b18f08a7cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e7eef662e85fc2c104145b18f08a7cf"></a>
-virtual <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a7e7eef662e85fc2c104145b18f08a7cf">InsertFromArg</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>, std::vector&lt; std::string &gt; &amp;arg)</td></tr>
-<tr class="memdesc:a7e7eef662e85fc2c104145b18f08a7cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic element insertion. <br /></td></tr>
-<tr class="separator:a7e7eef662e85fc2c104145b18f08a7cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26ab3bde285e08d936e5582ab837423c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26ab3bde285e08d936e5582ab837423c"></a>
+virtual <a class="el" href="classsyd_1_1TableElementBase.html">TableElementBase</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a26ab3bde285e08d936e5582ab837423c">InsertFromArg</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>, std::vector&lt; std::string &gt; &amp;arg)</td></tr>
+<tr class="memdesc:a26ab3bde285e08d936e5582ab837423c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic element insertion. <br /></td></tr>
+<tr class="separator:a26ab3bde285e08d936e5582ab837423c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f802d0161aab1a4b63ea74a854bf640"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0f802d0161aab1a4b63ea74a854bf640"></a>
 <a class="el" href="classsyd_1_1Injection.html">syd::Injection</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a0f802d0161aab1a4b63ea74a854bf640">InsertInjection</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
 <tr class="memdesc:a0f802d0161aab1a4b63ea74a854bf640"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new <a class="el" href="classsyd_1_1Injection.html" title="Store information about a radionuclide injection (date, etc). ">Injection</a> (check patient before etc) <br /></td></tr>
 <tr class="separator:a0f802d0161aab1a4b63ea74a854bf640"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a036b3cc5eff02d796370189fef8d6f4d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a036b3cc5eff02d796370189fef8d6f4d"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a036b3cc5eff02d796370189fef8d6f4d">QueryPatientByNameOrStudyId</a> (const std::string &amp;arg, <a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;p, bool fatalIfNotFound=true)</td></tr>
-<tr class="memdesc:a036b3cc5eff02d796370189fef8d6f4d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the patient by name or study_id. Stop if not found. <br /></td></tr>
-<tr class="separator:a036b3cc5eff02d796370189fef8d6f4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a02f3306153033cbad57f6ed387b09bdb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a02f3306153033cbad57f6ed387b09bdb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a02f3306153033cbad57f6ed387b09bdb">QueryPatientsByNameOrStudyId</a> (const std::string &amp;arg, std::vector&lt; <a class="el" href="classsyd_1_1Patient.html">Patient</a> &gt; &amp;patients)</td></tr>
-<tr class="memdesc:a02f3306153033cbad57f6ed387b09bdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return all the patients by name (can be 'all') or study_id. Stop if not found. <br /></td></tr>
-<tr class="separator:a02f3306153033cbad57f6ed387b09bdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56d9aa1dc04d18097f765eca9f109519"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a56d9aa1dc04d18097f765eca9f109519"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a56d9aa1dc04d18097f765eca9f109519">QueryInjectionByNameOrId</a> (const <a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;patient, const std::string &amp;arg, <a class="el" href="classsyd_1_1Injection.html">Injection</a> &amp;p, bool fatalIfNotFound=true)</td></tr>
-<tr class="memdesc:a56d9aa1dc04d18097f765eca9f109519"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the injection for the given patient where radionuclide match the arg. <br /></td></tr>
-<tr class="separator:a56d9aa1dc04d18097f765eca9f109519"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6411c81bc94c71fed34b4175a91de6b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6411c81bc94c71fed34b4175a91de6b2"></a>
+<a class="el" href="classsyd_1_1Patient.html">syd::Patient</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a6411c81bc94c71fed34b4175a91de6b2">FindPatientByNameOrStudyId</a> (const std::string &amp;arg)</td></tr>
+<tr class="memdesc:a6411c81bc94c71fed34b4175a91de6b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the patient by name or study_id. Fail if not found. <br /></td></tr>
+<tr class="separator:a6411c81bc94c71fed34b4175a91de6b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa60e70ed6b091a73674006549cc9faee"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa60e70ed6b091a73674006549cc9faee"></a>
+<a class="el" href="classsyd_1_1Injection.html">syd::Injection</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#aa60e70ed6b091a73674006549cc9faee">FindInjectionByNameOrId</a> (const <a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;patient, const std::string &amp;arg)</td></tr>
+<tr class="memdesc:aa60e70ed6b091a73674006549cc9faee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the injection for the given patient where radionuclide match the arg. Fail if not found. <br /></td></tr>
+<tr class="separator:aa60e70ed6b091a73674006549cc9faee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1641ebd102e066ef4464dcb4c71546c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1641ebd102e066ef4464dcb4c71546c"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#ac1641ebd102e066ef4464dcb4c71546c">FindDicom</a> (const <a class="el" href="classsyd_1_1Patient.html">syd::Patient</a> &amp;patient, const std::vector&lt; std::string &gt; &amp;patterns, std::vector&lt; <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &gt; &amp;series)</td></tr>
+<tr class="memdesc:ac1641ebd102e066ef4464dcb4c71546c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return dicom series that match the patterns. <br /></td></tr>
+<tr class="separator:ac1641ebd102e066ef4464dcb4c71546c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a375ab875d08fc5bac7c5106464c374b7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a375ab875d08fc5bac7c5106464c374b7"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a375ab875d08fc5bac7c5106464c374b7">GetAbsoluteFolder</a> (const <a class="el" href="classsyd_1_1DicomSerie.html">DicomSerie</a> &amp;serie)</td></tr>
 <tr class="memdesc:a375ab875d08fc5bac7c5106464c374b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the folder where the dicomserie are stored. <br /></td></tr>
@@ -139,10 +140,14 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a86b73359a953d98c2ad536713eebb190">GetAbsoluteFolder</a> (const <a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;patient)</td></tr>
 <tr class="memdesc:a86b73359a953d98c2ad536713eebb190"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the folder where the patient images are stored. <br /></td></tr>
 <tr class="separator:a86b73359a953d98c2ad536713eebb190"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0c71fe46a47c22c7e02075fc7622954"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad0c71fe46a47c22c7e02075fc7622954"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#ad0c71fe46a47c22c7e02075fc7622954">DumpDicom</a> (std::ostream &amp;os, <a class="el" href="classsyd_1_1Patient.html">syd::Patient</a> &amp;patient, const std::vector&lt; std::string &gt; &amp;patterns, double max_time_diff)</td></tr>
-<tr class="memdesc:ad0c71fe46a47c22c7e02075fc7622954"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specific Dump for Dicom. <br /></td></tr>
-<tr class="separator:ad0c71fe46a47c22c7e02075fc7622954"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a727a82c28c03be8042c90355839ef151"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a727a82c28c03be8042c90355839ef151"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a727a82c28c03be8042c90355839ef151">GetRelativeFolder</a> (const <a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;patient)</td></tr>
+<tr class="memdesc:a727a82c28c03be8042c90355839ef151"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the folder where the patient images are stored (relative to the database folder) <br /></td></tr>
+<tr class="separator:a727a82c28c03be8042c90355839ef151"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8294dabe5dac1a10c78855f953fabeb0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8294dabe5dac1a10c78855f953fabeb0"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a8294dabe5dac1a10c78855f953fabeb0">GetAbsolutePath</a> (const <a class="el" href="classsyd_1_1File.html">File</a> &amp;file)</td></tr>
+<tr class="memdesc:a8294dabe5dac1a10c78855f953fabeb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the absolute path of the file. <br /></td></tr>
+<tr class="separator:a8294dabe5dac1a10c78855f953fabeb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac2a561d9c1e80e6e04cb37db1bb8e405"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac2a561d9c1e80e6e04cb37db1bb8e405"></a>
 <a class="el" href="classsyd_1_1Timepoint.html">syd::Timepoint</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#ac2a561d9c1e80e6e04cb37db1bb8e405">InsertTimepoint</a> (<a class="el" href="classsyd_1_1Injection.html">syd::Injection</a> &amp;injection, <a class="el" href="classsyd_1_1Tag.html">syd::Tag</a> &amp;tag, std::vector&lt; <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &gt; &amp;dicoms, bool replaceTimepointFlag)</td></tr>
 <tr class="memdesc:ac2a561d9c1e80e6e04cb37db1bb8e405"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new <a class="el" href="classsyd_1_1Timepoint.html" title="Store information about a timepoint. ">Timepoint</a>. <br /></td></tr>
@@ -151,6 +156,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#adab85886b6543bdabad0745925c16d33">DumpTimepoint</a> (const std::vector&lt; std::string &gt; &amp;args, std::ostream &amp;os, bool verboseFlag=false)</td></tr>
 <tr class="memdesc:adab85886b6543bdabad0745925c16d33"><td class="mdescLeft">&#160;</td><td class="mdescRight">Specific Dump for <a class="el" href="classsyd_1_1Timepoint.html" title="Store information about a timepoint. ">Timepoint</a>. <br /></td></tr>
 <tr class="separator:adab85886b6543bdabad0745925c16d33"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8106f1ee3ea67c9ab2938ba64e74402"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac8106f1ee3ea67c9ab2938ba64e74402"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#ac8106f1ee3ea67c9ab2938ba64e74402">AddFileToDelete</a> (std::string &amp;f)</td></tr>
+<tr class="memdesc:ac8106f1ee3ea67c9ab2938ba64e74402"><td class="mdescLeft">&#160;</td><td class="mdescRight">What to do when a element is planned to be deleted. <br /></td></tr>
+<tr class="separator:ac8106f1ee3ea67c9ab2938ba64e74402"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a3df3669acf19e505c8d41e16ccb8db"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8a3df3669acf19e505c8d41e16ccb8db"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a8a3df3669acf19e505c8d41e16ccb8db">DeleteCurrentList</a> ()</td></tr>
+<tr class="memdesc:a8a3df3669acf19e505c8d41e16ccb8db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Overload to also delete the files. <br /></td></tr>
+<tr class="separator:a8a3df3669acf19e505c8d41e16ccb8db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classsyd_1_1Database"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsyd_1_1Database')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsyd_1_1Database.html">syd::Database</a></td></tr>
 <tr class="memitem:ae0fc42ac9795362e56b9dcb306670411 inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0fc42ac9795362e56b9dcb306670411"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ae0fc42ac9795362e56b9dcb306670411">GetDatabaseSchema</a> ()</td></tr>
@@ -160,37 +173,47 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#af978bbfce8839721d25735b6db020cb0">GetFilename</a> () const </td></tr>
 <tr class="memdesc:af978bbfce8839721d25735b6db020cb0 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the filename (.db file sqlite) <br /></td></tr>
 <tr class="separator:af978bbfce8839721d25735b6db020cb0 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a187e39f585c0ac3bd77dadfe92925980 inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a187e39f585c0ac3bd77dadfe92925980"></a>
-std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a187e39f585c0ac3bd77dadfe92925980">GetRelativeDBFolder</a> () const </td></tr>
-<tr class="memdesc:a187e39f585c0ac3bd77dadfe92925980 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the folder that contains the associated images (relative) <br /></td></tr>
-<tr class="separator:a187e39f585c0ac3bd77dadfe92925980 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f68db6f86aac8de58c524e513682a0c inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4f68db6f86aac8de58c524e513682a0c"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a4f68db6f86aac8de58c524e513682a0c">GetDBFolder</a> () const </td></tr>
+<tr class="memdesc:a4f68db6f86aac8de58c524e513682a0c inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the folder that contains the associated images (relative to the current path) <br /></td></tr>
+<tr class="separator:a4f68db6f86aac8de58c524e513682a0c inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af43b76c8045344eaaa96eb1062ac4196 inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af43b76c8045344eaaa96eb1062ac4196"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#af43b76c8045344eaaa96eb1062ac4196">GetAbsoluteDBFolder</a> () const </td></tr>
-<tr class="memdesc:af43b76c8045344eaaa96eb1062ac4196 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the folder that contains the associated images (absolute according to working directory) <br /></td></tr>
+<tr class="memdesc:af43b76c8045344eaaa96eb1062ac4196 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the folder that contains the associated images (absolute) <br /></td></tr>
 <tr class="separator:af43b76c8045344eaaa96eb1062ac4196 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61dac5f978b137f770aa2c16c79425a6 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a61dac5f978b137f770aa2c16c79425a6"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a61dac5f978b137f770aa2c16c79425a6 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a61dac5f978b137f770aa2c16c79425a6">Insert</a> (TableElement &amp;r)</td></tr>
+<tr class="memdesc:a61dac5f978b137f770aa2c16c79425a6 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new element of type TableElement in the database. <br /></td></tr>
+<tr class="separator:a61dac5f978b137f770aa2c16c79425a6 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabcdfa71722de81107140ca936b688fb inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="aabcdfa71722de81107140ca936b688fb"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:aabcdfa71722de81107140ca936b688fb inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aabcdfa71722de81107140ca936b688fb">Insert</a> (std::vector&lt; TableElement * &gt; &amp;r)</td></tr>
+<tr class="memdesc:aabcdfa71722de81107140ca936b688fb inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert several elements at a time. <br /></td></tr>
+<tr class="separator:aabcdfa71722de81107140ca936b688fb inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88655c201112bc243bb5901d1c7f5753 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a88655c201112bc243bb5901d1c7f5753"></a>
 template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:a88655c201112bc243bb5901d1c7f5753 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a88655c201112bc243bb5901d1c7f5753">Query</a> (const odb::query&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;q, std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;list)</td></tr>
+<tr class="memitem:a88655c201112bc243bb5901d1c7f5753 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a88655c201112bc243bb5901d1c7f5753">Query</a> (const odb::query&lt; TableElement &gt; &amp;q, std::vector&lt; TableElement &gt; &amp;list)</td></tr>
 <tr class="memdesc:a88655c201112bc243bb5901d1c7f5753 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform a query on the database and return the found elements in the list. <br /></td></tr>
 <tr class="separator:a88655c201112bc243bb5901d1c7f5753 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a335c44bc0b87923fc4e6fcfffbea5128 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a335c44bc0b87923fc4e6fcfffbea5128"></a>
 template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:a335c44bc0b87923fc4e6fcfffbea5128 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a335c44bc0b87923fc4e6fcfffbea5128">Query</a> (std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;list)</td></tr>
+<tr class="memitem:a335c44bc0b87923fc4e6fcfffbea5128 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a335c44bc0b87923fc4e6fcfffbea5128">Query</a> (std::vector&lt; TableElement &gt; &amp;list)</td></tr>
 <tr class="memdesc:a335c44bc0b87923fc4e6fcfffbea5128 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve all elements of the table. <br /></td></tr>
 <tr class="separator:a335c44bc0b87923fc4e6fcfffbea5128 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9198e4041a08a896198b31c614afce80 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a9198e4041a08a896198b31c614afce80"></a>
 template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:a9198e4041a08a896198b31c614afce80 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classsyd_1_1TableElement.html">TableElement</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a9198e4041a08a896198b31c614afce80">QueryOne</a> (const odb::query&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;q)</td></tr>
+<tr class="memitem:a9198e4041a08a896198b31c614afce80 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">TableElement&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a9198e4041a08a896198b31c614afce80">QueryOne</a> (const odb::query&lt; TableElement &gt; &amp;q)</td></tr>
 <tr class="memdesc:a9198e4041a08a896198b31c614afce80 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the unique element matching the query (fail if 0 or &gt;1 elements) <br /></td></tr>
 <tr class="separator:a9198e4041a08a896198b31c614afce80 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69c332026a6a4b9630d4888460bfe9d6 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a69c332026a6a4b9630d4888460bfe9d6"></a>
 template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:a69c332026a6a4b9630d4888460bfe9d6 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classsyd_1_1TableElement.html">TableElement</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a69c332026a6a4b9630d4888460bfe9d6">QueryOne</a> (IdType id)</td></tr>
+<tr class="memitem:a69c332026a6a4b9630d4888460bfe9d6 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">TableElement&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a69c332026a6a4b9630d4888460bfe9d6">QueryOne</a> (IdType id)</td></tr>
 <tr class="memdesc:a69c332026a6a4b9630d4888460bfe9d6 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the unique element with the given id. <br /></td></tr>
 <tr class="separator:a69c332026a6a4b9630d4888460bfe9d6 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7b374de04f2d0ae8f7ac229666f39ac2 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a7b374de04f2d0ae8f7ac229666f39ac2"></a>
 template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:a7b374de04f2d0ae8f7ac229666f39ac2 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a7b374de04f2d0ae8f7ac229666f39ac2">Count</a> (const odb::query&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; &amp;q)</td></tr>
+<tr class="memitem:a7b374de04f2d0ae8f7ac229666f39ac2 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a7b374de04f2d0ae8f7ac229666f39ac2">Count</a> (const odb::query&lt; TableElement &gt; &amp;q)</td></tr>
 <tr class="memdesc:a7b374de04f2d0ae8f7ac229666f39ac2 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Count the number of elements matching the query. <br /></td></tr>
 <tr class="separator:a7b374de04f2d0ae8f7ac229666f39ac2 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6544f36b101c2fc5caeda9976f8428c9 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a6544f36b101c2fc5caeda9976f8428c9"></a>
@@ -198,24 +221,14 @@ template&lt;class TableElement &gt; </td></tr>
 <tr class="memitem:a6544f36b101c2fc5caeda9976f8428c9 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a6544f36b101c2fc5caeda9976f8428c9">IfExist</a> (IdType id)</td></tr>
 <tr class="memdesc:a6544f36b101c2fc5caeda9976f8428c9 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given id exist. <br /></td></tr>
 <tr class="separator:a6544f36b101c2fc5caeda9976f8428c9 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61dac5f978b137f770aa2c16c79425a6 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a61dac5f978b137f770aa2c16c79425a6"></a>
-template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:a61dac5f978b137f770aa2c16c79425a6 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a61dac5f978b137f770aa2c16c79425a6">Insert</a> (<a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &amp;r)</td></tr>
-<tr class="memdesc:a61dac5f978b137f770aa2c16c79425a6 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new element of type <a class="el" href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. ">TableElement</a> in the database. <br /></td></tr>
-<tr class="separator:a61dac5f978b137f770aa2c16c79425a6 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabcdfa71722de81107140ca936b688fb inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="aabcdfa71722de81107140ca936b688fb"></a>
-template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:aabcdfa71722de81107140ca936b688fb inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aabcdfa71722de81107140ca936b688fb">Insert</a> (std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> * &gt; &amp;r)</td></tr>
-<tr class="memdesc:aabcdfa71722de81107140ca936b688fb inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert several elements at a time. <br /></td></tr>
-<tr class="separator:aabcdfa71722de81107140ca936b688fb inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a00c09ce90754816d6c2cd8d329f241fc inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a00c09ce90754816d6c2cd8d329f241fc"></a>
 template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:a00c09ce90754816d6c2cd8d329f241fc inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a00c09ce90754816d6c2cd8d329f241fc">Update</a> (<a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &amp;r)</td></tr>
+<tr class="memitem:a00c09ce90754816d6c2cd8d329f241fc inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a00c09ce90754816d6c2cd8d329f241fc">Update</a> (TableElement &amp;r)</td></tr>
 <tr class="memdesc:a00c09ce90754816d6c2cd8d329f241fc inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update an element in the database. <br /></td></tr>
 <tr class="separator:a00c09ce90754816d6c2cd8d329f241fc inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad0c3223b09bcb08e4184c3b7a584e202 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="ad0c3223b09bcb08e4184c3b7a584e202"></a>
 template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:ad0c3223b09bcb08e4184c3b7a584e202 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ad0c3223b09bcb08e4184c3b7a584e202">Update</a> (std::vector&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> * &gt; &amp;r)</td></tr>
+<tr class="memitem:ad0c3223b09bcb08e4184c3b7a584e202 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ad0c3223b09bcb08e4184c3b7a584e202">Update</a> (std::vector&lt; TableElement * &gt; &amp;r)</td></tr>
 <tr class="memdesc:ad0c3223b09bcb08e4184c3b7a584e202 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update a set of elements in the database. <br /></td></tr>
 <tr class="separator:ad0c3223b09bcb08e4184c3b7a584e202 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3092120b7fcb17efcf54c3a9257bea66 inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3092120b7fcb17efcf54c3a9257bea66"></a>
@@ -226,14 +239,58 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ad3a7c7fb4aac508e910acbfc732da3ce">GetLastSQLQuery</a> () const </td></tr>
 <tr class="memdesc:ad3a7c7fb4aac508e910acbfc732da3ce inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the last SQL query (set by TraceCallback). For debug purpose only. <br /></td></tr>
 <tr class="separator:ad3a7c7fb4aac508e910acbfc732da3ce inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d43a829a24357b3e25ada612de2a0dd inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2">template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:a2d43a829a24357b3e25ada612de2a0dd inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a2d43a829a24357b3e25ada612de2a0dd">Delete</a> (IdType id)</td></tr>
-<tr class="memdesc:a2d43a829a24357b3e25ada612de2a0dd inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">--------------------------&mdash;&mdash; OLD  <a href="#a2d43a829a24357b3e25ada612de2a0dd">More...</a><br /></td></tr>
-<tr class="separator:a2d43a829a24357b3e25ada612de2a0dd inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ffc572cb18370f088d8514ced5a4e97 inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ffc572cb18370f088d8514ced5a4e97"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetDeleteDryRunFlag</b> (bool b)</td></tr>
+<tr class="separator:a0ffc572cb18370f088d8514ced5a4e97 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3631460676cc92206d8d020e20a92b4 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="ac3631460676cc92206d8d020e20a92b4"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:ac3631460676cc92206d8d020e20a92b4 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ac3631460676cc92206d8d020e20a92b4">Delete</a> (IdType id)</td></tr>
+<tr class="memdesc:ac3631460676cc92206d8d020e20a92b4 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete a single record. <br /></td></tr>
+<tr class="separator:ac3631460676cc92206d8d020e20a92b4 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90ad2fc4daf994abedcdff6b78cb6165 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a90ad2fc4daf994abedcdff6b78cb6165"></a>
 template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:a90ad2fc4daf994abedcdff6b78cb6165 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Delete</b> (<a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &amp;e)</td></tr>
+<tr class="memitem:a90ad2fc4daf994abedcdff6b78cb6165 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a90ad2fc4daf994abedcdff6b78cb6165">Delete</a> (TableElement &amp;e)</td></tr>
+<tr class="memdesc:a90ad2fc4daf994abedcdff6b78cb6165 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete a single record. <br /></td></tr>
 <tr class="separator:a90ad2fc4daf994abedcdff6b78cb6165 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5174fadfeb1cae7d318a3434b5f13d3 inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af5174fadfeb1cae7d318a3434b5f13d3"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#af5174fadfeb1cae7d318a3434b5f13d3">Delete</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>, syd::IdType id)</td></tr>
+<tr class="memdesc:af5174fadfeb1cae7d318a3434b5f13d3 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete a single record. <br /></td></tr>
+<tr class="separator:af5174fadfeb1cae7d318a3434b5f13d3 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a968ecbec88ae95004568b2efd1557d0b inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a968ecbec88ae95004568b2efd1557d0b"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a968ecbec88ae95004568b2efd1557d0b inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a968ecbec88ae95004568b2efd1557d0b">Delete</a> (std::vector&lt; TableElement &gt; &amp;ve)</td></tr>
+<tr class="memdesc:a968ecbec88ae95004568b2efd1557d0b inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete several records. <br /></td></tr>
+<tr class="separator:a968ecbec88ae95004568b2efd1557d0b inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c3678a662a830b0321b279fc759a222 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a8c3678a662a830b0321b279fc759a222"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:a8c3678a662a830b0321b279fc759a222 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a8c3678a662a830b0321b279fc759a222">Delete</a> (std::vector&lt; IdType &gt; &amp;ids)</td></tr>
+<tr class="memdesc:a8c3678a662a830b0321b279fc759a222 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete several records. <br /></td></tr>
+<tr class="separator:a8c3678a662a830b0321b279fc759a222 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31d95ac9ac23b85d022383878f3c07ab inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a31d95ac9ac23b85d022383878f3c07ab"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a31d95ac9ac23b85d022383878f3c07ab">Delete</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>, std::vector&lt; syd::IdType &gt; &amp;ids)</td></tr>
+<tr class="memdesc:a31d95ac9ac23b85d022383878f3c07ab inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete several records. <br /></td></tr>
+<tr class="separator:a31d95ac9ac23b85d022383878f3c07ab inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf596bd4b3d3fbaebb574e03ae193cca inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf596bd4b3d3fbaebb574e03ae193cca"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#acf596bd4b3d3fbaebb574e03ae193cca">DeleteAll</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>)</td></tr>
+<tr class="memdesc:acf596bd4b3d3fbaebb574e03ae193cca inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete all records. <br /></td></tr>
+<tr class="separator:acf596bd4b3d3fbaebb574e03ae193cca inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9403ea635b64f87acd5db2a0566d3efa inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9403ea635b64f87acd5db2a0566d3efa"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a9403ea635b64f87acd5db2a0566d3efa">OnDelete</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>, <a class="el" href="classsyd_1_1TableElementBase.html">TableElementBase</a> *elem)</td></tr>
+<tr class="memdesc:a9403ea635b64f87acd5db2a0566d3efa inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback called when a record is deleted. Do nothing here, be could be overloaded. <br /></td></tr>
+<tr class="separator:a9403ea635b64f87acd5db2a0566d3efa inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad960fa82b5d3536bbf6f525ad38431fd inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="ad960fa82b5d3536bbf6f525ad38431fd"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:ad960fa82b5d3536bbf6f525ad38431fd inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ad960fa82b5d3536bbf6f525ad38431fd">AddToDeleteList</a> (TableElement &amp;elem)</td></tr>
+<tr class="memdesc:ad960fa82b5d3536bbf6f525ad38431fd inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an element to the list of element to be delete. <br /></td></tr>
+<tr class="separator:ad960fa82b5d3536bbf6f525ad38431fd inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2cabb55b481fbc01a1c163050ef2e0e inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa2cabb55b481fbc01a1c163050ef2e0e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#aa2cabb55b481fbc01a1c163050ef2e0e">CopyDatabaseTo</a> (std::string file, std::string folder)</td></tr>
+<tr class="memdesc:aa2cabb55b481fbc01a1c163050ef2e0e inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">-----------------------------&mdash; OLD <br /></td></tr>
+<tr class="separator:aa2cabb55b481fbc01a1c163050ef2e0e inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1eec3d29e99585e83bc936ad3cc0bb3 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="ad1eec3d29e99585e83bc936ad3cc0bb3"></a>
+template&lt;class TableElement &gt; </td></tr>
+<tr class="memitem:ad1eec3d29e99585e83bc936ad3cc0bb3 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><b>TableIsEqual</b> (<a class="el" href="classsyd_1_1Database.html">syd::Database</a> *db1)</td></tr>
+<tr class="separator:ad1eec3d29e99585e83bc936ad3cc0bb3 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02a175da42634e22a01a486b3612afb1 inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a02a175da42634e22a01a486b3612afb1">Dump</a> (const std::vector&lt; std::string &gt; &amp;args, std::ostream &amp;os)</td></tr>
 <tr class="memdesc:a02a175da42634e22a01a486b3612afb1 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete the element with id in the given table.  <a href="#a02a175da42634e22a01a486b3612afb1">More...</a><br /></td></tr>
 <tr class="separator:a02a175da42634e22a01a486b3612afb1 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -244,54 +301,14 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hr
 <tr class="memitem:a07f35ca4a0789dcfb86fe304690c6b50 inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classsyd_1_1TableBase.html">TableBase</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a07f35ca4a0789dcfb86fe304690c6b50">GetTable</a> (const std::string &amp;<a class="el" href="structsyd_1_1table__name.html">table_name</a>)</td></tr>
 <tr class="memdesc:a07f35ca4a0789dcfb86fe304690c6b50 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dump all elements of a given table (query[0])  <a href="#a07f35ca4a0789dcfb86fe304690c6b50">More...</a><br /></td></tr>
 <tr class="separator:a07f35ca4a0789dcfb86fe304690c6b50 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33d5080feb07e76f626fd652814bafa8 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a33d5080feb07e76f626fd652814bafa8"></a>
+<tr class="memitem:a091829c289943c8cdc7c9a6ae1bf0dcd inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a091829c289943c8cdc7c9a6ae1bf0dcd"></a>
 template&lt;class TableElement &gt; </td></tr>
-<tr class="memitem:a33d5080feb07e76f626fd652814bafa8 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="singletonsyd_1_1Table.html">Table</a>&lt; <a class="el" href="classsyd_1_1TableElement.html">TableElement</a> &gt; *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a33d5080feb07e76f626fd652814bafa8">GetTable</a> ()</td></tr>
-<tr class="memdesc:a33d5080feb07e76f626fd652814bafa8 inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the table that contains <a class="el" href="classsyd_1_1TableElement.html" title="Base class for all element (row) in a table. ">TableElement</a>. <br /></td></tr>
-<tr class="separator:a33d5080feb07e76f626fd652814bafa8 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a091829c289943c8cdc7c9a6ae1bf0dcd inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="singletonsyd_1_1Table.html">Table</a>&lt; TableElement &gt; *&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a091829c289943c8cdc7c9a6ae1bf0dcd">GetTable</a> ()</td></tr>
+<tr class="memdesc:a091829c289943c8cdc7c9a6ae1bf0dcd inherit pub_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the table that contains TableElement. <br /></td></tr>
+<tr class="separator:a091829c289943c8cdc7c9a6ae1bf0dcd inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b3b0d43ccd53b7d22abf53e0434beda inherit pub_methods_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b3b0d43ccd53b7d22abf53e0434beda"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><b>GetListOfTableNames</b> ()</td></tr>
 <tr class="separator:a6b3b0d43ccd53b7d22abf53e0434beda inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f8a659a4372e8bec6545c595bdd6d8e inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a0f8a659a4372e8bec6545c595bdd6d8e"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:a0f8a659a4372e8bec6545c595bdd6d8e inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="singletonsyd_1_1Table.html">Table</a>&lt; ElementType &gt; *&#160;</td><td class="memTemplItemRight" valign="bottom"><b>GetTable</b> ()</td></tr>
-<tr class="separator:a0f8a659a4372e8bec6545c595bdd6d8e inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abb1c7924d9b54436e3583327869a0ce8 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="abb1c7924d9b54436e3583327869a0ce8"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:abb1c7924d9b54436e3583327869a0ce8 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Query</b> (const odb::query&lt; ElementType &gt; &amp;q, std::vector&lt; ElementType &gt; &amp;list)</td></tr>
-<tr class="separator:abb1c7924d9b54436e3583327869a0ce8 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5743b7a946dd7d14072826ee78c123b inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="aa5743b7a946dd7d14072826ee78c123b"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:aa5743b7a946dd7d14072826ee78c123b inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Query</b> (std::vector&lt; ElementType &gt; &amp;list)</td></tr>
-<tr class="separator:aa5743b7a946dd7d14072826ee78c123b inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb038fee20e3ec0fd2e66be617ff1931 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="afb038fee20e3ec0fd2e66be617ff1931"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:afb038fee20e3ec0fd2e66be617ff1931 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">ElementType&#160;</td><td class="memTemplItemRight" valign="bottom"><b>QueryOne</b> (const odb::query&lt; ElementType &gt; &amp;q)</td></tr>
-<tr class="separator:afb038fee20e3ec0fd2e66be617ff1931 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae48c8104c0e15211a1b9ac8a2374c51c inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="ae48c8104c0e15211a1b9ac8a2374c51c"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:ae48c8104c0e15211a1b9ac8a2374c51c inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">ElementType&#160;</td><td class="memTemplItemRight" valign="bottom"><b>QueryOne</b> (IdType id)</td></tr>
-<tr class="separator:ae48c8104c0e15211a1b9ac8a2374c51c inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4687ee53a246a9d72e66d8d828801b42 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a4687ee53a246a9d72e66d8d828801b42"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:a4687ee53a246a9d72e66d8d828801b42 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Count</b> (const odb::query&lt; ElementType &gt; &amp;q)</td></tr>
-<tr class="separator:a4687ee53a246a9d72e66d8d828801b42 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2a101f09483fe274fa12d3d769e0166 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="ab2a101f09483fe274fa12d3d769e0166"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:ab2a101f09483fe274fa12d3d769e0166 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Insert</b> (ElementType &amp;r)</td></tr>
-<tr class="separator:ab2a101f09483fe274fa12d3d769e0166 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51f09170409acdc2df53698d247f78a2 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="a51f09170409acdc2df53698d247f78a2"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:a51f09170409acdc2df53698d247f78a2 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Insert</b> (std::vector&lt; ElementType * &gt; &amp;r)</td></tr>
-<tr class="separator:a51f09170409acdc2df53698d247f78a2 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaff5f5c4be5b71c1e257c2cd9dc65a0e inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="aaff5f5c4be5b71c1e257c2cd9dc65a0e"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:aaff5f5c4be5b71c1e257c2cd9dc65a0e inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Update</b> (ElementType &amp;r)</td></tr>
-<tr class="separator:aaff5f5c4be5b71c1e257c2cd9dc65a0e inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba327f0473f18e7d15d2e209cb8a8040 inherit pub_methods_classsyd_1_1Database"><td class="memTemplParams" colspan="2"><a class="anchor" id="aba327f0473f18e7d15d2e209cb8a8040"></a>
-template&lt;class ElementType &gt; </td></tr>
-<tr class="memitem:aba327f0473f18e7d15d2e209cb8a8040 inherit pub_methods_classsyd_1_1Database"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Update</b> (std::vector&lt; ElementType * &gt; &amp;r)</td></tr>
-<tr class="separator:aba327f0473f18e7d15d2e209cb8a8040 inherit pub_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -314,14 +331,12 @@ template&lt;class TableElement &gt; </td></tr>
 <tr class="memdesc:aa1d82736549398f655f191ef4e34e05e inherit pro_methods_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the map that contains the association between names and tables. <br /></td></tr>
 <tr class="separator:aa1d82736549398f655f191ef4e34e05e inherit pro_methods_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
-Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_types_classsyd_1_1Database"><td colspan="2" onclick="javascript:toggleInherit('pro_types_classsyd_1_1Database')"><img src="closed.png" alt="-"/>&#160;Protected Types inherited from <a class="el" href="classsyd_1_1Database.html">syd::Database</a></td></tr>
-<tr class="memitem:a4c238d025c31d11c79b830e9cbc8d643 inherit pro_types_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4c238d025c31d11c79b830e9cbc8d643"></a>
-typedef std::map&lt; std::string, <br class="typebreak" />
-<a class="el" href="classsyd_1_1TableBase.html">TableBase</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a4c238d025c31d11c79b830e9cbc8d643">MapOfTablesType</a></td></tr>
-<tr class="memdesc:a4c238d025c31d11c79b830e9cbc8d643 inherit pro_types_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the map that contains the association between names and tables. <br /></td></tr>
-<tr class="separator:a4c238d025c31d11c79b830e9cbc8d643 inherit pro_types_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:a56be254d866f977d4dcb4d6dccf78379"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a56be254d866f977d4dcb4d6dccf78379"></a>
+std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1StandardDatabase.html#a56be254d866f977d4dcb4d6dccf78379">list_of_files_to_delete_</a></td></tr>
+<tr class="memdesc:a56be254d866f977d4dcb4d6dccf78379"><td class="mdescLeft">&#160;</td><td class="mdescRight">List of filenames that will be deleted. <br /></td></tr>
+<tr class="separator:a56be254d866f977d4dcb4d6dccf78379"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_classsyd_1_1Database"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_classsyd_1_1Database')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="classsyd_1_1Database.html">syd::Database</a></td></tr>
 <tr class="memitem:a47790f65453bd829d73e8e225bcda7bc inherit pro_attribs_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a47790f65453bd829d73e8e225bcda7bc"></a>
 <a class="el" href="classsyd_1_1Database.html#a4c238d025c31d11c79b830e9cbc8d643">MapOfTablesType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a47790f65453bd829d73e8e225bcda7bc">map</a></td></tr>
@@ -355,11 +370,30 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a2b15b8e9ae9f006c614137e17bf2ecb1">current_sql_query_</a></td></tr>
 <tr class="memdesc:a2b15b8e9ae9f006c614137e17bf2ecb1 inherit pro_attribs_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store current sql query for debug purpose. <br /></td></tr>
 <tr class="separator:a2b15b8e9ae9f006c614137e17bf2ecb1 inherit pro_attribs_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8dcc9065354025ee0814b63dc79cf55d inherit pro_attribs_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8dcc9065354025ee0814b63dc79cf55d"></a>
+std::vector&lt; std::pair<br class="typebreak" />
+&lt; std::string, <br class="typebreak" />
+<a class="el" href="classsyd_1_1TableElementBase.html">TableElementBase</a> * &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a8dcc9065354025ee0814b63dc79cf55d">list_of_elements_to_delete_</a></td></tr>
+<tr class="memdesc:a8dcc9065354025ee0814b63dc79cf55d inherit pro_attribs_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Store the list of elements (with their types) that will be deleted. <br /></td></tr>
+<tr class="separator:a8dcc9065354025ee0814b63dc79cf55d inherit pro_attribs_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac56e18eadc345f5c107480aa57e00f9d inherit pro_attribs_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac56e18eadc345f5c107480aa57e00f9d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#ac56e18eadc345f5c107480aa57e00f9d">delete_dry_run_flag_</a></td></tr>
+<tr class="memdesc:ac56e18eadc345f5c107480aa57e00f9d inherit pro_attribs_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag to not delete. <br /></td></tr>
+<tr class="separator:ac56e18eadc345f5c107480aa57e00f9d inherit pro_attribs_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
+Additional Inherited Members</h2></td></tr>
+<tr class="inherit_header pro_types_classsyd_1_1Database"><td colspan="2" onclick="javascript:toggleInherit('pro_types_classsyd_1_1Database')"><img src="closed.png" alt="-"/>&#160;Protected Types inherited from <a class="el" href="classsyd_1_1Database.html">syd::Database</a></td></tr>
+<tr class="memitem:a4c238d025c31d11c79b830e9cbc8d643 inherit pro_types_classsyd_1_1Database"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4c238d025c31d11c79b830e9cbc8d643"></a>
+typedef std::map&lt; std::string, <br class="typebreak" />
+<a class="el" href="classsyd_1_1TableBase.html">TableBase</a> * &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Database.html#a4c238d025c31d11c79b830e9cbc8d643">MapOfTablesType</a></td></tr>
+<tr class="memdesc:a4c238d025c31d11c79b830e9cbc8d643 inherit pro_types_classsyd_1_1Database"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type of the map that contains the association between names and tables. <br /></td></tr>
+<tr class="separator:a4c238d025c31d11c79b830e9cbc8d643 inherit pro_types_classsyd_1_1Database"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This database manages a set of 'standard' tables: <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a>, <a class="el" href="classsyd_1_1Injection.html" title="Store information about a radionuclide injection (date, etc). ">Injection</a> etc. </p>
 
-<p>Definition at line <a class="el" href="sydStandardDatabase_8h_source.html#l00042">42</a> of file <a class="el" href="sydStandardDatabase_8h_source.html">sydStandardDatabase.h</a>.</p>
+<p>Definition at line <a class="el" href="sydStandardDatabase_8h_source.html#l00043">43</a> of file <a class="el" href="sydStandardDatabase_8h_source.html">sydStandardDatabase.h</a>.</p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/dsarrut/src/syd/syd/src/std_db/<a class="el" href="sydStandardDatabase_8h_source.html">sydStandardDatabase.h</a></li>
 <li>/home/dsarrut/src/syd/syd/src/std_db/<a class="el" href="sydStandardDatabase_8cxx_source.html">sydStandardDatabase.cxx</a></li>
