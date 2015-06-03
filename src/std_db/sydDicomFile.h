@@ -59,6 +59,8 @@ namespace syd {
     bool operator==(const DicomFile & p);
     bool operator!=(const DicomFile & p) { return !(*this == p); }
 
+    virtual void OnDelete(syd::Database * db);
+
   }; // end class
 }
 // --------------------------------------------------------------------

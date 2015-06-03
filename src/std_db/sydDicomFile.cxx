@@ -18,6 +18,9 @@
 
 // syd
 #include "sydDicomFile.h"
+#include "sydDatabase.h"
+#include "sydTable.h"
+#include "sydDicomSerie-odb.hxx"
 
 // --------------------------------------------------------------------
 syd::DicomFile::DicomFile():TableElementBase()
@@ -51,5 +54,14 @@ bool syd::DicomFile::operator==(const DicomFile & p)
           *dicom_serie == *p.dicom_serie and
           dicom_sop_uid == p.dicom_sop_uid and
           dicom_instance_number == p.dicom_instance_number);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomFile::OnDelete(syd::Database * db)
+{
+  db->AddToDeleteList(*file);
+  db->AddToDeleteList(*dicom_serie);
 }
 // --------------------------------------------------

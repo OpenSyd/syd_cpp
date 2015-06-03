@@ -18,6 +18,10 @@
 
 // syd
 #include "sydImage.h"
+#include "sydDatabase.h"
+#include "sydTable.h"
+#include "sydFile.h"
+#include "sydFile-odb.hxx"
 
 // --------------------------------------------------------------------
 syd::Image::Image():TableElementBase()
@@ -63,5 +67,13 @@ bool syd::Image::operator==(const Image & p)
     b = b and (*files[i] == *p.files[i]);
   b = b and *tag == *p.tag;
   return b;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::OnDelete(syd::Database * db)
+{
+  for(auto f:files) db->AddToDeleteList(*f);
 }
 // --------------------------------------------------

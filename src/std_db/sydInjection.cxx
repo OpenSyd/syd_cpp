@@ -18,6 +18,12 @@
 
 // syd
 #include "sydInjection.h"
+#include "sydDatabase.h"
+#include "sydTable.h"
+#include "sydDicomSerie.h"
+#include "sydDicomSerie-odb.hxx"
+#include "sydTimepoint.h"
+#include "sydTimepoint-odb.hxx"
 
 // --------------------------------------------------------------------
 syd::Injection::Injection():syd::TableElementBase()
@@ -71,5 +77,19 @@ bool syd::Injection::operator==(const Injection & p)
           *radionuclide == *p.radionuclide and
           date == p.date and
           activity_in_MBq == p.activity_in_MBq);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Injection::OnDelete(syd::Database * db)
+{
+  std::vector<syd::DicomSerie> dicomseries;
+  db->Query<syd::DicomSerie>(odb::query<syd::DicomSerie>::injection == id, dicomseries);
+  for(auto i:dicomseries) db->AddToDeleteList(i);
+
+  std::vector<syd::Timepoint> tp;
+  db->Query<syd::Timepoint>(odb::query<syd::Timepoint>::injection == id, tp);
+  for(auto i:tp) db->AddToDeleteList(i);
 }
 // --------------------------------------------------

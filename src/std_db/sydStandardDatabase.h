@@ -88,18 +88,20 @@ namespace syd {
 
 
     /// What to do when a element is planned to be deleted
-    virtual void OnDelete(const std::string & table_name, TableElementBase * e);
+    // virtual void OnDelete(const std::string & table_name, TableElementBase * e);
 
-    /// What to do when an Image will be deleted
-    void OnDeleteImage(syd::Image & e);
+    // /// What to do when an Image will be deleted
+    // void OnDeleteImage(syd::Image & e);
 
-    /// What to do when a File will be deleted
-    void OnDeleteFile(syd::File & e);
+    // /// What to do when a File will be deleted
+    // void OnDeleteFile(syd::File & e);
 
-    /// What to do when a Tag will be deleted
-    void OnDeleteTag(syd::Tag & e);
-    void OnDeleteDicomFile(syd::DicomFile & e);
-    void OnDeleteDicomSerie(syd::DicomSerie & e);
+    // /// What to do when a Tag will be deleted
+    // void OnDeleteTag(syd::Tag & e);
+    // void OnDeleteDicomFile(syd::DicomFile & e);
+    // void OnDeleteDicomSerie(syd::DicomSerie & e);
+
+    void AddFileToDelete(std::string & f) { list_of_files_to_delete_.push_back(f); }
 
     /// Overload to also delete the files
     virtual void DeleteCurrentList();
@@ -109,7 +111,7 @@ namespace syd {
     virtual void CreateTables();
 
     /// List of filenames that will be deleted
-    std::vector<std::string> list_of_files_to_delete;
+    std::vector<std::string> list_of_files_to_delete_;
 
   }; // class StandardDatabase
 

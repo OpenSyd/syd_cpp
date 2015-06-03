@@ -57,6 +57,8 @@ namespace syd {
     bool operator==(const Injection & p);
     bool operator!=(const Injection & p) { return !(*this == p); }
 
+    virtual void OnDelete(syd::Database * db);
+
   }; // end of class
 
 } // end of namespace

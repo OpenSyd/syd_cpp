@@ -18,6 +18,10 @@
 
 // syd
 #include "sydRadionuclide.h"
+#include "sydDatabase.h"
+#include "sydTable.h"
+#include "sydInjection.h"
+#include "sydInjection-odb.hxx"
 
 // --------------------------------------------------------------------
 syd::Radionuclide::Radionuclide():syd::TableElementBase()
@@ -66,3 +70,13 @@ bool syd::Radionuclide::operator==(const Radionuclide & p)
           half_life_in_hours == p.half_life_in_hours);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Radionuclide::OnDelete(syd::Database * db)
+{
+  std::vector<syd::Injection> injections;
+  db->Query<syd::Injection>(odb::query<syd::Injection>::radionuclide == id, injections);
+  for(auto i:injections) db->AddToDeleteList(i);
+}
+// --------------------------------------------------

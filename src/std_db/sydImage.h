@@ -37,49 +37,51 @@ namespace syd {
   /// 'Image' stored in a db. Contains information about a dicom
   /// image.
   class Image : public syd::TableElementBase {
-public:
+  public:
 
 #pragma db id auto
-  /// Id of the Image
-  IdType id;
+    /// Id of the Image
+    IdType id;
 
 #pragma db not_null
 #pragma db on_delete(cascade)
-  /// Foreign key, it must exist in the Patient table.
-  std::shared_ptr<syd::Patient> patient;
+    /// Foreign key, it must exist in the Patient table.
+    std::shared_ptr<syd::Patient> patient;
 
-  /// Associated Tag. FIXME : or a vector ? Delete image or not ???
-  std::shared_ptr<syd::Tag> tag;
+    /// Associated Tag. FIXME : or a vector ? Delete image or not ???
+    std::shared_ptr<syd::Tag> tag;
 
-  /// List of associated files.
-  std::vector<std::shared_ptr<syd::File>> files;
+    /// List of associated files.
+    std::vector<std::shared_ptr<syd::File>> files;
 
-  // FIXME -> needed ?. dicoms that serve to compute this image (could
-  // be empty).
-  std::vector<std::shared_ptr<syd::DicomSerie>> dicoms;
+    // FIXME -> needed ?. dicoms that serve to compute this image (could
+    // be empty).
+    std::vector<std::shared_ptr<syd::DicomSerie>> dicoms;
 
-  std::string type; // mhd etc. Needed ?
+    std::string type; // mhd etc. Needed ?
 
-  std::string pixel_type; // float, uint, Needed ?
+    std::string pixel_type; // float, uint, Needed ?
 
-  unsigned short int dimension; // Needed ?
+    unsigned short int dimension; // Needed ?
 
-  /// Image size (in pixels)
-  std::array<int, 3> size; // Needed ?
+    /// Image size (in pixels)
+    std::array<int, 3> size; // Needed ?
 
-  /// Image spacing aka size of the pixel (in mm)
-  std::array<double, 3> spacing; // Needed
+    /// Image spacing aka size of the pixel (in mm)
+    std::array<double, 3> spacing; // Needed
 
-  // ------------------------------------------------------------------------
-  SET_TABLE_NAME("Image")
-  Image();
+    // ------------------------------------------------------------------------
+    SET_TABLE_NAME("Image")
+    Image();
 
-  virtual std::string ToString() const;
+    virtual std::string ToString() const;
 
-  bool operator==(const Image & p);
-  bool operator!=(const Image & p) { return !(*this == p); }
+    bool operator==(const Image & p);
+    bool operator!=(const Image & p) { return !(*this == p); }
 
-}; // end class
+    virtual void OnDelete(syd::Database * db);
+
+  }; // end class
 }
 // --------------------------------------------------------------------
 

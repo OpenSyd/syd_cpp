@@ -18,6 +18,10 @@
 
 // syd
 #include "sydPatient.h"
+#include "sydDatabase.h"
+#include "sydTable.h"
+#include "sydInjection.h"
+#include "sydInjection-odb.hxx"
 
 // --------------------------------------------------
 syd::Patient::Patient():TableElementBase()
@@ -95,5 +99,15 @@ bool syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdico
     return false;
   }
   return false; // do not consider ok with a patient name not having a '^' inside
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Patient::OnDelete(syd::Database * db)
+{
+  std::vector<syd::Injection> injections;
+  db->Query<syd::Injection>(odb::query<syd::Injection>::patient == id, injections);
+  for(auto i:injections) db->AddToDeleteList(i);
 }
 // --------------------------------------------------

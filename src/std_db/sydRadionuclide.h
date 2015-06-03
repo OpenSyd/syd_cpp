@@ -50,6 +50,8 @@ namespace syd {
     bool operator==(const Radionuclide & p);
     bool operator!=(const Radionuclide & p) { return !(*this == p); }
 
+    virtual void OnDelete(syd::Database * db);
+
   }; // end of class
 } // end of namespace
 // --------------------------------------------------------------------

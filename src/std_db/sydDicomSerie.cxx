@@ -72,8 +72,6 @@ bool syd::DicomSerie::operator==(const DicomSerie & p)
 // --------------------------------------------------
 void syd::DicomSerie::OnDelete(syd::Database * db)
 {
-  DD("DicomSerie OnDelete");
-  DD(id);
   std::vector<syd::DicomFile> dicomfiles;
   db->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == id, dicomfiles);
   for(auto i:dicomfiles) db->AddToDeleteList(i);

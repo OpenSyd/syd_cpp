@@ -63,6 +63,8 @@ namespace syd {
 
     bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
 
+    virtual void OnDelete(syd::Database * db);
+
   }; // end of class
 }
 // --------------------------------------------------------------------

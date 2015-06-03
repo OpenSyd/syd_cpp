@@ -54,6 +54,8 @@ namespace syd {
     bool operator==(const File & p);
     bool operator!=(const File & p) { return !(*this == p); }
 
+    virtual void OnDelete(syd::Database * db);
+
   }; // end of class
 }
 // --------------------------------------------------------------------
