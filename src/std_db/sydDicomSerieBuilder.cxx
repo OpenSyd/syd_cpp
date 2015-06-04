@@ -327,10 +327,7 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie * serie,
   int columns = GetTagValueUShort(dset, "Columns");
   serie->size[0] = columns;
   serie->size[1] = rows;
-  //  serie->size[2] = 0;
-
-  int slice = atoi(GetTagValueString(dset, "NumberOfFrames").c_str());
-  if (slice != 0) serie->size[2] = slice;
+  serie->size[2] = 0; // creation, no file yet
 
   // Image spacing
   double sz = GetTagValueDouble(dset, "SpacingBetweenSlices");
@@ -382,7 +379,9 @@ syd::DicomFile * syd::DicomSerieBuilder::CreateDicomFile(const std::string & fil
   dicomfile->dicom_instance_number = instance_number;
 
   // Update the nb of slices
-  serie->size[2]++;
+  int slice = atoi(GetTagValueString(dset, "NumberOfFrames").c_str());
+  if (slice != 0) serie->size[2] = slice;
+  else serie->size[2]++;
 
   return dicomfile;
 }

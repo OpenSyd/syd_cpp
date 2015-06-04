@@ -74,6 +74,11 @@ int main(int argc, char* argv[])
     }
     DcmObject * dset = dfile.getAndRemoveDataset();
     builder.UpdateDicomSerie(&d, filename, dset);
+
+    int slice = atoi(syd::GetTagValueString(dset, "NumberOfFrames").c_str());
+    if (slice != 0) d.size[2] = slice;
+    else d.size[2] = db->Count<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == d.id);
+
     toupdate.push_back(new syd::DicomSerie(d));
   }
   db->Update(toupdate);

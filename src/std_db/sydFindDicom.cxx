@@ -69,6 +69,7 @@ int main(int argc, char* argv[])
     table.AddColumn("mod", 4);
     table.AddColumn("recon", 18);
     table.AddColumn("inj",12);
+    table.AddColumn("size",12);
     table.AddColumn("desc",110);
     table.Init();
 
@@ -83,6 +84,7 @@ int main(int argc, char* argv[])
             << s.dicom_modality
             << s.reconstruction_date
             << s.injection->radionuclide->name
+            << syd::ArrayToString<int, 3>(s.size)
             << s.dicom_description;
       previous = s.acquisition_date;
     }
