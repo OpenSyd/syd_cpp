@@ -41,6 +41,7 @@ std::string syd::DicomSerie::ToString() const
      << acquisition_date << " "
      << reconstruction_date << " "
      << ArrayToString<int, 3>(size) << " "
+     << ArrayToString<double, 3>(spacing) << " "
      << dicom_manufacturer << " "
      << dicom_description;
   return ss.str();

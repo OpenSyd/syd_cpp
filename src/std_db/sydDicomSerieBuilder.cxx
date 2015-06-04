@@ -332,6 +332,19 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie * serie,
   int slice = atoi(GetTagValueString(dset, "NumberOfFrames").c_str());
   serie->size[2] = slice;
 
+  // Image spacing
+  double sz = GetTagValueDouble(dset, "SpacingBetweenSlices");
+  if (sz == 0) sz = 1; // only one slice
+  std::string spacing = GetTagValueString(dset, "PixelSpacing");
+  int n = spacing.find("\\");
+  std::string sx = spacing.substr(0,n);
+  spacing = spacing.substr(n+1,spacing.size());
+  n = spacing.find("\\");
+  std::string sy = spacing.substr(0,n);
+  serie->spacing[0] = atof(sx.c_str());
+  serie->spacing[1] = atof(sy.c_str());
+  serie->spacing[2] = sz;
+
   // other (needed ?)
   // std::string TableTraverse = GetTagValueString(dset, "TableTraverse");
   // std::string InstanceNumber = GetTagValueString(dset, "InstanceNumber");
