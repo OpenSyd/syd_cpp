@@ -62,6 +62,6 @@ bool syd::DicomFile::operator==(const DicomFile & p)
 void syd::DicomFile::OnDelete(syd::Database * db)
 {
   db->AddToDeleteList(*file);
-  db->AddToDeleteList(*dicom_serie);
+  // db->AddToDeleteList(*dicom_serie); //--> no ! only if the last dicomfile // but need update size[2] ?
 }
 // --------------------------------------------------
