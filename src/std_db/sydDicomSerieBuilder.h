@@ -61,6 +61,9 @@ namespace syd {
     /// Insert the created DicomSerie/DicomFile into the db
     void InsertDicomSeries();
 
+    void UpdateDicomSerie(DicomSerie * serie,
+                          const std::string & filename,
+                          DcmObject * dset);
   protected:
     /// Protected constructor. No need to use directly.
     DicomSerieBuilder();
@@ -83,9 +86,6 @@ namespace syd {
     syd::DicomFile * CreateDicomFile(const std::string & filename,
                                      DcmObject * dset,
                                      DicomSerie * serie);
-    void UpdateDicomSerie(DicomSerie * serie,
-                          const std::string & filename,
-                          DcmObject * dset);
     bool GuessDicomSerieForThisFile(const std::string & filename, DcmObject * dset, DicomSerie ** serie);
     bool DicomFileAlreadyExist(const std::string & sop_uid);
 

@@ -60,4 +60,10 @@ target_link_libraries(sydDumpTimepoint sydStandardDatabase)
 wrap_ggo(sydStitchDicom sydStitchDicom.ggo)
 add_executable(sydStitchDicom sydStitchDicom.cxx sydStitchDicom_ggo.c)
 target_link_libraries(sydStitchDicom sydStandardDatabase)
+
+# Not really a tool, for debug only
+wrap_ggo(sydTest sydTest.ggo)
+add_executable(sydTest sydTest.cxx sydTest_ggo.c)
+target_link_libraries(sydTest sydStandardDatabase)
+
 #----------------------------------------------------------

@@ -26,6 +26,8 @@
 // --------------------------------------------------------------------
 syd::DicomSerie::DicomSerie():TableElementBase()
 {
+  size[0] = size[1] = size[2] = 1;
+  spacing[0] = spacing[1] = spacing[2] = 1;
 }
 // --------------------------------------------------------------------
 
@@ -65,7 +67,6 @@ bool syd::DicomSerie::operator==(const DicomSerie & p)
           dicom_description == p.dicom_description and
           size == p.size and
           spacing == p.spacing);
-
 }
 // --------------------------------------------------
 
