@@ -144,6 +144,13 @@ syd::Image syd::ImageBuilder::StitchDicomSerie(const syd::DicomSerie & a,
     LOG(FATAL) << "Error cannot stitch CT images. Only float pixel type (yet).";
   }
 
+  // Check if the same serie (flag to by pass
+  if (a.dicom_series_uid != b.dicom_series_uid) {
+    LOG(FATAL) << "Error, cannot stitch those two dicoms because the series_uid is not the same:"
+               << std::endl << a << " " << a.dicom_series_uid
+               << std::endl << b << " " << b.dicom_series_uid;
+  }
+
   // Create the image record
   syd::Image image = InitializeNewMHDImage(*a.patient, tag_, a);
 
@@ -156,7 +163,7 @@ syd::Image syd::ImageBuilder::StitchDicomSerie(const syd::DicomSerie & a,
   ImageType::Pointer image_a = ReadImage<PixelType>(a);
   ImageType::Pointer image_b = ReadImage<PixelType>(b);
 
-  // Stitch
+  // Stitch (default values for now, to be changed!)
   ImageType::Pointer output = syd::StitchImages<ImageType>(image_a, image_b, 150000, 4);
 
   // Update the image values
