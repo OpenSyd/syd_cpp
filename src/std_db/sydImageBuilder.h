@@ -52,8 +52,26 @@ namespace syd {
     void InsertImagesFromTimepoint(syd::Timepoint & timepoint);
 
     /// Update image information from this itk image (type, size, spacing)
-    template<class ImageType>
-    void UpdateImageInfo(syd::Image & image, typename ImageType::Pointer & itk_image);
+    template<class PixelType>
+    void UpdateImageInfo(syd::Image & image, typename itk::Image<PixelType,3>::Pointer & itk_image, bool computeMD5Flag);
+
+    /// Update and insert the Files associated with an mhd image
+    void InsertImageMHDFilesInfo(syd::Image & image, std::string filename);
+
+    /// Create & Insert a new Image by stitching 2 dicoms
+    syd::Image StitchDicomSerie(const syd::DicomSerie & a, const syd::DicomSerie & b);
+
+    /// Propose a default filename for the image (use the image.id, so must be inserted in the db before)
+    std::string GetDefaultImageFilename(const syd::Image & image, const syd::DicomSerie & dicomserie);
+
+
+    syd::Image InitializeNewMHDImage(const syd::Patient & patient,
+                                     const syd::Tag & tag,
+                                     const syd::DicomSerie & dicomserie);
+
+    // FIXME
+    template<class PixelType>
+    typename itk::Image<PixelType,3>::Pointer ReadImage(const syd::DicomSerie & dicom);
 
   protected:
     /// Protected constructor. No need to use directly.

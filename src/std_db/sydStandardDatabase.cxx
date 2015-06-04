@@ -84,6 +84,15 @@ std::string syd::StandardDatabase::GetAbsolutePath(const File & file)
 
 
 // --------------------------------------------------------------------
+std::string syd::StandardDatabase::GetAbsolutePath(const Image & image)
+{
+  if (image.type == "mhd") return GetAbsolutePath(*image.files[0]);
+  LOG(FATAL) << "Error GetAbsolutePath, dont know the image type: " << image;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::Patient syd::StandardDatabase::FindPatientByNameOrStudyId(const std::string & arg)
 {
   // Check if name

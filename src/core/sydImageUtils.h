@@ -46,8 +46,16 @@
 namespace syd {
 
   //--------------------------------------------------------------------
-  itk::Image<float, 3>::Pointer ReadDicomFromSingleFile(std::string filename);
-  itk::Image<short, 3>::Pointer ReadDicomSerieFromFolder(std::string folder, std::string serie_uid);
+  template<class PixelType>
+  typename itk::Image<PixelType,3>::Pointer
+  ReadDicomFromSingleFile(std::string filename);
+
+  template<class PixelType>
+  typename itk::Image<PixelType,3>::Pointer
+  ReadDicomSerieFromFolder(std::string folder, std::string serie_uid);
+
+  template<class PixelType>
+  void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, const std::string & filename);
   //--------------------------------------------------------------------
 
 

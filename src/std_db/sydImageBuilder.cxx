@@ -60,58 +60,32 @@ syd::Image syd::ImageBuilder::InsertImageFromDicomSerie(const syd::DicomSerie & 
   syd::Patient patient = *dicomserie.patient;
 
   // Create image first to get the id
-  syd::Image image;
-  image.patient = std::make_shared<syd::Patient>(patient);
-  image.tag = std::make_shared<syd::Tag>(tag_);
-  image.dicoms.push_back(std::make_shared<syd::DicomSerie>(dicomserie));
-  image.type = "mhd";
-  db_->Insert(image);
-
-  // Define filename, path
-  std::string path = db_->GetAbsoluteFolder(patient);
-  std::ostringstream oss;
-  oss << dicomserie.dicom_modality << "_" << image.id << ".mhd";
-  std::string filename = oss.str();
-  std::string output = path+PATH_SEPARATOR+filename;
+  syd::Image image = InitializeNewMHDImage(patient, tag_, dicomserie);
+  std::string f = db_->GetAbsolutePath(image);
 
   // Convert dicom, write to disk
-  std::string md5;
+  // std::string md5;
   try {
-    if (dicom_filenames.size() == 1) { // probably OT, NM image
-      typedef float PixelType;
-      typedef itk::Image<PixelType, 3> ImageType;
-      ImageType::Pointer itk_image = syd::ReadDicomFromSingleFile(dicom_filenames[0]);
-      syd::WriteImage<ImageType>(itk_image, output);
-      UpdateImageInfo<ImageType>(image, itk_image);
-      md5 = ComputeImageMD5<ImageType>(itk_image);
-    }
     if (dicomserie.dicom_modality == "CT") {
       typedef short PixelType;
-      typedef itk::Image<PixelType, 3> ImageType;
-      std::string folder = dicom_filenames[0];
-      syd::Replace(folder, GetFilenameFromPath(folder), "");
-      ImageType::Pointer itk_image = syd::ReadDicomSerieFromFolder(folder, dicomserie.dicom_series_uid);
-      syd::WriteImage<ImageType>(itk_image, output);
-      UpdateImageInfo<ImageType>(image, itk_image);
-      md5 = ComputeImageMD5<ImageType>(itk_image);
+      typedef itk::Image<PixelType,3> ImageType;
+      ImageType::Pointer itk_image = ReadImage<PixelType>(dicomserie);
+      UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
+      syd::WriteImage<ImageType>(itk_image, f);
+    }
+    else {
+      typedef float PixelType;
+      typedef itk::Image<PixelType,3> ImageType;
+      ImageType::Pointer itk_image = ReadImage<PixelType>(dicomserie);
+      UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
+      syd::WriteImage<ImageType>(itk_image, f);
     }
 
-    // Create File and Image object
-    syd::File mhd;
-    mhd.filename = filename;
-    mhd.path = db_->GetRelativeFolder(patient);
-    syd::Replace(filename, ".mhd", ".raw");
-    syd::File raw;
-    raw.filename = filename;
-    raw.path = db_->GetRelativeFolder(patient);
-    raw.md5 = md5;
-    db_->Insert(mhd);
-    db_->Insert(raw);
-    image.files.push_back(std::make_shared<syd::File>(mhd));
-    image.files.push_back(std::make_shared<syd::File>(raw)); // must be after file insertion
+    // Insert in the db
     db_->Update(image);
+
   } catch (syd::Exception & e) {
-    db_->Delete<syd::Image>(image);
+    db_->Delete(image);
     EXCEPTION("Error during CreateImageFromDicomSerie: " << e.what() << " (I remove the image " << image << ")");
   }
 
@@ -123,6 +97,10 @@ syd::Image syd::ImageBuilder::InsertImageFromDicomSerie(const syd::DicomSerie & 
 // --------------------------------------------------------------------
 void syd::ImageBuilder::InsertImagesFromTimepoint(syd::Timepoint & timepoint)
 {
+
+  DD("InsertImagesFromTimepoint TODO");
+  exit(0);
+
   // loop create all images
   for(auto d:timepoint.dicoms) {
     // Create new image
@@ -144,3 +122,100 @@ void syd::ImageBuilder::InsertImagesFromTimepoint(syd::Timepoint & timepoint)
    imageIO->ReadImageInformation();
    http://itk.org/ITKExamples/src/IO/ImageBase/ReadUnknownImageType/Documentation.html
 */
+
+
+// --------------------------------------------------------------------
+syd::Image syd::ImageBuilder::StitchDicomSerie(const syd::DicomSerie & a,
+                                               const syd::DicomSerie & b)
+{
+  if (tag_.label == "unamed_tag") {
+    EXCEPTION("Error in ImageBuilder, use SetImageTag before");
+  }
+
+  // Check a and b modality
+  if (a.dicom_modality != b.dicom_modality) {
+    LOG(FATAL) << "Error while trying to stitch the two following images, dicom_modality is not the same: "
+               << std::endl << a
+               << std::endl << b;
+  }
+
+  // Only consider single file and not CT for the moment
+  if (a.dicom_modality == "CT") {
+    LOG(FATAL) << "Error cannot stitch CT images. Only float pixel type (yet).";
+  }
+
+  // Create the image record
+  syd::Image image = InitializeNewMHDImage(*a.patient, tag_, a);
+
+  // Also link the second dicom
+  image.dicoms.push_back(std::make_shared<syd::DicomSerie>(b));
+
+  // Read the dicom images
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  ImageType::Pointer image_a = ReadImage<PixelType>(a);
+  ImageType::Pointer image_b = ReadImage<PixelType>(b);
+
+  // Stitch
+  ImageType::Pointer output = syd::StitchImages<ImageType>(image_a, image_b, 150000, 4);
+
+  // Update the image values
+  UpdateImageInfo<PixelType>(image, output, true); // true = update md5
+
+  // Write image
+  syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));
+
+  // Insert into the db
+  db_->Update(image);
+  return image;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::ImageBuilder::GetDefaultImageFilename(const syd::Image & image,
+                                                       const syd::DicomSerie & dicomserie)
+{
+  std::ostringstream oss;
+  oss << dicomserie.dicom_modality << "_" << image.id << ".mhd";
+  std::string filename = oss.str();
+  return filename;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image syd::ImageBuilder::InitializeNewMHDImage(const syd::Patient & patient,
+                                                    const syd::Tag & tag,
+                                                    const syd::DicomSerie & dicomserie)
+{
+  // Create image first to get the id
+  syd::Image image;
+  image.patient = std::make_shared<syd::Patient>(patient);
+  image.tag = std::make_shared<syd::Tag>(tag_);
+  image.dicoms.push_back(std::make_shared<syd::DicomSerie>(dicomserie));
+  image.type = "mhd";
+  db_->Insert(image);
+
+  // Define filename and create the associated Files
+  std::string filename = GetDefaultImageFilename(image, dicomserie);
+
+  // Create files
+  std::vector<syd::File> files(2); // .mhd and .raw
+  files[0].filename = filename;
+  files[0].path = db_->GetRelativeFolder(*image.patient);
+  syd::Replace(filename, ".mhd", ".raw");
+  files[1].filename = filename;
+  files[1].path = db_->GetRelativeFolder(patient);
+  db_->Insert(files[0]);
+  db_->Insert(files[1]);
+
+  // Set the Files
+  image.files.clear();
+  image.files.push_back(std::make_shared<syd::File>(files[0]));
+  image.files.push_back(std::make_shared<syd::File>(files[1])); // must be after file insertion
+
+  // (image is not updated in the db)
+  return image;
+}
+// --------------------------------------------------------------------

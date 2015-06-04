@@ -24,6 +24,7 @@
 #include "sydDatabase.h"
 #include "sydTable.h"
 #include "sydDatabaseManager.h"
+#include "sydImageUtils.h"
 
 // syd tables
 #include "sydPatient-odb.hxx"
@@ -74,6 +75,10 @@ namespace syd {
     /// Return the absolute path of the file
     std::string GetAbsolutePath(const File & file);
 
+    /// Return the absolute path of the image
+    std::string GetAbsolutePath(const Image & image);
+
+
     // /// Simple default Dump overwritten here to select special case DumpDicom.
     // virtual void Dump(const std::vector<std::string> & args, std::ostream & os);
 
@@ -114,6 +119,8 @@ namespace syd {
     std::vector<std::string> list_of_files_to_delete_;
 
   }; // class StandardDatabase
+
+  #include "sydStandardDatabase.txx"
 
 } // namespace syd
 

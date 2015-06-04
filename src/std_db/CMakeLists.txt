@@ -56,4 +56,8 @@ wrap_ggo(sydDumpTimepoint sydDumpTimepoint.ggo)
 add_executable(sydDumpTimepoint sydDumpTimepoint.cxx sydDumpTimepoint_ggo.c)
 target_link_libraries(sydDumpTimepoint sydStandardDatabase)
 
+# Create images by stitching 2 dicom
+wrap_ggo(sydStitchDicom sydStitchDicom.ggo)
+add_executable(sydStitchDicom sydStitchDicom.cxx sydStitchDicom_ggo.c)
+target_link_libraries(sydStitchDicom sydStandardDatabase)
 #----------------------------------------------------------

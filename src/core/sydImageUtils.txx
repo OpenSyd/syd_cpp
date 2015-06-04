@@ -194,9 +194,27 @@ typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType *
   s2->TransformIndexToPhysicalPoint(index2, pstart2);
   s2->TransformIndexToPhysicalPoint(last2, pend2);
 
+  // Check X and Y same size
+  bool isCorrect = true;
+  for(auto i=0; i<2; i++)  {
+    if (pstart1[i] != pstart2[i]) isCorrect = false;
+    if (pend1[i] != pend2[i]) isCorrect = false;
+  }
+  if (!isCorrect) {
+    LOG(FATAL) << "Error could not stitch the two images because X/Y size are not equal: "
+               << std::endl << "Image1: " << pstart1 << " -> " << pend1
+               << std::endl << "Image2: " << pstart2 << " -> " << pend2;
+  }
+
+  // Compute the total region
   typename ImageType::PointType pstart3, pend3;
-  for(auto i=0; i<3; i++) pstart3[i] = std::min(pstart1[i], pstart2[i]);
-  for(auto i=0; i<3; i++) pend3[i] = std::max(pend1[i], pend2[i]);
+  for(auto i=0; i<3; i++)  {
+    if (pstart1[i] > pend1[i]) pstart3[i] = std::max(pstart1[i], pstart2[i]); // reverse order
+    if (pstart1[i] < pend1[i]) pstart3[i] = std::min(pstart1[i], pstart2[i]);
+
+    if (pend1[i] > pstart1[i]) pend3[i] = std::max(pend1[i], pend2[i]);
+    if (pend1[i] < pstart1[i]) pend3[i] = std::min(pend1[i], pend2[i]); // reverse order
+  }
 
   typename ImageType::IndexType start, end;
   s1->TransformPhysicalPointToIndex(pstart3, start);
@@ -211,13 +229,21 @@ typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType *
   output->CopyInformation(s1);
   output->SetRegions(region);
   typename ImageType::PointType origin;
-  for(auto i=0; i<3; i++) origin[i] = (pstart1[i] < pstart2[i] ? s1->GetOrigin()[i]:s2->GetOrigin()[i]);
+  for(auto i=0; i<3; i++) {
+    if (pstart1[i] > pend1[i]) // reverse
+      origin[i] = (pstart1[i] > pstart2[i] ? s1->GetOrigin()[i]:s2->GetOrigin()[i]);
+    else
+      origin[i] = (pstart1[i] < pstart2[i] ? s1->GetOrigin()[i]:s2->GetOrigin()[i]);
+  }
   output->SetOrigin(origin);
   output->Allocate();
 
   // Resize 2 images like output
   typename ImageType::Pointer rs1 = syd::ResampleAndCropImageLike<ImageType>(s1, output, 0,0);
   typename ImageType::Pointer rs2 = syd::ResampleAndCropImageLike<ImageType>(s2, output, 0,0);
+
+  // Swap if not correct order
+  if (pstart3[2] == pstart1[2]) std::swap(rs1, rs2);
 
   if (0) {
     //typedef itk::ImageSliceConstIteratorWithIndex<ImageType> ConstIteratorType;
@@ -260,6 +286,7 @@ typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType *
     std::vector<double> cumul1(rs1->GetLargestPossibleRegion().GetSize()[2]);
     std::vector<double> cumul2(rs2->GetLargestPossibleRegion().GetSize()[2]);
 
+    // Cumulate pixel values along slices (profile)
     int i=0;
     while (!iter1.IsAtEnd()) {
       cumul1[i] = 0.0;
@@ -285,6 +312,7 @@ typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType *
       iter2.NextSlice(); ++i;
     }
 
+    // Find the slice where cumul larger than threshold_cumul
     bool start = false;
     int end=0;
     double t = threshold_cumul;//150000;
@@ -303,7 +331,6 @@ typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType *
     i = 0;
     int skip = skip_slices;
     while (!iter1.IsAtEnd()) {
-
       while (!iter1.IsAtEndOfSlice()) {
         while (!iter1.IsAtEndOfLine()) {
           if (i>end-skip) itero.Set(iter1.Get());
@@ -490,5 +517,148 @@ void ScaleImage(ImageType * input, double scale)
     iter.Set(iter.Get()*scale);
     ++iter;
   }
+}
+//--------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class PixelType>
+typename itk::Image<PixelType,3>::Pointer
+ReadDicomFromSingleFile(std::string filename)
+{
+  typedef itk::Image<PixelType,3> ImageType;
+  // Read the image data
+  LOG(2) << "Converting dicom file (" << filename << ") to itk image.";
+  typename ImageType::Pointer output = ReadImage<ImageType>(filename);
+
+  // Update the iamge
+  UpdateImageInformation<PixelType>(output, filename);
+  return output;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class PixelType>
+typename itk::Image<PixelType,3>::Pointer
+ReadDicomSerieFromFolder(std::string folder, std::string serie_uid)
+{
+  typedef itk::Image<PixelType,3> ImageType;
+  typename ImageType::Pointer output;
+  std::string file;
+  // Read itk image
+  try {
+    typedef itk::ImageSeriesReader<ImageType> ReaderType;
+    typedef itk::GDCMImageIO ImageIOType;
+    typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
+    InputNamesGeneratorType::Pointer nameGenerator = InputNamesGeneratorType::New();
+    nameGenerator->SetInputDirectory(folder);
+    const std::vector<std::string> & temp = nameGenerator->GetFileNames(serie_uid);
+    typename ReaderType::Pointer reader = ReaderType::New();
+    LOG(2) << "Loading " << temp.size() << " files for serie " << serie_uid << " in " << folder << ".";
+    reader->SetFileNames(temp);
+    file = temp[0];
+    reader->Update();
+    output = reader->GetOutput();
+  }
+  catch (itk::ExceptionObject &excp) {
+   EXCEPTION("Error while reading the dicom serie in " << folder << ", itk exception is: " << excp);
+  }
+
+  // Update the image
+  UpdateImageInformation<PixelType>(output, file);
+  return output;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class PixelType>
+void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, const std::string & filename)
+{
+  // Open the dicom to read some tags
+  typedef itk::Image<PixelType,3> ImageType;
+  DcmFileFormat dfile;
+  bool b = syd::OpenDicomFile(filename.c_str(), dfile);
+  if (!b) {
+    EXCEPTION("Could not open the dicom file '" << filename
+              << "' maybe this is not a dicom ?");
+  }
+  DcmObject *dset = dfile.getDataset();
+
+  // Remove meta information (if not : garbage in the mhd)
+  itk::MetaDataDictionary d;
+  image->SetMetaDataDictionary(d);
+
+  // Offset
+  std::string ImagePositionPatient = GetTagValueString(dset, "ImagePositionPatient");
+  if (ImagePositionPatient == "") {
+    EXCEPTION("Error while reading tag ImagePositionPatient in the dicom ");
+  }
+
+  int n = ImagePositionPatient.find("\\");
+  std::string sx = ImagePositionPatient.substr(0,n);
+  ImagePositionPatient = ImagePositionPatient.substr(n+1,ImagePositionPatient.size());
+  n = ImagePositionPatient.find("\\");
+  std::string sy = ImagePositionPatient.substr(0,n);
+  std::string sz = ImagePositionPatient.substr(n+1,ImagePositionPatient.size());
+  typename ImageType::PointType origin;
+  origin[0] = ToDouble(sx);
+  origin[1] = ToDouble(sy);
+  origin[2] = ToDouble(sz);
+  // Heuristic : sometimes the origin is not correctly set, so we
+  // correct. Warning : the third dimension could be wrong (a single
+  // dicom file is open)
+  if (image->GetOrigin()[0] != origin[0]) {
+    LOG(2) << "Change image origin from " << image->GetOrigin() << " to " << origin;
+    image->SetOrigin(origin);
+  }
+
+  // Correct for negative SpacingBetweenSlices
+  double s = GetTagValueDouble(dset, "SpacingBetweenSlices");
+
+  // change spacing z
+  typename ImageType::SpacingType spacing = image->GetSpacing();
+  if (s<0) spacing[2] = -s;
+  else spacing[2] = s;
+  image->SetSpacing(spacing);
+  // Direction
+  if (s<0) {
+    LOG(2) << "Negative spacing, I flip the image.";
+    typename ImageType::DirectionType direction = image->GetDirection();
+    direction.Fill(0.0);
+    direction(0,0) = 1; direction(1,1) = 1; direction(2,2) = -1;
+    image->SetDirection(direction);
+
+    // Change orientation
+    typename itk::OrientImageFilter<ImageType,ImageType>::Pointer orienter =
+      itk::OrientImageFilter<ImageType,ImageType>::New();
+    orienter->UseImageDirectionOn();
+    orienter->SetDesiredCoordinateOrientation(itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
+    orienter->SetInput(image);
+    orienter->Update();
+    image = orienter->GetOutput();
+  }
+
+  // Correct for pixel scale --> dont know why it does not work.
+  // DcmDictEntry * e = new DcmDictEntry(0x0011, 0x103b, EVR_UN, "PixelScale", 0, DcmVariableVM, NULL, true, NULL);
+  // DcmDataDictionary &globalDataDict = dcmDataDict.wrlock();
+  // globalDataDict.addEntry(e);
+  // DcmElement * ee = GetTagValue(dset, "PixelScale");
+  // double f;
+  // ee->getFloat64(f);
+  // DD(f);
+  /*
+  double scale = GetTagValueDouble(dset, "PixelScale");
+  DD(scale);
+  if (scale != 1.0 and scale != 0.0) {
+    typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> FilterType;
+    typename FilterType::Pointer filter = FilterType::New();
+    filter->SetInput(image);
+    filter->SetConstant(scale);
+    filter->Update();
+    image = filter->GetOutput();
+  }
+  */
 }
 //--------------------------------------------------------------------
