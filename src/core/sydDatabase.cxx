@@ -262,12 +262,21 @@ void syd::Database::DeleteCurrentList()
   odb::transaction t (db_->begin());
 
   // Delete all the elements in the list
+  /*
   for(auto it=list_of_elements_to_delete_.begin();
       it != list_of_elements_to_delete_.end(); ++it) {
     std::string table_name = it->first;
     if (!delete_dry_run_flag_) GetTable(table_name)->Erase(it->second);
     LOG(2) << "Deleting " << it->first << " " << *it->second;
   }
+  */
+  for(auto it=list_of_elements_to_delete_.begin();
+      it != list_of_elements_to_delete_.end(); ++it) {
+    auto & p = it->second;
+    if (!delete_dry_run_flag_) GetTable(p.first)->Erase(p.second);
+  }
+
+
   t.commit();
 
   // Verbose
@@ -281,7 +290,8 @@ void syd::Database::DeleteCurrentList()
   // free memory
   for(auto it=list_of_elements_to_delete_.begin();
       it != list_of_elements_to_delete_.end(); ++it) {
-    delete it->second;
+    //    delete it->second;
+    delete it->second.second;
   }
   list_of_elements_to_delete_.clear();
 }

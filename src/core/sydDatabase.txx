@@ -77,9 +77,15 @@ void syd::Database::AddToDeleteList(TableElement & elem)
   // Create a pointer to the element
   TableElementBase * e = new TableElement(elem);
   auto p = std::make_pair(TableElement::GetTableName(), e);
+  std::string key = TableElement::GetTableName()+ToString(elem.id);
 
-  //  auto result = std::find(list_of_elements_to_delete.begin(), list_of_elements_to_delete.end(), syd::comp(e));
+  auto result = list_of_elements_to_delete_.find(key);
+  if (result == list_of_elements_to_delete_.end()) { // not found
+    list_of_elements_to_delete_[key] = p;
+    OnDelete(TableElement::GetTableName(), e);
+  }
 
+  /*
   // Very slow & bad loop. To be improve (map)
   bool found = false;
   auto iter = list_of_elements_to_delete_.begin();
@@ -97,6 +103,7 @@ void syd::Database::AddToDeleteList(TableElement & elem)
     list_of_elements_to_delete_.push_back(p);
     OnDelete(TableElement::GetTableName(), e);
   }
+  */
 }
 // --------------------------------------------------------------------
 

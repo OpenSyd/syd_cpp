@@ -235,7 +235,10 @@ namespace syd {
     std::string current_sql_query_;
 
     /// Store the list of elements (with their types) that will be deleted
-    std::vector<std::pair<std::string, TableElementBase*>> list_of_elements_to_delete_;
+    //    std::vector<std::pair<std::string, TableElementBase*>> list_of_elements_to_delete_;
+
+    typedef std::pair<std::string, TableElementBase*> ElementPair;
+    std::map<std::string, ElementPair> list_of_elements_to_delete_;
 
     /// Flag to not delete
     bool delete_dry_run_flag_;
