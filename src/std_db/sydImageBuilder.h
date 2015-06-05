@@ -62,12 +62,23 @@ namespace syd {
     syd::Image StitchDicomSerie(const syd::DicomSerie & a, const syd::DicomSerie & b);
 
     /// Propose a default filename for the image (use the image.id, so must be inserted in the db before)
-    std::string GetDefaultImageFilename(const syd::Image & image, const syd::DicomSerie & dicomserie);
+
+    std::string GetDefaultImageFilename(const syd::Image & image);
+    std::string GetDefaultImageRelativePath(const syd::Image & image);
+    std::string GetDefaultRoiMaskImageFilename(const syd::RoiMaskImage & mask);
+    std::string GetDefaultRoiMaskImageRelativePath(const syd::RoiMaskImage & mask);
+
+    syd::Image CreateNewMHDImageFromDicom(const syd::Tag & tag,
+                                          const syd::DicomSerie & dicomserie);
+
+    void ImageSetDicom(syd::Image & image, const syd::DicomSerie & dicomserie);
+    void ImageInsertFile(syd::Image & image, std::string relativepath, std::string filename);
 
 
-    syd::Image InitializeNewMHDImage(const syd::Patient & patient,
-                                     const syd::Tag & tag,
-                                     const syd::DicomSerie & dicomserie);
+    syd::RoiMaskImage InsertRoiMaskImageFromDicomSerie(const syd::DicomSerie & dicom,
+                                                       const syd::RoiType & roitype,
+                                                       const std::string & filename);
+
 
     // FIXME
     template<class PixelType>

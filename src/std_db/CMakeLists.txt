@@ -11,6 +11,8 @@ wrap_odb(sydStandardDatabase sydDicomFile.h)
 wrap_odb(sydStandardDatabase sydTimepoint.h)
 wrap_odb(sydStandardDatabase sydTag.h)
 wrap_odb(sydStandardDatabase sydImage.h)
+wrap_odb(sydStandardDatabase sydRoiType.h)
+wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
 
 add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
@@ -24,6 +26,8 @@ add_library(sydStandardDatabase SHARED
   sydDicomFile-odb.cxx sydDicomFile.cxx
   sydTimepoint-odb.cxx sydTimepoint.cxx
   sydImage-odb.cxx sydImage.cxx
+  sydRoiType-odb.cxx sydRoiType.cxx
+  sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx
   sydDicomSerieBuilder.cxx
   sydTimepointBuilder.cxx
   sydImageBuilder.cxx
@@ -60,6 +64,16 @@ target_link_libraries(sydDumpTimepoint sydStandardDatabase)
 wrap_ggo(sydStitchDicom sydStitchDicom.ggo)
 add_executable(sydStitchDicom sydStitchDicom.cxx sydStitchDicom_ggo.c)
 target_link_libraries(sydStitchDicom sydStandardDatabase)
+
+# Reduce the size of an image by cropping it (with a mask or with a threshold)
+wrap_ggo(sydCropImage sydCropImage.ggo)
+add_executable(sydCropImage sydCropImage.cxx sydCropImage_ggo.c)
+target_link_libraries(sydCropImage sydStandardDatabase)
+
+# Insert a new RoiMaskImage
+wrap_ggo(sydInsertRoiMaskImage sydInsertRoiMaskImage.ggo)
+add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx sydInsertRoiMaskImage_ggo.c)
+target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 
 # Not really a tool, for debug only
 wrap_ggo(sydTest sydTest.ggo)

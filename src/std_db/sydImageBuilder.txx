@@ -32,7 +32,10 @@ void ImageBuilder::UpdateImageInfo(syd::Image & image,
   else {
     if (typeid(PixelType) == typeid(short)) image.pixel_type = "short";
     else {
-      EXCEPTION("Cannot create syd::Image from itk image with pixeltype = " << typeid(PixelType).name());
+      if (typeid(PixelType) == typeid(unsigned char)) image.pixel_type = "uchar";
+      else {
+        EXCEPTION("Cannot create syd::Image from itk image with pixeltype = " << typeid(PixelType).name());
+      }
     }
   }
 

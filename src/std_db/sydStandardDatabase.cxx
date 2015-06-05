@@ -27,14 +27,17 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::Radionuclide>();
   AddTable<syd::File>();
   AddTable<syd::Tag>();
+  AddTable<syd::RoiType>();
 
   AddTable<syd::Injection>();
 
   AddTable<syd::DicomSerie>();
   AddTable<syd::DicomFile>();
 
-  AddTable<syd::Timepoint>();
   AddTable<syd::Image>();
+  AddTable<syd::RoiMaskImage>();
+
+  AddTable<syd::Timepoint>(); // FIXME ?
 }
 // --------------------------------------------------------------------
 
@@ -44,16 +47,32 @@ std::string syd::StandardDatabase::GetAbsoluteFolder(const DicomSerie & serie)
 {
   Patient patient = QueryOne<Patient>(serie.patient->id);
   std::string f = GetAbsoluteFolder(patient);
-  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create patient dir
   std::string d = serie.acquisition_date;
   //  syd::Replace(d, " ", "_");
   // remove the hour and keep y m d
   d = d.substr(0, 10);
   f = f+PATH_SEPARATOR+d;
-  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create date dir
+  // if (!syd::DirExists(f)) syd::CreateDirectory(f); // create date dir  //FIXME in dicombuilder
   f = f+PATH_SEPARATOR+serie.dicom_modality;
-  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create modality dir
+  // if (!syd::DirExists(f)) syd::CreateDirectory(f); // create modality dir  //FIXME in dicombuilder
   return f;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::CreateAbsoluteFolder(const DicomSerie & serie)
+{
+  Patient patient = QueryOne<Patient>(serie.patient->id);
+  std::string f = GetAbsoluteFolder(patient);
+  std::string d = serie.acquisition_date;
+  //  syd::Replace(d, " ", "_");
+  // remove the hour and keep y m d
+  d = d.substr(0, 10);
+  f = f+PATH_SEPARATOR+d;
+  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create date dir  //FIXME in dicombuilder
+  f = f+PATH_SEPARATOR+serie.dicom_modality;
+  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create modality dir  //FIXME in dicombuilder
 }
 // --------------------------------------------------------------------
 
@@ -61,7 +80,9 @@ std::string syd::StandardDatabase::GetAbsoluteFolder(const DicomSerie & serie)
 // --------------------------------------------------------------------
 std::string syd::StandardDatabase::GetAbsoluteFolder(const Patient & patient)
 {
-  return GetAbsoluteDBFolder()+PATH_SEPARATOR+GetRelativeFolder(patient);
+  std::string f = GetAbsoluteDBFolder()+PATH_SEPARATOR+GetRelativeFolder(patient);
+  // if (!syd::DirExists(f)) syd::CreateDirectory(f); // create patient dir //FIXME in insert patient
+  return f;
 }
 // --------------------------------------------------------------------
 
@@ -77,7 +98,9 @@ std::string syd::StandardDatabase::GetRelativeFolder(const Patient & patient)
 // --------------------------------------------------------------------
 std::string syd::StandardDatabase::GetAbsolutePath(const File & file)
 {
-  std::string f = GetAbsoluteDBFolder()+PATH_SEPARATOR+file.path+PATH_SEPARATOR+file.filename;
+  std::string f = GetAbsoluteDBFolder()+PATH_SEPARATOR+file.path;
+  // if (!syd::DirExists(f)) syd::CreateDirectory(f); // create file dir
+  f = f+PATH_SEPARATOR+file.filename;
   return f;
 }
 // --------------------------------------------------------------------
@@ -142,12 +165,33 @@ syd::Injection syd::StandardDatabase::FindInjectionByNameOrId(const Patient & pa
 
 
 // --------------------------------------------------------------------
+syd::RoiType syd::StandardDatabase::FindRoiType(const std::string & name)
+{
+  return QueryOne<syd::RoiType>(odb::query<syd::RoiType>::name == name);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::TableElementBase * syd::StandardDatabase::InsertFromArg(const std::string & table_name,
                                                              std::vector<std::string> & arg)
 {
+  if (table_name == syd::Patient::GetTableName()) return InsertPatient(arg);
   if (table_name == syd::Injection::GetTableName()) return InsertInjection(arg);
   //  if (table_name == syd::DicomSerie::GetTableName()) return InsertDicomSerie(arg);
   return syd::Database::InsertFromArg(table_name, arg);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Patient * syd::StandardDatabase::InsertPatient(std::vector<std::string> & arg)
+{
+  syd::Patient * patient = dynamic_cast<syd::Patient*>(syd::Database::InsertFromArg(syd::Patient::GetTableName(), arg));
+  // Create the folder
+  std::string f = GetAbsoluteFolder(*patient);
+  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create patient dir //FIXME in insert patient
+  return patient;
 }
 // --------------------------------------------------------------------
 

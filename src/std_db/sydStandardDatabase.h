@@ -36,6 +36,8 @@
 #include "sydTag-odb.hxx"
 #include "sydTimepoint-odb.hxx"
 #include "sydImage-odb.hxx"
+#include "sydRoiType-odb.hxx"
+#include "sydRoiMaskImage-odb.hxx"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -51,6 +53,9 @@ namespace syd {
     /// Insert a new Injection (check patient before etc)
     syd::Injection * InsertInjection(std::vector<std::string> & arg);
 
+    /// Insert a new Patient (create folder)
+    syd::Patient * InsertPatient(std::vector<std::string> & arg);
+
     /// Return the patient by name or study_id. Fail if not found.
     syd::Patient FindPatientByNameOrStudyId(const std::string & arg);
 
@@ -63,8 +68,14 @@ namespace syd {
                    const std::vector<std::string> & patterns,
                    std::vector<syd::DicomSerie> & series);
 
+    /// Return a roitype from its name
+    syd::RoiType FindRoiType(const std::string & name);
+
     /// Return the folder where the dicomserie are stored
     std::string GetAbsoluteFolder(const DicomSerie & serie);
+
+    /// Create the folder for a serie (date/modality)
+    void CreateAbsoluteFolder(const DicomSerie & serie);
 
     /// Return the folder where the patient images are stored
     std::string GetAbsoluteFolder(const Patient & patient);

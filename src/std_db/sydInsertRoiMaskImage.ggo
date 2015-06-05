@@ -1,0 +1,13 @@
+#File sydInsertRoiMaskImage.ggo
+
+package "sydInsertRoiMaskImage"
+usage "sydInsertRoiMaskImage <db> <roitype> <dicom_id> <mask.mhd>"
+version "0.2"
+description "Create a new RoiMaskImage TODO
+- <db>            name of the database
+TODO
+"
+
+option "config"	  	 	-	"Config file"				      string  	no
+option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off

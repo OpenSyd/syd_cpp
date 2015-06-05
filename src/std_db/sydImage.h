@@ -44,7 +44,6 @@ namespace syd {
     IdType id;
 
 #pragma db not_null
-#pragma db on_delete(cascade)
     /// Foreign key, it must exist in the Patient table.
     std::shared_ptr<syd::Patient> patient;
 

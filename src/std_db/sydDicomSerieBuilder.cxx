@@ -365,6 +365,7 @@ syd::DicomFile * syd::DicomSerieBuilder::CreateDicomFile(const std::string & fil
   syd::File * file = new syd::File;
   std::string f = GetFilenameFromPath(filename);
   file->filename = f;
+  db_->CreateAbsoluteFolder(*serie);
   std::string p = db_->GetAbsoluteFolder(*serie);
   std::string rp = p;
   syd::Replace(rp, db_->GetAbsoluteDBFolder()+PATH_SEPARATOR, ""); // Get relative folder
