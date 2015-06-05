@@ -333,6 +333,7 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie * serie,
   double sz = GetTagValueDouble(dset, "SpacingBetweenSlices");
   if (sz == 0) {
     sz = GetTagValueDouble(dset, "SliceThickness");
+    if (sz == 0) sz = 1.0; // not found, default
   }
   std::string spacing = GetTagValueString(dset, "PixelSpacing");
   int n = spacing.find("\\");
@@ -342,7 +343,10 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie * serie,
   std::string sy = spacing.substr(0,n);
   serie->spacing[0] = atof(sx.c_str());
   serie->spacing[1] = atof(sy.c_str());
-  if (sz != 0) serie->spacing[2] = sz; // only update if found
+  serie->spacing[2] = sz;
+  if (serie->spacing[0] == 0) serie->spacing[0] = 1.0;
+  if (serie->spacing[1] == 0) serie->spacing[1] = 1.0;
+  //  if (sz != 0) serie->spacing[2] = sz; // only update if found
 
   // other (needed ?)
   // std::string TableTraverse = GetTagValueString(dset, "TableTraverse");
