@@ -409,11 +409,11 @@ void syd::DicomSerieBuilder::InsertDicomSeries()
     std::string f = syd::GetFilenameFromPath(files_to_copy[i]);
     std::string destination = destination_folders[i]+PATH_SEPARATOR+f;
     if (syd::FileExists(destination)) {
-      LOG(3) << "Destination file already exist, ignoring";
+      LOG(4) << "Destination file already exist, ignoring";
       nb_of_skip_copy++;
       continue;
     }
-    LOG(2) << "Copying " << f << " to " << destination_folders[i] << std::endl;
+    LOG(3) << "Copying " << f << " to " << destination_folders[i] << std::endl;
     syd::CopyFile(files_to_copy[i].c_str(), destination);
     syd::loadbar(i,n);
   }
