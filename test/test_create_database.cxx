@@ -31,9 +31,9 @@ int main(int argc, char* argv[])
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
 
   // Create the database
-  std::string dbname = "test-work.db";
+  std::string dbname = "data/test-work.db";
   std::string folder = "test-data";
-  std::string ref_dbname = "test-ref.db";
+  std::string ref_dbname = "data/test-ref.db";
   std::string ref_folder = "test-ref-data";
   LOG(1) << "Creating database " << dbname;
   syd::Database * db = m->Create("StandardDatabase", dbname, folder);
