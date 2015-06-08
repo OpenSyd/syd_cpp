@@ -22,6 +22,8 @@
 #include "sydTable.h"
 #include "sydFile.h"
 #include "sydFile-odb.hxx"
+#include "sydRoiMaskImage.h"
+#include "sydRoiMaskImage-odb.hxx"
 
 // --------------------------------------------------------------------
 syd::Image::Image():TableElementBase()
@@ -75,5 +77,10 @@ bool syd::Image::operator==(const Image & p)
 void syd::Image::OnDelete(syd::Database * db)
 {
   for(auto f:files) db->AddToDeleteList(*f);
+
+  // Also delete the RoiMaskImage
+  std::vector<syd::RoiMaskImage> masks;
+  db->Query<syd::RoiMaskImage>(odb::query<syd::RoiMaskImage>::image == id, masks);
+  for(auto i:masks) db->AddToDeleteList(i);
 }
 // --------------------------------------------------
