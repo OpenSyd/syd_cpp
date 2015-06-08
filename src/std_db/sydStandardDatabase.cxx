@@ -80,8 +80,7 @@ void syd::StandardDatabase::CreateAbsoluteFolder(const DicomSerie & serie)
 // --------------------------------------------------------------------
 std::string syd::StandardDatabase::GetAbsoluteFolder(const Patient & patient)
 {
-  std::string f = GetAbsoluteDBFolder()+PATH_SEPARATOR+GetRelativeFolder(patient);
-  // if (!syd::DirExists(f)) syd::CreateDirectory(f); // create patient dir //FIXME in insert patient
+  std::string f = GetDatabaseAbsoluteFolder()+PATH_SEPARATOR+GetRelativeFolder(patient);
   return f;
 }
 // --------------------------------------------------------------------
@@ -98,7 +97,7 @@ std::string syd::StandardDatabase::GetRelativeFolder(const Patient & patient)
 // --------------------------------------------------------------------
 std::string syd::StandardDatabase::GetAbsolutePath(const File & file)
 {
-  std::string f = GetAbsoluteDBFolder()+PATH_SEPARATOR+file.path;
+  std::string f = GetDatabaseAbsoluteFolder()+PATH_SEPARATOR+file.path;
   // if (!syd::DirExists(f)) syd::CreateDirectory(f); // create file dir
   f = f+PATH_SEPARATOR+file.filename;
   return f;
@@ -168,6 +167,18 @@ syd::Injection syd::StandardDatabase::FindInjectionByNameOrId(const Patient & pa
 syd::RoiType syd::StandardDatabase::FindRoiType(const std::string & name)
 {
   return QueryOne<syd::RoiType>(odb::query<syd::RoiType>::name == name);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiMaskImage syd::StandardDatabase::FindRoiMaskImage(const syd::Patient & patient,
+                                                          const syd::RoiType & roitype)
+{
+  syd::RoiMaskImage r =
+    QueryOne<syd::RoiMaskImage>(odb::query<syd::RoiMaskImage>::image->patient == patient.id and
+                                odb::query<syd::RoiMaskImage>::roitype == roitype.id);
+  return r;
 }
 // --------------------------------------------------------------------
 

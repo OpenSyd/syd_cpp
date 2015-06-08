@@ -121,7 +121,7 @@ void syd::Database::Dump(const std::vector<std::string> & args, std::ostream & o
 {
   if (args.size() == 0) {
     os << "Database schema: " << GetDatabaseSchema() << std::endl;
-    os << "Database folder: " << GetDBFolder() << std::endl;
+    os << "Database folder: " << GetDatabaseRelativeFolder() << std::endl;
     for(auto i=map.begin(); i != map.end(); i++) {
       int n = i->second->GetNumberOfElements();
       os << "Table \t" << std::setw(15) << i->first << " " <<  std::setw(10) << n;
@@ -200,7 +200,7 @@ void syd::Database::CopyDatabaseTo(std::string file, std::string folder)
 
   // Copy the folder content :/ FIXME (not on windows !)
   std::ostringstream cmd;
-  cmd << "cp -r " << GetAbsoluteDBFolder() << "/* " << folder;
+  cmd << "cp -r " << GetDatabaseAbsoluteFolder() << "/* " << folder;
   system(cmd.str().c_str());
 
   // if (!syd::DirExists(folder)) syd::CreateDirectory(folder);

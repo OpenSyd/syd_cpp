@@ -368,7 +368,7 @@ syd::DicomFile * syd::DicomSerieBuilder::CreateDicomFile(const std::string & fil
   db_->CreateAbsoluteFolder(*serie);
   std::string p = db_->GetAbsoluteFolder(*serie);
   std::string rp = p;
-  syd::Replace(rp, db_->GetAbsoluteDBFolder()+PATH_SEPARATOR, ""); // Get relative folder
+  syd::Replace(rp, db_->GetDatabaseAbsoluteFolder()+PATH_SEPARATOR, ""); // Get relative folder
   file->path = rp;
   files_to_copy.push_back(filename);
   destination_folders.push_back(p);

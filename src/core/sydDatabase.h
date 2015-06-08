@@ -52,10 +52,10 @@ namespace syd {
     std::string GetFilename() const { return filename_; }
 
     /// Return the folder that contains the associated images (relative to the current path)
-    std::string GetDBFolder() const { return relative_folder_; }
+    std::string GetDatabaseRelativeFolder() const { return relative_folder_; }
 
     /// Return the folder that contains the associated images (absolute)
-    std::string GetAbsoluteDBFolder() const { return absolute_folder_; }
+    std::string GetDatabaseAbsoluteFolder() const { return absolute_folder_; }
     // ------------------------------------------------------------------------
 
 
@@ -68,8 +68,9 @@ namespace syd {
     template<class TableElement>
     void Insert(std::vector<TableElement*>& r);
 
-    /// Insert a new element build from set of string // FIXME ? Useful ? Change name  ?
-    virtual TableElementBase * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
+    /// Insert a new element build from set of string
+    virtual TableElementBase * InsertFromArg(const std::string & table_name,
+                                             std::vector<std::string> & arg);
     // ------------------------------------------------------------------------
 
 
