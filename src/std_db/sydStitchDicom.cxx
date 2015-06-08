@@ -51,8 +51,7 @@ int main(int argc, char* argv[])
 
   // Create main builder
   syd::ImageBuilder builder(db);
-  builder.SetImageTag(tag);
-  syd::Image image = builder.StitchDicomSerie(a,b);
+  syd::Image image = builder.InsertStitchedImage(tag,a,b);
   LOG(1) << "Inserting Image " << image;
 
   // This is the end, my friend.

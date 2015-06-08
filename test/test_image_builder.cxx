@@ -41,16 +41,18 @@ int main(int argc, char* argv[])
   LOG(1) << "Loading database";
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
-  // Create main object
+  // Create image
   syd::ImageBuilder b(db);
-  syd::Tag tag = db->QueryOne<syd::Tag>(2);
-  b.SetImageTag(tag);
-
-  // test 1: create image from dicom
+  syd::Tag tag = db->QueryOne<syd::Tag>(1);
   syd::DicomSerie dicom = db->QueryOne<syd::DicomSerie>(2);
-  syd::Image image = b.InsertImageFromDicomSerie(dicom);
+  syd::Image image = b.InsertImage(tag,dicom);
   syd::Patient patient = *image.patient;
   LOG(1) << "Create and insert Image: " << image;
+
+  // Create roimaskimage
+  syd::RoiType roitype = db->FindRoiType("body");
+  syd::RoiMaskImage mask = b.InsertRoiMaskImage(tag, dicom, roitype, db->GetAbsolutePath(image));
+
 
   // test 2: create image for timepoint (+link tp with images)
   // syd::Timepoint tp = db->QueryOne<syd::Timepoint>(1);

@@ -53,9 +53,8 @@ int main(int argc, char* argv[])
 
   // Create main builder
   syd::ImageBuilder b(db);
-  b.SetImageTag(tag);
   for(auto d:dicom_series) {
-    syd::Image image = b.InsertImageFromDicomSerie(d);
+    syd::Image image = b.InsertImage(tag, d);
     LOG(1) << "Inserting Image " << image;
   }
 

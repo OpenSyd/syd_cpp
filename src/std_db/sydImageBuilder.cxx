@@ -33,18 +33,14 @@ syd::ImageBuilder::ImageBuilder(syd::StandardDatabase * db):syd::ImageBuilder()
 syd::ImageBuilder::ImageBuilder()
 {
   db_ = NULL;
-  tag_.label = "unamed_tag";
+  //tag_.label = "unamed_tag";
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::Image syd::ImageBuilder::InsertImageFromDicomSerie(const syd::DicomSerie & dicomserie)
+syd::Image syd::ImageBuilder::InsertImage(const syd::Tag & tag, const syd::DicomSerie & dicomserie)
 {
-  if (tag_.label == "unamed_tag") {
-    EXCEPTION("Error in ImageBuilder, use SetImageTag before");
-  }
-
   // Get the files
   std::vector<syd::DicomFile> dicom_files;
   db_->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie->id == dicomserie.id, dicom_files);
@@ -57,7 +53,9 @@ syd::Image syd::ImageBuilder::InsertImageFromDicomSerie(const syd::DicomSerie & 
   }
 
   // Create image first to get the id
-  syd::Image image = CreateNewMHDImageFromDicom(tag_, dicomserie);
+  syd::Image image = InsertEmptyImage(tag, *dicomserie.patient);
+  UpdateDicom(image, dicomserie);
+  UpdateFile(image, GetDefaultImageRelativePath(image), GetDefaultImageFilename(image));
   std::string f = db_->GetAbsolutePath(image);
 
   // Convert dicom, write to disk
@@ -83,7 +81,7 @@ syd::Image syd::ImageBuilder::InsertImageFromDicomSerie(const syd::DicomSerie & 
 
   } catch (syd::Exception & e) {
     db_->Delete(image);
-    EXCEPTION("Error during CreateImageFromDicomSerie: " << e.what() << " (I remove the image " << image << ")");
+    EXCEPTION("Error during InsertImage: " << e.what() << " (I remove the image " << image << ")");
   }
 
   return image;
@@ -92,43 +90,10 @@ syd::Image syd::ImageBuilder::InsertImageFromDicomSerie(const syd::DicomSerie & 
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilder::InsertImagesFromTimepoint(syd::Timepoint & timepoint)
+syd::Image syd::ImageBuilder::InsertStitchedImage(const syd::Tag & tag,
+                                                  const syd::DicomSerie & a,
+                                                  const syd::DicomSerie & b)
 {
-
-  DD("InsertImagesFromTimepoint TODO");
-  exit(0);
-
-  // loop create all images
-  for(auto d:timepoint.dicoms) {
-    // Create new image
-    syd::Image image = InsertImageFromDicomSerie(*d);
-    // Associate image with timepoint
-    timepoint.images.push_back(std::make_shared<syd::Image>(image));
-  }
-  db_->Update(timepoint);
-  //  LOG(1) << "Timpoint (" << timepoint << ") updated with " << timepoint.dicoms.size() << " images."; // FIXME not here
-}
-// --------------------------------------------------------------------
-
-/* from file ?
-   itk::ImageIOBase::Pointer imageIO =
-   itk::ImageIOFactory::CreateImageIO(
-   inputFileName,
-   itk::ImageIOFactory::ReadMode );
-   imageIO->SetFileName( inputFileName );
-   imageIO->ReadImageInformation();
-   http://itk.org/ITKExamples/src/IO/ImageBase/ReadUnknownImageType/Documentation.html
-*/
-
-
-// --------------------------------------------------------------------
-syd::Image syd::ImageBuilder::StitchDicomSerie(const syd::DicomSerie & a,
-                                               const syd::DicomSerie & b)
-{
-  if (tag_.label == "unamed_tag") {
-    EXCEPTION("Error in ImageBuilder, use SetImageTag before");
-  }
-
   // Check a and b modality
   if (a.dicom_modality != b.dicom_modality) {
     LOG(FATAL) << "Error while trying to stitch the two following images, dicom_modality is not the same: "
@@ -149,10 +114,10 @@ syd::Image syd::ImageBuilder::StitchDicomSerie(const syd::DicomSerie & a,
   }
 
   // Create the image record
-  syd::Image image = CreateNewMHDImageFromDicom(tag_, a);
-
-  // Also link the second dicom
-  image.dicoms.push_back(std::make_shared<syd::DicomSerie>(b));
+  syd::Image image = InsertEmptyImage(tag, *a.patient);
+  UpdateDicom(image, a);
+  UpdateDicom(image, b);
+  UpdateFile(image, GetDefaultImageRelativePath(image), GetDefaultImageFilename(image));
 
   // Read the dicom images
   typedef float PixelType;
@@ -176,11 +141,43 @@ syd::Image syd::ImageBuilder::StitchDicomSerie(const syd::DicomSerie & a,
 // --------------------------------------------------------------------
 
 
+
+
+// --------------------------------------------------------------------
+void syd::ImageBuilder::InsertImagesFromTimepoint(syd::Timepoint & timepoint)
+{
+
+  DD("InsertImagesFromTimepoint TODO");
+  exit(0);
+
+  // // loop create all images
+  // for(auto d:timepoint.dicoms) {
+  //   // Create new image
+  //   syd::Image image = InsertImage(*d);
+  //   // Associate image with timepoint
+  //   timepoint.images.push_back(std::make_shared<syd::Image>(image));
+  // }
+  // db_->Update(timepoint);
+  // //  LOG(1) << "Timpoint (" << timepoint << ") updated with " << timepoint.dicoms.size() << " images."; // FIXME not here
+    }
+// --------------------------------------------------------------------
+
+/* from file ?
+   itk::ImageIOBase::Pointer imageIO =
+   itk::ImageIOFactory::CreateImageIO(
+   inputFileName,
+   itk::ImageIOFactory::ReadMode );
+   imageIO->SetFileName( inputFileName );
+   imageIO->ReadImageInformation();
+   http://itk.org/ITKExamples/src/IO/ImageBase/ReadUnknownImageType/Documentation.html
+*/
+
+
 // --------------------------------------------------------------------
 std::string syd::ImageBuilder::GetDefaultImageFilename(const syd::Image & image)
 {
   if (image.dicoms.size() < 1) {
-    LOG(FATAL) << "Error cannot use GetDefaultImageFilename on image without dicom.";
+    LOG(FATAL) << "Error cannot use GetDefaultImageFilename on image without dicom. Image: " << image;
   }
   std::ostringstream oss;
   oss << image.dicoms[0]->dicom_modality << "_" << image.id << ".mhd";
@@ -193,7 +190,9 @@ std::string syd::ImageBuilder::GetDefaultImageFilename(const syd::Image & image)
 // --------------------------------------------------------------------
 std::string syd::ImageBuilder::GetDefaultRoiMaskImageFilename(const syd::RoiMaskImage & mask)
 {
-  DD(mask);
+  if (mask.roitype == NULL) {
+    LOG(FATAL) << "Error cannot use GetDefaultRoiMaskImageFilename without roitype. Mask: " << mask;
+  }
   std::ostringstream oss;
   oss << mask.roitype->name << "_" << mask.id << ".mhd";
   std::string filename = oss.str();
@@ -215,29 +214,26 @@ std::string syd::ImageBuilder::GetDefaultImageRelativePath(const syd::Image & im
 std::string syd::ImageBuilder::GetDefaultRoiMaskImageRelativePath(const syd::RoiMaskImage & mask)
 {
   if (mask.image == NULL) {
-    LOG(FATAL) << "Error could not use GetDefaultRoiMaskImageRelativePath with image in the mask.";
+    LOG(FATAL) << "Error could not use GetDefaultRoiMaskImageRelativePath with image in the mask. Mask: " << mask;
   }
   std::string p = db_->GetRelativeFolder(*mask.image->patient)+PATH_SEPARATOR+"roi"+PATH_SEPARATOR;
-  DD(p);
   return p;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilder::ImageSetDicom(syd::Image & image, const syd::DicomSerie & dicomserie)
+void syd::ImageBuilder::UpdateDicom(syd::Image & image, const syd::DicomSerie & dicomserie)
 {
-  image.patient = std::make_shared<syd::Patient>(*dicomserie.patient);
-  image.dicoms.clear();
   image.dicoms.push_back(std::make_shared<syd::DicomSerie>(dicomserie));
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilder::ImageInsertFile(syd::Image & image, std::string
-                                        relativepath,
-                                        std::string filename)
+void syd::ImageBuilder::UpdateFile(syd::Image & image,
+                                   std::string relativepath,
+                                   std::string filename)
 {
   std::string extension = GetExtension(filename);
   image.type = extension;
@@ -260,59 +256,42 @@ void syd::ImageBuilder::ImageInsertFile(syd::Image & image, std::string
 
 
 // --------------------------------------------------------------------
-syd::Image syd::ImageBuilder::CreateNewMHDImageFromDicom(const syd::Tag & tag,
-                                                         const syd::DicomSerie & dicomserie)
+syd::Image syd::ImageBuilder::InsertEmptyImage(const syd::Tag & tag,
+                                               const syd::Patient & patient)
 {
   syd::Image image;
-  image.tag = std::make_shared<syd::Tag>(tag_);
-  ImageSetDicom(image, dicomserie);
-  db_->Insert(image); // need to be after setdicom that set the patient
-  std::string filename = GetDefaultImageFilename(image);
-  std::string relativepath = GetDefaultImageRelativePath(image);
-  ImageInsertFile(image, relativepath, filename);
-
-  // (image is not updated in the db)
+  image.patient = std::make_shared<syd::Patient>(patient);
+  image.tag = std::make_shared<syd::Tag>(tag);
+  db_->Insert(image);
   return image;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImageFromDicomSerie(const syd::DicomSerie & dicom,
-                                                                      const syd::RoiType & roitype,
-                                                                      const std::string & filename)
+syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImage(const syd::Tag & tag,
+                                                        const syd::DicomSerie & dicom,
+                                                        const syd::RoiType & roitype,
+                                                        const std::string & filename)
 {
-  DD("InsertRoiMaskImageFromDicomSerie");
-  DD(dicom);
-  DD(roitype);
-  DD(filename);
-
   // Create a mask
   syd::RoiMaskImage mask;
   mask.roitype = std::make_shared<syd::RoiType>(roitype);
-  DD(mask);
 
   // Create the associated image
-  syd::Image image;
-  image.tag = std::make_shared<syd::Tag>(tag_);
-  ImageSetDicom(image, dicom);
-  DD(image);
-  db_->Insert(image); // need to be done before
-  DD(image);
+  syd::Image image = InsertEmptyImage(tag, *dicom.patient);
 
-  // Set the associated image and insert
+  // Net to set the image of the mask and insert it before GetDefaultRoiMaskImageRelativePath
   mask.image = std::make_shared<syd::Image>(image);
   db_->Insert(mask);
 
-  // Set the files to the image
-  std::string output_filename = GetDefaultRoiMaskImageFilename(mask);
-  std::string relativepath = GetDefaultRoiMaskImageRelativePath(mask);
-  std::string absolutepath = db_->GetDatabaseAbsoluteFolder()+PATH_SEPARATOR+relativepath;
-  if (!syd::DirExists(absolutepath)) syd::CreateDirectory(absolutepath);
-  DD(output_filename);
-  DD(relativepath);
-  ImageInsertFile(image, relativepath, output_filename);
-  DD(image);
+  // Update info
+  UpdateDicom(image, dicom);
+  UpdateFile(image, GetDefaultRoiMaskImageRelativePath(mask), GetDefaultRoiMaskImageFilename(mask));
+
+  // Create image folder if needed
+  std::string absolute_folder = db_->GetAbsoluteFolder(image);
+  if (!syd::DirExists(absolute_folder)) syd::CreateDirectory(absolute_folder);
 
   // Read image
   typedef unsigned char PixelType;
@@ -323,11 +302,7 @@ syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImageFromDicomSerie(const syd:
   UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
 
   // Write image
-  DD(db_->GetAbsolutePath(image));
   syd::WriteImage<ImageType>(itk_image, db_->GetAbsolutePath(image));
-
-  // Set pointer to mask
-  mask.image = std::make_shared<syd::Image>(image);
 
   // Insert into the db
   db_->Update(image);

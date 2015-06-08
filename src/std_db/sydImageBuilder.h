@@ -40,11 +40,26 @@ namespace syd {
     /// Destructor (empty)
     ~ImageBuilder() {}
 
-    /// The resulting images will be associated with this tag
-    void SetImageTag(syd::Tag & tag) { tag_ = tag; }
-
     /// Create & Insert a new Image from this DicomSerie
-    syd::Image InsertImageFromDicomSerie(const syd::DicomSerie & dicomserie);
+    syd::Image InsertImage(const syd::Tag & tag, const syd::DicomSerie & dicomserie);
+
+    /// Create & Insert a new Image by stitching 2 dicoms
+    syd::Image InsertStitchedImage(const syd::Tag & tag, const syd::DicomSerie & a, const syd::DicomSerie & b);
+
+    /// Create & Insert a RoiMaskImage from an image.mhd
+    syd::RoiMaskImage InsertRoiMaskImage(const syd::Tag & tag,
+                                         const syd::DicomSerie & dicom,
+                                         const syd::RoiType & roitype,
+                                         const std::string & filename);
+
+    /// Update an image by cropping according to the given mask
+    void CropImage(syd::Image & image, syd::RoiMaskImage & mask);
+
+    /// Update the image by creating the Files
+    void UpdateFile(syd::Image & image, std::string relativepath, std::string filename);
+
+    /// Update the image with dicom (just add the dicom to the list)
+    void UpdateDicom(syd::Image & image, const syd::DicomSerie & dicomserie);
 
     /// Update image information from this itk image (type, size, spacing)
     template<class PixelType>
@@ -52,40 +67,26 @@ namespace syd {
                          typename itk::Image<PixelType,3>::Pointer & itk_image,
                          bool computeMD5Flag);
 
-    /// Update and insert the Files associated with an mhd image
-    //    void InsertImageMHDFilesInfo(syd::Image & image, std::string filename);
-
-    /// Create & Insert a new Image by stitching 2 dicoms
-    syd::Image StitchDicomSerie(const syd::DicomSerie & a, const syd::DicomSerie & b);
-
     /// Propose a default filename for the image (use the image.id, so must be inserted in the db before)
-
     std::string GetDefaultImageFilename(const syd::Image & image);
+
+    /// Propose a default path for the image
     std::string GetDefaultImageRelativePath(const syd::Image & image);
+
+    /// Propose a default filename for the roimaskimage (use the image.id, so must be inserted in the db before)
     std::string GetDefaultRoiMaskImageFilename(const syd::RoiMaskImage & mask);
+
+    /// Propose a default path for the roimaskimage
     std::string GetDefaultRoiMaskImageRelativePath(const syd::RoiMaskImage & mask);
 
-    syd::Image CreateNewMHDImageFromDicom(const syd::Tag & tag,
-                                          const syd::DicomSerie & dicomserie);
-
-    void ImageSetDicom(syd::Image & image, const syd::DicomSerie & dicomserie);
-    void ImageInsertFile(syd::Image & image, std::string relativepath, std::string filename);
-
-
-    syd::RoiMaskImage InsertRoiMaskImageFromDicomSerie(const syd::DicomSerie & dicom,
-                                                       const syd::RoiType & roitype,
-                                                       const std::string & filename);
-
-    void CropImage(syd::Image & image, syd::RoiMaskImage & mask);
-
-    // FIXME
+    // Read an itk image for this dicom
     template<class PixelType>
     typename itk::Image<PixelType,3>::Pointer ReadImage(const syd::DicomSerie & dicom);
 
 
     /// OLD
 
-    /// Create & Insert new images for all dicom in this
+    /// TODO. Create & Insert new images for all dicom in this
     /// timepoint. Warning to not check if some images are already
     /// associated with this timepoint.
     void InsertImagesFromTimepoint(syd::Timepoint & timepoint);
@@ -98,8 +99,11 @@ namespace syd {
     /// Set the pointer to the database
     void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
 
+    /// Pointer to the database
     syd::StandardDatabase * db_;
-    syd::Tag tag_;
+
+    /// Create & Insert a new image without information
+    syd::Image InsertEmptyImage(const syd::Tag & tag, const syd::Patient & patient);
 
   }; // class ImageBuilder
 

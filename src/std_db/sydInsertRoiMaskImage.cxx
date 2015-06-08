@@ -41,20 +41,13 @@ int main(int argc, char* argv[])
 
   // Get the roitype
   syd::RoiType roitype = db->FindRoiType(args_info.inputs[1]);
-  DD(roitype);
 
   // Get the dicom
   syd::IdType id = atoi(args_info.inputs[2]);
   syd::DicomSerie dicom = db->QueryOne<syd::DicomSerie>(id);
-  DD(dicom);
 
   // Get mask filename
   std::string filename = args_info.inputs[3];
-  DD(filename);
-
-  // Will create an image so need patient & tag and optional dicom
-  // if no dicom -> must indicate the patient
-  // if no tag ? possible
 
   // FIXME DEBUG
   syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == "mask");
@@ -62,8 +55,7 @@ int main(int argc, char* argv[])
 
   // Create main builder
   syd::ImageBuilder b(db);
-  b.SetImageTag(tag); // Needed !!!
-  syd::RoiMaskImage mask = b.InsertRoiMaskImageFromDicomSerie(dicom, roitype, filename);
+  syd::RoiMaskImage mask = b.InsertRoiMaskImage(tag, dicom, roitype, filename);
   LOG(1) << "Inserting RoiMaskImage " << mask;
 
   // This is the end, my friend.
