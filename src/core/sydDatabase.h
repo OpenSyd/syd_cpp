@@ -156,7 +156,7 @@ namespace syd {
     void AddToDeleteList(TableElement & elem);
 
     /// Effectively delete current list of elements to be deleted
-    virtual void DeleteCurrentList();
+    virtual bool DeleteCurrentList();
     // ------------------------------------------------------------------------
 
 

@@ -62,7 +62,7 @@ namespace syd {
 
     // -----------------------------------------------------------
     /// Overload to also delete the files
-    virtual void DeleteCurrentList();
+    virtual bool DeleteCurrentList();
 
     /// Add a filename to the list of file that will be deleted
     void AddFileToDelete(std::string & f) { list_of_files_to_delete_.push_back(f); }
@@ -108,6 +108,9 @@ namespace syd {
 
     /// Return the absolute path of the image
     std::string GetAbsolutePath(const Image & image);
+
+    /// Return the absolute folder of the image (path without filename)
+    std::string GetAbsoluteFolder(const Image & image);
     // -----------------------------------------------------------
 
 

@@ -268,28 +268,38 @@ void syd::Database::OnDelete(const std::string & table_name, TableElementBase * 
 
 
 // --------------------------------------------------------------------
-void syd::Database::DeleteCurrentList()
+bool syd::Database::DeleteCurrentList()
 {
+  if (list_of_elements_to_delete_.size() == 0) {
+    LOG(1) << "No record have been deleted.";
+    return false;
+  }
+  std::string input;
+  std::cout << "Really delete " << list_of_elements_to_delete_.size() << " elements ([y]es/[n]o/[v]erbose) ?   ";
+  std::cin >> input;
+  if (input == "v") {
+    for(auto it=list_of_elements_to_delete_.begin();
+      it != list_of_elements_to_delete_.end(); ++it) {
+    auto & p = it->second;
+    std::cout << "\t delete: " << p.first << ": " << *p.second << std::endl;
+    }
+    return DeleteCurrentList();
+  }
+  if (input != "y") {
+    LOG(1) << "No record have been deleted.";
+    return false;
+  }
+
+  // Start the deletion
   odb::connection_ptr c (db_->connection ());
   c->execute ("PRAGMA foreign_keys=ON");
   odb::transaction t (db_->begin());
 
-  // Delete all the elements in the list
-  /*
-  for(auto it=list_of_elements_to_delete_.begin();
-      it != list_of_elements_to_delete_.end(); ++it) {
-    std::string table_name = it->first;
-    if (!delete_dry_run_flag_) GetTable(table_name)->Erase(it->second);
-    LOG(2) << "Deleting " << it->first << " " << *it->second;
-  }
-  */
-  for(auto it=list_of_elements_to_delete_.begin();
+   for(auto it=list_of_elements_to_delete_.begin();
       it != list_of_elements_to_delete_.end(); ++it) {
     auto & p = it->second;
     if (!delete_dry_run_flag_) GetTable(p.first)->Erase(p.second);
   }
-
-
   t.commit();
 
   // Verbose
@@ -307,5 +317,6 @@ void syd::Database::DeleteCurrentList()
     delete it->second.second;
   }
   list_of_elements_to_delete_.clear();
+  return true;
 }
 // --------------------------------------------------------------------

@@ -22,7 +22,6 @@
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {
-  //  syd::Database::CreateTables();
   AddTable<syd::Patient>();
   AddTable<syd::Radionuclide>();
   AddTable<syd::File>();
@@ -52,9 +51,7 @@ std::string syd::StandardDatabase::GetAbsoluteFolder(const DicomSerie & serie)
   // remove the hour and keep y m d
   d = d.substr(0, 10);
   f = f+PATH_SEPARATOR+d;
-  // if (!syd::DirExists(f)) syd::CreateDirectory(f); // create date dir  //FIXME in dicombuilder
   f = f+PATH_SEPARATOR+serie.dicom_modality;
-  // if (!syd::DirExists(f)) syd::CreateDirectory(f); // create modality dir  //FIXME in dicombuilder
   return f;
 }
 // --------------------------------------------------------------------
@@ -70,6 +67,7 @@ void syd::StandardDatabase::CreateAbsoluteFolder(const DicomSerie & serie)
   // remove the hour and keep y m d
   d = d.substr(0, 10);
   f = f+PATH_SEPARATOR+d;
+  LOG(FATAL) << "TODO !!!";
   if (!syd::DirExists(f)) syd::CreateDirectory(f); // create date dir  //FIXME in dicombuilder
   f = f+PATH_SEPARATOR+serie.dicom_modality;
   if (!syd::DirExists(f)) syd::CreateDirectory(f); // create modality dir  //FIXME in dicombuilder
@@ -98,7 +96,6 @@ std::string syd::StandardDatabase::GetRelativeFolder(const Patient & patient)
 std::string syd::StandardDatabase::GetAbsolutePath(const File & file)
 {
   std::string f = GetDatabaseAbsoluteFolder()+PATH_SEPARATOR+file.path;
-  // if (!syd::DirExists(f)) syd::CreateDirectory(f); // create file dir
   f = f+PATH_SEPARATOR+file.filename;
   return f;
 }
@@ -108,8 +105,19 @@ std::string syd::StandardDatabase::GetAbsolutePath(const File & file)
 // --------------------------------------------------------------------
 std::string syd::StandardDatabase::GetAbsolutePath(const Image & image)
 {
-  if (image.type == "mhd") return GetAbsolutePath(*image.files[0]);
-  LOG(FATAL) << "Error GetAbsolutePath, dont know the image type: " << image;
+  if (image.files.size() < 1) {
+    LOG(FATAL) << "Error in GetAbsolutePath, no associated file to the image: " << image;
+  }
+  return GetAbsolutePath(*image.files[0]);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::StandardDatabase::GetAbsoluteFolder(const Image & image)
+{
+  std::string f = GetAbsolutePath(image);
+  return GetPathFromFilename(f);
 }
 // --------------------------------------------------------------------
 
@@ -201,6 +209,7 @@ syd::Patient * syd::StandardDatabase::InsertPatient(std::vector<std::string> & a
   syd::Patient * patient = dynamic_cast<syd::Patient*>(syd::Database::InsertFromArg(syd::Patient::GetTableName(), arg));
   // Create the folder
   std::string f = GetAbsoluteFolder(*patient);
+  LOG(FATAL) << "TODO";
   if (!syd::DirExists(f)) syd::CreateDirectory(f); // create patient dir //FIXME in insert patient
   return patient;
 }
@@ -801,8 +810,10 @@ return roitypes[0];
 */
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::DeleteCurrentList()
+bool syd::StandardDatabase::DeleteCurrentList()
 {
+  bool b = syd::Database::DeleteCurrentList();
+  if (!b) return false;
   if (delete_dry_run_flag_) {
     for(auto f:list_of_files_to_delete_) {
       LOG(2) << "File would have been deleted: " << f;
@@ -819,6 +830,6 @@ void syd::StandardDatabase::DeleteCurrentList()
     }
   }
   list_of_files_to_delete_.clear();
-  syd::Database::DeleteCurrentList();
+  return true;
 }
 // --------------------------------------------------------------------
