@@ -235,7 +235,9 @@ void syd::ImageBuilder::ImageSetDicom(syd::Image & image, const syd::DicomSerie 
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilder::ImageInsertFile(syd::Image & image, std::string relativepath, std::string filename)
+void syd::ImageBuilder::ImageInsertFile(syd::Image & image, std::string
+                                        relativepath,
+                                        std::string filename)
 {
   std::string extension = GetExtension(filename);
   DD(extension);
@@ -306,7 +308,7 @@ syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImageFromDicomSerie(const syd:
   // Set the files to the image
   std::string output_filename = GetDefaultRoiMaskImageFilename(mask);
   std::string relativepath = GetDefaultRoiMaskImageRelativePath(mask);
-  std::string absolutepath = db_->GetAbsoluteDBFolder()+PATH_SEPARATOR+relativepath;
+  std::string absolutepath = db_->GetDatabaseAbsoluteFolder()+PATH_SEPARATOR+relativepath;
   if (!syd::DirExists(absolutepath)) syd::CreateDirectory(absolutepath);
   DD(output_filename);
   DD(relativepath);
@@ -332,5 +334,15 @@ syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImageFromDicomSerie(const syd:
   db_->Update(image);
   db_->Update(mask);
   return mask;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ImageBuilder::CropImage(syd::Image & image, syd::RoiMaskImage & mask)
+{
+  DD("Cropimage");
+  DD(image);
+  DD(mask);
 }
 // --------------------------------------------------------------------

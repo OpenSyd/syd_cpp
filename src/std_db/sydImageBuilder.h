@@ -46,17 +46,14 @@ namespace syd {
     /// Create & Insert a new Image from this DicomSerie
     syd::Image InsertImageFromDicomSerie(const syd::DicomSerie & dicomserie);
 
-    /// Create & Insert new images for all dicom in this
-    /// timepoint. Warning to not check if some images are already
-    /// associated with this timepoint.
-    void InsertImagesFromTimepoint(syd::Timepoint & timepoint);
-
     /// Update image information from this itk image (type, size, spacing)
     template<class PixelType>
-    void UpdateImageInfo(syd::Image & image, typename itk::Image<PixelType,3>::Pointer & itk_image, bool computeMD5Flag);
+    void UpdateImageInfo(syd::Image & image,
+                         typename itk::Image<PixelType,3>::Pointer & itk_image,
+                         bool computeMD5Flag);
 
     /// Update and insert the Files associated with an mhd image
-    void InsertImageMHDFilesInfo(syd::Image & image, std::string filename);
+    //    void InsertImageMHDFilesInfo(syd::Image & image, std::string filename);
 
     /// Create & Insert a new Image by stitching 2 dicoms
     syd::Image StitchDicomSerie(const syd::DicomSerie & a, const syd::DicomSerie & b);
@@ -79,10 +76,20 @@ namespace syd {
                                                        const syd::RoiType & roitype,
                                                        const std::string & filename);
 
+    void CropImage(syd::Image & image, syd::RoiMaskImage & mask);
 
     // FIXME
     template<class PixelType>
     typename itk::Image<PixelType,3>::Pointer ReadImage(const syd::DicomSerie & dicom);
+
+
+    /// OLD
+
+    /// Create & Insert new images for all dicom in this
+    /// timepoint. Warning to not check if some images are already
+    /// associated with this timepoint.
+    void InsertImagesFromTimepoint(syd::Timepoint & timepoint);
+
 
   protected:
     /// Protected constructor. No need to use directly.

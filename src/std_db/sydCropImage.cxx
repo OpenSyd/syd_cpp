@@ -45,15 +45,20 @@ int main(int argc, char* argv[])
   DD(image);
   DD(db->GetAbsolutePath(image));
 
+  // FIXME: default is roi body, or option mask or threshold
+
   // Get the roi
   std::string roiname = "body";
   syd::RoiType roitype = db->FindRoiType(roiname);
   DD(roitype);
-  syd::RoiMaskImage roi = db->QueryOne<syd::RoiMaskImage>(odb::query<syd::RoiMaskImage>::image->patient == image.patient->id and
-                                                          odb::query<syd::RoiMaskImage>::roitype == roitype.id);
+  syd::RoiMaskImage roi = db->FindRoiMaskImage(*image.patient, roitype);
   DD(roi);
 
   // Crop with the roi
+  syd::ImageBuilder b(db);
+  // FIXME no set tag here ...
+  b.CropImage(image, roi);
+  DD(image);
 
   // Update and write results
 

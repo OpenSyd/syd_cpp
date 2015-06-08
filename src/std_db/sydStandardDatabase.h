@@ -47,15 +47,29 @@ namespace syd {
 
   public:
 
+    // -----------------------------------------------------------
     /// Generic element insertion.
-    virtual TableElementBase * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
+    virtual TableElementBase * InsertFromArg(const std::string & table_name,
+                                             std::vector<std::string> & arg);
 
     /// Insert a new Injection (check patient before etc)
     syd::Injection * InsertInjection(std::vector<std::string> & arg);
 
     /// Insert a new Patient (create folder)
     syd::Patient * InsertPatient(std::vector<std::string> & arg);
+    // -----------------------------------------------------------
 
+
+    // -----------------------------------------------------------
+    /// Overload to also delete the files
+    virtual void DeleteCurrentList();
+
+    /// Add a filename to the list of file that will be deleted
+    void AddFileToDelete(std::string & f) { list_of_files_to_delete_.push_back(f); }
+    // -----------------------------------------------------------
+
+
+    // -----------------------------------------------------------
     /// Return the patient by name or study_id. Fail if not found.
     syd::Patient FindPatientByNameOrStudyId(const std::string & arg);
 
@@ -68,9 +82,15 @@ namespace syd {
                    const std::vector<std::string> & patterns,
                    std::vector<syd::DicomSerie> & series);
 
-    /// Return a roitype from its name
+    /// Return the roitype from its name
     syd::RoiType FindRoiType(const std::string & name);
 
+    /// Return the
+    syd::RoiMaskImage FindRoiMaskImage(const syd::Patient & patient, const syd::RoiType & roitype);
+    // -----------------------------------------------------------
+
+
+    // -----------------------------------------------------------
     /// Return the folder where the dicomserie are stored
     std::string GetAbsoluteFolder(const DicomSerie & serie);
 
@@ -88,7 +108,10 @@ namespace syd {
 
     /// Return the absolute path of the image
     std::string GetAbsolutePath(const Image & image);
+    // -----------------------------------------------------------
 
+
+    // Below : TODO
 
     // /// Simple default Dump overwritten here to select special case DumpDicom.
     // virtual void Dump(const std::vector<std::string> & args, std::ostream & os);
@@ -116,11 +139,6 @@ namespace syd {
     // void OnDeleteTag(syd::Tag & e);
     // void OnDeleteDicomFile(syd::DicomFile & e);
     // void OnDeleteDicomSerie(syd::DicomSerie & e);
-
-    void AddFileToDelete(std::string & f) { list_of_files_to_delete_.push_back(f); }
-
-    /// Overload to also delete the files
-    virtual void DeleteCurrentList();
 
   protected:
     /// Insert the tables
