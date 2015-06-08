@@ -24,58 +24,6 @@
 SYD_STATIC_INIT
 
 // --------------------------------------------------------------------
-template<class TableElement>
-void testInsert(syd::Database * db, TableElement & p)
-{
-  LOG(1) << "Table " << TableElement::GetTableName() << ", insert: " << p << " ...";
-  db->Insert(p);
-  TableElement q = db->QueryOne<TableElement>(p.id);
-  bool b = (p == q);
-  if (!b) {
-    LOG(FATAL) << "Error table " << TableElement::GetTableName() << " during insert.";
-  }
-  LOG(1) << p << "inserted.";
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void testUpdate(syd::Database * db, TableElement & p, TableElement & r)
-{
-  LOG(1) << "Table " << TableElement::GetTableName() << ", update: " << p << " ...";
-  db->Update(p);
-  TableElement q = db->QueryOne<TableElement>(p.id);
-  bool b = (p == q and p == r);
-  if (!b) {
-    LOG(FATAL) << "Error table " << TableElement::GetTableName() << " during update.";
-  }
-  LOG(1) << p << " updated.";
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void testDelete(syd::Database * db, TableElement & p)
-{
-  LOG(1) << "Table " << TableElement::GetTableName() << ", delete: " << p << " ...";
-  std::vector<TableElement> l;
-  db->Query(l);
-  int before = l.size();
-  db->Delete(p);
-  l.clear();
-  db->Query(l);
-  bool b = (l.size() == before-1);
-  if (!b) {
-    LOG(FATAL) << "Error table " << TableElement::GetTableName() << " during delete.";
-  }
-  LOG(1) << p << " deleted.";
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
@@ -83,107 +31,122 @@ int main(int argc, char* argv[])
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
 
   // Create the database
-  std::string dbname = "test-work.db";
+  std::string dbname = "data/test-work.db";
+  std::string dbname_copy = "data/test-work-copy.db";
   std::string folder = "test-data";
+  std::string ref_dbname1 = "data/test-tables-ref1.db";
+  std::string ref_folder = "test-tables-ref-data";
+  std::string ref_dbname2 = "data/test-tables-ref2.db";
   LOG(1) << "Creating database " << dbname;
   syd::Database * db = m->Create("StandardDatabase", dbname, folder);
 
+  // Make a copy for the end
+  db->CopyDatabaseTo(dbname_copy, folder);
+
   // Test CRUD - Create Read Update Delete
 
-  // Patient
-  LOG(1) << "---------------------------- Patient";
+  // Part 1 insert
+  LOG(1) << "---------------- Insert";
+  LOG(1) << "Insert Patient";
   syd::Patient p;
   p.Set("toto", 1, 90);
-  testInsert(db, p);
-  p.name = "titi";
-  p.weight_in_kg = 123;
-  p.study_id = 16;
-  p.dicom_patientid = "xxx";
-  syd::Patient pp = p;
-  testUpdate(db, p, pp);
-  testDelete(db, p);
-  db->Insert(p); // re-insert patient (because use later)
+  p.dicom_patientid = "XXAZER1234";
+  db->Insert(p);
 
-  // Radionuclide
-  LOG(1) << "---------------------------- Radionuclide";
+  LOG(1) << "Insert Radionuclide";
   syd::Radionuclide r;
   r.Set("Indium111", 67.313);
-  testInsert(db, r);
-  r.name = "Indium-111";
-  syd::Radionuclide rr = r;
-  testUpdate(db, r, rr);
-  testDelete(db, r);
   db->Insert(r);
 
-  // Injection
-  LOG(1) << "---------------------------- Injection";
+  LOG(1) << "Insert Injection";
   syd::Injection i;
   i.Set(p, r, "2014-02-01 12:34", 123.45);
-  testInsert(db, i);
-  i.activity_in_MBq = 666;
-  syd::Injection j = i;
-  testUpdate(db, i, j);
-  testDelete(db, i);
-  testInsert(db, i);
+  db->Insert(i);
 
-  // File
-  LOG(1) << "---------------------------- File";
+  LOG(1) << "Insert File";
   syd::File f;
-  f.filename = "toto";
+  f.filename = "toto.mhd";
   f.path = "/home/yes/";
-  f.md5 = "XXXXX";
-  testInsert(db, f);
-  f.filename = "bidon";
-  syd::File ff = f;
-  testUpdate(db, f, ff);
-  testDelete(db, f);
-  testInsert(db, f);
+  f.md5 = "XXXYY123XX";
+  db->Insert(f);
 
-  // Tag
-  LOG(1) << "---------------------------- Tag";
+  LOG(1) << "Insert Tag";
   syd::Tag t;
   t.label = "mytag";
-  t.description = "this is a tag";
-  testInsert(db, t);
-  t.label = "bidon";
-  syd::Tag tt = t;
-  testUpdate(db, t, tt);
-  testDelete(db, t);
+  t.description = "This is a description";
+  db->Insert(t);
 
-  // DicomSerie
-  LOG(1) << "---------------------------- DicomSerie";
-  syd::DicomSerie ds;
-  ds.patient = std::make_shared<syd::Patient>(p);
-  ds.injection = std::make_shared<syd::Injection>(i);
-  ds.acquisition_date = "2214-02-01 12:34";
-  ds.reconstruction_date = "1014-02-01 12:34";
-  ds.dicom_study_uid = "XXYY";
-  ds.dicom_series_uid = "RTRTRTRTRRT";
-  ds.dicom_frame_of_reference_uid = "ZERTAERT";
-  ds.dicom_modality = "CT";
-  ds.dicom_manufacturer = "bidon";
-  ds.dicom_description = "this is a description";
-  ds.size[0] = 1 ; ds.size[1] = 2 ; ds.size[2] = 3;
-  ds.spacing[0] = 1.2 ; ds.spacing[1] = 2.3 ; ds.spacing[2] = 3.2;
-  testInsert(db, ds);
-  ds.dicom_modality = "NM";
-  syd::DicomSerie dds = ds;
-  testUpdate(db, ds, dds);
-  testDelete(db, ds);
-  testInsert(db, ds); // re-insert
+  // Once everything inserted, create reference if needed.
+  TestCreateReferenceDB(argc, argv, db, ref_dbname1, ref_folder);
 
-  // DicomFile
-  LOG(1) << "---------------------------- DicomFile";
-  syd::DicomFile df;
-  df.file = std::make_shared<syd::File>(f);
-  df.dicom_serie = std::make_shared<syd::DicomSerie>(ds);
-  df.dicom_sop_uid = "AERTARIAZOERIPEOIR";
-  df.dicom_instance_number = 12;
-  testInsert(db, df);
-  df.dicom_sop_uid = "bidon";
-  syd::DicomFile ddf = df;
-  testUpdate(db, df, ddf);
-  testDelete(db, df);
+  // Compare
+  syd::Database * dbref = m->Read<syd::StandardDatabase>(ref_dbname1);
+  syd::TestTableEquality<syd::Patient>(db, dbref);
+  syd::TestTableEquality<syd::Injection>(db, dbref);
+  syd::TestTableEquality<syd::Radionuclide>(db, dbref);
+  syd::TestTableEquality<syd::File>(db, dbref);
+  syd::TestTableEquality<syd::Tag>(db, dbref);
+
+
+  // Then again with update
+  LOG(1) << "---------------- Update";
+
+  // Part 1 insert
+  LOG(1) << "Update Patient";
+  syd::Patient pp = db->QueryOne<syd::Patient>(odb::query<syd::Patient>::study_id == 1);
+  pp.Set("titi", 2, 666);
+  pp.dicom_patientid = "AZERAZER";
+  db->Update(pp);
+
+  LOG(1) << "Update Radionuclide";
+  syd::Radionuclide rr = db->QueryOne<syd::Radionuclide>(odb::query<syd::Radionuclide>::name == "Indium111");
+  rr.Set("Yttrium90", 67.313);
+  db->Update(rr);
+
+  LOG(1) << "Update Injection";
+  syd::Injection ii = db->QueryOne<syd::Injection>(odb::query<syd::Injection>::id == i.id);
+  ii.Set(p, r, "2010-03-10 13:34", 5123.45);
+  db->Update(ii);
+
+  LOG(1) << "Update File";
+  syd::File ff = db->QueryOne<syd::File>(odb::query<syd::File>::filename == "toto.mhd");
+  ff.filename = "titi.mhd";
+  ff.path = "/home/no/";
+  ff.md5 = "YYYYY";
+  db->Update(ff);
+
+  LOG(1) << "Update Tag";
+  syd::Tag tt = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == "mytag");
+  tt.label = "myModifiedTag";
+  tt.description = "This is another description";
+  db->Update(tt);
+
+ // Once everything inserted, create reference if needed.
+  TestCreateReferenceDB(argc, argv, db, ref_dbname2, ref_folder);
+
+  // Compare
+  syd::Database * dbref2 = m->Read<syd::StandardDatabase>(ref_dbname2);
+  syd::TestTableEquality<syd::Patient>(db, dbref2);
+  syd::TestTableEquality<syd::Injection>(db, dbref2);
+  syd::TestTableEquality<syd::Radionuclide>(db, dbref2);
+  syd::TestTableEquality<syd::File>(db, dbref2);
+  syd::TestTableEquality<syd::Tag>(db, dbref2);
+
+  // Delete
+  LOG(1) << "---------------- Delete";
+  db->Delete(pp);
+  //db->Delete(ii); <-- already by patient
+  db->Delete(rr);
+  db->Delete(ff);
+  db->Delete(tt);
+
+  // Compare with initial
+  syd::Database * dbcopy = m->Read<syd::StandardDatabase>(dbname_copy);
+  syd::TestTableEquality<syd::Patient>(db, dbcopy);
+  syd::TestTableEquality<syd::Injection>(db, dbcopy);
+  syd::TestTableEquality<syd::Radionuclide>(db, dbcopy);
+  syd::TestTableEquality<syd::File>(db, dbcopy);
+  syd::TestTableEquality<syd::Tag>(db, dbcopy);
 
   // This is the end, my friend.
   return EXIT_SUCCESS;
