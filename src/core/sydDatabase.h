@@ -125,7 +125,8 @@ namespace syd {
 
 
     // ------------------------------------------------------------------------
-    void SetDeleteDryRunFlag(bool b) { delete_dry_run_flag_ = b; }
+    /// If true, do not ask before deleting
+    void SetDeleteForceFlag(bool b) { deleteForceFlag_ = b; }
 
     /// Delete a single record
     template<class TableElement> void Delete(IdType id);
@@ -242,7 +243,7 @@ namespace syd {
     std::map<std::string, ElementPair> list_of_elements_to_delete_;
 
     /// Flag to not delete
-    bool delete_dry_run_flag_;
+    bool deleteForceFlag_;
 
   };
 

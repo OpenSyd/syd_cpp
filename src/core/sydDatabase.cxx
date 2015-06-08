@@ -32,7 +32,7 @@ void trace_callback( void* udp, const char* sql ) {
 // --------------------------------------------------------------------
 syd::Database::Database()
 {
-  SetDeleteDryRunFlag(false);
+  SetDeleteForceFlag(true); // by default, dont ask before deleting
 }
 // --------------------------------------------------------------------
 
@@ -109,7 +109,7 @@ void syd::Database::TraceCallback(const char* sql)
 
 // --------------------------------------------------------------------
 syd::TableElementBase * syd::Database::InsertFromArg(const std::string & table_name,
-                                                 std::vector<std::string> & arg)
+                                                     std::vector<std::string> & arg)
 {
   return GetTable(table_name)->InsertFromArg(arg);
 }
@@ -274,20 +274,23 @@ bool syd::Database::DeleteCurrentList()
     LOG(1) << "No record have been deleted.";
     return false;
   }
-  std::string input;
-  std::cout << "Really delete " << list_of_elements_to_delete_.size() << " elements ([y]es/[n]o/[v]erbose) ?   ";
-  std::cin >> input;
-  if (input == "v") {
-    for(auto it=list_of_elements_to_delete_.begin();
-      it != list_of_elements_to_delete_.end(); ++it) {
-    auto & p = it->second;
-    std::cout << "\t delete: " << p.first << ": " << *p.second << std::endl;
+
+  if (!deleteForceFlag_) {
+    std::string input;
+    std::cout << "Really delete " << list_of_elements_to_delete_.size() << " elements ([y]es/[n]o/[v]erbose) ?   ";
+    std::cin >> input;
+    if (input == "v") {
+      for(auto it=list_of_elements_to_delete_.begin();
+          it != list_of_elements_to_delete_.end(); ++it) {
+        auto & p = it->second;
+        std::cout << "\t delete: " << p.first << ": " << *p.second << std::endl;
+      }
+      return DeleteCurrentList();
     }
-    return DeleteCurrentList();
-  }
-  if (input != "y") {
-    LOG(1) << "No record have been deleted.";
-    return false;
+    if (input != "y") {
+      LOG(1) << "No record have been deleted.";
+      return false;
+    }
   }
 
   // Start the deletion
@@ -295,25 +298,19 @@ bool syd::Database::DeleteCurrentList()
   c->execute ("PRAGMA foreign_keys=ON");
   odb::transaction t (db_->begin());
 
-   for(auto it=list_of_elements_to_delete_.begin();
+  for(auto it=list_of_elements_to_delete_.begin();
       it != list_of_elements_to_delete_.end(); ++it) {
     auto & p = it->second;
-    if (!delete_dry_run_flag_) GetTable(p.first)->Erase(p.second);
+    GetTable(p.first)->Erase(p.second);
   }
   t.commit();
 
   // Verbose
-  if (delete_dry_run_flag_) {
-    LOG(WARNING) << "*Dry run*: " << list_of_elements_to_delete_.size() << " records would have been deleted.";
-  }
-  else {
-    LOG(1) << list_of_elements_to_delete_.size() << " records have been deleted.";
-  }
+  LOG(1) << list_of_elements_to_delete_.size() << " records have been deleted.";
 
   // free memory
   for(auto it=list_of_elements_to_delete_.begin();
       it != list_of_elements_to_delete_.end(); ++it) {
-    //    delete it->second;
     delete it->second.second;
   }
   list_of_elements_to_delete_.clear();

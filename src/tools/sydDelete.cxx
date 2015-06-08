@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   std::string tablename = args_info.inputs[1];
 
   // Set option
-  db->SetDeleteDryRunFlag(args_info.dry_run_flag);
+  db->SetDeleteForceFlag(args_info.force_flag);
 
   // Get the list of ids
   if (args_info.inputs[2] == std::string("all")) {

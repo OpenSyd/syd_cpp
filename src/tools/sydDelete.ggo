@@ -10,6 +10,6 @@ description "Delete the given elements in a table.
 "
 
 option "config"	  	 	-	"Config file"				string  	no
-option "verbose"   	 	v       "Verbosity level (0 for silence)"      int default ="0" no
+option "verbose"   	 	v       "Verbosity level (0 for silence)"       int default ="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		flag		off
-option "dry_run"   	 	d       "List what will be deleted but dont delete"		flag		off
+option "force"   	 	f       "Dont ask confirmation"		        flag		off
