@@ -67,10 +67,9 @@ void syd::StandardDatabase::CreateAbsoluteFolder(const DicomSerie & serie)
   // remove the hour and keep y m d
   d = d.substr(0, 10);
   f = f+PATH_SEPARATOR+d;
-  LOG(FATAL) << "TODO !!!";
-  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create date dir  //FIXME in dicombuilder
+  if (!syd::DirExists(f)) syd::CreateDirectory(f);
   f = f+PATH_SEPARATOR+serie.dicom_modality;
-  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create modality dir  //FIXME in dicombuilder
+  if (!syd::DirExists(f)) syd::CreateDirectory(f);
 }
 // --------------------------------------------------------------------
 
@@ -209,8 +208,7 @@ syd::Patient * syd::StandardDatabase::InsertPatient(std::vector<std::string> & a
   syd::Patient * patient = dynamic_cast<syd::Patient*>(syd::Database::InsertFromArg(syd::Patient::GetTableName(), arg));
   // Create the folder
   std::string f = GetAbsoluteFolder(*patient);
-  LOG(FATAL) << "TODO";
-  if (!syd::DirExists(f)) syd::CreateDirectory(f); // create patient dir //FIXME in insert patient
+  if (!syd::DirExists(f)) syd::CreateDirectory(f);
   return patient;
 }
 // --------------------------------------------------------------------
@@ -813,20 +811,14 @@ return roitypes[0];
 bool syd::StandardDatabase::DeleteCurrentList()
 {
   bool b = syd::Database::DeleteCurrentList();
-  if (!b) return false;
-  if (delete_dry_run_flag_) {
-    for(auto f:list_of_files_to_delete_) {
-      LOG(2) << "File would have been deleted: " << f;
+  if (!b) return false; // dont delete
+
+  for(auto f:list_of_files_to_delete_) {
+    if (std::remove(f.c_str()) != 0) {
+      LOG(WARNING) << "Could not delete the file " << f;
     }
-  }
-  else {
-    for(auto f:list_of_files_to_delete_) {
-      if (std::remove(f.c_str()) != 0) {
-        LOG(WARNING) << "Could not delete the file " << f;
-      }
-      else {
-        LOG(2) << "Deleting file " << f;
-      }
+    else {
+      LOG(2) << "Deleting file " << f;
     }
   }
   list_of_files_to_delete_.clear();
