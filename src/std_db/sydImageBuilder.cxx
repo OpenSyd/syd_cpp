@@ -240,7 +240,6 @@ void syd::ImageBuilder::ImageInsertFile(syd::Image & image, std::string
                                         std::string filename)
 {
   std::string extension = GetExtension(filename);
-  DD(extension);
   image.type = extension;
   image.files.clear();
   syd::File f;

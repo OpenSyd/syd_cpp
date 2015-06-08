@@ -31,9 +31,9 @@ int main(int argc, char* argv[])
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
 
   // Make a copy if the initial db
-  std::string init_dbname = "test.db";
-  std::string dbname = "test-work.db";
-  std::string ref_dbname = "test-ref-im.db";
+  std::string init_dbname = "data/test.db";
+  std::string dbname = "data/test-work.db";
+  std::string ref_dbname = "data/test-ref-im.db";
   std::string ref_folder = "test-ref-im-data";
   syd::CopyFile(init_dbname, dbname);
 
@@ -53,9 +53,9 @@ int main(int argc, char* argv[])
   LOG(1) << "Create and insert Image: " << image;
 
   // test 2: create image for timepoint (+link tp with images)
-  syd::Timepoint tp = db->QueryOne<syd::Timepoint>(1);
-  b.InsertImagesFromTimepoint(tp);
-  LOG(1) << "Create and insert image for timepoint " << tp;
+  // syd::Timepoint tp = db->QueryOne<syd::Timepoint>(1);
+  // b.InsertImagesFromTimepoint(tp);
+  // LOG(1) << "Create and insert image for timepoint " << tp;
 
   // test 3: create image
 

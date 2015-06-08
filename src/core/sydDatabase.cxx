@@ -177,8 +177,20 @@ void syd::Database::CopyDatabaseTo(std::string file, std::string folder)
   // Copy db
   syd::CopyFile(GetFilename(), file);
 
+  // Check the folder does not contains PATH_SEPARATOR
+  if (folder.find(PATH_SEPARATOR) != std::string::npos) {
+    LOG(FATAL) << "Could not copy database to folder '" << folder
+               << "': this folder name should be simple, withtout PATH_SEPARATOR.";
+  }
+
+  // Get the folder of file
+  std::string f = file;
+  syd::ConvertToAbsolutePath(f);
+  f = GetPathFromFilename(f);
+  f = f+PATH_SEPARATOR+folder;
+
   // Create folder
-  if (!syd::DirExists(folder)) syd::CreateDirectory(folder);
+  if (!syd::DirExists(f)) syd::CreateDirectory(f);
 
   // open the copied db and change the folder name
   try {
@@ -200,7 +212,8 @@ void syd::Database::CopyDatabaseTo(std::string file, std::string folder)
 
   // Copy the folder content :/ FIXME (not on windows !)
   std::ostringstream cmd;
-  cmd << "cp -r " << GetDatabaseAbsoluteFolder() << "/* " << folder;
+  cmd << "cp -r " << GetDatabaseAbsoluteFolder() << "/* " << f;
+  LOG(5) << cmd.str();
   system(cmd.str().c_str());
 
   // if (!syd::DirExists(folder)) syd::CreateDirectory(folder);
