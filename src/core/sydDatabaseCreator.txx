@@ -34,6 +34,18 @@ Database* syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
                                                      std::string filename,
                                                      std::string folder)
 {
+  // Check folder
+  if (folder.find(PATH_SEPARATOR) != std::string::npos) {
+    LOG(FATAL) << "Error the folder must be a simple folder name, without path or subfolder.";
+  }
+
+  // Create folder
+  std::string f = syd::GetPathFromFilename(filename)+PATH_SEPARATOR+folder;
+  if (!syd::DirExists(f)) {
+    LOG(WARNING) << "The folder '" << f << "' does not exist, I create it.";
+    syd::CreateDirectory(f);
+  }
+
   // Create schema
   odb::sqlite::database db(filename, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, false);
   try {

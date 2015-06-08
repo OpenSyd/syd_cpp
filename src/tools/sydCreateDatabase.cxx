@@ -70,23 +70,6 @@ int main(int argc, char* argv[])
     }
   }
 
-  // Set the folder in the db_info table
-  if (!syd::DirExists(folder)) {
-    LOG(WARNING) << "The folder '" << folder << "' does not exist, I create it.";
-    syd::CreateDirectory(folder);
-  }
-  std::string dbname_absolute = dbname;
-  syd::ConvertToAbsolutePath(dbname_absolute);
-  std::string folder_absolute = folder;
-  syd::ConvertToAbsolutePath(folder_absolute);
-  dbname_absolute = syd::GetPathFromFilename(dbname_absolute);
-  folder_absolute = syd::GetPathFromFilename(folder_absolute);
-  if (folder_absolute != dbname_absolute) {
-    LOG(FATAL) << "The database file and the image folder must be in the same directory. Here '"
-               << dbname << "' is in '" << dbname_absolute
-               << "' while the folder '" << folder << "' is in '" << folder_absolute;
-  }
-
   // Create the database
   syd::Database * db = m->Create(dbtype, dbname, folder);
   LOG(1) << "Database " << dbname << " of type '" << dbtype << "' created.";
