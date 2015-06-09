@@ -25,6 +25,7 @@
 #include <vector>
 #include <cmath>
 #include <sstream>
+#include <algorithm>
 
 // To get current working directory
 // http://stackoverflow.com/questions/143174/how-do-i-get-the-directory-that-a-program-is-running-from
