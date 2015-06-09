@@ -77,6 +77,10 @@ namespace syd {
 
     /// Crop an image according to a threshold
     void CropImageWithThreshold(syd::Image & image, double threshold);
+
+    /// Crop an image according to a threshold (pixeltype known)
+    template<class PixelType>
+    void CropImageWithThreshold(syd::Image & image, double lower_threshold);
     // -----------------------------------------------------------
 
 

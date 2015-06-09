@@ -53,8 +53,9 @@ template<unsigned int Dimension>
 typename itk::ImageBase<Dimension>::Pointer
 GetImageBase(const itk::ImageIOBase::Pointer & reader)
 {
-  if (reader->GetComponentSize() != 1) { // scalar image ?
-    LOG(FATAL) << "Error, only use GetImageBase with scalar image.";
+  if (reader->GetPixelType() != itk::ImageIOBase::SCALAR) { // scalar image ?
+    LOG(FATAL) << "Error, only use GetImageBase with scalar image, while it is: "
+               <<  itk::ImageIOBase::GetPixelTypeAsString(reader->GetPixelType());
   }
   typedef itk::ImageBase<Dimension> BaseImageType;
   typename BaseImageType::Pointer i = BaseImageType::New();
@@ -196,7 +197,6 @@ typename ImageType::Pointer CropImageLike(const ImageType * input,
   typename ImageType::IndexType start;
   input->TransformPhysicalPointToIndex(like->GetOrigin(), start);
   typename ImageType::SizeType size;
-
   for(auto i=0; i<3; i++) {
     size[i] = (int)ceil((double)like->GetLargestPossibleRegion().GetSize()[i]*
                         like->GetSpacing()[i]/input->GetSpacing()[i]);
@@ -205,6 +205,10 @@ typename ImageType::Pointer CropImageLike(const ImageType * input,
       LOG(FATAL) << "Error while CropImageLike, computed size is larger than initial image: " << size;
     }
     size[i] = std::min(size[i], input->GetLargestPossibleRegion().GetSize()[i]);
+
+    // Change starting index if the direction is negative
+    if (input->GetDirection()[i][i] < 0) start[i] = start[i] - size[i];
+
   }
   typename ImageType::RegionType r;
   r.SetSize(size);
@@ -604,7 +608,7 @@ ReadDicomSerieFromFolder(std::string folder, std::string serie_uid)
     output = reader->GetOutput();
   }
   catch (itk::ExceptionObject &excp) {
-   EXCEPTION("Error while reading the dicom serie in " << folder << ", itk exception is: " << excp);
+    EXCEPTION("Error while reading the dicom serie in " << folder << ", itk exception is: " << excp);
   }
 
   // Update the image
@@ -691,132 +695,64 @@ void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, con
   // ee->getFloat64(f);
   // DD(f);
   /*
-  double scale = GetTagValueDouble(dset, "PixelScale");
-  DD(scale);
-  if (scale != 1.0 and scale != 0.0) {
+    double scale = GetTagValueDouble(dset, "PixelScale");
+    DD(scale);
+    if (scale != 1.0 and scale != 0.0) {
     typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> FilterType;
     typename FilterType::Pointer filter = FilterType::New();
     filter->SetInput(image);
     filter->SetConstant(scale);
     filter->Update();
     image = filter->GetOutput();
-  }
+    }
   */
 }
 //--------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------
-// template<class PixelType>
-// typename itk::Image<PixelType,3>::Pointer CropImageLike(typename itk::Image<PixelType,3>::Pointer image,
-//                                                typename itk::Image<PixelType,3>::Pointer like,
-//                                                const PixelType & bg) // background value in like
-// {
-//   DD("CropImageLike");
-//   typedef itk::Image<PixelType,3> ImageType;
-//   DD(image->GetLargestPossibleRegion());
-//   DD(like->GetLargestPossibleRegion());
+template<class ImageType>
+typename ImageType::Pointer
+CropImageWithLowerThreshold(const ImageType * input, typename ImageType::PixelType lower_threshold)
+{
 
-//   // Create output image
+  // Binarize the image: set all pixel lower than threshold to the same value
+  auto binarizer = itk::BinaryThresholdImageFilter<ImageType, ImageType>::New();
+  binarizer->SetInput(input);
+  binarizer->SetLowerThreshold(lower_threshold);
+  binarizer->SetOutsideValue(lower_threshold);
 
+  // Convert to LabelMap
+  static const unsigned int Dim = ImageType::ImageDimension;
+  typedef float LabelType; // signed long ?
+  typedef itk::StatisticsLabelObject< LabelType, Dim > LabelObjectType;
+  typedef itk::LabelMap< LabelObjectType > LabelMapType;
+  typedef itk::LabelImageToLabelMapFilter<ImageType, LabelMapType> ImageToMapFilterType;
+  typename ImageToMapFilterType::Pointer imageToLabelFilter = ImageToMapFilterType::New();
+  imageToLabelFilter->SetBackgroundValue(lower_threshold);
+  imageToLabelFilter->SetInput(binarizer->GetOutput());
 
+  // AutoCrop
+  typedef itk::AutoCropLabelMapFilter<LabelMapType> AutoCropFilterType;
+  typename AutoCropFilterType::Pointer autoCropFilter = AutoCropFilterType::New();
+  autoCropFilter->SetInput(imageToLabelFilter->GetOutput());
 
+  // Convert to image to get the size
+  typedef itk::LabelMapToLabelImageFilter<LabelMapType, ImageType> MapToImageFilterType;
+  typename MapToImageFilterType::Pointer labelToImageFilter = MapToImageFilterType::New();
+  labelToImageFilter->SetInput(autoCropFilter->GetOutput());
+  labelToImageFilter->Update();
+  auto m_labeImage = labelToImageFilter->GetOutput();
 
-//   ImageType::Pointer output = ImageType::New();
+  // Final crop (of the initial image not binarized)
+  typedef itk::RegionOfInterestImageFilter<ImageType, ImageType> CropFilterType;
+  m_labeImage->SetRequestedRegion(m_labeImage->GetLargestPossibleRegion());
+  typename CropFilterType::Pointer cropFilter = CropFilterType::New();
+  cropFilter->SetInput(input);
+  cropFilter->SetRegionOfInterest(m_labeImage->GetLargestPossibleRegion());
+  cropFilter->Update();
 
-
-//   /*
-
-//   // Check spacing
-//   for(unsigned int i=0; i<ImageType::ImageDimension; i++) {
-//     if (like->GetSpacing[i] != input->GetSpacing()[i]) {
-//       LOG(FATAL) << "In CropImageLike, images must have the same spacing, but input's spacing is "
-//                  << image->GetSpacing() << " while image-like's spacing is " << like->GetSpacing() << ".";
-//     }
-//   }
-
-//   // Create output image
-//   ImageType::Pointer output = ImageType::New();
-
-//   // Set size
-//   output->CopyInformation(like);
-//   output->SetRegions(like->GetLargestPossibleRegion());
-//   output->SetSpacing(like->GetSpacing());
-//   output->SetOrigin(like->GetOrigin());
-//   output->Allocate();
-//   DD(output->GetLargestPossibleRegion());
-
-//   //  output->FillBuffer(GetBackgroundValue());
-//  // get startpoint source/dest
-//   // for each dim
-//   // if source < dest -> start from dest, compute in source
-//   // if source > dest -> start from source, compute in dest
-//   m_StartDestIndex = output->GetLargestPossibleRegion().GetIndex();
-//   m_StartSourceIndex = input->GetLargestPossibleRegion().GetIndex();
-//   PointType m_StartPointInSource;
-//   PointType m_StartPointInDest;
-//   m_StartSourceIndex = input->GetLargestPossibleRegion().GetIndex();
-//   input->TransformIndexToPhysicalPoint(m_StartSourceIndex, m_StartPointInSource);
-//   m_StartDestIndex = output->GetLargestPossibleRegion().GetIndex();
-//   output->TransformIndexToPhysicalPoint(m_StartDestIndex, m_StartPointInDest);
-//   IndexType startDestInSource;
-//   IndexType startSourceInDest;
-//   input->TransformPhysicalPointToIndex(m_StartPointInDest, startDestInSource);
-//   output->TransformPhysicalPointToIndex(m_StartPointInSource, startSourceInDest);
-//   for(int i=0; i<ImageType::ImageDimension; i++) {
-//     if (m_StartPointInSource[i] < m_StartPointInDest[i]) {
-//       m_StartSourceIndex[i] = startDestInSource[i];
-//     }
-//     else {
-//       m_StartDestIndex[i] = startSourceInDest[i];
-//     }
-//   }
-//   m_Region.SetIndex(m_StartSourceIndex);
-
-//   // Stop index
-//   m_StopSourceIndex = input->GetLargestPossibleRegion().GetIndex()+
-//     input->GetLargestPossibleRegion().GetSize();
-//   m_StopDestIndex = output->GetLargestPossibleRegion().GetIndex()+
-//     output->GetLargestPossibleRegion().GetSize();
-//   PointType m_StopPointInSource;
-//   PointType m_StopPointInDest;
-//   input->TransformIndexToPhysicalPoint(m_StopSourceIndex, m_StopPointInSource);
-//   output->TransformIndexToPhysicalPoint(m_StopDestIndex, m_StopPointInDest);
-//   IndexType stopDestInSource;
-//   IndexType stopSourceInDest;
-//   input->TransformPhysicalPointToIndex(m_StopPointInDest, stopDestInSource);
-//   output->TransformPhysicalPointToIndex(m_StopPointInSource, stopSourceInDest);
-
-//   for(int i=0; i<ImageType::ImageDimension; i++) {
-//     if (m_StopPointInSource[i] > m_StopPointInDest[i]) {
-//       m_StopSourceIndex[i] = stopDestInSource[i];
-//     }
-//     else {
-//       m_StopDestIndex[i] = stopSourceInDest[i];
-//     }
-//   }
-
-//   // Set size to the region we want to paste
-//   SizeType s;
-//   for(int i=0; i<ImageType::ImageDimension; i++)
-//     s[i] = m_StopSourceIndex[i]-m_StartSourceIndex[i];
-//   m_Region.SetSize(s);
-
-
-
-//   // Paste image inside
-//   typedef clitk::PasteImageFilter<ImageType,ImageType> PasteFilterType;
-//   typename PasteFilterType::Pointer pasteFilter = PasteFilterType::New();
-//   //pasteFilter->ReleaseDataFlagOn(); // change nothing ?
-//   //  pasteFilter->InPlaceOn(); // makt it seg fault
-//   pasteFilter->SetSourceImage(image);
-//   pasteFilter->SetDestinationImage(output);
-//   pasteFilter->SetDestinationIndex(m_StartDestIndex);
-//   pasteFilter->SetSourceRegion(m_Region);
-//   pasteFilter->Update();
-
-//   // Return image
-//   return pasteFilter->GetOutput();
-//   */
-// }
+  // End
+  return cropFilter->GetOutput();
+}
 //--------------------------------------------------------------------

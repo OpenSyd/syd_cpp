@@ -104,7 +104,7 @@ ImageBuilder::ReadImage(const syd::DicomSerie & dicom)
 
 // --------------------------------------------------------------------
 template<class PixelType>
-void syd::ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like)
+void ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like)
 {
   // load itk image
   typedef itk::Image<PixelType,3> ImageType;
@@ -114,10 +114,30 @@ void syd::ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like)
   auto reader = syd::ReadImageHeader(db_->GetAbsolutePath(like));
   auto itk_like = GetImageBase<3>(reader);
 
-  // crop image
+  // Crop image
   auto output = syd::CropImageLike<ImageType>(itk_image, itk_like);
 
-  // replace image on disk
+  // Replace image on disk
+  syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));
+
+  // Update image information
+  UpdateImageInfo<PixelType>(image, output, true); // recompute md5
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class PixelType>
+void ImageBuilder::CropImageWithThreshold(syd::Image & image, double lower_threshold)
+{
+  // load itk image
+  typedef itk::Image<PixelType,3> ImageType;
+  typename ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db_->GetAbsolutePath(image));
+
+  // Perform crop
+  auto output = syd::CropImageWithLowerThreshold<ImageType>(itk_image, lower_threshold);
+
+  // Replace image on disk
   syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));
 
   // Update image information

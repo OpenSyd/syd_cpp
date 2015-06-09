@@ -323,6 +323,7 @@ void syd::ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like, boo
         if (ref != d->dicom_frame_of_reference_uid)
           LOG(WARNING) << "Image associated with several dicom_frame_of_reference_uid. " << like;
       ref = d->dicom_frame_of_reference_uid;
+      DD(d->dicom_frame_of_reference_uid);
     }
     std::string ref2="";
     for(auto d:image.dicoms) {
@@ -330,6 +331,7 @@ void syd::ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like, boo
         if (ref2 != d->dicom_frame_of_reference_uid)
           LOG(WARNING) << "Image associated with several dicom_frame_of_reference_uid. " << like;
       ref2 = d->dicom_frame_of_reference_uid;
+      DD(d->dicom_frame_of_reference_uid);
     }
     if (ref != ref2) {
       LOG(FATAL) << "Cannot crop: " << image << std::endl << "like: "
@@ -352,11 +354,12 @@ void syd::ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like, boo
 // --------------------------------------------------------------------
 void syd::ImageBuilder::CropImageWithThreshold(syd::Image & image, double threshold)
 {
-  LOG(FATAL) << "CropImageWithThreshold not implemented yet";
-  // if (image.pixel_type == "float") {
-  //   auto output = syd::ReadImage<ImageType>(db_->GetAbsolutePath(image));
-  //   output = BinarizeImage<ImageType>(output, threshold);
-  //   CropImageLike<float>(image, output);
-  // }
+  // Dispatch according to pixel type
+  if (image.pixel_type == "float")  CropImageWithThreshold<float>(image, threshold);
+  else if (image.pixel_type == "short")  CropImageWithThreshold<short>(image, threshold);
+  else if (image.pixel_type == "unsigned char")  CropImageWithThreshold<unsigned char>(image, threshold);
+  else {
+    LOG(FATAL) << "Unknown pixel_type: " << image.pixel_type;
+  }
 }
 // --------------------------------------------------------------------

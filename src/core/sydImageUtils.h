@@ -41,6 +41,11 @@
 #include <itkImageSliceConstIteratorWithIndex.h>
 #include <itkConvolutionImageFilter.h>
 #include <itkRegionOfInterestImageFilter.h>
+#include <itkAutoCropLabelMapFilter.h>
+#include <itkStatisticsLabelObject.h>
+#include <itkLabelImageToLabelMapFilter.h>
+#include <itkLabelMapToLabelImageFilter.h>
+#include <itkBinaryThresholdImageFilter.h>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -110,10 +115,17 @@ namespace syd {
                            const itk::ImageBase<ImageType::ImageDimension> * like,
                            int interpolationType,
                            typename ImageType::PixelType defaultValue);
+
+  /// Crop the image according to the size of the other image
   template<class ImageType>
   typename ImageType::Pointer
   CropImageLike(const ImageType * input,
                 const itk::ImageBase<ImageType::ImageDimension> * like);
+
+  /// Crop an image by removing border with pixel value lower than the given threshold
+  template<class ImageType>
+  typename ImageType::Pointer
+  CropImageWithLowerThreshold(const ImageType * input, typename ImageType::PixelType lower_threshold);
   //--------------------------------------------------------------------
 
 

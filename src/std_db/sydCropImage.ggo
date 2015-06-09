@@ -3,11 +3,13 @@
 package "sydCropImage"
 usage "sydCropImage <db> <list_of_image_ids>"
 version "0.3"
-description "Crop the image according to another image or a threshold
+description "Crop the image according to another image or a (lower) threshold
 - <db>                     name of the database
 - <list_of_image_ids>      id of the image to crop
 
 If both --like and --threshold are given, --like is used.
+
+Threshold : every pixel with value lower than threshold are discarded.
 "
 
 option "config"	  	 	-	"Config file"				      string  	no
