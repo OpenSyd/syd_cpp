@@ -122,6 +122,7 @@ void ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like)
 
   // Update image information
   UpdateImageInfo<PixelType>(image, output, true); // recompute md5
+  db_->Update(image);
 }
 // --------------------------------------------------------------------
 
@@ -142,5 +143,6 @@ void ImageBuilder::CropImageWithThreshold(syd::Image & image, double lower_thres
 
   // Update image information
   UpdateImageInfo<PixelType>(image, output, true); // recompute md5
+  db_->Update(image);
 }
 // --------------------------------------------------------------------

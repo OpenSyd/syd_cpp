@@ -323,7 +323,6 @@ void syd::ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like, boo
         if (ref != d->dicom_frame_of_reference_uid)
           LOG(WARNING) << "Image associated with several dicom_frame_of_reference_uid. " << like;
       ref = d->dicom_frame_of_reference_uid;
-      DD(d->dicom_frame_of_reference_uid);
     }
     std::string ref2="";
     for(auto d:image.dicoms) {
@@ -331,7 +330,6 @@ void syd::ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like, boo
         if (ref2 != d->dicom_frame_of_reference_uid)
           LOG(WARNING) << "Image associated with several dicom_frame_of_reference_uid. " << like;
       ref2 = d->dicom_frame_of_reference_uid;
-      DD(d->dicom_frame_of_reference_uid);
     }
     if (ref != ref2) {
       LOG(FATAL) << "Cannot crop: " << image << std::endl << "like: "
