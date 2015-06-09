@@ -17,6 +17,12 @@ cmake_policy(SET CMP0042 NEW) # CMake 3.0
 
 
 #----------------------------------------------------------
+# Use c++11
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 # Basic variables
 set(SYD_SOURCE_DIR ${PROJECT_SOURCE_DIR})
 set(SYD_BINARY_DIR ${PROJECT_BINARY_DIR})
