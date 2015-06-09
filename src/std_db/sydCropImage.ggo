@@ -1,15 +1,17 @@
 #File sydCropImage.ggo
 
 package "sydCropImage"
-usage "sydCropImage <db> <image_id> <roiname>"
-version "0.2"
-description "Crop the image according to a roi (or to a threshold. later)
-- <db>            name of the database
-- <image_id>      id of the image to crop
-- roiname TODO
+usage "sydCropImage <db> <list_of_image_ids>"
+version "0.3"
+description "Crop the image according to another image or a threshold
+- <db>                     name of the database
+- <list_of_image_ids>      id of the image to crop
+
+If both --like and --threshold are given, --like is used.
 "
 
 option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
-#option "threshold"   	 	t       "Consider crop for )"		      flag	off
+option "threshold"   	 	t       "Crop according to this threshold"	      float     default="-1000" no
+option "like"                   l       "Crop according to this image id"	      int       no

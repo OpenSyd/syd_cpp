@@ -40,6 +40,7 @@ namespace syd {
     /// Destructor (empty)
     ~ImageBuilder() {}
 
+    // -----------------------------------------------------------
     /// Create & Insert a new Image from this DicomSerie
     syd::Image InsertImage(const syd::Tag & tag, const syd::DicomSerie & dicomserie);
 
@@ -51,10 +52,10 @@ namespace syd {
                                          const syd::DicomSerie & dicom,
                                          const syd::RoiType & roitype,
                                          const std::string & filename);
+    // -----------------------------------------------------------
 
-    /// Update an image by cropping according to the given mask
-    void CropImage(syd::Image & image, syd::RoiMaskImage & mask);
 
+    // -----------------------------------------------------------
     /// Update the image by creating the Files
     void UpdateFile(syd::Image & image, std::string relativepath, std::string filename);
 
@@ -67,6 +68,19 @@ namespace syd {
                          typename itk::Image<PixelType,3>::Pointer & itk_image,
                          bool computeMD5Flag);
 
+    /// Update an image by cropping according to the given mask
+    void CropImageLike(syd::Image & image, syd::Image & mask, bool forceFlag=false);
+
+    /// Crop and image like another (pixeltype known)
+    template<class PixelType>
+    void CropImageLike(syd::Image & image, syd::Image & like);
+
+    /// Crop an image according to a threshold
+    void CropImageWithThreshold(syd::Image & image, double threshold);
+    // -----------------------------------------------------------
+
+
+    // -----------------------------------------------------------
     /// Propose a default filename for the image (use the image.id, so must be inserted in the db before)
     std::string GetDefaultImageFilename(const syd::Image & image);
 

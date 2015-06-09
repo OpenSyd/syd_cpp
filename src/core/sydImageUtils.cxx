@@ -178,3 +178,28 @@ std::string syd::PointToString(const itk::Point<double,3> & t)
   return(myStream.str());
 }
 //--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+itk::ImageIOBase::Pointer syd::ReadImageHeader(const std::string & filename)
+{
+  itk::ImageIOBase::Pointer reader;
+  try {
+    reader = itk::ImageIOFactory::CreateImageIO(filename.c_str(), itk::ImageIOFactory::ReadMode);
+    reader->SetFileName(filename);
+    reader->ReadImageInformation();
+  } catch(std::exception & e) {
+    EXCEPTION("Error while reading header of image file " << filename << ". Error is: " << e.what());
+  }
+  return reader;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+void WriteImage(typename itk::ImageBase<3>::Pointer image, std::string filename)
+{
+  typedef itk::ImageBase<3> ImageBaseType;
+  //  DD(image->GetComponentTypeAsString(image->GetComponentType()));
+}
+//--------------------------------------------------------------------

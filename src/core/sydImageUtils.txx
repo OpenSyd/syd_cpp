@@ -49,6 +49,45 @@ typename ImageType::Pointer ReadImage(std::string filename)
 
 
 //--------------------------------------------------------------------
+template<unsigned int Dimension>
+typename itk::ImageBase<Dimension>::Pointer
+GetImageBase(const itk::ImageIOBase::Pointer & reader)
+{
+  if (reader->GetComponentSize() != 1) { // scalar image ?
+    LOG(FATAL) << "Error, only use GetImageBase with scalar image.";
+  }
+  typedef itk::ImageBase<Dimension> BaseImageType;
+  typename BaseImageType::Pointer i = BaseImageType::New();
+  typename BaseImageType::RegionType region;
+  typename BaseImageType::SizeType size;
+  typename BaseImageType::IndexType start;
+  typename BaseImageType::SpacingType spacing;
+  typename BaseImageType::PointType origin;
+  typename BaseImageType::DirectionType direction;
+  for(auto i=0; i<Dimension; i++) {
+    size[i] = reader->GetDimensions(i);//GetIORegion().GetSize()[i];
+    start[i] = 0;//a->GetIORegion().GetIndex()[i];
+    spacing[i] = reader->GetSpacing(i);
+    origin[i] = reader->GetOrigin(i);
+  }
+  for(auto i=0; i<Dimension; i++) {
+    auto v = reader->GetDirection(i);
+    for(auto j=0; j<Dimension; j++) {
+      direction(i,j) = v[j];
+    }
+  }
+  region.SetSize(size);
+  region.SetIndex(start);
+  i->SetRegions(region);
+  i->SetSpacing(spacing);
+  i->SetOrigin(origin);
+  i->SetDirection(direction);
+  return i;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
 template<class ImageType>
 std::string ComputeImageMD5(typename ImageType::Pointer image)
 {
@@ -162,6 +201,9 @@ typename ImageType::Pointer CropImageLike(const ImageType * input,
     size[i] = (int)ceil((double)like->GetLargestPossibleRegion().GetSize()[i]*
                         like->GetSpacing()[i]/input->GetSpacing()[i]);
     // Could not be larger than the initial image
+    if (size[i] > input->GetLargestPossibleRegion().GetSize()[i]) {
+      LOG(FATAL) << "Error while CropImageLike, computed size is larger than initial image: " << size;
+    }
     size[i] = std::min(size[i], input->GetLargestPossibleRegion().GetSize()[i]);
   }
   typename ImageType::RegionType r;
@@ -661,4 +703,120 @@ void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, con
   }
   */
 }
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+// template<class PixelType>
+// typename itk::Image<PixelType,3>::Pointer CropImageLike(typename itk::Image<PixelType,3>::Pointer image,
+//                                                typename itk::Image<PixelType,3>::Pointer like,
+//                                                const PixelType & bg) // background value in like
+// {
+//   DD("CropImageLike");
+//   typedef itk::Image<PixelType,3> ImageType;
+//   DD(image->GetLargestPossibleRegion());
+//   DD(like->GetLargestPossibleRegion());
+
+//   // Create output image
+
+
+
+
+//   ImageType::Pointer output = ImageType::New();
+
+
+//   /*
+
+//   // Check spacing
+//   for(unsigned int i=0; i<ImageType::ImageDimension; i++) {
+//     if (like->GetSpacing[i] != input->GetSpacing()[i]) {
+//       LOG(FATAL) << "In CropImageLike, images must have the same spacing, but input's spacing is "
+//                  << image->GetSpacing() << " while image-like's spacing is " << like->GetSpacing() << ".";
+//     }
+//   }
+
+//   // Create output image
+//   ImageType::Pointer output = ImageType::New();
+
+//   // Set size
+//   output->CopyInformation(like);
+//   output->SetRegions(like->GetLargestPossibleRegion());
+//   output->SetSpacing(like->GetSpacing());
+//   output->SetOrigin(like->GetOrigin());
+//   output->Allocate();
+//   DD(output->GetLargestPossibleRegion());
+
+//   //  output->FillBuffer(GetBackgroundValue());
+//  // get startpoint source/dest
+//   // for each dim
+//   // if source < dest -> start from dest, compute in source
+//   // if source > dest -> start from source, compute in dest
+//   m_StartDestIndex = output->GetLargestPossibleRegion().GetIndex();
+//   m_StartSourceIndex = input->GetLargestPossibleRegion().GetIndex();
+//   PointType m_StartPointInSource;
+//   PointType m_StartPointInDest;
+//   m_StartSourceIndex = input->GetLargestPossibleRegion().GetIndex();
+//   input->TransformIndexToPhysicalPoint(m_StartSourceIndex, m_StartPointInSource);
+//   m_StartDestIndex = output->GetLargestPossibleRegion().GetIndex();
+//   output->TransformIndexToPhysicalPoint(m_StartDestIndex, m_StartPointInDest);
+//   IndexType startDestInSource;
+//   IndexType startSourceInDest;
+//   input->TransformPhysicalPointToIndex(m_StartPointInDest, startDestInSource);
+//   output->TransformPhysicalPointToIndex(m_StartPointInSource, startSourceInDest);
+//   for(int i=0; i<ImageType::ImageDimension; i++) {
+//     if (m_StartPointInSource[i] < m_StartPointInDest[i]) {
+//       m_StartSourceIndex[i] = startDestInSource[i];
+//     }
+//     else {
+//       m_StartDestIndex[i] = startSourceInDest[i];
+//     }
+//   }
+//   m_Region.SetIndex(m_StartSourceIndex);
+
+//   // Stop index
+//   m_StopSourceIndex = input->GetLargestPossibleRegion().GetIndex()+
+//     input->GetLargestPossibleRegion().GetSize();
+//   m_StopDestIndex = output->GetLargestPossibleRegion().GetIndex()+
+//     output->GetLargestPossibleRegion().GetSize();
+//   PointType m_StopPointInSource;
+//   PointType m_StopPointInDest;
+//   input->TransformIndexToPhysicalPoint(m_StopSourceIndex, m_StopPointInSource);
+//   output->TransformIndexToPhysicalPoint(m_StopDestIndex, m_StopPointInDest);
+//   IndexType stopDestInSource;
+//   IndexType stopSourceInDest;
+//   input->TransformPhysicalPointToIndex(m_StopPointInDest, stopDestInSource);
+//   output->TransformPhysicalPointToIndex(m_StopPointInSource, stopSourceInDest);
+
+//   for(int i=0; i<ImageType::ImageDimension; i++) {
+//     if (m_StopPointInSource[i] > m_StopPointInDest[i]) {
+//       m_StopSourceIndex[i] = stopDestInSource[i];
+//     }
+//     else {
+//       m_StopDestIndex[i] = stopSourceInDest[i];
+//     }
+//   }
+
+//   // Set size to the region we want to paste
+//   SizeType s;
+//   for(int i=0; i<ImageType::ImageDimension; i++)
+//     s[i] = m_StopSourceIndex[i]-m_StartSourceIndex[i];
+//   m_Region.SetSize(s);
+
+
+
+//   // Paste image inside
+//   typedef clitk::PasteImageFilter<ImageType,ImageType> PasteFilterType;
+//   typename PasteFilterType::Pointer pasteFilter = PasteFilterType::New();
+//   //pasteFilter->ReleaseDataFlagOn(); // change nothing ?
+//   //  pasteFilter->InPlaceOn(); // makt it seg fault
+//   pasteFilter->SetSourceImage(image);
+//   pasteFilter->SetDestinationImage(output);
+//   pasteFilter->SetDestinationIndex(m_StartDestIndex);
+//   pasteFilter->SetSourceRegion(m_Region);
+//   pasteFilter->Update();
+
+//   // Return image
+//   return pasteFilter->GetOutput();
+//   */
+// }
 //--------------------------------------------------------------------

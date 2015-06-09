@@ -63,8 +63,15 @@ namespace syd {
   template<class ImageType>
   void WriteImage(typename ImageType::Pointer image, std::string filename);
 
+  void WriteImage(typename itk::ImageBase<3>::Pointer image, std::string filename);
+
   template<class ImageType>
   typename ImageType::Pointer ReadImage(std::string filename);
+
+  itk::ImageIOBase::Pointer ReadImageHeader(const std::string & filename);
+
+  template<unsigned int Dimension>
+  typename itk::ImageBase<Dimension>::Pointer GetImageBase(const itk::ImageIOBase::Pointer & reader);
 
   template<class ImageType>
   typename ImageType::Pointer CreateImageLike(typename itk::ImageBase<ImageType::ImageDimension> * like);

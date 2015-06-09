@@ -40,28 +40,24 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
   // Get the image
-  syd::IdType id = atoi(args_info.inputs[1]);
-  syd::Image image = db->QueryOne<syd::Image>(id);
-  DD(image);
-  DD(db->GetAbsolutePath(image));
+  std::vector<syd::IdType> ids;
+  for(auto i=1; i<args_info.inputs_num; i++) ids.push_back(atoi(args_info.inputs[i]));
 
-  // FIXME: default is roi body, or option mask or threshold
+  // Option like or threshold
+  double t = args_info.threshold_arg;
+  syd::Image like;
+  if (args_info.like_given) {
+    like = db->QueryOne<syd::Image>(args_info.like_arg);
+  }
 
-  // Get the roi
-  std::string roiname = "body";
-  syd::RoiType roitype = db->FindRoiType(roiname);
-  DD(roitype);
-  syd::RoiMaskImage roi = db->FindRoiMaskImage(*image.patient, roitype);
-  DD(roi);
-
-  // Crop with the roi
+  // Crop
   syd::ImageBuilder b(db);
-  // FIXME no set tag here ...
-  b.CropImage(image, roi);
-  DD(image);
-
-  // Update and write results
-
+  for(auto id:ids) {
+    syd::Image image = db->QueryOne<syd::Image>(id);
+    if (args_info.like_given) b.CropImageLike(image, like);
+    else b.CropImageWithThreshold(image, t);
+    LOG(1) << "Image cropped: " << image;
+  }
 
   // This is the end, my friend.
 }

@@ -159,7 +159,7 @@ void syd::ImageBuilder::InsertImagesFromTimepoint(syd::Timepoint & timepoint)
   // }
   // db_->Update(timepoint);
   // //  LOG(1) << "Timpoint (" << timepoint << ") updated with " << timepoint.dicoms.size() << " images."; // FIXME not here
-    }
+}
 // --------------------------------------------------------------------
 
 /* from file ?
@@ -313,10 +313,50 @@ syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImage(const syd::Tag & tag,
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilder::CropImage(syd::Image & image, syd::RoiMaskImage & mask)
+void syd::ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like, bool forceFlag)
 {
-  DD("Cropimage");
-  DD(image);
-  DD(mask);
+  // Check
+  if (!forceFlag) {
+    std::string ref="";
+    for(auto d:like.dicoms) {
+      if (ref != "")
+        if (ref != d->dicom_frame_of_reference_uid)
+          LOG(WARNING) << "Image associated with several dicom_frame_of_reference_uid. " << like;
+      ref = d->dicom_frame_of_reference_uid;
+    }
+    std::string ref2="";
+    for(auto d:image.dicoms) {
+      if (ref2 != "")
+        if (ref2 != d->dicom_frame_of_reference_uid)
+          LOG(WARNING) << "Image associated with several dicom_frame_of_reference_uid. " << like;
+      ref2 = d->dicom_frame_of_reference_uid;
+    }
+    if (ref != ref2) {
+      LOG(FATAL) << "Cannot crop: " << image << std::endl << "like: "
+                 << like << std::endl
+                 << "because they dont share the same dicom_frame_of_reference_uid (coordinate system).";
+    }
+  }
+
+  // Crop the image and write it to disk
+  if (image.pixel_type == "float") CropImageLike<float>(image, like);
+  else if (image.pixel_type == "short") CropImageLike<short>(image, like);
+  else if (image.pixel_type == "unsigned char") CropImageLike<unsigned char>(image, like);
+  else {
+    LOG(FATAL) << "Unknown pixel_type: " << image.pixel_type;
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ImageBuilder::CropImageWithThreshold(syd::Image & image, double threshold)
+{
+  LOG(FATAL) << "CropImageWithThreshold not implemented yet";
+  // if (image.pixel_type == "float") {
+  //   auto output = syd::ReadImage<ImageType>(db_->GetAbsolutePath(image));
+  //   output = BinarizeImage<ImageType>(output, threshold);
+  //   CropImageLike<float>(image, output);
+  // }
 }
 // --------------------------------------------------------------------

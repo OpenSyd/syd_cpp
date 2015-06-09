@@ -100,3 +100,27 @@ ImageBuilder::ReadImage(const syd::DicomSerie & dicom)
   return itk_image;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class PixelType>
+void syd::ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like)
+{
+  // load itk image
+  typedef itk::Image<PixelType,3> ImageType;
+  typename ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db_->GetAbsolutePath(image));
+
+  // load header of like image (no need to read all the pixels)
+  auto reader = syd::ReadImageHeader(db_->GetAbsolutePath(like));
+  auto itk_like = GetImageBase<3>(reader);
+
+  // crop image
+  auto output = syd::CropImageLike<ImageType>(itk_image, itk_like);
+
+  // replace image on disk
+  syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));
+
+  // Update image information
+  UpdateImageInfo<PixelType>(image, output, true); // recompute md5
+}
+// --------------------------------------------------------------------
