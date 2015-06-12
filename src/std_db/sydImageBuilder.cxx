@@ -319,16 +319,20 @@ void syd::ImageBuilder::CropImageLike(syd::Image & image, syd::Image & like, boo
   if (!forceFlag) {
     std::string ref="";
     for(auto d:like.dicoms) {
-      if (ref != "")
-        if (ref != d->dicom_frame_of_reference_uid)
+      if (ref != "") {
+        if (ref != d->dicom_frame_of_reference_uid) {
           LOG(WARNING) << "Image associated with several dicom_frame_of_reference_uid. " << like;
+        }
+      }
       ref = d->dicom_frame_of_reference_uid;
     }
     std::string ref2="";
     for(auto d:image.dicoms) {
-      if (ref2 != "")
-        if (ref2 != d->dicom_frame_of_reference_uid)
+      if (ref2 != "") {
+        if (ref2 != d->dicom_frame_of_reference_uid) {
           LOG(WARNING) << "Image associated with several dicom_frame_of_reference_uid. " << like;
+        }
+      }
       ref2 = d->dicom_frame_of_reference_uid;
     }
     if (ref != ref2) {
