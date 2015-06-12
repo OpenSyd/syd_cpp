@@ -84,3 +84,21 @@ void syd::Image::OnDelete(syd::Database * db)
   for(auto i:masks) db->AddToDeleteList(i);
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+std::string syd::Image::GetAcquisitionDate() const
+{
+  if (dicoms.size() == 0) return "unknown_date";
+  else return dicoms[0]->acquisition_date;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+std::string syd::Image::GetModality() const
+{
+  if (dicoms.size() == 0) return "unknown_modality";
+  else return dicoms[0]->dicom_modality;
+}
+// --------------------------------------------------

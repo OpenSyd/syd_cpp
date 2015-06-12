@@ -13,6 +13,7 @@ wrap_odb(sydStandardDatabase sydTag.h)
 wrap_odb(sydStandardDatabase sydImage.h)
 wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
+wrap_odb(sydStandardDatabase sydView.h)
 
 add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
@@ -28,6 +29,7 @@ add_library(sydStandardDatabase SHARED
   sydImage-odb.cxx sydImage.cxx
   sydRoiType-odb.cxx sydRoiType.cxx
   sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx
+  sydView-odb.cxx
   sydDicomSerieBuilder.cxx
   sydTimepointBuilder.cxx
   sydImageBuilder.cxx
@@ -50,15 +52,10 @@ wrap_ggo(sydInsertImageFromDicom sydInsertImageFromDicom.ggo)
 add_executable(sydInsertImageFromDicom sydInsertImageFromDicom.cxx sydInsertImageFromDicom_ggo.c)
 target_link_libraries(sydInsertImageFromDicom sydStandardDatabase)
 
-# Create Timepoints
-wrap_ggo(sydInsertTimepoint sydInsertTimepoint.ggo)
-add_executable(sydInsertTimepoint sydInsertTimepoint.cxx sydInsertTimepoint_ggo.c)
-target_link_libraries(sydInsertTimepoint sydStandardDatabase)
-
-# Search for Timepoint
-wrap_ggo(sydDumpTimepoint sydDumpTimepoint.ggo)
-add_executable(sydDumpTimepoint sydDumpTimepoint.cxx sydDumpTimepoint_ggo.c)
-target_link_libraries(sydDumpTimepoint sydStandardDatabase)
+# Search for Images
+wrap_ggo(sydFindImage sydFindImage.ggo)
+add_executable(sydFindImage sydFindImage.cxx sydFindImage_ggo.c)
+target_link_libraries(sydFindImage sydStandardDatabase)
 
 # Create images by stitching 2 dicom
 wrap_ggo(sydStitchDicom sydStitchDicom.ggo)
@@ -79,5 +76,15 @@ target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 wrap_ggo(sydTest sydTest.ggo)
 add_executable(sydTest sydTest.cxx sydTest_ggo.c)
 target_link_libraries(sydTest sydStandardDatabase)
+
+# Create Timepoints
+# wrap_ggo(sydInsertTimepoint sydInsertTimepoint.ggo)
+# add_executable(sydInsertTimepoint sydInsertTimepoint.cxx sydInsertTimepoint_ggo.c)
+# target_link_libraries(sydInsertTimepoint sydStandardDatabase)
+
+# Search for Timepoint
+# wrap_ggo(sydDumpTimepoint sydDumpTimepoint.ggo)
+# add_executable(sydDumpTimepoint sydDumpTimepoint.cxx sydDumpTimepoint_ggo.c)
+# target_link_libraries(sydDumpTimepoint sydStandardDatabase)
 
 #----------------------------------------------------------

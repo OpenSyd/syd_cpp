@@ -19,6 +19,10 @@
 // syd
 #include "sydStandardDatabase.h"
 
+
+#include "sydView-odb.hxx"
+
+
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {
@@ -284,6 +288,76 @@ void syd::StandardDatabase::FindDicom(const syd::Patient & patient,
 
   // Perform the query
   Query<DicomSerie>(q, series);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::FindImage(const syd::Patient & patient,
+                                      const std::vector<std::string> & patterns,
+                                      std::vector<syd::Image> & images)
+{
+  /*
+    http://www.codesynthesis.com/pipermail/odb-users/2011-July/000153.html
+    There is currently no support for using container members as predicates
+    in the C++-integrated queries. As a workaround for the meantime you can
+    use native queries (which are essentially the SQL WHERE text).
+  */
+
+  /* example select
+     SELECT object_id,dicom_description FROM Image_dicoms,Image,DicomSerie
+     where
+     image.patient == 7 and
+     object_id==image.id and
+     value == DicomSerie.id
+     and dicom_description LIKE "%FOV%"; ===> only this part cannot be in odb query
+  */
+
+  // ODB 10.6 Native Views
+  std::vector<syd::Image_Dicoms_View> results;
+  try {
+    typedef odb::query<syd::Image_Dicoms_View> Query;
+    Query q("image.patient == "+ToString(patient.id));
+    for(auto p:patterns) {
+      q = q and (Query("dicom_modality LIKE '%"+p+"%'") or
+                 Query("dicom_description LIKE '%"+p+"%'"));
+    }
+    // Sort by acquisition_date then reconstruction_date
+    q = q + "ORDER BY acquisition_date";
+    odb::transaction transaction (db_->begin());
+    odb::result<syd::Image_Dicoms_View> r (db_->query<syd::Image_Dicoms_View> (q));
+    for(auto i = r.begin(); i != r.end(); i++) {
+      Image_Dicoms_View s;
+      i.load(s);
+      results.push_back(s);
+    }
+    transaction.commit();
+  }
+   catch (const odb::exception& e) {
+     EXCEPTION("Error in sql query ; odb exception is: " << e.what());
+   }
+
+  // Get the sorting index
+  std::map<IdType, int> index;
+  int j=0;
+  for(auto i=0; i<results.size(); i++) {
+    if (index.find(results[i].image_id) == index.end()) {
+      index[results[i].image_id] = j;
+      ++j;
+    }
+  }
+
+  // Retrieve the images from ids
+  std::vector<syd::Image> temp;
+  if (results.size() != 0) {
+    odb::query<syd::Image> q(odb::query<syd::Image>::id == results[0].image_id);
+    for(auto r:results) q = q or odb::query<syd::Image>::id == r.image_id;
+    Query<syd::Image>(q, temp);
+  }
+
+  // Sort
+  images.resize(temp.size());
+  for(auto t:temp) images[index[t.id]] = t;
 }
 // --------------------------------------------------------------------
 

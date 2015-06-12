@@ -80,8 +80,13 @@ namespace syd {
 
     virtual void OnDelete(syd::Database * db);
 
+    std::string GetAcquisitionDate() const;
+    std::string GetModality() const;
+
   }; // end class
-}
+// --------------------------------------------------------------------
+
+} // end namespace
 // --------------------------------------------------------------------
 
 #endif

@@ -82,6 +82,11 @@ namespace syd {
                    const std::vector<std::string> & patterns,
                    std::vector<syd::DicomSerie> & series);
 
+    /// Return images that match the patterns
+    void FindImage(const syd::Patient & patient,
+                   const std::vector<std::string> & patterns,
+                   std::vector<syd::Image> & images);
+
     /// Return the roitype from its name
     syd::RoiType FindRoiType(const std::string & name);
 
