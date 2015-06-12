@@ -162,8 +162,11 @@ std::string syd::GetPathFromFilename(std::string & path)
     LOG(FATAL) << "Cannot get the path of '" << path << "' because it ends with a " << PATH_SEPARATOR;
   }
   size_t n = path.find_last_of(PATH_SEPARATOR);
-  if (n == std::string::npos) {
-    LOG(FATAL) << "Cannot get the path of '" << path << "' because not " << PATH_SEPARATOR << " was found.";
+  if (n == std::string::npos) { // no separator
+    //LOG(FATAL) << "Cannot get the path of '" << path << "' because not " << PATH_SEPARATOR << " was found.";
+    std::ostringstream s;
+    s << "." << PATH_SEPARATOR; // current path
+    return s.str();
   }
   std::string p = path.substr(0,n);
   return p;
