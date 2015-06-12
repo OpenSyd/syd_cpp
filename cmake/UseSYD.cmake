@@ -40,7 +40,7 @@ macro(WRAP_ODB ODB_SRCS)
       ${CMAKE_CURRENT_BINARY_DIR}/${ODB_HXX})
     if(EXISTS ${ODB_FILES_ABS})
       add_custom_command(OUTPUT ${ODB_OUTPUT}
-        COMMAND odb
+        COMMAND ${ODB_EXECUTABLE}
         ARGS --std c++11 --database sqlite -I${SYD_SOURCE_DIR}/src/std_db -I${SYD_SOURCE_DIR}/src/core --generate-schema --schema-format embedded --generate-query --sqlite-override-null --schema-name ${SCHEMA_NAME} ${ODB_FILES_ABS}
         DEPENDS ${ODB_FILES_ABS})
     else()
