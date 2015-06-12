@@ -50,8 +50,13 @@ int main(int argc, char* argv[])
   std::string filename = args_info.inputs[3];
 
   // FIXME DEBUG
-  syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == "mask");
-  DD(tag);
+  // Get the tag
+  std::string tagname = args_info.inputs[1];
+  syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == tagname);
+
+
+  // syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == "mask");
+  // DD(tag);
 
   // Create main builder
   syd::ImageBuilder b(db);

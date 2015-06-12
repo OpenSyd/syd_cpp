@@ -52,6 +52,11 @@ namespace syd {
     bool operator!=(const Tag & p) { return !(*this == p); }
 
   }; // end class
+
+
+  // Helpers function
+  std::string GetTagLabels(const std::vector<std::shared_ptr<syd::Tag>> & tags);
+
 }
 // --------------------------------------------------------------------
 

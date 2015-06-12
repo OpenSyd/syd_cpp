@@ -183,8 +183,8 @@ syd::RoiType syd::StandardDatabase::FindRoiType(const std::string & name)
 
 
 // --------------------------------------------------------------------
-syd::RoiMaskImage syd::StandardDatabase::FindRoiMaskImage(const syd::Patient & patient,
-                                                          const syd::RoiType & roitype)
+syd::RoiMaskImage syd::StandardDatabase::FindRoiMaskImage_TODO(const syd::Patient & patient,
+                                                               const syd::RoiType & roitype)
 {
   syd::RoiMaskImage r =
     QueryOne<syd::RoiMaskImage>(odb::query<syd::RoiMaskImage>::image->patient == patient.id and
@@ -897,5 +897,22 @@ bool syd::StandardDatabase::DeleteCurrentList()
   }
   list_of_files_to_delete_.clear();
   return true;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Tag syd::StandardDatabase::FindOrInsertTag(const std::string & label,
+                                                const std::string & description)
+{
+  syd::Tag tag;
+  if (Count<syd::Tag>(odb::query<syd::Tag>::label == label) == 1)
+    tag = QueryOne<syd::Tag>(odb::query<syd::Tag>::label == label);
+  else {
+    tag.label=label;
+    tag.description=description;
+    Insert(tag);
+  }
+  return tag;
 }
 // --------------------------------------------------------------------

@@ -66,8 +66,7 @@ int main(int argc, char* argv[])
     syd::PrintTable table;
     table.AddColumn("#id", 4);
     table.AddColumn("date", 18);
-    table.AddColumn("mod", 4);
-    table.AddColumn("tag", 12);
+    table.AddColumn("tags", 25);
     table.AddColumn("type", 8);
     table.AddColumn("size",12);
     table.AddColumn("dicom",110);
@@ -79,8 +78,7 @@ int main(int argc, char* argv[])
       size << s.size[0] << "x" << s.size[1] << "x" << s.size[2];
       table << s.id
             << s.GetAcquisitionDate()
-            << s.GetModality()
-            << s.tag->label
+            << GetTagLabels(s.tags)
             << s.pixel_type
             << size.str()
             << s.dicoms[0]->dicom_description;

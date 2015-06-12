@@ -60,3 +60,15 @@ bool syd::Tag::operator==(const Tag & p)
           description == p.description);
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+std::string syd::GetTagLabels(const std::vector<std::shared_ptr<syd::Tag>> & tags)
+{
+  std::ostringstream os;
+  if (tags.size() == 0) return "no_tag";
+  os << tags[0]->label;
+  for(auto i=1; i<tags.size(); i++) os << "," << tags[i]->label;
+  return os.str();
+}
+// --------------------------------------------------

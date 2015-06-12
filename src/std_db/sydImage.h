@@ -48,7 +48,7 @@ namespace syd {
     std::shared_ptr<syd::Patient> patient;
 
     /// Associated Tag. FIXME : or a vector ? Delete image or not ???
-    std::shared_ptr<syd::Tag> tag;
+    std::vector<std::shared_ptr<syd::Tag>> tags;
 
     /// List of associated files.
     std::vector<std::shared_ptr<syd::File>> files;
@@ -82,6 +82,9 @@ namespace syd {
 
     std::string GetAcquisitionDate() const;
     std::string GetModality() const;
+
+    /// Add a tag to the list (check is already exist), but do not update in the db.
+    void AddTag(syd::Tag & tag);
 
   }; // end class
 // --------------------------------------------------------------------

@@ -73,6 +73,7 @@ ImageBuilder::ReadImage(const syd::DicomSerie & dicom)
   typedef itk::Image<PixelType,3> ImageType;
 
   // Get the files
+  LOG(4) << "Get the dicom files";
   std::vector<syd::DicomFile> dicom_files;
   db_->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie->id == dicom.id, dicom_files);
   if (dicom_files.size() == 0) {
@@ -82,6 +83,7 @@ ImageBuilder::ReadImage(const syd::DicomSerie & dicom)
   for(auto f:dicom_files) {
     dicom_filenames.push_back(db_->GetAbsolutePath(*f.file));
   }
+  LOG(4) << "Found " << dicom_files.size();
 
   typename ImageType::Pointer itk_image;
   try {
@@ -91,6 +93,7 @@ ImageBuilder::ReadImage(const syd::DicomSerie & dicom)
     else {
       std::string folder = dicom_filenames[0];
       syd::Replace(folder, syd::GetFilenameFromPath(folder), "");
+      LOG(4) << "ITK reader";
       itk_image = syd::ReadDicomSerieFromFolder<PixelType>(folder, dicom.dicom_series_uid);
     }
   } catch (std::exception & e) {

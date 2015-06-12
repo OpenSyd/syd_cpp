@@ -40,15 +40,12 @@ std::string syd::Image::ToString() const
   std::string name;
   if (patient == NULL) name = "patient_not_set";
   else name = patient->name;
-  std::string t;
-  if (tag == NULL) t = "tag_not_set";
-  else t = tag->label;
   std::stringstream ss ;
   ss << id << " "
      << name << " ";
   if (files.size() == 0) ss << "(no files) ";
   for(auto f:files) ss << f->filename << " ";
-  ss << t << " " << type << " " << pixel_type << " "
+  ss << GetTagLabels(tags) << " " << type << " " << pixel_type << " "
      << size[0] << "x" << size[1] << "x" << size[2] << " "
      << spacing[0] << "x" << spacing[1] << "x" << spacing[2];
   if (dicoms.size() > 0) ss << " " << dicoms[0]->dicom_modality << " ";
@@ -65,9 +62,8 @@ bool syd::Image::operator==(const Image & p)
     *patient == *p.patient;
   if (!b) return b;
   if (files.size() != p.files.size()) return false;
-  for(auto i=0; i< files.size(); i++)
-    b = b and (*files[i] == *p.files[i]);
-  b = b and *tag == *p.tag;
+  for(auto i=0; i< files.size(); i++) b = b and (*files[i] == *p.files[i]);
+  for(auto i=0; i< tags.size(); i++)  b = b and (*tags[i] == *p.tags[i]); // if not same order ?
   return b;
 }
 // --------------------------------------------------
@@ -100,5 +96,21 @@ std::string syd::Image::GetModality() const
 {
   if (dicoms.size() == 0) return "unknown_modality";
   else return dicoms[0]->dicom_modality;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::AddTag(syd::Tag & tag)
+{
+  bool found = false;
+  int i=0;
+  while (i<tags.size() and !found) {
+    if (tags[i]->label == tag.label) found = true;
+    ++i;
+  }
+  if (!found) {
+    tags.push_back(std::make_shared<syd::Tag>(tag));
+  }
 }
 // --------------------------------------------------

@@ -90,8 +90,11 @@ namespace syd {
     /// Return the roitype from its name
     syd::RoiType FindRoiType(const std::string & name);
 
-    /// Return the
-    syd::RoiMaskImage FindRoiMaskImage(const syd::Patient & patient, const syd::RoiType & roitype);
+    /// Return the roi --> depend on the time could be several
+    syd::RoiMaskImage FindRoiMaskImage_TODO(const syd::Patient & patient, const syd::RoiType & roitype);
+
+    /// Find the tag by the label, or create it.
+    syd::Tag FindOrInsertTag(const std::string & label, const std::string & description);
     // -----------------------------------------------------------
 
 
@@ -118,6 +121,8 @@ namespace syd {
     std::string GetAbsoluteFolder(const Image & image);
     // -----------------------------------------------------------
 
+
+    //    void AddTag(syd::Image & image, syd::Tag & tag);
 
     // Below : TODO
 
