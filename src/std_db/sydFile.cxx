@@ -32,6 +32,7 @@ syd::File::File():TableElementBase()
   filename = "";
   path = "";
   md5 = "";
+  //look_for_dicomfile_on_delete_flag = true;
 }
 // --------------------------------------------------
 
@@ -83,8 +84,11 @@ void syd::File::OnDelete(syd::Database * d)
 
 
   // We also look for DicomFiles to be deleted.
-  std::vector<syd::DicomFile> dicomfiles;
-  db->Query<syd::DicomFile>(odb::query<syd::DicomFile>::file == id, dicomfiles);
-  for(auto i:dicomfiles) db->AddToDeleteList(i);
+  /* if (look_for_dicomfile_on_delete_flag) {
+    std::vector<syd::DicomFile> dicomfiles;
+    db->Query<syd::DicomFile>(odb::query<syd::DicomFile>::file == id, dicomfiles);
+    for(auto i:dicomfiles) db->AddToDeleteList(i);
+  }
+  */
 }
 // --------------------------------------------------

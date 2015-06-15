@@ -27,7 +27,7 @@ namespace syd {
 
 #pragma db model version(1, 1)
 
-#pragma db object
+#pragma db object table("File")
   /// Store information about a file linked to a database.
   class File: public syd::TableElementBase {
   public:
