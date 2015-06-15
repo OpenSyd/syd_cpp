@@ -44,7 +44,8 @@ std::string syd::Image::ToString() const
   ss << id << " "
      << name << " ";
   if (files.size() == 0) ss << "(no files) ";
-  for(auto f:files) ss << f->filename << " ";
+  //for(auto f:files) ss << f->filename << " "; // only first is usually useful
+  else ss << files[0]->filename << " ";
   ss << GetTagLabels(tags) << " " << type << " " << pixel_type << " "
      << size[0] << "x" << size[1] << "x" << size[2] << " "
      << spacing[0] << "x" << spacing[1] << "x" << spacing[2];
