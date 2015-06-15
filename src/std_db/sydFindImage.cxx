@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     table.AddColumn("tags", 25);
     table.AddColumn("type", 8);
     table.AddColumn("size",12);
-    table.AddColumn("dicom",110);
+    //    table.AddColumn("dicom",110);
     table.Init();
 
     // Dump all information
@@ -80,8 +80,8 @@ int main(int argc, char* argv[])
             << s.GetAcquisitionDate()
             << GetTagLabels(s.tags)
             << s.pixel_type
-            << size.str()
-            << s.dicoms[0]->dicom_description;
+            << size.str();
+            // << s.dicoms[0]->dicom_description;
     }
     table.Print(std::cout);
   }
