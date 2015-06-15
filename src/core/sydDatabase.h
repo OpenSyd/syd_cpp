@@ -83,6 +83,10 @@ namespace syd {
     template<class TableElement>
     void Query(std::vector<TableElement> & list);
 
+    /// Retrieve all elements of the given ids list
+    template<class TableElement>
+    void Query(const std::vector<IdType> & ids, std::vector<TableElement> & list);
+
     /// Get the unique element matching the query (fail if 0 or >1 elements)
     template<class TableElement>
     TableElement QueryOne(const odb::query<TableElement> & q);
@@ -112,6 +116,10 @@ namespace syd {
     /// Update a set of elements in the database
     template<class TableElement>
     void Update(std::vector<TableElement*> & r);
+
+    /// Update a set of elements in the database
+    template<class TableElement>
+    void Update(std::vector<TableElement> & r);
     // ------------------------------------------------------------------------
 
 
@@ -155,6 +163,10 @@ namespace syd {
     /// Add an element to the list of element to be delete
     template<class TableElement>
     void AddToDeleteList(TableElement & elem);
+
+    /// Add an element to the list of element to be delete
+    template<class TableElement>
+    void AddToDeleteList(std::vector<TableElement> & elem);
 
     /// Effectively delete current list of elements to be deleted
     virtual bool DeleteCurrentList();

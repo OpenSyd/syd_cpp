@@ -67,6 +67,11 @@ wrap_ggo(sydCropImage sydCropImage.ggo)
 add_executable(sydCropImage sydCropImage.cxx sydCropImage_ggo.c)
 target_link_libraries(sydCropImage sydStandardDatabase)
 
+# Change tag
+wrap_ggo(sydImageTag sydImageTag.ggo)
+add_executable(sydImageTag sydImageTag.cxx sydImageTag_ggo.c)
+target_link_libraries(sydImageTag sydStandardDatabase)
+
 # Insert a new RoiMaskImage
 wrap_ggo(sydInsertRoiMaskImage sydInsertRoiMaskImage.ggo)
 add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx sydInsertRoiMaskImage_ggo.c)

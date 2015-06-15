@@ -115,3 +115,19 @@ void syd::Image::AddTag(syd::Tag & tag)
   }
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::RemoveTag(syd::Tag & tag)
+{
+  bool found = false;
+  int i=0;
+  while (i<tags.size() and !found) {
+    if (tags[i]->label == tag.label) {
+      found = true;
+      tags.erase(tags.begin()+i);
+    }
+    ++i;
+  }
+}
+// --------------------------------------------------

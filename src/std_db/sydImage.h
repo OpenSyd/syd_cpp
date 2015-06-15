@@ -47,27 +47,29 @@ namespace syd {
     /// Foreign key, it must exist in the Patient table.
     std::shared_ptr<syd::Patient> patient;
 
-    /// Associated Tag. FIXME : or a vector ? Delete image or not ???
+    /// Associated tags
     std::vector<std::shared_ptr<syd::Tag>> tags;
 
     /// List of associated files.
     std::vector<std::shared_ptr<syd::File>> files;
 
-    // FIXME -> needed ?. dicoms that serve to compute this image (could
-    // be empty).
+    /// Dicoms that serve to compute this image (could be empty).
     std::vector<std::shared_ptr<syd::DicomSerie>> dicoms;
 
-    std::string type; // mhd etc. Needed ?
+    /// Type of the image (mhd by default)
+    std::string type;
 
-    std::string pixel_type; // float, uint, Needed ?
+    /// Pixel type: short, float, unsigned char
+    std::string pixel_type;
 
-    unsigned short int dimension; // Needed ?
+    /// Dimension is 3 or 2.
+    unsigned short int dimension;
 
     /// Image size (in pixels)
-    std::array<int, 3> size; // Needed ?
+    std::array<int, 3> size;
 
     /// Image spacing aka size of the pixel (in mm)
-    std::array<double, 3> spacing; // Needed
+    std::array<double, 3> spacing;
 
     // ------------------------------------------------------------------------
     SET_TABLE_NAME("Image")
@@ -80,11 +82,17 @@ namespace syd {
 
     virtual void OnDelete(syd::Database * db);
 
+    /// Return the acquisition date of the first dicom linked to this image
     std::string GetAcquisitionDate() const;
+
+    /// Return the modality of the dicom linked to this image
     std::string GetModality() const;
 
-    /// Add a tag to the list (check is already exist), but do not update in the db.
+    /// Add a tag to the list (check is already exist) ; do not update in the db.
     void AddTag(syd::Tag & tag);
+
+    /// Remove a tag from the list ; do not update in the db. Do nothing it not found
+    void RemoveTag(syd::Tag & tag);
 
   }; // end class
 // --------------------------------------------------------------------

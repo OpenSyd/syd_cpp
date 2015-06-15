@@ -54,13 +54,14 @@ int main(int argc, char* argv[])
   std::string tagname = args_info.inputs[1];
   syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == tagname);
 
+  LOG(FATAL) << "TODO";
 
   // syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == "mask");
   // DD(tag);
 
   // Create main builder
   syd::ImageBuilder b(db);
-  syd::RoiMaskImage mask = b.InsertRoiMaskImage(tag, dicom, roitype, filename);
+  syd::RoiMaskImage mask = b.InsertRoiMaskImage(dicom, roitype, filename);
   LOG(1) << "Inserting RoiMaskImage " << mask;
 
   // This is the end, my friend.

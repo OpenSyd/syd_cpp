@@ -28,7 +28,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT(sydDelete, 3);
+  SYD_INIT(sydDelete, 2);
 
   // Get params
   std::string dbname = args_info.inputs[0];
@@ -46,11 +46,12 @@ int main(int argc, char* argv[])
   db->SetDeleteForceFlag(args_info.force_flag);
 
   // Get the list of ids
-  if (args_info.inputs[2] == std::string("all")) {
+  if (args_info.inputs_num > 2 and args_info.inputs[2] == std::string("all")) {
     db->DeleteAll(tablename);
   }
   else {
     std::vector<syd::IdType> ids;
+    syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
     for(auto i=2; i<args_info.inputs_num; i++) {
       ids.push_back(atoi(args_info.inputs[i]));
     }

@@ -132,6 +132,11 @@ namespace syd {
   void loadbar(unsigned int x, unsigned int n, unsigned int w=50);
   //--------------------------------------------------------------------
 
+
+  //--------------------------------------------------------------------
+  void ReadIdsFromInputPipe(std::vector<syd::IdType> & ids);
+  //--------------------------------------------------------------------
+
 #include "sydCommon.txx"
 
 } // end namespace

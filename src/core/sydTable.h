@@ -54,6 +54,9 @@ namespace syd {
     /// Perform a query on the database and return the found elements in the list
     void Query(const odb::query<TableElement> & q, std::vector<TableElement> & list);
 
+    /// Get the list of element from the list of ids
+    void Query(const std::vector<IdType> & ids, std::vector<TableElement> & list);
+
     /// Retrieve all elements of the table
     void Query(std::vector<TableElement> & list);
 
@@ -80,6 +83,9 @@ namespace syd {
 
     /// Update a set of elements in the database
     void Update(std::vector<TableElement*> & r);
+
+    /// Update a set of elements in the database
+    void Update(std::vector<TableElement> & r);
 
     /// default impltementation of insert, must be overloaded
     virtual TableElement * InsertFromArg(std::vector<std::string> & arg);

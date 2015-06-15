@@ -373,3 +373,54 @@ void syd::loadbar(unsigned int x, unsigned int n, unsigned int w)
   std::cout << "]\r" << std::flush;
 }
 //------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+// Needed by ReadIdsFromInputPipe
+class RedirectCinToConsole {
+protected:
+  std::ifstream m_console;
+  std::streambuf *m_oldCin;
+  bool m_success;
+
+public:
+  RedirectCinToConsole() :
+    m_oldCin(0),
+    m_success(false) {
+    m_console.open("/dev/tty");
+    // Winodws ?? std::filebuf f; f.open( "CONIN$", std::ios_base::in );
+    // std::streambuf* save = std::cout.rdbuf(); std::cout.rdbuf( &theNewFileBuf );
+    if (m_console.is_open()) {
+      m_success = true;
+      m_oldCin = std::cin.rdbuf(m_console.rdbuf());
+    }
+  }
+  virtual ~RedirectCinToConsole() {
+    if (m_oldCin) {
+      std::cin.rdbuf(m_oldCin);
+    }
+    m_console.close();
+  }
+  operator bool () const { return m_success; }
+};
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::ReadIdsFromInputPipe(std::vector<syd::IdType> & ids)
+{
+  // http://stackoverflow.com/questions/4542544/supporting-piping-a-useful-hello-world
+  syd::IdType arg;
+  if (!isatty(fileno(stdin))) {
+    while (std::cin) {
+      std::cin >> arg;
+      ids.push_back(arg);
+    }
+  }
+
+  // need to set back cin to console
+  // http://stackoverflow.com/questions/12164448/how-to-restore-stdcin-to-keyboard-after-using-pipe
+  // Dont delete this pointer !
+  RedirectCinToConsole * l_redirect = new RedirectCinToConsole;
+}
+//------------------------------------------------------------------

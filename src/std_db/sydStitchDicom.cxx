@@ -29,7 +29,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT(sydStitchDicom, 4);
+  SYD_INIT(sydStitchDicom, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -44,13 +44,14 @@ int main(int argc, char* argv[])
   std::vector<syd::Tag> tags;
   db->FindTags(tagname, tags);
 
-  // Get the two dicom series to stitch
-  std::vector<syd::DicomSerie> dicoms;
+  // Get the dicom series to stitch
+  std::vector<syd::IdType> ids;
+  syd::ReadIdsFromInputPipe(ids);
   for(auto i=2; i<args_info.inputs_num; i++) {
-    syd::IdType id = atoi(args_info.inputs[i]);
-    syd::DicomSerie d = db->QueryOne<syd::DicomSerie>(id);
-    dicoms.push_back(d);
+    ids.push_back(atoi(args_info.inputs[i]));
   }
+  std::vector<syd::DicomSerie> dicoms;
+  db->Query(ids, dicoms);
 
   // Make pair
   std::vector<std::pair<syd::DicomSerie, syd::DicomSerie>> pairs;
@@ -76,11 +77,14 @@ int main(int argc, char* argv[])
 
   // Build stitched images
   syd::ImageBuilder builder(db);
+  std::vector<syd::Image> images;
   for(auto p:pairs) {
     syd::Image image = builder.InsertStitchedImage(p.first, p.second);
     for(auto t:tags) image.AddTag(t);
+    images.push_back(image);
     LOG(1) << "Inserting Image " << image;
   }
+  db->Update(images);
 
   // This is the end, my friend.
 }

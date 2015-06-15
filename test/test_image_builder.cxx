@@ -43,15 +43,14 @@ int main(int argc, char* argv[])
 
   // Create image
   syd::ImageBuilder b(db);
-  syd::Tag tag = db->QueryOne<syd::Tag>(1);
   syd::DicomSerie dicom = db->QueryOne<syd::DicomSerie>(2);
-  syd::Image image = b.InsertImage(tag,dicom);
+  syd::Image image = b.InsertImage(dicom);
   syd::Patient patient = *image.patient;
   LOG(1) << "Create and insert Image: " << image;
 
   // Create roimaskimage
   syd::RoiType roitype = db->FindRoiType("body");
-  syd::RoiMaskImage mask = b.InsertRoiMaskImage(tag, dicom, roitype, db->GetAbsolutePath(image));
+  syd::RoiMaskImage mask = b.InsertRoiMaskImage(dicom, roitype, db->GetAbsolutePath(image));
 
 
   // test 2: create image for timepoint (+link tp with images)

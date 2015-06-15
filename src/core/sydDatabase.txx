@@ -108,6 +108,45 @@ void syd::Database::AddToDeleteList(TableElement & elem)
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Database::AddToDeleteList(std::vector<TableElement> & elems)
+{
+  // Create a pointer to the element
+  /*TableElementBase * e = new TableElement(elem);
+  auto p = std::make_pair(TableElement::GetTableName(), e);
+  std::string key = TableElement::GetTableName()+ToString(elem.id);
+
+  auto result = list_of_elements_to_delete_.find(key);
+  if (result == list_of_elements_to_delete_.end()) { // not found
+    list_of_elements_to_delete_[key] = p;
+    OnDelete(TableElement::GetTableName(), e);
+  }
+  */
+
+  /*
+  // Very slow & bad loop. To be improve (map)
+  bool found = false;
+  auto iter = list_of_elements_to_delete_.begin();
+  while (!found and iter != list_of_elements_to_delete_.end()) {
+    if (iter->first == TableElement::GetTableName()) {
+      TableElement * a = dynamic_cast<TableElement*>(iter->second);
+      TableElement * b = dynamic_cast<TableElement*>(e);
+      if (a->id == b->id) found = true;
+    }
+    ++iter;
+  }
+
+  // Only raise OnDelete is not already in the list
+  if (!found) {
+    list_of_elements_to_delete_.push_back(p);
+    OnDelete(TableElement::GetTableName(), e);
+  }
+  */
+}
+// --------------------------------------------------------------------
+
+
 
 // --------------------------------------------------------------------
 template<class TableElement>
@@ -145,8 +184,18 @@ void syd::Database::AddTable()
 
 // --------------------------------------------------------------------
 template<class TableElement>
-void syd::Database::Query(const odb::query<TableElement> & q, std::vector<TableElement> & list) {
+void syd::Database::Query(const odb::query<TableElement> & q, std::vector<TableElement> & list)
+{
   GetTable<TableElement>()->Query(q,list);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Database::Query(const std::vector<IdType> & ids, std::vector<TableElement> & list)
+{
+  GetTable<TableElement>()->Query(ids,list);
 }
 // --------------------------------------------------------------------
 
@@ -222,9 +271,19 @@ void syd::Database::Update(TableElement & r)
 }
 // --------------------------------------------------------------------
 
+
 // --------------------------------------------------------------------
 template<class TableElement>
 void syd::Database::Update(std::vector<TableElement*> & r)
+{
+  GetTable<TableElement>()->Update(r);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Database::Update(std::vector<TableElement> & r)
 {
   GetTable<TableElement>()->Update(r);
 }

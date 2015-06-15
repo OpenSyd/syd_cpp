@@ -155,6 +155,20 @@ void syd::Table<TableElement>::Query(const odb::query<TableElement> & q,
 
 // --------------------------------------------------------------------
 template<class TableElement>
+void syd::Table<TableElement>::Query(const std::vector<IdType> & ids,
+                                     std::vector<TableElement> & list)
+{
+  if (ids.size()==0) return;
+  typedef odb::query<TableElement> query;
+  query q (odb::query<TableElement>::id == ids[0]);
+  for(auto i=1; i<ids.size(); i++) q = q or odb::query<TableElement>::id == ids[i];
+  Query(q,list);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
 void syd::Table<TableElement>::Query(std::vector<TableElement> & list)
 {
   odb::query<TableElement> q;
@@ -272,6 +286,28 @@ void syd::Table<TableElement>::Update(std::vector<TableElement*> & r)
   try {
     odb::transaction t (db_->begin());
     for(auto x:r) db_->update(*x);
+    t.commit();
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Cannot update " << r.size()
+              << " elements in the table '" << TableElement::GetTableName()
+              << "'. The error is: "  << e.what()
+              << std::endl << "And last sql query is: "
+              << std::endl << database_->GetLastSQLQuery());
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Table<TableElement>::Update(std::vector<TableElement> & r)
+{
+  try {
+    odb::transaction t (db_->begin());
+    for(auto x:r) {
+      db_->update(x);
+    }
     t.commit();
   }
   catch (const odb::exception& e) {

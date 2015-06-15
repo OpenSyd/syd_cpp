@@ -29,7 +29,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT(sydInsertImageFromDicom, 3);
+  SYD_INIT(sydInsertImageFromDicom, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -43,22 +43,28 @@ int main(int argc, char* argv[])
   std::string tagname = args_info.inputs[1];
   std::vector<syd::Tag> tags;
   db->FindTags(tagname, tags);
+  DDS(tags);
 
   // Get the list of dicomserie
-  std::vector<syd::DicomSerie> dicom_series;
+  std::vector<syd::IdType> ids;
+  syd::ReadIdsFromInputPipe(ids);
   for(auto i=2; i<args_info.inputs_num; i++) {
-    syd::IdType id = atoi(args_info.inputs[i]);
-    syd::DicomSerie d= db->QueryOne<syd::DicomSerie>(id);
-    dicom_series.push_back(d);
+    ids.push_back(atoi(args_info.inputs[i]));
   }
+  std::vector<syd::DicomSerie> dicom_series;
+  db->Query(ids, dicom_series);
 
   // Create main builder
   syd::ImageBuilder b(db);
+  std::vector<syd::Image> images;
   for(auto d:dicom_series) {
     syd::Image image = b.InsertImage(d);
     for(auto t:tags) image.AddTag(t);
+    images.push_back(image);
     LOG(1) << "Inserting Image " << image;
   }
+  // Update for tag
+  db->Update(images);
 
   // This is the end, my friend.
 }

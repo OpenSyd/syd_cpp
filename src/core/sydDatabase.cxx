@@ -278,6 +278,7 @@ bool syd::Database::DeleteCurrentList()
   if (!deleteForceFlag_) {
     std::string input;
     std::cout << "Really delete " << list_of_elements_to_delete_.size() << " elements ([y]es/[n]o/[v]erbose) ?   ";
+    std::cout.flush();
     std::cin >> input;
     if (input == "v") {
       for(auto it=list_of_elements_to_delete_.begin();
