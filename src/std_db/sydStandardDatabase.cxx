@@ -66,6 +66,7 @@ void syd::StandardDatabase::CreateAbsoluteFolder(const DicomSerie & serie)
 {
   Patient patient = QueryOne<Patient>(serie.patient->id);
   std::string f = GetAbsoluteFolder(patient);
+  if (!syd::DirExists(f)) syd::CreateDirectory(f);
   std::string d = serie.acquisition_date;
   //  syd::Replace(d, " ", "_");
   // remove the hour and keep y m d
@@ -141,6 +142,17 @@ syd::Patient syd::StandardDatabase::FindPatientByNameOrStudyId(const std::string
                << std::endl << e.what();
   }
   return p;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::FindPatients(const std::string & arg, std::vector<syd::Patient> & patients)
+{
+  if (arg == "all") return Query(patients);
+  std::vector<std::string> n;
+  syd::GetWords(arg, n);
+  for(auto a:n) patients.push_back(FindPatientByNameOrStudyId(a));
 }
 // --------------------------------------------------------------------
 

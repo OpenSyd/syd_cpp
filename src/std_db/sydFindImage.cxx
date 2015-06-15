@@ -39,9 +39,9 @@ int main(int argc, char* argv[])
   std::string dbname = args_info.inputs[0];
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
-  // Get the patient
-  std::string name = args_info.inputs[1];
-  syd::Patient patient = db->FindPatientByNameOrStudyId(name);
+  // Get the patients
+  std::vector<syd::Patient> patients;
+  db->FindPatients(args_info.inputs[1], patients);
 
   // Prepare the list of arguments
   std::vector<std::string> patterns;
@@ -54,22 +54,26 @@ int main(int argc, char* argv[])
     exclude.push_back(args_info.exclude_arg[i]);
 
   // Find
-  std::vector<syd::Image> images;
-  db->FindImage(patient, patterns, exclude, images); // this is sorted by acquisition date
-  if (images.size() == 0) {
-    LOG(1) << "No images found.";
-    return EXIT_SUCCESS;
+  std::vector<std::vector<syd::Image>> results;
+  int n=0;
+  for(auto patient:patients) {
+    std::vector<syd::Image> images;
+    db->FindImage(patient, patterns, exclude, images); // this is sorted by acquisition date
+    results.push_back(images);
+    n += images.size();
   }
 
   // Dump list of ids
-  for(auto s:images) std::cout << s.id << " ";
-  std::cout << std::endl;
+  for(auto i=0; i<patients.size(); i++)
+    for(auto s:results[i]) std::cout << s.id << " ";
+  if (n !=0) std::cout << std::endl;
 
   // Dump (if verbose)
-  if (Log::LogLevel() > 0) {
+  if (n !=0 and Log::LogLevel() > 0) {
     // init the table to output results
     syd::PrintTable table;
     table.AddColumn("#id", 4);
+    if (patients.size() > 1) table.AddColumn("#p", 5);
     table.AddColumn("date", 18);
     table.AddColumn("tags", 25);
     table.AddColumn("type", 8);
@@ -77,24 +81,31 @@ int main(int argc, char* argv[])
     //    table.AddColumn("dicom",110);
     table.Init();
 
-    // Dump all information
-    for(auto s:images) {
-      std::ostringstream size;
-      size << s.size[0] << "x" << s.size[1] << "x" << s.size[2];
-      table << s.id
-            << s.GetAcquisitionDate()
-            << GetTagLabels(s.tags)
-            << s.pixel_type
-            << size.str();
-            // << s.dicoms[0]->dicom_description;
+    for(auto i=0; i<patients.size(); i++) {
+      std::vector<syd::Image> & images =results[i];
+      // Dump all information
+      for(auto s:images) {
+        std::ostringstream size;
+        size << s.size[0] << "x" << s.size[1] << "x" << s.size[2];
+        table << s.id;
+        if (patients.size() > 1) table << s.patient->name;
+        table << s.GetAcquisitionDate()
+              << GetTagLabels(s.tags)
+              << s.pixel_type
+              << size.str();
+        // << s.dicoms[0]->dicom_description;
+      }
     }
     table.Print(std::cout);
   }
 
   // List of files
   if (args_info.files_flag) {
-    for(auto s:images) {
-      std::cout << db->GetAbsolutePath(s) << std::endl;
+    for(auto i=0; i<patients.size(); i++) {
+      std::vector<syd::Image> & images =results[i];
+      for(auto s:images) {
+        std::cout << db->GetAbsolutePath(s) << std::endl;
+      }
     }
   }
 

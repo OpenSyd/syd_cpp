@@ -73,6 +73,9 @@ namespace syd {
     /// Return the patient by name or study_id. Fail if not found.
     syd::Patient FindPatientByNameOrStudyId(const std::string & arg);
 
+    /// Find all the patients matching arg (can contains several name/id separated by space)
+    void FindPatients(const std::string & arg, std::vector<syd::Patient> & patients);
+
     /// Return the injection for the given patient where radionuclide match the arg. Fail if not found
     syd::Injection FindInjectionByNameOrId(const Patient & patient,
                                            const std::string & arg);

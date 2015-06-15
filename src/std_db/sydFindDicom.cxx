@@ -39,32 +39,38 @@ int main(int argc, char* argv[])
   std::string dbname = args_info.inputs[0];
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
-  // Get the patient
-  std::string name = args_info.inputs[1];
-  syd::Patient patient = db->FindPatientByNameOrStudyId(name);
+  // Get the patients
+  std::vector<syd::Patient> patients;
+  db->FindPatients(args_info.inputs[1], patients);
 
   // Prepare the list of arguments
   std::vector<std::string> patterns;
   for(auto i=2; i<args_info.inputs_num; i++)
     patterns.push_back(args_info.inputs[i]);
 
-  // Find
-  std::vector<syd::DicomSerie> series;
-  db->FindDicom(patient, patterns, series);
-  if (series.size() == 0) {
-    LOG(1) << "No dicom found.";
-    return EXIT_SUCCESS;
+
+  // Loop on patients
+  std::vector<std::vector<syd::DicomSerie>> results;
+   int n=0;
+   for(auto patient:patients) {
+    // Find
+    std::vector<syd::DicomSerie> series;
+    db->FindDicom(patient, patterns, series);
+    results.push_back(series);
+      n+=series.size();
   }
 
-  // Dump list of ids
-  for(auto s:series) std::cout << s.id << " ";
-  std::cout << std::endl;
+  // Print list of ids
+  for(auto i=0; i<patients.size(); i++)
+    for(auto s:results[i]) std::cout << s.id << " ";
+  if (n !=0) std::cout << std::endl;
 
   // Dump (if verbose)
-  if (Log::LogLevel() > 0) {
+  if (n !=0 and Log::LogLevel() > 0) {
     // init the table to output results
     syd::PrintTable table;
     table.AddColumn("#id", 4);
+    if (patients.size() > 1) table.AddColumn("#p", 5);
     table.AddColumn("date", 18);
     table.AddColumn("mod", 4);
     table.AddColumn("recon", 18);
@@ -73,34 +79,44 @@ int main(int argc, char* argv[])
     table.AddColumn("desc",110);
     table.Init();
 
-    // Dump all information
-    std::string previous = series[0].acquisition_date;
-    double max_time_diff = args_info.max_diff_arg;
-    for(auto s:series) {
-      double diff = syd::DateDifferenceInHours(s.acquisition_date, previous);
-      if (diff > max_time_diff) table.SkipLine();
-      table << s.id
-            << s.acquisition_date
-            << s.dicom_modality
-            << s.reconstruction_date
-            << s.injection->radionuclide->name
-            << syd::ArrayToString<int, 3>(s.size)
-            << s.dicom_description;
-      previous = s.acquisition_date;
+     for(auto i=0; i<patients.size(); i++) {
+      syd::Patient patient = patients[i];
+      std::vector<syd::DicomSerie> & series = results[i];
+      if (series.size() ==0) continue;
+
+      // Dump all information
+      std::string previous = series[0].acquisition_date;
+      double max_time_diff = args_info.max_diff_arg;
+      for(auto s:series) {
+        double diff = syd::DateDifferenceInHours(s.acquisition_date, previous);
+        if (diff > max_time_diff) table.SkipLine();
+        table << s.id;
+        if (patients.size() > 1) table << patient.name;
+        table << s.acquisition_date
+              << s.dicom_modality
+              << s.reconstruction_date
+              << s.injection->radionuclide->name
+              << syd::ArrayToString<int, 3>(s.size)
+              << s.dicom_description;
+        previous = s.acquisition_date;
+      }
     }
-    table.Print(std::cout);
+     table.Print(std::cout);
   }
 
-  // List of files
+  // Dump list of files
   if (Log::LogLevel() > 1) {
-    for(auto s:series) {
-      std::vector<syd::DicomFile> f;
-      db->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == s.id, f);
-      std::cout << s.id << " " << db->GetAbsolutePath(*f[0].file) << " ";
-      std::cout << std::endl;
+    for(auto i=0; i<patients.size(); i++) {
+      syd::Patient patient = patients[i];
+      std::vector<syd::DicomSerie> & series = results[i];
+      for(auto s:series) {
+        std::vector<syd::DicomFile> f;
+        db->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == s.id, f);
+        std::cout << s.id << " " << db->GetAbsolutePath(*f[0].file) << " ";
+        std::cout << std::endl;
+      }
     }
   }
-
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------
