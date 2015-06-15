@@ -305,6 +305,7 @@ void syd::StandardDatabase::FindDicom(const syd::Patient & patient,
 // --------------------------------------------------------------------
 void syd::StandardDatabase::FindImage(const syd::Patient & patient,
                                       const std::vector<std::string> & patterns,
+                                      const std::vector<std::string> & exclude,
                                       std::vector<syd::Image> & images)
 {
   /*
@@ -333,6 +334,13 @@ void syd::StandardDatabase::FindImage(const syd::Patient & patient,
                  Query("dicom_description LIKE '%"+p+"%'") or
                  Query("label LIKE '%"+p+"%'") or
                  Query("description LIKE '%"+p+"%'"));
+    }
+    for(auto e:exclude) {
+      q = q
+        and not(Query("label LIKE '%"+e+"%'"))
+        and not(Query("dicom_description LIKE '%"+e+"%'"))
+        and not(Query("label LIKE '%"+e+"%'"))
+        and not(Query("description LIKE '%"+e+"%'"));
     }
 
     //FIXME Set the "last sql query"

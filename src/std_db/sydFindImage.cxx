@@ -48,9 +48,14 @@ int main(int argc, char* argv[])
   for(auto i=2; i<args_info.inputs_num; i++)
     patterns.push_back(args_info.inputs[i]);
 
+  // Prepare the list of arguments
+  std::vector<std::string> exclude;
+  for(auto i=0; i<args_info.exclude_given; i++)
+    exclude.push_back(args_info.exclude_arg[i]);
+
   // Find
   std::vector<syd::Image> images;
-  db->FindImage(patient, patterns, images); // this is sorted by acquisition date
+  db->FindImage(patient, patterns, exclude, images); // this is sorted by acquisition date
   if (images.size() == 0) {
     LOG(1) << "No images found.";
     return EXIT_SUCCESS;

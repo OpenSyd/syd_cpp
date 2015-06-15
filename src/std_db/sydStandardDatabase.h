@@ -85,6 +85,7 @@ namespace syd {
     /// Return images that match the patterns
     void FindImage(const syd::Patient & patient,
                    const std::vector<std::string> & patterns,
+                   const std::vector<std::string> & exclude,
                    std::vector<syd::Image> & images);
 
     /// Return the roitype from its name
