@@ -1,12 +1,12 @@
 #File sydStitchDicom.ggo
 
 package "sydStitchDicom"
-usage "sydStitchDicom <db> <tag> <dicom_id> <dicom_id>"
+usage "sydStitchDicom <db> <tag> <dicom_ids>"
 version "0.2"
 description "Create a new (mhd) Image for each given dicom
 - <db>            name of the database
 - <tag>           name for the tag associated with images
-- <dicom_id>      the two dicom id to stitch together
+- <dicom_ids>     the dicoms id to stitch together (will be paired by dicom_series_uid)
 "
 
 option "config"	  	 	-	"Config file"				      string  	no

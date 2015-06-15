@@ -41,7 +41,8 @@ int main(int argc, char* argv[])
 
   // Get the tag
   std::string tagname = args_info.inputs[1];
-  syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == tagname);
+  std::vector<syd::Tag> tags;
+  db->FindTags(tagname, tags);
 
   // Get the list of dicomserie
   std::vector<syd::DicomSerie> dicom_series;
@@ -54,7 +55,8 @@ int main(int argc, char* argv[])
   // Create main builder
   syd::ImageBuilder b(db);
   for(auto d:dicom_series) {
-    syd::Image image = b.InsertImage(tag, d);
+    syd::Image image = b.InsertImage(d);
+    for(auto t:tags) image.AddTag(t);
     LOG(1) << "Inserting Image " << image;
   }
 

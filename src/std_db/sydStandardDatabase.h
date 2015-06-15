@@ -95,6 +95,9 @@ namespace syd {
 
     /// Find the tag by the label, or create it.
     syd::Tag FindOrInsertTag(const std::string & label, const std::string & description);
+
+    /// Get a list of tags from a list of label separated by a space
+    void FindTags(const std::string & names,  std::vector<syd::Tag> & tags);
     // -----------------------------------------------------------
 
 

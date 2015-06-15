@@ -30,15 +30,13 @@ namespace syd {
 #pragma db view                                                         \
   table("Image")                                                        \
   table("Image_dicoms": "Image.id = Image_dicoms.object_id ")           \
-  table("DicomSerie" : "DicomSerie.id = Image_dicoms.value")
+  table("Image_tags" :  "Image.id = Image_tags.object_id")              \
+  table("DicomSerie" :  "DicomSerie.id = Image_dicoms.value")           \
+  table("Tag" :         "Tag.id = Image_tags.value")
 
-// query("SELECT object_id, value "                \
-//                       "FROM Image_dicoms,Image,DicomSerie"      \
-//                       "WHERE Image.id ==173;")
-//                       // "WHERE Image_dicoms.object_id==image.id and value == DicomSerie.id and " \
-                      // "dicom_description LIKE (?)"  )
   struct Image_Dicoms_View
   {
+
 #pragma db column("Image_Dicoms.object_id")
     IdType image_id;
 
@@ -51,8 +49,11 @@ namespace syd {
 #pragma db column("DicomSerie.dicom_description")
     std::string dicom_description;
 
-// #pragma db column("DicomSerie.acquisition_date")
-//     std::string acquisition_date;
+#pragma db column("Tag.label")
+    std::string label;
+
+#pragma db column("Tag.description")
+    std::string tag_description;
 
   };
 

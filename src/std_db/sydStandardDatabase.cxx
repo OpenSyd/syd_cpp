@@ -195,6 +195,16 @@ syd::RoiMaskImage syd::StandardDatabase::FindRoiMaskImage_TODO(const syd::Patien
 
 
 // --------------------------------------------------------------------
+void syd::StandardDatabase::FindTags(const std::string & names,  std::vector<syd::Tag> & tags)
+{
+  std::vector<std::string> words;
+  syd::GetWords(names, words);
+  for(auto w:words) tags.push_back(QueryOne<syd::Tag>(odb::query<syd::Tag>::label == w));
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::TableElementBase * syd::StandardDatabase::InsertFromArg(const std::string & table_name,
                                                              std::vector<std::string> & arg)
 {
@@ -317,24 +327,33 @@ void syd::StandardDatabase::FindImage(const syd::Patient & patient,
   std::vector<syd::Image_Dicoms_View> results;
   try {
     typedef odb::query<syd::Image_Dicoms_View> Query;
-    Query q("image.patient == "+ToString(patient.id));
+    Query q("Image.patient == "+ToString(patient.id));
     for(auto p:patterns) {
       q = q and (Query("dicom_modality LIKE '%"+p+"%'") or
-                 Query("dicom_description LIKE '%"+p+"%'"));
+                 Query("dicom_description LIKE '%"+p+"%'") or
+                 Query("label LIKE '%"+p+"%'") or
+                 Query("description LIKE '%"+p+"%'"));
     }
+
+    //FIXME Set the "last sql query"
+
+
+    // FIXME Set the following query in sydTable.txt
+
     // Sort by acquisition_date then reconstruction_date
-    q = q + "ORDER BY acquisition_date";
+    q = q + " ORDER BY acquisition_date";
     odb::transaction transaction (db_->begin());
     odb::result<syd::Image_Dicoms_View> r (db_->query<syd::Image_Dicoms_View> (q));
-    for(auto i = r.begin(); i != r.end(); i++) {
+    for(auto i = r.begin(); i != r.end(); ++i) {
       Image_Dicoms_View s;
       i.load(s);
-      results.push_back(s);
+      // Don't know why sometimes id==0 ???
+      if (s.image_id != 0 and s.dicom_id != 0) results.push_back(s);
     }
     transaction.commit();
   }
    catch (const odb::exception& e) {
-     EXCEPTION("Error in sql query ; odb exception is: " << e.what());
+     EXCEPTION("Error in sql query ; odb exception is: " << e.what()); //FIXME
    }
 
   // Get the sorting index

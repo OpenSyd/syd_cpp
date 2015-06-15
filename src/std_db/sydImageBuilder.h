@@ -42,14 +42,13 @@ namespace syd {
 
     // -----------------------------------------------------------
     /// Create & Insert a new Image from this DicomSerie
-    syd::Image InsertImage(const syd::Tag & tag, const syd::DicomSerie & dicomserie);
+    syd::Image InsertImage(const syd::DicomSerie & dicomserie);
 
     /// Create & Insert a new Image by stitching 2 dicoms
-    syd::Image InsertStitchedImage(const syd::Tag & tag, const syd::DicomSerie & a, const syd::DicomSerie & b);
+    syd::Image InsertStitchedImage(const syd::DicomSerie & a, const syd::DicomSerie & b);
 
     /// Create & Insert a RoiMaskImage from an image.mhd
-    syd::RoiMaskImage InsertRoiMaskImage(const syd::Tag & tag,
-                                         const syd::DicomSerie & dicom,
+    syd::RoiMaskImage InsertRoiMaskImage(const syd::DicomSerie & dicom,
                                          const syd::RoiType & roitype,
                                          const std::string & filename);
     // -----------------------------------------------------------
@@ -121,7 +120,7 @@ namespace syd {
     syd::StandardDatabase * db_;
 
     /// Create & Insert a new image without information
-    syd::Image InsertEmptyImage(const syd::Tag & tag, const syd::Patient & patient);
+    syd::Image InsertEmptyImage(const syd::Patient & patient);
 
   }; // class ImageBuilder
 

@@ -38,7 +38,7 @@ syd::ImageBuilder::ImageBuilder()
 
 
 // --------------------------------------------------------------------
-syd::Image syd::ImageBuilder::InsertImage(const syd::Tag & tag, const syd::DicomSerie & dicomserie)
+syd::Image syd::ImageBuilder::InsertImage(const syd::DicomSerie & dicomserie)
 {
   // Get the files
   LOG(4) << "Get the DicomFiles from " << dicomserie;
@@ -54,7 +54,7 @@ syd::Image syd::ImageBuilder::InsertImage(const syd::Tag & tag, const syd::Dicom
   LOG(4) << "Found " << dicom_files.size();
 
   // Create image first to get the id
-  syd::Image image = InsertEmptyImage(tag, *dicomserie.patient);
+  syd::Image image = InsertEmptyImage(*dicomserie.patient);
   LOG(4) << "Update image dicom";
   UpdateDicom(image, dicomserie);
   LOG(4) << "Update image files";
@@ -65,8 +65,6 @@ syd::Image syd::ImageBuilder::InsertImage(const syd::Tag & tag, const syd::Dicom
   // std::string md5;
   try {
     if (dicomserie.dicom_modality == "CT") {
-      // Auto tag the image with ct
-      syd::Tag tag = db_->FindOrInsertTag("ct", "CT image");
       typedef short PixelType;
       typedef itk::Image<PixelType,3> ImageType;
       LOG(4) << "Read dicom";
@@ -75,6 +73,8 @@ syd::Image syd::ImageBuilder::InsertImage(const syd::Tag & tag, const syd::Dicom
       UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
       LOG(4) << "Write image on disk";
       syd::WriteImage<ImageType>(itk_image, f);
+      // Auto tag the image with ct
+      syd::Tag tag = db_->FindOrInsertTag("ct", "CT image");
       image.AddTag(tag);
     }
     else {
@@ -101,8 +101,7 @@ syd::Image syd::ImageBuilder::InsertImage(const syd::Tag & tag, const syd::Dicom
 
 
 // --------------------------------------------------------------------
-syd::Image syd::ImageBuilder::InsertStitchedImage(const syd::Tag & tag,
-                                                  const syd::DicomSerie & a,
+syd::Image syd::ImageBuilder::InsertStitchedImage(const syd::DicomSerie & a,
                                                   const syd::DicomSerie & b)
 {
   // Check a and b modality
@@ -125,7 +124,7 @@ syd::Image syd::ImageBuilder::InsertStitchedImage(const syd::Tag & tag,
   }
 
   // Create the image record
-  syd::Image image = InsertEmptyImage(tag, *a.patient);
+  syd::Image image = InsertEmptyImage(*a.patient);
   UpdateDicom(image, a);
   UpdateDicom(image, b);
   UpdateFile(image, GetDefaultImageRelativePath(image), GetDefaultImageFilename(image));
@@ -271,12 +270,10 @@ void syd::ImageBuilder::UpdateFile(syd::Image & image,
 
 
 // --------------------------------------------------------------------
-syd::Image syd::ImageBuilder::InsertEmptyImage(const syd::Tag & tag,
-                                               const syd::Patient & patient)
+syd::Image syd::ImageBuilder::InsertEmptyImage(const syd::Patient & patient)
 {
   syd::Image image;
   image.patient = std::make_shared<syd::Patient>(patient);
-  image.tags.push_back(std::make_shared<syd::Tag>(tag));
   db_->Insert(image);
   return image;
 }
@@ -284,8 +281,7 @@ syd::Image syd::ImageBuilder::InsertEmptyImage(const syd::Tag & tag,
 
 
 // --------------------------------------------------------------------
-syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImage(const syd::Tag & tag,
-                                                        const syd::DicomSerie & dicom,
+syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImage(const syd::DicomSerie & dicom,
                                                         const syd::RoiType & roitype,
                                                         const std::string & filename)
 {
@@ -294,7 +290,7 @@ syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImage(const syd::Tag & tag,
   mask.roitype = std::make_shared<syd::RoiType>(roitype);
 
   // Create the associated image
-  syd::Image image = InsertEmptyImage(tag, *dicom.patient);
+  syd::Image image = InsertEmptyImage(*dicom.patient);
 
   // Add auto tag (mask)
   syd::Tag tag_mask = db_->FindOrInsertTag("mask", "Mask image");

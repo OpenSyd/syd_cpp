@@ -41,18 +41,46 @@ int main(int argc, char* argv[])
 
   // Get the tag
   std::string tagname = args_info.inputs[1];
-  syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == tagname);
+  std::vector<syd::Tag> tags;
+  db->FindTags(tagname, tags);
 
   // Get the two dicom series to stitch
-  syd::IdType a_id = atoi(args_info.inputs[2]);
-  syd::DicomSerie a = db->QueryOne<syd::DicomSerie>(a_id);
-  syd::IdType b_id = atoi(args_info.inputs[3]);
-  syd::DicomSerie b = db->QueryOne<syd::DicomSerie>(b_id);
+  std::vector<syd::DicomSerie> dicoms;
+  for(auto i=2; i<args_info.inputs_num; i++) {
+    syd::IdType id = atoi(args_info.inputs[i]);
+    syd::DicomSerie d = db->QueryOne<syd::DicomSerie>(id);
+    dicoms.push_back(d);
+  }
 
-  // Create main builder
+  // Make pair
+  std::vector<std::pair<syd::DicomSerie, syd::DicomSerie>> pairs;
+  while (dicoms.size() > 0) {
+    syd::DicomSerie d = dicoms.back();
+    dicoms.pop_back();
+    std::string n = d.dicom_series_uid;
+    bool found = false;
+    int j=0;
+    while (j<dicoms.size() and !found) {
+      if (dicoms[j].dicom_series_uid == n) {
+        syd::DicomSerie d2 = dicoms[j];
+        dicoms.erase(dicoms.begin()+j);
+        pairs.push_back(std::make_pair(d,d2));
+        found = true;
+      }
+      ++j;
+    }
+    if (!found) {
+      LOG(1) << "Dicom " << d.id << " ignored (cannot find pair dicom).";
+    }
+  }
+
+  // Build stitched images
   syd::ImageBuilder builder(db);
-  syd::Image image = builder.InsertStitchedImage(tag,a,b);
-  LOG(1) << "Inserting Image " << image;
+  for(auto p:pairs) {
+    syd::Image image = builder.InsertStitchedImage(p.first, p.second);
+    for(auto t:tags) image.AddTag(t);
+    LOG(1) << "Inserting Image " << image;
+  }
 
   // This is the end, my friend.
 }
