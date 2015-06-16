@@ -26,7 +26,7 @@ void WriteImage(typename ImageType::Pointer image, std::string filename)
   writer->SetInput(image);
   try { writer->Update(); }
   catch(itk::ExceptionObject & err) {
-    LOG(FATAL) << "Error while writing image [" << filename << "]";
+    EXCEPTION("Error in 'WriteImage' while writing [" << filename << "]");
   }
 }
 //--------------------------------------------------------------------
@@ -41,7 +41,7 @@ typename ImageType::Pointer ReadImage(std::string filename)
   reader->SetFileName(filename.c_str());
   try { reader->Update(); }
   catch(itk::ExceptionObject & err) {
-    LOG(FATAL) << "Error while reading image [" << filename << "]";
+    EXCEPTION("Error in 'ReadImage' while reading [" << filename << "]");
   }
   return reader->GetOutput();
 }
