@@ -93,7 +93,7 @@ namespace syd {
     /// Propose a default filename for the roimaskimage (use the image.id, so must be inserted in the db before)
     std::string GetDefaultRoiMaskImageFilename(const syd::RoiMaskImage & mask);
 
-    /// Propose a default path for the roimaskimage
+    /// Propose a default path for the roimaskimage (need the patient in image)
     std::string GetDefaultRoiMaskImageRelativePath(const syd::RoiMaskImage & mask);
 
     // Read an itk image for this dicom

@@ -228,7 +228,7 @@ std::string syd::ImageBuilder::GetDefaultImageRelativePath(const syd::Image & im
 std::string syd::ImageBuilder::GetDefaultRoiMaskImageRelativePath(const syd::RoiMaskImage & mask)
 {
   if (mask.image == NULL) {
-    LOG(FATAL) << "Error could not use GetDefaultRoiMaskImageRelativePath with image in the mask. Mask: " << mask;
+    LOG(FATAL) << "Error could not use GetDefaultRoiMaskImageRelativePath without image in the mask. Mask: " << mask;
   }
   std::string p = db_->GetRelativeFolder(*mask.image->patient)+PATH_SEPARATOR+"roi"+PATH_SEPARATOR;
   return p;
@@ -288,39 +288,56 @@ syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImage(const syd::DicomSerie & 
   // Create a mask
   syd::RoiMaskImage mask;
   mask.roitype = std::make_shared<syd::RoiType>(roitype);
+  std::shared_ptr<syd::Image> image;
 
-  // Create the associated image
-  syd::Image image = InsertEmptyImage(*dicom.patient);
+  try {
+    // Create and insert the associated image (must be a pointer here because will bne updated)
+    image = std::make_shared<syd::Image>(InsertEmptyImage(*dicom.patient));
+    mask.image = image;
 
-  // Add auto tag (mask)
-  syd::Tag tag_mask = db_->FindOrInsertTag("mask", "Mask image");
-  image.AddTag(tag_mask);
+    // Add auto tag (mask)
+    syd::Tag tag_mask = db_->FindOrInsertTag("mask", "Mask image");
+    image->AddTag(tag_mask);
 
-  // Net to set the image of the mask and insert it before GetDefaultRoiMaskImageRelativePath
-  mask.image = std::make_shared<syd::Image>(image);
-  db_->Insert(mask);
+    // Need to insert the mask to get an id
+    db_->Insert(mask);
 
-  // Update info
-  UpdateDicom(image, dicom);
-  UpdateFile(image, GetDefaultRoiMaskImageRelativePath(mask), GetDefaultRoiMaskImageFilename(mask));
+    // Update info
+    UpdateDicom(*image, dicom);
 
-  // Create image folder if needed
-  std::string absolute_folder = db_->GetAbsoluteFolder(image);
-  if (!syd::DirExists(absolute_folder)) syd::CreateDirectory(absolute_folder);
+    // Need to set the image of the mask and insert it before GetDefaultRoiMaskImageRelativePath (need image patient)
+    UpdateFile(*image, GetDefaultRoiMaskImageRelativePath(mask), GetDefaultRoiMaskImageFilename(mask));
 
-  // Read image
-  typedef unsigned char PixelType;
-  typedef itk::Image<PixelType,3> ImageType;
-  ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
+    // Create image folder if needed
+    std::string absolute_folder = db_->GetAbsoluteFolder(*image);
+    if (!syd::DirExists(absolute_folder)) syd::CreateDirectory(absolute_folder);
 
-  // Update info
-  UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
+    // Read image
+    typedef unsigned char PixelType;
+    typedef itk::Image<PixelType,3> ImageType;
+    ImageType::Pointer itk_image;
+    itk_image = syd::ReadImage<ImageType>(filename);
 
-  // Write image
-  syd::WriteImage<ImageType>(itk_image, db_->GetAbsolutePath(image));
+    // Update info
+    UpdateImageInfo<PixelType>(*image, itk_image, true); // true = update md5
+
+    // Write image
+    syd::WriteImage<ImageType>(itk_image, db_->GetAbsolutePath(*image));
+
+  }
+  catch(std::exception & e) {
+    // delete (silently)
+    int l = Log::LogLevel();
+    Log::LogLevel() = 0;
+    db_->Delete(mask);
+    Log::LogLevel() = l;
+    EXCEPTION("Error in 'InsertRoiMaskImage' with dicom=" << dicom.id
+              << " roitype='" << roitype.name << "' file=[" << filename << "]"
+              << std::endl << e.what());
+  }
 
   // Insert into the db
-  db_->Update(image);
+  db_->Update(*image);
   db_->Update(mask);
   return mask;
 }
