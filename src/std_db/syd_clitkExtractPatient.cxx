@@ -70,11 +70,25 @@ int main(int argc, char* argv[])
 
     // Stop if error in cmd
     if (r == -1) {
-      LOG(FATAL) << "Error while executing the following command: " << cmd.str();
+      LOG(FATAL) << "Error while executing the following command: " << std::endl << cmd.str();
     }
 
-    // Check image is ok
-    //    itk::ImageIOBase::Pointer im = syd::ReadImageHeader();
+    // Second processing: morphological opening could help to remove table in some cases
+    if (args_info.opening_given) {
+      cmd.str("");
+      cmd.clear();
+      cmd << "clitkMorphoMath "
+          << " -i " << mhd_filename
+          << " -o " << mhd_filename
+          << " -t3 -r2 ";
+      LOG(1) << "Executing: " << std::endl << cmd.str();
+      r = syd::ExecuteCommandLine(cmd.str(), 2);
+    }
+
+    // Stop if error in cmd
+    if (r == -1) {
+      LOG(FATAL) << "Error while executing the following command: " << std::endl << cmd.str();
+    }
 
     // Create the mask image
     syd::RoiType roitype = db->FindRoiType("body");
