@@ -93,3 +93,10 @@ target_link_libraries(sydTest sydStandardDatabase)
 # target_link_libraries(sydDumpTimepoint sydStandardDatabase)
 
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# Need external tool
+wrap_ggo(syd_clitkExtractPatient syd_clitkExtractPatient.ggo)
+add_executable(syd_clitkExtractPatient syd_clitkExtractPatient.cxx syd_clitkExtractPatient_ggo.c)
+target_link_libraries(syd_clitkExtractPatient sydStandardDatabase)

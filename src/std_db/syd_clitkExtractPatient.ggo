@@ -1,0 +1,12 @@
+#File syd_clitkExtractPatient.ggo
+
+package "syd_clitkExtractPatient"
+usage "syd_clitkExtractPatient <db> <list_of_image_ids>"
+version "0.3"
+description "TODOP
+"
+
+option "config"	  	 	-	"Config file"				      string  	no
+option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
+option "options"   	 	p       "Option for clitkExtractPatient (in \" \")"   string    default="--verboseStep" no
