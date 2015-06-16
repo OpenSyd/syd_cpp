@@ -18,6 +18,7 @@ target_link_libraries(sydCommonSchema
 
 #----------------------------------------------------------
 # Common library
+include_directories(${SYD_SOURCE_DIR}/src/pstreams)
 add_library(sydCore
   md5.cpp
   sydCommon.cxx
