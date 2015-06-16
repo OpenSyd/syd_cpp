@@ -75,6 +75,7 @@ void syd::Table<TableElement>::Insert(std::vector<TableElement*> & r)
 template<class TableElement>
 void syd::Table<TableElement>::AddToDeleteList(std::vector<syd::IdType> & ids)
 {
+  if (ids.size() == 0) return;
   std::vector<TableElement> ve;
   odb::query<TableElement> q = odb::query<TableElement>::id == ids[0];
   for(auto i:ids) q = q or odb::query<TableElement>::id == i;
