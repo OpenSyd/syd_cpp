@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 
   // Get the patients
   std::vector<syd::Patient> patients;
-  db->FindPatients(args_info.inputs[1], patients);
+  db->FindPatients(patients, args_info.inputs[1]);
 
   // Prepare the list of arguments
   std::vector<std::string> patterns;
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
    for(auto patient:patients) {
     // Find
     std::vector<syd::DicomSerie> series;
-    db->FindDicom(patient, patterns, series);
+    db->FindDicoms(series, patient, patterns);
     results.push_back(series);
       n+=series.size();
   }

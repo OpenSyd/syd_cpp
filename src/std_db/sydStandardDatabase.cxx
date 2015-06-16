@@ -147,7 +147,7 @@ syd::Patient syd::StandardDatabase::FindPatientByNameOrStudyId(const std::string
 
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::FindPatients(const std::string & arg, std::vector<syd::Patient> & patients)
+void syd::StandardDatabase::FindPatients(std::vector<syd::Patient> & patients, const std::string & arg)
 {
   if (arg == "all") return Query(patients);
   std::vector<std::string> n;
@@ -207,7 +207,7 @@ syd::RoiMaskImage syd::StandardDatabase::FindRoiMaskImage_TODO(const syd::Patien
 
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::FindTags(const std::string & names,  std::vector<syd::Tag> & tags)
+void syd::StandardDatabase::FindTags(std::vector<syd::Tag> & tags, const std::string & names)
 {
   std::vector<std::string> words;
   syd::GetWords(names, words);
@@ -288,9 +288,9 @@ syd::Injection * syd::StandardDatabase::InsertInjection(std::vector<std::string>
 
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::FindDicom(const syd::Patient & patient,
-                                      const std::vector<std::string> & patterns,
-                                      std::vector<syd::DicomSerie> & series)
+void syd::StandardDatabase::FindDicoms(std::vector<syd::DicomSerie> & series,
+                                       const syd::Patient & patient,
+                                       const std::vector<std::string> & patterns)
 {
   // Build the query
   odb::query<DicomSerie> q = odb::query<DicomSerie>::patient->id == patient.id;
@@ -315,10 +315,10 @@ void syd::StandardDatabase::FindDicom(const syd::Patient & patient,
 
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::FindImage(const syd::Patient & patient,
-                                      const std::vector<std::string> & patterns,
-                                      const std::vector<std::string> & exclude,
-                                      std::vector<syd::Image> & images)
+void syd::StandardDatabase::FindImages(std::vector<syd::Image> & images,
+                                       const syd::Patient & patient,
+                                       const std::vector<std::string> & patterns,
+                                       const std::vector<std::string> & exclude)
 {
   /*
     http://www.codesynthesis.com/pipermail/odb-users/2011-July/000153.html
@@ -335,6 +335,13 @@ void syd::StandardDatabase::FindImage(const syd::Patient & patient,
      value == DicomSerie.id
      and dicom_description LIKE "%FOV%"; ===> only this part cannot be in odb query
   */
+
+  //
+  if (patterns.size() == 0 and exclude.size() == 0) {
+    // special case when images not linked to dicom or tag
+    Query<syd::Image>(odb::query<syd::Image>::patient == patient.id, images);
+    return;
+  }
 
   // ODB 10.6 Native Views
   std::vector<syd::Image_Dicoms_View> results;
@@ -928,7 +935,7 @@ bool syd::StandardDatabase::DeleteCurrentList()
 
   for(auto f:list_of_files_to_delete_) {
     if (std::remove(f.c_str()) != 0) {
-      LOG(WARNING) << "Could not delete the file " << f;
+      // LOG(WARNING) << "Could not delete the file " << f;
     }
     else {
       LOG(2) << "Deleting file " << f;

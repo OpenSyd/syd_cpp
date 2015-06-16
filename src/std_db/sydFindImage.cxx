@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 
   // Get the patients
   std::vector<syd::Patient> patients;
-  db->FindPatients(args_info.inputs[1], patients);
+  db->FindPatients(patients, args_info.inputs[1]);
 
   // Prepare the list of arguments
   std::vector<std::string> patterns;
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
   int n=0;
   for(auto patient:patients) {
     std::vector<syd::Image> images;
-    db->FindImage(patient, patterns, exclude, images); // this is sorted by acquisition date
+    db->FindImages(images, patient, patterns, exclude); // this is sorted by acquisition date
     results.push_back(images);
     n += images.size();
   }

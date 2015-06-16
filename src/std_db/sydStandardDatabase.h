@@ -74,22 +74,21 @@ namespace syd {
     syd::Patient FindPatientByNameOrStudyId(const std::string & arg);
 
     /// Find all the patients matching arg (can contains several name/id separated by space)
-    void FindPatients(const std::string & arg, std::vector<syd::Patient> & patients);
+    void FindPatients(std::vector<syd::Patient> & patients, const std::string & arg);
 
     /// Return the injection for the given patient where radionuclide match the arg. Fail if not found
-    syd::Injection FindInjectionByNameOrId(const Patient & patient,
-                                           const std::string & arg);
+    syd::Injection FindInjectionByNameOrId(const Patient & patient, const std::string & arg);
 
     /// Return dicom series that match the patterns
-    void FindDicom(const syd::Patient & patient,
-                   const std::vector<std::string> & patterns,
-                   std::vector<syd::DicomSerie> & series);
+    void FindDicoms(std::vector<syd::DicomSerie> & series,
+                    const syd::Patient & patient,
+                    const std::vector<std::string> & patterns);
 
     /// Return images that match the patterns
-    void FindImage(const syd::Patient & patient,
-                   const std::vector<std::string> & patterns,
-                   const std::vector<std::string> & exclude,
-                   std::vector<syd::Image> & images);
+    void FindImages(std::vector<syd::Image> & images,
+                    const syd::Patient & patient,
+                    const std::vector<std::string> & patterns,
+                    const std::vector<std::string> & exclude);
 
     /// Return the roitype from its name
     syd::RoiType FindRoiType(const std::string & name);
@@ -101,7 +100,7 @@ namespace syd {
     syd::Tag FindOrInsertTag(const std::string & label, const std::string & description);
 
     /// Get a list of tags from a list of label separated by a space
-    void FindTags(const std::string & names,  std::vector<syd::Tag> & tags);
+    void FindTags(std::vector<syd::Tag> & tags, const std::string & names);
     // -----------------------------------------------------------
 
 
