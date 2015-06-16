@@ -17,6 +17,7 @@
   ===========================================================================**/
 
 #include "sydCommon.h"
+#include "pstream.h"
 
 // --------------------------------------------------------------------
 void syd::CreateDirectory(std::string path)
@@ -417,10 +418,66 @@ void syd::ReadIdsFromInputPipe(std::vector<syd::IdType> & ids)
       ids.push_back(arg);
     }
   }
-
   // need to set back cin to console
+  // Dont work on osx (need Ctrl+D, after to end the cin input)
   // http://stackoverflow.com/questions/12164448/how-to-restore-stdcin-to-keyboard-after-using-pipe
   // Dont delete this pointer !
   RedirectCinToConsole * l_redirect = new RedirectCinToConsole;
+  std::cin.clear();
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+std::string syd::CreateTemporaryFile(const std::string & folder, const std::string & extension)
+{
+  char filename[512];
+  sprintf(filename, "%s%c%s%s", folder.c_str(), PATH_SEPARATOR, "syd_temp_XXXXXX", extension.c_str());
+  int fd = mkstemps(filename,extension.size());
+  if (fd == -1) {
+    LOG(FATAL) << "Could not create temporary file: " << filename;
+  }
+  return std::string(filename);
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+int syd::ExecuteCommandLine(const std::string & cmd, int logLevel)
+{
+  const redi::pstreams::pmode mode = redi::pstreams::pstdout|redi::pstreams::pstderr;
+  redi::ipstream child(cmd, mode);
+  char buf[1024];
+  std::streamsize n;
+  bool finished[2] = { false, false };
+  const std::string color = "\x1b[32m"; // green
+  std::cout << color;
+  bool error = false;
+  while (!finished[0] || !finished[1]) {
+    if (!finished[0]) {
+      while ((n = child.err().readsome(buf, sizeof(buf))) > 0) {
+        error = true;
+        std::cerr << sydlog::fatalColor;
+        std::cerr.write(buf, n);
+      }
+      if (child.eof()) {
+        finished[0] = true;
+        if (!finished[1]) child.clear();
+      }
+    }
+
+    if (!finished[1]) {
+      while ((n = child.out().readsome(buf, sizeof(buf))) > 0) {
+        if (Log::LogLevel() >= logLevel) std::cout.write(buf, n).flush(); // only print if level ok
+      }
+      if (child.eof()) {
+        finished[1] = true;
+        if (!finished[0]) child.clear();
+      }
+    }
+  }
+  std::cout << DD_RESET;
+  if (error) return -1; // Error
+  return 0; // ok
 }
 //------------------------------------------------------------------

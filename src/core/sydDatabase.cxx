@@ -279,7 +279,7 @@ bool syd::Database::DeleteCurrentList()
     std::string input;
     std::cout << "Really delete " << list_of_elements_to_delete_.size() << " elements ([y]es/[n]o/[v]erbose) ?   ";
     std::cout.flush();
-    std::cin >> input;
+    std::getline(std::cin, input);
     if (input == "v") {
       for(auto it=list_of_elements_to_delete_.begin();
           it != list_of_elements_to_delete_.end(); ++it) {

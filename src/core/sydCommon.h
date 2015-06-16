@@ -94,6 +94,7 @@ namespace syd {
   bool EqualFiles(std::ifstream & in1, std::ifstream & in2);
   bool EqualFiles(std::string in1, std::string in2);
   void CopyFile(std::string src, std::string dst);
+  std::string CreateTemporaryFile(const std::string & folder, const std::string & extension);
   //--------------------------------------------------------------------
 
 
@@ -135,6 +136,11 @@ namespace syd {
 
   //--------------------------------------------------------------------
   void ReadIdsFromInputPipe(std::vector<syd::IdType> & ids);
+  //--------------------------------------------------------------------
+
+
+  //--------------------------------------------------------------------
+  int ExecuteCommandLine(const std::string & cmd, int logLevel);
   //--------------------------------------------------------------------
 
 #include "sydCommon.txx"
