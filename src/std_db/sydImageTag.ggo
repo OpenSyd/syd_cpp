@@ -1,0 +1,15 @@
+#File sydImageTag.ggo
+
+package "sydImageTag"
+usage "sydImageTag <db> <add|rm> <tags> <list of image_ids>"
+version "0.2"
+description "Add or remove tags to images
+- <db>            name of the database
+- <add|rm>        add or remove (rm) tag
+- <tags>          names for the tags (separated by spaces, between \" \")
+- <image_ids>     list of image id
+"
+
+option "config"	  	 	-	"Config file"				      string  	no
+option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
+option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
