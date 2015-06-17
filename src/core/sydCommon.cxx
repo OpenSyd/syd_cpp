@@ -415,7 +415,7 @@ void syd::ReadIdsFromInputPipe(std::vector<syd::IdType> & ids)
   if (!isatty(fileno(stdin))) {
     while (std::cin) {
       std::cin >> arg;
-      ids.push_back(arg);
+      if (std::cin) ids.push_back(arg);
     }
   }
   // need to set back cin to console
