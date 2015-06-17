@@ -116,11 +116,11 @@ syd::Image syd::ImageBuilder::InsertStitchedImage(const syd::DicomSerie & a,
     LOG(FATAL) << "Error cannot stitch CT images. Only float pixel type (yet).";
   }
 
-  // Check if the same serie (flag to by pass
-  if (a.dicom_series_uid != b.dicom_series_uid) {
-    LOG(FATAL) << "Error, cannot stitch those two dicoms because the series_uid is not the same:"
-               << std::endl << a << " " << a.dicom_series_uid
-               << std::endl << b << " " << b.dicom_series_uid;
+  // Check if the same frame_of_reference_uid (flag to bypass ?)
+  if (a.dicom_frame_of_reference_uid != b.dicom_frame_of_reference_uid) {
+    LOG(FATAL) << "Error, cannot stitch those two dicoms because the frame_of_reference_uid is not the same:"
+               << std::endl << a << " " << a.dicom_frame_of_reference_uid
+               << std::endl << b << " " << b.dicom_frame_of_reference_uid;
   }
 
   // Create the image record

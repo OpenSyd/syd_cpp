@@ -53,16 +53,16 @@ int main(int argc, char* argv[])
   std::vector<syd::DicomSerie> dicoms;
   db->Query(ids, dicoms);
 
-  // Make pair
+  // Make pair, group by ids with the same dicom_frame_of_reference_uid
   std::vector<std::pair<syd::DicomSerie, syd::DicomSerie>> pairs;
   while (dicoms.size() > 0) {
     syd::DicomSerie d = dicoms.back();
     dicoms.pop_back();
-    std::string n = d.dicom_series_uid;
+    std::string n = d.dicom_frame_of_reference_uid;
     bool found = false;
     int j=0;
     while (j<dicoms.size() and !found) {
-      if (dicoms[j].dicom_series_uid == n) {
+      if (dicoms[j].dicom_frame_of_reference_uid == n) {
         syd::DicomSerie d2 = dicoms[j];
         dicoms.erase(dicoms.begin()+j);
         pairs.push_back(std::make_pair(d,d2));
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
       ++j;
     }
     if (!found) {
-      LOG(1) << "Dicom " << d.id << " ignored (cannot find pair dicom).";
+      LOG(1) << "Dicom " << d.id << " ignored (cannot find pair dicom with same frame_of_reference_uid).";
     }
   }
 
