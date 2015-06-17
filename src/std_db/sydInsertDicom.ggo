@@ -1,7 +1,7 @@
 #File sydInsertDicom.ggo
 
 package "sydInsertDicom"
-usage "sydInsertDicom <db> <folders>"
+usage "sydInsertDicom <db> <patient> <injection> <folders>"
 version "0.2"
 description "Insert the all dicom series in a db. Paramters are:
 - <db>            name of the database
