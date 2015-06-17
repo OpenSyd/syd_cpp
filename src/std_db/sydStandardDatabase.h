@@ -94,7 +94,9 @@ namespace syd {
     syd::RoiType FindRoiType(const std::string & name);
 
     /// Return the roi --> depend on the time could be several
-    syd::RoiMaskImage FindRoiMaskImage_TODO(const syd::Patient & patient, const syd::RoiType & roitype);
+    syd::RoiMaskImage FindRoiMaskImage(const syd::Patient & patient,
+                                       const syd::RoiType & roitype,
+                                       const syd::DicomSerie & dicom);
 
     /// Find the tag by the label, or create it.
     syd::Tag FindOrInsertTag(const std::string & label, const std::string & description);

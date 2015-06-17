@@ -195,13 +195,37 @@ syd::RoiType syd::StandardDatabase::FindRoiType(const std::string & name)
 
 
 // --------------------------------------------------------------------
-syd::RoiMaskImage syd::StandardDatabase::FindRoiMaskImage_TODO(const syd::Patient & patient,
-                                                               const syd::RoiType & roitype)
+syd::RoiMaskImage syd::StandardDatabase::FindRoiMaskImage(const syd::Patient & patient,
+                                                          const syd::RoiType & roitype,
+                                                          const syd::DicomSerie & dicom)
 {
-  syd::RoiMaskImage r =
-    QueryOne<syd::RoiMaskImage>(odb::query<syd::RoiMaskImage>::image->patient == patient.id and
-                                odb::query<syd::RoiMaskImage>::roitype == roitype.id);
-  return r;
+  // Get all mask for this patient and this roitype
+  std::vector<syd::RoiMaskImage> masks;
+  Query<syd::RoiMaskImage>(odb::query<syd::RoiMaskImage>::image->patient == patient.id and
+                           odb::query<syd::RoiMaskImage>::roitype == roitype.id, masks);
+  // Select the one associated with the dicom
+  bool found = false;
+  std::vector<syd::RoiMaskImage> results;
+  for(auto m:masks) {
+    if (m.image->dicoms.size() != 1) {
+      LOG(WARNING) << "Warning the image of this mask does not have a single dicom (ignoring): " << m;
+      continue;
+    }
+    if (dicom.dicom_frame_of_reference_uid == m.image->dicoms[0]->dicom_frame_of_reference_uid)
+      results.push_back(m);
+  }
+  if (results.size() == 0) {
+    EXCEPTION("No RoiMaskImage found for " << patient.name << " " << roitype.name
+              << " dicom " << dicom.id << " frame_of_reference_uid = " << dicom.dicom_frame_of_reference_uid);
+  }
+  if (results.size() > 1) {
+    std::string s;
+    for(auto r:results) s += "\n"+r.ToString();
+    EXCEPTION("Several RoiMaskImage found for " << patient.name << ", " << roitype.name
+              << ", dicom " << dicom.id << ", frame_of_reference_uid = " << dicom.dicom_frame_of_reference_uid
+              << s;);
+  }
+  return results[0];
 }
 // --------------------------------------------------------------------
 
@@ -340,6 +364,12 @@ void syd::StandardDatabase::FindImages(std::vector<syd::Image> & images,
   if (patterns.size() == 0 and exclude.size() == 0) {
     // special case when images not linked to dicom or tag
     Query<syd::Image>(odb::query<syd::Image>::patient == patient.id, images);
+    // Sort by acquisition_date of the dicom[0];
+    std::sort(begin(images), end(images),
+              [&images](Image a, Image b) {
+                if (a.dicoms.size() == 0) return true;
+                if (b.dicoms.size() == 0) return false;
+                return syd::IsDateBefore(a.dicoms[0]->acquisition_date, b.dicoms[0]->acquisition_date); });
     return;
   }
 
