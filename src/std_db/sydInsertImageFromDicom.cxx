@@ -43,7 +43,6 @@ int main(int argc, char* argv[])
   std::string tagname = args_info.inputs[1];
   std::vector<syd::Tag> tags;
   db->FindTags(tags, tagname);
-  DDS(tags);
 
   // Get the list of dicomserie
   std::vector<syd::IdType> ids;
