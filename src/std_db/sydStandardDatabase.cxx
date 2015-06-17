@@ -324,6 +324,10 @@ void syd::StandardDatabase::FindDicoms(std::vector<syd::DicomSerie> & series,
                or odb::query<DicomSerie>::dicom_modality.like(s)
                or odb::query<DicomSerie>::acquisition_date.like(s)
                or odb::query<DicomSerie>::reconstruction_date.like(s)
+               or odb::query<DicomSerie>::dicom_manufacturer.like(s)
+               or odb::query<DicomSerie>::dicom_series_uid.like(s)
+               or odb::query<DicomSerie>::dicom_study_uid.like(s)
+               or odb::query<DicomSerie>::dicom_frame_of_reference_uid.like(s)
                //  or odb::query<DicomSerie>::injection.radionuclide.name.like(s)
                );
   }

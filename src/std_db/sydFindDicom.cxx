@@ -77,6 +77,7 @@ int main(int argc, char* argv[])
     table.AddColumn("inj",12);
     table.AddColumn("size",12);
     table.AddColumn("desc",110);
+    table.AddColumn("device",30);
     table.Init();
 
      for(auto i=0; i<patients.size(); i++) {
@@ -97,7 +98,8 @@ int main(int argc, char* argv[])
               << s.reconstruction_date
               << s.injection->radionuclide->name
               << syd::ArrayToString<int, 3>(s.size)
-              << s.dicom_description;
+              << s.dicom_description
+              << s.dicom_manufacturer;
         previous = s.acquisition_date;
       }
     }
