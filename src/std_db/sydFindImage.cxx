@@ -63,6 +63,16 @@ int main(int argc, char* argv[])
     n += images.size();
   }
 
+  if (args_info.files_only_flag) {
+    for(auto i=0; i<patients.size(); i++) {
+      std::vector<syd::Image> & images =results[i];
+      for(auto s:images) {
+        std::cout << db->GetAbsolutePath(s) << " ";
+      }
+    }
+    return EXIT_SUCCESS;
+  }
+
   // Dump list of ids
   for(auto i=0; i<patients.size(); i++)
     for(auto s:results[i]) std::cout << s.id << " ";

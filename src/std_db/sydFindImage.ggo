@@ -18,3 +18,4 @@ option "verbose"    v   "Verbosity level (0 for silence)"       int default ="0"
 option "verboseSQL" -   "Verbose SQL query (debug)"		flag off
 option "files"      f   "Display image filenames"	        flag off
 option "exclude"    e   "Exclude pattern (multiple)"	        string no multiple
+option "files_only" -   "Only display filenames in a line"      flag off
