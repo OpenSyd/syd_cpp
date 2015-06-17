@@ -314,7 +314,8 @@ syd::Injection * syd::StandardDatabase::InsertInjection(std::vector<std::string>
 // --------------------------------------------------------------------
 void syd::StandardDatabase::FindDicoms(std::vector<syd::DicomSerie> & series,
                                        const syd::Patient & patient,
-                                       const std::vector<std::string> & patterns)
+                                       const std::vector<std::string> & patterns,
+                                       const std::vector<std::string> & exclude)
 {
   // Build the query
   odb::query<DicomSerie> q = odb::query<DicomSerie>::patient->id == patient.id;
@@ -330,6 +331,18 @@ void syd::StandardDatabase::FindDicoms(std::vector<syd::DicomSerie> & series,
                or odb::query<DicomSerie>::dicom_frame_of_reference_uid.like(s)
                //  or odb::query<DicomSerie>::injection.radionuclide.name.like(s)
                );
+  }
+  for(auto e:exclude) {
+    std::string s = "%"+e+"%";
+    q = q
+      and not (odb::query<DicomSerie>::dicom_description.like(s))
+      and not (odb::query<DicomSerie>::dicom_modality.like(s))
+      and not (odb::query<DicomSerie>::acquisition_date.like(s))
+      and not (odb::query<DicomSerie>::reconstruction_date.like(s))
+      and not (odb::query<DicomSerie>::dicom_manufacturer.like(s))
+      and not (odb::query<DicomSerie>::dicom_series_uid.like(s))
+      and not (odb::query<DicomSerie>::dicom_study_uid.like(s))
+      and not (odb::query<DicomSerie>::dicom_frame_of_reference_uid.like(s));
   }
 
   // Sort by acquisition_date then reconstruction_date

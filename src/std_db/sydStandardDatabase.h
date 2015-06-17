@@ -82,7 +82,8 @@ namespace syd {
     /// Return dicom series that match the patterns
     void FindDicoms(std::vector<syd::DicomSerie> & series,
                     const syd::Patient & patient,
-                    const std::vector<std::string> & patterns);
+                    const std::vector<std::string> & patterns,
+                    const std::vector<std::string> & exclude);
 
     /// Return images that match the patterns
     void FindImages(std::vector<syd::Image> & images,

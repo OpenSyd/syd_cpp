@@ -17,4 +17,5 @@ Use verbose to display additional info:
 option "config"	    -   "Config file"				string no
 option "verbose"    v   "Verbosity level (0 for silence)"       int default ="0" no
 option "verboseSQL" -   "Verbose SQL query (debug)"		flag off
+option "exclude"    e   "Exclude pattern (multiple)"	        string no multiple
 option "max_diff"   m   "Max time diff (in h) to skip line"	double default="0.9" no

@@ -48,6 +48,10 @@ int main(int argc, char* argv[])
   for(auto i=2; i<args_info.inputs_num; i++)
     patterns.push_back(args_info.inputs[i]);
 
+  // Prepare the list of arguments
+  std::vector<std::string> exclude;
+  for(auto i=0; i<args_info.exclude_given; i++)
+    exclude.push_back(args_info.exclude_arg[i]);
 
   // Loop on patients
   std::vector<std::vector<syd::DicomSerie>> results;
@@ -55,7 +59,7 @@ int main(int argc, char* argv[])
    for(auto patient:patients) {
     // Find
     std::vector<syd::DicomSerie> series;
-    db->FindDicoms(series, patient, patterns);
+    db->FindDicoms(series, patient, patterns, exclude);
     results.push_back(series);
       n+=series.size();
   }
@@ -76,7 +80,7 @@ int main(int argc, char* argv[])
     table.AddColumn("recon", 18);
     table.AddColumn("inj",12);
     table.AddColumn("size",12);
-    table.AddColumn("desc",110);
+    table.AddColumn("desc",90);
     table.AddColumn("device",30);
     table.Init();
 
