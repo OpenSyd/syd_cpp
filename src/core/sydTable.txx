@@ -161,8 +161,7 @@ void syd::Table<TableElement>::Query(const std::vector<IdType> & ids,
 {
   if (ids.size()==0) return;
   typedef odb::query<TableElement> query;
-  query q (odb::query<TableElement>::id == ids[0]);
-  for(auto i=1; i<ids.size(); i++) q = q or odb::query<TableElement>::id == ids[i];
+  query q(odb::query<TableElement>::id.in_range(ids.begin(), ids.end()));
   Query(q,list);
 }
 // --------------------------------------------------------------------
@@ -247,11 +246,32 @@ unsigned int syd::Table<TableElement>::Count(const odb::query<TableElement> & q)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-void syd::Table<TableElement>::DumpTable(std::ostream & os)
+void syd::Table<TableElement>::Dump(std::ostream & os, const std::string & format)
 {
+  // Get all elements
   std::vector<TableElement> elements;
-  Query(elements); // all
-  if (elements.size() == 0) return;
+  Query(elements);
+  Dump(os, format, elements);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Table<TableElement>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids)
+{
+  // Get all elements with the given ids. Ignore if not find
+  std::vector<TableElement> elements;
+  Query(ids, elements);
+  Dump(os, format, elements);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Table<TableElement>::Dump(std::ostream & os, const std::string & format, const std::vector<TableElement> & elements)
+{
   for(auto e:elements) {
     os << e << std::endl;
   }
@@ -259,34 +279,28 @@ void syd::Table<TableElement>::DumpTable(std::ostream & os)
 // --------------------------------------------------------------------
 
 
-template<class TableElement>
-void syd::Table<TableElement>::Dump(std::ostream & os, const std::string & format)
-{
-  // Get all ids
-}
 
-
+// --------------------------------------------------------------------
 template<class TableElement>
-void syd::Table<TableElement>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids)
+void syd::Table<TableElement>::Find(std::vector<syd::IdType> & ids,
+                                    const std::vector<std::string> & pattern,
+                                    const std::vector<std::string> & exclude)
 {
-  DD("Table::Dump ids default");
   std::vector<TableElement> elements;
-  Query(ids, elements); // (no sort)
-  Dump(os, format, elements);
-  // for(auto e:elements) {
-  //   os << e << std::endl;
-  // }
-}
-
-
-template<class TableElement>
-void syd::Table<TableElement>::Dump(std::ostream & os, const std::string & format, const std::vector<TableElement> & elements)
-{
-  DD("Table::Dump element default");
+  Query(elements);
   for(auto e:elements) {
-    os << e << std::endl;
+    std::string s(e.ToLargeString());
+    bool b = true;
+    for(auto p:pattern) {
+      if (s.find(p) == std::string::npos) { b = false; break; } // not match the pattern
+    }
+    for(auto p:exclude) {
+      if (s.find(p) != std::string::npos) { b = false; break; } // exclude
+    }
+    if (b) ids.push_back(e.id);
   }
 }
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------

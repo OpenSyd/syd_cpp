@@ -46,12 +46,14 @@ namespace syd {
     /// Insert simple record from list of strings (pure virtual)
     virtual TableElementBase * InsertFromArg(std::vector<std::string> & arg) = 0;
 
-    /// Simple dump records from the table
-    virtual void DumpTable(std::ostream & os) = 0;
+    /// Dump all the element of the table
+    virtual void Dump(std::ostream & os, const std::string & format) = 0;
 
-    /// FIXME
-    virtual void Dump(std::ostream & os, const std::string & format)=0;
-    virtual void Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids)=0;
+    /// Dump all the given elements of the table
+    virtual void Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids) = 0;
+
+    // Retrieve the element's id that match the pattern (and dont match the exclude pattern)
+    virtual void Find(std::vector<syd::IdType> & ids, const std::vector<std::string> & pattern, const std::vector<std::string> & exclude) = 0 ;
 
     /// Count the number of elements of a table. (to be changed)
     virtual unsigned int GetNumberOfElements() = 0;

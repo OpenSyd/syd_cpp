@@ -48,6 +48,7 @@ namespace syd {
     RoiMaskImage();
 
     virtual std::string ToString() const;
+    virtual std::string ToLargeString() const;
 
     bool operator==(const RoiMaskImage & p);
     bool operator!=(const RoiMaskImage & p) { return !(*this == p); }

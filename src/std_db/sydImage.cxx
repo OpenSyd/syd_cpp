@@ -56,6 +56,20 @@ std::string syd::Image::ToString() const
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+std::string syd::Image::ToLargeString() const
+{
+  // Add Large string of tags, files and dicoms
+  std::stringstream ss;
+  ss << ToString();
+  for(auto & f:files) ss << f->ToLargeString() << " ";
+  for(auto & t:tags) ss << t->ToLargeString() << " ";
+  for(auto & d:dicoms) ss << d->ToLargeString() << " ";
+  return ss.str();
+}
+// --------------------------------------------------
+
+
 // --------------------------------------------------
 bool syd::Image::operator==(const Image & p)
 {

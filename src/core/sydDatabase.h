@@ -124,6 +124,23 @@ namespace syd {
 
 
     // ------------------------------------------------------------------------
+    /// Simple dump the list of tables
+    virtual void Dump(std::ostream & os);
+
+    /// Dump all the elements of the table_name in the given format
+    virtual void Dump(std::ostream & os, const std::string & table_name, const std::string & format);
+
+    /// Dump all the elements of the table_name having the given ids in the given format
+    virtual void Dump(std::ostream & os, const std::string & table_name, const std::string & format, const std::vector<IdType> & ids);
+    // ------------------------------------------------------------------------
+
+
+    // ------------------------------------------------------------------------
+    virtual void Find(std::vector<syd::IdType> & ids, const std::string & table_name, const std::vector<std::string> & pattern, const std::vector<std::string> & exclude);
+    // ------------------------------------------------------------------------
+
+
+    // ------------------------------------------------------------------------
     /// Call back for SQL query to the DB. For debug purpose only
     void TraceCallback(const char* sql);
 
@@ -186,20 +203,10 @@ namespace syd {
     // bool Delete(const std::string & table_name, const IdType id);
 
     /// FIXME TO REMOVE  Generic dump according to args
-    virtual void Dump(const std::vector<std::string> & args, std::ostream & os);
+    //    virtual void Dump(const std::vector<std::string> & args, std::ostream & os);
 
     /// FIXME TO REMOVE  Dump all elements of a given table
-    virtual void DumpTable(const std::string & table_name, std::ostream & os);
-
-
-    /// Simple dump the list of tables
-    virtual void Dump(std::ostream & os);
-
-    /// Dump all the elements of the table_name in the given format
-    virtual void Dump(std::ostream & os, const std::string & table_name, const std::string & format);
-
-    /// Dump all the elements of the table_name having the given ids in the given format
-virtual void Dump(std::ostream & os, const std::string & table_name, const std::string & format, const std::vector<IdType> & ids);
+    //virtual void DumpTable(const std::string & table_name, std::ostream & os);
 
 
     /// Return the (base) table with table_name

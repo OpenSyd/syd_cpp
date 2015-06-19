@@ -51,6 +51,18 @@ std::string syd::DicomSerie::ToString() const
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+std::string syd::DicomSerie::ToLargeString() const
+{
+  std::stringstream ss;
+  ss << ToString() << " "
+     << patient->ToLargeString() << " "
+     << (injection==NULL ? "":injection->ToLargeString());
+  return ss.str();
+}
+// --------------------------------------------------------------------
+
+
 // --------------------------------------------------
 bool syd::DicomSerie::operator==(const DicomSerie & p)
 {

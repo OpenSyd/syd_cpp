@@ -45,7 +45,6 @@ std::string syd::DicomFile::ToString() const
 // --------------------------------------------------------------------
 
 
-
 // --------------------------------------------------
 bool syd::DicomFile::operator==(const DicomFile & p)
 {

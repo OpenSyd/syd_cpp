@@ -42,6 +42,17 @@ std::string syd::RoiMaskImage::ToString() const
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+std::string syd::RoiMaskImage::ToLargeString() const
+{
+  std::stringstream ss(ToString());
+  ss << roitype->ToLargeString() << " "
+     << image->ToLargeString();
+  return ss.str();
+}
+// --------------------------------------------------------------------
+
+
 // --------------------------------------------------
 bool syd::RoiMaskImage::operator==(const RoiMaskImage & p)
 {

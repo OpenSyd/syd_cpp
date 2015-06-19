@@ -40,9 +40,11 @@ namespace syd {
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const;
 
+    /// Use to write the element as a large string that contains all searchable strings (must be overloaded)
+    virtual std::string ToLargeString() const;
+
     /// Set basics values from a list of string
     virtual void Set(std::vector<std::string> & arg);
-
 
     virtual void OnDelete(syd::Database * db);
 

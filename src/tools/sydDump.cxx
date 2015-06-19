@@ -56,7 +56,6 @@ int main(int argc, char* argv[])
 
   // Dump elements
   std::string format = args_info.format_arg;
-  DD(format);
   if (ids.size() == 0) db->Dump(std::cout, table_name, format);
   else db->Dump(std::cout, table_name, format, ids);
 

@@ -76,6 +76,7 @@ namespace syd {
     Image();
 
     virtual std::string ToString() const;
+    virtual std::string ToLargeString() const;
 
     bool operator==(const Image & p);
     bool operator!=(const Image & p) { return !(*this == p); }

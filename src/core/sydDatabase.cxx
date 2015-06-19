@@ -117,34 +117,6 @@ syd::TableElementBase * syd::Database::InsertFromArg(const std::string & table_n
 
 
 // --------------------------------------------------------------------
-void syd::Database::Dump(const std::vector<std::string> & args, std::ostream & os)
-{
-  if (args.size() == 0) {
-    os << "Database schema: " << GetDatabaseSchema() << std::endl;
-    os << "Database folder: " << GetDatabaseRelativeFolder() << std::endl;
-    for(auto i=map.begin(); i != map.end(); i++) {
-      int n = i->second->GetNumberOfElements();
-      os << "Table \t" << std::setw(15) << i->first << " " <<  std::setw(10) << n;
-      if (n>1) os << " elements" << std::endl;
-      else os << " element" << std::endl;
-    }
-    os << std::flush;
-    return;
-  }
-  DumpTable(args[0], os); // suppose it is a table name
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::DumpTable(const std::string & table_name, std::ostream & os)
-{
-  GetTable(table_name)->DumpTable(os);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Database::Dump(std::ostream & os)
 {
   os << "Database schema: " << GetDatabaseSchema() << std::endl;
@@ -169,11 +141,27 @@ void syd::Database::Dump(std::ostream & os, const std::string & table_name, cons
 
 
 // --------------------------------------------------------------------
-void syd::Database::Dump(std::ostream & os, const std::string & table_name, const std::string & format, const std::vector<IdType> & ids)
+void syd::Database::Dump(std::ostream & os,
+                         const std::string & table_name,
+                         const std::string & format,
+                         const std::vector<IdType> & ids)
 {
   GetTable(table_name)->Dump(os, format, ids);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Find(std::vector<syd::IdType> & ids,
+                         const std::string & table_name,
+                         const std::vector<std::string> & pattern,
+                         const std::vector<std::string> & exclude)
+
+{
+  GetTable(table_name)->Find(ids, pattern, exclude);
+}
+// --------------------------------------------------------------------
+
 
 
 // --------------------------------------------------------------------

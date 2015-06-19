@@ -88,13 +88,14 @@ namespace syd {
     std::array<int, 3> size;
 
     /// Image spacing aka size of the pixel (in mm)
-    std::array<double, 3> spacing; //FIXME
+    std::array<double, 3> spacing;
 
     // ------------------------------------------------------------------------
     SET_TABLE_NAME("DicomSerie")
     DicomSerie();
 
     virtual std::string ToString() const;
+    virtual std::string ToLargeString() const;
 
     bool operator==(const DicomSerie & p);
     bool operator!=(const DicomSerie & p) { return !(*this == p); }

@@ -48,14 +48,17 @@ namespace syd {
     /// Add all records to the list of records to be deleted
     virtual void AddAllToDeleteList();
 
-    /// Dump the content of the table (simple output)
-    virtual void DumpTable(std::ostream & os);
-
-    /// FIXME
+    /// Dump the content of all elements the table
     virtual void Dump(std::ostream & os, const std::string & format);
+
+    /// Dump the content of all given elements the table
     virtual void Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids);
+
+    /// Dump the content of all given elements the table
     virtual void Dump(std::ostream & os, const std::string & format, const std::vector<TableElement> & elements);
 
+    /// Retrieve the element's id that match the pattern (minus the ones that match the exclude pattern)
+    virtual void Find(std::vector<syd::IdType> & ids, const std::vector<std::string> & pattern, const std::vector<std::string> & exclude);
 
     /// Perform a query on the database and return the found elements in the list
     void Query(const odb::query<TableElement> & q, std::vector<TableElement> & list);

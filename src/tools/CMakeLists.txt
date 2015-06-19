@@ -16,6 +16,13 @@ target_link_libraries(sydDump ${SYD_CORE_LIBRARIES})
 
 
 #----------------------------------------------------------
+wrap_ggo(sydFind sydFind.ggo)
+add_executable(sydFind sydFind.cxx sydFind_ggo.c)
+target_link_libraries(sydFind ${SYD_CORE_LIBRARIES})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 wrap_ggo(sydInsert sydInsert.ggo)
 add_executable(sydInsert sydInsert.cxx sydInsert_ggo.c)
 target_link_libraries(sydInsert ${SYD_CORE_LIBRARIES})

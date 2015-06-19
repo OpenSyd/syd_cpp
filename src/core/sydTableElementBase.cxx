@@ -30,6 +30,15 @@ std::string syd::TableElementBase::ToString() const
 
 
 // --------------------------------------------------------------------
+std::string syd::TableElementBase::ToLargeString() const
+{
+  // By default like the ToString. Better if overloaded.
+  return ToString();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::TableElementBase::Set(std::vector<std::string> & arg)
 {
   LOG(FATAL) << "The function 'Set' must be implemented for this table.";
