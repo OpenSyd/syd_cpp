@@ -13,7 +13,6 @@ wrap_odb(sydStandardDatabase sydTag.h)
 wrap_odb(sydStandardDatabase sydImage.h)
 wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
-wrap_odb(sydStandardDatabase sydView.h)
 
 add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
@@ -29,11 +28,11 @@ add_library(sydStandardDatabase SHARED
   sydImage-odb.cxx sydImage.cxx
   sydRoiType-odb.cxx sydRoiType.cxx
   sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx
-  sydView-odb.cxx
   sydDicomSerieBuilder.cxx
   sydTimepointBuilder.cxx
   sydImageBuilder.cxx
   sydTableImage.cxx
+  sydTableDicomSerie.cxx
   )
 ## to declare dependencies
 target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})

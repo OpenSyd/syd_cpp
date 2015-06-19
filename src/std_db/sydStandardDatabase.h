@@ -51,8 +51,7 @@ namespace syd {
 
     // -----------------------------------------------------------
     /// Generic element insertion.
-    virtual TableElementBase * InsertFromArg(const std::string & table_name,
-                                             std::vector<std::string> & arg);
+    virtual TableElementBase * InsertFromArg(const std::string & table_name, std::vector<std::string> & arg);
 
     /// Insert a new Injection (check patient before etc)
     syd::Injection * InsertInjection(std::vector<std::string> & arg);
@@ -80,18 +79,6 @@ namespace syd {
 
     /// Return the injection for the given patient where radionuclide match the arg. Fail if not found
     syd::Injection FindInjectionByNameOrId(const Patient & patient, const std::string & arg);
-
-    /// Return dicom series that match the patterns
-    void FindDicoms(std::vector<syd::DicomSerie> & series,
-                    const syd::Patient & patient,
-                    const std::vector<std::string> & patterns,
-                    const std::vector<std::string> & exclude);
-
-    /// Return images that match the patterns
-    void FindImages(std::vector<syd::Image> & images,
-                    const syd::Patient & patient,
-                    const std::vector<std::string> & patterns,
-                    const std::vector<std::string> & exclude);
 
     /// Return the roitype from its name
     syd::RoiType FindRoiType(const std::string & name);
@@ -133,13 +120,8 @@ namespace syd {
     // -----------------------------------------------------------
 
 
-    //    void AddTag(syd::Image & image, syd::Tag & tag);
 
     // Below : TODO
-
-    // /// Simple default Dump overwritten here to select special case DumpDicom.
-    // virtual void Dump(const std::vector<std::string> & args, std::ostream & os);
-
     /// Insert a new Timepoint
     syd::Timepoint InsertTimepoint(syd::Injection & injection,
                                    syd::Tag & tag,
@@ -149,20 +131,6 @@ namespace syd {
     /// Specific Dump for Timepoint
     virtual void DumpTimepoint(const std::vector<std::string> & args, std::ostream & os, bool verboseFlag=false);
 
-
-    /// What to do when a element is planned to be deleted
-    // virtual void OnDelete(const std::string & table_name, TableElementBase * e);
-
-    // /// What to do when an Image will be deleted
-    // void OnDeleteImage(syd::Image & e);
-
-    // /// What to do when a File will be deleted
-    // void OnDeleteFile(syd::File & e);
-
-    // /// What to do when a Tag will be deleted
-    // void OnDeleteTag(syd::Tag & e);
-    // void OnDeleteDicomFile(syd::DicomFile & e);
-    // void OnDeleteDicomSerie(syd::DicomSerie & e);
 
   protected:
     /// Insert the tables

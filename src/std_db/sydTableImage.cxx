@@ -18,6 +18,7 @@
 
 // syd
 #include "sydTableImage.h"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 template<>
@@ -45,8 +46,24 @@ void syd::Table<syd::Image>::Dump(std::ostream & os,
 {
 
   if (format == "help") {
-    std::cout << "Default format: id p date tags type size" << std::endl
-              << "format '1'    : id p date tags type size dicom_description" << std::endl;
+    std::cout << "Default format  : id p date tags type size" << std::endl
+              << "format 'dicom'  : id p date tags type size dicom_description" << std::endl
+              << "format 'file'   : full filename only" << std::endl
+              << "format 'file_n' : full filenames with line break" << std::endl;
+    return;
+  }
+
+  // Get the db
+  syd::StandardDatabase * db = dynamic_cast<syd::StandardDatabase*>(database_);
+
+  if (format == "file") {
+    for(auto & s:images) os << db->GetAbsolutePath(s) << " ";
+    os << std::endl;
+    return;
+  }
+
+  if (format == "file_n") {
+    for(auto & s:images) os << db->GetAbsolutePath(s) << std::endl;;
     return;
   }
 
@@ -57,7 +74,7 @@ void syd::Table<syd::Image>::Dump(std::ostream & os,
   table.AddColumn("tags", 25);
   table.AddColumn("type", 8);
   table.AddColumn("size",12);
-  if (format == "1") table.AddColumn("dicom",110);
+  if (format == "dicom") table.AddColumn("dicom",110);
   table.Init();
 
   for(auto s:images) {
@@ -69,7 +86,7 @@ void syd::Table<syd::Image>::Dump(std::ostream & os,
           << GetTagLabels(s.tags)
           << s.pixel_type
           << size.str();
-    if (format == "1") table << s.dicoms[0]->dicom_description;
+    if (format == "dicom") table << s.dicoms[0]->dicom_description;
   }
   table.Print(std::cout);
 }
