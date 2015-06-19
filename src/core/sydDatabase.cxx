@@ -145,6 +145,38 @@ void syd::Database::DumpTable(const std::string & table_name, std::ostream & os)
 
 
 // --------------------------------------------------------------------
+void syd::Database::Dump(std::ostream & os)
+{
+  os << "Database schema: " << GetDatabaseSchema() << std::endl;
+  os << "Database folder: " << GetDatabaseRelativeFolder() << std::endl;
+  for(auto i=map.begin(); i != map.end(); i++) {
+    int n = i->second->GetNumberOfElements();
+    os << "Table \t" << std::setw(15) << i->first << " " <<  std::setw(10) << n;
+    if (n>1) os << " elements" << std::endl;
+    else os << " element" << std::endl;
+  }
+  os << std::flush;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Dump(std::ostream & os, const std::string & table_name, const std::string & format)
+{
+  GetTable(table_name)->Dump(os, format);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Dump(std::ostream & os, const std::string & table_name, const std::string & format, const std::vector<IdType> & ids)
+{
+  GetTable(table_name)->Dump(os, format, ids);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::TableBase * syd::Database::GetTable(const std::string & table_name)
 {
   std::string str=table_name;

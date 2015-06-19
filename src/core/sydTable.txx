@@ -259,6 +259,36 @@ void syd::Table<TableElement>::DumpTable(std::ostream & os)
 // --------------------------------------------------------------------
 
 
+template<class TableElement>
+void syd::Table<TableElement>::Dump(std::ostream & os, const std::string & format)
+{
+  // Get all ids
+}
+
+
+template<class TableElement>
+void syd::Table<TableElement>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids)
+{
+  DD("Table::Dump ids default");
+  std::vector<TableElement> elements;
+  Query(ids, elements); // (no sort)
+  Dump(os, format, elements);
+  // for(auto e:elements) {
+  //   os << e << std::endl;
+  // }
+}
+
+
+template<class TableElement>
+void syd::Table<TableElement>::Dump(std::ostream & os, const std::string & format, const std::vector<TableElement> & elements)
+{
+  DD("Table::Dump element default");
+  for(auto e:elements) {
+    os << e << std::endl;
+  }
+}
+
+
 // --------------------------------------------------------------------
 template<class TableElement>
 void syd::Table<TableElement>::Update(TableElement & r)

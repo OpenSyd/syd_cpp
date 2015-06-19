@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
       cmd << "clitkMorphoMath "
           << " -i " << mhd_filename
           << " -o " << mhd_filename
-          << " -t3 -r2 ";
+          << " -t3 -r3 ";
       LOG(1) << "Executing: " << std::endl << cmd.str();
       r = syd::ExecuteCommandLine(cmd.str(), 2);
     }

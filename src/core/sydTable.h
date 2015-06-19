@@ -51,6 +51,12 @@ namespace syd {
     /// Dump the content of the table (simple output)
     virtual void DumpTable(std::ostream & os);
 
+    /// FIXME
+    virtual void Dump(std::ostream & os, const std::string & format);
+    virtual void Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids);
+    virtual void Dump(std::ostream & os, const std::string & format, const std::vector<TableElement> & elements);
+
+
     /// Perform a query on the database and return the found elements in the list
     void Query(const odb::query<TableElement> & q, std::vector<TableElement> & list);
 

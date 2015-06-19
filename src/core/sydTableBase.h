@@ -49,6 +49,10 @@ namespace syd {
     /// Simple dump records from the table
     virtual void DumpTable(std::ostream & os) = 0;
 
+    /// FIXME
+    virtual void Dump(std::ostream & os, const std::string & format)=0;
+    virtual void Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids)=0;
+
     /// Count the number of elements of a table. (to be changed)
     virtual unsigned int GetNumberOfElements() = 0;
 

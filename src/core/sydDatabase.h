@@ -185,14 +185,22 @@ namespace syd {
     /// Delete the element with id in the given table
     // bool Delete(const std::string & table_name, const IdType id);
 
-    /// Generic dump according to args
+    /// FIXME TO REMOVE  Generic dump according to args
     virtual void Dump(const std::vector<std::string> & args, std::ostream & os);
 
-    /// Dump all elements of a given table
+    /// FIXME TO REMOVE  Dump all elements of a given table
     virtual void DumpTable(const std::string & table_name, std::ostream & os);
 
-    /// Dump all elements of a given table (query[0])
-    //    void DumpTable(const std::vector<std::string> & query, std::ostream & os);
+
+    /// Simple dump the list of tables
+    virtual void Dump(std::ostream & os);
+
+    /// Dump all the elements of the table_name in the given format
+    virtual void Dump(std::ostream & os, const std::string & table_name, const std::string & format);
+
+    /// Dump all the elements of the table_name having the given ids in the given format
+virtual void Dump(std::ostream & os, const std::string & table_name, const std::string & format, const std::vector<IdType> & ids);
+
 
     /// Return the (base) table with table_name
     TableBase * GetTable(const std::string & table_name);

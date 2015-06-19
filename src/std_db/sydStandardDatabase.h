@@ -35,9 +35,11 @@
 #include "sydFile-odb.hxx"
 #include "sydTag-odb.hxx"
 #include "sydTimepoint-odb.hxx"
-#include "sydImage-odb.hxx"
 #include "sydRoiType-odb.hxx"
 #include "sydRoiMaskImage-odb.hxx"
+
+// syd tables
+#include "sydTableImage.h"
 
 // --------------------------------------------------------------------
 namespace syd {

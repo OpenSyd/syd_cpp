@@ -39,13 +39,26 @@ int main(int argc, char* argv[])
   // Load the database
   syd::Database * db = syd::DatabaseManager::GetInstance()->Read(dbname);
 
-  // Prepare the list of arguments
-  std::vector<std::string> args;
-  for(auto i=1; i<args_info.inputs_num; i++)
-    args.push_back(args_info.inputs[i]);
+  // Dump info for all tables
+  if (args_info.inputs_num == 1) {
+    db->Dump(std::cout);
+    return EXIT_SUCCESS;
+  }
 
-  // Dump
-  db->Dump(args, std::cout);
+  // get Table name
+  std::string table_name = args_info.inputs[1];
+
+  // Prepare the list of arguments
+  std::vector<syd::IdType> ids;
+  syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
+  for(auto i=1; i<args_info.inputs_num; i++)
+    ids.push_back(atoi(args_info.inputs[i]));
+
+  // Dump elements
+  std::string format = args_info.format_arg;
+  DD(format);
+  if (ids.size() == 0) db->Dump(std::cout, table_name, format);
+  else db->Dump(std::cout, table_name, format, ids);
 
   // This is the end, my friend.
 }
