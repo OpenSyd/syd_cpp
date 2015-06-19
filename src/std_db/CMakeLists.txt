@@ -43,20 +43,10 @@ wrap_ggo(sydInsertDicom sydInsertDicom.ggo)
 add_executable(sydInsertDicom sydInsertDicom.cxx sydInsertDicom_ggo.c)
 target_link_libraries(sydInsertDicom sydStandardDatabase)
 
-# Search for Dicom
-wrap_ggo(sydFindDicom sydFindDicom.ggo)
-add_executable(sydFindDicom sydFindDicom.cxx sydFindDicom_ggo.c)
-target_link_libraries(sydFindDicom sydStandardDatabase)
-
 # Create images
 wrap_ggo(sydInsertImageFromDicom sydInsertImageFromDicom.ggo)
 add_executable(sydInsertImageFromDicom sydInsertImageFromDicom.cxx sydInsertImageFromDicom_ggo.c)
 target_link_libraries(sydInsertImageFromDicom sydStandardDatabase)
-
-# Search for Images
-wrap_ggo(sydFindImage sydFindImage.ggo)
-add_executable(sydFindImage sydFindImage.cxx sydFindImage_ggo.c)
-target_link_libraries(sydFindImage sydStandardDatabase)
 
 # Create images by stitching 2 dicom
 wrap_ggo(sydStitchDicom sydStitchDicom.ggo)

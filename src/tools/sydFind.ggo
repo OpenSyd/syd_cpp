@@ -1,0 +1,18 @@
+#File sydFind.ggo
+
+package "sydFind"
+usage "sydFind <db> <table> <pattern> "
+version "0.3"
+description "Find the ids of elements in the table that match the pattern. Parameters are:
+- <db>        name of the database
+- <table>     name of the table
+- <pattern>   list of words to match, all words must match (logical 'AND'). Case sensitive
+Use --exclude option to exclude words.
+"
+
+option "config"	    -	"Config file"				 string  	no
+option "verbose"    v   "Verbosity level (0 for silence)"        int            default ="0" no
+option "verboseSQL" -   "Verbose SQL query (debug)"		 flag		off
+option "exclude"    e   "Exclude pattern (multiple)"	         string         no multiple
+option "dump"       d   "Dump results instead of displaying ids" flag           off
+option "format"     f   "Format when dump results"               string         default="" no
