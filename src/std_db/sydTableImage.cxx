@@ -29,7 +29,7 @@ void syd::Table<syd::Image>::Dump(std::ostream & os,
   std::vector<syd::Image> images;
   Query(ids, images); // (no sort)
     std::sort(begin(images), end(images),
-            [images](Image & a, Image & b) {
+            [images](Image a, Image b) {
               if (a.dicoms.size() == 0) return true;
               if (b.dicoms.size() == 0) return false;
               return syd::IsDateBefore(a.dicoms[0]->acquisition_date, b.dicoms[0]->acquisition_date); });

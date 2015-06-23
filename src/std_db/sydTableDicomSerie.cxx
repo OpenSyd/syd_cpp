@@ -29,7 +29,7 @@ void syd::Table<syd::DicomSerie>::Dump(std::ostream & os,
   std::vector<syd::DicomSerie> dicoms;
   Query(ids, dicoms); // (no sort)
     std::sort(begin(dicoms), end(dicoms),
-            [dicoms](DicomSerie & a, DicomSerie & b) {
+            [dicoms](DicomSerie a, DicomSerie b) {
               return syd::IsDateBefore(a.acquisition_date, b.acquisition_date); });
   Dump(os, format, dicoms);
 }
