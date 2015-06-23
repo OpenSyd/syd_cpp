@@ -31,8 +31,13 @@ add_library(sydStandardDatabase SHARED
   sydDicomSerieBuilder.cxx
   sydTimepointBuilder.cxx
   sydImageBuilder.cxx
-  sydTableImage.cxx
+
   sydTableDicomSerie.cxx
+  sydTablePatient.h
+  sydTableTag.h
+  sydTableRoiType.h
+  sydTableImage.h sydTableImage.cxx
+  sydTableRoiMaskImage.h
   )
 ## to declare dependencies
 target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})

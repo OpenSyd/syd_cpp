@@ -16,31 +16,10 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTABLEIMAGE_H
-#define SYDTABLEIMAGE_H
-
-// syd
-#include "sydPrintTable.h"
-#include "sydTable.h"
-#include "sydImage-odb.hxx"
-
 // --------------------------------------------------------------------
-namespace syd {
-
-  /// Specialization of Dump for Images (sort by acquisition_date)
-  template<>
-  void syd::Table<syd::Image>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids);
-
-  /// Specialization of Dump for Images
-  template<>
-  void syd::Table<syd::Image>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::Image> & images);
-
-  template<class Image>
-  void FindImages(std::vector<Image> & images, syd::Database * db, syd::Patient & patient, std::vector<syd::Tag> & tags);
-
-#include "sydTableImage.txx"
-
-} // namespace syd
+template<class RoiType>
+void FindRoiType(RoiType & roitype, syd::Database * db, const std::string & name)
+{
+  roitype = db->QueryOne<RoiType>(odb::query<syd::RoiType>::name == name);
+}
 // --------------------------------------------------------------------
-
-#endif

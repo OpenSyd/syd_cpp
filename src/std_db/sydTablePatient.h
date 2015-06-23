@@ -26,11 +26,11 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// Return the patient by name or study_id. Exception if not found. Require table with fields 'name' and 'study_id'.
+  /// Return the patient by name or study_id. Exception if not found. Require table with fields 'name' and 'study_id'. Required a template.
   template<class Patient>
-  void FindPatientByNameOrStudyId(Patient & p, syd::Database * db, std::string & arg);
+  void FindPatientByNameOrStudyId(syd::Patient & p, syd::Database * db, std::string & arg);
 
-#include "sydTablePatient.txx"
+  #include "sydTablePatient.txx"
 }
 // --------------------------------------------------------------------
 

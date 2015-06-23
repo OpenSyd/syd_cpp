@@ -40,7 +40,10 @@
 
 // syd tables
 #include "sydTablePatient.h"
+#include "sydTableTag.h"
+#include "sydTableRoiType.h"
 #include "sydTableImage.h"
+#include "sydTableRoiMaskImage.h"
 
 // --------------------------------------------------------------------
 namespace syd {
