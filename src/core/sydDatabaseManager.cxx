@@ -57,12 +57,18 @@ syd::Database * syd::DatabaseManager::Read(const std::string & filename)
     if (r.begin() == r.end()) {
       EXCEPTION("Cannot find schema_version name in the db " << filename);
     }
+
+    // Only *first* database_schema
+    r.begin().load(s);
+    /*
     // We only consider the *last* element here. The table
     // schema_version can contains several schema names, but only the
     // last defined the database type.
     for(auto i=r.begin(); i != r.end(); i++) {
-      r.begin().load(s);
+    r.begin().load(s);
+    DD(s.database_schema);
     }
+    */
     transaction.commit();
     db_schema_name = s.database_schema;
     LOG(5) << "Database type is '" << db_schema_name << "'.";
