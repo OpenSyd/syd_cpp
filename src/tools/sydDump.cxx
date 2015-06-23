@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
   // Prepare the list of arguments
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
-  for(auto i=1; i<args_info.inputs_num; i++)
+  for(auto i=2; i<args_info.inputs_num; i++)
     ids.push_back(atoi(args_info.inputs[i]));
 
   // Dump elements
