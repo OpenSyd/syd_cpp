@@ -49,7 +49,8 @@ int main(int argc, char* argv[])
   LOG(1) << "Create and insert Image: " << image;
 
   // Create roimaskimage
-  syd::RoiType roitype = db->FindRoiType("body");
+  syd::RoiType roitype;
+  syd::FindRoiType(roitype, db, "body");
   syd::RoiMaskImage mask = b.InsertRoiMaskImage(dicom, roitype, db->GetAbsolutePath(image));
 
 

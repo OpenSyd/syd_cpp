@@ -32,3 +32,20 @@ void FindPatientByNameOrStudyId(Patient & p, syd::Database * db, std::string & a
   }
 }
 // --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+template<class Patient>
+void FindPatients(std::vector<Patient> & patients, syd::Database * db, const std::string & arg)
+{
+  if (arg == "all") return db->Query(patients);
+  std::vector<std::string> n;
+  syd::GetWords(arg, n);
+  for(auto a:n) {
+    Patient p;
+    syd::FindPatientByNameOrStudyId(p, db, arg);
+    patients.push_back(p);
+  }
+}
+// --------------------------------------------------------------------

@@ -59,9 +59,11 @@ int main(int argc, char* argv[])
     else if (args_info.threshold_given) b.CropImageWithThreshold(image, t);
     else {
       // Try to find the body of this image
-      syd::RoiType body = db->FindRoiType("body");
+      syd::RoiType body;
+      FindRoiType(body, db, "body");
       try {
-        syd::RoiMaskImage mask = db->FindRoiMaskImage(*image.patient, body, *image.dicoms[0]);
+        syd::RoiMaskImage mask;
+        syd::FindRoiMaskImage(mask, db, *image.patient, body, *image.dicoms[0]);
         LOG(1) << "Find 'body' mask for the image: " << mask;
         b.CropImageLike(image, *mask.image);
       } catch (std::exception & e) {

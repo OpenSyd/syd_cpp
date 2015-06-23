@@ -127,37 +127,6 @@ std::string syd::StandardDatabase::GetAbsoluteFolder(const Image & image)
 
 
 // --------------------------------------------------------------------
-syd::Patient syd::StandardDatabase::FindPatientByNameOrStudyId(const std::string & arg)
-{
-  // Check if name
-  odb::query<Patient> q =
-    odb::query<Patient>::name == arg or
-    odb::query<Patient>::study_id == atoi(arg.c_str());
-  Patient p;
-  try {
-    p = QueryOne(q);
-  }
-  catch(std::exception & e) {
-    LOG(FATAL) << "Could not find patient with name or study_id equal to '" << arg << "'."
-               << std::endl << e.what();
-  }
-  return p;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::StandardDatabase::FindPatients(std::vector<syd::Patient> & patients, const std::string & arg)
-{
-  if (arg == "all") return Query(patients);
-  std::vector<std::string> n;
-  syd::GetWords(arg, n);
-  for(auto a:n) patients.push_back(FindPatientByNameOrStudyId(a));
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 syd::Injection syd::StandardDatabase::FindInjectionByNameOrId(const Patient & patient,
                                                               const std::string & arg)
 {
@@ -182,60 +151,6 @@ syd::Injection syd::StandardDatabase::FindInjectionByNameOrId(const Patient & pa
   LOG(FATAL) << "Could not find injection with name or id equal to '"
              << arg << "' for the patient " << patient.name << ".";
   return injections[0];// never here, to avoid warning
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::RoiType syd::StandardDatabase::FindRoiType(const std::string & name)
-{
-  return QueryOne<syd::RoiType>(odb::query<syd::RoiType>::name == name);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::RoiMaskImage syd::StandardDatabase::FindRoiMaskImage(const syd::Patient & patient,
-                                                          const syd::RoiType & roitype,
-                                                          const syd::DicomSerie & dicom)
-{
-  // Get all mask for this patient and this roitype
-  std::vector<syd::RoiMaskImage> masks;
-  Query<syd::RoiMaskImage>(odb::query<syd::RoiMaskImage>::image->patient == patient.id and
-                           odb::query<syd::RoiMaskImage>::roitype == roitype.id, masks);
-  // Select the one associated with the dicom
-  bool found = false;
-  std::vector<syd::RoiMaskImage> results;
-  for(auto m:masks) {
-    if (m.image->dicoms.size() != 1) {
-      LOG(WARNING) << "Warning the image of this mask does not have a single dicom (ignoring): " << m;
-      continue;
-    }
-    if (dicom.dicom_frame_of_reference_uid == m.image->dicoms[0]->dicom_frame_of_reference_uid)
-      results.push_back(m);
-  }
-  if (results.size() == 0) {
-    EXCEPTION("No RoiMaskImage found for " << patient.name << " " << roitype.name
-              << " dicom " << dicom.id << " frame_of_reference_uid = " << dicom.dicom_frame_of_reference_uid);
-  }
-  if (results.size() > 1) {
-    std::string s;
-    for(auto r:results) s += "\n"+r.ToString();
-    EXCEPTION("Several RoiMaskImage found for " << patient.name << ", " << roitype.name
-              << ", dicom " << dicom.id << ", frame_of_reference_uid = " << dicom.dicom_frame_of_reference_uid
-              << s;);
-  }
-  return results[0];
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::StandardDatabase::FindTags(std::vector<syd::Tag> & tags, const std::string & names)
-{
-  std::vector<std::string> words;
-  syd::GetWords(names, words);
-  for(auto w:words) tags.push_back(QueryOne<syd::Tag>(odb::query<syd::Tag>::label == w));
 }
 // --------------------------------------------------------------------
 
@@ -281,7 +196,8 @@ syd::Injection * syd::StandardDatabase::InsertInjection(std::vector<std::string>
   }
 
   // Get the patient and create the Injection
-  Patient p = FindPatientByNameOrStudyId(arg[0]);
+  Patient p;
+  syd::FindPatientByNameOrStudyId(p, this, arg[0]);
 
   // Check other injections for this patient
   std::vector<Injection> injections;

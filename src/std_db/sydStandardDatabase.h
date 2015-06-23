@@ -75,28 +75,11 @@ namespace syd {
 
 
     // -----------------------------------------------------------
-    /// Return the patient by name or study_id. Fail if not found.
-    syd::Patient FindPatientByNameOrStudyId(const std::string & arg);
-
-    /// Find all the patients matching arg (can contains several name/id separated by space)
-    void FindPatients(std::vector<syd::Patient> & patients, const std::string & arg);
-
     /// Return the injection for the given patient where radionuclide match the arg. Fail if not found
     syd::Injection FindInjectionByNameOrId(const Patient & patient, const std::string & arg);
 
-    /// Return the roitype from its name
-    syd::RoiType FindRoiType(const std::string & name);
-
-    /// Return the roi --> depend on the time could be several
-    syd::RoiMaskImage FindRoiMaskImage(const syd::Patient & patient,
-                                       const syd::RoiType & roitype,
-                                       const syd::DicomSerie & dicom);
-
     /// Find the tag by the label, or create it.
     syd::Tag FindOrInsertTag(const std::string & label, const std::string & description);
-
-    /// Get a list of tags from a list of label separated by a space
-    void FindTags(std::vector<syd::Tag> & tags, const std::string & names);
     // -----------------------------------------------------------
 
 

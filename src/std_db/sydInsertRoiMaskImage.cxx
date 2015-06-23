@@ -40,7 +40,8 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
   // Get the roitype
-  syd::RoiType roitype = db->FindRoiType(args_info.inputs[1]);
+  syd::RoiType roitype;
+  syd::FindRoiType(roitype, db, args_info.inputs[1]);
 
   // Get the dicom
   syd::IdType id = atoi(args_info.inputs[2]);

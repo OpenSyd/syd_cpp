@@ -91,7 +91,8 @@ int main(int argc, char* argv[])
     }
 
     // Create the mask image
-    syd::RoiType roitype = db->FindRoiType("body");
+    syd::RoiType roitype;
+    syd::FindRoiType(roitype, db, "body");
     syd::DicomSerie dicom = *image.dicoms[0];
     syd::ImageBuilder b(db);
     try {

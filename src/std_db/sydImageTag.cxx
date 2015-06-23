@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
   // Get the tags
   std::string tagname = args_info.inputs[2];
   std::vector<syd::Tag> tags;
-  db->FindTags(tags, tagname);
+  syd::FindTags(tags, db, tagname);
 
   // Read the standard input if pipe
   std::vector<syd::IdType> ids;

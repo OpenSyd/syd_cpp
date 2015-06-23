@@ -41,7 +41,8 @@ int main(int argc, char* argv[])
 
   // Get the patient
   std::string name = args_info.inputs[1];
-  syd::Patient patient = db->FindPatientByNameOrStudyId(name);
+  syd::Patient patient;
+  syd::FindPatientByNameOrStudyId(patient, db, name);
 
   // Get the injection
   std::string inj = args_info.inputs[2];
