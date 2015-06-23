@@ -1,6 +1,10 @@
 
 
 #----------------------------------------------------------
+# Store the odb executable
+SET(ODB_EXECUTABLE "@ODB_EXECUTABLE@")
+
+#----------------------------------------------------------
 SET(SYD_INCLUDE_DIRS "@SYD_INCLUDE_DIRS@")
 SET(SYD_LIBRARY_DIRS "@SYD_LIBRARY_DIRS@")
 SET(SYD_LIBRARIES "@SYD_LIBRARIES@")
