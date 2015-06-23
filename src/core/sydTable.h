@@ -84,7 +84,7 @@ namespace syd {
     /// Insert a new element in the database
     void Insert(TableElement & r);
 
-    /// Insert a set of elements in the database
+    /// Insert a set of elements in the database (with pointer to retrieve the correct id)
     void Insert(std::vector<TableElement*> & r);
 
     /// Update an element in the database

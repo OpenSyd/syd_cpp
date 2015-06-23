@@ -39,6 +39,7 @@
 #include "sydRoiMaskImage-odb.hxx"
 
 // syd tables
+#include "sydTablePatient.h"
 #include "sydTableImage.h"
 
 // --------------------------------------------------------------------
