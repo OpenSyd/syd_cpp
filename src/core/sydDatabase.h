@@ -194,6 +194,7 @@ namespace syd {
 
     //FIXME
     void CopyDatabaseTo(std::string file, std::string folder);
+
     template<class TableElement>
     bool TableIsEqual(syd::Database * db1);
 
