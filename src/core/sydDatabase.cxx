@@ -192,66 +192,6 @@ std::string syd::Database::GetListOfTableNames()
 
 
 // --------------------------------------------------------------------
-void syd::Database::CopyDatabaseTo(std::string file, std::string folder)
-{
-  // Copy db
-  syd::CopyFile(GetFilename(), file);
-
-  // Check the folder does not contains PATH_SEPARATOR
-  if (folder.find(PATH_SEPARATOR) != std::string::npos) {
-    LOG(FATAL) << "Could not copy database to folder '" << folder
-               << "': this folder name should be simple, withtout PATH_SEPARATOR.";
-  }
-
-  // Get the folder of file
-  std::string f = file;
-  syd::ConvertToAbsolutePath(f);
-  f = GetPathFromFilename(f);
-  f = f+PATH_SEPARATOR+folder;
-
-  // Create folder
-  if (!syd::DirExists(f)) syd::CreateDirectory(f);
-
-  // open the copied db and change the folder name
-  try {
-    odb::sqlite::database db(file, SQLITE_OPEN_READWRITE, false);
-    odb::transaction transaction (db.begin());
-    typedef odb::query<syd::DatabaseInformation> query;
-    typedef odb::result<syd::DatabaseInformation> result;
-    query q;
-    result r (db.query<syd::DatabaseInformation>(q));
-    syd::DatabaseInformation s;
-    r.begin().load(s);
-    s.folder = folder;
-    db.update(s);
-    transaction.commit();
-  }
-  catch (const odb::exception& e) {
-    EXCEPTION("Could not change the folder name in " << file << ". ODB error is: " << e.what());
-  }
-
-  // Copy the folder content :/ FIXME (not on windows !)
-  std::ostringstream cmd;
-  cmd << "cp -r " << GetDatabaseAbsoluteFolder() << "/* " << f;
-  LOG(5) << cmd.str();
-  system(cmd.str().c_str());
-
-  // if (!syd::DirExists(folder)) syd::CreateDirectory(folder);
-  // OFString scanPattern = "*";
-  // OFString dirPrefix = "";
-  // OFBool recurse = OFTrue;
-  // size_t found=0;
-  // OFList<OFString> & inputFiles;
-  // found = OFStandard::searchDirectoryRecursively(GetAbsoluteFolder().c_str(),
-  //                                                inputFiles, scanPattern,
-  //                                                dirPrefix, recurse);
-  // for(auto f:inputFiles) syd::CopyFile(
-
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Database::Delete(const std::string & table_name, syd::IdType id)
 {
   GetTable(table_name)->AddToDeleteList(id);

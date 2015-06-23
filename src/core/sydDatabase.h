@@ -64,7 +64,7 @@ namespace syd {
     template<class TableElement>
     void Insert(TableElement & r);
 
-    /// Insert several elements at a time
+    /// Insert several elements at a time (with pointer to get correct id)
     template<class TableElement>
     void Insert(std::vector<TableElement*>& r);
 
@@ -188,7 +188,6 @@ namespace syd {
     /// Effectively delete current list of elements to be deleted
     virtual bool DeleteCurrentList();
     // ------------------------------------------------------------------------
-
 
 
     /// -------------------------------- OLD

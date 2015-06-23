@@ -157,22 +157,22 @@ void syd::Database::AddTable()
     LOG(FATAL) << "Could not AddTable, open a db before";
   }
   std::string tablename = TableElement::GetTableName();
-  auto it = map.find(tablename);
-  if (it != map.end()) {
-    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
-               << "' already exist.";
-  }
+  // auto it = map.find(tablename);
+  // if (it != map.end()) {
+  //   LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
+  //              << "' already exist.";
+  // }
   // Also check with uppercase and lowercase
   std::string str = tablename;
-  std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-  it = map.find(str);
-  if (it != map.end()) {
-    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
-               << "' already exist.";
-  }
+  // std::transform(str.begin(), str.end(),str.begin(), ::toupper);
+  // it = map.find(str);
+  // if (it != map.end()) {
+  //   LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
+  //              << "' already exist.";
+  // }
   std::transform(str.begin(), str.end(),str.begin(), ::tolower);
-  it = map.find(str);
-  if (it != map.end()) {
+  auto it = map_lowercase.find(str);
+  if (it != map_lowercase.end()) {
     LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
                << "' already exist.";
   }
