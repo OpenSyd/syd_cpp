@@ -21,6 +21,8 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydImageBuilder.h"
+#include "sydTableRoiMaskImage.h"
+#include "sydTableRoiType.h"
 
 // syd init
 SYD_STATIC_INIT

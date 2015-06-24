@@ -19,6 +19,7 @@
 // syd
 #include "sydTestUtils.h"
 #include "sydImageBuilder.h"
+#include "sydTableRoiType.h"
 
 // syd init
 SYD_STATIC_INIT

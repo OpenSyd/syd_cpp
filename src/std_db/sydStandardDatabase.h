@@ -40,12 +40,7 @@
 #include "sydImageTransform-odb.hxx"
 
 // syd tables
-#include "sydTablePatient.h"
-#include "sydTableTag.h"
-#include "sydTableRoiType.h"
-#include "sydTableImage.h"
-#include "sydTableRoiMaskImage.h"
-#include "sydTableImageTransform.h"
+#include "sydTablePatient.h" /// for insertInjection to be remove
 
 // --------------------------------------------------------------------
 namespace syd {

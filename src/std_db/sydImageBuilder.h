@@ -21,6 +21,7 @@
 
 // syd
 #include "sydStandardDatabase.h"
+#include "sydTableImage.h"
 
 // itk
 #include <itkImageBase.h>
