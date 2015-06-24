@@ -371,17 +371,9 @@ syd::DicomFile * syd::DicomSerieBuilder::CreateDicomFile(const std::string & fil
   std::string absolute_folder = db_->GetAbsolutePath(relative_folder);
   if (!syd::FolderExists(absolute_folder)) syd::CreateDirectory(absolute_folder);
 
-  // std::string p = db_->GetAbsoluteFolder(*serie);
-  // std::string rp = p;
-  // syd::Replace(rp, db_->GetDatabaseAbsoluteFolder()+PATH_SEPARATOR, ""); // Get relative folder
-
   file->path = relative_folder;
   files_to_copy.push_back(filename);
   destination_folders.push_back(absolute_folder);
-  DD("dicom");
-  DD(relative_folder);
-  DD(absolute_folder);
-
   // file->md5 FIXME later
 
   // Then create the dicomfile

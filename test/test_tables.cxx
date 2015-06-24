@@ -31,17 +31,18 @@ int main(int argc, char* argv[])
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
 
   // Create the database
-  std::string dbname = "data/test-work.db";
-  std::string dbname_copy = "data/test-work-copy.db";
-  std::string folder = "test-data";
+  std::string init_dbname = "data/test.db";
+  std::string work_dbname = "data/test-work.db";
+  std::string work_folder = "test-work-data";
   std::string ref_dbname1 = "data/test-tables-ref1.db";
   std::string ref_folder = "test-tables-ref-data";
   std::string ref_dbname2 = "data/test-tables-ref2.db";
-  LOG(1) << "Creating database " << dbname;
-  syd::Database * db = m->Create("StandardDatabase", dbname, folder);
-
-  // Make a copy for the end
-  db->CopyDatabaseTo(dbname_copy, folder);
+  LOG(1) << "Creating database " << work_dbname;
+  syd::StandardDatabase * db_init = m->Read<syd::StandardDatabase>(init_dbname);
+  // Make a copy
+  db_init->CopyDatabaseTo(work_dbname, work_folder);
+  // Open the copy
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(work_dbname);
 
   // Test CRUD - Create Read Update Delete
 
@@ -49,13 +50,13 @@ int main(int argc, char* argv[])
   LOG(1) << "---------------- Insert";
   LOG(1) << "Insert Patient";
   syd::Patient p;
-  p.Set("toto", 1, 90);
+  p.Set("toto", 78, 90);
   p.dicom_patientid = "XXAZER1234";
   db->Insert(p);
 
   LOG(1) << "Insert Radionuclide";
   syd::Radionuclide r;
-  r.Set("Indium111", 67.313);
+  r.Set("Indium666", 67.313);
   db->Insert(r);
 
   LOG(1) << "Insert Injection";
@@ -93,14 +94,14 @@ int main(int argc, char* argv[])
 
   // Part 1 insert
   LOG(1) << "Update Patient";
-  syd::Patient pp = db->QueryOne<syd::Patient>(odb::query<syd::Patient>::study_id == 1);
-  pp.Set("titi", 2, 666);
+  syd::Patient pp = db->QueryOne<syd::Patient>(odb::query<syd::Patient>::study_id == 78);
+  pp.Set("titi", 987, 666);
   pp.dicom_patientid = "AZERAZER";
   db->Update(pp);
 
   LOG(1) << "Update Radionuclide";
-  syd::Radionuclide rr = db->QueryOne<syd::Radionuclide>(odb::query<syd::Radionuclide>::name == "Indium111");
-  rr.Set("Yttrium90", 67.313);
+  syd::Radionuclide rr = db->QueryOne<syd::Radionuclide>(odb::query<syd::Radionuclide>::name == "Indium666");
+  rr.Set("Yttrium900", 67.313);
   db->Update(rr);
 
   LOG(1) << "Update Injection";
@@ -141,12 +142,12 @@ int main(int argc, char* argv[])
   db->Delete(tt);
 
   // Compare with initial
-  syd::Database * dbcopy = m->Read<syd::StandardDatabase>(dbname_copy);
-  syd::TestTableEquality<syd::Patient>(db, dbcopy);
-  syd::TestTableEquality<syd::Injection>(db, dbcopy);
-  syd::TestTableEquality<syd::Radionuclide>(db, dbcopy);
-  syd::TestTableEquality<syd::File>(db, dbcopy);
-  syd::TestTableEquality<syd::Tag>(db, dbcopy);
+  //syd::Database * db_init = m->Read<syd::StandardDatabase>(dbname_copy);
+  syd::TestTableEquality<syd::Patient>(db, db_init);
+  syd::TestTableEquality<syd::Injection>(db, db_init);
+  syd::TestTableEquality<syd::Radionuclide>(db, db_init);
+  syd::TestTableEquality<syd::File>(db, db_init);
+  syd::TestTableEquality<syd::Tag>(db, db_init);
 
   // This is the end, my friend.
   return EXIT_SUCCESS;

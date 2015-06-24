@@ -120,5 +120,6 @@ std::string syd::ComputeRelativeFolder(const syd::Database * db, const syd::Dico
 
   // Add modality
   f = f+PATH_SEPARATOR+serie.dicom_modality;
+  return f;
 }
 // --------------------------------------------------------------------

@@ -1,6 +1,6 @@
 
 
-    sydCreateDatabase StandardDatabase data/data/test.db test-data -f
+    sydCreateDatabase StandardDatabase data/test.db test-data -f
 
     sydInsert data/test.db Radionuclide Indium111 67.313
     sydInsert data/test.db Radionuclide Yttrium90 64.053
@@ -57,8 +57,9 @@
 	sydInsert data/test.db Injection dm Yttrium90 "2013-11-20 10:40" 360
 	sydInsert data/test.db Injection bf Yttrium90 "2013-12-11 10:24" 1161
 
-    sydInsertDicom data/test.db jm Indium111 dicom/
-
-    sydInsertTimepoint data/test.db study1 1 2
+    sydInsertDicom data/test.db jm Indium111 dicom/ -v1
 
     sydInsert data/test.db RoiType body "Contour of the body"
+
+
+//sydInsertTimepoint data/test.db study1 1 2
