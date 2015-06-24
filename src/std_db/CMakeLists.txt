@@ -13,6 +13,7 @@ wrap_odb(sydStandardDatabase sydTag.h)
 wrap_odb(sydStandardDatabase sydImage.h)
 wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
+wrap_odb(sydStandardDatabase sydImageTransform.h)
 
 add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
@@ -26,18 +27,21 @@ add_library(sydStandardDatabase SHARED
   sydDicomFile-odb.cxx sydDicomFile.cxx
   sydTimepoint-odb.cxx sydTimepoint.cxx
   sydImage-odb.cxx sydImage.cxx
+  sydImageTransform-odb.cxx sydImageTransform.cxx
   sydRoiType-odb.cxx sydRoiType.cxx
   sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx
   sydDicomSerieBuilder.cxx
   sydTimepointBuilder.cxx
   sydImageBuilder.cxx
 
-  sydTableDicomSerie.cxx
-  sydTablePatient.h
+  sydTablePatient.h sydTablePatient.cxx
   sydTableTag.h
   sydTableRoiType.h
+  sydTableFile.h sydTableFile.cxx
+  sydTableDicomSerie.cxx
   sydTableImage.h sydTableImage.cxx
   sydTableRoiMaskImage.h
+  sydTableImageTransform.h sydTableImageTransform.cxx
   )
 ## to declare dependencies
 target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})
@@ -91,7 +95,14 @@ target_link_libraries(sydTest sydStandardDatabase)
 
 
 #----------------------------------------------------------
-# Need external tool
+# External tool: clitkExtractPatient
 wrap_ggo(syd_clitkExtractPatient syd_clitkExtractPatient.ggo)
 add_executable(syd_clitkExtractPatient syd_clitkExtractPatient.cxx syd_clitkExtractPatient_ggo.c)
 target_link_libraries(syd_clitkExtractPatient sydStandardDatabase)
+
+
+#----------------------------------------------------------
+# External tool: elastix
+wrap_ggo(syd_elastix syd_elastix.ggo)
+add_executable(syd_elastix syd_elastix.cxx syd_elastix_ggo.c)
+target_link_libraries(syd_elastix sydStandardDatabase)

@@ -37,6 +37,7 @@
 #include "sydTimepoint-odb.hxx"
 #include "sydRoiType-odb.hxx"
 #include "sydRoiMaskImage-odb.hxx"
+#include "sydImageTransform-odb.hxx"
 
 // syd tables
 #include "sydTablePatient.h"
@@ -44,6 +45,7 @@
 #include "sydTableRoiType.h"
 #include "sydTableImage.h"
 #include "sydTableRoiMaskImage.h"
+#include "sydTableImageTransform.h"
 
 // --------------------------------------------------------------------
 namespace syd {

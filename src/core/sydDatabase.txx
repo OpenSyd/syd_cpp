@@ -229,6 +229,15 @@ TableElement syd::Database::QueryOne(IdType id)
 
 // --------------------------------------------------------------------
 template<class TableElement>
+void syd::Database::QueryOne(TableElement & e, IdType id)
+{
+  e = GetTable<TableElement>()->QueryOne(id);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
 unsigned int syd::Database::Count(const odb::query<TableElement> & q)
 {
   return GetTable<TableElement>()->Count(q);

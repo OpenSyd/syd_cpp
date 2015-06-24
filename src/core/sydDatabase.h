@@ -94,6 +94,10 @@ namespace syd {
     /// Get the unique element with the given id
     template<class TableElement>
     TableElement QueryOne(IdType id);
+
+    /// Same as previous but return as a parameter (allow to avoid the template when call)
+    template<class TableElement>
+    void QueryOne(TableElement & e, IdType id);
     // ------------------------------------------------------------------------
 
 
@@ -273,6 +277,11 @@ namespace syd {
     bool deleteForceFlag_;
 
   };
+
+  template<class TableElement>
+  std::string GetAbsoluteFolder(const syd::Database * db, const TableElement & e) {
+    return db->GetDatabaseAbsoluteFolder()+PATH_SEPARATOR+GetRelativeFolder(db, e);
+  }
 
 #include "sydDatabase.txx"
 

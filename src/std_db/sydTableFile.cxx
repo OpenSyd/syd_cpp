@@ -16,32 +16,21 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTABLEPATIENT_H
-#define SYDTABLEPATIENT_H
-
 // syd
-#include "sydPatient.h"
-#include "sydDatabase.h"
-#include "sydStandardDatabase.h"
+#include "sydTableFile.h"
 
 // --------------------------------------------------------------------
-namespace syd {
-
-  /// Return  the folder for this patient (relative to the db)
-  std::string GetRelativeFolder(const syd::Database * db, const Patient & p);
-
-  /// Return the patient by name or study_id. Exception if not
-  /// found. Require table with fields 'name' and 'study_id'. Required
-  /// a template.
-  template<class Patient>
-  void FindPatientByNameOrStudyId(Patient & p, syd::Database * db, std::string & arg);
-
-  /// Find all the patients matching arg (can contains several name/id separated by space)
-  template<class Patient>
-  void FindPatients(std::vector<Patient> & patients, syd::Database * db, const std::string & arg);
-
-  #include "sydTablePatient.txx"
+std::string syd::GetRelativeFolder(const syd::Database *db, const syd::File & file)
+{
+  return file.path;
 }
 // --------------------------------------------------------------------
 
-#endif
+
+// --------------------------------------------------------------------
+std::string syd::GetAbsolutePath(const syd::Database *db, const syd::File & file)
+{
+  std::string path = syd::GetAbsoluteFolder(db, file);
+  return path+PATH_SEPARATOR+file.filename;
+}
+// --------------------------------------------------------------------

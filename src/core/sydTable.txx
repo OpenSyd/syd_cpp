@@ -272,6 +272,15 @@ void syd::Table<TableElement>::Dump(std::ostream & os, const std::string & forma
 template<class TableElement>
 void syd::Table<TableElement>::Dump(std::ostream & os, const std::string & format, const std::vector<TableElement> & elements)
 {
+  // Default dump
+  if (format == "help") {
+    os << "No 'format' defined for the table '" << TableElement::GetTableName() << "'";
+    return;
+  }
+  if (format != "") {
+    os << "Unknown format for table '" << TableElement::GetTableName() << "', use default format.";
+    return;
+  }
   for(auto e:elements) {
     os << e << std::endl;
   }

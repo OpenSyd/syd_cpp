@@ -40,6 +40,8 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::Image>();
   AddTable<syd::RoiMaskImage>();
 
+  AddTable<syd::ImageTransform>();
+
   AddTable<syd::Timepoint>(); // FIXME ?
 }
 // --------------------------------------------------------------------

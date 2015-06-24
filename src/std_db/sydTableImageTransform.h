@@ -16,32 +16,25 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTABLEPATIENT_H
-#define SYDTABLEPATIENT_H
+#ifndef SYDTABLEIMAGETRANSFORM_H
+#define SYDTABLEIMAGETRANSFORM_H
 
 // syd
-#include "sydPatient.h"
-#include "sydDatabase.h"
-#include "sydStandardDatabase.h"
+#include "sydImageTransform.h"
+#include "sydTableFile.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// Return  the folder for this patient (relative to the db)
-  std::string GetRelativeFolder(const syd::Database * db, const Patient & p);
+  std::string GetRelativeFolder(const syd::Database * db, const syd::ImageTransform & t);
 
-  /// Return the patient by name or study_id. Exception if not
-  /// found. Require table with fields 'name' and 'study_id'. Required
-  /// a template.
-  template<class Patient>
-  void FindPatientByNameOrStudyId(Patient & p, syd::Database * db, std::string & arg);
+  template<class ImageTransform>
+  void InsertNewImageTransform(ImageTransform & t, syd::Database * db,
+                               syd::Image & fixed_image, syd::Image & moving_image, std::string & config_filename);
 
-  /// Find all the patients matching arg (can contains several name/id separated by space)
-  template<class Patient>
-  void FindPatients(std::vector<Patient> & patients, syd::Database * db, const std::string & arg);
+#include "sydTableImageTransform.txx"
 
-  #include "sydTablePatient.txx"
-}
+} // end namespace
 // --------------------------------------------------------------------
 
 #endif

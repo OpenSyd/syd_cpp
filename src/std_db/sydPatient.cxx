@@ -28,7 +28,7 @@ syd::Patient::Patient():TableElementBase()
 {
   // default value
   id = 0; // will be changed when persist
-  name = "anonymous"; // must be unique
+  name = "not_set"; // must be unique
   study_id = 0; // must be unique
   weight_in_kg = 0;
   dicom_patientid = "unknown_dicom_id";
