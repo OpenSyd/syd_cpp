@@ -29,7 +29,7 @@ void InsertNewImageTransform(ImageTransform & transfo,
   transfo.moving_image = std::make_shared<syd::Image>(moving_image);
 
   // Get folder (create if does not exist)
-  std::string relative_folder = syd::CreateRelativeFolder<ImageTransform>(db, transfo);
+  std::string relative_folder = syd::ComputeRelativeFolder<ImageTransform>(db, transfo);
   DD(relative_folder);
   std::string absolute_folder = db->GetAbsolutePath(relative_folder);
   if (!syd::DirExists(absolute_folder)) syd::CreateDirectory(absolute_folder);

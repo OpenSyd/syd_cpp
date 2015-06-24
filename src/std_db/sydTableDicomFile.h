@@ -26,9 +26,8 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-
   template<>
-  std::string GetRelativeFilePath<syd::DicomFile>(const syd::Database * db, const syd::DicomFile & e);
+  std::string GetRelativeFilePath(const syd::Database * db, const syd::DicomFile & e);
 
 }
 // --------------------------------------------------------------------

@@ -41,7 +41,7 @@ namespace syd {
   // std::string GetRelativeFolder<syd::File>(syd::Database * db, const syd::File & e);
 
   template<>
-  std::string GetRelativeFilePath<syd::File>(const syd::Database * db, const syd::File & e);
+  std::string GetRelativeFilePath(const syd::Database * db, const syd::File & e);
 
 #include "sydTableFile.txx"
 }

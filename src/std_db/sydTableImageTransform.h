@@ -28,12 +28,12 @@ namespace syd {
 
   //  std::string GetRelativeFolder(const syd::Database * db, const syd::ImageTransform & t);
 
+  template<>
+  std::string ComputeRelativeFolder(const syd::Database * db, const syd::ImageTransform & e);
+
   template<class ImageTransform>
   void InsertNewImageTransform(ImageTransform & t, syd::Database * db,
                                syd::Image & fixed_image, syd::Image & moving_image, std::string & config_filename);
-
-  template<>
-  std::string ComputeRelativeFolder(const syd::Database * db, const syd::ImageTransform & e);
 
 #include "sydTableImageTransform.txx"
 

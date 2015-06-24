@@ -29,7 +29,7 @@
 // }
 
 template<>
-std::string syd::GetRelativeFilePath<syd::File>(const syd::Database * db, const syd::File & file)
+std::string syd::GetRelativeFilePath(const syd::Database * db, const syd::File & file)
 {
   return file.path+PATH_SEPARATOR+file.filename;
 }

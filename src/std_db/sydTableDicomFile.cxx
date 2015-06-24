@@ -18,10 +18,11 @@
 
 // syd
 #include "sydTableDicomFile.h"
+#include "sydTableFile.h"
 
 // --------------------------------------------------------------------
 template<>
-std::string syd::GetRelativeFilePath<syd::DicomFile>(const syd::Database * db, const syd::DicomFile & dicom_file)
+std::string syd::GetRelativeFilePath(const syd::Database * db, const syd::DicomFile & dicom_file)
 {
   if (dicom_file.file == NULL) {
     LOG(FATAL) << "No associated file with this DicomFile: " << dicom_file;

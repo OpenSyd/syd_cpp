@@ -48,11 +48,11 @@ std::string GetRelativeFilePath(const syd::Database * db, const TableElement & e
 
 
 template<class TableElement>
-std::string CreateRelativeFolder(const syd::Database * db, const TableElement & e)
+std::string ComputeRelativeFolder(const syd::Database * db, const TableElement & e)
 {
   // FIXME : or default is empty ?
   LOG(FATAL) << "The table '" << TableElement::GetTableName() << "' does not know how to determine a relative folder. "
-             << "Please, specialize CreateRelativeFolder<" << TableElement::GetTableName() << ">.";
+             << "Please, specialize ComputeRelativeFolder<" << TableElement::GetTableName() << ">.";
 }
 
 
