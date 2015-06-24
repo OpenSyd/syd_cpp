@@ -23,6 +23,7 @@
 #include "sydPrintTable.h"
 #include "sydTable.h"
 #include "sydImage-odb.hxx"
+#include "sydDatabasePath.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -37,6 +38,18 @@ namespace syd {
 
   template<class Image>
   void FindImages(std::vector<Image> & images, syd::Database * db, syd::Patient & patient, std::vector<syd::Tag> & tags);
+
+  //  std::string GetAbsolutePath(const syd::Database *db, const syd::Image & image);
+
+  // template<>
+  // std::string GetRelativeFolder<syd::Image>(syd::Database * db, const syd::Image & e);
+
+  template<>
+  std::string GetRelativeFilePath<syd::Image>(const syd::Database * db, const syd::Image & e);
+
+
+  template<>
+  std::string ComputeRelativeFolder(const syd::Database * db, const syd::Image & e);
 
 #include "sydTableImage.txx"
 

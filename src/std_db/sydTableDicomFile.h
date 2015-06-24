@@ -16,30 +16,21 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTABLEDICOMSERIE_H
-#define SYDTABLEDICOMSERIE_H
+#ifndef SYDTABLEDICOMFILE_H
+#define SYDTABLEDICOMFILE_H
 
 // syd
-#include "sydPrintTable.h"
-#include "sydTable.h"
-#include "sydDicomSerie-odb.hxx"
+#include "sydDicomFile.h"
 #include "sydDatabasePath.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// Specialization of Dump for DicomSeries (sort by acquisition_date)
-  template<>
-  void syd::Table<syd::DicomSerie>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids);
-
-  /// Specialization of Dump for DicomSeries
-  template<>
-  void syd::Table<syd::DicomSerie>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::DicomSerie> & dicoms);
 
   template<>
-  std::string ComputeRelativeFolder<syd::DicomSerie>(const syd::Database * db, const syd::DicomSerie & serie);
+  std::string GetRelativeFilePath<syd::DicomFile>(const syd::Database * db, const syd::DicomFile & e);
 
-} // namespace syd
+}
 // --------------------------------------------------------------------
 
 #endif

@@ -21,13 +21,23 @@
 #include "sydTablePatient.h"
 
 // --------------------------------------------------------------------
-std::string syd::GetRelativeFolder(const syd::Database * db, const syd::ImageTransform & t)
+// std::string syd::GetRelativeFolder(const syd::Database * db, const syd::ImageTransform & t)
+// {
+//   if (t.fixed_image == NULL) {
+//     LOG(FATAL) << "Could not GetRelativeFolder for this ImageTransfo because fixed_image is null: " << t;
+//   }
+//   std::string folder = syd::GetRelativeFolder(db, *(t.fixed_image->patient)) + PATH_SEPARATOR + "transform";
+//   DD(folder);
+//   return folder;
+// }
+// // --------------------------------------------------------------------
+
+template<>
+std::string syd::ComputeRelativeFolder(const syd::Database * db, const syd::ImageTransform & transfo)
 {
-  if (t.fixed_image == NULL) {
-    LOG(FATAL) << "Could not GetRelativeFolder for this ImageTransfo because fixed_image is null: " << t;
+  if (transfo.fixed_image == NULL) {
+    LOG(FATAL) << "Could not ComputeRelativeFolder for this ImageTransfo because fixed_image is null: " << transfo;
   }
-  std::string folder = syd::GetRelativeFolder(db, *(t.fixed_image->patient)) + PATH_SEPARATOR + "transform";
-  DD(folder);
-  return folder;
+  std::string f = ComputeRelativeFolder(db, *transfo.fixed_image->patient)+PATH_SEPARATOR+"transform";
+  return f;
 }
-// --------------------------------------------------------------------

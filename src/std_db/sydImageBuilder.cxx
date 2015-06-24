@@ -49,7 +49,7 @@ syd::Image syd::ImageBuilder::InsertImage(const syd::DicomSerie & dicomserie)
   }
   std::vector<std::string> dicom_filenames;
   for(auto f:dicom_files) {
-    dicom_filenames.push_back(db_->GetAbsolutePath(*f.file));
+    dicom_filenames.push_back(GetAbsoluteFilePath(db_, f));
   }
   LOG(4) << "Found " << dicom_files.size();
 
@@ -58,8 +58,9 @@ syd::Image syd::ImageBuilder::InsertImage(const syd::DicomSerie & dicomserie)
   LOG(4) << "Update image dicom";
   UpdateDicom(image, dicomserie);
   LOG(4) << "Update image files";
-  UpdateFile(image, GetDefaultImageRelativePath(image), GetDefaultImageFilename(image));
-  std::string f = db_->GetAbsolutePath(image);
+  //  UpdateFile(image, GetDefaultImageRelativePath(image), GetDefaultImageFilename(image));
+  UpdateFile(image, ComputeRelativeFolder(db_, image), GetDefaultImageFilename(image));
+  std::string f = GetAbsoluteFilePath(db_, image);
 
   // Convert dicom, write to disk
   // std::string md5;
@@ -127,7 +128,8 @@ syd::Image syd::ImageBuilder::InsertStitchedImage(const syd::DicomSerie & a,
   syd::Image image = InsertEmptyImage(*a.patient);
   UpdateDicom(image, a);
   UpdateDicom(image, b);
-  UpdateFile(image, GetDefaultImageRelativePath(image), GetDefaultImageFilename(image));
+  //  UpdateFile(image, GetDefaultImageRelativePath(image), GetDefaultImageFilename(image));
+  UpdateFile(image, ComputeRelativeFolder(db_, image), GetDefaultImageFilename(image));
 
   // Auto tag
   syd::Tag tag_stitch = db_->FindOrInsertTag("stitch", "Image computed by stitching 2 images");
@@ -146,7 +148,7 @@ syd::Image syd::ImageBuilder::InsertStitchedImage(const syd::DicomSerie & a,
   UpdateImageInfo<PixelType>(image, output, true); // true = update md5
 
   // Write image
-  syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));
+  syd::WriteImage<ImageType>(output, GetAbsoluteFilePath(db_, image));
 
   // Insert into the db
   db_->Update(image);
@@ -217,22 +219,23 @@ std::string syd::ImageBuilder::GetDefaultRoiMaskImageFilename(const syd::RoiMask
 
 
 // --------------------------------------------------------------------
-std::string syd::ImageBuilder::GetDefaultImageRelativePath(const syd::Image & image)
-{
-  return db_->GetRelativeFolder(*image.patient);
-}
+// std::string syd::ImageBuilder::GetDefaultImageRelativePath(const syd::Image & image)
+// {
+//   return ComputeRelativeFolder(db_, image);//db_->GetRelativeFolder(*image.patient);
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::string syd::ImageBuilder::GetDefaultRoiMaskImageRelativePath(const syd::RoiMaskImage & mask)
-{
-  if (mask.image == NULL) {
-    LOG(FATAL) << "Error could not use GetDefaultRoiMaskImageRelativePath without image in the mask. Mask: " << mask;
-  }
-  std::string p = db_->GetRelativeFolder(*mask.image->patient)+PATH_SEPARATOR+"roi"+PATH_SEPARATOR;
-  return p;
-}
+// std::string syd::ImageBuilder::GetDefaultRoiMaskImageRelativePath(const syd::RoiMaskImage & mask)
+// {
+//   // if (mask.image == NULL) {
+//   //   LOG(FATAL) << "Error could not use GetDefaultRoiMaskImageRelativePath without image in the mask. Mask: " << mask;
+//   // }
+//   //  std::string p = db_->GetRelativeFolder(*mask.image->patient)+PATH_SEPARATOR+"roi"+PATH_SEPARATOR;
+//   std::string p = ComputeRelativeFolder(db_, mask);//*mask.image->patient)+PATH_SEPARATOR+"roi"+PATH_SEPARATOR;
+//   return p;
+// }
 // --------------------------------------------------------------------
 
 
@@ -306,10 +309,12 @@ syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImage(const syd::DicomSerie & 
     UpdateDicom(*image, dicom);
 
     // Need to set the image of the mask and insert it before GetDefaultRoiMaskImageRelativePath (need image patient)
-    UpdateFile(*image, GetDefaultRoiMaskImageRelativePath(mask), GetDefaultRoiMaskImageFilename(mask));
+    //    UpdateFile(*image, GetDefaultRoiMaskImageRelativePath(mask), GetDefaultRoiMaskImageFilename(mask));
+    UpdateFile(*image, ComputeRelativeFolder(db_, mask), GetDefaultRoiMaskImageFilename(mask));
 
     // Create image folder if needed
-    std::string absolute_folder = db_->GetAbsoluteFolder(*image);
+    std::string relative_folder = ComputeRelativeFolder(db_, *image);
+    std::string absolute_folder = db_->GetAbsolutePath(relative_folder);
     if (!syd::DirExists(absolute_folder)) syd::CreateDirectory(absolute_folder);
 
     // Read image
@@ -322,7 +327,7 @@ syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImage(const syd::DicomSerie & 
     UpdateImageInfo<PixelType>(*image, itk_image, true); // true = update md5
 
     // Write image
-    syd::WriteImage<ImageType>(itk_image, db_->GetAbsolutePath(*image));
+    syd::WriteImage<ImageType>(itk_image, GetAbsoluteFilePath(db_, *image));
 
   }
   catch(std::exception & e) {

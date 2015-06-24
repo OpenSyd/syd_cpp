@@ -16,30 +16,18 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTABLEDICOMSERIE_H
-#define SYDTABLEDICOMSERIE_H
-
 // syd
-#include "sydPrintTable.h"
-#include "sydTable.h"
-#include "sydDicomSerie-odb.hxx"
+#include "sydTableRoiMaskImage.h"
 #include "sydDatabasePath.h"
 
 // --------------------------------------------------------------------
-namespace syd {
-
-  /// Specialization of Dump for DicomSeries (sort by acquisition_date)
-  template<>
-  void syd::Table<syd::DicomSerie>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids);
-
-  /// Specialization of Dump for DicomSeries
-  template<>
-  void syd::Table<syd::DicomSerie>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::DicomSerie> & dicoms);
-
-  template<>
-  std::string ComputeRelativeFolder<syd::DicomSerie>(const syd::Database * db, const syd::DicomSerie & serie);
-
-} // namespace syd
+template<>
+std::string syd::ComputeRelativeFolder(const syd::Database * db, const syd::RoiMaskImage & mask)
+{
+  if (mask.image == NULL) {
+    LOG(FATAL) << "Could not CreateRelativeFolder for this RoiMaskImage because image is null: " << mask;
+  }
+  std::string f = ComputeRelativeFolder(db, *mask.image->patient)+PATH_SEPARATOR+"roi";
+  return f;
+}
 // --------------------------------------------------------------------
-
-#endif

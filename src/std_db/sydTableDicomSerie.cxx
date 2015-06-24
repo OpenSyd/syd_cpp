@@ -19,6 +19,7 @@
 // syd
 #include "sydTableDicomSerie.h"
 #include "sydStandardDatabase.h"
+#include "sydTableFile.h"
 
 // --------------------------------------------------------------------
 template<>
@@ -58,7 +59,8 @@ void syd::Table<syd::DicomSerie>::Dump(std::ostream & os,
     for(auto & s:dicoms) {
       std::vector<syd::DicomFile> files;
       db->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == s.id, files);
-      os << db->GetAbsolutePath(*files[0].file);
+      //      os << db->GetAbsolutePath(*files[0].file);
+      os << syd::GetAbsoluteFilePath(db, files[0]);
       if (format == "file") os << " ";
       else os << std::endl;
     }
@@ -98,5 +100,25 @@ void syd::Table<syd::DicomSerie>::Dump(std::ostream & os,
     //previous = d.acquisition_date;
   }
   table.Print(std::cout);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<>
+std::string syd::ComputeRelativeFolder(const syd::Database * db, const syd::DicomSerie & serie)
+{
+  Patient patient = db->QueryOne<Patient>(serie.patient->id);
+  std::string f = syd::ComputeRelativeFolder(db, patient);
+
+  // Add date
+  std::string d = serie.acquisition_date;
+  //  syd::Replace(d, " ", "_");
+  // remove the hour and keep y m d
+  d = d.substr(0, 10);
+  f = f+PATH_SEPARATOR+d;
+
+  // Add modality
+  f = f+PATH_SEPARATOR+serie.dicom_modality;
 }
 // --------------------------------------------------------------------

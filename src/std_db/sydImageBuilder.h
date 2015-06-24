@@ -22,6 +22,8 @@
 // syd
 #include "sydStandardDatabase.h"
 #include "sydTableImage.h"
+#include "sydTableFile.h"
+#include "sydTableRoiMaskImage.h"
 
 // itk
 #include <itkImageBase.h>
@@ -89,13 +91,13 @@ namespace syd {
     std::string GetDefaultImageFilename(const syd::Image & image);
 
     /// Propose a default path for the image
-    std::string GetDefaultImageRelativePath(const syd::Image & image);
+//    std::string GetDefaultImageRelativePath(const syd::Image & image);
 
     /// Propose a default filename for the roimaskimage (use the image.id, so must be inserted in the db before)
     std::string GetDefaultRoiMaskImageFilename(const syd::RoiMaskImage & mask);
 
     /// Propose a default path for the roimaskimage (need the patient in image)
-    std::string GetDefaultRoiMaskImageRelativePath(const syd::RoiMaskImage & mask);
+//  std::string GetDefaultRoiMaskImageRelativePath(const syd::RoiMaskImage & mask);
 
     // Read an itk image for this dicom
     template<class PixelType>

@@ -21,6 +21,7 @@
 
 // syd
 #include "sydRoiMaskImage.h"
+#include "sydDatabasePath.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -32,6 +33,9 @@ namespace syd {
   template<class RoiMaskImage>
   void FindRoiMaskImage(RoiMaskImage & mask, syd::Database * db, syd::Patient & patient,
                         syd::RoiType & roitype, syd::Image & image);
+
+  template<>
+  std::string ComputeRelativeFolder(const syd::Database * db, const syd::RoiMaskImage & mask);
 
 #include "sydTableRoiMaskImage.txx"
 }

@@ -56,6 +56,9 @@ namespace syd {
 
     /// Return the folder that contains the associated images (absolute)
     std::string GetDatabaseAbsoluteFolder() const { return absolute_folder_; }
+
+    /// Return absolute path from a relative one
+    std::string GetAbsolutePath(std::string relative_path) const { return absolute_folder_+PATH_SEPARATOR+relative_path; }
     // ------------------------------------------------------------------------
 
 
@@ -77,38 +80,38 @@ namespace syd {
     // ------------------------------------------------------------------------
     /// Perform a query on the database and return the found elements in the list
     template<class TableElement>
-    void Query(const odb::query<TableElement> & q, std::vector<TableElement> & list);
+    void Query(const odb::query<TableElement> & q, std::vector<TableElement> & list) const;
 
     /// Retrieve all elements of the table
     template<class TableElement>
-    void Query(std::vector<TableElement> & list);
+    void Query(std::vector<TableElement> & list) const;
 
     /// Retrieve all elements of the given ids list
     template<class TableElement>
-    void Query(const std::vector<IdType> & ids, std::vector<TableElement> & list);
+    void Query(const std::vector<IdType> & ids, std::vector<TableElement> & list) const;
 
     /// Get the unique element matching the query (fail if 0 or >1 elements)
     template<class TableElement>
-    TableElement QueryOne(const odb::query<TableElement> & q);
+    TableElement QueryOne(const odb::query<TableElement> & q) const;
 
     /// Get the unique element with the given id
     template<class TableElement>
-    TableElement QueryOne(IdType id);
+    TableElement QueryOne(IdType id) const;
 
     /// Same as previous but return as a parameter (allow to avoid the template when call)
     template<class TableElement>
-    void QueryOne(TableElement & e, IdType id);
+    void QueryOne(TableElement & e, IdType id) const;
     // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
     /// Count the number of elements matching the query
     template<class TableElement>
-    unsigned int Count(const odb::query<TableElement> & q);
+    unsigned int Count(const odb::query<TableElement> & q) const;
 
     /// Check if the given id exist
     template<class TableElement>
-    bool IfExist(IdType id);
+    bool IfExist(IdType id) const;
     // ------------------------------------------------------------------------
 
 
@@ -214,13 +217,13 @@ namespace syd {
 
 
     /// Return the (base) table with table_name
-    TableBase * GetTable(const std::string & table_name);
+    TableBase * GetTable(const std::string & table_name) const;
 
     /// Return the table that contains TableElement
     template<class TableElement>
-    Table<TableElement> * GetTable();
+    Table<TableElement> * GetTable() const;
 
-    std::string GetListOfTableNames();
+    std::string GetListOfTableNames() const;
 
     // ----------------------------------------------------------------------------------
     protected:
@@ -277,11 +280,6 @@ namespace syd {
     bool deleteForceFlag_;
 
   };
-
-  template<class TableElement>
-  std::string GetAbsoluteFolder(const syd::Database * db, const TableElement & e) {
-    return db->GetDatabaseAbsoluteFolder()+PATH_SEPARATOR+GetRelativeFolder(db, e);
-  }
 
 #include "sydDatabase.txx"
 

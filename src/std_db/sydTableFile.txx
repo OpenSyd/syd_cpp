@@ -16,6 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#include "sydDatabase.h"
+
 // --------------------------------------------------------------------
 template<class File>
 void InsertNewFile(File & file, syd::Database * db, const std::string filename, const std::string & relative_folder)

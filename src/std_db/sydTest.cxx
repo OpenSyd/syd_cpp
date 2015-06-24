@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
     std::vector<syd::DicomFile> files;
     db->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == d.id, files);
     // DDS(files);
-    std::string filename = db->GetAbsolutePath(*files[0].file);
+    std::string filename = GetAbsoluteFilePath(db, files[0]);
     DcmFileFormat dfile;
     bool b = syd::OpenDicomFile(filename, dfile);
     if (!b) {  // this is not a dicom file

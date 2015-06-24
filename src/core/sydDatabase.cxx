@@ -165,7 +165,7 @@ void syd::Database::Find(std::vector<syd::IdType> & ids,
 
 
 // --------------------------------------------------------------------
-syd::TableBase * syd::Database::GetTable(const std::string & table_name)
+syd::TableBase * syd::Database::GetTable(const std::string & table_name) const
 {
   std::string str=table_name;
   std::transform(str.begin(), str.end(),str.begin(), ::tolower);
@@ -180,7 +180,7 @@ syd::TableBase * syd::Database::GetTable(const std::string & table_name)
 
 
 // --------------------------------------------------------------------
-std::string syd::Database::GetListOfTableNames()
+std::string syd::Database::GetListOfTableNames() const
 {
   std::stringstream os;
   for(auto i = map.begin(); i!=map.end(); i++) {

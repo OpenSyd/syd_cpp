@@ -29,24 +29,25 @@ void InsertNewImageTransform(ImageTransform & transfo,
   transfo.moving_image = std::make_shared<syd::Image>(moving_image);
 
   // Get folder (create if does not exist)
-  std::string folder = syd::GetAbsoluteFolder<ImageTransform>(db, transfo);
-  DD(folder);
-  if (!syd::DirExists(folder)) syd::CreateDirectory(folder);
+  std::string relative_folder = syd::CreateRelativeFolder<ImageTransform>(db, transfo);
+  DD(relative_folder);
+  std::string absolute_folder = db->GetAbsolutePath(relative_folder);
+  if (!syd::DirExists(absolute_folder)) syd::CreateDirectory(absolute_folder);
 
   // Create filename
   std::string filename = syd::GetFilenameFromPath(config_filename);
 
   // Create a file for the config file
   syd::File file;
-  syd::InsertNewFile(file, db, filename, GetRelativeFolder(db, transfo)); // will check already exist
+  syd::InsertNewFile(file, db, filename, relative_folder);
   DD(file);
   transfo.config_file = std::make_shared<syd::File>(file);
 
   // Copy the file to the right folder
   DD("copy");
   DD(config_filename);
-  DD(GetAbsoluteFolder(db, file));
-  syd::CopyFile(config_filename, GetAbsolutePath(db, file));
+  DD(GetAbsoluteFilePath(db, file));
+  syd::CopyFile(config_filename, GetAbsoluteFilePath(db, file));
 
   // Insert
   db->Insert(transfo);

@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
   // Create roimaskimage
   syd::RoiType roitype;
   syd::FindRoiType(roitype, db, "body");
-  syd::RoiMaskImage mask = b.InsertRoiMaskImage(dicom, roitype, db->GetAbsolutePath(image));
+  syd::RoiMaskImage mask = b.InsertRoiMaskImage(dicom, roitype, GetAbsoluteFilePath(db, image));
 
 
   // test 2: create image for timepoint (+link tp with images)
@@ -79,8 +79,8 @@ int main(int argc, char* argv[])
     for(auto j=0; j<images[i].files.size(); j++) {
       syd::File f1 = *images[i].files[j];
       syd::File f2 = *images[i].files[j];
-      std::string a = db->GetAbsolutePath(f1);
-      std::string b = dbref->GetAbsolutePath(f2);
+      std::string a = GetAbsoluteFilePath(db, f1);
+      std::string b = GetAbsoluteFilePath(dbref, f2);
       bool r = syd::EqualFiles(a, b);
       if (!r) {
         LOG(FATAL) << "Error file " << a << " is different from the reference " << b;

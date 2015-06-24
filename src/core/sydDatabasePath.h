@@ -16,30 +16,33 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTABLEDICOMSERIE_H
-#define SYDTABLEDICOMSERIE_H
+#ifndef SYDDATABASEPATH_H
+#define SYDDATABASEPATH_H
 
 // syd
-#include "sydPrintTable.h"
-#include "sydTable.h"
-#include "sydDicomSerie-odb.hxx"
-#include "sydDatabasePath.h"
+#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// Specialization of Dump for DicomSeries (sort by acquisition_date)
-  template<>
-  void syd::Table<syd::DicomSerie>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids);
+  // template<class TableElement>
+  // std::string GetAbsoluteFolder(syd::Database * db, const TableElement & e);
 
-  /// Specialization of Dump for DicomSeries
-  template<>
-  void syd::Table<syd::DicomSerie>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::DicomSerie> & dicoms);
+  // template<class TableElement>
+  // std::string GetRelativeFolder(syd::Database * db, const TableElement & e);
 
-  template<>
-  std::string ComputeRelativeFolder<syd::DicomSerie>(const syd::Database * db, const syd::DicomSerie & serie);
+  template<class TableElement>
+  std::string GetAbsoluteFilePath(const syd::Database * db, const TableElement & e);
 
-} // namespace syd
+  template<class TableElement>
+  std::string GetRelativeFilePath(const syd::Database * db, const TableElement & e);
+
+  template<class TableElement>
+  std::string ComputeRelativeFolder(const syd::Database * db, const TableElement & e);
+
+#include "sydDatabasePath.txx"
+
+} // end namespace
 // --------------------------------------------------------------------
 
 #endif

@@ -18,19 +18,18 @@
 
 // syd
 #include "sydTableFile.h"
+#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
-std::string syd::GetRelativeFolder(const syd::Database *db, const syd::File & file)
+
+// template<>
+// std::string GetRelativeFolder<syd::File>(syd::Database * db, const syd::File & e)
+// {
+//   return file.path;
+// }
+
+template<>
+std::string syd::GetRelativeFilePath<syd::File>(const syd::Database * db, const syd::File & file)
 {
-  return file.path;
+  return file.path+PATH_SEPARATOR+file.filename;
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::string syd::GetAbsolutePath(const syd::Database *db, const syd::File & file)
-{
-  std::string path = syd::GetAbsoluteFolder(db, file);
-  return path+PATH_SEPARATOR+file.filename;
-}
-// --------------------------------------------------------------------

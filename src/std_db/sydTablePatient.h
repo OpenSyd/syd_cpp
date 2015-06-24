@@ -28,7 +28,7 @@
 namespace syd {
 
   /// Return  the folder for this patient (relative to the db)
-  std::string GetRelativeFolder(const syd::Database * db, const Patient & p);
+  //std::string GetRelativeFolder(const syd::Database * db, const Patient & p);
 
   /// Return the patient by name or study_id. Exception if not
   /// found. Require table with fields 'name' and 'study_id'. Required
@@ -39,6 +39,12 @@ namespace syd {
   /// Find all the patients matching arg (can contains several name/id separated by space)
   template<class Patient>
   void FindPatients(std::vector<Patient> & patients, syd::Database * db, const std::string & arg);
+
+  // template<>
+  // std::string GetRelativeFolder<syd::Patient>(const syd::Database * db, const syd::Patient & p);
+
+  template<>
+  std::string ComputeRelativeFolder(const syd::Database * db, const syd::Patient & patient);
 
   #include "sydTablePatient.txx"
 }

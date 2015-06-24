@@ -19,7 +19,7 @@
 
 // --------------------------------------------------------------------
 template<class TableElement>
-Table<TableElement> * syd::Database::GetTable()
+Table<TableElement> * syd::Database::GetTable() const
 {
   return (Table<TableElement>*)GetTable(TableElement::GetTableName());
 }
@@ -184,7 +184,7 @@ void syd::Database::AddTable()
 
 // --------------------------------------------------------------------
 template<class TableElement>
-void syd::Database::Query(const odb::query<TableElement> & q, std::vector<TableElement> & list)
+void syd::Database::Query(const odb::query<TableElement> & q, std::vector<TableElement> & list) const
 {
   GetTable<TableElement>()->Query(q,list);
 }
@@ -193,7 +193,7 @@ void syd::Database::Query(const odb::query<TableElement> & q, std::vector<TableE
 
 // --------------------------------------------------------------------
 template<class TableElement>
-void syd::Database::Query(const std::vector<IdType> & ids, std::vector<TableElement> & list)
+void syd::Database::Query(const std::vector<IdType> & ids, std::vector<TableElement> & list) const
 {
   GetTable<TableElement>()->Query(ids,list);
 }
@@ -202,7 +202,7 @@ void syd::Database::Query(const std::vector<IdType> & ids, std::vector<TableElem
 
 // --------------------------------------------------------------------
 template<class TableElement>
-void syd::Database::Query(std::vector<TableElement> & list)
+void syd::Database::Query(std::vector<TableElement> & list) const
 {
   GetTable<TableElement>()->Query(list);
 }
@@ -211,7 +211,7 @@ void syd::Database::Query(std::vector<TableElement> & list)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-TableElement syd::Database::QueryOne(const odb::query<TableElement> & q)
+TableElement syd::Database::QueryOne(const odb::query<TableElement> & q) const
 {
   return GetTable<TableElement>()->QueryOne(q);
 }
@@ -220,7 +220,7 @@ TableElement syd::Database::QueryOne(const odb::query<TableElement> & q)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-TableElement syd::Database::QueryOne(IdType id)
+TableElement syd::Database::QueryOne(IdType id) const
 {
   return GetTable<TableElement>()->QueryOne(id);
 }
@@ -229,7 +229,7 @@ TableElement syd::Database::QueryOne(IdType id)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-void syd::Database::QueryOne(TableElement & e, IdType id)
+void syd::Database::QueryOne(TableElement & e, IdType id) const
 {
   e = GetTable<TableElement>()->QueryOne(id);
 }
@@ -238,7 +238,7 @@ void syd::Database::QueryOne(TableElement & e, IdType id)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-unsigned int syd::Database::Count(const odb::query<TableElement> & q)
+unsigned int syd::Database::Count(const odb::query<TableElement> & q) const
 {
   return GetTable<TableElement>()->Count(q);
 }
@@ -247,7 +247,7 @@ unsigned int syd::Database::Count(const odb::query<TableElement> & q)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-bool syd::Database::IfExist(IdType id)
+bool syd::Database::IfExist(IdType id) const
 {
   return GetTable<TableElement>()->IfExist(id);
 }

@@ -25,6 +25,7 @@
 #include "sydTable.h"
 #include "sydDatabaseManager.h"
 #include "sydImageUtils.h"
+#include "sydDatabasePath.h"
 
 // syd tables
 #include "sydPatient-odb.hxx"
@@ -81,6 +82,7 @@ namespace syd {
 
 
     // -----------------------------------------------------------
+    /*
     /// Return the folder where the dicomserie are stored
     std::string GetAbsoluteFolder(const DicomSerie & serie);
 
@@ -101,6 +103,7 @@ namespace syd {
 
     /// Return the absolute folder of the image (path without filename)
     std::string GetAbsoluteFolder(const Image & image);
+    */
     // -----------------------------------------------------------
 
 

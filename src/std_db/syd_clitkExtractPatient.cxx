@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     // Create command line
     std::ostringstream cmd;
     cmd << "clitkExtractPatient "
-        << " -i " << db->GetAbsolutePath(image)
+        << " -i " << GetAbsoluteFilePath(db, image)
         << " -o " << mhd_filename
         << " " << args_info.options_arg;
     LOG(1) << "Executing: " << std::endl << cmd.str();

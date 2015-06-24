@@ -37,7 +37,7 @@ namespace syd {
     static std::string GetTableName() { return TableElement::GetTableName(); }
 
     /// Compute the number of elements in this table
-    virtual unsigned int GetNumberOfElements();
+    virtual unsigned int GetNumberOfElements() const;
 
     /// Add the record with the given id to the list of records to be deleted
     virtual void AddToDeleteList(syd::IdType id);
@@ -49,7 +49,7 @@ namespace syd {
     virtual void AddAllToDeleteList();
 
     /// Dump the content of all elements the table
-    virtual void Dump(std::ostream & os, const std::string & format);
+    virtual void Dump(std::ostream & os, const std::string & format); // FIXME const
 
     /// Dump the content of all given elements the table
     virtual void Dump(std::ostream & os, const std::string & format, const std::vector<syd::IdType> & ids);
@@ -61,25 +61,25 @@ namespace syd {
     virtual void Find(std::vector<syd::IdType> & ids, const std::vector<std::string> & pattern, const std::vector<std::string> & exclude);
 
     /// Perform a query on the database and return the found elements in the list
-    void Query(const odb::query<TableElement> & q, std::vector<TableElement> & list);
+    void Query(const odb::query<TableElement> & q, std::vector<TableElement> & list) const;
 
     /// Get the list of element from the list of ids
-    void Query(const std::vector<IdType> & ids, std::vector<TableElement> & list);
+    void Query(const std::vector<IdType> & ids, std::vector<TableElement> & list) const;
 
     /// Retrieve all elements of the table
-    void Query(std::vector<TableElement> & list);
+    void Query(std::vector<TableElement> & list) const;
 
     /// Get the unique element matching the query (fail if 0 or >1 elements)
-    TableElement QueryOne(const odb::query<TableElement> & q);
+    TableElement QueryOne(const odb::query<TableElement> & q) const;
 
     /// Get the unique element with the given id
-    TableElement QueryOne(IdType id);
+    TableElement QueryOne(IdType id) const;
 
     /// Count the number of elements matching the query
-    unsigned int Count(const odb::query<TableElement> & q);
+    unsigned int Count(const odb::query<TableElement> & q) const;
 
     /// Check if the given id exist
-    bool IfExist(IdType id);
+    bool IfExist(IdType id) const;
 
     /// Insert a new element in the database
     void Insert(TableElement & r);

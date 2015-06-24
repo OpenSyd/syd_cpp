@@ -48,6 +48,7 @@ void syd::StandardDatabase::CreateTables()
 
 
 // --------------------------------------------------------------------
+/*
 std::string syd::StandardDatabase::GetAbsoluteFolder(const DicomSerie & serie)
 {
   Patient patient = QueryOne<Patient>(serie.patient->id);
@@ -126,6 +127,7 @@ std::string syd::StandardDatabase::GetAbsoluteFolder(const Image & image)
   return GetPathFromFilename(f);
 }
 // --------------------------------------------------------------------
+*/
 
 
 // --------------------------------------------------------------------
@@ -171,10 +173,12 @@ syd::TableElementBase * syd::StandardDatabase::InsertFromArg(const std::string &
 
 // --------------------------------------------------------------------
 syd::Patient * syd::StandardDatabase::InsertPatient(std::vector<std::string> & arg)
+// FIXME to change in InsertNewPatient
 {
   syd::Patient * patient = dynamic_cast<syd::Patient*>(syd::Database::InsertFromArg(syd::Patient::GetTableName(), arg));
   // Create the folder
-  std::string f = GetAbsoluteFolder(*patient);
+  //  std::string f = GetAbsoluteFolder(this, *patient);
+  std::string f = patient->name; //syd::GetAbsoluteFolder(this, *patient);
   if (!syd::DirExists(f)) syd::CreateDirectory(f);
   return patient;
 }

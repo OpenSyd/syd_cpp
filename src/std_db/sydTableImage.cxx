@@ -28,7 +28,7 @@ void syd::Table<syd::Image>::Dump(std::ostream & os,
 {
   std::vector<syd::Image> images;
   Query(ids, images); // (no sort)
-    std::sort(begin(images), end(images),
+  std::sort(begin(images), end(images),
             [images](Image a, Image b) {
               if (a.dicoms.size() == 0) return true;
               if (b.dicoms.size() == 0) return false;
@@ -57,13 +57,13 @@ void syd::Table<syd::Image>::Dump(std::ostream & os,
   syd::StandardDatabase * db = dynamic_cast<syd::StandardDatabase*>(database_);
 
   if (format == "file") {
-    for(auto & s:images) os << db->GetAbsolutePath(s) << " ";
+    for(auto & s:images) os << GetAbsoluteFilePath(db, s) << " ";
     os << std::endl;
     return;
   }
 
   if (format == "file_n") {
-    for(auto & s:images) os << db->GetAbsolutePath(s) << std::endl;;
+    for(auto & s:images) os << GetAbsoluteFilePath(db, s) << std::endl;;
     return;
   }
 
@@ -91,3 +91,42 @@ void syd::Table<syd::Image>::Dump(std::ostream & os,
   table.Print(std::cout);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// std::string syd::GetAbsolutePath(const syd::Database *db, const syd::Image & image)
+// {
+//   if (image.files.size() == 0) {
+//     LOG(FATAL) << "No associated file with this image: " << image;
+//   }
+//   return syd::GetAbsolutePath(db, image.files[0]);
+// }
+// --------------------------------------------------------------------
+
+
+// template<>
+// std::string GetRelativeFolder<syd::Image>(syd::Database * db, const syd::Image & image)
+// {
+//   if (image.files.size() == 0) {
+//     LOG(FATAL) << "No associated file with this image: " << image;
+//   }
+//   //  return syd::GetRelativeFolder(db, *image.files[0]);
+//   return syd::GetRelativeFolder(db, *image.files[0]);
+// }
+
+template<>
+std::string syd::GetRelativeFilePath<syd::Image>(const syd::Database * db, const syd::Image & image)
+{
+  if (image.files.size() == 0) {
+    LOG(FATAL) << "No associated file with this image: " << image;
+  }
+  return syd::GetRelativeFilePath(db, *image.files[0]);
+}
+
+
+template<>
+std::string syd::ComputeRelativeFolder(const syd::Database * db, const syd::Image & image)
+{
+  std::string p = ComputeRelativeFolder(db, *image.patient);
+  return p;
+}

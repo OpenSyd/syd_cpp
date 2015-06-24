@@ -19,9 +19,23 @@
 #include "sydTablePatient.h"
 
 // --------------------------------------------------------------------
-std::string syd::GetRelativeFolder(const syd::Database * db, const syd::Patient & p)
-{
-  //  if (p.name == "not_set") // FIXME ?
-  return p.name;
-}
+// std::string syd::GetRelativeFolder(const syd::Database * db, const syd::Patient & p)
+// {
+//   //  if (p.name == "not_set") // FIXME ?
+//   return p.name;
+// }
 // --------------------------------------------------------------------
+
+
+
+// template<>
+// std::string GetRelativeFolder<syd::Patient>(const syd::Database * db, const syd::Patient & p)
+// {
+//   return p.name;
+// }
+
+template<>
+std::string syd::ComputeRelativeFolder(const syd::Database * db, const syd::Patient & patient)
+{
+  return patient.name;
+}

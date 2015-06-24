@@ -117,7 +117,7 @@ void syd::Table<TableElement>::Erase(TableElementBase * elem)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-unsigned int syd::Table<TableElement>::GetNumberOfElements()
+unsigned int syd::Table<TableElement>::GetNumberOfElements() const
 {
   std::vector<TableElement> list;
   Query(list);
@@ -130,7 +130,7 @@ unsigned int syd::Table<TableElement>::GetNumberOfElements()
 // Warning : do not clear the vector, append
 template<class TableElement>
 void syd::Table<TableElement>::Query(const odb::query<TableElement> & q,
-                                     std::vector<TableElement> & list)
+                                     std::vector<TableElement> & list) const
 {
   try {
     odb::transaction transaction (db_->begin());
@@ -157,7 +157,7 @@ void syd::Table<TableElement>::Query(const odb::query<TableElement> & q,
 // --------------------------------------------------------------------
 template<class TableElement>
 void syd::Table<TableElement>::Query(const std::vector<IdType> & ids,
-                                     std::vector<TableElement> & list)
+                                     std::vector<TableElement> & list) const
 {
   if (ids.size()==0) return;
   typedef odb::query<TableElement> query;
@@ -169,7 +169,7 @@ void syd::Table<TableElement>::Query(const std::vector<IdType> & ids,
 
 // --------------------------------------------------------------------
 template<class TableElement>
-void syd::Table<TableElement>::Query(std::vector<TableElement> & list)
+void syd::Table<TableElement>::Query(std::vector<TableElement> & list) const
 {
   odb::query<TableElement> q;
   return Query(q, list);
@@ -179,7 +179,7 @@ void syd::Table<TableElement>::Query(std::vector<TableElement> & list)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-TableElement syd::Table<TableElement>::QueryOne(const odb::query<TableElement> & q)
+TableElement syd::Table<TableElement>::QueryOne(const odb::query<TableElement> & q) const
 {
   std::vector<TableElement> elements;
   Query(q,elements);
@@ -201,7 +201,7 @@ TableElement syd::Table<TableElement>::QueryOne(const odb::query<TableElement> &
 
 // --------------------------------------------------------------------
 template<class TableElement>
-TableElement syd::Table<TableElement>::QueryOne(IdType id)
+TableElement syd::Table<TableElement>::QueryOne(IdType id) const
 {
   odb::query<TableElement> q = odb::query<TableElement>::id == id;
   return QueryOne(q);
@@ -211,7 +211,7 @@ TableElement syd::Table<TableElement>::QueryOne(IdType id)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-bool syd::Table<TableElement>::IfExist(IdType id)
+bool syd::Table<TableElement>::IfExist(IdType id) const
 {
   odb::query<TableElement> q = odb::query<TableElement>::id == id;
   return (Count(q) == 1); // Cannot be > 1
@@ -221,7 +221,7 @@ bool syd::Table<TableElement>::IfExist(IdType id)
 
 // --------------------------------------------------------------------
 template<class TableElement>
-unsigned int syd::Table<TableElement>::Count(const odb::query<TableElement> & q)
+unsigned int syd::Table<TableElement>::Count(const odb::query<TableElement> & q) const
 {
   int n=0;
   try {
