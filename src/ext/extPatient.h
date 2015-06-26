@@ -16,21 +16,41 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTABLETAG_H
-#define SYDTABLETAG_H
+#ifndef EXTPATIENT_H
+#define EXTPATIENT_H
 
 // syd
-#include "sydTag.h"
-#include "sydDatabase.h"
+#include "sydPatient.h"
 
 // --------------------------------------------------------------------
-namespace syd {
+namespace ext {
 
-  template<class Tag>
-  void FindTags(std::vector<Tag> & tags, syd::Database * db, const std::string & names);
+#pragma db model version(1, 1)
 
-#include "sydTableTag.txx"
+#pragma db object table("ext::Patient")
+  /// Store information about a patient (id, study_id, name etc).
+  class Patient: public syd::Patient {
+  public:
 
+    typedef std::shared_ptr<ext::Patient> pointer;
+
+    friend class odb::access;
+
+    virtual ~Patient() { DD("dest ext::Patient"); }
+
+    static pointer New() { return pointer(new ext::Patient); }
+
+    //
+    std::string birth_date;
+
+    // ------------------------------------------------------------------------
+    //    Patient();
+
+    virtual std::string ToString() const;
+  protected:
+    Patient():syd::Patient() { DD("const extPatient"); birth_date = "2015"; }
+
+  }; // end of class
 }
 // --------------------------------------------------------------------
 

@@ -16,21 +16,20 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include "sydTablePatient.h"
+// ext
+#include "extPatient.h"
 
-// --------------------------------------------------------------------
-template<>
-std::string syd::ComputeRelativeFolder(const syd::Database * db, const syd::Patient & patient)
+// --------------------------------------------------
+std::string ext::Patient::ToString() const
 {
-  return patient.name;
+  //  DD("syd::Patient::ToString");
+  std::stringstream ss ;
+  ss << id << " "
+     << study_id << " "
+     << name << " "
+     << weight_in_kg << " "
+     << dicom_patientid << " "
+     << birth_date;
+  return ss.str();
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<>
-void syd::Table<syd::Patient>::Set(syd::Patient & p, const std::vector<std::string> & arg)
-{
-  DD("real set for patient");
-}
-// --------------------------------------------------------------------
+// --------------------------------------------------

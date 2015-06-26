@@ -21,13 +21,13 @@
 
 // syd
 #include "sydDicomFile.h"
-#include "sydDatabasePath.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
+  /// Specialization for DicomFile: return the path of the linked file
   template<>
-  std::string GetRelativeFilePath(const syd::Database * db, const syd::DicomFile & e);
+  std::string GetRelativePath(const syd::Database * db, const syd::DicomFile & e);
 
 }
 // --------------------------------------------------------------------

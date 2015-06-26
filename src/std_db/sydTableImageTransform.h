@@ -26,11 +26,15 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  //  std::string GetRelativeFolder(const syd::Database * db, const syd::ImageTransform & t);
-
+  /// Specialization for ImageTransform: data are in folder named 'transform'
   template<>
   std::string ComputeRelativeFolder(const syd::Database * db, const syd::ImageTransform & e);
 
+  /// Specialization for ImageTransform: return the path of the linked file
+  template<>
+  std::string GetRelativePath<syd::ImageTransform>(const syd::Database * db, const syd::ImageTransform & e);
+
+  /// Create a new ImageTransform
   template<class ImageTransform>
   void InsertNewImageTransform(ImageTransform & t, syd::Database * db,
                                syd::Image & fixed_image, syd::Image & moving_image, std::string & config_filename);

@@ -46,8 +46,8 @@ void InsertNewImageTransform(ImageTransform & transfo,
   // Copy the file to the right folder
   DD("copy");
   DD(config_filename);
-  DD(GetAbsoluteFilePath(db, file));
-  syd::CopyFile(config_filename, GetAbsoluteFilePath(db, file));
+  DD(GetAbsolutePath(db, file));
+  syd::CopyFile(config_filename, GetAbsolutePath(db, file));
 
   // Insert
   db->Insert(transfo);

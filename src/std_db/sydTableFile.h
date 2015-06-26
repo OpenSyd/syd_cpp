@@ -27,21 +27,13 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// Return the folder for this file (relative to the db)
-  // std::string GetRelativeFolder(const syd::Database *db, const syd::File & file);
-
-  // /// Return the full path folder for this file in the db //FIXME Change to GetAbsoluteFilePath
-  // std::string GetAbsolutePath(const syd::Database *db, const syd::File & file);
-
+  /// Creation of a new File element
   template<class File>
   void InsertNewFile(File & file, syd::Database * db, const std::string filename, const std::string & relative_folder);
 
-
-  // template<>
-  // std::string GetRelativeFolder<syd::File>(syd::Database * db, const syd::File & e);
-
+  /// Specialization for File: return the path of the linked file
   template<>
-  std::string GetRelativeFilePath(const syd::Database * db, const syd::File & e);
+  std::string GetRelativePath(const syd::Database * db, const syd::File & e);
 
 #include "sydTableFile.txx"
 }

@@ -20,7 +20,7 @@
 #define SYDRADIONUCLIDE_H
 
 // syd
-#include "sydPatient.h"
+#include "sydTableElementBase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -44,8 +44,8 @@ namespace syd {
     Radionuclide();
 
     virtual std::string ToString() const;
-    virtual void Set(std::vector<std::string> & arg);
-    void Set(const std::string & vname, double hl);
+    // virtual void Set(std::vector<std::string> & arg);
+    // void Set(const std::string & vname, double hl);
 
     bool operator==(const Radionuclide & p);
     bool operator!=(const Radionuclide & p) { return !(*this == p); }

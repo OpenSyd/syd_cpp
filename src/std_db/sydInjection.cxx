@@ -33,7 +33,7 @@ syd::Injection::Injection():syd::TableElementBase()
 
 
 // --------------------------------------------------------------------
-void syd::Injection::Set(Patient & p,
+/*void syd::Injection::Set(Patient & p,
                          Radionuclide & pr,
                          const std::string & pdate,
                          double activity)
@@ -46,6 +46,7 @@ void syd::Injection::Set(Patient & p,
   date = date;
   activity_in_MBq = activity;
 }
+*/
 // --------------------------------------------------------------------
 
 
@@ -84,6 +85,8 @@ bool syd::Injection::operator==(const Injection & p)
 // --------------------------------------------------
 void syd::Injection::OnDelete(syd::Database * db)
 {
+  DD(" injection OnDelete");
+  /*
   std::vector<syd::DicomSerie> dicomseries;
   db->Query<syd::DicomSerie>(odb::query<syd::DicomSerie>::injection == id, dicomseries);
   for(auto i:dicomseries) db->AddToDeleteList(i);
@@ -91,5 +94,6 @@ void syd::Injection::OnDelete(syd::Database * db)
   std::vector<syd::Timepoint> tp;
   db->Query<syd::Timepoint>(odb::query<syd::Timepoint>::injection == id, tp);
   for(auto i:tp) db->AddToDeleteList(i);
+  */
 }
 // --------------------------------------------------

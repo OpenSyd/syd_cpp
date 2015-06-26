@@ -21,7 +21,6 @@
 
 // syd
 #include "sydRoiMaskImage.h"
-#include "sydDatabasePath.h"
 
 // --------------------------------------------------------------------
 namespace syd {

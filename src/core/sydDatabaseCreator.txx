@@ -36,7 +36,11 @@ Database* syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
 {
   // Check folder
   if (folder.find(PATH_SEPARATOR) != std::string::npos) {
-    LOG(FATAL) << "Error the folder must be a simple folder name, without path or subfolder.";
+    LOG(FATAL) << "The folder must be a simple folder name, without path or subfolder.";
+  }
+
+  if (syd::FileExists(filename)) {
+    LOG(FATAL) << "Cannot create the database, the file '" << filename << "' already exists.";
   }
 
   // Create folder
@@ -54,6 +58,9 @@ Database* syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
     odb::transaction t (db.begin ());
     odb::schema_catalog::create_schema(db, "sydCommonSchema"); // common schema
     // Specific list of schemas
+    for(auto s:schemas) {
+      DD(s);
+    }
     for(auto s:schemas) odb::schema_catalog::create_schema(db, s);
     t.commit ();
   }

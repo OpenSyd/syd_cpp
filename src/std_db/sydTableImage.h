@@ -23,7 +23,6 @@
 #include "sydPrintTable.h"
 #include "sydTable.h"
 #include "sydImage-odb.hxx"
-#include "sydDatabasePath.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -36,20 +35,17 @@ namespace syd {
   template<>
   void syd::Table<syd::Image>::Dump(std::ostream & os, const std::string & format, const std::vector<syd::Image> & images);
 
-  template<class Image>
-  void FindImages(std::vector<Image> & images, syd::Database * db, syd::Patient & patient, std::vector<syd::Tag> & tags);
-
-  //  std::string GetAbsolutePath(const syd::Database *db, const syd::Image & image);
-
-  // template<>
-  // std::string GetRelativeFolder<syd::Image>(syd::Database * db, const syd::Image & e);
-
+  /// Specialization for Image: return the path of the linked file
   template<>
-  std::string GetRelativeFilePath<syd::Image>(const syd::Database * db, const syd::Image & e);
+  std::string GetRelativePath(const syd::Database * db, const syd::Image & e);
 
-
+  /// Specialization for Image: image are in folder named by patient name
   template<>
   std::string ComputeRelativeFolder(const syd::Database * db, const syd::Image & e);
+
+  /// Find images according to grep into description. Templated to allow use with class inherited from Image
+  template<class Image>
+  void FindImages(std::vector<Image> & images, syd::Database * db, syd::Patient & patient, std::vector<syd::Tag> & tags);
 
 #include "sydTableImage.txx"
 

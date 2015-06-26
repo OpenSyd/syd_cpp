@@ -17,6 +17,43 @@
   ===========================================================================**/
 
 
+
+// --------------------------------------------------------------------
+template<class Record>
+void syd::Database::New(std::shared_ptr<Record> & record) const
+{
+  DD("Database::New");
+  // std::shared_ptr<Record> r(new Record);
+  // record = r;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class Record>
+void syd::Database::Insert(std::shared_ptr<Record> record)
+{
+  DD("Database Insert");
+  DD(record);
+  try {
+    odb::transaction t (db_->begin());
+    db_->persist(*record);
+    //    db_->update(r);
+    t.commit();
+  }
+  catch (const odb::exception& e) {
+    LOG(FATAL) << "Cannot insert the element: <"
+               << record << "> in the table '" << "FIXME"
+               << "'. The error is: "  << e.what()
+               << std::endl << "And last sql query is: "
+               << std::endl << GetLastSQLQuery();
+  }
+  DD("Insert is done");
+}
+// --------------------------------------------------------------------
+
+
+/*
 // --------------------------------------------------------------------
 template<class TableElement>
 Table<TableElement> * syd::Database::GetTable() const
@@ -24,131 +61,11 @@ Table<TableElement> * syd::Database::GetTable() const
   return (Table<TableElement>*)GetTable(TableElement::GetTableName());
 }
 // --------------------------------------------------------------------
+*/
 
 
 // --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::Delete(IdType id)
-{
-  TableElement e = QueryOne(odb::query<TableElement>::id == id);
-  AddToDeleteList(e);
-  DeleteCurrentList();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::Delete(TableElement & e)
-{
-  AddToDeleteList(e);
-  DeleteCurrentList();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-int syd::Database::Delete(std::vector<TableElement> & ve)
-{
-  for(auto e:ve) AddToDeleteList(e);
-  DeleteCurrentList();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-int syd::Database::Delete(std::vector<IdType> & ids)
-{
-  std::vector<TableElement> ve;
-  odb::query<TableElement> q = odb::query<TableElement>::id == ids[0];
-  for(auto i:ids) q = q or odb::query<TableElement>::id == i;
-  Query(q, ve);
-  DeleteCurrentList();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::AddToDeleteList(TableElement & elem)
-{
-  // Create a pointer to the element
-  TableElementBase * e = new TableElement(elem);
-  auto p = std::make_pair(TableElement::GetTableName(), e);
-  std::string key = TableElement::GetTableName()+ToString(elem.id);
-
-  auto result = list_of_elements_to_delete_.find(key);
-  if (result == list_of_elements_to_delete_.end()) { // not found
-    list_of_elements_to_delete_[key] = p;
-    OnDelete(TableElement::GetTableName(), e);
-  }
-
-  /*
-  // Very slow & bad loop. To be improve (map)
-  bool found = false;
-  auto iter = list_of_elements_to_delete_.begin();
-  while (!found and iter != list_of_elements_to_delete_.end()) {
-    if (iter->first == TableElement::GetTableName()) {
-      TableElement * a = dynamic_cast<TableElement*>(iter->second);
-      TableElement * b = dynamic_cast<TableElement*>(e);
-      if (a->id == b->id) found = true;
-    }
-    ++iter;
-  }
-
-  // Only raise OnDelete is not already in the list
-  if (!found) {
-    list_of_elements_to_delete_.push_back(p);
-    OnDelete(TableElement::GetTableName(), e);
-  }
-  */
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::AddToDeleteList(std::vector<TableElement> & elems)
-{
-  // Create a pointer to the element
-  /*TableElementBase * e = new TableElement(elem);
-  auto p = std::make_pair(TableElement::GetTableName(), e);
-  std::string key = TableElement::GetTableName()+ToString(elem.id);
-
-  auto result = list_of_elements_to_delete_.find(key);
-  if (result == list_of_elements_to_delete_.end()) { // not found
-    list_of_elements_to_delete_[key] = p;
-    OnDelete(TableElement::GetTableName(), e);
-  }
-  */
-
-  /*
-  // Very slow & bad loop. To be improve (map)
-  bool found = false;
-  auto iter = list_of_elements_to_delete_.begin();
-  while (!found and iter != list_of_elements_to_delete_.end()) {
-    if (iter->first == TableElement::GetTableName()) {
-      TableElement * a = dynamic_cast<TableElement*>(iter->second);
-      TableElement * b = dynamic_cast<TableElement*>(e);
-      if (a->id == b->id) found = true;
-    }
-    ++iter;
-  }
-
-  // Only raise OnDelete is not already in the list
-  if (!found) {
-    list_of_elements_to_delete_.push_back(p);
-    OnDelete(TableElement::GetTableName(), e);
-  }
-  */
-}
-// --------------------------------------------------------------------
-
-
-
-// --------------------------------------------------------------------
+/*
 template<class TableElement>
 void syd::Database::AddTable()
 {
@@ -176,226 +93,42 @@ void syd::Database::AddTable()
     LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
                << "' already exist.";
   }
-  map[tablename] = new Table<TableElement>(this, db_);
-  map_lowercase[str] = map[tablename];
+
+
+  auto * t = new Table<TableElement>;
+  t->SetSQLDatabase(db_);
+  t->SetDatabase(this);
+  t->Initialization();
+  map[tablename] = t;//new Table<TableElement>(this, db_);
+  map_lowercase[str] = t;//map[tablename];
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::Query(const odb::query<TableElement> & q, std::vector<TableElement> & list) const
-{
-  GetTable<TableElement>()->Query(q,list);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::Query(const std::vector<IdType> & ids, std::vector<TableElement> & list) const
-{
-  GetTable<TableElement>()->Query(ids,list);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::Query(std::vector<TableElement> & list) const
-{
-  GetTable<TableElement>()->Query(list);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-TableElement syd::Database::QueryOne(const odb::query<TableElement> & q) const
-{
-  return GetTable<TableElement>()->QueryOne(q);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-TableElement syd::Database::QueryOne(IdType id) const
-{
-  return GetTable<TableElement>()->QueryOne(id);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::QueryOne(TableElement & e, IdType id) const
-{
-  e = GetTable<TableElement>()->QueryOne(id);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-unsigned int syd::Database::Count(const odb::query<TableElement> & q) const
-{
-  return GetTable<TableElement>()->Count(q);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-bool syd::Database::IfExist(IdType id) const
-{
-  return GetTable<TableElement>()->IfExist(id);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::Insert(TableElement & r)
-{
-  GetTable<TableElement>()->Insert(r);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::Insert(std::vector<TableElement*> & r)
-{
-  GetTable<TableElement>()->Insert(r);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::Update(TableElement & r)
-{
-  GetTable<TableElement>()->Update(r);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::Update(std::vector<TableElement*> & r)
-{
-  GetTable<TableElement>()->Update(r);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableElement>
-void syd::Database::Update(std::vector<TableElement> & r)
-{
-  GetTable<TableElement>()->Update(r);
-}
-// --------------------------------------------------------------------
-
-/*
-// --------------------------------------------------------------------
-template<class TableType>
-void syd::Database::Erase(T & r)
-{
-  odb::transaction t (db_->begin());
-  db_->erase<T>(r);
-  t.commit();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableType>
-void syd::Database::Erase(std::vector<T> & r)
-{
-  odb::transaction t (db_->begin());
-  for(auto i: r) db_->erase<T>(*i);
-  t.commit();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableType>
-T syd::Database::GetById(IdType id)
-{
-  odb::transaction transaction (db_->begin());
-  typedef odb::query<TableType> query;
-  typedef odb::result<T> result;
-  result r (db_->query<TableType>(odb::query<TableType>::id == id));
-  if (r.begin() != r.end()) {
-    T s;
-    r.begin().load(s);
-    transaction.commit();
-    return s;
-  }
-  transaction.commit();
-  LOG(FATAL) << "Error element with id = " << id << " does not exist in "
-             << get_name() << " (" << GetType() << ")";
-  T s;
-  return s; // fake return
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableType>
-bool syd::Database::GetIfExist(odb::query<TableType> q, T & t)
-{
-  odb::transaction transaction (db_->begin());
-  typedef odb::query<TableType> query;
-  typedef odb::result<T> result;
-  result r (db_->query<TableType>(q));
-  bool b = false;
-  if (r.begin() != r.end()) {
-    b = true;
-    r.begin().load(t); // load the first element
-  }
-  transaction.commit();
-  return b;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class TableType>
-bool syd::Database::GetOrInsert(odb::query<TableType> q, T & t)
-{
-  bool b = GetIfExist<T>(q, t);
-  if (!b) { //Create
-    Insert(t);
-    return true;
-  }
-  return false;
-}
-// --------------------------------------------------------------------
 */
+// --------------------------------------------------------------------
 
 
-//--------------------------------------------------------------------
-template<class TableElement>
-bool syd::Database::TableIsEqual(syd::Database * db)
+// --------------------------------------------------------------------
+/*template<class Table>
+void syd::Database::AddTableTT()
 {
-  std::vector<TableElement> elements1;
-  std::vector<TableElement> elements2;
-  Query(elements1);
-  db->Query(elements2);
-
-  if (elements1.size() != elements2.size()) {
-    return false;
+  // No exception handling here, fatal error if fail.
+  if (db_ == NULL) {
+    LOG(FATAL) << "Could not AddTable, open a db before";
   }
-
-  for(auto i=0; i<elements1.size(); i++) {
-    if (elements1[i] != elements2[i]) {
-      return false;
-    }
+  std::string tablename = Table::GetTableName();
+  DD(tablename);
+  std::string str = tablename;
+  std::transform(str.begin(), str.end(),str.begin(), ::tolower);
+  auto it = map_lowercase.find(str);
+  if (it != map_lowercase.end()) {
+    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
+               << "' already exist.";
   }
-  return true;
+  Table * t = new Table;
+  t->SetSQLDatabase(db_);
+  t->SetDatabase(this);
+  t->Initialization();
+  map[tablename] = t;
+  map_lowercase[str] = t;
 }
-//--------------------------------------------------------------------
+*/
+// --------------------------------------------------------------------

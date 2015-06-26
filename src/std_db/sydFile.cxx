@@ -19,13 +19,11 @@
 // syd
 #include "sydFile.h"
 #include "sydStandardDatabase.h"
-#include "sydTable.h"
-#include "sydImage.h"
-#include "sydImage-odb.hxx"
-#include "sydDicomFile.h"
-#include "sydDicomFile-odb.hxx"
-
-#include "sydTableFile.h"
+// #include "sydTable.h"
+// #include "sydImage.h"
+// #include "sydImage-odb.hxx"
+// #include "sydDicomFile.h"
+// #include "sydDicomFile-odb.hxx"
 
 // --------------------------------------------------
 syd::File::File():TableElementBase()
@@ -67,10 +65,12 @@ bool syd::File::operator==(const File & p)
 // --------------------------------------------------
 void syd::File::OnDelete(syd::Database * d)
 {
+  DD("File OnDelete");
+  /*
   syd::StandardDatabase * db = dynamic_cast<syd::StandardDatabase*>(d);
 
   // When a File is deleted, we also delete the file on disk
-  std::string f = syd::GetAbsoluteFilePath(d, *this);//db->GetAbsolutePath(*this);
+  std::string f = db->GetAbsolutePath(*this);
   db->AddFileToDelete(f);// list_of_files_to_delete.push_back(f);
 
   // We also look for images to be deleted. Manual search because dont know how to do
@@ -83,7 +83,7 @@ void syd::File::OnDelete(syd::Database * d)
     }
   }
   for(auto i:images) db->AddToDeleteList(i);
-
+  */
 
   // We also look for DicomFiles to be deleted.
   /* if (look_for_dicomfile_on_delete_flag) {

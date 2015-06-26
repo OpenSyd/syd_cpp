@@ -60,7 +60,7 @@ void syd::Table<syd::DicomSerie>::Dump(std::ostream & os,
       std::vector<syd::DicomFile> files;
       db->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == s.id, files);
       //      os << db->GetAbsolutePath(*files[0].file);
-      os << syd::GetAbsoluteFilePath(db, files[0]);
+      os << syd::GetAbsolutePath(db, files[0]);
       if (format == "file") os << " ";
       else os << std::endl;
     }

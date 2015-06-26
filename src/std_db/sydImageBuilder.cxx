@@ -49,7 +49,7 @@ syd::Image syd::ImageBuilder::InsertImage(const syd::DicomSerie & dicomserie)
   }
   std::vector<std::string> dicom_filenames;
   for(auto f:dicom_files) {
-    dicom_filenames.push_back(GetAbsoluteFilePath(db_, f));
+    dicom_filenames.push_back(db_->GetAbsolutePath(f));
   }
   LOG(4) << "Found " << dicom_files.size();
 
@@ -59,8 +59,8 @@ syd::Image syd::ImageBuilder::InsertImage(const syd::DicomSerie & dicomserie)
   UpdateDicom(image, dicomserie);
   LOG(4) << "Update image files";
   //  UpdateFile(image, GetDefaultImageRelativePath(image), GetDefaultImageFilename(image));
-  UpdateFile(image, ComputeRelativeFolder(db_, image), GetDefaultImageFilename(image));
-  std::string f = GetAbsoluteFilePath(db_, image);
+  UpdateFile(image, db_->ComputeRelativeFolder(image), GetDefaultImageFilename(image));
+  std::string f = db_->GetAbsolutePath(image);
 
   // Convert dicom, write to disk
   // std::string md5;
@@ -129,7 +129,7 @@ syd::Image syd::ImageBuilder::InsertStitchedImage(const syd::DicomSerie & a,
   UpdateDicom(image, a);
   UpdateDicom(image, b);
   //  UpdateFile(image, GetDefaultImageRelativePath(image), GetDefaultImageFilename(image));
-  UpdateFile(image, ComputeRelativeFolder(db_, image), GetDefaultImageFilename(image));
+  UpdateFile(image, db_->ComputeRelativeFolder(image), GetDefaultImageFilename(image));
 
   // Auto tag
   syd::Tag tag_stitch = db_->FindOrInsertTag("stitch", "Image computed by stitching 2 images");
@@ -148,7 +148,7 @@ syd::Image syd::ImageBuilder::InsertStitchedImage(const syd::DicomSerie & a,
   UpdateImageInfo<PixelType>(image, output, true); // true = update md5
 
   // Write image
-  syd::WriteImage<ImageType>(output, GetAbsoluteFilePath(db_, image));
+  syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));
 
   // Insert into the db
   db_->Update(image);
@@ -160,7 +160,7 @@ syd::Image syd::ImageBuilder::InsertStitchedImage(const syd::DicomSerie & a,
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilder::InsertImagesFromTimepoint(syd::Timepoint & timepoint)
+/*void syd::ImageBuilder::InsertImagesFromTimepoint(syd::Timepoint & timepoint)
 {
 
   DD("InsertImagesFromTimepoint TODO");
@@ -176,6 +176,7 @@ void syd::ImageBuilder::InsertImagesFromTimepoint(syd::Timepoint & timepoint)
   // db_->Update(timepoint);
   // //  LOG(1) << "Timpoint (" << timepoint << ") updated with " << timepoint.dicoms.size() << " images."; // FIXME not here
 }
+*/
 // --------------------------------------------------------------------
 
 /* from file ?
@@ -310,11 +311,11 @@ syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImage(const syd::DicomSerie & 
 
     // Need to set the image of the mask and insert it before GetDefaultRoiMaskImageRelativePath (need image patient)
     //    UpdateFile(*image, GetDefaultRoiMaskImageRelativePath(mask), GetDefaultRoiMaskImageFilename(mask));
-    UpdateFile(*image, ComputeRelativeFolder(db_, mask), GetDefaultRoiMaskImageFilename(mask));
+    UpdateFile(*image, db_->ComputeRelativeFolder(mask), GetDefaultRoiMaskImageFilename(mask));
 
     // Create image folder if needed
-    std::string relative_folder = ComputeRelativeFolder(db_, *image);
-    std::string absolute_folder = db_->GetAbsolutePath(relative_folder);
+    std::string relative_folder = db_->ComputeRelativeFolder(*image);
+    std::string absolute_folder = db_->ConvertToAbsolutePath(relative_folder);
     if (!syd::DirExists(absolute_folder)) syd::CreateDirectory(absolute_folder);
 
     // Read image
@@ -327,7 +328,7 @@ syd::RoiMaskImage syd::ImageBuilder::InsertRoiMaskImage(const syd::DicomSerie & 
     UpdateImageInfo<PixelType>(*image, itk_image, true); // true = update md5
 
     // Write image
-    syd::WriteImage<ImageType>(itk_image, GetAbsoluteFilePath(db_, *image));
+    syd::WriteImage<ImageType>(itk_image, db_->GetAbsolutePath(*image));
 
   }
   catch(std::exception & e) {

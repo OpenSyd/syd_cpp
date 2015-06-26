@@ -1,51 +1,80 @@
 
+
+## Needed to find sydRecord-odb.hxx
+include_directories(${SYD_BINARY_DIR}/src/core)
+
+
 #----------------------------------------------------------
 # Standard database : StandardDatabase
 set(SCHEMA_NAME StandardDatabase)
 wrap_odb(sydStandardDatabase sydPatient.h)
-wrap_odb(sydStandardDatabase sydRadionuclide.h)
-wrap_odb(sydStandardDatabase sydFile.h)
-wrap_odb(sydStandardDatabase sydInjection.h)
-wrap_odb(sydStandardDatabase sydDicomSerie.h)
-wrap_odb(sydStandardDatabase sydDicomFile.h)
-wrap_odb(sydStandardDatabase sydTimepoint.h)
-wrap_odb(sydStandardDatabase sydTag.h)
-wrap_odb(sydStandardDatabase sydImage.h)
-wrap_odb(sydStandardDatabase sydRoiType.h)
-wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
-wrap_odb(sydStandardDatabase sydImageTransform.h)
+# wrap_odb(sydStandardDatabase sydRadionuclide.h)
+# wrap_odb(sydStandardDatabase sydFile.h)
+# wrap_odb(sydStandardDatabase sydInjection.h)
+# wrap_odb(sydStandardDatabase sydDicomSerie.h)
+# wrap_odb(sydStandardDatabase sydDicomFile.h)
+# #wrap_odb(sydStandardDatabase sydTimepoint.h)
+# wrap_odb(sydStandardDatabase sydTag.h)
+# wrap_odb(sydStandardDatabase sydImage.h)
+# wrap_odb(sydStandardDatabase sydRoiType.h)
+# wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
+# wrap_odb(sydStandardDatabase sydImageTransform.h)
 
 add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
   sydStandardDatabasePlugin.cxx
   sydPatient-odb.cxx sydPatient.cxx
-  sydRadionuclide-odb.cxx sydRadionuclide.cxx
-  sydFile-odb.cxx sydFile.cxx
-  sydTag-odb.cxx sydTag.cxx
-  sydInjection-odb.cxx sydInjection.cxx
-  sydDicomSerie-odb.cxx sydDicomSerie.cxx
-  sydDicomFile-odb.cxx sydDicomFile.cxx
-  sydTimepoint-odb.cxx sydTimepoint.cxx
-  sydImage-odb.cxx sydImage.cxx
-  sydImageTransform-odb.cxx sydImageTransform.cxx
-  sydRoiType-odb.cxx sydRoiType.cxx
-  sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx
-  sydDicomSerieBuilder.cxx
-  sydTimepointBuilder.cxx
-  sydImageBuilder.cxx
+#   sydRadionuclide-odb.cxx sydRadionuclide.cxx
+#   sydFile-odb.cxx sydFile.cxx
+#   sydTag-odb.cxx sydTag.cxx
+#   sydInjection-odb.cxx sydInjection.cxx
+#   sydDicomSerie-odb.cxx sydDicomSerie.cxx
+#   sydDicomFile-odb.cxx sydDicomFile.cxx
+# #  sydTimepoint-odb.cxx sydTimepoint.cxx
+#   sydImage-odb.cxx sydImage.cxx
+#   sydImageTransform-odb.cxx sydImageTransform.cxx
+#   sydRoiType-odb.cxx sydRoiType.cxx
+#   sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx
+#   sydDicomSerieBuilder.cxx
+# #  sydTimepointBuilder.cxx
+#   sydImageBuilder.cxx
 
-  sydTablePatient.cxx
-  sydTableTag.h
-  sydTableRoiType.h
-  sydTableFile.cxx
-  sydTableDicomFile.cxx
-  sydTableDicomSerie.cxx
-  sydTableImage.cxx
-  sydTableRoiMaskImage.cxx
-  sydTableImageTransform.cxx
+  # sydTablePatient.cxx
+  # sydTableTag.h
+  # sydTableRoiType.h
+  # sydTableFile.cxx
+  # sydTableDicomFile.cxx
+  # sydTableDicomSerie.cxx
+  # sydTableImage.cxx
+  # sydTableRoiMaskImage.cxx
+  # sydTableImageTransform.cxx
   )
 ## to declare dependencies
 target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})
+
+
+# ## test extend db
+# set(SCHEMA_NAME ExtendedDatabase)
+# wrap_odb(extExtendedDatabase extPatient.h)
+
+# add_library(extExtendedDatabase SHARED
+#   extExtendedDatabase.cxx
+#   extExtendedDatabasePlugin.cxx
+#   sydPatient-odb.cxx sydPatient.cxx
+#   extPatient-odb.cxx extPatient.cxx
+#   )
+
+# # Not really a tool, for debug only
+# wrap_ggo(sydTest sydTest.ggo)
+# add_executable(sydTest sydTest.cxx sydTest_ggo.c)
+# target_link_libraries(sydTest extExtendedDatabase sydStandardDatabase)
+
+
+
+
+
+
+
 
 # Create DicomSeries
 wrap_ggo(sydInsertDicom sydInsertDicom.ggo)
@@ -77,11 +106,6 @@ wrap_ggo(sydInsertRoiMaskImage sydInsertRoiMaskImage.ggo)
 add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx sydInsertRoiMaskImage_ggo.c)
 target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 
-# Not really a tool, for debug only
-wrap_ggo(sydTest sydTest.ggo)
-add_executable(sydTest sydTest.cxx sydTest_ggo.c)
-target_link_libraries(sydTest sydStandardDatabase)
-
 # Create Timepoints
 # wrap_ggo(sydInsertTimepoint sydInsertTimepoint.ggo)
 # add_executable(sydInsertTimepoint sydInsertTimepoint.cxx sydInsertTimepoint_ggo.c)
@@ -107,3 +131,15 @@ target_link_libraries(syd_clitkExtractPatient sydStandardDatabase)
 wrap_ggo(syd_elastix syd_elastix.ggo)
 add_executable(syd_elastix syd_elastix.cxx syd_elastix_ggo.c)
 target_link_libraries(syd_elastix sydStandardDatabase)
+
+
+
+#----------------------------------------------------------
+
+# set(SCHEMA_NAME TestDatabase)
+# wrap_odb(sydTestDatabase sydTestPatient.h)
+
+# add_library(sydTestDatabase SHARED
+#   sydTestDatabase.cxx
+#   sydStandardDatabasePlugin.cxx
+#   sydPatient-odb.cxx sydPatient.cxx

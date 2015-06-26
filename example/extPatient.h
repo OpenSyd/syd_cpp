@@ -33,6 +33,8 @@ namespace ext {
   class Patient: public syd::Patient {
   public:
 
+    virtual ~Patient() { DD("dest Patient"); }
+
     /// Additional column 'birth_date'
     std::string birth_date;
 

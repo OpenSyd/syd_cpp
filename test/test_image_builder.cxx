@@ -33,14 +33,17 @@ int main(int argc, char* argv[])
 
   // Make a copy if the initial db
   std::string init_dbname = "data/test.db";
-  std::string dbname = "data/test-work.db";
-  std::string ref_dbname = "data/test-ref-im.db";
-  std::string ref_folder = "test-ref-im-data";
-  syd::CopyFile(init_dbname, dbname);
+  std::string work_dbname = "data/test-work.db";
+  std::string work_folder = "test-work-data";
+  std::string ref_dbname = "data/test-image-builder-ref.db";
+  std::string ref_folder = "test-image-builder-ref-data";
 
-  // Load the database (with dicom)
-  LOG(1) << "Loading database";
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+  LOG(1) << "Creating database " << work_dbname;
+  syd::StandardDatabase * db_init = m->Read<syd::StandardDatabase>(init_dbname);
+  // Make a copy
+  db_init->CopyDatabaseTo(work_dbname, work_folder);
+  // Open the copy
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(work_dbname);
 
   // Create image
   syd::ImageBuilder b(db);
@@ -52,7 +55,7 @@ int main(int argc, char* argv[])
   // Create roimaskimage
   syd::RoiType roitype;
   syd::FindRoiType(roitype, db, "body");
-  syd::RoiMaskImage mask = b.InsertRoiMaskImage(dicom, roitype, GetAbsoluteFilePath(db, image));
+  syd::RoiMaskImage mask = b.InsertRoiMaskImage(dicom, roitype, GetAbsolutePath(db, image));
 
 
   // test 2: create image for timepoint (+link tp with images)
@@ -79,8 +82,8 @@ int main(int argc, char* argv[])
     for(auto j=0; j<images[i].files.size(); j++) {
       syd::File f1 = *images[i].files[j];
       syd::File f2 = *images[i].files[j];
-      std::string a = GetAbsoluteFilePath(db, f1);
-      std::string b = GetAbsoluteFilePath(dbref, f2);
+      std::string a = GetAbsolutePath(db, f1);
+      std::string b = GetAbsolutePath(dbref, f2);
       bool r = syd::EqualFiles(a, b);
       if (!r) {
         LOG(FATAL) << "Error file " << a << " is different from the reference " << b;

@@ -21,9 +21,9 @@
 
 // syd
 #include "sydStandardDatabase.h"
-#include "sydTableImage.h"
-#include "sydTableFile.h"
-#include "sydTableRoiMaskImage.h"
+//#include "sydTableImage.h"
+//#include "sydTableFile.h"
+//#include "sydTableRoiMaskImage.h"
 
 // itk
 #include <itkImageBase.h>
@@ -109,7 +109,7 @@ namespace syd {
     /// TODO. Create & Insert new images for all dicom in this
     /// timepoint. Warning to not check if some images are already
     /// associated with this timepoint.
-    void InsertImagesFromTimepoint(syd::Timepoint & timepoint);
+    //    void InsertImagesFromTimepoint(syd::Timepoint & timepoint);
 
 
   protected:

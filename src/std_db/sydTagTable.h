@@ -16,33 +16,33 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDDATABASEPATH_H
-#define SYDDATABASEPATH_H
+#ifndef SYDTAGTABLE_H
+#define SYDTAGTABLE_H
 
 // syd
+#include "sydTag.h"
 #include "sydDatabase.h"
+#include "sydTag-odb.hxx"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  // template<class TableElement>
-  // std::string GetAbsoluteFolder(syd::Database * db, const TableElement & e);
+  template<class Tag>
+  class TagTable: public syd::Table<Tag> {
+  public:
 
-  // template<class TableElement>
-  // std::string GetRelativeFolder(syd::Database * db, const TableElement & e);
+    // Each patient in different folder
+    std::string ComputeRelativeFolder(const Tag & p);
 
-  template<class TableElement>
-  std::string GetAbsoluteFilePath(const syd::Database * db, const TableElement & e);
+    void Set(Tag & e, const std::vector<std::string> & arg);
 
-  template<class TableElement>
-  std::string GetRelativeFilePath(const syd::Database * db, const TableElement & e);
+    //    void FindTag(Tag & p, const std::string & arg);
+    //template<class Tag>
+    // void FindTags(std::vector<Tag> & tags, syd::Database * db, const std::string & names);
+  };
 
-  template<class TableElement>
-  std::string ComputeRelativeFolder(const syd::Database * db, const TableElement & e);
-
-#include "sydDatabasePath.txx"
-
-} // end namespace
+#include "sydTagTable.txx"
+}
 // --------------------------------------------------------------------
 
 #endif

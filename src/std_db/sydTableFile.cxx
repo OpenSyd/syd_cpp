@@ -21,15 +21,9 @@
 #include "sydDatabase.h"
 
 // --------------------------------------------------------------------
-
-// template<>
-// std::string GetRelativeFolder<syd::File>(syd::Database * db, const syd::File & e)
-// {
-//   return file.path;
-// }
-
 template<>
-std::string syd::GetRelativeFilePath(const syd::Database * db, const syd::File & file)
+std::string syd::GetRelativePath(const syd::Database * db, const syd::File & file)
 {
   return file.path+PATH_SEPARATOR+file.filename;
 }
+// --------------------------------------------------------------------

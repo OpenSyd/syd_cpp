@@ -16,43 +16,52 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDELEMENTBASE_H
-#define SYDELEMENTBASE_H
+#ifndef SYDRECORD_H
+#define SYDRECORD_H
 
 // syd
 #include "sydCommon.h"
+#include <odb/core.hxx>
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class Database;
-
-  /// Base class for all element (row) in a table
-  class TableElementBase {
+  /// Base class for all record (or element, or row) in a table
+#pragma db object abstract
+  class Record {
   public:
 
+    virtual ~Record() { DD("dest Record"); }
+
+#pragma db id auto
+    /// Main key (automated, unique)
+    IdType id;
+
     /// Default function to print an element (must be inline here).
-    friend std::ostream& operator<<(std::ostream& os, const TableElementBase & p) {
+    friend std::ostream& operator<<(std::ostream& os, const Record & p) {
       os << p.ToString();
       return os;
     }
 
+    /// Default function to print a pointer to an element (must be inline here).
+    template<class R>
+    friend std::ostream& operator<<(std::ostream& os, const std::shared_ptr<R> p) {
+      os << p->ToString();
+      return os;
+    }
+
     /// Use to write the element as a string (must be overloaded)
-    virtual std::string ToString() const;
+    virtual std::string ToString() const = 0;
 
-    /// Use to write the element as a large string that contains all searchable strings (must be overloaded)
-    virtual std::string ToLargeString() const;
+   protected:
+    Record(std::string) {}
 
-    /// Set basics values from a list of string
-    //    virtual void Set(std::vector<std::string> & arg);
-
-    virtual void OnDelete(syd::Database * db);
 
   }; // end of class
 
-#define SET_TABLE_NAME(name) static std::string GetTableName() { return name; }
+  //#define SET_TABLE_NAME(name) static std::string GetTableName() { return name; }
 
 } // end namespace
-// --------------------------------------------------------------------
+  // --------------------------------------------------------------------
 
 #endif

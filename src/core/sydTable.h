@@ -31,8 +31,11 @@ namespace syd {
   class Table: public TableBase {
   public:
 
+    Table():TableBase() {}
+    //    Table(syd::Database * db):TableBase(db) {}
+
     /// Simple constructor, store the pointer to the db and the name of the table
-    Table(syd::Database * db, odb::sqlite::database * d);
+    //    Table(syd::Database * db, odb::sqlite::database * d);
 
     static std::string GetTableName() { return TableElement::GetTableName(); }
 
@@ -75,6 +78,13 @@ namespace syd {
     /// Get the unique element with the given id
     TableElement QueryOne(IdType id) const;
 
+    /// Get the unique element with the given id
+    void QueryOne(TableElement & e, IdType id) const;
+
+
+
+    void TestQuery(std::shared_ptr<TableElement> & p) const;
+
     /// Count the number of elements matching the query
     unsigned int Count(const odb::query<TableElement> & q) const;
 
@@ -83,6 +93,8 @@ namespace syd {
 
     /// Insert a new element in the database
     void Insert(TableElement & r);
+
+    void TestInsert(std::shared_ptr<TableElement> r);
 
     /// Insert a set of elements in the database (with pointer to retrieve the correct id)
     void Insert(std::vector<TableElement*> & r);
@@ -102,8 +114,19 @@ namespace syd {
     /// Prepare to erase a record (without commit)
     virtual void Erase(TableElementBase * elem);
 
-  protected:
-    syd::Database * database_;
+    /// Return the relative path of an element linked to a file. Must
+    /// be specialized for all table.
+    std::string GetRelativePath(const TableElement & e) const;
+
+    /// Compute a (relative) folder that could contains element of the
+    /// TableElement. Must be specialized for all table.
+    std::string ComputeRelativeFolder(const TableElement & e);
+
+    /// Set element properties from a set of strings
+    virtual void Set(TableElement & e, const std::vector<std::string> & arg);
+
+  // protected:
+  //   syd::Database * database_;
 
   };
 

@@ -22,6 +22,7 @@
 // syd
 #include "sydCommon.h"
 #include "sydTableElementBase.h"
+#include "sydDatabase.h"
 
 // odb
 #include <odb/database.hxx>
@@ -40,8 +41,17 @@ namespace syd {
   class TableBase {
   public:
 
-    /// Constructor, must give the linked database.
-    TableBase(odb::sqlite::database * d):db_(d) {}
+    TableBase() {}
+    // TableBase(syd::Database * db) { database_ = db; }
+
+    // /// Constructor, must give the linked database.
+    // TableBase(odb::sqlite::database * d):db_(d) {}
+
+    virtual void Initialization() {};
+
+
+    void SetSQLDatabase(odb::sqlite::database * d) { db_ = d; }
+    void SetDatabase(syd::Database * db) { database_ = db; }
 
     /// Insert simple record from list of strings (pure virtual)
     virtual TableElementBase * InsertFromArg(std::vector<std::string> & arg) = 0;
@@ -70,9 +80,11 @@ namespace syd {
     /// Prepare to erase a record (without commit)
     virtual void Erase(TableElementBase * elem) = 0;
 
+    odb::sqlite::database * GetSQLDatabase() { return db_; }
+
   protected:
     odb::sqlite::database * db_;
-
+    syd::Database * database_;
   };
 
 } // end namespace

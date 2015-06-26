@@ -19,7 +19,7 @@
 
 // --------------------------------------------------------------------
 template<class Patient>
-void FindPatientByNameOrStudyId(Patient & p, syd::Database * db, std::string & arg) {
+void FindPatient(Patient & p, const syd::Database * db, const std::string & arg) {
   odb::query<Patient> q =
     odb::query<Patient>::name == arg or
     odb::query<Patient>::study_id == atoi(arg.c_str());
@@ -37,14 +37,14 @@ void FindPatientByNameOrStudyId(Patient & p, syd::Database * db, std::string & a
 
 // --------------------------------------------------------------------
 template<class Patient>
-void FindPatients(std::vector<Patient> & patients, syd::Database * db, const std::string & arg)
+void FindPatients(std::vector<Patient> & patients, const syd::Database * db, const std::string & arg)
 {
   if (arg == "all") return db->Query(patients);
   std::vector<std::string> n;
   syd::GetWords(arg, n);
   for(auto a:n) {
     Patient p;
-    syd::FindPatientByNameOrStudyId(p, db, arg);
+    syd::FindPatient(p, db, arg);
     patients.push_back(p);
   }
 }

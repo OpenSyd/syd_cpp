@@ -17,39 +17,23 @@
   ===========================================================================**/
 
 // syd
-#include "sydTableElementBase.h"
-#include "sydDatabase.h"
+#include "extExtendedDatabase.h"
 
 // --------------------------------------------------------------------
-std::string syd::TableElementBase::ToString() const
+void ext::ExtendedDatabase::CreateTables()
 {
-  LOG(FATAL) << "The function 'ToString' must be implemented for this table: ";
-  return ""; // avoid warning
+  DD("syd::ExtendedDatabase::CreateTables");
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::string syd::TableElementBase::ToLargeString() const
+syd::Patient::pointer ext::ExtendedDatabase::NewPatient()
 {
-  // By default like the ToString. Better if overloaded.
-  return ToString();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-// void syd::TableElementBase::Set(std::vector<std::string> & arg)
-// {
-//   LOG(FATAL) << "The function 'Set' must be implemented for this table.";
-// }
-// --------------------------------------------------------------------
-
-
-
-// --------------------------------------------------------------------
-void syd::TableElementBase::OnDelete(syd::Database * db)
-{
-  // By default, do nothing
+  DD("new ext::Patient");
+  syd::Patient::pointer patient(ext::Patient::New());//patient(new ext::Patient);
+  DD("here");
+  DD(patient);
+  return patient;
 }
 // --------------------------------------------------------------------

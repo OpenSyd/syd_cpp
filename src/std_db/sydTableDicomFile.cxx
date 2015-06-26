@@ -22,11 +22,11 @@
 
 // --------------------------------------------------------------------
 template<>
-std::string syd::GetRelativeFilePath(const syd::Database * db, const syd::DicomFile & dicom_file)
+std::string syd::GetRelativePath(const syd::Database * db, const syd::DicomFile & dicom_file)
 {
   if (dicom_file.file == NULL) {
     LOG(FATAL) << "No associated file with this DicomFile: " << dicom_file;
   }
-  return syd::GetRelativeFilePath(db, *dicom_file.file);
+  return syd::GetRelativePath(db, *dicom_file.file);
 }
 // --------------------------------------------------------------------

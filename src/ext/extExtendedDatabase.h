@@ -16,21 +16,35 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include "sydTablePatient.h"
+#ifndef SYDEXTENDEDDATABASE_H
+#define SYDEXTENDEDDATABASE_H
+
+// syd
+#include "sydStandardDatabase.h"
+
+// syd tables
+#include "sydPatient-odb.hxx"
+#include "extPatient-odb.hxx"
 
 // --------------------------------------------------------------------
-template<>
-std::string syd::ComputeRelativeFolder(const syd::Database * db, const syd::Patient & patient)
-{
-  return patient.name;
-}
+namespace ext {
+
+  class ExtendedDatabase: public syd::StandardDatabase {
+
+  public:
+
+    virtual syd::Patient::pointer NewPatient();
+
+  protected:
+    /// Insert the tables
+    virtual void CreateTables();
+
+  }; // class ExtendedDatabase
+
+  #include "extExtendedDatabase.txx"
+
+} // namespace ext
+
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-template<>
-void syd::Table<syd::Patient>::Set(syd::Patient & p, const std::vector<std::string> & arg)
-{
-  DD("real set for patient");
-}
-// --------------------------------------------------------------------
+#endif

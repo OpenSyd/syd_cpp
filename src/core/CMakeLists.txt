@@ -4,10 +4,12 @@
 set(SCHEMA_NAME sydCommonSchema)
 wrap_odb(sydCore sydDatabaseInformation.h)
 wrap_odb(sydCore sydDatabaseSchemaName.h)
+wrap_odb(sydCore sydRecord.h)
 
 add_library(sydCommonSchema SHARED
   sydDatabaseSchemaName-odb.cxx
   sydDatabaseInformation-odb.cxx
+  sydRecord-odb.cxx ## sydRecord.cxx
   sydDatabaseInformation.cxx)
 
 # needed for clang osx
@@ -29,10 +31,10 @@ add_library(sydCore
   sydPluginManager.cxx
   sydException.cxx
   sydDatabase.cxx
-  sydTestUtils.cxx
+#  sydTestUtils.cxx
   sydDatabaseManager.cxx
   sydDicomCommon.cxx
-  sydTableElementBase.cxx
+#  sydTableElementBase.cxx
 )
 
 target_link_libraries(sydCore

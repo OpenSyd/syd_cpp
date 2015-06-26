@@ -51,8 +51,8 @@ namespace syd {
     Injection();
 
     virtual std::string ToString() const;
-    virtual void Set(std::vector<std::string> & arg) { DD("TODO"); }
-    void Set(Patient & p, Radionuclide & pr, const std::string & pdate, double activity);
+    // virtual void Set(std::vector<std::string> & arg) { DD("TODO"); }
+    // void Set(Patient & p, Radionuclide & pr, const std::string & pdate, double activity);
 
     bool operator==(const Injection & p);
     bool operator!=(const Injection & p) { return !(*this == p); }

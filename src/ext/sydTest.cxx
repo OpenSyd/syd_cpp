@@ -21,7 +21,7 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydStandardDatabase.h"
-//#include "extExtendedDatabase.h"
+#include "extExtendedDatabase.h"
 
 // Init syd
 SYD_STATIC_INIT
@@ -31,6 +31,9 @@ int main(int argc, char* argv[])
 {
   // Init command line
   SYD_INIT(sydTest, 1);
+
+  Log::SQLFlag() = false;
+  Log::LogLevel() = 10;
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -44,10 +47,11 @@ int main(int argc, char* argv[])
     std::string b = dbname+".backup";
     std::rename(dbname.c_str(), b.c_str());
     std::string folder = "test";
-    syd::Database * db = m->Create("StandardDatabase", dbname, folder);
-    //    syd::Database * db = m->Create("ExtendedDatabase", dbname, folder);
+    //syd::Database * db = m->Create("StandardDatabase", dbname, folder);
+    syd::Database * db = m->Create("ExtendedDatabase", dbname, folder);
     db->Dump();
   }
+
 
   // With generic db
   {
@@ -69,21 +73,23 @@ int main(int argc, char* argv[])
   }
 
   // With specific db
-  if (0){
+  {
 
     DD("------------------");
     syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
     db->Dump(std::cout);
 
     // Create a new patient
-    //    auto patient = db->NewPatient();
-    syd::Patient::pointer patient(new syd::Patient);
+    //    syd::Patient * a = new syd::Patient; // MUST NOT BE POSSIBLE
+    // ext::Patient * b = new ext::Patient;    // MUST NOT BE POSSIBLE
+
+    auto patient = db->NewPatient();
     //    db->New(patient);
     std::cout << patient << std::endl;
     DD(patient);
     db->Insert(patient);
     DD(patient);
-    DD("ici");
+
     // Read a patient
     /*
     auto patient = db->FindPatient("toto");
@@ -93,7 +99,7 @@ int main(int argc, char* argv[])
     */
   }
 
-  DD("end");
+
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

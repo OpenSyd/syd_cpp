@@ -27,24 +27,23 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// Return  the folder for this patient (relative to the db)
-  //std::string GetRelativeFolder(const syd::Database * db, const Patient & p);
-
   /// Return the patient by name or study_id. Exception if not
   /// found. Require table with fields 'name' and 'study_id'. Required
   /// a template.
   template<class Patient>
-  void FindPatientByNameOrStudyId(Patient & p, syd::Database * db, std::string & arg);
+  void FindPatient(Patient & p, const syd::Database * db, const std::string & arg);
 
   /// Find all the patients matching arg (can contains several name/id separated by space)
   template<class Patient>
-  void FindPatients(std::vector<Patient> & patients, syd::Database * db, const std::string & arg);
+  void FindPatients(std::vector<Patient> & patients, const syd::Database * db, const std::string & arg);
 
-  // template<>
-  // std::string GetRelativeFolder<syd::Patient>(const syd::Database * db, const syd::Patient & p);
-
+  /// Specialization for Image: image are in folder named by patient name
   template<>
   std::string ComputeRelativeFolder(const syd::Database * db, const syd::Patient & patient);
+
+  /// FIXME
+  template<>
+  void Table<syd::Patient>::Set(syd::Patient & p, const std::vector<std::string> & arg);
 
   #include "sydTablePatient.txx"
 }

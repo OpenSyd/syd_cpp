@@ -18,7 +18,6 @@
 
 // syd
 #include "sydDatabase.h"
-#include "sydTable.h"
 
 // --------------------------------------------------------------------
 // http://stackoverflow.com/questions/1607368/sql-query-logging-for-sqlite
@@ -32,7 +31,7 @@ void trace_callback( void* udp, const char* sql ) {
 // --------------------------------------------------------------------
 syd::Database::Database()
 {
-  SetDeleteForceFlag(true); // by default, dont ask before deleting
+
 }
 // --------------------------------------------------------------------
 
@@ -70,15 +69,19 @@ void syd::Database::Read(std::string filename)
   }
 
   // Now consider the folder according to the filename path and check it exists
-  std::string pwd;
-  if (!syd::GetWorkingDirectory(pwd))  {
-    EXCEPTION("Error while trying to get current working dir.");
-  }
-  if (filename_[0] != PATH_SEPARATOR) {
-    pwd = pwd+PATH_SEPARATOR+filename_;
-    unsigned found = pwd.find_last_of(PATH_SEPARATOR);
-    pwd = pwd.substr(0,found);
-  }
+  std::string pwd = filename;
+  ConvertToAbsolutePath(pwd);
+  pwd = GetPathFromFilename(pwd);
+
+  // if (!syd::GetWorkingDirectory(pwd))  {
+  //   EXCEPTION("Error while trying to get current working dir.");
+  // }
+  // if (filename_[0] != PATH_SEPARATOR) {
+  //   pwd = pwd+PATH_SEPARATOR+filename_;
+  //   unsigned found = pwd.find_last_of(PATH_SEPARATOR);
+  //   pwd = pwd.substr(0,found);
+  // }
+
   absolute_folder_ = pwd+PATH_SEPARATOR+relative_folder_;
   if (!syd::DirExists(absolute_folder_)) {
     EXCEPTION("The folder '" << absolute_folder_ << "' does not exist.");
@@ -108,63 +111,56 @@ void syd::Database::TraceCallback(const char* sql)
 
 
 // --------------------------------------------------------------------
-syd::TableElementBase * syd::Database::InsertFromArg(const std::string & table_name,
-                                                     std::vector<std::string> & arg)
+/*void syd::Database::AddTableT(const std::string & tablename, syd::TableBase * table)
 {
-  return GetTable(table_name)->InsertFromArg(arg);
+  // No exception handling here, fatal error if fail.
+  if (db_ == NULL) {
+    LOG(FATAL) << "Could not AddTable, open a db before";
+  }
+
+  std::string str = tablename;
+  std::transform(str.begin(), str.end(),str.begin(), ::tolower);
+  auto it = map_lowercase.find(str);
+  if (it != map_lowercase.end()) {
+    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
+               << "' already exist.";
+  }
+  table->SetSQLDatabase(db_);
+  //  table->SetDatabase(this);
+  map[tablename] = table;
+  map_lowercase[str] = map[tablename];
 }
+*/
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::Database::Dump(std::ostream & os)
+void syd::Database::Dump(std::ostream & os) const
 {
   os << "Database schema: " << GetDatabaseSchema() << std::endl;
   os << "Database folder: " << GetDatabaseRelativeFolder() << std::endl;
-  for(auto i=map.begin(); i != map.end(); i++) {
-    int n = i->second->GetNumberOfElements();
-    os << "Table \t" << std::setw(15) << i->first << " " <<  std::setw(10) << n;
-    if (n>1) os << " elements" << std::endl;
-    else os << " element" << std::endl;
-  }
+  // for(auto i=map.begin(); i != map.end(); i++) {
+  //   int n = i->second->GetNumberOfElements();
+  //   os << "Table \t" << std::setw(15) << i->first << " " <<  std::setw(10) << n;
+  //   if (n>1) os << " elements" << std::endl;
+  //   else os << " element" << std::endl;
+  // }
   os << std::flush;
 }
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-void syd::Database::Dump(std::ostream & os, const std::string & table_name, const std::string & format)
-{
-  GetTable(table_name)->Dump(os, format);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::Dump(std::ostream & os,
-                         const std::string & table_name,
-                         const std::string & format,
-                         const std::vector<IdType> & ids)
-{
-  GetTable(table_name)->Dump(os, format, ids);
-}
-// --------------------------------------------------------------------
-
+// void syd::Database::Insert2(std::shared_ptr<syd::Record> record)
+// {
+//   DD("Insert2");
+//   odb::transaction t (db_->begin());
+//   db_->persist(record);
+//   //    db_->update(r);
+//   t.commit();
+// }
 
 // --------------------------------------------------------------------
-void syd::Database::Find(std::vector<syd::IdType> & ids,
-                         const std::string & table_name,
-                         const std::vector<std::string> & pattern,
-                         const std::vector<std::string> & exclude)
-
-{
-  GetTable(table_name)->Find(ids, pattern, exclude);
-}
-// --------------------------------------------------------------------
-
-
-
-// --------------------------------------------------------------------
+/*
 syd::TableBase * syd::Database::GetTable(const std::string & table_name) const
 {
   std::string str=table_name;
@@ -188,153 +184,5 @@ std::string syd::Database::GetListOfTableNames() const
   }
   return os.str();
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::CopyDatabaseTo(std::string file, std::string folder)
-{
-  // Copy db
-  syd::CopyFile(GetFilename(), file);
-
-  // Check the folder does not contains PATH_SEPARATOR
-  if (folder.find(PATH_SEPARATOR) != std::string::npos) {
-    LOG(FATAL) << "Could not copy database to folder '" << folder
-               << "': this folder name should be simple, withtout PATH_SEPARATOR.";
-  }
-
-  // Get the folder of file
-  std::string f = file;
-  syd::ConvertToAbsolutePath(f);
-  f = GetPathFromFilename(f);
-  f = f+PATH_SEPARATOR+folder;
-
-  // Create folder
-  if (!syd::DirExists(f)) syd::CreateDirectory(f);
-
-  // open the copied db and change the folder name
-  try {
-    odb::sqlite::database db(file, SQLITE_OPEN_READWRITE, false);
-    odb::transaction transaction (db.begin());
-    typedef odb::query<syd::DatabaseInformation> query;
-    typedef odb::result<syd::DatabaseInformation> result;
-    query q;
-    result r (db.query<syd::DatabaseInformation>(q));
-    syd::DatabaseInformation s;
-    r.begin().load(s);
-    s.folder = folder;
-    db.update(s);
-    transaction.commit();
-  }
-  catch (const odb::exception& e) {
-    EXCEPTION("Could not change the folder name in " << file << ". ODB error is: " << e.what());
-  }
-
-  // Copy the folder content :/ FIXME (not on windows !)
-  std::ostringstream cmd;
-  cmd << "cp -r " << GetDatabaseAbsoluteFolder() << "/* " << f;
-  LOG(5) << cmd.str();
-  system(cmd.str().c_str());
-
-  // if (!syd::DirExists(folder)) syd::CreateDirectory(folder);
-  // OFString scanPattern = "*";
-  // OFString dirPrefix = "";
-  // OFBool recurse = OFTrue;
-  // size_t found=0;
-  // OFList<OFString> & inputFiles;
-  // found = OFStandard::searchDirectoryRecursively(GetAbsoluteFolder().c_str(),
-  //                                                inputFiles, scanPattern,
-  //                                                dirPrefix, recurse);
-  // for(auto f:inputFiles) syd::CopyFile(
-
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::Delete(const std::string & table_name, syd::IdType id)
-{
-  GetTable(table_name)->AddToDeleteList(id);
-  DeleteCurrentList();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::Delete(const std::string & table_name, std::vector<syd::IdType> & ids)
-{
-  GetTable(table_name)->AddToDeleteList(ids);
-  DeleteCurrentList();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::DeleteAll(const std::string & table_name)
-{
-  GetTable(table_name)->AddAllToDeleteList();
-  DeleteCurrentList();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::OnDelete(const std::string & table_name, TableElementBase * elem)
-{
-  // to be overloaded
-  elem->OnDelete(this);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-bool syd::Database::DeleteCurrentList()
-{
-  if (list_of_elements_to_delete_.size() == 0) {
-    LOG(1) << "No record have been deleted.";
-    return false;
-  }
-
-  if (!deleteForceFlag_) {
-    std::string input;
-    std::cout << "Really delete " << list_of_elements_to_delete_.size() << " elements ([y]es/[n]o/[v]erbose) ?   ";
-    std::cout.flush();
-    std::getline(std::cin, input);
-    if (input == "v") {
-      for(auto it=list_of_elements_to_delete_.begin();
-          it != list_of_elements_to_delete_.end(); ++it) {
-        auto & p = it->second;
-        std::cout << "\t delete: " << p.first << ": " << *p.second << std::endl;
-      }
-      return DeleteCurrentList();
-    }
-    if (input != "y") {
-      LOG(1) << "No record have been deleted.";
-      return false;
-    }
-  }
-
-  // Start the deletion
-  odb::connection_ptr c (db_->connection ());
-  c->execute ("PRAGMA foreign_keys=ON");
-  odb::transaction t (db_->begin());
-
-  for(auto it=list_of_elements_to_delete_.begin();
-      it != list_of_elements_to_delete_.end(); ++it) {
-    auto & p = it->second;
-    GetTable(p.first)->Erase(p.second);
-  }
-  t.commit();
-
-  // Verbose
-  LOG(1) << list_of_elements_to_delete_.size() << " records have been deleted.";
-
-  // free memory
-  for(auto it=list_of_elements_to_delete_.begin();
-      it != list_of_elements_to_delete_.end(); ++it) {
-    delete it->second.second;
-  }
-  list_of_elements_to_delete_.clear();
-  return true;
-}
+*/
 // --------------------------------------------------------------------

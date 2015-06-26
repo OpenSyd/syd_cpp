@@ -17,11 +17,12 @@
   ===========================================================================**/
 
 // --------------------------------------------------------------------
-template<class TableElement>
-syd::Table<TableElement>::Table(syd::Database * db, odb::sqlite::database * d)
-:TableBase(d), database_(db)
-{
-}
+// template<class TableElement>
+// syd::Table<TableElement>::Table(syd::Database * db, odb::sqlite::database * d)
+// :TableBase(d)
+// {
+//   SetDatabase(db);
+// }
 // --------------------------------------------------------------------
 
 
@@ -29,6 +30,7 @@ syd::Table<TableElement>::Table(syd::Database * db, odb::sqlite::database * d)
 template<class TableElement>
 void syd::Table<TableElement>::Insert(TableElement & r)
 {
+  DD(r);
   try {
     odb::transaction t (db_->begin());
     db_->persist(r);
@@ -36,12 +38,45 @@ void syd::Table<TableElement>::Insert(TableElement & r)
     t.commit();
   }
   catch (const odb::exception& e) {
+    DD("here");
+    DD(r.ToString());
+    DD(TableElement::GetTableName());
+    DD(database_->GetLastSQLQuery());
     EXCEPTION("Cannot insert the element: "
               << r.ToString() << std::endl
-              << " in the table '" << syd::Table<TableElement>::GetTableName()
+              << " in the table '" << TableElement::GetTableName()
               << "'. Maybe a element with same unique field already exist or a foreign constraint is not fulfill ?" << std::endl
               << "The odb exception is: "  << e.what()
               << std::endl << "And last sql query is: " << database_->GetLastSQLQuery());
+    DD("after ex");
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Table<TableElement>::TestInsert(std::shared_ptr<TableElement> r)
+{
+  DD(*r);
+  try {
+    odb::transaction t (db_->begin());
+    db_->persist(*r);
+    //db_->update(r); //needed ?
+    t.commit();
+  }
+  catch (const odb::exception& e) {
+    DD("here");
+    DD(r->ToString());
+    DD(TableElement::GetTableName());
+    DD(database_->GetLastSQLQuery());
+    EXCEPTION("Cannot insert the element: "
+              << r->ToString() << std::endl
+              << " in the table '" << TableElement::GetTableName()
+              << "'. Maybe a element with same unique field already exist or a foreign constraint is not fulfill ?" << std::endl
+              << "The odb exception is: "  << e.what()
+              << std::endl << "And last sql query is: " << database_->GetLastSQLQuery());
+    DD("after ex");
   }
 }
 // --------------------------------------------------------------------
@@ -126,6 +161,45 @@ unsigned int syd::Table<TableElement>::GetNumberOfElements() const
 // --------------------------------------------------------------------
 
 
+
+template<class TableElement>
+void syd::Table<TableElement>::TestQuery(std::shared_ptr<TableElement> & p) const
+{
+  DD("TestQuery");
+  odb::transaction transaction (db_->begin());
+
+  std::shared_ptr<TableElement> aa;
+  //  aa = db_->load<TableElement>(1);
+  transaction.commit();
+  DD(aa);
+
+
+  /*
+  typedef odb::query<TableElement> query;
+  query q = odb::query<TableElement>::id == 1;
+  typedef odb::result<TableElement> result;
+  result r (db_->query<TableElement>(q));
+
+  for(auto i = r.begin(); i != r.end(); i++) {
+    //for (result::iterator i (r.begin ()); i != r.end (); ++i)
+    //i.load(p);
+    TableElement & temp (*i);
+    DD(temp);
+    p = std::make_shared<TableElement>(temp);
+    DD(p);
+  }
+  */
+  // <for(auto i = r.begin(); i != r.end(); i++) {
+  //   TableElement s;
+  //   i.load(s);
+  //   list.push_back(s);
+  //   }
+    transaction.commit();
+
+}
+
+
+
 // --------------------------------------------------------------------
 // Warning : do not clear the vector, append
 template<class TableElement>
@@ -181,8 +255,12 @@ void syd::Table<TableElement>::Query(std::vector<TableElement> & list) const
 template<class TableElement>
 TableElement syd::Table<TableElement>::QueryOne(const odb::query<TableElement> & q) const
 {
+  DD("here queryOne");
+  // FIXME change to odb query_one
+
   std::vector<TableElement> elements;
   Query(q,elements);
+  DD(elements.size());
   if (elements.size() == 1) return elements[0];
   if (elements.size() == 0) {
     EXCEPTION("Error while QueryOne in table '" << TableElement::GetTableName()
@@ -205,6 +283,18 @@ TableElement syd::Table<TableElement>::QueryOne(IdType id) const
 {
   odb::query<TableElement> q = odb::query<TableElement>::id == id;
   return QueryOne(q);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Table<TableElement>::QueryOne(TableElement & e, IdType id) const
+{
+  //  odb::query<TableElement> q = odb::query<TableElement>::id == id;
+  DD("here");
+  e = QueryOne(id);
+  DD(e);
 }
 // --------------------------------------------------------------------
 
@@ -380,9 +470,51 @@ void syd::Table<TableElement>::Update(std::vector<TableElement> & r)
 template<class TableElement>
 TableElement * syd::Table<TableElement>::InsertFromArg(std::vector<std::string> & arg)
 {
-  TableElement e;
-  e.Set(arg);
-  Insert(e);
-  return new TableElement(e);
+  TableElement *e = new TableElement;
+  Set(*e, arg);
+  DD(*e);
+  Insert(*e);
+  DD(*e);
+  return e;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+void syd::Table<TableElement>::Set(TableElement & e, const std::vector<std::string> & arg)
+{
+  LOG(FATAL) << "The table '" << TableElement::GetTableName()
+             << "' does not a function Set. "
+             << "Please, specialize syd::Table<"
+             << TableElement::GetTableName() << ">::Set(elem, arg).";
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+std::string syd::Table<TableElement>::
+GetRelativePath(const TableElement & e) const
+{
+  LOG(FATAL) << "The table '" << TableElement::GetTableName()
+             << "' does not have associated file. "
+             << "Please, specialize syd::Table<"
+             << TableElement::GetTableName() << ">::GetRelativePath(elem).";
+  return ""; // to avoid warning
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TableElement>
+std::string syd::Table<TableElement>::
+ComputeRelativeFolder(const TableElement & e)
+{
+  LOG(FATAL) << "The table '" << TableElement::GetTableName()
+             << "' does not know how to determine a relative folder. "
+             << "Please, specialize syd::Table<"
+             << TableElement::GetTableName() << ">::ComputeRelativeFolder(elem).";
+  return ""; // to avoid warning;
 }
 // --------------------------------------------------------------------

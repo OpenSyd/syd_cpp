@@ -20,21 +20,25 @@
 #define SYDPATIENT_H
 
 // syd
-#include "sydTableElementBase.h"
+#include "sydRecord.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db model version(1, 1)
 
-#pragma db object
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Patient")
   /// Store information about a patient (id, study_id, name etc).
-  class Patient: public syd::TableElementBase {
+  class Patient: public syd::Record {
   public:
 
-#pragma db id auto
-    /// Main key (automated, unique)
-    IdType id;
+    typedef std::shared_ptr<Patient> pointer;
+
+    friend class odb::access;
+
+    virtual ~Patient() { DD("syd::Patient dest");}
+
+    static pointer New() { return pointer(new Patient); }
 
 #pragma db options("UNIQUE")
     /// Patient name (unique)
@@ -51,19 +55,12 @@ namespace syd {
     std::string dicom_patientid;
 
     // ------------------------------------------------------------------------
-    SET_TABLE_NAME("Patient");
-    Patient();
-
+    //    Patient();
     virtual std::string ToString() const;
-    virtual void Set(std::vector<std::string> & arg);
-    void Set(std::string pname, IdType studyId, double weight);
 
-    bool operator==(const Patient & p);
-    bool operator!=(const Patient & p) { return !(*this == p); }
+   protected:
+    Patient():Record("") { name = "unset_name"; DD("const sydpatient"); }
 
-    bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
-
-    virtual void OnDelete(syd::Database * db);
 
   }; // end of class
 }
