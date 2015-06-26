@@ -22,9 +22,8 @@
 // --------------------------------------------------------------------
 void ext::ExtendedDatabase::CreateTables()
 {
-  DD("syd::ExtendedDatabase::CreateTables");
-  AddTable<ext::Patient>("Patient");
-  AddTable<syd::Injection>("Injection");
+  AddTable<ext::Patient>();
+  AddTable<syd::Injection>();
 }
 // --------------------------------------------------------------------
 
@@ -32,10 +31,7 @@ void ext::ExtendedDatabase::CreateTables()
 // --------------------------------------------------------------------
 syd::Patient::pointer ext::ExtendedDatabase::NewPatient()
 {
-  DD("new ext::Patient");
   syd::Patient::pointer patient(ext::Patient::New());//patient(new ext::Patient);
-  DD("here");
-  DD(patient);
   return patient;
 }
 // --------------------------------------------------------------------

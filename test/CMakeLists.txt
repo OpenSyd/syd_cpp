@@ -8,15 +8,13 @@ include_directories(${SYD_INCLUDE_DIRS})
 include_directories(${SYD_BINARY_DIR}/src/core)
 
 
-# Not really a tool, for debug only
-wrap_ggo(test_extendedDatabase test_extendedDatabase.ggo)
-add_executable(test_extendedDatabase test_extendedDatabase.cxx test_extendedDatabase_ggo.c)
+# Test creation of database
+add_executable(test_extendedDatabase test_extendedDatabase.cxx)
 target_link_libraries(test_extendedDatabase extExtendedDatabase)
 
-
-
-
-
+# wrap_ggo(test_extendedDatabase test_extendedDatabase.ggo)
+# add_executable(test_extendedDatabase test_extendedDatabase.cxx test_extendedDatabase_ggo.c)
+# target_link_libraries(test_extendedDatabase extExtendedDatabase)
 
 
 # #----------------------------------------------------------

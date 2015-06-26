@@ -36,7 +36,7 @@ namespace ext {
 
     friend class odb::access;
 
-    virtual ~Patient() { DD("dest ext::Patient"); }
+    virtual ~Patient() { }
 
     static pointer New() { return pointer(new ext::Patient); }
 
@@ -48,7 +48,7 @@ namespace ext {
 
     virtual std::string ToString() const;
   protected:
-    Patient():syd::Patient() { DD("const extPatient"); birth_date = "2015"; }
+    Patient():syd::Patient() { birth_date = "2015"; }
 
   }; // end of class
 }

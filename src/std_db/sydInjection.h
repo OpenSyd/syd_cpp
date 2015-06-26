@@ -41,13 +41,13 @@ namespace syd {
 
     friend class odb::access;
 
-    //virtual ~Patient() { DD("syd::Patient dest");}
+    virtual ~Injection() { }
 
     typedef std::shared_ptr<Injection> pointer;
     static pointer New() { return pointer(new Injection); }
 
     virtual std::string GetTableName() const { return "Injection"; }
-
+    static std::string GetStaticTableName() { return "Injection"; }
 
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
 

@@ -33,9 +33,7 @@ namespace syd {
   class Record {
   public:
 
-    //    Record() {}
-
-    virtual ~Record() { DD("dest Record"); }
+    virtual ~Record() { }
 
     virtual std::string GetTableName() const = 0;
 

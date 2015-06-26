@@ -33,8 +33,6 @@ void syd::Database::New(std::shared_ptr<Record> & record) const
 template<class Record>
 void syd::Database::Insert(std::shared_ptr<Record> record)
 {
-  DD("Database Insert");
-  DD(record);
   try {
     odb::transaction t (db_->begin());
     db_->persist(*record);
@@ -48,7 +46,6 @@ void syd::Database::Insert(std::shared_ptr<Record> record)
                << std::endl << "And last sql query is: "
                << std::endl << GetLastSQLQuery();
   }
-  DD("Insert is done");
 }
 // --------------------------------------------------------------------
 
@@ -67,17 +64,15 @@ Table<TableElement> * syd::Database::GetTable() const
 // --------------------------------------------------------------------
 
 template<class Record>
-void syd::Database::AddTable(const std::string & tablename)
+void syd::Database::AddTable()
 {
   // No exception handling here, fatal error if fail.
   if (db_ == NULL) {
     LOG(FATAL) << "Could not AddTable, open a db before";
   }
-  //  std::string tablename = Record::GetTableName();
+  std::string tablename = Record::GetStaticTableName();
   std::string str = tablename;
-  DD(str);
   std::transform(str.begin(), str.end(),str.begin(), ::tolower);
-  DD(str);
   auto it = map_lowercase.find(str);
   if (it != map_lowercase.end()) {
     LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
@@ -87,11 +82,8 @@ void syd::Database::AddTable(const std::string & tablename)
 
   auto * t = new Table<Record>;
   t->db_ = this; // FIXME
-  // t->SetSQLDatabase(db_);
-  // t->SetDatabase(this);
-  // t->Initialization();
-  map[tablename] = t;//new Table<Record>(this, db_);
-  map_lowercase[str] = t;//map[tablename];
+  map[tablename] = t;
+  map_lowercase[str] = t;
 }
 // --------------------------------------------------------------------
 

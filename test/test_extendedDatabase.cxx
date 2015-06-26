@@ -17,7 +17,6 @@
   ===========================================================================**/
 
 // syd
-#include "test_extendedDatabase_ggo.h"
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "extExtendedDatabase.h"
@@ -28,9 +27,6 @@ SYD_STATIC_INIT
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  // Init command line
-  SYD_INIT(test_extendedDatabase, 1);
-
   Log::SQLFlag() = false;
   Log::LogLevel() = 1;
 
@@ -39,16 +35,13 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  std::string dbname = args_info.inputs[0];
+  std::string dbname = "test_extendedDatabase.db";
+  std::string folder = "test";
 
   // StandardDatabase
   {
-    // Create
-    std::string b = dbname+".backup";
-    std::rename(dbname.c_str(), b.c_str());
-    std::string folder = "test";
-    LOG(1) << "Create StandardDatabase " << dbname;
-    m->Create("StandardDatabase", dbname, folder);
+    std::cout << "Create StandardDatabase " << dbname << std::endl;
+    m->Create("StandardDatabase", dbname, folder, true);
   }
 
   {
@@ -57,7 +50,7 @@ int main(int argc, char* argv[])
     db->Dump(std::cout);
 
     // Create a new patient
-    // syd::Patient * a = new syd::Patient; // MUST NE IMPOSSIBLE
+    // syd::Patient * a = new syd::Patient; // MUST BE IMPOSSIBLE
 
     auto patient = db->NewPatient();
     std::cout << "Before insertion " << patient << std::endl;
@@ -74,11 +67,8 @@ int main(int argc, char* argv[])
   {
     dbname = dbname+"-ext.db"; // cannot be the same db name ! dont know why
     // Create
-    std::string b = dbname+".backup";
-    std::rename(dbname.c_str(), b.c_str());
-    std::string folder = "test";
-    LOG(1) << "Create ExtendedDatabase " << dbname;
-    m->Create("ExtendedDatabase", dbname, folder);
+    std::cout << "Create ExtendedDatabase " << dbname << std::endl;
+    m->Create("ExtendedDatabase", dbname, folder, true);
   }
 
   {
@@ -87,7 +77,7 @@ int main(int argc, char* argv[])
     db->Dump(std::cout);
 
     // Create a new patient
-    // ext::Patient * a = new ext::Patient; // MUST NE IMPOSSIBLE
+    // ext::Patient * a = new ext::Patient; // MUST BE IMPOSSIBLE
 
     auto patient = db->NewPatient();
     std::cout << "Before insertion " << patient << std::endl;

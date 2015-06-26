@@ -35,7 +35,7 @@ namespace syd {
 
   public:
 
-    virtual ~StandardDatabase() { DD("dest StandardDatabase"); }
+    virtual ~StandardDatabase() {}
 
     virtual syd::Patient::pointer NewPatient();
 

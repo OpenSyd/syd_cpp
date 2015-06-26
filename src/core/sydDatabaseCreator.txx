@@ -32,15 +32,20 @@ Database * syd::DatabaseCreator<DatabaseType>::Read(std::string filename)
 template<class DatabaseType>
 void syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
                                                 std::string filename,
-                                                std::string folder)
+                                                std::string folder,
+                                                bool force_overwrite)
 {
   // Check folder
   if (folder.find(PATH_SEPARATOR) != std::string::npos) {
     LOG(FATAL) << "The folder must be a simple folder name, without path or subfolder.";
   }
 
-  if (syd::FileExists(filename)) {
-    LOG(FATAL) << "Cannot create the database, the file '" << filename << "' already exists.";
+  if (syd::FileExists(filename)){
+    if (!force_overwrite) {
+      LOG(FATAL) << "Cannot create the database, the file '" << filename << "' already exists.";
+    }
+    std::string b = filename+".backup";
+    std::rename(filename.c_str(), b.c_str());
   }
 
   // Create folder
@@ -58,9 +63,6 @@ void syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
     odb::transaction t (db.begin ());
     odb::schema_catalog::create_schema(db, "sydCommonSchema"); // common schema
     // Specific list of schemas
-    for(auto s:schemas) {
-      DD(s);
-    }
     for(auto s:schemas) odb::schema_catalog::create_schema(db, s);
     t.commit ();
   }
@@ -81,7 +83,5 @@ void syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
   } catch (const odb::exception& e) {
     EXCEPTION("Error while trying to insert basic database information (sydCommonSchema) in the db. Error is:" << e.what());
   }
-
-  return NULL;//  return Read(filename);
 }
 // --------------------------------------------------------------------

@@ -10,6 +10,7 @@ add_library(sydCommonSchema SHARED
   sydDatabaseSchemaName-odb.cxx
   sydDatabaseInformation-odb.cxx
   sydRecord-odb.cxx sydRecord.cxx
+  sydLog.cxx
   sydDatabaseInformation.cxx)
 
 # needed for clang osx

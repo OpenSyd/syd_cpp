@@ -35,7 +35,6 @@
 // --------------------------------------------------
 std::string syd::Patient::ToString() const
 {
-  //  DD("syd::Patient::ToString");
   std::stringstream ss ;
   ss << id << " "
      << study_id << " "

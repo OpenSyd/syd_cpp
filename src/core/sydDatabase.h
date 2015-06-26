@@ -123,7 +123,7 @@ namespace syd {
     virtual void CreateTables() = 0;
 
     template<class Record>
-    void AddTable(const std::string & tablename);
+    void AddTable();
 
     /// Type of the map that contains the association between names and tables
     typedef std::map<std::string, TableBase*> MapOfTablesType;

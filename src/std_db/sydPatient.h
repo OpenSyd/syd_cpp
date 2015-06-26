@@ -36,7 +36,7 @@ namespace syd {
 
     friend class odb::access;
 
-    virtual ~Patient() { DD("syd::Patient dest");}
+    virtual ~Patient() {}
 
     static pointer New() { return pointer(new Patient); }
 
@@ -64,7 +64,7 @@ namespace syd {
     virtual std::string ToString() const;
 
    protected:
-    Patient():Record("") { name = "unset_name"; DD("const sydpatient"); }
+    Patient():Record("") { name = "unset_name"; }
 
 
   }; // end of class

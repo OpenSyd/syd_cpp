@@ -22,11 +22,8 @@
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {
-  DD("syd::StandardDatabase::CreateTables");
-
-  AddTable<syd::Patient>("Patient");
-  AddTable<syd::Injection>("Injection");
-
+  AddTable<syd::Patient>();
+  AddTable<syd::Injection>();
 }
 // --------------------------------------------------------------------
 
@@ -34,7 +31,6 @@ void syd::StandardDatabase::CreateTables()
 // --------------------------------------------------------------------
 syd::Patient::pointer syd::StandardDatabase::NewPatient()
 {
-  DD("new syd::Patient");
   //  syd::Patient::pointer patient(new syd::Patient);//syd::Patient::New();
   return syd::Patient::New();//patient;
 }

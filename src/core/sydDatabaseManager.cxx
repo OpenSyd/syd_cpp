@@ -93,7 +93,8 @@ syd::Database * syd::DatabaseManager::Read(const std::string & filename)
 // --------------------------------------------------------------------
 void syd::DatabaseManager::Create(const std::string & db_schema_name,
                                   const std::string & filename,
-                                  const std::string & folder)
+                                  const std::string & folder,
+                                  bool force_overwrite)
 {
   auto it = db_map_.find(db_schema_name);
   auto & list = GetDatabaseSchemas();
@@ -107,6 +108,6 @@ void syd::DatabaseManager::Create(const std::string & db_schema_name,
               << "Known type are: " << os.str() << std::endl
               << "Try to insert this typename via plugin.");
   }
-  it->second->Create(db_schema_name, filename, folder);
+  it->second->Create(db_schema_name, filename, folder, force_overwrite);
 }
 // --------------------------------------------------------------------
