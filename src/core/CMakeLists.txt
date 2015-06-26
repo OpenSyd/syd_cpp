@@ -9,7 +9,7 @@ wrap_odb(sydCore sydRecord.h)
 add_library(sydCommonSchema SHARED
   sydDatabaseSchemaName-odb.cxx
   sydDatabaseInformation-odb.cxx
-  sydRecord-odb.cxx ## sydRecord.cxx
+  sydRecord-odb.cxx sydRecord.cxx
   sydDatabaseInformation.cxx)
 
 # needed for clang osx

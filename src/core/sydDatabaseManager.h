@@ -41,7 +41,7 @@ namespace syd {
     DatabaseSchema * Read(const std::string & filename);
 
     /// Create a new empty database of the given db_schema_name
-    Database * Create(const std::string & db_schema_name, const std::string & filename, const std::string & folder);
+    void Create(const std::string & db_schema_name, const std::string & filename, const std::string & folder);
 
     /// Return a list of registered database schema names
     const std::vector<std::string> & GetDatabaseSchemas() const { return db_schema_names_; }

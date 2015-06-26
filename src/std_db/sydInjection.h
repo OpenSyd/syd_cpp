@@ -20,25 +20,39 @@
 #define SYDINJECTION_H
 
 // syd
+//#include "sydRecord.h"
+//#include "sydCommon.h"
+//#include "sydStandardDatabase.h"
 #include "sydPatient.h"
-#include "sydRadionuclide.h"
+// #include "sydRadionuclide.h"
+//#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Injection")
   /// Store information about a radionuclide injection (date, etc).
-  class Injection : public TableElementBase {
+  class Injection : public syd::Record {
   public:
 
-#pragma db id auto
-    IdType id;
-
+    //#pragma db not_null // FIXME to put when Set is ok
     /// Foreign key, linked to Patient table.
-    std::shared_ptr<Patient> patient;
+    std::shared_ptr<syd::Patient> patient;
+
+    friend class odb::access;
+
+    //virtual ~Patient() { DD("syd::Patient dest");}
+
+    typedef std::shared_ptr<Injection> pointer;
+    static pointer New() { return pointer(new Injection); }
+
+    virtual std::string GetTableName() const { return "Injection"; }
+
+
+    virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
 
     /// Foreign key, linked to Radionuclide table.
-    std::shared_ptr<Radionuclide> radionuclide;
+    //    std::shared_ptr<Radionuclide> radionuclide;
 
     /// Date of the injection
     std::string date;
@@ -47,17 +61,19 @@ namespace syd {
     double activity_in_MBq;
 
     // ------------------------------------------------------------------------
-    SET_TABLE_NAME("Injection")
-    Injection();
+    // SET_TABLE_NAME("Injection")
+    // Injection();
 
     virtual std::string ToString() const;
     // virtual void Set(std::vector<std::string> & arg) { DD("TODO"); }
     // void Set(Patient & p, Radionuclide & pr, const std::string & pdate, double activity);
 
-    bool operator==(const Injection & p);
-    bool operator!=(const Injection & p) { return !(*this == p); }
+    // bool operator==(const Injection & p);
+    // bool operator!=(const Injection & p) { return !(*this == p); }
 
-    virtual void OnDelete(syd::Database * db);
+    // virtual void OnDelete(syd::Database * db);
+   protected:
+    Injection():Record("") { DD("const injection"); }
 
   }; // end of class
 

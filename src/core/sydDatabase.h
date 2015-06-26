@@ -24,6 +24,7 @@
 #include "sydException.h"
 #include "sydDatabaseInformation-odb.hxx"
 #include "sydRecord-odb.hxx"
+#include "sydTableBase.h"
 
 // odb
 #include <odb/sqlite/database.hxx>
@@ -35,7 +36,7 @@
 namespace syd {
 
   // The following classes will be defined elsewhere
-  //  template<class TableElementBase> class Table;
+  template<class TableElementBase> class Table;
   template<class DatabaseSchema> class DatabaseCreator;
 
   /// This is the base class of all databases. Manage a sqlite
@@ -50,7 +51,7 @@ namespace syd {
 
   public:
 
-    virtual ~Database() { DD("dest Database"); }
+    //    virtual ~Database() { DD("dest Database"); delete db_;}
 
     // ------------------------------------------------------------------------
     /// Return the type of the db (read in the file)
@@ -80,7 +81,7 @@ namespace syd {
 
 
 
-
+    odb::sqlite::database * GetSQLDatabase() const { return db_; }
 
 
     // ------------------------------------------------------------------------
@@ -92,19 +93,23 @@ namespace syd {
     template<class Record>
     void Insert(std::shared_ptr<Record> record);
 
+    std::shared_ptr<Record> NewRecord(const std::string & table_name) const;
 
-    //    void Insert2(std::shared_ptr<syd::Record> record);
+    void Insert2(std::shared_ptr<syd::Record> & record);
 
-    /*
+    virtual void Set(std::shared_ptr<syd::Record> & record, const std::vector<std::string> & args) const;
+
     /// Return the (base) table with table_name
     TableBase * GetTable(const std::string & table_name) const;
 
-    /// Return the table that contains TableElement
-    template<class TableElement>
-    Table<TableElement> * GetTable() const;
+    template<class Record>
+    void QueryOne(std::shared_ptr<Record> & record, const odb::query<Record> & q) const;
+
+    // /// Return the table that contains TableElement
+    // template<class TableElement>
+    // Table<TableElement> * GetTable() const;
 
     std::string GetListOfTableNames() const;
-    */
 
     // ----------------------------------------------------------------------------------
     protected:
@@ -117,7 +122,9 @@ namespace syd {
     /// Must be overwritten by concrete classes.
     virtual void CreateTables() = 0;
 
-    /*
+    template<class Record>
+    void AddTable(const std::string & tablename);
+
     /// Type of the map that contains the association between names and tables
     typedef std::map<std::string, TableBase*> MapOfTablesType;
 
@@ -129,9 +136,9 @@ namespace syd {
 
     /// Return the map that contains the association between names and tables
     MapOfTablesType & GetMapOfTables() { return map; }
-    */
 
     /// The sqlite database
+    //std::unique_ptr<odb::sqlite::database> db_;
     odb::sqlite::database * db_;
 
     /// Filename of the db

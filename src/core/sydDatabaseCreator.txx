@@ -30,9 +30,9 @@ Database * syd::DatabaseCreator<DatabaseType>::Read(std::string filename)
 
 // --------------------------------------------------------------------
 template<class DatabaseType>
-Database* syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
-                                                     std::string filename,
-                                                     std::string folder)
+void syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
+                                                std::string filename,
+                                                std::string folder)
 {
   // Check folder
   if (folder.find(PATH_SEPARATOR) != std::string::npos) {
@@ -82,6 +82,6 @@ Database* syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
     EXCEPTION("Error while trying to insert basic database information (sydCommonSchema) in the db. Error is:" << e.what());
   }
 
-  return Read(filename);
+  return NULL;//  return Read(filename);
 }
 // --------------------------------------------------------------------

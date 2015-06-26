@@ -26,12 +26,21 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  class Database;
+
   /// Base class for all record (or element, or row) in a table
-#pragma db object abstract
+#pragma db object abstract pointer(std::shared_ptr)
   class Record {
   public:
 
+    //    Record() {}
+
     virtual ~Record() { DD("dest Record"); }
+
+    virtual std::string GetTableName() const = 0;
+
+    virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
+
 
 #pragma db id auto
     /// Main key (automated, unique)

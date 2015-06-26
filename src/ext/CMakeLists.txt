@@ -1,6 +1,6 @@
 
 
-## Needed to find sydRecord-odb.hxx
+## Both needed
 include_directories(${SYD_BINARY_DIR}/src/core)
 include_directories(${SYD_SOURCE_DIR}/src/std_db)
 

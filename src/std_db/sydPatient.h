@@ -40,6 +40,11 @@ namespace syd {
 
     static pointer New() { return pointer(new Patient); }
 
+    virtual std::string GetTableName() const { return "Patient"; }
+    static std::string GetStaticTableName() { return "Patient"; }
+
+    virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
+
 #pragma db options("UNIQUE")
     /// Patient name (unique)
     std::string name;

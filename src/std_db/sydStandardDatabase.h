@@ -21,10 +21,11 @@
 
 // syd
 #include "sydDatabase.h"
+#include "sydTable.h"
 
 // syd tables
 #include "sydPatient-odb.hxx"
-
+#include "sydInjection-odb.hxx"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -37,6 +38,10 @@ namespace syd {
     virtual ~StandardDatabase() { DD("dest StandardDatabase"); }
 
     virtual syd::Patient::pointer NewPatient();
+
+    syd::Patient::pointer FindPatient(const std::string & name_or_study_id);
+
+    virtual void Set(std::shared_ptr<syd::Injection> & record, const std::vector<std::string> & args) const;
 
   protected:
     /// Insert the tables

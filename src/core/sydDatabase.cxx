@@ -69,20 +69,11 @@ void syd::Database::Read(std::string filename)
   }
 
   // Now consider the folder according to the filename path and check it exists
-  std::string pwd = filename;
-  ConvertToAbsolutePath(pwd);
-  pwd = GetPathFromFilename(pwd);
+  std::string database_path = filename;
+  ConvertToAbsolutePath(database_path);
+  database_path = GetPathFromFilename(database_path);
 
-  // if (!syd::GetWorkingDirectory(pwd))  {
-  //   EXCEPTION("Error while trying to get current working dir.");
-  // }
-  // if (filename_[0] != PATH_SEPARATOR) {
-  //   pwd = pwd+PATH_SEPARATOR+filename_;
-  //   unsigned found = pwd.find_last_of(PATH_SEPARATOR);
-  //   pwd = pwd.substr(0,found);
-  // }
-
-  absolute_folder_ = pwd+PATH_SEPARATOR+relative_folder_;
+  absolute_folder_ = database_path+PATH_SEPARATOR+relative_folder_;
   if (!syd::DirExists(absolute_folder_)) {
     EXCEPTION("The folder '" << absolute_folder_ << "' does not exist.");
   }
@@ -150,17 +141,22 @@ void syd::Database::Dump(std::ostream & os) const
 // --------------------------------------------------------------------
 
 
-// void syd::Database::Insert2(std::shared_ptr<syd::Record> record)
-// {
-//   DD("Insert2");
-//   odb::transaction t (db_->begin());
-//   db_->persist(record);
-//   //    db_->update(r);
-//   t.commit();
-// }
+void syd::Database::Insert2(std::shared_ptr<syd::Record> & record)
+{
+  DD("Insert2");
+
+  DD(record->GetTableName());
+
+  GetTable(record->GetTableName())->Insert2(record);
+
+  //  odb::transaction t (db_->begin());
+  //  std::shared_ptr<syd::Record> a(new syd::Patient);
+  //  db_->persist(record); //FIXME
+  //    db_->update(r);
+  //  t.commit();
+}
 
 // --------------------------------------------------------------------
-/*
 syd::TableBase * syd::Database::GetTable(const std::string & table_name) const
 {
   std::string str=table_name;
@@ -184,5 +180,21 @@ std::string syd::Database::GetListOfTableNames() const
   }
   return os.str();
 }
-*/
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::shared_ptr<syd::Record> syd::Database::NewRecord(const std::string & table_name) const
+{
+  return GetTable(table_name)->New();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Set(std::shared_ptr<syd::Record> & record, const std::vector<std::string> & args) const
+{
+  DD("Set");
+  record->Set(this, args);
+}
 // --------------------------------------------------------------------

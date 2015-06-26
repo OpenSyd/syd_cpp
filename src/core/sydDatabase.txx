@@ -65,29 +65,19 @@ Table<TableElement> * syd::Database::GetTable() const
 
 
 // --------------------------------------------------------------------
-/*
-template<class TableElement>
-void syd::Database::AddTable()
+
+template<class Record>
+void syd::Database::AddTable(const std::string & tablename)
 {
   // No exception handling here, fatal error if fail.
   if (db_ == NULL) {
     LOG(FATAL) << "Could not AddTable, open a db before";
   }
-  std::string tablename = TableElement::GetTableName();
-  // auto it = map.find(tablename);
-  // if (it != map.end()) {
-  //   LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
-  //              << "' already exist.";
-  // }
-  // Also check with uppercase and lowercase
+  //  std::string tablename = Record::GetTableName();
   std::string str = tablename;
-  // std::transform(str.begin(), str.end(),str.begin(), ::toupper);
-  // it = map.find(str);
-  // if (it != map.end()) {
-  //   LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
-  //              << "' already exist.";
-  // }
+  DD(str);
   std::transform(str.begin(), str.end(),str.begin(), ::tolower);
+  DD(str);
   auto it = map_lowercase.find(str);
   if (it != map_lowercase.end()) {
     LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
@@ -95,14 +85,14 @@ void syd::Database::AddTable()
   }
 
 
-  auto * t = new Table<TableElement>;
-  t->SetSQLDatabase(db_);
-  t->SetDatabase(this);
-  t->Initialization();
-  map[tablename] = t;//new Table<TableElement>(this, db_);
+  auto * t = new Table<Record>;
+  t->db_ = this; // FIXME
+  // t->SetSQLDatabase(db_);
+  // t->SetDatabase(this);
+  // t->Initialization();
+  map[tablename] = t;//new Table<Record>(this, db_);
   map_lowercase[str] = t;//map[tablename];
 }
-*/
 // --------------------------------------------------------------------
 
 
@@ -132,3 +122,31 @@ void syd::Database::AddTableTT()
 }
 */
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class Record>
+void syd::Database::QueryOne(std::shared_ptr<Record> & record, const odb::query<Record> & q) const
+{
+  DD("QueryOne");
+  try {
+    odb::transaction transaction (db_->begin());
+    DD("here");
+    auto r = db_->query_one<Record>(q);
+    if (r.get() == 0) {
+      DD("bug");
+      EXCEPTION("Error in sql query for the table '" << Record::GetStaticTableName() << "'"
+                << std::endl << "And last sql query is: "
+                << std::endl << GetLastSQLQuery());
+    }
+    record = r;
+    // DD(record);
+    transaction.commit();
+  }
+  catch (const odb::exception& e) {
+    LOG(FATAL) << "Error in sql query for the table '" << record->GetTableName()
+               << "', message is: " << e.what()
+               << std::endl << "And last sql query is: "
+               << std::endl << GetLastSQLQuery();
+  }
+}

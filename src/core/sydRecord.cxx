@@ -16,46 +16,12 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef EXTPATIENT_H
-#define EXTPATIENT_H
-
 // syd
-#include "sydPatient.h"
+#include "sydRecord.h"
 
 // --------------------------------------------------------------------
-namespace ext {
-
-#pragma db model version(1, 1)
-
-#pragma db object
-  /// Example of extended version of a table Patient
-  class Patient: public syd::Patient {
-  public:
-
-    /// Additional column 'birth_date'
-    std::string   birth_date;
-
-
-    SET_TABLE_NAME("extPatient")
-
-    /// Required constructor
-    Patient():syd::Patient() { birth_date = "birth_date"; }
-
-    /// Required constructor
-    //    Patient(std::string pname, syd::IdType studyId, double weight):syd::Patient(pname, studyId, weight) { birth_date = "birth_date";}
-
-
-    std::string ToString() const
-    {
-      std::stringstream ss ;
-      ss << syd::Patient::ToString() << " "
-         << birth_date;
-      return ss.str();
-    }
-
-
-  }; // end of class
+void syd::Record::Set(const syd::Database * db, const std::vector<std::string> & args)
+{
+  LOG(FATAL) << "The function Set(db, args) must be implemented for table " << GetTableName();
 }
 // --------------------------------------------------------------------
-
-#endif

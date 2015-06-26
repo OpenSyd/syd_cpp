@@ -91,9 +91,9 @@ syd::Database * syd::DatabaseManager::Read(const std::string & filename)
 
 
 // --------------------------------------------------------------------
-syd::Database * syd::DatabaseManager::Create(const std::string & db_schema_name,
-                                             const std::string & filename,
-                                             const std::string & folder)
+void syd::DatabaseManager::Create(const std::string & db_schema_name,
+                                  const std::string & filename,
+                                  const std::string & folder)
 {
   auto it = db_map_.find(db_schema_name);
   auto & list = GetDatabaseSchemas();
@@ -107,6 +107,6 @@ syd::Database * syd::DatabaseManager::Create(const std::string & db_schema_name,
               << "Known type are: " << os.str() << std::endl
               << "Try to insert this typename via plugin.");
   }
-  return it->second->Create(db_schema_name, filename, folder);
+  it->second->Create(db_schema_name, filename, folder);
 }
 // --------------------------------------------------------------------

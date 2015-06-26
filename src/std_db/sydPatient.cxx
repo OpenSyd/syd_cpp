@@ -45,3 +45,17 @@ std::string syd::Patient::ToString() const
   return ss.str();
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Patient::Set(const syd::Database * db, const std::vector<std::string> & arg)
+{
+  if (arg.size() < 2) {
+    LOG(FATAL) << "To insert patient, please set <name> <study_id> [<weight_in_kg> <dicom_patientid>]";
+  }
+  name = arg[0];
+  study_id = atoi(arg[1].c_str());
+  if (arg.size() > 2) weight_in_kg = atof(arg[2].c_str());
+  if (arg.size() > 3) dicom_patientid = arg[3];
+}
+// --------------------------------------------------

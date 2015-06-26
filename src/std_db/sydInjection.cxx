@@ -18,17 +18,19 @@
 
 // syd
 #include "sydInjection.h"
-#include "sydDatabase.h"
-#include "sydTable.h"
-#include "sydDicomSerie.h"
-#include "sydDicomSerie-odb.hxx"
-#include "sydTimepoint.h"
-#include "sydTimepoint-odb.hxx"
+
+#include "sydStandardDatabase.h"
+// #include "sydDatabase.h"
+// #include "sydTable.h"
+// #include "sydDicomSerie.h"
+// #include "sydDicomSerie-odb.hxx"
+// #include "sydTimepoint.h"
+// #include "sydTimepoint-odb.hxx"
 
 // --------------------------------------------------------------------
-syd::Injection::Injection():syd::TableElementBase()
-{
-}
+// syd::Injection::Injection():syd::TableElementBase()
+// {
+// }
 // --------------------------------------------------------------------
 
 
@@ -56,9 +58,9 @@ std::string syd::Injection::ToString() const
   std::string name;
   if (patient == NULL) name = "patient_not_set";
   else name = patient->name;
-  std::string r;
-  if (radionuclide == NULL) r = "radionuclide_not_set";
-  else r = radionuclide->name;
+  std::string r="fixme";
+  //if (radionuclide == NULL) r = "radionuclide_not_set";
+  //else r = radionuclide->name;
   std::stringstream ss ;
   ss << id << " "
      << name << " "
@@ -70,30 +72,41 @@ std::string syd::Injection::ToString() const
 // --------------------------------------------------
 
 
-// --------------------------------------------------
-bool syd::Injection::operator==(const Injection & p)
+void syd::Injection::Set(const syd::Database * d, const std::vector<std::string> & args)
 {
-  return (id == p.id and
-          *patient == *p.patient and
-          *radionuclide == *p.radionuclide and
-          date == p.date and
-          activity_in_MBq == p.activity_in_MBq);
+  DD("Set Injection");
+  syd::StandardDatabase* db = (syd::StandardDatabase*)(d);
+  std::string patient_name = args[0];
+  auto p = db->FindPatient(patient_name);
+  DD("find patient done");
+  DD(p);
+  patient = p;
 }
+
+// --------------------------------------------------
+// bool syd::Injection::operator==(const Injection & p)
+// {
+//   return (id == p.id and
+//           *patient == *p.patient and
+//           *radionuclide == *p.radionuclide and
+//           date == p.date and
+//           activity_in_MBq == p.activity_in_MBq);
+// }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Injection::OnDelete(syd::Database * db)
-{
-  DD(" injection OnDelete");
-  /*
-  std::vector<syd::DicomSerie> dicomseries;
-  db->Query<syd::DicomSerie>(odb::query<syd::DicomSerie>::injection == id, dicomseries);
-  for(auto i:dicomseries) db->AddToDeleteList(i);
+// void syd::Injection::OnDelete(syd::Database * db)
+// {
+//   DD(" injection OnDelete");
+//   /*
+//   std::vector<syd::DicomSerie> dicomseries;
+//   db->Query<syd::DicomSerie>(odb::query<syd::DicomSerie>::injection == id, dicomseries);
+//   for(auto i:dicomseries) db->AddToDeleteList(i);
 
-  std::vector<syd::Timepoint> tp;
-  db->Query<syd::Timepoint>(odb::query<syd::Timepoint>::injection == id, tp);
-  for(auto i:tp) db->AddToDeleteList(i);
-  */
-}
+//   std::vector<syd::Timepoint> tp;
+//   db->Query<syd::Timepoint>(odb::query<syd::Timepoint>::injection == id, tp);
+//   for(auto i:tp) db->AddToDeleteList(i);
+//   */
+// }
 // --------------------------------------------------

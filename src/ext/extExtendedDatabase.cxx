@@ -23,6 +23,8 @@
 void ext::ExtendedDatabase::CreateTables()
 {
   DD("syd::ExtendedDatabase::CreateTables");
+  AddTable<ext::Patient>("Patient");
+  AddTable<syd::Injection>("Injection");
 }
 // --------------------------------------------------------------------
 
