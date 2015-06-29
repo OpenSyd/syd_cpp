@@ -48,41 +48,57 @@ int main(int argc, char* argv[])
   }
 
 
+  std::vector<std::string> args;
+  args.push_back("toto");
+  args.push_back("1");
+  args.push_back("77");
+  args.push_back("XYXYXYX");
+  args.push_back("2015-654-354");
+
+
   // With generic db
   {
 
     DD("------------------");
-    syd::Database * db = m->Read(dbname); // FIXME set it shared
+    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
     db->Dump(std::cout); // list of tables etc
 
     // Create a new record
 
-    auto record = db->NewRecord("Patient");
-    DD(record);
-    std::vector<std::string> args;
-    args.push_back("toto");
-    args.push_back("1");
-    args.push_back("bidon");
-    db->Set(record, args);
-    //    record->Set(args);
-    DD(record);
-    db->Insert2(record);
-    DD(record);
+    auto patient = db->NewPatient();
+    DD(patient);
+    db->Set(patient, args);
+    DD(patient);
+    db->Insert(patient);
+    DD(patient);
 
-    DD("----------------");
-    auto inj = db->NewRecord("Injection");
-    DD(inj);
-    //    inj->patient = record;
-    args.clear();
-    args.push_back("toto");
-    args.push_back("1");
-    args.push_back("bidon");
-    DDS(args);
-    db->Set(inj, args);
-    //inj->Set(db, args); // same previous, but 'less' consistant
-    DD(inj);
-    db->Insert2(inj);
-    DD(inj);
+    auto p = db->FindPatient("toto");
+    DD(p);
+
+    auto r = db->Find("Patient", 1);
+    DD(r);
+
+    try {
+      db->FindPatient("titi");
+    }
+    catch(std::exception & e) {
+      std::cout << "titi not found. " << e.what();
+    }
+
+    // DD("----------------");
+    // auto inj = db->NewRecord("Injection");
+    // DD(inj);
+    // //    inj->patient = record;
+    // args.clear();
+    // args.push_back("toto");
+    // args.push_back("1");
+    // args.push_back("bidon");
+    // DDS(args);
+    // db->Set(inj, args);
+    // //inj->Set(db, args); // same previous, but 'less' consistant
+    // DD(inj);
+    // db->InsertRecord(inj);
+    // DD(inj);
 
 
     //    get sqldb try persist here

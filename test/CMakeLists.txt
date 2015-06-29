@@ -6,15 +6,25 @@ include_directories(${SYD_INCLUDE_DIRS})
 
 # Needed for odb generated sydDatabaseInformation-odb.hxx
 include_directories(${SYD_BINARY_DIR}/src/core)
-
+include_directories(${SYD_BINARY_DIR}/src/ext)
 
 # Test creation of database
-add_executable(test_extendedDatabase test_extendedDatabase.cxx)
-target_link_libraries(test_extendedDatabase extExtendedDatabase)
+add_executable(test_create_database test_create_database.cxx)
+target_link_libraries(test_create_database extExtendedDatabase)
+add_test(NAME test_create_database
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_create_database
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
-# wrap_ggo(test_extendedDatabase test_extendedDatabase.ggo)
-# add_executable(test_extendedDatabase test_extendedDatabase.cxx test_extendedDatabase_ggo.c)
-# target_link_libraries(test_extendedDatabase extExtendedDatabase)
+# Test insert
+add_executable(test_insert test_insert.cxx)
+target_link_libraries(test_insert extExtendedDatabase)
+add_test(NAME test_insert
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_insert
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
+
+add_executable(test_query test_query.cxx)
+target_link_libraries(test_query extExtendedDatabase)
+
 
 
 # #----------------------------------------------------------

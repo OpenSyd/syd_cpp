@@ -58,3 +58,18 @@ void syd::Patient::Set(const syd::Database * db, const std::vector<std::string> 
   if (arg.size() > 3) dicom_patientid = arg[3];
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Patient::Set(const syd::Database * db,
+                       const std::string & pname,
+                       const IdType & pstudy_id,
+                       const double pweight_in_kg,
+                       const std::string pdicom_patientid)
+{
+  name = pname;
+  study_id = pstudy_id;
+  weight_in_kg = pweight_in_kg;
+  dicom_patientid = pdicom_patientid;
+}
+// --------------------------------------------------

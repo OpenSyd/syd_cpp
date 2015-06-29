@@ -20,21 +20,20 @@
 
 
 // --------------------------------------------------------------------
-template<class Record>
-std::shared_ptr<syd::Record> syd::Table<Record>::New() const
+template<class RecordType>
+std::shared_ptr<syd::Record> syd::Table<RecordType>::New() const
 {
-  DD("Table<Record>::New()");
-  return Record::New();
+  return RecordType::New();
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class Record>
-void syd::Table<Record>::Insert2(std::shared_ptr<syd::Record> record) const
+template<class RecordType>
+void syd::Table<RecordType>::Insert(std::shared_ptr<syd::Record> record) const
 {
   //  auto p = std::dynamic_pointer_cast<Record>(record);
-  auto p = std::static_pointer_cast<Record>(record);
-  db_->Insert<Record>(p);
+  auto p = std::static_pointer_cast<RecordType>(record);
+  db_->Insert<RecordType>(p);
 }
 // --------------------------------------------------------------------

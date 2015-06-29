@@ -17,71 +17,69 @@
   ===========================================================================**/
 
 // syd
-#include "sydTestUtils.h"
-#include "sydStandardDatabase.h"
+#include "sydPluginManager.h"
+#include "sydDatabaseManager.h"
+#include "extExtendedDatabase.h"
 
-// syd init
+// Init syd
 SYD_STATIC_INIT
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  // Init
-  syd::TestInitialisation();
-  syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
+  Log::SQLFlag() = false;
+  Log::LogLevel() = 1;
 
-  // Create the database
-  std::string dbname = "data/test-work.db";
-  std::string folder = "test-data";
-  std::string ref_dbname = "data/test-ref.db";
-  std::string ref_folder = "test-ref-data";
-  LOG(1) << "Creating database " << dbname;
-  syd::Database * db = m->Create("StandardDatabase", dbname, folder);
+  // Load plugin
+  syd::PluginManager::GetInstance()->Load();
+  syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
-  // Insert some (fake) patients
+  // Get the database
+  std::string dbname = "test_create_database.db";
+  std::string folder = "test";
+
+  // StandardDatabase
+  std::cout << "Create StandardDatabase " << dbname << std::endl;
+  m->Create("StandardDatabase", dbname, folder, true);
+
   {
-    syd::Patient p;
-    p.Set("toto", 1, 90);
-    db->Insert(p);
-    syd::Patient t;
+    std::cout << "Open as generic Database" << std::endl;
+    syd::Database * db = m->Read(dbname);
+    db->Dump(std::cout);
   }
 
   {
-    syd::Patient p;
-    p.Set("titi", 2, 86);
-    db->Insert(p);
+    std::cout << "Open as StandardDatabase" << std::endl;
+    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+    db->Dump(std::cout);
   }
 
-  // Insert some injections
-  {
-    syd::Radionuclide r;
-    r.Set("Indium111", 67.313);
-    db->Insert(r);
-    syd::Patient p = db->QueryOne<syd::Patient>(odb::query<syd::Patient>::study_id == 1);
-    syd::Injection i;
-    i.Set(p, r, "2024-27-08 18:00", 200.0);
-    db->Insert(i);
-  }
+  // ExtendedDatabase
+  std::string ext_dbname = dbname+"-ext.db"; // cannot be the same db name ! dont know why
+  // Create
+  std::cout << "Create ExtendedDatabase " << ext_dbname << std::endl;
+  m->Create("ExtendedDatabase", ext_dbname, folder, true);
 
   {
-    syd::Radionuclide r;
-    r.Set("Yttrium90", 64.053);
-    db->Insert(r);
-    syd::Patient p = db->QueryOne<syd::Patient>(odb::query<syd::Patient>::study_id == 1);
-    syd::Injection i;
-    i.Set(p, r, "2034-27-08 18:00", 180.0);
-    db->Insert(i);
+    std::cout << "Open as generic Database" << std::endl;
+    syd::Database * db = m->Read(ext_dbname);
+    db->Dump(std::cout);
   }
 
-  // Create reference is needed
-  TestCreateReferenceDB(argc, argv, db, ref_dbname, ref_folder);
+  {
+    std::cout << "Open as StandardDatabase" << std::endl;
+    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(ext_dbname);
+    db->Dump(std::cout);
+  }
 
-  // Compare table
-  syd::Database * dbref = m->Read<syd::StandardDatabase>(ref_dbname);
-  syd::TestTableEquality<syd::Patient>(db, dbref);
-  syd::TestTableEquality<syd::Injection>(db, dbref);
+  {
+    std::cout << "Open as ExtendedDatabase" << std::endl;
+    ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
+    db->Dump(std::cout);
+  }
 
-  // This is the end, my friend.
+
   return EXIT_SUCCESS;
+  // This is the end, my friend.
 }
 // --------------------------------------------------------------------

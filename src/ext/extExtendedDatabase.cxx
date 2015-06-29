@@ -26,12 +26,3 @@ void ext::ExtendedDatabase::CreateTables()
   AddTable<syd::Injection>();
 }
 // --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Patient::pointer ext::ExtendedDatabase::NewPatient()
-{
-  syd::Patient::pointer patient(ext::Patient::New());//patient(new ext::Patient);
-  return patient;
-}
-// --------------------------------------------------------------------

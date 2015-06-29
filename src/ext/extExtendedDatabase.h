@@ -33,8 +33,6 @@ namespace ext {
 
   public:
 
-    virtual syd::Patient::pointer NewPatient();
-
   protected:
     /// Insert the tables
     virtual void CreateTables();

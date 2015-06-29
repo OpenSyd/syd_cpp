@@ -30,22 +30,20 @@ namespace syd {
 
   /// This class is used to encapsulate common functions for a
   /// database table that manage some Record.
-  template<class Record>
+  template<class RecordType>
   class Table: public TableBase {
   public:
 
-    Table():TableBase() {}
+    /// Constructor, set the pointer to the database
+    Table(syd::Database * d):TableBase() { db_ = d;}
 
-    //    static std::string GetTableName() { return Record::GetTableName(); }
-
-    /// Compute the number of elements in this table
-    //    virtual unsigned int GetNumberOfElements() const;
-
+    //// Default New, create a new record of the correct type, return a generic syd::Record
     virtual std::shared_ptr<syd::Record> New() const;
 
-    virtual void Insert2(std::shared_ptr<syd::Record> record) const;
+    /// Insert a new element in the table (knowing is type)
+    virtual void Insert(std::shared_ptr<syd::Record> record) const;
 
-    //  protected:
+  protected:
     syd::Database * db_;
 
   };

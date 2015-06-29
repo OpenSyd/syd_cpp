@@ -51,7 +51,7 @@ namespace syd {
 
   public:
 
-    //    virtual ~Database() { DD("dest Database"); delete db_;}
+    typedef std::shared_ptr<syd::Record> record_pointer;
 
     // ------------------------------------------------------------------------
     /// Return the type of the db (read in the file)
@@ -64,10 +64,54 @@ namespace syd {
     std::string GetDatabaseRelativeFolder() const { return relative_folder_; }
 
     /// Return the folder that contains the associated images (absolute)
-    std::string GetDatabaseAbsoluteFolder() const { return absolute_folder_; }
+   std::string GetDatabaseAbsoluteFolder() const { return absolute_folder_; }
 
     /// Return absolute path from a relative one
     std::string ConvertToAbsolutePath(std::string relative_path) const { return absolute_folder_+PATH_SEPARATOR+relative_path; }
+    // ------------------------------------------------------------------------
+
+
+    // ------------------------------------------------------------------------
+    virtual void Dump(std::ostream & os = std::cout) const;
+    // ------------------------------------------------------------------------
+
+
+    // ------------------------------------------------------------------------
+    /// Create a new record of the specified table.
+    std::shared_ptr<Record> New(const std::string & table_name) const;
+
+    /// Create a new record knowing the type
+    template<class RecordType>
+    void New(std::shared_ptr<RecordType> & record) const;
+
+    /// Create a new record knowing the type
+    template<class RecordType>
+    std::shared_ptr<RecordType> New() const;
+    // ------------------------------------------------------------------------
+
+
+    // ------------------------------------------------------------------------
+    /// Insert an element. The type of the element is
+    void Insert(record_pointer record);
+
+    /// Insert an element
+    template<class RecordType>
+    void Insert(std::shared_ptr<RecordType> record);
+    // ------------------------------------------------------------------------
+
+
+    // ------------------------------------------------------------------------
+    /// Set parameter of an element. 'Set' must be overwritten in the Record.
+    virtual void Set(record_pointer record, const std::vector<std::string> & args) const;
+    // ------------------------------------------------------------------------
+
+
+    // ------------------------------------------------------------------------
+    //    virtual record_pointer Find(const std::string & table_name, IdType id) const;
+    template<class RecordType>
+    void QueryOne(std::shared_ptr<RecordType> & record, const odb::query<RecordType> & q) const;
+    template<class RecordType>
+    void QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const;
     // ------------------------------------------------------------------------
 
 
@@ -80,34 +124,9 @@ namespace syd {
     // ------------------------------------------------------------------------
 
 
-
-    odb::sqlite::database * GetSQLDatabase() const { return db_; }
-
-
     // ------------------------------------------------------------------------
-    virtual void Dump(std::ostream & os = std::cout) const;
-
-    template<class Record>
-    void New(std::shared_ptr<Record> & record) const;
-
-    template<class Record>
-    void Insert(std::shared_ptr<Record> record);
-
-    std::shared_ptr<Record> NewRecord(const std::string & table_name) const;
-
-    void Insert2(std::shared_ptr<syd::Record> & record);
-
-    virtual void Set(std::shared_ptr<syd::Record> & record, const std::vector<std::string> & args) const;
-
     /// Return the (base) table with table_name
     TableBase * GetTable(const std::string & table_name) const;
-
-    template<class Record>
-    void QueryOne(std::shared_ptr<Record> & record, const odb::query<Record> & q) const;
-
-    // /// Return the table that contains TableElement
-    // template<class TableElement>
-    // Table<TableElement> * GetTable() const;
 
     std::string GetListOfTableNames() const;
 
@@ -122,6 +141,7 @@ namespace syd {
     /// Must be overwritten by concrete classes.
     virtual void CreateTables() = 0;
 
+    /// Declare a new table in the database
     template<class Record>
     void AddTable();
 

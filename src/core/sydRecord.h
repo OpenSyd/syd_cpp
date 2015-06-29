@@ -33,12 +33,16 @@ namespace syd {
   class Record {
   public:
 
+    typedef std::shared_ptr<Record> pointer;
+
+    /// Virtual destructor
     virtual ~Record() { }
 
+    /// Return the name of the table
     virtual std::string GetTableName() const = 0;
 
+    /// Set the values of the fields from some string.
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
-
 
 #pragma db id auto
     /// Main key (automated, unique)
@@ -53,6 +57,7 @@ namespace syd {
     /// Default function to print a pointer to an element (must be inline here).
     template<class R>
     friend std::ostream& operator<<(std::ostream& os, const std::shared_ptr<R> p) {
+      // FIXME      if (p.get() == 0) os << "[NULL]";
       os << p->ToString();
       return os;
     }

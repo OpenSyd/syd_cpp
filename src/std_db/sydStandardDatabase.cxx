@@ -29,20 +29,6 @@ void syd::StandardDatabase::CreateTables()
 
 
 // --------------------------------------------------------------------
-syd::Patient::pointer syd::StandardDatabase::NewPatient()
-{
-  //  syd::Patient::pointer patient(new syd::Patient);//syd::Patient::New();
-  return syd::Patient::New();//patient;
-}
-// --------------------------------------------------------------------
-
-
-void syd::StandardDatabase::Set(std::shared_ptr<syd::Injection> & record, const std::vector<std::string> & args) const
-{
-  DD("syd Set Injection in StandardDatabase");
-}
-
-
 syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & name_or_study_id)
 {
   DD("FindPatient");
@@ -62,3 +48,4 @@ syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & nam
   return patient;
   //  return NewPatient();
 }
+// --------------------------------------------------------------------

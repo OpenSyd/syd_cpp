@@ -36,7 +36,7 @@ namespace syd {
 
     virtual std::shared_ptr<syd::Record> New() const = 0;
 
-    virtual void Insert2(std::shared_ptr<syd::Record> record) const = 0;
+    virtual void Insert(std::shared_ptr<syd::Record> record) const = 0;
 
     //    syd::Database * db_;
 

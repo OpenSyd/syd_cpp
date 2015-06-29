@@ -43,6 +43,7 @@ void syd::Database::Read(std::string filename)
   // Open the DB
   LOG(5) << "Opening database '" << filename_ << "'.";
   try {
+    //    db_ = std::unique_ptr<odb::sqlite::database>(new odb::sqlite::database(filename_));
     db_ = new odb::sqlite::database(filename_);
     odb::connection_ptr c(db_->connection());
     c->execute("PRAGMA foreign_keys=ON;");
@@ -102,59 +103,28 @@ void syd::Database::TraceCallback(const char* sql)
 
 
 // --------------------------------------------------------------------
-/*void syd::Database::AddTableT(const std::string & tablename, syd::TableBase * table)
-{
-  // No exception handling here, fatal error if fail.
-  if (db_ == NULL) {
-    LOG(FATAL) << "Could not AddTable, open a db before";
-  }
-
-  std::string str = tablename;
-  std::transform(str.begin(), str.end(),str.begin(), ::tolower);
-  auto it = map_lowercase.find(str);
-  if (it != map_lowercase.end()) {
-    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
-               << "' already exist.";
-  }
-  table->SetSQLDatabase(db_);
-  //  table->SetDatabase(this);
-  map[tablename] = table;
-  map_lowercase[str] = map[tablename];
-}
-*/
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Database::Dump(std::ostream & os) const
 {
   os << "Database schema: " << GetDatabaseSchema() << std::endl;
   os << "Database folder: " << GetDatabaseRelativeFolder() << std::endl;
-  // for(auto i=map.begin(); i != map.end(); i++) {
-  //   int n = i->second->GetNumberOfElements();
-  //   os << "Table \t" << std::setw(15) << i->first << " " <<  std::setw(10) << n;
-  //   if (n>1) os << " elements" << std::endl;
-  //   else os << " element" << std::endl;
-  // }
+  for(auto i=map.begin(); i != map.end(); i++) {
+    int n = 666;// FIXME i->second->GetNumberOfElements();
+    os << "Table \t" << std::setw(15) << i->first << " " <<  std::setw(10) << n;
+    if (n>1) os << " elements" << std::endl;
+    else os << " element" << std::endl;
+  }
   os << std::flush;
 }
 // --------------------------------------------------------------------
 
 
-void syd::Database::Insert2(std::shared_ptr<syd::Record> & record)
+// --------------------------------------------------------------------
+void syd::Database::Insert(record_pointer record)
 {
-  DD("Insert2");
-
-  DD(record->GetTableName());
-
-  GetTable(record->GetTableName())->Insert2(record);
-
-  //  odb::transaction t (db_->begin());
-  //  std::shared_ptr<syd::Record> a(new syd::Patient);
-  //  db_->persist(record); //FIXME
-  //    db_->update(r);
-  //  t.commit();
+  GetTable(record->GetTableName())->Insert(record);
 }
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 syd::TableBase * syd::Database::GetTable(const std::string & table_name) const
@@ -184,7 +154,8 @@ std::string syd::Database::GetListOfTableNames() const
 
 
 // --------------------------------------------------------------------
-std::shared_ptr<syd::Record> syd::Database::NewRecord(const std::string & table_name) const
+syd::Database::record_pointer
+syd::Database::New(const std::string & table_name) const
 {
   return GetTable(table_name)->New();
 }
@@ -192,9 +163,19 @@ std::shared_ptr<syd::Record> syd::Database::NewRecord(const std::string & table_
 
 
 // --------------------------------------------------------------------
-void syd::Database::Set(std::shared_ptr<syd::Record> & record, const std::vector<std::string> & args) const
+void syd::Database::Set(record_pointer record,
+                        const std::vector<std::string> & args) const
 {
-  DD("Set");
   record->Set(this, args);
 }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// syd::Database::record_pointer
+// syd::Database::Find(const std::string & table_name, IdType id) const
+// {
+//   DD("Generic Find");
+//   //  return GetTable(table_name)->Find(id);
+// }
 // --------------------------------------------------------------------

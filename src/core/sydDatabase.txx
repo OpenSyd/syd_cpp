@@ -19,19 +19,26 @@
 
 
 // --------------------------------------------------------------------
-template<class Record>
-void syd::Database::New(std::shared_ptr<Record> & record) const
+template<class RecordType>
+void syd::Database::New(std::shared_ptr<RecordType> & record) const
 {
-  DD("Database::New");
-  // std::shared_ptr<Record> r(new Record);
-  // record = r;
+  record = RecordType::New();
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class Record>
-void syd::Database::Insert(std::shared_ptr<Record> record)
+template<class RecordType>
+std::shared_ptr<RecordType> syd::Database::New() const
+{
+  return RecordType::New();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::Insert(std::shared_ptr<RecordType> record)
 {
   try {
     odb::transaction t (db_->begin());
@@ -40,8 +47,10 @@ void syd::Database::Insert(std::shared_ptr<Record> record)
     t.commit();
   }
   catch (const odb::exception& e) {
+    std::string n="";
+    if (record != 0) n = record->GetTableName();
     LOG(FATAL) << "Cannot insert the element: <"
-               << record << "> in the table '" << "FIXME"
+               << record << "> in the table '" << n
                << "'. The error is: "  << e.what()
                << std::endl << "And last sql query is: "
                << std::endl << GetLastSQLQuery();
@@ -50,27 +59,15 @@ void syd::Database::Insert(std::shared_ptr<Record> record)
 // --------------------------------------------------------------------
 
 
-/*
 // --------------------------------------------------------------------
-template<class TableElement>
-Table<TableElement> * syd::Database::GetTable() const
-{
-  return (Table<TableElement>*)GetTable(TableElement::GetTableName());
-}
-// --------------------------------------------------------------------
-*/
-
-
-// --------------------------------------------------------------------
-
-template<class Record>
+template<class RecordType>
 void syd::Database::AddTable()
 {
   // No exception handling here, fatal error if fail.
   if (db_ == NULL) {
     LOG(FATAL) << "Could not AddTable, open a db before";
   }
-  std::string tablename = Record::GetStaticTableName();
+  std::string tablename = RecordType::GetStaticTableName();
   std::string str = tablename;
   std::transform(str.begin(), str.end(),str.begin(), ::tolower);
   auto it = map_lowercase.find(str);
@@ -78,10 +75,8 @@ void syd::Database::AddTable()
     LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
                << "' already exist.";
   }
-
-
-  auto * t = new Table<Record>;
-  t->db_ = this; // FIXME
+  auto * t = new Table<RecordType>(this);
+  //  t->db_ = this; // FIXME
   map[tablename] = t;
   map_lowercase[str] = t;
 }
@@ -89,45 +84,18 @@ void syd::Database::AddTable()
 
 
 // --------------------------------------------------------------------
-/*template<class Table>
-void syd::Database::AddTableTT()
-{
-  // No exception handling here, fatal error if fail.
-  if (db_ == NULL) {
-    LOG(FATAL) << "Could not AddTable, open a db before";
-  }
-  std::string tablename = Table::GetTableName();
-  DD(tablename);
-  std::string str = tablename;
-  std::transform(str.begin(), str.end(),str.begin(), ::tolower);
-  auto it = map_lowercase.find(str);
-  if (it != map_lowercase.end()) {
-    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
-               << "' already exist.";
-  }
-  Table * t = new Table;
-  t->SetSQLDatabase(db_);
-  t->SetDatabase(this);
-  t->Initialization();
-  map[tablename] = t;
-  map_lowercase[str] = t;
-}
-*/
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class Record>
-void syd::Database::QueryOne(std::shared_ptr<Record> & record, const odb::query<Record> & q) const
+template<class RecordType>
+void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
+                             const odb::query<RecordType> & q) const
 {
   DD("QueryOne");
   try {
     odb::transaction transaction (db_->begin());
     DD("here");
-    auto r = db_->query_one<Record>(q);
+    auto r = db_->query_one<RecordType>(q);
     if (r.get() == 0) {
       DD("bug");
-      EXCEPTION("Error in sql query for the table '" << Record::GetStaticTableName() << "'"
+      EXCEPTION("Error in sql query for the table '" << RecordType::GetStaticTableName() << "'"
                 << std::endl << "And last sql query is: "
                 << std::endl << GetLastSQLQuery());
     }
@@ -136,9 +104,29 @@ void syd::Database::QueryOne(std::shared_ptr<Record> & record, const odb::query<
     transaction.commit();
   }
   catch (const odb::exception& e) {
-    LOG(FATAL) << "Error in sql query for the table '" << record->GetTableName()
+    LOG(FATAL) << "Error in QueryOne sql query for the table '" << record->GetTableName()
                << "', message is: " << e.what()
                << std::endl << "And last sql query is: "
                << std::endl << GetLastSQLQuery();
   }
 }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const
+{
+  try {
+    odb::transaction transaction (db_->begin());
+    record = db_->load<RecordType>(id);
+    transaction.commit();
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Error in QueryOne sql query for the table '" << RecordType::GetStaticTableName()
+              << "' and id = " << id << std::endl
+              << "\t odb message: " << e.what() << std::endl
+              << "\t last sql query: " << GetLastSQLQuery());
+  }
+}
+// --------------------------------------------------------------------

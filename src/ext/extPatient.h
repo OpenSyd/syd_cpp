@@ -40,6 +40,13 @@ namespace ext {
 
     static pointer New() { return pointer(new ext::Patient); }
 
+    virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
+
+    virtual void Set(const syd::Database * db, const std::string & pname,
+                     const syd::IdType & pstudy_id, const double pweight_in_kg=-1,
+                     const std::string pdicom_patientid="unset_dicom_patientid",
+                     const std::string pbirth_date="0000-00-00 00:00");
+
     //
     std::string birth_date;
 

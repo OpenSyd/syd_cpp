@@ -45,6 +45,11 @@ namespace syd {
 
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
 
+    virtual void Set(const syd::Database * db, const std::string & pname,
+                     const IdType & pstudy_id, const double pweight_in_kg=-1,
+                     const std::string pdicom_patientid="unset_dicom_patientid");
+
+
 #pragma db options("UNIQUE")
     /// Patient name (unique)
     std::string name;
