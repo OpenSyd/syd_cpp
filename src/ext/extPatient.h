@@ -33,6 +33,7 @@ namespace ext {
   public:
 
     typedef std::shared_ptr<ext::Patient> pointer;
+    typedef std::vector<std::shared_ptr<ext::Patient>> vector;
 
     friend class odb::access;
 

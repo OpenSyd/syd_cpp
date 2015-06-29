@@ -126,3 +126,28 @@ void syd::Database::QueryOne(std::shared_ptr<RecordType> & record, const IdType 
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
+                          const odb::query<RecordType> & q) const
+{
+  try {
+    odb::transaction transaction (db_->begin());
+    typedef odb::result<RecordType> result;
+    result r(db_->query<RecordType>(q));
+    for(auto i = r.begin(); i != r.end(); i++) {
+      std::shared_ptr<RecordType> s = New<RecordType>();
+      i.load(*s);
+      records.push_back(s);
+    }
+    transaction.commit();
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Error during Query(r, q) for the table '" << RecordType::GetStaticTableName()
+              << "'. Last sql query is: "
+              << std::endl << GetLastSQLQuery());
+  }
+}
+// --------------------------------------------------------------------

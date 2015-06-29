@@ -48,7 +48,8 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     //    Patient();
-    typedef std::shared_ptr<Patient> pointer;
+    typedef std::shared_ptr<syd::Patient> pointer;
+    typedef std::vector<std::shared_ptr<syd::Patient>> vector;
     friend class odb::access;
     virtual ~Patient() {}
     virtual std::string GetTableName() const { return "Patient"; }
