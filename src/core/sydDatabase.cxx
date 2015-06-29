@@ -163,10 +163,17 @@ syd::Database::New(const std::string & table_name) const
 
 
 // --------------------------------------------------------------------
-void syd::Database::Set(record_pointer record,
-                        const std::vector<std::string> & args) const
+void syd::Database::Set(record_pointer record, const std::vector<std::string> & args) const
 {
   record->Set(this, args);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void  syd::Database::QueryOne(record_pointer & r, const std::string & table_name, const IdType & id) const
+{
+  GetTable(table_name)->QueryOne(r, id);
 }
 // --------------------------------------------------------------------
 

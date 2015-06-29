@@ -43,6 +43,8 @@ namespace syd {
     /// Insert a new element in the table (knowing is type)
     virtual void Insert(std::shared_ptr<syd::Record> record) const;
 
+    virtual void QueryOne(std::shared_ptr<syd::Record> & record, const syd::IdType & id) const;
+
   protected:
     syd::Database * db_;
 

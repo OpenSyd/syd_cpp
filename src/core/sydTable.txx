@@ -37,3 +37,15 @@ void syd::Table<RecordType>::Insert(std::shared_ptr<syd::Record> record) const
   db_->Insert<RecordType>(p);
 }
 // --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Table<RecordType>::QueryOne(std::shared_ptr<syd::Record> & record, const syd::IdType & id) const
+{
+  auto p = std::static_pointer_cast<RecordType>(record);
+  db_->QueryOne(p,id);
+  record = p;
+}
+// --------------------------------------------------------------------

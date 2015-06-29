@@ -47,6 +47,15 @@ std::string syd::Patient::ToString() const
 
 
 // --------------------------------------------------
+bool syd::Patient::IsEqual(const pointer p) const
+{
+  return (syd::Record::IsEqual(p) and name == p->name and
+          study_id == p->study_id and dicom_patientid == p->dicom_patientid);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 void syd::Patient::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {

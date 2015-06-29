@@ -88,15 +88,12 @@ template<class RecordType>
 void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
                              const odb::query<RecordType> & q) const
 {
-  DD("QueryOne");
   try {
     odb::transaction transaction (db_->begin());
-    DD("here");
     auto r = db_->query_one<RecordType>(q);
     if (r.get() == 0) {
-      DD("bug");
-      EXCEPTION("Error in sql query for the table '" << RecordType::GetStaticTableName() << "'"
-                << std::endl << "And last sql query is: "
+      EXCEPTION("No matching record in QueryOne(q) for the table '" << RecordType::GetStaticTableName()
+                << ". Last sql query is: "
                 << std::endl << GetLastSQLQuery());
     }
     record = r;
@@ -104,10 +101,9 @@ void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
     transaction.commit();
   }
   catch (const odb::exception& e) {
-    LOG(FATAL) << "Error in QueryOne sql query for the table '" << record->GetTableName()
-               << "', message is: " << e.what()
-               << std::endl << "And last sql query is: "
-               << std::endl << GetLastSQLQuery();
+    EXCEPTION("Error in QueryOne(q) for the table '" << record->GetTableName()
+              << "', cannot find the record. Last sql query is: "
+              << std::endl << GetLastSQLQuery());
   }
 }
 // --------------------------------------------------------------------

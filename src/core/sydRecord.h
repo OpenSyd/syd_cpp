@@ -65,6 +65,9 @@ namespace syd {
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const = 0;
 
+    /// Return true if the record is equal (same id here);
+    virtual bool IsEqual(const pointer p) const;
+
    protected:
     Record(std::string) {}
 

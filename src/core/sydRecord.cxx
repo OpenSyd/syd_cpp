@@ -25,3 +25,11 @@ void syd::Record::Set(const syd::Database * db, const std::vector<std::string> &
   LOG(FATAL) << "The function Set(db, args) must be implemented for table " << GetTableName();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::Record::IsEqual(const pointer p) const
+{
+  return (id == p->id);
+}
+// --------------------------------------------------------------------

@@ -32,24 +32,6 @@ namespace syd {
   class Patient: public syd::Record {
   public:
 
-    typedef std::shared_ptr<Patient> pointer;
-
-    friend class odb::access;
-
-    virtual ~Patient() {}
-
-    static pointer New() { return pointer(new Patient); }
-
-    virtual std::string GetTableName() const { return "Patient"; }
-    static std::string GetStaticTableName() { return "Patient"; }
-
-    virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
-
-    virtual void Set(const syd::Database * db, const std::string & pname,
-                     const IdType & pstudy_id, const double pweight_in_kg=-1,
-                     const std::string pdicom_patientid="unset_dicom_patientid");
-
-
 #pragma db options("UNIQUE")
     /// Patient name (unique)
     std::string name;
@@ -66,7 +48,20 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     //    Patient();
+    typedef std::shared_ptr<Patient> pointer;
+    friend class odb::access;
+    virtual ~Patient() {}
+    virtual std::string GetTableName() const { return "Patient"; }
+    static std::string GetStaticTableName() { return "Patient"; }
     virtual std::string ToString() const;
+    static pointer New() { return pointer(new Patient); }
+    virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
+
+    virtual void Set(const syd::Database * db, const std::string & pname,
+                     const IdType & pstudy_id, const double pweight_in_kg=-1,
+                     const std::string pdicom_patientid="unset_dicom_patientid");
+
+    virtual bool IsEqual(const pointer p) const;
 
    protected:
     Patient():Record("") { name = "unset_name"; }

@@ -40,6 +40,8 @@ namespace ext {
 
     static pointer New() { return pointer(new ext::Patient); }
 
+    virtual bool IsEqual(const pointer p) const;
+
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
 
     virtual void Set(const syd::Database * db, const std::string & pname,

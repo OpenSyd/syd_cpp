@@ -108,10 +108,17 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     //    virtual record_pointer Find(const std::string & table_name, IdType id) const;
+    /// Query a single record according to query
     template<class RecordType>
     void QueryOne(std::shared_ptr<RecordType> & record, const odb::query<RecordType> & q) const;
+    /// Query a single record according to the id
     template<class RecordType>
     void QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const;
+    /// Query a single record from the table_name
+    void QueryOne(record_pointer & r, const std::string & table_name, const IdType & id) const;
+    /// Query a single record according to query
+    // template<class RecordType>
+    // void Query(std::shared_ptr<RecordType> & record, const odb::query<RecordType> & q) const;
     // ------------------------------------------------------------------------
 
 

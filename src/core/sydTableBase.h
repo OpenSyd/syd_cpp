@@ -34,11 +34,13 @@ namespace syd {
   class TableBase {
   public:
 
-    virtual std::shared_ptr<syd::Record> New() const = 0;
+    typedef std::shared_ptr<syd::Record> record_pointer;
 
-    virtual void Insert(std::shared_ptr<syd::Record> record) const = 0;
+    virtual record_pointer New() const = 0;
 
-    //    syd::Database * db_;
+    virtual void Insert(record_pointer record) const = 0;
+
+    virtual void QueryOne(record_pointer & r, const IdType & id) const = 0;
 
   };
 
