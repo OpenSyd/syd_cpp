@@ -151,3 +151,28 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records) const
+{
+  odb::query<RecordType> q;
+  Query(records, q);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
+                          const std::vector<syd::IdType> & ids) const
+{
+  if (ids.size() == 0) return;
+  odb::query<RecordType> q(odb::query<RecordType>::id == ids[0]);
+  for(auto id:ids) {
+    q = q or odb::query<RecordType>::id == id;
+  }
+  Query(records, q);
+}
+// --------------------------------------------------------------------

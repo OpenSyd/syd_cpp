@@ -51,7 +51,8 @@ namespace syd {
 
   public:
 
-    typedef std::shared_ptr<syd::Record> record_pointer;
+    typedef syd::Record::pointer record_pointer;
+    typedef syd::Record::vector record_vector;
 
     // ------------------------------------------------------------------------
     /// Return the type of the db (read in the file)
@@ -111,15 +112,28 @@ namespace syd {
     /// Query a single record according to query
     template<class RecordType>
     void QueryOne(std::shared_ptr<RecordType> & record, const odb::query<RecordType> & q) const;
+
     /// Query a single record according to the id
     template<class RecordType>
     void QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const;
+
     /// Query a single record from the table_name
     void QueryOne(record_pointer & r, const std::string & table_name, const IdType & id) const;
+
     /// Query several records according to query
     template<class RecordType>
-    void Query(std::vector<std::shared_ptr<RecordType>> & records,
-                const odb::query<RecordType> & q) const;
+    void Query(std::vector<std::shared_ptr<RecordType>> & records, const odb::query<RecordType> & q) const;
+
+    /// Query all records
+    template<class RecordType>
+    void Query(std::vector<std::shared_ptr<RecordType>> & records) const;
+
+    /// Query several records according to their id
+    template<class RecordType>
+    void Query(std::vector<std::shared_ptr<RecordType>> & records, const std::vector<syd::IdType> & ids) const;
+
+    /// Query several records according to their id
+    void Query(std::vector<record_pointer> & records, const std::string table_name, const std::vector<syd::IdType> & ids) const;
     // ------------------------------------------------------------------------
 
 

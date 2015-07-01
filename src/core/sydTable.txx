@@ -21,7 +21,8 @@
 
 // --------------------------------------------------------------------
 template<class RecordType>
-std::shared_ptr<syd::Record> syd::Table<RecordType>::New() const
+typename syd::Table<RecordType>::record_pointer
+syd::Table<RecordType>::New() const
 {
   return RecordType::New();
 }
@@ -30,7 +31,7 @@ std::shared_ptr<syd::Record> syd::Table<RecordType>::New() const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Table<RecordType>::Insert(std::shared_ptr<syd::Record> record) const
+void syd::Table<RecordType>::Insert(record_pointer record) const
 {
   //  auto p = std::dynamic_pointer_cast<Record>(record);
   auto p = std::static_pointer_cast<RecordType>(record);
@@ -39,13 +40,25 @@ void syd::Table<RecordType>::Insert(std::shared_ptr<syd::Record> record) const
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Table<RecordType>::QueryOne(record_pointer & record, const syd::IdType & id) const
+{
+  typename RecordType::pointer p;//auto p = std::static_pointer_cast<RecordType>(record);
+  db_->QueryOne(p,id);
+  record = p;
+}
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Table<RecordType>::QueryOne(std::shared_ptr<syd::Record> & record, const syd::IdType & id) const
+void syd::Table<RecordType>::Query(record_vector & records, const std::vector<syd::IdType> & ids) const
 {
-  auto p = std::static_pointer_cast<RecordType>(record);
-  db_->QueryOne(p,id);
-  record = p;
+  typename RecordType::vector specific_records;
+  db_->Query(specific_records, ids);
+  for(auto r:specific_records) {
+    records.push_back(r);
+  }
 }
 // --------------------------------------------------------------------

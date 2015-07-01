@@ -34,6 +34,7 @@ namespace syd {
   public:
 
     typedef std::shared_ptr<Record> pointer;
+    typedef std::vector<pointer> vector;
 
     /// Virtual destructor
     virtual ~Record() { }

@@ -44,6 +44,8 @@ namespace syd {
     virtual ~Injection() { }
 
     typedef std::shared_ptr<Injection> pointer;
+    typedef std::vector<pointer> vector;
+
     static pointer New() { return pointer(new Injection); }
 
     virtual std::string GetTableName() const { return "Injection"; }

@@ -34,6 +34,10 @@ namespace syd {
   class Table: public TableBase {
   public:
 
+    /// Generic record type
+    typedef syd::Record::pointer record_pointer;
+    typedef syd::Record::vector record_vector;
+
     /// Constructor, set the pointer to the database
     Table(syd::Database * d):TableBase() { db_ = d;}
 
@@ -41,9 +45,11 @@ namespace syd {
     virtual std::shared_ptr<syd::Record> New() const;
 
     /// Insert a new element in the table (knowing is type)
-    virtual void Insert(std::shared_ptr<syd::Record> record) const;
+    virtual void Insert(record_pointer record) const;
 
-    virtual void QueryOne(std::shared_ptr<syd::Record> & record, const syd::IdType & id) const;
+    virtual void QueryOne(record_pointer & record, const syd::IdType & id) const;
+
+    virtual void Query(record_vector & records, const std::vector<syd::IdType> & ids) const;
 
   protected:
     syd::Database * db_;

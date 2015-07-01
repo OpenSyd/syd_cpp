@@ -171,9 +171,21 @@ void syd::Database::Set(record_pointer record, const std::vector<std::string> & 
 
 
 // --------------------------------------------------------------------
-void  syd::Database::QueryOne(record_pointer & r, const std::string & table_name, const IdType & id) const
+void  syd::Database::QueryOne(record_pointer & record,
+                              const std::string & table_name,
+                              const IdType & id) const
 {
-  GetTable(table_name)->QueryOne(r, id);
+  GetTable(table_name)->QueryOne(record, id);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Query(record_vector & records,
+                          const std::string table_name,
+                          const std::vector<syd::IdType> & ids) const
+{
+  GetTable(table_name)->Query(records, ids);
 }
 // --------------------------------------------------------------------
 
