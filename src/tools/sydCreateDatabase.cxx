@@ -33,9 +33,11 @@ int main(int argc, char* argv[])
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
-  auto & list = m->GetDatabaseSchemas();
 
+  // Display help (-l)
   if (args_info.list_flag) {
+    // Get the list of database if needed.
+    auto & list = m->GetDatabaseSchemas();
     if (list.size() == 0) {
       LOG(FATAL) << "No database type registered. No plugin found ? Try to check the SYD_PLUGIN environement variable.";
     }
@@ -71,7 +73,8 @@ int main(int argc, char* argv[])
   }
 
   // Create the database
-  syd::Database * db = m->Create(dbtype, dbname, folder);
+  m->Create(dbtype, dbname, folder);
+  syd::Database * db = m->Read(dbname);
   LOG(1) << "Database " << dbname << " of type '" << dbtype << "' created.";
   LOG(2) << "List of tables: " << db->GetListOfTableNames();
 

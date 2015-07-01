@@ -53,58 +53,45 @@ add_library(sydStandardDatabase SHARED
 target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})
 
 
-# ## test extend db
-# set(SCHEMA_NAME ExtendedDatabase)
-# wrap_odb(extExtendedDatabase extPatient.h)
-
-# add_library(extExtendedDatabase SHARED
-#   extExtendedDatabase.cxx
-#   extExtendedDatabasePlugin.cxx
-#   sydPatient-odb.cxx sydPatient.cxx
-#   extPatient-odb.cxx extPatient.cxx
-#   )
-
+##############################
 # # Not really a tool, for debug only
 # wrap_ggo(sydTest sydTest.ggo)
 # add_executable(sydTest sydTest.cxx sydTest_ggo.c)
 # target_link_libraries(sydTest extExtendedDatabase sydStandardDatabase)
 
+##############################
+# Specific tools (usable for StandardDatabase or db that inherit from it)
 
 
+# # Create DicomSeries
+# wrap_ggo(sydInsertDicom sydInsertDicom.ggo)
+# add_executable(sydInsertDicom sydInsertDicom.cxx sydInsertDicom_ggo.c)
+# target_link_libraries(sydInsertDicom sydStandardDatabase)
 
+# # Create images
+# wrap_ggo(sydInsertImageFromDicom sydInsertImageFromDicom.ggo)
+# add_executable(sydInsertImageFromDicom sydInsertImageFromDicom.cxx sydInsertImageFromDicom_ggo.c)
+# target_link_libraries(sydInsertImageFromDicom sydStandardDatabase)
 
+# # Create images by stitching 2 dicom
+# wrap_ggo(sydStitchDicom sydStitchDicom.ggo)
+# add_executable(sydStitchDicom sydStitchDicom.cxx sydStitchDicom_ggo.c)
+# target_link_libraries(sydStitchDicom sydStandardDatabase)
 
+# # Reduce the size of an image by cropping it (with a mask or with a threshold)
+# wrap_ggo(sydCropImage sydCropImage.ggo)
+# add_executable(sydCropImage sydCropImage.cxx sydCropImage_ggo.c)
+# target_link_libraries(sydCropImage sydStandardDatabase)
 
+# # Change tag
+# wrap_ggo(sydImageTag sydImageTag.ggo)
+# add_executable(sydImageTag sydImageTag.cxx sydImageTag_ggo.c)
+# target_link_libraries(sydImageTag sydStandardDatabase)
 
-# Create DicomSeries
-wrap_ggo(sydInsertDicom sydInsertDicom.ggo)
-add_executable(sydInsertDicom sydInsertDicom.cxx sydInsertDicom_ggo.c)
-target_link_libraries(sydInsertDicom sydStandardDatabase)
-
-# Create images
-wrap_ggo(sydInsertImageFromDicom sydInsertImageFromDicom.ggo)
-add_executable(sydInsertImageFromDicom sydInsertImageFromDicom.cxx sydInsertImageFromDicom_ggo.c)
-target_link_libraries(sydInsertImageFromDicom sydStandardDatabase)
-
-# Create images by stitching 2 dicom
-wrap_ggo(sydStitchDicom sydStitchDicom.ggo)
-add_executable(sydStitchDicom sydStitchDicom.cxx sydStitchDicom_ggo.c)
-target_link_libraries(sydStitchDicom sydStandardDatabase)
-
-# Reduce the size of an image by cropping it (with a mask or with a threshold)
-wrap_ggo(sydCropImage sydCropImage.ggo)
-add_executable(sydCropImage sydCropImage.cxx sydCropImage_ggo.c)
-target_link_libraries(sydCropImage sydStandardDatabase)
-
-# Change tag
-wrap_ggo(sydImageTag sydImageTag.ggo)
-add_executable(sydImageTag sydImageTag.cxx sydImageTag_ggo.c)
-target_link_libraries(sydImageTag sydStandardDatabase)
-
-# Insert a new RoiMaskImage
-wrap_ggo(sydInsertRoiMaskImage sydInsertRoiMaskImage.ggo)
-add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx sydInsertRoiMaskImage_ggo.c)
-target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
+# # Insert a new RoiMaskImage
+# wrap_ggo(sydInsertRoiMaskImage sydInsertRoiMaskImage.ggo)
+# add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx sydInsertRoiMaskImage_ggo.c)
+# target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 
 # Create Timepoints
 # wrap_ggo(sydInsertTimepoint sydInsertTimepoint.ggo)
@@ -119,27 +106,15 @@ target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 #----------------------------------------------------------
 
 
-#----------------------------------------------------------
-# External tool: clitkExtractPatient
-wrap_ggo(syd_clitkExtractPatient syd_clitkExtractPatient.ggo)
-add_executable(syd_clitkExtractPatient syd_clitkExtractPatient.cxx syd_clitkExtractPatient_ggo.c)
-target_link_libraries(syd_clitkExtractPatient sydStandardDatabase)
+# #----------------------------------------------------------
+# # External tool: clitkExtractPatient
+# wrap_ggo(syd_clitkExtractPatient syd_clitkExtractPatient.ggo)
+# add_executable(syd_clitkExtractPatient syd_clitkExtractPatient.cxx syd_clitkExtractPatient_ggo.c)
+# target_link_libraries(syd_clitkExtractPatient sydStandardDatabase)
 
 
-#----------------------------------------------------------
-# External tool: elastix
-wrap_ggo(syd_elastix syd_elastix.ggo)
-add_executable(syd_elastix syd_elastix.cxx syd_elastix_ggo.c)
-target_link_libraries(syd_elastix sydStandardDatabase)
-
-
-
-#----------------------------------------------------------
-
-# set(SCHEMA_NAME TestDatabase)
-# wrap_odb(sydTestDatabase sydTestPatient.h)
-
-# add_library(sydTestDatabase SHARED
-#   sydTestDatabase.cxx
-#   sydStandardDatabasePlugin.cxx
-#   sydPatient-odb.cxx sydPatient.cxx
+# #----------------------------------------------------------
+# # External tool: elastix
+# wrap_ggo(syd_elastix syd_elastix.ggo)
+# add_executable(syd_elastix syd_elastix.cxx syd_elastix_ggo.c)
+# target_link_libraries(syd_elastix sydStandardDatabase)

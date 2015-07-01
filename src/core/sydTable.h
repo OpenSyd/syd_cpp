@@ -47,8 +47,10 @@ namespace syd {
     /// Insert a new element in the table (knowing is type)
     virtual void Insert(record_pointer record) const;
 
+    /// Query a single element by its id
     virtual void QueryOne(record_pointer & record, const syd::IdType & id) const;
 
+    /// Query several elements by their id
     virtual void Query(record_vector & records, const std::vector<syd::IdType> & ids) const;
 
   protected:

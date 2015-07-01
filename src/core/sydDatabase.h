@@ -51,7 +51,10 @@ namespace syd {
 
   public:
 
+    /// Type of a generic record (pointer)
     typedef syd::Record::pointer record_pointer;
+
+    /// Type of a generic vector of records (pointer)
     typedef syd::Record::vector record_vector;
 
     // ------------------------------------------------------------------------

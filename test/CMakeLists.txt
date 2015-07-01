@@ -22,8 +22,19 @@ add_test(NAME test_insert
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_insert
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
+# Test query
 add_executable(test_query test_query.cxx)
 target_link_libraries(test_query extExtendedDatabase)
+add_test(NAME test_query
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_query
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
+
+# Test dump
+add_executable(test_dump test_dump.cxx)
+target_link_libraries(test_dump extExtendedDatabase)
+add_test(NAME test_dump
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_dump
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
 
 

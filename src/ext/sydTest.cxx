@@ -65,25 +65,25 @@ int main(int argc, char* argv[])
 
     // Create a new record
 
-    auto patient = db->NewPatient();
-    DD(patient);
-    db->Set(patient, args);
-    DD(patient);
-    db->Insert(patient);
-    DD(patient);
+    // auto patient = db->NewPatient();
+    // DD(patient);
+    // db->Set(patient, args);
+    // DD(patient);
+    // db->Insert(patient);
+    // DD(patient);
 
-    auto p = db->FindPatient("toto");
-    DD(p);
+    // auto p = db->FindPatient("toto");
+    // DD(p);
 
-    auto r = db->Find("Patient", 1);
-    DD(r);
+    // auto r = db->Find("Patient", 1);
+    // DD(r);
 
-    try {
-      db->FindPatient("titi");
-    }
-    catch(std::exception & e) {
-      std::cout << "titi not found. " << e.what();
-    }
+    // try {
+    //   db->FindPatient("titi");
+    // }
+    // catch(std::exception & e) {
+    //   std::cout << "titi not found. " << e.what();
+    //    }
 
     // DD("----------------");
     // auto inj = db->NewRecord("Injection");
