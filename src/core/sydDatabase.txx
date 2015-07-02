@@ -16,7 +16,7 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 template<class RecordType>
@@ -32,6 +32,20 @@ template<class RecordType>
 std::shared_ptr<RecordType> syd::Database::New() const
 {
   return RecordType::New();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::Dump(std::ostream & os,
+                         const std::vector<std::shared_ptr<RecordType>> & records) const
+{
+  if (records.size() == 0) return;
+  syd::PrintTable ta;
+  records[0]->InitPrintTable(this, ta, ""); // or db->InitPrintTable ?
+  for(auto r:records) r->DumpInTable(this, ta, "");
+  ta.Print(os);
 }
 // --------------------------------------------------------------------
 

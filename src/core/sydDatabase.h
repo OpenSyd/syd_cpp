@@ -52,10 +52,10 @@ namespace syd {
   public:
 
     /// Type of a generic record (pointer)
-    typedef syd::Record::pointer record_pointer;
+    typedef syd::Record::pointer generic_record_pointer;
 
     /// Type of a generic vector of records (pointer)
-    typedef syd::Record::vector record_vector;
+    typedef syd::Record::vector generic_record_vector;
 
     // ------------------------------------------------------------------------
     /// Return the type of the db (read in the file)
@@ -75,10 +75,15 @@ namespace syd {
     // ------------------------------------------------------------------------
 
 
-    // ------------------------------------------------------------------------
-    virtual void Dump(std::ostream & os = std::cout) const;
-    // ------------------------------------------------------------------------
-
+    /* In the following using:
+       std::shared_ptr<RecordType> and std::vector<std::shared_ptr<RecordType>>
+       instead of typename RecordType::pointer or RecordType::vector
+       is done purposely because it allows the compiler to detect the template
+       without explicit specification:
+       db->Query(patients);
+       instead of
+       db->Query<syd::Patient>(patients);
+    */
 
     // ------------------------------------------------------------------------
     /// Create a new record of the specified table.
@@ -96,7 +101,7 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// Insert an element. The type of the element is
-    void Insert(record_pointer record);
+    void Insert(generic_record_pointer record);
 
     /// Insert an element
     template<class RecordType>
@@ -106,12 +111,12 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// Set parameter of an element. 'Set' must be overwritten in the Record.
-    virtual void Set(record_pointer record, const std::vector<std::string> & args) const;
+    virtual void Set(generic_record_pointer record, const std::vector<std::string> & args) const;
     // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
-    //    virtual record_pointer Find(const std::string & table_name, IdType id) const;
+    //    virtual generic_record_pointer Find(const std::string & table_name, IdType id) const;
     /// Query a single record according to query
     template<class RecordType>
     void QueryOne(std::shared_ptr<RecordType> & record, const odb::query<RecordType> & q) const;
@@ -121,7 +126,7 @@ namespace syd {
     void QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const;
 
     /// Query a single record from the table_name
-    void QueryOne(record_pointer & r, const std::string & table_name, const IdType & id) const;
+    void QueryOne(generic_record_pointer & r, const std::string & table_name, const IdType & id) const;
 
     /// Query several records according to query
     template<class RecordType>
@@ -136,7 +141,14 @@ namespace syd {
     void Query(std::vector<std::shared_ptr<RecordType>> & records, const std::vector<syd::IdType> & ids) const;
 
     /// Query several records according to their id
-    void Query(std::vector<record_pointer> & records, const std::string table_name, const std::vector<syd::IdType> & ids) const;
+    void Query(generic_record_vector & records, const std::string table_name, const std::vector<syd::IdType> & ids) const;
+    // ------------------------------------------------------------------------
+
+
+    // ------------------------------------------------------------------------
+    virtual void Dump(std::ostream & os = std::cout) const;
+    template<class RecordType>
+    void Dump(std::ostream & os, const std::vector<std::shared_ptr<RecordType>> & records) const;
     // ------------------------------------------------------------------------
 
 

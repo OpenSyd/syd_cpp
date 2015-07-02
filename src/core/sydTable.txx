@@ -21,7 +21,7 @@
 
 // --------------------------------------------------------------------
 template<class RecordType>
-typename syd::Table<RecordType>::record_pointer
+typename syd::Table<RecordType>::generic_record_pointer
 syd::Table<RecordType>::New() const
 {
   return RecordType::New();
@@ -31,7 +31,7 @@ syd::Table<RecordType>::New() const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Table<RecordType>::Insert(record_pointer record) const
+void syd::Table<RecordType>::Insert(generic_record_pointer record) const
 {
   //  auto p = std::dynamic_pointer_cast<Record>(record);
   auto p = std::static_pointer_cast<RecordType>(record);
@@ -42,10 +42,10 @@ void syd::Table<RecordType>::Insert(record_pointer record) const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Table<RecordType>::QueryOne(record_pointer & record, const syd::IdType & id) const
+void syd::Table<RecordType>::QueryOne(generic_record_pointer & record, const syd::IdType & id) const
 {
   typename RecordType::pointer p;//auto p = std::static_pointer_cast<RecordType>(record);
-  db_->QueryOne(p,id);
+  db_->QueryOne<RecordType>(p,id);
   record = p;
 }
 // --------------------------------------------------------------------
@@ -53,10 +53,10 @@ void syd::Table<RecordType>::QueryOne(record_pointer & record, const syd::IdType
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Table<RecordType>::Query(record_vector & records, const std::vector<syd::IdType> & ids) const
+void syd::Table<RecordType>::Query(generic_record_vector & records, const std::vector<syd::IdType> & ids) const
 {
   typename RecordType::vector specific_records;
-  db_->Query(specific_records, ids);
+  db_->Query<RecordType>(specific_records, ids);
   for(auto r:specific_records) {
     records.push_back(r);
   }

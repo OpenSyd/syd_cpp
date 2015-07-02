@@ -119,7 +119,29 @@ void syd::Database::Dump(std::ostream & os) const
 
 
 // --------------------------------------------------------------------
-void syd::Database::Insert(record_pointer record)
+// void syd::Database::Dump2(const generic_record_pointer record, std::ostream & os) const
+// {
+//   DD("Dump2 syd::Database");
+//   DD(record);
+// }
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+// void syd::Database::Dump(std::ostream & os, generic_record_vector records) const
+// {
+//   DD("dump");
+//   DD(records.size());
+
+//   //  GetTable
+
+// }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Insert(generic_record_pointer record)
 {
   GetTable(record->GetTableName())->Insert(record);
 }
@@ -154,7 +176,7 @@ std::string syd::Database::GetListOfTableNames() const
 
 
 // --------------------------------------------------------------------
-syd::Database::record_pointer
+syd::Database::generic_record_pointer
 syd::Database::New(const std::string & table_name) const
 {
   return GetTable(table_name)->New();
@@ -163,7 +185,7 @@ syd::Database::New(const std::string & table_name) const
 
 
 // --------------------------------------------------------------------
-void syd::Database::Set(record_pointer record, const std::vector<std::string> & args) const
+void syd::Database::Set(generic_record_pointer record, const std::vector<std::string> & args) const
 {
   record->Set(this, args);
 }
@@ -171,7 +193,7 @@ void syd::Database::Set(record_pointer record, const std::vector<std::string> & 
 
 
 // --------------------------------------------------------------------
-void  syd::Database::QueryOne(record_pointer & record,
+void  syd::Database::QueryOne(generic_record_pointer & record,
                               const std::string & table_name,
                               const IdType & id) const
 {
@@ -181,7 +203,7 @@ void  syd::Database::QueryOne(record_pointer & record,
 
 
 // --------------------------------------------------------------------
-void syd::Database::Query(record_vector & records,
+void syd::Database::Query(generic_record_vector & records,
                           const std::string table_name,
                           const std::vector<syd::IdType> & ids) const
 {
@@ -191,7 +213,7 @@ void syd::Database::Query(record_vector & records,
 
 
 // --------------------------------------------------------------------
-// syd::Database::record_pointer
+// syd::Database::generic_record_pointer
 // syd::Database::Find(const std::string & table_name, IdType id) const
 // {
 //   DD("Generic Find");

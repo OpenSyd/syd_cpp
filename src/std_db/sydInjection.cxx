@@ -75,13 +75,47 @@ std::string syd::Injection::ToString() const
 void syd::Injection::Set(const syd::Database * d, const std::vector<std::string> & args)
 {
   DD("Set Injection");
+  if (args.size() < 4) {
+    LOG(FATAL) << "Provide <patient> <radionuclide> <date> <activity_in_MBq>. "
+               << std::endl
+               << " <patient> can be the study_id or the name";
+  }
+
   syd::StandardDatabase* db = (syd::StandardDatabase*)(d);
   std::string patient_name = args[0];
   auto p = db->FindPatient(patient_name);
   DD("find patient done");
   DD(p);
   patient = p;
+  // radionuclide todo
+  date = args[2];
+  activity_in_MBq = atof(args[3].c_str());
 }
+
+
+// --------------------------------------------------
+void syd::Injection::InitPrintTable(const syd::Database * db,
+                                    syd::PrintTable & ta,
+                                    const std::string & format) const
+{
+  DD("here initprinttable injection");
+  ta.AddColumn("#id");
+  ta.AddColumn("p", 15);
+  ta.AddColumn("rad", 8);
+  ta.AddColumn("date", 22);
+  ta.AddColumn("Q(MBq)", 7);
+}
+
+
+void syd::Injection::DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+{
+  std::string pname = "unset_patient";
+  if (patient != NULL) pname = patient->name;
+  // std::string rad = "unset_radio";
+  // if (radionuclide != NULL) rad = radionuclide->name;
+  ta << id << pname << "Indium" << date << activity_in_MBq;
+}
+
 
 // --------------------------------------------------
 // bool syd::Injection::operator==(const Injection & p)

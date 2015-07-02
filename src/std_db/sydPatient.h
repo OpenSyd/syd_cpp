@@ -25,6 +25,8 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  class Injection;
+
 #pragma db model version(1, 1)
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Patient")
@@ -62,6 +64,11 @@ namespace syd {
     virtual void Set(const syd::Database * db, const std::string & pname,
                      const IdType & pstudy_id, const double pweight_in_kg=-1,
                      const std::string pdicom_patientid="unset_dicom_patientid");
+
+
+    virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+
 
     virtual bool IsEqual(const pointer p) const;
 

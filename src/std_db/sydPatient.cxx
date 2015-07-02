@@ -18,6 +18,8 @@
 
 // syd
 #include "sydPatient.h"
+#include "sydInjection.h"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------
 // syd::Patient::Patient():syd::Record()
@@ -82,3 +84,27 @@ void syd::Patient::Set(const syd::Database * db,
   dicom_patientid = pdicom_patientid;
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Patient::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+{
+  DD("here initprinttable patient");
+  ta.AddColumn("#id");
+  ta.AddColumn("name", 8);
+  ta.AddColumn("sid", 5);
+  ta.AddColumn("w(kg)", 5);
+  ta.AddColumn("dicom", 10);
+  ta.AddColumn("nb_inj", 10); // advanced dump format, compute the nb of injections
+}
+
+
+void syd::Patient::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+{
+  ta << id << name << study_id << weight_in_kg << dicom_patientid;
+  syd::StandardDatabase* db = (syd::StandardDatabase*)(d);
+  syd::Injection::vector injections;
+  odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
+  db->Query(injections, q);
+  ta << injections.size();
+}

@@ -67,6 +67,11 @@ namespace syd {
     // Injection();
 
     virtual std::string ToString() const;
+
+    virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+
+
     // virtual void Set(std::vector<std::string> & arg) { DD("TODO"); }
     // void Set(Patient & p, Radionuclide & pr, const std::string & pdate, double activity);
 
@@ -75,7 +80,7 @@ namespace syd {
 
     // virtual void OnDelete(syd::Database * db);
    protected:
-    Injection():Record("") { DD("const injection"); }
+    Injection():Record("") { }
 
   }; // end of class
 

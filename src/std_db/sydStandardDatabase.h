@@ -39,6 +39,11 @@ namespace syd {
 
     syd::Patient::pointer FindPatient(const std::string & name_or_study_id);
 
+    //    void Dump(std::ostream & os, const std::vector<std::shared_ptr<syd::Patient>> & patients) const;
+
+    // virtual void Dump2(const syd::Patient::pointer patient, std::ostream & os = std::cout) const;
+    // virtual void Dump2(const syd::Record::pointer record, std::ostream & os = std::cout) const;
+
   protected:
     /// Insert the tables
     virtual void CreateTables();

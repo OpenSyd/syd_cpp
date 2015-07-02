@@ -21,6 +21,7 @@
 
 // syd
 #include "sydCommon.h"
+#include "sydPrintTable.h"
 #include <odb/core.hxx>
 
 // --------------------------------------------------------------------
@@ -44,6 +45,11 @@ namespace syd {
 
     /// Set the values of the fields from some string.
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
+
+    //    virtual void Dump(const syd::Database * db, std::ostream & os, vector records);
+    virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+    //    virtual void Dump(syd::Database * db, std::ostream & os, std::vector<std::shared_ptr<Rec
 
 #pragma db id auto
     /// Main key (automated, unique)

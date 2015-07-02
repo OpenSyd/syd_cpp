@@ -33,3 +33,27 @@ bool syd::Record::IsEqual(const pointer p) const
   return (id == p->id);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// void syd::Record::Dump(const syd::Database * db, std::ostream & os, vector records)
+// {
+//   DD(" dump records");
+//   for(auto r:records) {
+//     os << r->ToString() << std::endl;
+//   }
+// }
+// --------------------------------------------------------------------
+
+
+void syd::Record::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+{
+  DD(" initprinttable");
+}
+
+
+void syd::Record::DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+{
+  DD(" DumpInTable");
+  DD(ToString());
+}
