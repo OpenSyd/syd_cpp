@@ -119,28 +119,6 @@ void syd::Database::Dump(std::ostream & os) const
 
 
 // --------------------------------------------------------------------
-// void syd::Database::Dump2(const generic_record_pointer record, std::ostream & os) const
-// {
-//   DD("Dump2 syd::Database");
-//   DD(record);
-// }
-// --------------------------------------------------------------------
-
-
-
-// --------------------------------------------------------------------
-// void syd::Database::Dump(std::ostream & os, generic_record_vector records) const
-// {
-//   DD("dump");
-//   DD(records.size());
-
-//   //  GetTable
-
-// }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Database::Insert(generic_record_pointer record)
 {
   GetTable(record->GetTableName())->Insert(record);
@@ -213,10 +191,9 @@ void syd::Database::Query(generic_record_vector & records,
 
 
 // --------------------------------------------------------------------
-// syd::Database::generic_record_pointer
-// syd::Database::Find(const std::string & table_name, IdType id) const
-// {
-//   DD("Generic Find");
-//   //  return GetTable(table_name)->Find(id);
-// }
+void syd::Database::Query(generic_record_vector & records,
+                          const std::string table_name) const
+{
+  GetTable(table_name)->Query(records);
+}
 // --------------------------------------------------------------------

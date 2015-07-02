@@ -54,10 +54,14 @@ int main(int argc, char* argv[])
   for(auto i=2; i<args_info.inputs_num; i++)
     ids.push_back(atoi(args_info.inputs[i]));
 
+  // Get elements
+  syd::Record::vector records;
+  if (ids.size() == 0) db->Query(records, table_name);
+  else  db->Query(records, table_name, ids);
+
   // Dump elements
   std::string format = args_info.format_arg;
-  if (ids.size() == 0) db->Dump(std::cout, table_name, format);
-  else db->Dump(std::cout, table_name, format, ids);
+  db->Dump(records, format, std::cout);
 
   // This is the end, my friend.
 }

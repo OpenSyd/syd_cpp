@@ -142,6 +142,9 @@ namespace syd {
 
     /// Query several records according to their id
     void Query(generic_record_vector & records, const std::string table_name, const std::vector<syd::IdType> & ids) const;
+
+    /// Query all records of the given tables
+    void Query(generic_record_vector & records, const std::string table_name) const;
     // ------------------------------------------------------------------------
 
 

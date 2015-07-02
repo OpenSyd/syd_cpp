@@ -62,3 +62,16 @@ void syd::Table<RecordType>::Query(generic_record_vector & records, const std::v
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Table<RecordType>::Query(generic_record_vector & records) const
+{
+  typename RecordType::vector specific_records;
+  db_->Query<RecordType>(specific_records);
+  for(auto r:specific_records) {
+    records.push_back(r);
+  }
+}
+// --------------------------------------------------------------------

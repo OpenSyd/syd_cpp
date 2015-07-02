@@ -53,6 +53,9 @@ namespace syd {
     /// Query several elements by their id
     virtual void Query(generic_record_vector & records, const std::vector<syd::IdType> & ids) const;
 
+    /// Query all elements
+    virtual void Query(generic_record_vector & records) const;
+
   protected:
     syd::Database * db_;
 
