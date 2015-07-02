@@ -75,3 +75,12 @@ void syd::Table<RecordType>::Query(generic_record_vector & records) const
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+long syd::Table<RecordType>::GetNumberOfElements() const
+{
+  return db_->GetNumberOfElements<RecordType>();
+}
+// --------------------------------------------------------------------

@@ -108,8 +108,8 @@ void syd::Database::Dump(std::ostream & os) const
   os << "Database schema: " << GetDatabaseSchema() << std::endl;
   os << "Database folder: " << GetDatabaseRelativeFolder() << std::endl;
   for(auto i=map.begin(); i != map.end(); i++) {
-    int n = 666;// FIXME i->second->GetNumberOfElements();
-    os << "Table \t" << std::setw(15) << i->first << " " <<  std::setw(10) << n;
+    int n = GetNumberOfElements(i->first);
+    os << "Table: " << std::setw(15) << i->first << " " <<  std::setw(10) << n;
     if (n>1) os << " elements" << std::endl;
     else os << " element" << std::endl;
   }
@@ -195,5 +195,13 @@ void syd::Database::Query(generic_record_vector & records,
                           const std::string table_name) const
 {
   GetTable(table_name)->Query(records);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+long syd::Database::GetNumberOfElements(const std::string table_name) const
+{
+  return GetTable(table_name)->GetNumberOfElements();
 }
 // --------------------------------------------------------------------

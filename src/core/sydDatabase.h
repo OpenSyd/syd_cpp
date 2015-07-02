@@ -36,7 +36,7 @@
 namespace syd {
 
   // The following classes will be defined elsewhere
-  template<class TableElementBase> class Table;
+  template<class Record> class Table;
   template<class DatabaseSchema> class DatabaseCreator;
 
   /// This is the base class of all databases. Manage a sqlite
@@ -172,8 +172,15 @@ namespace syd {
     /// Return the (base) table with table_name
     TableBase * GetTable(const std::string & table_name) const;
 
+    /// Return a string with the list of the table names
     std::string GetListOfTableNames() const;
 
+    /// Get the number of elements in the table
+    long GetNumberOfElements(const std::string table_name) const;
+
+    /// Get the number of elements in the table, knowing the type
+    template<class RecordType>
+    long GetNumberOfElements() const;
     // ----------------------------------------------------------------------------------
     protected:
     // Create an empty database

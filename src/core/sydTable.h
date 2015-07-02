@@ -56,6 +56,9 @@ namespace syd {
     /// Query all elements
     virtual void Query(generic_record_vector & records) const;
 
+    /// Get the number of elements in the table
+    virtual long GetNumberOfElements() const;
+
   protected:
     syd::Database * db_;
 

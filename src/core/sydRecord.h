@@ -28,6 +28,8 @@
 namespace syd {
 
   class Database;
+  struct RecordStat;
+
 
   /// Base class for all record (or element, or row) in a table
 #pragma db object abstract pointer(std::shared_ptr)
@@ -84,22 +86,6 @@ namespace syd {
     Record(std::string) {}
 
   }; // end of class
-
-
-    /* MACROS
-
-       typedef pointer vector
-       virtual const
-       constructor(str) (protected)
-       New
-       GetTableName GetStaticTableName
-       ToString
-       IsEqual
-
-       optional : Set  ; InitPrintTable+DumpInTable
-
-
-     */
 
   /// odb::access is needed for polymorphism
 #define TABLE_DEFINE(TABLE_NAME)                                        \

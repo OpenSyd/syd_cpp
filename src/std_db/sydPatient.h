@@ -26,6 +26,7 @@
 namespace syd {
 
   class Injection;
+  class PatientStat;
 
 #pragma db model version(1, 1)
 
@@ -63,6 +64,7 @@ namespace syd {
     Patient();
 
   }; // end of class
+
 }
 // --------------------------------------------------------------------
 

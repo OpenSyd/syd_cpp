@@ -47,6 +47,8 @@ namespace syd {
 
     virtual void Query(record_vector & r) const = 0;
 
+    virtual long GetNumberOfElements() const = 0;
+
   };
 
 } // end namespace

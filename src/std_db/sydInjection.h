@@ -30,6 +30,8 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  class InjectionStat;
+
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Injection")
   /// Store information about a radionuclide injection (date, etc).
   class Injection : public syd::Record {
@@ -53,6 +55,7 @@ namespace syd {
     TABLE_DEFINE(Injection);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Injection);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Injection);
+    // ------------------------------------------------------------------------
 
    protected:
     Injection();
