@@ -22,15 +22,15 @@
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------
-// syd::Patient::Patient():syd::Record()
-// {
-//   // default value
-//   id = 0; // will be changed when persist
-//   name = "unknown_name"; // must be unique
-//   study_id = 0; // must be unique
-//   weight_in_kg = 0;
-//   dicom_patientid = "unknown_dicom_id";
-// }
+syd::Patient::Patient():syd::Record("")
+{
+  // default value
+  id = 0; // will be changed when persist
+  name = "unset_name"; // must be unique
+  study_id = 0; // must be unique
+  weight_in_kg = 0;
+  dicom_patientid = "unset_dicom_patientid";
+}
 // --------------------------------------------------
 
 
@@ -89,22 +89,33 @@ void syd::Patient::Set(const syd::Database * db,
 // --------------------------------------------------
 void syd::Patient::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
 {
-  DD("here initprinttable patient");
+  if (format == "help") {
+    std::cout << "Available formats for table 'Patient': " << std::endl
+              << "\tdefault: id name study_id weight dicom" << std::endl
+              << "\tinjection: add a column with the number of associated injections" << std::endl;
+    return;
+  }
   ta.AddColumn("#id");
   ta.AddColumn("name", 8);
   ta.AddColumn("sid", 5);
   ta.AddColumn("w(kg)", 5);
   ta.AddColumn("dicom", 10);
-  ta.AddColumn("nb_inj", 10); // advanced dump format, compute the nb of injections
+  if (format == "injection")
+    ta.AddColumn("nb_inj", 10); // advanced dump format, compute the nb of injections
 }
+// --------------------------------------------------
 
 
+// --------------------------------------------------
 void syd::Patient::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
 {
   ta << id << name << study_id << weight_in_kg << dicom_patientid;
-  syd::StandardDatabase* db = (syd::StandardDatabase*)(d);
-  syd::Injection::vector injections;
-  odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
-  db->Query(injections, q);
-  ta << injections.size();
+  if (format == "injection") {
+    syd::StandardDatabase* db = (syd::StandardDatabase*)(d);
+    syd::Injection::vector injections;
+    odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
+    db->Query(injections, q);
+    ta << injections.size();
+  }
 }
+// --------------------------------------------------

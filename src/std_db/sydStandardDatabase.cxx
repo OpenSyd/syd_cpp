@@ -31,22 +31,17 @@ void syd::StandardDatabase::CreateTables()
 // --------------------------------------------------------------------
 syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & name_or_study_id)
 {
-  DD("FindPatient");
   syd::Patient::pointer patient;
-  //  try{
-  DD(name_or_study_id);
-  odb::query<syd::Patient> q = odb::query<syd::Patient>::name == name_or_study_id;
-  DD("before QueryOne");
-  QueryOne(patient, q);//odb::query<syd::Patient>::name == name_or_study_id);
-  // }
-  // catch (const odb::exception& e) {
-  //   LOG(FATAL) << "Error TODO" // FIXME
-  //              << e->what()
-  //              << std::endl << GetLastSQLQuery();
-  // }
-  DD(patient);
+  odb::query<syd::Patient> q =
+    odb::query<syd::Patient>::name == name_or_study_id or
+    odb::query<syd::Patient>::study_id == atoi(name_or_study_id.c_str());
+  try {
+    QueryOne(patient, q);
+  } catch(std::exception & e) {
+    EXCEPTION("Error in FindPatient with param: " << name_or_study_id << std::endl
+              << "Error message is: " << e.what());
+  }
   return patient;
-  //  return NewPatient();
 }
 // --------------------------------------------------------------------
 

@@ -34,7 +34,14 @@ namespace syd {
   class Record {
   public:
 
+#pragma db id auto
+    /// Main key (automated, unique)
+    IdType id;
+
+    /// Define pointer type
     typedef std::shared_ptr<Record> pointer;
+
+    /// Define vectortype
     typedef std::vector<pointer> vector;
 
     /// Virtual destructor
@@ -46,14 +53,17 @@ namespace syd {
     /// Set the values of the fields from some string.
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
 
-    //    virtual void Dump(const syd::Database * db, std::ostream & os, vector records);
+    /// Initialise a PrintTable according to the format
     virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
-    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
-    //    virtual void Dump(syd::Database * db, std::ostream & os, std::vector<std::shared_ptr<Rec
 
-#pragma db id auto
-    /// Main key (automated, unique)
-    IdType id;
+    /// Add a line in the given
+    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+
+    /// Use to write the element as a string (must be overloaded)
+    virtual std::string ToString() const = 0;
+
+    /// Return true if the record is equal (same id here);
+    virtual bool IsEqual(const pointer p) const;
 
     /// Default function to print an element (must be inline here).
     friend std::ostream& operator<<(std::ostream& os, const Record & p) {
@@ -69,19 +79,45 @@ namespace syd {
       return os;
     }
 
-    /// Use to write the element as a string (must be overloaded)
-    virtual std::string ToString() const = 0;
-
-    /// Return true if the record is equal (same id here);
-    virtual bool IsEqual(const pointer p) const;
-
    protected:
+    /// This default constructor allow to oblige class that inherit from Record to not have default constructor
     Record(std::string) {}
-
 
   }; // end of class
 
-  //#define SET_TABLE_NAME(name) static std::string GetTableName() { return name; }
+
+    /* MACROS
+
+       typedef pointer vector
+       virtual const
+       constructor(str) (protected)
+       New
+       GetTableName GetStaticTableName
+       ToString
+       IsEqual
+
+       optional : Set  ; InitPrintTable+DumpInTable
+
+
+     */
+
+  /// odb::access is needed for polymorphism
+#define TABLE_DEFINE(TABLE_NAME)                                        \
+    typedef std::shared_ptr<TABLE_NAME> pointer;                        \
+    typedef std::vector<pointer> vector;                                \
+    friend class odb::access;                                           \
+    virtual std::string GetTableName() const { return #TABLE_NAME; }    \
+    static std::string GetStaticTableName() { return #TABLE_NAME; }     \
+    static pointer New() { return pointer(new TABLE_NAME); }            \
+
+#define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME) \
+    virtual std::string ToString() const;             \
+    virtual bool IsEqual(const pointer p) const;
+
+#define TABLE_DECLARE_OPTIONAL_FUNCTIONS(TABLE_NAME)                    \
+    virtual void Set(const syd::Database * db, const std::vector<std::string> & args); \
+    virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const; \
+    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
 
 } // end namespace
   // --------------------------------------------------------------------

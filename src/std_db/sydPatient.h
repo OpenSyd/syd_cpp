@@ -49,32 +49,18 @@ namespace syd {
     std::string dicom_patientid;
 
     // ------------------------------------------------------------------------
-    //    Patient();
-    typedef std::shared_ptr<syd::Patient> pointer;
-    typedef std::vector<pointer> vector;
+    TABLE_DEFINE(Patient);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(Patient);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Patient);
+    // ------------------------------------------------------------------------
 
-    friend class odb::access;
-    virtual ~Patient() {}
-    virtual std::string GetTableName() const { return "Patient"; }
-    static std::string GetStaticTableName() { return "Patient"; }
-    virtual std::string ToString() const;
-    static pointer New() { return pointer(new Patient); }
-    virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
-
+    /// Additional Set function to shorter patient inclusion
     virtual void Set(const syd::Database * db, const std::string & pname,
                      const IdType & pstudy_id, const double pweight_in_kg=-1,
                      const std::string pdicom_patientid="unset_dicom_patientid");
 
-
-    virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
-    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
-
-
-    virtual bool IsEqual(const pointer p) const;
-
    protected:
-    Patient():Record("") { name = "unset_name"; }
-
+    Patient();
 
   }; // end of class
 }

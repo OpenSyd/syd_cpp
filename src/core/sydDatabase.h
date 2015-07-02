@@ -146,9 +146,13 @@ namespace syd {
 
 
     // ------------------------------------------------------------------------
+    /// Generic dump, display the list of tables
     virtual void Dump(std::ostream & os = std::cout) const;
+    /// Dump the given records (according to a format)
     template<class RecordType>
-    void Dump(std::ostream & os, const std::vector<std::shared_ptr<RecordType>> & records) const;
+    void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
+              const std::string & format="",
+              std::ostream & os=std::cout) const;
     // ------------------------------------------------------------------------
 
 

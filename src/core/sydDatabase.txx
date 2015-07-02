@@ -38,14 +38,17 @@ std::shared_ptr<RecordType> syd::Database::New() const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Database::Dump(std::ostream & os,
-                         const std::vector<std::shared_ptr<RecordType>> & records) const
+void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & records,
+                         const std::string & format,
+                         std::ostream & os) const
 {
   if (records.size() == 0) return;
   syd::PrintTable ta;
-  records[0]->InitPrintTable(this, ta, ""); // or db->InitPrintTable ?
-  for(auto r:records) r->DumpInTable(this, ta, "");
-  ta.Print(os);
+  records[0]->InitPrintTable(this, ta, format);
+  if (format != "help") {
+    for(auto r:records) r->DumpInTable(this, ta, format);
+    ta.Print(os);
+  }
 }
 // --------------------------------------------------------------------
 
@@ -57,7 +60,6 @@ void syd::Database::Insert(std::shared_ptr<RecordType> record)
   try {
     odb::transaction t (db_->begin());
     db_->persist(*record);
-    //    db_->update(r);
     t.commit();
   }
   catch (const odb::exception& e) {
@@ -90,7 +92,6 @@ void syd::Database::AddTable()
                << "' already exist.";
   }
   auto * t = new Table<RecordType>(this);
-  //  t->db_ = this; // FIXME
   map[tablename] = t;
   map_lowercase[str] = t;
 }
@@ -111,7 +112,6 @@ void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
                 << std::endl << GetLastSQLQuery());
     }
     record = r;
-    // DD(record);
     transaction.commit();
   }
   catch (const odb::exception& e) {

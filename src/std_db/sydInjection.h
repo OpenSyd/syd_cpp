@@ -35,24 +35,11 @@ namespace syd {
   class Injection : public syd::Record {
   public:
 
-    //#pragma db not_null // FIXME to put when Set is ok
+#pragma db not_null
     /// Foreign key, linked to Patient table.
     std::shared_ptr<syd::Patient> patient;
 
-    friend class odb::access;
-
-    virtual ~Injection() { }
-
-    typedef std::shared_ptr<Injection> pointer;
-    typedef std::vector<pointer> vector;
-
-    static pointer New() { return pointer(new Injection); }
-
-    virtual std::string GetTableName() const { return "Injection"; }
-    static std::string GetStaticTableName() { return "Injection"; }
-
-    virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
-
+    //#pragma db not_null
     /// Foreign key, linked to Radionuclide table.
     //    std::shared_ptr<Radionuclide> radionuclide;
 
@@ -63,24 +50,12 @@ namespace syd {
     double activity_in_MBq;
 
     // ------------------------------------------------------------------------
-    // SET_TABLE_NAME("Injection")
-    // Injection();
+    TABLE_DEFINE(Injection);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(Injection);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Injection);
 
-    virtual std::string ToString() const;
-
-    virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
-    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
-
-
-    // virtual void Set(std::vector<std::string> & arg) { DD("TODO"); }
-    // void Set(Patient & p, Radionuclide & pr, const std::string & pdate, double activity);
-
-    // bool operator==(const Injection & p);
-    // bool operator!=(const Injection & p) { return !(*this == p); }
-
-    // virtual void OnDelete(syd::Database * db);
    protected:
-    Injection():Record("") { }
+    Injection();
 
   }; // end of class
 

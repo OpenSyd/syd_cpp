@@ -19,6 +19,15 @@
 // ext
 #include "extPatient.h"
 
+
+// --------------------------------------------------
+ext::Patient::Patient():syd::Patient()
+{
+  birth_date = "unset_birth_date";
+}
+// --------------------------------------------------
+
+
 // --------------------------------------------------
 std::string ext::Patient::ToString() const
 {
@@ -67,5 +76,23 @@ void ext::Patient::Set(const syd::Database * db,
 {
   syd::Patient::Set(db, pname, pstudy_id, pweight_in_kg, pdicom_patientid);
   birth_date = pbirth_date;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void ext::Patient::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+{
+  syd::Patient::InitPrintTable(db, ta, format);
+  ta.AddColumn("birth", 20);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void ext::Patient::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+{
+  syd::Patient::DumpInTable(d, ta, format);
+  ta << birth_date;
 }
 // --------------------------------------------------

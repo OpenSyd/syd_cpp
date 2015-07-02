@@ -36,24 +36,17 @@ bool syd::Record::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------------------------
-// void syd::Record::Dump(const syd::Database * db, std::ostream & os, vector records)
-// {
-//   DD(" dump records");
-//   for(auto r:records) {
-//     os << r->ToString() << std::endl;
-//   }
-// }
+void syd::Record::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+{
+  ta.AddColumn("#id", 5);
+  ta.AddColumn("#fields", 80);
+}
 // --------------------------------------------------------------------
 
 
-void syd::Record::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
-{
-  DD(" initprinttable");
-}
-
-
+// --------------------------------------------------------------------
 void syd::Record::DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
 {
-  DD(" DumpInTable");
-  DD(ToString());
+  ta << id << ToString();
 }
+// --------------------------------------------------------------------

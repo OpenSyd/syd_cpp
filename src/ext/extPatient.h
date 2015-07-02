@@ -32,33 +32,22 @@ namespace ext {
   class Patient: public syd::Patient {
   public:
 
-    typedef std::shared_ptr<ext::Patient> pointer;
-    typedef std::vector<pointer> vector;
+    /// Additional field: birth_date
+    std::string birth_date;
 
-    friend class odb::access;
+    // ------------------------------------------------------------------------
+    TABLE_DEFINE(Patient);
 
-    virtual ~Patient() { }
-
-    static pointer New() { return pointer(new ext::Patient); }
-
-    virtual bool IsEqual(const pointer p) const;
-
-    virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(Patient);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Patient);
 
     virtual void Set(const syd::Database * db, const std::string & pname,
                      const syd::IdType & pstudy_id, const double pweight_in_kg=-1,
                      const std::string pdicom_patientid="unset_dicom_patientid",
                      const std::string pbirth_date="0000-00-00 00:00");
 
-    //
-    std::string birth_date;
-
-    // ------------------------------------------------------------------------
-    //    Patient();
-
-    virtual std::string ToString() const;
   protected:
-    Patient():syd::Patient() { birth_date = "2015"; }
+    Patient();
 
   }; // end of class
 }

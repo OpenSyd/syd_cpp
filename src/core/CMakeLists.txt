@@ -11,6 +11,7 @@ add_library(sydCommonSchema SHARED
   sydDatabaseInformation-odb.cxx
   sydRecord-odb.cxx sydRecord.cxx
   sydLog.cxx
+  sydPrintTable.cxx # needed in sydRecord
   sydDatabaseInformation.cxx)
 
 # needed for clang osx
@@ -27,7 +28,6 @@ add_library(sydCore
   sydCommon.cxx
   sydLog.cxx
   sydDatabaseInformation.cxx
-  sydPrintTable.cxx
   sydImageUtils.cxx
   sydPluginManager.cxx
   sydException.cxx

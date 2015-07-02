@@ -74,35 +74,33 @@ int main(int argc, char* argv[])
 
   db->New(inj);
   arg[0] = "toto"; arg[1] = "Indium111"; arg[2] = "2003-12-04 12:23"; arg[3] = "160.21";
-
-  //  db->Set(inj, arg);
+  db->Set(inj, arg);
   db->Insert(inj);
-  DD(inj);
 
   db->New(inj);
   arg[0] = "titi"; arg[1] = "Indium111"; arg[2] = "2013-02-14 17:23"; arg[3] = "360.33";
   db->Set(inj, arg);
   db->Insert(inj);
-  DD(inj);
 
   db->New(inj);
   arg[0] = "titi"; arg[1] = "Indium111"; arg[2] = "2013-04-14 17:23"; arg[3] = "960.33";
   db->Set(inj, arg);
   db->Insert(inj);
-  DD(inj);
-
 
   // Dump knowing the record type
-  std::cout << std::endl;
   {
     ext::Patient::vector patients;
     db->Query(patients); // all patients
     //    std::ofstream of(ext_dbname+"_out.txt");
-    db->Dump(std::cout, patients); // default format
+    db->Dump(patients); // default format
+    db->Dump(patients, "help"); // help format
+    db->Dump(patients, "injection"); // format with injections
 
     syd::Injection::vector injections;
     db->Query(injections);
-    db->Dump(std::cout, injections);
+    db->Dump(injections);
+
+    // Compare to reference output ?
   }
 
   return EXIT_SUCCESS;
