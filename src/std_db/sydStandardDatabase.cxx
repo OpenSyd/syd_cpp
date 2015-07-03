@@ -26,6 +26,7 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::Injection>();
   AddTable<syd::Radionuclide>();
   AddTable<syd::Tag>();
+  AddTable<syd::File>();
 }
 // --------------------------------------------------------------------
 

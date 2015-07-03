@@ -20,21 +20,17 @@
 #define SYDFILE_H
 
 // syd
-#include "sydTableElementBase.h"
+#include "sydRecord.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db model version(1, 1)
 
-#pragma db object table("File")
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::File")
   /// Store information about a file linked to a database.
-  class File: public syd::TableElementBase {
+  class File: public syd::Record {
   public:
-
-#pragma db id auto
-    /// Main key (automated, unique)
-    IdType id;
 
     /// File name
     std::string filename;
@@ -45,16 +41,14 @@ namespace syd {
     /// Associated md5 (not always computed)
     std::string md5;
 
+     // ------------------------------------------------------------------------
+    TABLE_DEFINE(File);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(File);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(File);
     // ------------------------------------------------------------------------
-    SET_TABLE_NAME("File")
+
+  protected:
     File();
-
-    virtual std::string ToString() const;
-
-    bool operator==(const File & p);
-    bool operator!=(const File & p) { return !(*this == p); }
-
-    virtual void OnDelete(syd::Database * db);
 
   }; // end of class
 }

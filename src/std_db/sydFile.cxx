@@ -19,20 +19,14 @@
 // syd
 #include "sydFile.h"
 #include "sydStandardDatabase.h"
-// #include "sydTable.h"
-// #include "sydImage.h"
-// #include "sydImage-odb.hxx"
-// #include "sydDicomFile.h"
-// #include "sydDicomFile-odb.hxx"
 
 // --------------------------------------------------
-syd::File::File():TableElementBase()
+syd::File::File():syd::Record("")
 {
   // default value
-  filename = "";
-  path = "";
-  md5 = "";
-  //look_for_dicomfile_on_delete_flag = true;
+  filename = "unset_filename"; // must be unique
+  path = "unset_path";
+  md5 = "unset_md5";
 }
 // --------------------------------------------------
 
@@ -42,30 +36,93 @@ std::string syd::File::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
-     << path << " "
      << filename << " "
-     << (md5 == "" ? "no_md5":"md5");
+     << path << " "
+     << (md5 == "unset_md5"? "no_md5":"md5");
   return ss.str();
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-bool syd::File::operator==(const File & p)
+bool syd::File::IsEqual(const pointer p) const
 {
-  return (id == p.id and
-          filename == p.filename and
-          path == p.path and
-          md5 == p.md5);
+  return (syd::Record::IsEqual(p) and
+          filename == p->filename and
+          path == p->path and
+          md5 == p->md5);
 }
 // --------------------------------------------------
 
 
+// --------------------------------------------------
+void syd::File::Set(const syd::Database * db, const std::vector<std::string> & arg)
+{
+  //  if (arg.size() < 2) {
+  LOG(FATAL) << "Not possible in insert file directly";
+  //To insert patient, please set <filename> <path> [<weight_in_kg> <dicom_patientid>]";
+  //}
+  // name = arg[0];
+  // study_id = atoi(arg[1].c_str());
+  // if (arg.size() > 2) weight_in_kg = atof(arg[2].c_str());
+  // if (arg.size() > 3) dicom_patientid = arg[3];
+}
+// --------------------------------------------------
+
 
 // --------------------------------------------------
-void syd::File::OnDelete(syd::Database * d)
+void syd::File::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
 {
-  DD("File OnDelete");
+  if (format == "help") {
+    std::cout << "Available formats for table 'File': " << std::endl
+              << "\tdefault: id filename path md5(y/n)" << std::endl
+              << "\tmd5: id filename path md5(complete)" << std::endl
+              << "\tmpath: id pathname" << std::endl;
+    return;
+  }
+  ta.AddColumn("#id");
+  if (format == "md5") {
+    ta.AddColumn("filename", 15);
+    ta.AddColumn("path", 30);
+    ta.AddColumn("md5", 40);
+  }
+  else {
+    if (format == "path") {
+      ta.AddColumn("path", 50);
+    }
+    else {
+      ta.AddColumn("filename", 15);
+      ta.AddColumn("path", 30);
+      ta.AddColumn("md5?", 5);
+    }
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::File::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+{
+  ta << id;
+  if (format == "md5") {
+    ta << filename  << path << md5;
+  }
+  else {
+    if (format == "path") {
+      ta << std::string(path+PATH_SEPARATOR+filename);
+    }
+    else {
+      ta << filename  << path << (md5=="unset_md5" ? "no_md5":"md5");
+    }
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+// void syd::File::OnDelete(syd::Database * d)
+// {
+//   DD("File OnDelete");
   /*
   syd::StandardDatabase * db = dynamic_cast<syd::StandardDatabase*>(d);
 
@@ -92,5 +149,5 @@ void syd::File::OnDelete(syd::Database * d)
     for(auto i:dicomfiles) db->AddToDeleteList(i);
   }
   */
-}
+// }
 // --------------------------------------------------

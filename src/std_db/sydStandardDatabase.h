@@ -28,6 +28,7 @@
 #include "sydInjection-odb.hxx"
 #include "sydRadionuclide-odb.hxx"
 #include "sydTag-odb.hxx"
+#include "sydFile-odb.hxx"
 
 // --------------------------------------------------------------------
 namespace syd {
