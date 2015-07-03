@@ -88,14 +88,6 @@ namespace syd {
     // ------------------------------------------------------------------------
     /// Create a new record of the specified table.
     std::shared_ptr<Record> New(const std::string & table_name) const;
-
-    /// Create a new record knowing the type
-    template<class RecordType>
-    void New(std::shared_ptr<RecordType> & record) const;
-
-    /// Create a new record knowing the type
-    template<class RecordType>
-    std::shared_ptr<RecordType> New() const;
     // ------------------------------------------------------------------------
 
 

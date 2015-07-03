@@ -53,13 +53,15 @@ int main(int argc, char* argv[])
 
   // Insert some records
   /// Insert element
-  auto p1 = db->New<ext::Patient>();
+
+  auto p1 = ext::Patient::New();
+  //  auto p1 = db->New<ext::Patient>();
   p1->Set(db, "toto", 1, 50,  "XXYYZZ", "2002-08-09 10:00");
-  auto p2 = db->New<ext::Patient>();
+  auto p2 = ext::Patient::New();
   p2->Set(db, "titi", 2, 150, "AXXYYZZ", "2005-02-01 17:00");
-  auto p3 = db->New<ext::Patient>();
+  auto p3 = ext::Patient::New();
   p3->Set(db, "tutu", 3, 60,  "BXXYYZZ", "2009-07-17 09:00");
-  auto p4 = db->New<ext::Patient>();
+  auto p4 = ext::Patient::New();
   p4->Set(db, "tata", 4, 80,  "CXXYYZZ", "2002-08-09 10:00");
 
   db->Insert(p1);
@@ -72,17 +74,17 @@ int main(int argc, char* argv[])
   syd::Injection::pointer inj;
   std::vector<std::string> arg(4);
 
-  db->New(inj);
+  inj = syd::Injection::New();
   arg[0] = "toto"; arg[1] = "Indium111"; arg[2] = "2003-12-04 12:23"; arg[3] = "160.21";
   db->Set(inj, arg);
   db->Insert(inj);
 
-  db->New(inj);
+  inj = syd::Injection::New();
   arg[0] = "titi"; arg[1] = "Indium111"; arg[2] = "2013-02-14 17:23"; arg[3] = "360.33";
   db->Set(inj, arg);
   db->Insert(inj);
 
-  db->New(inj);
+  inj = syd::Injection::New();
   arg[0] = "titi"; arg[1] = "Indium111"; arg[2] = "2013-04-14 17:23"; arg[3] = "960.33";
   db->Set(inj, arg);
   db->Insert(inj);

@@ -20,24 +20,6 @@
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Database::New(std::shared_ptr<RecordType> & record) const
-{
-  record = RecordType::New();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-std::shared_ptr<RecordType> syd::Database::New() const
-{
-  return RecordType::New();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
 void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & records,
                          const std::string & format,
                          std::ostream & os) const
@@ -152,7 +134,7 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
     typedef odb::result<RecordType> result;
     result r(db_->query<RecordType>(q));
     for(auto i = r.begin(); i != r.end(); i++) {
-      std::shared_ptr<RecordType> s = New<RecordType>();
+      std::shared_ptr<RecordType> s = RecordType::New();
       i.load(*s);
       records.push_back(s);
     }

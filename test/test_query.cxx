@@ -43,13 +43,13 @@ int main(int argc, char* argv[])
   ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
 
   /// Insert element
-  auto p1 = db->New<ext::Patient>();
+  auto p1 = ext::Patient::New();
   p1->Set(db, "toto", 1, 50,  "XXYYZZ", "2002-08-09 10:00");
-  auto p2 = db->New<ext::Patient>();
+  auto p2 = ext::Patient::New();
   p2->Set(db, "titi", 2, 150, "AXXYYZZ", "2005-02-01 17:00");
-  auto p3 = db->New<ext::Patient>();
+  auto p3 = ext::Patient::New();
   p3->Set(db, "tutu", 3, 60,  "BXXYYZZ", "2009-07-17 09:00");
-  auto p4 = db->New<ext::Patient>();
+  auto p4 = ext::Patient::New();
   p4->Set(db, "tata", 4, 80,  "CXXYYZZ", "2002-08-09 10:00");
 
   db->Insert(p1);

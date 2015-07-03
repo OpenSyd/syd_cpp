@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
   {
     std::cout << "Open std as StandardDatabase" << std::endl;
     syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
-    auto patient = db->New<syd::Patient>();
+    auto patient = syd::Patient::New();
     args[0] = "titi";
     args[1] = "2";
     db->Set(patient, args);
@@ -103,8 +103,7 @@ int main(int argc, char* argv[])
   {
     std::cout << "Open ext as StandardDatabase" << std::endl;
     syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(ext_dbname);
-    syd::Patient::pointer patient;
-    db->New(patient);
+    auto patient = syd::Patient::New();
     args[0] = "titi";
     args[1] = "2";
     db->Set(patient, args); // in that case the birth_date is not initialized
@@ -120,7 +119,7 @@ int main(int argc, char* argv[])
   {
     std::cout << "Open ext as ExtendedDatabase" << std::endl;
     ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
-    auto patient = db->New<ext::Patient>();
+    auto patient = ext::Patient::New();
     args[0] = "tutu";
     args[1] = "3";
     db->Set(patient, args);
