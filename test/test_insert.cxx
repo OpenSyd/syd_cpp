@@ -147,16 +147,36 @@ int main(int argc, char* argv[])
     p = ext::Patient::New();
     p->Set(db, "atata", 40, 80,  "CXXYYZZ", "2002-08-09 10:00");
     patients.push_back(p);
-    db->Insert<ext::Patient>(patients);
+    db->Insert(patients);
 
     ext::Patient::vector vp;
     db->Query(vp);
     if (vp.size() != 6)  {
-      LOG(FATAL) << "Error while inserting mulitple ext patient in ext db";
+      LOG(FATAL) << "Error while inserting multiple ext patient in ext db";
     }
+    std::cout << "Insert multiple specific: " << vp.size() << std::endl;
   }
 
-  return EXIT_SUCCESS;
+  //----------------------------------------------------------------
+  {
+    syd::Database * db = m->Read(ext_dbname);
+    syd::Record::vector records;
+    for(auto i=0; i<5; i++) {
+      auto r = db->New("Patient");
+      args[0] = "toto_"+args[0];
+      args[1] = syd::ToString(66+atoi(args[1].c_str()));
+      db->Set(r, args);
+      records.push_back(r);
+    }
+    db->Insert(records);
+    records.clear();
+    db->Query(records, "Patient");
+    if (records.size() != 11)  {
+      LOG(FATAL) << "Error while inserting generic multiple ext patient in ext db";
+    }
+    std::cout << "Insert multiple generic: " << records.size() << std::endl;
+  }
+    return EXIT_SUCCESS;
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

@@ -92,8 +92,11 @@ namespace syd {
 
 
     // ------------------------------------------------------------------------
-    /// Insert an element. The type of the element is
+    /// Insert an element. The type of the element is unknown
     void Insert(generic_record_pointer record);
+
+    /// Insert several elements. The type of the element is unknown
+    void Insert(generic_record_vector record);
 
     /// Insert an element
     template<class RecordType>
@@ -122,6 +125,7 @@ namespace syd {
     void QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const;
 
     /// Query a single record from the table_name
+    // FIXME table_name can be found from record ??
     void QueryOne(generic_record_pointer & r, const std::string & table_name, const IdType & id) const;
 
     /// Query several records according to query
