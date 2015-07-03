@@ -26,16 +26,12 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::DicomFile")
   /// Store information about a dicom file (unique dicom identifier
   /// dicom_sop_uid). Also contains a link to the DicomSerie it
   /// belongs to.
-  class DicomFile : public syd::TableElementBase {
+  class DicomFile : public syd::Record {
   public:
-
-#pragma db id auto
-    /// Id of the DicomFile
-    IdType id;
 
     /// Foreign key, it must exist in the File table.
     std::shared_ptr<syd::File> file;
@@ -51,15 +47,14 @@ namespace syd {
     int dicom_instance_number;
 
     // ------------------------------------------------------------------------
-    SET_TABLE_NAME("DicomFile")
+    TABLE_DEFINE(DicomFile);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomFile);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(DicomFile);
+    // ------------------------------------------------------------------------
+
+  protected:
     DicomFile();
 
-    virtual std::string ToString() const;
-
-    bool operator==(const DicomFile & p);
-    bool operator!=(const DicomFile & p) { return !(*this == p); }
-
-    virtual void OnDelete(syd::Database * db);
 
   }; // end class
 }

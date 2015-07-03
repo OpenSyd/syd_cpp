@@ -25,7 +25,6 @@
 syd::Patient::Patient():syd::Record("")
 {
   // default value
-  id = 0; // will be changed when persist
   name = "unset_name"; // must be unique
   study_id = 0; // must be unique
   weight_in_kg = 0;

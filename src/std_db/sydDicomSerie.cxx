@@ -18,16 +18,15 @@
 
 // syd
 #include "sydDicomSerie.h"
-#include "sydDicomFile.h"
-#include "sydDatabase.h"
-#include "sydTable.h"
-#include "sydDicomFile-odb.hxx"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
-syd::DicomSerie::DicomSerie():TableElementBase()
+syd::DicomSerie::DicomSerie():syd::Record("")
 {
-  size[0] = size[1] = size[2] = 1;
-  spacing[0] = spacing[1] = spacing[2] = 1;
+  patient = NULL;
+  injection = NULL;
+  size[0] = size[1] = size[2] = 0;
+  spacing[0] = spacing[1] = spacing[2] = 0.0;
 }
 // --------------------------------------------------------------------
 
@@ -38,7 +37,7 @@ std::string syd::DicomSerie::ToString() const
   std::stringstream ss ;
   ss << id << " "
      << patient->name << " "
-     << (injection==NULL ? "-":injection->radionuclide->name) << " "
+     << (injection==NULL ? "no_inj":injection->radionuclide->name) << " "
      << dicom_modality << " "
      << acquisition_date << " "
      << reconstruction_date << " "
@@ -51,43 +50,65 @@ std::string syd::DicomSerie::ToString() const
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-std::string syd::DicomSerie::ToLargeString() const
-{
-  std::stringstream ss;
-  ss << ToString() << " "
-     << patient->ToLargeString() << " "
-     << (injection==NULL ? "":injection->ToLargeString());
-  return ss.str();
-}
-// --------------------------------------------------------------------
-
-
 // --------------------------------------------------
-bool syd::DicomSerie::operator==(const DicomSerie & p)
+bool syd::DicomSerie::IsEqual(const pointer p) const
 {
-  return (id == p.id and
-          *patient == *p.patient and
-          *injection == *p.injection and
-          acquisition_date == p.acquisition_date and
-          reconstruction_date == p.reconstruction_date and
-          dicom_study_uid == p.dicom_study_uid and
-          dicom_series_uid == p.dicom_series_uid and
-          dicom_frame_of_reference_uid == p.dicom_frame_of_reference_uid and
-          dicom_modality == p.dicom_modality and
-          dicom_manufacturer == p.dicom_manufacturer and
-          dicom_description == p.dicom_description and
-          size == p.size and
-          spacing == p.spacing);
+  bool b = (syd::Record::IsEqual(p) and
+            patient->IsEqual(p->patient) and
+            acquisition_date == p->acquisition_date and
+            reconstruction_date == p->reconstruction_date and
+            dicom_study_uid == p->dicom_study_uid and
+            dicom_series_uid == p->dicom_series_uid and
+            dicom_frame_of_reference_uid == p->dicom_frame_of_reference_uid and
+            dicom_modality == p->dicom_modality and
+            dicom_manufacturer == p->dicom_manufacturer and
+            dicom_description == p->dicom_description and
+            size == p->size and
+            spacing == p->spacing);
+  if (!b) return b;
+  if (injection == NULL and p->injection == NULL) return b;
+  else return injection->IsEqual(p->injection);
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::DicomSerie::OnDelete(syd::Database * db)
+void syd::DicomSerie::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
-  std::vector<syd::DicomFile> dicomfiles;
-  db->Query<syd::DicomFile>(odb::query<syd::DicomFile>::dicom_serie == id, dicomfiles);
-  for(auto i:dicomfiles) db->AddToDeleteList(i);
+  LOG(FATAL) << "Cannot insert DicomSerie with 'Set'. Use sydInsertDicom.";
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomSerie::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+{
+  if (format == "help") {
+    std::cout << "Available formats for table 'DicomSerie': " << std::endl
+              << "\tdefault: " << std::endl;
+    return;
+  }
+  ta.AddColumn("#id");
+  ta.AddColumn("p", 8);
+  ta.AddColumn("inj", 5);
+  ta.AddColumn("mod", 5);
+  ta.AddColumn("acqui_date", 25);
+  ta.AddColumn("recon_date", 25);
+  ta.AddColumn("description", 50);
+
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomSerie::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+{
+  ta << id << patient->name;
+  if (injection == NULL) ta << "no_inj";
+  else ta << injection->radionuclide->name;
+  ta << dicom_modality
+     << acquisition_date
+     << reconstruction_date
+     << std::string(dicom_description+dicom_manufacturer);
 }
 // --------------------------------------------------

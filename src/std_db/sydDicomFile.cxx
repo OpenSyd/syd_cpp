@@ -18,13 +18,13 @@
 
 // syd
 #include "sydDicomFile.h"
-#include "sydDatabase.h"
-#include "sydTable.h"
-#include "sydDicomSerie-odb.hxx"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
-syd::DicomFile::DicomFile():TableElementBase()
+syd::DicomFile::DicomFile():syd::Record("")
 {
+  file = NULL;
+  dicom_serie = NULL;
   dicom_sop_uid = "";
   dicom_instance_number = 0;
 }
@@ -46,22 +46,45 @@ std::string syd::DicomFile::ToString() const
 
 
 // --------------------------------------------------
-bool syd::DicomFile::operator==(const DicomFile & p)
+bool syd::DicomFile::IsEqual(const pointer p) const
 {
-  return (id == p.id and
-          *file == *p.file and
-          *dicom_serie == *p.dicom_serie and
-          dicom_sop_uid == p.dicom_sop_uid and
-          dicom_instance_number == p.dicom_instance_number);
+  return (syd::Record::IsEqual(p) and
+          file->IsEqual(p->file) and
+          dicom_serie->IsEqual(p->dicom_serie) and
+          dicom_sop_uid == p->dicom_sop_uid and
+          dicom_instance_number == p->dicom_instance_number);
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::DicomFile::OnDelete(syd::Database * db)
+void syd::DicomFile::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
-  //  file->look_for_dicomfile_on_delete_flag = false;
-  db->AddToDeleteList(*file);
-  // db->AddToDeleteList(*dicom_serie); //--> no ! only if the last dicomfile // but need update size[2] ?
+  LOG(FATAL) << "Cannot insert DicomFile with 'Set'. Use sydInsertDicom.";
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomFile::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+{
+  if (format == "help") {
+    std::cout << "Available formats for table 'DicomFile': " << std::endl
+              << "\tdefault: id serie_id dicom_instance_nb file dop_uid" << std::endl;
+    return;
+  }
+  ta.AddColumn("#id");
+  ta.AddColumn("serie", 5);
+  ta.AddColumn("nb", 8);
+  ta.AddColumn("file", 5);
+  ta.AddColumn("sop_uid", 20);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomFile::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+{
+  ta << id << dicom_serie->id << dicom_instance_number << file->filename << dicom_sop_uid;
 }
 // --------------------------------------------------

@@ -19,27 +19,19 @@
 #ifndef SYDDICOMSERIE_H
 #define SYDDICOMSERIE_H
 
-// std
-#include <array>
-
 // syd
 #include "sydPatient.h"
 #include "sydInjection.h"
-#include "sydFile.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::DicomSerie")
   /// Store information about a dicom image (serie). Element of table
   /// 'DicomSerie' stored in a db. Contains information about a dicom
   /// image.
-  class DicomSerie : public syd::TableElementBase {
+  class DicomSerie : public syd::Record {
   public:
-
-#pragma db id auto
-    /// Id of the DicomSerie
-    IdType id;
 
 #pragma db not_null
     /// Foreign key, it must exist in the Patient table. Not strictly
@@ -90,17 +82,14 @@ namespace syd {
     /// Image spacing aka size of the pixel (in mm)
     std::array<double, 3> spacing;
 
+     // ------------------------------------------------------------------------
+    TABLE_DEFINE(DicomSerie);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomSerie);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(DicomSerie);
     // ------------------------------------------------------------------------
-    SET_TABLE_NAME("DicomSerie")
+
+  protected:
     DicomSerie();
-
-    virtual std::string ToString() const;
-    virtual std::string ToLargeString() const;
-
-    bool operator==(const DicomSerie & p);
-    bool operator!=(const DicomSerie & p) { return !(*this == p); }
-
-    virtual void OnDelete(syd::Database * db);
 
   }; // end class
 }
