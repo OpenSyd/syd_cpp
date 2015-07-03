@@ -44,13 +44,3 @@ syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & nam
   return patient;
 }
 // --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-/*    void Find(syd::Record::vector & records,
-              const std::string & table_name,
-              const std::string & patient_name,
-              const std::vector<std::string> & pattern,
-              const std::vector<std::string> & exclude) const;
-*/
-// --------------------------------------------------------------------

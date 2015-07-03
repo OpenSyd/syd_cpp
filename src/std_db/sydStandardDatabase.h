@@ -32,38 +32,16 @@ namespace syd {
 
   /// This database manages a set of 'standard' tables: Patient, Injection etc.
   class StandardDatabase: public Database {
-
   public:
 
     virtual ~StandardDatabase() {}
-
     syd::Patient::pointer FindPatient(const std::string & name_or_study_id);
-
-    /// Find (grep)
-    template<class RecordType>
-    void Find(std::vector<std::shared_ptr<RecordType>> & records,
-              const std::vector<std::string> & patterns,
-              const std::vector<std::string> & exclude);
-
-    /*
-    void Find(syd::Record::vector & records,
-              const std::string & table_name,
-              const std::string & patient_name,
-              const std::vector<std::string> & pattern,
-              const std::vector<std::string> & exclude) const;
-    */
-
-    //    void Dump(std::ostream & os, const std::vector<std::shared_ptr<syd::Patient>> & patients) const;
-
-    // virtual void Dump2(const syd::Patient::pointer patient, std::ostream & os = std::cout) const;
-    // virtual void Dump2(const syd::Record::pointer record, std::ostream & os = std::cout) const;
 
   protected:
     /// Insert the tables
     virtual void CreateTables();
 
   }; // class StandardDatabase
-
 
   #include "sydStandardDatabase.txx"
 

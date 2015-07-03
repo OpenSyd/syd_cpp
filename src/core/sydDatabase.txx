@@ -193,6 +193,7 @@ void syd::Database::Grep(std::vector<std::shared_ptr<RecordType>> & output,
                          const std::vector<std::string> & patterns,
                          const std::vector<std::string> & exclude)
 {
+  // Very slow (for the moment)
   for(auto r:input) {
     std::string s = r->ToString();
     std::size_t found = std::string::npos-1; // found
