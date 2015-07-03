@@ -131,6 +131,31 @@ int main(int argc, char* argv[])
     }
   }
 
+  //----------------------------------------------------------------
+  {
+    ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
+    ext::Patient::vector patients;
+    auto p = ext::Patient::New();
+    p->Set(db, "atoto", 10, 50,  "XXYYZZ", "2002-08-09 10:00");
+    patients.push_back(p);
+    p = ext::Patient::New();
+    p->Set(db, "atiti", 20, 150, "AXXYYZZ", "2005-02-01 17:00");
+    patients.push_back(p);
+    p = ext::Patient::New();
+    p->Set(db, "atutu", 30, 60,  "BXXYYZZ", "2009-07-17 09:00");
+    patients.push_back(p);
+    p = ext::Patient::New();
+    p->Set(db, "atata", 40, 80,  "CXXYYZZ", "2002-08-09 10:00");
+    patients.push_back(p);
+    db->Insert<ext::Patient>(patients);
+
+    ext::Patient::vector vp;
+    db->Query(vp);
+    if (vp.size() != 6)  {
+      LOG(FATAL) << "Error while inserting mulitple ext patient in ext db";
+    }
+  }
+
   return EXIT_SUCCESS;
   // This is the end, my friend.
 }

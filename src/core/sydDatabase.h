@@ -98,6 +98,10 @@ namespace syd {
     /// Insert an element
     template<class RecordType>
     void Insert(std::shared_ptr<RecordType> record);
+
+    /// Insert several elements
+    template<class RecordType>
+    void Insert(std::vector<std::shared_ptr<RecordType>> records);
     // ------------------------------------------------------------------------
 
 
