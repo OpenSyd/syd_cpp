@@ -118,3 +118,20 @@ void syd::Patient::DumpInTable(const syd::Database * d, syd::PrintTable & ta, co
   }
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+bool syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const {
+  if (dicom_patientid != vdicom_patientid) return false;
+  // Try to guess initials. Consider the first letter and the first after the symbol '^'
+  int n = vdicom_name.find("^");
+  if (n != std::string::npos) {
+    std::string initials = vdicom_name[0] + vdicom_name.substr(n+1,1);
+    std::transform(initials.begin(), initials.end(), initials.begin(), ::tolower);
+    // Check only 2 first letters
+    if (initials[0] == name[0] and initials[1] == name[1]) return true;
+    return false;
+  }
+  return false; // do not consider ok with a patient name not having a '^' inside
+}
+// --------------------------------------------------

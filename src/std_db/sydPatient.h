@@ -58,6 +58,8 @@ namespace syd {
                      const IdType & pstudy_id, const double pweight_in_kg=-1,
                      const std::string pdicom_patientid="unset_dicom_patientid");
 
+    bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
+
    protected:
     Patient();
 
