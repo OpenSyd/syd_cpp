@@ -137,13 +137,20 @@ namespace syd {
 
     /// Query all records of the given tables
     void Query(generic_record_vector & records, const std::string table_name) const;
+
+    /// Find (grep)
+    template<class RecordType>
+    void Grep(std::vector<std::shared_ptr<RecordType>> & output,
+              const std::vector<std::shared_ptr<RecordType>> & input,
+              const std::vector<std::string> & patterns,
+              const std::vector<std::string> & exclude);
     // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
     /// Generic dump, display the list of tables
     virtual void Dump(std::ostream & os = std::cout) const;
-    /// Dump the given records (according to a format)
+    /// Dump the given records (according to a format). (Templated needed because dont know how to substitute vector<ppatient> with vector<precord>)
     template<class RecordType>
     void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
               const std::string & format="",

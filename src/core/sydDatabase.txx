@@ -184,3 +184,23 @@ long syd::Database::GetNumberOfElements() const
   return records.size();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::Grep(std::vector<std::shared_ptr<RecordType>> & output,
+                         const std::vector<std::shared_ptr<RecordType>> & input,
+                         const std::vector<std::string> & patterns,
+                         const std::vector<std::string> & exclude)
+{
+  for(auto r:input) {
+    std::string s = r->ToString();
+    std::size_t found = std::string::npos; // not found
+    for(auto p:patterns) {
+      found = s.find(p);
+      if (found == std::string::npos) continue;
+    }
+    if (found != std::string::npos) output.push_back(r);
+  }
+}
+// --------------------------------------------------------------------

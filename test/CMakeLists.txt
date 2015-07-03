@@ -36,6 +36,13 @@ add_test(NAME test_dump
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_dump
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
+# Test find
+add_executable(test_find test_find.cxx)
+target_link_libraries(test_find extExtendedDatabase)
+add_test(NAME test_find
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_find
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
+
 
 
 # #----------------------------------------------------------
