@@ -20,18 +20,15 @@
 #define SYDRADIONUCLIDE_H
 
 // syd
-#include "sydTableElementBase.h"
+#include "sydRecord.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Radionuclide")
   /// Store information about a radionuclide
-  class Radionuclide : public TableElementBase {
+  class Radionuclide : public syd::Record {
   public:
-
-#pragma db id auto
-    IdType id;
 
 #pragma db options("UNIQUE")
     std::string name;
@@ -40,17 +37,13 @@ namespace syd {
     double half_life_in_hours;
 
     // ------------------------------------------------------------------------
-    SET_TABLE_NAME("Radionuclide")
+    TABLE_DEFINE(Radionuclide);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(Radionuclide);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Radionuclide);
+    // ------------------------------------------------------------------------
+
+  protected:
     Radionuclide();
-
-    virtual std::string ToString() const;
-    // virtual void Set(std::vector<std::string> & arg);
-    // void Set(const std::string & vname, double hl);
-
-    bool operator==(const Radionuclide & p);
-    bool operator!=(const Radionuclide & p) { return !(*this == p); }
-
-    virtual void OnDelete(syd::Database * db);
 
   }; // end of class
 } // end of namespace

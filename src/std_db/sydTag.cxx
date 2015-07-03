@@ -19,25 +19,11 @@
 // syd
 #include "sydTag.h"
 
-// --------------------------------------------------------------------
-syd::Tag::Tag():syd::TableElementBase()
+// --------------------------------------------------
+syd::Tag::Tag():syd::Record("")
 {
-  label = "unamed_tag";
-  description = "no_description";
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Tag::Set(std::vector<std::string> & arg)
-{
-  if (arg.size() == 0) {
-    LOG(FATAL) << "Could not insert a Tag without argument, at least set the 'label'.";
-  }
-  label = arg[0];
-  if (arg.size() > 1) description = arg[1];
-}
-// --------------------------------------------------------------------
+// --------------------------------------------------
 
 
 // --------------------------------------------------
@@ -53,22 +39,56 @@ std::string syd::Tag::ToString() const
 
 
 // --------------------------------------------------
-bool syd::Tag::operator==(const Tag & p)
+bool syd::Tag::IsEqual(const pointer p) const
 {
-  return (id == p.id and
-          label == p.label and
-          description == p.description);
+  return (syd::Record::IsEqual(p) and label == p->label and
+          description == p->description);
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-std::string syd::GetTagLabels(const std::vector<std::shared_ptr<syd::Tag>> & tags)
+void syd::Tag::Set(const syd::Database * db, const std::vector<std::string> & arg)
+{
+  if (arg.size() < 2) {
+    LOG(FATAL) << "To insert patient, please set <label> <description>";
+  }
+  label = arg[0];
+  description = arg[1];
+}
+// --------------------------------------------------
+
+
+
+// --------------------------------------------------
+void syd::Tag::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+{
+  if (format == "help") {
+    std::cout << "Available formats for table 'Tag': " << std::endl
+              << "\tdefault: id label description" << std::endl;
+    return;
+  }
+  ta.AddColumn("#id");
+  ta.AddColumn("label", 8);
+  ta.AddColumn("description", 25);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Tag::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+{
+  ta << id << label << description;
+}
+// --------------------------------------------------
+
+// --------------------------------------------------
+/*std::string syd::GetTagLabels(const std::vector<std::shared_ptr<syd::Tag>> & tags)
 {
   std::ostringstream os;
   if (tags.size() == 0) return "no_tag";
   os << tags[0]->label;
   for(auto i=1; i<tags.size(); i++) os << "," << tags[i]->label;
   return os.str();
-}
+  }*/
 // --------------------------------------------------

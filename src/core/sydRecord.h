@@ -30,7 +30,6 @@ namespace syd {
   class Database;
   struct RecordStat;
 
-
   /// Base class for all record (or element, or row) in a table
 #pragma db object abstract pointer(std::shared_ptr)
   class Record {

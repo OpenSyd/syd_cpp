@@ -18,39 +18,15 @@
 
 // syd
 #include "sydRadionuclide.h"
-// #include "sydDatabase.h"
-// #include "sydTable.h"
-// #include "sydInjection.h"
-// #include "sydInjection-odb.hxx"
 
 // --------------------------------------------------------------------
-syd::Radionuclide::Radionuclide():syd::TableElementBase()
+syd::Radionuclide::Radionuclide():syd::Record("")
 {
 }
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-// void syd::Radionuclide::Set(const std::string & vname, double hl)
-// {
-//   name = vname;
-//   half_life_in_hours = hl;
-// }
-// // --------------------------------------------------------------------
-
-
-// // --------------------------------------------------------------------
-// void syd::Radionuclide::Set(std::vector<std::string> & arg)
-// {
-//   if (arg.size() < 2) {
-//     LOG(FATAL) << "Radionuclide Set require <name> <half_life_in_hours>";
-//   }
-//   Set(arg[0], atof(arg[1].c_str()));
-// }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
+// --------------------------------------------------
 std::string syd::Radionuclide::ToString() const
 {
   std::stringstream ss ;
@@ -59,27 +35,48 @@ std::string syd::Radionuclide::ToString() const
      << half_life_in_hours;
   return ss.str();
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-bool syd::Radionuclide::operator==(const Radionuclide & p)
-{
-  return (id == p.id and
-          name == p.name and
-          half_life_in_hours == p.half_life_in_hours);
-}
-// --------------------------------------------------------------------
+// --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Radionuclide::OnDelete(syd::Database * db)
+bool syd::Radionuclide::IsEqual(const pointer p) const
 {
-  DD("Radionuclide ondelete");
-  /*
-  std::vector<syd::Injection> injections;
-  db->Query<syd::Injection>(odb::query<syd::Injection>::radionuclide == id, injections);
-  for(auto i:injections) db->AddToDeleteList(i);
-  */
+  return (syd::Record::IsEqual(p) and name == p->name and
+          half_life_in_hours == p->half_life_in_hours);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Radionuclide::Set(const syd::Database * db, const std::vector<std::string> & arg)
+{
+  if (arg.size() < 2) {
+    LOG(FATAL) << "To insert patient, please set <name> <half_life_in_hours>";
+  }
+  name = arg[0];
+  half_life_in_hours = atof(arg[1].c_str());
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Radionuclide::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+{
+  if (format == "help") {
+    std::cout << "Available formats for table 'Radionuclide': " << std::endl
+              << "\tdefault: id name half_life_in_hours" << std::endl;
+    return;
+  }
+  ta.AddColumn("#id");
+  ta.AddColumn("name", 10);
+  ta.AddColumn("half_life(h)", 10);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Radionuclide::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+{
+  ta << id << name << half_life_in_hours;
 }
 // --------------------------------------------------

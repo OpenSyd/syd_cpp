@@ -20,19 +20,15 @@
 #define SYDTAG_H
 
 // syd
-#include "sydTableElementBase.h"
+#include "sydRecord.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Tag")
   /// Simple table to store a label and a description
-  class Tag : public syd::TableElementBase {
+  class Tag : public syd::Record {
   public:
-
-#pragma db id auto
-    /// Id of the Tag
-    IdType id;
 
 #pragma db options("UNIQUE")
     /// Label of the tag (name)
@@ -42,20 +38,18 @@ namespace syd {
     std::string description;
 
     // ------------------------------------------------------------------------
-    SET_TABLE_NAME("Tag")
+    TABLE_DEFINE(Tag);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(Tag);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Tag);
+    // ------------------------------------------------------------------------
+
+   protected:
     Tag();
 
-    virtual std::string ToString() const;
-    virtual void Set(std::vector<std::string> & arg);
-
-    bool operator==(const Tag & p);
-    bool operator!=(const Tag & p) { return !(*this == p); }
-
-  }; // end class
-
+  }; // end of class
 
   // Helpers function
-  std::string GetTagLabels(const std::vector<std::shared_ptr<syd::Tag>> & tags);
+  //std::string GetTagLabels(const std::vector<std::shared_ptr<syd::Tag>> & tags);
 
 }
 // --------------------------------------------------------------------

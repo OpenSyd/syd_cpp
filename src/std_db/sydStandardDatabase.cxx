@@ -24,6 +24,8 @@ void syd::StandardDatabase::CreateTables()
 {
   AddTable<syd::Patient>();
   AddTable<syd::Injection>();
+  AddTable<syd::Radionuclide>();
+  AddTable<syd::Tag>();
 }
 // --------------------------------------------------------------------
 

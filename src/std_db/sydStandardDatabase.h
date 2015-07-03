@@ -26,6 +26,8 @@
 // syd tables
 #include "sydPatient-odb.hxx"
 #include "sydInjection-odb.hxx"
+#include "sydRadionuclide-odb.hxx"
+#include "sydTag-odb.hxx"
 
 // --------------------------------------------------------------------
 namespace syd {

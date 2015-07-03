@@ -20,12 +20,8 @@
 #define SYDINJECTION_H
 
 // syd
-//#include "sydRecord.h"
-//#include "sydCommon.h"
-//#include "sydStandardDatabase.h"
 #include "sydPatient.h"
-// #include "sydRadionuclide.h"
-//#include "sydDatabase.h"
+#include "sydRadionuclide.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -41,9 +37,9 @@ namespace syd {
     /// Foreign key, linked to Patient table.
     std::shared_ptr<syd::Patient> patient;
 
-    //#pragma db not_null
+#pragma db not_null
     /// Foreign key, linked to Radionuclide table.
-    //    std::shared_ptr<Radionuclide> radionuclide;
+    std::shared_ptr<syd::Radionuclide> radionuclide;
 
     /// Date of the injection
     std::string date;

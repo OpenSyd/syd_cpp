@@ -28,8 +28,6 @@ namespace syd {
   class Injection;
   class PatientStat;
 
-#pragma db model version(1, 1)
-
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Patient")
   /// Store information about a patient (id, study_id, name etc).
   class Patient: public syd::Record {

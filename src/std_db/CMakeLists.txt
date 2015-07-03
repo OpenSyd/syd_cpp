@@ -8,13 +8,13 @@ include_directories(${SYD_BINARY_DIR}/src/core)
 # Standard database : StandardDatabase
 set(SCHEMA_NAME StandardDatabase)
 wrap_odb(sydStandardDatabase sydPatient.h)
-# wrap_odb(sydStandardDatabase sydRadionuclide.h)
+wrap_odb(sydStandardDatabase sydRadionuclide.h)
+wrap_odb(sydStandardDatabase sydTag.h)
 # wrap_odb(sydStandardDatabase sydFile.h)
 wrap_odb(sydStandardDatabase sydInjection.h)
 # wrap_odb(sydStandardDatabase sydDicomSerie.h)
 # wrap_odb(sydStandardDatabase sydDicomFile.h)
 # #wrap_odb(sydStandardDatabase sydTimepoint.h)
-# wrap_odb(sydStandardDatabase sydTag.h)
 # wrap_odb(sydStandardDatabase sydImage.h)
 # wrap_odb(sydStandardDatabase sydRoiType.h)
 # wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
@@ -24,10 +24,10 @@ add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
   sydStandardDatabasePlugin.cxx
   sydPatient-odb.cxx sydPatient.cxx
-#   sydRadionuclide-odb.cxx sydRadionuclide.cxx
-#   sydFile-odb.cxx sydFile.cxx
-#   sydTag-odb.cxx sydTag.cxx
+  sydRadionuclide-odb.cxx sydRadionuclide.cxx
+  sydTag-odb.cxx sydTag.cxx
   sydInjection-odb.cxx sydInjection.cxx
+#   sydFile-odb.cxx sydFile.cxx
 #   sydDicomSerie-odb.cxx sydDicomSerie.cxx
 #   sydDicomFile-odb.cxx sydDicomFile.cxx
 # #  sydTimepoint-odb.cxx sydTimepoint.cxx

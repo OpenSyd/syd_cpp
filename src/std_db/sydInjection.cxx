@@ -24,28 +24,10 @@
 syd::Injection::Injection():syd::Record("")
 {
   patient = NULL;
-  // radionuclide = NULL; FIXME
+  radionuclide = NULL;
   date = "unset_date";
   activity_in_MBq = 0.0;
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-/*void syd::Injection::Set(Patient & p,
-                         Radionuclide & pr,
-                         const std::string & pdate,
-                         double activity)
-{
-  patient = std::make_shared<syd::Patient>(p);
-  radionuclide = std::make_shared<syd::Radionuclide>(pr);
-  if (!IsDateValid(pdate)) {
-    LOG(FATAL) << "Error while using Injection::Set, the date is not valid: " << pdate;
-  }
-  date = date;
-  activity_in_MBq = activity;
-}
-*/
 // --------------------------------------------------------------------
 
 
@@ -55,9 +37,9 @@ std::string syd::Injection::ToString() const
   std::string name;
   if (patient == NULL) name = "patient_not_set";
   else name = patient->name;
-  std::string r="fixme";
-  //if (radionuclide == NULL) r = "radionuclide_not_set";
-  //else r = radionuclide->name;
+  std::string r;
+  if (radionuclide == NULL) r = "radionuclide_not_set";
+  else r = radionuclide->name;
   std::stringstream ss ;
   ss << id << " "
      << name << " "
@@ -83,7 +65,15 @@ void syd::Injection::Set(const syd::Database * d, const std::vector<std::string>
   std::string patient_name = args[0];
   auto p = db->FindPatient(patient_name);
   patient = p;
-  // radionuclide todo
+  syd::Radionuclide::pointer rad;
+  odb::query<syd::Radionuclide> q = odb::query<syd::Radionuclide>::name == args[1] or
+    odb::query<syd::Radionuclide>::id == atoi(args[1].c_str());
+  try {
+  db->QueryOne(rad, q);
+  } catch(std::exception & e) {
+    LOG(FATAL) << "Error while creating the Injection, the radionuclide '" << args[1] << "' is not found (or several exist).";
+  }
+  radionuclide = rad;
   date = args[2];
   if (!IsDateValid(date)) {
     LOG(FATAL) << "The date is not valid for this injection:" << this;
@@ -106,9 +96,9 @@ void syd::Injection::InitPrintTable(const syd::Database * db,
   }
   ta.AddColumn("#id");
   ta.AddColumn("p", 15);
-  ta.AddColumn("rad", 8);
+  ta.AddColumn("rad", 15);
   ta.AddColumn("injec_date", 20);
-  ta.AddColumn("A(MBq)", 7,2);
+  ta.AddColumn("A(MBq)", 10,2);
 }
 // --------------------------------------------------
 
@@ -118,9 +108,9 @@ void syd::Injection::DumpInTable(const syd::Database * db, syd::PrintTable & ta,
 {
   std::string pname = "unset_patient";
   if (patient != NULL) pname = patient->name;
-  // std::string rad = "unset_radio";
-  // if (radionuclide != NULL) rad = radionuclide->name;
-  ta << id << pname << "Indium" << date << activity_in_MBq;
+  std::string rad = "unset_radionuclide";
+  if (radionuclide != NULL) rad = radionuclide->name;
+  ta << id << pname << rad << date << activity_in_MBq;
 }
 // --------------------------------------------------
 
@@ -130,39 +120,8 @@ bool syd::Injection::IsEqual(const pointer p) const
 {
   return (syd::Record::IsEqual(p) and
           patient->IsEqual(p->patient) and
-          //          patient.IsEqual(p.patient) and radionuclide FIXME
+          radionuclide->IsEqual(p->radionuclide) and
           date == p->date and
           activity_in_MBq == p->activity_in_MBq);
 }
-// --------------------------------------------------
-
-
-
-
-// --------------------------------------------------
-// bool syd::Injection::operator==(const Injection & p)
-// {
-//   return (id == p.id and
-//           *patient == *p.patient and
-//           *radionuclide == *p.radionuclide and
-//           date == p.date and
-//           activity_in_MBq == p.activity_in_MBq);
-// }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-// void syd::Injection::OnDelete(syd::Database * db)
-// {
-//   DD(" injection OnDelete");
-//   /*
-//   std::vector<syd::DicomSerie> dicomseries;
-//   db->Query<syd::DicomSerie>(odb::query<syd::DicomSerie>::injection == id, dicomseries);
-//   for(auto i:dicomseries) db->AddToDeleteList(i);
-
-//   std::vector<syd::Timepoint> tp;
-//   db->Query<syd::Timepoint>(odb::query<syd::Timepoint>::injection == id, tp);
-//   for(auto i:tp) db->AddToDeleteList(i);
-//   */
-// }
 // --------------------------------------------------
