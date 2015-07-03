@@ -51,17 +51,24 @@ int main(int argc, char* argv[])
     exclude.push_back(args_info.exclude_arg[i]);
 
   // Find
-  std::vector<syd::IdType> ids;
-  db->Find(ids, table_name, patterns, exclude);
-  if (ids.size() == 0) return EXIT_SUCCESS;
+  syd::Record::vector records;
+  db->Query(records, table_name);
+
+  // Grep
+  syd::Record::vector results;
+  db->Grep(results, records, patterns, exclude);
 
   // Dump results
   if (!args_info.dump_flag) {
+    // Get ids
+    std::vector<syd::IdType> ids;
+    for(auto r:results) ids.push_back(r->id);
+    if (ids.size() == 0) return EXIT_SUCCESS;
     for(auto id:ids) std::cout << id << " ";
     std::cout << std::endl;
   }
   else {
-    db->Dump(std::cout, table_name, args_info.format_arg, ids);
+    db->Dump(results, args_info.format_arg);
   }
 
   // This is the end, my friend.

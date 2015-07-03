@@ -46,22 +46,11 @@ syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & nam
 // --------------------------------------------------------------------
 
 
-
-// void syd::StandardDatabase::Dump(std::ostream & os,
-//                                  const std::vector<std::shared_ptr<syd::Patient>> & patients) const
-// {
-//   DD(" Dump patient from StandardDatabase");
-// }
-
-
-// void syd::StandardDatabase::Dump2(const syd::Patient::pointer patient, std::ostream & os) const
-// {
-//   DD("Dump2 syd::StandardDatabase patient");
-//   DD(patient);
-// }
-
-// void syd::StandardDatabase::Dump2(const syd::Record::pointer record, std::ostream & os) const
-// {
-//   DD("Dump2 syd::StandardDatabase record");
-//   syd::Database::Dump2(record, os);
-// }
+// --------------------------------------------------------------------
+/*    void Find(syd::Record::vector & records,
+              const std::string & table_name,
+              const std::string & patient_name,
+              const std::vector<std::string> & pattern,
+              const std::vector<std::string> & exclude) const;
+*/
+// --------------------------------------------------------------------

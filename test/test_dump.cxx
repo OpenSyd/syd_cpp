@@ -34,17 +34,6 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
-
-  // Dump
-  /*
-    no need to dump ? only query then ToString
-    or dump
-
-    db->Dump(patients, format); // like 'set' concepts
-    db->Dump(records, format);
-
-  */
-
   // Create the database
   std::string ext_dbname = "test_dump.ext.db";
   std::string folder = "test";
@@ -52,8 +41,6 @@ int main(int argc, char* argv[])
   ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
 
   // Insert some records
-  /// Insert element
-
   auto p1 = ext::Patient::New();
   //  auto p1 = db->New<ext::Patient>();
   p1->Set(db, "toto", 1, 50,  "XXYYZZ", "2002-08-09 10:00");
@@ -69,7 +56,7 @@ int main(int argc, char* argv[])
   db->Insert(p3);
   db->Insert(p4);
 
-  //  syd::Radionuclide
+  //  syd::Radionuclide (later)
 
   syd::Injection::pointer inj;
   std::vector<std::string> arg(4);
