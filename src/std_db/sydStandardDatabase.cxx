@@ -27,6 +27,8 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::Radionuclide>();
   AddTable<syd::Tag>();
   AddTable<syd::File>();
+  AddTable<syd::DicomFile>();
+  AddTable<syd::DicomSerie>();
 }
 // --------------------------------------------------------------------
 
@@ -45,5 +47,27 @@ syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & nam
               << "Error message is: " << e.what());
   }
   return patient;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient::pointer patient,
+                                                             const std::string & name_or_study_id)
+{
+  syd::Injection::pointer injection;
+  odb::query<syd::Injection> q =
+    odb::query<syd::Injection>::patient == patient->id and (
+    odb::query<syd::Injection>::radionuclide->name == name_or_study_id.c_str() or
+    odb::query<syd::Injection>::id == atoi(name_or_study_id.c_str()));
+
+  try {
+    QueryOne(injection, q);
+  } catch(std::exception & e) {
+    EXCEPTION("Error in FindInjection for patient " << patient->name
+              << ", with param: " << name_or_study_id << std::endl
+              << "Error message is: " << e.what());
+  }
+  return injection;
 }
 // --------------------------------------------------------------------

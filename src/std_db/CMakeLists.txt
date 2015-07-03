@@ -30,12 +30,12 @@ add_library(sydStandardDatabase SHARED
   sydFile-odb.cxx sydFile.cxx
   sydDicomSerie-odb.cxx sydDicomSerie.cxx
   sydDicomFile-odb.cxx sydDicomFile.cxx
+#  sydDicomSerieBuilder.cxx
 # #  sydTimepoint-odb.cxx sydTimepoint.cxx
 #   sydImage-odb.cxx sydImage.cxx
 #   sydImageTransform-odb.cxx sydImageTransform.cxx
 #   sydRoiType-odb.cxx sydRoiType.cxx
 #   sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx
-#   sydDicomSerieBuilder.cxx
 # #  sydTimepointBuilder.cxx
 #   sydImageBuilder.cxx
 
@@ -63,10 +63,10 @@ target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})
 # Specific tools (usable for StandardDatabase or db that inherit from it)
 
 
-# # Create DicomSeries
-# wrap_ggo(sydInsertDicom sydInsertDicom.ggo)
-# add_executable(sydInsertDicom sydInsertDicom.cxx sydInsertDicom_ggo.c)
-# target_link_libraries(sydInsertDicom sydStandardDatabase)
+# Create DicomSeries
+wrap_ggo(sydInsertDicom sydInsertDicom.ggo)
+add_executable(sydInsertDicom sydInsertDicom.cxx sydInsertDicom_ggo.c)
+target_link_libraries(sydInsertDicom sydStandardDatabase)
 
 # # Create images
 # wrap_ggo(sydInsertImageFromDicom sydInsertImageFromDicom.ggo)

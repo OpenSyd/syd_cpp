@@ -29,6 +29,8 @@
 #include "sydRadionuclide-odb.hxx"
 #include "sydTag-odb.hxx"
 #include "sydFile-odb.hxx"
+#include "sydDicomSerie-odb.hxx"
+#include "sydDicomFile-odb.hxx"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -39,6 +41,7 @@ namespace syd {
 
     virtual ~StandardDatabase() {}
     syd::Patient::pointer FindPatient(const std::string & name_or_study_id);
+    syd::Injection::pointer FindInjection(const syd::Patient::pointer patient, const std::string & name_or_study_id);
 
   protected:
     /// Insert the tables

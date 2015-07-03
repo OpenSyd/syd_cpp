@@ -34,11 +34,9 @@ namespace syd {
   public:
 
 #pragma db not_null
-    /// Foreign key, it must exist in the Patient table. Not strictly
-    /// needed (because included in injection) but convenient.
+    /// Foreign key, it must exist in the Patient table. Useful if no associated injection
     std::shared_ptr<syd::Patient> patient;
 
-#pragma db not_null
     /// Foreign key, it must exist in the Injection table.
     std::shared_ptr<syd::Injection> injection;
 
