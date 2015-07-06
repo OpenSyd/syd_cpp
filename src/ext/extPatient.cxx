@@ -52,6 +52,15 @@ bool ext::Patient::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
+void ext::Patient::CopyFrom(const pointer p)
+{
+  syd::Patient::CopyFrom(p);
+  birth_date = p->birth_date;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 void ext::Patient::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   syd::Patient::Set(db, arg);

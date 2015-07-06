@@ -48,6 +48,16 @@ bool syd::Radionuclide::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
+void syd::Radionuclide::CopyFrom(const pointer p)
+{
+  syd::Record::CopyFrom(p);
+  name = p->name;
+  half_life_in_hours = p->half_life_in_hours;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 void syd::Radionuclide::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {

@@ -35,6 +35,14 @@ bool syd::Record::IsEqual(const pointer p) const
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------
+void syd::Record::CopyFrom(const pointer p)
+{
+  id = p->id;
+}
+// --------------------------------------------------
+
+
 // --------------------------------------------------------------------
 void syd::Record::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
 {

@@ -58,6 +58,18 @@ bool syd::DicomFile::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
+void syd::DicomFile::CopyFrom(const pointer p)
+{
+  syd::Record::CopyFrom(p);
+  file = p->file;
+  dicom_serie = p->dicom_serie;
+  dicom_sop_uid = p->dicom_sop_uid;
+  dicom_instance_number = p->dicom_instance_number;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 void syd::DicomFile::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   LOG(FATAL) << "Cannot insert DicomFile with 'Set'. Use sydInsertDicom.";

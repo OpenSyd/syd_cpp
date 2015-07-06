@@ -125,3 +125,15 @@ bool syd::Injection::IsEqual(const pointer p) const
           activity_in_MBq == p->activity_in_MBq);
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Injection::CopyFrom(const pointer p)
+{
+  syd::Record::CopyFrom(p);
+  patient = p->patient;
+  radionuclide = p->radionuclide;
+  date = p->date;
+  activity_in_MBq = p->activity_in_MBq;
+}
+// --------------------------------------------------

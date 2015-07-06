@@ -56,16 +56,20 @@ bool syd::File::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
+void syd::File::CopyFrom(const pointer p)
+{
+  syd::Record::CopyFrom(p);
+  filename = p->filename;
+  path = p->path;
+  md5 = p->md5;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 void syd::File::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
-  //  if (arg.size() < 2) {
   LOG(FATAL) << "Not possible in insert file directly";
-  //To insert patient, please set <filename> <path> [<weight_in_kg> <dicom_patientid>]";
-  //}
-  // name = arg[0];
-  // study_id = atoi(arg[1].c_str());
-  // if (arg.size() > 2) weight_in_kg = atof(arg[2].c_str());
-  // if (arg.size() > 3) dicom_patientid = arg[3];
 }
 // --------------------------------------------------
 

@@ -19,6 +19,9 @@
 #ifndef SYDDICOMSERIE_H
 #define SYDDICOMSERIE_H
 
+// std
+#include <array> // needed on osx
+
 // syd
 #include "sydPatient.h"
 #include "sydInjection.h"

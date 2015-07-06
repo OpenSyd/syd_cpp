@@ -48,6 +48,16 @@ bool syd::Tag::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
+void syd::Tag::CopyFrom(const pointer p)
+{
+  syd::Record::CopyFrom(p);
+  label = p->label;
+  description = p->description;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 void syd::Tag::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {

@@ -63,9 +63,6 @@ namespace syd {
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const = 0;
 
-    /// Return true if the record is equal (same id here);
-    virtual bool IsEqual(const pointer p) const;
-
     /// Default function to print an element (must be inline here).
     friend std::ostream& operator<<(std::ostream& os, const Record & p) {
       os << p.ToString();
@@ -84,6 +81,13 @@ namespace syd {
     /// This default constructor allow to oblige class that inherit from Record to not have default constructor
     Record(std::string) {}
 
+    /// Copy all fields form the given record (protected to avoid use with generic pointer)
+    virtual void CopyFrom(const pointer p);
+
+    /// Return true if the record is equal (same id here); (protected to avoid use with generic pointer)
+    virtual bool IsEqual(const pointer p) const;
+
+
   }; // end of class
 
   /// odb::access is needed for polymorphism
@@ -97,7 +101,8 @@ namespace syd {
 
 #define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME) \
     virtual std::string ToString() const;             \
-    virtual bool IsEqual(const pointer p) const;
+    virtual bool IsEqual(const pointer p) const;      \
+    virtual void CopyFrom(const pointer p);
 
 #define TABLE_DECLARE_OPTIONAL_FUNCTIONS(TABLE_NAME)                    \
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args); \
