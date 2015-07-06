@@ -56,9 +56,10 @@ namespace syd {
     /// Additional Set function to shorter patient inclusion
     virtual void Set(const syd::Database * db, const std::string & pname,
                      const IdType & pstudy_id, const double pweight_in_kg=-1,
-                     const std::string pdicom_patientid="unset_dicom_patientid");
+                     const std::string pdicom_patientid="unset");
 
     bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
+    std::string ComputeRelativeFolder() const;
 
    protected:
     Patient();

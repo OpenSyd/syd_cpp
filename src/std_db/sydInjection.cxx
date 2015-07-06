@@ -25,7 +25,7 @@ syd::Injection::Injection():syd::Record("")
 {
   patient = NULL;
   radionuclide = NULL;
-  date = "unset_date";
+  date = "unset";
   activity_in_MBq = 0.0;
 }
 // --------------------------------------------------------------------
@@ -106,9 +106,9 @@ void syd::Injection::InitPrintTable(const syd::Database * db,
 // --------------------------------------------------
 void syd::Injection::DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
 {
-  std::string pname = "unset_patient";
+  std::string pname = "unset";
   if (patient != NULL) pname = patient->name;
-  std::string rad = "unset_radionuclide";
+  std::string rad = "unset";
   if (radionuclide != NULL) rad = radionuclide->name;
   ta << id << pname << rad << date << activity_in_MBq;
 }

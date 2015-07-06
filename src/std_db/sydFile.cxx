@@ -24,9 +24,9 @@
 syd::File::File():syd::Record("")
 {
   // default value
-  filename = "unset_filename"; // must be unique
-  path = "unset_path";
-  md5 = "unset_md5";
+  filename = "unset"; // must be unique
+  path = "unset";
+  md5 = "unset";
 }
 // --------------------------------------------------
 
@@ -38,7 +38,7 @@ std::string syd::File::ToString() const
   ss << id << " "
      << filename << " "
      << path << " "
-     << (md5 == "unset_md5"? "no_md5":"md5");
+     << (md5 == "unset"? "no_md5":"md5");
   return ss.str();
 }
 // --------------------------------------------------
@@ -86,18 +86,18 @@ void syd::File::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, c
   }
   ta.AddColumn("#id");
   if (format == "md5") {
-    ta.AddColumn("filename", 15);
+    ta.AddColumn("filename", 25);
     ta.AddColumn("path", 30);
     ta.AddColumn("md5", 40);
   }
   else {
     if (format == "path") {
-      ta.AddColumn("path", 50);
+      ta.AddColumn("path", 100);
     }
     else {
-      ta.AddColumn("filename", 15);
+      ta.AddColumn("filename", 25);
       ta.AddColumn("path", 30);
-      ta.AddColumn("md5?", 5);
+      ta.AddColumn("md5?", 10);
     }
   }
 }
@@ -116,7 +116,7 @@ void syd::File::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const
       ta << std::string(path+PATH_SEPARATOR+filename);
     }
     else {
-      ta << filename  << path << (md5=="unset_md5" ? "no_md5":"md5");
+      ta << filename  << path << (md5=="unset" ? "no_md5":"md5");
     }
   }
 }

@@ -25,10 +25,10 @@
 syd::Patient::Patient():syd::Record("")
 {
   // default value
-  name = "unset_name"; // must be unique
+  name = "unset"; // must be unique
   study_id = 0; // must be unique
   weight_in_kg = 0;
-  dicom_patientid = "unset_dicom_patientid";
+  dicom_patientid = "unset";
 }
 // --------------------------------------------------
 
@@ -109,8 +109,8 @@ void syd::Patient::InitPrintTable(const syd::Database * db, syd::PrintTable & ta
   ta.AddColumn("#id");
   ta.AddColumn("name", 8);
   ta.AddColumn("sid", 5);
-  ta.AddColumn("w(kg)", 5);
-  ta.AddColumn("dicom", 10);
+  ta.AddColumn("w(kg)", 10);
+  ta.AddColumn("dicom", 20);
   if (format == "injection")
     ta.AddColumn("nb_inj", 10); // advanced dump format, compute the nb of injections
 }
@@ -145,5 +145,13 @@ bool syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdico
     return false;
   }
   return false; // do not consider ok with a patient name not having a '^' inside
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+std::string syd::Patient::ComputeRelativeFolder() const
+{
+  return name;
 }
 // --------------------------------------------------
