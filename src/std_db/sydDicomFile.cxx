@@ -49,8 +49,8 @@ std::string syd::DicomFile::ToString() const
 bool syd::DicomFile::IsEqual(const pointer p) const
 {
   return (syd::Record::IsEqual(p) and
-          file->IsEqual(p->file) and
-          dicom_serie->IsEqual(p->dicom_serie) and
+          file->id == p->file->id and
+          dicom_serie->id == p->dicom_serie->id and
           dicom_sop_uid == p->dicom_sop_uid and
           dicom_instance_number == p->dicom_instance_number);
 }

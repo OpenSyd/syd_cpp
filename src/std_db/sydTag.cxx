@@ -92,15 +92,16 @@ void syd::Tag::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const 
 }
 // --------------------------------------------------
 
+
 // --------------------------------------------------
-/*std::string syd::GetTagLabels(const std::vector<std::shared_ptr<syd::Tag>> & tags)
-  {
+std::string syd::GetTagLabels(const syd::Tag::vector & tags)
+{
   std::ostringstream os;
   if (tags.size() == 0) return "no_tag";
   os << tags[0]->label;
   for(auto i=1; i<tags.size(); i++) os << "," << tags[i]->label;
   return os.str();
-  }*/
+}
 // --------------------------------------------------
 
 

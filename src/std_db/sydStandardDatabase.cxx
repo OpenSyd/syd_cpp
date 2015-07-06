@@ -29,6 +29,10 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::File>();
   AddTable<syd::DicomFile>();
   AddTable<syd::DicomSerie>();
+  AddTable<syd::Image>();
+
+  // AddTable<syd::RoiType>();
+  // AddTable<syd::RoiMaskImage>();
 }
 // --------------------------------------------------------------------
 

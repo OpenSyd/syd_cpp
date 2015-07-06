@@ -32,29 +32,25 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Image")
   /// Store information about a dicom image (serie). Element of table
   /// 'Image' stored in a db. Contains information about a dicom
   /// image.
-  class Image : public syd::TableElementBase {
+  class Image : public syd::Record {
   public:
-
-#pragma db id auto
-    /// Id of the Image
-    IdType id;
 
 #pragma db not_null
     /// Foreign key, it must exist in the Patient table.
-    std::shared_ptr<syd::Patient> patient;
+    syd::Patient::pointer patient;
 
     /// Associated tags
-    std::vector<std::shared_ptr<syd::Tag>> tags;
+    syd::Tag::vector tags;
 
     /// List of associated files.
-    std::vector<std::shared_ptr<syd::File>> files;
+    syd::File::vector files;
 
     /// Dicoms that serve to compute this image (could be empty).
-    std::vector<std::shared_ptr<syd::DicomSerie>> dicoms;
+    syd::DicomSerie::vector dicoms;
 
     /// Type of the image (mhd by default)
     std::string type;
@@ -72,16 +68,13 @@ namespace syd {
     std::array<double, 3> spacing;
 
     // ------------------------------------------------------------------------
-    SET_TABLE_NAME("Image")
-    Image();
+    TABLE_DEFINE(Image);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(Image);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Image);
+    // ------------------------------------------------------------------------
 
-    virtual std::string ToString() const;
-    virtual std::string ToLargeString() const;
-
-    bool operator==(const Image & p);
-    bool operator!=(const Image & p) { return !(*this == p); }
-
-    virtual void OnDelete(syd::Database * db);
+    /// Standard folder
+    virtual std::string ComputeRelativeFolder() const;
 
     /// Return the acquisition date of the first dicom linked to this image
     std::string GetAcquisitionDate() const;
@@ -90,10 +83,13 @@ namespace syd {
     std::string GetModality() const;
 
     /// Add a tag to the list (check is already exist) ; do not update in the db.
-    void AddTag(syd::Tag & tag);
+    void AddTag(syd::Tag::pointer tag);
 
     /// Remove a tag from the list ; do not update in the db. Do nothing it not found
-    void RemoveTag(syd::Tag & tag);
+    void RemoveTag(syd::Tag::pointer tag);
+
+  protected:
+    Image();
 
   }; // end class
 // --------------------------------------------------------------------

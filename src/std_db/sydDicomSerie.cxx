@@ -116,7 +116,6 @@ void syd::DicomSerie::InitPrintTable(const syd::Database * db, syd::PrintTable &
   ta.AddColumn("acqui_date", 20);
   ta.AddColumn("recon_date", 20);
   ta.AddColumn("description", 90);
-
 }
 // --------------------------------------------------
 

@@ -15,7 +15,7 @@ wrap_odb(sydStandardDatabase sydInjection.h)
 wrap_odb(sydStandardDatabase sydDicomSerie.h)
 wrap_odb(sydStandardDatabase sydDicomFile.h)
 # #wrap_odb(sydStandardDatabase sydTimepoint.h)
-# wrap_odb(sydStandardDatabase sydImage.h)
+wrap_odb(sydStandardDatabase sydImage.h)
 # wrap_odb(sydStandardDatabase sydRoiType.h)
 # wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
 # wrap_odb(sydStandardDatabase sydImageTransform.h)
@@ -31,8 +31,8 @@ add_library(sydStandardDatabase SHARED
   sydDicomSerie-odb.cxx sydDicomSerie.cxx
   sydDicomFile-odb.cxx sydDicomFile.cxx
   sydDicomSerieBuilder.cxx
+  sydImage-odb.cxx sydImage.cxx
 # #  sydTimepoint-odb.cxx sydTimepoint.cxx
-#   sydImage-odb.cxx sydImage.cxx
 #   sydImageTransform-odb.cxx sydImageTransform.cxx
 #   sydRoiType-odb.cxx sydRoiType.cxx
 #   sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx

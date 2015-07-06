@@ -119,8 +119,8 @@ void syd::Injection::DumpInTable(const syd::Database * db, syd::PrintTable & ta,
 bool syd::Injection::IsEqual(const pointer p) const
 {
   return (syd::Record::IsEqual(p) and
-          patient->IsEqual(p->patient) and
-          radionuclide->IsEqual(p->radionuclide) and
+          patient->id == p->patient->id and
+          radionuclide->id == p->radionuclide->id and
           date == p->date and
           activity_in_MBq == p->activity_in_MBq);
 }

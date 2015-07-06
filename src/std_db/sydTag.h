@@ -49,7 +49,7 @@ namespace syd {
   }; // end of class
 
   // Helpers function
-  //std::string GetTagLabels(const std::vector<std::shared_ptr<syd::Tag>> & tags);
+  std::string GetTagLabels(const syd::Tag::vector & tags);
 
 }
 // --------------------------------------------------------------------
