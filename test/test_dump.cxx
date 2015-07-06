@@ -56,7 +56,10 @@ int main(int argc, char* argv[])
   db->Insert(p3);
   db->Insert(p4);
 
-  //  syd::Radionuclide (later)
+  auto r = syd::Radionuclide::New();
+  r->name = "Indium111";
+  r->half_life_in_hours = 67.313;
+  db->Insert(r);
 
   syd::Injection::pointer inj;
   std::vector<std::string> arg(4);
