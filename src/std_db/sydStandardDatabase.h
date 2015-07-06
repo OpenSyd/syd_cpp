@@ -31,6 +31,7 @@
 #include "sydFile-odb.hxx"
 #include "sydDicomSerie-odb.hxx"
 #include "sydDicomFile-odb.hxx"
+#include "sydImage-odb.hxx"
 
 // --------------------------------------------------------------------
 namespace syd {
