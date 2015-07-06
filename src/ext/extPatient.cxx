@@ -105,3 +105,5 @@ void ext::Patient::DumpInTable(const syd::Database * d, syd::PrintTable & ta, co
   ta << birth_date;
 }
 // --------------------------------------------------
+
+void ext::Patient::Sort(ext::Patient::vector & v, const std::string & type) {}

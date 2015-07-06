@@ -63,6 +63,8 @@ namespace syd {
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const = 0;
 
+    // virtual void Sort(vector v, const std::string & order);
+
     /// Default function to print an element (must be inline here).
     friend std::ostream& operator<<(std::ostream& os, const Record & p) {
       os << p.ToString();
@@ -99,10 +101,11 @@ namespace syd {
     static std::string GetStaticTableName() { return #TABLE_NAME; }     \
     static pointer New() { return pointer(new TABLE_NAME); }            \
 
-#define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME) \
-    virtual std::string ToString() const;             \
-    virtual bool IsEqual(const pointer p) const;      \
-    virtual void CopyFrom(const pointer p);
+#define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME)           \
+  virtual std::string ToString() const;                         \
+  virtual bool IsEqual(const pointer p) const;                  \
+  virtual void CopyFrom(const pointer p);                       \
+  virtual void Sort(vector & v, const std::string & order);
 
 #define TABLE_DECLARE_OPTIONAL_FUNCTIONS(TABLE_NAME)                    \
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args); \

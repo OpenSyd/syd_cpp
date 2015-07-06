@@ -155,3 +155,12 @@ std::string syd::Patient::ComputeRelativeFolder() const
   return name;
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Patient::Sort(syd::Patient::vector & v, const std::string & type)
+{
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) { return a->study_id < b->study_id; });
+}
+// --------------------------------------------------

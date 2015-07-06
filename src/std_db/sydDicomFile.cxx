@@ -100,3 +100,6 @@ void syd::DicomFile::DumpInTable(const syd::Database * d, syd::PrintTable & ta, 
   ta << id << dicom_serie->id << dicom_instance_number << file->filename << dicom_sop_uid;
 }
 // --------------------------------------------------
+
+
+void syd::DicomFile::Sort(syd::DicomFile::vector & v, const std::string & type) {}

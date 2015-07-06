@@ -272,3 +272,13 @@ void syd::Database::Grep(std::vector<std::shared_ptr<RecordType>> & output,
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records, const std::string & order) const
+{
+  if (records.size() == 0) return;
+  records[0]->Sort(records, order);
+}
+// --------------------------------------------------------------------

@@ -123,3 +123,20 @@ long syd::Table<RecordType>::GetNumberOfElements() const
   return db_->GetNumberOfElements<RecordType>();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Table<RecordType>::Sort(generic_record_vector & records, const std::string & type) const
+{
+  typename RecordType::vector specific_records;
+  for(auto r:records) {
+    specific_records.push_back(std::dynamic_pointer_cast<RecordType>(r));
+  }
+  db_->Sort<RecordType>(specific_records, type);
+  records.clear();
+  for(auto r:specific_records) {
+    records.push_back(r);
+  }
+}
+// --------------------------------------------------------------------

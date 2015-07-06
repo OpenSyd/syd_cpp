@@ -55,6 +55,8 @@ namespace syd {
 
     virtual long GetNumberOfElements() const = 0;
 
+    virtual void Sort(record_vector & records, const std::string & type) const = 0;
+
   };
 
 } // end namespace

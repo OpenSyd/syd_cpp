@@ -233,3 +233,12 @@ long syd::Database::GetNumberOfElements(const std::string table_name) const
   return GetTable(table_name)->GetNumberOfElements();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Sort(generic_record_vector & records, const std::string & type) const
+{
+  if (records.size() == 0 ) return;
+  GetTable(records[0]->GetTableName())->Sort(records, type);
+}
+// --------------------------------------------------------------------

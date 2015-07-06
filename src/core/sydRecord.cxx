@@ -58,3 +58,21 @@ void syd::Record::DumpInTable(const syd::Database * db, syd::PrintTable & ta, co
   ta << id << ToString();
 }
 // --------------------------------------------------------------------
+
+
+// void syd::Record::Sort(vector v, const std::string & order)
+// {
+//   DD("sort generic");
+//   DD(order);
+
+
+
+
+//   // std::vector<syd::DicomSerie> dicoms;
+//   // Query(ids, dicoms); // (no sort)
+//   //   std::sort(begin(dicoms), end(dicoms),
+//   //           [dicoms](DicomSerie a, DicomSerie b) {
+//   //             return syd::IsDateBefore(a.acquisition_date, b.acquisition_date); });
+
+
+// }

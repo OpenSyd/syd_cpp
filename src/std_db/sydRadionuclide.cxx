@@ -90,3 +90,6 @@ void syd::Radionuclide::DumpInTable(const syd::Database * d, syd::PrintTable & t
   ta << id << name << half_life_in_hours;
 }
 // --------------------------------------------------
+
+
+void syd::Radionuclide::Sort(Radionuclide::vector & v, const std::string & order) {}

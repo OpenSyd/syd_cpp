@@ -156,3 +156,13 @@ std::string syd::DicomSerie::ComputeRelativeFolder() const
   return f;
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomSerie::Sort(DicomSerie::vector & v, const std::string & order)
+{
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) {
+              return syd::IsDateBefore(a->acquisition_date, b->acquisition_date); });
+}
+// --------------------------------------------------

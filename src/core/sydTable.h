@@ -65,6 +65,9 @@ namespace syd {
     /// Query all elements
     virtual void Query(generic_record_vector & records) const;
 
+    /// Sort some records (to be specialized in record->Sort
+    void Sort(generic_record_vector & records, const std::string & type) const;
+
     /// Get the number of elements in the table
     virtual long GetNumberOfElements() const;
 

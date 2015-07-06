@@ -137,3 +137,6 @@ void syd::Injection::CopyFrom(const pointer p)
   activity_in_MBq = p->activity_in_MBq;
 }
 // --------------------------------------------------
+
+
+void syd::Injection::Sort(syd::Injection::vector & v, const std::string & type) {}

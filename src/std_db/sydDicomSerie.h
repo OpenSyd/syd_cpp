@@ -89,12 +89,13 @@ namespace syd {
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(DicomSerie);
     // ------------------------------------------------------------------------
 
-    std::string ComputeRelativeFolder() const;
+    virtual std::string ComputeRelativeFolder() const;
 
   protected:
     DicomSerie();
 
   }; // end class
+
 }
 // --------------------------------------------------------------------
 

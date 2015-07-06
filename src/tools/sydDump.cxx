@@ -59,6 +59,8 @@ int main(int argc, char* argv[])
   if (ids.size() == 0) db->Query(records, table_name);
   else  db->Query(records, table_name, ids);
 
+  db->Sort(records);
+
   // Dump elements
   std::string format = args_info.format_arg;
   db->Dump(records, format, std::cout);
