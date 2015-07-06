@@ -109,13 +109,31 @@ namespace syd {
 
 
     // ------------------------------------------------------------------------
+    /// Update an element. The type of the element is unknown
+    void Update(generic_record_pointer record);
+
+    /// Update several elements. The type of the element is unknown
+    void Update(generic_record_vector record);
+
+    /// Update an element
+    template<class RecordType>
+    void Update(std::shared_ptr<RecordType> record);
+
+    /// Update several elements
+    template<class RecordType>
+    void Update(std::vector<std::shared_ptr<RecordType>> records);
+    // ------------------------------------------------------------------------
+
+
+    // ------------------------------------------------------------------------
     /// Set parameter of an element. 'Set' must be overwritten in the Record.
     virtual void Set(generic_record_pointer record, const std::vector<std::string> & args) const;
     // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
-    //    virtual generic_record_pointer Find(const std::string & table_name, IdType id) const;
+    /// All Query function allocate new records
+
     /// Query a single record according to query
     template<class RecordType>
     void QueryOne(std::shared_ptr<RecordType> & record, const odb::query<RecordType> & q) const;
@@ -125,7 +143,6 @@ namespace syd {
     void QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const;
 
     /// Query a single record from the table_name
-    // FIXME table_name can be found from record ??
     void QueryOne(generic_record_pointer & r, const std::string & table_name, const IdType & id) const;
 
     /// Query several records according to query

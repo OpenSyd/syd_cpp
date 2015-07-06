@@ -43,6 +43,10 @@ namespace syd {
 
     virtual void Insert(record_vector records) const = 0;
 
+    virtual void Update(record_pointer record) const = 0;
+
+    virtual void Update(record_vector records) const = 0;
+
     virtual void QueryOne(record_pointer & r, const syd::IdType & id) const = 0;
 
     virtual void Query(record_vector & r, const std::vector<syd::IdType> & id) const = 0;

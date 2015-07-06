@@ -137,6 +137,24 @@ void syd::Database::Insert(generic_record_vector records)
 
 
 // --------------------------------------------------------------------
+void syd::Database::Update(generic_record_pointer record)
+{
+  GetTable(record->GetTableName())->Update(record);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Update(generic_record_vector records)
+{
+  if (records.size() == 0) return;
+  //Check Type //FIXME
+  GetTable(records[0]->GetTableName())->Update(records);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::TableBase * syd::Database::GetTable(const std::string & table_name) const
 {
   std::string str=table_name;

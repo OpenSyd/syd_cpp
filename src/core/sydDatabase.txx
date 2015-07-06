@@ -42,20 +42,6 @@ void syd::Database::Insert(std::shared_ptr<RecordType> record)
   std::vector<std::shared_ptr<RecordType>> records;
   records.push_back(record);
   Insert(records);
-  // try {
-  //   odb::transaction t (db_->begin());
-  //   db_->persist(*record);
-  //   t.commit();
-  // }
-  // catch (const odb::exception& e) {
-  //   std::string n="";
-  //   if (record != 0) n = record->GetTableName();
-  //   LOG(FATAL) << "Cannot insert the element: <"
-  //              << record << "> in the table '" << n
-  //              << "'. The error is: "  << e.what()
-  //              << std::endl << "And last sql query is: "
-  //              << std::endl << GetLastSQLQuery();
-  // }
 }
 // --------------------------------------------------------------------
 
@@ -71,6 +57,37 @@ void syd::Database::Insert(std::vector<std::shared_ptr<RecordType>> records)
   }
   catch (const odb::exception& e) {
     LOG(FATAL) << "Cannot insert " << records.size()
+               << " element(s) in the table '" << RecordType::GetStaticTableName()
+               << "'. The error is: "  << e.what()
+               << std::endl << "And last sql query is: "
+               << std::endl << GetLastSQLQuery();
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::Update(std::shared_ptr<RecordType> record)
+{
+  std::vector<std::shared_ptr<RecordType>> records;
+  records.push_back(record);
+  Update(records);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::Update(std::vector<std::shared_ptr<RecordType>> records)
+{
+  try {
+    odb::transaction t (db_->begin());
+    for(auto record:records) db_->update(*record);
+    t.commit();
+  }
+  catch (const odb::exception& e) {
+    LOG(FATAL) << "Cannot update " << records.size()
                << " element(s) in the table '" << RecordType::GetStaticTableName()
                << "'. The error is: "  << e.what()
                << std::endl << "And last sql query is: "

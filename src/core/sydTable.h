@@ -50,6 +50,12 @@ namespace syd {
     /// Insert new elements in the table (knowing is type)
     virtual void Insert(generic_record_vector records) const;
 
+    /// Update a new element in the table (knowing is type)
+    virtual void Update(generic_record_pointer record) const;
+
+    /// Update new elements in the table (knowing is type)
+    virtual void Update(generic_record_vector records) const;
+
     /// Query a single element by its id
     virtual void QueryOne(generic_record_pointer & record, const syd::IdType & id) const;
 

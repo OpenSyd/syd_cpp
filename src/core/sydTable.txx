@@ -56,6 +56,31 @@ void syd::Table<RecordType>::Insert(generic_record_vector records) const
 
 // --------------------------------------------------------------------
 template<class RecordType>
+void syd::Table<RecordType>::Update(generic_record_pointer record) const
+{
+  //  auto p = std::dynamic_pointer_cast<Record>(record);
+  auto p = std::static_pointer_cast<RecordType>(record);
+  db_->Update<RecordType>(p);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Table<RecordType>::Update(generic_record_vector records) const
+{
+  //  auto p = std::dynamic_pointer_cast<Record>(record);
+  typename RecordType::vector specific_records;
+  for(auto r:records) {
+    specific_records.push_back(std::dynamic_pointer_cast<RecordType>(r));
+  }
+  db_->Update<RecordType>(specific_records);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
 void syd::Table<RecordType>::QueryOne(generic_record_pointer & record, const syd::IdType & id) const
 {
   typename RecordType::pointer p;//auto p = std::static_pointer_cast<RecordType>(record);
