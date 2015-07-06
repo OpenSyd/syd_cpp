@@ -41,12 +41,12 @@ int main(int argc, char* argv[])
 
   // Get the patient
   std::string name = args_info.inputs[1];
-  syd::Patient patient;
-  syd::FindPatientByNameOrStudyId(patient, db, name);
+  auto patient = db->FindPatient(name);
 
   // Get the injection
   std::string inj = args_info.inputs[2];
-  syd::Injection injection = db->FindInjectionByNameOrId(patient, inj);
+  auto injection = db->FindInjection(patient, inj);
+  // FIXME 0 if no injection
 
   // Get the list of folders to look for
   std::vector<std::string> folders;
@@ -54,9 +54,9 @@ int main(int argc, char* argv[])
 
   // Dicom insertion
   syd::DicomSerieBuilder b(db);
-  b.SetInjection(injection);
+  b.SetInjection(injection); // FIXME change to SetPatient if no injection
   b.SetForcePatientFlag(args_info.forcePatient_flag);
-  b.SetForceUpdateFlag(args_info.forceUpdate_flag);
+  //  b.SetForceUpdateFlag(args_info.forceUpdate_flag); //FIXME
   for(auto f:folders) {
     OFList<OFString> files;
     b.SearchForFilesInFolder(f, files);

@@ -30,7 +30,7 @@ add_library(sydStandardDatabase SHARED
   sydFile-odb.cxx sydFile.cxx
   sydDicomSerie-odb.cxx sydDicomSerie.cxx
   sydDicomFile-odb.cxx sydDicomFile.cxx
-#  sydDicomSerieBuilder.cxx
+  sydDicomSerieBuilder.cxx
 # #  sydTimepoint-odb.cxx sydTimepoint.cxx
 #   sydImage-odb.cxx sydImage.cxx
 #   sydImageTransform-odb.cxx sydImageTransform.cxx

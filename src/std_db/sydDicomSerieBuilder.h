@@ -21,7 +21,8 @@
 
 // syd
 #include "sydStandardDatabase.h"
-//#include "sydTableRoiMaskImage.h"
+#include "sydDicomFile.h"
+#include "sydDicomSerie.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -34,16 +35,16 @@ namespace syd {
 
   public:
     /// Constructor.
-    DicomSerieBuilder(syd::StandardDatabase * db);
+    DicomSerieBuilder(StandardDatabase * db);
 
     /// Destructor (empty)
     ~DicomSerieBuilder() {}
 
     /// Set the pointer to the database
-    void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
+    void SetDatabase(StandardDatabase * db) { db_ = db; }
 
     /// Set the injection (required)
-    void SetInjection(syd::Injection & injection);
+    void SetInjection(Injection::pointer injection);
 
     /// Don't stop even if the patient in the dicom seems different
     /// from the patient in the injection
@@ -62,32 +63,32 @@ namespace syd {
     /// Insert the created DicomSerie/DicomFile into the db
     void InsertDicomSeries();
 
-    void UpdateDicomSerie(DicomSerie * serie,
+    void UpdateDicomSerie(DicomSerie::pointer serie,
                           const std::string & filename,
                           DcmObject * dset);
   protected:
     /// Protected constructor. No need to use directly.
     DicomSerieBuilder();
 
-    syd::StandardDatabase * db_;
-    syd::Patient patient_;
-    syd::Injection injection_;
+    StandardDatabase * db_;
+    Patient::pointer patient_;
+    Injection::pointer injection_;
     bool forcePatientFlag_;
     bool useInjectionFlag_;
     bool forceUpdateFlag_;
 
-    std::vector<syd::DicomSerie*> series_to_insert;
-    std::vector<syd::DicomSerie*> series_to_update;
-    std::vector<syd::DicomFile*> dicomfiles_to_insert;
+    DicomSerie::vector series_to_insert;
+    DicomSerie::vector series_to_update;
+    DicomFile::vector dicomfiles_to_insert;
     std::vector<std::string> files_to_copy;
     std::vector<std::string> destination_folders;
     int nb_of_skip_files;
 
-    syd::DicomSerie * CreateDicomSerie(const std::string & filename, DcmObject * dset);
-    syd::DicomFile * CreateDicomFile(const std::string & filename,
-                                     DcmObject * dset,
-                                     DicomSerie * serie);
-    bool GuessDicomSerieForThisFile(const std::string & filename, DcmObject * dset, DicomSerie ** serie);
+    //    DicomSerie::pointer CreateDicomSerie(const std::string & filename, DcmObject * dset);
+    DicomFile::pointer CreateDicomFile(const std::string & filename,
+                                       DcmObject * dset,
+                                       DicomSerie::pointer serie);
+    bool GuessDicomSerieForThisFile(const std::string & filename, DcmObject * dset, DicomSerie::pointer & serie);
     bool DicomFileAlreadyExist(const std::string & sop_uid);
 
   }; // class DicomSerieBuilder

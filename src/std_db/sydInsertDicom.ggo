@@ -6,7 +6,7 @@ version "0.2"
 description "Insert the all dicom series in a db. Paramters are:
 - <db>            name of the database
 - <patient>       name or study_id of the patient
-- <injection>     name or id of the injection
+- <injection>     name or id of the injection //FIXME 0 if no injection
 - <folders>       list of folders to look for dicom series
 "
 

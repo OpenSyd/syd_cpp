@@ -111,11 +111,11 @@ void syd::DicomSerie::InitPrintTable(const syd::Database * db, syd::PrintTable &
   }
   ta.AddColumn("#id");
   ta.AddColumn("p", 8);
-  ta.AddColumn("inj", 5);
+  ta.AddColumn("inj", 12);
   ta.AddColumn("mod", 5);
-  ta.AddColumn("acqui_date", 25);
-  ta.AddColumn("recon_date", 25);
-  ta.AddColumn("description", 50);
+  ta.AddColumn("acqui_date", 20);
+  ta.AddColumn("recon_date", 20);
+  ta.AddColumn("description", 90);
 
 }
 // --------------------------------------------------
@@ -131,5 +131,28 @@ void syd::DicomSerie::DumpInTable(const syd::Database * d, syd::PrintTable & ta,
      << acquisition_date
      << reconstruction_date
      << std::string(dicom_description+dicom_manufacturer);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+std::string syd::DicomSerie::ComputeRelativeFolder() const
+{
+  if (patient == NULL) {
+    LOG(FATAL) << "Error calling ComputeRelativeFolder for a serie, patient pointer is not set. " << ToString();
+  }
+  // Part 1: patient
+  std::string f = patient->ComputeRelativeFolder()+PATH_SEPARATOR;
+
+  // Part 2: date
+  std::string d = acquisition_date;
+  //  syd::Replace(d, " ", "_");
+  // remove the hour and keep y m d
+  d = d.substr(0, 10);
+  f = f+PATH_SEPARATOR+d;
+
+  // Part 3: modality
+  f = f+PATH_SEPARATOR+dicom_modality;
+  return f;
 }
 // --------------------------------------------------
