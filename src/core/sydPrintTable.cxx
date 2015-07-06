@@ -38,6 +38,14 @@ void syd::PrintTable::AddColumn(std::string name, int w, int digit)
 
 
 //------------------------------------------------------------------
+void syd::PrintTable::SetColumnWidth(int col, int w)
+{
+  width[col] = w;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
 void syd::PrintTable::Init()
 {
   current_line = 0;

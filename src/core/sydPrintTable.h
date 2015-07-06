@@ -35,6 +35,7 @@ namespace syd {
     PrintTable & operator<<(const std::string & value);
     void SkipLine();
     void Print(std::ostream & out);
+    void SetColumnWidth(int col, int width);
   protected:
     std::vector<std::vector<std::string>> values;
     std::vector<std::string> headers;
