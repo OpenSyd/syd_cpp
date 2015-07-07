@@ -78,8 +78,8 @@ void syd::Radionuclide::InitPrintTable(const syd::Database * db, syd::PrintTable
     return;
   }
   ta.AddColumn("#id");
-  ta.AddColumn("name", 10);
-  ta.AddColumn("half_life(h)", 10);
+  ta.AddColumn("name", 15);
+  ta.AddColumn("half_life(h)", 10,2);
 }
 // --------------------------------------------------
 
