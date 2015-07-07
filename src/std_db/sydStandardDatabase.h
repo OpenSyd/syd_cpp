@@ -33,6 +33,7 @@
 #include "sydDicomSerie-odb.hxx"
 #include "sydDicomFile-odb.hxx"
 #include "sydImage-odb.hxx"
+#include "sydRoiType-odb.hxx"
 
 // itk
 #include <itkImage.h>

@@ -20,9 +20,10 @@
 #include "sydRoiType.h"
 
 // --------------------------------------------------------------------
-syd::RoiType::RoiType():TableElementBase()
+syd::RoiType::RoiType():Record("")
 {
-  name = "unnamed_roi";
+  name = "unset";
+  description = "unset";
 }
 // --------------------------------------------------------------------
 
@@ -40,18 +41,28 @@ std::string syd::RoiType::ToString() const
 
 
 // --------------------------------------------------
-bool syd::RoiType::operator==(const RoiType & p)
+void syd::RoiType::CopyFrom(const pointer p)
 {
-  bool b = (id == p.id and
-            name == p.name and
-            description == p.description);
+  syd::Record::CopyFrom(p);
+  name = p->name;
+  description = p->description;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+bool syd::RoiType::IsEqual(const pointer p) const
+{
+  bool b = (syd::Record::IsEqual(p) and
+            name == p->name and
+            description == p->description);
   return b;
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::RoiType::Set(std::vector<std::string> & arg)
+void syd::RoiType::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
     LOG(FATAL) << "To insert roitype, please set <name> <description>";
@@ -63,10 +74,31 @@ void syd::RoiType::Set(std::vector<std::string> & arg)
 
 
 // --------------------------------------------------
-void syd::RoiType::OnDelete(syd::Database * db)
+void syd::RoiType::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
 {
-  LOG(FATAL) << "TODO OnDelete for RoiType not yet implemented.";
-// Look for all RoiMaskImage that use this roitype ...
-  //  db->AddToDeleteList(*image);
+  if (format == "help") {
+    std::cout << "Available formats for table 'RoiType': " << std::endl
+              << "\tdefault: id name study_id weight dicom" << std::endl;
+    return;
+  }
+  ta.AddColumn("#id");
+  ta.AddColumn("name", 20);
+  ta.AddColumn("description", 80);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::RoiType::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+{
+  ta << id << name << description;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::RoiType::Sort(syd::RoiType::vector & v, const std::string & type)
+{
+
 }
 // --------------------------------------------------

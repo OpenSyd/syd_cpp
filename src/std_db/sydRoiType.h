@@ -20,20 +20,15 @@
 #define SYDROITYPE_H
 
 // syd
-#include "sydImage.h"
-#include "sydRoiType.h"
+#include "sydRecord.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::RoiType")
   /// Store information about a type of ROI (liver, kidney etc)
-  class RoiType : public syd::TableElementBase {
+  class RoiType : public syd::Record {
   public:
-
-#pragma db id auto
-    /// Id of the RoiType
-    IdType id;
 
 #pragma db options("UNIQUE")
     /// Name of the roi (unique)
@@ -42,18 +37,14 @@ namespace syd {
     /// Description associated with the roitype
     std::string description;
 
+     // ------------------------------------------------------------------------
+    TABLE_DEFINE(RoiType);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(RoiType);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(RoiType);
     // ------------------------------------------------------------------------
-    SET_TABLE_NAME("RoiType")
+
+  protected:
     RoiType();
-
-    virtual std::string ToString() const;
-
-    bool operator==(const RoiType & p);
-    bool operator!=(const RoiType & p) { return !(*this == p); }
-
-    virtual void Set(std::vector<std::string> & arg);
-
-    virtual void OnDelete(syd::Database * db);
 
   }; // end class
 }
