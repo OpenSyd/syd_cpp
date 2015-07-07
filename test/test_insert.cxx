@@ -86,7 +86,8 @@ int main(int argc, char* argv[])
   {
     std::cout << "Open std as StandardDatabase" << std::endl;
     syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
-    auto patient = syd::Patient::New();
+    syd::Patient::pointer patient;
+    db->New(patient);
     args[0] = "titi";
     args[1] = "2";
     db->Set(patient, args);
@@ -103,7 +104,8 @@ int main(int argc, char* argv[])
   {
     std::cout << "Open ext as StandardDatabase" << std::endl;
     syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(ext_dbname);
-    auto patient = syd::Patient::New();
+    syd::Patient::pointer patient;
+    db->New(patient);
     args[0] = "titi";
     args[1] = "2";
     db->Set(patient, args); // in that case the birth_date is not initialized
@@ -119,7 +121,8 @@ int main(int argc, char* argv[])
   {
     std::cout << "Open ext as ExtendedDatabase" << std::endl;
     ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
-    auto patient = ext::Patient::New();
+    ext::Patient::pointer patient;
+    db->New(patient);
     args[0] = "tutu";
     args[1] = "3";
     db->Set(patient, args);
@@ -135,23 +138,25 @@ int main(int argc, char* argv[])
   {
     ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
     ext::Patient::vector patients;
-    auto p = ext::Patient::New();
+    ext::Patient::pointer p;
+    db->New(p);
     p->Set(db, "atoto", 10, 50,  "XXYYZZ", "2002-08-09 10:00");
     patients.push_back(p);
-    p = ext::Patient::New();
+    db->New(p);
     p->Set(db, "atiti", 20, 150, "AXXYYZZ", "2005-02-01 17:00");
     patients.push_back(p);
-    p = ext::Patient::New();
+    db->New(p);
     p->Set(db, "atutu", 30, 60,  "BXXYYZZ", "2009-07-17 09:00");
     patients.push_back(p);
-    p = ext::Patient::New();
+    db->New(p);
     p->Set(db, "atata", 40, 80,  "CXXYYZZ", "2002-08-09 10:00");
     patients.push_back(p);
+
     db->Insert(patients);
 
     ext::Patient::vector vp;
     db->Query(vp);
-    if (vp.size() != 6)  {
+    if (vp.size() != 7)  {
       LOG(FATAL) << "Error while inserting multiple ext patient in ext db";
     }
     std::cout << "Insert multiple specific: " << vp.size() << std::endl;
@@ -171,12 +176,12 @@ int main(int argc, char* argv[])
     db->Insert(records);
     records.clear();
     db->Query(records, "Patient");
-    if (records.size() != 11)  {
+    if (records.size() != 12)  {
       LOG(FATAL) << "Error while inserting generic multiple ext patient in ext db";
     }
     std::cout << "Insert multiple generic: " << records.size() << std::endl;
   }
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

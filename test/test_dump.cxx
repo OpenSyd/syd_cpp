@@ -41,14 +41,17 @@ int main(int argc, char* argv[])
   ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
 
   // Insert some records
-  auto p1 = ext::Patient::New();
-  //  auto p1 = db->New<ext::Patient>();
+  ext::Patient::pointer p1;
+  db->New(p1);;
   p1->Set(db, "toto", 1, 50,  "XXYYZZ", "2002-08-09 10:00");
-  auto p2 = ext::Patient::New();
+  ext::Patient::pointer p2;
+  db->New(p2);
   p2->Set(db, "titi", 2, 150, "AXXYYZZ", "2005-02-01 17:00");
-  auto p3 = ext::Patient::New();
+  ext::Patient::pointer p3;
+  db->New(p3);
   p3->Set(db, "tutu", 3, 60,  "BXXYYZZ", "2009-07-17 09:00");
-  auto p4 = ext::Patient::New();
+  ext::Patient::pointer p4;
+  db->New(p4);
   p4->Set(db, "tata", 4, 80,  "CXXYYZZ", "2002-08-09 10:00");
 
   db->Insert(p1);
@@ -56,7 +59,8 @@ int main(int argc, char* argv[])
   db->Insert(p3);
   db->Insert(p4);
 
-  auto r = syd::Radionuclide::New();
+  syd::Radionuclide::pointer r;
+  db->New(r);
   r->name = "Indium111";
   r->half_life_in_hours = 67.313;
   db->Insert(r);
@@ -64,17 +68,17 @@ int main(int argc, char* argv[])
   syd::Injection::pointer inj;
   std::vector<std::string> arg(4);
 
-  inj = syd::Injection::New();
+  db->New(inj);
   arg[0] = "toto"; arg[1] = "Indium111"; arg[2] = "2003-12-04 12:23"; arg[3] = "160.21";
   db->Set(inj, arg);
   db->Insert(inj);
 
-  inj = syd::Injection::New();
+  db->New(inj);
   arg[0] = "titi"; arg[1] = "Indium111"; arg[2] = "2013-02-14 17:23"; arg[3] = "360.33";
   db->Set(inj, arg);
   db->Insert(inj);
 
-  inj = syd::Injection::New();
+  db->New(inj);
   arg[0] = "titi"; arg[1] = "Indium111"; arg[2] = "2013-04-14 17:23"; arg[3] = "960.33";
   db->Set(inj, arg);
   db->Insert(inj);
