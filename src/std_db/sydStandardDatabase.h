@@ -58,6 +58,13 @@ namespace syd {
     typename itk::Image<PixelType,3>::Pointer
     ReadImage(const syd::DicomSerie::pointer dicom);
 
+
+    /// Update image information from this itk image (type, size, spacing)
+    template<class PixelType>
+    void UpdateImageInfo(syd::Image::pointer image,
+                         typename itk::Image<PixelType,3>::Pointer & itk_image,
+                         bool computeMD5Flag);
+
   protected:
     /// Insert the tables
     virtual void CreateTables();

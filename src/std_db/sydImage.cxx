@@ -164,7 +164,7 @@ void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, 
     ta.AddColumn("#file", 100);
   }
   else {
-    ta.AddColumn("#id");
+    ta.AddColumn("#id", 5);
     ta.AddColumn("p", 8);
     ta.AddColumn("tags", 20);
     ta.AddColumn("size", 12);

@@ -16,41 +16,45 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDIMAGEFROMDICOMBUILDER_H
-#define SYDIMAGEFROMDICOMBUILDER_H
+#ifndef SYDSTITCHDICOMIMAGEBUILDER_H
+#define SYDSTITCHDICOMIMAGEBUILDER_H
 
 // syd
 #include "sydStandardDatabase.h"
 #include "sydImage.h"
-//#include "sydImageUtils.h"
 
 // itk
-#include <itkImage.h>
+#include <itkImageBase.h>
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// This class is used to create a Image. A Image is defined
-  /// with an injection, a patient, some tag, some associated dicom
-  /// series and images.
-  class ImageFromDicomBuilder {
+  /// This class is used to stitch 2 dicoms together and create an image.
+  class StitchDicomImageBuilder {
 
   public:
     /// Constructor.
-    ImageFromDicomBuilder(syd::StandardDatabase * db);
+    StitchDicomImageBuilder(syd::StandardDatabase * db);
 
     /// Destructor (empty)
-    ~ImageFromDicomBuilder() {}
+    ~StitchDicomImageBuilder() {}
 
-    /// Main function: convert a dicom to a mhd image
-    syd::Image::pointer CreateImageFromDicom(const syd::DicomSerie::pointer dicom);
+    /// Create & Insert a new Image by stitching 2 dicoms
+    syd::Image::pointer InsertStitchedImage(const syd::DicomSerie::pointer a, const syd::DicomSerie::pointer b);
 
   protected:
+    /// Protected constructor. No need to use directly.
+    StitchDicomImageBuilder();
+
+    /// Set the pointer to the database
+    void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
+
+    /// Pointer to the database
     syd::StandardDatabase * db_;
 
-  }; // class ImageFromDicomBuilder
+  }; // class StitchDicomImageBuilder
 
-#include "sydImageFromDicomBuilder.txx"
+  //#include "sydStitchDicomImageBuilder.txx"
 
 } // namespace syd
 // --------------------------------------------------------------------

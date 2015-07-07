@@ -57,6 +57,14 @@
 	sydInsert data/test.db Injection dm Yttrium90 "2013-11-20 10:40" 360
 	sydInsert data/test.db Injection bf Yttrium90 "2013-12-11 10:24" 1161
 
-    sydInsertDicom data/test.db jm Indium111 dicom/ -v1
+    sydInsertDicom data/test.db jm Indium111 dicom/ -v1 -f
+    sydInsertDicom data/test.db jm Indium111 ~/src/images/synfrizz3/synfrizz-data/jm/2013-02-13/NM -v1 -f
+    sydInsertDicom data/test.db jm Indium111 ~/src/images/synfrizz3/synfrizz-data/jm/2013-02-12/OT -f -v1
+
+    sydFind data/test.db dicomserie -d IRACSCRR
+    sydFind data/test.db Dicomserie IRACSCRR | sydStitchDicom  data/test.db debug -v2
+
+
+
 
     sydInsert data/test.db RoiType body "Contour of the body"

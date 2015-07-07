@@ -53,7 +53,7 @@ syd::Image::pointer syd::ImageFromDicomBuilder::CreateImageFromDicom(const syd::
       typedef itk::Image<PixelType,3> ImageType;
       LOG(4) << "Read dicom (short)";
       ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom);
-      UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
+      db_->UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
       LOG(4) << "Write image on disk " << mhd_path;
       syd::WriteImage<ImageType>(itk_image, mhd_path);
     }
@@ -63,7 +63,7 @@ syd::Image::pointer syd::ImageFromDicomBuilder::CreateImageFromDicom(const syd::
       typedef itk::Image<PixelType,3> ImageType;
       LOG(4) << "Read dicom (float)";
       ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom);
-      UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
+      db_->UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
       LOG(4) << "Write image on disk " << mhd_path;
       syd::WriteImage<ImageType>(itk_image, mhd_path);
     }

@@ -39,6 +39,7 @@ add_library(sydStandardDatabase SHARED
 # #  sydTimepointBuilder.cxx
 #   sydImageBuilder.cxx
   sydImageFromDicomBuilder.cxx
+  sydStitchDicomImageBuilder.cxx
 
   # sydTablePatient.cxx
   # sydTableTag.h
@@ -74,10 +75,10 @@ wrap_ggo(sydInsertImageFromDicom sydInsertImageFromDicom.ggo)
 add_executable(sydInsertImageFromDicom sydInsertImageFromDicom.cxx sydInsertImageFromDicom_ggo.c)
 target_link_libraries(sydInsertImageFromDicom sydStandardDatabase)
 
-# # Create images by stitching 2 dicom
-# wrap_ggo(sydStitchDicom sydStitchDicom.ggo)
-# add_executable(sydStitchDicom sydStitchDicom.cxx sydStitchDicom_ggo.c)
-# target_link_libraries(sydStitchDicom sydStandardDatabase)
+# Create images by stitching 2 dicom
+wrap_ggo(sydStitchDicom sydStitchDicom.ggo)
+add_executable(sydStitchDicom sydStitchDicom.cxx sydStitchDicom_ggo.c)
+target_link_libraries(sydStitchDicom sydStandardDatabase)
 
 # # Reduce the size of an image by cropping it (with a mask or with a threshold)
 # wrap_ggo(sydCropImage sydCropImage.ggo)
