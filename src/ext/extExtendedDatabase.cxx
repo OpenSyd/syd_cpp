@@ -24,5 +24,11 @@ void ext::ExtendedDatabase::CreateTables()
 {
   AddTable<ext::Patient>();
   AddTable<syd::Injection>();
+  AddTable<syd::Radionuclide>();
+  AddTable<syd::Tag>();
+  AddTable<syd::File>();
+  AddTable<syd::DicomFile>();
+  AddTable<syd::DicomSerie>();
+  AddTable<syd::Image>();
 }
 // --------------------------------------------------------------------
