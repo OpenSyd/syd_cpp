@@ -109,11 +109,15 @@ void syd::PrintTable::SkipLine()
 //------------------------------------------------------------------
 void syd::PrintTable::Print(std::ostream & out)
 {
-  for(auto i=0; i<headers.size(); i++) out << std::setw(width[i]) << headers[i];
+  for(auto i=0; i<headers.size(); i++) {
+    if (width[i] != 0)
+      out << std::setw(width[i]) << headers[i];
+  }
   out << std::endl;
   for(auto i=0; i<values.size(); i++) {
     for(auto j=0; j<values[i].size(); j++) {
-      out << std::setw(width[j]) << std::fixed << std::setprecision (precision[j]) << values[i][j];
+      if (width[j] != 0)
+        out << std::setw(width[j]) << std::fixed << std::setprecision (precision[j]) << values[i][j];
     }
     out << std::endl;
   }
