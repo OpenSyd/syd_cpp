@@ -63,9 +63,6 @@ namespace syd {
     /// Insert the created DicomSerie/DicomFile into the db
     void InsertDicomSeries();
 
-    void UpdateDicomSerie(DicomSerie::pointer serie,
-                          const std::string & filename,
-                          DcmObject * dset);
   protected:
     /// Protected constructor. No need to use directly.
     DicomSerieBuilder();
@@ -84,11 +81,15 @@ namespace syd {
     std::vector<std::string> destination_folders;
     int nb_of_skip_files;
 
-    //    DicomSerie::pointer CreateDicomSerie(const std::string & filename, DcmObject * dset);
+    void UpdateDicomSerie(DicomSerie::pointer serie,
+                          const std::string & filename,
+                          DcmObject * dset);
     DicomFile::pointer CreateDicomFile(const std::string & filename,
                                        DcmObject * dset,
                                        DicomSerie::pointer serie);
-    bool GuessDicomSerieForThisFile(const std::string & filename, DcmObject * dset, DicomSerie::pointer & serie);
+    bool GuessDicomSerieForThisFile(const std::string & filename,
+                                    DcmObject * dset,
+                                    DicomSerie::pointer & serie);
     bool DicomFileAlreadyExist(const std::string & sop_uid);
 
   }; // class DicomSerieBuilder
