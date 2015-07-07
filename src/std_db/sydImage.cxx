@@ -156,15 +156,21 @@ void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, 
 {
   if (format == "help") {
     std::cout << "Available formats for table 'Image': " << std::endl
-              << "\tdefault: id patient tags size spacing dicoms" << std::endl;
+              << "\tdefault: id patient tags size spacing dicoms" << std::endl
+              << "\tfile: full path" << std::endl;
     return;
   }
-  ta.AddColumn("#id");
-  ta.AddColumn("p", 8);
-  ta.AddColumn("tags", 20);
-  ta.AddColumn("size", 10);
-  ta.AddColumn("spacing", 10);
-  ta.AddColumn("dicoms", 20);
+  if (format == "file") {
+    ta.AddColumn("#file", 100);
+  }
+  else {
+    ta.AddColumn("#id");
+    ta.AddColumn("p", 8);
+    ta.AddColumn("tags", 20);
+    ta.AddColumn("size", 12);
+    ta.AddColumn("spacing", 25);
+    ta.AddColumn("dicom_id", 15);
+  }
 }
 // --------------------------------------------------
 
@@ -172,11 +178,21 @@ void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, 
 // --------------------------------------------------
 void syd::Image::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
 {
-  ta << id << patient->name << GetTagLabels(tags)
-     << syd::ArrayToString<int, 3>(size) << syd::ArrayToString<double, 3>(spacing);
-  std::string dicom;
-  for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
-  ta << dicom;
+   if (format == "file") {
+     if (files.size() == 0) {
+       ta << "no_file";
+       return;
+     }
+     //const syd::StandardDatabase * db = std::dynamic_cast<const syd::StandardDatabase*>(d);
+     ta << d->ConvertToAbsolutePath(files[0]->path+PATH_SEPARATOR+files[0]->filename);
+   }
+   else {
+     ta << id << patient->name << GetTagLabels(tags)
+        << syd::ArrayToString<int, 3>(size) << syd::ArrayToString<double, 3>(spacing);
+     std::string dicom;
+     for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
+     ta << dicom;
+   }
 }
 // --------------------------------------------------
 
