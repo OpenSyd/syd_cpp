@@ -38,7 +38,7 @@ void syd::StandardDatabase::CreateTables()
 
 
 // --------------------------------------------------------------------
-syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & name_or_study_id)
+syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & name_or_study_id) const
 {
   syd::Patient::pointer patient;
   odb::query<syd::Patient> q =
@@ -57,7 +57,7 @@ syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & nam
 
 // --------------------------------------------------------------------
 syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient::pointer patient,
-                                                             const std::string & name_or_study_id)
+                                                             const std::string & name_or_study_id) const
 {
   syd::Injection::pointer injection;
   odb::query<syd::Injection> q =
@@ -78,12 +78,31 @@ syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient:
 
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::string & names)
+void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::string & names) const
 {
   std::vector<std::string> words;
   syd::GetWords(names, words);
   odb::query<Tag> q = odb::query<Tag>::label.in_range(words.begin(), words.end());
   Query<Tag>(tags, q);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Tag::pointer syd::StandardDatabase::FindOrInsertTag(const std::string & label,
+                                                         const std::string & description)
+{
+  syd::Tag::pointer tag;
+  try {
+    odb::query<syd::Tag> q = odb::query<syd::Tag>::label == label;
+    QueryOne(tag, q);
+  } catch (std::exception & e) {
+    New(tag);
+    tag->label=label;
+    tag->description=description;
+    Insert(tag);
+  }
+  return tag;
 }
 // --------------------------------------------------------------------
 
