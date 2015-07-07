@@ -51,6 +51,14 @@ add_test(NAME test_find
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
 
+# Test delete
+add_executable(test_delete test_delete.cxx)
+target_link_libraries(test_delete extExtendedDatabase)
+add_test(NAME test_delete
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_delete
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
+
+
 
 # #----------------------------------------------------------
 # # test create database
