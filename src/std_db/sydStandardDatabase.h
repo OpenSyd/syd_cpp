@@ -22,6 +22,7 @@
 // syd
 #include "sydDatabase.h"
 #include "sydTable.h"
+#include "sydImageUtils.h"
 
 // syd tables
 #include "sydPatient-odb.hxx"
@@ -33,6 +34,9 @@
 #include "sydDicomFile-odb.hxx"
 #include "sydImage-odb.hxx"
 
+// itk
+#include <itkImage.h>
+
 // --------------------------------------------------------------------
 namespace syd {
 
@@ -41,6 +45,7 @@ namespace syd {
   public:
 
     virtual ~StandardDatabase() {}
+
     syd::Patient::pointer FindPatient(const std::string & name_or_study_id);
     syd::Injection::pointer FindInjection(const syd::Patient::pointer patient, const std::string & name_or_study_id);
     void FindTags(syd::Tag::vector & tags, const std::string & names);
@@ -48,6 +53,10 @@ namespace syd {
     std::string GetAbsolutePath(const syd::Image::pointer image) const;
     std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
     std::string GetAbsolutePath(const syd::File::pointer file) const;
+
+    template<class PixelType>
+    typename itk::Image<PixelType,3>::Pointer
+    ReadImage(const syd::DicomSerie::pointer dicom);
 
   protected:
     /// Insert the tables
