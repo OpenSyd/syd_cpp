@@ -15,11 +15,18 @@ endmacro(DD)
 # Find ITK (required)
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
-message(STATUS "Trying to find ITK - ok")
+message(STATUS "ITK is found")
 
 #----------------------------------------------------------
 # Add include directories needed to use SYD.
 include_directories(BEFORE ${SYD_INCLUDE_DIRS})
+
+## get list of include for itk (not used yet)
+set(I_ITK_INCLUDE "")
+foreach(A ${ITK_INCLUDE_DIRS})
+  set(I_ITK_INCLUDE ${I_ITK_INCLUDE} "-I" ${A})
+endforeach()
+
 
 #----------------------------------------------------------
 # Add link directories needed to use SYD.
