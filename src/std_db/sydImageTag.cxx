@@ -20,8 +20,7 @@
 #include "sydImageTag_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydImageBuilder.h"
-//#include "sydTableTag.h"
+#include "sydStandardDatabase.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -48,25 +47,31 @@ int main(int argc, char* argv[])
 
   // Get the tags
   std::string tagname = args_info.inputs[2];
-  std::vector<syd::Tag> tags;
-  syd::FindTags(tags, db, tagname);
+  syd::Tag::vector tags;
+  db->FindTags(tags, tagname);
+  DDS(tags);
+  if (tags.size() == 0) {
+    LOG(1) << "No found tag from '" << tagname << "'";
+    return EXIT_SUCCESS;
+  }
 
   // Read the standard input if pipe
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
 
   // Get the list of image ids
-  std::vector<syd::Image> images;
+  syd::Image::vector images;
   for(auto i=3; i<args_info.inputs_num; ++i) {
     ids.push_back(atoi(args_info.inputs[i]));
   }
-  db->Query(ids, images);
+  db->Query(images, ids);
 
   // Change the tag
   for(auto & i:images) {
-    if (action == "add") for(auto t:tags) i.AddTag(t);
-    else for(auto t:tags) i.RemoveTag(t);
+    if (action == "add") for(auto t:tags) i->AddTag(t);
+    else for(auto t:tags) i->RemoveTag(t);
     LOG(1) << "Change tag for image " << i;
+    DD(i);
   }
   // Update the db
   if (images.size() > 0) db->Update(images);
@@ -75,5 +80,6 @@ int main(int argc, char* argv[])
   }
 
   // This is the end, my friend.
+  return EXIT_SUCCESS;
 }
 // --------------------------------------------------------------------
