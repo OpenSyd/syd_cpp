@@ -67,19 +67,19 @@ namespace syd {
 
     /// Default function to print an element (must be inline here).
     friend std::ostream& operator<<(std::ostream& os, const Record & p) {
-      os << p.ToString();
-      return os;
-    }
+    os << p.ToString();
+    return os;
+  }
 
     /// Default function to print a pointer to an element (must be inline here).
     template<class R>
     friend std::ostream& operator<<(std::ostream& os, const std::shared_ptr<R> p) {
-      // FIXME      if (p.get() == 0) os << "[NULL]";
-      os << p->ToString();
-      return os;
-    }
+    // FIXME      if (p.get() == 0) os << "[NULL]";
+    os << p->ToString();
+    return os;
+  }
 
-   protected:
+  protected:
     /// This default constructor allow to oblige class that inherit from Record to not have default constructor
     Record(std::string) {}
 
@@ -92,7 +92,7 @@ namespace syd {
 
   }; // end of class
 
-  /// odb::access is needed for polymorphism
+    /// odb::access is needed for polymorphism
 #define TABLE_DEFINE(TABLE_NAME)                                        \
     typedef std::shared_ptr<TABLE_NAME> pointer;                        \
     typedef std::vector<pointer> vector;                                \
@@ -102,15 +102,15 @@ namespace syd {
     static pointer New() { return pointer(new TABLE_NAME); }            \
 
 #define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME)           \
-  virtual std::string ToString() const;                         \
-  virtual bool IsEqual(const pointer p) const;                  \
-  virtual void CopyFrom(const pointer p);                       \
-  virtual void Sort(vector & v, const std::string & order);
+    virtual std::string ToString() const;                       \
+    virtual bool IsEqual(const pointer p) const;                \
+    virtual void CopyFrom(const pointer p);                     \
+    virtual void Sort(vector & v, const std::string & order);
 
 #define TABLE_DECLARE_OPTIONAL_FUNCTIONS(TABLE_NAME)                    \
-    virtual void Set(const syd::Database * db, const std::vector<std::string> & args); \
-    virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const; \
-    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+  virtual void Set(const syd::Database * db, const std::vector<std::string> & args); \
+  virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const; \
+  virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
 
 } // end namespace
   // --------------------------------------------------------------------

@@ -201,7 +201,8 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
     typedef odb::result<RecordType> result;
     result r(db_->query<RecordType>(q));
     for(auto i = r.begin(); i != r.end(); i++) {
-      std::shared_ptr<RecordType> s = RecordType::New();
+      std::shared_ptr<RecordType> s;
+      New(s);
       i.load(*s);
       records.push_back(s);
     }
@@ -280,5 +281,15 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records, con
 {
   if (records.size() == 0) return;
   records[0]->Sort(records, order);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::New(std::shared_ptr<RecordType> & record) const
+{
+  auto p = GetTable(RecordType::GetStaticTableName())->New();
+  record = std::dynamic_pointer_cast<RecordType>(p);
 }
 // --------------------------------------------------------------------
