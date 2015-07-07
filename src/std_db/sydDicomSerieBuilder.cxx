@@ -144,7 +144,7 @@ namespace syd {
 
     // If this is a new DicomSerie, we create it
     if (!b) {
-      serie = DicomSerie::New();
+      db_->New(serie);
       UpdateDicomSerie(serie, filename, dset);
       //serie = CreateDicomSerie(filename, dset);
       series_to_insert.push_back(serie);
@@ -371,7 +371,8 @@ namespace syd {
                                                         DicomSerie::pointer serie)
   {
     // First create the file
-    auto file = File::New();
+    syd::File::pointer file;
+    db_->New(file);
     std::string f = GetFilenameFromPath(filename);
     file->filename = f;
     //  db_->CreateAbsoluteFolder(*serie);
@@ -386,7 +387,8 @@ namespace syd {
     // file->md5 FIXME later
 
     // Then create the dicomfile
-    auto dicomfile = DicomFile::New();
+    syd::DicomFile::pointer dicomfile;
+    db_->New(dicomfile);
     dicomfile->file = file;
     dicomfile->dicom_serie = serie;
     std::string sop_uid = GetTagValueString(dset, "SOPInstanceUID");
