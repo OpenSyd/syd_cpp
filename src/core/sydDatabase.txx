@@ -293,3 +293,23 @@ void syd::Database::New(std::shared_ptr<RecordType> & record) const
   record = std::dynamic_pointer_cast<RecordType>(p);
 }
 // --------------------------------------------------------------------
+
+
+// ------------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::Delete(std::shared_ptr<RecordType> record)
+{
+  try {
+    odb::transaction t (db_->begin());
+    db_->erase(record);//<RecordType>(record);
+    t.commit();
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Error while deleting element "
+              << record << " in the table '" << RecordType::GetStaticTableName()
+              << "', message is: " << e.what()
+              << std::endl << "And last sql query is: "
+              << std::endl << GetLastSQLQuery());
+  }
+}
+// ------------------------------------------------------------------------

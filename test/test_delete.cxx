@@ -53,26 +53,41 @@ int main(int argc, char* argv[])
   insert_patients(db);
   insert_injections(db);
 
-  ext::Patient::vector patients;
-  db->Query(patients);
-  db->Dump(patients, "injection");
+  {
+    ext::Patient::vector patients;
+    db->Query(patients);
+    db->Dump(patients, "injection");
 
-  syd::Radionuclide::vector r;
-  db->Query(r);
-  db->Dump(r);
+    syd::Radionuclide::vector r;
+    db->Query(r);
+    db->Dump(r);
 
-  syd::Injection::vector injections;
-  db->Query(injections);
-  db->Dump(injections);
-
+    syd::Injection::vector injections;
+    db->Query(injections);
+    db->Dump(injections);
+  }
 
   //----------------------------------------------------------------
 
+  syd::Injection::vector injections;
   syd::Injection::pointer inj;
+  syd::Radionuclide::pointer rad;
+  syd::Radionuclide::vector radionuclides;
   {
-    db->Query(inj, 1);
-    std::cout << "Delete a simple injection " << inj;
-    //    db->Delete(inj); // -> nothing else deleted
+    db->QueryOne(inj, 1);
+    std::cout << "Delete a simple injection " << inj << std::endl;
+    db->Delete(inj); // -> nothing else deleted
+    db->Query(injections);
+    db->Dump(injections);
+  }
+
+  {
+    db->QueryOne(rad, 2);
+    std::cout << "Delete a radionuclide on_delete(cascade)" << rad << std::endl;
+    db->Delete(rad); // -> one injection must be deleted
+    db->Query(radionuclides);
+    db->Dump(radionuclides);
+    injections.clear();
     db->Query(injections);
     db->Dump(injections);
   }

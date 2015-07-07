@@ -60,6 +60,3 @@
     sydInsertDicom data/test.db jm Indium111 dicom/ -v1
 
     sydInsert data/test.db RoiType body "Contour of the body"
-
-
-//sydInsertTimepoint data/test.db study1 1 2

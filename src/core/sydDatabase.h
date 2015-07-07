@@ -198,6 +198,15 @@ namespace syd {
     virtual void Sort(generic_record_vector & records, const std::string & type="") const;
     // ------------------------------------------------------------------------
 
+
+
+    // ------------------------------------------------------------------------
+    template<class RecordType>
+    void Delete(std::shared_ptr<RecordType> record);
+    // ------------------------------------------------------------------------
+
+
+
     // ------------------------------------------------------------------------
     /// Call back for SQL query to the DB. For debug purpose only
     void TraceCallback(const char* sql);

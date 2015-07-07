@@ -33,11 +33,11 @@ namespace syd {
   class Injection : public syd::Record {
   public:
 
-#pragma db not_null
+#pragma db not_null on_delete(cascade)
     /// Foreign key, linked to Patient table.
     std::shared_ptr<syd::Patient> patient;
 
-#pragma db not_null
+#pragma db not_null on_delete(cascade)
     /// Foreign key, linked to Radionuclide table.
     std::shared_ptr<syd::Radionuclide> radionuclide;
 
