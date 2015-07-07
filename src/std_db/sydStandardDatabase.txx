@@ -20,7 +20,7 @@
 // --------------------------------------------------------------------
 template<class PixelType>
 typename itk::Image<PixelType,3>::Pointer
-syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom)
+syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom) const
 {
   typedef itk::Image<PixelType,3> ImageType;
 

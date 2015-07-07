@@ -46,9 +46,10 @@ namespace syd {
 
     virtual ~StandardDatabase() {}
 
-    syd::Patient::pointer FindPatient(const std::string & name_or_study_id);
-    syd::Injection::pointer FindInjection(const syd::Patient::pointer patient, const std::string & name_or_study_id);
-    void FindTags(syd::Tag::vector & tags, const std::string & names);
+    syd::Patient::pointer FindPatient(const std::string & name_or_study_id) const;
+    syd::Injection::pointer FindInjection(const syd::Patient::pointer patient, const std::string & name_or_study_id) const;
+    void FindTags(syd::Tag::vector & tags, const std::string & names) const;
+    syd::Tag::pointer FindOrInsertTag(const std::string & label, const std::string & description);
 
     std::string GetAbsolutePath(const syd::Image::pointer image) const;
     std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
@@ -56,8 +57,7 @@ namespace syd {
 
     template<class PixelType>
     typename itk::Image<PixelType,3>::Pointer
-    ReadImage(const syd::DicomSerie::pointer dicom);
-
+    ReadImage(const syd::DicomSerie::pointer dicom) const;
 
     /// Update image information from this itk image (type, size, spacing)
     template<class PixelType>

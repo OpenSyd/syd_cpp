@@ -83,11 +83,9 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
   std::string mhd_path = db_->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
   image->UpdateFile(db_, mhd_filename, mhd_relative_path);
 
-  DD(image);
-
   // Auto tag
-  // syd::Tag tag_stitch = db_->FindOrInsertTag("stitch", "Image computed by stitching 2 images");
-  // image.AddTag(tag_stitch);
+  syd::Tag::pointer tag_stitch = db_->FindOrInsertTag("stitch", "Image computed by stitching 2 images");
+  image->AddTag(tag_stitch);
 
   // Read the dicom images
   typedef float PixelType;
@@ -99,7 +97,6 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
   ImageType::Pointer output = syd::StitchImages<ImageType>(image_a, image_b, 150000, 4);
 
   // Update the image values
-  DD("before update")
   db_->UpdateImageInfo<PixelType>(image, output, true); // true = update md5
 
   // Write image
