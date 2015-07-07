@@ -88,6 +88,9 @@ namespace syd {
     /// Remove a tag from the list ; do not update in the db. Do nothing it not found
     void RemoveTag(syd::Tag::pointer tag);
 
+    void UpdateFile(syd::Database * db, const std::string & filename,
+                    const std::string & relativepath, bool deleteExistingFiles=false);
+
   protected:
     Image();
 

@@ -21,7 +21,7 @@
 
 // syd
 #include "sydStandardDatabase.h"
-//#include "sydTableImage.h"
+#include "sydImage.h"
 //#include "sydTableFile.h"
 //#include "sydTableRoiMaskImage.h"
 
@@ -45,15 +45,16 @@ namespace syd {
 
     // -----------------------------------------------------------
     /// Create & Insert a new Image from this DicomSerie
-    syd::Image InsertImage(const syd::DicomSerie & dicomserie);
+    syd::Image InsertImage(const syd::DicomSerie::pointer dicomserie);
 
     /// Create & Insert a new Image by stitching 2 dicoms
-    syd::Image InsertStitchedImage(const syd::DicomSerie & a, const syd::DicomSerie & b);
+    syd::Image InsertStitchedImage(const syd::DicomSerie::pointer a, const syd::DicomSerie::pointer b);
 
     /// Create & Insert a RoiMaskImage from an image.mhd
-    syd::RoiMaskImage InsertRoiMaskImage(const syd::DicomSerie & dicom,
+    /*syd::RoiMaskImage InsertRoiMaskImage(const syd::DicomSerie & dicom,
                                          const syd::RoiType & roitype,
                                          const std::string & filename);
+    */
     // -----------------------------------------------------------
 
 

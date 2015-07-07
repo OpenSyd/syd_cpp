@@ -68,7 +68,7 @@ void syd::Image::Set(const syd::Database * db, const std::vector<std::string> & 
 void syd::Image::CopyFrom(const pointer p)
 {
   syd::Record::CopyFrom(p);
-  patient == p->patient;
+  patient = p->patient;
   files.clear();
   tags.clear();
   dicoms.clear();
@@ -198,5 +198,37 @@ void syd::Image::Sort(syd::Image::vector & v, const std::string & type)
               if (b->dicoms.size() == 0) return false;
               return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
             });
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::UpdateFile(syd::Database * db,
+                            const std::string & filename,
+                            const std::string & relativepath,
+                            bool deleteExistingFiles)
+{
+  std::string extension = GetExtension(filename);
+  type = extension;
+  if (files.size() != 0 and deleteExistingFiles) {
+    LOG(FATAL) << "TODO UpdateFile deleteExistingFiles";
+    //    for(auto f:files)
+  }
+  files.clear();
+  syd::File::pointer f;
+  db->New(f);
+  f->filename = filename;
+  f->path = relativepath;
+  db->Insert(f);
+  files.push_back(f);
+  if (extension == "mhd") {
+    std::string ff = filename;
+    syd::Replace(ff, ".mhd", ".raw");
+    db->New(f);
+    f->filename = ff;
+    f->path = relativepath;
+    db->Insert(f);
+    files.push_back(f);
+  }
 }
 // --------------------------------------------------

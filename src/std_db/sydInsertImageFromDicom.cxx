@@ -20,7 +20,8 @@
 #include "sydInsertImageFromDicom_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydImageBuilder.h"
+//#include "sydImageBuilder.h"
+#include "sydImageFromDicomBuilder.h"
 //#include "sydTableTag.h"
 
 // syd init
@@ -42,8 +43,9 @@ int main(int argc, char* argv[])
 
   // Get the tag
   std::string tagname = args_info.inputs[1];
-  std::vector<syd::Tag> tags;
-  FindTags(tags, db, tagname);
+  syd::Tag::vector tags;
+  db->FindTags(tags, tagname);
+  DDS(tags);
 
   // Get the list of dicomserie
   std::vector<syd::IdType> ids;
@@ -51,15 +53,15 @@ int main(int argc, char* argv[])
   for(auto i=2; i<args_info.inputs_num; i++) {
     ids.push_back(atoi(args_info.inputs[i]));
   }
-  std::vector<syd::DicomSerie> dicom_series;
-  db->Query(ids, dicom_series);
+  syd::DicomSerie::vector dicom_series;
+  db->Query(dicom_series, ids);
 
   // Create main builder
-  syd::ImageBuilder b(db);
-  std::vector<syd::Image> images;
+  syd::ImageFromDicomBuilder builder(db);
+  syd::Image::vector images;
   for(auto d:dicom_series) {
-    syd::Image image = b.InsertImage(d);
-    for(auto t:tags) image.AddTag(t);
+    syd::Image::pointer image = builder.CreateImageFromDicom(d);
+    for(auto t:tags) image->AddTag(t);
     images.push_back(image);
     LOG(1) << "Inserting Image " << image;
   }

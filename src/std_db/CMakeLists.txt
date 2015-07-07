@@ -38,6 +38,7 @@ add_library(sydStandardDatabase SHARED
 #   sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx
 # #  sydTimepointBuilder.cxx
 #   sydImageBuilder.cxx
+  sydImageFromDicomBuilder.cxx
 
   # sydTablePatient.cxx
   # sydTableTag.h
@@ -68,10 +69,10 @@ wrap_ggo(sydInsertDicom sydInsertDicom.ggo)
 add_executable(sydInsertDicom sydInsertDicom.cxx sydInsertDicom_ggo.c)
 target_link_libraries(sydInsertDicom sydStandardDatabase)
 
-# # Create images
-# wrap_ggo(sydInsertImageFromDicom sydInsertImageFromDicom.ggo)
-# add_executable(sydInsertImageFromDicom sydInsertImageFromDicom.cxx sydInsertImageFromDicom_ggo.c)
-# target_link_libraries(sydInsertImageFromDicom sydStandardDatabase)
+# Create images
+wrap_ggo(sydInsertImageFromDicom sydInsertImageFromDicom.ggo)
+add_executable(sydInsertImageFromDicom sydInsertImageFromDicom.cxx sydInsertImageFromDicom_ggo.c)
+target_link_libraries(sydInsertImageFromDicom sydStandardDatabase)
 
 # # Create images by stitching 2 dicom
 # wrap_ggo(sydStitchDicom sydStitchDicom.ggo)
