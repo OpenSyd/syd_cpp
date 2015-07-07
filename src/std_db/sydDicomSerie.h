@@ -38,11 +38,11 @@ namespace syd {
 
 #pragma db not_null on_delete(cascade)
     /// Foreign key, it must exist in the Patient table. Useful if no associated injection
-    std::shared_ptr<syd::Patient> patient;
+    syd::Patient::pointer patient;
 
-    /// Foreign key, it must exist in the Injection table.
+    /// Foreign key, it must exist in the Injection table. Maybe null.
 #pragma db on_delete(cascade)
-    std::shared_ptr<syd::Injection> injection;
+    syd::Injection::pointer injection;
 
     /// Date when the image has been acquired. Dicom tag =
     /// AcquisitionTime & AcquisitionDate

@@ -26,34 +26,27 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object
+#pragma db object  polymorphic pointer(std::shared_ptr) table("syd::RoiMaskImage")
   /// Store information about a contour transformed as a binary image.
-  class RoiMaskImage : public syd::TableElementBase {
+  class RoiMaskImage : public syd::Record {
   public:
-
-#pragma db id auto
-    /// Id of the RoiMaskImage
-    IdType id;
 
 #pragma db not_null
     /// Foreign key, it must exist in the Image table.
-    std::shared_ptr<syd::Image> image;
+    syd::Image::pointer image;
 
 #pragma db not_null
     /// Foreign Key. Associated RoiType id
-    std::shared_ptr<syd::RoiType> roitype;
+    syd::RoiType::pointer roitype;
 
     // ------------------------------------------------------------------------
-    SET_TABLE_NAME("RoiMaskImage")
+    TABLE_DEFINE(RoiMaskImage);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(RoiMaskImage);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(RoiMaskImage);
+    // ------------------------------------------------------------------------
+
+  protected:
     RoiMaskImage();
-
-    virtual std::string ToString() const;
-    virtual std::string ToLargeString() const;
-
-    bool operator==(const RoiMaskImage & p);
-    bool operator!=(const RoiMaskImage & p) { return !(*this == p); }
-
-    virtual void OnDelete(syd::Database * db);
 
   }; // end class
 }

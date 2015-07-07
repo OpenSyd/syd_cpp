@@ -34,12 +34,12 @@ namespace syd {
   public:
 
     /// Foreign key, it must exist in the File table.
-#pragma db on_delete(cascade)
-    std::shared_ptr<syd::File> file;
+#pragma db not_null on_delete(cascade)
+    syd::File::pointer file;
 
     /// Foreign key, it must exist in the DicomSerie table.
-#pragma db on_delete(cascade)
-    std::shared_ptr<syd::DicomSerie> dicom_serie;
+#pragma db not_null on_delete(cascade)
+    syd::DicomSerie::pointer dicom_serie;
 
 #pragma db options("UNIQUE")
     /// Dicom SOPInstanceUID. Unique dicom file identifier. Unique in db.

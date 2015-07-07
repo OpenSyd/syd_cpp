@@ -35,11 +35,11 @@ namespace syd {
 
 #pragma db not_null on_delete(cascade)
     /// Foreign key, linked to Patient table.
-    std::shared_ptr<syd::Patient> patient;
+    syd::Patient::pointer patient;
 
 #pragma db not_null on_delete(cascade)
     /// Foreign key, linked to Radionuclide table.
-    std::shared_ptr<syd::Radionuclide> radionuclide;
+    syd::Radionuclide::pointer radionuclide;
 
     /// Date of the injection
     std::string date;

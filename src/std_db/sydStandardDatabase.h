@@ -34,6 +34,7 @@
 #include "sydDicomFile-odb.hxx"
 #include "sydImage-odb.hxx"
 #include "sydRoiType-odb.hxx"
+#include "sydRoiMaskImage-odb.hxx"
 
 // itk
 #include <itkImage.h>
