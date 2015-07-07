@@ -75,3 +75,40 @@ syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient:
   return injection;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::string & names)
+{
+  std::vector<std::string> words;
+  syd::GetWords(names, words);
+  odb::query<Tag> q = odb::query<Tag>::label.in_range(words.begin(), words.end());
+  Query<Tag>(tags, q);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::StandardDatabase::GetAbsolutePath(const syd::Image::pointer image) const
+{
+  if (image->files.size() == 0) return "unset_file";
+  else return GetAbsolutePath(image->files[0]);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::StandardDatabase::GetAbsolutePath(const syd::DicomFile::pointer dicom) const
+{
+  return GetAbsolutePath(dicom->file);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::StandardDatabase::GetAbsolutePath(const syd::File::pointer file) const
+{
+  std::string f = file->path+PATH_SEPARATOR+file->filename;
+  return ConvertToAbsolutePath(f);
+}
+// --------------------------------------------------------------------

@@ -43,6 +43,11 @@ namespace syd {
     virtual ~StandardDatabase() {}
     syd::Patient::pointer FindPatient(const std::string & name_or_study_id);
     syd::Injection::pointer FindInjection(const syd::Patient::pointer patient, const std::string & name_or_study_id);
+    void FindTags(syd::Tag::vector & tags, const std::string & names);
+
+    std::string GetAbsolutePath(const syd::Image::pointer image) const;
+    std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
+    std::string GetAbsolutePath(const syd::File::pointer file) const;
 
   protected:
     /// Insert the tables
