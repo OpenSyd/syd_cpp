@@ -34,9 +34,11 @@ namespace syd {
   public:
 
     /// Foreign key, it must exist in the File table.
+#pragma db on_delete(cascade)
     std::shared_ptr<syd::File> file;
 
     /// Foreign key, it must exist in the DicomSerie table.
+#pragma db on_delete(cascade)
     std::shared_ptr<syd::DicomSerie> dicom_serie;
 
 #pragma db options("UNIQUE")

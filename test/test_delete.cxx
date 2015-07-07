@@ -22,6 +22,7 @@
 #include "extExtendedDatabase.h"
 #include "test_insert_patients.h"
 #include "test_insert_injections.h"
+#include "test_insert_dicoms.h"
 
 // Init syd
 SYD_STATIC_INIT
@@ -67,12 +68,34 @@ int main(int argc, char* argv[])
     db->Dump(injections);
   }
 
+  {
+    syd::Injection::pointer inj;
+    db->QueryOne(inj, 1);
+    insert_dicoms(db, inj, "dicom");
+
+    syd::DicomSerie::vector dicoms;
+    db->Query(dicoms);
+    db->Dump(dicoms);
+  }
+
   //----------------------------------------------------------------
 
   syd::Injection::vector injections;
   syd::Injection::pointer inj;
   syd::Radionuclide::pointer rad;
   syd::Radionuclide::vector radionuclides;
+  syd::DicomSerie::pointer serie;
+  syd::DicomSerie::vector dicoms;
+
+  {
+    db->QueryOne(serie, 2);
+    DD(serie);
+    db->Delete(serie);
+    db->Query(dicoms);
+    db->Dump(dicoms);
+  }
+
+
   {
     db->QueryOne(inj, 1);
     std::cout << "Delete a simple injection " << inj << std::endl;
@@ -91,6 +114,17 @@ int main(int argc, char* argv[])
     db->Query(injections);
     db->Dump(injections);
   }
+
+
+  // On delete patient -> injection (not tested, like radionuclide)
+
+  // File ? must delete file on disks
+
+  // DicomSerie
+  // DicomFile
+
+  // Tag ? warning with images
+  //
 
   /*
   db->Delete(rad); // -> delete injections also

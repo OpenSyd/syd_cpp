@@ -56,4 +56,30 @@ void insert_patients(ext::ExtendedDatabase * db) {
   db->Insert(rad);
   }
 
+  {
+  syd::Tag::pointer tag;
+  db->New(tag);
+  tag->label = "debug";
+  tag->description = "this is a debug tag";
+  db->Insert(tag);
+  }
+
+  {
+  syd::Tag::pointer tag;
+  db->New(tag);
+  tag->label = "bidule";
+  tag->description = "this is another tag";
+  db->Insert(tag);
+  }
+
+  {
+  syd::Tag::pointer tag;
+  db->New(tag);
+  tag->label = "I_am_a_tag";
+  tag->description = "this is yet another tag";
+  db->Insert(tag);
+  }
+
+
+
 }

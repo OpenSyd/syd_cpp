@@ -295,8 +295,8 @@ namespace syd {
       patient_->dicom_patientid = patientID;
       bool a = patient_->CheckIdentity(patientID, patientName);
       if (!a) {
-        LOG(FATAL) << "Patient name dont match ? patient is " << patient_ << std::endl
-                   << " while dicom is " << patientName;
+        LOG(WARNING) << "Patient name dont match ? patient is " << patient_ << std::endl
+                     << " while dicom is " << patientName;
       }
       db_->Update<Patient>(patient_); //FIXME !!
     }
