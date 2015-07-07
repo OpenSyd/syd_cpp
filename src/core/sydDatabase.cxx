@@ -71,7 +71,7 @@ void syd::Database::Read(std::string filename)
 
   // Now consider the folder according to the filename path and check it exists
   std::string database_path = filename;
-  ConvertToAbsolutePath(database_path);
+  syd::ConvertToAbsolutePath(database_path);
   database_path = GetPathFromFilename(database_path);
 
   absolute_folder_ = database_path+PATH_SEPARATOR+relative_folder_;
