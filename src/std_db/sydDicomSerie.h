@@ -29,7 +29,7 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::DicomSerie")
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::DicomSerie") callback(Callback)
   /// Store information about a dicom image (serie). Element of table
   /// 'DicomSerie' stored in a db. Contains information about a dicom
   /// image.
@@ -91,6 +91,9 @@ namespace syd {
     // ------------------------------------------------------------------------
 
     virtual std::string ComputeRelativeFolder() const;
+
+    void Callback(odb::callback_event, odb::database&) const;
+    void Callback(odb::callback_event, odb::database&);
 
   protected:
     DicomSerie();

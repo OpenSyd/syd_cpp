@@ -54,32 +54,20 @@ int main(int argc, char* argv[])
   insert_patients(db);
   insert_injections(db);
 
-  {
-    ext::Patient::vector patients;
-    db->Query(patients);
-    db->Dump(patients, "injection");
-
-    syd::Radionuclide::vector r;
-    db->Query(r);
-    db->Dump(r);
-
-    syd::Injection::vector injections;
-    db->Query(injections);
-    db->Dump(injections);
-  }
+  db->Dump("Patient", "injection");
+  db->Dump("Radionuclide");
+  db->Dump("Injection");
 
   {
     syd::Injection::pointer inj;
     db->QueryOne(inj, 1);
     insert_dicoms(db, inj, "dicom");
 
-    syd::DicomSerie::vector dicoms;
-    db->Query(dicoms);
-    db->Dump(dicoms);
+    db->Dump("DicomSerie");
   }
 
   //----------------------------------------------------------------
-
+  std::cout << std::endl << std::endl;
   syd::Injection::vector injections;
   syd::Injection::pointer inj;
   syd::Radionuclide::pointer rad;
@@ -87,14 +75,38 @@ int main(int argc, char* argv[])
   syd::DicomSerie::pointer serie;
   syd::DicomSerie::vector dicoms;
 
-  {
-    db->QueryOne(serie, 2);
+   {
+    db->QueryOne(serie, 1);
+    std::cout << "Delete an dicomserie " << serie << std::endl;
     DD(serie);
+
+    // syd::DicomFile::vector dfiles;
+    // odb::query<syd::DicomFile> q = odb::query<syd::DicomFile>::dicom_serie == serie->id;
+    // db->Query(dfiles,q);
+    // DDS(dfiles);
+
     db->Delete(serie);
+    DD("end delete serie");
     db->Query(dicoms);
     db->Dump(dicoms);
   }
 
+  exit(0);
+  {
+    syd::File::vector files;
+    db->Query(files);
+    DDS(files);
+    std::cout << "Delete a file " << files[0] << std::endl;
+    db->Delete(files[0]);
+    std::cout << "DONE" << std::endl;
+
+    syd::DicomFile::vector dfiles;
+    db->Query(dfiles);
+    DDS(dfiles);
+
+  }
+
+  exit(0);
 
   {
     db->QueryOne(inj, 1);

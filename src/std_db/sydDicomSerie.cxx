@@ -174,3 +174,40 @@ void syd::DicomSerie::Sort(DicomSerie::vector & v, const std::string & order)
               return syd::IsDateBefore(a->acquisition_date, b->acquisition_date); });
 }
 // --------------------------------------------------
+
+
+
+// --------------------------------------------------
+void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db) const
+{
+  std::cout << "DicomSerie::Callback const " << event << std::endl;
+  if (event == odb::callback_event::pre_erase) {
+    DD("DicomSerie pre erase");
+    // syd::DicomFile::vector dfiles;
+
+    // //    odb::transaction transaction (db.begin());
+    // typedef odb::result<syd::DicomFile> result;
+    // odb::query<syd::DicomFile> q = odb::query<syd::DicomFile>::dicom_serie == id;
+    // result r(db.query<DicomFile>(q));
+    // for(auto i = r.begin(); i != r.end(); i++) {
+    //   DD("here");
+    //   syd::DicomFile::pointer s = syd::DicomFile::New();
+    //   i.load(*s);
+    //   dfiles.push_back(s);
+    // }
+    // //transaction.commit();
+
+    // DD(dfiles.size());
+    // for(auto d:dfiles) db.erase(d);
+    // DD("end call erase")
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db)
+{
+  std::cout << "DicomSerie::Callback " << event << std::endl;
+}
+// --------------------------------------------------

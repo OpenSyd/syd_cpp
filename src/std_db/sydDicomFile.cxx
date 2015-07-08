@@ -85,10 +85,10 @@ void syd::DicomFile::InitPrintTable(const syd::Database * db, syd::PrintTable & 
               << "\tdefault: id serie_id dicom_instance_nb file dop_uid" << std::endl;
     return;
   }
-  ta.AddColumn("#id");
-  ta.AddColumn("serie", 5);
+  ta.AddColumn("#id",4);
+  ta.AddColumn("serie", 7);
   ta.AddColumn("nb", 8);
-  ta.AddColumn("file", 5);
+  ta.AddColumn("file", 40);
   ta.AddColumn("sop_uid", 20);
 }
 // --------------------------------------------------
@@ -103,3 +103,24 @@ void syd::DicomFile::DumpInTable(const syd::Database * d, syd::PrintTable & ta, 
 
 
 void syd::DicomFile::Sort(syd::DicomFile::vector & v, const std::string & type) {}
+
+
+
+// --------------------------------------------------
+void syd::DicomFile::Callback(odb::callback_event event, odb::database & db) const
+{
+  std::cout << "DicomFile::Callback const " << event << std::endl;
+  if (event == odb::callback_event::pre_erase) {
+    DD("DicomFile Pre erase");
+    //    db.erase(file);
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomFile::Callback(odb::callback_event event, odb::database & db)
+{
+  std::cout << "DicomFile::Callback " << event << std::endl;
+}
+// --------------------------------------------------

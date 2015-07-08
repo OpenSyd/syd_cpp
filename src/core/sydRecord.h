@@ -22,6 +22,9 @@
 // syd
 #include "sydCommon.h"
 #include "sydPrintTable.h"
+
+// odb
+#include <odb/callback.hxx>
 #include <odb/core.hxx>
 
 // --------------------------------------------------------------------

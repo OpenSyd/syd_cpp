@@ -26,11 +26,11 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::DicomFile")
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::DicomFile") callback(Callback)
   /// Store information about a dicom file (unique dicom identifier
   /// dicom_sop_uid). Also contains a link to the DicomSerie it
   /// belongs to.
-  class DicomFile : public syd::Record {
+  class DicomFile: public syd::Record {
   public:
 
     /// Foreign key, it must exist in the File table.
@@ -53,6 +53,9 @@ namespace syd {
     TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomFile);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(DicomFile);
     // ------------------------------------------------------------------------
+
+    void Callback(odb::callback_event, odb::database&) const;
+    void Callback(odb::callback_event, odb::database&);
 
   protected:
     DicomFile();

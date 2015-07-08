@@ -27,7 +27,7 @@ namespace syd {
 
 #pragma db model version(1, 1)
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::File")
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::File") callback(Callback)
   /// Store information about a file linked to a database.
   class File: public syd::Record {
   public:
@@ -46,6 +46,9 @@ namespace syd {
     TABLE_DECLARE_MANDATORY_FUNCTIONS(File);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(File);
     // ------------------------------------------------------------------------
+
+    void Callback(odb::callback_event, odb::database&) const;
+    void Callback(odb::callback_event, odb::database&);
 
   protected:
     File();

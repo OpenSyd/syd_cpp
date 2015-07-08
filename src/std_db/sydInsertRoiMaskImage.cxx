@@ -20,8 +20,7 @@
 #include "sydInsertRoiMaskImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydImageBuilder.h"
-#include "sydTableRoiType.h"
+#include "sydStandardDatabase.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -41,12 +40,13 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
   // Get the roitype
-  syd::RoiType roitype;
-  syd::FindRoiType(roitype, db, args_info.inputs[1]);
+  syd::RoiType::pointer roitype;
+  db->FindRoiType(roitype, args_info.inputs[1]);
 
   // Get the dicom
   syd::IdType id = atoi(args_info.inputs[2]);
-  syd::DicomSerie dicom = db->QueryOne<syd::DicomSerie>(id);
+  syd::DicomSerie::pointer dicom;
+  db->QueryOne(dicom, id);
 
   // Get mask filename
   std::string filename = args_info.inputs[3];
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
   // FIXME DEBUG
   // Get the tag
   std::string tagname = args_info.inputs[1];
-  syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == tagname);
+  syd::Tag::pointer tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == tagname);
 
   LOG(FATAL) << "TODO";
 

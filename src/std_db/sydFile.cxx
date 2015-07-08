@@ -86,7 +86,7 @@ void syd::File::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, c
   }
   ta.AddColumn("#id");
   if (format == "md5") {
-    ta.AddColumn("filename", 25);
+    ta.AddColumn("filename", 40);
     ta.AddColumn("path", 30);
     ta.AddColumn("md5", 40);
   }
@@ -95,7 +95,7 @@ void syd::File::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, c
       ta.AddColumn("path", 100);
     }
     else {
-      ta.AddColumn("filename", 25);
+      ta.AddColumn("filename", 40);
       ta.AddColumn("path", 30);
       ta.AddColumn("md5?", 10);
     }
@@ -159,4 +159,23 @@ void syd::File::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const
 
 // --------------------------------------------------
 void syd::File::Sort(syd::File::vector & v, const std::string & type) {}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::File::Callback(odb::callback_event event, odb::database & db) const
+{
+  std::cout << "File::Callback const " << event << std::endl;
+  if (event == odb::callback_event::pre_erase) {
+    std::cout << "Erase the file: " << filename;
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::File::Callback(odb::callback_event event, odb::database & db)
+{
+  std::cout << "File::Callback " << event << std::endl;
+}
 // --------------------------------------------------

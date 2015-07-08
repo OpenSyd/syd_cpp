@@ -90,7 +90,7 @@ wrap_ggo(sydImageTag sydImageTag.ggo)
 add_executable(sydImageTag sydImageTag.cxx sydImageTag_ggo.c)
 target_link_libraries(sydImageTag sydStandardDatabase)
 
-# # Insert a new RoiMaskImage
+# Insert a new RoiMaskImage (NOT YET)
 # wrap_ggo(sydInsertRoiMaskImage sydInsertRoiMaskImage.ggo)
 # add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx sydInsertRoiMaskImage_ggo.c)
 # target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
