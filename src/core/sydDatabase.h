@@ -180,6 +180,9 @@ namespace syd {
     /// Generic dump, display the list of tables
     virtual void Dump(std::ostream & os = std::cout) const;
 
+    /// Display all elements of a given tables
+    void Dump(const std::string & table_name, const std::string & format="", std::ostream & os=std::cout) const;
+
     /// Dump the given records (according to a format). (Templated
     /// needed because dont know how to substitute vector<ppatient>
     /// with vector<precord>)

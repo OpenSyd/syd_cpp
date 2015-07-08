@@ -44,9 +44,9 @@ void syd::Database::Read(std::string filename)
   LOG(5) << "Opening database '" << filename_ << "'.";
   try {
     //    db_ = std::unique_ptr<odb::sqlite::database>(new odb::sqlite::database(filename_));
-    db_ = new odb::sqlite::database(filename_);
-    odb::connection_ptr c(db_->connection());
-    c->execute("PRAGMA foreign_keys=ON;");
+    db_ = new odb::sqlite::database(filename_, SQLITE_OPEN_READWRITE, true); // true = foreign_keys
+    // odb::connection_ptr c(db_->connection());
+    // c->execute("PRAGMA foreign_keys=ON;");
   }
   catch (const odb::exception& e) {
     EXCEPTION("Cannot open db '" << filename_ << "' : " << e.what());
@@ -114,6 +114,16 @@ void syd::Database::Dump(std::ostream & os) const
     else os << " element" << std::endl;
   }
   os << std::flush;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Dump(const std::string & table_name, const std::string & format, std::ostream & os) const
+{
+  syd::Record::vector records;
+  Query(records, table_name); // get all records
+  Dump(records, format, os);
 }
 // --------------------------------------------------------------------
 
