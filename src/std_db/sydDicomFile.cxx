@@ -21,7 +21,7 @@
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
-syd::DicomFile::DicomFile():syd::Record("")
+syd::DicomFile::DicomFile():syd::Record()
 {
   file = NULL;
   dicom_serie = NULL;
@@ -109,10 +109,8 @@ void syd::DicomFile::Sort(syd::DicomFile::vector & v, const std::string & type) 
 // --------------------------------------------------
 void syd::DicomFile::Callback(odb::callback_event event, odb::database & db) const
 {
-  std::cout << "DicomFile::Callback const " << event << std::endl;
   if (event == odb::callback_event::pre_erase) {
-    DD("DicomFile Pre erase");
-    //    db.erase(file);
+    db.erase(file);
   }
 }
 // --------------------------------------------------
@@ -121,6 +119,8 @@ void syd::DicomFile::Callback(odb::callback_event event, odb::database & db) con
 // --------------------------------------------------
 void syd::DicomFile::Callback(odb::callback_event event, odb::database & db)
 {
-  std::cout << "DicomFile::Callback " << event << std::endl;
+  if (event == odb::callback_event::pre_erase) {
+    db.erase(file);
+  }
 }
 // --------------------------------------------------

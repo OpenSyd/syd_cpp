@@ -20,6 +20,13 @@
 #include "sydRecord.h"
 
 // --------------------------------------------------------------------
+syd::Record::Record()
+{
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Record::Set(const syd::Database * db, const std::vector<std::string> & args)
 {
   LOG(FATAL) << "The function Set(db, args) must be implemented for table " << GetTableName();
@@ -44,7 +51,9 @@ void syd::Record::CopyFrom(const pointer p)
 
 
 // --------------------------------------------------------------------
-void syd::Record::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+void syd::Record::InitPrintTable(const syd::Database * db,
+                                 syd::PrintTable & ta,
+                                 const std::string & format) const
 {
   ta.AddColumn("#id", 5);
   ta.AddColumn("#fields", 80);
@@ -53,26 +62,10 @@ void syd::Record::InitPrintTable(const syd::Database * db, syd::PrintTable & ta,
 
 
 // --------------------------------------------------------------------
-void syd::Record::DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+void syd::Record::DumpInTable(const syd::Database * db,
+                              syd::PrintTable & ta,
+                              const std::string & format) const
 {
   ta << id << ToString();
 }
 // --------------------------------------------------------------------
-
-
-// void syd::Record::Sort(vector v, const std::string & order)
-// {
-//   DD("sort generic");
-//   DD(order);
-
-
-
-
-//   // std::vector<syd::DicomSerie> dicoms;
-//   // Query(ids, dicoms); // (no sort)
-//   //   std::sort(begin(dicoms), end(dicoms),
-//   //           [dicoms](DicomSerie a, DicomSerie b) {
-//   //             return syd::IsDateBefore(a.acquisition_date, b.acquisition_date); });
-
-
-// }

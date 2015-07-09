@@ -27,6 +27,7 @@ namespace syd {
 
   class Injection;
   class PatientStat;
+  class StandardDatabase;
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Patient")
   /// Store information about a patient (id, study_id, name etc).
@@ -61,11 +62,7 @@ namespace syd {
     bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
     std::string ComputeRelativeFolder() const;
 
-   protected:
-    Patient();
-
   }; // end of class
-
 }
 // --------------------------------------------------------------------
 

@@ -25,52 +25,44 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::ImageTransform")
   /// Store information about a geometrical transformation from one image space to another.
-  class ImageTransform : public syd::TableElementBase {
+  class ImageTransform : public syd::Record {
   public:
 
-#pragma db id auto
-    /// Id of the ImageTransform
-    IdType id;
-
-#pragma db not_null
+#pragma db not_null on_delete(cascade)
     /// Fixed image. Foreign key
-    std::shared_ptr<syd::Image> fixed_image;
+    syd::Image::pointer fixed_image;
 
-#pragma db not_null
+#pragma db not_null on_delete(cascade)
     /// Moving image. Foreign key
-    std::shared_ptr<syd::Image> moving_image;
+    syd::Image::pointer moving_image;
 
     /// Associated tags
-    std::vector<std::shared_ptr<syd::Tag>> tags;
+    syd::Tag::vector tags;
 
-    /// Mask of fixed image.
-    std::shared_ptr<syd::RoiMaskImage> fixed_mask;
+    /// Mask of fixed image. Can be null.
+    syd::RoiMaskImage::pointer fixed_mask;
 
-    /// Mask of moving image
-    std::shared_ptr<syd::RoiMaskImage> moving_mask;
+    /// Mask of moving image.Can be null.
+    syd::RoiMaskImage::pointer moving_mask;
 
+#pragma db on_delete(cascade)
     /// Elastix config file
-    std::shared_ptr<syd::File> config_file;
+    syd::File::pointer config_file;
 
+#pragma db on_delete(cascade)
     /// Result file
-    std::shared_ptr<syd::File> transform_file;
+    syd::File::pointer transform_file;
 
     /// Date of the computation
     std::string date;
 
     // ------------------------------------------------------------------------
-    SET_TABLE_NAME("ImageTransform")
-    ImageTransform();
-
-    virtual std::string ToString() const;
-    virtual std::string ToLargeString() const;
-
-    bool operator==(const ImageTransform & p);
-    bool operator!=(const ImageTransform & p) { return !(*this == p); }
-
-    virtual void OnDelete(syd::Database * db);
+    TABLE_DEFINE(ImageTransform);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(ImageTransform);
+    TABLE_DECLARE_OPTIONAL_FUNCTIONS(ImageTransform);
+    // ------------------------------------------------------------------------
 
   }; // end class
 // --------------------------------------------------------------------

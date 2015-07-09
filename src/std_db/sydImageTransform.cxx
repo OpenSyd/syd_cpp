@@ -21,9 +21,15 @@
 #include "sydDatabase.h"
 
 // --------------------------------------------------------------------
-syd::ImageTransform::ImageTransform():TableElementBase()
+syd::ImageTransform::ImageTransform():Record()
 {
-  date = "unknown_date";
+  date = "unset";
+  fixed_image = NULL;
+  moving_image = NULL;
+  fixed_mask = NULL;
+  moving_mask = NULL;
+  config_file = NULL;
+  transform_file = NULL;
 }
 // --------------------------------------------------------------------
 
@@ -47,47 +53,75 @@ std::string syd::ImageTransform::ToString() const
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-std::string syd::ImageTransform::ToLargeString() const
-{
-  // Add Large string of tags, files, images
-  std::stringstream ss;
-  ss << ToString() << " "
-     << fixed_image->ToLargeString() << " "
-     << moving_image->ToLargeString() << " ";
-  for(auto & t:tags) ss << t->ToLargeString() << " ";
-  if (fixed_mask != NULL) ss << fixed_mask->ToLargeString() << " ";
-  if (moving_mask != NULL) ss << moving_mask->ToLargeString() << " ";
-  if (config_file != NULL) ss << config_file->ToLargeString() << " ";
-  if (transform_file != NULL) ss << transform_file->ToLargeString() << " ";
-  return ss.str();
-}
 // --------------------------------------------------
-
-
-// --------------------------------------------------
-bool syd::ImageTransform::operator==(const ImageTransform & p)
+bool syd::ImageTransform::IsEqual(const pointer p) const
 {
-  bool b = id == p.id and
-    *fixed_image == *p.fixed_image and
-    *moving_image == *p.moving_image and
-    *fixed_mask == *p.fixed_mask and
-    *moving_mask == *p.moving_mask and
-    *config_file == *p.config_file and
-    *transform_file == *p.transform_file and
-    date == p.date;
+  bool b = syd::Record::IsEqual(p) and
+    fixed_image->id == p->fixed_image->id and
+    moving_image->id == p->moving_image->id and
+    fixed_mask->id == p->fixed_mask->id and
+    moving_mask->id == p->moving_mask->id and
+    config_file->id == p->config_file->id and
+    transform_file->id == p->transform_file->id and
+    date == p->date;
   if (!b) return b;
-  for(auto i=0; i< tags.size(); i++)  b = b and (*tags[i] == *p.tags[i]); // if not same order ?
+  for(auto i=0; i< tags.size(); i++)  b = b and (tags[i]->id == p->tags[i]->id); // if not same order ?
   return b;
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::ImageTransform::OnDelete(syd::Database * db)
+void syd::ImageTransform::CopyFrom(const pointer p)
 {
-  DD("on delete ImageTransform");
-  if (config_file != NULL) db->AddToDeleteList(*config_file);
-  if (transform_file != NULL) db->AddToDeleteList(*transform_file);
+  syd::Record::CopyFrom(p);
+  fixed_image = p->fixed_image;
+  moving_image = p->moving_image;
+  fixed_mask = p->fixed_mask;
+  moving_mask = p->moving_mask;
+  config_file = p->config_file;
+  transform_file = p->transform_file;
+  date = p->date;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::ImageTransform::Set(const syd::Database * db, const std::vector<std::string> & arg)
+{
+  LOG(FATAL) << "Set ImageTransform not implemented";
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::ImageTransform::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+{
+  LOG(FATAL) << "InitPrintTable ImageTransform not implemented";
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::ImageTransform::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+{
+  LOG(FATAL) << "InitPrintTable ImageTransform not implemented";
+}
+// --------------------------------------------------
+
+
+
+// --------------------------------------------------
+// std::string syd::ImageTransform::ComputeRelativeFolder() const
+// {
+//    LOG(FATAL) << "ComputeRelativeFolder ImageTransform not implemented";return "";
+// }
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::ImageTransform::Sort(syd::ImageTransform::vector & v, const std::string & type)
+{
+  LOG(FATAL) << "Sort ImageTransform not implemented";
 }
 // --------------------------------------------------

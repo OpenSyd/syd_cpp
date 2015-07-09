@@ -7,6 +7,7 @@ include_directories(${SYD_BINARY_DIR}/src/core)
 #----------------------------------------------------------
 # Standard database : StandardDatabase
 set(SCHEMA_NAME StandardDatabase)
+#wrap_odb(sydStandardDatabase sydStandardRecord.h)
 wrap_odb(sydStandardDatabase sydPatient.h)
 wrap_odb(sydStandardDatabase sydRadionuclide.h)
 wrap_odb(sydStandardDatabase sydTag.h)
@@ -17,10 +18,12 @@ wrap_odb(sydStandardDatabase sydDicomFile.h)
 wrap_odb(sydStandardDatabase sydImage.h)
 wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
-# wrap_odb(sydStandardDatabase sydImageTransform.h)
+wrap_odb(sydStandardDatabase sydImageTransform.h)
 # #wrap_odb(sydStandardDatabase sydTimepoint.h)
 
 add_library(sydStandardDatabase SHARED
+  # sydStandardRecord-odb.cxx
+  # sydStandardRecord.cxx
   sydStandardDatabase.cxx
   sydStandardDatabasePlugin.cxx
   sydPatient-odb.cxx sydPatient.cxx
@@ -34,12 +37,14 @@ add_library(sydStandardDatabase SHARED
   sydImage-odb.cxx sydImage.cxx
   sydRoiType-odb.cxx sydRoiType.cxx
   sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx
-# #  sydTimepoint-odb.cxx sydTimepoint.cxx
-#   sydImageTransform-odb.cxx sydImageTransform.cxx
-# #  sydTimepointBuilder.cxx
-#   sydImageBuilder.cxx
+  sydImageTransform-odb.cxx sydImageTransform.cxx
+
   sydImageFromDicomBuilder.cxx
   sydStitchDicomImageBuilder.cxx
+
+  # #  sydTimepointBuilder.cxx
+#   sydImageBuilder.cxx
+# #  sydTimepoint-odb.cxx sydTimepoint.cxx
 
   # sydTablePatient.cxx
   # sydTableTag.h

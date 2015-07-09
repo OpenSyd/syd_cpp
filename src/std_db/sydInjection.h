@@ -33,11 +33,11 @@ namespace syd {
   class Injection : public syd::Record {
   public:
 
-#pragma db not_null on_delete(cascade)
+#pragma db not_null
     /// Foreign key, linked to Patient table.
     syd::Patient::pointer patient;
 
-#pragma db not_null on_delete(cascade)
+#pragma db not_null
     /// Foreign key, linked to Radionuclide table.
     syd::Radionuclide::pointer radionuclide;
 
@@ -52,9 +52,6 @@ namespace syd {
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Injection);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Injection);
     // ------------------------------------------------------------------------
-
-   protected:
-    Injection();
 
   }; // end of class
 

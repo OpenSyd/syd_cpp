@@ -20,7 +20,7 @@
 #include "sydRoiType.h"
 
 // --------------------------------------------------------------------
-syd::RoiType::RoiType():Record("")
+syd::RoiType::RoiType():Record()
 {
   name = "unset";
   description = "unset";

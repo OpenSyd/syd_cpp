@@ -49,9 +49,10 @@ namespace syd {
 
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
+    void EraseAssociatedFile() const;
 
-  protected:
-    File();
+  // protected:
+  //   File(syd::Database * db);
 
   }; // end of class
 }

@@ -20,8 +20,10 @@
 #include "sydRadionuclide.h"
 
 // --------------------------------------------------------------------
-syd::Radionuclide::Radionuclide():syd::Record("")
+syd::Radionuclide::Radionuclide():syd::Record()
 {
+  name = "unset";
+  half_life_in_hours = 0.0;
 }
 // --------------------------------------------------------------------
 

@@ -66,8 +66,6 @@ namespace syd {
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const = 0;
 
-    // virtual void Sort(vector v, const std::string & order);
-
     /// Default function to print an element (must be inline here).
     friend std::ostream& operator<<(std::ostream& os, const Record & p) {
     os << p.ToString();
@@ -83,13 +81,16 @@ namespace syd {
   }
 
   protected:
-    /// This default constructor allow to oblige class that inherit from Record to not have default constructor
-    Record(std::string) {}
+    /// This default constructor allow to oblige class that inherit
+    /// from Record to not have default constructor
+    Record();
 
-    /// Copy all fields form the given record (protected to avoid use with generic pointer)
+    /// Copy all fields form the given record (protected to avoid use
+    /// with generic pointer)
     virtual void CopyFrom(const pointer p);
 
-    /// Return true if the record is equal (same id here); (protected to avoid use with generic pointer)
+    /// Return true if the record is equal (same id here); (protected
+    /// to avoid use with generic pointer)
     virtual bool IsEqual(const pointer p) const;
 
 
@@ -97,23 +98,25 @@ namespace syd {
 
     /// odb::access is needed for polymorphism
 #define TABLE_DEFINE(TABLE_NAME)                                        \
-    typedef std::shared_ptr<TABLE_NAME> pointer;                        \
-    typedef std::vector<pointer> vector;                                \
-    friend class odb::access;                                           \
-    virtual std::string GetTableName() const { return #TABLE_NAME; }    \
-    static std::string GetStaticTableName() { return #TABLE_NAME; }     \
-    static pointer New() { return pointer(new TABLE_NAME); }            \
+  typedef std::shared_ptr<TABLE_NAME> pointer;                          \
+  typedef std::vector<pointer> vector;                                  \
+  friend class odb::access;                                             \
+  virtual std::string GetTableName() const { return #TABLE_NAME; }      \
+  static std::string GetStaticTableName() { return #TABLE_NAME; }       \
+  TABLE_NAME();                                                         \
+  static pointer New() { return pointer(new TABLE_NAME); }              \
 
 #define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME)           \
-    virtual std::string ToString() const;                       \
-    virtual bool IsEqual(const pointer p) const;                \
-    virtual void CopyFrom(const pointer p);                     \
-    virtual void Sort(vector & v, const std::string & order);
+  virtual std::string ToString() const;                         \
+  virtual bool IsEqual(const pointer p) const;                  \
+  virtual void CopyFrom(const pointer p);                       \
 
 #define TABLE_DECLARE_OPTIONAL_FUNCTIONS(TABLE_NAME)                    \
+  virtual void Sort(vector & v, const std::string & order);             \
   virtual void Set(const syd::Database * db, const std::vector<std::string> & args); \
   virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const; \
   virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+
 
 } // end namespace
   // --------------------------------------------------------------------

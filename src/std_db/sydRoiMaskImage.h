@@ -45,9 +45,6 @@ namespace syd {
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(RoiMaskImage);
     // ------------------------------------------------------------------------
 
-  protected:
-    RoiMaskImage();
-
   }; // end class
 }
 // --------------------------------------------------------------------

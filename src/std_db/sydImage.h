@@ -91,9 +91,6 @@ namespace syd {
     void UpdateFile(syd::Database * db, const std::string & filename,
                     const std::string & relativepath, bool deleteExistingFiles=false);
 
-  protected:
-    Image();
-
   }; // end class
 // --------------------------------------------------------------------
 

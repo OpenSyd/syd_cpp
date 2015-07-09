@@ -36,12 +36,11 @@ namespace syd {
   class DicomSerie : public syd::Record {
   public:
 
-#pragma db not_null on_delete(cascade)
+#pragma db not_null
     /// Foreign key, it must exist in the Patient table. Useful if no associated injection
     syd::Patient::pointer patient;
 
-    /// Foreign key, it must exist in the Injection table. Maybe null.
-#pragma db on_delete(cascade)
+    /// Foreign key. May be null. Dont delete Serie if injection does not exist.
     syd::Injection::pointer injection;
 
     /// Date when the image has been acquired. Dicom tag =
@@ -87,16 +86,25 @@ namespace syd {
      // ------------------------------------------------------------------------
     TABLE_DEFINE(DicomSerie);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomSerie);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(DicomSerie);
     // ------------------------------------------------------------------------
+
+
+    virtual void Sort(DicomSerie::vector & v, const std::string & order);
+
+    virtual void InitPrintTable(const syd::Database * db,
+                                syd::PrintTable & ta,
+                                const std::string & format) const;
+    virtual void DumpInTable(const syd::Database * db,
+                             syd::PrintTable & ta,
+                             const std::string & format) const;
 
     virtual std::string ComputeRelativeFolder() const;
 
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
-  protected:
-    DicomSerie();
+  // protected:
+  //   DicomSerie(syd::Database * db);
 
   }; // end class
 

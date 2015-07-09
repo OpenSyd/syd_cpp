@@ -21,7 +21,7 @@
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------
-syd::File::File():syd::Record("")
+syd::File::File():syd::Record()
 {
   // default value
   filename = "unset"; // must be unique
@@ -165,9 +165,8 @@ void syd::File::Sort(syd::File::vector & v, const std::string & type) {}
 // --------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db) const
 {
-  std::cout << "File::Callback const " << event << std::endl;
   if (event == odb::callback_event::pre_erase) {
-    std::cout << "Erase the file: " << filename;
+    EraseAssociatedFile();
   }
 }
 // --------------------------------------------------
@@ -176,6 +175,16 @@ void syd::File::Callback(odb::callback_event event, odb::database & db) const
 // --------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db)
 {
-  std::cout << "File::Callback " << event << std::endl;
+  if (event == odb::callback_event::pre_erase) {
+    EraseAssociatedFile();
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::File::EraseAssociatedFile() const
+{
+  std::cout << "TODO File erase " << filename << std::endl;
 }
 // --------------------------------------------------

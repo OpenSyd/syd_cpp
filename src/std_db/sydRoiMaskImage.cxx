@@ -24,7 +24,7 @@
 #include "sydImage-odb.hxx"
 
 // --------------------------------------------------------------------
-syd::RoiMaskImage::RoiMaskImage():Record("")
+syd::RoiMaskImage::RoiMaskImage():Record()
 {
   image = NULL;
   roitype = NULL;

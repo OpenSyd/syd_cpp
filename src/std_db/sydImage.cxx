@@ -23,7 +23,7 @@
 #include "sydTag.h"
 
 // --------------------------------------------------------------------
-syd::Image::Image():Record("")
+syd::Image::Image():syd::Record()
 {
   type = "unset";
   pixel_type = "unset";

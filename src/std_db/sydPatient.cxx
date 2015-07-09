@@ -22,7 +22,7 @@
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------
-syd::Patient::Patient():syd::Record("")
+syd::Patient::Patient():syd::Record()
 {
   // default value
   name = "unset"; // must be unique

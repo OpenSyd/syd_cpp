@@ -21,7 +21,7 @@
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
-syd::Injection::Injection():syd::Record("")
+syd::Injection::Injection():syd::Record()
 {
   patient = NULL;
   radionuclide = NULL;
@@ -69,9 +69,10 @@ void syd::Injection::Set(const syd::Database * d, const std::vector<std::string>
   odb::query<syd::Radionuclide> q = odb::query<syd::Radionuclide>::name == args[1] or
     odb::query<syd::Radionuclide>::id == atoi(args[1].c_str());
   try {
-  db->QueryOne(rad, q);
+    db->QueryOne(rad, q);
   } catch(std::exception & e) {
-    LOG(FATAL) << "Error while creating the Injection, the radionuclide '" << args[1] << "' is not found (or several exist).";
+    LOG(FATAL) << "Error while creating the Injection, the radionuclide '"
+               << args[1] << "' is not found (or several exist).";
   }
   radionuclide = rad;
   date = args[2];
