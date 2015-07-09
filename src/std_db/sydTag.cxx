@@ -20,8 +20,10 @@
 #include "sydTag.h"
 
 // --------------------------------------------------
-syd::Tag::Tag():syd::Record("")
+syd::Tag::Tag():syd::Record()
 {
+  label = "unset";
+  description = "unset";
 }
 // --------------------------------------------------
 

@@ -43,8 +43,8 @@ namespace syd {
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Tag);
     // ------------------------------------------------------------------------
 
-   protected:
-    Tag();
+   // protected:
+   //  Tag(syd::Database * db);
 
   }; // end of class
 
