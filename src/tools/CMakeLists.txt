@@ -31,8 +31,8 @@ target_link_libraries(sydFind ${SYD_CORE_LIBRARIES})
 #----------------------------------------------------------
 
 
-# #----------------------------------------------------------
-# wrap_ggo(sydDelete sydDelete.ggo)
-# add_executable(sydDelete sydDelete.cxx sydDelete_ggo.c)
-# target_link_libraries(sydDelete ${SYD_CORE_LIBRARIES})
-# #----------------------------------------------------------
+#----------------------------------------------------------
+wrap_ggo(sydDelete sydDelete.ggo)
+add_executable(sydDelete sydDelete.cxx sydDelete_ggo.c)
+target_link_libraries(sydDelete ${SYD_CORE_LIBRARIES})
+#----------------------------------------------------------

@@ -62,7 +62,6 @@ int main(int argc, char* argv[])
     syd::Injection::pointer inj;
     db->QueryOne(inj, 1);
     insert_dicoms(db, inj, "dicom");
-
     db->Dump("DicomSerie");
   }
 
@@ -76,73 +75,63 @@ int main(int argc, char* argv[])
   syd::DicomSerie::vector dicoms;
 
    {
+     // Delete Serie -> will also delete DicomFile + Files
     db->QueryOne(serie, 1);
     std::cout << "Delete an dicomserie " << serie << std::endl;
-    DD(serie);
-
-    // syd::DicomFile::vector dfiles;
-    // odb::query<syd::DicomFile> q = odb::query<syd::DicomFile>::dicom_serie == serie->id;
-    // db->Query(dfiles,q);
-    // DDS(dfiles);
-
-    db->Delete(serie);
-    DD("end delete serie");
-    db->Query(dicoms);
-    db->Dump(dicoms);
-  }
-
-  exit(0);
-  {
-    syd::File::vector files;
-    db->Query(files);
-    DDS(files);
-    std::cout << "Delete a file " << files[0] << std::endl;
-    db->Delete(files[0]);
-    std::cout << "DONE" << std::endl;
 
     syd::DicomFile::vector dfiles;
     db->Query(dfiles);
-    DDS(dfiles);
+    int total_files = dfiles.size();
+    dfiles.clear();
 
+    odb::query<syd::DicomFile> q = odb::query<syd::DicomFile>::dicom_serie == serie->id;
+    db->Query(dfiles,q);
+    int n = dfiles.size();
+    dfiles.clear();
+
+    db->Delete(serie);
+
+    db->Query(dfiles);
+    if (dfiles.size() != total_files-n) {
+      LOG(FATAL) << "Error while deleting the serie";
+    }
+    else {
+      std::cout << "OK, " << total_files << " before, "
+                << dfiles.size() << " after" << std::endl;
+    }
   }
 
-  exit(0);
+  {
+    // Delete File -> callback to erase file
+    std::cout << std::endl;
+    db->Dump("DicomFile");
+
+    syd::File::vector files;
+    db->Query(files);
+    std::cout << "Delete a file " << files[0] << std::endl;
+    db->Delete(files[0]);
+    db->Dump("DicomFile");
+  }
 
   {
     db->QueryOne(inj, 1);
     std::cout << "Delete a simple injection " << inj << std::endl;
-    db->Delete(inj); // -> nothing else deleted
-    db->Query(injections);
-    db->Dump(injections);
+    try {
+      db->Delete(inj);
+    } catch(std::exception & e) {
+      std::cout << "OK deletion impossible because FK. " << e.what() << std::endl;
+    }
   }
 
   {
     db->QueryOne(rad, 2);
     std::cout << "Delete a radionuclide on_delete(cascade)" << rad << std::endl;
-    db->Delete(rad); // -> one injection must be deleted
-    db->Query(radionuclides);
-    db->Dump(radionuclides);
-    injections.clear();
-    db->Query(injections);
-    db->Dump(injections);
+    try {
+      db->Delete(rad);
+    } catch(std::exception & e) {
+      std::cout << "OK deletion impossible because FK. " << e.what() << std::endl;
+    }
   }
-
-
-  // On delete patient -> injection (not tested, like radionuclide)
-
-  // File ? must delete file on disks
-
-  // DicomSerie
-  // DicomFile
-
-  // Tag ? warning with images
-  //
-
-  /*
-  db->Delete(rad); // -> delete injections also
-  db->Delete(patient); // -> delete injections also
-  */
-
 
   return EXIT_SUCCESS;
   // This is the end, my friend.

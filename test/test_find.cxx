@@ -91,10 +91,13 @@ int main(int argc, char* argv[])
   exclude.push_back("NO");
 
   {
-    ext::Patient::vector patients;
+    syd::Patient::vector patients;
     db->Query(patients);
+
+    //    db->Sort<syd::Patient>(patients); // FIXME
+
     db->Dump(patients, ""); // output screen
-    ext::Patient::vector p;
+    syd::Patient::vector p;
     db->Grep(p, patients, patterns, exclude);
     db->Dump(p, ""); // output screen
 

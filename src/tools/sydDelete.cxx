@@ -43,11 +43,11 @@ int main(int argc, char* argv[])
   std::string tablename = args_info.inputs[1];
 
   // Set option
-  db->SetDeleteForceFlag(args_info.force_flag);
+  // FIXME db->SetDeleteForceFlag(args_info.force_flag);
 
   // Get the list of ids
   if (args_info.inputs_num > 2 and args_info.inputs[2] == std::string("all")) {
-    db->DeleteAll(tablename);
+    // FIXME db->DeleteAll(tablename);
   }
   else {
     std::vector<syd::IdType> ids;
@@ -55,7 +55,14 @@ int main(int argc, char* argv[])
     for(auto i=2; i<args_info.inputs_num; i++) {
       ids.push_back(atoi(args_info.inputs[i]));
     }
-    db->Delete(tablename, ids);
+    try {
+      db->Delete(tablename, ids);
+    }
+    catch (std::exception & e) {
+      LOG(FATAL) << "Cannot delete " << ids.size() << " elements of table "
+                 << tablename
+                 << ". Probably because another table need them and should be deleted first.";
+    }
   }
 
   // This is the end, my friend.

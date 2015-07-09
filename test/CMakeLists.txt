@@ -58,6 +58,12 @@ add_test(NAME test_delete
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_delete
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
+# Test  dynamic_fields
+add_executable(test_dynamic_fields test_dynamic_fields.cxx)
+target_link_libraries(test_dynamic_fields extExtendedDatabase)
+add_test(NAME test_dynamic_fields
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_dynamic_fields
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
 
 # #----------------------------------------------------------
