@@ -18,7 +18,7 @@
 
 // ext
 #include "extPatient.h"
-
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------
 ext::Patient::Patient():syd::Patient()
@@ -107,3 +107,28 @@ void ext::Patient::DumpInTable(const syd::Database * d, syd::PrintTable & ta, co
 // --------------------------------------------------
 
 void ext::Patient::Sort(ext::Patient::vector & v, const std::string & type) {}
+
+
+
+// --------------------------------------------------
+void ext::Patient::Callback(odb::callback_event event, odb::database & db) const
+{
+  //  DD("Callback const ext Patient");
+  //DD(event);
+  if (event == odb::callback_event::pre_load) {
+    //DD("pre load");
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void ext::Patient::Callback(odb::callback_event event, odb::database & db)
+{
+  //  DD("Callback const ext Patient");
+  //DD(event);
+  if (event == odb::callback_event::pre_load) {
+    //DD("pre load");
+  }
+}
+// --------------------------------------------------
