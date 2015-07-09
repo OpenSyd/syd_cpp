@@ -35,6 +35,7 @@
 #include "sydImage-odb.hxx"
 #include "sydRoiType-odb.hxx"
 #include "sydRoiMaskImage-odb.hxx"
+#include "sydImageTransform-odb.hxx"
 
 // itk
 #include <itkImage.h>
@@ -57,6 +58,12 @@ namespace syd {
     std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
     std::string GetAbsolutePath(const syd::File::pointer file) const;
 
+
+    // template<class RecordType>
+    // void Sort(std::vector<std::shared_ptr<RecordType>> & records, const std::string & type="") const;
+    // template<>
+    // void Sort(std::vector<std::shared_ptr<syd::Patient>> & records, const std::string & type="") const;
+
     template<class PixelType>
     typename itk::Image<PixelType,3>::Pointer
     ReadImage(const syd::DicomSerie::pointer dicom) const;
@@ -73,7 +80,7 @@ namespace syd {
 
   }; // class StandardDatabase
 
-  #include "sydStandardDatabase.txx"
+#include "sydStandardDatabase.txx"
 
 } // namespace syd
 

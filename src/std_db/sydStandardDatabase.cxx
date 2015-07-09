@@ -32,6 +32,7 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::Image>();
   AddTable<syd::RoiType>();
   AddTable<syd::RoiMaskImage>();
+  AddTable<syd::ImageTransform>();
 }
 // --------------------------------------------------------------------
 
@@ -130,3 +131,17 @@ std::string syd::StandardDatabase::GetAbsolutePath(const syd::File::pointer file
   return ConvertToAbsolutePath(f);
 }
 // --------------------------------------------------------------------
+
+
+
+
+// --------------------------------------------------
+// template<>
+// void syd::StandardDatabase::Sort(std::vector<std::shared_ptr<syd::Patient>> & v, const std::string & type) const
+// {
+//   DD(" sort for patient");
+//   typedef std::shared_ptr<syd::Patient> pointer;
+//   std::sort(begin(v), end(v),
+//             [v](pointer a, pointer b) { return a->study_id < b->study_id; });
+// }
+// --------------------------------------------------
