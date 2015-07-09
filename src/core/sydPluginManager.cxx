@@ -87,7 +87,7 @@ void syd::PluginManager::Load(const std::string & filename)
 {
   std::string ext = GetExtension(filename);
   if (ext != "so" and ext != "dylib" and ext != "DLL" and ext != "dll") {
-    LOG(10) << "(syd plugin) ignoring the file '" << filename << "'.";
+    LOG(20) << "(syd plugin) ignoring the file '" << filename << "'.";
     return;
   }
   void * plugin;
