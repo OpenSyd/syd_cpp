@@ -154,9 +154,12 @@ void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
 {
   try {
     odb::transaction transaction (db_->begin());
-    auto r = db_->query_one<RecordType>(q);
+    typename RecordType::pointer r;
+    New(r);
+    db_->query_one(q, *r);
     if (r.get() == 0) {
-      EXCEPTION("No matching record in QueryOne(q) for the table '" << RecordType::GetStaticTableName()
+      EXCEPTION("No matching record in QueryOne(q) for the table '"
+                << RecordType::GetStaticTableName()
                 << ". Last sql query is: "
                 << std::endl << GetLastSQLQuery());
     }
@@ -164,7 +167,7 @@ void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
     transaction.commit();
   }
   catch (const odb::exception& e) {
-    EXCEPTION("Error in QueryOne(q) for the table '" << record->GetTableName()
+    EXCEPTION("Error in QueryOne(q) for the table '" << RecordType::GetStaticTableName()
               << "', cannot find the record. Last sql query is: "
               << std::endl << GetLastSQLQuery());
   }
@@ -178,7 +181,9 @@ void syd::Database::QueryOne(std::shared_ptr<RecordType> & record, const IdType 
 {
   try {
     odb::transaction transaction (db_->begin());
-    record = db_->load<RecordType>(id);
+    typename RecordType::pointer s;
+    s = db_->load<RecordType>(id);
+    record = s;
     transaction.commit();
   }
   catch (const odb::exception& e) {
@@ -201,9 +206,8 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
     typedef odb::result<RecordType> result;
     result r(db_->query<RecordType>(q));
     for(auto i = r.begin(); i != r.end(); i++) {
-      std::shared_ptr<RecordType> s;
-      New(s);
-      i.load(*s);
+      typename RecordType::pointer s;
+      s = i.load();
       records.push_back(s);
     }
     transaction.commit();
@@ -280,7 +284,8 @@ template<class RecordType>
 void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records, const std::string & order) const
 {
   if (records.size() == 0) return;
-  records[0]->Sort(records, order);
+  DD("Default SORT, do nothing");
+  //  records[0]->Sort(records, order);
 }
 // --------------------------------------------------------------------
 
@@ -307,6 +312,27 @@ void syd::Database::Delete(std::shared_ptr<RecordType> record)
   catch (const odb::exception& e) {
     EXCEPTION("Error while deleting element "
               << record << " in the table '" << RecordType::GetStaticTableName()
+              << "', message is: " << e.what()
+              << std::endl << "And last sql query is: "
+              << std::endl << GetLastSQLQuery());
+  }
+}
+// ------------------------------------------------------------------------
+
+
+// ------------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::Delete(std::vector<std::shared_ptr<RecordType>> & records)
+{
+  try {
+    odb::transaction t (db_->begin());
+    for(auto r:records) db_->erase(r);//<RecordType>(record);
+    t.commit();
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Error while deleting "
+              << records.size() << " elements in the table '"
+              << RecordType::GetStaticTableName()
               << "', message is: " << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());

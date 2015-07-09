@@ -206,6 +206,9 @@ namespace syd {
     // ------------------------------------------------------------------------
     template<class RecordType>
     void Delete(std::shared_ptr<RecordType> record);
+    void Delete(const std::string & table_name, const std::vector<syd::IdType> & ids);
+    template<class RecordType>
+    void Delete(std::vector<std::shared_ptr<RecordType>> & records);
     // ------------------------------------------------------------------------
 
 

@@ -71,6 +71,8 @@ namespace syd {
     /// Get the number of elements in the table
     virtual long GetNumberOfElements() const;
 
+    virtual void Delete(const std::vector<syd::IdType> & ids) const;
+
   protected:
     syd::Database * db_;
 

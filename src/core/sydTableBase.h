@@ -29,6 +29,7 @@ namespace syd {
 
   //class Database;
   class Record;
+  class Database;
 
   /// Base class for the functions that are common to all tables
   class TableBase {
@@ -56,6 +57,8 @@ namespace syd {
     virtual long GetNumberOfElements() const = 0;
 
     virtual void Sort(record_vector & records, const std::string & type) const = 0;
+
+    virtual void Delete(const std::vector<syd::IdType> & ids) const = 0;
 
   };
 

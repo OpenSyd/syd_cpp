@@ -252,3 +252,11 @@ void syd::Database::Sort(generic_record_vector & records, const std::string & ty
   GetTable(records[0]->GetTableName())->Sort(records, type);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Delete(const std::string & table_name, const std::vector<syd::IdType> & ids)
+{
+  GetTable(table_name)->Delete(ids);
+}
+// --------------------------------------------------------------------
