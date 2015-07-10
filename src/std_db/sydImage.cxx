@@ -166,7 +166,7 @@ void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, 
   else {
     ta.AddColumn("#id", 5);
     ta.AddColumn("p", 8);
-    ta.AddColumn("tags", 20);
+    ta.AddColumn("tags", 40);
     ta.AddColumn("size", 12);
     ta.AddColumn("spacing", 25);
     ta.AddColumn("dicom_id", 15);
@@ -254,7 +254,7 @@ void syd::Image::UpdateFile(syd::Database * db,
 void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event,db);
-  if (event == odb::callback_event::pre_erase) {
+  if (event == odb::callback_event::post_erase) {
     for(auto f:files) db.erase(f);
   }
 }
@@ -265,7 +265,7 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 void syd::Image::Callback(odb::callback_event event, odb::database & db)
 {
   syd::Record::Callback(event,db);
-  if (event == odb::callback_event::pre_erase) {
+  if (event == odb::callback_event::post_erase) {
     for(auto f:files) db.erase(f);
   }
 }
