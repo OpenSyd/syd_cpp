@@ -144,17 +144,6 @@ void syd::Table<RecordType>::Sort(generic_record_vector & records, const std::st
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Table<RecordType>::Delete(const std::vector<syd::IdType> & ids) const
-{
-  typename RecordType::vector v;
-  db_->Query(v, ids);
-  db_->Delete(v);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
 void syd::Table<RecordType>::Delete(generic_record_vector & records) const
 {
   typename RecordType::vector specific_records;

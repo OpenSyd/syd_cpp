@@ -306,7 +306,7 @@ void syd::Database::Delete(std::shared_ptr<RecordType> record)
 {
   try {
     odb::transaction t (db_->begin());
-    db_->erase(record);//<RecordType>(record);
+    db_->erase(record);
     t.commit();
   }
   catch (const odb::exception& e) {
@@ -326,7 +326,7 @@ void syd::Database::Delete(std::vector<std::shared_ptr<RecordType>> & records)
 {
   try {
     odb::transaction t (db_->begin());
-    for(auto r:records) db_->erase(r);//<RecordType>(record);
+    for(auto r:records) db_->erase(r);
     t.commit();
   }
   catch (const odb::exception& e) {

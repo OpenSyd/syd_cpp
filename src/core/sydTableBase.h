@@ -58,8 +58,6 @@ namespace syd {
 
     virtual void Sort(record_vector & records, const std::string & type) const = 0;
 
-    virtual void Delete(const std::vector<syd::IdType> & ids) const = 0;
-
     virtual void Delete(record_vector & v) const = 0;
 
   };
