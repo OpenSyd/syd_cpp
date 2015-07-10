@@ -73,6 +73,8 @@ namespace syd {
 
     virtual void Delete(const std::vector<syd::IdType> & ids) const;
 
+    virtual void Delete(generic_record_vector & records) const;
+
   protected:
     syd::Database * db_;
 

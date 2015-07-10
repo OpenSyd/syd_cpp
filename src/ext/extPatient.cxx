@@ -106,9 +106,6 @@ void ext::Patient::DumpInTable(const syd::Database * d, syd::PrintTable & ta, co
 }
 // --------------------------------------------------
 
-void ext::Patient::Sort(ext::Patient::vector & v, const std::string & type) {}
-
-
 
 // --------------------------------------------------
 void ext::Patient::Callback(odb::callback_event event, odb::database & db) const

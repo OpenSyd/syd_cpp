@@ -117,11 +117,3 @@ void syd::ImageTransform::DumpInTable(const syd::Database * d, syd::PrintTable &
 //    LOG(FATAL) << "ComputeRelativeFolder ImageTransform not implemented";return "";
 // }
 // --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::ImageTransform::Sort(syd::ImageTransform::vector & v, const std::string & type)
-{
-  LOG(FATAL) << "Sort ImageTransform not implemented";
-}
-// --------------------------------------------------

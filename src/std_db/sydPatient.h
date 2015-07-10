@@ -59,8 +59,9 @@ namespace syd {
                      const IdType & pstudy_id, const double pweight_in_kg=-1,
                      const std::string pdicom_patientid="unset");
 
-    bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
-    std::string ComputeRelativeFolder() const;
+    virtual bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
+    virtual std::string ComputeRelativeFolder() const;
+    virtual void Sort(vector & v, const std::string & order);
 
   }; // end of class
 }

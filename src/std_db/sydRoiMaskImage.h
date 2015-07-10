@@ -45,6 +45,8 @@ namespace syd {
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(RoiMaskImage);
     // ------------------------------------------------------------------------
 
+    virtual void Sort(vector & v, const std::string & order);
+
   }; // end class
 }
 // --------------------------------------------------------------------

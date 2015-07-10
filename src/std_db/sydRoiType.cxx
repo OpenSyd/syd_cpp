@@ -94,11 +94,3 @@ void syd::RoiType::DumpInTable(const syd::Database * d, syd::PrintTable & ta, co
   ta << id << name << description;
 }
 // --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::RoiType::Sort(syd::RoiType::vector & v, const std::string & type)
-{
-
-}
-// --------------------------------------------------

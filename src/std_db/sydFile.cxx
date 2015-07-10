@@ -158,11 +158,6 @@ void syd::File::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const
 
 
 // --------------------------------------------------
-void syd::File::Sort(syd::File::vector & v, const std::string & type) {}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db) const
 {
   if (event == odb::callback_event::pre_erase) {

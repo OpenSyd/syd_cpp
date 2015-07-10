@@ -151,3 +151,16 @@ void syd::Table<RecordType>::Delete(const std::vector<syd::IdType> & ids) const
   db_->Delete(v);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Table<RecordType>::Delete(generic_record_vector & records) const
+{
+  typename RecordType::vector specific_records;
+  for(auto r:records) {
+    specific_records.push_back(std::dynamic_pointer_cast<RecordType>(r));
+  }
+  db_->Delete<RecordType>(specific_records);
+}
+// --------------------------------------------------------------------

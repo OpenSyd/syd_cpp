@@ -47,7 +47,9 @@ int main(int argc, char* argv[])
 
   // Get the list of ids
   if (args_info.inputs_num > 2 and args_info.inputs[2] == std::string("all")) {
-    // FIXME db->DeleteAll(tablename);
+    syd::Record::vector v;
+    db->Query(v, tablename);
+    db->Delete(v);
   }
   else {
     std::vector<syd::IdType> ids;

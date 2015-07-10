@@ -112,7 +112,6 @@ namespace syd {
   virtual void CopyFrom(const pointer p);                       \
 
 #define TABLE_DECLARE_OPTIONAL_FUNCTIONS(TABLE_NAME)                    \
-  virtual void Sort(vector & v, const std::string & order);             \
   virtual void Set(const syd::Database * db, const std::vector<std::string> & args); \
   virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const; \
   virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;

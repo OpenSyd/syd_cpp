@@ -102,10 +102,6 @@ void syd::DicomFile::DumpInTable(const syd::Database * d, syd::PrintTable & ta, 
 // --------------------------------------------------
 
 
-void syd::DicomFile::Sort(syd::DicomFile::vector & v, const std::string & type) {}
-
-
-
 // --------------------------------------------------
 void syd::DicomFile::Callback(odb::callback_event event, odb::database & db) const
 {

@@ -19,8 +19,7 @@
 // syd
 #include "sydTest_ggo.h"
 #include "sydPluginManager.h"
-#include "sydDatabaseManager.h"
-#include "extExtendedDatabase.h"
+#include "sfzSynfrizzDatabase.h"
 
 // Init syd
 SYD_STATIC_INIT
@@ -29,92 +28,44 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT(sydTest, 1);
+  SYD_INIT(sydTest, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  std::string dbname = args_info.inputs[0];
-  DD(dbname);
+  std::string dbname1 = args_info.inputs[0];
+  syd::StandardDatabase * db1 = m->Read<syd::StandardDatabase>(dbname1);
 
-  {
-    std::string b = dbname+".backup";
-    std::rename(dbname.c_str(), b.c_str());
-    std::string folder = "test";
-    //m->Create("StandardDatabase", dbname, folder);
-    m->Create("ExtendedDatabase", dbname, folder);
-  }
+  // Get the database 2
+  std::string dbname2 = args_info.inputs[1];
+  std::string folder = db1->GetDatabaseRelativeFolder();
+  DD(folder);
+  sfz::SynfrizzDatabase * db2 = static_cast<sfz::SynfrizzDatabase*>(m->Create("SynfrizzDatabase", dbname2, folder));
 
-
-  std::vector<std::string> args;
-  args.push_back("toto");
-  args.push_back("1");
-  args.push_back("77");
-  args.push_back("XYXYXYX");
-  args.push_back("2015-654-354");
+  std::string l = db1->GetListOfTableNames(); // order count !!
+  std::vector<std::string> table_names;
+  syd::GetWords(l, table_names);
+  DDS(table_names);
 
 
-  // With generic db
-  {
+  db1->CopyTable("Tag", db2);
+  //  db1->CopyTable("Patient", db2);
+  // db1->CopyTable("Radionuclide", db2);
+  // db1->CopyTable("File", db2);
+  // db1->CopyTable("Injection", db2);
+  // db1->CopyTable("DicomSerie", db2);
+  // db1->CopyTable("DicomFile", db2);
 
-    DD("------------------");
-    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
-    db->Dump(std::cout); // list of tables etc
+  // for(auto table_name:table_names) {
+  //   DD(table_name);
+  //   db1->CopyTable(table_name, db2);
+  //   // db1->Query(elements);
+  //   // DDS(elements);
+  //   // db2->Insert(elements);
+  // }
 
-    // Create a new record
-
-    // auto patient = db->NewPatient();
-    // DD(patient);
-    // db->Set(patient, args);
-    // DD(patient);
-    // db->Insert(patient);
-    // DD(patient);
-
-    // auto p = db->FindPatient("toto");
-    // DD(p);
-
-    // auto r = db->Find("Patient", 1);
-    // DD(r);
-
-    // try {
-    //   db->FindPatient("titi");
-    // }
-    // catch(std::exception & e) {
-    //   std::cout << "titi not found. " << e.what();
-    //    }
-
-    // DD("----------------");
-    // auto inj = db->NewRecord("Injection");
-    // DD(inj);
-    // //    inj->patient = record;
-    // args.clear();
-    // args.push_back("toto");
-    // args.push_back("1");
-    // args.push_back("bidon");
-    // DDS(args);
-    // db->Set(inj, args);
-    // //inj->Set(db, args); // same previous, but 'less' consistant
-    // DD(inj);
-    // db->InsertRecord(inj);
-    // DD(inj);
-
-
-    //    get sqldb try persist here
-    /*
-    auto s = db->GetSQLDatabase();
-    odb::transaction t (s->begin());
-    //  std::shared_ptr<syd::Record> a(new syd::Patient);
-    std::shared_ptr<syd::Record> a(syd::Patient::New());
-    //    syd::Record * a(syd::Patient::New());
-    DD(a);
-    s->persist(a);
-    //    db_->update(r);
-    t.commit();
-    DD(a);
-    */
-  }
 
 
   // This is the end, my friend.
