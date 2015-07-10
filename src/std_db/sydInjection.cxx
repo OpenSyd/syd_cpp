@@ -138,3 +138,31 @@ void syd::Injection::CopyFrom(const pointer p)
   activity_in_MBq = p->activity_in_MBq;
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Injection::Callback(odb::callback_event event, odb::database & db) const
+{
+  // DD("before");
+  syd::Record::Callback(event, db);
+  // DD("after");
+  // DD("Callback_const "+syd::ToString(event)+" "+GetTableName());
+  // if (event == odb::callback_event::pre_erase) {
+
+  // }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Injection::Callback(odb::callback_event event, odb::database & db)
+{
+  // DD("before");
+  syd::Record::Callback(event, db);
+  // DD("after");
+  // DD("Callback "+syd::ToString(event)+" "+GetTableName());
+  // if (event == odb::callback_event::pre_erase) {
+
+  // }
+}
+// --------------------------------------------------

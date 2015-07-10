@@ -32,6 +32,7 @@ namespace ext {
   class ExtendedDatabase: public syd::StandardDatabase {
 
   public:
+    virtual ~ExtendedDatabase() { }
 
   protected:
     /// Insert the tables

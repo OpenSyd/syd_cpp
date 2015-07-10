@@ -60,9 +60,10 @@ namespace syd {
 
   //--------------------------------------------------------------------
   // Static declaration To be include in main
-#define SYD_STATIC_INIT                                         \
-  syd::DatabaseManager * syd::DatabaseManager::singleton_;      \
-  syd::PluginManager * syd::PluginManager::singleton_;
+#define SYD_STATIC_INIT                                                 \
+  syd::DatabaseManager * syd::DatabaseManager::singleton_;              \
+  syd::PluginManager * syd::PluginManager::singleton_;                  \
+  std::map<odb::database *, syd::Database *> syd::Database::ListOfLoadedDatabases;
 
   //--------------------------------------------------------------------
   // To init tools with GGO, log and help

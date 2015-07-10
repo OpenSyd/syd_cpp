@@ -18,6 +18,7 @@
 
 // syd
 #include "sydRecord.h"
+#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
 syd::Record::Record()
@@ -69,3 +70,31 @@ void syd::Record::DumpInTable(const syd::Database * db,
   ta << id << ToString();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Record::Callback(odb::callback_event event, odb::database & db) const
+{
+  //DD("Callback_const "+syd::ToString(event)+" "+GetTableName());
+  if (event == odb::callback_event::pre_erase) {
+
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Record::Callback(odb::callback_event event, odb::database & d)
+{
+  //DD("Callback "+syd::ToString(event)+" "+GetTableName());
+  if (event == odb::callback_event::pre_load) {
+    //DD(" load db pointer ?"); //FIXME here
+    auto search = syd::Database::ListOfLoadedDatabases.find(&d);
+    if (search == syd::Database::ListOfLoadedDatabases.end()) {
+      LOG(FATAL) << "Error db not find FIXME";
+    }
+    //DD(search->second->GetFilename());
+    db_ = search->second;
+  }
+}
+// --------------------------------------------------

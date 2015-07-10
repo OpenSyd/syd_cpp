@@ -28,7 +28,7 @@ namespace syd {
 
   class InjectionStat;
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Injection")
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Injection") callback(Callback)
   /// Store information about a radionuclide injection (date, etc).
   class Injection : public syd::Record {
   public:
@@ -52,6 +52,9 @@ namespace syd {
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Injection);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Injection);
     // ------------------------------------------------------------------------
+
+    virtual void Callback(odb::callback_event, odb::database&) const;
+    virtual void Callback(odb::callback_event, odb::database&);
 
   protected:
     Injection();

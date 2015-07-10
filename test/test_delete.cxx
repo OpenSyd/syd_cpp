@@ -64,6 +64,8 @@ int main(int argc, char* argv[])
     insert_dicoms(db, inj, "dicom");
     db->Dump("DicomSerie");
   }
+  exit(0);
+
 
   //----------------------------------------------------------------
   std::cout << std::endl << std::endl;

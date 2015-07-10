@@ -34,7 +34,7 @@ namespace syd {
   struct RecordStat;
 
   /// Base class for all record (or element, or row) in a table
-#pragma db object abstract pointer(std::shared_ptr)
+#pragma db object abstract pointer(std::shared_ptr)  callback(Callback)
   class Record {
   public:
 
@@ -80,6 +80,10 @@ namespace syd {
     return os;
   }
 
+    virtual void Callback(odb::callback_event, odb::database&) const;
+    virtual void Callback(odb::callback_event, odb::database&);
+
+
   protected:
     /// This default constructor allow to oblige class that inherit
     /// from Record to not have default constructor
@@ -93,6 +97,9 @@ namespace syd {
     /// to avoid use with generic pointer)
     virtual bool IsEqual(const pointer p) const;
 
+    /// This field will store a pointer to the db and is not save in the db (transient)
+#pragma db transient
+    syd::Database * db_;
 
   }; // end of class
 

@@ -253,6 +253,7 @@ void syd::Image::UpdateFile(syd::Database * db,
 // --------------------------------------------------
 void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 {
+  syd::Record::Callback(event,db);
   if (event == odb::callback_event::pre_erase) {
     for(auto f:files) db.erase(f);
   }
@@ -263,6 +264,7 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 // --------------------------------------------------
 void syd::Image::Callback(odb::callback_event event, odb::database & db)
 {
+  syd::Record::Callback(event,db);
   if (event == odb::callback_event::pre_erase) {
     for(auto f:files) db.erase(f);
   }

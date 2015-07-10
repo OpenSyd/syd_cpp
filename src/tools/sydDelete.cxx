@@ -62,7 +62,6 @@ int main(int argc, char* argv[])
     try {
       syd::Record::vector v;
       db->Query(v, tablename, ids);
-      DD("before delete");
       db->Delete(v);
       n = v.size();
     }

@@ -105,6 +105,7 @@ void syd::DicomFile::DumpInTable(const syd::Database * d, syd::PrintTable & ta, 
 // --------------------------------------------------
 void syd::DicomFile::Callback(odb::callback_event event, odb::database & db) const
 {
+  syd::Record::Callback(event, db);
   if (event == odb::callback_event::pre_erase) {
     db.erase(file);
   }
@@ -115,6 +116,7 @@ void syd::DicomFile::Callback(odb::callback_event event, odb::database & db) con
 // --------------------------------------------------
 void syd::DicomFile::Callback(odb::callback_event event, odb::database & db)
 {
+  syd::Record::Callback(event, db);
   if (event == odb::callback_event::pre_erase) {
     db.erase(file);
   }

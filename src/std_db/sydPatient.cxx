@@ -164,3 +164,19 @@ void syd::Patient::Sort(syd::Patient::vector & v, const std::string & type)
             [v](pointer a, pointer b) { return a->study_id < b->study_id; });
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Patient::Callback(odb::callback_event event, odb::database & db) const
+{
+  syd::Record::Callback(event,db);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Patient::Callback(odb::callback_event event, odb::database & db)
+{
+  syd::Record::Callback(event,db);
+}
+// --------------------------------------------------

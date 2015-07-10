@@ -37,28 +37,35 @@ syd::Database::Database()
 
 
 // --------------------------------------------------------------------
+syd::Database::~Database()
+{
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Database::Read(std::string filename)
 {
   filename_ = filename;
   // Open the DB
   LOG(5) << "Opening database '" << filename_ << "'.";
   try {
-    //    db_ = std::unique_ptr<odb::sqlite::database>(new odb::sqlite::database(filename_));
-    db_ = new odb::sqlite::database(filename_, SQLITE_OPEN_READWRITE, true); // true = foreign_keys
-    // odb::connection_ptr c(db_->connection());
+    //    odb_db_ = std::unique_ptr<odb::sqlite::database>(new odb::sqlite::database(filename_));
+    odb_db_ = new odb::sqlite::database(filename_, SQLITE_OPEN_READWRITE, true); // true = foreign_keys
+    // odb::connection_ptr c(odb_db_->connection());
     // c->execute("PRAGMA foreign_keys=ON;");
   }
   catch (const odb::exception& e) {
     EXCEPTION("Cannot open db '" << filename_ << "' : " << e.what());
   }
 
-  // Set the folder by reading the 'folder' value in the db_info table.
+  // Set the folder by reading the 'folder' value in the odb_db_info table.
   try {
-    odb::transaction transaction (db_->begin());
+    odb::transaction transaction (odb_db_->begin());
     typedef odb::query<syd::DatabaseInformation> query;
     typedef odb::result<syd::DatabaseInformation> result;
     query q;
-    result r (db_->query<syd::DatabaseInformation>(q));
+    result r (odb_db_->query<syd::DatabaseInformation>(q));
     syd::DatabaseInformation s;
     r.begin().load(s);
     relative_folder_ = s.folder;
@@ -80,12 +87,15 @@ void syd::Database::Read(std::string filename)
   }
 
   // Install tracer
-  odb::sqlite::connection_ptr c (db_->connection ());
+  odb::sqlite::connection_ptr c (odb_db_->connection ());
   sqlite3* handle (c->handle ());
   sqlite3_trace (handle, trace_callback, this);
 
   // Define the tables
   CreateTables();
+
+  // Register to the loaded database
+  ListOfLoadedDatabases[odb_db_] = this;
 }
 // --------------------------------------------------------------------
 
@@ -107,7 +117,7 @@ void syd::Database::Dump(std::ostream & os) const
 {
   os << "Database schema: " << GetDatabaseSchema() << std::endl;
   os << "Database folder: " << GetDatabaseRelativeFolder() << std::endl;
-  for(auto i=map.begin(); i != map.end(); i++) {
+  for(auto i=map_.begin(); i != map_.end(); i++) {
     int n = GetNumberOfElements(i->first);
     os << "Table: " << std::setw(15) << i->first << " " <<  std::setw(10) << n;
     if (n>1) os << " elements" << std::endl;
@@ -169,8 +179,8 @@ syd::TableBase * syd::Database::GetTable(const std::string & table_name) const
 {
   std::string str=table_name;
   std::transform(str.begin(), str.end(),str.begin(), ::tolower);
-  auto it = map_lowercase.find(str);
-  if (it == map_lowercase.end()) {
+  auto it = map_lowercase_.find(str);
+  if (it == map_lowercase_.end()) {
     EXCEPTION("Cannot find the table '" << table_name << "'." << std::endl
               << "Existing tables are: " << GetListOfTableNames());
   }
@@ -183,7 +193,7 @@ syd::TableBase * syd::Database::GetTable(const std::string & table_name) const
 std::string syd::Database::GetListOfTableNames() const
 {
   std::stringstream os;
-  for(auto i = map.begin(); i!=map.end(); i++) {
+  for(auto i = map_.begin(); i!=map_.end(); i++) {
     os << i->first << " ";
   }
   return os.str();

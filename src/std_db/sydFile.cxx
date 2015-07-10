@@ -160,6 +160,7 @@ void syd::File::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const
 // --------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db) const
 {
+  syd::Record::Callback(event,db);
   if (event == odb::callback_event::pre_erase) {
     EraseAssociatedFile();
   }
@@ -170,6 +171,7 @@ void syd::File::Callback(odb::callback_event event, odb::database & db) const
 // --------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db)
 {
+  syd::Record::Callback(event,db);
   if (event == odb::callback_event::pre_erase) {
     EraseAssociatedFile();
   }
@@ -180,11 +182,10 @@ void syd::File::Callback(odb::callback_event event, odb::database & db)
 // --------------------------------------------------
 void syd::File::EraseAssociatedFile() const
 {
-  // std::cout << "TODO File erase " << filename << std::endl;
-  std::string p = path+PATH_SEPARATOR+filename;
-  DD(p);
-  // if (std::remove(f.c_str()) != 0) {
-  //   // LOG(WARNING) << "Could not delete the file " << f;
-  // }
+  //  syd::StandardDatabase * db = static_cast<syd::StandardDatabase*>(db_);
+  std::string p = db_->ConvertToAbsolutePath(path+PATH_SEPARATOR+filename);
+  if (std::remove(p.c_str()) != 0) {
+    LOG(WARNING) << "Could not delete the file " << p;
+  }
 }
 // --------------------------------------------------

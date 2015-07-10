@@ -51,6 +51,8 @@ namespace syd {
 
   public:
 
+    virtual ~Database();
+
     /// Type of a generic record (pointer)
     typedef syd::Record::pointer generic_record_pointer;
 
@@ -235,6 +237,10 @@ namespace syd {
     /// Get the number of elements in the table, knowing the type
     template<class RecordType>
     long GetNumberOfElements() const;
+
+
+    static std::map<odb::database *, syd::Database *> ListOfLoadedDatabases;
+
     // ----------------------------------------------------------------------------------
     protected:
     // Create an empty database
@@ -254,17 +260,17 @@ namespace syd {
     typedef std::map<std::string, TableBase*> MapOfTablesType;
 
     /// Map that contains the association between names and tables
-    MapOfTablesType map;
+    MapOfTablesType map_;
 
     /// Copy of the map with the table name in lowercase (for comparison)
-    MapOfTablesType map_lowercase;
+    MapOfTablesType map_lowercase_;
 
     /// Return the map that contains the association between names and tables
-    MapOfTablesType & GetMapOfTables() { return map; }
+    MapOfTablesType & GetMapOfTables() { return map_; }
 
     /// The sqlite database
     //std::unique_ptr<odb::sqlite::database> db_;
-    odb::sqlite::database * db_;
+    odb::sqlite::database * odb_db_;
 
     /// Filename of the db
     std::string filename_;

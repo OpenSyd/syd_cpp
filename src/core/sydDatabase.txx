@@ -78,8 +78,8 @@ template<class RecordType>
 void syd::Database::Insert(std::vector<std::shared_ptr<RecordType>> records)
 {
   try {
-    odb::transaction t (db_->begin());
-    for(auto record:records) db_->persist(*record);
+    odb::transaction t (odb_db_->begin());
+    for(auto record:records) odb_db_->persist(*record);
     t.commit();
   }
   catch (const odb::exception& e) {
@@ -109,8 +109,8 @@ template<class RecordType>
 void syd::Database::Update(std::vector<std::shared_ptr<RecordType>> records)
 {
   try {
-    odb::transaction t (db_->begin());
-    for(auto record:records) db_->update(*record);
+    odb::transaction t (odb_db_->begin());
+    for(auto record:records) odb_db_->update(*record);
     t.commit();
   }
   catch (const odb::exception& e) {
@@ -129,20 +129,20 @@ template<class RecordType>
 void syd::Database::AddTable()
 {
   // No exception handling here, fatal error if fail.
-  if (db_ == NULL) {
+  if (odb_db_ == NULL) {
     LOG(FATAL) << "Could not AddTable, open a db before";
   }
   std::string tablename = RecordType::GetStaticTableName();
   std::string str = tablename;
   std::transform(str.begin(), str.end(),str.begin(), ::tolower);
-  auto it = map_lowercase.find(str);
-  if (it != map_lowercase.end()) {
+  auto it = map_lowercase_.find(str);
+  if (it != map_lowercase_.end()) {
     LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
                << "' already exist.";
   }
   auto * t = new Table<RecordType>(this);
-  map[tablename] = t;
-  map_lowercase[str] = t;
+  map_[tablename] = t;
+  map_lowercase_[str] = t;
 }
 // --------------------------------------------------------------------
 
@@ -153,10 +153,10 @@ void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
                              const odb::query<RecordType> & q) const
 {
   try {
-    odb::transaction transaction (db_->begin());
+    odb::transaction transaction (odb_db_->begin());
     typename RecordType::pointer r;
     New(r);
-    db_->query_one(q, *r);
+    odb_db_->query_one(q, *r);
     if (r.get() == 0) {
       EXCEPTION("No matching record in QueryOne(q) for the table '"
                 << RecordType::GetStaticTableName()
@@ -180,9 +180,9 @@ template<class RecordType>
 void syd::Database::QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const
 {
   try {
-    odb::transaction transaction (db_->begin());
+    odb::transaction transaction (odb_db_->begin());
     typename RecordType::pointer s;
-    s = db_->load<RecordType>(id);
+    s = odb_db_->load<RecordType>(id);
     record = s;
     transaction.commit();
   }
@@ -202,9 +202,9 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
                           const odb::query<RecordType> & q) const
 {
   try {
-    odb::transaction transaction (db_->begin());
+    odb::transaction transaction (odb_db_->begin());
     typedef odb::result<RecordType> result;
-    result r(db_->query<RecordType>(q));
+    result r(odb_db_->query<RecordType>(q));
     for(auto i = r.begin(); i != r.end(); i++) {
       typename RecordType::pointer s;
       s = i.load();
@@ -305,8 +305,8 @@ template<class RecordType>
 void syd::Database::Delete(std::shared_ptr<RecordType> record)
 {
   try {
-    odb::transaction t (db_->begin());
-    db_->erase(record);
+    odb::transaction t (odb_db_->begin());
+    odb_db_->erase(record);
     t.commit();
   }
   catch (const odb::exception& e) {
@@ -325,8 +325,8 @@ template<class RecordType>
 void syd::Database::Delete(std::vector<std::shared_ptr<RecordType>> & records)
 {
   try {
-    odb::transaction t (db_->begin());
-    for(auto r:records) db_->erase(r);
+    odb::transaction t (odb_db_->begin());
+    for(auto r:records) odb_db_->erase(r);
     t.commit();
   }
   catch (const odb::exception& e) {
