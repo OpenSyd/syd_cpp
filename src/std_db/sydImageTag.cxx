@@ -49,7 +49,6 @@ int main(int argc, char* argv[])
   std::string tagname = args_info.inputs[2];
   syd::Tag::vector tags;
   db->FindTags(tags, tagname);
-  DDS(tags);
   if (tags.size() == 0) {
     LOG(1) << "No found tag from '" << tagname << "'";
     return EXIT_SUCCESS;
@@ -71,7 +70,6 @@ int main(int argc, char* argv[])
     if (action == "add") for(auto t:tags) i->AddTag(t);
     else for(auto t:tags) i->RemoveTag(t);
     LOG(1) << "Change tag for image " << i;
-    DD(i);
   }
   // Update the db
   if (images.size() > 0) db->Update(images);
