@@ -145,8 +145,9 @@ void syd::RoiMaskImage::Sort(syd::RoiMaskImage::vector & v, const std::string & 
 // --------------------------------------------------
 void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db) const
 {
-  if (event == odb::callback_event::pre_erase) {
-    image->Callback(event, db);
+  syd::Record::Callback(event,db);
+  // If it is asked to delete a RoiMaskImage, we also delete the image at the end
+  if (event == odb::callback_event::post_erase) {
     db.erase(image);
   }
 }
@@ -156,9 +157,6 @@ void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db) 
 // --------------------------------------------------
 void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db)
 {
-  if (event == odb::callback_event::pre_erase) {
-    image->Callback(event, db);
-    db.erase(image);
-  }
+  syd::Record::Callback(event,db);
 }
 // --------------------------------------------------
