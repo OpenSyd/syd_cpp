@@ -72,9 +72,9 @@ int main(int argc, char* argv[])
                  << " (foreign key constraint).";
     }
   }
-  if (n== 0) LOG(1) << "No images has been deleted";
-  if (n== 1) LOG(1) << "One image has been deleted";
-  if (n>1)   LOG(1) << n << " images has been deleted.";
+  if (n== 0) { LOG(1) << "No images has been deleted"; }
+  if (n== 1) { LOG(1) << "One image has been deleted"; }
+  if (n>1)   { LOG(1) << n << " images has been deleted."; }
 
   // This is the end, my friend.
 }
