@@ -20,9 +20,8 @@
 #include "sydCropImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydImageBuilder.h"
-//#include "sydTableRoiMaskImage.h"
-//#include "sydTableRoiType.h"
+#include "sydStandardDatabase.h"
+#include "sydCropImageBuilder.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -45,37 +44,49 @@ int main(int argc, char* argv[])
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
   for(auto i=1; i<args_info.inputs_num; i++) ids.push_back(atoi(args_info.inputs[i]));
+  if (ids.size() == 0) return EXIT_SUCCESS;
 
   // Option like or threshold
   double t = args_info.threshold_arg;
-  syd::Image like;
+  syd::Image::pointer like;
   if (args_info.like_given) {
-    like = db->QueryOne<syd::Image>(args_info.like_arg);
+    db->QueryOne(like, args_info.like_arg);
   }
 
   // Crop
-  syd::ImageBuilder b(db);
-  for(auto id:ids) {
-    syd::Image image = db->QueryOne<syd::Image>(id);
-    if (args_info.like_given) b.CropImageLike(image, like);
-    else if (args_info.threshold_given) b.CropImageWithThreshold(image, t);
+  syd::Image::vector images;
+  db->Query(images, ids);
+  if (images.size() == 0) {
+    LOG(1) << "No image to crop";
+  }
+
+  syd::CropImageBuilder b(db);
+  for(auto image:images) {
+    auto size = image->size;
+    //b.CropImageLike(image, like, false);
+    if (args_info.like_given) b.CropImageLike(image, like, args_info.force_flag);
     else {
-      // Try to find the body of this image
-      syd::RoiType body;
-      FindRoiType(body, db, "body");
-      try {
-        syd::RoiMaskImage mask;
-        syd::FindRoiMaskImage(mask, db, *image.patient, body, *image.dicoms[0]);
-        LOG(1) << "Find 'body' mask for the image: " << mask;
-        b.CropImageLike(image, *mask.image);
-      } catch (std::exception & e) {
-        LOG(WARNING) << "Could not crop the image: " << image
-                     << std::endl << "Error is: " << e.what();
-        continue; // (skip log)
+      if (args_info.threshold_given) b.CropImageWithThreshold(image, t);
+      else {
+        if (image->dicoms.size() == 0) {
+          LOG(WARNING) << "No associated dicom for this image, no --like nor -t given, I do nothing";
+        }
+        // Try to find the body of this image
+        syd::RoiType::pointer body = db->FindRoiType("body");
+        try {
+          auto mask = db->FindRoiMaskImage(body, image->dicoms[0]);
+          LOG(1) << "Find 'body' mask for the image: " << mask;
+          b.CropImageLike(image, mask->image, args_info.force_flag);
+        } catch (std::exception & e) {
+          LOG(WARNING) << "Could not crop the image: " << image
+                       << std::endl << "Error is: " << e.what();
+          continue; // (skip log)
+        }
       }
     }
-    LOG(1) << "Image cropped: " << image;
+    LOG(1) << "Image cropped: " << image << " (initial size was " << syd::ArrayToString<int,3>(size) << ")";
   }
+
 
   // This is the end, my friend.
 }
