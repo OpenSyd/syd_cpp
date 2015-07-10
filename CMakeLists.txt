@@ -65,7 +65,7 @@ SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 
 #----------------------------------------------------------
 SET(SYD_VERSION_MAJOR "0")
-SET(SYD_VERSION_MINOR "1")
+SET(SYD_VERSION_MINOR "2")
 SET(SYD_VERSION_PATCH "0")
 #----------------------------------------------------------
 
