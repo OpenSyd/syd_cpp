@@ -6,15 +6,26 @@ wrap_odb(sydCore sydDatabaseInformation.h)
 wrap_odb(sydCore sydDatabaseSchemaName.h)
 wrap_odb(sydCore sydRecord.h)
 
-add_library(sydCommonSchema SHARED
-  sydDatabaseSchemaName-odb.cxx
-  sydDatabaseInformation-odb.cxx
-  sydRecord-odb.cxx sydRecord.cxx
-  sydLog.cxx
-  sydPrintTable.cxx # needed in sydRecord
-  sydDatabaseInformation.cxx)
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  message(STATUS "Clang compiler found (special case for static external in shared library)")
+  add_library(sydCommonSchema
+    sydDatabaseSchemaName-odb.cxx
+    sydDatabaseInformation-odb.cxx
+    sydRecord-odb.cxx sydRecord.cxx
+    sydLog.cxx
+    sydStatic.cxx # with clang on osx (apple), needed for static member def
+    sydPrintTable.cxx # needed in sydRecord
+    sydDatabaseInformation.cxx)
+else()
+  add_library(sydCommonSchema
+    sydDatabaseSchemaName-odb.cxx
+    sydDatabaseInformation-odb.cxx
+    sydRecord-odb.cxx sydRecord.cxx
+    sydLog.cxx
+    sydPrintTable.cxx # needed in sydRecord
+    sydDatabaseInformation.cxx)
+endif()
 
-# needed for clang osx
 target_link_libraries(sydCommonSchema
   ${DCMTK_LIBRARIES}
   odb-sqlite odb sqlite3 z
