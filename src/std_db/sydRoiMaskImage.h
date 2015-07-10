@@ -31,8 +31,8 @@ namespace syd {
   class RoiMaskImage : public syd::Record {
   public:
 
-#pragma db not_null on_delete(cascade)
-    /// Foreign key, it must exist in the Image table. If the image is deleted, the RoiMaskImage also.
+#pragma db not_null
+    /// Foreign key, it must exist in the Image table.
     syd::Image::pointer image;
 
 #pragma db not_null

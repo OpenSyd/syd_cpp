@@ -42,7 +42,6 @@ add_library(sydStandardDatabase SHARED
   sydImageFromDicomBuilder.cxx
   sydStitchDicomImageBuilder.cxx
   sydRoiMaskImageBuilder.cxx
-  sydCropImageBuilder.cxx
 
   # #  sydTimepointBuilder.cxx
 #   sydImageBuilder.cxx
@@ -87,10 +86,10 @@ wrap_ggo(sydStitchDicom sydStitchDicom.ggo)
 add_executable(sydStitchDicom sydStitchDicom.cxx sydStitchDicom_ggo.c)
 target_link_libraries(sydStitchDicom sydStandardDatabase)
 
-# Reduce the size of an image by cropping it (with a mask or with a threshold)
-wrap_ggo(sydCropImage sydCropImage.ggo)
-add_executable(sydCropImage sydCropImage.cxx sydCropImage_ggo.c)
-target_link_libraries(sydCropImage sydStandardDatabase)
+# # Reduce the size of an image by cropping it (with a mask or with a threshold)
+# wrap_ggo(sydCropImage sydCropImage.ggo)
+# add_executable(sydCropImage sydCropImage.cxx sydCropImage_ggo.c)
+# target_link_libraries(sydCropImage sydStandardDatabase)
 
 # Change tag
 wrap_ggo(sydImageTag sydImageTag.ggo)

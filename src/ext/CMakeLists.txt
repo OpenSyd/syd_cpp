@@ -14,7 +14,7 @@ add_library(extExtendedDatabase SHARED
   extPatient-odb.cxx extPatient.cxx
   )
 
-target_link_libraries(extExtendedDatabase ${SYD_LIBRARIES})
+target_link_libraries(extExtendedDatabase sydStandardDatabase  ${SYD_CORE_LIBRARIES})
 
 # Not really a tool, for debug only
 # wrap_ggo(sydTest sydTest.ggo)
