@@ -55,16 +55,13 @@ namespace syd {
     void FindTags(syd::Tag::vector & tags, const std::string & names) const;
     syd::Tag::pointer FindOrInsertTag(const std::string & label, const std::string & description);
     syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
+    syd::RoiMaskImage::pointer FindRoiMaskImage(const syd::RoiType::pointer roitype,
+                                                const syd::DicomSerie::pointer dicom) const;
 
     std::string GetAbsolutePath(const syd::Image::pointer image) const;
     std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
     std::string GetAbsolutePath(const syd::File::pointer file) const;
 
-
-    // template<class RecordType>
-    // void Sort(std::vector<std::shared_ptr<RecordType>> & records, const std::string & type="") const;
-    // template<>
-    // void Sort(std::vector<std::shared_ptr<syd::Patient>> & records, const std::string & type="") const;
 
     template<class PixelType>
     typename itk::Image<PixelType,3>::Pointer

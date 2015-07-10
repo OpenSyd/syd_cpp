@@ -118,6 +118,44 @@ syd::RoiType::pointer syd::StandardDatabase::FindRoiType(const std::string & roi
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+syd::RoiMaskImage::pointer
+syd::StandardDatabase::FindRoiMaskImage(const syd::RoiType::pointer roitype,
+                                        const syd::DicomSerie::pointer dicom) const
+{
+  syd::Patient::pointer patient = dicom->patient;
+
+  // Get all mask for this patient and this roitype
+  syd::RoiMaskImage::vector masks;
+  odb::query<RoiMaskImage> q = odb::query<RoiMaskImage>::image->patient == patient->id and
+    odb::query<RoiMaskImage>::roitype == roitype->id;
+  Query(masks, q);
+
+  // Select the one associated with the dicom
+  bool found = false;
+  syd::RoiMaskImage::vector results;
+  for(auto m:masks) {
+    if (m->image->dicoms.size() != 1) {
+      LOG(WARNING) << "Warning the image of this mask does not have a single dicom (ignoring): " << m;
+      continue;
+    }
+    if (dicom->dicom_frame_of_reference_uid == m->image->dicoms[0]->dicom_frame_of_reference_uid)
+      results.push_back(m);
+  }
+  if (results.size() == 0) {
+    EXCEPTION("No RoiMaskImage found for " << patient->name << " " << roitype->name
+              << ", with dicom " << dicom->id << " frame_of_reference_uid = " << dicom->dicom_frame_of_reference_uid);
+  }
+  if (results.size() > 1) {
+    std::string s;
+    for(auto r:results) s += "\n"+r->ToString();
+    EXCEPTION("Several RoiMaskImage found for " << patient->name << ", " << roitype->name
+              << ", dicom " << dicom->id << ", frame_of_reference_uid = " << dicom->dicom_frame_of_reference_uid
+              << s;);
+  }
+  return results[0];
+}
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
