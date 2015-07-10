@@ -108,6 +108,19 @@ syd::Tag::pointer syd::StandardDatabase::FindOrInsertTag(const std::string & lab
 
 
 // --------------------------------------------------------------------
+syd::RoiType::pointer syd::StandardDatabase::FindRoiType(const std::string & roiname) const
+{
+  syd::RoiType::pointer r;
+  odb::query<syd::RoiType> q = odb::query<RoiType>::name == roiname;
+  QueryOne(r, q);
+  return r;
+}
+// --------------------------------------------------------------------
+
+
+
+
+// --------------------------------------------------------------------
 std::string syd::StandardDatabase::GetAbsolutePath(const syd::Image::pointer image) const
 {
   if (image->files.size() == 0) return "unset_file";

@@ -154,9 +154,7 @@ void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
 {
   try {
     odb::transaction transaction (odb_db_->begin());
-    typename RecordType::pointer r;
-    New(r);
-    odb_db_->query_one(q, *r);
+    typename RecordType::pointer r(odb_db_->query_one<RecordType>(q));
     if (r.get() == 0) {
       EXCEPTION("No matching record in QueryOne(q) for the table '"
                 << RecordType::GetStaticTableName()
@@ -285,7 +283,7 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records, con
 {
   if (records.size() == 0) return;
   DD("Default SORT, do nothing");
-  //  records[0]->Sort(records, order);
+  //records[0]->Sort(records, order);
 }
 // --------------------------------------------------------------------
 

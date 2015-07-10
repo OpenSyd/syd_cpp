@@ -47,6 +47,9 @@ namespace syd {
 
     virtual void Sort(vector & v, const std::string & order);
 
+    /// Standard folder
+    virtual std::string ComputeRelativeFolder() const;
+
     /// Callback : delete the associated image when the roimaskimage is deleted.
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);

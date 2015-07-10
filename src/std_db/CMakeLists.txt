@@ -41,6 +41,7 @@ add_library(sydStandardDatabase SHARED
 
   sydImageFromDicomBuilder.cxx
   sydStitchDicomImageBuilder.cxx
+  sydRoiMaskImageBuilder.cxx
 
   # #  sydTimepointBuilder.cxx
 #   sydImageBuilder.cxx
@@ -113,11 +114,11 @@ target_link_libraries(sydImageTag sydStandardDatabase)
 #----------------------------------------------------------
 
 
-# #----------------------------------------------------------
-# # External tool: clitkExtractPatient
-# wrap_ggo(syd_clitkExtractPatient syd_clitkExtractPatient.ggo)
-# add_executable(syd_clitkExtractPatient syd_clitkExtractPatient.cxx syd_clitkExtractPatient_ggo.c)
-# target_link_libraries(syd_clitkExtractPatient sydStandardDatabase)
+#----------------------------------------------------------
+# External tool: clitkExtractPatient
+wrap_ggo(syd_clitkExtractPatient syd_clitkExtractPatient.ggo)
+add_executable(syd_clitkExtractPatient syd_clitkExtractPatient.cxx syd_clitkExtractPatient_ggo.c)
+target_link_libraries(syd_clitkExtractPatient sydStandardDatabase)
 
 
 # #----------------------------------------------------------

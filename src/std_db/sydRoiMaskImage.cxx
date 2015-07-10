@@ -47,6 +47,12 @@ std::string syd::RoiMaskImage::ToString() const
 
 
 // --------------------------------------------------
+std::string syd::RoiMaskImage::ComputeRelativeFolder() const
+{
+  return image->ComputeRelativeFolder()+PATH_SEPARATOR+"roi";
+}
+// --------------------------------------------------
+// --------------------------------------------------
 void syd::RoiMaskImage::CopyFrom(const pointer p)
 {
   syd::Record::CopyFrom(p);

@@ -20,8 +20,7 @@
 #include "syd_clitkExtractPatient_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydImageBuilder.h"
-#include "sydTableRoiType.h"
+#include "sydRoiMaskImageBuilder.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -45,10 +44,13 @@ int main(int argc, char* argv[])
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
   for(auto i=1; i<args_info.inputs_num; i++) ids.push_back(atoi(args_info.inputs[i]));
 
+  syd::RoiType::pointer roitype = db->FindRoiType("body");
+
   // Loop on ids
-  for(auto id:ids) {
-    syd::Image image = db->QueryOne<syd::Image>(id);
-    if (image.dicoms.size() == 0) {
+  syd::Image::vector images;
+  db->Query(images, ids);
+  for(auto image:images) {
+    if (image->dicoms.size() == 0) {
       LOG(FATAL) << "Error, not dicom associated with this image: " << image;
     }
 
@@ -61,7 +63,7 @@ int main(int argc, char* argv[])
     // Create command line
     std::ostringstream cmd;
     cmd << "clitkExtractPatient "
-        << " -i " << GetAbsolutePath(db, image)
+        << " -i " << db->GetAbsolutePath(image)
         << " -o " << mhd_filename
         << " " << args_info.options_arg;
     LOG(1) << "Executing: " << std::endl << cmd.str();
@@ -92,12 +94,10 @@ int main(int argc, char* argv[])
     }
 
     // Create the mask image
-    syd::RoiType roitype;
-    syd::FindRoiType(roitype, db, "body");
-    syd::DicomSerie dicom = *image.dicoms[0];
-    syd::ImageBuilder b(db);
+    syd::DicomSerie::pointer dicom = image->dicoms[0];
+    syd::RoiMaskImageBuilder b(db);
     try {
-      syd::RoiMaskImage mask = b.InsertRoiMaskImage(dicom, roitype, mhd_filename);
+      syd::RoiMaskImage::pointer mask = b.InsertRoiMaskImage(dicom, roitype, mhd_filename);
       LOG(1) << "Inserting RoiMaskImage " << mask;
     }
     catch(std::exception & e) {

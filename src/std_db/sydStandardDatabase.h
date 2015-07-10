@@ -54,6 +54,7 @@ namespace syd {
                                           const std::string & name_or_study_id) const;
     void FindTags(syd::Tag::vector & tags, const std::string & names) const;
     syd::Tag::pointer FindOrInsertTag(const std::string & label, const std::string & description);
+    syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
 
     std::string GetAbsolutePath(const syd::Image::pointer image) const;
     std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
