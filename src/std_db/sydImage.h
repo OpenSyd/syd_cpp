@@ -32,7 +32,7 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Image")
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Image") callback(Callback)
   /// Store information about a dicom image (serie). Element of table
   /// 'Image' stored in a db. Contains information about a dicom
   /// image.
@@ -46,7 +46,7 @@ namespace syd {
     /// Associated tags
     syd::Tag::vector tags;
 
-    /// List of associated files.
+    /// List of associated files (will be deleted when the image is deleted)
     syd::File::vector files;
 
     /// Dicoms that serve to compute this image (could be empty).
@@ -92,6 +92,13 @@ namespace syd {
 
     void UpdateFile(syd::Database * db, const std::string & filename,
                     const std::string & relativepath, bool deleteExistingFiles=false);
+
+    /// Callback : delete the associated files when the image is deleted.
+    void Callback(odb::callback_event, odb::database&) const;
+    void Callback(odb::callback_event, odb::database&);
+
+  protected:
+    Image();
 
   }; // end class
 // --------------------------------------------------------------------

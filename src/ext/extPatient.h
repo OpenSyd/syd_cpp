@@ -49,9 +49,8 @@ namespace ext {
     virtual void Callback(odb::callback_event, odb::database&) const;
     virtual void Callback(odb::callback_event, odb::database&);
 
-  // protected:
-  //   Patient(syd::Database * db);
-
+  protected:
+    Patient();
 
   }; // end of class
 }

@@ -134,3 +134,25 @@ void syd::RoiMaskImage::Sort(syd::RoiMaskImage::vector & v, const std::string & 
             });
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db) const
+{
+  if (event == odb::callback_event::pre_erase) {
+    image->Callback(event, db);
+    db.erase(image);
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db)
+{
+  if (event == odb::callback_event::pre_erase) {
+    image->Callback(event, db);
+    db.erase(image);
+  }
+}
+// --------------------------------------------------

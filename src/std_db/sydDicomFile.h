@@ -57,6 +57,9 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
+  protected:
+    DicomFile();
+
   }; // end class
 }
 // --------------------------------------------------------------------

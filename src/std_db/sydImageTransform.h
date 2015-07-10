@@ -64,6 +64,9 @@ namespace syd {
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(ImageTransform);
     // ------------------------------------------------------------------------
 
+  protected:
+    ImageTransform();
+
   }; // end class
 // --------------------------------------------------------------------
 

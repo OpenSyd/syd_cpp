@@ -53,6 +53,9 @@ namespace syd {
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Injection);
     // ------------------------------------------------------------------------
 
+  protected:
+    Injection();
+
   }; // end of class
 
 } // end of namespace

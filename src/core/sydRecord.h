@@ -103,7 +103,6 @@ namespace syd {
   friend class odb::access;                                             \
   virtual std::string GetTableName() const { return #TABLE_NAME; }      \
   static std::string GetStaticTableName() { return #TABLE_NAME; }       \
-  TABLE_NAME();                                                         \
   static pointer New() { return pointer(new TABLE_NAME); }              \
 
 #define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME)           \

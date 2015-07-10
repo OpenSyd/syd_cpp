@@ -248,3 +248,23 @@ void syd::Image::UpdateFile(syd::Database * db,
   }
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::Callback(odb::callback_event event, odb::database & db) const
+{
+  if (event == odb::callback_event::pre_erase) {
+    for(auto f:files) db.erase(f);
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::Callback(odb::callback_event event, odb::database & db)
+{
+  if (event == odb::callback_event::pre_erase) {
+    for(auto f:files) db.erase(f);
+  }
+}
+// --------------------------------------------------

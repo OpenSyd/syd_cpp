@@ -42,8 +42,8 @@ namespace syd {
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Radionuclide);
     // ------------------------------------------------------------------------
 
-  // protected:
-  //   Radionuclide(syd::Database * d);
+  protected:
+    Radionuclide();
 
   }; // end of class
 } // end of namespace

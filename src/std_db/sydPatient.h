@@ -63,6 +63,9 @@ namespace syd {
     virtual std::string ComputeRelativeFolder() const;
     virtual void Sort(vector & v, const std::string & order);
 
+  protected:
+    Patient();
+
   }; // end of class
 }
 // --------------------------------------------------------------------

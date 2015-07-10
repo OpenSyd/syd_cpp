@@ -99,6 +99,9 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
+  protected:
+    DicomSerie();
+
   }; // end class
 }
 // --------------------------------------------------------------------

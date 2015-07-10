@@ -180,6 +180,11 @@ void syd::File::Callback(odb::callback_event event, odb::database & db)
 // --------------------------------------------------
 void syd::File::EraseAssociatedFile() const
 {
-  std::cout << "TODO File erase " << filename << std::endl;
+  // std::cout << "TODO File erase " << filename << std::endl;
+  std::string p = path+PATH_SEPARATOR+filename;
+  DD(p);
+  // if (std::remove(f.c_str()) != 0) {
+  //   // LOG(WARNING) << "Could not delete the file " << f;
+  // }
 }
 // --------------------------------------------------
