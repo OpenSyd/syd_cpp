@@ -46,10 +46,12 @@ int main(int argc, char* argv[])
   // FIXME db->SetDeleteForceFlag(args_info.force_flag);
 
   // Get the list of ids
+  int n=0;
   if (args_info.inputs_num > 2 and args_info.inputs[2] == std::string("all")) {
     syd::Record::vector v;
     db->Query(v, tablename);
     db->Delete(v);
+    n = v.size();
   }
   else {
     std::vector<syd::IdType> ids;
@@ -58,14 +60,22 @@ int main(int argc, char* argv[])
       ids.push_back(atoi(args_info.inputs[i]));
     }
     try {
-      db->Delete(tablename, ids);
+      syd::Record::vector v;
+      db->Query(v, tablename, ids);
+      DD("before delete");
+      db->Delete(v);
+      n = v.size();
     }
     catch (std::exception & e) {
       LOG(FATAL) << "Cannot delete " << ids.size() << " elements of table "
                  << tablename
-                 << ". Probably because another table need them and should be deleted first.";
+                 << ". Probably because elements from another table need them and should be deleted first"
+                 << " (foreign key constraint).";
     }
   }
+  if (n== 0) LOG(1) << "No images has been deleted";
+  if (n== 1) LOG(1) << "One image has been deleted";
+  if (n>1)   LOG(1) << n << " images has been deleted.";
 
   // This is the end, my friend.
 }
