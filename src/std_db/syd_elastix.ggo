@@ -1,9 +1,13 @@
 #File syd_elastix.ggo
 
 package "syd_elastix"
-usage "syd_elastix <db> <todo>"
+usage "syd_elastix <db> <fixed_image> <moving_image> <config>"
 version "0.3"
-description "TODOP
+description "Parameters are:
+- <db>            : name of the database
+- <fixed_image>   : id of the fixed image
+- <moving_image>  : id of the moving image
+- <config>        : elastix config file
 "
 
 option "config"	  	 	-	"Config file"				      string  	no

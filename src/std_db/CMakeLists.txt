@@ -59,7 +59,7 @@ add_library(sydStandardDatabase SHARED
   # sydTableImageTransform.cxx
   )
 ## to declare dependencies
-target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})
+target_link_libraries(sydStandardDatabase  ${SYD_CORE_LIBRARIES})
 
 
 ##############################
@@ -122,8 +122,8 @@ add_executable(syd_clitkExtractPatient syd_clitkExtractPatient.cxx syd_clitkExtr
 target_link_libraries(syd_clitkExtractPatient sydStandardDatabase)
 
 
-# #----------------------------------------------------------
-# # External tool: elastix
-# wrap_ggo(syd_elastix syd_elastix.ggo)
-# add_executable(syd_elastix syd_elastix.cxx syd_elastix_ggo.c)
-# target_link_libraries(syd_elastix sydStandardDatabase)
+#----------------------------------------------------------
+# External tool: elastix
+wrap_ggo(syd_elastix syd_elastix.ggo)
+add_executable(syd_elastix syd_elastix.cxx syd_elastix_ggo.c)
+target_link_libraries(syd_elastix sydStandardDatabase )
