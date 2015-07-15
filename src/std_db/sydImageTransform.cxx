@@ -120,7 +120,7 @@ void syd::ImageTransform::DumpInTable(const syd::Database * d, syd::PrintTable &
      << fixed_image->patient->name
      << fixed_image->id
      << moving_image->id
-     << config_file->filename
+     << (config_file == NULL ? "unset":config_file->filename)
      << date;
 }
 // --------------------------------------------------

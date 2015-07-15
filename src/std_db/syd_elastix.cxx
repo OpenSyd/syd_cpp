@@ -68,16 +68,11 @@ int main(int argc, char* argv[])
   db->Insert(transfo); // insert to get id
   std::string f = syd::GetFilenameFromPath(config_file);
   std::string output_dir = transfo->ComputeRelativeFolder();
-  DD(f);
-  DD(output_dir);
   bool b = fs::create_directory(db->ConvertToAbsolutePath(output_dir));
   if (!b) {
     LOG(FATAL) << "Error while creating " << output_dir;
   }
-  DD("output done");
   transfo->config_file = db->InsertNewFile(config_file, f, output_dir, true); // copy
-  DD(transfo->config_file);
-  DD("here");
   transfo->transform_file = db->InsertNewFile("", "TransformParameters.0.txt", output_dir, false); // do not copy yet
 
   namespace pt = boost::posix_time;
@@ -86,20 +81,11 @@ int main(int argc, char* argv[])
   pt::time_facet*const ff = new pt::time_facet("%Y-%m-%d %H:%M:%S");
   msg.imbue(std::locale(msg.getloc(),ff));
   msg << now;
-  DD(msg.str());
   transfo->date = msg.str();
-
-  //  db->Update(transfo);
-
- //  transfo->date = syd::ToString(1900+timeinfo->tm_year)+"-"+
- //    timeinfo->tm_mon
- // "2015-04-01 10:00"
 
   // path
   std::string fixed_image_path = db->GetAbsolutePath(fixed_image);
   std::string moving_image_path = db->GetAbsolutePath(moving_image);
-
-  DD(output_dir);
 
   // Create command line
   std::ostringstream cmd;
@@ -117,13 +103,9 @@ int main(int argc, char* argv[])
      << cmd.str();
   os.close();
 
-  DD(fs::file_size(config_file));
-
   // Execute elastix
   LOG(1) << cmd.str();
   int r = syd::ExecuteCommandLine(cmd.str(), 2); // 2 is the log level
-
-  DD(r);
 
   if (r!=0) { // fail
     LOG(1) << "Command fail, removing temporary folder and table element";
@@ -132,22 +114,17 @@ int main(int argc, char* argv[])
 
   }
   else  {
-    DD("ok");
-    std::string res = db->GetAbsolutePath(transfo->transform_file);
-    DD(res);
+     std::string res = db->GetAbsolutePath(transfo->transform_file);
     if (!fs::exists(res)) {
       LOG(FATAL) << "Error could not find the file " << res;
       fs::remove_all(output_dir);
       db->Delete(transfo);
     }
-    db->Update(transfo);
-    DD(transfo);
+    else {
+      db->Update(transfo);
+      LOG(1) << "Registration computed. Result: " << transfo;
+    }
   }
-
-
-  // Update in the db
-  //  db->Update(transfo);
-  //  LOG(1) << "Registration computed. Result: " << transfo;
 
   // This is the end, my friend.
 }

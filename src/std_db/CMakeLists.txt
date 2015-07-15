@@ -127,3 +127,9 @@ target_link_libraries(syd_clitkExtractPatient sydStandardDatabase)
 wrap_ggo(syd_elastix syd_elastix.ggo)
 add_executable(syd_elastix syd_elastix.cxx syd_elastix_ggo.c)
 target_link_libraries(syd_elastix sydStandardDatabase )
+
+#----------------------------------------------------------
+# External tool: transformix
+wrap_ggo(syd_transformix syd_transformix.ggo)
+add_executable(syd_transformix syd_transformix.cxx syd_transformix_ggo.c)
+target_link_libraries(syd_transformix sydStandardDatabase )
