@@ -21,11 +21,12 @@
 
 // syd
 #include "sydRoiMaskImage.h"
+#include "sydFile.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::ImageTransform")
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::ImageTransform") callback(Callback)
   /// Store information about a geometrical transformation from one image space to another.
   class ImageTransform : public syd::Record {
   public:
@@ -61,8 +62,20 @@ namespace syd {
     // ------------------------------------------------------------------------
     TABLE_DEFINE(ImageTransform);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(ImageTransform);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(ImageTransform);
     // ------------------------------------------------------------------------
+
+
+    virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
+
+    virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+
+    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+
+    virtual void Callback(odb::callback_event, odb::database&) const;
+    virtual void Callback(odb::callback_event, odb::database&);
+
+    virtual std::string ComputeRelativeFolder() const;
+
 
   protected:
     ImageTransform();

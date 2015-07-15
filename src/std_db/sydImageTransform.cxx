@@ -18,7 +18,8 @@
 
 // syd
 #include "sydImageTransform.h"
-#include "sydDatabase.h"
+#include "sydStandardDatabase.h"
+#include "sydFile.h"
 
 // --------------------------------------------------------------------
 syd::ImageTransform::ImageTransform():Record()
@@ -97,7 +98,17 @@ void syd::ImageTransform::Set(const syd::Database * db, const std::vector<std::s
 // --------------------------------------------------
 void syd::ImageTransform::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
 {
-  LOG(FATAL) << "InitPrintTable ImageTransform not implemented";
+  if (format == "help") {
+    std::cout << "Available formats for table 'ImageTransform': " << std::endl
+              << "\tdefault: " << std::endl;
+    return;
+  }
+  ta.AddColumn("#id", 5);
+  ta.AddColumn("p", 7);
+  ta.AddColumn("fixed", 8);
+  ta.AddColumn("moving", 8);
+  ta.AddColumn("config", 40);
+  ta.AddColumn("date", 25);
 }
 // --------------------------------------------------
 
@@ -105,15 +116,43 @@ void syd::ImageTransform::InitPrintTable(const syd::Database * db, syd::PrintTab
 // --------------------------------------------------
 void syd::ImageTransform::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
 {
-  LOG(FATAL) << "InitPrintTable ImageTransform not implemented";
+  ta << id
+     << fixed_image->patient->name
+     << fixed_image->id
+     << moving_image->id
+     << config_file->filename
+     << date;
 }
 // --------------------------------------------------
 
 
+// --------------------------------------------------
+void syd::ImageTransform::Callback(odb::callback_event event, odb::database & db) const
+{
+  syd::Record::Callback(event, db);
+  if (event == odb::callback_event::post_erase) {
+    db.erase(config_file);
+    db.erase(transform_file);
+    std::string f = db_->ConvertToAbsolutePath(ComputeRelativeFolder());
+    fs::remove_all(f);
+  }
+}
+// --------------------------------------------------
+
 
 // --------------------------------------------------
-// std::string syd::ImageTransform::ComputeRelativeFolder() const
-// {
-//    LOG(FATAL) << "ComputeRelativeFolder ImageTransform not implemented";return "";
-// }
+void syd::ImageTransform::Callback(odb::callback_event event, odb::database & db)
+{
+  syd::Record::Callback(event, db);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+std::string syd::ImageTransform::ComputeRelativeFolder() const
+{
+  syd::Patient::pointer patient = fixed_image->patient;
+  std::string p = patient->ComputeRelativeFolder()+PATH_SEPARATOR+"transform"+PATH_SEPARATOR+syd::ToString(id);
+  return p;
+}
 // --------------------------------------------------
