@@ -271,7 +271,14 @@ void syd::Database::Grep(std::vector<std::shared_ptr<RecordType>> & output,
       found = s.find(p);
       if (found == std::string::npos) break; // not found
     }
-    if (found != std::string::npos) output.push_back(r);
+    if (found != std::string::npos) { // still ok, we continue
+      found = std::string::npos;
+      for(auto e:exclude) {
+        found = s.find(e);
+        if (found != std::string::npos) break; // found, we stop
+      }
+      if (found == std::string::npos) output.push_back(r);
+    }
   }
 }
 // --------------------------------------------------------------------
