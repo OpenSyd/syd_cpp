@@ -100,6 +100,7 @@ set(SYD_CORE_LIBRARIES
   sydCore
   sydCommonSchema
   odb-sqlite odb sqlite3 z
+  ${Boost_LIBRARIES}
   ${ITK_LIBRARIES})
 set(SYD_LIBRARIES
   sydStandardDatabase
