@@ -22,55 +22,55 @@
 // --------------------------------------------------------------------
 static int do_mkdir(const char *path, mode_t mode)
 {
-    typedef struct stat Stat;
-    Stat            st;
-    int             status = 0;
+  typedef struct stat Stat;
+  Stat            st;
+  int             status = 0;
 
-    if (stat(path, &st) != 0)
+  if (stat(path, &st) != 0)
     {
-        /* Directory does not exist. EEXIST for race condition */
-        if (mkdir(path, mode) != 0 && errno != EEXIST)
-            status = -1;
-    }
-    else if (!S_ISDIR(st.st_mode))
-    {
-        errno = ENOTDIR;
+      /* Directory does not exist. EEXIST for race condition */
+      if (mkdir(path, mode) != 0 && errno != EEXIST)
         status = -1;
     }
+  else if (!S_ISDIR(st.st_mode))
+    {
+      errno = ENOTDIR;
+      status = -1;
+    }
 
-    return(status);
+  return(status);
 }
 
 /**
-** mkpath - ensure all directories in path exist
-** Algorithm takes the pessimistic view and works top-down to ensure
-** each directory in path exists, rather than optimistically creating
-** the last element and working backwards.
-*/
+ ** mkpath - ensure all directories in path exist
+ ** Algorithm takes the pessimistic view and works top-down to ensure
+ ** each directory in path exists, rather than optimistically creating
+ ** the last element and working backwards.
+ */
 int mkpath(const char *path, mode_t mode)
 {
-    char           *pp;
-    char           *sp;
-    int             status;
-    char           *copypath = strdup(path);
+  char           *pp;
+  char           *sp;
+  int             status;
+  char           *copypath = strdup(path);
 
-    status = 0;
-    pp = copypath;
-    while (status == 0 && (sp = strchr(pp, '/')) != 0)
+  status = 0;
+  pp = copypath;
+  while (status == 0 && (sp = strchr(pp, '/')) != 0)
     {
-        if (sp != pp)
+      if (sp != pp)
         {
-            /* Neither root nor double slash in path */
-            *sp = '\0';
-            status = do_mkdir(copypath, mode);
-            *sp = '/';
+          /* Neither root nor double slash in path */
+          *sp = '\0';
+          status = do_mkdir(copypath, mode);
+          *sp = '/';
         }
-        pp = sp + 1;
+      pp = sp + 1;
     }
-    if (status == 0)
-        status = do_mkdir(path, mode);
-    free(copypath);
-    return (status);
+  if (status == 0)
+    status = do_mkdir(path, mode);
+  free(copypath);
+  return (status);
 }
 
 
@@ -88,10 +88,10 @@ void syd::CreateDirectory(std::string path)
     }
     else {
     LOG(WARNING) << "The folder " << path << " already exist.";
-  }
-  if (status != 0) {
-  EXCEPTION("Error while creating the folder " << path);
-  }
+    }
+    if (status != 0) {
+    EXCEPTION("Error while creating the folder " << path);
+    }
   */
   int status = mkpath(path.c_str(), 0777);
   if (status != 0) {
@@ -506,6 +506,20 @@ std::string syd::CreateTemporaryFile(const std::string & folder, const std::stri
     LOG(FATAL) << "Could not create temporary file: " << filename;
   }
   return std::string(filename);
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+std::string syd::CreateTemporaryDirectory(const std::string & folder)
+{
+  char foldername[512];
+  sprintf(foldername, "%s%c%s", folder.c_str(), PATH_SEPARATOR, "syd_temp_XXXXXX");
+  char * fd = mkdtemp(foldername);
+  if (fd == NULL) {
+    LOG(FATAL) << "Could not create temporary folder: " << foldername;
+  }
+  return std::string(fd);
 }
 //------------------------------------------------------------------
 
