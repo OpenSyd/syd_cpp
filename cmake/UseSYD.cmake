@@ -18,6 +18,12 @@ include(${ITK_USE_FILE})
 message(STATUS "ITK is found")
 
 #----------------------------------------------------------
+# Find Boost (required)
+find_package(Boost REQUIRED date_time system filesystem)
+include_directories( ${Boost_INCLUDE_DIR} )
+message(STATUS "Boost is found")
+
+#----------------------------------------------------------
 # Add include directories needed to use SYD.
 include_directories(BEFORE ${SYD_INCLUDE_DIRS})
 
