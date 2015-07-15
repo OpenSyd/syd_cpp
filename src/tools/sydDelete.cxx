@@ -69,12 +69,13 @@ int main(int argc, char* argv[])
       LOG(FATAL) << "Cannot delete " << ids.size() << " elements of table "
                  << tablename
                  << ". Probably because elements from another table need them and should be deleted first"
-                 << " (foreign key constraint).";
+                 << " (foreign key constraint). " << std::endl
+                 << e.what();
     }
   }
-  if (n== 0) { LOG(1) << "No images has been deleted"; }
-  if (n== 1) { LOG(1) << "One image has been deleted"; }
-  if (n>1)   { LOG(1) << n << " images has been deleted."; }
+  if (n== 0) { LOG(1) << "No elements has been deleted"; }
+  if (n== 1) { LOG(1) << "One element has been deleted"; }
+  if (n>1)   { LOG(1) << n << " elements has been deleted."; }
 
   // This is the end, my friend.
 }
