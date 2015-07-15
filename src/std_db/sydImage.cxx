@@ -170,6 +170,7 @@ void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, 
     ta.AddColumn("size", 12);
     ta.AddColumn("spacing", 25);
     ta.AddColumn("dicom_id", 15);
+    ta.AddColumn("date", 20);
   }
 }
 // --------------------------------------------------
@@ -192,6 +193,8 @@ void syd::Image::DumpInTable(const syd::Database * d, syd::PrintTable & ta, cons
      std::string dicom;
      for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
      ta << dicom;
+     if (dicoms.size() == 0) ta << "no_dicom";
+     else ta << dicoms[0]->acquisition_date;
    }
 }
 // --------------------------------------------------
