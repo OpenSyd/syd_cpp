@@ -184,15 +184,22 @@ std::string syd::StandardDatabase::GetAbsolutePath(const syd::File::pointer file
 // --------------------------------------------------------------------
 
 
-
-
-// --------------------------------------------------
-// template<>
-// void syd::StandardDatabase::Sort(std::vector<std::shared_ptr<syd::Patient>> & v, const std::string & type) const
-// {
-//   DD(" sort for patient");
-//   typedef std::shared_ptr<syd::Patient> pointer;
-//   std::sort(begin(v), end(v),
-//             [v](pointer a, pointer b) { return a->study_id < b->study_id; });
-// }
-// --------------------------------------------------
+// --------------------------------------------------------------------
+syd::File::pointer syd::StandardDatabase::InsertNewFile(std::string input_path,
+                                                        std::string filename,
+                                                        std::string path,
+                                                        bool copy)
+{
+  syd::File::pointer file;
+  New(file);
+  file->filename = filename;
+  file->path = path;
+  fs::path p = GetAbsolutePath(file);
+  if (fs::exists(p)) {
+    EXCEPTION("File '" << p << "' already exists (during InsertNewFile)");
+  }
+  if (copy) fs::copy_file(input_path, p);
+  Insert(file);
+  return file;
+}
+// --------------------------------------------------------------------
