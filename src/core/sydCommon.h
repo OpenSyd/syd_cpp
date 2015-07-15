@@ -44,6 +44,11 @@
 #include "sydDicomCommon.h" // needed for helpers functions (FileExists)
 #include "md5.h"
 
+// boost
+#define BOOST_NO_CXX11_SCOPED_ENUMS
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
+
 //--------------------------------------------------------------------
 using namespace sydlog;
 
@@ -97,6 +102,7 @@ namespace syd {
   bool EqualFiles(std::string in1, std::string in2);
   void CopyFile(std::string src, std::string dst);
   std::string CreateTemporaryFile(const std::string & folder, const std::string & extension);
+  std::string CreateTemporaryDirectory(const std::string & folder);
   //--------------------------------------------------------------------
 
 
