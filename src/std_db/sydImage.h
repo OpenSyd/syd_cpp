@@ -93,11 +93,6 @@ namespace syd {
     void UpdateFile(syd::Database * db, const std::string & filename,
                     const std::string & relativepath, bool deleteExistingFiles=false);
 
-    //    void CropLike(const syd::Image::pointer like, bool force=false);
-
-    // template<class PixelType>
-    // void CropLike(const syd::Image::pointer like);
-
     /// Callback : delete the associated files when the image is deleted.
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
@@ -107,8 +102,6 @@ namespace syd {
 
   }; // end class
 // --------------------------------------------------------------------
-
-//#include "sydImage.txx"
 
 } // end namespace
 // --------------------------------------------------------------------

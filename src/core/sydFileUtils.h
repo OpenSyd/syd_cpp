@@ -53,11 +53,6 @@ namespace syd {
   // fs::create_directories(path);
   // fs::exists(path);
 
-  //  bool FileExists(std::string filename);
-  //  bool DirExists(std::string folder);
-  // bool FolderExists(std::string folder);
-
-
   std::string GetExtension(const std::string filename);
   std::string GetFilenameFromPath(const std::string path);
   void ConvertToAbsolutePath(std::string & folder);
