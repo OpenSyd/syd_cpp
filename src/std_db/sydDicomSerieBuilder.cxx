@@ -77,7 +77,7 @@ namespace syd {
     OFString dirPrefix = "";
     OFBool recurse = OFTrue;
     size_t found=0;
-    if (DirExists(absolute_folder)) {
+    if (fs::exists(absolute_folder)) {
       found = OFStandard::searchDirectoryRecursively(absolute_folder.c_str(),
                                                      inputFiles, scanPattern,
                                                      dirPrefix, recurse);
@@ -379,7 +379,7 @@ namespace syd {
 
     std::string relative_folder = serie->ComputeRelativeFolder(); // FIXME
     std::string absolute_folder = db_->ConvertToAbsolutePath(relative_folder);
-    if (!FolderExists(absolute_folder)) CreateDirectory(absolute_folder);
+    if (!fs::exists(absolute_folder)) fs::create_directories(absolute_folder);
 
     file->path = relative_folder;
     files_to_copy.push_back(filename);
@@ -422,7 +422,7 @@ namespace syd {
     for(auto i=0; i<files_to_copy.size(); i++) {
       std::string f = GetFilenameFromPath(files_to_copy[i]);
       std::string destination = destination_folders[i]+PATH_SEPARATOR+f;
-      if (FileExists(destination)) {
+      if (fs::exists(destination)) {
         LOG(4) << "Destination file already exist, ignoring";
         nb_of_skip_copy++;
         continue;

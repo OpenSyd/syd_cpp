@@ -63,11 +63,11 @@ void syd::PluginManager::LoadInFolder(const std::string & folder)
   OFBool recurse = OFFalse;
   size_t found=0;
   OFList<OFString> inputFiles;
-  if (syd::DirExists(absolute_folder)) {
+  if (fs::exists(absolute_folder)) {
     found = OFStandard::searchDirectoryRecursively(absolute_folder.c_str(),
                                                    inputFiles, scanPattern,
                                                    dirPrefix, recurse);
-    }
+  }
   else {
     LOG(WARNING) << "(syd plugin) The directory " << absolute_folder << " in SYD_PLUGIN does not exist.";
   }

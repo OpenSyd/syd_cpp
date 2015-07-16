@@ -20,7 +20,6 @@
 #define SYDDATABASE_H
 
 // syd
-#include "sydCommon.h"
 #include "sydException.h"
 #include "sydDatabaseInformation-odb.hxx"
 #include "sydRecord-odb.hxx"

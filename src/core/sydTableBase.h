@@ -20,7 +20,9 @@
 #define SYDTABLEBASE_H
 
 // syd
-#include "sydCommon.h"
+#include "sydDD.h"
+#include "sydLog.h"
+//#include "sydCommon.h"
 //#include "sydRecord.h"
 //#include "sydDatabase.h"
 

@@ -18,6 +18,7 @@
 
 // syd
 #include "sydDatabase.h"
+#include "sydFileUtils.h"
 
 // --------------------------------------------------------------------
 // http://stackoverflow.com/questions/1607368/sql-query-logging-for-sqlite
@@ -82,7 +83,7 @@ void syd::Database::Read(std::string filename)
   database_path = GetPathFromFilename(database_path);
 
   absolute_folder_ = database_path+PATH_SEPARATOR+relative_folder_;
-  if (!syd::DirExists(absolute_folder_)) {
+  if (!fs::exists(absolute_folder_)) {
     EXCEPTION("The folder '" << absolute_folder_ << "' does not exist.");
   }
 

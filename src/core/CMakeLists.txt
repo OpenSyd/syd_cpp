@@ -37,6 +37,7 @@ include_directories(${SYD_SOURCE_DIR}/src/pstreams)
 add_library(sydCore
   md5.cpp
   sydCommon.cxx
+  sydFileUtils.cxx
   sydLog.cxx
   sydDatabaseInformation.cxx
   sydImageUtils.cxx

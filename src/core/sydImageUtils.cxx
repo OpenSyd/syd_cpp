@@ -50,16 +50,16 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
   std::string new_path_raw = new_path.substr(0,n)+".raw";
 
   // Check files
-  if (!syd::FileExists(old_path)) {
+  if (!fs::exists(old_path)) {
     LOG(FATAL) << "Rename MHD : Error path (mhd) not exist : " << old_path;
   }
-  if (!syd::FileExists(old_path_raw)) {
+  if (!fs::exists(old_path_raw)) {
     LOG(FATAL) << "Rename MHD : Error path (raw) not exist : " << old_path_raw;
   }
-  if (syd::FileExists(new_path)) {
+  if (fs::exists(new_path)) {
     LOG(WARNING) << "Rename MHD : path (mhd) to rename already exist : " << new_path;
   }
-  if (syd::FileExists(new_path_raw)) {
+  if (fs::exists(new_path_raw)) {
     LOG(WARNING) << "Rename MHD : path (raw) to rename already exist : " << new_path_raw;
   }
 

@@ -88,25 +88,6 @@ namespace syd {
 
 
   //--------------------------------------------------------------------
-  void CreateDirectory(std::string folder);
-  bool FileExists(std::string filename);
-  bool DirExists(std::string folder);
-  bool FolderExists(std::string folder);
-  std::string GetExtension(const std::string filename);
-  std::string GetFilenameFromPath(const std::string path);
-  void ConvertToAbsolutePath(std::string & folder);
-  void RemoveBackPathSeparator(std::string & folder);
-  std::string GetPathFromFilename(std::string & path);
-  bool GetWorkingDirectory(std::string & pwd);
-  bool EqualFiles(std::ifstream & in1, std::ifstream & in2);
-  bool EqualFiles(std::string in1, std::string in2);
-  void CopyFile(std::string src, std::string dst);
-  std::string CreateTemporaryFile(const std::string & folder, const std::string & extension);
-  std::string CreateTemporaryDirectory(const std::string & folder);
-  //--------------------------------------------------------------------
-
-
-  //--------------------------------------------------------------------
   std::string ConvertDateTime(std::string date, std::string time);
   void ConvertStringToDate(std::string s, tm & d);
   double DateDifferenceInHours(std::string end, std::string start);

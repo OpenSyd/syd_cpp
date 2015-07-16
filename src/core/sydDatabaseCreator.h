@@ -22,6 +22,7 @@
 // syd
 #include "sydDatabaseManager.h"
 #include "sydDatabase.h"
+#include "sydFileUtils.h"
 
 // --------------------------------------------------------------------
 namespace syd {

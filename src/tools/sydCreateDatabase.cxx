@@ -59,11 +59,11 @@ int main(int argc, char* argv[])
   std::string dbname = args_info.inputs[1];
   std::string folder = args_info.inputs[2];
 
-  if (syd::FileExists(dbname) and !args_info.overwrite_flag) {
+  if (fs::exists(dbname) and !args_info.overwrite_flag) {
     LOG(FATAL) << "Database not created: the file '" << dbname << "' already exists.";
   }
   // It is *required* to delete before. If not inconsistency could happens.
-  if (syd::FileExists(dbname)) {
+  if (fs::exists(dbname)) {
     LOG(WARNING) << "Deleting the file '" << dbname << "' (.backup).";
     std::string b = dbname+".backup";
     int result = std::rename(dbname.c_str(), b.c_str());

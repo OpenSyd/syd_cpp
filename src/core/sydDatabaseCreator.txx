@@ -40,7 +40,7 @@ void syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
     LOG(FATAL) << "The folder must be a simple folder name, without path or subfolder.";
   }
 
-  if (syd::FileExists(filename)){
+  if (fs::exists(filename)) {//syd::FileExists(filename)){
     if (!force_overwrite) {
       LOG(FATAL) << "Cannot create the database, the file '" << filename << "' already exists.";
     }
@@ -50,9 +50,9 @@ void syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
 
   // Create folder
   std::string f = syd::GetPathFromFilename(filename)+PATH_SEPARATOR+folder;
-  if (!syd::DirExists(f)) {
+  if (!fs::exists(f)) {
     LOG(WARNING) << "The folder '" << f << "' does not exist, I create it.";
-    syd::CreateDirectory(f);
+    fs::create_directories(f);
   }
 
   // Create schema

@@ -21,7 +21,7 @@
 
 // syd
 #include "sydCommon.h"
-//#include "sydTimeActivityCurveIntegrate.h"
+#include "sydFileUtils.h"
 
 // itk
 #include <itkImageFileReader.h>
