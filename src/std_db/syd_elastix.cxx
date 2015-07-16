@@ -52,7 +52,19 @@ int main(int argc, char* argv[])
   db->QueryOne(moving_image, atoi(args_info.inputs[2]));
 
   // Get the masks
-  //FIXME later
+  syd::RoiMaskImage::pointer fixed_mask;
+  std::string fixed_mask_path;
+  if (args_info.fMask_given) {
+    db->QueryOne(fixed_mask, args_info.fMask_arg);
+    fixed_mask_path = db->GetAbsolutePath(fixed_mask->image);
+  }
+
+  syd::RoiMaskImage::pointer moving_mask;
+  std::string moving_mask_path;
+  if (args_info.mMask_given) {
+    db->QueryOne(moving_mask, args_info.mMask_arg);
+    moving_mask_path = db->GetAbsolutePath(moving_mask->image);
+  }
 
   // Get the elastix config file
   std::string config_file = args_info.inputs[3];
@@ -65,6 +77,8 @@ int main(int argc, char* argv[])
   db->New(transfo);
   transfo->fixed_image = fixed_image;
   transfo->moving_image = moving_image;
+  if (args_info.fMask_given) transfo->fixed_mask = fixed_mask;
+  if (args_info.mMask_given) transfo->moving_mask = moving_mask;
   db->Insert(transfo); // insert to get id
   std::string f = syd::GetFilenameFromPath(config_file);
   std::string output_dir = transfo->ComputeRelativeFolder();
@@ -93,7 +107,9 @@ int main(int argc, char* argv[])
       << " -m " << moving_image_path
       << " -out " << db->ConvertToAbsolutePath(output_dir)
       << " -p " << config_file;
-  //mask here
+  // masks
+  if (fixed_mask != NULL) cmd << " -fMask " << fixed_mask_path;
+  if (moving_mask != NULL) cmd << " -mMask " << moving_mask_path;
   cmd << options; // additional options to elastix
   std::ofstream os(output_dir+PATH_SEPARATOR+"command.txt");
   os << msg.str() << std::endl
@@ -105,7 +121,7 @@ int main(int argc, char* argv[])
 
   // Execute elastix
   LOG(1) << cmd.str();
-  int r = syd::ExecuteCommandLine(cmd.str(), 2); // 2 is the log level
+  int r = syd::ExecuteCommandLine(cmd.str(), args_info.verbose_arg);
 
   if (r!=0) { // fail
     LOG(1) << "Command fail, removing temporary folder and table element";
