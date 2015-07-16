@@ -226,6 +226,8 @@ namespace syd {
     // ------------------------------------------------------------------------
     /// Return the (base) table with table_name
     TableBase * GetTable(const std::string & table_name) const;
+    template<class RecordType>
+    Table<RecordType> * GetTable() const;
 
     /// Return a string with the list of the table names
     std::string GetListOfTableNames() const;

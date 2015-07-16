@@ -20,6 +20,21 @@
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
+template<>
+void syd::Table<syd::Image>::SortT(syd::Image::vector & v, const std::string & type) const
+{
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) {
+              if (a->dicoms.size() == 0) return true;
+              if (b->dicoms.size() == 0) return false;
+              return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
+            });
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {
   AddTable<syd::Patient>();

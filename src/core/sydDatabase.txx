@@ -18,6 +18,18 @@
 
 #include "sydPrintTable.h"
 
+
+// ------------------------------------------------------------------------
+template<class RecordType>
+Table<RecordType> * syd::Database::GetTable() const
+{
+  DD("GetTable");
+  auto t = GetTable(RecordType::GetStaticTableName());
+  return dynamic_cast<Table<RecordType>*>(t);
+}
+// ------------------------------------------------------------------------
+
+
 // --------------------------------------------------------------------
 template<class RecordType>
 void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & records,
@@ -289,8 +301,8 @@ template<class RecordType>
 void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records, const std::string & order) const
 {
   if (records.size() == 0) return;
-  DD("Default SORT, do nothing");
-  //records[0]->Sort(records, order);
+  auto t = GetTable<RecordType>();
+  t->SortT(records, order);
 }
 // --------------------------------------------------------------------
 

@@ -37,6 +37,9 @@ namespace syd {
     /// Generic record type
     typedef syd::Record::pointer generic_record_pointer;
     typedef syd::Record::vector generic_record_vector;
+    typedef typename RecordType::pointer pointer;
+    typedef typename RecordType::vector vector;
+
 
     /// Constructor, set the pointer to the database
     Table(syd::Database * d):TableBase() { db_ = d;}
@@ -67,6 +70,8 @@ namespace syd {
 
     /// Sort some records (to be specialized in record->Sort
     void Sort(generic_record_vector & records, const std::string & type) const;
+
+    void SortT(vector & records, const std::string & type) const;
 
     /// Get the number of elements in the table
     virtual long GetNumberOfElements() const;

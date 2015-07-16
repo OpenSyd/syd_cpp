@@ -85,6 +85,11 @@ namespace syd {
 
 #include "sydStandardDatabase.txx"
 
+
+template<>
+void syd::Table<syd::Image>::SortT(syd::Image::vector & records, const std::string & type) const;
+
+
 } // namespace syd
 
 // --------------------------------------------------------------------
