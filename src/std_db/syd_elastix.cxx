@@ -55,14 +55,29 @@ int main(int argc, char* argv[])
   syd::RoiMaskImage::pointer fixed_mask;
   std::string fixed_mask_path;
   if (args_info.fMask_given) {
-    db->QueryOne(fixed_mask, args_info.fMask_arg);
+    /* FIXME
+    syd::IdType id = atoi(args_info.fMask_arg);
+    if (id !=0) db->QueryOne(fixed_mask, id);
+    else {
+      syd::RoiType::pointer roitype = db->FindRoiType(args_info.fMask_arg);
+      if (input_image->dicoms.size() == 0) {
+        LOG(FATAL) << "The image must be linked to a dicom to find the corresponding roi mask";
+      }
+      fixed_mask = db->FindRoiMaskImage(roitype, input_image->dicoms[0]);
+    }
+
+    // if not, FindRoiMaskImage(roitype, dicom
+    */
+
+
+    db->QueryOne(fixed_mask, atoi(args_info.fMask_arg));
     fixed_mask_path = db->GetAbsolutePath(fixed_mask->image);
   }
 
   syd::RoiMaskImage::pointer moving_mask;
   std::string moving_mask_path;
   if (args_info.mMask_given) {
-    db->QueryOne(moving_mask, args_info.mMask_arg);
+    db->QueryOne(moving_mask, atoi(args_info.mMask_arg));
     moving_mask_path = db->GetAbsolutePath(moving_mask->image);
   }
 
