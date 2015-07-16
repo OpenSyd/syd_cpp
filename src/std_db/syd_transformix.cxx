@@ -54,10 +54,34 @@ int main(int argc, char* argv[])
   db->QueryOne(input_image, atoi(args_info.inputs[2]));
   std::string input_image_path = db->GetAbsolutePath(input_image);
 
+  // Modify the transform file according to the input image spacing
+  std::ifstream in(transform_path);
+  transform_path = transform_path+"_temp.txt";
+  std::ofstream out(transform_path);
+  std::string line;
+  while (std::getline(in, line)) {
+    syd::Replace(line, "(Size ", "//(Size ");
+    syd::Replace(line, "(Spacing ", "//(Spacing ");
+    syd::Replace(line, "(FixedInternalImagePixelType ", "//(FixedInternalImagePixelType ");
+    syd::Replace(line, "(MovingInternalImagePixelType ", "//(MovingInternalImagePixelType ");
+    syd::Replace(line, "(DefaultPixelValue ", "//(DefaultPixelValue ");
+    syd::Replace(line, "(ResultImagePixelType ", "//(ResultImagePixelType ");
+    out << line << std::endl;
+  }
+  out << "(Size " << input_image->size[0] << " " << input_image->size[1] << " " << input_image->size[2] << ")" << std::endl;
+  out << "(Spacing " << input_image->spacing[0] << " " << input_image->spacing[1] << " " << input_image->spacing[2] << ")" << std::endl;
+  // out << "(FixedInternalImagePixelType " << input_image->pixel_type << ")" << std::endl;
+  // out << "(MovingInternalImagePixelType " << input_image->pixel_type << ")" << std::endl;
+  if (input_image->pixel_type == "short") out << "(DefaultPixelValue -1000)" << std::endl; // FIXME
+  else out << "(DefaultPixelValue 0)" << std::endl;
+  out << "(ResultImagePixelType " << input_image->pixel_type << ")" << std::endl;
+  out.close();
+
   // Create output image
   syd::Image::pointer output_image;
   db->New(output_image);
   output_image->CopyFrom(input_image);
+  output_image->tags.clear(); // dont herit tag
   db->Insert(output_image);
   std::ostringstream oss;
   if (input_image->dicoms.size() == 0) oss << "IMAGE_" << output_image->id << ".mhd";
@@ -86,14 +110,16 @@ int main(int argc, char* argv[])
   LOG(1) << cmd.str();
   int r = syd::ExecuteCommandLine(cmd.str(), args_info.verbose_arg);
 
-  if (r!=0) { // fail
+  // Get result path
+  std::string f = db->ConvertToAbsolutePath(output_image->ComputeRelativeFolder()+PATH_SEPARATOR+"result.mhd");
+
+  if (r!=0 || !fs::exists(f)) { // fail
     LOG(1) << "Command fail, removing temporary image";
     db->Delete(output_image);
   }
   else  {
-    std::string f = db->ConvertToAbsolutePath(output_image->ComputeRelativeFolder()+PATH_SEPARATOR+"result.mhd");
     syd::RenameMHDImage(f, output_image_path);
-    LOG(1) << "Registration computed. Result: " << transform;
+    LOG(1) << "Image computed. Result: " << output_image;
   }
 
   // This is the end, my friend.
