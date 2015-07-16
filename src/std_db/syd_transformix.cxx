@@ -49,12 +49,10 @@ int main(int argc, char* argv[])
   syd::ImageTransform::pointer transform;
   db->QueryOne(transform, atoi(args_info.inputs[1]));
   std::string transform_path = db->GetAbsolutePath(transform->transform_file);
-  DD(transform);
 
   syd::Image::pointer input_image;
   db->QueryOne(input_image, atoi(args_info.inputs[2]));
   std::string input_image_path = db->GetAbsolutePath(input_image);
-  DD(input_image);
 
   // Create output image
   syd::Image::pointer output_image;
@@ -68,13 +66,14 @@ int main(int argc, char* argv[])
   std::string mhd_relative_path = output_image->ComputeRelativeFolder()+PATH_SEPARATOR;
   std::string mhd_path = db->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
   output_image->UpdateFile(db, mhd_filename, mhd_relative_path);
-  DD(mhd_filename);
   std::string output_image_path = db->GetAbsolutePath(output_image);
-  DD(output_image_path);
-  db->Update(output_image);
 
   // Tag ? ct spect mask to copy ; transform to add
+  syd::Tag::vector tags;
+  db->FindTags(tags, args_info.tags_arg);
+  for(auto t:tags) output_image->AddTag(t);
 
+  db->Update(output_image);
 
   // Create command line
   std::ostringstream cmd;
@@ -85,29 +84,16 @@ int main(int argc, char* argv[])
 
   // Execute transformix
   LOG(1) << cmd.str();
-  int r = syd::ExecuteCommandLine(cmd.str(), 2); // 2 is the log level
+  int r = syd::ExecuteCommandLine(cmd.str(), args_info.verbose_arg);
 
   if (r!=0) { // fail
-    LOG(1) << "Command fail, removing temporary folder and table element";
-    // fs::remove_all(output_dir);
+    LOG(1) << "Command fail, removing temporary image";
     db->Delete(output_image);
-
   }
   else  {
-    DD("done");
     std::string f = db->ConvertToAbsolutePath(output_image->ComputeRelativeFolder()+PATH_SEPARATOR+"result.mhd");
     syd::RenameMHDImage(f, output_image_path);
-
-     // std::string res = db->GetAbsolutePath(transfo->transform_file);
-    // if (!fs::exists(res)) {
-    //   LOG(FATAL) << "Error could not find the file " << res;
-    //   fs::remove_all(output_dir);
-    //   db->Delete(transfo);
-    // }
-    // else {
-    //   db->Update(transfo);
-    //   LOG(1) << "Registration computed. Result: " << transfo;
-    // }
+    LOG(1) << "Registration computed. Result: " << transform;
   }
 
   // This is the end, my friend.
