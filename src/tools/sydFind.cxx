@@ -58,6 +58,9 @@ int main(int argc, char* argv[])
   syd::Record::vector results;
   db->Grep(results, records, patterns, exclude);
 
+  // Sort
+  db->Sort(results);
+
   // Dump results
   if (!args_info.dump_flag) {
     // Get ids
