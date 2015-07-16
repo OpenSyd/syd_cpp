@@ -47,17 +47,11 @@ syd::RoiMaskImageBuilder::InsertRoiMaskImage(const syd::DicomSerie::pointer & di
     // Create a mask
     db_->New(mask);
     mask->roitype = roitype;
-
-    // Create an image
-    db_->New(image);
-    image->patient = dicom->patient;
-    image->dicoms.push_back(dicom);
-    image->type = "mhd";
-    db_->Insert(image); // to obtain an id
-    // Add auto tag (mask)
+    mask->patient = dicom->patient;
+    mask->dicoms.push_back(dicom);
+    mask->type = "mhd";
     syd::Tag::pointer tag_mask = db_->FindOrInsertTag("mask", "Mask image");
-    image->AddTag(tag_mask);
-    mask->image = image;
+    mask->AddTag(tag_mask);
     db_->Insert(mask);
 
     // Create filename
@@ -68,7 +62,7 @@ syd::RoiMaskImageBuilder::InsertRoiMaskImage(const syd::DicomSerie::pointer & di
     std::string mhd_path = db_->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
 
     // Update files in images
-    image->UpdateFile(db_, mhd_filename, mhd_relative_path);
+    mask->UpdateFile(db_, mhd_filename, mhd_relative_path);
 
     // Read image
     typedef unsigned char PixelType;
@@ -77,7 +71,7 @@ syd::RoiMaskImageBuilder::InsertRoiMaskImage(const syd::DicomSerie::pointer & di
     itk_image = syd::ReadImage<ImageType>(filename);
 
     // Update image info
-    db_->UpdateImageInfo<PixelType>(mask->image, itk_image, true); // true = update md5
+    db_->UpdateImageInfo<PixelType>(mask, itk_image, true); // true = update md5
     LOG(4) << "Write image on disk " << mhd_path;
     syd::WriteImage<ImageType>(itk_image, mhd_path);
 
@@ -87,7 +81,6 @@ syd::RoiMaskImageBuilder::InsertRoiMaskImage(const syd::DicomSerie::pointer & di
   }
 
   // Final update
-  db_->Update(mask->image);
   db_->Update(mask);
   return mask;
 }

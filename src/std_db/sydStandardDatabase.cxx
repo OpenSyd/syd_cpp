@@ -39,10 +39,9 @@ void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v, const st
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
-              if (a->image->dicoms.size() == 0) return true;
-              if (b->image->dicoms.size() == 0) return false;
-              return a->image->dicoms[0]->acquisition_date <
-                b->image->dicoms[0]->acquisition_date;
+              if (a->dicoms.size() == 0) return true;
+              if (b->dicoms.size() == 0) return false;
+              return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
             });
 }
 // --------------------------------------------------
@@ -183,7 +182,7 @@ syd::StandardDatabase::FindRoiMaskImage(const syd::RoiType::pointer roitype,
 
   // Get all mask for this patient and this roitype
   syd::RoiMaskImage::vector masks;
-  odb::query<RoiMaskImage> q = odb::query<RoiMaskImage>::image->patient == patient->id and
+  odb::query<RoiMaskImage> q = odb::query<RoiMaskImage>::patient == patient->id and
     odb::query<RoiMaskImage>::roitype == roitype->id;
   Query(masks, q);
 
@@ -191,11 +190,11 @@ syd::StandardDatabase::FindRoiMaskImage(const syd::RoiType::pointer roitype,
   bool found = false;
   syd::RoiMaskImage::vector results;
   for(auto m:masks) {
-    if (m->image->dicoms.size() != 1) {
+    if (m->dicoms.size() != 1) {
       LOG(WARNING) << "Warning the image of this mask does not have a single dicom (ignoring): " << m;
       continue;
     }
-    if (dicom->dicom_frame_of_reference_uid == m->image->dicoms[0]->dicom_frame_of_reference_uid)
+    if (dicom->dicom_frame_of_reference_uid == m->dicoms[0]->dicom_frame_of_reference_uid)
       results.push_back(m);
   }
   if (results.size() == 0) {

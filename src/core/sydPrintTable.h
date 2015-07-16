@@ -36,6 +36,8 @@ namespace syd {
     void SkipLine();
     void Print(std::ostream & out);
     void SetColumnWidth(int col, int width);
+    int GetNumberOfColumns() const { return headers.size(); }
+    void Endl();
   protected:
     std::vector<std::vector<std::string>> values;
     std::vector<std::string> headers;

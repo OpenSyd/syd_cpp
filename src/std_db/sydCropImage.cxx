@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
         try {
           auto mask = db->FindRoiMaskImage(body, image->dicoms[0]);
           LOG(1) << "Find 'body' mask for the image: " << mask;
-          b.CropImageLike(image, mask->image, args_info.force_flag);
+          b.CropImageLike(image, mask, args_info.force_flag);
         } catch (std::exception & e) {
           LOG(WARNING) << "Could not crop the image: " << image
                        << std::endl << "Error is: " << e.what();

@@ -33,6 +33,7 @@ void syd::PrintTable::AddColumn(std::string name, int w, int digit)
   headers.push_back(name);
   width.push_back(w);
   precision.push_back(digit);
+  if (current_line != -1) values[current_line].resize(headers.size());
 }
 //------------------------------------------------------------------
 
@@ -48,7 +49,18 @@ void syd::PrintTable::SetColumnWidth(int col, int w)
 //------------------------------------------------------------------
 void syd::PrintTable::Init()
 {
-  current_line = 0;
+  current_line = -1;
+  current_column = 0;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable::Endl()
+{
+  std::vector<std::string> line(headers.size());
+  values.push_back(line);
+  current_line++;
   current_column = 0;
 }
 //------------------------------------------------------------------
@@ -57,18 +69,11 @@ void syd::PrintTable::Init()
 //------------------------------------------------------------------
 syd::PrintTable & syd::PrintTable::operator<<(const double & value)
 {
-  if (values.size() == current_line) {
-    std::vector<std::string> line(headers.size());
-    values.push_back(line);
-  }
+  if (current_line == -1) Endl();
   std::stringstream ss;
   ss << std::fixed << std::setprecision (precision[current_column]) << value;
   values[current_line][current_column] = ss.str();
   current_column++;
-  if (current_column == headers.size()) {
-    current_column = 0;
-    current_line++;
-  }
   return *this;
 }
 //------------------------------------------------------------------
@@ -77,22 +82,14 @@ syd::PrintTable & syd::PrintTable::operator<<(const double & value)
 //------------------------------------------------------------------
 syd::PrintTable & syd::PrintTable::operator<<(const std::string & value)
 {
-  if (values.size() == current_line) {
-    std::vector<std::string> line(headers.size());
-    values.push_back(line);
-  }
+  if (current_line == -1) Endl();
   // Trunc string if too big
   std::string v = value;
   if (v.size() > width[current_column]) {
     v = value.substr(0,width[current_column]-4)+"...";
   }
-
   values[current_line][current_column] = v;
   current_column++;
-  if (current_column == headers.size()) {
-    current_column = 0;
-    current_line++;
-  }
   return *this;
 }
 //------------------------------------------------------------------

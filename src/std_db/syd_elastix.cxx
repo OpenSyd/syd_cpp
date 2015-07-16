@@ -71,14 +71,14 @@ int main(int argc, char* argv[])
 
 
     db->QueryOne(fixed_mask, atoi(args_info.fMask_arg));
-    fixed_mask_path = db->GetAbsolutePath(fixed_mask->image);
+    fixed_mask_path = db->GetAbsolutePath(fixed_mask);
   }
 
   syd::RoiMaskImage::pointer moving_mask;
   std::string moving_mask_path;
   if (args_info.mMask_given) {
     db->QueryOne(moving_mask, atoi(args_info.mMask_arg));
-    moving_mask_path = db->GetAbsolutePath(moving_mask->image);
+    moving_mask_path = db->GetAbsolutePath(moving_mask);
   }
 
   // Get the elastix config file

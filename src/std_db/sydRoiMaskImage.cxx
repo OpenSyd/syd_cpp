@@ -24,9 +24,9 @@
 #include "sydImage-odb.hxx"
 
 // --------------------------------------------------------------------
-syd::RoiMaskImage::RoiMaskImage():Record()
+syd::RoiMaskImage::RoiMaskImage():Image()
 {
-  image = NULL;
+  //image = NULL;
   roitype = NULL;
 }
 // --------------------------------------------------------------------
@@ -35,28 +35,26 @@ syd::RoiMaskImage::RoiMaskImage():Record()
 // --------------------------------------------------------------------
 std::string syd::RoiMaskImage::ToString() const
 {
-  std::string i = "unset";
-  if (image != NULL) i = image->ToString();
   std::stringstream ss ;
-  ss << id << " "
-     << roitype->name << " "
-     << i;
+  ss << syd::Image::ToString() << " "
+     << roitype->name << " ";
   return ss.str();
 }
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 std::string syd::RoiMaskImage::ComputeRelativeFolder() const
 {
-  return image->ComputeRelativeFolder()+PATH_SEPARATOR+"roi";
+  return syd::Image::ComputeRelativeFolder()+PATH_SEPARATOR+"roi";
 }
 // --------------------------------------------------
+
+
 // --------------------------------------------------
 void syd::RoiMaskImage::CopyFrom(const pointer p)
 {
-  syd::Record::CopyFrom(p);
-  image = p->image;
+  syd::Image::CopyFrom(p);
   roitype = p->roitype;
 }
 // --------------------------------------------------
@@ -65,8 +63,7 @@ void syd::RoiMaskImage::CopyFrom(const pointer p)
 // --------------------------------------------------
 bool syd::RoiMaskImage::IsEqual(const pointer p) const
 {
-  bool b = (syd::Record::IsEqual(p) and
-            image->id == p->image->id and
+  bool b = (syd::Image::IsEqual(p) and
             roitype->id == p->roitype->id);
   return b;
 }
@@ -84,23 +81,9 @@ void syd::RoiMaskImage::Set(const syd::Database * db, const std::vector<std::str
 // --------------------------------------------------
 void syd::RoiMaskImage::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
 {
-  if (format == "help") {
-    std::cout << "Available formats for table 'Image': " << std::endl
-              << "\tdefault: id patient tags size spacing dicoms" << std::endl
-              << "\tfile: full path" << std::endl;
-    return;
-  }
-  if (format == "file") {
-    ta.AddColumn("#file", 100);
-  }
-  else {
-    ta.AddColumn("#id", 5);
-    ta.AddColumn("p", 8);
+  syd::Image::InitPrintTable(db, ta, format);
+  if (format != "file") {
     ta.AddColumn("roi", 15);
-    ta.AddColumn("tags", 20);
-    ta.AddColumn("size", 12);
-    ta.AddColumn("spacing", 25);
-    ta.AddColumn("dicom_id", 15);
   }
 }
 // --------------------------------------------------
@@ -109,21 +92,13 @@ void syd::RoiMaskImage::InitPrintTable(const syd::Database * db, syd::PrintTable
 // --------------------------------------------------
 void syd::RoiMaskImage::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
 {
-   if (format == "file") {
-     if (image->files.size() == 0) {
-       ta << "no_file";
-       return;
-     }
-     //const syd::StandardDatabase * db = std::dynamic_cast<const syd::StandardDatabase*>(d);
-     ta << d->ConvertToAbsolutePath(image->files[0]->path+PATH_SEPARATOR+image->files[0]->filename);
-   }
-   else {
-     ta << id << image->patient->name << roitype->name << GetTagLabels(image->tags)
-        << syd::ArrayToString<int, 3>(image->size) << syd::ArrayToString<double, 3>(image->spacing);
-     std::string dicom;
-     for(auto d:image->dicoms) dicom += syd::ToString(d->id)+" ";
-     ta << dicom;
-   }
+  if (ta.GetNumberOfColumns() == 7)  {
+    ta.AddColumn("roi", 15);
+  }
+  syd::Image::DumpInTable(d, ta, format);
+  if (format != "file") {
+    ta << roitype->name;
+  }
 }
 // --------------------------------------------------
 
@@ -131,11 +106,7 @@ void syd::RoiMaskImage::DumpInTable(const syd::Database * d, syd::PrintTable & t
 // --------------------------------------------------
 void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db) const
 {
-  syd::Record::Callback(event,db);
-  // If it is asked to delete a RoiMaskImage, we also delete the image at the end
-  if (event == odb::callback_event::post_erase) {
-    db.erase(image);
-  }
+  syd::Image::Callback(event,db);
 }
 // --------------------------------------------------
 
@@ -143,6 +114,6 @@ void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db) 
 // --------------------------------------------------
 void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db)
 {
-  syd::Record::Callback(event,db);
+  syd::Image::Callback(event,db);
 }
 // --------------------------------------------------

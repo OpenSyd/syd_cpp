@@ -66,7 +66,12 @@ void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & record
     // Change col width
     for(auto c:col_width) ta.SetColumnWidth(c.first, c.second);
     // Print rows
-    for(auto r:records) r->DumpInTable(this, ta, f);
+    int n=0;
+    for(auto r:records) {
+      r->DumpInTable(this, ta, f);
+      n++;
+      if (n != records.size()) ta.Endl(); // no endl at the end
+    }
     ta.Print(os);
   }
 }
