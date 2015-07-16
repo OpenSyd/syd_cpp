@@ -88,7 +88,6 @@ namespace syd {
     TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomSerie);
     // ------------------------------------------------------------------------
 
-    virtual void Sort(DicomSerie::vector & v, const std::string & order);
     virtual void InitPrintTable(const syd::Database * db,
                                 syd::PrintTable & ta,
                                 const std::string & format) const;

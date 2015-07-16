@@ -159,17 +159,6 @@ std::string syd::DicomSerie::ComputeRelativeFolder() const
 
 
 // --------------------------------------------------
-void syd::DicomSerie::Sort(DicomSerie::vector & v, const std::string & order)
-{
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              return syd::IsDateBefore(a->acquisition_date, b->acquisition_date); });
-}
-// --------------------------------------------------
-
-
-
-// --------------------------------------------------
 void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db) const
 {
   // Special case: when a serie is deleted, the linked DicomFile will

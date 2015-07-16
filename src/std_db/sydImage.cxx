@@ -220,19 +220,6 @@ std::string syd::Image::ComputeRelativeFolder() const
 
 
 // --------------------------------------------------
-void syd::Image::Sort(syd::Image::vector & v, const std::string & type)
-{
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              if (a->dicoms.size() == 0) return true;
-              if (b->dicoms.size() == 0) return false;
-              return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
-            });
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Image::UpdateFile(syd::Database * db,
                             const std::string & filename,
                             const std::string & relativepath,

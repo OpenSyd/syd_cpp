@@ -21,7 +21,7 @@
 
 // --------------------------------------------------------------------
 template<>
-void syd::Table<syd::Image>::SortT(syd::Image::vector & v, const std::string & type) const
+void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & type) const
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
@@ -32,6 +32,41 @@ void syd::Table<syd::Image>::SortT(syd::Image::vector & v, const std::string & t
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------
+template<>
+void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v, const std::string & type) const
+{
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) {
+              if (a->image->dicoms.size() == 0) return true;
+              if (b->image->dicoms.size() == 0) return false;
+              return a->image->dicoms[0]->acquisition_date <
+                b->image->dicoms[0]->acquisition_date;
+            });
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+template<>
+void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & v, const std::string & order) const
+{
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) {
+              return syd::IsDateBefore(a->acquisition_date, b->acquisition_date); });
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+template<>
+void syd::Table<syd::Patient>::Sort(syd::Patient::vector & v, const std::string & order) const
+{
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) { return a->study_id < b->study_id; });
+}
+// --------------------------------------------------
 
 
 // --------------------------------------------------------------------

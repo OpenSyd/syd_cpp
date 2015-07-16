@@ -144,7 +144,7 @@ void syd::Table<RecordType>::Sort(generic_record_vector & records, const std::st
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Table<RecordType>::SortT(vector & records, const std::string & type) const
+void syd::Table<RecordType>::Sort(vector & records, const std::string & type) const
 {
   DD(" default sort in table");
 }

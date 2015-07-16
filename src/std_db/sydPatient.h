@@ -61,7 +61,6 @@ namespace syd {
 
     virtual bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
     virtual std::string ComputeRelativeFolder() const;
-    virtual void Sort(vector & v, const std::string & order);
 
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);

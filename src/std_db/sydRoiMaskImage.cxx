@@ -129,20 +129,6 @@ void syd::RoiMaskImage::DumpInTable(const syd::Database * d, syd::PrintTable & t
 
 
 // --------------------------------------------------
-void syd::RoiMaskImage::Sort(syd::RoiMaskImage::vector & v, const std::string & type)
-{
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              if (a->image->dicoms.size() == 0) return true;
-              if (b->image->dicoms.size() == 0) return false;
-              return a->image->dicoms[0]->acquisition_date <
-                b->image->dicoms[0]->acquisition_date;
-            });
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event,db);

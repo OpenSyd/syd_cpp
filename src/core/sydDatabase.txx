@@ -23,7 +23,6 @@
 template<class RecordType>
 Table<RecordType> * syd::Database::GetTable() const
 {
-  DD("GetTable");
   auto t = GetTable(RecordType::GetStaticTableName());
   return dynamic_cast<Table<RecordType>*>(t);
 }
@@ -302,7 +301,7 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records, con
 {
   if (records.size() == 0) return;
   auto t = GetTable<RecordType>();
-  t->SortT(records, order);
+  t->Sort(records, order);
 }
 // --------------------------------------------------------------------
 

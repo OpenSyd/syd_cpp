@@ -73,8 +73,6 @@ namespace syd {
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Image);
     // ------------------------------------------------------------------------
 
-    virtual void Sort(vector & v, const std::string & order);
-
     /// Standard folder
     virtual std::string ComputeRelativeFolder() const;
 

@@ -105,10 +105,3 @@ void syd::StandardDatabase::UpdateImageInfo(syd::Image::pointer image,
   }
 }
 // --------------------------------------------------------------------
-
-
-// template<class RecordType>
-// void syd::StandardDatabase::Sort(std::vector<std::shared_ptr<RecordType>> & records, const std::string & type) const
-// {
-//   DD("default sort standarddatabase");
-// }
