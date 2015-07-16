@@ -124,40 +124,6 @@ void syd::File::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const
 
 
 // --------------------------------------------------
-// void syd::File::OnDelete(syd::Database * d)
-// {
-//   DD("File OnDelete");
-  /*
-  syd::StandardDatabase * db = dynamic_cast<syd::StandardDatabase*>(d);
-
-  // When a File is deleted, we also delete the file on disk
-  std::string f = db->GetAbsolutePath(*this);
-  db->AddFileToDelete(f);// list_of_files_to_delete.push_back(f);
-
-  // We also look for images to be deleted. Manual search because dont know how to do
-  std::vector<syd::Image> images_temp;
-  std::vector<syd::Image> images;
-  db->Query<syd::Image>(images_temp);
-  for(auto i:images_temp) {
-    for(auto f:i.files) {
-      if (f->id == id) images.push_back(i);
-    }
-  }
-  for(auto i:images) db->AddToDeleteList(i);
-  */
-
-  // We also look for DicomFiles to be deleted.
-  /* if (look_for_dicomfile_on_delete_flag) {
-    std::vector<syd::DicomFile> dicomfiles;
-    db->Query<syd::DicomFile>(odb::query<syd::DicomFile>::file == id, dicomfiles);
-    for(auto i:dicomfiles) db->AddToDeleteList(i);
-  }
-  */
-// }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event,db);
