@@ -40,12 +40,11 @@ void syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
     LOG(FATAL) << "The folder must be a simple folder name, without path or subfolder.";
   }
 
-  if (fs::exists(filename)) {//syd::FileExists(filename)){
+  if (fs::exists(filename)) {
     if (!force_overwrite) {
       LOG(FATAL) << "Cannot create the database, the file '" << filename << "' already exists.";
     }
-    std::string b = filename+".backup";
-    std::rename(filename.c_str(), b.c_str());
+    fs::rename(filename, filename+".backup");
   }
 
   // Create folder
