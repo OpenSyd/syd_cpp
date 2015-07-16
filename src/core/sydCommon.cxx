@@ -93,7 +93,7 @@ std::string & syd::trim(std::string &s)
 
 
 // --------------------------------------------------------------------
-void syd::GetWords(const std::string & phrase, std::vector<std::string> & words) {
+void syd::GetWords(std::vector<std::string> & words, const std::string & phrase) {
   std::istringstream iss(phrase); // consider all words in 'phrase'
   do {
     std::string s;

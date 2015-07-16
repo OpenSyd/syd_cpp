@@ -30,7 +30,7 @@ void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & record
   // Get column width in the format
   std::map<int,int> col_width;
   std::vector<std::string> words;
-  syd::GetWords(format, words);
+  syd::GetWords(words, format);
   for(auto w:words) {
     std::size_t found = w.find(":");
     if (found!=std::string::npos) {

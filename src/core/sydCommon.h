@@ -108,7 +108,7 @@ namespace syd {
   std::string ArrayToString(const std::array<T, N> & t);
   void SkipComment(std::istream & is);
   bool Replace(std::string& str, const std::string& from, const std::string& to);
-  void GetWords(const std::string & phrase, std::vector<std::string> & words);
+  void GetWords(std::vector<std::string> & words, const std::string & phrase);
   // trim from start
   std::string &ltrim(std::string &s);
   // trim from end

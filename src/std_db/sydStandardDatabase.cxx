@@ -81,9 +81,15 @@ syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient:
 void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::string & names) const
 {
   std::vector<std::string> words;
-  syd::GetWords(names, words);
+  syd::GetWords(words, names);
   odb::query<Tag> q = odb::query<Tag>::label.in_range(words.begin(), words.end());
   Query<Tag>(tags, q);
+  if (tags.size() != words.size()) {
+    std::string s;
+    for(auto t:tags) s += t->ToString()+" ";
+    EXCEPTION("Cannot find all tags in FindTags: " << names << std::endl
+              << "Find: " << s);
+  }
 }
 // --------------------------------------------------------------------
 
