@@ -39,7 +39,7 @@ FindRoiMaskImage(const syd::StandardDatabase * db,
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT(syd_elastix, 3);
+  SYD_INIT(syd_elastix, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -49,11 +49,22 @@ int main(int argc, char* argv[])
   std::string dbname = args_info.inputs[0];
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
-  // Get the images
+  // Get the elastix config file
+  std::string config_file = args_info.inputs[1];
+
+
+  // Read ids from the command line and the pipe
+  std::vector<syd::IdType> ids;
+  syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
+  for(auto i=2; i<args_info.inputs_num; i++)
+    ids.push_back(atoi(args_info.inputs[i]));
+  if (ids.size() < 2) {
+    LOG(FATAL) << "Please provide at least two image ids (fixed and moving  images).";
+  }
+
+  // Get the reference image
   syd::Image::pointer fixed_image;
-  db->QueryOne(fixed_image, atoi(args_info.inputs[1]));
-  syd::Image::pointer moving_image;
-  db->QueryOne(moving_image, atoi(args_info.inputs[2]));
+  db->QueryOne(fixed_image, ids[0]);
 
   // Get the masks
   syd::RoiMaskImage::pointer fixed_mask;
@@ -63,86 +74,89 @@ int main(int argc, char* argv[])
     fixed_mask_path = db->GetAbsolutePath(fixed_mask);
   }
 
-  syd::RoiMaskImage::pointer moving_mask;
-  std::string moving_mask_path;
-  if (args_info.mMask_given) {
-    moving_mask = FindRoiMaskImage(db, moving_image->patient, args_info.mMask_arg, moving_image->frame_of_reference_uid);
-    moving_mask_path = db->GetAbsolutePath(moving_mask);
-  }
+  // Loop over all images
+  for(auto i=1; i<ids.size(); i++) {
 
-  // Get the elastix config file
-  std::string config_file = args_info.inputs[3];
+    syd::Image::pointer moving_image;
+    db->QueryOne(moving_image, ids[i]);
 
-  // Get elastix param
-  std::string options = args_info.options_arg;
+    syd::RoiMaskImage::pointer moving_mask;
+    std::string moving_mask_path;
+    if (args_info.mMask_given) {
+      moving_mask = FindRoiMaskImage(db, moving_image->patient, args_info.mMask_arg, moving_image->frame_of_reference_uid);
+      moving_mask_path = db->GetAbsolutePath(moving_mask);
+    }
 
-  // Prepare the ImageTransform to get an id
-  syd::ImageTransform::pointer transfo;
-  db->New(transfo);
-  transfo->fixed_image = fixed_image;
-  transfo->moving_image = moving_image;
-  if (args_info.fMask_given) transfo->fixed_mask = fixed_mask;
-  if (args_info.mMask_given) transfo->moving_mask = moving_mask;
-  db->Insert(transfo); // insert to get id
-  std::string f = syd::GetFilenameFromPath(config_file);
-  std::string output_dir = transfo->ComputeRelativeFolder();
-  bool b = fs::create_directory(db->ConvertToAbsolutePath(output_dir));
-  if (!b) {
-    LOG(FATAL) << "Error while creating " << output_dir;
-  }
-  transfo->config_file = db->InsertNewFile(config_file, f, output_dir, true); // copy
-  transfo->transform_file = db->InsertNewFile("", "TransformParameters.0.txt", output_dir, false); // do not copy yet
+    // Get elastix param
+    std::string options = args_info.options_arg;
 
-  namespace pt = boost::posix_time;
-  std::ostringstream msg;
-  const pt::ptime now = pt::second_clock::local_time();
-  pt::time_facet*const ff = new pt::time_facet("%Y-%m-%d %H:%M:%S");
-  msg.imbue(std::locale(msg.getloc(),ff));
-  msg << now;
-  transfo->date = msg.str();
+    // Prepare the ImageTransform to get an id
+    syd::ImageTransform::pointer transfo;
+    db->New(transfo);
+    transfo->fixed_image = fixed_image;
+    transfo->moving_image = moving_image;
+    if (args_info.fMask_given) transfo->fixed_mask = fixed_mask;
+    if (args_info.mMask_given) transfo->moving_mask = moving_mask;
+    db->Insert(transfo); // insert to get id
 
-  // path
-  std::string fixed_image_path = db->GetAbsolutePath(fixed_image);
-  std::string moving_image_path = db->GetAbsolutePath(moving_image);
+    std::string f = syd::GetFilenameFromPath(config_file);
+    std::string output_dir = transfo->ComputeRelativeFolder();
+    bool b = fs::create_directories(db->ConvertToAbsolutePath(output_dir));
+    if (!b) {
+      LOG(FATAL) << "Error while creating " << output_dir;
+    }
 
-  // Create command line
-  std::ostringstream cmd;
-  cmd << "elastix -f " << fixed_image_path
-      << " -m " << moving_image_path
-      << " -out " << db->ConvertToAbsolutePath(output_dir)
-      << " -p " << config_file;
-  // masks
-  if (fixed_mask != NULL) cmd << " -fMask " << fixed_mask_path;
-  if (moving_mask != NULL) cmd << " -mMask " << moving_mask_path;
-  cmd << options; // additional options to elastix
-  std::ofstream os(output_dir+PATH_SEPARATOR+"command.txt");
-  os << msg.str() << std::endl
-     << fixed_image->id << " " << fixed_image_path << std::endl
-     << moving_image->id << " " << moving_image_path << std::endl
-     << config_file << std::endl
-     << cmd.str();
-  os.close();
+    namespace pt = boost::posix_time;
+    std::ostringstream msg;
+    const pt::ptime now = pt::second_clock::local_time();
+    pt::time_facet*const ff = new pt::time_facet("%Y-%m-%d %H:%M:%S");
+    msg.imbue(std::locale(msg.getloc(),ff));
+    msg << now;
+    transfo->date = msg.str();
 
-  // Execute elastix
-  LOG(1) << cmd.str();
-  int r = syd::ExecuteCommandLine(cmd.str(), args_info.verbose_arg);
+    // path
+    std::string fixed_image_path = db->GetAbsolutePath(fixed_image);
+    std::string moving_image_path = db->GetAbsolutePath(moving_image);
 
-  if (r!=0) { // fail
-    LOG(1) << "Command fail, removing temporary folder and table element";
-    fs::remove_all(output_dir);
-    db->Delete(transfo);
+    // Create command line
+    std::ostringstream cmd;
+    cmd << "elastix -f " << fixed_image_path
+        << " -m " << moving_image_path
+        << " -out " << db->ConvertToAbsolutePath(output_dir)
+        << " -p " << config_file;
+    // masks
+    if (fixed_mask != NULL) cmd << " -fMask " << fixed_mask_path;
+    if (moving_mask != NULL) cmd << " -mMask " << moving_mask_path;
+    cmd << options; // additional options to elastix
+    std::ofstream os(output_dir+PATH_SEPARATOR+"command.txt");
+    os << msg.str() << std::endl
+       << fixed_image->id << " " << fixed_image_path << std::endl
+       << moving_image->id << " " << moving_image_path << std::endl
+       << config_file << std::endl
+       << cmd.str();
+    os.close();
 
-  }
-  else  {
-     std::string res = db->GetAbsolutePath(transfo->transform_file);
-    if (!fs::exists(res)) {
-      LOG(FATAL) << "Error could not find the file " << res;
-      fs::remove_all(output_dir);
+    // Execute elastix
+    LOG(1) << cmd.str();
+    int r = syd::ExecuteCommandLine(cmd.str(), args_info.verbose_arg);
+
+    if (r!=0) { // fail
+      LOG(WARNING) << "Command elastix fail, removing temporary folder and table element";
       db->Delete(transfo);
     }
-    else {
-      db->Update(transfo);
-      LOG(1) << "Registration computed. Result: " << transfo;
+    else  {
+      std::string res = db->GetAbsolutePath(transfo->transform_file);
+      if (!fs::exists(res)) {
+        LOG(FATAL) << "Error could not find the file " << res;
+        fs::remove_all(output_dir);
+        db->Delete(transfo);
+      }
+      else { // only create the files if ok
+        transfo->config_file = db->InsertNewFile(config_file, f, output_dir, true); // copy
+        transfo->transform_file = db->InsertNewFile("", "TransformParameters.0.txt", output_dir, false); // do not copy yet
+        db->Update(transfo);
+        LOG(1) << "Registration computed. Result: " << transfo;
+      }
     }
   }
 

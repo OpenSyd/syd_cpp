@@ -1,13 +1,13 @@
 #File syd_elastix.ggo
 
 package "syd_elastix"
-usage "syd_elastix <db> <fixed_image> <moving_image> <config>"
+usage "syd_elastix <db> <config> <fixed_image> <moving_image*> "
 version "0.3"
 description "Parameters are:
 - <db>            : name of the database
-- <fixed_image>   : id of the fixed image
-- <moving_image>  : id of the moving image
 - <config>        : elastix config file
+- <fixed_image>   : id of the fixed image
+- <moving_image*> : ids of the moving image (multiple -> on registration by id)
 "
 
 option "config"         -	"Config file"				        string  no
