@@ -52,7 +52,6 @@ int main(int argc, char* argv[])
   // Get the elastix config file
   std::string config_file = args_info.inputs[1];
 
-
   // Read ids from the command line and the pipe
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
@@ -150,8 +149,7 @@ int main(int argc, char* argv[])
     else  {
       std::string res = db->GetAbsolutePath(transfo->transform_file);
       if (!fs::exists(res)) {
-        LOG(FATAL) << "Error could not find the file " << res;
-        fs::remove_all(output_dir);
+        LOG(WARNING) << "Error could not find the file, delete temporary folder and table element" << res;
         db->Delete(transfo);
       }
       else { // only create the files if ok
