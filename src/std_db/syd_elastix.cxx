@@ -106,6 +106,9 @@ int main(int argc, char* argv[])
       LOG(FATAL) << "Error while creating " << output_dir;
     }
 
+    transfo->config_file = db->InsertNewFile(config_file, f, output_dir, true); // copy
+    transfo->transform_file = db->InsertNewFile("", "TransformParameters.0.txt", output_dir, false); // do not copy
+
     namespace pt = boost::posix_time;
     std::ostringstream msg;
     const pt::ptime now = pt::second_clock::local_time();
@@ -152,8 +155,6 @@ int main(int argc, char* argv[])
         db->Delete(transfo);
       }
       else { // only create the files if ok
-        transfo->config_file = db->InsertNewFile(config_file, f, output_dir, true); // copy
-        transfo->transform_file = db->InsertNewFile("", "TransformParameters.0.txt", output_dir, false); // do not copy yet
         db->Update(transfo);
         LOG(1) << "Registration computed. Result: " << transfo;
       }
