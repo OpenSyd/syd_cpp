@@ -143,14 +143,6 @@ void syd::ImageTransform::Callback(odb::callback_event event, odb::database & db
 
 
 // --------------------------------------------------
-void syd::ImageTransform::Callback(odb::callback_event event, odb::database & db)
-{
-  syd::Record::Callback(event, db);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 std::string syd::ImageTransform::ComputeRelativeFolder() const
 {
   syd::Patient::pointer patient = fixed_image->patient;

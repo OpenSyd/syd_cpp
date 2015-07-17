@@ -73,28 +73,36 @@ void syd::Record::DumpInTable(const syd::Database * db,
 
 
 // --------------------------------------------------
-void syd::Record::Callback(odb::callback_event event, odb::database & db) const
+void syd::Record::SetDatabasePointer(odb::callback_event event, odb::database & d) const
 {
-  //DD("Callback_const "+syd::ToString(event)+" "+GetTableName());
-  if (event == odb::callback_event::pre_erase) {
-
+  //DD("SetDatabasePointer " + GetTableName()+" " + syd::ToString(event));
+  auto search = syd::Database::ListOfLoadedDatabases.find(&d);
+  if (search == syd::Database::ListOfLoadedDatabases.end()) {
+    LOG(FATAL) << "Error during callback in an object " << GetTableName()
+               << " cannot find the db pointer. Event is " << event;
   }
+  db_ = search->second;
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Record::Callback(odb::callback_event event, odb::database & d)
+void syd::Record::Callback(odb::callback_event event, odb::database & db) const
 {
-  //DD("Callback "+syd::ToString(event)+" "+GetTableName());
-  if (event == odb::callback_event::pre_load) {
-    //DD(" load db pointer ?"); //FIXME here
-    auto search = syd::Database::ListOfLoadedDatabases.find(&d);
-    if (search == syd::Database::ListOfLoadedDatabases.end()) {
-      LOG(FATAL) << "Error db not find FIXME";
-    }
-    //DD(search->second->GetFilename());
-    db_ = search->second;
-  }
+  // Events in Callback const : persist, update, erase
+  // event load can only be here if the non-const version does not exist
+  // DD("Record::Callback_const "+syd::ToString(event)+" "+GetTableName());
+  if (event == odb::callback_event::pre_persist or
+      event == odb::callback_event::post_load) SetDatabasePointer(event, db);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Record::Callback(odb::callback_event event, odb::database & db)
+{
+  // Events in Callback non-const : load
+  //DD("Record::Callback non const "+syd::ToString(event)+" "+GetTableName());
+  if (event == odb::callback_event::post_load) SetDatabasePointer(event, db);
 }
 // --------------------------------------------------

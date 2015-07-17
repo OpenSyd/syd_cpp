@@ -97,9 +97,18 @@ namespace syd {
     /// to avoid use with generic pointer)
     virtual bool IsEqual(const pointer p) const;
 
-    /// This field will store a pointer to the db and is not save in the db (transient)
+    /// This field will store a pointer to the db and is not save in
+    /// the db (transient). Moreover, we need to set this pointer at
+    /// the creation of the object (load or persist). odb call the
+    /// const version of the callback, so to be able to change this
+    /// pointer, we declare it mutable.
 #pragma db transient
-    syd::Database * db_;
+    mutable syd::Database * db_;
+
+    // Search for the sydDatebase from the odb::database (slow, but
+    // call every new object). It is declare const, but will change
+    // the db_ (mutable)
+    virtual void SetDatabasePointer(odb::callback_event event, odb::database & d) const;
 
   }; // end of class
 

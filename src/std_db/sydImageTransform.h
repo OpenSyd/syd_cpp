@@ -72,10 +72,8 @@ namespace syd {
     virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
 
     virtual void Callback(odb::callback_event, odb::database&) const;
-    virtual void Callback(odb::callback_event, odb::database&);
 
     virtual std::string ComputeRelativeFolder() const;
-
 
   protected:
     ImageTransform();
