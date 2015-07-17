@@ -109,6 +109,7 @@ void syd::ImageTransform::InitPrintTable(const syd::Database * db, syd::PrintTab
   ta.AddColumn("moving", 8);
   ta.AddColumn("config", 40);
   ta.AddColumn("date", 25);
+  ta.AddColumn("ref_frame", 30, 0, false);
 }
 // --------------------------------------------------
 
@@ -121,7 +122,8 @@ void syd::ImageTransform::DumpInTable(const syd::Database * d, syd::PrintTable &
      << fixed_image->id
      << moving_image->id
      << (config_file == NULL ? "unset":config_file->filename)
-     << date;
+     << date
+     << fixed_image->frame_of_reference_uid;
 }
 // --------------------------------------------------
 
@@ -131,8 +133,8 @@ void syd::ImageTransform::Callback(odb::callback_event event, odb::database & db
 {
   syd::Record::Callback(event, db);
   if (event == odb::callback_event::post_erase) {
-    db.erase(config_file);
-    db.erase(transform_file);
+    if (config_file != NULL) db.erase(config_file);
+    if (transform_file != NULL) db.erase(transform_file);
     std::string f = db_->ConvertToAbsolutePath(ComputeRelativeFolder());
     fs::remove_all(f);
   }

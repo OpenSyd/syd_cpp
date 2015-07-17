@@ -10,9 +10,9 @@ description "Parameters are:
 - <config>        : elastix config file
 "
 
-option "config"	  	 	-	"Config file"				        string  no
-option "verbose"   	 	v       "Verbosity level (-1 for silence)"              int     default="0" no
-option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		        flag	off
-option "options"   	 	p       "Option for elastix (in \" \")"                 string  default="" no
-option "fMask"   	 	-       "Mask id or name for fixed image (table RoiMaskImage)"  string no
-option "mMask"   	 	-       "Mask id or name for moving image (table RoiMaskImage)" string no
+option "config"         -	"Config file"				        string  no
+option "verbose"        v       "Verbosity level (-1 for silence)"              int     default="0" no
+option "verboseSQL"     -       "Verbose SQL query (debug)"		        flag	off
+option "options"        p       "Option for elastix (in \" \")"                 string  default="" no
+option "fMask"          -       "Mask id or name for fixed image (table RoiMaskImage)"  string no
+option "mMask"   	-       "Mask id or name for moving image (table RoiMaskImage)" string no

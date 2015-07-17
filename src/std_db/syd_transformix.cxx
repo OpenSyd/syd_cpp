@@ -77,11 +77,20 @@ int main(int argc, char* argv[])
   out << "(ResultImagePixelType " << input_image->pixel_type << ")" << std::endl;
   out.close();
 
+
+  // Check frame_of_reference_uid
+  if (input_image->frame_of_reference_uid != transform->moving_image->frame_of_reference_uid) {
+    LOG(FATAL) << "Error the frame_of_reference_uid of the input image is different from the one of the moving_image of the transform" << std::endl
+               << "input : " << input_image << std::endl
+               << "moving_image : " << transform->moving_image  << std::endl;
+  }
+
   // Create output image
   syd::Image::pointer output_image;
   db->New(output_image);
   output_image->CopyFrom(input_image);
   output_image->tags.clear(); // dont herit tag
+  output_image->frame_of_reference_uid = transform->fixed_image->frame_of_reference_uid; // copy the ref from the fixed_image
   db->Insert(output_image);
   std::ostringstream oss;
   if (input_image->dicoms.size() == 0) oss << "IMAGE_" << output_image->id << ".mhd";

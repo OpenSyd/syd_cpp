@@ -58,13 +58,17 @@ int main(int argc, char* argv[])
   // Get the masks
   syd::RoiMaskImage::pointer fixed_mask;
   std::string fixed_mask_path;
-  if (args_info.fMask_given)
-    fixed_mask = FindRoiMaskImage(db, fixed_mask->patient, args_info.fMask_arg, fixed_image->frame_of_reference_uid);
+  if (args_info.fMask_given) {
+    fixed_mask = FindRoiMaskImage(db, fixed_image->patient, args_info.fMask_arg, fixed_image->frame_of_reference_uid);
+    fixed_mask_path = db->GetAbsolutePath(fixed_mask);
+  }
 
   syd::RoiMaskImage::pointer moving_mask;
   std::string moving_mask_path;
-  if (args_info.mMask_given)
-    moving_mask = FindRoiMaskImage(db, moving_mask->patient, args_info.mMask_arg, moving_image->frame_of_reference_uid);
+  if (args_info.mMask_given) {
+    moving_mask = FindRoiMaskImage(db, moving_image->patient, args_info.mMask_arg, moving_image->frame_of_reference_uid);
+    moving_mask_path = db->GetAbsolutePath(moving_mask);
+  }
 
   // Get the elastix config file
   std::string config_file = args_info.inputs[3];
@@ -165,7 +169,11 @@ FindRoiMaskImage(const syd::StandardDatabase * db,
   // by roi name
   syd::RoiType::pointer roitype = db->FindRoiType(mask_name_or_id);
   syd::RoiMaskImage::vector temp;
-  db->FindRoiMaskImages(temp, patient, roitype, frame_of_reference_uid);
+  odb::query<syd::RoiMaskImage> q =
+    odb::query<syd::RoiMaskImage>::patient == patient->id and
+    odb::query<syd::RoiMaskImage>::roitype == roitype->id and
+    odb::query<syd::RoiMaskImage>::frame_of_reference_uid == frame_of_reference_uid;
+  db->Query(temp, q);
   if (temp.size() == 0) {
     LOG(FATAL) << "No mask '" << roitype->name
                << "' with frame_of_reference_uid "
