@@ -5,11 +5,11 @@ usage "syd_transformix <db> <transform> <image> "
 version "0.3"
 description "Parameters are:
 - <db>            : name of the database
-- <transform>     : id of transformation
-- <image>         : id of the image to transform
+- <image>         : ids of the image to transform
 "
 
 option "config"	  	 	-	"Config file"				      string  	no
 option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
 option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
+option "transform"   	        -       "List of transform ids (between \"\")"        string    yes
 option "tags"   	        t       "Add tags (separated by space, in \"\")"      string    default="transform" no
