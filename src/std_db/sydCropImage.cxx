@@ -74,7 +74,12 @@ int main(int argc, char* argv[])
         // Try to find the body of this image
         syd::RoiType::pointer body = db->FindRoiType("body");
         try {
-          auto mask = db->FindRoiMaskImage(body, image->dicoms[0]);
+          odb::query<syd::RoiMaskImage> q =
+            odb::query<syd::RoiMaskImage>::patient == image->patient->id and
+            odb::query<syd::RoiMaskImage>::roitype == body->id and
+            odb::query<syd::RoiMaskImage>::frame_of_reference_uid == image->frame_of_reference_uid;
+          syd::RoiMaskImage::pointer mask;
+          db->QueryOne(mask, q);
           LOG(1) << "Find 'body' mask for the image: " << mask;
           b.CropImageLike(image, mask, args_info.force_flag);
         } catch (std::exception & e) {

@@ -56,9 +56,6 @@ namespace syd {
     syd::Tag::pointer FindOrInsertTag(const std::string & label, const std::string & description);
     syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
 
-    syd::RoiMaskImage::pointer FindRoiMaskImage(const syd::RoiType::pointer roitype,
-                                                const syd::DicomSerie::pointer dicom) const;
-
     std::string GetAbsolutePath(const syd::Image::pointer image) const;
     std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
     std::string GetAbsolutePath(const syd::File::pointer file) const;
