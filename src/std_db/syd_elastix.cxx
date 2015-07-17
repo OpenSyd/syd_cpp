@@ -22,14 +22,18 @@
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
 
-#include "boost/date_time/gregorian/gregorian.hpp" //include all types plus i/o
 #include "boost/date_time/posix_time/posix_time.hpp"
-using namespace boost::gregorian;
 namespace pt = boost::posix_time;
-
 
 // syd init
 SYD_STATIC_INIT
+
+// --------------------------------------------------------------------
+syd::RoiMaskImage::pointer
+FindRoiMaskImage(const syd::StandardDatabase * db,
+                 const syd::Patient::pointer patient,
+                 const std::string & roi_name_or_id,
+                 const std::string & frame_of_reference_uid);
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -54,32 +58,13 @@ int main(int argc, char* argv[])
   // Get the masks
   syd::RoiMaskImage::pointer fixed_mask;
   std::string fixed_mask_path;
-  if (args_info.fMask_given) {
-    /* FIXME
-    syd::IdType id = atoi(args_info.fMask_arg);
-    if (id !=0) db->QueryOne(fixed_mask, id);
-    else {
-      syd::RoiType::pointer roitype = db->FindRoiType(args_info.fMask_arg);
-      if (input_image->dicoms.size() == 0) {
-        LOG(FATAL) << "The image must be linked to a dicom to find the corresponding roi mask";
-      }
-      fixed_mask = db->FindRoiMaskImage(roitype, input_image->dicoms[0]);
-    }
-
-    // if not, FindRoiMaskImage(roitype, dicom
-    */
-
-
-    db->QueryOne(fixed_mask, atoi(args_info.fMask_arg));
-    fixed_mask_path = db->GetAbsolutePath(fixed_mask);
-  }
+  if (args_info.fMask_given)
+    fixed_mask = FindRoiMaskImage(db, fixed_mask->patient, args_info.fMask_arg, fixed_image->frame_of_reference_uid);
 
   syd::RoiMaskImage::pointer moving_mask;
   std::string moving_mask_path;
-  if (args_info.mMask_given) {
-    db->QueryOne(moving_mask, atoi(args_info.mMask_arg));
-    moving_mask_path = db->GetAbsolutePath(moving_mask);
-  }
+  if (args_info.mMask_given)
+    moving_mask = FindRoiMaskImage(db, moving_mask->patient, args_info.mMask_arg, moving_image->frame_of_reference_uid);
 
   // Get the elastix config file
   std::string config_file = args_info.inputs[3];
@@ -158,5 +143,41 @@ int main(int argc, char* argv[])
   }
 
   // This is the end, my friend.
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+syd::RoiMaskImage::pointer
+FindRoiMaskImage(const syd::StandardDatabase * db,
+                 const syd::Patient::pointer patient,
+                 const std::string & mask_name_or_id,
+                 const std::string & frame_of_reference_uid)
+{
+  syd::RoiMaskImage::pointer mask;
+  // By id
+  syd::IdType id = atoi(mask_name_or_id.c_str());
+  if (id != 0) {
+    db->QueryOne(mask, id);
+    return mask;
+  }
+  // by roi name
+  syd::RoiType::pointer roitype = db->FindRoiType(mask_name_or_id);
+  syd::RoiMaskImage::vector temp;
+  db->FindRoiMaskImages(temp, patient, roitype, frame_of_reference_uid);
+  if (temp.size() == 0) {
+    LOG(FATAL) << "No mask '" << roitype->name
+               << "' with frame_of_reference_uid "
+               << frame_of_reference_uid;
+  }
+  if (temp.size() > 1) {
+    std::string s;
+    for(auto t:temp) s += t->ToString()+" ";
+    LOG(FATAL) << "Several masks '" << roitype->name
+               << "' with frame_of_reference_uid found "
+               << frame_of_reference_uid << ": " << std::endl << s;
+  }
+  return temp[0];
 }
 // --------------------------------------------------------------------

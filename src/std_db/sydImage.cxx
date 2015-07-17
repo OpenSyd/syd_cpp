@@ -28,6 +28,7 @@ syd::Image::Image():syd::Record()
   type = "unset";
   pixel_type = "unset";
   dimension = 3;
+  frame_of_reference_uid = "unset";
   for(auto &s:size) s = 0;
   for(auto &s:spacing) s = 1.0;
 }
@@ -51,6 +52,7 @@ std::string syd::Image::ToString() const
      << spacing[0] << "x" << spacing[1] << "x" << spacing[2];
   if (dicoms.size() > 0) ss << " " << dicoms[0]->dicom_modality << " ";
   for(auto d:dicoms) ss << d->id << " ";
+  ss << frame_of_reference_uid;
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -78,6 +80,7 @@ void syd::Image::CopyFrom(const pointer p)
   type = p->type;
   pixel_type = p->pixel_type;
   dimension = p->dimension;
+  frame_of_reference_uid = p->frame_of_reference_uid;
   for(auto i=0; i<size.size(); i++) size[i] = p->size[i];
   for(auto i=0; i<spacing.size(); i++) spacing[i] = p->spacing[i];
 }
@@ -95,7 +98,8 @@ bool syd::Image::IsEqual(const pointer p) const
   b  =  b and
     type == p->type and
     pixel_type == p->pixel_type and
-    dimension == p->dimension;
+    dimension == p->dimension and
+    frame_of_reference_uid == p->frame_of_reference_uid;
   for(auto i=0; i<size.size(); i++) b = b and size[i] == p->size[i];
   for(auto i=0; i<spacing.size(); i++) b = b and spacing[i] == p->spacing[i];
   return b;
@@ -175,7 +179,8 @@ void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, 
       ta.AddColumn("size", 12);
       ta.AddColumn("spacing", 25);
       ta.AddColumn("dicom_id", 15);
-      ta.AddColumn("date", 20);
+      ta.AddColumn("acqui_date", 18);
+      ta.AddColumn("ref_frame", 30, 0, false);
     }
   }
 }
@@ -205,6 +210,7 @@ void syd::Image::DumpInTable(const syd::Database * d, syd::PrintTable & ta, cons
       ta << dicom;
       if (dicoms.size() == 0) ta << "no_dicom";
       else ta << dicoms[0]->acquisition_date;
+      ta << frame_of_reference_uid;
     }
   }
 }

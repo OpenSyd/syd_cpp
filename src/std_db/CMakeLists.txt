@@ -63,10 +63,10 @@ target_link_libraries(sydStandardDatabase  ${SYD_CORE_LIBRARIES})
 
 
 ##############################
-# # Not really a tool, for debug only
-# wrap_ggo(sydTest sydTest.ggo)
-# add_executable(sydTest sydTest.cxx sydTest_ggo.c)
-# target_link_libraries(sydTest extExtendedDatabase sydStandardDatabase)
+# Not really a tool, for debug only
+wrap_ggo(sydTest sydTest.ggo)
+add_executable(sydTest sydTest.cxx sydTest_ggo.c)
+target_link_libraries(sydTest sydStandardDatabase)
 
 ##############################
 # Specific tools (usable for StandardDatabase or db that inherit from it)

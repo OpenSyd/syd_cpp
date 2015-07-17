@@ -36,62 +36,20 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
-  // Get the database
   std::string dbname = args_info.inputs[0];
-  DD(dbname);
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
 
-  {
-    std::string b = dbname+".backup";
-    std::rename(dbname.c_str(), b.c_str());
-    std::string folder = "test";
-    syd::Database * db = m->Create("StandardDatabase", dbname, folder);
-    //    syd::Database * db = m->Create("ExtendedDatabase", dbname, folder);
-    db->Dump();
+  db->Dump("Image");
+
+  syd::Image::vector images;
+  db->Query(images);
+
+  for(auto image:images) {
+    DD(image);
+    image->frame_of_reference_uid = image->dicoms[0]->dicom_frame_of_reference_uid;
+    DD(image);
   }
-
-  // With generic db
-  {
-    /*
-    DD("------------------");
-    syd::Database * db = m->Read(dbname); // FIXME set it shared
-    db->Dump(std::cout); // list of tables etc
-
-    // Create a new record
-    auto record = db->NewRecord("Patient");
-    DD(record);
-    std::vector<std::string> args;
-    args.push_back("toto");
-    args.push_back("1");
-    db->Set(record, args);
-    DD(record);
-    db->Insert(record);
-    */
-  }
-
-  // With specific db
-  if (0){
-
-    DD("------------------");
-    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
-    db->Dump(std::cout);
-
-    // Create a new patient
-    //    auto patient = db->NewPatient();
-    syd::Patient::pointer patient(new syd::Patient);
-    //    db->New(patient);
-    std::cout << patient << std::endl;
-    DD(patient);
-    db->Insert(patient);
-    DD(patient);
-    DD("ici");
-    // Read a patient
-    /*
-    auto patient = db->FindPatient("toto");
-    DD(patient);
-    db->Find(patient, id);
-    DD(patient);
-    */
-  }
+  db->Update(images);
 
   DD("end");
   // This is the end, my friend.

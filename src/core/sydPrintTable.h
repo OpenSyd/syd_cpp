@@ -29,7 +29,7 @@ namespace syd {
   class PrintTable {
   public:
     PrintTable();
-    void AddColumn(std::string name, int width=-1, int digit=0);
+    void AddColumn(std::string name, int width=-1, int digit=0, bool trunc_by_end_flag=true);
     void Init();
     PrintTable & operator<<(const double & value);
     PrintTable & operator<<(const std::string & value);
@@ -43,6 +43,7 @@ namespace syd {
     std::vector<std::string> headers;
     std::vector<int> width;
     std::vector<int> precision;
+    std::vector<bool> trunc_by_end;
     int current_line;
     int current_column;
   };

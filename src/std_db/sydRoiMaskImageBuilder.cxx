@@ -49,6 +49,7 @@ syd::RoiMaskImageBuilder::InsertRoiMaskImage(const syd::DicomSerie::pointer & di
     mask->roitype = roitype;
     mask->patient = dicom->patient;
     mask->dicoms.push_back(dicom);
+    mask->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
     mask->type = "mhd";
     syd::Tag::pointer tag_mask = db_->FindOrInsertTag("mask", "Mask image");
     mask->AddTag(tag_mask);

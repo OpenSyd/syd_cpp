@@ -38,33 +38,17 @@ syd::CropImageBuilder::CropImageBuilder()
 
 
 // --------------------------------------------------------------------
-void syd::CropImageBuilder::CropImageLike(syd::Image::pointer image, const syd::Image::pointer like, bool forceFlag)
+void syd::CropImageBuilder::CropImageLike(syd::Image::pointer image,
+                                          const syd::Image::pointer like,
+                                          bool forceFlag)
 {
   // Check
   if (!forceFlag) {
-    std::string ref="";
-    for(auto d:like->dicoms) {
-      if (ref != "") {
-        if (ref != d->dicom_frame_of_reference_uid) {
-          LOG(WARNING) << "Image associated with several dicom_frame_of_reference_uid. " << like;
-        }
-      }
-      ref = d->dicom_frame_of_reference_uid;
-    }
-    std::string ref2="";
-    for(auto d:image->dicoms) {
-      if (ref2 != "") {
-        if (ref2 != d->dicom_frame_of_reference_uid) {
-          LOG(WARNING) << "Image associated with several dicom_frame_of_reference_uid. " << like;
-        }
-      }
-      ref2 = d->dicom_frame_of_reference_uid;
-    }
-    if (ref != ref2) {
+    if (image->frame_of_reference_uid != like->frame_of_reference_uid) {
       EXCEPTION("Cannot crop: " << image << std::endl << "like: "
                 << like << std::endl
-                << "because they dont share the same dicom_frame_of_reference_uid (coordinate system)."
-                << "Use the 'force' flag to do it anyway");
+                << "because they dont share the same frame_of_reference_uid (coordinate system)."
+                << "Use the 'force' flag to do it anyway.");
     }
   }
 

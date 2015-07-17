@@ -35,6 +35,7 @@ syd::Image::pointer syd::ImageFromDicomBuilder::CreateImageFromDicom(const syd::
   db_->New(image);
   image->patient = dicom->patient;
   image->dicoms.push_back(dicom);
+  image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
   image->type = "mhd";
   db_->Insert(image); // to obtain an id
 

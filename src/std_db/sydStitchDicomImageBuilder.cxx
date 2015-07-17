@@ -71,6 +71,7 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
   syd::Image::pointer image;
   db_->New(image);
   image->patient = a->patient;
+  image->frame_of_reference_uid = a->dicom_frame_of_reference_uid;
   image->dicoms.push_back(a);
   image->dicoms.push_back(b);
   db_->Insert(image); // to obtain an id

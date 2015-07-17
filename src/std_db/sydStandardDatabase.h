@@ -55,8 +55,13 @@ namespace syd {
     void FindTags(syd::Tag::vector & tags, const std::string & names) const;
     syd::Tag::pointer FindOrInsertTag(const std::string & label, const std::string & description);
     syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
+
     syd::RoiMaskImage::pointer FindRoiMaskImage(const syd::RoiType::pointer roitype,
                                                 const syd::DicomSerie::pointer dicom) const;
+    void FindRoiMaskImages(syd::RoiMaskImage::vector & mask,
+                           const syd::Patient::pointer patient,
+                           const syd::RoiType::pointer roitype,
+                           const std::string & frame_of_reference_uid) const;
 
     std::string GetAbsolutePath(const syd::Image::pointer image) const;
     std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;

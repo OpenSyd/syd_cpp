@@ -214,6 +214,23 @@ syd::StandardDatabase::FindRoiMaskImage(const syd::RoiType::pointer roitype,
 
 
 // --------------------------------------------------------------------
+void syd::StandardDatabase::FindRoiMaskImages(syd::RoiMaskImage::vector & mask,
+                                              const syd::Patient::pointer patient,
+                                              const syd::RoiType::pointer roitype,
+                                              const std::string & frame_of_reference_uid) const
+{
+  // Get all mask for this patient and this roitype
+  syd::RoiMaskImage::vector masks;
+  odb::query<RoiMaskImage> q = odb::query<RoiMaskImage>::patient == patient->id and
+    odb::query<RoiMaskImage>::roitype == roitype->id and
+    odb::query<RoiMaskImage>::frame_of_reference_uid == frame_of_reference_uid;
+  Query(masks, q);
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
 std::string syd::StandardDatabase::GetAbsolutePath(const syd::Image::pointer image) const
 {
   if (image->files.size() == 0) return "unset_file";

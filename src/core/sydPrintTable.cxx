@@ -27,13 +27,14 @@ syd::PrintTable::PrintTable()
 
 
 //------------------------------------------------------------------
-void syd::PrintTable::AddColumn(std::string name, int w, int digit)
+void syd::PrintTable::AddColumn(std::string name, int w, int digit, bool trunc_by_end_flag)
 {
   if (w == -1) w = name.size()+1;
   headers.push_back(name);
   width.push_back(w);
   precision.push_back(digit);
   if (current_line != -1) values[current_line].resize(headers.size());
+  trunc_by_end.push_back(trunc_by_end_flag);
 }
 //------------------------------------------------------------------
 
@@ -85,8 +86,9 @@ syd::PrintTable & syd::PrintTable::operator<<(const std::string & value)
   if (current_line == -1) Endl();
   // Trunc string if too big
   std::string v = value;
-  if (v.size() > width[current_column]) {
-    v = value.substr(0,width[current_column]-4)+"...";
+  if (v.size() >= width[current_column]) {
+    if (trunc_by_end[current_column]) v = value.substr(0,width[current_column]-4)+"...";
+    else v = "..."+value.substr(v.size()-width[current_column]+4,v.size());
   }
   values[current_line][current_column] = v;
   current_column++;
@@ -107,8 +109,7 @@ void syd::PrintTable::SkipLine()
 void syd::PrintTable::Print(std::ostream & out)
 {
   for(auto i=0; i<headers.size(); i++) {
-    if (width[i] != 0)
-      out << std::setw(width[i]) << headers[i];
+    if (width[i] != 0) out << std::setw(width[i]) << headers[i];
   }
   out << std::endl;
   for(auto i=0; i<values.size(); i++) {

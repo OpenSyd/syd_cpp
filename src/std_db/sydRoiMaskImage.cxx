@@ -92,7 +92,7 @@ void syd::RoiMaskImage::InitPrintTable(const syd::Database * db, syd::PrintTable
 // --------------------------------------------------
 void syd::RoiMaskImage::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
 {
-  if (ta.GetNumberOfColumns() == 7)  {
+  if (ta.GetNumberOfColumns() == 8)  {
     ta.AddColumn("roi", 15);
   }
   syd::Image::DumpInTable(d, ta, format);

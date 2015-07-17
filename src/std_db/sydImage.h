@@ -58,6 +58,10 @@ namespace syd {
     /// Pixel type: short, float, unsigned char
     std::string pixel_type;
 
+    /// Frame of reference : images with same frame_of_reference_uid
+    /// are in the same coordinate system.
+    std::string frame_of_reference_uid;
+
     /// Dimension is 3 or 2.
     unsigned short int dimension;
 
