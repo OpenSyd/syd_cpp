@@ -35,7 +35,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT(syd_transformix, 3);
+  SYD_INIT(syd_transformix, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -58,8 +58,8 @@ int main(int argc, char* argv[])
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
   for(auto i=1; i<args_info.inputs_num; i++)
     ids.push_back(atoi(args_info.inputs[i]));
-  if (ids.size() < 2) {
-    LOG(FATAL) << "Please provide at least two image ids (fixed and moving  images).";
+  if (ids.size() < 1) {
+    LOG(FATAL) << "Please provide at least one image id.";
   }
   syd::Image::vector initial_images;
   db->Query(initial_images, ids);
