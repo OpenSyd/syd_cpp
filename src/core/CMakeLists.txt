@@ -45,10 +45,9 @@ add_library(sydCore
   sydPluginManager.cxx
   sydException.cxx
   sydDatabase.cxx
-#  sydTestUtils.cxx
   sydDatabaseManager.cxx
   sydDicomCommon.cxx
-#  sydTableElementBase.cxx
+  sydTimeActivityCurve.cxx
 )
 
 target_link_libraries(sydCore
