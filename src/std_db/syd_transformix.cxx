@@ -112,8 +112,14 @@ int main(int argc, char* argv[])
       syd::Replace(line, "(ResultImagePixelType ", "//(ResultImagePixelType ");
       out << line << std::endl;
     }
-    out << "(Size " << input_image->size[0] << " " << input_image->size[1] << " " << input_image->size[2] << ")" << std::endl;
-    out << "(Spacing " << input_image->spacing[0] << " " << input_image->spacing[1] << " " << input_image->spacing[2] << ")" << std::endl;
+    out << "(Size "
+        << input_image->size[0] << " "
+        << input_image->size[1] << " "
+        << input_image->size[2] << ")" << std::endl;
+    out << "(Spacing "
+        << input_image->spacing[0] << " "
+        << input_image->spacing[1] << " "
+        << input_image->spacing[2] << ")" << std::endl;
     // out << "(FixedInternalImagePixelType " << input_image->pixel_type << ")" << std::endl;
     // out << "(MovingInternalImagePixelType " << input_image->pixel_type << ")" << std::endl;
     if (input_image->pixel_type == "short") out << "(DefaultPixelValue -1000)" << std::endl; // FIXME
