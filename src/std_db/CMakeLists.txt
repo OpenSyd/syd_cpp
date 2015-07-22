@@ -43,6 +43,7 @@ add_library(sydStandardDatabase SHARED
   sydStitchDicomImageBuilder.cxx
   sydRoiMaskImageBuilder.cxx
   sydCropImageBuilder.cxx
+  sydIntegratedActivityImageBuilder.cxx
 
   # #  sydTimepointBuilder.cxx
 #   sydImageBuilder.cxx
@@ -111,6 +112,13 @@ target_link_libraries(sydImageTag sydStandardDatabase)
 # wrap_ggo(sydDumpTimepoint sydDumpTimepoint.ggo)
 # add_executable(sydDumpTimepoint sydDumpTimepoint.cxx sydDumpTimepoint_ggo.c)
 # target_link_libraries(sydDumpTimepoint sydStandardDatabase)
+
+
+# Create image of integrated activity
+wrap_ggo(sydInsertIntegratedActivityImage sydInsertIntegratedActivityImage.ggo)
+add_executable(sydInsertIntegratedActivityImage sydInsertIntegratedActivityImage.cxx sydInsertIntegratedActivityImage_ggo.c)
+target_link_libraries(sydInsertIntegratedActivityImage sydStandardDatabase)
+
 
 #----------------------------------------------------------
 
