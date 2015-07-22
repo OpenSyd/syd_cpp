@@ -50,7 +50,6 @@ add_test(NAME test_find
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_find
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
-
 # Test delete
 add_executable(test_delete test_delete.cxx)
 target_link_libraries(test_delete extExtendedDatabase)
@@ -58,12 +57,20 @@ add_test(NAME test_delete
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_delete
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
-# Test  dynamic_fields
-add_executable(test_dynamic_fields test_dynamic_fields.cxx)
-target_link_libraries(test_dynamic_fields extExtendedDatabase)
-add_test(NAME test_dynamic_fields
-  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_dynamic_fields
+# Test integration
+add_executable(test_integration test_integration.cxx)
+target_link_libraries(test_integration sydStandardDatabase)
+add_test(NAME test_integration
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_integration
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
+
+
+# # Test  dynamic_fields
+# add_executable(test_dynamic_fields test_dynamic_fields.cxx)
+# target_link_libraries(test_dynamic_fields extExtendedDatabase)
+# add_test(NAME test_dynamic_fields
+#   COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_dynamic_fields
+#   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
 
 # #----------------------------------------------------------
