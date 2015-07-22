@@ -46,7 +46,7 @@ namespace syd {
 
     /// Crop and image like another (pixeltype known)
     template<class PixelType>
-    void CropImageLike(syd::Image::pointer image, syd::Image::pointer like);
+    void CropImageLike(syd::Image::pointer image, syd::Image::pointer like, int interpolationType, PixelType default_pixel);
 
     /// Crop an image according to a threshold
     void CropImageWithThreshold(syd::Image::pointer image, double threshold);

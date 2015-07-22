@@ -53,9 +53,9 @@ void syd::CropImageBuilder::CropImageLike(syd::Image::pointer image,
   }
 
   // Crop the image and write it to disk
-  if (image->pixel_type == "float") CropImageLike<float>(image, like);
-  else if (image->pixel_type == "short") CropImageLike<short>(image, like);
-  else if (image->pixel_type == "unsigned char") CropImageLike<unsigned char>(image, like);
+  if (image->pixel_type == "float") CropImageLike<float>(image, like, 1, 0);
+  else if (image->pixel_type == "short") CropImageLike<short>(image, like, 1, -1000);
+  else if (image->pixel_type == "unsigned char") CropImageLike<unsigned char>(image, like, 0, 0);
   else {
     LOG(FATAL) << "Unknown pixel_type: " << image->pixel_type;
   }
