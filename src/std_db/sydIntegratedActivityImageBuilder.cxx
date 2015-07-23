@@ -62,13 +62,16 @@ syd::Image::pointer syd::IntegratedActivityImageBuilder::GetOutput() const
 // --------------------------------------------------------------------
 void syd::IntegratedActivityImageBuilder::SaveDebugPixel(const std::string & filename) const
 {
+  DD("SaveDebugPixel");
   syd::PrintTable ta;
-  ta.AddColumn("#time", 10);
-  for(auto index:debug_pixels) ta.AddColumn(syd::ToString(index), 5);
+  ta.AddColumn("time", 10, 4);
+  for(auto d:debug_data) {
+    ta.AddColumn(d.name, 10, 1);
+  }
   ta.Init();
   for(auto t=0; t<current_tac_.size(); t++) {
     ta << current_tac_.GetTime(t);
-    for(auto tac:debug_tac) { DD(tac); ta << tac.GetValue(t); }
+    for(auto d:debug_data) ta << d.tac.GetValue(t);
     ta.Endl();
   }
   std::ofstream os(filename);
@@ -79,14 +82,74 @@ void syd::IntegratedActivityImageBuilder::SaveDebugPixel(const std::string & fil
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::AddDebugPixel(int x, int y, int z)
+void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & filename) const
+{
+  DD("SaveDebugModel");
+  // Create tac from the models
+  std::vector<syd::TimeActivityCurve*> tacs;
+  for(auto d:debug_data) {
+    for(auto model:d.models) {
+      syd::TimeActivityCurve * tac = model->GetTAC(0, current_tac_.GetTime(current_tac_.size()-1), 100);
+      //    DD(*tac);
+      tacs.push_back(tac);
+    }
+  }
+
+  // Set table column name
+  syd::PrintTable ta;
+  ta.AddColumn("time", 10, 4);
+  for(auto d:debug_data) {
+    for(auto model:d.models) {
+      std::string name = d.name+"_"+model->GetName();
+      ta.AddColumn(name, 10,1);
+    }
+  }
+  ta.Init();
+
+  // Set values
+  for(auto t=0; t<tacs[0]->size(); t++) {
+    ta << tacs[0]->GetTime(t);
+    for(auto tac:tacs) ta << tac->GetValue(t);
+    ta.Endl();
+  }
+
+  // Dump
+  std::ofstream os(filename);
+  ta.Print(os);
+  os.close();
+
+  // Other debug
+  for(auto d:debug_data) {
+    std::cout << d.name << " "  << std::endl;
+    for(auto i=0; i< d.models.size(); i++) {
+      auto model = d.models[i];
+      std::string p;
+      for(auto pp:model->GetParameters()) p = p+syd::ToString(pp)+" ";
+      std::cout << "\t" << model->GetName() << " " << d.summaries[i].BriefReport() << " "
+                << p
+                << std::endl;
+    }
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::IntegratedActivityImageBuilder::AddDebugPixel(std::string name, int x, int y, int z)
 {
   if (images_.size() == 0) {
     LOG(FATAL) << "Only use AddDebugPixel after SetInput";
   }
   auto size = images_[0]->size;
   int index = z*size[0]*size[1] + y*size[0] + x;
-  debug_pixels.push_back(index);
+  DebugType debug;
+  debug.name = name;
+  debug.x = x;
+  debug.y = y;
+  debug.z = z;
+  debug.index = index;
+  debug_data.push_back(debug);
+  std::cout << "debug " << name << " " << x << " " << y << " " << z << std::endl;
 }
 // --------------------------------------------------------------------
 
@@ -98,7 +161,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   // FIXME separate itk only
 
   // alloc debug
-  debug_tac.resize(debug_pixels.size());
+  //debug_tac.resize(debug_pixels.size());
 
   // typedef
   typedef float PixelType;
@@ -168,6 +231,10 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   }
   DD(current_tac_);
 
+
+  // Init solver
+  InitSolver();
+
   // loop pixel ? list of iterators
   //  update values of the tac
   //  call tac integration
@@ -183,17 +250,20 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
       ++it; // next value
     }
 
-    // Integration
-    double v = Integrate();
-
-    // Save for debug
-    auto iter = std::find(debug_pixels.begin(), debug_pixels.end(), index);
-    if (iter != debug_pixels.end()) {
-      int x = iter - debug_pixels.begin();
-      DD(x);
-      debug_tac[x] = current_tac_;
-      //debug_model[x] =  fixme later
+    // Check for debug
+    current_debug_flag_ = false;
+    //    auto iter = std::find(debug_pixels.begin(), debug_pixels.end(), index);
+    debug_current = std::find_if(debug_data.begin(), debug_data.end(),
+                                 [index] (const DebugType & d) { return d.index == index; } );
+    if (debug_current != debug_data.end()) {
+      current_debug_flag_ = true;
+      debug_current->tac = current_tac_;
     }
+
+    // Integration
+    double v;
+    //if (current_tac_.GetValue(0) > 300)
+    if (current_debug_flag_) v = Integrate();
 
     // Next
     out_iter.Set(v);
@@ -215,6 +285,52 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 double syd::IntegratedActivityImageBuilder::Integrate()
 {
 
+  // current_tac_ is ok
+
+  for(auto model:models_) {
+    // DD("Fit with model");
+    // DD(model->GetName());
+
+    ceres::Problem problem;// New problem each time ? to be changed FIXME
+    model->SetProblemResidual(&problem, current_tac_);
+
+    ceres::Solve(*ceres_options_, &problem, &ceres_summary_);
+
+    // std::cout << ceres_summary_.BriefReport() << "\n";
+    // std::cout << ceres_summary_.FullReport() << "\n";
+
+    // AICc_absolute
+    // AICc_relative
+
+    // Goodness of fit  = coefficient of determination = R^2 = 1 - SSre/SStot
+    // SSre  = sum of squares of residuals
+    // SStot =  total sum of squares (see Coefficient_of_determination wikipedia)
+
+    // Correlation matrix ? Landaw [20] ?
+    // http://ceres-solver.org/solving.html#covariance-estimation
+    // Covariance covariance(options); etc
+
+    // DEBUG
+    if (current_debug_flag_) {
+      DD(model->GetName());
+      DD(current_tac_);
+      syd::FitModelBase * m = model->Clone();
+      debug_current->models.push_back(m);
+      debug_current->summaries.push_back(ceres_summary_);
+      std::cout << ceres_summary_.BriefReport() << "\n";
+      std::cout << ceres_summary_.FullReport() << "\n";
+    }
+
+  }
+
+  // Then : AICc_min, Delta_i, w_AICi
+  // Selection ?
+
+  double r = 0.0;
+
+
+  /*
+
   // First point
   double t1 = 0;
   double t2 = current_tac_.GetTime(0);
@@ -235,7 +351,39 @@ double syd::IntegratedActivityImageBuilder::Integrate()
   }
 
   // Last point ? mono expo fit with physical half life only (?)
+  */
 
   return r;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::IntegratedActivityImageBuilder::InitSolver()
+{
+  DD("InitSolver");
+
+  // Solve
+  ceres_options_ = new ceres::Solver::Options;
+  ceres_options_->max_num_iterations = 500;
+  ceres_options_->linear_solver_type = ceres::DENSE_QR;
+  ceres_options_->minimizer_progress_to_stdout = false;
+  ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
+  //ceres_options_->trust_region_strategy_type = ceres::DOGLEG;// (faster LM ?)
+  //ceres_options_->dogleg_type = ceres::SUBSPACE_DOGLEG;
+  ceres_options_->logging_type = ceres::SILENT;
+
+  // Create the models
+  models_.push_back(new syd::FitModel_f1);
+  models_.push_back(new syd::FitModel_f2);
+  models_.push_back(new syd::FitModel_f3);
+  models_.push_back(new syd::FitModel_f4a);
+  models_.push_back(new syd::FitModel_f4b);
+  models_.push_back(new syd::FitModel_f4c);
+  models_.push_back(new syd::FitModel_f4);
+
+  for(auto m:models_) m->SetLambdaPhysicHours(0.010297405); // Indium in hour
+
+  DD("end InitSolver");
 }
 // --------------------------------------------------------------------

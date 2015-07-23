@@ -22,10 +22,23 @@
 // syd
 #include "sydStandardDatabase.h"
 #include "sydImage.h"
-#include "sydTimeActivityCurve.h"
+#include "sydFitModels.h"
 
 // --------------------------------------------------------------------
 namespace syd {
+
+  class DebugType {
+  public:
+    //    ~DebugType() { DD(" dest"); }
+    int index;
+    int x;
+    int y;
+    int z;
+    syd::TimeActivityCurve tac;
+    std::vector<syd::FitModelBase*> models;
+    std::string name;
+    std::vector<ceres::Solver::Summary> summaries;
+  };
 
   /// This class is used to create a pixel-based integrated activity.
   class IntegratedActivityImageBuilder {
@@ -42,10 +55,13 @@ namespace syd {
     void CreateIntegratedActivityImage();
     double Integrate();
 
+    void InitSolver();
+
     syd::TimeActivityCurve & GetTAC() { return current_tac_; }
 
     void SaveDebugPixel(const std::string & filename) const;
-    void AddDebugPixel(int x, int y, int z);
+    void SaveDebugModel(const std::string & filename) const;
+    void AddDebugPixel(std::string name, int x, int y, int z);
 
   protected:
     syd::StandardDatabase * db_;
@@ -54,9 +70,20 @@ namespace syd {
     syd::Image::pointer output_;
     syd::TimeActivityCurve current_tac_;
 
-    std::vector<int> debug_pixels;
-    std::vector<syd::TimeActivityCurve> debug_tac;
+    // std::vector<int> debug_pixels;
+    // std::vector<syd::TimeActivityCurve> debug_tac;
 
+    std::vector<syd::FitModelBase*> models_;
+    //    std::vector<syd::FitModelBase*> debug_models_;
+    bool current_debug_flag_;
+
+    std::vector<DebugType> debug_data;
+    std::vector<DebugType>::iterator debug_current;
+
+    ceres::Solver::Options * ceres_options_;
+    ceres::Solver::Summary ceres_summary_;
+
+    //    ceres::Problem problem;
 
   }; // class IntegratedActivityImageBuilder
 

@@ -60,8 +60,21 @@ int main(int argc, char* argv[])
   builder.SetInput(images);
 
   // Options here
-  builder.AddDebugPixel(40, 22, 61);
-  builder.AddDebugPixel(60, 22, 45);
+  //  builder.AddDebugPixel("liver", 40, 22, 61);
+  // builder.AddDebugPixel("heart", 60, 22, 45);
+
+  // builder.AddDebugPixel("liver", 35, 31, 66);
+  // builder.AddDebugPixel("heart", 62, 21, 48);
+  if (args_info.debug_given) {
+    std::string file=args_info.debug_arg;
+    std::ifstream is(file);
+    while (is) {
+      std::string name;
+      int x,y,z;
+      is >> name >> x >> y >> z;
+      if (is) builder.AddDebugPixel(name, x,y,z);
+    }
+  }
 
   // Go !
   builder.CreateIntegratedActivityImage();
@@ -72,6 +85,7 @@ int main(int argc, char* argv[])
 
   // Debug here
   builder.SaveDebugPixel("gp/tac.txt");
+  builder.SaveDebugModel("gp/models.txt");
 
   // Update tags
   /*

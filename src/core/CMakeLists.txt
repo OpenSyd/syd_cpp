@@ -33,6 +33,23 @@ target_link_libraries(sydCommonSchema
   ${ITK_LIBRARIES})
 
 #----------------------------------------------------------
+# Fit library
+add_library(sydFit
+  sydFitModelBase.cxx
+  sydFitModel_f1.cxx
+  sydFitModel_f2.cxx
+  sydFitModel_f3.cxx
+  sydFitModel_f4.cxx
+  sydFitModel_f4a.cxx
+  sydFitModel_f4b.cxx
+  sydFitModel_f4c.cxx
+)
+
+target_link_libraries(sydFit ${CERES_LIBRARIES})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 # Common library
 include_directories(${SYD_SOURCE_DIR}/src/pstreams)
 add_library(sydCore
@@ -53,7 +70,9 @@ add_library(sydCore
 target_link_libraries(sydCore
   ${DCMTK_LIBRARIES}
   sydCommonSchema
+  sydFit
   odb-sqlite odb sqlite3 z
-  ${ITK_LIBRARIES})
+  ${ITK_LIBRARIES}
+  ${CERES_LIBRARIES})
 
 #----------------------------------------------------------
