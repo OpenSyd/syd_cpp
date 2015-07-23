@@ -45,6 +45,7 @@ namespace syd {
     double GetVariance(unsigned int i) const { return variances[i]; }
 
     void SetValue(unsigned int i, double v) { values[i] = v; }
+    void SetTime(unsigned int i, double v) { times[i] = v; }
     unsigned int FindMaxIndex();
 
     friend std::ostream& operator<<(std::ostream& os, const TimeActivityCurve & p);
