@@ -47,7 +47,6 @@ void syd::FitModel_f4::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   for(auto i=0; i<tac.size(); i++) {
     problem->AddResidualBlock(new CostFctType(residuals_[i]), NULL, &params_[0], &params_[1], &params_[2], &params_[3]);
   }
-
 }
 // --------------------------------------------------------------------
 

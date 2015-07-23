@@ -89,8 +89,7 @@ void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & fil
   std::vector<syd::TimeActivityCurve*> tacs;
   for(auto d:debug_data) {
     for(auto model:d.models) {
-      syd::TimeActivityCurve * tac = model->GetTAC(0, current_tac_.GetTime(current_tac_.size()-1), 100);
-      //    DD(*tac);
+      syd::TimeActivityCurve * tac = model->GetTAC(0, current_tac_.GetTime(current_tac_.size()-1), 200);
       tacs.push_back(tac);
     }
   }
@@ -101,7 +100,7 @@ void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & fil
   for(auto d:debug_data) {
     for(auto model:d.models) {
       std::string name = d.name+"_"+model->GetName();
-      ta.AddColumn(name, 10,1);
+      ta.AddColumn(name, 20,1);
     }
   }
   ta.Init();
@@ -202,7 +201,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   }
   for(auto & iter:iterators) iter.GoToBegin();
 
-  DD("loop");
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
     for(auto & iter:iterators) {
       it.Set(iter.Get());
@@ -212,7 +210,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   }
 
   //WriteImage<Image4DType>(tac_image, "4D.mhd"); hard to see
-  DD("allocate");
   ImageType::Pointer itk_output = ImageType::New();
   itk_output->CopyInformation(itk_images[0]);
   itk_output->SetRegions(itk_images[0]->GetLargestPossibleRegion());
@@ -229,11 +226,11 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
     double t = DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
     current_tac_.AddValue(t, 0.0);
   }
-  DD(current_tac_);
-
 
   // Init solver
   InitSolver();
+  //double max_time = log(0.01)/(-models_[0]->GetLambdaPhysicHours()); // consider mono expo decay from max point
+  //DD(max_time);
 
   // loop pixel ? list of iterators
   //  update values of the tac
@@ -249,6 +246,10 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
       current_tac_.SetValue(i, it.Get());
       ++it; // next value
     }
+    // double max = current_tac_.GetValue(current_tac_.FindMaxIndex());
+    // double max_time = log(0.01)/(-models_[0]->GetLambdaPhysicHours()); // consider mono expo decay from max point
+    // // DD(max);
+    // current_tac_.SetTime(itk_images.size(), max_time); //final point
 
     // Check for debug
     current_debug_flag_ = false;
@@ -288,8 +289,6 @@ double syd::IntegratedActivityImageBuilder::Integrate()
   // current_tac_ is ok
 
   for(auto model:models_) {
-    // DD("Fit with model");
-    // DD(model->GetName());
 
     ceres::Problem problem;// New problem each time ? to be changed FIXME
     model->SetProblemResidual(&problem, current_tac_);
@@ -312,13 +311,11 @@ double syd::IntegratedActivityImageBuilder::Integrate()
 
     // DEBUG
     if (current_debug_flag_) {
-      DD(model->GetName());
-      DD(current_tac_);
       syd::FitModelBase * m = model->Clone();
       debug_current->models.push_back(m);
       debug_current->summaries.push_back(ceres_summary_);
-      std::cout << ceres_summary_.BriefReport() << "\n";
-      std::cout << ceres_summary_.FullReport() << "\n";
+      // std::cout << ceres_summary_.BriefReport() << "\n";
+      //std::cout << ceres_summary_.FullReport() << "\n";
     }
 
   }

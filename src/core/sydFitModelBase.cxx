@@ -38,7 +38,6 @@ void syd::FitModelBase::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
 // --------------------------------------------------------------------
 void syd::FitModelBase::CopyFrom(const syd::FitModelBase * model)
 {
-  DD("copy");
   name_ = model->GetName();
   lambda_phys_hours_ = model->GetLambdaPhysicHours();
   params_  = model->GetParameters();
