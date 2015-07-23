@@ -55,9 +55,9 @@ void syd::TimeActivityCurve::SortByTime()
 unsigned int syd::TimeActivityCurve::FindMaxIndex()
 {
   double max=0.0;
-  unsigned int max_index;
+  unsigned int max_index=0;
   for (auto i = 0; i < size(); ++i) {
-    if (GetValue(i) > max) {
+    if (GetValue(i) >= max) {
       max = GetValue(i);
       max_index = i;
     }
