@@ -49,10 +49,8 @@ void syd::FitModelBase::CopyFrom(const syd::FitModelBase * model)
 // --------------------------------------------------------------------
 syd::TimeActivityCurve * syd::FitModelBase::GetTAC(double first_time, double last_time, int n) const
 {
-  DD("GetTAC");
   syd::TimeActivityCurve * tac = new syd::TimeActivityCurve;
   double step = (last_time-first_time)/(double)n;
-  DD(step);
   double time = first_time;
   for(auto i=0; i<n; i++) {
     tac->AddValue(time, GetValue(time));
