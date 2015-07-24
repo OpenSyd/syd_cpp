@@ -54,32 +54,12 @@ using namespace sydlog;
 
 namespace syd {
 
- //  //--------------------------------------------------------------------
-//   // GGO with modified struct name
-// #define GGO(ggo_filename, args_info)                                    \
-//   args_info_##ggo_filename args_info;					\
-//   cmdline_parser_##ggo_filename##2(argc, argv, &args_info, 1, 1, 0);    \
-//   if (args_info.config_given)						\
-//     cmdline_parser_##ggo_filename##_configfile (args_info.config_arg, &args_info, 0, 0, 1); \
-//     else cmdline_parser_##ggo_filename(argc, argv, &args_info);
-
   //--------------------------------------------------------------------
   // Static declaration To be include in main
 #define SYD_STATIC_INIT                                                 \
   syd::DatabaseManager * syd::DatabaseManager::singleton_;              \
   syd::PluginManager * syd::PluginManager::singleton_;                  \
   std::map<odb::database *, syd::Database *> syd::Database::ListOfLoadedDatabases;
-
- //  //--------------------------------------------------------------------
-//   // To init tools with GGO, log and help
-// #define SYD_INIT(G, N)                       \
-//   GGO(G, args_info);                         \
-//   Log::SQLFlag() = args_info.verboseSQL_flag;           \
-//   Log::LogLevel() = args_info.verbose_arg;              \
-//   if (args_info.inputs_num < N) {                       \
-//     cmdline_parser_##G##_print_help();           \
-//     LOG(FATAL) << "Please provide at least "#N" params";   \
-//   }
 
   //--------------------------------------------------------------------
   /// Type for id in the db
