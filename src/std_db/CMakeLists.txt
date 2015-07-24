@@ -2,7 +2,7 @@
 
 ## Needed to find sydRecord-odb.hxx
 #include_directories(${SYD_BINARY_DIR}/src/core)
-include_directories(${SYD_BINARY_DIR}/src/common_db)
+#include_directories(${SYD_BINARY_DIR}/src/common_db)
 
 # include_directories(../common_db)
 # DD(SYD_SOURCE_DIR)
@@ -10,7 +10,7 @@ include_directories(${SYD_BINARY_DIR}/src/common_db)
 #----------------------------------------------------------
 # Standard database : StandardDatabase
 set(SCHEMA_NAME StandardDatabase)
-#wrap_odb(sydStandardDatabase sydStandardRecord.h)
+
 wrap_odb(sydStandardDatabase sydPatient.h)
 wrap_odb(sydStandardDatabase sydRadionuclide.h)
 wrap_odb(sydStandardDatabase sydTag.h)
@@ -22,11 +22,8 @@ wrap_odb(sydStandardDatabase sydImage.h)
 wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
 wrap_odb(sydStandardDatabase sydImageTransform.h)
-# #wrap_odb(sydStandardDatabase sydTimepoint.h)
 
 add_library(sydStandardDatabase SHARED
-  # sydStandardRecord-odb.cxx
-  # sydStandardRecord.cxx
   sydStandardDatabase.cxx
   sydStandardDatabasePlugin.cxx
   sydPatient-odb.cxx sydPatient.cxx
@@ -48,23 +45,9 @@ add_library(sydStandardDatabase SHARED
   sydCropImageBuilder.cxx
   sydIntegratedActivityImageBuilder.cxx
 
-  # #  sydTimepointBuilder.cxx
-#   sydImageBuilder.cxx
-# #  sydTimepoint-odb.cxx sydTimepoint.cxx
-
-  # sydTablePatient.cxx
-  # sydTableTag.h
-  # sydTableRoiType.h
-  # sydTableFile.cxx
-  # sydTableDicomFile.cxx
-  # sydTableDicomSerie.cxx
-  # sydTableImage.cxx
-  # sydTableRoiMaskImage.cxx
-  # sydTableImageTransform.cxx
   )
 ## to declare dependencies
-target_link_libraries(sydStandardDatabase  ${SYD_CORE_LIBRARIES})
-
+target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})
 
 ##############################
 # Not really a tool, for debug only

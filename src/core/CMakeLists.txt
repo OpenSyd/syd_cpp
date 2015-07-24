@@ -11,33 +11,33 @@ add_library(sydCore
   sydCommon.cxx
   sydFileUtils.cxx
   sydLog.cxx
-#  sydDatabaseInformation.cxx
-  sydImageUtils.cxx
-#  sydPluginManager.cxx
   sydException.cxx
-#  sydDatabase.cxx
-#  sydDatabaseManager.cxx
   sydDicomCommon.cxx
-  sydTimeActivityCurve.cxx
   sydPrintTable.cxx
 )
 
 target_link_libraries(sydCore
   ${DCMTK_LIBRARIES}
   ${Boost_LIBRARIES} ## needed on osx
-  #  # sydCommonSchema
-  #  # sydFit
-  #   #odb-sqlite odb sqlite3 z
-  #  # ${ITK_LIBRARIES}
-  #   #${CERES_LIBRARIES}
 )
 
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
-# Fit library
+# ITK tools library
+add_library(sydItkUtils
+  sydImageUtils.cxx
+)
+
+target_link_libraries(sydItkUtils ${ITK_LIBRARIES})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# Fit tools library
 add_library(sydFit
+  sydTimeActivityCurve.cxx
   sydFitModelBase.cxx
   sydFitModel_f1.cxx
   sydFitModel_f2.cxx

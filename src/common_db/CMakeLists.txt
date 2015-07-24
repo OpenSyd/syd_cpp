@@ -1,5 +1,8 @@
 
 
+# only depends on sydCore and odb
+# no dependence on sydFit and sydItkUtils
+
 #----------------------------------------------------------
 # First create the common database schema
 set(SCHEMA_NAME sydCommonDatabase)
@@ -27,44 +30,38 @@ else()
 endif()
 
 target_link_libraries(sydCommonDatabase
-  sydCore
-  # ${DCMTK_LIBRARIES}
-  odb-sqlite odb sqlite3 z
-  ${Boost_LIBRARIES} ## needed on osx
-  ${ITK_LIBRARIES})
-
-
+  sydCore odb-sqlite odb sqlite3 z)
 
 #----------------------------------------------------------
 wrap_ggo(sydCreateDatabase_GGO_C sydCreateDatabase.ggo sydCommandLineDefaultWithoutDB.ggo)
 add_executable(sydCreateDatabase sydCreateDatabase.cxx ${sydCreateDatabase_GGO_C})
-target_link_libraries(sydCreateDatabase ${SYD_CORE_LIBRARIES})
+target_link_libraries(sydCreateDatabase sydCommonDatabase)
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
 wrap_ggo(sydInsert_GGO_C sydInsert.ggo sydCommandLineDefault.ggo)
 add_executable(sydInsert sydInsert.cxx ${sydInsert_GGO_C})
-target_link_libraries(sydInsert ${SYD_CORE_LIBRARIES})
+target_link_libraries(sydInsert sydCommonDatabase)
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
 wrap_ggo(sydDump_GGO_C sydDump.ggo sydCommandLineDefault.ggo)
 add_executable(sydDump sydDump.cxx ${sydDump_GGO_C})
-target_link_libraries(sydDump ${SYD_CORE_LIBRARIES})
+target_link_libraries(sydDump sydCommonDatabase)
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
 wrap_ggo(sydFind_GGO_C sydFind.ggo sydCommandLineDefault.ggo)
 add_executable(sydFind sydFind.cxx ${sydFind_GGO_C})
-target_link_libraries(sydFind ${SYD_CORE_LIBRARIES})
+target_link_libraries(sydFind sydCommonDatabase)
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
 wrap_ggo(sydDelete_GGO_C sydDelete.ggo sydCommandLineDefault.ggo)
 add_executable(sydDelete sydDelete.cxx ${sydDelete_GGO_C})
-target_link_libraries(sydDelete ${SYD_CORE_LIBRARIES})
+target_link_libraries(sydDelete sydCommonDatabase)
 #----------------------------------------------------------

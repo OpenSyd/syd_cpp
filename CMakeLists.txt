@@ -32,7 +32,11 @@ set(SYD_BINARY_DIR ${PROJECT_BINARY_DIR})
 #----------------------------------------------------------
 # cmake include
 set(CMAKE_MODULE_PATH "${SYD_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
+# the following are dependencies for syd, but not for lib using syd
 include(cmake/dependencies.cmake)
+
+# the following are dependencies needed to compile against syd
 include(cmake/UseSYD.cmake)
 #----------------------------------------------------------
 
@@ -99,14 +103,13 @@ set(SYD_CORE_LIBRARIES
   sydCommonDatabase
   sydCore
   sydFit
-  ${DCMTK_LIBRARIES}
+  sydItkUtils
   odb-sqlite odb sqlite3 z
+  ${DCMTK_LIBRARIES}
   ${Boost_LIBRARIES}
   ${ITK_LIBRARIES})
 
-set(SYD_LIBRARIES
-  sydStandardDatabase
-  ${SYD_CORE_LIBRARIES})
+set(SYD_LIBRARIES sydStandardDatabase ${SYD_CORE_LIBRARIES})
 # ----------------------------------------------------------
 
 
@@ -124,9 +127,6 @@ SET(SYD_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
 LIST(APPEND SYD_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/core")
 LIST(APPEND SYD_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/common_db")
 LIST(APPEND SYD_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/std_db")
-LIST(APPEND SYD_INCLUDE_DIRS "${SYD_BINARY_DIR}/src/core")
-LIST(APPEND SYD_INCLUDE_DIRS "${SYD_BINARY_DIR}/src/ext")
-LIST(APPEND SYD_INCLUDE_DIRS "${SYD_BINARY_DIR}/src/common_db")
 
 # Generate SYDConfig.cmake for the build tree.
 SET (SYD_USE_FILE "${SYD_SOURCE_DIR}/cmake/UseSYD.cmake")
