@@ -1,36 +1,39 @@
 
+
 #----------------------------------------------------------
-# First create the common database schema
-set(SCHEMA_NAME sydCommonSchema)
-wrap_odb(sydCore sydDatabaseInformation.h)
-wrap_odb(sydCore sydDatabaseSchemaName.h)
-wrap_odb(sydCore sydRecord.h)
+# pstream to allow reading from pip
+include_directories(${SYD_SOURCE_DIR}/src/core/pstreams)
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  message(STATUS "Clang compiler found (special case for static external in shared library)")
-  add_library(sydCommonSchema SHARED
-    sydDatabaseSchemaName-odb.cxx
-    sydDatabaseInformation-odb.cxx
-    sydRecord-odb.cxx sydRecord.cxx
-    sydLog.cxx
-    sydStatic.cxx # with clang on osx (apple), needed for static member def
-    sydPrintTable.cxx # needed in sydRecord
-    sydDatabaseInformation.cxx)
-else()
-  add_library(sydCommonSchema SHARED # shared is needed here
-    sydDatabaseSchemaName-odb.cxx
-    sydDatabaseInformation-odb.cxx
-    sydRecord-odb.cxx sydRecord.cxx
-    sydLog.cxx
-    sydPrintTable.cxx # needed in sydRecord
-    sydDatabaseInformation.cxx)
-endif()
+#----------------------------------------------------------
+# Common library
+add_library(sydCore
+  md5.cpp
+  sydCommon.cxx
+  sydFileUtils.cxx
+  sydLog.cxx
+#  sydDatabaseInformation.cxx
+  sydImageUtils.cxx
+#  sydPluginManager.cxx
+  sydException.cxx
+#  sydDatabase.cxx
+#  sydDatabaseManager.cxx
+  sydDicomCommon.cxx
+  sydTimeActivityCurve.cxx
+  sydPrintTable.cxx
+)
 
-target_link_libraries(sydCommonSchema
+target_link_libraries(sydCore
   ${DCMTK_LIBRARIES}
-  odb-sqlite odb sqlite3 z
   ${Boost_LIBRARIES} ## needed on osx
-  ${ITK_LIBRARIES})
+  #  # sydCommonSchema
+  #  # sydFit
+  #   #odb-sqlite odb sqlite3 z
+  #  # ${ITK_LIBRARIES}
+  #   #${CERES_LIBRARIES}
+)
+
+#----------------------------------------------------------
+
 
 #----------------------------------------------------------
 # Fit library
@@ -46,33 +49,4 @@ add_library(sydFit
 )
 
 target_link_libraries(sydFit ${CERES_LIBRARIES})
-#----------------------------------------------------------
-
-
-#----------------------------------------------------------
-# Common library
-include_directories(${SYD_SOURCE_DIR}/src/pstreams)
-add_library(sydCore
-  md5.cpp
-  sydCommon.cxx
-  sydFileUtils.cxx
-  sydLog.cxx
-  sydDatabaseInformation.cxx
-  sydImageUtils.cxx
-  sydPluginManager.cxx
-  sydException.cxx
-  sydDatabase.cxx
-  sydDatabaseManager.cxx
-  sydDicomCommon.cxx
-  sydTimeActivityCurve.cxx
-)
-
-target_link_libraries(sydCore
-  ${DCMTK_LIBRARIES}
-  sydCommonSchema
-  sydFit
-  odb-sqlite odb sqlite3 z
-  ${ITK_LIBRARIES}
-  ${CERES_LIBRARIES})
-
 #----------------------------------------------------------

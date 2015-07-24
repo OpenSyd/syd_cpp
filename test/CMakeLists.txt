@@ -7,6 +7,7 @@ include_directories(${SYD_INCLUDE_DIRS})
 # Needed for odb generated sydDatabaseInformation-odb.hxx
 include_directories(${SYD_BINARY_DIR}/src/core)
 include_directories(${SYD_BINARY_DIR}/src/ext)
+include_directories(${SYD_SOURCE_DIR}/src/ext)
 
 # Test creation of database
 add_executable(test_create_database test_create_database.cxx)
@@ -58,11 +59,11 @@ add_test(NAME test_delete
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
 # Test integration
-add_executable(test_integration test_integration.cxx)
-target_link_libraries(test_integration sydStandardDatabase)
-add_test(NAME test_integration
-  COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_integration
-  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
+# add_executable(test_integration test_integration.cxx)
+# target_link_libraries(test_integration sydStandardDatabase)
+# add_test(NAME test_integration
+#   COMMAND ${EXECUTABLE_OUTPUT_PATH}/test_integration
+#   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
 
 # # Test  dynamic_fields

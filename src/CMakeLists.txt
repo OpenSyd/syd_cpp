@@ -7,14 +7,15 @@ add_subdirectory(${SYD_SOURCE_DIR}/src/core)
 
 
 #----------------------------------------------------------
-# Common command line tools
+# Common database
 include_directories(${SYD_SOURCE_DIR}/src/core)
-add_subdirectory(${SYD_SOURCE_DIR}/src/tools)
-#----------------------------------------------------------
+add_subdirectory(${SYD_SOURCE_DIR}/src/common_db)
+# #----------------------------------------------------------
 
 
 #----------------------------------------------------------
 # Standard Database
+include_directories(${SYD_SOURCE_DIR}/src/common_db)
 add_subdirectory(${SYD_SOURCE_DIR}/src/std_db)
 add_subdirectory(${SYD_SOURCE_DIR}/src/ext)
 #----------------------------------------------------------

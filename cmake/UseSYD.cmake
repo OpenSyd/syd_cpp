@@ -54,7 +54,7 @@ macro(WRAP_ODB ODB_SRCS)
     if(EXISTS ${ODB_FILES_ABS})
       add_custom_command(OUTPUT ${ODB_OUTPUT}
         COMMAND ${ODB_EXECUTABLE}
-        ARGS --std c++11 --database sqlite -I${SYD_SOURCE_DIR}/src/std_db -I${SYD_SOURCE_DIR}/src/core  --generate-schema --schema-format embedded --generate-query --sqlite-override-null --schema-name ${SCHEMA_NAME} ${ODB_FILES_ABS}
+        ARGS --std c++11 --database sqlite -I${SYD_SOURCE_DIR}/src/std_db -I${SYD_SOURCE_DIR}/src/core  -I${SYD_SOURCE_DIR}/src/common_db  --generate-schema --schema-format embedded --generate-query --sqlite-override-null --schema-name ${SCHEMA_NAME} ${ODB_FILES_ABS}
         DEPENDS ${ODB_FILES_ABS})
     else()
       message(FATAL_ERROR "Error odb cannot file the following file: " ${ODB_FILES_ABS})
@@ -77,9 +77,10 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpermissive")
 #----------------------------------------------------------
 # Need thoses directories to include odb generated files
 include_directories(${SYD_BINARY_DIR}/src/)
+include_directories(${SYD_BINARY_DIR}/src/common_db)
+include_directories(${SYD_BINARY_DIR}/src/core)
 include_directories(${SYD_BINARY_DIR}/src/std_db)
-
-
+include_directories(${SYD_BINARY_DIR}/src/ext)
 # ----------------------------------------------------------
 
 ##include(cmake/FindGengetopt.cmake)

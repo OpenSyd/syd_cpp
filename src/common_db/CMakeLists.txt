@@ -1,8 +1,38 @@
 
 
+#----------------------------------------------------------
+# First create the common database schema
+set(SCHEMA_NAME sydCommonDatabase)
+wrap_odb(sydCore sydDatabaseInformation.h)
+wrap_odb(sydCore sydDatabaseSchemaName.h)
+wrap_odb(sydCore sydRecord.h)
 
-## Needed to find sydRecord-odb.hxx
-include_directories(${SYD_BINARY_DIR}/src/core)
+set(sydCommonDatabase_src
+  sydDatabaseSchemaName-odb.cxx
+  sydDatabaseInformation-odb.cxx
+  sydRecord-odb.cxx sydRecord.cxx
+  sydDatabase.cxx
+  sydDatabaseManager.cxx
+  sydDatabaseInformation.cxx
+  sydPluginManager.cxx
+  sydDatabaseInformation.cxx)
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  # with clang on osx (apple), needed for static member def
+  message(STATUS "Clang compiler found (special case for static external in shared library)")
+  add_library(sydCommonDatabase SHARED ${sydCommonDatabase_src} sydStatic.cxx )
+else()
+  # shared is needed here
+  add_library(sydCommonDatabase SHARED ${sydCommonDatabase_src})
+endif()
+
+target_link_libraries(sydCommonDatabase
+  sydCore
+  # ${DCMTK_LIBRARIES}
+  odb-sqlite odb sqlite3 z
+  ${Boost_LIBRARIES} ## needed on osx
+  ${ITK_LIBRARIES})
+
 
 
 #----------------------------------------------------------

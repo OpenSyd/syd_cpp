@@ -96,12 +96,14 @@ endif(MSVC)
 #----------------------------------------------------------
 # define the set of libraries
 set(SYD_CORE_LIBRARIES
-  ${DCMTK_LIBRARIES}
+  sydCommonDatabase
   sydCore
-  sydCommonSchema
+  sydFit
+  ${DCMTK_LIBRARIES}
   odb-sqlite odb sqlite3 z
   ${Boost_LIBRARIES}
   ${ITK_LIBRARIES})
+
 set(SYD_LIBRARIES
   sydStandardDatabase
   ${SYD_CORE_LIBRARIES})
@@ -120,9 +122,11 @@ SET(SYD_LIBRARY_PATH "${LIBRARY_OUTPUT_PATH}")
 SET(SYD_EXECUTABLE_PATH "${EXECUTABLE_OUTPUT_PATH}")
 
 LIST(APPEND SYD_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/core")
+LIST(APPEND SYD_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/common_db")
 LIST(APPEND SYD_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/std_db")
-LIST(APPEND SYD_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/ext")
 LIST(APPEND SYD_INCLUDE_DIRS "${SYD_BINARY_DIR}/src/core")
+LIST(APPEND SYD_INCLUDE_DIRS "${SYD_BINARY_DIR}/src/ext")
+LIST(APPEND SYD_INCLUDE_DIRS "${SYD_BINARY_DIR}/src/common_db")
 
 # Generate SYDConfig.cmake for the build tree.
 SET (SYD_USE_FILE "${SYD_SOURCE_DIR}/cmake/UseSYD.cmake")
