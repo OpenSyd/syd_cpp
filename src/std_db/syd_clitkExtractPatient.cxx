@@ -21,6 +21,7 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydRoiMaskImageBuilder.h"
+#include "sydCommonGengetopt.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -29,20 +30,19 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT(syd_clitkExtractPatient, 1);
+  SYD_INIT_GGO(syd_clitkExtractPatient, 0);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  std::string dbname = args_info.inputs[0];
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the images
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
-  for(auto i=1; i<args_info.inputs_num; i++) ids.push_back(atoi(args_info.inputs[i]));
+  for(auto i=0; i<args_info.inputs_num; i++) ids.push_back(atoi(args_info.inputs[i]));
 
   syd::RoiType::pointer roitype = db->FindRoiType("body");
 

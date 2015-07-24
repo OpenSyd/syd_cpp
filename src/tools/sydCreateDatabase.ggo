@@ -1,12 +1,15 @@
 #File sydCreateClinicDatabase.ggo
 
-package "sydCreateClinicDatabase"
+package "syd"
+version "0.3"
 usage "sydCreateClinicDatabase <schema> <filename.db> <folder>"
-version "0.2"
-description "Create a new *empty* database of the given schema. <folder> will contains images."
+description "Create a new *empty* database of the given schema. The <folder> will contains the images. The database schema (list of tables) is a name that corresponds to a dynamically loaded library (plugin).
 
-option "config"	  	 	-	"Config file"				 string  	no
-option "verbose"   	 	v       "Verbosity level (0 for silence)"        int default ="0" no
-option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		 flag		off
-option "overwrite"   	 	f       "Force overwrite even if the file exist" flag		off
-option "list"   	 	l       "Print list of available DB schema (then stop)"	 flag		off
+Example:
+sydCreateClinicDatabase StandardDatabase toto.db my_folder/
+
+will load the library libStandardDatabase.so (or dylib) that contains the database schema. The variable SYD_PLUGIN is used to look fo those libraries.
+"
+
+option "overwrite"  f       "Force overwrite even if the file exist"            flag	off
+option "list"       l       "Print list of available DB schema (then stop)"	flag	off

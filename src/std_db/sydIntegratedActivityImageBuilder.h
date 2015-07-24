@@ -63,6 +63,9 @@ namespace syd {
     void SaveDebugModel(const std::string & filename) const;
     void AddDebugPixel(std::string name, int x, int y, int z);
 
+    bool debug_only_flag_;
+    double robust_scaling_;
+
   protected:
     syd::StandardDatabase * db_;
 
@@ -83,6 +86,7 @@ namespace syd {
     ceres::Solver::Options * ceres_options_;
     ceres::Solver::Summary ceres_summary_;
 
+    int nb_of_computed_pixels_;
     //    ceres::Problem problem;
 
   }; // class IntegratedActivityImageBuilder

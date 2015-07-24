@@ -21,6 +21,7 @@
 #include "sydDicomSerieBuilder.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
+#include "sydCommonGengetopt.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -29,28 +30,27 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT(sydInsertDicom, 4);
+  SYD_INIT_GGO(sydInsertDicom, 3);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  std::string dbname = args_info.inputs[0];
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the patient
-  std::string name = args_info.inputs[1];
+  std::string name = args_info.inputs[0];
   auto patient = db->FindPatient(name);
 
   // Get the injection
-  std::string inj = args_info.inputs[2];
+  std::string inj = args_info.inputs[1];
   auto injection = db->FindInjection(patient, inj);
   // FIXME 0 if no injection
 
   // Get the list of folders to look for
   std::vector<std::string> folders;
-  for(auto i=3; i<args_info.inputs_num; i++) folders.push_back(args_info.inputs[i]);
+  for(auto i=2; i<args_info.inputs_num; i++) folders.push_back(args_info.inputs[i]);
 
   // Dicom insertion
   syd::DicomSerieBuilder b(db);

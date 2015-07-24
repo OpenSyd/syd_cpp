@@ -20,6 +20,7 @@
 #include "sydInsert_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
+#include "sydCommonGengetopt.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -28,20 +29,19 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT(sydInsert, 2);
+  SYD_INIT_GGO(sydInsert, 1);
 
   // Get params
-  std::string dbname = args_info.inputs[0];
-  std::string tablename = args_info.inputs[1];
+  std::string tablename = args_info.inputs[0];
   std::vector<std::string> args;
-  for(auto i=2; i<args_info.inputs_num; i++)
+  for(auto i=1; i<args_info.inputs_num; i++)
     args.push_back(args_info.inputs[i]);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
 
     // Load the database
-  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(dbname);
+  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
 
   // Insert
   syd::Record::pointer e = db->New(tablename);

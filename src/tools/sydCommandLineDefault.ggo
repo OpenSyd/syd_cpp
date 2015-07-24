@@ -1,0 +1,6 @@
+
+#section "Common options"
+option "db"	    -	"Database file \n(use 'default' to read from $SYD_CURRENT_DB)" string default = "default" no
+option "verbose"    v   "Verbosity level (0 for silence)"        int            default ="0" no
+option "verboseSQL" -   "Verbose SQL query (debug)"		 flag		off
+option "config"	    -	"Config file where to read options (overwritten by command line options)"	 string  	no

@@ -21,6 +21,7 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
+#include "sydCommonGengetopt.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -29,24 +30,23 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT(sydImageTag, 3);
+  SYD_INIT_GGO(sydImageTag, 3);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  std::string dbname = args_info.inputs[0];
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the action (add or remove)
-  std::string action = args_info.inputs[1];
+  std::string action = args_info.inputs[0];
   if (action != "add" and action != "rm") {
     LOG(FATAL) << "Please provide 'add' or 'rm' as second parameter.";
   }
 
   // Get the tags
-  std::string tagname = args_info.inputs[2];
+  std::string tagname = args_info.inputs[1];
   syd::Tag::vector tags;
   db->FindTags(tags, tagname);
   if (tags.size() == 0) {
@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 
   // Get the list of image ids
   syd::Image::vector images;
-  for(auto i=3; i<args_info.inputs_num; ++i) {
+  for(auto i=2; i<args_info.inputs_num; ++i) {
     ids.push_back(atoi(args_info.inputs[i]));
   }
   db->Query(images, ids);

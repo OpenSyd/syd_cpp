@@ -1,10 +1,9 @@
 #File sydCropImage.ggo
 
-package "sydCropImage"
-usage "sydCropImage <db> <list_of_image_ids>"
-version "0.3"
+package "syd"
+version "0.4"
+usage "sydCropImage <list_of_image_ids>"
 description "Crop the image according to another image or a (lower) threshold
-- <db>                     name of the database
 - <list_of_image_ids>      id of the image to crop
 
 If both --like and --threshold are given, --like is used.
@@ -12,9 +11,6 @@ If none : try to find a RoiMaskImage corresponding to 'body' with similar dicom 
 Threshold : every pixel with value lower than threshold are discarded.
 "
 
-option "config"	  	 	-	"Config file"				      string  	no
-option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
-option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
 option "threshold"   	 	t       "Crop according to this threshold"	      float     default="-1000" no
 option "like"                   l       "Crop according to this image id"	      int       no
 option "force"                  f       "Crop even if the dicom reference frame does not fit" flag off

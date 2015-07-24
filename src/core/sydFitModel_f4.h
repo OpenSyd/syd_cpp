@@ -32,6 +32,8 @@ namespace syd {
     FitModel_f4();
     ~FitModel_f4();
 
+    virtual int GetK() const { return 4; } // K
+
     class ResidualType: public FitModelBase::ResidualBaseType {
     public:
       ResidualType(double x, double y, double l):ResidualBaseType(x,y,l) {}
@@ -49,6 +51,9 @@ namespace syd {
     virtual FitModelBase * Clone() const;
     virtual void SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac);
     virtual double GetValue(const double & time) const;
+
+    virtual double GetA(const int i) const;
+    virtual double GetLambda(const int i) const;
 
   protected:
     std::vector<ResidualType*> residuals_;

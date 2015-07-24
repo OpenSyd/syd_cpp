@@ -1,14 +1,9 @@
 #File sydInsertImageFromDicom.ggo
 
-package "sydInsertImageFromDicom"
-usage "sydInsertImageFromDicom <db> <tag> <list of dicom_ids>"
-version "0.2"
+package "syd"
+version "0.3"
+usage "sydInsertImageFromDicom <tag> <list of dicom_ids>"
 description "Create a new (mhd) Image for each given dicom
-- <db>            name of the database
 - <tag>           name for the tag associated with images
 - <dicom_ids>     list of dicom id to insert
 "
-
-option "config"	  	 	-	"Config file"				      string  	no
-option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
-option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off

@@ -1,15 +1,11 @@
 #File sydDump.ggo
 
-package "sydDump"
-usage "sydDump <db> [<table>] [<list of ids>]"
-version "0.2"
+package "syd"
+version "0.3"
+usage "sydDump [<table>] [<list of ids>]"
 description "Dump information of a database. Parameters are:
-- <db>    name of the database
 - <table> name of the table (optional)
 - <ids>   list of ids to display (all if omitted)
 "
 
-option "config"	    -	"Config file"				string  	no
-option "verbose"    v   "Verbosity level (0 for silence)"       int default ="0" no
-option "verboseSQL" -   "Verbose SQL query (debug)"		flag		off
 option "format"	    f	"Format of the output ('help' for help)" string default="" no

@@ -20,6 +20,7 @@
 #include "sydTest_ggo.h"
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
+#include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
 //#include "extExtendedDatabase.h"
 
@@ -30,14 +31,13 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT(sydTest, 1);
+  SYD_INIT_GGO(sydTest, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
-  std::string dbname = args_info.inputs[0];
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
   db->Dump("Image");
 

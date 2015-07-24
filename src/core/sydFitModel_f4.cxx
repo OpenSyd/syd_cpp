@@ -35,7 +35,7 @@ void syd::FitModel_f4::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   params_[0] = tac.GetValue(0)/2.0; // A1
   params_[1] = GetLambdaPhysicHours(); // l1
   params_[2] = tac.GetValue(0)/2.0; // A2
-  params_[3] = GetLambdaPhysicHours(); // l2
+  params_[3] = 0.0; // l2
 
   // need to be created each time
   residuals_.clear();
@@ -47,6 +47,11 @@ void syd::FitModel_f4::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   for(auto i=0; i<tac.size(); i++) {
     problem->AddResidualBlock(new CostFctType(residuals_[i]), NULL, &params_[0], &params_[1], &params_[2], &params_[3]);
   }
+
+  // problem->SetParameterLowerBound(&params_[0], 0, 0); // A positive
+  // problem->SetParameterUpperBound(&params_[1], 0, GetLambdaPhysicHours()/2.0); // positive
+  // problem->SetParameterLowerBound(&params_[2], 0, 0); // A positive
+  // problem->SetParameterUpperBound(&params_[3], 0, GetLambdaPhysicHours()/5.0); // positive
 }
 // --------------------------------------------------------------------
 
@@ -88,5 +93,23 @@ double syd::FitModel_f4::GetValue(const double & t) const
   const double l2 = params_[3];
   const double l = lambda_phys_hours_;
   return A1 * exp(-(l+l1)*t) + A1 * exp(-(l+l2)*t);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModel_f4::GetA(const int i) const
+{
+  if (i==0) return params_[0];
+  else return params_[2];
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModel_f4::GetLambda(const int i) const
+{
+  if (i==0) return params_[1];
+  else return params_[3];
 }
 // --------------------------------------------------------------------

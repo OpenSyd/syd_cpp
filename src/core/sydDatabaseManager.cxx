@@ -34,8 +34,19 @@ syd::DatabaseManager * syd::DatabaseManager::GetInstance()
 
 
 // --------------------------------------------------------------------
-syd::Database * syd::DatabaseManager::Read(const std::string & filename)
+syd::Database * syd::DatabaseManager::Read(std::string filename)
 {
+  // Get the real filename from the environment variable is filename is 'default'
+  if (filename == "default") {
+    char * file = getenv("SYD_CURRENT_DB");
+    if (file == NULL) {
+      LOG(FATAL) << "Cannot find the SYD_CURRENT_DB environment variable. Please set with something like: "
+                 << "export SYD_CURRENT_DB=/home/genghiskhan/my_db/toto.db";
+    }
+    filename = std::string(file);
+  }
+
+  // Create and open the db
   odb::sqlite::database * db;
   LOG(5) << "Opening database '" << filename << "' to get the type of db.";
   try {

@@ -1,15 +1,13 @@
 #File sydInsertIntegratedActivityImage.ggo
 
-package "sydInsertIntegratedActivityImage"
-usage "sydInsertIntegratedActivityImage <db> <tag> <image_ids>"
-version "0.2"
+package "syd"
+version "0.3"
+usage "sydInsertIntegratedActivityImage <tag> <image_ids>"
 description "Create a new (mhd) Image for each given dicom
-- <db>            name of the database
 - <tag>           name for the tag associated with images
 - <image_ids>     list of image id to integrate
 "
 
-option "config"	  	 	-	"Config file"				      string  	no
-option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
-option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
 option "debug"   	 	-       "File with debug points"		      string    no
+option "only_debug"   	 	-       "Do not create the image, only compute for point"       flag off
+option "robust_scaling"   	-       "Ceres scaling Loss robust"                             float default="0.1" no

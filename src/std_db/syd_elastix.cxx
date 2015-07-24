@@ -21,6 +21,7 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
+#include "sydCommonGengetopt.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 namespace pt = boost::posix_time;
@@ -39,23 +40,22 @@ FindRoiMaskImage(const syd::StandardDatabase * db,
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT(syd_elastix, 2);
+  SYD_INIT_GGO(syd_elastix, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  std::string dbname = args_info.inputs[0];
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the elastix config file
-  std::string config_file = args_info.inputs[1];
+  std::string config_file = args_info.inputs[0];
 
   // Read ids from the command line and the pipe
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
-  for(auto i=2; i<args_info.inputs_num; i++)
+  for(auto i=1; i<args_info.inputs_num; i++)
     ids.push_back(atoi(args_info.inputs[i]));
   if (ids.size() < 2) {
     LOG(FATAL) << "Please provide at least two image ids (fixed and moving  images).";

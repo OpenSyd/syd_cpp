@@ -77,6 +77,7 @@ void syd::IntegratedActivityImageBuilder::SaveDebugPixel(const std::string & fil
   std::ofstream os(filename);
   ta.Print(os);
   os.close();
+  DD("end debug pixel");
 }
 // --------------------------------------------------------------------
 
@@ -229,8 +230,16 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 
   // Init solver
   InitSolver();
+  nb_of_computed_pixels_ = 0;
+
   //double max_time = log(0.01)/(-models_[0]->GetLambdaPhysicHours()); // consider mono expo decay from max point
   //DD(max_time);
+  current_tac_.AddValue(200, 0.0); // add final point
+  current_tac_.AddValue(220, 0.0); // add final point
+  current_tac_.AddValue(280, 0.0); // add final point
+  current_tac_.AddValue(420, 0.0); // add final point
+
+  current_tac_.AddValue(500, 0.0); // add final point
 
   // loop pixel ? list of iterators
   //  update values of the tac
@@ -262,9 +271,14 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
     }
 
     // Integration
-    double v;
-    //if (current_tac_.GetValue(0) > 300)
-    if (current_debug_flag_) v = Integrate();
+    double v = 0.0;
+    if (debug_only_flag_) {
+      if (current_debug_flag_) v = Integrate();
+    }
+    else {
+      if (current_tac_.GetValue(0) > 500) v = Integrate();
+    }
+    //if (current_debug_flag_) v = Integrate();
 
     // Next
     out_iter.Set(v);
@@ -278,6 +292,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   // update db (only once it is finished)
 
   DD("end");
+  DD(nb_of_computed_pixels_);
 }
 // --------------------------------------------------------------------
 
@@ -285,13 +300,17 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 // --------------------------------------------------------------------
 double syd::IntegratedActivityImageBuilder::Integrate()
 {
-
-  // current_tac_ is ok
+  nb_of_computed_pixels_++;
 
   for(auto model:models_) {
 
     ceres::Problem problem;// New problem each time ? to be changed FIXME
     model->SetProblemResidual(&problem, current_tac_);
+
+    // Positivity constraints
+    for(auto i=0; i<model->GetNumberOfParameters(); i++) {
+      //      problem.SetParameterLowerBound(&model->GetParameters()[i], 0, 0); // A positive
+    }
 
     ceres::Solve(*ceres_options_, &problem, &ceres_summary_);
 
@@ -316,6 +335,7 @@ double syd::IntegratedActivityImageBuilder::Integrate()
       debug_current->summaries.push_back(ceres_summary_);
       // std::cout << ceres_summary_.BriefReport() << "\n";
       //std::cout << ceres_summary_.FullReport() << "\n";
+      // DD(m->ComputeAUC());
     }
 
   }
@@ -323,8 +343,11 @@ double syd::IntegratedActivityImageBuilder::Integrate()
   // Then : AICc_min, Delta_i, w_AICi
   // Selection ?
 
-  double r = 0.0;
+  int best_model = 0; // FIXME
 
+  double r = models_[best_model]->ComputeAUC();
+
+  if (current_debug_flag_) { DD(r); }
 
   /*
 
@@ -362,24 +385,28 @@ void syd::IntegratedActivityImageBuilder::InitSolver()
 
   // Solve
   ceres_options_ = new ceres::Solver::Options;
-  ceres_options_->max_num_iterations = 500;
-  ceres_options_->linear_solver_type = ceres::DENSE_QR;
+  ceres_options_->max_num_iterations = 50;
+  ceres_options_->linear_solver_type = ceres::DENSE_QR; // because few parameters/data
   ceres_options_->minimizer_progress_to_stdout = false;
   ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
-  //ceres_options_->trust_region_strategy_type = ceres::DOGLEG;// (faster LM ?)
+  //ceres_options_->trust_region_strategy_type = ceres::DOGLEG;// (LM seems faster)
   //ceres_options_->dogleg_type = ceres::SUBSPACE_DOGLEG;
   ceres_options_->logging_type = ceres::SILENT;
 
   // Create the models
   models_.push_back(new syd::FitModel_f1);
   models_.push_back(new syd::FitModel_f2);
-  models_.push_back(new syd::FitModel_f3);
+  //models_.push_back(new syd::FitModel_f3);
   models_.push_back(new syd::FitModel_f4a);
-  models_.push_back(new syd::FitModel_f4b);
-  models_.push_back(new syd::FitModel_f4c);
+  //models_.push_back(new syd::FitModel_f4b);
+  //models_.push_back(new syd::FitModel_f4c);
   models_.push_back(new syd::FitModel_f4);
 
-  for(auto m:models_) m->SetLambdaPhysicHours(0.010297405); // Indium in hour
+  for(auto m:models_) {
+    m->SetLambdaPhysicHours(0.010297405); // Indium in hour
+    DD(robust_scaling_);
+    m->robust_scaling_ = robust_scaling_;
+  }
 
   DD("end InitSolver");
 }

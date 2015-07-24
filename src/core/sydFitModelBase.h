@@ -25,11 +25,17 @@
 // ceres
 #include "ceres/ceres.h"
 
+// google logging (ceres)
+#include <glog/logging.h>
+
 // std
 #include <vector>
 
 // --------------------------------------------------------------------
 namespace syd {
+
+  // This is needed only once in the main to ensure that solver is SILENT
+#define SYD_CERES_STATIC_INIT google::InitGoogleLogging("");
 
   class FitModelBase
   {
@@ -47,12 +53,16 @@ namespace syd {
     };
 
 
+    double robust_scaling_;
+
     virtual std::string GetName() const { return name_; }
-    int GetNumberOfParameters() const { return params_.size(); } // K
+    int GetNumberOfParameters() const { return params_.size(); }
+    virtual int GetK() const { return GetNumberOfParameters(); } // Ka
 
     void SetLambdaPhysicHours(double l) { lambda_phys_hours_ = l; }
 
     double GetLambdaPhysicHours() const { return lambda_phys_hours_; }
+    std::vector<double> & GetParameters() { return params_; }
     const std::vector<double> & GetParameters() const { return params_; }
 
     virtual FitModelBase * Clone() const = 0;
@@ -64,6 +74,10 @@ namespace syd {
     void CopyFrom(const syd::FitModelBase * model);
 
     friend std::ostream& operator<<(std::ostream& os, const FitModelBase & p);
+
+    double ComputeAUC() const;
+    virtual double GetA(const int i) const { LOG(FATAL) << "GetA to implement " << GetName(); }
+    virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); }
 
   protected:
     std::string name_;

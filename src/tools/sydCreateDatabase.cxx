@@ -20,6 +20,7 @@
 #include "sydCreateDatabase_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
+#include "sydCommonGengetopt.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -28,7 +29,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // init ggo
-  SYD_INIT(sydCreateDatabase, 0); // allow zero param for option -l
+  SYD_INIT_GGO(sydCreateDatabase, 0); // allow zero param for option -l
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();

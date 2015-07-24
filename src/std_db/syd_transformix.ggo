@@ -1,15 +1,11 @@
 #File syd_transformix.ggo
 
-package "syd_transformix"
-usage "syd_transformix <db> <transform> <image> "
-version "0.3"
+package "syd"
+version "0.4"
+usage "syd_transformix <transform> <image> "
 description "Parameters are:
-- <db>            : name of the database
 - <image>         : ids of the image to transform
 "
 
-option "config"	  	 	-	"Config file"				      string  	no
-option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
-option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
 option "transform"   	        -       "List of transform ids (between \"\")"        string    yes
 option "tags"   	        t       "Add tags (separated by space, in \"\")"      string    default="transform" no

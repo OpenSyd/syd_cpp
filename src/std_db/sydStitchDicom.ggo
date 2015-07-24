@@ -1,14 +1,9 @@
 #File sydStitchDicom.ggo
 
-package "sydStitchDicom"
-usage "sydStitchDicom <db> <tag> <dicom_ids>"
-version "0.2"
+package "syd"
+version "0.3"
+usage "sydStitchDicom <tag> <dicom_ids>"
 description "Create a new (mhd) Image for each given dicom
-- <db>            name of the database
 - <tag>           name for the tag associated with images
 - <dicom_ids>     the dicoms id to stitch together (will be paired by dicom_series_uid)
 "
-
-option "config"	  	 	-	"Config file"				      string  	no
-option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
-option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off

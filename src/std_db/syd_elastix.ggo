@@ -1,18 +1,14 @@
 #File syd_elastix.ggo
 
-package "syd_elastix"
-usage "syd_elastix <db> <config> <fixed_image> <moving_image*> "
-version "0.3"
+package "syd"
+version "0.'"
+usage "syd_elastix <config> <fixed_image> <moving_image*> "
 description "Parameters are:
-- <db>            : name of the database
 - <config>        : elastix config file
 - <fixed_image>   : id of the fixed image
 - <moving_image*> : ids of the moving image (multiple -> on registration by id)
 "
 
-option "config"         -	"Config file"				        string  no
-option "verbose"        v       "Verbosity level (-1 for silence)"              int     default="0" no
-option "verboseSQL"     -       "Verbose SQL query (debug)"		        flag	off
 option "options"        p       "Option for elastix (in \" \")"                 string  default="" no
 option "fMask"          -       "Mask id or name for fixed image (table RoiMaskImage)"  string no
 option "mMask"   	-       "Mask id or name for moving image (table RoiMaskImage)" string no

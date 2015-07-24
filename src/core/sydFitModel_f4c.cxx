@@ -90,3 +90,23 @@ double syd::FitModel_f4c::GetValue(const double & t) const
     (exp(-(lh+l)*t) - exp(-(lr+lt+l)*t));
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModel_f4c::GetA(const int i) const
+{
+  const double lr = params_[0];
+  const double lt = params_[1];
+  const double lh = params_[2];
+  return lt/(lr+lt-lh);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModel_f4c::GetLambda(const int i) const
+{
+  if (i==0) return params_[2];
+  else return params_[1]+params_[0];
+}
+// --------------------------------------------------------------------

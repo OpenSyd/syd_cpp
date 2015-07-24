@@ -44,9 +44,14 @@ void syd::FitModel_f4a::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
   }
   // FIXME --> could be templated by CostFctType and param_nb ?
   for(auto i=0; i<tac.size(); i++) {
-    problem->AddResidualBlock(new CostFctType(residuals_[i]), NULL, &params_[0], &params_[1], &params_[2]);
+    problem->AddResidualBlock(new CostFctType(residuals_[i]),
+                              NULL, //new ceres::CauchyLoss(robust_scaling_),
+                              &params_[0], &params_[1], &params_[2]);
   }
 
+  problem->SetParameterLowerBound(&params_[0], 0, 0); // A positive
+  // problem->SetParameterLowerBound(&params_[1], 0, 0); // positive
+  // problem->SetParameterLowerBound(&params_[2], 0, 0); // positive
 }
 // --------------------------------------------------------------------
 
@@ -87,5 +92,23 @@ double syd::FitModel_f4a::GetValue(const double & t) const
   const double l = lambda_phys_hours_;
   return A1 * (exp(-(l+lambda_1)*t) -
                exp(-(l+lambda_2)*t));
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModel_f4a::GetA(const int i) const
+{
+  if (i==0) return params_[0];
+  else return -params_[0];
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModel_f4a::GetLambda(const int i) const
+{
+  if (i==0) return params_[1];
+  else return params_[2];
 }
 // --------------------------------------------------------------------

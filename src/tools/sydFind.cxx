@@ -20,29 +20,30 @@
 #include "sydFind_ggo.h"
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
+#include "sydCommonGengetopt.h"
 
 // Init syd
 SYD_STATIC_INIT
+
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT(sydFind, 2);
+  SYD_INIT_GGO(sydFind, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
 
   // Get the database
-  std::string dbname = args_info.inputs[0];
-  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(dbname);
+  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
 
   // Get the table name
-  std::string table_name = args_info.inputs[1];
+  std::string table_name = args_info.inputs[0];
 
   // Prepare the list of arguments
   std::vector<std::string> patterns;
-  for(auto i=2; i<args_info.inputs_num; i++)
+  for(auto i=1; i<args_info.inputs_num; i++)
     patterns.push_back(args_info.inputs[i]);
 
   // Prepare the list of arguments

@@ -23,6 +23,7 @@
 syd::FitModelBase::FitModelBase()
 {
   name_ = "no_name";
+  robust_scaling_ = 0.1;
 }
 // --------------------------------------------------------------------
 
@@ -67,4 +68,19 @@ namespace syd {
 
   }
 } // end namespace
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModelBase::ComputeAUC() const
+{
+  double AUC = 0.0;
+  for(auto k=0; k<GetK(); k++) {
+    // DD(k);
+    // DD(GetA(k));
+    // DD(GetLambda(k));
+    AUC += GetA(k) / (GetLambda(k) + GetLambdaPhysicHours());
+  }
+  return AUC;
+}
 // --------------------------------------------------------------------

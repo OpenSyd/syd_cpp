@@ -45,6 +45,10 @@ namespace syd {
     // 1, 1, 1 ==> (nb of residuals=1), 1 for each param.
     typedef ceres::AutoDiffCostFunction<ResidualType, 1, 1, 1, 1> CostFctType;
 
+    virtual int GetK() const { return 4; } // K
+    virtual double GetA(const int i) const;
+    virtual double GetLambda(const int i) const;
+
     virtual FitModelBase * Clone() const;
     virtual void SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac);
     virtual double GetValue(const double & time) const;

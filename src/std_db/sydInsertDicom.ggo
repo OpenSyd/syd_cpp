@@ -1,17 +1,13 @@
 #File sydInsertDicom.ggo
 
-package "sydInsertDicom"
-usage "sydInsertDicom <db> <patient> <injection> <folders>"
-version "0.2"
-description "Insert the all dicom series in a db. Paramters are:
-- <db>            name of the database
+package "syd"
+version "0.3"
+usage "sydInsertDicom <patient> <injection> <folders>"
+description "Insert the all dicom series in a db. Parameters are:
 - <patient>       name or study_id of the patient
 - <injection>     name or id of the injection //FIXME 0 if no injection
 - <folders>       list of folders to look for dicom series
 "
 
-option "config"	  	 	-	"Config file"				      string  	no
-option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
-option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off
 option "forcePatient"    	f       "If true : do not check patient name initial" flag      off
-option "forceUpdate"    	u       "Force reinsert even if dicom already exist"  flag      off
+# option "forceUpdate"    	u       "Force reinsert even if dicom already exist"  flag      off

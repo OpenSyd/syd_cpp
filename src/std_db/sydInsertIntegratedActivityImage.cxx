@@ -21,7 +21,7 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydIntegratedActivityImageBuilder.h"
-
+#include "sydCommonGengetopt.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -29,26 +29,27 @@ SYD_STATIC_INIT
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
+  SYD_CERES_STATIC_INIT;
+
   // Init
-  SYD_INIT(sydInsertIntegratedActivityImage, 2);
+  SYD_INIT_GGO(sydInsertIntegratedActivityImage, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  std::string dbname = args_info.inputs[0];
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the tag
-  std::string tagname = args_info.inputs[1];
+  std::string tagname = args_info.inputs[0];
   syd::Tag::vector tags;
   db->FindTags(tags, tagname);
 
   // Get the list of images to integrate
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
-  for(auto i=2; i<args_info.inputs_num; i++) {
+  for(auto i=1; i<args_info.inputs_num; i++) {
     ids.push_back(atoi(args_info.inputs[i]));
   }
   syd::Image::vector images;
@@ -58,6 +59,9 @@ int main(int argc, char* argv[])
   // Create main builder
   syd::IntegratedActivityImageBuilder builder(db);
   builder.SetInput(images);
+
+  builder.debug_only_flag_ = args_info.only_debug_flag;
+  builder.robust_scaling_ = args_info.robust_scaling_arg;
 
   // Options here
   //  builder.AddDebugPixel("liver", 40, 22, 61);
@@ -72,7 +76,9 @@ int main(int argc, char* argv[])
       std::string name;
       int x,y,z;
       is >> name >> x >> y >> z;
-      if (is) builder.AddDebugPixel(name, x,y,z);
+      if (is) {
+        if (name[0] != '#') builder.AddDebugPixel(name, x,y,z);
+      }
     }
   }
 

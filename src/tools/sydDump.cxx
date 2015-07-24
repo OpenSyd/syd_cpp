@@ -20,6 +20,7 @@
 #include "sydDump_ggo.h"
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
+#include "sydCommonGengetopt.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -28,30 +29,27 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT(sydDump, 1);
+  SYD_INIT_GGO(sydDump, 0);
 
-  // Get db name
-  std::string dbname = args_info.inputs[0];
-
-  // Load plugin
+   // Load plugin
   syd::PluginManager::GetInstance()->Load();
 
   // Load the database
-  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(dbname);
+  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
 
   // Dump info for all tables
-  if (args_info.inputs_num == 1) {
+  if (args_info.inputs_num == 0) {
     db->Dump(std::cout);
     return EXIT_SUCCESS;
   }
 
   // get Table name
-  std::string table_name = args_info.inputs[1];
+  std::string table_name = args_info.inputs[0];
 
   // Prepare the list of arguments
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
-  for(auto i=2; i<args_info.inputs_num; i++)
+  for(auto i=1; i<args_info.inputs_num; i++)
     ids.push_back(atoi(args_info.inputs[i]));
 
   // Get elements
