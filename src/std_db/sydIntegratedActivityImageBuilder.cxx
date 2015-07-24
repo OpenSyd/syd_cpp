@@ -234,12 +234,11 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 
   //double max_time = log(0.01)/(-models_[0]->GetLambdaPhysicHours()); // consider mono expo decay from max point
   //DD(max_time);
-  current_tac_.AddValue(200, 0.0); // add final point
-  current_tac_.AddValue(220, 0.0); // add final point
-  current_tac_.AddValue(280, 0.0); // add final point
-  current_tac_.AddValue(420, 0.0); // add final point
-
-  current_tac_.AddValue(500, 0.0); // add final point
+   // current_tac_.AddValue(200, 0.0); // add final point
+   // current_tac_.AddValue(220, 0.0); // add final point
+   // current_tac_.AddValue(280, 0.0); // add final point
+   // current_tac_.AddValue(420, 0.0); // add final point
+   // current_tac_.AddValue(500, 0.0); // add final point
 
   // loop pixel ? list of iterators
   //  update values of the tac
@@ -309,7 +308,7 @@ double syd::IntegratedActivityImageBuilder::Integrate()
 
     // Positivity constraints
     for(auto i=0; i<model->GetNumberOfParameters(); i++) {
-      //      problem.SetParameterLowerBound(&model->GetParameters()[i], 0, 0); // A positive
+      //problem.SetParameterLowerBound(&model->GetParameters()[i], 0, 0); // A positive
     }
 
     ceres::Solve(*ceres_options_, &problem, &ceres_summary_);
@@ -345,7 +344,7 @@ double syd::IntegratedActivityImageBuilder::Integrate()
 
   int best_model = 0; // FIXME
 
-  double r = models_[best_model]->ComputeAUC();
+  double r = models_[2]->ComputeAUC();
 
   if (current_debug_flag_) { DD(r); }
 
@@ -394,13 +393,13 @@ void syd::IntegratedActivityImageBuilder::InitSolver()
   ceres_options_->logging_type = ceres::SILENT;
 
   // Create the models
-  models_.push_back(new syd::FitModel_f1);
+  // models_.push_back(new syd::FitModel_f1);
   models_.push_back(new syd::FitModel_f2);
-  //models_.push_back(new syd::FitModel_f3);
+  models_.push_back(new syd::FitModel_f3);
   models_.push_back(new syd::FitModel_f4a);
   //models_.push_back(new syd::FitModel_f4b);
   //models_.push_back(new syd::FitModel_f4c);
-  models_.push_back(new syd::FitModel_f4);
+  // models_.push_back(new syd::FitModel_f4);
 
   for(auto m:models_) {
     m->SetLambdaPhysicHours(0.010297405); // Indium in hour
