@@ -41,7 +41,7 @@ namespace syd {
 
     typedef ceres::AutoDiffCostFunction<ResidualType, 1, 1> CostFctType;
 
-    virtual int GetK() const { return 1; } // K
+    virtual int GetNumberOfExpo() const { return 1; }
     virtual double GetA(const int i) const;
     virtual double GetLambda(const int i) const;
 

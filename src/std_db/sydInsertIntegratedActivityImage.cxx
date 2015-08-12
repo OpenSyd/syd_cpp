@@ -62,6 +62,8 @@ int main(int argc, char* argv[])
 
   builder.debug_only_flag_ = args_info.only_debug_flag;
   builder.robust_scaling_ = args_info.robust_scaling_arg;
+  builder.gauss_sigma_ = args_info.gauss_arg;
+  builder.activity_threshold_ = args_info.min_activity_arg;
 
   // Options here
   //  builder.AddDebugPixel("liver", 40, 22, 61);
@@ -89,7 +91,7 @@ int main(int argc, char* argv[])
     DD(image);
   */
 
-  // Debug here
+  // Debug here //FIXME
   builder.SaveDebugPixel("gp/tac.txt");
   builder.SaveDebugModel("gp/models.txt");
 

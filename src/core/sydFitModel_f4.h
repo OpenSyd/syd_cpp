@@ -32,7 +32,7 @@ namespace syd {
     FitModel_f4();
     ~FitModel_f4();
 
-    virtual int GetK() const { return 4; } // K
+    virtual int GetNumberOfExpo() const { return 2;}
 
     class ResidualType: public FitModelBase::ResidualBaseType {
     public:

@@ -31,10 +31,12 @@ syd::FitModel_f4a::FitModel_f4a():FitModelBase()
 // --------------------------------------------------------------------
 void syd::FitModel_f4a::SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac)
 {
+  syd::FitModelBase::SetProblemResidual(problem, tac);
+
   // Initialisation
   params_[0] = tac.GetValue(0); // A1
-  params_[1] = 0.0; // lambda_1
-  params_[2] = 0.0; // lambda_2
+  params_[1] = GetLambdaPhysicHours(); // lambda_1
+  params_[2] = 0.0;//GetLambdaPhysicHours()*1.2; // lambda_2
 
   // need to be created each time
   residuals_.clear();
@@ -49,8 +51,14 @@ void syd::FitModel_f4a::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
                               &params_[0], &params_[1], &params_[2]);
   }
 
-  //problem->SetParameterLowerBound(&params_[0], 0, 0); // A positive
-  //problem->SetParameterLowerBound(&params_[1], 0, GetLambdaPhysicHours()); // positive
+  problem->SetParameterLowerBound(&params_[0], 0, 0); // A positive
+
+  // problem->SetParameterLowerBound(&params_[0], 0, 0); // l1
+  // problem->SetParameterLowerBound(&params_[0], 0, 0); // l2
+
+  //problem->SetParameterLowerBound(&params_[1], 0, GetLambdaPhysicHours());
+  //problem->SetParameterLowerBound(&params_[2], 0, GetLambdaPhysicHours());
+  //  problem->SetParameterLowerBound(&params_[1], 0, 0.0);
   //problem->SetParameterLowerBound(&params_[2], 0, 0); // positive
 
   //problem->SetParameterLowerBound(&params_[1], 0, GetLambdaPhysicHours());

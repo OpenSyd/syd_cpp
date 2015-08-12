@@ -29,7 +29,6 @@ namespace syd {
 
   class DebugType {
   public:
-    //    ~DebugType() { DD(" dest"); }
     int index;
     int x;
     int y;
@@ -37,7 +36,17 @@ namespace syd {
     syd::TimeActivityCurve tac;
     std::vector<syd::FitModelBase*> models;
     std::string name;
-    std::vector<ceres::Solver::Summary> summaries;
+    std::vector<ceres::Solver::Summary> summaries; // FIXME to put in model
+    int selected_model;
+  };
+
+  class ModelResult {
+  public:
+    syd::FitModelBase * model;
+    syd::TimeActivityCurve * tac;
+    syd::TimeActivityCurve * restricted_tac;
+    double R2;
+    double AICc;
   };
 
   /// This class is used to create a pixel-based integrated activity.
@@ -50,44 +59,54 @@ namespace syd {
     /// Destructor (empty)
     ~IntegratedActivityImageBuilder() {}
 
+    typedef float PixelType;
+    typedef itk::Image<PixelType,3> ImageType;
+    typedef itk::Image<PixelType,4> Image4DType;
+
     void SetInput(syd::Image::vector & images);
-    syd::Image::pointer GetOutput() const;
+    syd::Image::pointer GetOutput() const; // FIXME to change
+
+    // Main function
     void CreateIntegratedActivityImage();
-    double Integrate();
 
+    // protected
     void InitSolver();
+    void FitModels(TimeActivityCurve & tac, bool debug_this_point_flag, DebugType * debug_current);
+    void ReadAndInitInputData(std::vector<ImageType::Pointer> & itk_images,
+                              Image4DType::Pointer tac_image);
 
-    syd::TimeActivityCurve & GetTAC() { return current_tac_; }
-
+    // Debug
     void SaveDebugPixel(const std::string & filename) const;
     void SaveDebugModel(const std::string & filename) const;
     void AddDebugPixel(std::string name, int x, int y, int z);
-
     bool debug_only_flag_;
+
+    // options
     double robust_scaling_;
+    bool gauss_sigma_;
+    double activity_threshold_;
 
   protected:
     syd::StandardDatabase * db_;
 
     syd::Image::vector images_;
-    syd::Image::pointer output_;
-    syd::TimeActivityCurve current_tac_;
+    syd::Image::pointer output_; // FIXME to remove ?
 
-    // std::vector<int> debug_pixels;
-    // std::vector<syd::TimeActivityCurve> debug_tac;
-
+    // List of all tested models
     std::vector<syd::FitModelBase*> models_;
-    //    std::vector<syd::FitModelBase*> debug_models_;
-    bool current_debug_flag_;
 
-    std::vector<DebugType> debug_data;
-    std::vector<DebugType>::iterator debug_current;
+    // Current selected models
+    syd::FitModelBase * current_model_;
 
+    // Options for the solver
     ceres::Solver::Options * ceres_options_;
     ceres::Solver::Summary ceres_summary_;
+    ceres::Solver::Summary current_ceres_summary_;
 
-    int nb_of_computed_pixels_;
-    //    ceres::Problem problem;
+    // Debug
+    bool current_debug_flag_;
+    std::vector<DebugType> debug_data;
+    std::vector<DebugType>::iterator debug_current;
 
   }; // class IntegratedActivityImageBuilder
 

@@ -31,6 +31,8 @@ syd::FitModel_f4c::FitModel_f4c():FitModelBase()
 // --------------------------------------------------------------------
 void syd::FitModel_f4c::SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac)
 {
+  syd::FitModelBase::SetProblemResidual(problem, tac);
+
   // Initialisation
   params_[0] = GetLambdaPhysicHours(); // l_r
   params_[1] = 0.0; // l_t

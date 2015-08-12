@@ -31,6 +31,8 @@ syd::FitModel_f1::FitModel_f1():FitModelBase()
 // --------------------------------------------------------------------
 void syd::FitModel_f1::SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac)
 {
+  syd::FitModelBase::SetProblemResidual(problem, tac);
+
   // Initialisation
   params_[0] = tac.GetValue(0);
 

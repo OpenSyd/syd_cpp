@@ -48,6 +48,8 @@ namespace syd {
     void SetTime(unsigned int i, double v) { times[i] = v; }
     unsigned int FindMaxIndex();
 
+    void clear() { times.clear(); values.clear(); variances.clear(); }
+
     friend std::ostream& operator<<(std::ostream& os, const TimeActivityCurve & p);
 
   protected:

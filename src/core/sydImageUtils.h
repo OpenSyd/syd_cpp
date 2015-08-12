@@ -46,6 +46,7 @@
 #include <itkLabelImageToLabelMapFilter.h>
 #include <itkLabelMapToLabelImageFilter.h>
 #include <itkBinaryThresholdImageFilter.h>
+#include <itkRecursiveGaussianImageFilter.h>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -136,6 +137,9 @@ namespace syd {
                double threshold_cumul, double skip_slices);
   //--------------------------------------------------------------------
 
+
+  template<class ImageType>
+  typename ImageType::Pointer GaussianFilter(const ImageType * input, double sigma_in_mm);
 
   //--------------------------------------------------------------------
   void CopyMHDImage(std::string from, std::string to, int verbose_level=2);

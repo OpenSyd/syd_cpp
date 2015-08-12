@@ -31,6 +31,8 @@ syd::FitModel_f3::FitModel_f3():FitModelBase()
 // --------------------------------------------------------------------
 void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac)
 {
+  syd::FitModelBase::SetProblemResidual(problem, tac);
+
   // Initialisation
   params_[0] = tac.GetValue(0)/2.0; // A1
   params_[1] = 0.0; // lambda_1
@@ -49,9 +51,9 @@ void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
                               &params_[0], &params_[1], &params_[2]);
   }
 
-  // problem->SetParameterLowerBound(&params_[0], 0, 0.0); // A positive
-  // problem->SetParameterLowerBound(&params_[1], 0, 0.0); // positive
-  // problem->SetParameterLowerBound(&params_[2], 0, 0.0); //  positive
+  problem->SetParameterLowerBound(&params_[0], 0, 0.0);
+  //  problem->SetParameterLowerBound(&params_[1], 0, 0.0);
+  problem->SetParameterLowerBound(&params_[2], 0, 0.0);
 }
 // --------------------------------------------------------------------
 

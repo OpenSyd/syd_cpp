@@ -56,8 +56,9 @@ namespace syd {
     double robust_scaling_;
 
     virtual std::string GetName() const { return name_; }
-    int GetNumberOfParameters() const { return params_.size(); }
-    virtual int GetK() const { return GetNumberOfParameters(); } // Ka
+    //int GetNumberOfParameters() const { return params_.size(); }
+    int GetK()  const { return params_.size(); } //const { return GetNumberOfParameters(); } // Ka
+    virtual int GetNumberOfExpo() const = 0;//; { return GetNumberOfParameters(); } // Ka
 
     void SetLambdaPhysicHours(double l) { lambda_phys_hours_ = l; }
 
@@ -76,13 +77,21 @@ namespace syd {
     friend std::ostream& operator<<(std::ostream& os, const FitModelBase & p);
 
     double ComputeAUC() const;
+    double ComputeR2(syd::TimeActivityCurve & tac) const;
+    double ComputeAICc(syd::TimeActivityCurve & tac) const;
+    double ComputeSS(syd::TimeActivityCurve & tac) const;
+
     virtual double GetA(const int i) const { LOG(FATAL) << "GetA to implement " << GetName(); }
     virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); }
 
-  protected:
+    bool start_from_max_flag;
+
+    // protected:
     std::string name_;
     double lambda_phys_hours_;
     std::vector<double> params_;
+    syd::TimeActivityCurve * current_tac;
+
   };
 
 }  // namespace syd
