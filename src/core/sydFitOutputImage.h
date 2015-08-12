@@ -74,16 +74,15 @@ namespace syd {
   };
 
 
- // class FitOutputImage_AUC: public FitOutputImage {
- //  public:
- //    FitOutputImage_AUC(Pointer input):FitOutputImage(input) { filename = "auc.mhd"; }
- //    virtual void Update(const syd::TimeActivityCurve & tac,
- //                        const syd::FitModelBase * model,
- //                        const ceres::Solver::Summary & summary) {
- //      double r = model->ComputeAUC();
- //      iterator.Set(r);
- //    }
- //  };
+ class FitOutputImage_Success: public FitOutputImage {
+  public:
+   FitOutputImage_Success(Pointer input):FitOutputImage(input) { filename = "success.mhd"; }
+   virtual void Update(const syd::TimeActivityCurve & tac,
+                       const syd::FitModelBase * model) {
+     iterator.Set(1);
+   }
+ };
+
 
 
 
