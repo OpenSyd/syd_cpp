@@ -20,9 +20,9 @@
 #include "sydInsertIntegratedActivityImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydIntegratedActivityImageBuilder.h"
 #include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
+#include "sydIntegratedActivityImageBuilder.h"
 
 // syd init
 SYD_STATIC_INIT

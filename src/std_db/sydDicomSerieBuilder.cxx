@@ -71,7 +71,7 @@ namespace syd {
     inputFiles.clear();
     std::string absolute_folder = folder;
     ConvertToAbsolutePath(absolute_folder);
-    sydLOG(2) << "Search for files in " << folder;
+    LOG(2) << "Search for files in " << folder;
 
     OFString scanPattern = "*"; // or *dcm ?
     OFString dirPrefix = "";
@@ -83,7 +83,7 @@ namespace syd {
                                                      dirPrefix, recurse);
     }
     else {
-      sydLOG(FATAL) << "The directory " << absolute_folder << " does not exist.";
+      LOG(FATAL) << "The directory " << absolute_folder << " does not exist.";
     }
     // I dont know why but sometimes, the recursive search find the same
     // files several times. Here is a workaournd to remove duplicate
@@ -97,14 +97,14 @@ namespace syd {
     for(auto i=v.begin(); i<v.end(); i++) inputFiles.push_back(*i);
     int n_after = inputFiles.size();
     if (n_before != n_after) {
-      sydLOG(WARNING) << "Found duplicated files, I ignore them.";
+      LOG(WARNING) << "Found duplicated files, I ignore them.";
     }
 
     if (inputFiles.size() > 0) {
-      sydLOG(2) << "Found " << inputFiles.size() << " files. Now searching for dicom.";
+      LOG(2) << "Found " << inputFiles.size() << " files. Now searching for dicom.";
     }
     else {
-      sydLOG(WARNING) << "No files found.";
+      LOG(WARNING) << "No files found.";
     }
   }
   // --------------------------------------------------------------------
@@ -117,7 +117,7 @@ namespace syd {
     DcmFileFormat dfile;
     bool b = OpenDicomFile(filename, dfile);
     if (!b) {  // this is not a dicom file
-      sydLOG(WARNING) << "Error the file '" << filename << "' is not a dicom file.";
+      LOG(WARNING) << "Error the file '" << filename << "' is not a dicom file.";
       return;
     }
     DcmObject * dset = dfile.getAndRemoveDataset();
@@ -126,15 +126,15 @@ namespace syd {
     std::string sop_uid = GetTagValueString(dset, "SOPInstanceUID");
     if (DicomFileAlreadyExist(sop_uid)) {
       if (!forceUpdateFlag_) {
-        sydLOG(2) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
+        LOG(2) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
         nb_of_skip_files++;
         return;
       }
       odb::query<DicomFile> q (odb::query<DicomFile>::dicom_sop_uid == sop_uid);
       DicomFile::pointer f;
       db_->QueryOne(f, q);
-      sydLOG(2) << "Dicom already exist, we remove first both DicomSerie and DicomFile: " << f->file->filename;
-      sydLOG(FATAL) << "On cascade not yet implemented. TODO.";
+      LOG(2) << "Dicom already exist, we remove first both DicomSerie and DicomFile: " << f->file->filename;
+      LOG(FATAL) << "On cascade not yet implemented. TODO.";
       //    db_->Delete(f);
     }
 
@@ -148,7 +148,7 @@ namespace syd {
       UpdateDicomSerie(serie, filename, dset);
       //serie = CreateDicomSerie(filename, dset);
       series_to_insert.push_back(serie);
-      sydLOG(2) << "Creating a new serie: " << serie->dicom_series_uid;
+      LOG(2) << "Creating a new serie: " << serie->dicom_series_uid;
     }
 
     // Then we add this dicomfile to the serie
@@ -193,7 +193,7 @@ namespace syd {
       // Very simple heuristic based on the modality
       if (s->dicom_modality == "CT") {
         if (index != -1) {
-          sydLOG(FATAL) << "Error two different CT DicomSerie with the same series_uid exist. Database corrupted."
+          LOG(FATAL) << "Error two different CT DicomSerie with the same series_uid exist. Database corrupted."
                      << std::endl
                      << "First serie: " << series_to_insert[index] << std::endl
                      << "Second serie: " << series_to_insert[i] << std::endl;
@@ -219,7 +219,7 @@ namespace syd {
       // Very simple heuristic based on the modality
       if (s->dicom_modality == "CT") {
         if (index != -1) {
-          sydLOG(FATAL) << "Error two different CT DicomSerie with the same series_uid exist. Database corrupted."
+          LOG(FATAL) << "Error two different CT DicomSerie with the same series_uid exist. Database corrupted."
                      << std::endl
                      << "First serie: " << series[index] << std::endl
                      << "Second serie: " << s << std::endl;
@@ -271,7 +271,7 @@ namespace syd {
 
     // Injection must be before the acquisition
     if (DateDifferenceInHours(acquisition_date, injection_->date) < 0) {
-      sydLOG(FATAL) << "Error, try to create a dicomserie with a date before the injection."
+      LOG(FATAL) << "Error, try to create a dicomserie with a date before the injection."
                  << std::endl << "Injection : " << injection_
                  << std::endl << "Date : " << acquisition_date;
     }
@@ -279,10 +279,10 @@ namespace syd {
     // Patient, injection (do not check here that injection is really associated with the patient)
     std::string patientID = GetTagValueString(dset, "PatientID");
     std::string patientName = GetTagValueString(dset, "PatientName");
-    sydLOG(3) << "Check patient dicom_patientid is the same than the given patient";
+    LOG(3) << "Check patient dicom_patientid is the same than the given patient";
     bool b = patient_->CheckIdentity(patientID, patientName);
     if (!b and !forcePatientFlag_ and patient_->dicom_patientid != "unknown_dicom_id") {
-      sydLOG(FATAL) << "Patient do not seems to be the same. You ask for " << patient_->name
+      LOG(FATAL) << "Patient do not seems to be the same. You ask for " << patient_->name
                  << " with dicom_id = '" << patient_->dicom_patientid << "'"
                  << " while in dicom, it is '" << patientID << "'" << std::endl
                  << "Filename is " << filename << std::endl
@@ -290,12 +290,12 @@ namespace syd {
     }
     if (!b) {
       // if the patient has no dicom id, we set it (and update the db)
-      sydLOG(1) << "The dicom_id of the patient " << patient_ << " has been updated to "
+      LOG(1) << "The dicom_id of the patient " << patient_ << " has been updated to "
              << patientID << " (dicom name is " << patientName << ")";
       patient_->dicom_patientid = patientID;
       bool a = patient_->CheckIdentity(patientID, patientName);
       if (!a) {
-        sydLOG(WARNING) << "Patient name dont match ? patient is " << patient_ << std::endl
+        LOG(WARNING) << "Patient name dont match ? patient is " << patient_ << std::endl
                      << " while dicom is " << patientName;
       }
       db_->Update<Patient>(patient_); //FIXME !!
@@ -423,11 +423,11 @@ namespace syd {
       std::string f = GetFilenameFromPath(files_to_copy[i]);
       std::string destination = destination_folders[i]+PATH_SEPARATOR+f;
       if (fs::exists(destination)) {
-        sydLOG(4) << "Destination file already exist, ignoring";
+        LOG(4) << "Destination file already exist, ignoring";
         nb_of_skip_copy++;
         continue;
       }
-      sydLOG(3) << "Copying " << f << " to " << destination_folders[i] << std::endl;
+      LOG(3) << "Copying " << f << " to " << destination_folders[i] << std::endl;
       CopyFile(files_to_copy[i].c_str(), destination);
       loadbar(i,n);
     }
@@ -437,16 +437,16 @@ namespace syd {
     db_->Insert(dicomfiles_to_insert);
 
     // Log
-    sydLOG(1) << files.size() << " Files have been added in the db";
-    sydLOG(1) << dicomfiles_to_insert.size() << " DicomFiles have been added in the db";
-    sydLOG(1) << series_to_insert.size() << " DicomSeries has been added in the db";
+    LOG(1) << files.size() << " Files have been added in the db";
+    LOG(1) << dicomfiles_to_insert.size() << " DicomFiles have been added in the db";
+    LOG(1) << series_to_insert.size() << " DicomSeries has been added in the db";
     if (nb_of_skip_files != 0) {
-      sydLOG(1) << nb_of_skip_files << " dicom already exist in the db and have been skipped.";
+      LOG(1) << nb_of_skip_files << " dicom already exist in the db and have been skipped.";
     }
     if (nb_of_skip_copy != 0) {
-      sydLOG(1) << nb_of_skip_copy << " files already exist in the db folder and have not been copied.";
+      LOG(1) << nb_of_skip_copy << " files already exist in the db folder and have not been copied.";
     }
-    sydLOG(1) << files_to_copy.size()-nb_of_skip_copy << " files have been copied.";
+    LOG(1) << files_to_copy.size()-nb_of_skip_copy << " files have been copied.";
 
     // Once done, clear vectors
     series_to_insert.clear();

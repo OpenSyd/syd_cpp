@@ -19,15 +19,16 @@
 #ifndef SYDFITMODELBASE_H
 #define SYDFITMODELBASE_H
 
-// syd
-//#include "sydCommon.h"
-#include "sydTimeActivityCurve.h"
-
 // ceres
 #include "ceres/ceres.h"
 
 // google logging (ceres)
 #include <glog/logging.h>
+#undef LOG
+
+// syd
+//#include "sydCommon.h"
+#include "sydTimeActivityCurve.h"
 
 // std
 #include <vector>

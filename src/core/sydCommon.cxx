@@ -279,7 +279,7 @@ int syd::ExecuteCommandLine(const std::string & cmd, int logLevel)
     if (!finished[0]) {
       while ((n = child.err().readsome(buf, sizeof(buf))) > 0) {
         error = true;
-        std::cerr << syd::fatalColor;
+        std::cerr << fatalColor;
         std::cerr.write(buf, n);
       }
       if (child.eof()) {

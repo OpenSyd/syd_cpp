@@ -72,7 +72,7 @@ bool syd::Patient::IsEqual(const pointer p) const
 void syd::Patient::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
-    sydLOG(FATAL) << "To insert patient, please set <name> <study_id> [<weight_in_kg> <dicom_patientid>]";
+    LOG(FATAL) << "To insert patient, please set <name> <study_id> [<weight_in_kg> <dicom_patientid>]";
   }
   name = arg[0];
   study_id = atoi(arg[1].c_str());

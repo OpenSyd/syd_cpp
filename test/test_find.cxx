@@ -27,8 +27,8 @@ SYD_STATIC_INIT
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  syd::Log::SQLFlag() = false;
-  syd::Log::LogLevel() = 1;
+  Log::SQLFlag() = false;
+  Log::LogLevel() = 1;
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
     std::stringstream oss;
     db->Dump(p, "", oss);
     if (str != oss.str()) {
-      sydLOG(syd::FATAL) << "ERROR ref is: " << str << std::endl
+      LOG(FATAL) << "ERROR ref is: " << str << std::endl
                  << " while dump is: " << oss.str();
     }
   }
@@ -141,7 +141,7 @@ int main(int argc, char* argv[])
     std::stringstream oss;
     db->Dump(results, "", oss);
     if (str != oss.str()) {
-      sydLOG(syd::FATAL) << "ERROR ref is: " << str << std::endl
+      LOG(FATAL) << "ERROR ref is: " << str << std::endl
                  << " while dump is: " << oss.str();
     }
 

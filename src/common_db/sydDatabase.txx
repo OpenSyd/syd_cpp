@@ -99,7 +99,7 @@ void syd::Database::Insert(std::vector<std::shared_ptr<RecordType>> records)
     t.commit();
   }
   catch (const odb::exception& e) {
-    sydLOG(FATAL) << "Cannot insert " << records.size()
+    LOG(FATAL) << "Cannot insert " << records.size()
                << " element(s) in the table '" << RecordType::GetStaticTableName()
                << "'. The error is: "  << e.what()
                << std::endl << "And last sql query is: "
@@ -130,7 +130,7 @@ void syd::Database::Update(std::vector<std::shared_ptr<RecordType>> records)
     t.commit();
   }
   catch (const odb::exception& e) {
-    sydLOG(FATAL) << "Cannot update " << records.size()
+    LOG(FATAL) << "Cannot update " << records.size()
                << " element(s) in the table '" << RecordType::GetStaticTableName()
                << "'. The error is: "  << e.what()
                << std::endl << "And last sql query is: "
@@ -146,14 +146,14 @@ void syd::Database::AddTable()
 {
   // No exception handling here, fatal error if fail.
   if (odb_db_ == NULL) {
-    sydLOG(FATAL) << "Could not AddTable, open a db before";
+    LOG(FATAL) << "Could not AddTable, open a db before";
   }
   std::string tablename = RecordType::GetStaticTableName();
   std::string str = tablename;
   std::transform(str.begin(), str.end(),str.begin(), ::tolower);
   auto it = map_lowercase_.find(str);
   if (it != map_lowercase_.end()) {
-    sydLOG(FATAL) << "When creating the database, a table with the same name '" << tablename
+    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
                << "' already exist.";
   }
   auto * t = new Table<RecordType>(this);

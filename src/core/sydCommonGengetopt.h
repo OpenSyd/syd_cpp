@@ -56,13 +56,13 @@
 
 
 //--------------------------------------------------------------------
-#define SYD_INIT_GGO(ggo_filename, N)                                 \
-  GGO2(ggo_filename, args_info);                                      \
-  syd::Log::SQLFlag() = args_info.verboseSQL_flag;                    \
-  syd::Log::LogLevel() = args_info.verbose_arg;                       \
-  if (args_info.inputs_num < N) {                                     \
-    cmdline_parser_##ggo_filename##_print_help();                     \
-      sydLOG(syd::FATAL) << "Please provide at least "#N" params";    \
+#define SYD_INIT_GGO(ggo_filename, N)                                   \
+  GGO2(ggo_filename, args_info);                                        \
+  sydlog::Log::SQLFlag() = args_info.verboseSQL_flag;                   \
+  sydlog::Log::LogLevel() = args_info.verbose_arg;                      \
+  if (args_info.inputs_num < N) {                                       \
+    cmdline_parser_##ggo_filename##_print_help();                       \
+      sydlog::LOG(sydlog::FATAL) << "Please provide at least "#N" params"; \
   }
 //--------------------------------------------------------------------
 

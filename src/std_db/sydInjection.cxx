@@ -55,7 +55,7 @@ std::string syd::Injection::ToString() const
 void syd::Injection::Set(const syd::Database * d, const std::vector<std::string> & args)
 {
   if (args.size() < 4) {
-    sydLOG(FATAL) << "Provide <patient> <radionuclide> <date> <activity_in_MBq>. "
+    LOG(FATAL) << "Provide <patient> <radionuclide> <date> <activity_in_MBq>. "
                << std::endl
                << " <patient> can be the study_id or the name" << std::endl
                << " <radionuclide> can be a name or an id";
@@ -71,13 +71,13 @@ void syd::Injection::Set(const syd::Database * d, const std::vector<std::string>
   try {
     db->QueryOne(rad, q);
   } catch(std::exception & e) {
-    sydLOG(FATAL) << "Error while creating the Injection, the radionuclide '"
+    LOG(FATAL) << "Error while creating the Injection, the radionuclide '"
                << args[1] << "' is not found (or several exist).";
   }
   radionuclide = rad;
   date = args[2];
   if (!IsDateValid(date)) {
-    sydLOG(FATAL) << "The date is not valid for this injection:" << this;
+    LOG(FATAL) << "The date is not valid for this injection:" << this;
   }
   activity_in_MBq = atof(args[3].c_str());
 }

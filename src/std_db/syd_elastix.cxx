@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
   for(auto i=1; i<args_info.inputs_num; i++)
     ids.push_back(atoi(args_info.inputs[i]));
   if (ids.size() < 2) {
-    sydLOG(syd::FATAL) << "Please provide at least two image ids (fixed and moving  images).";
+    LOG(FATAL) << "Please provide at least two image ids (fixed and moving  images).";
   }
 
   // Get the reference image
@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
     std::string output_dir = transfo->ComputeRelativeFolder();
     bool b = fs::create_directories(db->ConvertToAbsolutePath(output_dir));
     if (!b) {
-      sydLOG(syd::FATAL) << "Error while creating " << output_dir;
+      LOG(FATAL) << "Error while creating " << output_dir;
     }
 
     transfo->config_file = db->InsertNewFile(config_file, f, output_dir, true); // copy
@@ -139,22 +139,22 @@ int main(int argc, char* argv[])
     os.close();
 
     // Execute elastix
-    sydLOG(1) << cmd.str();
+    LOG(1) << cmd.str();
     int r = syd::ExecuteCommandLine(cmd.str(), args_info.verbose_arg);
 
     if (r!=0) { // fail
-      sydLOG(syd::WARNING) << "Command elastix fail, removing temporary folder and table element";
+      LOG(WARNING) << "Command elastix fail, removing temporary folder and table element";
       db->Delete(transfo);
     }
     else  {
       std::string res = db->GetAbsolutePath(transfo->transform_file);
       if (!fs::exists(res)) {
-        sydLOG(syd::WARNING) << "Error could not find the file, delete temporary folder and table element" << res;
+        LOG(WARNING) << "Error could not find the file, delete temporary folder and table element" << res;
         db->Delete(transfo);
       }
       else { // only create the files if ok
         db->Update(transfo);
-        sydLOG(1) << "Registration computed. Result: " << transfo;
+        LOG(1) << "Registration computed. Result: " << transfo;
       }
     }
   }
@@ -188,14 +188,14 @@ FindRoiMaskImage(const syd::StandardDatabase * db,
     odb::query<syd::RoiMaskImage>::frame_of_reference_uid == frame_of_reference_uid;
   db->Query(temp, q);
   if (temp.size() == 0) {
-    sydLOG(syd::FATAL) << "No mask '" << roitype->name
+    LOG(FATAL) << "No mask '" << roitype->name
                << "' with frame_of_reference_uid "
                << frame_of_reference_uid;
   }
   if (temp.size() > 1) {
     std::string s;
     for(auto t:temp) s += t->ToString()+" ";
-    sydLOG(syd::FATAL) << "Several masks '" << roitype->name
+    LOG(FATAL) << "Several masks '" << roitype->name
                << "' with frame_of_reference_uid found "
                << frame_of_reference_uid << ": " << std::endl << s;
   }

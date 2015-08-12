@@ -40,7 +40,7 @@ syd::Database * syd::DatabaseManager::Read(std::string filename)
   if (filename == "default") {
     char * file = getenv("SYD_CURRENT_DB");
     if (file == NULL) {
-      sydLOG(FATAL) << "Cannot find the SYD_CURRENT_DB environment variable. Please set with something like: "
+      LOG(FATAL) << "Cannot find the SYD_CURRENT_DB environment variable. Please set with something like: "
                  << "export SYD_CURRENT_DB=/home/genghiskhan/my_db/toto.db";
     }
     filename = std::string(file);
@@ -48,7 +48,7 @@ syd::Database * syd::DatabaseManager::Read(std::string filename)
 
   // Create and open the db
   odb::sqlite::database * db;
-  sydLOG(5) << "Opening database '" << filename << "' to get the type of db.";
+  LOG(5) << "Opening database '" << filename << "' to get the type of db.";
   try {
     db = new odb::sqlite::database(filename);
     odb::connection_ptr c(db->connection());
@@ -82,7 +82,7 @@ syd::Database * syd::DatabaseManager::Read(std::string filename)
     */
     transaction.commit();
     db_schema_name = s.database_schema;
-    sydLOG(5) << "Database type is '" << db_schema_name << "'.";
+    LOG(5) << "Database type is '" << db_schema_name << "'.";
   }
   catch (const odb::exception& e) {
     EXCEPTION("Cannot find the db typename in '" << filename << "'."

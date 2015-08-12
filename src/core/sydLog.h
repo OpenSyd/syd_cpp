@@ -28,11 +28,15 @@
 #include <stdio.h>
 #include <iostream>
 
-namespace syd {
+// We use a different namespace than 'syd', to be able to make 'using
+// namespace syslog" and thus use 'FATAL' and not 'syd::FATAL',
+// without using 'using namespace syd".
+
+namespace sydlog {
   /// Must be negative to always being displayed
   static int FATAL = -666;
   static int WARNING = -555;
-  static int SQL = -444;
+  // static int SQL = -444;
 
   static const char * resetColor = "\x1b[0m";
   static const char * fatalColor = "\x1b[31m";
@@ -62,22 +66,14 @@ namespace syd {
   };
   // --------------------------------------------------------------------
 
+
+  // Main function to use LOG like : LOG(1) << blabla
+  std::ostringstream& LOG(int level);
+
+  // The same for SQL function
+  std::ostringstream& LOG_SQL();
+
   typedef Log FILELog;
 }
-
-#define sydFILE_LOG(level)                      \
-  if (level > FILELog::LogLevel()) ;            \
-  else syd::Log().Get(level)
-
-/// ----------------------------------------------------------------------------
-/// Main LOG macros
-
-#define sydLOG(level)                           \
-  if (level > syd::Log::LogLevel()) ;           \
-  else syd::Log().Get(level)
-
-#define sydLOGSQL                               \
-  if (!syd::Log::SQLFlag()) ;                   \
-  else syd::Log().Get(0)
 
 #endif /* end #define SYDLOG_H */

@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
       ++j;
     }
     if (!found) {
-      sydLOG(1) << "Dicom " << d->id << " ignored (cannot find pair dicom with same frame_of_reference_uid).";
+      LOG(1) << "Dicom " << d->id << " ignored (cannot find pair dicom with same frame_of_reference_uid).";
     }
   }
 
@@ -79,13 +79,13 @@ int main(int argc, char* argv[])
   syd::StitchDicomImageBuilder builder(db);
   syd::Image::vector images;
   for(auto p:pairs) {
-    sydLOG(2) << "Stitching dicoms:" << std::endl
+    LOG(2) << "Stitching dicoms:" << std::endl
            << p.first << std::endl
            << p.second << std::endl;
     syd::Image::pointer image = builder.InsertStitchedImage(p.first, p.second);
     for(auto t:tags) image->AddTag(t);
     images.push_back(image);
-    sydLOG(1) << "Inserting Image " << image;
+    LOG(1) << "Inserting Image " << image;
   }
   db->Update(images);
 

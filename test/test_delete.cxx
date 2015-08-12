@@ -30,8 +30,8 @@ SYD_STATIC_INIT
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  syd::Log::SQLFlag() = false;
-  syd::Log::LogLevel() = 1;
+  Log::SQLFlag() = false;
+  Log::LogLevel() = 1;
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 
     db->Query(dfiles);
     if (dfiles.size() != total_files-n) {
-      sydLOG(syd::FATAL) << "Error while deleting the serie";
+      LOG(FATAL) << "Error while deleting the serie";
     }
     else {
       std::cout << "OK, " << total_files << " before, "

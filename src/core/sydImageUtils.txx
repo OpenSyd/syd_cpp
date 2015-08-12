@@ -54,7 +54,7 @@ typename itk::ImageBase<Dimension>::Pointer
 GetImageBase(const itk::ImageIOBase::Pointer & reader)
 {
   if (reader->GetPixelType() != itk::ImageIOBase::SCALAR) { // scalar image ?
-    sydLOG(FATAL) << "Error, only use GetImageBase with scalar image, while it is: "
+    LOG(FATAL) << "Error, only use GetImageBase with scalar image, while it is: "
                <<  itk::ImageIOBase::GetPixelTypeAsString(reader->GetPixelType());
   }
   typedef itk::ImageBase<Dimension> BaseImageType;
@@ -120,9 +120,9 @@ typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filen
 {
   // Read image one after the other to limit a bit the used memory
   typename ImageType::Pointer im1 = syd::ReadImage<ImageType>(filenames[0]);
-  sydLOG(2) << "Start with  " << filenames[0];
+  LOG(2) << "Start with  " << filenames[0];
   for(auto i=1; i<filenames.size(); i++) {
-    sydLOG(2) << "Adding " << filenames[i];
+    LOG(2) << "Adding " << filenames[i];
     typedef itk::AddImageFilter<ImageType> FilterType;
     typename ImageType::Pointer im2 = syd::ReadImage<ImageType>(filenames[i]);
     typename FilterType::Pointer filter = FilterType::New();
@@ -134,7 +134,7 @@ typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filen
   }
 
   // Average
-  sydLOG(2) << "Average";
+  LOG(2) << "Average";
   typedef float PixelType;
   typedef itk::Image<PixelType,3> OutputImageType;
   typedef itk::MultiplyImageFilter<ImageType, OutputImageType, OutputImageType> FilterType;
@@ -202,7 +202,7 @@ typename ImageType::Pointer CropImageLike(const ImageType * input,
                         like->GetSpacing()[i]/input->GetSpacing()[i]);
     // Could not be larger than the initial image
     if (size[i] > input->GetLargestPossibleRegion().GetSize()[i]) {
-      sydLOG(FATAL) << "Error while CropImageLike, computed size is larger than initial image: " << size;
+      LOG(FATAL) << "Error while CropImageLike, computed size is larger than initial image: " << size;
     }
     size[i] = std::min(size[i], input->GetLargestPossibleRegion().GetSize()[i]);
 
@@ -247,7 +247,7 @@ typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType *
     if (pend1[i] != pend2[i]) isCorrect = false;
   }
   if (!isCorrect) {
-    sydLOG(FATAL) << "Error could not stitch the two images because X/Y size are not equal: "
+    LOG(FATAL) << "Error could not stitch the two images because X/Y size are not equal: "
                << std::endl << "Image1: " << pstart1 << " -> " << pend1
                << std::endl << "Image2: " << pstart2 << " -> " << pend2;
   }
@@ -574,7 +574,7 @@ ReadDicomFromSingleFile(std::string filename)
 {
   typedef itk::Image<PixelType,3> ImageType;
   // Read the image data
-  sydLOG(2) << "Converting dicom file (" << filename << ") to itk image.";
+  LOG(2) << "Converting dicom file (" << filename << ") to itk image.";
   typename ImageType::Pointer output = ReadImage<ImageType>(filename);
 
   // Update the iamge
@@ -601,7 +601,7 @@ ReadDicomSerieFromFolder(std::string folder, std::string serie_uid)
     nameGenerator->SetInputDirectory(folder);
     const std::vector<std::string> & temp = nameGenerator->GetFileNames(serie_uid);
     typename ReaderType::Pointer reader = ReaderType::New();
-    sydLOG(2) << "Loading " << temp.size() << " files for serie " << serie_uid << " in " << folder << ".";
+    LOG(2) << "Loading " << temp.size() << " files for serie " << serie_uid << " in " << folder << ".";
     reader->SetFileNames(temp);
     file = temp[0];
     reader->Update();
@@ -656,7 +656,7 @@ void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, con
   // correct. Warning : the third dimension could be wrong (a single
   // dicom file is open)
   if (image->GetOrigin()[0] != origin[0]) {
-    sydLOG(2) << "Change image origin from " << image->GetOrigin() << " to " << origin;
+    LOG(2) << "Change image origin from " << image->GetOrigin() << " to " << origin;
     image->SetOrigin(origin);
   }
 
@@ -670,7 +670,7 @@ void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, con
   image->SetSpacing(spacing);
   // Direction
   if (s<0) {
-    sydLOG(2) << "Negative spacing, I flip the image.";
+    LOG(2) << "Negative spacing, I flip the image.";
     typename ImageType::DirectionType direction = image->GetDirection();
     direction.Fill(0.0);
     direction(0,0) = 1; direction(1,1) = 1; direction(2,2) = -1;

@@ -37,6 +37,7 @@
 #include "sydLog.h"
 #include "sydException.h"
 
+using namespace sydlog;
 
 // FIXME --> to remove
 #include "sydDicomCommon.h" // needed for helpers functions (FileExists)

@@ -139,7 +139,7 @@ void syd::DicomSerie::DumpInTable(const syd::Database * d, syd::PrintTable & ta,
 std::string syd::DicomSerie::ComputeRelativeFolder() const
 {
   if (patient == NULL) {
-    sydLOG(FATAL) << "Error calling ComputeRelativeFolder for a serie, patient pointer is not set. " << ToString();
+    LOG(FATAL) << "Error calling ComputeRelativeFolder for a serie, patient pointer is not set. " << ToString();
   }
   // Part 1: patient
   std::string f = patient->ComputeRelativeFolder()+PATH_SEPARATOR;

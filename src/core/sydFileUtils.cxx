@@ -131,7 +131,7 @@ void syd::RemoveBackPathSeparator(std::string & folder)
 //------------------------------------------------------------------
 std::string syd::GetFilenameFromPath(const std::string path) {
   if (path.back() == PATH_SEPARATOR) {
-    sydLOG(FATAL) << "Cannot get the filename of '" << path << "' because it ends with a " << PATH_SEPARATOR;
+    LOG(FATAL) << "Cannot get the filename of '" << path << "' because it ends with a " << PATH_SEPARATOR;
   }
   size_t n = path.find_last_of(PATH_SEPARATOR);
   std::string p = path.substr(n+1);
@@ -145,11 +145,11 @@ std::string syd::GetFilenameFromPath(const std::string path) {
 std::string syd::GetPathFromFilename(std::string & path)
 {
   if (path.back() == PATH_SEPARATOR) {
-    sydLOG(FATAL) << "Cannot get the path of '" << path << "' because it ends with a " << PATH_SEPARATOR;
+    LOG(FATAL) << "Cannot get the path of '" << path << "' because it ends with a " << PATH_SEPARATOR;
   }
   size_t n = path.find_last_of(PATH_SEPARATOR);
   if (n == std::string::npos) { // no separator
-    //sydLOG(FATAL) << "Cannot get the path of '" << path << "' because not " << PATH_SEPARATOR << " was found.";
+    //LOG(FATAL) << "Cannot get the path of '" << path << "' because not " << PATH_SEPARATOR << " was found.";
     std::ostringstream s;
     s << "." << PATH_SEPARATOR; // current path
     return s.str();
@@ -175,7 +175,7 @@ std::string syd::CreateTemporaryFile(const std::string & folder, const std::stri
   sprintf(filename, "%s%c%s%s", folder.c_str(), PATH_SEPARATOR, "syd_temp_XXXXXX", extension.c_str());
   int fd = mkstemps(filename,extension.size());
   if (fd == -1) {
-    sydLOG(FATAL) << "Could not create temporary file: " << filename;
+    LOG(FATAL) << "Could not create temporary file: " << filename;
   }
   return std::string(filename);
 }
@@ -189,7 +189,7 @@ std::string syd::CreateTemporaryDirectory(const std::string & folder)
   sprintf(foldername, "%s%c%s", folder.c_str(), PATH_SEPARATOR, "syd_temp_XXXXXX");
   char * fd = mkdtemp(foldername);
   if (fd == NULL) {
-    sydLOG(FATAL) << "Could not create temporary folder: " << foldername;
+    LOG(FATAL) << "Could not create temporary folder: " << foldername;
   }
   return std::string(fd);
 }

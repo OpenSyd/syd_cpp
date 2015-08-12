@@ -57,7 +57,7 @@ void syd::CropImageBuilder::CropImageLike(syd::Image::pointer image,
   else if (image->pixel_type == "short") CropImageLike<short>(image, like, 1, -1000);
   else if (image->pixel_type == "unsigned char") CropImageLike<unsigned char>(image, like, 0, 0);
   else {
-    sydLOG(FATAL) << "Unknown pixel_type: " << image->pixel_type;
+    LOG(FATAL) << "Unknown pixel_type: " << image->pixel_type;
   }
 }
 // --------------------------------------------------------------------
@@ -71,7 +71,7 @@ void syd::CropImageBuilder::CropImageWithThreshold(syd::Image::pointer image, do
   else if (image->pixel_type == "short")  CropImageWithThreshold<short>(image, threshold);
   else if (image->pixel_type == "unsigned char")  CropImageWithThreshold<unsigned char>(image, threshold);
   else {
-    sydLOG(FATAL) << "Unknown pixel_type: " << image->pixel_type;
+    LOG(FATAL) << "Unknown pixel_type: " << image->pixel_type;
   }
 }
 // --------------------------------------------------------------------

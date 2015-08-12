@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
     syd::Image::pointer image = builder.CreateImageFromDicom(d);
     for(auto t:tags) image->AddTag(t);
     images.push_back(image);
-    sydLOG(1) << "Inserting Image " << image;
+    LOG(1) << "Inserting Image " << image;
   }
   // Update for tag
   db->Update(images);

@@ -18,47 +18,47 @@
 
 #include "sydLog.h"
 
-std::ostream * syd::Log::output = &(std::cout);
+std::ostream * sydlog::Log::output = &(std::cout);
 
 // --------------------------------------------------------------------
-syd::Log::Log()
+sydlog::Log::Log()
 {
-  syd::Log::fatalFlag = false;
+  sydlog::Log::fatalFlag = false;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::ostringstream& syd::Log::Get(int level)
+std::ostringstream& sydlog::Log::Get(int level)
 {
-  if (level == syd::FATAL) {
-    syd::Log::fatalFlag = true;
-    os << syd::fatalColor;
+  if (level == sydlog::FATAL) {
+    sydlog::Log::fatalFlag = true;
+    os << sydlog::fatalColor;
   }
-  if (level == syd::WARNING) os << syd::warningColor;
+  if (level == sydlog::WARNING) os << sydlog::warningColor;
   os << "[" << NowTime();
-  if (level != syd::FATAL and level != syd::WARNING) os << " " << level << "] ";
+  if (level != sydlog::FATAL and level != sydlog::WARNING) os << " " << level << "] ";
   else os << "] ";
-  if (level == syd::WARNING) os << "(Warning) ";
-  if (level == syd::FATAL) os << "Fatal. ";
+  if (level == sydlog::WARNING) os << "(Warning) ";
+  if (level == sydlog::FATAL) os << "Fatal. ";
   return os;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::Log::~Log()
+sydlog::Log::~Log()
 {
   os << std::endl;
-  (*syd::Log::output) << os.str().c_str() << syd::resetColor;
-  syd::Log::output->flush(); // required
+  (*sydlog::Log::output) << os.str().c_str() << sydlog::resetColor;
+  sydlog::Log::output->flush(); // required
   if (fatalFlag) exit(1);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-int& syd::Log::LogLevel()
+int& sydlog::Log::LogLevel()
 {
   static int logLevel = 0; // default level
   return logLevel;
@@ -67,7 +67,7 @@ int& syd::Log::LogLevel()
 
 
 // --------------------------------------------------------------------
-bool& syd::Log::SQLFlag()
+bool& sydlog::Log::SQLFlag()
 {
   static bool sqlFlag = false; // default
   return sqlFlag;
@@ -78,7 +78,7 @@ bool& syd::Log::SQLFlag()
 // --------------------------------------------------------------------
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
 #include <windows.h>
-std::string syd::NowTime()
+std::string sydlog::NowTime()
 {
   const int MAX_LEN = 200;
   char buffer[MAX_LEN];
@@ -94,7 +94,7 @@ std::string syd::NowTime()
 }
 #else
 #include <sys/time.h>
-std::string syd::NowTime()
+std::string sydlog::NowTime()
 {
   char buffer[11];
   time_t t;
@@ -109,4 +109,26 @@ std::string syd::NowTime()
   return result;
 }
 #endif //WIN32
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::ostringstream& sydlog::LOG(int level) {
+  if (level > sydlog::FILELog::LogLevel()) {
+    // No output, create a fake os.
+    static std::ostringstream * os = new std::ostringstream; // only one
+    os->clear(); // reset each time it is used.
+    os->str("");
+    return *os;
+  }
+  else return sydlog::Log().Get(level);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::ostringstream& sydlog::LOG_SQL() {
+  if (!sydlog::Log::SQLFlag()) return LOG(999999);
+  else return LOG(0);
+}
 // --------------------------------------------------------------------

@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
   for(auto i=0; i<args_info.inputs_num; i++)
     ids.push_back(atoi(args_info.inputs[i]));
   if (ids.size() < 1) {
-    sydLOG(syd::FATAL) << "Please provide at least one image id.";
+    LOG(FATAL) << "Please provide at least one image id.";
   }
   syd::Image::vector initial_images;
   db->Query(initial_images, ids);
@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
     for(auto j=0; j<initial_transforms.size(); j++) {
       if (initial_transforms[j]->moving_image->frame_of_reference_uid == image->frame_of_reference_uid) {
         if (found != -1) {
-          sydLOG(syd::FATAL) << "Error two transform could be used with the image: " << image << std::endl
+          LOG(FATAL) << "Error two transform could be used with the image: " << image << std::endl
                      << "First  is: " << initial_transforms[found] << std::endl
                      << "Second is: " << initial_transforms[j] << std::endl;
         }
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
       }
     }
     if (found == -1) {
-      sydLOG(syd::FATAL) << "Error, could not find adequate ImageTransform for image:" << image;
+      LOG(FATAL) << "Error, could not find adequate ImageTransform for image:" << image;
     }
     images.push_back(image);
     transforms.push_back(initial_transforms[found]);
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
 
     // Check frame_of_reference_uid
     if (input_image->frame_of_reference_uid != transform->moving_image->frame_of_reference_uid) {
-      sydLOG(syd::WARNING) << "Error the frame_of_reference_uid of the input image is different from the one of the moving_image of the transform" << std::endl
+      LOG(WARNING) << "Error the frame_of_reference_uid of the input image is different from the one of the moving_image of the transform" << std::endl
                    << "input : " << input_image << std::endl
                    << "moving_image : " << transform->moving_image  << std::endl;
       continue;
@@ -167,19 +167,19 @@ int main(int argc, char* argv[])
     //  cmd << options; // additional options to transformix
 
     // Execute transformix
-    sydLOG(1) << cmd.str();
+    LOG(1) << cmd.str();
     int r = syd::ExecuteCommandLine(cmd.str(), args_info.verbose_arg);
 
     // Get result path
     std::string f = db->ConvertToAbsolutePath(output_image->ComputeRelativeFolder()+PATH_SEPARATOR+"result.mhd");
 
     if (r!=0 || !fs::exists(f)) { // fail
-      sydLOG(1) << "Command fail, removing temporary image";
+      LOG(1) << "Command fail, removing temporary image";
       db->Delete(output_image);
     }
     else  {
       syd::RenameMHDImage(f, output_image_path);
-      sydLOG(1) << "Image computed. Result: " << output_image;
+      LOG(1) << "Image computed. Result: " << output_image;
     }
   }
 

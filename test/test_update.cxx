@@ -27,8 +27,8 @@ SYD_STATIC_INIT
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  syd::Log::SQLFlag() = false;
-  syd::Log::LogLevel() = 1;
+  Log::SQLFlag() = false;
+  Log::LogLevel() = 1;
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
     pref->CopyFrom(p);
     db->QueryOne(p, p->id);
     if (!p->IsEqual(pref)) {
-      sydLOG(syd::FATAL) << "Error update single generic. p is " << p << " and pref " << pref;
+      LOG(FATAL) << "Error update single generic. p is " << p << " and pref " << pref;
     }
     std::cout << "Update " << p << std::endl;
   }

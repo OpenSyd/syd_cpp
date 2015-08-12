@@ -65,7 +65,7 @@ bool syd::RoiType::IsEqual(const pointer p) const
 void syd::RoiType::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
-    sydLOG(FATAL) << "To insert roitype, please set <name> <description>";
+    LOG(FATAL) << "To insert roitype, please set <name> <description>";
   }
   name = arg[0];
   description = arg[1];

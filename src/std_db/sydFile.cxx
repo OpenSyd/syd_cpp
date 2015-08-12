@@ -69,7 +69,7 @@ void syd::File::CopyFrom(const pointer p)
 // --------------------------------------------------
 void syd::File::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
-  sydLOG(FATAL) << "Not possible in insert file directly";
+  LOG(FATAL) << "Not possible in insert file directly";
 }
 // --------------------------------------------------
 
@@ -151,7 +151,7 @@ void syd::File::EraseAssociatedFile() const
   //  syd::StandardDatabase * db = static_cast<syd::StandardDatabase*>(db_);
   std::string p = db_->ConvertToAbsolutePath(path+PATH_SEPARATOR+filename);
   if (std::remove(p.c_str()) != 0) {
-    sydLOG(WARNING) << "Could not delete the file " << p;
+    LOG(WARNING) << "Could not delete the file " << p;
   }
 }
 // --------------------------------------------------

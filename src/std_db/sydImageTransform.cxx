@@ -90,7 +90,7 @@ void syd::ImageTransform::CopyFrom(const pointer p)
 // --------------------------------------------------
 void syd::ImageTransform::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
-  sydLOG(FATAL) << "Set ImageTransform not implemented";
+  LOG(FATAL) << "Set ImageTransform not implemented";
 }
 // --------------------------------------------------
 

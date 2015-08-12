@@ -49,7 +49,7 @@ void syd::Database::Read(std::string filename)
 {
   filename_ = filename;
   // Open the DB
-  sydLOG(5) << "Opening database '" << filename_ << "'.";
+  LOG(5) << "Opening database '" << filename_ << "'.";
   try {
     //    odb_db_ = std::unique_ptr<odb::sqlite::database>(new odb::sqlite::database(filename_));
     odb_db_ = new odb::sqlite::database(filename_, SQLITE_OPEN_READWRITE, true); // true = foreign_keys
@@ -107,7 +107,7 @@ void syd::Database::TraceCallback(const char* sql)
   std::string s = std::string(sql);
   if (s == "COMMIT") return;
   if (s == "BEGIN") return;
-  sydLOGSQL << s;
+  LOG_SQL() << s;
   current_sql_query_=s;
 }
 // --------------------------------------------------------------------

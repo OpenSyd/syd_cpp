@@ -63,7 +63,7 @@ void syd::Tag::CopyFrom(const pointer p)
 void syd::Tag::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
-    sydLOG(FATAL) << "To insert patient, please set <label> <description>";
+    LOG(FATAL) << "To insert patient, please set <label> <description>";
   }
   label = arg[0];
   description = arg[1];
