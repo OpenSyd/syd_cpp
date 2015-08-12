@@ -77,16 +77,14 @@ int main(int argc, char* argv[])
 
   // Read the images+times and set to the builder
   std::string starting_date = images[0]->dicoms[0]->injection->date;
+  ImageType::Pointer im;
   for(auto image:images) {
-    auto im = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));
+    im = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));
     double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
     builder.AddInput(im, t);
   }
 
-  builder.image_lambda_phys_in_hour_ = 0.010297405; // Indium in hour
-  DD(builder.image_lambda_phys_in_hour_);
   builder.image_lambda_phys_in_hour_ = log(2.0)/images[0]->dicoms[0]->injection->radionuclide->half_life_in_hours;
-  DD(builder.image_lambda_phys_in_hour_);
   builder.debug_only_flag_ = args_info.only_debug_flag;
   builder.robust_scaling_ = args_info.robust_scaling_arg;
   builder.gauss_sigma_ = args_info.gauss_arg;
@@ -106,16 +104,43 @@ int main(int argc, char* argv[])
     }
   }
 
-  // Go with full models
+  // Set the models
   auto f3 = new syd::FitModel_f3;
-  auto f4 = new syd::FitModel_f4;
+  auto f4a = new syd::FitModel_f4a;
   builder.AddModel(f3);
-  builder.AddModel(f4);
+  builder.AddModel(f4a);
+
+  // Set the output
+  auto auc = new syd::FitOutputImage_AUC(im);
+  auto r2 = new syd::FitOutputImage_R2(im);
+  auto best_model = new syd::FitOutputImage_Model(im);
+  auto iter = new syd::FitOutputImage_Iteration(im);
+  auto success = new syd::FitOutputImage_Success(im);
+  builder.AddOutputImage(auc);
+  builder.AddOutputImage(r2);
+  builder.AddOutputImage(best_model);
+  builder.AddOutputImage(iter);
+  builder.AddOutputImage(success);
+
+  // Go !
   builder.CreateIntegratedActivityImage();
+
+  // Output
+  for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename);
+
 
   // Debug here //FIXME
   builder.SaveDebugPixel("gp/tac.txt");
   builder.SaveDebugModel("gp/models.txt");
+
+  // Redo with a mask
+  /*  DD("Start again");
+  builder.ClearModel();
+  builder.AddModel(f3);
+  builder.SetMask(mask);
+  //  builder.restricted_tac_flag;
+  builder.CreateIntegratedActivityImage();
+  */
 
   // Output
   DD("FIXME : insert builder output in the db");

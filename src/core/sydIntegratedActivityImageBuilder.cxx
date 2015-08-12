@@ -20,7 +20,6 @@
 #include "sydIntegratedActivityImageBuilder.h"
 #include "sydImageUtils.h"
 #include "sydPrintTable.h"
-#include "sydFitOutputImage.h"
 
 // itk
 #include <itkImageRegionIterator.h>
@@ -154,17 +153,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   tac_image_ = Image4DType::New();
   InitInputData();
 
-  // Create output
-  std::vector<FitOutputImage*> outputs;
-  auto auc = new syd::FitOutputImage_AUC(images_[0]);
-  outputs.push_back(auc);
-  auto r2 = new syd::FitOutputImage_R2(images_[0]);
-  outputs.push_back(r2);
-  auto best_model = new syd::FitOutputImage_Model(images_[0]);
-  outputs.push_back(best_model);
- auto iter = new syd::FitOutputImage_Iteration(images_[0]);
-  outputs.push_back(iter);
-
   // create initial tac with the times
   TimeActivityCurve tac;
   for(auto t:times_) tac.AddValue(t, 0.0);
@@ -207,15 +195,9 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
       if (best != -1) {
         current_model_ = models_[best];
         // Update output
-        for(auto o:outputs) o->Update(tac, current_model_);
+        for(auto o:outputs_) o->Update(tac, current_model_);
         if (debug_this_point_flag) debug_data[debug_point_current].selected_model = best;
       }
-      else {
-        for(auto o:outputs) o->iterator.Set(-1.0); // means not found
-      }
-    }
-    else {
-      for(auto o:outputs) o->iterator.Set(0.0);
     }
 
     // debug points for plot
@@ -225,15 +207,12 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
     }
 
     // Next debug images
-    for(auto o:outputs) ++o->iterator;
+    for(auto o:outputs_) ++o->iterator;
 
     // progress bar
     ++x;
     loadbar(x,n);
   }
-
-  // write result images
-  for(auto o:outputs) WriteImage<ImageType>(o->image, o->filename);
 }
 // --------------------------------------------------------------------
 

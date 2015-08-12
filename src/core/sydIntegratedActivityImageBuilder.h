@@ -22,6 +22,7 @@
 // syd
 #include "sydImageUtils.h"
 #include "sydFitModels.h"
+#include "sydFitOutputImage.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -63,6 +64,7 @@ namespace syd {
 
     void AddInput(ImageType::Pointer image, double time) { images_.push_back(image); times_.push_back(time); }
     void AddModel(syd::FitModelBase * m) { models_.push_back(m); }
+    void AddOutputImage(syd::FitOutputImage * o) { outputs_.push_back(o); }
 
     // Main function
     void CreateIntegratedActivityImage();
@@ -84,6 +86,7 @@ namespace syd {
     double activity_threshold_;
     double R2_min_threshold_;
     double image_lambda_phys_in_hour_;
+    std::vector<FitOutputImage*> outputs_;
 
   protected:
 
