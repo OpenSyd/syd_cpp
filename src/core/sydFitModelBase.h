@@ -27,7 +27,6 @@
 #undef LOG
 
 // syd
-//#include "sydCommon.h"
 #include "sydTimeActivityCurve.h"
 
 // std
@@ -78,13 +77,16 @@ namespace syd {
 
     friend std::ostream& operator<<(std::ostream& os, const FitModelBase & p);
 
-    double ComputeAUC() const;
-    double ComputeR2(syd::TimeActivityCurve & tac) const;
-    double ComputeAICc(syd::TimeActivityCurve & tac) const;
-    double ComputeSS(syd::TimeActivityCurve & tac) const;
+    double Integrate(double a, double b) const;
+    double Integrate() const;
 
-    virtual double GetA(const int i) const { LOG(FATAL) << "GetA to implement " << GetName(); }
-    virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); }
+    double ComputeAUC(const syd::TimeActivityCurve & tac, const syd::TimeActivityCurve & restricted_tac) const;
+    double ComputeR2(const syd::TimeActivityCurve & tac) const;
+    double ComputeAICc(const syd::TimeActivityCurve & tac) const;
+    double ComputeSS(const syd::TimeActivityCurve & tac) const;
+
+    virtual double GetA(const int i) const { LOG(sydlog::FATAL) << "GetA to implement " << GetName(); }
+    virtual double GetLambda(const int i) const { LOG(sydlog::FATAL) << "GetLambda to implement " << GetName(); }
 
     bool start_from_max_flag;
 
@@ -93,6 +95,7 @@ namespace syd {
     double lambda_phys_hours_;
     std::vector<double> params_;
     syd::TimeActivityCurve * current_tac;
+    double current_starting_time;
 
   };
 

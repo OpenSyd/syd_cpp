@@ -73,7 +73,7 @@ namespace syd {
     // protected
     void InitSolver();
     void FitModels(TimeActivityCurve & tac, bool debug_this_point_flag, DebugType * debug_current);
-    void ReadAndInitInputData();
+    void InitInputData();
 
     // Debug
     void SaveDebugPixel(const std::string & filename) const;

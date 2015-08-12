@@ -74,19 +74,64 @@ namespace syd {
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeAUC() const
+double syd::FitModelBase::Integrate(double a, double b) const
 {
-  double AUC = 0.0;
+  double x;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
-    AUC += GetA(k) / (GetLambda(k) + GetLambdaPhysicHours());
+    double A = GetA(k);
+    double l = GetLambda(k) + GetLambdaPhysicHours();
+    x += A/l * (exp(-l*a) - exp(-l*b)) ;
   }
+  return x;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModelBase::Integrate() const
+{
+  double x = 0.0;
+  for(auto k=0; k<GetNumberOfExpo(); k++) {
+    double A = GetA(k);
+    double l = GetLambda(k) + GetLambdaPhysicHours();
+    x += A/l;
+  }
+  return x;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac,
+                                     const syd::TimeActivityCurve & restricted_tac) const
+{
+  // Simple integration if full model
+  if (!start_from_max_flag) return Integrate();
+
+  // If not ...
+  double AUC = 0.0;
+
+  // Integrate from 0 to first time of the restricted_tac
+  double starting_part_model = Integrate(0.0, restricted_tac.GetTime(0));
+
+  // Integrate from 0 to infinity
+  double total = Integrate();
+
+  // Trapeze intregration of the first curve part
+  int index = 0;
+  double t = restricted_tac.GetTime(0);
+  while (tac.GetTime(index) < t) ++index;
+  double starting_part = tac.Integrate_Trapeze(0, index);
+
+  AUC = total - starting_part_model + starting_part;
+
   return AUC;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeR2(syd::TimeActivityCurve & tac) const
+double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve & tac) const
 {
   double mean = 0.0;
   for(auto i=0; i<tac.size(); i++) mean += tac.GetValue(i);
@@ -106,7 +151,7 @@ double syd::FitModelBase::ComputeR2(syd::TimeActivityCurve & tac) const
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeSS(syd::TimeActivityCurve & tac) const
+double syd::FitModelBase::ComputeSS(const syd::TimeActivityCurve & tac) const
 {
   double SS = 0.0;
   for(auto i=0; i<tac.size(); i++) {
@@ -118,7 +163,7 @@ double syd::FitModelBase::ComputeSS(syd::TimeActivityCurve & tac) const
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeAICc(syd::TimeActivityCurve & tac) const
+double syd::FitModelBase::ComputeAICc(const syd::TimeActivityCurve & tac) const
 {
   // See Glatting 2007 equ (4)
   // See Kletting 2013 eq (5) / (6) and erratum

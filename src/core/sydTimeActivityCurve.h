@@ -39,17 +39,19 @@ namespace syd {
     ~TimeActivityCurve();
 
     void AddValue(double time, double value, double variance=0.0);
-    void SortByTime();
+    void SetValue(unsigned int i, double v) { values[i] = v; }
+    void SetTime(unsigned int i, double v) { times[i] = v; }
     unsigned int size() const { return times.size(); }
+
     double GetValue(unsigned int i) const { return values[i]; }
     double GetTime(unsigned int i) const { return times[i]; }
     double GetVariance(unsigned int i) const { return variances[i]; }
 
-    void SetValue(unsigned int i, double v) { values[i] = v; }
-    void SetTime(unsigned int i, double v) { times[i] = v; }
-    unsigned int FindMaxIndex();
+    void SortByTime();
 
-    void clear() { times.clear(); values.clear(); variances.clear(); }
+    unsigned int FindMaxIndex();
+    double Integrate_Trapeze(int start, int end) const;
+    void clear();
 
     friend std::ostream& operator<<(std::ostream& os, const TimeActivityCurve & p);
 

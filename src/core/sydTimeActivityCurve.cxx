@@ -78,3 +78,50 @@ namespace syd {
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::TimeActivityCurve::Integrate_Trapeze(int start, int end) const
+{
+  double r = 0.0;
+  if (end >= size()-1) {
+    LOG(FATAL) << "Could not Integrate_Trapeze with end index = " << end;
+  }
+  for(int i=start; i<end; ++i) {
+    // First solution with paralelogram
+    double a = GetValue(i);
+    double b = GetValue(i+1);
+    double d = GetTime(i+1)-GetTime(i);
+    r = r + d*(a+b)/2.0;
+
+    /*
+    // Alternative : fit monoexpo curve at each point
+    double t1 = tac_->GetTime(i);
+    double t2 = tac_->GetTime(i+1);
+    double A1 = tac_->GetValue(i);
+    double A2 = tac_->GetValue(i+1);
+    double lambda = 1.0/((t2-t1)/log(A1/A2));
+    double A = A1/exp(-lambda*t1);
+    //   double B = A2/exp(-lambda*t2);
+    double integral = syd::IntegrateMonoExpo(A, lambda, t1, t2);
+    r += integral;
+    */
+
+    /* debug
+       std::cout << t1 << " " << A1 << "      " << t2 << " " << A2 << std::endl;
+       std::cout << "paral = " << d*(a+b)/2.0 << " and int= " << integral << std::endl;
+       std::cout << lambda << " " << A << " " << B << std::endl;
+    */
+
+  }
+  return r;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimeActivityCurve::clear()
+{
+  times.clear(); values.clear(); variances.clear();
+}
+// --------------------------------------------------------------------

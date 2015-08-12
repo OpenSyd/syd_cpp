@@ -26,6 +26,7 @@ namespace syd {
     }
 
     virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model,
                         const ceres::Solver::Summary & summary) = 0;
 
@@ -36,9 +37,10 @@ namespace syd {
   public:
     FitOutputImage_AUC(Pointer input):FitOutputImage(input) { filename = "auc.mhd"; }
     virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model,
                         const ceres::Solver::Summary & summary) {
-      double r = model->ComputeAUC();
+      double r = model->ComputeAUC(tac, restricted_tac);
       iterator.Set(r);
     }
   };
@@ -48,23 +50,12 @@ namespace syd {
   public:
     FitOutputImage_R2(Pointer input):FitOutputImage(input) { filename = "r2.mhd"; }
     virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model,
                         const ceres::Solver::Summary & summary) {
-
-      // R² = 1 - (SS_res/SS_tot)
-      // SS_res = residual sum of squares
-      // SS_tot = total sum of squares (prop to var)
-
-      double mean = 0.0;
-      for(auto i=0; i<tac.size(); i++) mean += tac.GetValue(i);
-      mean = mean / (double)tac.size();
-
-      double SS_res = summary.final_cost; // auto squared by ceres
-      double SS_tot = 0.0;
-      for(auto i=0; i<tac.size(); i++) {
-        SS_tot += pow(tac.GetValue(i)-mean, 2);
-      }
-      double R2 = 1.0 - (SS_res/SS_tot);
+      double R2;
+      if (model->start_from_max_flag) model->ComputeR2(restricted_tac);
+      else R2 = model->ComputeR2(tac);
       iterator.Set(R2);
     }
   };
