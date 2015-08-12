@@ -24,6 +24,7 @@ syd::FitModel_f4c::FitModel_f4c():FitModelBase()
 {
   name_ = "f4c";
   params_.resize(3);
+  id_ = 7;
 }
 // --------------------------------------------------------------------
 

@@ -35,7 +35,6 @@ namespace syd {
     syd::TimeActivityCurve tac;
     std::vector<syd::FitModelBase*> models;
     std::string name;
-    std::vector<ceres::Solver::Summary> summaries; // FIXME to put in model
     int selected_model;
   };
 
@@ -62,17 +61,15 @@ namespace syd {
     typedef itk::Image<PixelType,3> ImageType;
     typedef itk::Image<PixelType,4> Image4DType;
 
-    //    void SetInput(syd::Image::vector & images);
-    //    void SetInput(syd::Image::vector & images);
     void AddInput(ImageType::Pointer image, double time) { images_.push_back(image); times_.push_back(time); }
-    //syd::Image::pointer GetOutput() const; // FIXME to change
+    void AddModel(syd::FitModelBase * m) { models_.push_back(m); }
 
     // Main function
     void CreateIntegratedActivityImage();
 
     // protected
     void InitSolver();
-    void FitModels(TimeActivityCurve & tac, bool debug_this_point_flag, DebugType * debug_current);
+    int FitModels(TimeActivityCurve & tac, bool debug_this_point_flag, DebugType * debug_current);
     void InitInputData();
 
     // Debug
@@ -83,8 +80,10 @@ namespace syd {
 
     // options
     double robust_scaling_;
-    bool gauss_sigma_;
+    double gauss_sigma_;
     double activity_threshold_;
+    double R2_min_threshold_;
+    double image_lambda_phys_in_hour_;
 
   protected:
 
@@ -109,7 +108,6 @@ namespace syd {
     // Debug
     bool current_debug_flag_;
     std::vector<DebugType> debug_data;
-    std::vector<DebugType>::iterator debug_current;
 
   }; // class IntegratedActivityImageBuilder
 

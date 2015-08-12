@@ -24,6 +24,7 @@ syd::FitModel_f1::FitModel_f1():FitModelBase()
 {
   name_ = "f1";
   params_.resize(1); // FIXME to replace by AddParameter("A1");
+  id_ = 1;
 }
 // --------------------------------------------------------------------
 

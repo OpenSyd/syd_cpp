@@ -53,7 +53,7 @@ namespace syd {
       const double lambda;
     };
 
-
+    int id_;
     double robust_scaling_;
 
     virtual std::string GetName() const { return name_; }
@@ -80,7 +80,7 @@ namespace syd {
     double Integrate(double a, double b) const;
     double Integrate() const;
 
-    double ComputeAUC(const syd::TimeActivityCurve & tac, const syd::TimeActivityCurve & restricted_tac) const;
+    double ComputeAUC(const syd::TimeActivityCurve & tac) const;
     double ComputeR2(const syd::TimeActivityCurve & tac) const;
     double ComputeAICc(const syd::TimeActivityCurve & tac) const;
     double ComputeSS(const syd::TimeActivityCurve & tac) const;
@@ -96,6 +96,7 @@ namespace syd {
     std::vector<double> params_;
     syd::TimeActivityCurve * current_tac;
     double current_starting_time;
+    ceres::Solver::Summary ceres_summary_;
 
   };
 

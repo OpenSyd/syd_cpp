@@ -25,6 +25,7 @@ syd::FitModelBase::FitModelBase()
   name_ = "no_name";
   robust_scaling_ = 0.1;
   start_from_max_flag = false;
+  id_ = 0;
 }
 // --------------------------------------------------------------------
 
@@ -44,6 +45,7 @@ void syd::FitModelBase::CopyFrom(const syd::FitModelBase * model)
   lambda_phys_hours_ = model->GetLambdaPhysicHours();
   params_  = model->GetParameters();
   start_from_max_flag = model->start_from_max_flag;
+  ceres_summary_ = model->ceres_summary_;
 }
 // --------------------------------------------------------------------
 
@@ -102,12 +104,12 @@ double syd::FitModelBase::Integrate() const
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac,
-                                     const syd::TimeActivityCurve & restricted_tac) const
+double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac) const
 {
   // Simple integration if full model
   if (!start_from_max_flag) return Integrate();
-
+  return 0.0;
+  /*
   // If not ...
   double AUC = 0.0;
 
@@ -126,6 +128,7 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac,
   AUC = total - starting_part_model + starting_part;
 
   return AUC;
+  */
 }
 // --------------------------------------------------------------------
 

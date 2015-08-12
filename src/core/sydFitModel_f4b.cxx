@@ -24,6 +24,7 @@ syd::FitModel_f4b::FitModel_f4b():FitModelBase()
 {
   name_ = "f4b";
   params_.resize(3);
+  id_ = 6;
 }
 // --------------------------------------------------------------------
 

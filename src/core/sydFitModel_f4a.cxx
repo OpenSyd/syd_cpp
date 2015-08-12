@@ -24,6 +24,7 @@ syd::FitModel_f4a::FitModel_f4a():FitModelBase()
 {
   name_ = "f4a";
   params_.resize(3);
+  id_ = 5;
 }
 // --------------------------------------------------------------------
 
@@ -51,7 +52,7 @@ void syd::FitModel_f4a::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
                               &params_[0], &params_[1], &params_[2]);
   }
 
-  problem->SetParameterLowerBound(&params_[0], 0, 0); // A positive
+  //  problem->SetParameterLowerBound(&params_[0], 0, 0); // A positive
 
   // problem->SetParameterLowerBound(&params_[0], 0, 0); // l1
   // problem->SetParameterLowerBound(&params_[0], 0, 0); // l2

@@ -24,6 +24,7 @@ syd::FitModel_f3::FitModel_f3():FitModelBase()
 {
   name_ = "f3";
   params_.resize(3);
+  id_ = 3;
 }
 // --------------------------------------------------------------------
 
@@ -51,9 +52,9 @@ void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
                               &params_[0], &params_[1], &params_[2]);
   }
 
-  problem->SetParameterLowerBound(&params_[0], 0, 0.0);
-  problem->SetParameterLowerBound(&params_[1], 0, -GetLambdaPhysicHours()*0.9);
-  problem->SetParameterLowerBound(&params_[2], 0, 0.0);
+  // problem->SetParameterLowerBound(&params_[0], 0, 0.0);
+  // problem->SetParameterLowerBound(&params_[1], 0, -GetLambdaPhysicHours()*0.9);
+  // problem->SetParameterLowerBound(&params_[2], 0, 0.0);
 }
 // --------------------------------------------------------------------
 

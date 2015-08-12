@@ -83,11 +83,15 @@ int main(int argc, char* argv[])
     builder.AddInput(im, t);
   }
 
-
+  builder.image_lambda_phys_in_hour_ = 0.010297405; // Indium in hour
+  DD(builder.image_lambda_phys_in_hour_);
+  builder.image_lambda_phys_in_hour_ = log(2.0)/images[0]->dicoms[0]->injection->radionuclide->half_life_in_hours;
+  DD(builder.image_lambda_phys_in_hour_);
   builder.debug_only_flag_ = args_info.only_debug_flag;
   builder.robust_scaling_ = args_info.robust_scaling_arg;
   builder.gauss_sigma_ = args_info.gauss_arg;
   builder.activity_threshold_ = args_info.min_activity_arg;
+  builder.R2_min_threshold_ = args_info.r2_min_arg;
 
   if (args_info.debug_given) {
     std::string file=args_info.debug_arg;
@@ -102,7 +106,11 @@ int main(int argc, char* argv[])
     }
   }
 
-  // Go !
+  // Go with full models
+  auto f3 = new syd::FitModel_f3;
+  auto f4 = new syd::FitModel_f4;
+  builder.AddModel(f3);
+  builder.AddModel(f4);
   builder.CreateIntegratedActivityImage();
 
   // Debug here //FIXME
