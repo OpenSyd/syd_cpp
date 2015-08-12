@@ -52,10 +52,10 @@ syd::Image::pointer syd::ImageFromDicomBuilder::CreateImageFromDicom(const syd::
     if (dicom->dicom_modality == "CT") {
       typedef short PixelType;
       typedef itk::Image<PixelType,3> ImageType;
-      LOG(4) << "Read dicom (short)";
+      sydLOG(4) << "Read dicom (short)";
       ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom);
       db_->UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
-      LOG(4) << "Write image on disk " << mhd_path;
+      sydLOG(4) << "Write image on disk " << mhd_path;
       syd::WriteImage<ImageType>(itk_image, mhd_path);
       syd::Tag::pointer tag_ct = db_->FindOrInsertTag("ct", "CT scan image");
       image->AddTag(tag_ct);
@@ -64,10 +64,10 @@ syd::Image::pointer syd::ImageFromDicomBuilder::CreateImageFromDicom(const syd::
       // No auto tag, we dont know if this is a spect, a pet etc
       typedef float PixelType;
       typedef itk::Image<PixelType,3> ImageType;
-      LOG(4) << "Read dicom (float)";
+      sydLOG(4) << "Read dicom (float)";
       ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom);
       db_->UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
-      LOG(4) << "Write image on disk " << mhd_path;
+      sydLOG(4) << "Write image on disk " << mhd_path;
       syd::WriteImage<ImageType>(itk_image, mhd_path);
     }
 

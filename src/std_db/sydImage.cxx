@@ -61,7 +61,7 @@ std::string syd::Image::ToString() const
 // --------------------------------------------------
 void syd::Image::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
-  LOG(FATAL) << "To insert Image, please use sydInsertImage";
+  sydLOG(FATAL) << "To insert Image, please use sydInsertImage";
 }
 // --------------------------------------------------
 
@@ -234,7 +234,7 @@ void syd::Image::UpdateFile(syd::Database * db,
   std::string extension = GetExtension(filename);
   type = extension;
   if (files.size() != 0 and deleteExistingFiles) {
-    LOG(FATAL) << "TODO UpdateFile deleteExistingFiles";
+    sydLOG(FATAL) << "TODO UpdateFile deleteExistingFiles";
     //    for(auto f:files)
   }
   files.clear();

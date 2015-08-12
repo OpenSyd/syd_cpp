@@ -26,8 +26,6 @@
 // std
 #include <exception>
 
-using namespace sydlog;
-
 namespace syd {
 
   // --------------------------------------------------------------------

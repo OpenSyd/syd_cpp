@@ -22,7 +22,6 @@
 // syd
 #include "sydDD.h"
 #include "sydLog.h"
-using namespace sydlog;
 
 // std
 #include <vector>

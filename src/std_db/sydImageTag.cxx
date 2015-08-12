@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
   // Get the action (add or remove)
   std::string action = args_info.inputs[0];
   if (action != "add" and action != "rm") {
-    LOG(FATAL) << "Please provide 'add' or 'rm' as second parameter.";
+    sydLOG(syd::FATAL) << "Please provide 'add' or 'rm' as second parameter.";
   }
 
   // Get the tags
@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
   syd::Tag::vector tags;
   db->FindTags(tags, tagname);
   if (tags.size() == 0) {
-    LOG(1) << "No found tag from '" << tagname << "'";
+    sydLOG(1) << "No found tag from '" << tagname << "'";
     return EXIT_SUCCESS;
   }
 
@@ -69,12 +69,12 @@ int main(int argc, char* argv[])
   for(auto & i:images) {
     if (action == "add") for(auto t:tags) i->AddTag(t);
     else for(auto t:tags) i->RemoveTag(t);
-    LOG(1) << "Change tag for image " << i;
+    sydLOG(1) << "Change tag for image " << i;
   }
   // Update the db
   if (images.size() > 0) db->Update(images);
   else {
-    LOG(1) << "No tag changed.";
+    sydLOG(1) << "No tag changed.";
   }
 
   // This is the end, my friend.

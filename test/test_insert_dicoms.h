@@ -4,8 +4,8 @@
 
 void insert_dicoms(ext::ExtendedDatabase * db, syd::Injection::pointer injection, std::string folder) {
 
-  int a = Log::LogLevel();
-  Log::LogLevel() = 0;
+  int a = syd::Log::LogLevel();
+  syd::Log::LogLevel() = 0;
 
   syd::DicomSerieBuilder b(db);
   b.SetInjection(injection);
@@ -15,5 +15,5 @@ void insert_dicoms(ext::ExtendedDatabase * db, syd::Injection::pointer injection
   for(auto f:files) b.CreateDicomSerieFromFile(f.c_str());
   b.InsertDicomSeries();
 
-  Log::LogLevel() = a;
+  syd::Log::LogLevel() = a;
 }

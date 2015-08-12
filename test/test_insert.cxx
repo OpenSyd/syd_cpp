@@ -27,8 +27,8 @@ SYD_STATIC_INIT
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  Log::SQLFlag() = false;
-  Log::LogLevel() = 1;
+  syd::Log::SQLFlag() = false;
+  syd::Log::LogLevel() = 1;
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
     if (patient->id != 1) {
-      LOG(FATAL) << "Error while inserting generic patient in std db" << patient;
+      sydLOG(syd::FATAL) << "Error while inserting generic patient in std db" << patient;
     }
   }
 
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
     if (patient->id != 1) {
-      LOG(FATAL) << "Error while inserting generic patient in ext db" << patient;
+      sydLOG(syd::FATAL) << "Error while inserting generic patient in ext db" << patient;
     }
   }
 
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
     if (patient->id != 1 and patient->name != "titi" and patient->study_id != 2) {
-      LOG(FATAL) << "Error while inserting std patient in std db" << patient;
+      sydLOG(syd::FATAL) << "Error while inserting std patient in std db" << patient;
     }
 
   }
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
     if (patient->id != 1 and patient->name != "titi" and patient->study_id != 2) {
-      LOG(FATAL) << "Error while inserting std patient in ext db" << patient;
+      sydLOG(syd::FATAL) << "Error while inserting std patient in ext db" << patient;
     }
   }
 
@@ -130,7 +130,7 @@ int main(int argc, char* argv[])
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
     if (patient->id != 1 and patient->name != "tutu" and patient->study_id != 3) {
-      LOG(FATAL) << "Error while inserting ext patient in ext db" << patient;
+      sydLOG(syd::FATAL) << "Error while inserting ext patient in ext db" << patient;
     }
   }
 
@@ -157,7 +157,7 @@ int main(int argc, char* argv[])
     ext::Patient::vector vp;
     db->Query(vp);
     if (vp.size() != 7)  {
-      LOG(FATAL) << "Error while inserting multiple ext patient in ext db";
+      sydLOG(syd::FATAL) << "Error while inserting multiple ext patient in ext db";
     }
     std::cout << "Insert multiple specific: " << vp.size() << std::endl;
   }
@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
     records.clear();
     db->Query(records, "Patient");
     if (records.size() != 12)  {
-      LOG(FATAL) << "Error while inserting generic multiple ext patient in ext db";
+      sydLOG(syd::FATAL) << "Error while inserting generic multiple ext patient in ext db";
     }
     std::cout << "Insert multiple generic: " << records.size() << std::endl;
   }

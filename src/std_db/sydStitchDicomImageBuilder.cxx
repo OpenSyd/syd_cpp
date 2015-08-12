@@ -43,26 +43,26 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
 {
   // Check a and b modality
   if (a->dicom_modality != b->dicom_modality) {
-    LOG(FATAL) << "Error while trying to stitch the two following images, dicom_modality is not the same: "
+    sydLOG(FATAL) << "Error while trying to stitch the two following images, dicom_modality is not the same: "
                << std::endl << a
                << std::endl << b;
   }
 
   // Check a and b patient
   if (a->patient->id != b->patient->id) {
-    LOG(FATAL) << "Error while trying to stitch the two following images, patient is not the same: "
+    sydLOG(FATAL) << "Error while trying to stitch the two following images, patient is not the same: "
                << std::endl << a
                << std::endl << b;
   }
 
   // Only consider single file and not CT for the moment
   if (a->dicom_modality == "CT") {
-    LOG(FATAL) << "Error cannot stitch CT images. Only float pixel type (yet).";
+    sydLOG(FATAL) << "Error cannot stitch CT images. Only float pixel type (yet).";
   }
 
   // Check if the same frame_of_reference_uid (flag to bypass ?)
   if (a->dicom_frame_of_reference_uid != b->dicom_frame_of_reference_uid) {
-    LOG(FATAL) << "Error, cannot stitch those two dicoms because the frame_of_reference_uid is not the same:"
+    sydLOG(FATAL) << "Error, cannot stitch those two dicoms because the frame_of_reference_uid is not the same:"
                << std::endl << a << " " << a->dicom_frame_of_reference_uid
                << std::endl << b << " " << b->dicom_frame_of_reference_uid;
   }

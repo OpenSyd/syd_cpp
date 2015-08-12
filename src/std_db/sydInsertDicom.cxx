@@ -62,14 +62,14 @@ int main(int argc, char* argv[])
     b.SearchForFilesInFolder(f, files);
     int n = files.size();
     int i=0;
-    LOG(1) << "Searching for dicom series in " << files.size() << " files ...";
+    sydLOG(1) << "Searching for dicom series in " << files.size() << " files ...";
     for(auto f:files) {
       syd::loadbar(i,n);
       b.CreateDicomSerieFromFile(f.c_str());
       ++i;
     }
   }
-  LOG(1) << "Copying files to db ...";
+  sydLOG(1) << "Copying files to db ...";
   b.InsertDicomSeries();
 
   // This is the end, my friend.

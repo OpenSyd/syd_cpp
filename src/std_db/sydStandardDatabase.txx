@@ -25,7 +25,7 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom) const
   typedef itk::Image<PixelType,3> ImageType;
 
   // Get the files
-  LOG(4) << "Get the dicom files";
+  sydLOG(4) << "Get the dicom files";
   syd::DicomFile::vector dicom_files;
   odb::query<syd::DicomFile> q = odb::query<syd::DicomFile>::dicom_serie->id == dicom->id;
   Query(dicom_files, q);
@@ -36,7 +36,7 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom) const
   for(auto f:dicom_files) {
     dicom_filenames.push_back(GetAbsolutePath(f));
   }
-  LOG(4) << "Found " << dicom_files.size();
+  sydLOG(4) << "Found " << dicom_files.size();
 
   typename ImageType::Pointer itk_image;
   try {
@@ -46,7 +46,7 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom) const
     else {
       std::string folder = dicom_filenames[0];
       syd::Replace(folder, syd::GetFilenameFromPath(folder), "");
-      LOG(4) << "ITK reader";
+      sydLOG(4) << "ITK reader";
       itk_image = syd::ReadDicomSerieFromFolder<PixelType>(folder, dicom->dicom_series_uid);
     }
   } catch (std::exception & e) {
@@ -97,7 +97,7 @@ void syd::StandardDatabase::UpdateImageInfo(syd::Image::pointer image,
     std::string md5 = syd::ComputeImageMD5<ImageType>(itk_image);
     if (image->type == "mhd") {
       if (image->files.size() != 2) {
-        LOG(FATAL) << "Error while updating md5 for the image, I expect 2 Files: " << image;
+        sydLOG(FATAL) << "Error while updating md5 for the image, I expect 2 Files: " << image;
       }
       image->files[1]->md5 = md5;
       Update(image->files[1]);

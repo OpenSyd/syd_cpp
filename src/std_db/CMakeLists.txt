@@ -43,7 +43,6 @@ add_library(sydStandardDatabase SHARED
   sydStitchDicomImageBuilder.cxx
   sydRoiMaskImageBuilder.cxx
   sydCropImageBuilder.cxx
-  sydIntegratedActivityImageBuilder.cxx
 
   )
 ## to declare dependencies

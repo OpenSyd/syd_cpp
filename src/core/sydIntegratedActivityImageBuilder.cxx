@@ -19,6 +19,7 @@
 // syd
 #include "sydIntegratedActivityImageBuilder.h"
 #include "sydImageUtils.h"
+#include "sydPrintTable.h"
 #include "sydFitOutputImage.h"
 
 // itk
@@ -26,37 +27,10 @@
 #include <itkImageRegionConstIterator.h>
 
 // --------------------------------------------------------------------
-syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder(syd::StandardDatabase * db)
+syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
 {
-  db_ = db;
   gauss_sigma_ = 5;
   activity_threshold_ = 500;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::SetInput(syd::Image::vector & images)
-{
-  // Check sizes, order by date
-  images_ = images;
-
-  // Sort by acquisition date
-  std::sort(begin(images_), end(images_),
-            [images](syd::Image::pointer a, syd::Image::pointer b) {
-              if (a->dicoms.size() == 0) return true;
-              if (b->dicoms.size() == 0) return false;
-              return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
-            });
-
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Image::pointer syd::IntegratedActivityImageBuilder::GetOutput() const
-{
-  return output_;
 }
 // --------------------------------------------------------------------
 
@@ -192,7 +166,7 @@ void syd::IntegratedActivityImageBuilder::AddDebugPixel(std::string name, int x,
   if (images_.size() == 0) {
     LOG(FATAL) << "Only use AddDebugPixel after SetInput";
   }
-  auto size = images_[0]->size;
+  auto size = images_[0]->GetLargestPossibleRegion().GetSize();
   int index = z*size[0]*size[1] + y*size[0] + x;
   DebugType debug;
   debug.name = name;
@@ -217,34 +191,27 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   // make this builder independent of db.
 
   // Initialisation
-  std::vector<ImageType::Pointer> itk_images;
-  Image4DType::Pointer tac_image = Image4DType::New();
-  ReadAndInitInputData(itk_images, tac_image);
+  tac_image_ = Image4DType::New();
+  ReadAndInitInputData();
 
   // Create output
   std::vector<FitOutputImage*> outputs;
-  auto auc = new syd::FitOutputImage_AUC(itk_images[0]);
+  auto auc = new syd::FitOutputImage_AUC(images_[0]);
   outputs.push_back(auc);
-  auto r2 = new syd::FitOutputImage_R2(itk_images[0]);
+  auto r2 = new syd::FitOutputImage_R2(images_[0]);
   outputs.push_back(r2);
 
-  // create initial tac
-  std::vector<double> times;
-  std::string starting_date = images_[0]->dicoms[0]->injection->date;
+  // create initial tac with the times
   TimeActivityCurve tac;
-  for(auto image:images_) {
-    double t = DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
-    tac.AddValue(t, 0.0);
-    times.push_back(t);
-  }
-  DDS(times);
+  for(auto t:times_) tac.AddValue(t, 0.0);
+  DD(tac);
 
   // Init solver
   InitSolver();
 
   // Init main iterator
   typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
-  Iterator4D it(tac_image, tac_image->GetLargestPossibleRegion());
+  Iterator4D it(tac_image_, tac_image_->GetLargestPossibleRegion());
 
   // debug init, sort point by index
   bool debug_this_point_flag = true;
@@ -257,11 +224,11 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   // main loop
   DD("start loop");
   int x = 0;
-  int n = itk_images[0]->GetLargestPossibleRegion().GetNumberOfPixels();
+  int n = images_[0]->GetLargestPossibleRegion().GetNumberOfPixels();
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
 
     // Create current tac
-    for(auto i=0; i<itk_images.size(); i++) {
+    for(auto i=0; i<images_.size(); i++) {
       tac.SetValue(i, it.Get());
       ++it; // next value
     }
@@ -385,41 +352,39 @@ void syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac,
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::ReadAndInitInputData(std::vector<ImageType::Pointer> & itk_images,
-                                                               Image4DType::Pointer tac_image)
+void syd::IntegratedActivityImageBuilder::ReadAndInitInputData()
 {
   DD("ReadAndInitInputData");
-  // Load itk images
-  for(auto image:images_) {
-    auto im = syd::ReadImage<ImageType>(db_->GetAbsolutePath(image));
-    if (gauss_sigma_ != 0) im = syd::GaussianFilter<ImageType>(im, gauss_sigma_);
-    itk_images.push_back(im);
+
+  // Gauss images if needed
+  DD(gauss_sigma_);
+  for(auto & image:images_) {
+    if (gauss_sigma_ != 0) image = syd::GaussianFilter<ImageType>(image, gauss_sigma_);
   }
-  DD(itk_images.size());
 
   // consider images_ OR create a 4D images ?
   typename Image4DType::SizeType size;
-  for(auto i=1; i<4; i++) size[i] = itk_images[0]->GetLargestPossibleRegion().GetSize()[i-1];
-  size[0] = itk_images.size();
+  for(auto i=1; i<4; i++) size[i] = images_[0]->GetLargestPossibleRegion().GetSize()[i-1];
+  size[0] = images_.size();
   typename Image4DType::RegionType region;
   region.SetSize(size);
-  tac_image->SetRegions(region);
+  tac_image_->SetRegions(region);
   typename Image4DType::SpacingType spacing;
-  for(auto i=1; i<4; i++) spacing[i] = itk_images[0]->GetSpacing()[i-1];
+  for(auto i=1; i<4; i++) spacing[i] = images_[0]->GetSpacing()[i-1];
   spacing[0] = 1.0;
-  tac_image->SetSpacing(spacing);
+  tac_image_->SetSpacing(spacing);
   typename Image4DType::PointType origin;
-  for(auto i=1; i<4; i++) origin[i] = itk_images[0]->GetOrigin()[i-1];
+  for(auto i=1; i<4; i++) origin[i] = images_[0]->GetOrigin()[i-1];
   origin[0] = 0.0;
-  tac_image->SetOrigin(origin);
-  tac_image->Allocate();
+  tac_image_->SetOrigin(origin);
+  tac_image_->Allocate();
 
   // Copy data to the 4D image
   typedef itk::ImageRegionIterator<ImageType> Iterator3D;
   typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
-  Iterator4D it(tac_image, tac_image->GetLargestPossibleRegion());
+  Iterator4D it(tac_image_, tac_image_->GetLargestPossibleRegion());
   std::vector<Iterator3D> iterators;
-  for(auto image:itk_images) {
+  for(auto image:images_) {
     iterators.push_back(Iterator3D(image, image->GetLargestPossibleRegion()));
   }
   for(auto & iter:iterators) iter.GoToBegin();

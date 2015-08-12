@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   syd::Image::vector images;
   db->Query(images, ids);
   if (images.size() == 0) {
-    LOG(1) << "No image to crop";
+    sydLOG(1) << "No image to crop";
   }
 
   syd::CropImageBuilder b(db);
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
       if (args_info.threshold_given) b.CropImageWithThreshold(image, t);
       else {
         if (image->dicoms.size() == 0) {
-          LOG(WARNING) << "No associated dicom for this image, no --like nor -t given, I do nothing";
+          sydLOG(syd::WARNING) << "No associated dicom for this image, no --like nor -t given, I do nothing";
         }
         // Try to find the body of this image
         syd::RoiType::pointer body = db->FindRoiType("body");
@@ -80,16 +80,16 @@ int main(int argc, char* argv[])
             odb::query<syd::RoiMaskImage>::frame_of_reference_uid == image->frame_of_reference_uid;
           syd::RoiMaskImage::pointer mask;
           db->QueryOne(mask, q);
-          LOG(1) << "Find 'body' mask for the image: " << mask;
+          sydLOG(1) << "Find 'body' mask for the image: " << mask;
           b.CropImageLike(image, mask, args_info.force_flag);
         } catch (std::exception & e) {
-          LOG(WARNING) << "Could not crop the image: " << image
+          sydLOG(syd::WARNING) << "Could not crop the image: " << image
                        << std::endl << "Error is: " << e.what();
           continue; // (skip log)
         }
       }
     }
-    LOG(1) << "Image cropped: " << image << " (initial size was " << syd::ArrayToString<int,3>(size) << ")";
+    sydLOG(1) << "Image cropped: " << image << " (initial size was " << syd::ArrayToString<int,3>(size) << ")";
   }
 
 

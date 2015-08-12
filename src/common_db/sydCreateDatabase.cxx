@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
     // Get the list of database if needed.
     auto & list = m->GetDatabaseSchemas();
     if (list.size() == 0) {
-      LOG(FATAL) << "No database type registered. No plugin found ? Try to check the SYD_PLUGIN environement variable.";
+      sydLOG(syd::FATAL) << "No database type registered. No plugin found ? Try to check the SYD_PLUGIN environement variable.";
     }
     if (list.size() > 1) std::cout << "There are " << list.size() << " registered database types: ";
     else std::cout  << "There is a single registered database type: ";
@@ -54,30 +54,30 @@ int main(int argc, char* argv[])
   // Check param
   if (args_info.inputs_num < 3) {
     cmdline_parser_sydCreateDatabase_print_help();
-    LOG(FATAL) << "Please provide at least 3 param";
+    sydLOG(syd::FATAL) << "Please provide at least 3 param";
   }
   std::string dbtype = args_info.inputs[0];
   std::string dbname = args_info.inputs[1];
   std::string folder = args_info.inputs[2];
 
   if (fs::exists(dbname) and !args_info.overwrite_flag) {
-    LOG(FATAL) << "Database not created: the file '" << dbname << "' already exists.";
+    sydLOG(syd::FATAL) << "Database not created: the file '" << dbname << "' already exists.";
   }
   // It is *required* to delete before. If not inconsistency could happens.
   if (fs::exists(dbname)) {
-    LOG(WARNING) << "Deleting the file '" << dbname << "' (.backup).";
+    sydLOG(syd::WARNING) << "Deleting the file '" << dbname << "' (.backup).";
     std::string b = dbname+".backup";
     int result = std::rename(dbname.c_str(), b.c_str());
     if (result != 0) {
-      LOG(FATAL) << "Error while renaming " << dbname << " to " << b;
+      sydLOG(syd::FATAL) << "Error while renaming " << dbname << " to " << b;
     }
   }
 
   // Create the database
   m->Create(dbtype, dbname, folder);
   syd::Database * db = m->Read(dbname);
-  LOG(1) << "Database " << dbname << " of type '" << dbtype << "' created.";
-  LOG(2) << "List of tables: " << db->GetListOfTableNames();
+  sydLOG(1) << "Database " << dbname << " of type '" << dbtype << "' created.";
+  sydLOG(2) << "List of tables: " << db->GetListOfTableNames();
 
   // This is the end, my friend.
 }

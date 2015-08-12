@@ -30,7 +30,7 @@ syd::Record::Record()
 // --------------------------------------------------------------------
 void syd::Record::Set(const syd::Database * db, const std::vector<std::string> & args)
 {
-  LOG(FATAL) << "The function Set(db, args) must be implemented for table " << GetTableName();
+  sydLOG(FATAL) << "The function Set(db, args) must be implemented for table " << GetTableName();
 }
 // --------------------------------------------------------------------
 
@@ -78,7 +78,7 @@ void syd::Record::SetDatabasePointer(odb::callback_event event, odb::database & 
   //DD("SetDatabasePointer " + GetTableName()+" " + syd::ToString(event));
   auto search = syd::Database::ListOfLoadedDatabases.find(&d);
   if (search == syd::Database::ListOfLoadedDatabases.end()) {
-    LOG(FATAL) << "Error during callback in an object " << GetTableName()
+    sydLOG(FATAL) << "Error during callback in an object " << GetTableName()
                << " cannot find the db pointer. Event is " << event;
   }
   db_ = search->second;

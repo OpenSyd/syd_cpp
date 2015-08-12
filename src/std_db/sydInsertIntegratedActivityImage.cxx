@@ -21,6 +21,7 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydIntegratedActivityImageBuilder.h"
+#include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
 
 // syd init
@@ -56,21 +57,38 @@ int main(int argc, char* argv[])
   db->Query(images, ids);
   DDS(images);
 
+  // Sort by time
+  std::sort(begin(images), end(images),
+            [images](syd::Image::pointer a, syd::Image::pointer b) {
+              if (a->dicoms.size() == 0) return true;
+              if (b->dicoms.size() == 0) return false;
+              return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
+            });
+
+  // FIXME
+  DD("FIXME : make some check on images list here");
+
+  // image type
+  typedef float PixelType;
+  typedef itk::Image<PixelType,3> ImageType;
+
   // Create main builder
-  syd::IntegratedActivityImageBuilder builder(db);
-  builder.SetInput(images);
+  syd::IntegratedActivityImageBuilder builder;
+
+  // Read the images+times and set to the builder
+  std::string starting_date = images[0]->dicoms[0]->injection->date;
+  for(auto image:images) {
+    auto im = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));
+    double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
+    builder.AddInput(im, t);
+  }
+
 
   builder.debug_only_flag_ = args_info.only_debug_flag;
   builder.robust_scaling_ = args_info.robust_scaling_arg;
   builder.gauss_sigma_ = args_info.gauss_arg;
   builder.activity_threshold_ = args_info.min_activity_arg;
 
-  // Options here
-  //  builder.AddDebugPixel("liver", 40, 22, 61);
-  // builder.AddDebugPixel("heart", 60, 22, 45);
-
-  // builder.AddDebugPixel("liver", 35, 31, 66);
-  // builder.AddDebugPixel("heart", 62, 21, 48);
   if (args_info.debug_given) {
     std::string file=args_info.debug_arg;
     std::ifstream is(file);
@@ -86,14 +104,13 @@ int main(int argc, char* argv[])
 
   // Go !
   builder.CreateIntegratedActivityImage();
-  /*
-    syd::Image::pointer image = builder.GetOutput();
-    DD(image);
-  */
 
   // Debug here //FIXME
   builder.SaveDebugPixel("gp/tac.txt");
   builder.SaveDebugModel("gp/models.txt");
+
+  // Output
+  DD("FIXME : insert builder output in the db");
 
   // Update tags
   /*

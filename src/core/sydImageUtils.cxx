@@ -29,7 +29,7 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
 {
   // Check if not the same
   if (old_path == new_path) {
-    LOG(WARNING) << "Try to rename " << old_path << " to the same file. Do nothing.";
+    sydLOG(WARNING) << "Try to rename " << old_path << " to the same file. Do nothing.";
     return; // do nothing
   }
 
@@ -37,7 +37,7 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
   size_t n = old_path.find_last_of(".");
   std::string extension = old_path.substr(n+1);
   if (extension != "mhd") {
-    LOG(FATAL) << "Rename MHD : Error the filename must have mhd as extension : " << old_path;
+    sydLOG(FATAL) << "Rename MHD : Error the filename must have mhd as extension : " << old_path;
   }
   std::string old_path_raw = old_path.substr(0,n)+".raw";
 
@@ -45,30 +45,30 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
   n = new_path.find_last_of(".");
   extension = new_path.substr(n+1);
   if (extension != "mhd") {
-    LOG(FATAL) << "Rename MHD : Error the new filename must have mhd as extension : " << new_path;
+    sydLOG(FATAL) << "Rename MHD : Error the new filename must have mhd as extension : " << new_path;
   }
   std::string new_path_raw = new_path.substr(0,n)+".raw";
 
   // Check files
   if (!fs::exists(old_path)) {
-    LOG(FATAL) << "Rename MHD : Error path (mhd) not exist : " << old_path;
+    sydLOG(FATAL) << "Rename MHD : Error path (mhd) not exist : " << old_path;
   }
   if (!fs::exists(old_path_raw)) {
-    LOG(FATAL) << "Rename MHD : Error path (raw) not exist : " << old_path_raw;
+    sydLOG(FATAL) << "Rename MHD : Error path (raw) not exist : " << old_path_raw;
   }
   if (fs::exists(new_path)) {
-    LOG(WARNING) << "Rename MHD : path (mhd) to rename already exist : " << new_path;
+    sydLOG(WARNING) << "Rename MHD : path (mhd) to rename already exist : " << new_path;
   }
   if (fs::exists(new_path_raw)) {
-    LOG(WARNING) << "Rename MHD : path (raw) to rename already exist : " << new_path_raw;
+    sydLOG(WARNING) << "Rename MHD : path (raw) to rename already exist : " << new_path_raw;
   }
 
   // verbose
   if (erase) {
-    LOG(verbose_level) << "Rename header " << old_path << " to " << new_path;
+    sydLOG(verbose_level) << "Rename header " << old_path << " to " << new_path;
   }
   else {
-    LOG(verbose_level) << "Copy header " << old_path << " to " << new_path;
+    sydLOG(verbose_level) << "Copy header " << old_path << " to " << new_path;
   }
 
   // header part : change ElementDataFile in the header
@@ -106,14 +106,14 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
 
   // Rename or copy .raw part
   if (erase) {
-    LOG(verbose_level) << "Rename raw " << old_path_raw << " to " << new_path_raw;
+    sydLOG(verbose_level) << "Rename raw " << old_path_raw << " to " << new_path_raw;
     int result = std::rename(old_path_raw.c_str(), new_path_raw.c_str());
     if (result != 0) {
-      LOG(FATAL) << "Error while renaming " << old_path_raw << " to " << new_path_raw;
+      sydLOG(FATAL) << "Error while renaming " << old_path_raw << " to " << new_path_raw;
     }
   }
   else {
-    LOG(verbose_level) << "Copy raw " << old_path_raw << " to " << new_path_raw;
+    sydLOG(verbose_level) << "Copy raw " << old_path_raw << " to " << new_path_raw;
     // std::ifstream  src(old_path_raw.c_str(), std::ios::binary);
     // std::ofstream  dst(new_path_raw.c_str(), std::ios::binary);
     // dst << src.rdbuf();

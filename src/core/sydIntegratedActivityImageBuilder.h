@@ -20,8 +20,7 @@
 #define SYDINTEGRATEDACTIVITYIMAGEBUILDER_H
 
 // syd
-#include "sydStandardDatabase.h"
-#include "sydImage.h"
+#include "sydImageUtils.h"
 #include "sydFitModels.h"
 
 // --------------------------------------------------------------------
@@ -54,7 +53,7 @@ namespace syd {
 
   public:
     /// Constructor.
-    IntegratedActivityImageBuilder(syd::StandardDatabase * db);
+    IntegratedActivityImageBuilder();
 
     /// Destructor (empty)
     ~IntegratedActivityImageBuilder() {}
@@ -63,8 +62,10 @@ namespace syd {
     typedef itk::Image<PixelType,3> ImageType;
     typedef itk::Image<PixelType,4> Image4DType;
 
-    void SetInput(syd::Image::vector & images);
-    syd::Image::pointer GetOutput() const; // FIXME to change
+    //    void SetInput(syd::Image::vector & images);
+    //    void SetInput(syd::Image::vector & images);
+    void AddInput(ImageType::Pointer image, double time) { images_.push_back(image); times_.push_back(time); }
+    //syd::Image::pointer GetOutput() const; // FIXME to change
 
     // Main function
     void CreateIntegratedActivityImage();
@@ -72,8 +73,7 @@ namespace syd {
     // protected
     void InitSolver();
     void FitModels(TimeActivityCurve & tac, bool debug_this_point_flag, DebugType * debug_current);
-    void ReadAndInitInputData(std::vector<ImageType::Pointer> & itk_images,
-                              Image4DType::Pointer tac_image);
+    void ReadAndInitInputData();
 
     // Debug
     void SaveDebugPixel(const std::string & filename) const;
@@ -87,10 +87,13 @@ namespace syd {
     double activity_threshold_;
 
   protected:
-    syd::StandardDatabase * db_;
 
-    syd::Image::vector images_;
-    syd::Image::pointer output_; // FIXME to remove ?
+    // Input
+    std::vector<ImageType::Pointer> images_;
+    std::vector<double> times_;
+
+    // Computed 4D images that merge all 3D images
+    Image4DType::Pointer tac_image_;
 
     // List of all tested models
     std::vector<syd::FitModelBase*> models_;

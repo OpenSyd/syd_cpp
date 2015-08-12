@@ -69,7 +69,7 @@ void syd::PluginManager::LoadInFolder(const std::string & folder)
                                                    dirPrefix, recurse);
   }
   else {
-    LOG(WARNING) << "(syd plugin) The directory " << absolute_folder << " in SYD_PLUGIN does not exist.";
+    sydLOG(WARNING) << "(syd plugin) The directory " << absolute_folder << " in SYD_PLUGIN does not exist.";
   }
 
   for(auto f=inputFiles.begin(); f != inputFiles.end(); f++) {
@@ -87,20 +87,20 @@ void syd::PluginManager::Load(const std::string & filename)
 {
   std::string ext = GetExtension(filename);
   if (ext != "so" and ext != "dylib" and ext != "DLL" and ext != "dll") {
-    LOG(20) << "(syd plugin) ignoring the file '" << filename << "'.";
+    sydLOG(20) << "(syd plugin) ignoring the file '" << filename << "'.";
     return;
   }
   void * plugin;
   plugin = dlopen(filename.c_str(), RTLD_NOW);
   if (!plugin) {
-    LOG(10) << "(syd plugin) The file '" << filename << "' is not a plugin.";
+    sydLOG(10) << "(syd plugin) The file '" << filename << "' is not a plugin.";
     return;
   }
   RegisterDatabaseSchemaFunction db_creator;
   db_creator = (RegisterDatabaseSchemaFunction) dlsym(plugin, "RegisterDatabaseSchema");
   char * result = dlerror();
   if (result) {
-    LOG(10) << "(plugin) The lib " << filename << " does not contain a valid plugin for syd.";
+    sydLOG(10) << "(plugin) The lib " << filename << " does not contain a valid plugin for syd.";
     return;
   }
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();

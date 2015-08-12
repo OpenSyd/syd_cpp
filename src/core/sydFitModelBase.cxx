@@ -18,7 +18,6 @@
 
 // syd
 #include "sydFitModelBase.h"
-#include "sydCommon.h"
 
 // --------------------------------------------------------------------
 syd::FitModelBase::FitModelBase()

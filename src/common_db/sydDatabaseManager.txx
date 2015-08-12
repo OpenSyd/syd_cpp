@@ -22,12 +22,12 @@ DatabaseCreator<DatabaseSchema> * syd::DatabaseManager::RegisterDatabaseSchema(c
 {
   auto it = db_map_.find(schema);
   if (it != db_map_.end()) {
-    LOG(FATAL) << "The database schema '" << schema << "' already exist.";
+    sydLOG(FATAL) << "The database schema '" << schema << "' already exist.";
   }
   DatabaseCreator<DatabaseSchema> * c = new DatabaseCreator<DatabaseSchema>;
   db_map_[schema] = c;
   db_schema_names_.push_back(schema);
-  LOG(5) << "The database schema '" << schema << "' is registered.";
+  sydLOG(5) << "The database schema '" << schema << "' is registered.";
   c->AddSchemaName(schema);
   return c;
 }

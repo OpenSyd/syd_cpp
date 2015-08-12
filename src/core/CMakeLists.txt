@@ -46,6 +46,7 @@ add_library(sydFit
   sydFitModel_f4a.cxx
   sydFitModel_f4b.cxx
   sydFitModel_f4c.cxx
+  sydIntegratedActivityImageBuilder.cxx
 )
 
 target_link_libraries(sydFit ${CERES_LIBRARIES})

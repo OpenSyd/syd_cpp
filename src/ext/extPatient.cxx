@@ -66,7 +66,7 @@ void ext::Patient::Set(const syd::Database * db, const std::vector<std::string> 
   syd::Patient::Set(db, arg);
   if (arg.size() > 4) {
     if (!syd::IsDateValid(arg[4])) {
-        LOG(FATAL) << "Error " << arg[4] << " is not a valid date. Use 'YYYY-MM-DD hh:mm' format, such as 2013-05-17 12:00.";
+      sydLOG(syd::FATAL) << "Error " << arg[4] << " is not a valid date. Use 'YYYY-MM-DD hh:mm' format, such as 2013-05-17 12:00.";
       }
     birth_date = arg[4];
   }

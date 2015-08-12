@@ -73,7 +73,7 @@ bool syd::RoiMaskImage::IsEqual(const pointer p) const
 // --------------------------------------------------
 void syd::RoiMaskImage::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
-  LOG(FATAL) << "To insert a RoiMaskImage, use sydInsertRoiMaskImage";
+  sydLOG(FATAL) << "To insert a RoiMaskImage, use sydInsertRoiMaskImage";
 }
 // --------------------------------------------------
 

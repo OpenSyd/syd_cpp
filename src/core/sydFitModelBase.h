@@ -20,6 +20,7 @@
 #define SYDFITMODELBASE_H
 
 // syd
+//#include "sydCommon.h"
 #include "sydTimeActivityCurve.h"
 
 // ceres

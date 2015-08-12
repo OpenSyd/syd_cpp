@@ -27,8 +27,8 @@ SYD_STATIC_INIT
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  Log::SQLFlag() = false;
-  Log::LogLevel() = 1;
+  syd::Log::SQLFlag() = false;
+  syd::Log::LogLevel() = 1;
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -75,14 +75,14 @@ int main(int argc, char* argv[])
     db->QueryOne(p, 1);
     std::cout << "QueryOne syd::Patient " << p << std::endl;
     if (!p->IsEqual(p1)) {
-      LOG(FATAL) << "Error while comparing p and p1: " << p << " " << p1;
+      sydLOG(syd::FATAL) << "Error while comparing p and p1: " << p << " " << p1;
     }
 
     ext::Patient::pointer q;
     db->QueryOne(q, 1);
     std::cout << "QueryOne ext::Patient " << q << std::endl;
     if (!q->IsEqual(p1)) {
-      LOG(FATAL) << "Error while comparing p and p1: " << q << " " << p1;
+      sydLOG(syd::FATAL) << "Error while comparing p and p1: " << q << " " << p1;
     }
     //DD(&q); DD(&p1); -> not the same object, but similar in the db
 
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
     ext::Patient::pointer patient;
     db->QueryOne(patient, query);
     if (!patient->IsEqual(p4)) {
-      LOG(FATAL) << "Error while comparing p and p4: " << patient << " <--> " << p4;
+      sydLOG(syd::FATAL) << "Error while comparing p and p4: " << patient << " <--> " << p4;
     }
   }
 
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
     if (!p1->IsEqual(patients[0]) or
         !p3->IsEqual(patients[1]) or
         !p4->IsEqual(patients[2])) {
-      LOG(FATAL) << "Error while Query n patients";
+      sydLOG(syd::FATAL) << "Error while Query n patients";
     }
     std::cout << "Query n patients: " << patients.size() << std::endl;
   }
@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
         !p2->IsEqual(patients[1]) or
         !p3->IsEqual(patients[2]) or
         !p4->IsEqual(patients[3])) {
-      LOG(FATAL) << "Error while Query all patients";
+      sydLOG(syd::FATAL) << "Error while Query all patients";
     }
     std::cout << "Query all n patients: " << patients.size() << std::endl;
   }
@@ -139,7 +139,7 @@ int main(int argc, char* argv[])
     db->Query(patients, ids);
     if (!p1->IsEqual(patients[0]) or
         !p3->IsEqual(patients[1])) {
-      LOG(FATAL) << "Error while Query patients by ids";
+      sydLOG(syd::FATAL) << "Error while Query patients by ids";
     }
     std::cout << "Query patients by ids: " << patients.size() << std::endl;
   }
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
     db->Query(records, "Patient", ids);
     // if (!records[0]->IsEqual(p1) or
     //     !records[1]->IsEqual(p3)) {
-    //   LOG(FATAL) << "Error while Query generic patients by ids";
+    //   sydLOG(syd::FATAL) << "Error while Query generic patients by ids";
     // }
     std::cout << "Query generic by ids: " << records.size() << std::endl;
   }

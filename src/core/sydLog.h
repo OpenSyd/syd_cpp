@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <iostream>
 
-namespace sydlog {
+namespace syd {
   /// Must be negative to always being displayed
   static int FATAL = -666;
   static int WARNING = -555;
@@ -37,50 +37,47 @@ namespace sydlog {
   static const char * resetColor = "\x1b[0m";
   static const char * fatalColor = "\x1b[31m";
   static const char * warningColor = "\x1b[33m";
+
+  std::string NowTime();
+
+  // --------------------------------------------------------------------
+  class Log
+  {
+  public:
+    Log();
+    virtual ~Log();
+    std::ostringstream& Get(int level);
+  public:
+    static int& LogLevel();
+    static bool& SQLFlag();
+    static std::string ToString(int level);
+    static int FromString(const std::string& level);
+    bool fatalFlag;
+    static std::ostream * output;
+  protected:
+    std::ostringstream os;
+  private:
+    Log(const Log&);
+    Log& operator =(const Log&);
+  };
+  // --------------------------------------------------------------------
+
+  typedef Log FILELog;
 }
 
-inline std::string NowTime();
-
-// --------------------------------------------------------------------
-class Log
-{
-public:
-  Log();
-  virtual ~Log();
-  std::ostringstream& Get(int level);
-public:
-  static int& LogLevel();
-  static bool& SQLFlag();
-  static std::string ToString(int level);
-  static int FromString(const std::string& level);
-  bool fatalFlag;
-  static std::ostream * output;
-protected:
-  std::ostringstream os;
-private:
-  Log(const Log&);
-  Log& operator =(const Log&);
-};
-// --------------------------------------------------------------------
-
-
-// ----------------------------------------------------------------------------
-typedef Log FILELog;
-
-#define FILE_LOG(level)                   \
-  if (level > FILELog::LogLevel()) ;      \
-  else Log().Get(level)
+#define sydFILE_LOG(level)                      \
+  if (level > FILELog::LogLevel()) ;            \
+  else syd::Log().Get(level)
 
 /// ----------------------------------------------------------------------------
 /// Main LOG macros
 
-#undef LOG
-#define LOG(level)                        \
-  if (level > Log::LogLevel()) ;          \
-  else Log().Get(level)
+#define sydLOG(level)                           \
+  if (level > syd::Log::LogLevel()) ;           \
+  else syd::Log().Get(level)
 
-#define LOGSQL             \
-  if (!Log::SQLFlag()) ;   \
-  else Log().Get(0)
+#define sydLOGSQL                               \
+  if (!syd::Log::SQLFlag()) ;                   \
+  else syd::Log().Get(0)
 
 #endif /* end #define SYDLOG_H */

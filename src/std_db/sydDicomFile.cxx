@@ -72,7 +72,7 @@ void syd::DicomFile::CopyFrom(const pointer p)
 // --------------------------------------------------
 void syd::DicomFile::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
-  LOG(FATAL) << "Cannot insert DicomFile with 'Set'. Use sydInsertDicom.";
+  sydLOG(FATAL) << "Cannot insert DicomFile with 'Set'. Use sydInsertDicom.";
 }
 // --------------------------------------------------
 

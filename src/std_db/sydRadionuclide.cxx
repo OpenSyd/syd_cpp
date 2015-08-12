@@ -63,7 +63,7 @@ void syd::Radionuclide::CopyFrom(const pointer p)
 void syd::Radionuclide::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
-    LOG(FATAL) << "To insert patient, please set <name> <half_life_in_hours>";
+    sydLOG(FATAL) << "To insert patient, please set <name> <half_life_in_hours>";
   }
   name = arg[0];
   half_life_in_hours = atof(arg[1].c_str());

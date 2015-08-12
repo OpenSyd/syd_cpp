@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
   db->Query(images, ids);
   for(auto image:images) {
     if (image->dicoms.size() == 0) {
-      LOG(FATAL) << "Error, not dicom associated with this image: " << image;
+      sydLOG(syd::FATAL) << "Error, not dicom associated with this image: " << image;
     }
 
     // Check if already exist // find mask roitype=body, image same dicom
@@ -66,14 +66,14 @@ int main(int argc, char* argv[])
         << " -i " << db->GetAbsolutePath(image)
         << " -o " << mhd_filename
         << " " << args_info.options_arg;
-    LOG(1) << "Executing: " << std::endl << cmd.str();
+    sydLOG(1) << "Executing: " << std::endl << cmd.str();
 
     // Exec command line
     int r = syd::ExecuteCommandLine(cmd.str(), 2);
 
     // Stop if error in cmd
     if (r == -1) {
-      LOG(FATAL) << "Error while executing the following command: " << std::endl << cmd.str();
+      sydLOG(syd::FATAL) << "Error while executing the following command: " << std::endl << cmd.str();
     }
 
     // Second processing: morphological opening could help to remove table in some cases
@@ -84,13 +84,13 @@ int main(int argc, char* argv[])
           << " -i " << mhd_filename
           << " -o " << mhd_filename
           << " -t3 -r3 ";
-      LOG(1) << "Executing: " << std::endl << cmd.str();
+      sydLOG(1) << "Executing: " << std::endl << cmd.str();
       r = syd::ExecuteCommandLine(cmd.str(), 2);
     }
 
     // Stop if error in cmd
     if (r == -1) {
-      LOG(FATAL) << "Error while executing the following command: " << std::endl << cmd.str();
+      sydLOG(syd::FATAL) << "Error while executing the following command: " << std::endl << cmd.str();
     }
 
     // Create the mask image
@@ -98,10 +98,10 @@ int main(int argc, char* argv[])
     syd::RoiMaskImageBuilder b(db);
     try {
       syd::RoiMaskImage::pointer mask = b.InsertRoiMaskImage(dicom, roitype, mhd_filename);
-      LOG(1) << "Inserting RoiMaskImage " << mask;
+      sydLOG(1) << "Inserting RoiMaskImage " << mask;
     }
     catch(std::exception & e) {
-      LOG(WARNING) << "Cannot create mask image, skip it." << std::endl << e.what();
+      sydLOG(syd::WARNING) << "Cannot create mask image, skip it." << std::endl << e.what();
     }
 
     syd::DeleteMHDImage(mhd_filename);

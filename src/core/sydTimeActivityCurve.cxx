@@ -46,7 +46,7 @@ void syd::TimeActivityCurve::AddValue(double time, double value, double variance
 // --------------------------------------------------------------------
 void syd::TimeActivityCurve::SortByTime()
 {
-  LOG(FATAL) << "TODO TimeActivityCurve::SortByTime";
+  sydLOG(FATAL) << "TODO TimeActivityCurve::SortByTime";
 }
 // --------------------------------------------------------------------
 

@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
   syd::Record::pointer e = db->New(tablename);
   db->Set(e, args);
   db->Insert(e);
-  LOG(1) << "Insertion done: " << e->ToString();
+  sydLOG(1) << "Insertion done: " << e->ToString();
 
   // This is the end, my friend.
 }
