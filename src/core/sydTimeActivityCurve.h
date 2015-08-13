@@ -47,6 +47,8 @@ namespace syd {
     double GetTime(unsigned int i) const { return times[i]; }
     double GetVariance(unsigned int i) const { return variances[i]; }
 
+    void CopyFrom(syd::TimeActivityCurve & tac);
+
     void SortByTime();
 
     unsigned int FindMaxIndex();
