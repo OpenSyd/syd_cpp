@@ -334,8 +334,6 @@ void syd::IntegratedActivityImageBuilder::InitInputData()
 // --------------------------------------------------------------------
 void syd::IntegratedActivityImageBuilder::InitSolver()
 {
-  DD("InitSolver");
-
   // Solve
   ceres_options_ = new ceres::Solver::Options;
   ceres_options_->max_num_iterations = 50;
@@ -351,7 +349,5 @@ void syd::IntegratedActivityImageBuilder::InitSolver()
     m->SetLambdaPhysicHours(image_lambda_phys_in_hour_);
     m->robust_scaling_ = robust_scaling_;
   }
-
-  DD("end InitSolver");
 }
 // --------------------------------------------------------------------
