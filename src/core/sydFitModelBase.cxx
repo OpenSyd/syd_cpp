@@ -108,27 +108,28 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac) const
 {
   // Simple integration if full model
   if (!start_from_max_flag) return Integrate();
-  return 0.0;
-  /*
-  // If not ...
+
+  // If not, we consider the current_tac as the restricted one
+  if (!current_tac) {
+    LOG(FATAL) << "Could not compute ComputeAUC with restricted tac, 'current_tac' must be set";
+  }
   double AUC = 0.0;
 
   // Integrate from 0 to first time of the restricted_tac
-  double starting_part_model = Integrate(0.0, restricted_tac.GetTime(0));
+  double starting_part_model = Integrate(0.0, current_tac->GetTime(0));
 
   // Integrate from 0 to infinity
   double total = Integrate();
 
   // Trapeze intregration of the first curve part
   int index = 0;
-  double t = restricted_tac.GetTime(0);
+  double t = current_tac->GetTime(0);
   while (tac.GetTime(index) < t) ++index;
   double starting_part = tac.Integrate_Trapeze(0, index);
 
   AUC = total - starting_part_model + starting_part;
 
   return AUC;
-  */
 }
 // --------------------------------------------------------------------
 
@@ -136,15 +137,18 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac) const
 // --------------------------------------------------------------------
 double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve & tac) const
 {
-  double mean = 0.0;
-  for(auto i=0; i<tac.size(); i++) mean += tac.GetValue(i);
-  mean = mean / (double)tac.size();
+  const syd::TimeActivityCurve * current = &tac;
+  if (start_from_max_flag) current = current_tac;
 
-  double SS_res = ComputeSS(tac);
+  double mean = 0.0;
+  for(auto i=0; i<current->size(); i++) mean += current->GetValue(i);
+  mean = mean / (double)current->size();
+
+  double SS_res = ComputeSS(*current);
 
   double SS_tot = 0.0;
-  for(auto i=0; i<tac.size(); i++) {
-    SS_tot += pow(tac.GetValue(i)-mean, 2);
+  for(auto i=0; i<current->size(); i++) {
+    SS_tot += pow(current->GetValue(i)-mean, 2);
   }
 
   double R2 = 1.0 - (SS_res/SS_tot);
