@@ -82,6 +82,7 @@ int main(int argc, char* argv[])
   std::vector<ImageType::Pointer> itk_images;
   for(auto image:images) {
     im = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));
+    if (args_info.gauss_arg != 0) im = syd::GaussianFilter<ImageType>(im, args_info.gauss_arg);
     double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
     builder.AddInput(im, t);
     itk_images.push_back(im);
@@ -92,7 +93,6 @@ int main(int argc, char* argv[])
   builder.image_lambda_phys_in_hour_ = log(2.0)/images[0]->dicoms[0]->injection->radionuclide->half_life_in_hours;
   builder.debug_only_flag_ = args_info.only_debug_flag;
   builder.robust_scaling_ = args_info.robust_scaling_arg;
-  builder.gauss_sigma_ = args_info.gauss_arg;
   builder.R2_min_threshold_ = args_info.r2_min_arg;
 
   if (args_info.debug_given) {
@@ -176,6 +176,10 @@ int main(int argc, char* argv[])
   syd::WriteImage<ImageType>(r2->image, "r2_bis.mhd");
   syd::WriteImage<ImageType>(best_model->image, "best_model_bis.mhd");
   syd::WriteImage<ImageType>(auc->image, "auc_bis.mhd");
+
+  // Debug here //FIXME
+  builder.SaveDebugPixel("gp/tac_2.txt");
+  builder.SaveDebugModel("gp/models_2.txt");
 
   // Output
   DD("FIXME : insert builder output in the db");

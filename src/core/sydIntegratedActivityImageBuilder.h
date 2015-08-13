@@ -89,7 +89,6 @@ namespace syd {
 
     // options
     double robust_scaling_;
-    double gauss_sigma_;
     double R2_min_threshold_;
     double image_lambda_phys_in_hour_;
     bool restricted_tac_flag_;

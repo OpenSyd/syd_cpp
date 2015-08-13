@@ -28,7 +28,6 @@
 // --------------------------------------------------------------------
 syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
 {
-  gauss_sigma_ = 5;
   R2_min_threshold_ = 0.7;
   mask_ = 0;
   restricted_tac_flag_ = false;
@@ -193,7 +192,9 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
     else debug_this_point_flag = false;
 
     // Check if pixel is in the mask
-    if (mask_flag and it_mask.Get() == 0 and !debug_this_point_flag) { // skip it
+    if (((mask_flag and it_mask.Get() == 0) and !debug_this_point_flag)
+        or
+        (debug_only_flag_ and !debug_this_point_flag)) { // skip it
       for(auto i=0; i<images_.size(); i++) ++it;
     }
     else {
@@ -290,12 +291,6 @@ int syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac,
 // --------------------------------------------------------------------
 void syd::IntegratedActivityImageBuilder::InitInputData()
 {
-  // Gauss images if needed
-  DD(gauss_sigma_);
-  for(auto & image:images_) {
-    if (gauss_sigma_ != 0) image = syd::GaussianFilter<ImageType>(image, gauss_sigma_);
-  }
-
   // consider images_ OR create a 4D images ?
   typename Image4DType::SizeType size;
   for(auto i=1; i<4; i++) size[i] = images_[0]->GetLargestPossibleRegion().GetSize()[i-1];
