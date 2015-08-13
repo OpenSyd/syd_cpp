@@ -262,6 +262,10 @@ int syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac,
     if (debug_this_point_flag) {
       syd::FitModelBase * mm = model->Clone();
       debug_current->models.push_back(mm);
+      // Copy the current tac
+      syd::TimeActivityCurve * c = new TimeActivityCurve;
+      c->CopyFrom(tac);
+      mm->current_tac = c;
     }
   }
 
