@@ -84,9 +84,10 @@ namespace syd {
     double ComputeR2(const syd::TimeActivityCurve & tac) const;
     double ComputeAICc(const syd::TimeActivityCurve & tac) const;
     double ComputeSS(const syd::TimeActivityCurve & tac) const;
+    bool IsAICcValid(int N) const;
 
-    virtual double GetA(const int i) const { LOG(sydlog::FATAL) << "GetA to implement " << GetName(); }
-    virtual double GetLambda(const int i) const { LOG(sydlog::FATAL) << "GetLambda to implement " << GetName(); }
+    virtual double GetA(const int i) const { LOG(sydlog::FATAL) << "GetA to implement " << GetName(); return 0.0; }
+    virtual double GetLambda(const int i) const { LOG(sydlog::FATAL) << "GetLambda to implement " << GetName(); return 0.0; }
 
     bool start_from_max_flag;
 

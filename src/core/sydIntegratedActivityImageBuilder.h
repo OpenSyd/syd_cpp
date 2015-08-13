@@ -61,13 +61,20 @@ namespace syd {
     typedef float PixelType;
     typedef itk::Image<PixelType,3> ImageType;
     typedef itk::Image<PixelType,4> Image4DType;
+    typedef itk::ImageRegionIterator<ImageType> Iterator3D;
+    typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
 
+    // Input
     void AddInput(ImageType::Pointer image, double time) { images_.push_back(image); times_.push_back(time); }
     void AddModel(syd::FitModelBase * m) { models_.push_back(m); }
     void AddOutputImage(syd::FitOutputImage * o) { outputs_.push_back(o); }
 
     // Main function
     void CreateIntegratedActivityImage();
+
+    // Other functions
+    void ClearModel() { models_.clear(); }
+    void SetMask(ImageType::Pointer m) { mask_ = m; }
 
     // protected
     void InitSolver();
@@ -83,10 +90,11 @@ namespace syd {
     // options
     double robust_scaling_;
     double gauss_sigma_;
-    double activity_threshold_;
     double R2_min_threshold_;
     double image_lambda_phys_in_hour_;
+    bool restricted_tac_flag_;
     std::vector<FitOutputImage*> outputs_;
+    ImageType::Pointer mask_;
 
   protected:
 

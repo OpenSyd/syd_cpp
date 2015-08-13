@@ -166,6 +166,15 @@ double syd::FitModelBase::ComputeSS(const syd::TimeActivityCurve & tac) const
 
 
 // --------------------------------------------------------------------
+bool syd::FitModelBase::IsAICcValid(int N) const
+{
+  double K = GetK();
+  return (K+1+2) <= N;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 double syd::FitModelBase::ComputeAICc(const syd::TimeActivityCurve & tac) const
 {
   // See Glatting 2007 equ (4)

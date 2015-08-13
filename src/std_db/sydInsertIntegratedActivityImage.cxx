@@ -30,6 +30,7 @@ SYD_STATIC_INIT
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
+  // Init ceres log
   SYD_CERES_STATIC_INIT;
 
   // Init
@@ -55,7 +56,6 @@ int main(int argc, char* argv[])
   }
   syd::Image::vector images;
   db->Query(images, ids);
-  DDS(images);
 
   // Sort by time
   std::sort(begin(images), end(images),
@@ -71,6 +71,7 @@ int main(int argc, char* argv[])
   // image type
   typedef float PixelType;
   typedef itk::Image<PixelType,3> ImageType;
+  typedef itk::ImageRegionIterator<ImageType> Iterator;
 
   // Create main builder
   syd::IntegratedActivityImageBuilder builder;
@@ -78,17 +79,20 @@ int main(int argc, char* argv[])
   // Read the images+times and set to the builder
   std::string starting_date = images[0]->dicoms[0]->injection->date;
   ImageType::Pointer im;
+  std::vector<ImageType::Pointer> itk_images;
   for(auto image:images) {
     im = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));
     double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
     builder.AddInput(im, t);
+    itk_images.push_back(im);
   }
+  im = itk_images[0]; // consider the first image for the following
 
+  // Set some options
   builder.image_lambda_phys_in_hour_ = log(2.0)/images[0]->dicoms[0]->injection->radionuclide->half_life_in_hours;
   builder.debug_only_flag_ = args_info.only_debug_flag;
   builder.robust_scaling_ = args_info.robust_scaling_arg;
   builder.gauss_sigma_ = args_info.gauss_arg;
-  builder.activity_threshold_ = args_info.min_activity_arg;
   builder.R2_min_threshold_ = args_info.r2_min_arg;
 
   if (args_info.debug_given) {
@@ -122,25 +126,56 @@ int main(int argc, char* argv[])
   builder.AddOutputImage(iter);
   builder.AddOutputImage(success);
 
+  // Use a mask, consider values of the first spect
+  ImageType::Pointer mask = syd::CreateImageLike<ImageType>(im);
+  Iterator it_mask(mask, mask->GetLargestPossibleRegion());
+  Iterator it_image(im, im->GetLargestPossibleRegion());
+  it_mask.GoToBegin();
+  it_image.GoToBegin();
+  while (!it_mask.IsAtEnd()) {
+    if (it_image.Get() > args_info.min_activity_arg) it_mask.Set(1.0);
+    else it_mask.Set(0.0);
+    ++it_mask;
+    ++it_image;
+  }
+  builder.SetMask(mask);
+  syd::WriteImage<ImageType>(mask, "mask.mhd");
+
   // Go !
   builder.CreateIntegratedActivityImage();
 
   // Output
   for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename);
 
-
   // Debug here //FIXME
   builder.SaveDebugPixel("gp/tac.txt");
   builder.SaveDebugModel("gp/models.txt");
 
+  // Modifiy the mask according to success
+  auto it_success = success->iterator;
+  it_success.GoToBegin();
+  it_mask.GoToBegin();
+  while (!it_mask.IsAtEnd()) {
+    if (it_success.Get() == 1.0) it_mask.Set(0.0);
+    ++it_success;
+    ++it_mask;
+  }
+  syd::WriteImage<ImageType>(mask, "mask2.mhd");
+
   // Redo with a mask
-  /*  DD("Start again");
+  DD("Start again");
   builder.ClearModel();
   builder.AddModel(f3);
-  builder.SetMask(mask);
-  //  builder.restricted_tac_flag;
+  builder.R2_min_threshold_ = 0.1;
+  //  builder.SetMask(mask);
+  builder.restricted_tac_flag_ = true;
   builder.CreateIntegratedActivityImage();
-  */
+
+  // Output
+  //for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename);
+  syd::WriteImage<ImageType>(r2->image, "r2_bis.mhd");
+  syd::WriteImage<ImageType>(best_model->image, "best_model_bis.mhd");
+  syd::WriteImage<ImageType>(auc->image, "auc_bis.mhd");
 
   // Output
   DD("FIXME : insert builder output in the db");

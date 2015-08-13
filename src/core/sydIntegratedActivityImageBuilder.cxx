@@ -29,8 +29,9 @@
 syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
 {
   gauss_sigma_ = 5;
-  activity_threshold_ = 500;
   R2_min_threshold_ = 0.7;
+  mask_ = 0;
+  restricted_tac_flag_ = false;
 }
 // --------------------------------------------------------------------
 
@@ -58,7 +59,6 @@ void syd::IntegratedActivityImageBuilder::SaveDebugPixel(const std::string & fil
   std::ofstream os(filename);
   ta.Print(os);
   os.close();
-  DD("end debug pixel");
 }
 // --------------------------------------------------------------------
 
@@ -156,7 +156,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   // create initial tac with the times
   TimeActivityCurve tac;
   for(auto t:times_) tac.AddValue(t, 0.0);
-  DD(tac);
 
   // Init solver
   InitSolver();
@@ -165,45 +164,74 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
   Iterator4D it(tac_image_, tac_image_->GetLargestPossibleRegion());
 
+  // Init mask iterator
+  bool mask_flag = false;
+  Iterator3D it_mask;
+  if (mask_) {
+    mask_flag = true;
+    it_mask = Iterator3D(mask_, mask_->GetLargestPossibleRegion());
+    it_mask.GoToBegin();
+  }
+
+  // Init output iterators
+  for(auto & o:outputs_) o->iterator.GoToBegin();
+
   // debug init, sort point by index
   bool debug_this_point_flag = true;
   int debug_point_current=0;
   std::sort(begin(debug_data), end(debug_data),
             [](DebugType a, DebugType b) {
               return a.index < b.index; });
-  if (debug_only_flag_) activity_threshold_ = 9999999;
 
   // main loop
-  DD("start loop");
   int x = 0;
   int n = images_[0]->GetLargestPossibleRegion().GetNumberOfPixels();
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
 
-    // Create current tac
-    for(auto i=0; i<images_.size(); i++) {
-      tac.SetValue(i, it.Get());
-      ++it; // next value
-    }
-
+    // Consider current point, is it a debug point ?
     if (x == debug_data[debug_point_current].index) debug_this_point_flag = true;
     else debug_this_point_flag = false;
 
-    // Avoid computing if value too low
-    if (debug_this_point_flag or tac.GetValue(0) > activity_threshold_) {
+    // Check if pixel is in the mask
+    if (mask_flag and it_mask.Get() == 0 and !debug_this_point_flag) { // skip it
+      for(auto i=0; i<images_.size(); i++) ++it;
+    }
+    else {
+      // Create current tac
+      for(auto i=0; i<images_.size(); i++) {
+        tac.SetValue(i, it.Get());
+        ++it; // next value
+      }
+
+      syd::TimeActivityCurve restricted_tac;
+      if (restricted_tac_flag_) {
+        // Select only the end of the curve (min 2 points);
+        auto m = tac.FindMaxIndex();
+        m = std::min(m, tac.size()-2);
+        for(auto i=m; i<tac.size(); i++)
+          restricted_tac.AddValue(tac.GetTime(i), tac.GetValue(i));
+      }
+
       // Solve
-      int best = FitModels(tac, debug_this_point_flag, &debug_data[debug_point_current]);
+      int best;
+      if (restricted_tac_flag_)
+        best = FitModels(restricted_tac, debug_this_point_flag, &debug_data[debug_point_current]);
+      else
+        best = FitModels(tac, debug_this_point_flag, &debug_data[debug_point_current]);
+
+      // Set the current selected model, update the output
       if (best != -1) {
         current_model_ = models_[best];
         // Update output
         for(auto o:outputs_) o->Update(tac, current_model_);
-        if (debug_this_point_flag) debug_data[debug_point_current].selected_model = best;
       }
-    }
 
-    // debug points for plot
-    if (debug_this_point_flag) {
-      debug_data[debug_point_current].tac = tac;
-      ++debug_point_current;
+      // debug points for plot
+      if (debug_this_point_flag) {
+        debug_data[debug_point_current].selected_model = best;
+        debug_data[debug_point_current].tac = tac;
+        ++debug_point_current;
+      }
     }
 
     // Next debug images
@@ -212,6 +240,9 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
     // progress bar
     ++x;
     loadbar(x,n);
+
+    // Next in mask
+    if (mask_flag) ++it_mask;
   }
 }
 // --------------------------------------------------------------------
@@ -241,8 +272,10 @@ int syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac,
   for(auto i=0; i<models_.size(); i++) {
     double R2 = models_[i]->ComputeR2(tac);
     if (R2 > R2_threshold) {
-      double AICc = models_[i]->ComputeAICc(tac);
-      if (AICc < best_AICc) {
+      double AICc;
+      bool b = models_[i]->IsAICcValid(tac.size());
+      if (b) AICc = models_[i]->ComputeAICc(tac);
+      if (!b or AICc < best_AICc) { // if AICc not valid, consider it is ok
         best = i;
         best_AICc = AICc;
         best_R2 = R2;
@@ -257,8 +290,6 @@ int syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac,
 // --------------------------------------------------------------------
 void syd::IntegratedActivityImageBuilder::InitInputData()
 {
-  DD("ReadAndInitInputData");
-
   // Gauss images if needed
   DD(gauss_sigma_);
   for(auto & image:images_) {
@@ -283,8 +314,6 @@ void syd::IntegratedActivityImageBuilder::InitInputData()
   tac_image_->Allocate();
 
   // Copy data to the 4D image
-  typedef itk::ImageRegionIterator<ImageType> Iterator3D;
-  typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
   Iterator4D it(tac_image_, tac_image_->GetLargestPossibleRegion());
   std::vector<Iterator3D> iterators;
   for(auto image:images_) {
