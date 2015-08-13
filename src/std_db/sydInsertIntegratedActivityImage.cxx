@@ -165,9 +165,9 @@ int main(int argc, char* argv[])
   // Redo with a mask
   DD("Start again");
   builder.ClearModel();
+  f3->id_ = f3->id_*10; // to distinguish from previous
+  f3->start_from_max_flag = true;
   builder.AddModel(f3);
-  builder.R2_min_threshold_ = 0.1;
-  //  builder.SetMask(mask);
   builder.restricted_tac_flag_ = true;
   builder.CreateIntegratedActivityImage();
 
