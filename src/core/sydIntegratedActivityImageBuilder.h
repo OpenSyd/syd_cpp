@@ -95,6 +95,10 @@ namespace syd {
     std::vector<FitOutputImage*> outputs_;
     ImageType::Pointer mask_;
 
+    // Debug
+    bool current_debug_flag_;
+    std::vector<DebugType> debug_data;
+
   protected:
 
     // Input
@@ -114,10 +118,6 @@ namespace syd {
     ceres::Solver::Options * ceres_options_;
     ceres::Solver::Summary ceres_summary_;
     ceres::Solver::Summary current_ceres_summary_;
-
-    // Debug
-    bool current_debug_flag_;
-    std::vector<DebugType> debug_data;
 
   }; // class IntegratedActivityImageBuilder
 
