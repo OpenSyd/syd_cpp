@@ -42,6 +42,7 @@ namespace syd {
     FitOutputImage(Pointer input) {
       image = syd::CreateImageLike<ImageType>(input);
       iterator = Iterator(image, image->GetLargestPossibleRegion());
+      image->FillBuffer(0.0);
     }
 
     virtual void Update(const syd::TimeActivityCurve & tac,
