@@ -165,10 +165,28 @@ int main(int argc, char* argv[])
   // Redo with a mask
   DD("Start again");
   builder.ClearModel();
+  builder.debug_data.clear();
+
+if (args_info.debug_given) {
+    std::string file=args_info.debug_arg;
+    std::ifstream is(file);
+    while (is) {
+      std::string name;
+      int x,y,z;
+      is >> name >> x >> y >> z;
+      if (is) {
+        if (name[0] != '#') builder.AddDebugPixel(name, x,y,z);
+      }
+    }
+  }
+
   f3->id_ = f3->id_*10; // to distinguish from previous
   f3->start_from_max_flag = true;
   builder.AddModel(f3);
-  builder.restricted_tac_flag_ = true;
+  f4a->id_ = f4a->id_*10; // to distinguish from previous
+  f4a->start_from_max_flag = true;
+  builder.AddModel(f4a);
+  builder.restricted_tac_flag_ = true; // FIXME -> in model ?
   builder.CreateIntegratedActivityImage();
 
   // Output
