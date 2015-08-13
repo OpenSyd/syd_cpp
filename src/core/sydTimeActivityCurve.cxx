@@ -93,6 +93,7 @@ double syd::TimeActivityCurve::Integrate_Trapeze(int start, int end) const
     double b = GetValue(i+1);
     double d = GetTime(i+1)-GetTime(i);
     r = r + d*(a+b)/2.0;
+
     /*
     // Alternative : fit monoexpo curve at each point
     double t1 = tac_->GetTime(i);
@@ -122,18 +123,5 @@ double syd::TimeActivityCurve::Integrate_Trapeze(int start, int end) const
 void syd::TimeActivityCurve::clear()
 {
   times.clear(); values.clear(); variances.clear();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::TimeActivityCurve::CopyFrom(syd::TimeActivityCurve & tac)
-{
-  clear();
-  for(auto i=0; i<tac.size(); i++) {
-    times.push_back(tac.GetTime(i));
-    values.push_back(tac.GetValue(i));
-    variances.push_back(tac.GetVariance(i));
-  }
 }
 // --------------------------------------------------------------------
