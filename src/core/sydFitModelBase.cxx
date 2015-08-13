@@ -46,6 +46,7 @@ void syd::FitModelBase::CopyFrom(const syd::FitModelBase * model)
   params_  = model->GetParameters();
   start_from_max_flag = model->start_from_max_flag;
   ceres_summary_ = model->ceres_summary_;
+  current_tac = model->current_tac;
 }
 // --------------------------------------------------------------------
 
@@ -138,7 +139,12 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac) const
 double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve & tac) const
 {
   const syd::TimeActivityCurve * current = &tac;
-  if (start_from_max_flag) current = current_tac;
+  if (start_from_max_flag) {
+    if (!current_tac) {
+      LOG(FATAL) << "Could not compute ComputeAUC with restricted tac, 'current_tac' must be set";
+    }
+    current = current_tac;
+  }
 
   double mean = 0.0;
   for(auto i=0; i<current->size(); i++) mean += current->GetValue(i);
