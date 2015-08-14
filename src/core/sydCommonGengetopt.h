@@ -62,7 +62,7 @@
   sydlog::Log::LogLevel() = args_info.verbose_arg;                      \
   if (args_info.inputs_num < N) {                                       \
     cmdline_parser_##ggo_filename##_print_help();                       \
-      sydlog::LOG(sydlog::FATAL) << "Please provide at least "#N" params"; \
+      LOG(FATAL) << "Please provide at least "#N" params";              \
   }
 //--------------------------------------------------------------------
 
