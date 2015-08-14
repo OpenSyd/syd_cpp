@@ -141,8 +141,6 @@ void syd::IntegratedActivityImageBuilder::AddDebugPixel(std::string name, int x,
 // --------------------------------------------------------------------
 void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 {
-  LOG(2) << "Init CreateIntegratedActivityImage";
-
   // typedef
   typedef float PixelType;
   typedef itk::Image<PixelType,3> ImageType;
@@ -185,10 +183,18 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
               return a.index < b.index; });
   if(debug_data.size() == 0) debug_point_current = -1;
 
+  // log
+  //  models, threshold, mask
+  std::string sm;
+  for(auto m:models_) sm += m->name_+" ";
+  LOG(1) << "Starting fit with models : " << sm << "; "
+         << (mask_flag ? "mask":"no_mask")
+         << " R2_min = " << R2_min_threshold_
+         << (restricted_tac_flag_ ? " with last 3 points of the curve only":"");
+
   // main loop
   int x = 0;
   int n = images_[0]->GetLargestPossibleRegion().GetNumberOfPixels();
-  LOG(1) << "Starting CreateIntegratedActivityImage";
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
 
     // Consider current point, is it a debug point ?
