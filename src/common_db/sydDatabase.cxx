@@ -107,7 +107,7 @@ void syd::Database::TraceCallback(const char* sql)
   std::string s = std::string(sql);
   if (s == "COMMIT") return;
   if (s == "BEGIN") return;
-  LOG_SQL() << s;
+  LOG_SQL << s;
   current_sql_query_=s;
 }
 // --------------------------------------------------------------------
