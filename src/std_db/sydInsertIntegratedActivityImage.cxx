@@ -139,11 +139,11 @@ int main(int argc, char* argv[])
   auto iter = new syd::FitOutputImage_Iteration(im);
   auto success = new syd::FitOutputImage_Success(im);
   builder.AddOutputImage(auc);
+  builder.AddOutputImage(success); // needed for mask
   if (args_info.debug_images_flag) {
     builder.AddOutputImage(r2);
     builder.AddOutputImage(best_model);
     builder.AddOutputImage(iter);
-    builder.AddOutputImage(success);
   }
 
   // Use a mask, consider values of the first spect
@@ -159,7 +159,8 @@ int main(int argc, char* argv[])
     ++it_image;
   }
   builder.SetMask(mask);
-  syd::WriteImage<ImageType>(mask, "mask.mhd");
+  if (args_info.debug_images_flag)
+    syd::WriteImage<ImageType>(mask, "mask.mhd");
 
   // Go !
   builder.CreateIntegratedActivityImage();
