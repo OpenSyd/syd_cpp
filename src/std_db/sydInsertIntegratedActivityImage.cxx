@@ -56,6 +56,22 @@ int main(int argc, char* argv[])
   }
   syd::Image::vector images;
   db->Query(images, ids);
+  if (images.size() ==0) {
+    LOG(1) << "No images.";
+    return EXIT_SUCCESS;
+  }
+
+  // Make some check on images list
+  auto size = images[0]->size;
+  bool b = true;
+  for(auto image:images) {
+    b = b and image->IsSameSizeAndSpacingThan(images[0]);
+  }
+  if (!b) {
+    std::string s;
+    for(auto image:images) s += image->SizeAsString() + " " + image->SpacingAsString() + "\n";
+    LOG(FATAL) << "The images must have the same size/spacing, abort. Images are: " << s;
+  }
 
   // Sort by time
   std::sort(begin(images), end(images),
@@ -64,9 +80,6 @@ int main(int argc, char* argv[])
               if (b->dicoms.size() == 0) return false;
               return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
             });
-
-  // FIXME
-  DD("FIXME : make some check on images list here");
 
   // image type
   typedef float PixelType;
@@ -92,25 +105,31 @@ int main(int argc, char* argv[])
   // Set some options
   builder.image_lambda_phys_in_hour_ = log(2.0)/images[0]->dicoms[0]->injection->radionuclide->half_life_in_hours;
   builder.debug_only_flag_ = args_info.only_debug_flag;
-  builder.robust_scaling_ = args_info.robust_scaling_arg;
   builder.R2_min_threshold_ = args_info.r2_min_arg;
+
+  // Consider the debug points
+  struct debug_point {
+    std::string name;
+    int x,y,z;
+  };
+  std::vector<debug_point> debug_points;
 
   if (args_info.debug_given) {
     std::string file=args_info.debug_arg;
     std::ifstream is(file);
     while (is) {
-      std::string name;
-      int x,y,z;
-      is >> name >> x >> y >> z;
-      if (is) {
-        if (name[0] != '#') builder.AddDebugPixel(name, x,y,z);
-      }
+      debug_point d;
+      is >> d.name >> d.x >> d.y >> d.z;
+      if (is and d.name[0] != '#') debug_points.push_back(d);
     }
   }
+  for(auto d:debug_points) builder.AddDebugPixel(d.name, d.x, d.y, d.z);
 
   // Set the models
   auto f3 = new syd::FitModel_f3;
+  f3->id_ = 3;
   auto f4a = new syd::FitModel_f4a;
+  f4a->id_ = 4;
   builder.AddModel(f3);
   builder.AddModel(f4a);
 
@@ -147,7 +166,7 @@ int main(int argc, char* argv[])
   // Output
   for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename);
 
-  // Debug here //FIXME
+  // Debug here
   builder.SaveDebugPixel("gp/tac.txt");
   builder.SaveDebugModel("gp/models.txt");
 
@@ -163,30 +182,14 @@ int main(int argc, char* argv[])
   syd::WriteImage<ImageType>(mask, "mask2.mhd");
 
   // Redo with a mask
-  DD("Start again");
   builder.ClearModel();
-  builder.debug_data.clear();
-
-if (args_info.debug_given) {
-    std::string file=args_info.debug_arg;
-    std::ifstream is(file);
-    while (is) {
-      std::string name;
-      int x,y,z;
-      is >> name >> x >> y >> z;
-      if (is) {
-        if (name[0] != '#') builder.AddDebugPixel(name, x,y,z);
-      }
-    }
-  }
-
-  f3->id_ = f3->id_*10; // to distinguish from previous
-  f3->start_from_max_flag = true;
+  builder.debug_data.clear(); // need to reset the debug data
+  for(auto d:debug_points) builder.AddDebugPixel(d.name, d.x, d.y, d.z);
+  f3->id_ = 5; // to distinguish from previous
   builder.AddModel(f3);
-  f4a->id_ = f4a->id_*10; // to distinguish from previous
-  f4a->start_from_max_flag = true;
+  f4a->id_ = 6; // to distinguish from previous
   builder.AddModel(f4a);
-  builder.restricted_tac_flag_ = true; // FIXME -> in model ?
+  builder.restricted_tac_flag_ = true;
   builder.CreateIntegratedActivityImage();
 
   // Output
