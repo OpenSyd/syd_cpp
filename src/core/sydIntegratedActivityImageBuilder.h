@@ -78,7 +78,7 @@ namespace syd {
 
     // Debug
     void SaveDebugPixel(const std::string & filename) const;
-    void SaveDebugModel(const std::string & filename) const;
+    void SaveDebugModel(const std::string & filename);
     void AddDebugPixel(std::string name, int x, int y, int z);
     bool debug_only_flag_;
 

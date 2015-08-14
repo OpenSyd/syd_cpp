@@ -62,9 +62,20 @@ void syd::IntegratedActivityImageBuilder::SaveDebugPixel(const std::string & fil
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & filename) const
+void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & filename)
 {
   if (debug_data.size() < 1) return;
+
+  for(auto & d:debug_data) {
+    for(auto model:d.models) {
+      syd::FitModelBase * subm = model->Clone();
+      subm->lambda_phys_hours_ = 0.0043449876; // 177Lu
+      //subm->lambda_phys_hours_ = 0.010823439; // 90Y
+      subm->name_ = subm->name_+"177Lu";
+      d.models.push_back(subm);
+    }
+  }
+
 
   // Create tac from the models
   auto tac = debug_data[0].tac;
@@ -106,12 +117,13 @@ void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & fil
       auto model = d.models[i];
       std::string p;
       for(auto pp:model->GetParameters()) p = p+syd::ToString(pp)+" ";
-      std::cout << " " << model->GetName() << " " << model->ceres_summary_.BriefReport() << " "
+      std::cout << " " << model->GetName() << " " //<< model->ceres_summary_.BriefReport() << " "
                 << p
-                << " Select? " << (i == d.selected_model)
+                << (i == d.selected_model ? "**Selected**":"")
                 << " R2 = " << model->ComputeR2(d.tac, restricted_tac_flag_)
                 << " AICc = " << model->ComputeAICc(d.tac)
-                << " AUC = " << model->ComputeAUC(d.tac, restricted_tac_flag_)
+                << " AUC = " << model->ComputeAUC(d.tac, model->lambda_phys_hours_, restricted_tac_flag_)
+                << " l = " << model->lambda_phys_hours_
                 << std::endl;
     }
   }
@@ -294,16 +306,17 @@ int syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac,
   double best_R2 = 0.0;
   for(auto i=0; i<models_.size(); i++) {
     auto & m = models_[i];
-    if (!m->IsAcceptable()) continue;
-    double R2 = m->ComputeR2(tac);
-    if (R2 > R2_threshold) {
-      double AICc;
-      bool b = m->IsAICcValid(tac.size());
-      if (b) AICc = m->ComputeAICc(tac);
-      if (!b or AICc < best_AICc) { // if AICc not valid, consider it is ok
-        best = i;
-        best_AICc = AICc;
-        best_R2 = R2;
+    if (m->IsAcceptable()) {
+      double R2 = m->ComputeR2(tac);
+      if (R2 > R2_threshold and R2 > best_R2) {
+        double AICc;
+        bool b = m->IsAICcValid(tac.size());
+        if (b) AICc = m->ComputeAICc(tac);
+        if (!b or AICc < best_AICc) { // if AICc not valid, consider it is ok
+          best = i;
+          best_AICc = AICc;
+          best_R2 = R2;
+        }
       }
     }
   }

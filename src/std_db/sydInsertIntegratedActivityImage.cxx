@@ -127,15 +127,24 @@ int main(int argc, char* argv[])
   for(auto d:debug_points) builder.AddDebugPixel(d.name, d.x, d.y, d.z);
 
   // Set the models
+  auto f2 = new syd::FitModel_f2;
+  f2->id_ = 2;
   auto f3 = new syd::FitModel_f3;
   f3->id_ = 3;
   auto f4a = new syd::FitModel_f4a;
   f4a->id_ = 4;
+  //builder.AddModel(f2); // no f2
   builder.AddModel(f3);
   builder.AddModel(f4a);
 
+  // auto f4 = new syd::FitModel_f4;
+  // f4->id_ = 7;
+  // builder.AddModel(f4); // no f4
+
   // Set the output
   auto auc = new syd::FitOutputImage_AUC(im);
+  auc->l_phys = builder.image_lambda_phys_in_hour_;
+  auto auc_177lu = new syd::FitOutputImage_AUC(im);
   auto r2 = new syd::FitOutputImage_R2(im);
   auto best_model = new syd::FitOutputImage_Model(im);
   auto iter = new syd::FitOutputImage_Iteration(im);
@@ -146,6 +155,11 @@ int main(int argc, char* argv[])
     builder.AddOutputImage(r2);
     builder.AddOutputImage(best_model);
     builder.AddOutputImage(iter);
+    auc_177lu->l_phys = 0.0043449876; // lut
+    //    auc_177lu->l_phys = 0.010297405; // Indium
+    //    auc_177lu->l_phys = 0.010823439;
+    auc_177lu->filename = "auc_177lu.mhd";
+    builder.AddOutputImage(auc_177lu);
   }
 
   // Use a mask, consider values of the first spect
@@ -168,7 +182,7 @@ int main(int argc, char* argv[])
   builder.CreateIntegratedActivityImage();
 
   // Output
-  if (args_info.debug_images_flag)
+  if (args_info.debug_images_flag and !args_info.debug_only_flag)
     for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename);
 
   // Debug here
@@ -184,7 +198,7 @@ int main(int argc, char* argv[])
     ++it_success;
     ++it_mask;
   }
-  if (args_info.debug_images_flag)
+  if (args_info.debug_images_flag and !args_info.debug_only_flag)
     syd::WriteImage<ImageType>(mask, "mask2.mhd");
 
   // Redo with a mask
@@ -199,41 +213,42 @@ int main(int argc, char* argv[])
   builder.CreateIntegratedActivityImage();
 
   // Output
-  if (args_info.debug_images_flag)
+  if (args_info.debug_images_flag and !args_info.debug_only_flag)
     for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename+"_2.mhd");
 
   // Debug here
   builder.SaveDebugPixel("gp/tac_2.txt");
   builder.SaveDebugModel("gp/models_2.txt");
 
-
   // update the mask
-  it_success = success->iterator;
-  it_success.GoToBegin();
-  it_mask.GoToBegin();
-  while (!it_mask.IsAtEnd()) {
-    if (it_success.Get() == 1.0) it_mask.Set(0.0);
-    ++it_success;
-    ++it_mask;
+  if (!args_info.debug_only_flag) {
+    it_success = success->iterator;
+    it_success.GoToBegin();
+    it_mask.GoToBegin();
+    while (!it_mask.IsAtEnd()) {
+      if (it_success.Get() == 1.0) it_mask.Set(0.0);
+      ++it_success;
+      ++it_mask;
+    }
+    if (args_info.debug_images_flag and !args_info.debug_only_flag)
+      syd::WriteImage<ImageType>(mask, "mask3.mhd");
+
+    int f = syd::FillHoles<ImageType>(auc->image, mask, 2);
+
+    // Deal with remaining failed pixels
+    LOG(1) << "Last step: fill remaining holes. " << f << " failed pixels remain.";
+
+    syd::WriteImage<ImageType>(auc->image, "auc3.mhd");
   }
-  if (args_info.debug_images_flag)
-    syd::WriteImage<ImageType>(mask, "mask3.mhd");
-
-  int f = syd::FillHoles<ImageType>(auc->image, mask, 2);
-
-  // Deal with remaining failed pixels
-  LOG(1) << "Last step: fill remaining holes. " << f << " pixels remain failed.";
-
-  syd::WriteImage<ImageType>(auc->image, "auc3.mhd");
 
   // Output
   DD("FIXME : insert builder output in the db");
 
   // Update tags
   /*
-  for(auto t:tags) image->AddTag(t);
-  db->Update(image);
-  LOG(1) << "Inserting Image " << image;
+    for(auto t:tags) image->AddTag(t);
+    db->Update(image);
+    LOG(1) << "Inserting Image " << image;
   */
 
   DD("done");
