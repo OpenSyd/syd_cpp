@@ -38,7 +38,6 @@ syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
 // --------------------------------------------------------------------
 void syd::IntegratedActivityImageBuilder::SaveDebugPixel(const std::string & filename) const
 {
-  DD("SaveDebugPixel");
   if (debug_data.size() < 1) return;
 
   syd::PrintTable ta;
@@ -65,7 +64,6 @@ void syd::IntegratedActivityImageBuilder::SaveDebugPixel(const std::string & fil
 // --------------------------------------------------------------------
 void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & filename) const
 {
-  DD("SaveDebugModel");
   if (debug_data.size() < 1) return;
 
   // Create tac from the models
@@ -111,9 +109,9 @@ void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & fil
       std::cout << " " << model->GetName() << " " << model->ceres_summary_.BriefReport() << " "
                 << p
                 << " Select? " << (i == d.selected_model)
-                << " R2 = " << model->ComputeR2(d.tac)
+                << " R2 = " << model->ComputeR2(d.tac, restricted_tac_flag_)
                 << " AICc = " << model->ComputeAICc(d.tac)
-                << " AUC = " << model->ComputeAUC(d.tac)
+                << " AUC = " << model->ComputeAUC(d.tac, restricted_tac_flag_)
                 << std::endl;
     }
   }
@@ -136,7 +134,6 @@ void syd::IntegratedActivityImageBuilder::AddDebugPixel(std::string name, int x,
   debug.z = z;
   debug.index = index;
   debug_data.push_back(debug);
-  std::cout << "debug " << name << " " << x << " " << y << " " << z << std::endl;
 }
 // --------------------------------------------------------------------
 
@@ -173,7 +170,10 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   }
 
   // Init output iterators
-  for(auto & o:outputs_) o->iterator.GoToBegin();
+  for(auto & o:outputs_) {
+    o->iterator.GoToBegin();
+    o->use_current_tac = restricted_tac_flag_;
+  }
 
   // debug init, sort point by index
   bool debug_this_point_flag = true;
@@ -275,11 +275,13 @@ int syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac,
   double best_AICc = 666;
   double best_R2 = 0.0;
   for(auto i=0; i<models_.size(); i++) {
-    double R2 = models_[i]->ComputeR2(tac);
+    auto & m = models_[i];
+    if (!m->IsAcceptable()) continue;
+    double R2 = m->ComputeR2(tac);
     if (R2 > R2_threshold) {
       double AICc;
-      bool b = models_[i]->IsAICcValid(tac.size());
-      if (b) AICc = models_[i]->ComputeAICc(tac);
+      bool b = m->IsAICcValid(tac.size());
+      if (b) AICc = m->ComputeAICc(tac);
       if (!b or AICc < best_AICc) { // if AICc not valid, consider it is ok
         best = i;
         best_AICc = AICc;
@@ -346,7 +348,7 @@ void syd::IntegratedActivityImageBuilder::InitSolver()
   // Init the models
   for(auto m:models_) {
     m->SetLambdaPhysicHours(image_lambda_phys_in_hour_);
-    m->robust_scaling_ = robust_scaling_;
+    // m->robust_scaling_ = robust_scaling_;
   }
 }
 // --------------------------------------------------------------------

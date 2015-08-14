@@ -68,18 +68,13 @@ namespace syd {
     void AddInput(ImageType::Pointer image, double time) { images_.push_back(image); times_.push_back(time); }
     void AddModel(syd::FitModelBase * m) { models_.push_back(m); }
     void AddOutputImage(syd::FitOutputImage * o) { outputs_.push_back(o); }
+    void SetMask(ImageType::Pointer m) { mask_ = m; }
 
     // Main function
     void CreateIntegratedActivityImage();
 
     // Other functions
     void ClearModel() { models_.clear(); }
-    void SetMask(ImageType::Pointer m) { mask_ = m; }
-
-    // protected
-    void InitSolver();
-    int FitModels(TimeActivityCurve & tac, bool debug_this_point_flag, DebugType * debug_current);
-    void InitInputData();
 
     // Debug
     void SaveDebugPixel(const std::string & filename) const;
@@ -88,7 +83,7 @@ namespace syd {
     bool debug_only_flag_;
 
     // options
-    double robust_scaling_;
+    //double robust_scaling_;
     double R2_min_threshold_;
     double image_lambda_phys_in_hour_;
     bool restricted_tac_flag_;
@@ -113,6 +108,10 @@ namespace syd {
 
     // Current selected models
     syd::FitModelBase * current_model_;
+
+    void InitSolver();
+    int FitModels(TimeActivityCurve & tac, bool debug_this_point_flag, DebugType * debug_current);
+    void InitInputData();
 
     // Options for the solver
     ceres::Solver::Options * ceres_options_;
