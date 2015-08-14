@@ -141,6 +141,8 @@ void syd::IntegratedActivityImageBuilder::AddDebugPixel(std::string name, int x,
 // --------------------------------------------------------------------
 void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 {
+  LOG(2) << "Init CreateIntegratedActivityImage";
+
   // typedef
   typedef float PixelType;
   typedef itk::Image<PixelType,3> ImageType;
@@ -176,19 +178,21 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   }
 
   // debug init, sort point by index
-  bool debug_this_point_flag = true;
+  bool debug_this_point_flag;
   int debug_point_current=0;
   std::sort(begin(debug_data), end(debug_data),
             [](DebugType a, DebugType b) {
               return a.index < b.index; });
+  if(debug_data.size() == 0) debug_point_current = -1;
 
   // main loop
   int x = 0;
   int n = images_[0]->GetLargestPossibleRegion().GetNumberOfPixels();
+  LOG(1) << "Starting CreateIntegratedActivityImage";
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
 
     // Consider current point, is it a debug point ?
-    if (x == debug_data[debug_point_current].index) debug_this_point_flag = true;
+    if (debug_point_current != -1 and x == debug_data[debug_point_current].index) debug_this_point_flag = true;
     else debug_this_point_flag = false;
 
     // Check if pixel is in the mask
