@@ -45,7 +45,7 @@ void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
     auto r = new ResidualType(tac.GetTime(i), tac.GetValue(i), GetLambdaPhysicHours());
     residuals_.push_back(r);
   }
-  // FIXME --> could be templated by CostFctType and param_nb ?
+  // could be templated by CostFctType and param_nb ? not easy
   for(auto i=0; i<tac.size(); i++) {
     problem->AddResidualBlock(new CostFctType(residuals_[i]),
                               NULL,//new ceres::HuberLoss(robust_scaling_),
@@ -53,7 +53,7 @@ void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   }
 
   // problem->SetParameterLowerBound(&params_[0], 0, 0.0);
-  // problem->SetParameterLowerBound(&params_[1], 0, -GetLambdaPhysicHours()*0.9);
+  //  problem->SetParameterLowerBound(&params_[1], 0, -GetLambdaPhysicHours()*0.5);
   // problem->SetParameterLowerBound(&params_[2], 0, 0.0);
 }
 // --------------------------------------------------------------------
