@@ -56,10 +56,11 @@ namespace syd {
   /// Compute and store the AUC (Area Under the Curve)
   class FitOutputImage_AUC: public FitOutputImage {
   public:
+    double l_phys;
     FitOutputImage_AUC(Pointer input):FitOutputImage(input) { filename = "auc.mhd"; }
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::FitModelBase * model) {
-      double r = model->ComputeAUC(tac, use_current_tac);
+      double r = model->ComputeAUC(tac, l_phys, use_current_tac);
       iterator.Set(r);
     }
   };
