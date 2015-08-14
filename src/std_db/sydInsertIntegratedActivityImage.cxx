@@ -207,9 +207,6 @@ int main(int argc, char* argv[])
   builder.SaveDebugModel("gp/models_2.txt");
 
 
-  // Deal with remaining failed pixels
-  LOG(1) << "Last step: fill remaining holes";
-
   // update the mask
   it_success = success->iterator;
   it_success.GoToBegin();
@@ -222,7 +219,11 @@ int main(int argc, char* argv[])
   if (args_info.debug_images_flag)
     syd::WriteImage<ImageType>(mask, "mask3.mhd");
 
-  syd::FillHoles<ImageType>(auc->image, mask, 2);
+  int f = syd::FillHoles<ImageType>(auc->image, mask, 2);
+
+  // Deal with remaining failed pixels
+  LOG(1) << "Last step: fill remaining holes. " << f << " pixels remain failed.";
+
   syd::WriteImage<ImageType>(auc->image, "auc3.mhd");
 
   // Output

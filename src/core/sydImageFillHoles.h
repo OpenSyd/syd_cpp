@@ -27,7 +27,7 @@ namespace syd {
   */
 
   template<class ImageType>
-  void FillHoles(ImageType * input, const ImageType * mask, int r)
+  int FillHoles(ImageType * input, const ImageType * mask, int r)
   {
     typedef itk::NeighborhoodIterator<ImageType> Iterator;
     typedef itk::ConstNeighborhoodIterator<ImageType> CIterator;
@@ -42,6 +42,7 @@ namespace syd {
     int n = 1;
     for(auto i=0; i<3; i++) n *= it_n.GetSize(i);
 
+    int failure = 0;
     while (!it_mask.IsAtEnd()) {
       if (it_mask.GetCenterPixel() == 1.0) {
         double  s = 0.0;
@@ -54,6 +55,7 @@ namespace syd {
         if (m == 0) {
           LOG(WARNING) << "Too large hole to fill (no pixels in mask around this one). index is "
                        << it_n.GetIndex();
+          ++failure;
         }
         else {
           s = s/m; // mean of neighbor pixels
@@ -62,7 +64,8 @@ namespace syd {
       }
       ++it_mask;
       ++it_n;
-    }
-  }
+    } //  end loop
+    return failure;
+  } // end function
 } // end namespace
 //--------------------------------------------------------------------
