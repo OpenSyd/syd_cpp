@@ -104,7 +104,7 @@ int main(int argc, char* argv[])
 
   // Set some options
   builder.image_lambda_phys_in_hour_ = log(2.0)/images[0]->dicoms[0]->injection->radionuclide->half_life_in_hours;
-  builder.debug_only_flag_ = args_info.only_debug_flag;
+  builder.debug_only_flag_ = args_info.debug_only_flag;
   builder.R2_min_threshold_ = args_info.r2_min_arg;
 
   // Consider the debug points
@@ -113,7 +113,6 @@ int main(int argc, char* argv[])
     int x,y,z;
   };
   std::vector<debug_point> debug_points;
-
   if (args_info.debug_given) {
     std::string file=args_info.debug_arg;
     std::ifstream is(file);
@@ -140,10 +139,12 @@ int main(int argc, char* argv[])
   auto iter = new syd::FitOutputImage_Iteration(im);
   auto success = new syd::FitOutputImage_Success(im);
   builder.AddOutputImage(auc);
-  builder.AddOutputImage(r2);
-  builder.AddOutputImage(best_model);
-  builder.AddOutputImage(iter);
-  builder.AddOutputImage(success);
+  if (args_info.debug_images_flag) {
+    builder.AddOutputImage(r2);
+    builder.AddOutputImage(best_model);
+    builder.AddOutputImage(iter);
+    builder.AddOutputImage(success);
+  }
 
   // Use a mask, consider values of the first spect
   ImageType::Pointer mask = syd::CreateImageLike<ImageType>(im);
@@ -164,7 +165,8 @@ int main(int argc, char* argv[])
   builder.CreateIntegratedActivityImage();
 
   // Output
-  for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename);
+  if (args_info.debug_images_flag)
+    for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename);
 
   // Debug here
   builder.SaveDebugPixel("gp/tac.txt");
@@ -179,7 +181,8 @@ int main(int argc, char* argv[])
     ++it_success;
     ++it_mask;
   }
-  syd::WriteImage<ImageType>(mask, "mask2.mhd");
+  if (args_info.debug_images_flag)
+    syd::WriteImage<ImageType>(mask, "mask2.mhd");
 
   // Redo with a mask
   builder.ClearModel();
@@ -193,12 +196,10 @@ int main(int argc, char* argv[])
   builder.CreateIntegratedActivityImage();
 
   // Output
-  //for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename);
-  syd::WriteImage<ImageType>(r2->image, "r2_bis.mhd");
-  syd::WriteImage<ImageType>(best_model->image, "best_model_bis.mhd");
-  syd::WriteImage<ImageType>(auc->image, "auc_bis.mhd");
+  if (args_info.debug_images_flag)
+    for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename+"_2.mhd");
 
-  // Debug here //FIXME
+  // Debug here
   builder.SaveDebugPixel("gp/tac_2.txt");
   builder.SaveDebugModel("gp/models_2.txt");
 
