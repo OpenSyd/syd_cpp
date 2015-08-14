@@ -81,10 +81,10 @@ namespace syd {
 
     friend std::ostream& operator<<(std::ostream& os, const FitModelBase & p);
 
-    double Integrate(double a, double b) const;
-    double Integrate() const;
+    double Integrate(double a, double b, double l_phys) const;
+    double Integrate(double l_phys) const;
 
-    double ComputeAUC(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
+    double ComputeAUC(const syd::TimeActivityCurve & tac, double l_phys, bool use_current_tac=false) const;
     double ComputeR2(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
     double ComputeAICc(const syd::TimeActivityCurve & tac) const;
     double ComputeSS(const syd::TimeActivityCurve & tac) const;

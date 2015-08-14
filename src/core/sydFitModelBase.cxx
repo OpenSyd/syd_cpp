@@ -78,12 +78,12 @@ namespace syd {
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::Integrate(double a, double b) const
+double syd::FitModelBase::Integrate(double a, double b, double l_phys) const
 {
   double x;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
-    double l = GetLambda(k) + GetLambdaPhysicHours();
+    double l = GetLambda(k) + l_phys;
     x += A/l * (exp(-l*a) - exp(-l*b)) ;
   }
   return x;
@@ -92,12 +92,12 @@ double syd::FitModelBase::Integrate(double a, double b) const
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::Integrate() const
+double syd::FitModelBase::Integrate(double l_phys) const
 {
   double x = 0.0;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
-    double l = GetLambda(k) + GetLambdaPhysicHours();
+    double l = GetLambda(k) + l_phys;
     x += A/l;
   }
   return x;
@@ -106,10 +106,10 @@ double syd::FitModelBase::Integrate() const
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac, bool use_current_tac) const
+double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac, double l_phys, bool use_current_tac) const
 {
   // Simple integration if full model
-  if (!use_current_tac) return Integrate();
+  if (!use_current_tac) return Integrate(l_phys);
 
   // If not, we consider the current_tac as the restricted one
   if (!current_tac) {
@@ -118,10 +118,10 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac, bool us
   double AUC = 0.0;
 
   // Integrate from 0 to first time of the restricted_tac
-  double starting_part_model = Integrate(0.0, current_tac->GetTime(0));
+  double starting_part_model = Integrate(0.0, current_tac->GetTime(0), l_phys);
 
   // Integrate from 0 to infinity
-  double total = Integrate();
+  double total = Integrate(l_phys);
 
   // Trapeze intregration of the first curve part
   int index = 0;
@@ -217,8 +217,8 @@ bool syd::FitModelBase::IsAcceptable() const
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
     double l = GetLambda(k) + GetLambdaPhysicHours();
-    if (A<=0.0) is_ok = false; // Warning, to change for some model (f4a)
-    if (l<0.5*GetLambdaPhysicHours()) is_ok = false; // too slow decay
+    // if (A<=0.0) is_ok = false; // Warning, to change for some model (f4a)
+    // if (l<0.2*GetLambdaPhysicHours()) is_ok = false; // too slow decay
   }
   return is_ok;
 }
