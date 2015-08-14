@@ -8,9 +8,13 @@ description "Create a new (mhd) Image for each given dicom
 - <image_ids>     list of image id to integrate
 "
 
-option "debug"   	 	-       "File with debug points"                           string    no
-option "only_debug"   	 	-       "Do not create the image, only compute for point"  flag off
-#option "robust_scaling"   	-       "Ceres scaling Loss robust"                        float default="0.1" no
 option "min_activity"   	-       "Dont fit if lower activity"                       float default="500" no
 option "gauss"   	        -       "Gaussian filter on images first"                  float default="0" no
 option "r2_min"   	        -       "Min R2 threshold for model selection"             float default="0.7" no
+
+section "debug"
+option "debug"   	 	-       "File with debug points"                           string    no
+option "debug_only"   	 	-       "Do not create the image, only compute for point"  flag off
+option "debug_images"   	-       "Output some debug images"                         flag off
+
+#option "robust_scaling"   	-       "Ceres scaling Loss robust"                        float default="0.1" no
