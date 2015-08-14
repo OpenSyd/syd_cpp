@@ -52,6 +52,7 @@ namespace syd {
     virtual FitModelBase * Clone() const;
     virtual void SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac);
     virtual double GetValue(const double & time) const;
+    virtual bool IsAcceptable() const;
 
   protected:
     std::vector<ResidualType*> residuals_;

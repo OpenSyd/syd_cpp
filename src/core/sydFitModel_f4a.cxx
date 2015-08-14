@@ -124,3 +124,17 @@ double syd::FitModel_f4a::GetLambda(const int i) const
   else return params_[2];
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::FitModel_f4a::IsAcceptable() const
+{
+  bool is_ok = true;
+  for(auto k=0; k<GetNumberOfExpo(); k++) {
+    double A = GetA(k);
+    double l = GetLambda(k) + GetLambdaPhysicHours();
+    if (l<0.5*GetLambdaPhysicHours()) is_ok = false;
+  }
+  return is_ok;
+}
+// --------------------------------------------------------------------
