@@ -36,7 +36,7 @@ void syd::FitModel_f4a::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
 
   // Initialisation
   params_[0] = tac.GetValue(0); // A1
-  params_[1] = GetLambdaPhysicHours(); // lambda_1
+  params_[1] = 0.0;//GetLambdaPhysicHours(); // lambda_1
   params_[2] = 0.0;//GetLambdaPhysicHours()*1.2; // lambda_2
 
   // need to be created each time
@@ -52,18 +52,8 @@ void syd::FitModel_f4a::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
                               &params_[0], &params_[1], &params_[2]);
   }
 
-  //  problem->SetParameterLowerBound(&params_[0], 0, 0); // A positive
-
-  // problem->SetParameterLowerBound(&params_[0], 0, 0); // l1
-  // problem->SetParameterLowerBound(&params_[0], 0, 0); // l2
-
-  //problem->SetParameterLowerBound(&params_[1], 0, GetLambdaPhysicHours());
-  //problem->SetParameterLowerBound(&params_[2], 0, GetLambdaPhysicHours());
-  //  problem->SetParameterLowerBound(&params_[1], 0, 0.0);
-  //problem->SetParameterLowerBound(&params_[2], 0, 0); // positive
-
-  //problem->SetParameterLowerBound(&params_[1], 0, GetLambdaPhysicHours());
-  // problem->SetParameterLowerBound(&params_[2], 0, GetLambdaPhysicHours());
+  problem->SetParameterLowerBound(&params_[1], 0, -0.2*GetLambdaPhysicHours());
+  problem->SetParameterLowerBound(&params_[2], 0, -0.2*GetLambdaPhysicHours());
 }
 // --------------------------------------------------------------------
 
@@ -133,7 +123,7 @@ bool syd::FitModel_f4a::IsAcceptable() const
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
     double l = GetLambda(k) + GetLambdaPhysicHours();
-    if (l<0.5*GetLambdaPhysicHours()) is_ok = false;
+    //if (l<-0.2*GetLambdaPhysicHours()) is_ok = false;
   }
   return is_ok;
 }
