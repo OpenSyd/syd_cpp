@@ -23,6 +23,7 @@
 #include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
 #include "sydIntegratedActivityImageBuilder.h"
+#include "sydImageFillHoles.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -85,6 +86,7 @@ int main(int argc, char* argv[])
   typedef float PixelType;
   typedef itk::Image<PixelType,3> ImageType;
   typedef itk::ImageRegionIterator<ImageType> Iterator;
+  typedef itk::NeighborhoodIterator<ImageType> NIterator;
 
   // Create main builder
   syd::IntegratedActivityImageBuilder builder;
@@ -203,6 +205,25 @@ int main(int argc, char* argv[])
   // Debug here
   builder.SaveDebugPixel("gp/tac_2.txt");
   builder.SaveDebugModel("gp/models_2.txt");
+
+
+  // Deal with remaining failed pixels
+  LOG(1) << "Last step: fill remaining holes";
+
+  // update the mask
+  it_success = success->iterator;
+  it_success.GoToBegin();
+  it_mask.GoToBegin();
+  while (!it_mask.IsAtEnd()) {
+    if (it_success.Get() == 1.0) it_mask.Set(0.0);
+    ++it_success;
+    ++it_mask;
+  }
+  if (args_info.debug_images_flag)
+    syd::WriteImage<ImageType>(mask, "mask3.mhd");
+
+  syd::FillHoles<ImageType>(auc->image, mask, 2);
+  syd::WriteImage<ImageType>(auc->image, "auc3.mhd");
 
   // Output
   DD("FIXME : insert builder output in the db");
