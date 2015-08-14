@@ -277,3 +277,16 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db)
   }
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+bool syd::Image::IsSameSizeAndSpacingThan(const syd::Image::pointer image) const
+{
+  bool b = true;
+  for(auto i=0; i<size.size(); i++) {
+    b = b and size[i] == image->size[i] and
+      spacing[i] == image->spacing[i];
+  }
+  return b;
+}
+// --------------------------------------------------
