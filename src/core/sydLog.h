@@ -36,7 +36,6 @@ namespace sydlog {
   /// Must be negative to always being displayed
   static int FATAL = -666;
   static int WARNING = -555;
-  // static int SQL = -444;
 
   static const char * resetColor = "\x1b[0m";
   static const char * fatalColor = "\x1b[31m";
@@ -58,22 +57,18 @@ namespace sydlog {
     static int FromString(const std::string& level);
     bool fatalFlag;
     static std::ostream * output;
+
   protected:
     std::ostringstream os;
+
   private:
     Log(const Log&);
     Log& operator =(const Log&);
   };
   // --------------------------------------------------------------------
 
+#include "sydLogMacro.h"
 
-  // Main function to use LOG like : LOG(1) << blabla
-  std::ostringstream& LOG(int level);
-
-  // The same for SQL function
-  std::ostringstream& LOG_SQL();
-
-  typedef Log FILELog;
 }
 
 #endif /* end #define SYDLOG_H */

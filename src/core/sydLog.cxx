@@ -110,25 +110,3 @@ std::string sydlog::NowTime()
 }
 #endif //WIN32
 // --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::ostringstream& sydlog::LOG(int level) {
-  if (level > sydlog::FILELog::LogLevel()) {
-    // No output, create a fake os.
-    static std::ostringstream * os = new std::ostringstream; // only one
-    os->clear(); // reset each time it is used.
-    os->str("");
-    return *os;
-  }
-  else return sydlog::Log().Get(level);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::ostringstream& sydlog::LOG_SQL() {
-  if (!sydlog::Log::SQLFlag()) return LOG(999999);
-  else return LOG(0);
-}
-// --------------------------------------------------------------------
