@@ -38,11 +38,13 @@ namespace syd {
     Pointer image;
     Iterator iterator;
     std::string filename;
+    bool use_current_tac;
 
     FitOutputImage(Pointer input) {
       image = syd::CreateImageLike<ImageType>(input);
       iterator = Iterator(image, image->GetLargestPossibleRegion());
       image->FillBuffer(0.0);
+      use_current_tac = false;
     }
 
     virtual void Update(const syd::TimeActivityCurve & tac,
@@ -57,7 +59,7 @@ namespace syd {
     FitOutputImage_AUC(Pointer input):FitOutputImage(input) { filename = "auc.mhd"; }
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::FitModelBase * model) {
-      double r = model->ComputeAUC(tac);
+      double r = model->ComputeAUC(tac, use_current_tac);
       iterator.Set(r);
     }
   };
@@ -68,7 +70,7 @@ namespace syd {
     FitOutputImage_R2(Pointer input):FitOutputImage(input) { filename = "r2.mhd"; }
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::FitModelBase * model) {
-      double R2 = model->ComputeR2(tac);
+      double R2 = model->ComputeR2(tac, use_current_tac);
       iterator.Set(R2);
     }
   };
