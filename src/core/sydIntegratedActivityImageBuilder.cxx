@@ -195,6 +195,8 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   // main loop
   int x = 0;
   int n = images_[0]->GetLargestPossibleRegion().GetNumberOfPixels();
+  int number_of_pixels_in_mask = 0;
+  int number_of_pixels_success = 0;
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
 
     // Consider current point, is it a debug point ?
@@ -208,6 +210,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
       for(auto i=0; i<images_.size(); i++) ++it;
     }
     else {
+      ++number_of_pixels_in_mask;
       // Create current tac
       for(auto i=0; i<images_.size(); i++) {
         tac.SetValue(i, it.Get());
@@ -232,6 +235,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 
       // Set the current selected model, update the output
       if (best != -1) {
+        ++number_of_pixels_success;
         current_model_ = models_[best];
         // Update output
         for(auto o:outputs_) o->Update(tac, current_model_);
@@ -255,6 +259,10 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
     // Next in mask
     if (mask_flag) ++it_mask;
   }
+
+  LOG(2) << "Done. " << x << " pixels  " << number_of_pixels_in_mask << " pixels in mask  "
+         << number_of_pixels_success << " successfully fit  "
+         << number_of_pixels_in_mask-number_of_pixels_success << " fail";
 }
 // --------------------------------------------------------------------
 
