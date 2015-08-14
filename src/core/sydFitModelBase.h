@@ -80,11 +80,12 @@ namespace syd {
     double Integrate(double a, double b) const;
     double Integrate() const;
 
-    double ComputeAUC(const syd::TimeActivityCurve & tac) const;
-    double ComputeR2(const syd::TimeActivityCurve & tac) const;
+    double ComputeAUC(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
+    double ComputeR2(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
     double ComputeAICc(const syd::TimeActivityCurve & tac) const;
     double ComputeSS(const syd::TimeActivityCurve & tac) const;
     bool IsAICcValid(int N) const;
+    virtual bool IsAcceptable() const;
 
     virtual double GetA(const int i) const { LOG(sydlog::FATAL) << "GetA to implement " << GetName(); return 0.0; }
     virtual double GetLambda(const int i) const { LOG(sydlog::FATAL) << "GetLambda to implement " << GetName(); return 0.0; }

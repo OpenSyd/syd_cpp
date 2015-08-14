@@ -71,6 +71,7 @@ namespace syd {
   std::ostream& operator<<(std::ostream& os, const FitModelBase & p)
   {
     //FIXME
+    return os;
   }
 } // end namespace
 // --------------------------------------------------------------------
@@ -105,10 +106,10 @@ double syd::FitModelBase::Integrate() const
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac) const
+double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac, bool use_current_tac) const
 {
   // Simple integration if full model
-  if (!start_from_max_flag) return Integrate();
+  if (!use_current_tac) return Integrate();
 
   // If not, we consider the current_tac as the restricted one
   if (!current_tac) {
@@ -136,10 +137,10 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac) const
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve & tac) const
+double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve & tac, bool use_current_tac) const
 {
   const syd::TimeActivityCurve * current = &tac;
-  if (start_from_max_flag) {
+  if (use_current_tac) {
     if (!current_tac) {
       LOG(FATAL) << "Could not compute ComputeAUC with restricted tac, 'current_tac' must be set";
     }
@@ -205,5 +206,20 @@ double syd::FitModelBase::ComputeAICc(const syd::TimeActivityCurve & tac) const
   //           << " -> " << AIC << " " << AICc << std::endl;
 
   return AICc;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::FitModelBase::IsAcceptable() const
+{
+  bool is_ok = true;
+  for(auto k=0; k<GetNumberOfExpo(); k++) {
+    double A = GetA(k);
+    double l = GetLambda(k) + GetLambdaPhysicHours();
+    if (A<=0.0) is_ok = false; // Warning, to change for some model (f4a)
+    if (l<0.5*GetLambdaPhysicHours()) is_ok = false; // too slow decay
+  }
+  return is_ok;
 }
 // --------------------------------------------------------------------
