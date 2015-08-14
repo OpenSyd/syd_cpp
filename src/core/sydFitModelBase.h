@@ -26,6 +26,10 @@
 #include <glog/logging.h>
 #undef LOG
 
+// Reset log macro. There is a macro name conflict because glog/ceres
+// use a macro named LOG, so we need to reput syd LOG macro here
+#include "sydLogMacro.h"
+
 // syd
 #include "sydTimeActivityCurve.h"
 
@@ -87,8 +91,8 @@ namespace syd {
     bool IsAICcValid(int N) const;
     virtual bool IsAcceptable() const;
 
-    virtual double GetA(const int i) const { LOG(sydlog::FATAL) << "GetA to implement " << GetName(); return 0.0; }
-    virtual double GetLambda(const int i) const { LOG(sydlog::FATAL) << "GetLambda to implement " << GetName(); return 0.0; }
+    virtual double GetA(const int i) const { LOG(FATAL) << "GetA to implement " << GetName(); return 0.0; }
+    virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); return 0.0; }
 
     bool start_from_max_flag;
 
