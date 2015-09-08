@@ -83,12 +83,12 @@ int main(int argc, char* argv[])
       iss >> w3; // 4th words
       HL = atof(w3.c_str());
       if (w2 == "(d)") HL*=24.0;
-      else {
-        if (w2 == "(s)") HL/=3600;
-        else {
-          if (w2 != "(h)") {
-            LOG(FATAL) << "I dont know the unity : " << w2 << " for the Half-life."
-                       << std::endl << page;
+      else { if (w2 == "(s)") HL/=3600;
+        else { if (w2 == "(min)") HL /= 60;
+          else { if (w2 != "(h)") {
+              LOG(FATAL) << "I dont know the unity : " << w2 << " for the Half-life."
+                         << std::endl << page;
+            }
           }
         }
       }
