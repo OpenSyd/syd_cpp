@@ -60,7 +60,7 @@ void syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
     odb::connection_ptr c (db.connection ());
     c->execute ("PRAGMA foreign_keys=ON");
     odb::transaction t (db.begin ());
-    odb::schema_catalog::create_schema(db, "sydCommonSchema"); // common schema
+    odb::schema_catalog::create_schema(db, "sydCommonDatabase"); // common schema
     // Specific list of schemas
     for(auto s:schemas) odb::schema_catalog::create_schema(db, s);
     t.commit ();
@@ -80,7 +80,7 @@ void syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
     db.update(s);
     t.commit();
   } catch (const odb::exception& e) {
-    EXCEPTION("Error while trying to insert basic database information (sydCommonSchema) in the db. Error is:" << e.what());
+    EXCEPTION("Error while trying to insert basic database information (sydCommonDatabase) in the db. Error is:" << e.what());
   }
 }
 // --------------------------------------------------------------------
