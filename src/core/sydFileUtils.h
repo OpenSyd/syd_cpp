@@ -46,7 +46,9 @@ using namespace sydlog;
 // boost
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
+#include <boost/asio.hpp>
 namespace fs = boost::filesystem;
+using boost::asio::ip::tcp;
 
 //--------------------------------------------------------------------
 namespace syd {
@@ -65,7 +67,7 @@ namespace syd {
   void CopyFile(std::string src, std::string dst);
   std::string CreateTemporaryFile(const std::string & folder, const std::string & extension);
   std::string CreateTemporaryDirectory(const std::string & folder);
-
+  int GetPageContent(char const *argv[], std::ostream & os);
 
 } // end namespace syd
 //--------------------------------------------------------------------
