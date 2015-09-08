@@ -33,6 +33,11 @@ namespace syd {
 #pragma db options("UNIQUE")
     std::string name;
 
+    std::string element;
+    double atomic_number; //Z
+    double mass_number; // A
+    bool metastable;
+
     /// Half life of the radionuclide in hours
     double half_life_in_hours;
 

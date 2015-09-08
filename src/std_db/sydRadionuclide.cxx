@@ -23,7 +23,7 @@
 syd::Radionuclide::Radionuclide():syd::Record()
 {
   name = "unset";
-  half_life_in_hours = 0.0;
+  metastable = false;
 }
 // --------------------------------------------------------------------
 
@@ -34,7 +34,11 @@ std::string syd::Radionuclide::ToString() const
   std::stringstream ss ;
   ss << id << " "
      << name << " "
-     << half_life_in_hours;
+     << half_life_in_hours << " "
+     << element << " "
+     << atomic_number << " "
+     << mass_number << " "
+     << (metastable? "metastable":"");
   return ss.str();
 }
 // --------------------------------------------------
@@ -44,7 +48,11 @@ std::string syd::Radionuclide::ToString() const
 bool syd::Radionuclide::IsEqual(const pointer p) const
 {
   return (syd::Record::IsEqual(p) and name == p->name and
-          half_life_in_hours == p->half_life_in_hours);
+          half_life_in_hours == p->half_life_in_hours and
+          element == p->element and
+          atomic_number == p->atomic_number and
+          mass_number == p->mass_number and
+          metastable == p->metastable);
 }
 // --------------------------------------------------
 
@@ -55,6 +63,10 @@ void syd::Radionuclide::CopyFrom(const pointer p)
   syd::Record::CopyFrom(p);
   name = p->name;
   half_life_in_hours = p->half_life_in_hours;
+  element = p->element;
+  atomic_number = p->atomic_number;
+  mass_number = p->mass_number;
+  metastable = p->metastable;
 }
 // --------------------------------------------------
 
@@ -62,11 +74,7 @@ void syd::Radionuclide::CopyFrom(const pointer p)
 // --------------------------------------------------
 void syd::Radionuclide::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
-  if (arg.size() < 2) {
-    LOG(FATAL) << "To insert patient, please set <name> <half_life_in_hours>";
-  }
-  name = arg[0];
-  half_life_in_hours = atof(arg[1].c_str());
+  LOG(FATAL) << "To insert Radionuclide, please sydRadionuclideUpdate";
 }
 // --------------------------------------------------
 
@@ -81,7 +89,11 @@ void syd::Radionuclide::InitPrintTable(const syd::Database * db, syd::PrintTable
   }
   ta.AddColumn("#id");
   ta.AddColumn("name", 15);
-  ta.AddColumn("half_life(h)", 10,2);
+  ta.AddColumn("HF(h)", 10,2);
+  ta.AddColumn("element", 10);
+  ta.AddColumn("Z", 4);
+  ta.AddColumn("A", 4);
+  ta.AddColumn("metastable", 12);
 }
 // --------------------------------------------------
 
@@ -89,6 +101,6 @@ void syd::Radionuclide::InitPrintTable(const syd::Database * db, syd::PrintTable
 // --------------------------------------------------
 void syd::Radionuclide::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
 {
-  ta << id << name << half_life_in_hours;
+  ta << id << name << half_life_in_hours << element << atomic_number << mass_number << (metastable? "Y":"N");
 }
 // --------------------------------------------------
