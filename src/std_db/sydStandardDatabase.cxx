@@ -68,6 +68,16 @@ void syd::Table<syd::Patient>::Sort(syd::Patient::vector & v, const std::string 
 // --------------------------------------------------
 
 
+// --------------------------------------------------
+template<>
+void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & v, const std::string & order) const
+{
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) { return a->atomic_number < b->atomic_number; });
+}
+// --------------------------------------------------
+
+
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {
