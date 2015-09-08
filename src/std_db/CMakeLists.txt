@@ -83,6 +83,12 @@ wrap_ggo(sydImageTag_GGO_C sydImageTag.ggo sydCommandLineDefault.ggo)
 add_executable(sydImageTag sydImageTag.cxx ${sydImageTag_GGO_C})
 target_link_libraries(sydImageTag sydStandardDatabase)
 
+# Update Radionuclide table
+wrap_ggo(sydRadionuclideUpdate_GGO_C sydRadionuclideUpdate.ggo sydCommandLineDefault.ggo)
+add_executable(sydRadionuclideUpdate sydRadionuclideUpdate.cxx ${sydRadionuclideUpdate_GGO_C})
+target_link_libraries(sydRadionuclideUpdate sydStandardDatabase)
+
+
 # Insert a new RoiMaskImage (NOT YET)
 # wrap_ggo(sydInsertRoiMaskImage sydInsertRoiMaskImage.ggo)
 # add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx sydInsertRoiMaskImage_GGO_C})

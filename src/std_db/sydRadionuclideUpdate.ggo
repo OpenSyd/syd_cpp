@@ -1,0 +1,10 @@
+#File sydRadionuclideUpdate.ggo
+
+package "syd"
+version "0.3"
+usage "sydRadionuclideUpdate <name>"
+description "Create or update a new radionuclide, by retrieving information from
+http://www.nucleide.org/DDEP_WG/DDEPdata.htm
+"
+option "url"    -       "Database url server" string default = "www.nucleide.org" no
+option "path"   -       "Database url path "  string default = "/DDEP_WG/Nuclides/" no
