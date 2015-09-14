@@ -103,10 +103,10 @@ namespace syd {
     bool IsSameSizeAndSpacingThan(const syd::Image::pointer image) const;
 
     /// Return size as string such like 128x128x64
-    std::string SizeAsString() const { syd::ArrayToString<int,3>(size); }
+    std::string SizeAsString() const { return syd::ArrayToString<int,3>(size); }
 
     /// Return spacing as string such like 0.5x0.5x0.3
-    std::string SpacingAsString() const { syd::ArrayToString<double,3>(spacing); }
+    std::string SpacingAsString() const { return syd::ArrayToString<double,3>(spacing); }
 
   protected:
     Image();
