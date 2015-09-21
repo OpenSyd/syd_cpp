@@ -24,6 +24,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydIntegratedActivityImageBuilder.h"
 #include "sydImageFillHoles.h"
+#include "sydImage_GaussianFilter.h"
 
 // syd init
 SYD_STATIC_INIT
