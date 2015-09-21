@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -119,21 +119,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  LOG(1) &lt;&lt; <span class="stringliteral">&quot;Working dir is &quot;</span> &lt;&lt; pwd;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="comment">// Load plugin</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <a class="code" href="classsyd_1_1PluginManager.html#a9d0d3a5c5108268ff18157d96d8070e3">syd::PluginManager::GetInstance</a>()-&gt;Load();</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  syd::PluginManager::GetInstance()-&gt;Load();</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;}</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">//--------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">//--------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keywordtype">void</span> syd::TestCreateReferenceDB(<span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>* argv[],</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                                <a class="code" href="classsyd_1_1Database.html">syd::Database</a> * db,</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                                syd::Database * db,</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                                std::string file,</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                                std::string folder)</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;{</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordflow">if</span> (argc &gt; 1) {</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keywordflow">if</span> (std::string(argv[1]) == <span class="stringliteral">&quot;create_ref&quot;</span>) {</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;      LOG(0) &lt;&lt; <span class="stringliteral">&quot;Creating reference output...&quot;</span>;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      db-&gt;<a class="code" href="classsyd_1_1Database.html#aa2cabb55b481fbc01a1c163050ef2e0e">CopyDatabaseTo</a>(file, folder);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;      db-&gt;CopyDatabaseTo(file, folder);</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    }</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;      LOG(WARNING) &lt;&lt; <span class="stringliteral">&quot;Ignoring parameter &quot;</span> &lt;&lt; argv[0];</div>
@@ -141,9 +141,6 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  }</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;}</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">//--------------------------------------------------------------------</span></div>
-<div class="ttc" id="classsyd_1_1Database_html"><div class="ttname"><a href="classsyd_1_1Database.html">syd::Database</a></div><div class="ttdoc">This is the base class of all databases. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00040">sydDatabase.h:40</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_aa2cabb55b481fbc01a1c163050ef2e0e"><div class="ttname"><a href="classsyd_1_1Database.html#aa2cabb55b481fbc01a1c163050ef2e0e">syd::Database::CopyDatabaseTo</a></div><div class="ttdeci">void CopyDatabaseTo(std::string file, std::string folder)</div><div class="ttdoc">-----------------------------— OLD </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8cxx_source.html#l00175">sydDatabase.cxx:175</a></div></div>
-<div class="ttc" id="classsyd_1_1PluginManager_html_a9d0d3a5c5108268ff18157d96d8070e3"><div class="ttname"><a href="classsyd_1_1PluginManager.html#a9d0d3a5c5108268ff18157d96d8070e3">syd::PluginManager::GetInstance</a></div><div class="ttdeci">static PluginManager * GetInstance()</div><div class="ttdoc">Retrieve the unique instance (singleton) </div><div class="ttdef"><b>Definition:</b> <a href="sydPluginManager_8cxx_source.html#l00026">sydPluginManager.cxx:26</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

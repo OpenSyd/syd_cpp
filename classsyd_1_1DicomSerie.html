@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,44 +105,43 @@ Inheritance diagram for syd::DicomSerie:</div>
  <div class="center">
   <img src="classsyd_1_1DicomSerie.png" usemap="#syd::DicomSerie_map" alt=""/>
   <map id="syd::DicomSerie_map" name="syd::DicomSerie_map">
-<area href="classsyd_1_1TableElementBase.html" title="Base class for all element (row) in a table. " alt="syd::TableElementBase" shape="rect" coords="0,0,141,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3308c7f3c69b87613457de887c32f024"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3308c7f3c69b87613457de887c32f024"></a>
-virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a3308c7f3c69b87613457de887c32f024">ToString</a> () const </td></tr>
-<tr class="memdesc:a3308c7f3c69b87613457de887c32f024"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use to write the element as a string (must be overloaded) <br /></td></tr>
-<tr class="separator:a3308c7f3c69b87613457de887c32f024"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7f49d2daa6a133b62dbcf84745ceb77"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad7f49d2daa6a133b62dbcf84745ceb77"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classsyd_1_1DicomSerie.html">DicomSerie</a> &amp;p)</td></tr>
-<tr class="separator:ad7f49d2daa6a133b62dbcf84745ceb77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55d6fc163acb2da074af357bb066d130"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a55d6fc163acb2da074af357bb066d130"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classsyd_1_1DicomSerie.html">DicomSerie</a> &amp;p)</td></tr>
-<tr class="separator:a55d6fc163acb2da074af357bb066d130"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf5fb707659f77a761d265b3e9ab4dce"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf5fb707659f77a761d265b3e9ab4dce"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnDelete</b> (<a class="el" href="classsyd_1_1Database.html">syd::Database</a> *db)</td></tr>
-<tr class="separator:adf5fb707659f77a761d265b3e9ab4dce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classsyd_1_1TableElementBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsyd_1_1TableElementBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsyd_1_1TableElementBase.html">syd::TableElementBase</a></td></tr>
-<tr class="memitem:a292aac278da3d6d223382d626c2c37a6 inherit pub_methods_classsyd_1_1TableElementBase"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a292aac278da3d6d223382d626c2c37a6"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1TableElementBase.html#a292aac278da3d6d223382d626c2c37a6">Set</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
-<tr class="memdesc:a292aac278da3d6d223382d626c2c37a6 inherit pub_methods_classsyd_1_1TableElementBase"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
-<tr class="separator:a292aac278da3d6d223382d626c2c37a6 inherit pub_methods_classsyd_1_1TableElementBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdba8d26ca94b60c508b7c36b85c6211"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abdba8d26ca94b60c508b7c36b85c6211"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TABLE_DEFINE</b> (<a class="el" href="classsyd_1_1DicomSerie.html">DicomSerie</a>)</td></tr>
+<tr class="separator:abdba8d26ca94b60c508b7c36b85c6211"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25bb988c52001d4a2f6204fa2f949e07"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a25bb988c52001d4a2f6204fa2f949e07"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TABLE_DECLARE_MANDATORY_FUNCTIONS</b> (<a class="el" href="classsyd_1_1DicomSerie.html">DicomSerie</a>)</td></tr>
+<tr class="separator:a25bb988c52001d4a2f6204fa2f949e07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3185c85d91533f67650659409fe23584"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3185c85d91533f67650659409fe23584"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>InitPrintTable</b> (const syd::Database *db, <a class="el" href="classsyd_1_1PrintTable.html">syd::PrintTable</a> &amp;ta, const std::string &amp;format) const </td></tr>
+<tr class="separator:a3185c85d91533f67650659409fe23584"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55351a292d4290c04fe193a96bd7d2d5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a55351a292d4290c04fe193a96bd7d2d5"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>DumpInTable</b> (const syd::Database *db, <a class="el" href="classsyd_1_1PrintTable.html">syd::PrintTable</a> &amp;ta, const std::string &amp;format) const </td></tr>
+<tr class="separator:a55351a292d4290c04fe193a96bd7d2d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abd85b045a9c1bd8df4052341375417d1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abd85b045a9c1bd8df4052341375417d1"></a>
+virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><b>ComputeRelativeFolder</b> () const </td></tr>
+<tr class="separator:abd85b045a9c1bd8df4052341375417d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c66a2ea8eb106543fbd3c140b113dd7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5c66a2ea8eb106543fbd3c140b113dd7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Callback</b> (odb::callback_event, odb::database &amp;) const </td></tr>
+<tr class="separator:a5c66a2ea8eb106543fbd3c140b113dd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a46e6a1f35b71e1a037de57803a7f7f9e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a46e6a1f35b71e1a037de57803a7f7f9e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Callback</b> (odb::callback_event, odb::database &amp;)</td></tr>
+<tr class="separator:a46e6a1f35b71e1a037de57803a7f7f9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a3d8ff81a9b685cd2fde770a0b2926ce5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d8ff81a9b685cd2fde770a0b2926ce5"></a>
-IdType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a3d8ff81a9b685cd2fde770a0b2926ce5">id</a></td></tr>
-<tr class="memdesc:a3d8ff81a9b685cd2fde770a0b2926ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Id of the <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">DicomSerie</a>. <br /></td></tr>
-<tr class="separator:a3d8ff81a9b685cd2fde770a0b2926ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeff8ef7948cf11a76fcb5e1bee3227b5"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classsyd_1_1Patient.html">syd::Patient</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#aeff8ef7948cf11a76fcb5e1bee3227b5">patient</a></td></tr>
-<tr class="memdesc:aeff8ef7948cf11a76fcb5e1bee3227b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, it must exist in the <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table.  <a href="#aeff8ef7948cf11a76fcb5e1bee3227b5">More...</a><br /></td></tr>
-<tr class="separator:aeff8ef7948cf11a76fcb5e1bee3227b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1f43c2cc66a9b6c1ca6409c6b11278a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1f43c2cc66a9b6c1ca6409c6b11278a"></a>
-std::shared_ptr&lt; <a class="el" href="classsyd_1_1Injection.html">syd::Injection</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#ac1f43c2cc66a9b6c1ca6409c6b11278a">injection</a></td></tr>
-<tr class="memdesc:ac1f43c2cc66a9b6c1ca6409c6b11278a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, it must exist in the <a class="el" href="classsyd_1_1Injection.html" title="Store information about a radionuclide injection (date, etc). ">Injection</a> table. <br /></td></tr>
-<tr class="separator:ac1f43c2cc66a9b6c1ca6409c6b11278a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d9d1671f21bbd00917920346acfeb08"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d9d1671f21bbd00917920346acfeb08"></a>
+syd::Patient::pointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a3d9d1671f21bbd00917920346acfeb08">patient</a></td></tr>
+<tr class="memdesc:a3d9d1671f21bbd00917920346acfeb08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, it must exist in the <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table. Useful if no associated injection. <br /></td></tr>
+<tr class="separator:a3d9d1671f21bbd00917920346acfeb08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d238871313cb525d3bea81bdce09639"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d238871313cb525d3bea81bdce09639"></a>
+syd::Injection::pointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a7d238871313cb525d3bea81bdce09639">injection</a></td></tr>
+<tr class="memdesc:a7d238871313cb525d3bea81bdce09639"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key. May be null. Dont delete Serie if injection does not exist. <br /></td></tr>
+<tr class="separator:a7d238871313cb525d3bea81bdce09639"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05db952b76b7980cb12d9206ffa82dcb"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">acquisition_date</a></td></tr>
 <tr class="memdesc:a05db952b76b7980cb12d9206ffa82dcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Date when the image has been acquired.  <a href="#a05db952b76b7980cb12d9206ffa82dcb">More...</a><br /></td></tr>
 <tr class="separator:a05db952b76b7980cb12d9206ffa82dcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -184,7 +183,7 @@ std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"
 <div class="textblock"><p>Store information about a dicom image (serie). </p>
 <p>Element of table '<a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">DicomSerie</a>' stored in a db. Contains information about a dicom image. </p>
 
-<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00037">37</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
+<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00036">36</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a class="anchor" id="a05db952b76b7980cb12d9206ffa82dcb"></a>
 <div class="memitem">
@@ -199,7 +198,7 @@ std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"
 <p>Date when the image has been acquired. </p>
 <p>Dicom tag = AcquisitionTime &amp; AcquisitionDate </p>
 
-<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00055">55</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
+<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00048">48</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
 
 </div>
 </div>
@@ -216,7 +215,7 @@ std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"
 <p>Dicom FrameOfReferenceUID. </p>
 <p>to allow link between CT and SPECT image. "All images in a Series that share the same Frame of Reference UID shall be spatially related to each other.". Warning, sometimes CT and SPECT dot not share the same FrameOfReferenceUID even if they were acquired in the same session because, for example, of different table height. </p>
 
-<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00075">75</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
+<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00068">68</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
 
 </div>
 </div>
@@ -233,24 +232,7 @@ std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"
 <p>Dicom SeriesInstanceUID. </p>
 <p>In general, slices of a same CT share the same SeriesInstanceUID. Sometimes SPECT acquisition at different table position share the same SeriesInstanceUID. </p>
 
-<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00067">67</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aeff8ef7948cf11a76fcb5e1bee3227b5"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classsyd_1_1Patient.html">syd::Patient</a>&gt; syd::DicomSerie::patient</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Foreign key, it must exist in the <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table. </p>
-<p>Not strictly needed (because included in injection) but convenient. </p>
-
-<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00047">47</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
+<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00060">60</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
 
 </div>
 </div>
@@ -267,7 +249,7 @@ std::array&lt; double, 3 &gt;&#160;</td><td class="memItemRight" valign="bottom"
 <p>Date when the image has been reconstructed. </p>
 <p>Dicom tag = ContentDate/Time or InstanceCreationDate/Tiem </p>
 
-<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00059">59</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
+<p>Definition at line <a class="el" href="sydDicomSerie_8h_source.html#l00052">52</a> of file <a class="el" href="sydDicomSerie_8h_source.html">sydDicomSerie.h</a>.</p>
 
 </div>
 </div>

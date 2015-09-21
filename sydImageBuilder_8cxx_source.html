@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -122,144 +122,414 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#a2490d6b5320bdd8cbbb7fc477ba2244f">   33</a></span>&#160;<a class="code" href="classsyd_1_1ImageBuilder.html#a2490d6b5320bdd8cbbb7fc477ba2244f">syd::ImageBuilder::ImageBuilder</a>()</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;{</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  db_ = NULL;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  tag_.label = <span class="stringliteral">&quot;unamed_tag&quot;</span>;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;}</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;}</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#a54abc573cfb4c4a4b3ad2e05cb45adf6">   42</a></span>&#160;<a class="code" href="classsyd_1_1Image.html">syd::Image</a> <a class="code" href="classsyd_1_1ImageBuilder.html#a54abc573cfb4c4a4b3ad2e05cb45adf6">syd::ImageBuilder::InsertImageFromDicomSerie</a>(<span class="keyword">const</span> <a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp; dicomserie)</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;{</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keywordflow">if</span> (tag_.label == <span class="stringliteral">&quot;unamed_tag&quot;</span>) {</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Error in ImageBuilder, use SetImageTag before&quot;</span>);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  }</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="comment">// Get the files</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  std::vector&lt;syd::DicomFile&gt; dicom_files;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  db_-&gt;Query&lt;<a class="code" href="classsyd_1_1DicomFile.html">syd::DicomFile</a>&gt;(odb::query&lt;syd::DicomFile&gt;::dicom_serie-&gt;id == dicomserie.<a class="code" href="classsyd_1_1DicomSerie.html#a3d8ff81a9b685cd2fde770a0b2926ce5">id</a>, dicom_files);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordflow">if</span> (dicom_files.size() == 0) {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Error not DicomFile associated with this DicomSerie: &quot;</span> &lt;&lt; dicomserie);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#ac8b026b53a694a695f6938e2cea4d33c">   41</a></span>&#160;<a class="code" href="classsyd_1_1Image.html">syd::Image</a> <a class="code" href="classsyd_1_1ImageBuilder.html#ac8b026b53a694a695f6938e2cea4d33c">syd::ImageBuilder::InsertImage</a>(<span class="keyword">const</span> <a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp; dicomserie)</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;{</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="comment">// Get the files</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  LOG(4) &lt;&lt; <span class="stringliteral">&quot;Get the DicomFiles from &quot;</span> &lt;&lt; dicomserie;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  std::vector&lt;syd::DicomFile&gt; dicom_files;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  db_-&gt;Query&lt;<a class="code" href="classsyd_1_1DicomFile.html">syd::DicomFile</a>&gt;(odb::query&lt;syd::DicomFile&gt;::dicom_serie-&gt;id == dicomserie.id, dicom_files);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordflow">if</span> (dicom_files.size() == 0) {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Error not DicomFile associated with this DicomSerie: &quot;</span> &lt;&lt; dicomserie);</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  std::vector&lt;std::string&gt; dicom_filenames;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> f:dicom_files) {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    dicom_filenames.push_back(db_-&gt;GetAbsolutePath(f));</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  }</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  std::vector&lt;std::string&gt; dicom_filenames;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> f:dicom_files) {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    dicom_filenames.push_back(db_-&gt;GetAbsolutePath(*f.file));</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  }</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="comment">// Get patient</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <a class="code" href="classsyd_1_1Patient.html">syd::Patient</a> patient = *dicomserie.<a class="code" href="classsyd_1_1DicomSerie.html#aeff8ef7948cf11a76fcb5e1bee3227b5">patient</a>;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  <span class="comment">// Create image first to get the id</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  <a class="code" href="classsyd_1_1Image.html">syd::Image</a> image;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  image.<a class="code" href="classsyd_1_1Image.html#a420355ce71198e76971a33a879660948">patient</a> = std::make_shared&lt;syd::Patient&gt;(patient);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  image.<a class="code" href="classsyd_1_1Image.html#a37d85a4a7a671ac715708a36a76bfdc9">tag</a> = std::make_shared&lt;syd::Tag&gt;(tag_);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  image.dicoms.push_back(std::make_shared&lt;syd::DicomSerie&gt;(dicomserie));</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  image.type = <span class="stringliteral">&quot;mhd&quot;</span>;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  db_-&gt;Insert(image);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  <span class="comment">// Define filename, path</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  std::string path = db_-&gt;GetAbsoluteFolder(patient);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  std::ostringstream oss;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  oss &lt;&lt; dicomserie.<a class="code" href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">dicom_modality</a> &lt;&lt; <span class="stringliteral">&quot;_&quot;</span> &lt;&lt; image.<a class="code" href="classsyd_1_1Image.html#a35e297098d3995274bd949f80f25e62f">id</a> &lt;&lt; <span class="stringliteral">&quot;.mhd&quot;</span>;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  std::string filename = oss.str();</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  std::string output = path+PATH_SEPARATOR+filename;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="comment">// Convert dicom, write to disk</span></div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  std::string md5;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="keywordflow">try</span> {</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keywordflow">if</span> (dicom_filenames.size() == 1) { <span class="comment">// probably OT, NM image</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;      <span class="keyword">typedef</span> <span class="keywordtype">float</span> PixelType;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      <span class="keyword">typedef</span> itk::Image&lt;PixelType, 3&gt; ImageType;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      ImageType::Pointer itk_image = syd::ReadDicomFromSingleFile(dicom_filenames[0]);</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      syd::WriteImage&lt;ImageType&gt;(itk_image, output);</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;      UpdateImageInfo&lt;ImageType&gt;(image, itk_image);</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      md5 = ComputeImageMD5&lt;ImageType&gt;(itk_image);</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    }</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keywordflow">if</span> (dicomserie.<a class="code" href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">dicom_modality</a> == <span class="stringliteral">&quot;CT&quot;</span>) {</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;      <span class="keyword">typedef</span> <span class="keywordtype">short</span> PixelType;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;      <span class="keyword">typedef</span> itk::Image&lt;PixelType, 3&gt; ImageType;</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;      std::string folder = dicom_filenames[0];</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;      syd::Replace(folder, GetFilenameFromPath(folder), <span class="stringliteral">&quot;&quot;</span>);</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;      ImageType::Pointer itk_image = syd::ReadDicomSerieFromFolder(folder, dicomserie.<a class="code" href="classsyd_1_1DicomSerie.html#a6b72e08967b219da005c658c03a79834">dicom_series_uid</a>);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;      syd::WriteImage&lt;ImageType&gt;(itk_image, output);</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;      UpdateImageInfo&lt;ImageType&gt;(image, itk_image);</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;      md5 = ComputeImageMD5&lt;ImageType&gt;(itk_image);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    }</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  LOG(4) &lt;&lt; <span class="stringliteral">&quot;Found &quot;</span> &lt;&lt; dicom_files.size();</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="comment">// Create image first to get the id</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;  <a class="code" href="classsyd_1_1Image.html">syd::Image</a> image = InsertEmptyImage(*dicomserie.<a class="code" href="classsyd_1_1DicomSerie.html#a3d9d1671f21bbd00917920346acfeb08">patient</a>);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;  LOG(4) &lt;&lt; <span class="stringliteral">&quot;Update image dicom&quot;</span>;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  UpdateDicom(image, dicomserie);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  LOG(4) &lt;&lt; <span class="stringliteral">&quot;Update image files&quot;</span>;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="comment">//  UpdateFile(image, GetDefaultImageRelativePath(image), GetDefaultImageFilename(image));</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  UpdateFile(image, db_-&gt;<a class="code" href="classsyd_1_1Image.html#aa92106acb4c6434d795fc702ee76814b">ComputeRelativeFolder</a>(image), GetDefaultImageFilename(image));</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  std::string f = db_-&gt;GetAbsolutePath(image);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="comment">// Convert dicom, write to disk</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="comment">// std::string md5;</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keywordflow">if</span> (dicomserie.<a class="code" href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">dicom_modality</a> == <span class="stringliteral">&quot;CT&quot;</span>) {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;      <span class="keyword">typedef</span> <span class="keywordtype">short</span> PixelType;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;      <span class="keyword">typedef</span> itk::Image&lt;PixelType,3&gt; ImageType;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;      LOG(4) &lt;&lt; <span class="stringliteral">&quot;Read dicom&quot;</span>;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;      ImageType::Pointer itk_image = ReadImage&lt;PixelType&gt;(dicomserie);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;      LOG(4) &lt;&lt; <span class="stringliteral">&quot;Update image info and md5&quot;</span>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;      UpdateImageInfo&lt;PixelType&gt;(image, itk_image, <span class="keyword">true</span>); <span class="comment">// true = update md5</span></div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;      LOG(4) &lt;&lt; <span class="stringliteral">&quot;Write image on disk&quot;</span>;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;      syd::WriteImage&lt;ImageType&gt;(itk_image, f);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;      <span class="comment">// Auto tag the image with ct</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;      <a class="code" href="classsyd_1_1Tag.html">syd::Tag</a> tag = db_-&gt;FindOrInsertTag(<span class="stringliteral">&quot;ct&quot;</span>, <span class="stringliteral">&quot;CT image&quot;</span>);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;      image.AddTag(tag);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    }</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;      <span class="comment">// No auto tag, we dont know if this is a spect, a pet etc</span></div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;      <span class="keyword">typedef</span> <span class="keywordtype">float</span> PixelType;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;      <span class="keyword">typedef</span> itk::Image&lt;PixelType,3&gt; ImageType;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;      ImageType::Pointer itk_image = ReadImage&lt;PixelType&gt;(dicomserie);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;      UpdateImageInfo&lt;PixelType&gt;(image, itk_image, <span class="keyword">true</span>); <span class="comment">// true = update md5</span></div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;      syd::WriteImage&lt;ImageType&gt;(itk_image, f);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    }</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="comment">// Insert in the db</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    LOG(4) &lt;&lt; <span class="stringliteral">&quot;Update database.&quot;</span>;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    db_-&gt;Update(image);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;  } <span class="keywordflow">catch</span> (<a class="code" href="classsyd_1_1Exception.html">syd::Exception</a> &amp; e) {</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;    db_-&gt;Delete(image);</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Error during InsertImage: &quot;</span> &lt;&lt; e.<a class="code" href="classsyd_1_1Exception.html#a07988fa8add370285abf5039a6fed898">what</a>() &lt;&lt; <span class="stringliteral">&quot; (I remove the image &quot;</span> &lt;&lt; image &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>);</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  }</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="comment">// Create File and Image object</span></div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <a class="code" href="classsyd_1_1File.html">syd::File</a> mhd;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    mhd.<a class="code" href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">filename</a> = filename;</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    mhd.<a class="code" href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">path</a> = db_-&gt;GetRelativeFolder(patient);</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    syd::Replace(filename, <span class="stringliteral">&quot;.mhd&quot;</span>, <span class="stringliteral">&quot;.raw&quot;</span>);</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <a class="code" href="classsyd_1_1File.html">syd::File</a> raw;</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    raw.<a class="code" href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">filename</a> = filename;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    raw.<a class="code" href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">path</a> = db_-&gt;GetRelativeFolder(patient);</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    raw.<a class="code" href="classsyd_1_1File.html#a6d6b67ab100513f076f4804c355b2f58">md5</a> = md5;</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    db_-&gt;Insert(mhd);</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    db_-&gt;Insert(raw);</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    image.<a class="code" href="classsyd_1_1Image.html#a1bb0c11a702b6785c61fb2b5a96454dc">files</a>.push_back(std::make_shared&lt;syd::File&gt;(mhd));</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;    image.<a class="code" href="classsyd_1_1Image.html#a1bb0c11a702b6785c61fb2b5a96454dc">files</a>.push_back(std::make_shared&lt;syd::File&gt;(raw)); <span class="comment">// must be after file insertion</span></div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    db_-&gt;Update(image);</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  } <span class="keywordflow">catch</span> (<a class="code" href="classsyd_1_1Exception.html">syd::Exception</a> &amp; e) {</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    db_-&gt;Delete&lt;<a class="code" href="classsyd_1_1Image.html">syd::Image</a>&gt;(image);</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Error during CreateImageFromDicomSerie: &quot;</span> &lt;&lt; e.<a class="code" href="classsyd_1_1Exception.html#a07988fa8add370285abf5039a6fed898">what</a>() &lt;&lt; <span class="stringliteral">&quot; (I remove the image &quot;</span> &lt;&lt; image &lt;&lt; <span class="stringliteral">&quot;)&quot;</span>);</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  }</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
-<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  <span class="keywordflow">return</span> image;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;}</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#ab897de028edbc3d78d5e24820aaeeef0">  124</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1ImageBuilder.html#ab897de028edbc3d78d5e24820aaeeef0">syd::ImageBuilder::InsertImagesFromTimepoint</a>(<a class="code" href="classsyd_1_1Timepoint.html">syd::Timepoint</a> &amp; timepoint)</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;{</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  <span class="comment">// loop create all images</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:timepoint.<a class="code" href="classsyd_1_1Timepoint.html#a50bbdb4f69297bc523b6e0c2d303f9c0">dicoms</a>) {</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="comment">// Create new image</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <a class="code" href="classsyd_1_1Image.html">syd::Image</a> image = InsertImageFromDicomSerie(*d);</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="comment">// Associate image with timepoint</span></div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    timepoint.images.push_back(std::make_shared&lt;syd::Image&gt;(image));</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  }</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  db_-&gt;Update(timepoint);</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  <span class="comment">//  LOG(1) &lt;&lt; &quot;Timpoint (&quot; &lt;&lt; timepoint &lt;&lt; &quot;) updated with &quot; &lt;&lt; timepoint.dicoms.size() &lt;&lt; &quot; images.&quot;; // FIXME not here</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;}</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="keywordflow">return</span> image;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;}</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#ac5f44fbe1a39c2206607cea7dc27d22a">  105</a></span>&#160;<a class="code" href="classsyd_1_1Image.html">syd::Image</a> <a class="code" href="classsyd_1_1ImageBuilder.html#ac5f44fbe1a39c2206607cea7dc27d22a">syd::ImageBuilder::InsertStitchedImage</a>(<span class="keyword">const</span> <a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp; a,</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;                                                  <span class="keyword">const</span> <a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp; b)</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;{</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  <span class="comment">// Check a and b modality</span></div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keywordflow">if</span> (a.<a class="code" href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">dicom_modality</a> != b.<a class="code" href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">dicom_modality</a>) {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Error while trying to stitch the two following images, dicom_modality is not the same: &quot;</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;               &lt;&lt; std::endl &lt;&lt; a</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;               &lt;&lt; std::endl &lt;&lt; b;</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  }</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="comment">// Only consider single file and not CT for the moment</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keywordflow">if</span> (a.<a class="code" href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">dicom_modality</a> == <span class="stringliteral">&quot;CT&quot;</span>) {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Error cannot stitch CT images. Only float pixel type (yet).&quot;</span>;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;  }</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="comment">// Check if the same frame_of_reference_uid (flag to bypass ?)</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;  <span class="keywordflow">if</span> (a.<a class="code" href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">dicom_frame_of_reference_uid</a> != b.<a class="code" href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">dicom_frame_of_reference_uid</a>) {</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Error, cannot stitch those two dicoms because the frame_of_reference_uid is not the same:&quot;</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;               &lt;&lt; std::endl &lt;&lt; a &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; a.<a class="code" href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">dicom_frame_of_reference_uid</a></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;               &lt;&lt; std::endl &lt;&lt; b &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; b.<a class="code" href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">dicom_frame_of_reference_uid</a>;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  }</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="comment">// Create the image record</span></div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;  <a class="code" href="classsyd_1_1Image.html">syd::Image</a> image = InsertEmptyImage(*a.<a class="code" href="classsyd_1_1DicomSerie.html#a3d9d1671f21bbd00917920346acfeb08">patient</a>);</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;  UpdateDicom(image, a);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  UpdateDicom(image, b);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  <span class="comment">//  UpdateFile(image, GetDefaultImageRelativePath(image), GetDefaultImageFilename(image));</span></div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  UpdateFile(image, db_-&gt;<a class="code" href="classsyd_1_1Image.html#aa92106acb4c6434d795fc702ee76814b">ComputeRelativeFolder</a>(image), GetDefaultImageFilename(image));</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  <span class="comment">// Auto tag</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;  <a class="code" href="classsyd_1_1Tag.html">syd::Tag</a> tag_stitch = db_-&gt;FindOrInsertTag(<span class="stringliteral">&quot;stitch&quot;</span>, <span class="stringliteral">&quot;Image computed by stitching 2 images&quot;</span>);</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  image.<a class="code" href="classsyd_1_1Image.html#a1a2a8e0bffbd25a9cb953fe3564926af">AddTag</a>(tag_stitch);</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">/* from file ?</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">   itk::ImageIOBase::Pointer imageIO =</span></div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">   itk::ImageIOFactory::CreateImageIO(</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="comment">   inputFileName,</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">   itk::ImageIOFactory::ReadMode );</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="comment">   imageIO-&gt;SetFileName( inputFileName );</span></div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="comment">   imageIO-&gt;ReadImageInformation();</span></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="comment">   http://itk.org/ITKExamples/src/IO/ImageBase/ReadUnknownImageType/Documentation.html</span></div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">*/</span></div>
-<div class="ttc" id="classsyd_1_1ImageBuilder_html"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html">syd::ImageBuilder</a></div><div class="ttdoc">This class is used to create a Image. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8h_source.html#l00034">sydImageBuilder.h:34</a></div></div>
-<div class="ttc" id="classsyd_1_1Image_html_a35e297098d3995274bd949f80f25e62f"><div class="ttname"><a href="classsyd_1_1Image.html#a35e297098d3995274bd949f80f25e62f">syd::Image::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Id of the Image. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00044">sydImage.h:44</a></div></div>
-<div class="ttc" id="classsyd_1_1File_html_a2224a82b7e7c7e1f3a3e1bca67845650"><div class="ttname"><a href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">syd::File::filename</a></div><div class="ttdeci">std::string filename</div><div class="ttdoc">File name. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00040">sydFile.h:40</a></div></div>
-<div class="ttc" id="classsyd_1_1ImageBuilder_html_a54abc573cfb4c4a4b3ad2e05cb45adf6"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#a54abc573cfb4c4a4b3ad2e05cb45adf6">syd::ImageBuilder::InsertImageFromDicomSerie</a></div><div class="ttdeci">syd::Image InsertImageFromDicomSerie(const syd::DicomSerie &amp;dicomserie)</div><div class="ttdoc">Create & Insert a new Image from this DicomSerie. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00042">sydImageBuilder.cxx:42</a></div></div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;  <span class="comment">// Read the dicom images</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;  <span class="keyword">typedef</span> <span class="keywordtype">float</span> PixelType;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;  <span class="keyword">typedef</span> itk::Image&lt;PixelType, 3&gt; ImageType;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  ImageType::Pointer image_a = ReadImage&lt;PixelType&gt;(a);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;  ImageType::Pointer image_b = ReadImage&lt;PixelType&gt;(b);</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  <span class="comment">// Stitch (default values for now, to be changed!)</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;  ImageType::Pointer output = syd::StitchImages&lt;ImageType&gt;(image_a, image_b, 150000, 4);</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  <span class="comment">// Update the image values</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  UpdateImageInfo&lt;PixelType&gt;(image, output, <span class="keyword">true</span>); <span class="comment">// true = update md5</span></div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  <span class="comment">// Write image</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  syd::WriteImage&lt;ImageType&gt;(output, db_-&gt;GetAbsolutePath(image));</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  <span class="comment">// Insert into the db</span></div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  db_-&gt;Update(image);</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  <span class="keywordflow">return</span> image;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;}</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="comment">/*void syd::ImageBuilder::InsertImagesFromTimepoint(syd::Timepoint &amp; timepoint)</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment">{</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment"></span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="comment">  DD(&quot;InsertImagesFromTimepoint TODO&quot;);</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="comment">  exit(0);</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="comment"></span></div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="comment">  // // loop create all images</span></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="comment">  // for(auto d:timepoint.dicoms) {</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="comment">  //   // Create new image</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment">  //   syd::Image image = InsertImage(*d);</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="comment">  //   // Associate image with timepoint</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="comment">  //   timepoint.images.push_back(std::make_shared&lt;syd::Image&gt;(image));</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">  // }</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;<span class="comment">  // db_-&gt;Update(timepoint);</span></div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="comment">  // //  LOG(1) &lt;&lt; &quot;Timpoint (&quot; &lt;&lt; timepoint &lt;&lt; &quot;) updated with &quot; &lt;&lt; timepoint.dicoms.size() &lt;&lt; &quot; images.&quot;; // FIXME not here</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment">}</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;<span class="comment">*/</span></div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;<span class="comment">/* from file ?</span></div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="comment">   itk::ImageIOBase::Pointer imageIO =</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="comment">   itk::ImageIOFactory::CreateImageIO(</span></div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;<span class="comment">   inputFileName,</span></div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;<span class="comment">   itk::ImageIOFactory::ReadMode );</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="comment">   imageIO-&gt;SetFileName( inputFileName );</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;<span class="comment">   imageIO-&gt;ReadImageInformation();</span></div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;<span class="comment">   http://itk.org/ITKExamples/src/IO/ImageBase/ReadUnknownImageType/Documentation.html</span></div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="comment">*/</span></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#a7d58ccb20f8da2808a104c7fc6dac633">  194</a></span>&#160;std::string <a class="code" href="classsyd_1_1ImageBuilder.html#a7d58ccb20f8da2808a104c7fc6dac633">syd::ImageBuilder::GetDefaultImageFilename</a>(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Image.html">syd::Image</a> &amp; image)</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;{</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;  <span class="keywordflow">if</span> (image.<a class="code" href="classsyd_1_1Image.html#a7146091d32cabe31a99733d7e29b1769">dicoms</a>.size() &lt; 1) {</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Error cannot use GetDefaultImageFilename on image without dicom. Image: &quot;</span> &lt;&lt; image;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;  }</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;  std::ostringstream oss;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;  oss &lt;&lt; image.<a class="code" href="classsyd_1_1Image.html#a7146091d32cabe31a99733d7e29b1769">dicoms</a>[0]-&gt;dicom_modality &lt;&lt; <span class="stringliteral">&quot;_&quot;</span> &lt;&lt; image.id &lt;&lt; <span class="stringliteral">&quot;.mhd&quot;</span>;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;  std::string filename = oss.str();</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;  <span class="keywordflow">return</span> filename;</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;}</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00208"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#a83fa9364150a8611ae2472c9d5018237">  208</a></span>&#160;std::string <a class="code" href="classsyd_1_1ImageBuilder.html#a83fa9364150a8611ae2472c9d5018237">syd::ImageBuilder::GetDefaultRoiMaskImageFilename</a>(<span class="keyword">const</span> <a class="code" href="classsyd_1_1RoiMaskImage.html">syd::RoiMaskImage</a> &amp; mask)</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;{</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;  <span class="keywordflow">if</span> (mask.<a class="code" href="classsyd_1_1RoiMaskImage.html#aacff089a49ed7fda1353448397bcc138">roitype</a> == NULL) {</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Error cannot use GetDefaultRoiMaskImageFilename without roitype. Mask: &quot;</span> &lt;&lt; mask;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  std::ostringstream oss;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  oss &lt;&lt; mask.<a class="code" href="classsyd_1_1RoiMaskImage.html#aacff089a49ed7fda1353448397bcc138">roitype</a>-&gt;name &lt;&lt; <span class="stringliteral">&quot;_&quot;</span> &lt;&lt; mask.id &lt;&lt; <span class="stringliteral">&quot;.mhd&quot;</span>;</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;  std::string filename = oss.str();</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  <span class="keywordflow">return</span> filename;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;}</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;</div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;<span class="comment">// std::string syd::ImageBuilder::GetDefaultImageRelativePath(const syd::Image &amp; image)</span></div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;<span class="comment">// {</span></div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="comment">//   return ComputeRelativeFolder(db_, image);//db_-&gt;GetRelativeFolder(*image.patient);</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="comment">// }</span></div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="comment">// std::string syd::ImageBuilder::GetDefaultRoiMaskImageRelativePath(const syd::RoiMaskImage &amp; mask)</span></div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;<span class="comment">// {</span></div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;<span class="comment">//   // if (mask.image == NULL) {</span></div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;<span class="comment">//   //   LOG(FATAL) &lt;&lt; &quot;Error could not use GetDefaultRoiMaskImageRelativePath without image in the mask. Mask: &quot; &lt;&lt; mask;</span></div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;<span class="comment">//   // }</span></div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;<span class="comment">//   //  std::string p = db_-&gt;GetRelativeFolder(*mask.image-&gt;patient)+PATH_SEPARATOR+&quot;roi&quot;+PATH_SEPARATOR;</span></div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;<span class="comment">//   std::string p = ComputeRelativeFolder(db_, mask);//*mask.image-&gt;patient)+PATH_SEPARATOR+&quot;roi&quot;+PATH_SEPARATOR;</span></div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment">//   return p;</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="comment">// }</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#ab1aff138aab8d90bc98fa33d07e8bfd5">  244</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1ImageBuilder.html#ab1aff138aab8d90bc98fa33d07e8bfd5">syd::ImageBuilder::UpdateDicom</a>(<a class="code" href="classsyd_1_1Image.html">syd::Image</a> &amp; image, <span class="keyword">const</span> <a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp; dicomserie)</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;{</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;  image.<a class="code" href="classsyd_1_1Image.html#a7146091d32cabe31a99733d7e29b1769">dicoms</a>.push_back(std::make_shared&lt;syd::DicomSerie&gt;(dicomserie));</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;}</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00252"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#a5c8df51970b0174c528b9735baa27214">  252</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1ImageBuilder.html#a5c8df51970b0174c528b9735baa27214">syd::ImageBuilder::UpdateFile</a>(<a class="code" href="classsyd_1_1Image.html">syd::Image</a> &amp; image,</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;                                   std::string relativepath,</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;                                   std::string filename)</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;{</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  std::string extension = GetExtension(filename);</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;  image.<a class="code" href="classsyd_1_1Image.html#ade73e3bea95832742e53ec8e20458fd2">type</a> = extension;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  image.<a class="code" href="classsyd_1_1Image.html#a46e76d246d4c9d13abd7a2a6f5af700f">files</a>.clear();</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;  <a class="code" href="classsyd_1_1File.html">syd::File</a> f;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;  f.<a class="code" href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">filename</a> = filename;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;  f.<a class="code" href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">path</a> = relativepath;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;  db_-&gt;Insert(f);</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;  image.<a class="code" href="classsyd_1_1Image.html#a46e76d246d4c9d13abd7a2a6f5af700f">files</a>.push_back(std::make_shared&lt;syd::File&gt;(f));</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  <span class="keywordflow">if</span> (extension == <span class="stringliteral">&quot;mhd&quot;</span>) {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    syd::Replace(filename, <span class="stringliteral">&quot;.mhd&quot;</span>, <span class="stringliteral">&quot;.raw&quot;</span>);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <a class="code" href="classsyd_1_1File.html">syd::File</a> raw;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    raw.<a class="code" href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">filename</a> = filename;</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    raw.<a class="code" href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">path</a> = relativepath;</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    db_-&gt;Insert(raw);</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    image.<a class="code" href="classsyd_1_1Image.html#a46e76d246d4c9d13abd7a2a6f5af700f">files</a>.push_back(std::make_shared&lt;syd::File&gt;(raw));</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;  }</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;}</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00277"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#a5c246f6febb6b1463243ac0eda85cc99">  277</a></span>&#160;<a class="code" href="classsyd_1_1Image.html">syd::Image</a> <a class="code" href="classsyd_1_1ImageBuilder.html#a5c246f6febb6b1463243ac0eda85cc99">syd::ImageBuilder::InsertEmptyImage</a>(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Patient.html">syd::Patient</a> &amp; patient)</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;{</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;  <a class="code" href="classsyd_1_1Image.html">syd::Image</a> image;</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;  image.<a class="code" href="classsyd_1_1Image.html#a7a948d746d177d161f69db529d4ef111">patient</a> = std::make_shared&lt;syd::Patient&gt;(patient);</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;  db_-&gt;Insert(image);</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;  <span class="keywordflow">return</span> image;</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;}</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;<a class="code" href="classsyd_1_1RoiMaskImage.html">syd::RoiMaskImage</a> syd::ImageBuilder::InsertRoiMaskImage(<span class="keyword">const</span> <a class="code" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp; dicom,</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                                                        <span class="keyword">const</span> <a class="code" href="classsyd_1_1RoiType.html">syd::RoiType</a> &amp; roitype,</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                                                        <span class="keyword">const</span> std::string &amp; filename)</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;{</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;  <span class="comment">// Create a mask</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;  <a class="code" href="classsyd_1_1RoiMaskImage.html">syd::RoiMaskImage</a> mask;</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;  mask.<a class="code" href="classsyd_1_1RoiMaskImage.html#aacff089a49ed7fda1353448397bcc138">roitype</a> = std::make_shared&lt;syd::RoiType&gt;(roitype);</div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;  std::shared_ptr&lt;syd::Image&gt; image;</div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;  <span class="keywordflow">try</span> {</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="comment">// Create and insert the associated image (must be a pointer here because will bne updated)</span></div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    image = std::make_shared&lt;syd::Image&gt;(InsertEmptyImage(*dicom.<a class="code" href="classsyd_1_1DicomSerie.html#a3d9d1671f21bbd00917920346acfeb08">patient</a>));</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    mask.image = image;</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;</div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="comment">// Add auto tag (mask)</span></div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <a class="code" href="classsyd_1_1Tag.html">syd::Tag</a> tag_mask = db_-&gt;FindOrInsertTag(<span class="stringliteral">&quot;mask&quot;</span>, <span class="stringliteral">&quot;Mask image&quot;</span>);</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    image-&gt;AddTag(tag_mask);</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="comment">// Need to insert the mask to get an id</span></div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    db_-&gt;Insert(mask);</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    <span class="comment">// Update info</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    UpdateDicom(*image, dicom);</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <span class="comment">// Need to set the image of the mask and insert it before GetDefaultRoiMaskImageRelativePath (need image patient)</span></div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    <span class="comment">//    UpdateFile(*image, GetDefaultRoiMaskImageRelativePath(mask), GetDefaultRoiMaskImageFilename(mask));</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    UpdateFile(*image, db_-&gt;ComputeRelativeFolder(mask), GetDefaultRoiMaskImageFilename(mask));</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="comment">// Create image folder if needed</span></div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    std::string relative_folder = db_-&gt;ComputeRelativeFolder(*image);</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    std::string absolute_folder = db_-&gt;ConvertToAbsolutePath(relative_folder);</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="keywordflow">if</span> (!syd::DirExists(absolute_folder)) syd::CreateDirectory(absolute_folder);</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="comment">// Read image</span></div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <span class="keyword">typedef</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> PixelType;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keyword">typedef</span> itk::Image&lt;PixelType,3&gt; ImageType;</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    ImageType::Pointer itk_image;</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    itk_image = syd::ReadImage&lt;ImageType&gt;(filename);</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="comment">// Update info</span></div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    UpdateImageInfo&lt;PixelType&gt;(*image, itk_image, <span class="keyword">true</span>); <span class="comment">// true = update md5</span></div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="comment">// Write image</span></div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;    syd::WriteImage&lt;ImageType&gt;(itk_image, db_-&gt;GetAbsolutePath(*image));</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;  }</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;  <span class="keywordflow">catch</span>(std::exception &amp; e) {</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="comment">// delete (silently)</span></div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keywordtype">int</span> l = Log::LogLevel();</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    Log::LogLevel() = 0;</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    db_-&gt;Delete(mask);</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    Log::LogLevel() = l;</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    EXCEPTION(<span class="stringliteral">&quot;Error in &#39;InsertRoiMaskImage&#39; with dicom=&quot;</span> &lt;&lt; dicom.id</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;              &lt;&lt; <span class="stringliteral">&quot; roitype=&#39;&quot;</span> &lt;&lt; roitype.<a class="code" href="classsyd_1_1RoiType.html#a1af14121063b8267b436331963127ef7">name</a> &lt;&lt; <span class="stringliteral">&quot;&#39; file=[&quot;</span> &lt;&lt; filename &lt;&lt; <span class="stringliteral">&quot;]&quot;</span></div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;              &lt;&lt; std::endl &lt;&lt; e.what());</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;  }</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;  <span class="comment">// Insert into the db</span></div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;  db_-&gt;Update(*image);</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;  db_-&gt;Update(mask);</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;  <span class="keywordflow">return</span> mask;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;}</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00354"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#a938b8e4d7519d05998047947fc478425">  354</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1ImageBuilder.html#a938b8e4d7519d05998047947fc478425">syd::ImageBuilder::CropImageLike</a>(<a class="code" href="classsyd_1_1Image.html">syd::Image</a> &amp; image, <a class="code" href="classsyd_1_1Image.html">syd::Image</a> &amp; like, <span class="keywordtype">bool</span> forceFlag)</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;{</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;  <span class="comment">// Check</span></div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;  <span class="keywordflow">if</span> (!forceFlag) {</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    std::string ref=<span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:like.<a class="code" href="classsyd_1_1Image.html#a7146091d32cabe31a99733d7e29b1769">dicoms</a>) {</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;      <span class="keywordflow">if</span> (ref != <span class="stringliteral">&quot;&quot;</span>) {</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        <span class="keywordflow">if</span> (ref != d-&gt;dicom_frame_of_reference_uid) {</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;          LOG(WARNING) &lt;&lt; <span class="stringliteral">&quot;Image associated with several dicom_frame_of_reference_uid. &quot;</span> &lt;&lt; like;</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        }</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;      }</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;      ref = d-&gt;dicom_frame_of_reference_uid;</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    }</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    std::string ref2=<span class="stringliteral">&quot;&quot;</span>;</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:image.<a class="code" href="classsyd_1_1Image.html#a7146091d32cabe31a99733d7e29b1769">dicoms</a>) {</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;      <span class="keywordflow">if</span> (ref2 != <span class="stringliteral">&quot;&quot;</span>) {</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        <span class="keywordflow">if</span> (ref2 != d-&gt;dicom_frame_of_reference_uid) {</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;          LOG(WARNING) &lt;&lt; <span class="stringliteral">&quot;Image associated with several dicom_frame_of_reference_uid. &quot;</span> &lt;&lt; like;</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;        }</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;      }</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;      ref2 = d-&gt;dicom_frame_of_reference_uid;</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    }</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    <span class="keywordflow">if</span> (ref != ref2) {</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;      LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Cannot crop: &quot;</span> &lt;&lt; image &lt;&lt; std::endl &lt;&lt; <span class="stringliteral">&quot;like: &quot;</span></div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;                 &lt;&lt; like &lt;&lt; std::endl</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;                 &lt;&lt; <span class="stringliteral">&quot;because they dont share the same dicom_frame_of_reference_uid (coordinate system).&quot;</span>;</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    }</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;  }</div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;  <span class="comment">// Crop the image and write it to disk</span></div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;  <span class="keywordflow">if</span> (image.<a class="code" href="classsyd_1_1Image.html#a2e575e74f5f5201a2fc2a378b06656d5">pixel_type</a> == <span class="stringliteral">&quot;float&quot;</span>) CropImageLike&lt;float&gt;(image, like);</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (image.pixel_type == <span class="stringliteral">&quot;short&quot;</span>) CropImageLike&lt;short&gt;(image, like);</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (image.pixel_type == <span class="stringliteral">&quot;unsigned char&quot;</span>) CropImageLike&lt;unsigned char&gt;(image, like);</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;  <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Unknown pixel_type: &quot;</span> &lt;&lt; image.pixel_type;</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;  }</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;}</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00395"></a><span class="lineno"><a class="line" href="classsyd_1_1ImageBuilder.html#a8b347a4dbac4b437151fd48eb5277f39">  395</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1ImageBuilder.html#a8b347a4dbac4b437151fd48eb5277f39">syd::ImageBuilder::CropImageWithThreshold</a>(<a class="code" href="classsyd_1_1Image.html">syd::Image</a> &amp; image, <span class="keywordtype">double</span> threshold)</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;{</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;  <span class="comment">// Dispatch according to pixel type</span></div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;  <span class="keywordflow">if</span> (image.<a class="code" href="classsyd_1_1Image.html#a2e575e74f5f5201a2fc2a378b06656d5">pixel_type</a> == <span class="stringliteral">&quot;float&quot;</span>)  CropImageWithThreshold&lt;float&gt;(image, threshold);</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (image.pixel_type == <span class="stringliteral">&quot;short&quot;</span>)  CropImageWithThreshold&lt;short&gt;(image, threshold);</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (image.pixel_type == <span class="stringliteral">&quot;unsigned char&quot;</span>)  CropImageWithThreshold&lt;unsigned char&gt;(image, threshold);</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;  <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Unknown pixel_type: &quot;</span> &lt;&lt; image.pixel_type;</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;  }</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;}</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="ttc" id="classsyd_1_1Image_html_a2e575e74f5f5201a2fc2a378b06656d5"><div class="ttname"><a href="classsyd_1_1Image.html#a2e575e74f5f5201a2fc2a378b06656d5">syd::Image::pixel_type</a></div><div class="ttdeci">std::string pixel_type</div><div class="ttdoc">Pixel type: short, float, unsigned char. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00059">sydImage.h:59</a></div></div>
+<div class="ttc" id="classsyd_1_1DicomSerie_html_a2a47ab6d79a841303cad845b2f797fc2"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">syd::DicomSerie::dicom_frame_of_reference_uid</a></div><div class="ttdeci">std::string dicom_frame_of_reference_uid</div><div class="ttdoc">Dicom FrameOfReferenceUID. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00068">sydDicomSerie.h:68</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html">syd::ImageBuilder</a></div><div class="ttdoc">This class is used to create a Image. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8h_source.html#l00037">sydImageBuilder.h:37</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_a7d58ccb20f8da2808a104c7fc6dac633"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#a7d58ccb20f8da2808a104c7fc6dac633">syd::ImageBuilder::GetDefaultImageFilename</a></div><div class="ttdeci">std::string GetDefaultImageFilename(const syd::Image &amp;image)</div><div class="ttdoc">Propose a default filename for the image (use the image.id, so must be inserted in the db before) ...</div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00194">sydImageBuilder.cxx:194</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_a5c8df51970b0174c528b9735baa27214"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#a5c8df51970b0174c528b9735baa27214">syd::ImageBuilder::UpdateFile</a></div><div class="ttdeci">void UpdateFile(syd::Image &amp;image, std::string relativepath, std::string filename)</div><div class="ttdoc">Create & Insert a RoiMaskImage from an image.mhd. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00252">sydImageBuilder.cxx:252</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_ac8b026b53a694a695f6938e2cea4d33c"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#ac8b026b53a694a695f6938e2cea4d33c">syd::ImageBuilder::InsertImage</a></div><div class="ttdeci">syd::Image InsertImage(const syd::DicomSerie::pointer dicomserie)</div><div class="ttdoc">Create & Insert a new Image from this DicomSerie. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00041">sydImageBuilder.cxx:41</a></div></div>
+<div class="ttc" id="classsyd_1_1RoiType_html_a1af14121063b8267b436331963127ef7"><div class="ttname"><a href="classsyd_1_1RoiType.html#a1af14121063b8267b436331963127ef7">syd::RoiType::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">Name of the roi (unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydRoiType_8h_source.html#l00035">sydRoiType.h:35</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_ab1aff138aab8d90bc98fa33d07e8bfd5"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#ab1aff138aab8d90bc98fa33d07e8bfd5">syd::ImageBuilder::UpdateDicom</a></div><div class="ttdeci">void UpdateDicom(syd::Image &amp;image, const syd::DicomSerie &amp;dicomserie)</div><div class="ttdoc">Update the image with dicom (just add the dicom to the list) </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00244">sydImageBuilder.cxx:244</a></div></div>
+<div class="ttc" id="classsyd_1_1File_html_a2224a82b7e7c7e1f3a3e1bca67845650"><div class="ttname"><a href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">syd::File::filename</a></div><div class="ttdeci">std::string filename</div><div class="ttdoc">File name. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00036">sydFile.h:36</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_a83fa9364150a8611ae2472c9d5018237"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#a83fa9364150a8611ae2472c9d5018237">syd::ImageBuilder::GetDefaultRoiMaskImageFilename</a></div><div class="ttdeci">std::string GetDefaultRoiMaskImageFilename(const syd::RoiMaskImage &amp;mask)</div><div class="ttdoc">Propose a default path for the image. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00208">sydImageBuilder.cxx:208</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a7a948d746d177d161f69db529d4ef111"><div class="ttname"><a href="classsyd_1_1Image.html#a7a948d746d177d161f69db529d4ef111">syd::Image::patient</a></div><div class="ttdeci">syd::Patient::pointer patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00044">sydImage.h:44</a></div></div>
 <div class="ttc" id="classsyd_1_1File_html"><div class="ttname"><a href="classsyd_1_1File.html">syd::File</a></div><div class="ttdoc">Store information about a file linked to a database. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00032">sydFile.h:32</a></div></div>
-<div class="ttc" id="classsyd_1_1ImageBuilder_html_a2490d6b5320bdd8cbbb7fc477ba2244f"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#a2490d6b5320bdd8cbbb7fc477ba2244f">syd::ImageBuilder::ImageBuilder</a></div><div class="ttdeci">ImageBuilder()</div><div class="ttdoc">Protected constructor. No need to use directly. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00033">sydImageBuilder.cxx:33</a></div></div>
-<div class="ttc" id="classsyd_1_1Image_html_a1bb0c11a702b6785c61fb2b5a96454dc"><div class="ttname"><a href="classsyd_1_1Image.html#a1bb0c11a702b6785c61fb2b5a96454dc">syd::Image::files</a></div><div class="ttdeci">std::vector&lt; std::shared_ptr&lt; syd::File &gt; &gt; files</div><div class="ttdoc">List of associated files. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00055">sydImage.h:55</a></div></div>
-<div class="ttc" id="classsyd_1_1File_html_ab3ea1e8acafa37d8b286761980514955"><div class="ttname"><a href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">syd::File::path</a></div><div class="ttdeci">std::string path</div><div class="ttdoc">File (relative) path. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00043">sydFile.h:43</a></div></div>
-<div class="ttc" id="classsyd_1_1Timepoint_html_a50bbdb4f69297bc523b6e0c2d303f9c0"><div class="ttname"><a href="classsyd_1_1Timepoint.html#a50bbdb4f69297bc523b6e0c2d303f9c0">syd::Timepoint::dicoms</a></div><div class="ttdeci">std::vector&lt; std::shared_ptr&lt; syd::DicomSerie &gt; &gt; dicoms</div><div class="ttdoc">List of associated dicoms. </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8h_source.html#l00050">sydTimepoint.h:50</a></div></div>
-<div class="ttc" id="classsyd_1_1ImageBuilder_html_ab897de028edbc3d78d5e24820aaeeef0"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#ab897de028edbc3d78d5e24820aaeeef0">syd::ImageBuilder::InsertImagesFromTimepoint</a></div><div class="ttdeci">void InsertImagesFromTimepoint(syd::Timepoint &amp;timepoint)</div><div class="ttdoc">Create & Insert new images for all dicom in this timepoint. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00124">sydImageBuilder.cxx:124</a></div></div>
-<div class="ttc" id="classsyd_1_1File_html_a6d6b67ab100513f076f4804c355b2f58"><div class="ttname"><a href="classsyd_1_1File.html#a6d6b67ab100513f076f4804c355b2f58">syd::File::md5</a></div><div class="ttdeci">std::string md5</div><div class="ttdoc">Associated md5 (not always computed) </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00046">sydFile.h:46</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_ae0761ffcc3ce331e47ecece1aa5737ef"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">syd::DicomSerie::dicom_modality</a></div><div class="ttdeci">std::string dicom_modality</div><div class="ttdoc">Modality as indicated in the dicom tag Modality. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00078">sydDicomSerie.h:78</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a1a2a8e0bffbd25a9cb953fe3564926af"><div class="ttname"><a href="classsyd_1_1Image.html#a1a2a8e0bffbd25a9cb953fe3564926af">syd::Image::AddTag</a></div><div class="ttdeci">void AddTag(syd::Tag::pointer tag)</div><div class="ttdoc">Add a tag to the list (check is already exist) ; do not update in the db. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8cxx_source.html#l00129">sydImage.cxx:129</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_a2490d6b5320bdd8cbbb7fc477ba2244f"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#a2490d6b5320bdd8cbbb7fc477ba2244f">syd::ImageBuilder::ImageBuilder</a></div><div class="ttdeci">ImageBuilder()</div><div class="ttdoc">OLD. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00033">sydImageBuilder.cxx:33</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_a5c246f6febb6b1463243ac0eda85cc99"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#a5c246f6febb6b1463243ac0eda85cc99">syd::ImageBuilder::InsertEmptyImage</a></div><div class="ttdeci">syd::Image InsertEmptyImage(const syd::Patient &amp;patient)</div><div class="ttdoc">Create & Insert a new image without information. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00277">sydImageBuilder.cxx:277</a></div></div>
+<div class="ttc" id="classsyd_1_1File_html_ab3ea1e8acafa37d8b286761980514955"><div class="ttname"><a href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">syd::File::path</a></div><div class="ttdeci">std::string path</div><div class="ttdoc">File (relative) path. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00039">sydFile.h:39</a></div></div>
+<div class="ttc" id="classsyd_1_1RoiMaskImage_html"><div class="ttname"><a href="classsyd_1_1RoiMaskImage.html">syd::RoiMaskImage</a></div><div class="ttdoc">Store information about a contour transformed as a binary image. </div><div class="ttdef"><b>Definition:</b> <a href="sydRoiMaskImage_8h_source.html#l00031">sydRoiMaskImage.h:31</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_a8b347a4dbac4b437151fd48eb5277f39"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#a8b347a4dbac4b437151fd48eb5277f39">syd::ImageBuilder::CropImageWithThreshold</a></div><div class="ttdeci">void CropImageWithThreshold(syd::Image &amp;image, double threshold)</div><div class="ttdoc">Crop an image according to a threshold. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00395">sydImageBuilder.cxx:395</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_ade73e3bea95832742e53ec8e20458fd2"><div class="ttname"><a href="classsyd_1_1Image.html#ade73e3bea95832742e53ec8e20458fd2">syd::Image::type</a></div><div class="ttdeci">std::string type</div><div class="ttdoc">Type of the image (mhd by default) </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00056">sydImage.h:56</a></div></div>
+<div class="ttc" id="classsyd_1_1DicomSerie_html_ae0761ffcc3ce331e47ecece1aa5737ef"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">syd::DicomSerie::dicom_modality</a></div><div class="ttdeci">std::string dicom_modality</div><div class="ttdoc">Modality as indicated in the dicom tag Modality. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00071">sydDicomSerie.h:71</a></div></div>
+<div class="ttc" id="classsyd_1_1DicomSerie_html_a3d9d1671f21bbd00917920346acfeb08"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a3d9d1671f21bbd00917920346acfeb08">syd::DicomSerie::patient</a></div><div class="ttdeci">syd::Patient::pointer patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. Useful if no associated injection. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00041">sydDicomSerie.h:41</a></div></div>
 <div class="ttc" id="classsyd_1_1Exception_html"><div class="ttname"><a href="classsyd_1_1Exception.html">syd::Exception</a></div><div class="ttdoc">Base class for exception in syd. </div><div class="ttdef"><b>Definition:</b> <a href="sydException_8h_source.html#l00036">sydException.h:36</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_a6b72e08967b219da005c658c03a79834"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a6b72e08967b219da005c658c03a79834">syd::DicomSerie::dicom_series_uid</a></div><div class="ttdeci">std::string dicom_series_uid</div><div class="ttdoc">Dicom SeriesInstanceUID. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00067">sydDicomSerie.h:67</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_a3d8ff81a9b685cd2fde770a0b2926ce5"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a3d8ff81a9b685cd2fde770a0b2926ce5">syd::DicomSerie::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Id of the DicomSerie. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00042">sydDicomSerie.h:42</a></div></div>
 <div class="ttc" id="classsyd_1_1Exception_html_a07988fa8add370285abf5039a6fed898"><div class="ttname"><a href="classsyd_1_1Exception.html#a07988fa8add370285abf5039a6fed898">syd::Exception::what</a></div><div class="ttdeci">virtual const char * what() const noexcept</div><div class="ttdoc">Main class to get the error message. </div><div class="ttdef"><b>Definition:</b> <a href="sydException_8cxx_source.html#l00034">sydException.cxx:34</a></div></div>
-<div class="ttc" id="classsyd_1_1Image_html_a37d85a4a7a671ac715708a36a76bfdc9"><div class="ttname"><a href="classsyd_1_1Image.html#a37d85a4a7a671ac715708a36a76bfdc9">syd::Image::tag</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Tag &gt; tag</div><div class="ttdoc">Associated Tag. FIXME : or a vector ? Delete image or not ??? </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00052">sydImage.h:52</a></div></div>
-<div class="ttc" id="classsyd_1_1Timepoint_html"><div class="ttname"><a href="classsyd_1_1Timepoint.html">syd::Timepoint</a></div><div class="ttdoc">Store information about a timepoint. </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8h_source.html#l00032">sydTimepoint.h:32</a></div></div>
 <div class="ttc" id="classsyd_1_1Image_html"><div class="ttname"><a href="classsyd_1_1Image.html">syd::Image</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00039">sydImage.h:39</a></div></div>
 <div class="ttc" id="classsyd_1_1DicomFile_html"><div class="ttname"><a href="classsyd_1_1DicomFile.html">syd::DicomFile</a></div><div class="ttdoc">Store information about a dicom file (unique dicom identifier dicom_sop_uid). </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00033">sydDicomFile.h:33</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html"><div class="ttname"><a href="classsyd_1_1Patient.html">syd::Patient</a></div><div class="ttdoc">Store information about a patient (id, study_id, name etc). </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00032">sydPatient.h:32</a></div></div>
-<div class="ttc" id="classsyd_1_1Image_html_a420355ce71198e76971a33a879660948"><div class="ttname"><a href="classsyd_1_1Image.html#a420355ce71198e76971a33a879660948">syd::Image::patient</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Patient &gt; patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00049">sydImage.h:49</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html"><div class="ttname"><a href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00037">sydDicomSerie.h:37</a></div></div>
-<div class="ttc" id="classsyd_1_1StandardDatabase_html"><div class="ttname"><a href="classsyd_1_1StandardDatabase.html">syd::StandardDatabase</a></div><div class="ttdoc">This database manages a set of &#39;standard&#39; tables: Patient, Injection etc. </div><div class="ttdef"><b>Definition:</b> <a href="sydStandardDatabase_8h_source.html#l00043">sydStandardDatabase.h:43</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_aeff8ef7948cf11a76fcb5e1bee3227b5"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#aeff8ef7948cf11a76fcb5e1bee3227b5">syd::DicomSerie::patient</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Patient &gt; patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00047">sydDicomSerie.h:47</a></div></div>
-<div class="ttc" id="classsyd_1_1ImageBuilder_html_ade90fd7812b5c5a0fd2f2b12940bc823"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#ade90fd7812b5c5a0fd2f2b12940bc823">syd::ImageBuilder::SetDatabase</a></div><div class="ttdeci">void SetDatabase(syd::StandardDatabase *db)</div><div class="ttdoc">Set the pointer to the database. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8h_source.html#l00063">sydImageBuilder.h:63</a></div></div>
-<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00049">sydCommon.h:49</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_ac5f44fbe1a39c2206607cea7dc27d22a"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#ac5f44fbe1a39c2206607cea7dc27d22a">syd::ImageBuilder::InsertStitchedImage</a></div><div class="ttdeci">syd::Image InsertStitchedImage(const syd::DicomSerie::pointer a, const syd::DicomSerie::pointer b)</div><div class="ttdoc">Create & Insert a new Image by stitching 2 dicoms. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00105">sydImageBuilder.cxx:105</a></div></div>
+<div class="ttc" id="classsyd_1_1Patient_html"><div class="ttname"><a href="classsyd_1_1Patient.html">syd::Patient</a></div><div class="ttdoc">Store information about a patient (id, study_id, name etc). </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00034">sydPatient.h:34</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_aa92106acb4c6434d795fc702ee76814b"><div class="ttname"><a href="classsyd_1_1Image.html#aa92106acb4c6434d795fc702ee76814b">syd::Image::ComputeRelativeFolder</a></div><div class="ttdeci">virtual std::string ComputeRelativeFolder() const </div><div class="ttdoc">Standard folder. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8cxx_source.html#l00221">sydImage.cxx:221</a></div></div>
+<div class="ttc" id="classsyd_1_1DicomSerie_html"><div class="ttname"><a href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00036">sydDicomSerie.h:36</a></div></div>
+<div class="ttc" id="classsyd_1_1Tag_html"><div class="ttname"><a href="classsyd_1_1Tag.html">syd::Tag</a></div><div class="ttdoc">Simple table to store a label and a description. </div><div class="ttdef"><b>Definition:</b> <a href="sydTag_8h_source.html#l00030">sydTag.h:30</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a46e76d246d4c9d13abd7a2a6f5af700f"><div class="ttname"><a href="classsyd_1_1Image.html#a46e76d246d4c9d13abd7a2a6f5af700f">syd::Image::files</a></div><div class="ttdeci">syd::File::vector files</div><div class="ttdoc">List of associated files (will be deleted when the image is deleted) </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00050">sydImage.h:50</a></div></div>
+<div class="ttc" id="classsyd_1_1RoiMaskImage_html_aacff089a49ed7fda1353448397bcc138"><div class="ttname"><a href="classsyd_1_1RoiMaskImage.html#aacff089a49ed7fda1353448397bcc138">syd::RoiMaskImage::roitype</a></div><div class="ttdeci">syd::RoiType::pointer roitype</div><div class="ttdoc">Foreign Key. Associated RoiType id. </div><div class="ttdef"><b>Definition:</b> <a href="sydRoiMaskImage_8h_source.html#l00036">sydRoiMaskImage.h:36</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_a938b8e4d7519d05998047947fc478425"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#a938b8e4d7519d05998047947fc478425">syd::ImageBuilder::CropImageLike</a></div><div class="ttdeci">void CropImageLike(syd::Image &amp;image, syd::Image &amp;mask, bool forceFlag=false)</div><div class="ttdoc">Update an image by cropping according to the given mask. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00354">sydImageBuilder.cxx:354</a></div></div>
+<div class="ttc" id="classsyd_1_1StandardDatabase_html"><div class="ttname"><a href="classsyd_1_1StandardDatabase.html">syd::StandardDatabase</a></div><div class="ttdoc">This database manages a set of &#39;standard&#39; tables: Patient, Injection etc. </div><div class="ttdef"><b>Definition:</b> <a href="sydStandardDatabase_8h_source.html#l00047">sydStandardDatabase.h:47</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_ade90fd7812b5c5a0fd2f2b12940bc823"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#ade90fd7812b5c5a0fd2f2b12940bc823">syd::ImageBuilder::SetDatabase</a></div><div class="ttdeci">void SetDatabase(syd::StandardDatabase *db)</div><div class="ttdoc">Set the pointer to the database. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8h_source.html#l00121">sydImageBuilder.h:121</a></div></div>
+<div class="ttc" id="classsyd_1_1RoiType_html"><div class="ttname"><a href="classsyd_1_1RoiType.html">syd::RoiType</a></div><div class="ttdoc">Store information about a type of ROI (liver, kidney etc) </div><div class="ttdef"><b>Definition:</b> <a href="sydRoiType_8h_source.html#l00030">sydRoiType.h:30</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00053">sydCommon.h:53</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a7146091d32cabe31a99733d7e29b1769"><div class="ttname"><a href="classsyd_1_1Image.html#a7146091d32cabe31a99733d7e29b1769">syd::Image::dicoms</a></div><div class="ttdeci">syd::DicomSerie::vector dicoms</div><div class="ttdoc">Dicoms that serve to compute this image (could be empty). </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00053">sydImage.h:53</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

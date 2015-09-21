@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -109,47 +109,42 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#define SYDRADIONUCLIDE_H</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// syd</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydPatient.h&quot;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydRecord.h&quot;</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesyd.html">syd</a> {</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#pragma db object</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">class </span>Radionuclide : <span class="keyword">public</span> TableElementBase {</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#pragma db object polymorphic pointer(std::shared_ptr) table(&quot;syd::Radionuclide&quot;)</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">class </span>Radionuclide : <span class="keyword">public</span> syd::Record {</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#pragma db id auto</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    IdType id;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#pragma db options(&quot;UNIQUE&quot;)</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    std::string name;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#pragma db options(&quot;UNIQUE&quot;)</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    std::string name;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="classsyd_1_1Radionuclide.html#ad98928097347d12cd0798a802932097f">   40</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classsyd_1_1Radionuclide.html#ad98928097347d12cd0798a802932097f">half_life_in_hours</a>;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="comment">// ------------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    SET_TABLE_NAME(<span class="stringliteral">&quot;Radionuclide&quot;</span>)</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <a class="code" href="classsyd_1_1Radionuclide.html">Radionuclide</a>();</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    virtual std::<span class="keywordtype">string</span> <a class="code" href="classsyd_1_1Radionuclide.html#aca61af30b589bfcf10d9bb9413a016a5">ToString</a>() const;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    virtual <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Radionuclide.html#ad5f2010ab002a40f5944abb7f96d909b">Set</a>(std::vector&lt;std::<span class="keywordtype">string</span>&gt; &amp; arg);</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Radionuclide.html#ad5f2010ab002a40f5944abb7f96d909b">Set</a>(const std::<span class="keywordtype">string</span> &amp; vname, <span class="keywordtype">double</span> hl);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    std::string element;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">double</span> atomic_number; <span class="comment">//Z</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keywordtype">double</span> mass_number; <span class="comment">// A</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordtype">bool</span> metastable;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classsyd_1_1Radionuclide.html#ad98928097347d12cd0798a802932097f">   42</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classsyd_1_1Radionuclide.html#ad98928097347d12cd0798a802932097f">half_life_in_hours</a>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">// ------------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    TABLE_DEFINE(<a class="code" href="classsyd_1_1Radionuclide.html">Radionuclide</a>);</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    TABLE_DECLARE_MANDATORY_FUNCTIONS(<a class="code" href="classsyd_1_1Radionuclide.html">Radionuclide</a>);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    TABLE_DECLARE_OPTIONAL_FUNCTIONS(<a class="code" href="classsyd_1_1Radionuclide.html">Radionuclide</a>);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="comment">// ------------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">bool</span> operator==(const <a class="code" href="classsyd_1_1Radionuclide.html">Radionuclide</a> &amp; p);</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="keywordtype">bool</span> operator!=(const <a class="code" href="classsyd_1_1Radionuclide.html">Radionuclide</a> &amp; p) { <span class="keywordflow">return</span> !(*<span class="keyword">this</span> == p); }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <a class="code" href="classsyd_1_1Radionuclide.html">Radionuclide</a>();</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnDelete(<a class="code" href="classsyd_1_1Database.html">syd::Database</a> * db);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  }; <span class="comment">// end of class</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;} <span class="comment">// end of namespace</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="classsyd_1_1Radionuclide_html_ad5f2010ab002a40f5944abb7f96d909b"><div class="ttname"><a href="classsyd_1_1Radionuclide.html#ad5f2010ab002a40f5944abb7f96d909b">syd::Radionuclide::Set</a></div><div class="ttdeci">virtual void Set(std::vector&lt; std::string &gt; &amp;arg)</div><div class="ttdoc">Set basics values from a list of string. </div><div class="ttdef"><b>Definition:</b> <a href="sydRadionuclide_8cxx_source.html#l00043">sydRadionuclide.cxx:43</a></div></div>
-<div class="ttc" id="classsyd_1_1Radionuclide_html_aca61af30b589bfcf10d9bb9413a016a5"><div class="ttname"><a href="classsyd_1_1Radionuclide.html#aca61af30b589bfcf10d9bb9413a016a5">syd::Radionuclide::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydRadionuclide_8cxx_source.html#l00054">sydRadionuclide.cxx:54</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html"><div class="ttname"><a href="classsyd_1_1Database.html">syd::Database</a></div><div class="ttdoc">This is the base class of all databases. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00040">sydDatabase.h:40</a></div></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  }; <span class="comment">// end of class</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;} <span class="comment">// end of namespace</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="classsyd_1_1Radionuclide_html"><div class="ttname"><a href="classsyd_1_1Radionuclide.html">syd::Radionuclide</a></div><div class="ttdoc">Store information about a radionuclide. </div><div class="ttdef"><b>Definition:</b> <a href="sydRadionuclide_8h_source.html#l00030">sydRadionuclide.h:30</a></div></div>
-<div class="ttc" id="classsyd_1_1Radionuclide_html_ad98928097347d12cd0798a802932097f"><div class="ttname"><a href="classsyd_1_1Radionuclide.html#ad98928097347d12cd0798a802932097f">syd::Radionuclide::half_life_in_hours</a></div><div class="ttdeci">double half_life_in_hours</div><div class="ttdoc">Half life of the radionuclide in hours. </div><div class="ttdef"><b>Definition:</b> <a href="sydRadionuclide_8h_source.html#l00040">sydRadionuclide.h:40</a></div></div>
-<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00049">sydCommon.h:49</a></div></div>
+<div class="ttc" id="classsyd_1_1Radionuclide_html_ad98928097347d12cd0798a802932097f"><div class="ttname"><a href="classsyd_1_1Radionuclide.html#ad98928097347d12cd0798a802932097f">syd::Radionuclide::half_life_in_hours</a></div><div class="ttdeci">double half_life_in_hours</div><div class="ttdoc">Half life of the radionuclide in hours. </div><div class="ttdef"><b>Definition:</b> <a href="sydRadionuclide_8h_source.html#l00042">sydRadionuclide.h:42</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00053">sydCommon.h:53</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

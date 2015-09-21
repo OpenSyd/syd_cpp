@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -102,9 +102,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac843379dd89196d54dc5109765f38a05"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac843379dd89196d54dc5109765f38a05"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>AddColumn</b> (std::string name, int width=-1, int digit=0)</td></tr>
-<tr class="separator:ac843379dd89196d54dc5109765f38a05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8301ab727691e1f614219569123def9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac8301ab727691e1f614219569123def9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>AddColumn</b> (std::string name, int width=-1, int digit=0, bool trunc_by_end_flag=true)</td></tr>
+<tr class="separator:ac8301ab727691e1f614219569123def9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada5052b1a6189eceed0f9f4eefb47ec7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ada5052b1a6189eceed0f9f4eefb47ec7"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> ()</td></tr>
 <tr class="separator:ada5052b1a6189eceed0f9f4eefb47ec7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -120,6 +120,15 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SkipLine</b> ()</td><
 <tr class="memitem:a7b628e0b87ae28412fda178d6fb7e6f2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7b628e0b87ae28412fda178d6fb7e6f2"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Print</b> (std::ostream &amp;out)</td></tr>
 <tr class="separator:a7b628e0b87ae28412fda178d6fb7e6f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aebeec273c3d928a9c6616016d3a057b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aebeec273c3d928a9c6616016d3a057b2"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetColumnWidth</b> (int col, int width)</td></tr>
+<tr class="separator:aebeec273c3d928a9c6616016d3a057b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3668b9fc306ed29a15f8a3529d7c30d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3668b9fc306ed29a15f8a3529d7c30d9"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>GetNumberOfColumns</b> () const </td></tr>
+<tr class="separator:a3668b9fc306ed29a15f8a3529d7c30d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace64db43c753d51b73f640f15a7f6fe9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ace64db43c753d51b73f640f15a7f6fe9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Endl</b> ()</td></tr>
+<tr class="separator:ace64db43c753d51b73f640f15a7f6fe9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -136,6 +145,9 @@ std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>w
 <tr class="memitem:a8a0135e9d26fa8121dff5d1bd8e9db26"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8a0135e9d26fa8121dff5d1bd8e9db26"></a>
 std::vector&lt; int &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>precision</b></td></tr>
 <tr class="separator:a8a0135e9d26fa8121dff5d1bd8e9db26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72a2a137185e4a052e7f127b50cf4e2a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a72a2a137185e4a052e7f127b50cf4e2a"></a>
+std::vector&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>trunc_by_end</b></td></tr>
+<tr class="separator:a72a2a137185e4a052e7f127b50cf4e2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71a5e6a6e04fb58570a9b38d8722664c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a71a5e6a6e04fb58570a9b38d8722664c"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>current_line</b></td></tr>
 <tr class="separator:a71a5e6a6e04fb58570a9b38d8722664c"><td class="memSeparator" colspan="2">&#160;</td></tr>

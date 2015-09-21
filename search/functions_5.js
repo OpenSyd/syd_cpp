@@ -1,18 +1,13 @@
 var searchData=
 [
-  ['getabsolutedbfolder',['GetAbsoluteDBFolder',['../classsyd_1_1Database.html#af43b76c8045344eaaa96eb1062ac4196',1,'syd::Database']]],
-  ['getabsolutefolder',['GetAbsoluteFolder',['../classsyd_1_1StandardDatabase.html#a375ab875d08fc5bac7c5106464c374b7',1,'syd::StandardDatabase::GetAbsoluteFolder(const DicomSerie &amp;serie)'],['../classsyd_1_1StandardDatabase.html#a86b73359a953d98c2ad536713eebb190',1,'syd::StandardDatabase::GetAbsoluteFolder(const Patient &amp;patient)']]],
-  ['getabsolutepath',['GetAbsolutePath',['../classsyd_1_1StandardDatabase.html#a8294dabe5dac1a10c78855f953fabeb0',1,'syd::StandardDatabase']]],
-  ['getdatabaseschema',['GetDatabaseSchema',['../classsyd_1_1Database.html#ae0fc42ac9795362e56b9dcb306670411',1,'syd::Database']]],
-  ['getdatabaseschemas',['GetDatabaseSchemas',['../classsyd_1_1DatabaseManager.html#a402555b6cdc2639dbff8cd1f69bc13c4',1,'syd::DatabaseManager']]],
-  ['getdbfolder',['GetDBFolder',['../classsyd_1_1Database.html#a4f68db6f86aac8de58c524e513682a0c',1,'syd::Database']]],
-  ['getfilename',['GetFilename',['../classsyd_1_1Database.html#af978bbfce8839721d25735b6db020cb0',1,'syd::Database']]],
-  ['getinstance',['GetInstance',['../classsyd_1_1DatabaseManager.html#a0fb6ff33f3f40fa6819dbfa69c71141f',1,'syd::DatabaseManager::GetInstance()'],['../classsyd_1_1PluginManager.html#a9d0d3a5c5108268ff18157d96d8070e3',1,'syd::PluginManager::GetInstance()']]],
-  ['getlastsqlquery',['GetLastSQLQuery',['../classsyd_1_1Database.html#ad3a7c7fb4aac508e910acbfc732da3ce',1,'syd::Database']]],
-  ['getmapoftables',['GetMapOfTables',['../classsyd_1_1Database.html#aa1d82736549398f655f191ef4e34e05e',1,'syd::Database']]],
-  ['getnumberofelements',['GetNumberOfElements',['../singletonsyd_1_1Table.html#a3355865c9b92b4606ca5253fce833200',1,'syd::Table::GetNumberOfElements()'],['../classsyd_1_1TableBase.html#a13b3574ca33638f68f8922ac02a004e8',1,'syd::TableBase::GetNumberOfElements()']]],
-  ['getrelativefolder',['GetRelativeFolder',['../classsyd_1_1StandardDatabase.html#a727a82c28c03be8042c90355839ef151',1,'syd::StandardDatabase']]],
-  ['gettable',['GetTable',['../classsyd_1_1Database.html#a07f35ca4a0789dcfb86fe304690c6b50',1,'syd::Database::GetTable(const std::string &amp;table_name)'],['../classsyd_1_1Database.html#a091829c289943c8cdc7c9a6ae1bf0dcd',1,'syd::Database::GetTable()']]],
-  ['guessifdicomcanbeinthistimepoint',['GuessIfDicomCanBeInThisTimepoint',['../classsyd_1_1TimepointBuilder.html#ab36aa70f0fe170e889975205180f4db1',1,'syd::TimepointBuilder']]],
-  ['guesstimepointforthisdicomserie',['GuessTimepointForThisDicomSerie',['../classsyd_1_1TimepointBuilder.html#a5772b14334b1a28dab40e64814727699',1,'syd::TimepointBuilder']]]
+  ['imagebuilder',['ImageBuilder',['../classsyd_1_1ImageBuilder.html#a8b75f33398b7c537910e7f2ff9b5db2e',1,'syd::ImageBuilder::ImageBuilder(syd::StandardDatabase *db)'],['../classsyd_1_1ImageBuilder.html#a2490d6b5320bdd8cbbb7fc477ba2244f',1,'syd::ImageBuilder::ImageBuilder()']]],
+  ['imagefromdicombuilder',['ImageFromDicomBuilder',['../classsyd_1_1ImageFromDicomBuilder.html#a7c0be063d87e91c051cc972946605d2f',1,'syd::ImageFromDicomBuilder']]],
+  ['insertdicomserie',['InsertDicomSerie',['../classsyd_1_1TimepointBuilder.html#a78edc063d6d7a92ad9441a8de16e8fdf',1,'syd::TimepointBuilder']]],
+  ['insertdicomseries',['InsertDicomSeries',['../classsyd_1_1DicomSerieBuilder.html#a26fb59fedcd861f317bb67619d07236f',1,'syd::DicomSerieBuilder']]],
+  ['insertemptyimage',['InsertEmptyImage',['../classsyd_1_1ImageBuilder.html#a5c246f6febb6b1463243ac0eda85cc99',1,'syd::ImageBuilder']]],
+  ['insertimage',['InsertImage',['../classsyd_1_1ImageBuilder.html#ac8b026b53a694a695f6938e2cea4d33c',1,'syd::ImageBuilder']]],
+  ['insertroimaskimage',['InsertRoiMaskImage',['../classsyd_1_1RoiMaskImageBuilder.html#a305776bc946693f5877a1dc41b0a4a78',1,'syd::RoiMaskImageBuilder']]],
+  ['insertstitchedimage',['InsertStitchedImage',['../classsyd_1_1ImageBuilder.html#ac5f44fbe1a39c2206607cea7dc27d22a',1,'syd::ImageBuilder::InsertStitchedImage()'],['../classsyd_1_1StitchDicomImageBuilder.html#a6a0dc1448f79055177834ed8ae92f6ed',1,'syd::StitchDicomImageBuilder::InsertStitchedImage()']]],
+  ['integratedactivityimagebuilder',['IntegratedActivityImageBuilder',['../classsyd_1_1IntegratedActivityImageBuilder.html#a1849afed7cc17a2d3818ec16f2981f3e',1,'syd::IntegratedActivityImageBuilder']]],
+  ['issamesizeandspacingthan',['IsSameSizeAndSpacingThan',['../classsyd_1_1Image.html#ad542f37b8bf9bae38edcb4699ef21af6',1,'syd::Image']]]
 ];

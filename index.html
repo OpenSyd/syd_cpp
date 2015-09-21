@@ -64,7 +64,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -170,13 +170,13 @@ sydDump mydb.db DicomSerie
  <h1>Development</h1>
 <h2>Main classes</h2>
 <ul>
-<li><a class="el" href="classsyd_1_1DatabaseManager.html" title="Manage a set of database schema. Allow to read and create. ">syd::DatabaseManager</a></li>
-<li><a class="el" href="classsyd_1_1Database.html" title="This is the base class of all databases. ">syd::Database</a></li>
-<li><a class="el" href="singletonsyd_1_1Table.html" title="This class is used to encapsulate common functions for a database table that manage some TableElement...">syd::Table</a></li>
-<li><a class="el" href="classsyd_1_1TableBase.html" title="Base class for the functions that are common to all tables. ">syd::TableBase</a></li>
+<li>syd::DatabaseManager</li>
+<li>syd::Database</li>
+<li>syd::Table</li>
+<li>syd::TableBase</li>
 </ul>
 <h3>Database CRUD (Create Read Update Delete)</h3>
-<p>The schema of a database is defined at compile time by C++ classes, thanks to <a href="http://www.codesynthesis.com/products/odb/doc/manual.xhtml">odb</a>. Database types can be known at runtime via plugins. Schema can be modified (under some conditions). Main classes are: <a class="el" href="classsyd_1_1PluginManager.html">syd::PluginManager</a> and <a class="el" href="classsyd_1_1DatabaseManager.html" title="Manage a set of database schema. Allow to read and create. ">syd::DatabaseManager</a>.</p>
+<p>The schema of a database is defined at compile time by C++ classes, thanks to <a href="http://www.codesynthesis.com/products/odb/doc/manual.xhtml">odb</a>. Database types can be known at runtime via plugins. Schema can be modified (under some conditions). Main classes are: syd::PluginManager and syd::DatabaseManager.</p>
 <ul>
 <li>Create <pre class="fragment">  syd::PluginManager::GetInstance()-&gt;Load();
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();

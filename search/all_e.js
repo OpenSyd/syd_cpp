@@ -1,9 +1,13 @@
 var searchData=
 [
-  ['radionuclide',['Radionuclide',['../classsyd_1_1Radionuclide.html',1,'syd']]],
-  ['radionuclide',['radionuclide',['../classsyd_1_1Injection.html#a764de179e59dfa3fbbb02c9774b36385',1,'syd::Injection']]],
-  ['read',['Read',['../classsyd_1_1Database.html#afdb7a92bd1e821d19a0eb60538189b62',1,'syd::Database::Read()'],['../singletonsyd_1_1DatabaseCreator.html#a424813db8d2967e116849c124a7e2b52',1,'syd::DatabaseCreator::Read()'],['../classsyd_1_1DatabaseManager.html#ab61ef523e66be29ede3eef5d5c1b96c3',1,'syd::DatabaseManager::Read(const std::string &amp;filename)'],['../classsyd_1_1DatabaseManager.html#a650f64cf4a5a5700ccdf1cc9b5a946aa',1,'syd::DatabaseManager::Read(const std::string &amp;filename)']]],
-  ['reconstruction_5fdate',['reconstruction_date',['../classsyd_1_1DicomSerie.html#a5f735f7a79bcb537b3479aa454d18f97',1,'syd::DicomSerie']]],
-  ['registerdatabaseschema',['RegisterDatabaseSchema',['../classsyd_1_1DatabaseManager.html#a156cd31db7574dd358caea3024d78d33',1,'syd::DatabaseManager']]],
-  ['relative_5ffolder_5f',['relative_folder_',['../classsyd_1_1Database.html#a3bfdf90d2454ae4f4809947a03763349',1,'syd::Database']]]
+  ['tag',['Tag',['../classsyd_1_1Tag.html',1,'syd']]],
+  ['tag',['tag',['../classsyd_1_1Timepoint.html#a099408f0476aab384f4c8c16c49853a8',1,'syd::Timepoint']]],
+  ['tags',['tags',['../classsyd_1_1Image.html#ab44fd4ca648e65fbb039881379eea3af',1,'syd::Image::tags()'],['../classsyd_1_1ImageTransform.html#ac7b4f350251d4dc98c93368feb94d7b1',1,'syd::ImageTransform::tags()']]],
+  ['time_5ffrom_5finjection_5fin_5fhours',['time_from_injection_in_hours',['../classsyd_1_1Timepoint.html#a4e5cf8966ac29dd9cc660843b9984ee4',1,'syd::Timepoint']]],
+  ['timeactivitycurve',['TimeActivityCurve',['../classsyd_1_1TimeActivityCurve.html',1,'syd']]],
+  ['timepoint',['Timepoint',['../classsyd_1_1Timepoint.html',1,'syd']]],
+  ['timepointbuilder',['TimepointBuilder',['../classsyd_1_1TimepointBuilder.html',1,'syd']]],
+  ['timepointbuilder',['TimepointBuilder',['../classsyd_1_1TimepointBuilder.html#a60097dc12be23df67c5463ed971f24e3',1,'syd::TimepointBuilder::TimepointBuilder(syd::StandardDatabase *db)'],['../classsyd_1_1TimepointBuilder.html#a5a0b4815713a130a7a937333fd1ac35f',1,'syd::TimepointBuilder::TimepointBuilder()']]],
+  ['transform_5ffile',['transform_file',['../classsyd_1_1ImageTransform.html#a3f071d5eb91637a95408fa8b3ddb64ff',1,'syd::ImageTransform']]],
+  ['type',['type',['../classsyd_1_1Image.html#ade73e3bea95832742e53ec8e20458fd2',1,'syd::Image']]]
 ];

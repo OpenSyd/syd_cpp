@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,37 +105,23 @@ Inheritance diagram for syd::Tag:</div>
  <div class="center">
   <img src="classsyd_1_1Tag.png" usemap="#syd::Tag_map" alt=""/>
   <map id="syd::Tag_map" name="syd::Tag_map">
-<area href="classsyd_1_1TableElementBase.html" title="Base class for all element (row) in a table. " alt="syd::TableElementBase" shape="rect" coords="0,0,141,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad65b2739b72e184dd79ce30ca11183ca"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad65b2739b72e184dd79ce30ca11183ca"></a>
-virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Tag.html#ad65b2739b72e184dd79ce30ca11183ca">ToString</a> () const </td></tr>
-<tr class="memdesc:ad65b2739b72e184dd79ce30ca11183ca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use to write the element as a string (must be overloaded) <br /></td></tr>
-<tr class="separator:ad65b2739b72e184dd79ce30ca11183ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6a87fb402f4eee020f34a6c04d5c562"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab6a87fb402f4eee020f34a6c04d5c562"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Tag.html#ab6a87fb402f4eee020f34a6c04d5c562">Set</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
-<tr class="memdesc:ab6a87fb402f4eee020f34a6c04d5c562"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
-<tr class="separator:ab6a87fb402f4eee020f34a6c04d5c562"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad122390ed590be29ff78c41303d00086"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad122390ed590be29ff78c41303d00086"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classsyd_1_1Tag.html">Tag</a> &amp;p)</td></tr>
-<tr class="separator:ad122390ed590be29ff78c41303d00086"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a160e6d9d06ec080ab3cf5445bd6e0afa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a160e6d9d06ec080ab3cf5445bd6e0afa"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classsyd_1_1Tag.html">Tag</a> &amp;p)</td></tr>
-<tr class="separator:a160e6d9d06ec080ab3cf5445bd6e0afa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_classsyd_1_1TableElementBase"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classsyd_1_1TableElementBase')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classsyd_1_1TableElementBase.html">syd::TableElementBase</a></td></tr>
-<tr class="memitem:a339d0ca8ffb7d6426bba929788179e84 inherit pub_methods_classsyd_1_1TableElementBase"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a339d0ca8ffb7d6426bba929788179e84"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnDelete</b> (<a class="el" href="classsyd_1_1Database.html">syd::Database</a> *db)</td></tr>
-<tr class="separator:a339d0ca8ffb7d6426bba929788179e84 inherit pub_methods_classsyd_1_1TableElementBase"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad62dfc060d53454d38cd5efc45d4b2cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad62dfc060d53454d38cd5efc45d4b2cf"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TABLE_DEFINE</b> (<a class="el" href="classsyd_1_1Tag.html">Tag</a>)</td></tr>
+<tr class="separator:ad62dfc060d53454d38cd5efc45d4b2cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f70399f063e22abc750bc5754874a7d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5f70399f063e22abc750bc5754874a7d"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TABLE_DECLARE_MANDATORY_FUNCTIONS</b> (<a class="el" href="classsyd_1_1Tag.html">Tag</a>)</td></tr>
+<tr class="separator:a5f70399f063e22abc750bc5754874a7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b2defada868545573d641b5c50aaa08"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b2defada868545573d641b5c50aaa08"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TABLE_DECLARE_OPTIONAL_FUNCTIONS</b> (<a class="el" href="classsyd_1_1Tag.html">Tag</a>)</td></tr>
+<tr class="separator:a8b2defada868545573d641b5c50aaa08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a338e8bb4aae9d53a319c7baeaaeeaab8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a338e8bb4aae9d53a319c7baeaaeeaab8"></a>
-IdType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Tag.html#a338e8bb4aae9d53a319c7baeaaeeaab8">id</a></td></tr>
-<tr class="memdesc:a338e8bb4aae9d53a319c7baeaaeeaab8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Id of the <a class="el" href="classsyd_1_1Tag.html" title="Simple table to store a label and a description. ">Tag</a>. <br /></td></tr>
-<tr class="separator:a338e8bb4aae9d53a319c7baeaaeeaab8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a695c1bc16ac978e62893bf1618e77288"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a695c1bc16ac978e62893bf1618e77288"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Tag.html#a695c1bc16ac978e62893bf1618e77288">label</a></td></tr>
 <tr class="memdesc:a695c1bc16ac978e62893bf1618e77288"><td class="mdescLeft">&#160;</td><td class="mdescRight">Label of the tag (name) <br /></td></tr>

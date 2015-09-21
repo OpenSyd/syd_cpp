@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,46 +105,37 @@ Inheritance diagram for syd::Injection:</div>
  <div class="center">
   <img src="classsyd_1_1Injection.png" usemap="#syd::Injection_map" alt=""/>
   <map id="syd::Injection_map" name="syd::Injection_map">
-<area href="classsyd_1_1TableElementBase.html" title="Base class for all element (row) in a table. " alt="syd::TableElementBase" shape="rect" coords="0,0,141,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6f6132b6349cf9941d396f6a066d72f5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f6132b6349cf9941d396f6a066d72f5"></a>
-virtual std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#a6f6132b6349cf9941d396f6a066d72f5">ToString</a> () const </td></tr>
-<tr class="memdesc:a6f6132b6349cf9941d396f6a066d72f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use to write the element as a string (must be overloaded) <br /></td></tr>
-<tr class="separator:a6f6132b6349cf9941d396f6a066d72f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9b2bfd3bde6377d7e6adc4414065fd2f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9b2bfd3bde6377d7e6adc4414065fd2f"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#a9b2bfd3bde6377d7e6adc4414065fd2f">Set</a> (std::vector&lt; std::string &gt; &amp;arg)</td></tr>
-<tr class="memdesc:a9b2bfd3bde6377d7e6adc4414065fd2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set basics values from a list of string. <br /></td></tr>
-<tr class="separator:a9b2bfd3bde6377d7e6adc4414065fd2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a329f0902410cda5cfb999b3ec447fb02"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a329f0902410cda5cfb999b3ec447fb02"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Set</b> (<a class="el" href="classsyd_1_1Patient.html">Patient</a> &amp;p, <a class="el" href="classsyd_1_1Radionuclide.html">Radionuclide</a> &amp;pr, const std::string &amp;pdate, double activity)</td></tr>
-<tr class="separator:a329f0902410cda5cfb999b3ec447fb02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e32238e9925ffb3588991042fef461a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2e32238e9925ffb3588991042fef461a"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="classsyd_1_1Injection.html">Injection</a> &amp;p)</td></tr>
-<tr class="separator:a2e32238e9925ffb3588991042fef461a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a170b274621721628d7689da3a1a0ca"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6a170b274621721628d7689da3a1a0ca"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator!=</b> (const <a class="el" href="classsyd_1_1Injection.html">Injection</a> &amp;p)</td></tr>
-<tr class="separator:a6a170b274621721628d7689da3a1a0ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb7cb0ae27d683dcba4d70c6152b9783"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acb7cb0ae27d683dcba4d70c6152b9783"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>OnDelete</b> (<a class="el" href="classsyd_1_1Database.html">syd::Database</a> *db)</td></tr>
-<tr class="separator:acb7cb0ae27d683dcba4d70c6152b9783"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1bdb36b4512530c76815bc8e09bcfd0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af1bdb36b4512530c76815bc8e09bcfd0"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TABLE_DEFINE</b> (<a class="el" href="classsyd_1_1Injection.html">Injection</a>)</td></tr>
+<tr class="separator:af1bdb36b4512530c76815bc8e09bcfd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9af1eab7b72e97b44d9e7df743503e6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab9af1eab7b72e97b44d9e7df743503e6"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TABLE_DECLARE_MANDATORY_FUNCTIONS</b> (<a class="el" href="classsyd_1_1Injection.html">Injection</a>)</td></tr>
+<tr class="separator:ab9af1eab7b72e97b44d9e7df743503e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b89d62c2ba3e1702dc494bfd7682393"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b89d62c2ba3e1702dc494bfd7682393"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>TABLE_DECLARE_OPTIONAL_FUNCTIONS</b> (<a class="el" href="classsyd_1_1Injection.html">Injection</a>)</td></tr>
+<tr class="separator:a6b89d62c2ba3e1702dc494bfd7682393"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b6b9bb378d57d141366d119cead6b24"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5b6b9bb378d57d141366d119cead6b24"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Callback</b> (odb::callback_event, odb::database &amp;) const </td></tr>
+<tr class="separator:a5b6b9bb378d57d141366d119cead6b24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ce499a7da6ad49593f611d54bc37ce1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3ce499a7da6ad49593f611d54bc37ce1"></a>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Callback</b> (odb::callback_event, odb::database &amp;)</td></tr>
+<tr class="separator:a3ce499a7da6ad49593f611d54bc37ce1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a10f0afbf52e0a6a9edbec960f580b2d5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10f0afbf52e0a6a9edbec960f580b2d5"></a>
-IdType&#160;</td><td class="memItemRight" valign="bottom"><b>id</b></td></tr>
-<tr class="separator:a10f0afbf52e0a6a9edbec960f580b2d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab90a36a2472597c5b7c172119f3c5ca3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab90a36a2472597c5b7c172119f3c5ca3"></a>
-std::shared_ptr&lt; <a class="el" href="classsyd_1_1Patient.html">Patient</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3">patient</a></td></tr>
-<tr class="memdesc:ab90a36a2472597c5b7c172119f3c5ca3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, linked to <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table. <br /></td></tr>
-<tr class="separator:ab90a36a2472597c5b7c172119f3c5ca3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a764de179e59dfa3fbbb02c9774b36385"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a764de179e59dfa3fbbb02c9774b36385"></a>
-std::shared_ptr&lt; <a class="el" href="classsyd_1_1Radionuclide.html">Radionuclide</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#a764de179e59dfa3fbbb02c9774b36385">radionuclide</a></td></tr>
-<tr class="memdesc:a764de179e59dfa3fbbb02c9774b36385"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, linked to <a class="el" href="classsyd_1_1Radionuclide.html" title="Store information about a radionuclide. ">Radionuclide</a> table. <br /></td></tr>
-<tr class="separator:a764de179e59dfa3fbbb02c9774b36385"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6cff5fe137932031271706242ec8c98c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6cff5fe137932031271706242ec8c98c"></a>
+syd::Patient::pointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#a6cff5fe137932031271706242ec8c98c">patient</a></td></tr>
+<tr class="memdesc:a6cff5fe137932031271706242ec8c98c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, linked to <a class="el" href="classsyd_1_1Patient.html" title="Store information about a patient (id, study_id, name etc). ">Patient</a> table. <br /></td></tr>
+<tr class="separator:a6cff5fe137932031271706242ec8c98c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ee5306e9fde93a4244281a485777f8d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4ee5306e9fde93a4244281a485777f8d"></a>
+syd::Radionuclide::pointer&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#a4ee5306e9fde93a4244281a485777f8d">radionuclide</a></td></tr>
+<tr class="memdesc:a4ee5306e9fde93a4244281a485777f8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Foreign key, linked to <a class="el" href="classsyd_1_1Radionuclide.html" title="Store information about a radionuclide. ">Radionuclide</a> table. <br /></td></tr>
+<tr class="separator:a4ee5306e9fde93a4244281a485777f8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6a2df3f3ec09b09e689d23fa213910f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae6a2df3f3ec09b09e689d23fa213910f"></a>
 std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1Injection.html#ae6a2df3f3ec09b09e689d23fa213910f">date</a></td></tr>
 <tr class="memdesc:ae6a2df3f3ec09b09e689d23fa213910f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Date of the injection. <br /></td></tr>
@@ -157,7 +148,7 @@ double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Store information about a radionuclide injection (date, etc). </p>
 
-<p>Definition at line <a class="el" href="sydInjection_8h_source.html#l00031">31</a> of file <a class="el" href="sydInjection_8h_source.html">sydInjection.h</a>.</p>
+<p>Definition at line <a class="el" href="sydInjection_8h_source.html#l00033">33</a> of file <a class="el" href="sydInjection_8h_source.html">sydInjection.h</a>.</p>
 </div><hr/>The documentation for this class was generated from the following files:<ul>
 <li>/home/dsarrut/src/syd/syd/src/std_db/<a class="el" href="sydInjection_8h_source.html">sydInjection.h</a></li>
 <li>/home/dsarrut/src/syd/syd/src/std_db/<a class="el" href="sydInjection_8cxx_source.html">sydInjection.cxx</a></li>

@@ -1,9 +1,22 @@
 var searchData=
 [
-  ['path',['path',['../classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955',1,'syd::File']]],
-  ['patient',['Patient',['../classsyd_1_1Patient.html',1,'syd']]],
-  ['patient',['patient',['../classsyd_1_1DicomSerie.html#aeff8ef7948cf11a76fcb5e1bee3227b5',1,'syd::DicomSerie::patient()'],['../classsyd_1_1Image.html#a420355ce71198e76971a33a879660948',1,'syd::Image::patient()'],['../classsyd_1_1Injection.html#ab90a36a2472597c5b7c172119f3c5ca3',1,'syd::Injection::patient()']]],
-  ['pluginmanager',['PluginManager',['../classsyd_1_1PluginManager.html',1,'syd']]],
-  ['pluginmanager',['PluginManager',['../classsyd_1_1PluginManager.html#a9a8a769e102e882881af129d515c50bd',1,'syd::PluginManager']]],
-  ['printtable',['PrintTable',['../classsyd_1_1PrintTable.html',1,'syd']]]
+  ['radionuclide',['Radionuclide',['../classsyd_1_1Radionuclide.html',1,'syd']]],
+  ['radionuclide',['radionuclide',['../classsyd_1_1Injection.html#a4ee5306e9fde93a4244281a485777f8d',1,'syd::Injection']]],
+  ['readimage',['ReadImage',['../classsyd_1_1ImageBuilder.html#a06c2859c1ab851fbb5faf02afd23f53a',1,'syd::ImageBuilder']]],
+  ['reconstruction_5fdate',['reconstruction_date',['../classsyd_1_1DicomSerie.html#a5f735f7a79bcb537b3479aa454d18f97',1,'syd::DicomSerie']]],
+  ['redirectcintoconsole',['RedirectCinToConsole',['../classRedirectCinToConsole.html',1,'']]],
+  ['removetag',['RemoveTag',['../classsyd_1_1Image.html#acbb426b4a18f1fa939f32ab011c274b3',1,'syd::Image']]],
+  ['residualbasetype',['ResidualBaseType',['../classsyd_1_1FitModelBase_1_1ResidualBaseType.html',1,'syd::FitModelBase']]],
+  ['residualtype',['ResidualType',['../classsyd_1_1FitModel__f4_1_1ResidualType.html',1,'syd::FitModel_f4']]],
+  ['residualtype',['ResidualType',['../classsyd_1_1FitModel__f4a_1_1ResidualType.html',1,'syd::FitModel_f4a']]],
+  ['residualtype',['ResidualType',['../classsyd_1_1FitModel__f3_1_1ResidualType.html',1,'syd::FitModel_f3']]],
+  ['residualtype',['ResidualType',['../classsyd_1_1FitModel__f2_1_1ResidualType.html',1,'syd::FitModel_f2']]],
+  ['residualtype',['ResidualType',['../classsyd_1_1FitModel__f1_1_1ResidualType.html',1,'syd::FitModel_f1']]],
+  ['residualtype',['ResidualType',['../classsyd_1_1FitModel__f4c_1_1ResidualType.html',1,'syd::FitModel_f4c']]],
+  ['residualtype',['ResidualType',['../classsyd_1_1FitModel__f4b_1_1ResidualType.html',1,'syd::FitModel_f4b']]],
+  ['roimaskimage',['RoiMaskImage',['../classsyd_1_1RoiMaskImage.html',1,'syd']]],
+  ['roimaskimagebuilder',['RoiMaskImageBuilder',['../classsyd_1_1RoiMaskImageBuilder.html',1,'syd']]],
+  ['roimaskimagebuilder',['RoiMaskImageBuilder',['../classsyd_1_1RoiMaskImageBuilder.html#a4defdb5119a9d715e9c5e5d631d10964',1,'syd::RoiMaskImageBuilder::RoiMaskImageBuilder(syd::StandardDatabase *db)'],['../classsyd_1_1RoiMaskImageBuilder.html#a02a07822842a44b030acd3b43a6e2a14',1,'syd::RoiMaskImageBuilder::RoiMaskImageBuilder()']]],
+  ['roitype',['roitype',['../classsyd_1_1RoiMaskImage.html#aacff089a49ed7fda1353448397bcc138',1,'syd::RoiMaskImage']]],
+  ['roitype',['RoiType',['../classsyd_1_1RoiType.html',1,'syd']]]
 ];

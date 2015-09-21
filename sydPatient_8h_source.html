@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -109,61 +109,60 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#define SYDPATIENT_H</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// syd</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydTableElementBase.h&quot;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydRecord.h&quot;</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacesyd.html">syd</a> {</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#pragma db model version(1, 1)</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#pragma db object</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  <span class="keyword">class </span>Patient: <span class="keyword">public</span> <a class="code" href="classsyd_1_1TableElementBase.html">syd::TableElementBase</a> {</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#pragma db id auto</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    IdType <a class="code" href="classsyd_1_1Patient.html#a24c91d398e03e6dfbe27b622bdda2cb0">id</a>;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#pragma db options(&quot;UNIQUE&quot;)</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    std::string <a class="code" href="classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987">name</a>;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#pragma db options(&quot;UNIQUE&quot;)</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    IdType <a class="code" href="classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6">study_id</a>;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classsyd_1_1Patient.html#a2158bdcfc2510f8b507541b304f96f51">   48</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classsyd_1_1Patient.html#a2158bdcfc2510f8b507541b304f96f51">weight_in_kg</a>;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="classsyd_1_1Patient.html#a193d9432bfeaaa0fa9dd39f85d397a55">   51</a></span>&#160;    std::string <a class="code" href="classsyd_1_1Patient.html#a193d9432bfeaaa0fa9dd39f85d397a55">dicom_patientid</a>;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="comment">// ------------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    SET_TABLE_NAME(<span class="stringliteral">&quot;Patient&quot;</span>);</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <a class="code" href="classsyd_1_1Patient.html">Patient</a>();</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">class </span>Injection;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keyword">class </span>PatientStat;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keyword">class </span>StandardDatabase;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#pragma db object polymorphic pointer(std::shared_ptr) table(&quot;syd::Patient&quot;) callback(Callback)</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">class </span>Patient: <span class="keyword">public</span> syd::Record {</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#pragma db options(&quot;UNIQUE&quot;)</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    std::string <a class="code" href="classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987">name</a>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#pragma db options(&quot;UNIQUE&quot;)</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    IdType <a class="code" href="classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6">study_id</a>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="classsyd_1_1Patient.html#a2158bdcfc2510f8b507541b304f96f51">   46</a></span>&#160;    <span class="keywordtype">double</span> <a class="code" href="classsyd_1_1Patient.html#a2158bdcfc2510f8b507541b304f96f51">weight_in_kg</a>;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classsyd_1_1Patient.html#a193d9432bfeaaa0fa9dd39f85d397a55">   49</a></span>&#160;    std::string <a class="code" href="classsyd_1_1Patient.html#a193d9432bfeaaa0fa9dd39f85d397a55">dicom_patientid</a>;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="comment">// ------------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    TABLE_DEFINE(<a class="code" href="classsyd_1_1Patient.html">Patient</a>);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    TABLE_DECLARE_MANDATORY_FUNCTIONS(<a class="code" href="classsyd_1_1Patient.html">Patient</a>);</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    TABLE_DECLARE_OPTIONAL_FUNCTIONS(<a class="code" href="classsyd_1_1Patient.html">Patient</a>);</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="comment">// ------------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">virtual</span> std::string <a class="code" href="classsyd_1_1Patient.html#a97e0d70f2296e0d8919cba4476c1e5d7">ToString</a>() <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">Set</a>(std::vector&lt;std::string&gt; &amp; arg);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">Set</a>(std::string pname, IdType studyId, <span class="keywordtype">double</span> weight);</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keywordtype">bool</span> operator==(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Patient.html">Patient</a> &amp; p);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">bool</span> operator!=(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Patient.html">Patient</a> &amp; p) { <span class="keywordflow">return</span> !(*<span class="keyword">this</span> == p); }</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="keywordtype">bool</span> CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) <span class="keyword">const</span>;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> OnDelete(<a class="code" href="classsyd_1_1Database.html">syd::Database</a> * db);</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Patient.html#a59f0c80be2204f109ea5e09e948b2df7">Set</a>(<span class="keyword">const</span> syd::Database * db, <span class="keyword">const</span> std::string &amp; pname,</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                     <span class="keyword">const</span> IdType &amp; pstudy_id, <span class="keyword">const</span> <span class="keywordtype">double</span> pweight_in_kg=-1,</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                     <span class="keyword">const</span> std::string pdicom_patientid=<span class="stringliteral">&quot;unset&quot;</span>);</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">virtual</span> <span class="keywordtype">bool</span> CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">virtual</span> std::string ComputeRelativeFolder() <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="keywordtype">void</span> Callback(odb::callback_event, odb::database&amp;) <span class="keyword">const</span>;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="keywordtype">void</span> Callback(odb::callback_event, odb::database&amp;);</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  }; <span class="comment">// end of class</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;}</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="ttc" id="classsyd_1_1Patient_html_a2158bdcfc2510f8b507541b304f96f51"><div class="ttname"><a href="classsyd_1_1Patient.html#a2158bdcfc2510f8b507541b304f96f51">syd::Patient::weight_in_kg</a></div><div class="ttdeci">double weight_in_kg</div><div class="ttdoc">Patient weight_in_kg. </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00048">sydPatient.h:48</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html_a97e0d70f2296e0d8919cba4476c1e5d7"><div class="ttname"><a href="classsyd_1_1Patient.html#a97e0d70f2296e0d8919cba4476c1e5d7">syd::Patient::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8cxx_source.html#l00065">sydPatient.cxx:65</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html"><div class="ttname"><a href="classsyd_1_1Database.html">syd::Database</a></div><div class="ttdoc">This is the base class of all databases. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00040">sydDatabase.h:40</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html_aedc75248ef2491a8fb2379ec805a03db"><div class="ttname"><a href="classsyd_1_1Patient.html#aedc75248ef2491a8fb2379ec805a03db">syd::Patient::Set</a></div><div class="ttdeci">virtual void Set(std::vector&lt; std::string &gt; &amp;arg)</div><div class="ttdoc">Set basics values from a list of string. </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8cxx_source.html#l00051">sydPatient.cxx:51</a></div></div>
-<div class="ttc" id="classsyd_1_1TableElementBase_html"><div class="ttname"><a href="classsyd_1_1TableElementBase.html">syd::TableElementBase</a></div><div class="ttdoc">Base class for all element (row) in a table. </div><div class="ttdef"><b>Definition:</b> <a href="sydTableElementBase_8h_source.html#l00031">sydTableElementBase.h:31</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html_a86d13a77573c136984d2ad7f137d8987"><div class="ttname"><a href="classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987">syd::Patient::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">Patient name (unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00041">sydPatient.h:41</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html_a193d9432bfeaaa0fa9dd39f85d397a55"><div class="ttname"><a href="classsyd_1_1Patient.html#a193d9432bfeaaa0fa9dd39f85d397a55">syd::Patient::dicom_patientid</a></div><div class="ttdeci">std::string dicom_patientid</div><div class="ttdoc">Patient dicom ID. Not unique because could be unknown. </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00051">sydPatient.h:51</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html_a0daacb12fc62184d1e486019182a98a6"><div class="ttname"><a href="classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6">syd::Patient::study_id</a></div><div class="ttdeci">IdType study_id</div><div class="ttdoc">Patient number in the study (unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00045">sydPatient.h:45</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html"><div class="ttname"><a href="classsyd_1_1Patient.html">syd::Patient</a></div><div class="ttdoc">Store information about a patient (id, study_id, name etc). </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00032">sydPatient.h:32</a></div></div>
-<div class="ttc" id="classsyd_1_1Patient_html_a24c91d398e03e6dfbe27b622bdda2cb0"><div class="ttname"><a href="classsyd_1_1Patient.html#a24c91d398e03e6dfbe27b622bdda2cb0">syd::Patient::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Main key (automated, unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00037">sydPatient.h:37</a></div></div>
-<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00049">sydCommon.h:49</a></div></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <a class="code" href="classsyd_1_1Patient.html">Patient</a>();</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;  }; <span class="comment">// end of class</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;}</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="ttc" id="classsyd_1_1Patient_html_a2158bdcfc2510f8b507541b304f96f51"><div class="ttname"><a href="classsyd_1_1Patient.html#a2158bdcfc2510f8b507541b304f96f51">syd::Patient::weight_in_kg</a></div><div class="ttdeci">double weight_in_kg</div><div class="ttdoc">Patient weight_in_kg. </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00046">sydPatient.h:46</a></div></div>
+<div class="ttc" id="classsyd_1_1Patient_html_a86d13a77573c136984d2ad7f137d8987"><div class="ttname"><a href="classsyd_1_1Patient.html#a86d13a77573c136984d2ad7f137d8987">syd::Patient::name</a></div><div class="ttdeci">std::string name</div><div class="ttdoc">Patient name (unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00039">sydPatient.h:39</a></div></div>
+<div class="ttc" id="classsyd_1_1Patient_html_a193d9432bfeaaa0fa9dd39f85d397a55"><div class="ttname"><a href="classsyd_1_1Patient.html#a193d9432bfeaaa0fa9dd39f85d397a55">syd::Patient::dicom_patientid</a></div><div class="ttdeci">std::string dicom_patientid</div><div class="ttdoc">Patient dicom ID. Not unique because could be unknown. </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00049">sydPatient.h:49</a></div></div>
+<div class="ttc" id="classsyd_1_1Patient_html_a59f0c80be2204f109ea5e09e948b2df7"><div class="ttname"><a href="classsyd_1_1Patient.html#a59f0c80be2204f109ea5e09e948b2df7">syd::Patient::Set</a></div><div class="ttdeci">virtual void Set(const syd::Database *db, const std::string &amp;pname, const IdType &amp;pstudy_id, const double pweight_in_kg=-1, const std::string pdicom_patientid=&quot;unset&quot;)</div><div class="ttdoc">Additional Set function to shorter patient inclusion. </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8cxx_source.html#l00072">sydPatient.cxx:72</a></div></div>
+<div class="ttc" id="classsyd_1_1Patient_html_a0daacb12fc62184d1e486019182a98a6"><div class="ttname"><a href="classsyd_1_1Patient.html#a0daacb12fc62184d1e486019182a98a6">syd::Patient::study_id</a></div><div class="ttdeci">IdType study_id</div><div class="ttdoc">Patient number in the study (unique) </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00043">sydPatient.h:43</a></div></div>
+<div class="ttc" id="classsyd_1_1Patient_html"><div class="ttname"><a href="classsyd_1_1Patient.html">syd::Patient</a></div><div class="ttdoc">Store information about a patient (id, study_id, name etc). </div><div class="ttdef"><b>Definition:</b> <a href="sydPatient_8h_source.html#l00034">sydPatient.h:34</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00053">sydCommon.h:53</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

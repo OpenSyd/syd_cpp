@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -107,13 +107,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">// syd</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;sydDicomFile.h&quot;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;sydDatabase.h&quot;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;sydTable.h&quot;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydDicomSerie-odb.hxx&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;syd::DicomFile::DicomFile():TableElementBase()</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;{</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;sydStandardDatabase.h&quot;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;syd::DicomFile::DicomFile():<a class="code" href="namespacesyd.html">syd</a>::Record()</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  file = NULL;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  dicom_serie = NULL;</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  dicom_sop_uid = <span class="stringliteral">&quot;&quot;</span>;</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  dicom_instance_number = 0;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div>
@@ -121,7 +121,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classsyd_1_1DicomFile.html#a6305e19960a2bd2bb13b9c60773f4b14">   35</a></span>&#160;std::string <a class="code" href="classsyd_1_1DicomFile.html#a6305e19960a2bd2bb13b9c60773f4b14">syd::DicomFile::ToString</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;std::string syd::DicomFile::ToString()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword"></span>{</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  std::stringstream ss ;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  ss &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
@@ -134,35 +134,85 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keywordtype">bool</span> syd::DicomFile::operator==(<span class="keyword">const</span> <a class="code" href="classsyd_1_1DicomFile.html">DicomFile</a> &amp; p)</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;{</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keywordflow">return</span> (<span class="keywordtype">id</span> == p.<a class="code" href="classsyd_1_1DicomFile.html#a0b17a0e5d72f453236311fd5ecdcaf88">id</a> and</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;          *file == *p.<a class="code" href="classsyd_1_1DicomFile.html#ae2977269943fbe575502d0d0c5c4451c">file</a> and</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;          *dicom_serie == *p.<a class="code" href="classsyd_1_1DicomFile.html#a9f4aebe327d27124ec6e76d7913abbd3">dicom_serie</a> and</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;          dicom_sop_uid == p.<a class="code" href="classsyd_1_1DicomFile.html#a21f7d2f4305a088e8195f3002fec2bc6">dicom_sop_uid</a> and</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;          dicom_instance_number == p.<a class="code" href="classsyd_1_1DicomFile.html#a967d5da7f1971e134e050e86c4a6cd03">dicom_instance_number</a>);</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="keywordtype">bool</span> syd::DicomFile::IsEqual(<span class="keyword">const</span> pointer p)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="keywordflow">return</span> (syd::Record::IsEqual(p) and</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;          file-&gt;id == p-&gt;file-&gt;id and</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;          dicom_serie-&gt;id == p-&gt;dicom_serie-&gt;id and</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;          dicom_sop_uid == p-&gt;dicom_sop_uid and</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;          dicom_instance_number == p-&gt;dicom_instance_number);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keywordtype">void</span> syd::DicomFile::OnDelete(<a class="code" href="classsyd_1_1Database.html">syd::Database</a> * db)</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;{</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  db-&gt;<a class="code" href="classsyd_1_1Database.html#ad960fa82b5d3536bbf6f525ad38431fd">AddToDeleteList</a>(*file);</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  db-&gt;<a class="code" href="classsyd_1_1Database.html#ad960fa82b5d3536bbf6f525ad38431fd">AddToDeleteList</a>(*dicom_serie);</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;}</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="ttc" id="classsyd_1_1DicomFile_html_a9f4aebe327d27124ec6e76d7913abbd3"><div class="ttname"><a href="classsyd_1_1DicomFile.html#a9f4aebe327d27124ec6e76d7913abbd3">syd::DicomFile::dicom_serie</a></div><div class="ttdeci">std::shared_ptr&lt; syd::DicomSerie &gt; dicom_serie</div><div class="ttdoc">Foreign key, it must exist in the DicomSerie table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00044">sydDicomFile.h:44</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html"><div class="ttname"><a href="classsyd_1_1Database.html">syd::Database</a></div><div class="ttdoc">This is the base class of all databases. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00040">sydDatabase.h:40</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomFile_html_a21f7d2f4305a088e8195f3002fec2bc6"><div class="ttname"><a href="classsyd_1_1DicomFile.html#a21f7d2f4305a088e8195f3002fec2bc6">syd::DicomFile::dicom_sop_uid</a></div><div class="ttdeci">std::string dicom_sop_uid</div><div class="ttdoc">Dicom SOPInstanceUID. Unique dicom file identifier. Unique in db. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00048">sydDicomFile.h:48</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomFile_html_a0b17a0e5d72f453236311fd5ecdcaf88"><div class="ttname"><a href="classsyd_1_1DicomFile.html#a0b17a0e5d72f453236311fd5ecdcaf88">syd::DicomFile::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Id of the DicomFile. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00038">sydDicomFile.h:38</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomFile_html_ae2977269943fbe575502d0d0c5c4451c"><div class="ttname"><a href="classsyd_1_1DicomFile.html#ae2977269943fbe575502d0d0c5c4451c">syd::DicomFile::file</a></div><div class="ttdeci">std::shared_ptr&lt; syd::File &gt; file</div><div class="ttdoc">Foreign key, it must exist in the File table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00041">sydDicomFile.h:41</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_ad960fa82b5d3536bbf6f525ad38431fd"><div class="ttname"><a href="classsyd_1_1Database.html#ad960fa82b5d3536bbf6f525ad38431fd">syd::Database::AddToDeleteList</a></div><div class="ttdeci">void AddToDeleteList(TableElement &amp;elem)</div><div class="ttdoc">Add an element to the list of element to be delete. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00076">sydDatabase.h:76</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomFile_html"><div class="ttname"><a href="classsyd_1_1DicomFile.html">syd::DicomFile</a></div><div class="ttdoc">Store information about a dicom file (unique dicom identifier dicom_sop_uid). </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00033">sydDicomFile.h:33</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomFile_html_a6305e19960a2bd2bb13b9c60773f4b14"><div class="ttname"><a href="classsyd_1_1DicomFile.html#a6305e19960a2bd2bb13b9c60773f4b14">syd::DicomFile::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8cxx_source.html#l00035">sydDicomFile.cxx:35</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomFile_html_a967d5da7f1971e134e050e86c4a6cd03"><div class="ttname"><a href="classsyd_1_1DicomFile.html#a967d5da7f1971e134e050e86c4a6cd03">syd::DicomFile::dicom_instance_number</a></div><div class="ttdeci">int dicom_instance_number</div><div class="ttdoc">Dicom InstanceNumber. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00051">sydDicomFile.h:51</a></div></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keywordtype">void</span> syd::DicomFile::CopyFrom(<span class="keyword">const</span> pointer p)</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;{</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;  syd::Record::CopyFrom(p);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  file = p-&gt;file;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  dicom_serie = p-&gt;dicom_serie;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  dicom_sop_uid = p-&gt;dicom_sop_uid;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;  dicom_instance_number = p-&gt;dicom_instance_number;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="keywordtype">void</span> syd::DicomFile::Set(<span class="keyword">const</span> syd::Database * db, <span class="keyword">const</span> std::vector&lt;std::string&gt; &amp; arg)</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;{</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Cannot insert DicomFile with &#39;Set&#39;. Use sydInsertDicom.&quot;</span>;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;}</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="keywordtype">void</span> syd::DicomFile::InitPrintTable(<span class="keyword">const</span> syd::Database * db, <a class="code" href="classsyd_1_1PrintTable.html">syd::PrintTable</a> &amp; ta, <span class="keyword">const</span> std::string &amp; format)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  <span class="keywordflow">if</span> (format == <span class="stringliteral">&quot;help&quot;</span>) {</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;Available formats for table &#39;DicomFile&#39;: &quot;</span> &lt;&lt; std::endl</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\tdefault: id serie_id dicom_instance_nb file dop_uid&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  }</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;#id&quot;</span>,4);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;serie&quot;</span>, 7);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;nb&quot;</span>, 8);</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;file&quot;</span>, 40);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;sop_uid&quot;</span>, 20);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;}</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="keywordtype">void</span> syd::DicomFile::DumpInTable(<span class="keyword">const</span> syd::Database * d, <a class="code" href="classsyd_1_1PrintTable.html">syd::PrintTable</a> &amp; ta, <span class="keyword">const</span> std::string &amp; format)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  ta &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; dicom_serie-&gt;id &lt;&lt; dicom_instance_number &lt;&lt; file-&gt;filename &lt;&lt; dicom_sop_uid;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;}</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="keywordtype">void</span> syd::DicomFile::Callback(odb::callback_event event, odb::database &amp; db)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  syd::Record::Callback(event, db);</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  <span class="keywordflow">if</span> (event == odb::callback_event::pre_erase) {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    db.erase(file);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  }</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;}</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;<span class="keywordtype">void</span> syd::DicomFile::Callback(odb::callback_event event, odb::database &amp; db)</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;{</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  syd::Record::Callback(event, db);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;  <span class="keywordflow">if</span> (event == odb::callback_event::pre_erase) {</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    db.erase(file);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  }</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;}</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="ttc" id="classsyd_1_1PrintTable_html"><div class="ttname"><a href="classsyd_1_1PrintTable.html">syd::PrintTable</a></div><div class="ttdoc">Helpers class to dump a table (line/column) of values, controling the precision and the column size...</div><div class="ttdef"><b>Definition:</b> <a href="sydPrintTable_8h_source.html#l00029">sydPrintTable.h:29</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00053">sydCommon.h:53</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

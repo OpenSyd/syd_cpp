@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['query',['Query',['../classsyd_1_1Database.html#a88655c201112bc243bb5901d1c7f5753',1,'syd::Database::Query(const odb::query&lt; TableElement &gt; &amp;q, std::vector&lt; TableElement &gt; &amp;list)'],['../classsyd_1_1Database.html#a335c44bc0b87923fc4e6fcfffbea5128',1,'syd::Database::Query(std::vector&lt; TableElement &gt; &amp;list)'],['../singletonsyd_1_1Table.html#ab9b0730762f8b56bd7a01ebd63a35301',1,'syd::Table::Query(const odb::query&lt; TableElement &gt; &amp;q, std::vector&lt; TableElement &gt; &amp;list)'],['../singletonsyd_1_1Table.html#acd17fca0f798dfa91de832a3fc9e9688',1,'syd::Table::Query(std::vector&lt; TableElement &gt; &amp;list)']]],
-  ['queryone',['QueryOne',['../classsyd_1_1Database.html#a9198e4041a08a896198b31c614afce80',1,'syd::Database::QueryOne(const odb::query&lt; TableElement &gt; &amp;q)'],['../classsyd_1_1Database.html#a69c332026a6a4b9630d4888460bfe9d6',1,'syd::Database::QueryOne(IdType id)'],['../singletonsyd_1_1Table.html#a1ce4cadd334ec49731683731f22daeaf',1,'syd::Table::QueryOne(const odb::query&lt; TableElement &gt; &amp;q)'],['../singletonsyd_1_1Table.html#aea56dc1166b741d8bf9dcc868d34ab9d',1,'syd::Table::QueryOne(IdType id)']]]
+  ['updatedicom',['UpdateDicom',['../classsyd_1_1ImageBuilder.html#ab1aff138aab8d90bc98fa33d07e8bfd5',1,'syd::ImageBuilder']]],
+  ['updatedicomserie',['UpdateDicomSerie',['../classsyd_1_1DicomSerieBuilder.html#a08e9e96229919eb5d9333a9fa9e447ce',1,'syd::DicomSerieBuilder']]],
+  ['updatefile',['UpdateFile',['../classsyd_1_1ImageBuilder.html#a5c8df51970b0174c528b9735baa27214',1,'syd::ImageBuilder']]],
+  ['updateimageinfo',['UpdateImageInfo',['../classsyd_1_1ImageBuilder.html#a86d6a1822cbfe5f793c01b5c157e3b27',1,'syd::ImageBuilder::UpdateImageInfo()'],['../classsyd_1_1StandardDatabase.html#a41876099a06f6ddfb3adf168317f10df',1,'syd::StandardDatabase::UpdateImageInfo()']]]
 ];

@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -107,73 +107,287 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">// syd</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;sydImage.h&quot;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;sydDatabase.h&quot;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;sydTable.h&quot;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydFile.h&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;sydFile-odb.hxx&quot;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;syd::Image::Image():TableElementBase()</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;s:size) s = 0;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;s:spacing) s = 1.0;</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;}</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;sydStandardDatabase.h&quot;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;sydDicomSerie.h&quot;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydTag.h&quot;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;syd::Image::Image():<a class="code" href="namespacesyd.html">syd</a>::Record()</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;{</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  type = <span class="stringliteral">&quot;unset&quot;</span>;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  pixel_type = <span class="stringliteral">&quot;unset&quot;</span>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;  dimension = 3;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;  frame_of_reference_uid = <span class="stringliteral">&quot;unset&quot;</span>;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;s:size) s = 0;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> &amp;s:spacing) s = 1.0;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;}</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#a95a4a4f328ecdece5e24781997060a2c">   36</a></span>&#160;std::string <a class="code" href="classsyd_1_1Image.html#a95a4a4f328ecdece5e24781997060a2c">syd::Image::ToString</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  std::string name;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keywordflow">if</span> (patient == NULL) name = <span class="stringliteral">&quot;patient_not_set&quot;</span>;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keywordflow">else</span> name = patient-&gt;name;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  std::string t;</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keywordflow">if</span> (tag == NULL) t = <span class="stringliteral">&quot;tag_not_set&quot;</span>;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordflow">else</span> t = tag-&gt;label;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;std::string syd::Image::ToString()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  std::string name;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keywordflow">if</span> (patient == NULL) name = <span class="stringliteral">&quot;unset&quot;</span>;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keywordflow">else</span> name = patient-&gt;name;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  std::stringstream ss ;</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  ss &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;     &lt;&lt; name &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;  <span class="keywordflow">if</span> (files.size() == 0) ss &lt;&lt; <span class="stringliteral">&quot;(no files) &quot;</span>;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> f:files) ss &lt;&lt; f-&gt;filename &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  ss &lt;&lt; t &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; type &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; pixel_type &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;     &lt;&lt; size[0] &lt;&lt; <span class="stringliteral">&quot;x&quot;</span> &lt;&lt; size[1] &lt;&lt; <span class="stringliteral">&quot;x&quot;</span> &lt;&lt; size[2] &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;     &lt;&lt; spacing[0] &lt;&lt; <span class="stringliteral">&quot;x&quot;</span> &lt;&lt; spacing[1] &lt;&lt; <span class="stringliteral">&quot;x&quot;</span> &lt;&lt; spacing[2];</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="keywordflow">if</span> (dicoms.size() &gt; 0) ss &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; dicoms[0]-&gt;dicom_modality &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:dicoms) ss &lt;&lt; d-&gt;id &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keywordflow">return</span> ss.str();</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;}</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keywordtype">bool</span> syd::Image::operator==(<span class="keyword">const</span> <a class="code" href="classsyd_1_1Image.html">Image</a> &amp; p)</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;{</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;  <span class="keywordtype">bool</span> b = <span class="keywordtype">id</span> == p.<a class="code" href="classsyd_1_1Image.html#a35e297098d3995274bd949f80f25e62f">id</a> and</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    *patient == *p.<a class="code" href="classsyd_1_1Image.html#a420355ce71198e76971a33a879660948">patient</a>;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keywordflow">if</span> (!b) <span class="keywordflow">return</span> b;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;  <span class="keywordflow">if</span> (files.size() != p.<a class="code" href="classsyd_1_1Image.html#a1bb0c11a702b6785c61fb2b5a96454dc">files</a>.size()) <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt; files.size(); i++)</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    b = b and (*files[i] == *p.<a class="code" href="classsyd_1_1Image.html#a1bb0c11a702b6785c61fb2b5a96454dc">files</a>[i]);</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  b = b and *tag == *p.<a class="code" href="classsyd_1_1Image.html#a37d85a4a7a671ac715708a36a76bfdc9">tag</a>;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  <span class="keywordflow">return</span> b;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;}</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keywordtype">void</span> syd::Image::OnDelete(<a class="code" href="classsyd_1_1Database.html">syd::Database</a> * db)</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;{</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> f:files) db-&gt;<a class="code" href="classsyd_1_1Database.html#ad960fa82b5d3536bbf6f525ad38431fd">AddToDeleteList</a>(*f);</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="ttc" id="classsyd_1_1Database_html"><div class="ttname"><a href="classsyd_1_1Database.html">syd::Database</a></div><div class="ttdoc">This is the base class of all databases. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00040">sydDatabase.h:40</a></div></div>
-<div class="ttc" id="classsyd_1_1Image_html_a35e297098d3995274bd949f80f25e62f"><div class="ttname"><a href="classsyd_1_1Image.html#a35e297098d3995274bd949f80f25e62f">syd::Image::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Id of the Image. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00044">sydImage.h:44</a></div></div>
-<div class="ttc" id="classsyd_1_1Image_html_a1bb0c11a702b6785c61fb2b5a96454dc"><div class="ttname"><a href="classsyd_1_1Image.html#a1bb0c11a702b6785c61fb2b5a96454dc">syd::Image::files</a></div><div class="ttdeci">std::vector&lt; std::shared_ptr&lt; syd::File &gt; &gt; files</div><div class="ttdoc">List of associated files. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00055">sydImage.h:55</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_ad960fa82b5d3536bbf6f525ad38431fd"><div class="ttname"><a href="classsyd_1_1Database.html#ad960fa82b5d3536bbf6f525ad38431fd">syd::Database::AddToDeleteList</a></div><div class="ttdeci">void AddToDeleteList(TableElement &amp;elem)</div><div class="ttdoc">Add an element to the list of element to be delete. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00076">sydDatabase.h:76</a></div></div>
-<div class="ttc" id="classsyd_1_1Image_html_a37d85a4a7a671ac715708a36a76bfdc9"><div class="ttname"><a href="classsyd_1_1Image.html#a37d85a4a7a671ac715708a36a76bfdc9">syd::Image::tag</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Tag &gt; tag</div><div class="ttdoc">Associated Tag. FIXME : or a vector ? Delete image or not ??? </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00052">sydImage.h:52</a></div></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="comment">//for(auto f:files) ss &lt;&lt; f-&gt;filename &lt;&lt; &quot; &quot;; // only first is usually useful</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordflow">else</span> ss &lt;&lt; files[0]-&gt;filename &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  ss &lt;&lt; GetTagLabels(tags) &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; type &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; pixel_type &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;     &lt;&lt; size[0] &lt;&lt; <span class="stringliteral">&quot;x&quot;</span> &lt;&lt; size[1] &lt;&lt; <span class="stringliteral">&quot;x&quot;</span> &lt;&lt; size[2] &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;     &lt;&lt; spacing[0] &lt;&lt; <span class="stringliteral">&quot;x&quot;</span> &lt;&lt; spacing[1] &lt;&lt; <span class="stringliteral">&quot;x&quot;</span> &lt;&lt; spacing[2];</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="keywordflow">if</span> (dicoms.size() &gt; 0) ss &lt;&lt; <span class="stringliteral">&quot; &quot;</span> &lt;&lt; dicoms[0]-&gt;dicom_modality &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:dicoms) ss &lt;&lt; d-&gt;id &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  ss &lt;&lt; frame_of_reference_uid;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keywordflow">return</span> ss.str();</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;}</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="keywordtype">void</span> syd::Image::Set(<span class="keyword">const</span> syd::Database * db, <span class="keyword">const</span> std::vector&lt;std::string&gt; &amp; arg)</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;{</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;To insert Image, please use sydInsertImage&quot;</span>;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;}</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keywordtype">void</span> syd::Image::CopyFrom(<span class="keyword">const</span> pointer p)</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;{</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  syd::Record::CopyFrom(p);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  patient = p-&gt;patient;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;  files.clear();</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  tags.clear();</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  dicoms.clear();</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> f:p-&gt;files) files.push_back(f);</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> t:p-&gt;tags) tags.push_back(t);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:p-&gt;dicoms) dicoms.push_back(d);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  type = p-&gt;type;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  pixel_type = p-&gt;pixel_type;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  dimension = p-&gt;dimension;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  frame_of_reference_uid = p-&gt;frame_of_reference_uid;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt;size.size(); i++) size[i] = p-&gt;size[i];</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt;spacing.size(); i++) spacing[i] = p-&gt;spacing[i];</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;}</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="keywordtype">bool</span> syd::Image::IsEqual(<span class="keyword">const</span> pointer p)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;  <span class="keywordtype">bool</span> b = (syd::Record::IsEqual(p) and</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            patient-&gt;<span class="keywordtype">id</span> == p-&gt;patient-&gt;<span class="keywordtype">id</span>);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;  for(auto i=0; i&lt;files.size(); i++) b = b and files[i]-&gt;<span class="keywordtype">id</span> == p-&gt;files[i]-&gt;<span class="keywordtype">id</span>;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  for(auto i=0; i&lt;tags.size(); i++) b = b and tags[i]-&gt;<span class="keywordtype">id</span> == p-&gt;tags[i]-&gt;<span class="keywordtype">id</span>;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  for(auto i=0; i&lt;dicoms.size(); i++) b = b and dicoms[i]-&gt;<span class="keywordtype">id</span> == p-&gt;dicoms[i]-&gt;<span class="keywordtype">id</span>;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;  b  =  b and</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    type == p-&gt;type and</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    pixel_type == p-&gt;pixel_type and</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    dimension == p-&gt;dimension and</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    frame_of_reference_uid == p-&gt;frame_of_reference_uid;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  for(auto i=0; i&lt;size.size(); i++) b = b and size[i] == p-&gt;size[i];</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  for(auto i=0; i&lt;spacing.size(); i++) b = b and spacing[i] == p-&gt;spacing[i];</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  return b;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;}</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00111"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#a95f58f8d14b3119b33880fbff4bcb5d1">  111</a></span>&#160;std::<span class="keywordtype">string</span> <a class="code" href="namespacesyd.html">syd</a>::<a class="code" href="classsyd_1_1Image.html">Image</a>::GetAcquisitionDate()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;  <span class="keywordflow">if</span> (dicoms.size() == 0) <span class="keywordflow">return</span> <span class="stringliteral">&quot;unknown_date&quot;</span>;</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">return</span> dicoms[0]-&gt;acquisition_date;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;}</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00120"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#a812590414d1ebfb5284b26419716d14b">  120</a></span>&#160;std::string <a class="code" href="classsyd_1_1Image.html#a812590414d1ebfb5284b26419716d14b">syd::Image::GetModality</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  <span class="keywordflow">if</span> (dicoms.size() == 0) <span class="keywordflow">return</span> <span class="stringliteral">&quot;unknown_modality&quot;</span>;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;  <span class="keywordflow">else</span> <span class="keywordflow">return</span> dicoms[0]-&gt;dicom_modality;</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;}</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00129"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#a1a2a8e0bffbd25a9cb953fe3564926af">  129</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Image.html#a1a2a8e0bffbd25a9cb953fe3564926af">syd::Image::AddTag</a>(syd::Tag::pointer tag)</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;{</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;  <span class="keywordtype">bool</span> found = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  <span class="keywordtype">int</span> i=0;</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  <span class="keywordflow">while</span> (i&lt;tags.size() and !found) {</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keywordflow">if</span> (tags[i]-&gt;label == tag-&gt;label) found = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    ++i;</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;  }</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;  <span class="keywordflow">if</span> (!found) tags.push_back(tag);</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;}</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#acbb426b4a18f1fa939f32ab011c274b3">  143</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Image.html#acbb426b4a18f1fa939f32ab011c274b3">syd::Image::RemoveTag</a>(syd::Tag::pointer tag)</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;{</div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;  <span class="keywordtype">bool</span> found = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;  <span class="keywordtype">int</span> i=0;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  <span class="keywordflow">while</span> (i&lt;tags.size() and !found) {</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    <span class="keywordflow">if</span> (tags[i]-&gt;label == tag-&gt;label) {</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;      found = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;      tags.erase(tags.begin()+i);</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    }</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    ++i;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;  }</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;}</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="keywordtype">void</span> syd::Image::InitPrintTable(<span class="keyword">const</span> syd::Database * db, <a class="code" href="classsyd_1_1PrintTable.html">syd::PrintTable</a> &amp; ta, <span class="keyword">const</span> std::string &amp; format)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;  <span class="keywordflow">if</span> (format == <span class="stringliteral">&quot;help&quot;</span>) {</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;Available formats for table &#39;Image&#39;: &quot;</span> &lt;&lt; std::endl</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\tdefault: id patient tags size spacing dicoms&quot;</span> &lt;&lt; std::endl</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\tfile: full path&quot;</span> &lt;&lt; std::endl</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\tfilelist: full path as a line&quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  }</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;  <span class="keywordflow">if</span> (format == <span class="stringliteral">&quot;file&quot;</span>) {</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    ta.AddColumn(<span class="stringliteral">&quot;#file&quot;</span>, 100);</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;  }</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;  <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordflow">if</span> (format == <span class="stringliteral">&quot;filelist&quot;</span>) {</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;      <span class="comment">// no column</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    }</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;      ta.AddColumn(<span class="stringliteral">&quot;#id&quot;</span>, 5);</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;      ta.AddColumn(<span class="stringliteral">&quot;p&quot;</span>, 8);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;      ta.AddColumn(<span class="stringliteral">&quot;tags&quot;</span>, 40);</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;      ta.AddColumn(<span class="stringliteral">&quot;size&quot;</span>, 12);</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;      ta.AddColumn(<span class="stringliteral">&quot;spacing&quot;</span>, 25);</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;      ta.AddColumn(<span class="stringliteral">&quot;dicom_id&quot;</span>, 15);</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;      ta.AddColumn(<span class="stringliteral">&quot;acqui_date&quot;</span>, 18);</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;      ta.AddColumn(<span class="stringliteral">&quot;ref_frame&quot;</span>, 30, 0, <span class="keyword">false</span>);</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    }</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;  }</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;}</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;<span class="keywordtype">void</span> syd::Image::DumpInTable(<span class="keyword">const</span> syd::Database * d, <a class="code" href="classsyd_1_1PrintTable.html">syd::PrintTable</a> &amp; ta, <span class="keyword">const</span> std::string &amp; format)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;  <span class="keywordflow">if</span> (format == <span class="stringliteral">&quot;file&quot;</span>) {</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordflow">if</span> (files.size() == 0) {</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;      ta &lt;&lt; <span class="stringliteral">&quot;no_file&quot;</span>;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;      <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    }</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="comment">//const syd::StandardDatabase * db = std::dynamic_cast&lt;const syd::StandardDatabase*&gt;(d);</span></div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    ta &lt;&lt; d-&gt;ConvertToAbsolutePath(files[0]-&gt;path+PATH_SEPARATOR+files[0]-&gt;filename);</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;  }</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;  <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keywordflow">if</span> (format == <span class="stringliteral">&quot;filelist&quot;</span>) {</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;      std::cout &lt;&lt; d-&gt;ConvertToAbsolutePath(files[0]-&gt;path+PATH_SEPARATOR+files[0]-&gt;filename) &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    }</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;      ta &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; patient-&gt;name &lt;&lt; GetTagLabels(tags)</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;         &lt;&lt; syd::ArrayToString&lt;int, 3&gt;(size) &lt;&lt; syd::ArrayToString&lt;double, 3&gt;(spacing);</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;      std::string dicom;</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;      <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:dicoms) dicom += syd::ToString(d-&gt;id)+<span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;      ta &lt;&lt; dicom;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;      <span class="keywordflow">if</span> (dicoms.size() == 0) ta &lt;&lt; <span class="stringliteral">&quot;no_dicom&quot;</span>;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;      <span class="keywordflow">else</span> ta &lt;&lt; dicoms[0]-&gt;acquisition_date;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;      ta &lt;&lt; frame_of_reference_uid;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    }</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;  }</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;}</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00221"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#aa92106acb4c6434d795fc702ee76814b">  221</a></span>&#160;std::string <a class="code" href="classsyd_1_1Image.html#aa92106acb4c6434d795fc702ee76814b">syd::Image::ComputeRelativeFolder</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;  <span class="keywordflow">return</span> patient-&gt;name;</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;}</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="keywordtype">void</span> syd::Image::UpdateFile(syd::Database * db,</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                            <span class="keyword">const</span> std::string &amp; filename,</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;                            <span class="keyword">const</span> std::string &amp; relativepath,</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;                            <span class="keywordtype">bool</span> deleteExistingFiles)</div>
+<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;{</div>
+<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;  std::string extension = GetExtension(filename);</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;  type = extension;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;  <span class="keywordflow">if</span> (files.size() != 0 and deleteExistingFiles) {</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;TODO UpdateFile deleteExistingFiles&quot;</span>;</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    <span class="comment">//    for(auto f:files)</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;  }</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;  files.clear();</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;  syd::File::pointer f;</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;  db-&gt;New(f);</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;  f-&gt;filename = filename;</div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;  f-&gt;path = relativepath;</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;  db-&gt;Insert(f);</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;  files.push_back(f);</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;  <span class="keywordflow">if</span> (extension == <span class="stringliteral">&quot;mhd&quot;</span>) {</div>
+<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    std::string ff = filename;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    syd::Replace(ff, <span class="stringliteral">&quot;.mhd&quot;</span>, <span class="stringliteral">&quot;.raw&quot;</span>);</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    db-&gt;New(f);</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    f-&gt;filename = ff;</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    f-&gt;path = relativepath;</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    db-&gt;Insert(f);</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    files.push_back(f);</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;  }</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;}</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00261"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#a7494ef03137f8d5729506c9e6ebab788">  261</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Image.html#a7494ef03137f8d5729506c9e6ebab788">syd::Image::Callback</a>(odb::callback_event event, odb::database &amp; db)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;  syd::Record::Callback(event,db);</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  <span class="keywordflow">if</span> (event == odb::callback_event::post_erase) {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> f:files) db.erase(f);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;  }</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;}</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;<span class="keywordtype">void</span> <a class="code" href="classsyd_1_1Image.html#a7494ef03137f8d5729506c9e6ebab788">syd::Image::Callback</a>(odb::callback_event event, odb::database &amp; db)</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;{</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;  syd::Record::Callback(event,db);</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;  <span class="keywordflow">if</span> (event == odb::callback_event::post_erase) {</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> f:files) db.erase(f);</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;  }</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;}</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00283"></a><span class="lineno"><a class="line" href="classsyd_1_1Image.html#ad542f37b8bf9bae38edcb4699ef21af6">  283</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="classsyd_1_1Image.html#ad542f37b8bf9bae38edcb4699ef21af6">syd::Image::IsSameSizeAndSpacingThan</a>(<span class="keyword">const</span> syd::Image::pointer image)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;  <span class="keywordtype">bool</span> b = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt;size.size(); i++) {</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    b = b and size[i] == image-&gt;size[i] and</div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;      spacing[i] == image-&gt;spacing[i];</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;  }</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;  <span class="keywordflow">return</span> b;</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;}</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="ttc" id="classsyd_1_1Image_html_ad542f37b8bf9bae38edcb4699ef21af6"><div class="ttname"><a href="classsyd_1_1Image.html#ad542f37b8bf9bae38edcb4699ef21af6">syd::Image::IsSameSizeAndSpacingThan</a></div><div class="ttdeci">bool IsSameSizeAndSpacingThan(const syd::Image::pointer image) const </div><div class="ttdoc">Test if the image is the same size and spacing than the param. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8cxx_source.html#l00283">sydImage.cxx:283</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a7494ef03137f8d5729506c9e6ebab788"><div class="ttname"><a href="classsyd_1_1Image.html#a7494ef03137f8d5729506c9e6ebab788">syd::Image::Callback</a></div><div class="ttdeci">void Callback(odb::callback_event, odb::database &amp;) const </div><div class="ttdoc">Callback : delete the associated files when the image is deleted. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8cxx_source.html#l00261">sydImage.cxx:261</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_acbb426b4a18f1fa939f32ab011c274b3"><div class="ttname"><a href="classsyd_1_1Image.html#acbb426b4a18f1fa939f32ab011c274b3">syd::Image::RemoveTag</a></div><div class="ttdeci">void RemoveTag(syd::Tag::pointer tag)</div><div class="ttdoc">Remove a tag from the list ; do not update in the db. Do nothing it not found. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8cxx_source.html#l00143">sydImage.cxx:143</a></div></div>
+<div class="ttc" id="classsyd_1_1PrintTable_html"><div class="ttname"><a href="classsyd_1_1PrintTable.html">syd::PrintTable</a></div><div class="ttdoc">Helpers class to dump a table (line/column) of values, controling the precision and the column size...</div><div class="ttdef"><b>Definition:</b> <a href="sydPrintTable_8h_source.html#l00029">sydPrintTable.h:29</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a1a2a8e0bffbd25a9cb953fe3564926af"><div class="ttname"><a href="classsyd_1_1Image.html#a1a2a8e0bffbd25a9cb953fe3564926af">syd::Image::AddTag</a></div><div class="ttdeci">void AddTag(syd::Tag::pointer tag)</div><div class="ttdoc">Add a tag to the list (check is already exist) ; do not update in the db. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8cxx_source.html#l00129">sydImage.cxx:129</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a812590414d1ebfb5284b26419716d14b"><div class="ttname"><a href="classsyd_1_1Image.html#a812590414d1ebfb5284b26419716d14b">syd::Image::GetModality</a></div><div class="ttdeci">std::string GetModality() const </div><div class="ttdoc">Return the modality of the dicom linked to this image. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8cxx_source.html#l00120">sydImage.cxx:120</a></div></div>
 <div class="ttc" id="classsyd_1_1Image_html"><div class="ttname"><a href="classsyd_1_1Image.html">syd::Image</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00039">sydImage.h:39</a></div></div>
-<div class="ttc" id="classsyd_1_1Image_html_a420355ce71198e76971a33a879660948"><div class="ttname"><a href="classsyd_1_1Image.html#a420355ce71198e76971a33a879660948">syd::Image::patient</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Patient &gt; patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00049">sydImage.h:49</a></div></div>
-<div class="ttc" id="classsyd_1_1Image_html_a95a4a4f328ecdece5e24781997060a2c"><div class="ttname"><a href="classsyd_1_1Image.html#a95a4a4f328ecdece5e24781997060a2c">syd::Image::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8cxx_source.html#l00036">sydImage.cxx:36</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_aa92106acb4c6434d795fc702ee76814b"><div class="ttname"><a href="classsyd_1_1Image.html#aa92106acb4c6434d795fc702ee76814b">syd::Image::ComputeRelativeFolder</a></div><div class="ttdeci">virtual std::string ComputeRelativeFolder() const </div><div class="ttdoc">Standard folder. </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8cxx_source.html#l00221">sydImage.cxx:221</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00053">sydCommon.h:53</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

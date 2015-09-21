@@ -68,7 +68,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -107,84 +107,175 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">// syd</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &quot;sydDicomSerie.h&quot;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;sydDicomFile.h&quot;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &quot;sydDatabase.h&quot;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &quot;sydTable.h&quot;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &quot;sydDicomFile-odb.hxx&quot;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;syd::DicomSerie::DicomSerie():TableElementBase()</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;}</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &quot;sydStandardDatabase.h&quot;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;syd::DicomSerie::DicomSerie():<a class="code" href="namespacesyd.html">syd</a>::Record()</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;  patient = NULL;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;  injection = NULL;</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  size[0] = size[1] = size[2] = 0;</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;  spacing[0] = spacing[1] = spacing[2] = 0.0;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;}</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="classsyd_1_1DicomSerie.html#a3308c7f3c69b87613457de887c32f024">   34</a></span>&#160;std::string <a class="code" href="classsyd_1_1DicomSerie.html#a3308c7f3c69b87613457de887c32f024">syd::DicomSerie::ToString</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword"></span>{</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;  std::stringstream ss ;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  ss &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;     &lt;&lt; patient-&gt;name &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;     &lt;&lt; (injection==NULL ? <span class="stringliteral">&quot;-&quot;</span>:injection-&gt;radionuclide-&gt;name) &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;     &lt;&lt; dicom_modality &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;     &lt;&lt; acquisition_date &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;     &lt;&lt; reconstruction_date &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;     &lt;&lt; ArrayToString&lt;int, 3&gt;(size) &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;     &lt;&lt; dicom_manufacturer &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;     &lt;&lt; dicom_description;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  <span class="keywordflow">return</span> ss.str();</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;}</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="keywordtype">bool</span> syd::DicomSerie::operator==(<span class="keyword">const</span> <a class="code" href="classsyd_1_1DicomSerie.html">DicomSerie</a> &amp; p)</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;{</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keywordflow">return</span> (<span class="keywordtype">id</span> == p.<a class="code" href="classsyd_1_1DicomSerie.html#a3d8ff81a9b685cd2fde770a0b2926ce5">id</a> and</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;          *patient == *p.<a class="code" href="classsyd_1_1DicomSerie.html#aeff8ef7948cf11a76fcb5e1bee3227b5">patient</a> and</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;          *injection == *p.<a class="code" href="classsyd_1_1DicomSerie.html#ac1f43c2cc66a9b6c1ca6409c6b11278a">injection</a> and</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;          acquisition_date == p.<a class="code" href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">acquisition_date</a> and</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;          reconstruction_date == p.<a class="code" href="classsyd_1_1DicomSerie.html#a5f735f7a79bcb537b3479aa454d18f97">reconstruction_date</a> and</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;          dicom_study_uid == p.<a class="code" href="classsyd_1_1DicomSerie.html#acac09f9cf460c44347db1dda6a408a9d">dicom_study_uid</a> and</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;          dicom_series_uid == p.<a class="code" href="classsyd_1_1DicomSerie.html#a6b72e08967b219da005c658c03a79834">dicom_series_uid</a> and</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;          dicom_frame_of_reference_uid == p.<a class="code" href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">dicom_frame_of_reference_uid</a> and</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;          dicom_modality == p.<a class="code" href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">dicom_modality</a> and</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;          dicom_manufacturer == p.<a class="code" href="classsyd_1_1DicomSerie.html#afe4d4142678329f24f27999ca08ca0f1">dicom_manufacturer</a> and</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;          dicom_description == p.<a class="code" href="classsyd_1_1DicomSerie.html#a20d09d10998b7cabd197c739ae492919">dicom_description</a> and</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;          size == p.<a class="code" href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">size</a> and</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;          spacing == p.<a class="code" href="classsyd_1_1DicomSerie.html#ae0e66e018c7f715920c4a7d76caee495">spacing</a>);</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;}</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;std::string syd::DicomSerie::ToString()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  std::stringstream ss ;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  ss &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;     &lt;&lt; patient-&gt;name &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;     &lt;&lt; (injection==NULL ? <span class="stringliteral">&quot;no_inj&quot;</span>:injection-&gt;radionuclide-&gt;name) &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;     &lt;&lt; dicom_modality &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;     &lt;&lt; acquisition_date &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;     &lt;&lt; reconstruction_date &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;     &lt;&lt; ArrayToString&lt;int, 3&gt;(size) &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;     &lt;&lt; ArrayToString&lt;double, 3&gt;(spacing) &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;     &lt;&lt; dicom_manufacturer &lt;&lt; <span class="stringliteral">&quot; &quot;</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;     &lt;&lt; dicom_description;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordflow">return</span> ss.str();</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;}</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">// --------------------------------------------------------------------</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="keywordtype">bool</span> syd::DicomSerie::IsEqual(<span class="keyword">const</span> pointer p)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keywordtype">bool</span> b = (syd::Record::IsEqual(p) and</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;            patient-&gt;IsEqual(p-&gt;patient) and</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            acquisition_date == p-&gt;acquisition_date and</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            reconstruction_date == p-&gt;reconstruction_date and</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            dicom_study_uid == p-&gt;dicom_study_uid and</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            dicom_series_uid == p-&gt;dicom_series_uid and</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            dicom_frame_of_reference_uid == p-&gt;dicom_frame_of_reference_uid and</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            dicom_modality == p-&gt;dicom_modality and</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            dicom_manufacturer == p-&gt;dicom_manufacturer and</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            dicom_description == p-&gt;dicom_description and</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            size == p-&gt;size and</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;            spacing == p-&gt;spacing);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;  if (!b) return b;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;  if (injection == NULL and p-&gt;injection == NULL) return b;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;  else return injection-&gt;IsEqual(p-&gt;injection);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;}</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;<span class="keywordtype">void</span> syd::DicomSerie::OnDelete(<a class="code" href="classsyd_1_1Database.html">syd::Database</a> * db)</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;{</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  std::vector&lt;syd::DicomFile&gt; dicomfiles;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  db-&gt;<a class="code" href="classsyd_1_1Database.html#a88655c201112bc243bb5901d1c7f5753">Query</a>&lt;<a class="code" href="classsyd_1_1DicomFile.html">syd::DicomFile</a>&gt;(odb::query&lt;syd::DicomFile&gt;::dicom_serie == id, dicomfiles);</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i:dicomfiles) db-&gt;<a class="code" href="classsyd_1_1Database.html#ad960fa82b5d3536bbf6f525ad38431fd">AddToDeleteList</a>(i);</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;}</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_a2a47ab6d79a841303cad845b2f797fc2"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a2a47ab6d79a841303cad845b2f797fc2">syd::DicomSerie::dicom_frame_of_reference_uid</a></div><div class="ttdeci">std::string dicom_frame_of_reference_uid</div><div class="ttdoc">Dicom FrameOfReferenceUID. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00075">sydDicomSerie.h:75</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html"><div class="ttname"><a href="classsyd_1_1Database.html">syd::Database</a></div><div class="ttdoc">This is the base class of all databases. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00040">sydDatabase.h:40</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_a05db952b76b7980cb12d9206ffa82dcb"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a05db952b76b7980cb12d9206ffa82dcb">syd::DicomSerie::acquisition_date</a></div><div class="ttdeci">std::string acquisition_date</div><div class="ttdoc">Date when the image has been acquired. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00055">sydDicomSerie.h:55</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_ae0e66e018c7f715920c4a7d76caee495"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#ae0e66e018c7f715920c4a7d76caee495">syd::DicomSerie::spacing</a></div><div class="ttdeci">std::array&lt; double, 3 &gt; spacing</div><div class="ttdoc">Image spacing aka size of the pixel (in mm) </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00091">sydDicomSerie.h:91</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_a20d09d10998b7cabd197c739ae492919"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a20d09d10998b7cabd197c739ae492919">syd::DicomSerie::dicom_description</a></div><div class="ttdeci">std::string dicom_description</div><div class="ttdoc">Concatenation of several descriptions tag (SeriesDescription StudyDescription, ImageID, DatasetName) </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00085">sydDicomSerie.h:85</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_a88655c201112bc243bb5901d1c7f5753"><div class="ttname"><a href="classsyd_1_1Database.html#a88655c201112bc243bb5901d1c7f5753">syd::Database::Query</a></div><div class="ttdeci">void Query(const odb::query&lt; TableElement &gt; &amp;q, std::vector&lt; TableElement &gt; &amp;list)</div><div class="ttdoc">Perform a query on the database and return the found elements in the list. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00142">sydDatabase.h:142</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_ad960fa82b5d3536bbf6f525ad38431fd"><div class="ttname"><a href="classsyd_1_1Database.html#ad960fa82b5d3536bbf6f525ad38431fd">syd::Database::AddToDeleteList</a></div><div class="ttdeci">void AddToDeleteList(TableElement &amp;elem)</div><div class="ttdoc">Add an element to the list of element to be delete. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00076">sydDatabase.h:76</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_ac1f43c2cc66a9b6c1ca6409c6b11278a"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#ac1f43c2cc66a9b6c1ca6409c6b11278a">syd::DicomSerie::injection</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Injection &gt; injection</div><div class="ttdoc">Foreign key, it must exist in the Injection table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00051">sydDicomSerie.h:51</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_ae0761ffcc3ce331e47ecece1aa5737ef"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#ae0761ffcc3ce331e47ecece1aa5737ef">syd::DicomSerie::dicom_modality</a></div><div class="ttdeci">std::string dicom_modality</div><div class="ttdoc">Modality as indicated in the dicom tag Modality. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00078">sydDicomSerie.h:78</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_a6b72e08967b219da005c658c03a79834"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a6b72e08967b219da005c658c03a79834">syd::DicomSerie::dicom_series_uid</a></div><div class="ttdeci">std::string dicom_series_uid</div><div class="ttdoc">Dicom SeriesInstanceUID. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00067">sydDicomSerie.h:67</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_a3d8ff81a9b685cd2fde770a0b2926ce5"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a3d8ff81a9b685cd2fde770a0b2926ce5">syd::DicomSerie::id</a></div><div class="ttdeci">IdType id</div><div class="ttdoc">Id of the DicomSerie. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00042">sydDicomSerie.h:42</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_a5f735f7a79bcb537b3479aa454d18f97"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a5f735f7a79bcb537b3479aa454d18f97">syd::DicomSerie::reconstruction_date</a></div><div class="ttdeci">std::string reconstruction_date</div><div class="ttdoc">Date when the image has been reconstructed. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00059">sydDicomSerie.h:59</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_a4e26c46c6fd257e9b33d4f5ea04b3c27"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a4e26c46c6fd257e9b33d4f5ea04b3c27">syd::DicomSerie::size</a></div><div class="ttdeci">std::array&lt; int, 3 &gt; size</div><div class="ttdoc">Image size (in pixels). It is an array because the size is fixed. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00088">sydDicomSerie.h:88</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomFile_html"><div class="ttname"><a href="classsyd_1_1DicomFile.html">syd::DicomFile</a></div><div class="ttdoc">Store information about a dicom file (unique dicom identifier dicom_sop_uid). </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomFile_8h_source.html#l00033">sydDicomFile.h:33</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_acac09f9cf460c44347db1dda6a408a9d"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#acac09f9cf460c44347db1dda6a408a9d">syd::DicomSerie::dicom_study_uid</a></div><div class="ttdeci">std::string dicom_study_uid</div><div class="ttdoc">Dicom StudyInstanceUID. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00062">sydDicomSerie.h:62</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html"><div class="ttname"><a href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00037">sydDicomSerie.h:37</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_afe4d4142678329f24f27999ca08ca0f1"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#afe4d4142678329f24f27999ca08ca0f1">syd::DicomSerie::dicom_manufacturer</a></div><div class="ttdeci">std::string dicom_manufacturer</div><div class="ttdoc">Dicom tags Manufacturer and ManufacturerModelName. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00081">sydDicomSerie.h:81</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_a3308c7f3c69b87613457de887c32f024"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#a3308c7f3c69b87613457de887c32f024">syd::DicomSerie::ToString</a></div><div class="ttdeci">virtual std::string ToString() const </div><div class="ttdoc">Use to write the element as a string (must be overloaded) </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8cxx_source.html#l00034">sydDicomSerie.cxx:34</a></div></div>
-<div class="ttc" id="classsyd_1_1DicomSerie_html_aeff8ef7948cf11a76fcb5e1bee3227b5"><div class="ttname"><a href="classsyd_1_1DicomSerie.html#aeff8ef7948cf11a76fcb5e1bee3227b5">syd::DicomSerie::patient</a></div><div class="ttdeci">std::shared_ptr&lt; syd::Patient &gt; patient</div><div class="ttdoc">Foreign key, it must exist in the Patient table. </div><div class="ttdef"><b>Definition:</b> <a href="sydDicomSerie_8h_source.html#l00047">sydDicomSerie.h:47</a></div></div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespacesyd.html">syd</a>::DicomSerie::CopyFrom(const pointer p)</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;{</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  syd::Record::CopyFrom(p);</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  patient = p-&gt;patient;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;  acquisition_date = p-&gt;acquisition_date;</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  reconstruction_date = p-&gt;reconstruction_date;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;  dicom_study_uid = p-&gt;dicom_study_uid;</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;  dicom_series_uid = p-&gt;dicom_series_uid;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  dicom_frame_of_reference_uid = p-&gt;dicom_frame_of_reference_uid;</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  dicom_modality = p-&gt;dicom_modality;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;  dicom_manufacturer = p-&gt;dicom_manufacturer;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;  dicom_description = p-&gt;dicom_description;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> i=0; i&lt; size.size(); i++) {</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    size[i] = p-&gt;size[i];</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    spacing[i] = p-&gt;spacing[i];</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;  }</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;}</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="keywordtype">void</span> syd::DicomSerie::InitPrintTable(<span class="keyword">const</span> syd::Database * db, <a class="code" href="classsyd_1_1PrintTable.html">syd::PrintTable</a> &amp; ta, <span class="keyword">const</span> std::string &amp; format)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;  <span class="keywordflow">if</span> (format == <span class="stringliteral">&quot;help&quot;</span>) {</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    std::cout &lt;&lt; <span class="stringliteral">&quot;Available formats for table &#39;DicomSerie&#39;: &quot;</span> &lt;&lt; std::endl</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\tdefault: &quot;</span> &lt;&lt; std::endl</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;              &lt;&lt; <span class="stringliteral">&quot;\tsize: &quot;</span> &lt;&lt; std::endl;</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;  }</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;#id&quot;</span>);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;p&quot;</span>, 8);</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;inj&quot;</span>, 12);</div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;mod&quot;</span>, 5);</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;acqui_date&quot;</span>, 20);</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;recon_date&quot;</span>, 20);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;  <span class="keywordflow">if</span> (format == <span class="stringliteral">&quot;size&quot;</span>) {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    ta.AddColumn(<span class="stringliteral">&quot;size&quot;</span>, 12);</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    ta.AddColumn(<span class="stringliteral">&quot;spacing&quot;</span>, 25);</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  }</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;  <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  ta.AddColumn(<span class="stringliteral">&quot;description&quot;</span>, 90);</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;}</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keywordtype">void</span> syd::DicomSerie::DumpInTable(<span class="keyword">const</span> syd::Database * d, <a class="code" href="classsyd_1_1PrintTable.html">syd::PrintTable</a> &amp; ta, <span class="keyword">const</span> std::string &amp; format)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;  ta &lt;&lt; <span class="keywordtype">id</span> &lt;&lt; patient-&gt;name;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;  <span class="keywordflow">if</span> (injection == NULL) ta &lt;&lt; <span class="stringliteral">&quot;no_inj&quot;</span>;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  <span class="keywordflow">else</span> ta &lt;&lt; injection-&gt;radionuclide-&gt;name;</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  ta &lt;&lt; dicom_modality</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;     &lt;&lt; acquisition_date</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;     &lt;&lt; reconstruction_date;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;  <span class="keywordflow">if</span> (format == <span class="stringliteral">&quot;size&quot;</span>) {</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    ta &lt;&lt; syd::ArrayToString&lt;int, 3&gt;(size) &lt;&lt; syd::ArrayToString&lt;double, 3&gt;(spacing);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  }</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  <span class="keywordflow">else</span> ta &lt;&lt; std::string(dicom_description+<span class="stringliteral">&quot; &quot;</span>+dicom_manufacturer);</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;}</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;std::string syd::DicomSerie::ComputeRelativeFolder()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;  <span class="keywordflow">if</span> (patient == NULL) {</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Error calling ComputeRelativeFolder for a serie, patient pointer is not set. &quot;</span> &lt;&lt; ToString();</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;  }</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;  <span class="comment">// Part 1: patient</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;  std::string f = patient-&gt;ComputeRelativeFolder()+PATH_SEPARATOR;</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;  <span class="comment">// Part 2: date</span></div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  std::string d = acquisition_date;</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;  <span class="comment">//  syd::Replace(d, &quot; &quot;, &quot;_&quot;);</span></div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;  <span class="comment">// remove the hour and keep y m d</span></div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;  d = d.substr(0, 10);</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  f = f+PATH_SEPARATOR+d;</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;  <span class="comment">// Part 3: modality</span></div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;  f = f+PATH_SEPARATOR+dicom_modality;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;  <span class="keywordflow">return</span> f;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;}</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;<span class="keywordtype">void</span> syd::DicomSerie::Callback(odb::callback_event event, odb::database &amp; db)<span class="keyword"> const</span></div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="keyword"></span>{</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  <span class="comment">// Special case: when a serie is deleted, the linked DicomFile will</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;  <span class="comment">// be deleted by the oncascade, but the callback is not called to</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;  <span class="comment">// erase the file, so we do it here.</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;  <span class="keywordflow">if</span> (event == odb::callback_event::pre_erase) {</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    syd::DicomFile::vector dfiles;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keyword">typedef</span> odb::result&lt;syd::DicomFile&gt; result;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    odb::query&lt;syd::DicomFile&gt; q = odb::query&lt;syd::DicomFile&gt;::dicom_serie == id;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    result r(db.query&lt;DicomFile&gt;(q));</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> i = r.begin(); i != r.end(); i++) {</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;      syd::DicomFile::pointer s = syd::DicomFile::New();</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;      i.load(*s);</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;      dfiles.push_back(s);</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    }</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:dfiles) d-&gt;Callback(event, db);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;  }</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;}</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="keywordtype">void</span> syd::DicomSerie::Callback(odb::callback_event event, odb::database &amp; db)</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;{</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;}</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="comment">// --------------------------------------------------</span></div>
+<div class="ttc" id="classsyd_1_1PrintTable_html"><div class="ttname"><a href="classsyd_1_1PrintTable.html">syd::PrintTable</a></div><div class="ttdoc">Helpers class to dump a table (line/column) of values, controling the precision and the column size...</div><div class="ttdef"><b>Definition:</b> <a href="sydPrintTable_8h_source.html#l00029">sydPrintTable.h:29</a></div></div>
+<div class="ttc" id="namespacesyd_html"><div class="ttname"><a href="namespacesyd.html">syd</a></div><div class="ttdef"><b>Definition:</b> <a href="sydCommon_8h_source.html#l00053">sydCommon.h:53</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

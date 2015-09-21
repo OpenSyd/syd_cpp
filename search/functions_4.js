@@ -1,6 +1,9 @@
 var searchData=
 [
-  ['finddicom',['FindDicom',['../classsyd_1_1StandardDatabase.html#ac1641ebd102e066ef4464dcb4c71546c',1,'syd::StandardDatabase']]],
-  ['findinjectionbynameorid',['FindInjectionByNameOrId',['../classsyd_1_1StandardDatabase.html#aa60e70ed6b091a73674006549cc9faee',1,'syd::StandardDatabase']]],
-  ['findpatientbynameorstudyid',['FindPatientByNameOrStudyId',['../classsyd_1_1StandardDatabase.html#a6411c81bc94c71fed34b4175a91de6b2',1,'syd::StandardDatabase']]]
+  ['getacquisitiondate',['GetAcquisitionDate',['../classsyd_1_1Image.html#a95f58f8d14b3119b33880fbff4bcb5d1',1,'syd::Image']]],
+  ['getdefaultimagefilename',['GetDefaultImageFilename',['../classsyd_1_1ImageBuilder.html#a7d58ccb20f8da2808a104c7fc6dac633',1,'syd::ImageBuilder']]],
+  ['getdefaultroimaskimagefilename',['GetDefaultRoiMaskImageFilename',['../classsyd_1_1ImageBuilder.html#a83fa9364150a8611ae2472c9d5018237',1,'syd::ImageBuilder']]],
+  ['getmodality',['GetModality',['../classsyd_1_1Image.html#a812590414d1ebfb5284b26419716d14b',1,'syd::Image']]],
+  ['guessifdicomcanbeinthistimepoint',['GuessIfDicomCanBeInThisTimepoint',['../classsyd_1_1TimepointBuilder.html#ab36aa70f0fe170e889975205180f4db1',1,'syd::TimepointBuilder']]],
+  ['guesstimepointforthisdicomserie',['GuessTimepointForThisDicomSerie',['../classsyd_1_1TimepointBuilder.html#a5772b14334b1a28dab40e64814727699',1,'syd::TimepointBuilder']]]
 ];

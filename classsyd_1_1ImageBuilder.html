@@ -71,7 +71,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Typedefs</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Enumerations</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(7)"><span class="SelectionMark">&#160;</span>Friends</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Enumerations</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -111,82 +111,210 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a4e4574a0cc9b4e5413f5497b609b8b2b">~ImageBuilder</a> ()</td></tr>
 <tr class="memdesc:a4e4574a0cc9b4e5413f5497b609b8b2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destructor (empty) <br /></td></tr>
 <tr class="separator:a4e4574a0cc9b4e5413f5497b609b8b2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e9a16356edaec932c5e7049559c91a6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7e9a16356edaec932c5e7049559c91a6"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a7e9a16356edaec932c5e7049559c91a6">SetImageTag</a> (<a class="el" href="classsyd_1_1Tag.html">syd::Tag</a> &amp;tag)</td></tr>
-<tr class="memdesc:a7e9a16356edaec932c5e7049559c91a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">The resulting images will be associated with this tag. <br /></td></tr>
-<tr class="separator:a7e9a16356edaec932c5e7049559c91a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54abc573cfb4c4a4b3ad2e05cb45adf6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a54abc573cfb4c4a4b3ad2e05cb45adf6"></a>
-<a class="el" href="classsyd_1_1Image.html">syd::Image</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a54abc573cfb4c4a4b3ad2e05cb45adf6">InsertImageFromDicomSerie</a> (const <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicomserie)</td></tr>
-<tr class="memdesc:a54abc573cfb4c4a4b3ad2e05cb45adf6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create &amp; Insert a new <a class="el" href="classsyd_1_1Image.html" title="Store information about a dicom image (serie). ">Image</a> from this <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">DicomSerie</a>. <br /></td></tr>
-<tr class="separator:a54abc573cfb4c4a4b3ad2e05cb45adf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab897de028edbc3d78d5e24820aaeeef0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#ab897de028edbc3d78d5e24820aaeeef0">InsertImagesFromTimepoint</a> (<a class="el" href="classsyd_1_1Timepoint.html">syd::Timepoint</a> &amp;timepoint)</td></tr>
-<tr class="memdesc:ab897de028edbc3d78d5e24820aaeeef0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create &amp; Insert new images for all dicom in this timepoint.  <a href="#ab897de028edbc3d78d5e24820aaeeef0">More...</a><br /></td></tr>
-<tr class="separator:ab897de028edbc3d78d5e24820aaeeef0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bdfb5c6103c5a2deca613ba7f11ab76"><td class="memTemplParams" colspan="2"><a class="anchor" id="a1bdfb5c6103c5a2deca613ba7f11ab76"></a>
-template&lt;class ImageType &gt; </td></tr>
-<tr class="memitem:a1bdfb5c6103c5a2deca613ba7f11ab76"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a1bdfb5c6103c5a2deca613ba7f11ab76">UpdateImageInfo</a> (<a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;image, typename ImageType::Pointer &amp;itk_image)</td></tr>
-<tr class="memdesc:a1bdfb5c6103c5a2deca613ba7f11ab76"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update image information from this itk image (type, size, spacing) <br /></td></tr>
-<tr class="separator:a1bdfb5c6103c5a2deca613ba7f11ab76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8b026b53a694a695f6938e2cea4d33c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac8b026b53a694a695f6938e2cea4d33c"></a>
+<a class="el" href="classsyd_1_1Image.html">syd::Image</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#ac8b026b53a694a695f6938e2cea4d33c">InsertImage</a> (const syd::DicomSerie::pointer dicomserie)</td></tr>
+<tr class="memdesc:ac8b026b53a694a695f6938e2cea4d33c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create &amp; Insert a new <a class="el" href="classsyd_1_1Image.html" title="Store information about a dicom image (serie). ">Image</a> from this <a class="el" href="classsyd_1_1DicomSerie.html" title="Store information about a dicom image (serie). ">DicomSerie</a>. <br /></td></tr>
+<tr class="separator:ac8b026b53a694a695f6938e2cea4d33c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5f44fbe1a39c2206607cea7dc27d22a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac5f44fbe1a39c2206607cea7dc27d22a"></a>
+<a class="el" href="classsyd_1_1Image.html">syd::Image</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#ac5f44fbe1a39c2206607cea7dc27d22a">InsertStitchedImage</a> (const syd::DicomSerie::pointer a, const syd::DicomSerie::pointer b)</td></tr>
+<tr class="memdesc:ac5f44fbe1a39c2206607cea7dc27d22a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create &amp; Insert a new <a class="el" href="classsyd_1_1Image.html" title="Store information about a dicom image (serie). ">Image</a> by stitching 2 dicoms. <br /></td></tr>
+<tr class="separator:ac5f44fbe1a39c2206607cea7dc27d22a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c8df51970b0174c528b9735baa27214"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a5c8df51970b0174c528b9735baa27214">UpdateFile</a> (<a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;image, std::string relativepath, std::string filename)</td></tr>
+<tr class="memdesc:a5c8df51970b0174c528b9735baa27214"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create &amp; Insert a <a class="el" href="classsyd_1_1RoiMaskImage.html" title="Store information about a contour transformed as a binary image. ">RoiMaskImage</a> from an image.mhd.  <a href="#a5c8df51970b0174c528b9735baa27214">More...</a><br /></td></tr>
+<tr class="separator:a5c8df51970b0174c528b9735baa27214"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab1aff138aab8d90bc98fa33d07e8bfd5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab1aff138aab8d90bc98fa33d07e8bfd5"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#ab1aff138aab8d90bc98fa33d07e8bfd5">UpdateDicom</a> (<a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;image, const <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicomserie)</td></tr>
+<tr class="memdesc:ab1aff138aab8d90bc98fa33d07e8bfd5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the image with dicom (just add the dicom to the list) <br /></td></tr>
+<tr class="separator:ab1aff138aab8d90bc98fa33d07e8bfd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a86d6a1822cbfe5f793c01b5c157e3b27"><td class="memTemplParams" colspan="2"><a class="anchor" id="a86d6a1822cbfe5f793c01b5c157e3b27"></a>
+template&lt;class PixelType &gt; </td></tr>
+<tr class="memitem:a86d6a1822cbfe5f793c01b5c157e3b27"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a86d6a1822cbfe5f793c01b5c157e3b27">UpdateImageInfo</a> (<a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;image, typename itk::Image&lt; PixelType, 3 &gt;::Pointer &amp;itk_image, bool computeMD5Flag)</td></tr>
+<tr class="memdesc:a86d6a1822cbfe5f793c01b5c157e3b27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update image information from this itk image (type, size, spacing) <br /></td></tr>
+<tr class="separator:a86d6a1822cbfe5f793c01b5c157e3b27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a938b8e4d7519d05998047947fc478425"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a938b8e4d7519d05998047947fc478425"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a938b8e4d7519d05998047947fc478425">CropImageLike</a> (<a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;image, <a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;mask, bool forceFlag=false)</td></tr>
+<tr class="memdesc:a938b8e4d7519d05998047947fc478425"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update an image by cropping according to the given mask. <br /></td></tr>
+<tr class="separator:a938b8e4d7519d05998047947fc478425"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85c1bebe0eefdf4a49ebb23fb155e52d"><td class="memTemplParams" colspan="2"><a class="anchor" id="a85c1bebe0eefdf4a49ebb23fb155e52d"></a>
+template&lt;class PixelType &gt; </td></tr>
+<tr class="memitem:a85c1bebe0eefdf4a49ebb23fb155e52d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a85c1bebe0eefdf4a49ebb23fb155e52d">CropImageLike</a> (<a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;image, <a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;like)</td></tr>
+<tr class="memdesc:a85c1bebe0eefdf4a49ebb23fb155e52d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Crop and image like another (pixeltype known) <br /></td></tr>
+<tr class="separator:a85c1bebe0eefdf4a49ebb23fb155e52d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b347a4dbac4b437151fd48eb5277f39"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8b347a4dbac4b437151fd48eb5277f39"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a8b347a4dbac4b437151fd48eb5277f39">CropImageWithThreshold</a> (<a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;image, double threshold)</td></tr>
+<tr class="memdesc:a8b347a4dbac4b437151fd48eb5277f39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Crop an image according to a threshold. <br /></td></tr>
+<tr class="separator:a8b347a4dbac4b437151fd48eb5277f39"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15c9eec87fba15dcfbf1d383a80703ff"><td class="memTemplParams" colspan="2"><a class="anchor" id="a15c9eec87fba15dcfbf1d383a80703ff"></a>
+template&lt;class PixelType &gt; </td></tr>
+<tr class="memitem:a15c9eec87fba15dcfbf1d383a80703ff"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a15c9eec87fba15dcfbf1d383a80703ff">CropImageWithThreshold</a> (<a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;image, double lower_threshold)</td></tr>
+<tr class="memdesc:a15c9eec87fba15dcfbf1d383a80703ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Crop an image according to a threshold (pixeltype known) <br /></td></tr>
+<tr class="separator:a15c9eec87fba15dcfbf1d383a80703ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d58ccb20f8da2808a104c7fc6dac633"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7d58ccb20f8da2808a104c7fc6dac633"></a>
+std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a7d58ccb20f8da2808a104c7fc6dac633">GetDefaultImageFilename</a> (const <a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;image)</td></tr>
+<tr class="memdesc:a7d58ccb20f8da2808a104c7fc6dac633"><td class="mdescLeft">&#160;</td><td class="mdescRight">Propose a default filename for the image (use the image.id, so must be inserted in the db before) <br /></td></tr>
+<tr class="separator:a7d58ccb20f8da2808a104c7fc6dac633"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83fa9364150a8611ae2472c9d5018237"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a83fa9364150a8611ae2472c9d5018237">GetDefaultRoiMaskImageFilename</a> (const <a class="el" href="classsyd_1_1RoiMaskImage.html">syd::RoiMaskImage</a> &amp;mask)</td></tr>
+<tr class="memdesc:a83fa9364150a8611ae2472c9d5018237"><td class="mdescLeft">&#160;</td><td class="mdescRight">Propose a default path for the image.  <a href="#a83fa9364150a8611ae2472c9d5018237">More...</a><br /></td></tr>
+<tr class="separator:a83fa9364150a8611ae2472c9d5018237"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06c2859c1ab851fbb5faf02afd23f53a"><td class="memTemplParams" colspan="2"><a class="anchor" id="a06c2859c1ab851fbb5faf02afd23f53a"></a>
+template&lt;class PixelType &gt; </td></tr>
+<tr class="memitem:a06c2859c1ab851fbb5faf02afd23f53a"><td class="memTemplItemLeft" align="right" valign="top">itk::Image&lt; PixelType, 3 &gt;::Pointer&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a06c2859c1ab851fbb5faf02afd23f53a">ReadImage</a> (const <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom)</td></tr>
+<tr class="memdesc:a06c2859c1ab851fbb5faf02afd23f53a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Propose a default path for the roimaskimage (need the patient in image) <br /></td></tr>
+<tr class="separator:a06c2859c1ab851fbb5faf02afd23f53a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06c2859c1ab851fbb5faf02afd23f53a"><td class="memTemplParams" colspan="2"><a class="anchor" id="a06c2859c1ab851fbb5faf02afd23f53a"></a>
+template&lt;class PixelType &gt; </td></tr>
+<tr class="memitem:a06c2859c1ab851fbb5faf02afd23f53a"><td class="memTemplItemLeft" align="right" valign="top">itk::Image&lt; PixelType, 3 &gt;::Pointer&#160;</td><td class="memTemplItemRight" valign="bottom"><b>ReadImage</b> (const <a class="el" href="classsyd_1_1DicomSerie.html">syd::DicomSerie</a> &amp;dicom)</td></tr>
+<tr class="separator:a06c2859c1ab851fbb5faf02afd23f53a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:a2490d6b5320bdd8cbbb7fc477ba2244f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2490d6b5320bdd8cbbb7fc477ba2244f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a2490d6b5320bdd8cbbb7fc477ba2244f">ImageBuilder</a> ()</td></tr>
-<tr class="memdesc:a2490d6b5320bdd8cbbb7fc477ba2244f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Protected constructor. No need to use directly. <br /></td></tr>
+<tr class="memitem:a2490d6b5320bdd8cbbb7fc477ba2244f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a2490d6b5320bdd8cbbb7fc477ba2244f">ImageBuilder</a> ()</td></tr>
+<tr class="memdesc:a2490d6b5320bdd8cbbb7fc477ba2244f"><td class="mdescLeft">&#160;</td><td class="mdescRight">OLD.  <a href="#a2490d6b5320bdd8cbbb7fc477ba2244f">More...</a><br /></td></tr>
 <tr class="separator:a2490d6b5320bdd8cbbb7fc477ba2244f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade90fd7812b5c5a0fd2f2b12940bc823"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ade90fd7812b5c5a0fd2f2b12940bc823"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#ade90fd7812b5c5a0fd2f2b12940bc823">SetDatabase</a> (<a class="el" href="classsyd_1_1StandardDatabase.html">syd::StandardDatabase</a> *db)</td></tr>
 <tr class="memdesc:ade90fd7812b5c5a0fd2f2b12940bc823"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the pointer to the database. <br /></td></tr>
 <tr class="separator:ade90fd7812b5c5a0fd2f2b12940bc823"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c246f6febb6b1463243ac0eda85cc99"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5c246f6febb6b1463243ac0eda85cc99"></a>
+<a class="el" href="classsyd_1_1Image.html">syd::Image</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#a5c246f6febb6b1463243ac0eda85cc99">InsertEmptyImage</a> (const <a class="el" href="classsyd_1_1Patient.html">syd::Patient</a> &amp;patient)</td></tr>
+<tr class="memdesc:a5c246f6febb6b1463243ac0eda85cc99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create &amp; Insert a new image without information. <br /></td></tr>
+<tr class="separator:a5c246f6febb6b1463243ac0eda85cc99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:ae7d5363004cdef6fe2bb125c51936e12"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae7d5363004cdef6fe2bb125c51936e12"></a>
-<a class="el" href="classsyd_1_1StandardDatabase.html">syd::StandardDatabase</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>db_</b></td></tr>
+<a class="el" href="classsyd_1_1StandardDatabase.html">syd::StandardDatabase</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classsyd_1_1ImageBuilder.html#ae7d5363004cdef6fe2bb125c51936e12">db_</a></td></tr>
+<tr class="memdesc:ae7d5363004cdef6fe2bb125c51936e12"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer to the database. <br /></td></tr>
 <tr class="separator:ae7d5363004cdef6fe2bb125c51936e12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43ab04950fd5302a6e78cd5573575f2f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a43ab04950fd5302a6e78cd5573575f2f"></a>
-<a class="el" href="classsyd_1_1Tag.html">syd::Tag</a>&#160;</td><td class="memItemRight" valign="bottom"><b>tag_</b></td></tr>
-<tr class="separator:a43ab04950fd5302a6e78cd5573575f2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>This class is used to create a <a class="el" href="classsyd_1_1Image.html" title="Store information about a dicom image (serie). ">Image</a>. </p>
 <p>A <a class="el" href="classsyd_1_1Image.html" title="Store information about a dicom image (serie). ">Image</a> is defined with an injection, a patient, some tag, some associated dicom series and images. </p>
 
-<p>Definition at line <a class="el" href="sydImageBuilder_8h_source.html#l00034">34</a> of file <a class="el" href="sydImageBuilder_8h_source.html">sydImageBuilder.h</a>.</p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="ab897de028edbc3d78d5e24820aaeeef0"></a>
+<p>Definition at line <a class="el" href="sydImageBuilder_8h_source.html#l00037">37</a> of file <a class="el" href="sydImageBuilder_8h_source.html">sydImageBuilder.h</a>.</p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a2490d6b5320bdd8cbbb7fc477ba2244f"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">syd::ImageBuilder::ImageBuilder </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>OLD. </p>
+<p>TODO. Create &amp; Insert new images for all dicom in this timepoint. Warning to not check if some images are already associated with this timepoint. Protected constructor. No need to use directly. </p>
+
+<p>Definition at line <a class="el" href="sydImageBuilder_8cxx_source.html#l00033">33</a> of file <a class="el" href="sydImageBuilder_8cxx_source.html">sydImageBuilder.cxx</a>.</p>
+<div class="fragment"><div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;{</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <a class="code" href="classsyd_1_1ImageBuilder.html#ae7d5363004cdef6fe2bb125c51936e12">db_</a> = NULL;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;}</div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_ae7d5363004cdef6fe2bb125c51936e12"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#ae7d5363004cdef6fe2bb125c51936e12">syd::ImageBuilder::db_</a></div><div class="ttdeci">syd::StandardDatabase * db_</div><div class="ttdoc">Pointer to the database. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8h_source.html#l00124">sydImageBuilder.h:124</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a83fa9364150a8611ae2472c9d5018237"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void syd::ImageBuilder::InsertImagesFromTimepoint </td>
+          <td class="memname">std::string syd::ImageBuilder::GetDefaultRoiMaskImageFilename </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classsyd_1_1Timepoint.html">syd::Timepoint</a> &amp;&#160;</td>
-          <td class="paramname"><em>timepoint</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="classsyd_1_1RoiMaskImage.html">syd::RoiMaskImage</a> &amp;&#160;</td>
+          <td class="paramname"><em>mask</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Create &amp; Insert new images for all dicom in this timepoint. </p>
-<p>Warning to not check if some images are already associated with this timepoint. </p>
+<p>Propose a default path for the image. </p>
+<p>Propose a default filename for the roimaskimage (use the image.id, so must be inserted in the db before) </p>
 
-<p>Definition at line <a class="el" href="sydImageBuilder_8cxx_source.html#l00124">124</a> of file <a class="el" href="sydImageBuilder_8cxx_source.html">sydImageBuilder.cxx</a>.</p>
-<div class="fragment"><div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;{</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;  <span class="comment">// loop create all images</span></div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;  <span class="keywordflow">for</span>(<span class="keyword">auto</span> d:timepoint.<a class="code" href="classsyd_1_1Timepoint.html#a50bbdb4f69297bc523b6e0c2d303f9c0">dicoms</a>) {</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="comment">// Create new image</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <a class="code" href="classsyd_1_1Image.html">syd::Image</a> image = <a class="code" href="classsyd_1_1ImageBuilder.html#a54abc573cfb4c4a4b3ad2e05cb45adf6">InsertImageFromDicomSerie</a>(*d);</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="comment">// Associate image with timepoint</span></div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    timepoint.images.push_back(std::make_shared&lt;syd::Image&gt;(image));</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;  }</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;  db_-&gt;<a class="code" href="classsyd_1_1Database.html#a00c09ce90754816d6c2cd8d329f241fc">Update</a>(timepoint);</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;  <span class="comment">//  LOG(1) &lt;&lt; &quot;Timpoint (&quot; &lt;&lt; timepoint &lt;&lt; &quot;) updated with &quot; &lt;&lt; timepoint.dicoms.size() &lt;&lt; &quot; images.&quot;; // FIXME not here</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;}</div>
-<div class="ttc" id="classsyd_1_1ImageBuilder_html_a54abc573cfb4c4a4b3ad2e05cb45adf6"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#a54abc573cfb4c4a4b3ad2e05cb45adf6">syd::ImageBuilder::InsertImageFromDicomSerie</a></div><div class="ttdeci">syd::Image InsertImageFromDicomSerie(const syd::DicomSerie &amp;dicomserie)</div><div class="ttdoc">Create & Insert a new Image from this DicomSerie. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8cxx_source.html#l00042">sydImageBuilder.cxx:42</a></div></div>
-<div class="ttc" id="classsyd_1_1Timepoint_html_a50bbdb4f69297bc523b6e0c2d303f9c0"><div class="ttname"><a href="classsyd_1_1Timepoint.html#a50bbdb4f69297bc523b6e0c2d303f9c0">syd::Timepoint::dicoms</a></div><div class="ttdeci">std::vector&lt; std::shared_ptr&lt; syd::DicomSerie &gt; &gt; dicoms</div><div class="ttdoc">List of associated dicoms. </div><div class="ttdef"><b>Definition:</b> <a href="sydTimepoint_8h_source.html#l00050">sydTimepoint.h:50</a></div></div>
-<div class="ttc" id="classsyd_1_1Database_html_a00c09ce90754816d6c2cd8d329f241fc"><div class="ttname"><a href="classsyd_1_1Database.html#a00c09ce90754816d6c2cd8d329f241fc">syd::Database::Update</a></div><div class="ttdeci">void Update(TableElement &amp;r)</div><div class="ttdoc">Update an element in the database. </div><div class="ttdef"><b>Definition:</b> <a href="sydDatabase_8h_source.html#l00213">sydDatabase.h:213</a></div></div>
-<div class="ttc" id="classsyd_1_1Image_html"><div class="ttname"><a href="classsyd_1_1Image.html">syd::Image</a></div><div class="ttdoc">Store information about a dicom image (serie). </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00039">sydImage.h:39</a></div></div>
+<p>Definition at line <a class="el" href="sydImageBuilder_8cxx_source.html#l00208">208</a> of file <a class="el" href="sydImageBuilder_8cxx_source.html">sydImageBuilder.cxx</a>.</p>
+<div class="fragment"><div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;{</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;  <span class="keywordflow">if</span> (mask.<a class="code" href="classsyd_1_1RoiMaskImage.html#aacff089a49ed7fda1353448397bcc138">roitype</a> == NULL) {</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    LOG(FATAL) &lt;&lt; <span class="stringliteral">&quot;Error cannot use GetDefaultRoiMaskImageFilename without roitype. Mask: &quot;</span> &lt;&lt; mask;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;  }</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;  std::ostringstream oss;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;  oss &lt;&lt; mask.<a class="code" href="classsyd_1_1RoiMaskImage.html#aacff089a49ed7fda1353448397bcc138">roitype</a>-&gt;name &lt;&lt; <span class="stringliteral">&quot;_&quot;</span> &lt;&lt; mask.id &lt;&lt; <span class="stringliteral">&quot;.mhd&quot;</span>;</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;  std::string filename = oss.str();</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;  <span class="keywordflow">return</span> filename;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;}</div>
+<div class="ttc" id="classsyd_1_1RoiMaskImage_html_aacff089a49ed7fda1353448397bcc138"><div class="ttname"><a href="classsyd_1_1RoiMaskImage.html#aacff089a49ed7fda1353448397bcc138">syd::RoiMaskImage::roitype</a></div><div class="ttdeci">syd::RoiType::pointer roitype</div><div class="ttdoc">Foreign Key. Associated RoiType id. </div><div class="ttdef"><b>Definition:</b> <a href="sydRoiMaskImage_8h_source.html#l00036">sydRoiMaskImage.h:36</a></div></div>
+</div><!-- fragment -->
+</div>
+</div>
+<a class="anchor" id="a5c8df51970b0174c528b9735baa27214"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void syd::ImageBuilder::UpdateFile </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classsyd_1_1Image.html">syd::Image</a> &amp;&#160;</td>
+          <td class="paramname"><em>image</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>relativepath</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>filename</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create &amp; Insert a <a class="el" href="classsyd_1_1RoiMaskImage.html" title="Store information about a contour transformed as a binary image. ">RoiMaskImage</a> from an image.mhd. </p>
+<p>Update the image by creating the Files </p>
+
+<p>Definition at line <a class="el" href="sydImageBuilder_8cxx_source.html#l00252">252</a> of file <a class="el" href="sydImageBuilder_8cxx_source.html">sydImageBuilder.cxx</a>.</p>
+<div class="fragment"><div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;{</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  std::string extension = GetExtension(filename);</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;  image.<a class="code" href="classsyd_1_1Image.html#ade73e3bea95832742e53ec8e20458fd2">type</a> = extension;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;  image.<a class="code" href="classsyd_1_1Image.html#a46e76d246d4c9d13abd7a2a6f5af700f">files</a>.clear();</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;  <a class="code" href="classsyd_1_1File.html">syd::File</a> f;</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;  f.<a class="code" href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">filename</a> = filename;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;  f.<a class="code" href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">path</a> = relativepath;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;  <a class="code" href="classsyd_1_1ImageBuilder.html#ae7d5363004cdef6fe2bb125c51936e12">db_</a>-&gt;Insert(f);</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;  image.<a class="code" href="classsyd_1_1Image.html#a46e76d246d4c9d13abd7a2a6f5af700f">files</a>.push_back(std::make_shared&lt;syd::File&gt;(f));</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;  <span class="keywordflow">if</span> (extension == <span class="stringliteral">&quot;mhd&quot;</span>) {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;    syd::Replace(filename, <span class="stringliteral">&quot;.mhd&quot;</span>, <span class="stringliteral">&quot;.raw&quot;</span>);</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <a class="code" href="classsyd_1_1File.html">syd::File</a> raw;</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    raw.<a class="code" href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">filename</a> = filename;</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    raw.<a class="code" href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">path</a> = relativepath;</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    <a class="code" href="classsyd_1_1ImageBuilder.html#ae7d5363004cdef6fe2bb125c51936e12">db_</a>-&gt;Insert(raw);</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    image.<a class="code" href="classsyd_1_1Image.html#a46e76d246d4c9d13abd7a2a6f5af700f">files</a>.push_back(std::make_shared&lt;syd::File&gt;(raw));</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;  }</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;}</div>
+<div class="ttc" id="classsyd_1_1File_html_a2224a82b7e7c7e1f3a3e1bca67845650"><div class="ttname"><a href="classsyd_1_1File.html#a2224a82b7e7c7e1f3a3e1bca67845650">syd::File::filename</a></div><div class="ttdeci">std::string filename</div><div class="ttdoc">File name. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00036">sydFile.h:36</a></div></div>
+<div class="ttc" id="classsyd_1_1File_html"><div class="ttname"><a href="classsyd_1_1File.html">syd::File</a></div><div class="ttdoc">Store information about a file linked to a database. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00032">sydFile.h:32</a></div></div>
+<div class="ttc" id="classsyd_1_1ImageBuilder_html_ae7d5363004cdef6fe2bb125c51936e12"><div class="ttname"><a href="classsyd_1_1ImageBuilder.html#ae7d5363004cdef6fe2bb125c51936e12">syd::ImageBuilder::db_</a></div><div class="ttdeci">syd::StandardDatabase * db_</div><div class="ttdoc">Pointer to the database. </div><div class="ttdef"><b>Definition:</b> <a href="sydImageBuilder_8h_source.html#l00124">sydImageBuilder.h:124</a></div></div>
+<div class="ttc" id="classsyd_1_1File_html_ab3ea1e8acafa37d8b286761980514955"><div class="ttname"><a href="classsyd_1_1File.html#ab3ea1e8acafa37d8b286761980514955">syd::File::path</a></div><div class="ttdeci">std::string path</div><div class="ttdoc">File (relative) path. </div><div class="ttdef"><b>Definition:</b> <a href="sydFile_8h_source.html#l00039">sydFile.h:39</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_ade73e3bea95832742e53ec8e20458fd2"><div class="ttname"><a href="classsyd_1_1Image.html#ade73e3bea95832742e53ec8e20458fd2">syd::Image::type</a></div><div class="ttdeci">std::string type</div><div class="ttdoc">Type of the image (mhd by default) </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00056">sydImage.h:56</a></div></div>
+<div class="ttc" id="classsyd_1_1Image_html_a46e76d246d4c9d13abd7a2a6f5af700f"><div class="ttname"><a href="classsyd_1_1Image.html#a46e76d246d4c9d13abd7a2a6f5af700f">syd::Image::files</a></div><div class="ttdeci">syd::File::vector files</div><div class="ttdoc">List of associated files (will be deleted when the image is deleted) </div><div class="ttdef"><b>Definition:</b> <a href="sydImage_8h_source.html#l00050">sydImage.h:50</a></div></div>
 </div><!-- fragment -->
 </div>
 </div>
