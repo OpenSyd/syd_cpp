@@ -279,26 +279,21 @@ namespace syd {
     // Patient, injection (do not check here that injection is really associated with the patient)
     std::string patientID = GetTagValueString(dset, "PatientID");
     std::string patientName = GetTagValueString(dset, "PatientName");
-    LOG(3) << "Check patient dicom_patientid is the same than the given patient";
-    bool b = patient_->CheckIdentity(patientID, patientName);
-    if (!b and !forcePatientFlag_ and patient_->dicom_patientid != "unknown_dicom_id") {
-      LOG(FATAL) << "Patient do not seems to be the same. You ask for " << patient_->name
-                 << " with dicom_id = '" << patient_->dicom_patientid << "'"
-                 << " while in dicom, it is '" << patientID << "'" << std::endl
-                 << "Filename is " << filename << std::endl
-                 << "Use 'forcePatient' if you want to bypass this check";
-    }
-    if (!b) {
-      // if the patient has no dicom id, we set it (and update the db)
-      LOG(1) << "The dicom_id of the patient " << patient_ << " has been updated to "
-             << patientID << " (dicom name is " << patientName << ")";
-      patient_->dicom_patientid = patientID;
-      bool a = patient_->CheckIdentity(patientID, patientName);
-      if (!a) {
-        LOG(WARNING) << "Patient name dont match ? patient is " << patient_ << std::endl
-                     << " while dicom is " << patientName;
+
+    if (!forcePatientFlag_) {
+      LOG(3) << "Check patient dicom_patientid is the same than the given patient";
+      if (patient_->dicom_patientid != patientID) {
+        LOG(FATAL) << "Patient do not seems to be the same. You ask for " << patient_->name
+                   << " with dicom_id = " << patient_->dicom_patientid
+                   << " while in dicom, it is '" << patientID
+                   << " with name: " << patientName << std::endl
+                     << "Filename is " << filename << std::endl
+                   << "Use 'forcePatient' if you want to bypass this check";
       }
-      db_->Update<Patient>(patient_); //FIXME !!
+    }
+    if (patient_->dicom_patientid != patientID) { // update the dicom id if it is different (force flag)
+      patient_->dicom_patientid = patientID;
+      db_->Update<Patient>(patient_);
     }
     serie->patient = patient_;
     serie->injection = injection_;
