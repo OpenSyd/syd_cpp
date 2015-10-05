@@ -1,0 +1,9 @@
+#File sydInsertDecayCorrectedImage.ggo
+
+package "syd"
+version "0.3"
+usage "sydInsertDecayCorrectedImage <tag> <list of image_ids>"
+description "Create new (mhd) images corrected by the decay of the injection
+- <tag>           name for the tag associated with the new images
+- <image_ids>     list of image id to correct
+"
