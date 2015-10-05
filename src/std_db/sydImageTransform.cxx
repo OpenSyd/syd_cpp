@@ -43,7 +43,7 @@ std::string syd::ImageTransform::ToString() const
      << (fixed_image == NULL ? "no_patient":fixed_image->patient->name) << " "
      << (fixed_image == NULL ? "no_fixed_image":syd::ToString(fixed_image->id)) << " "
      << (moving_image == NULL ? "no_moving_image":syd::ToString(moving_image->id)) << " "
-     << GetTagLabels(tags) << " "
+     << GetLabels(tags) << " "
      << (fixed_mask == NULL ? "no_fixed_mask":syd::ToString(fixed_mask->id)) << " "
      << (moving_mask == NULL ? "no_moving_mask":syd::ToString(moving_mask->id)) << " "
      << (config_file == NULL ? "no_config":config_file->filename) << " "

@@ -48,9 +48,13 @@ namespace syd {
 
   }; // end of class
 
-  // Helpers function
-  std::string GetTagLabels(const syd::Tag::vector & tags);
+  // Helper functions
 
+  // Print the list of tag labels
+  std::string GetLabels(const syd::Tag::vector & tags);
+
+  // Check if all tags are in the first list
+  bool IsAllTagsIn(syd::Tag::vector & input_tags, syd::Tag::vector & to_search_tags);
 }
 // --------------------------------------------------------------------
 

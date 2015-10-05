@@ -19,6 +19,9 @@
 // syd
 #include "sydTag.h"
 
+// std
+#include <set>
+
 // --------------------------------------------------
 syd::Tag::Tag():syd::Record()
 {
@@ -63,7 +66,7 @@ void syd::Tag::CopyFrom(const pointer p)
 void syd::Tag::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
-    LOG(FATAL) << "To insert patient, please set <label> <description>";
+    LOG(FATAL) << "To insert a Tag, please set <label> <description>";
   }
   label = arg[0];
   description = arg[1];
@@ -96,12 +99,31 @@ void syd::Tag::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const 
 
 
 // --------------------------------------------------
-std::string syd::GetTagLabels(const syd::Tag::vector & tags)
+std::string syd::GetLabels(const syd::Tag::vector & tags)
 {
   std::ostringstream os;
   if (tags.size() == 0) return "no_tag";
   os << tags[0]->label;
   for(auto i=1; i<tags.size(); i++) os << "," << tags[i]->label;
   return os.str();
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+bool syd::IsAllTagsIn(syd::Tag::vector & input_tags, syd::Tag::vector & to_search_tags)
+{
+  // http://stackoverflow.com/questions/5225820/compare-two-vectors-c
+  std::set<syd::Tag::pointer> s1(input_tags.begin(), input_tags.end());
+  std::set<syd::Tag::pointer> s2(to_search_tags.begin(), to_search_tags.end());
+  std::vector<syd::Tag::pointer> v3;
+  std::set_intersection(s1.begin(), s1.end(),
+                        s2.begin(), s2.end(),
+                        std::back_inserter(v3),
+                        [](const syd::Tag::pointer a, const syd::Tag::pointer b) { return a->label > b->label; } );
+  DDS(input_tags);
+  DDS(to_search_tags);
+  DDS(v3);
+  return (v3.size() == to_search_tags.size());
 }
 // --------------------------------------------------
