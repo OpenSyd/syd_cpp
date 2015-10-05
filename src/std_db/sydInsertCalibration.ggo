@@ -1,0 +1,8 @@
+#File sydInsertCalibration.ggo
+
+package "syd"
+version "0.3"
+usage "sydInsertCalibration <tag> <image_id> <fov_ratio %>"
+description "Create (or update if exist) a calibration factor for the given image, using the given fov_ratio.
+fov_ratio is a percentage between 0 and 100.
+"
