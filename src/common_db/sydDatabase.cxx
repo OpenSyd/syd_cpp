@@ -116,6 +116,7 @@ void syd::Database::TraceCallback(const char* sql)
 // --------------------------------------------------------------------
 void syd::Database::Dump(std::ostream & os) const
 {
+  os << "Database file  : " << GetFilename() << std::endl;
   os << "Database schema: " << GetDatabaseSchema() << std::endl;
   os << "Database folder: " << GetDatabaseRelativeFolder() << std::endl;
   for(auto i=map_.begin(); i != map_.end(); i++) {
