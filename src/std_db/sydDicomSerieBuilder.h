@@ -27,7 +27,7 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// This class search for dicom file in folder and insert the
+  /// Search for dicom file in folder and insert the
   /// DicomSerie and DicomFile in the db.  A check on the patient
   /// name/id is performed (could be forced with
   /// SetForcePatientFlag(true)).
