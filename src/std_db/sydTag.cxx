@@ -121,9 +121,6 @@ bool syd::IsAllTagsIn(syd::Tag::vector & input_tags, syd::Tag::vector & to_searc
                         s2.begin(), s2.end(),
                         std::back_inserter(v3),
                         [](const syd::Tag::pointer a, const syd::Tag::pointer b) { return a->label > b->label; } );
-  DDS(input_tags);
-  DDS(to_search_tags);
-  DDS(v3);
   return (v3.size() == to_search_tags.size());
 }
 // --------------------------------------------------

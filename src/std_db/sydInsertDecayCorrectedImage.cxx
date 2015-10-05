@@ -55,6 +55,9 @@ int main(int argc, char* argv[])
 
   DDS(images);
 
+  // We only consider the calibration of the first image here ! ?
+
+
   // Create main builder
   syd::DecayCorrectedImageBuilder builder(db);
   syd::Image::vector result_images;

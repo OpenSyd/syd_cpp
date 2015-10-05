@@ -43,13 +43,11 @@ int main(int argc, char* argv[])
   std::string tagname = args_info.inputs[0];
   syd::Tag::vector tags;
   db->FindTags(tags, tagname);
-  DDS(tags);
 
   // Get the image
   syd::IdType image_id = atoi(args_info.inputs[1]);
   syd::Image::pointer image;
   db->QueryOne(image, image_id);
-  DD(image);
 
   // Check
   if (image->dicoms.size() == 0) {
@@ -60,7 +58,6 @@ int main(int argc, char* argv[])
     LOG(FATAL) << "Error, the dicom is not associated with an injection.";
   }
   syd::Injection::pointer injection = dicom->injection;
-  DD(injection);
 
   // Already exist or not ?
   syd::Calibration::vector calibrations;
@@ -81,14 +78,15 @@ int main(int argc, char* argv[])
     }
   }
   if (n==0) { //not found, we create
-    DD("Create new calibration");
+    LOG(2) << "Create a new Calibration record";
     calibration = syd::Calibration::New();
     calibration->image = image;
     for(auto t:tags) calibration->tags.push_back(t);
     db->Insert(calibration);
   }
-  DD(calibration);
-
+  else {
+    LOG(2) << "Update Calibration";
+  }
 
   // Now we update the values
   double f = atof(args_info.inputs[2])/100.0;
@@ -96,19 +94,13 @@ int main(int argc, char* argv[])
     LOG(FATAL) << "Error the fov_ratio must be [0:100] %";
   }
   calibration->fov_ratio = f;
-  DD(calibration->fov_ratio);
 
   double injected_activity = injection->activity_in_MBq;
   double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection->date);
   double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
-  DD(injected_activity);
-  DD(time);
-  DD(lambda);
   double activity_at_acquisition = injected_activity * exp(-lambda * time);
-  DD(activity_at_acquisition);
 
   // Compute the image total counts
-  DD(db->GetAbsolutePath(image));
   typedef float PixelType;
   typedef itk::Image<PixelType,3> ImageType;
   ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));
@@ -118,14 +110,12 @@ int main(int argc, char* argv[])
     total_counts += iter.Get();
     ++iter;
   }
-  DD(total_counts);
 
   // Compute the calibration and update
   double k = total_counts / activity_at_acquisition * f;
-  DD(k);
   calibration->factor = k;
   db->Update(calibration);
-  DD(calibration);
+  LOG(1) << calibration;
 
   // This is the end, my friend.
 }
