@@ -36,6 +36,7 @@
 #include "sydRoiType-odb.hxx"
 #include "sydRoiMaskImage-odb.hxx"
 #include "sydImageTransform-odb.hxx"
+#include "sydCalibration-odb.hxx"
 
 // itk
 #include <itkImage.h>

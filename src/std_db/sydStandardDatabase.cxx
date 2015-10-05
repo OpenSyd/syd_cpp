@@ -92,6 +92,7 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::RoiType>();
   AddTable<syd::RoiMaskImage>();
   AddTable<syd::ImageTransform>();
+  AddTable<syd::Calibration>();
 }
 // --------------------------------------------------------------------
 

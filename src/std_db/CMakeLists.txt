@@ -22,6 +22,7 @@ wrap_odb(sydStandardDatabase sydImage.h)
 wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
 wrap_odb(sydStandardDatabase sydImageTransform.h)
+wrap_odb(sydStandardDatabase sydCalibration.h)
 
 add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
@@ -38,11 +39,13 @@ add_library(sydStandardDatabase SHARED
   sydRoiType-odb.cxx sydRoiType.cxx
   sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx
   sydImageTransform-odb.cxx sydImageTransform.cxx
+  sydCalibration-odb.cxx sydCalibration.cxx
 
   sydImageFromDicomBuilder.cxx
   sydStitchDicomImageBuilder.cxx
   sydRoiMaskImageBuilder.cxx
   sydCropImageBuilder.cxx
+  sydDecayCorrectedImageBuilder.cxx
 
   )
 ## to declare dependencies
@@ -87,6 +90,16 @@ target_link_libraries(sydImageTag sydStandardDatabase)
 wrap_ggo(sydRadionuclideUpdate_GGO_C sydRadionuclideUpdate.ggo sydCommandLineDefault.ggo)
 add_executable(sydRadionuclideUpdate sydRadionuclideUpdate.cxx ${sydRadionuclideUpdate_GGO_C})
 target_link_libraries(sydRadionuclideUpdate sydStandardDatabase)
+
+# Insert / Update calibration for an image
+wrap_ggo(sydInsertCalibration_GGO_C sydInsertCalibration.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertCalibration sydInsertCalibration.cxx ${sydInsertCalibration_GGO_C})
+target_link_libraries(sydInsertCalibration sydStandardDatabase)
+
+# Create decay corrected image
+wrap_ggo(sydInsertDecayCorrectedImage_GGO_C sydInsertDecayCorrectedImage.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertDecayCorrectedImage sydInsertDecayCorrectedImage.cxx ${sydInsertDecayCorrectedImage_GGO_C})
+target_link_libraries(sydInsertDecayCorrectedImage sydStandardDatabase)
 
 
 # Insert a new RoiMaskImage (NOT YET)
