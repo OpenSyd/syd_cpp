@@ -175,12 +175,12 @@ void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, 
     else {
       ta.AddColumn("#id", 5);
       ta.AddColumn("p", 8);
-      ta.AddColumn("tags", 40);
+      ta.AddColumn("tags", 50);
       ta.AddColumn("size", 12);
       ta.AddColumn("spacing", 25);
       ta.AddColumn("dicom_id", 15);
       ta.AddColumn("acqui_date", 18);
-      ta.AddColumn("ref_frame", 30, 0, false);
+      ta.AddColumn("ref_frame", 20, 0, false);
     }
   }
 }
@@ -207,6 +207,7 @@ void syd::Image::DumpInTable(const syd::Database * d, syd::PrintTable & ta, cons
          << syd::ArrayToString<int, 3>(size) << syd::ArrayToString<double, 3>(spacing);
       std::string dicom;
       for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
+      dicom.pop_back(); // remove last space
       ta << dicom;
       if (dicoms.size() == 0) ta << "no_dicom";
       else ta << dicoms[0]->acquisition_date;
