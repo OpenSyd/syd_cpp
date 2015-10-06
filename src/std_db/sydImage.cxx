@@ -227,6 +227,18 @@ std::string syd::Image::ComputeRelativeFolder() const
 
 // --------------------------------------------------
 void syd::Image::UpdateFile(syd::Database * db,
+                            const std::string & path,
+                            bool deleteExistingFiles)
+{
+  std::string mhd_relative_path = ComputeRelativeFolder()+PATH_SEPARATOR;
+  std::string mhd_filename = syd::GetFilenameFromPath(path);
+  return UpdateFile(db, mhd_filename, mhd_relative_path, deleteExistingFiles);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::UpdateFile(syd::Database * db,
                             const std::string & filename,
                             const std::string & relativepath,
                             bool deleteExistingFiles)
@@ -288,5 +300,24 @@ bool syd::Image::IsSameSizeAndSpacingThan(const syd::Image::pointer image) const
       spacing[i] == image->spacing[i];
   }
   return b;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+std::string syd::Image::ComputeDefaultFilename(syd::Database * db) const
+{
+  // fast initial check (useful but not sufficient)
+  if (id == -1) {
+    LOG(FATAL) << "Could not compute a default filename for this image, the object is not persistant: " << this;
+  }
+  std::ostringstream oss;
+  if (dicoms.size() != 0) oss << dicoms[0]->dicom_modality;
+  else  oss << "image";
+  oss << "_" << id << ".mhd";
+  std::string mhd_filename = oss.str();
+  std::string mhd_relative_path = ComputeRelativeFolder()+PATH_SEPARATOR;
+  std::string mhd_path = db->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
+  return mhd_path;
 }
 // --------------------------------------------------

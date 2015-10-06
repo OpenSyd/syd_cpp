@@ -39,14 +39,19 @@ syd::Image::pointer syd::ImageFromDicomBuilder::CreateImageFromDicom(const syd::
   image->type = "mhd";
   db_->Insert(image); // to obtain an id
 
+  std::string mhd_path = image->ComputeDefaultFilename(db_);
+  /*
   std::ostringstream oss;
   oss << dicom->dicom_modality << "_" << image->id << ".mhd";
   std::string mhd_filename = oss.str();
   std::string mhd_relative_path = image->ComputeRelativeFolder()+PATH_SEPARATOR;
   std::string mhd_path = db_->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
+  */
+  // std::string mhd_relative_path = image->ComputeRelativeFolder()+PATH_SEPARATOR;
+  // std::string mhd_filename = syd::GetFilenameFromPath(mhd_path);
 
   // Update the Files
-  image->UpdateFile(db_, mhd_filename, mhd_relative_path);
+  image->UpdateFile(db_, mhd_path); //filename, mhd_relative_path);
 
   try {
     if (dicom->dicom_modality == "CT") {

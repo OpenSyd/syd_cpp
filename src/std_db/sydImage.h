@@ -92,8 +92,12 @@ namespace syd {
     /// Remove a tag from the list ; do not update in the db. Do nothing it not found
     void RemoveTag(syd::Tag::pointer tag);
 
+    /// When creating a new image, update the associated file
     void UpdateFile(syd::Database * db, const std::string & filename,
                     const std::string & relativepath, bool deleteExistingFiles=false);
+
+    /// When creating a new image, update the associated file
+    void UpdateFile(syd::Database * db, const std::string & path, bool deleteExistingFiles=false);
 
     /// Callback : delete the associated files when the image is deleted.
     void Callback(odb::callback_event, odb::database&) const;
@@ -107,6 +111,9 @@ namespace syd {
 
     /// Return spacing as string such like 0.5x0.5x0.3
     std::string SpacingAsString() const { return syd::ArrayToString<double,3>(spacing); }
+
+    /// When create a new image, compute a default name. Image *must* be persistant (with correct id)
+    std::string ComputeDefaultFilename(syd::Database * db) const;
 
   protected:
     Image();
