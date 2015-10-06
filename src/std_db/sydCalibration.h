@@ -36,8 +36,8 @@ namespace syd {
   class Calibration : public syd::Record {
   public:
 
-#pragma db not_null
-    /// Foreign key, it must exist in the Image table
+#pragma db not_null on_delete(cascade)
+    /// Foreign key, it must exist in the Image table. If the image is deleted, the calibration also.
     syd::Image::pointer image;
 
     /// Associated tags
