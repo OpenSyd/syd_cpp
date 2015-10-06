@@ -195,12 +195,11 @@ void syd::Image::DumpInTable(const syd::Database * d, syd::PrintTable & ta, cons
       ta << "no_file";
       return;
     }
-    //const syd::StandardDatabase * db = std::dynamic_cast<const syd::StandardDatabase*>(d);
-    ta << d->ConvertToAbsolutePath(files[0]->path+PATH_SEPARATOR+files[0]->filename);
+    ta << files[0]->GetAbsolutePath(d);
   }
   else {
     if (format == "filelist") {
-      std::cout << d->ConvertToAbsolutePath(files[0]->path+PATH_SEPARATOR+files[0]->filename) << " ";
+      std::cout << files[0]->GetAbsolutePath(d) << " ";
     }
     else {
       ta << id << patient->name << GetLabels(tags)
