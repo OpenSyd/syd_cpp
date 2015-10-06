@@ -1,0 +1,9 @@
+#File sydDicomInfo.ggo
+
+package "syd"
+version "0.3"
+usage "sydDicomInfo <dicom_id>"
+description "Dump content of the dicom for the given dicom serie. If the serie contains several files, only the first is displayed.
+
+TODO Later : option to select the given file.
+"

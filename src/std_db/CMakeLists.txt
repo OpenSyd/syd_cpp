@@ -76,6 +76,11 @@ wrap_ggo(sydStitchDicom_GGO_C sydStitchDicom.ggo sydCommandLineDefault.ggo)
 add_executable(sydStitchDicom sydStitchDicom.cxx ${sydStitchDicom_GGO_C})
 target_link_libraries(sydStitchDicom sydStandardDatabase)
 
+# Dump content of the dicom
+wrap_ggo(sydDicomInfo_GGO_C sydDicomInfo.ggo sydCommandLineDefault.ggo)
+add_executable(sydDicomInfo sydDicomInfo.cxx ${sydDicomInfo_GGO_C})
+target_link_libraries(sydDicomInfo sydStandardDatabase)
+
 # Reduce the size of an image by cropping it (with a mask or with a threshold)
 wrap_ggo(sydCropImage_GGO_C sydCropImage.ggo sydCommandLineDefault.ggo)
 add_executable(sydCropImage sydCropImage.cxx ${sydCropImage_GGO_C})
