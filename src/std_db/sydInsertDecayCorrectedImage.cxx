@@ -52,27 +52,26 @@ int main(int argc, char* argv[])
   }
   syd::Image::vector images;
   db->Query(images, ids);
+  if (images.size() == 0) {
+    LOG(FATAL) << "No image ids given. I do nothing.";
+  }
 
-  DDS(images);
-
-  // We only consider the calibration of the first image here ! ?
-
+  // We only consider the calibration of the first image
+  syd::Calibration::pointer calib;
+  typedef odb::query<syd::Calibration> QC;
+  QC q = QC::image == images[0]->id;
+  try {
+      db->QueryOne(calib, q);
+  } catch(std::exception & e) {
+    LOG(FATAL) << "Error while searching calibration for this image: " << images[0]
+               << "." << std::endl << e.what();
+  }
+  LOG(2) << "Using calibration factor: " << calib->factor << " (id= " << calib->id << ")";
 
   // Create main builder
   syd::DecayCorrectedImageBuilder builder(db);
   syd::Image::vector result_images;
   for(auto image:images) {
-    // Find calibration --> FIXME to change by using a tag ?
-    syd::Calibration::pointer calib;
-    typedef odb::query<syd::Calibration> QC;
-    QC q = QC::image == image->id;
-    try {
-      db->QueryOne(calib, q);
-    } catch(std::exception & e) {
-      LOG(FATAL) << "Error while searching calibration for this image: " << image
-                 << "." << std::endl << e.what();
-    }
-    DD(calib);
     syd::Image::pointer result = builder.CreateDecayCorrectedImage(image, calib);
     for(auto t:tags) result->AddTag(t);
     result_images.push_back(result);
