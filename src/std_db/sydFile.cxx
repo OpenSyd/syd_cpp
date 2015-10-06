@@ -155,3 +155,12 @@ void syd::File::EraseAssociatedFile() const
   }
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+std::string syd::File::GetAbsolutePath(const syd::Database * db)
+{
+  std::string apath = db->ConvertToAbsolutePath(path+PATH_SEPARATOR+filename);
+  return apath;
+}
+// --------------------------------------------------

@@ -51,6 +51,8 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&);
     void EraseAssociatedFile() const;
 
+    std::string GetAbsolutePath(const syd::Database * db);
+
   protected:
     File();
 
