@@ -14,3 +14,4 @@ Threshold : every pixel with value lower than threshold are discarded.
 option "threshold"   	 	t       "Crop according to this threshold"	      float     default="-1000" no
 option "like"                   l       "Crop according to this image id"	      int       no
 option "force"                  f       "Crop even if the dicom reference frame does not fit" flag off
+option "resample"               s       "Use the spacing of the like image (if not, keep the initial spacing)" flag off

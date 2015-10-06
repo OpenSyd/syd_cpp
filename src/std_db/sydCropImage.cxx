@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
   for(auto image:images) {
     auto size = image->size;
     //b.CropImageLike(image, like, false);
-    if (args_info.like_given) b.CropImageLike(image, like, args_info.force_flag);
+    if (args_info.like_given) b.CropImageLike(image, like, args_info.resample_flag, args_info.force_flag);
     else {
       if (args_info.threshold_given) b.CropImageWithThreshold(image, t);
       else {
@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
           syd::RoiMaskImage::pointer mask;
           db->QueryOne(mask, q);
           LOG(1) << "Find 'body' mask for the image: " << mask;
-          b.CropImageLike(image, mask, args_info.force_flag);
+          b.CropImageLike(image, mask, args_info.resample_flag , args_info.force_flag); // false = dont resample
         } catch (std::exception & e) {
           LOG(WARNING) << "Could not crop the image: " << image
                        << std::endl << "Error is: " << e.what();

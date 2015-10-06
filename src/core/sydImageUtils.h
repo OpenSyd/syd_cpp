@@ -22,6 +22,7 @@
 // syd
 #include "sydCommon.h"
 #include "sydFileUtils.h"
+#include "sydImageCrop.h" // need for stitch. FIXME to change
 
 // itk
 #include <itkImageFileReader.h>
@@ -33,19 +34,9 @@
 #include <itkMultiplyImageFilter.h>
 #include <itkCastImageFilter.h>
 #include <itkOrientImageFilter.h>
-#include <itkResampleImageFilter.h>
-#include <itkAffineTransform.h>
-#include <itkNearestNeighborInterpolateImageFunction.h>
-#include <itkLinearInterpolateImageFunction.h>
 #include <itkImageSliceIteratorWithIndex.h>
 #include <itkImageSliceConstIteratorWithIndex.h>
 #include <itkConvolutionImageFilter.h>
-#include <itkRegionOfInterestImageFilter.h>
-#include <itkAutoCropLabelMapFilter.h>
-#include <itkStatisticsLabelObject.h>
-#include <itkLabelImageToLabelMapFilter.h>
-#include <itkLabelMapToLabelImageFilter.h>
-#include <itkBinaryThresholdImageFilter.h>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -105,27 +96,6 @@ namespace syd {
 
   template<class ImageType>
   void ScaleImage(ImageType * input, double scale);
-  //--------------------------------------------------------------------
-
-
-  //--------------------------------------------------------------------
-  template<class ImageType>
-  typename ImageType::Pointer
-  ResampleAndCropImageLike(const ImageType * input,
-                           const itk::ImageBase<ImageType::ImageDimension> * like,
-                           int interpolationType,
-                           typename ImageType::PixelType defaultValue);
-
-  /// Crop the image according to the size of the other image
-  template<class ImageType>
-  typename ImageType::Pointer
-  CropImageLike(const ImageType * input,
-                const itk::ImageBase<ImageType::ImageDimension> * like);
-
-  /// Crop an image by removing border with pixel value lower than the given threshold
-  template<class ImageType>
-  typename ImageType::Pointer
-  CropImageWithLowerThreshold(const ImageType * input, typename ImageType::PixelType lower_threshold);
   //--------------------------------------------------------------------
 
 

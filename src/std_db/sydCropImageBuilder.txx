@@ -20,6 +20,7 @@
 template<class PixelType>
 void CropImageBuilder::CropImageLike(syd::Image::pointer image,
                                      const syd::Image::pointer like,
+                                     bool resampleFlag,
                                      int interpolationType,
                                      PixelType default_pixel)
 {
@@ -33,7 +34,11 @@ void CropImageBuilder::CropImageLike(syd::Image::pointer image,
   auto itk_like = GetImageBase<3>(reader);
 
   // Crop image
-  auto output = syd::ResampleAndCropImageLike<ImageType>(itk_image, itk_like, interpolationType, default_pixel);
+  typename ImageType::Pointer output;
+  if (resampleFlag)
+    output = syd::ResampleAndCropImageLike<ImageType>(itk_image, itk_like, interpolationType, default_pixel);
+  else
+    output = syd::CropImageLike<ImageType>(itk_image, itk_like);
 
   // Replace image on disk
   syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));

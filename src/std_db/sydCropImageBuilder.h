@@ -22,9 +22,7 @@
 // syd
 #include "sydStandardDatabase.h"
 #include "sydImage.h"
-
-// itk
-#include <itkImageBase.h>
+#include "sydImageCrop.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -42,11 +40,12 @@ namespace syd {
     ~CropImageBuilder() {}
 
     /// Update an image by cropping according to the given mask
-    void CropImageLike(syd::Image::pointer image, const syd::Image::pointer like, bool forceFlag=false);
+    void CropImageLike(syd::Image::pointer image, const syd::Image::pointer like, bool resampleFlag, bool forceFlag=false);
 
     /// Crop and image like another (pixeltype known)
     template<class PixelType>
-    void CropImageLike(syd::Image::pointer image, syd::Image::pointer like, int interpolationType, PixelType default_pixel);
+    void CropImageLike(syd::Image::pointer image, syd::Image::pointer like,
+                       bool resampleFlag, int interpolationType, PixelType default_pixel);
 
     /// Crop an image according to a threshold
     void CropImageWithThreshold(syd::Image::pointer image, double threshold);
