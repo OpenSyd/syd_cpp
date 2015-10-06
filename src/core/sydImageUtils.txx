@@ -549,6 +549,36 @@ ReadDicomSerieFromFolder(std::string folder, std::string serie_uid)
 
 //--------------------------------------------------------------------
 template<class PixelType>
+typename itk::Image<PixelType,3>::Pointer
+ReadDicomSerieFromListOfFiles(std::string folder, const std::vector<std::string> & files)
+{
+  // WARNING must be in the correct order !
+  typedef itk::Image<PixelType,3> ImageType;
+  typename ImageType::Pointer output;
+  std::string file;
+  // Read itk image
+  try {
+    typedef itk::ImageSeriesReader<ImageType> ReaderType;
+    typename ReaderType::Pointer reader = ReaderType::New();
+    LOG(2) << "Loading " << files.size() << " files for serie in " << folder << ".";
+    reader->SetFileNames(files);
+    file = files[0];
+    reader->Update();
+    output = reader->GetOutput();
+  }
+  catch (itk::ExceptionObject &excp) {
+    EXCEPTION("Error while reading the dicom serie in " << folder << ", itk exception is: " << excp);
+  }
+
+  // Update the image
+  UpdateImageInformation<PixelType>(output, file);
+  return output;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class PixelType>
 void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, const std::string & filename)
 {
   // Open the dicom to read some tags
@@ -591,12 +621,16 @@ void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, con
 
   // Correct for negative SpacingBetweenSlices
   double s = GetTagValueDouble(dset, "SpacingBetweenSlices");
+  if (s == 0) s = GetTagValueDouble(dset, "SliceThickness");
 
   // change spacing z
   typename ImageType::SpacingType spacing = image->GetSpacing();
   if (s<0) spacing[2] = -s;
-  else spacing[2] = s;
+  else {
+    if (s != 0) spacing[2] = s;
+  }
   image->SetSpacing(spacing);
+
   // Direction
   if (s<0) {
     LOG(2) << "Negative spacing, I flip the image.";

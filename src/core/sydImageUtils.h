@@ -51,6 +51,10 @@ namespace syd {
   ReadDicomSerieFromFolder(std::string folder, std::string serie_uid);
 
   template<class PixelType>
+  typename itk::Image<PixelType,3>::Pointer
+  ReadDicomSerieFromListOfFiles(std::string folder, const std::vector<std::string> & files);
+
+  template<class PixelType>
   void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, const std::string & filename);
   //--------------------------------------------------------------------
 

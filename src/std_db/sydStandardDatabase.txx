@@ -46,7 +46,11 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom) const
     else {
       std::string folder = dicom_filenames[0];
       syd::Replace(folder, syd::GetFilenameFromPath(folder), "");
-      LOG(4) << "ITK reader";
+      LOG(4) << "ITK reader (sort the list of files according to dicom position)";
+      // Cannot use ReadDicomSerieFromListOfFiles because the files are not sorted according to dicom
+      // std::vector<std::string> files;
+      // for(auto df:dicom_files) files.push_back(df->file->GetAbsolutePath(this));
+      // itk_image = syd::ReadDicomSerieFromListOfFiles<PixelType>(folder, files);
       itk_image = syd::ReadDicomSerieFromFolder<PixelType>(folder, dicom->dicom_series_uid);
     }
   } catch (std::exception & e) {
