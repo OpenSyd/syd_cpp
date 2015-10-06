@@ -78,6 +78,20 @@ void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & v, const st
 // --------------------------------------------------
 
 
+// --------------------------------------------------
+template<>
+void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & v, const std::string & order) const
+{
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) {
+              if (a->image->dicoms.size() == 0) return true;
+              if (b->image->dicoms.size() == 0) return false;
+              return a->image->dicoms[0]->acquisition_date < b->image->dicoms[0]->acquisition_date;
+            });
+}
+// --------------------------------------------------
+
+
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {

@@ -90,6 +90,7 @@ template<> void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & 
 template<> void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & records, const std::string & type) const;
 template<> void syd::Table<syd::Patient>::Sort(syd::Patient::vector & records, const std::string & type) const;
 template<> void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & records, const std::string & type) const;
+template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records, const std::string & type) const;
 
 } // namespace syd
 
