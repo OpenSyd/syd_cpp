@@ -30,7 +30,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydImageTag, 3);
+  SYD_INIT_GGO(sydImageTag, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -41,18 +41,22 @@ int main(int argc, char* argv[])
 
   // Get the action (add or remove)
   std::string action = args_info.inputs[0];
-  if (action != "add" and action != "rm") {
+  if (action != "add" and action != "rm" and action != "view") {
     LOG(FATAL) << "Please provide 'add' or 'rm' as second parameter.";
   }
 
   // Get the tags
   std::string tagname = args_info.inputs[1];
   syd::Tag::vector tags;
-  db->FindTags(tags, tagname);
-  if (tags.size() == 0) {
-    LOG(1) << "No found tag from '" << tagname << "'";
-    return EXIT_SUCCESS;
+  int start = 2;
+  if (action != "view") {
+    db->FindTags(tags, tagname);
+    if (tags.size() == 0) {
+      LOG(1) << "No found tag from '" << tagname << "'";
+      return EXIT_SUCCESS;
+    }
   }
+  else start = 1;
 
   // Read the standard input if pipe
   std::vector<syd::IdType> ids;
@@ -60,7 +64,7 @@ int main(int argc, char* argv[])
 
   // Get the list of image ids
   syd::Image::vector images;
-  for(auto i=2; i<args_info.inputs_num; ++i) {
+  for(auto i=start; i<args_info.inputs_num; ++i) {
     ids.push_back(atoi(args_info.inputs[i]));
   }
   db->Query(images, ids);
@@ -68,8 +72,17 @@ int main(int argc, char* argv[])
   // Change the tag
   for(auto & i:images) {
     if (action == "add") for(auto t:tags) i->AddTag(t);
-    else for(auto t:tags) i->RemoveTag(t);
-    LOG(1) << "Change tag for image " << i;
+    else {
+      if (action == "rm") for(auto t:tags) i->RemoveTag(t);
+      else {
+        if (action == "view") {
+          std::cout << i->id << " ";
+          for(auto t:i->tags) std::cout << t->label << " ";
+        }
+      }
+    }
+    if (action != "view") LOG(1) << "Change tag for image " << i;
+    else std::cout << std::endl;
   }
   // Update the db
   if (images.size() > 0) db->Update(images);

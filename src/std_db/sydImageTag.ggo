@@ -2,9 +2,9 @@
 
 package "syd"
 version "0.3"
-usage "sydImageTag <add|rm> <tags> <list of image_ids>"
+usage "sydImageTag <add|rm|view> <tags> <list of image_ids>"
 description "Add or remove tags to images
-- <add|rm>        add or remove (rm) tag
+- <add|rm|view>   add or remove (rm) tag ; or just display them (view)
 - <tags>          names for the tags (separated by spaces, between \" \")
 - <image_ids>     list of image id
 "
