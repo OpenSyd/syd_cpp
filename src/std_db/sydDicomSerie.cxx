@@ -99,21 +99,28 @@ void syd::DicomSerie::InitPrintTable(const syd::Database * db, syd::PrintTable &
   if (format == "help") {
     std::cout << "Available formats for table 'DicomSerie': " << std::endl
               << "\tdefault: " << std::endl
-              << "\tsize: " << std::endl;
+              << "\tsize: " << std::endl
+              << "\tpath: (warning could be slow)" << std::endl;
     return;
   }
-  ta.AddColumn("#id");
-  ta.AddColumn("p", 8);
-  ta.AddColumn("inj", 12);
-  ta.AddColumn("mod", 5);
-  ta.AddColumn("acqui_date", 20);
-  ta.AddColumn("recon_date", 20);
-  if (format == "size") {
-    ta.AddColumn("size", 12);
-    ta.AddColumn("spacing", 25);
+  if (format == "path") {
+    ta.AddColumn("#id");
+    ta.AddColumn("#path", 120, 0, false);
   }
-  else
-  ta.AddColumn("description", 90);
+  else {
+    ta.AddColumn("#id");
+    ta.AddColumn("p", 8);
+    ta.AddColumn("inj", 12);
+    ta.AddColumn("mod", 5);
+    ta.AddColumn("acqui_date", 20);
+    ta.AddColumn("recon_date", 20);
+    if (format == "size") {
+      ta.AddColumn("size", 12);
+      ta.AddColumn("spacing", 25);
+    }
+    else
+      ta.AddColumn("description", 90);
+  }
 }
 // --------------------------------------------------
 
@@ -121,16 +128,28 @@ void syd::DicomSerie::InitPrintTable(const syd::Database * db, syd::PrintTable &
 // --------------------------------------------------
 void syd::DicomSerie::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
 {
-  ta << id << patient->name;
-  if (injection == NULL) ta << "no_inj";
-  else ta << injection->radionuclide->name;
-  ta << dicom_modality
-     << acquisition_date
-     << reconstruction_date;
-  if (format == "size") {
-    ta << syd::ArrayToString<int, 3>(size) << syd::ArrayToString<double, 3>(spacing);
+  if (format == "path") {
+    ta << id;
+    //Look for associated file (this is slow !)
+    syd::DicomFile::vector dfiles;
+    typedef odb::query<syd::DicomFile> QDF;
+    QDF q = QDF::dicom_serie == id;
+    d->Query(dfiles, q);
+    if (dfiles.size() >= 1) ta << dfiles[0]->file->GetAbsolutePath(d);
+    else ta << d->ConvertToAbsolutePath(dfiles[0]->file->path);
   }
-  else ta << std::string(dicom_description+" "+dicom_manufacturer);
+  else {
+    ta << id << patient->name;
+    if (injection == NULL) ta << "no_inj";
+    else ta << injection->radionuclide->name;
+    ta << dicom_modality
+       << acquisition_date
+       << reconstruction_date;
+    if (format == "size") {
+      ta << syd::ArrayToString<int, 3>(size) << syd::ArrayToString<double, 3>(spacing);
+    }
+    else ta << std::string(dicom_description+" "+dicom_manufacturer);
+  }
 }
 // --------------------------------------------------
 
