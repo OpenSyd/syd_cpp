@@ -37,6 +37,7 @@
 #include "sydRoiMaskImage-odb.hxx"
 #include "sydImageTransform-odb.hxx"
 #include "sydCalibration-odb.hxx"
+#include "sydPixelValueUnit-odb.hxx"
 
 // itk
 #include <itkImage.h>
@@ -91,6 +92,7 @@ template<> void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & reco
 template<> void syd::Table<syd::Patient>::Sort(syd::Patient::vector & records, const std::string & type) const;
 template<> void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & records, const std::string & type) const;
 template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records, const std::string & type) const;
+template<> void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & records, const std::string & type) const;
 
 } // namespace syd
 

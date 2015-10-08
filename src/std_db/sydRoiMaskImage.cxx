@@ -79,7 +79,9 @@ void syd::RoiMaskImage::Set(const syd::Database * db, const std::vector<std::str
 
 
 // --------------------------------------------------
-void syd::RoiMaskImage::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+void syd::RoiMaskImage::InitPrintTable(const syd::Database * db,
+                                       syd::PrintTable & ta,
+                                       const std::string & format) const
 {
   syd::Image::InitPrintTable(db, ta, format);
   if (format != "file") {
@@ -90,9 +92,11 @@ void syd::RoiMaskImage::InitPrintTable(const syd::Database * db, syd::PrintTable
 
 
 // --------------------------------------------------
-void syd::RoiMaskImage::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+void syd::RoiMaskImage::DumpInTable(const syd::Database * d,
+                                    syd::PrintTable & ta,
+                                    const std::string & format) const
 {
-  if (ta.GetNumberOfColumns() == 8)  {
+  if (ta.GetNumberOfColumns() == 9)  { // FIXME, bug if Image change the nb of col
     ta.AddColumn("roi", 15);
   }
   syd::Image::DumpInTable(d, ta, format);

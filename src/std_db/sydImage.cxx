@@ -52,7 +52,8 @@ std::string syd::Image::ToString() const
      << spacing[0] << "x" << spacing[1] << "x" << spacing[2];
   if (dicoms.size() > 0) ss << " " << dicoms[0]->dicom_modality << " ";
   for(auto d:dicoms) ss << d->id << " ";
-  ss << frame_of_reference_uid;
+  ss << frame_of_reference_uid << " ";
+  ss << pixel_value_unit->name;
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -61,7 +62,7 @@ std::string syd::Image::ToString() const
 // --------------------------------------------------
 void syd::Image::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
-  LOG(FATAL) << "To insert Image, please use sydInsertImage";
+  LOG(FATAL) << "To insert Image, please use sydInsertImageFromDicom";
 }
 // --------------------------------------------------
 
@@ -83,6 +84,7 @@ void syd::Image::CopyFrom(const pointer p)
   frame_of_reference_uid = p->frame_of_reference_uid;
   for(auto i=0; i<size.size(); i++) size[i] = p->size[i];
   for(auto i=0; i<spacing.size(); i++) spacing[i] = p->spacing[i];
+  pixel_value_unit = p->pixel_value_unit;
 }
 // --------------------------------------------------
 
@@ -99,6 +101,7 @@ bool syd::Image::IsEqual(const pointer p) const
     type == p->type and
     pixel_type == p->pixel_type and
     dimension == p->dimension and
+    pixel_value_unit == p->pixel_value_unit and
     frame_of_reference_uid == p->frame_of_reference_uid;
   for(auto i=0; i<size.size(); i++) b = b and size[i] == p->size[i];
   for(auto i=0; i<spacing.size(); i++) b = b and spacing[i] == p->spacing[i];
@@ -175,11 +178,12 @@ void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, 
     else {
       ta.AddColumn("#id", 5);
       ta.AddColumn("p", 8);
+      ta.AddColumn("acqui_date", 18);
       ta.AddColumn("tags", 50);
       ta.AddColumn("size", 12);
       ta.AddColumn("spacing", 25);
       ta.AddColumn("dicom_id", 15);
-      ta.AddColumn("acqui_date", 18);
+      ta.AddColumn("unit", 15);
       ta.AddColumn("ref_frame", 20, 0, false);
     }
   }
@@ -188,7 +192,9 @@ void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, 
 
 
 // --------------------------------------------------
-void syd::Image::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+void syd::Image::DumpInTable(const syd::Database * d,
+                             syd::PrintTable & ta,
+                             const std::string & format) const
 {
   if (format == "file") {
     if (files.size() == 0) {
@@ -202,14 +208,17 @@ void syd::Image::DumpInTable(const syd::Database * d, syd::PrintTable & ta, cons
       std::cout << files[0]->GetAbsolutePath(d) << " ";
     }
     else {
-      ta << id << patient->name << GetLabels(tags)
+      ta << id << patient->name;
+      if (dicoms.size() == 0) ta << "no_dicom";
+      else ta << dicoms[0]->acquisition_date;
+      ta << GetLabels(tags)
          << syd::ArrayToString<int, 3>(size) << syd::ArrayToString<double, 3>(spacing);
       std::string dicom;
       for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
       dicom.pop_back(); // remove last space
       ta << dicom;
-      if (dicoms.size() == 0) ta << "no_dicom";
-      else ta << dicoms[0]->acquisition_date;
+      if (pixel_value_unit != NULL) ta << pixel_value_unit->name;
+      else ta << "novalue";
       ta << frame_of_reference_uid;
     }
   }

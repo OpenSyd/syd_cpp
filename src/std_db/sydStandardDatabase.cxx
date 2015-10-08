@@ -92,6 +92,18 @@ void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & v, const std:
 // --------------------------------------------------
 
 
+// --------------------------------------------------
+template<>
+void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & v, const std::string & order) const
+{
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) {
+              return a->name < b->name;
+            });
+}
+// --------------------------------------------------
+
+
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {
@@ -107,6 +119,7 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::RoiMaskImage>();
   AddTable<syd::ImageTransform>();
   AddTable<syd::Calibration>();
+  AddTable<syd::PixelValueUnit>();
 }
 // --------------------------------------------------------------------
 
