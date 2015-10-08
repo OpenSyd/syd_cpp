@@ -31,10 +31,7 @@ syd::DecayCorrectedImageBuilder::DecayCorrectedImageBuilder(StandardDatabase * d
 syd::DecayCorrectedImageBuilder::DecayCorrectedImageBuilder()
 {
   // init
-  patient_ = NULL;
-  injection_ = NULL;
   db_ = NULL;
-  input_ = NULL;
 }
 // --------------------------------------------------------------------
 
@@ -44,26 +41,23 @@ syd::Image::pointer
 syd::DecayCorrectedImageBuilder::CreateDecayCorrectedImage(syd::Image::pointer input,
                                                            syd::Calibration::pointer calib)
 {
-  input_ = input;
-
   // Get information
-  patient_ = input_->patient;
-  if (input_->dicoms.size() < 1) {
+  if (input->dicoms.size() < 1) {
     LOG(FATAL) << "Error this image is not associated with a dicom. ";
   }
-  syd::DicomSerie::pointer dicom = input_->dicoms[0];
-  injection_ = dicom->injection;
-  if (injection_ == NULL) {
-    LOG(FATAL) << "Error this dicom is not associated with an injection :" << input_->dicoms[0];
+  syd::DicomSerie::pointer dicom = input->dicoms[0];
+  syd::Injection::pointer injection = dicom->injection;
+  if (injection == NULL) {
+    LOG(FATAL) << "Error this dicom is not associated with an injection :" << input->dicoms[0];
   }
 
-  double injected_activity = injection_->activity_in_MBq;
-  double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection_->date);
-  double lambda = log(2.0)/(injection_->radionuclide->half_life_in_hours);
+  double injected_activity = injection->activity_in_MBq;
+  double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection->date);
+  double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
 
   // Create output image
   syd::Image::pointer result = syd::Image::New();
-  result = input_; // copy the fields
+  result = input; // copy the fields
   result->id = -1; // but change the ID to insert as a new image.
 
   // FIXME --> change equation to take spect acquisition time into account (how to do when 2 spects ?)

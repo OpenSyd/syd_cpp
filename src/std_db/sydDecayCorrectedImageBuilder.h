@@ -51,12 +51,6 @@ namespace syd {
 
     StandardDatabase * db_;
 
-    // Temporary members
-    Patient::pointer patient_;
-    Injection::pointer injection_;
-    Image::pointer input_;
-
-
   }; // class DecayCorrectedImageBuilder
 } // namespace syd
 // --------------------------------------------------------------------
