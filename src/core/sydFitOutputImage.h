@@ -56,11 +56,14 @@ namespace syd {
   /// Compute and store the AUC (Area Under the Curve)
   class FitOutputImage_AUC: public FitOutputImage {
   public:
-    double l_phys;
-    FitOutputImage_AUC(Pointer input):FitOutputImage(input) { filename = "auc.mhd"; }
+    double lambda_phys_hours_;
+    FitOutputImage_AUC(Pointer input, double l):FitOutputImage(input)
+    {
+      filename = "auc.mhd"; lambda_phys_hours_ = l;
+    }
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::FitModelBase * model) {
-      double r = model->ComputeAUC(tac, l_phys, use_current_tac);
+      double r = model->ComputeAUC(tac, lambda_phys_hours_, use_current_tac);
       iterator.Set(r);
     }
   };
@@ -106,6 +109,27 @@ namespace syd {
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::FitModelBase * model) {
       iterator.Set(1);
+    }
+  };
+
+  /// Store image with effective half life (l1+l_phys, first expo only)
+  class FitOutputImage_EffHalfLife: public FitOutputImage {
+  public:
+    FitOutputImage_EffHalfLife(Pointer input):FitOutputImage(input) { filename = "ehl.mhd"; }
+    virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::FitModelBase * model) {
+      double h = model->GetEffHalfLife();
+      iterator.Set(h);
+    }
+  };
+
+  /// Store image with nb of points used for fit
+  class FitOutputImage_NbOfPointsForFit: public FitOutputImage {
+  public:
+    FitOutputImage_NbOfPointsForFit(Pointer input):FitOutputImage(input) { filename = "nbfit.mhd"; }
+    virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::FitModelBase * model) {
+      iterator.Set(tac.size());
     }
   };
 
