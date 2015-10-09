@@ -17,7 +17,7 @@
   ===========================================================================**/
 
 // syd
-#include "sydSubstituteRadionuclide_ggo.h"
+#include "sydInsertSubstituteRadionuclideImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
@@ -30,7 +30,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydSubstituteRadionuclide, 1);
+  SYD_INIT_GGO(sydInsertSubstituteRadionuclideImage, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();

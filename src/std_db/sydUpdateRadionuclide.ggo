@@ -1,8 +1,8 @@
-#File sydRadionuclideUpdate.ggo
+#File sydUpdateRadionuclide.ggo
 
 package "syd"
-version "0.3"
-usage "sydRadionuclideUpdate <name>"
+version "0.4"
+usage "sydUpdateRadionuclide <name>"
 description "Create or update a new radionuclide, by retrieving information from
 http://www.nucleide.org/DDEP_WG/DDEPdata.htm
 "

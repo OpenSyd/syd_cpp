@@ -95,9 +95,9 @@ add_executable(sydImageTag sydImageTag.cxx ${sydImageTag_GGO_C})
 target_link_libraries(sydImageTag sydStandardDatabase)
 
 # Update Radionuclide table
-wrap_ggo(sydRadionuclideUpdate_GGO_C sydRadionuclideUpdate.ggo sydCommandLineDefault.ggo)
-add_executable(sydRadionuclideUpdate sydRadionuclideUpdate.cxx ${sydRadionuclideUpdate_GGO_C})
-target_link_libraries(sydRadionuclideUpdate sydStandardDatabase)
+wrap_ggo(sydUpdateRadionuclide_GGO_C sydUpdateRadionuclide.ggo sydCommandLineDefault.ggo)
+add_executable(sydUpdateRadionuclide sydUpdateRadionuclide.cxx ${sydUpdateRadionuclide_GGO_C})
+target_link_libraries(sydUpdateRadionuclide sydStandardDatabase)
 
 # Insert / Update calibration for an image
 wrap_ggo(sydInsertCalibration_GGO_C sydInsertCalibration.ggo sydCommandLineDefault.ggo)
@@ -110,9 +110,9 @@ add_executable(sydInsertDecayCorrectedImage sydInsertDecayCorrectedImage.cxx ${s
 target_link_libraries(sydInsertDecayCorrectedImage sydStandardDatabase)
 
 # Create image with a different radionuclide
-wrap_ggo(sydSubstituteRadionuclide_GGO_C sydSubstituteRadionuclide.ggo sydCommandLineDefault.ggo)
-add_executable(sydSubstituteRadionuclide sydSubstituteRadionuclide.cxx ${sydSubstituteRadionuclide_GGO_C})
-target_link_libraries(sydSubstituteRadionuclide sydStandardDatabase)
+wrap_ggo(sydInsertSubstituteRadionuclideImage_GGO_C sydInsertSubstituteRadionuclideImage.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertSubstituteRadionuclideImage sydInsertSubstituteRadionuclideImage.cxx ${sydInsertSubstituteRadionuclideImage_GGO_C})
+target_link_libraries(sydInsertSubstituteRadionuclideImage sydStandardDatabase)
 
 
 # Insert a new RoiMaskImage (NOT YET)
