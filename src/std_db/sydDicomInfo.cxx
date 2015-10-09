@@ -61,35 +61,37 @@ int main(int argc, char* argv[])
   typedef itk::ImageFileReader<ImageType> ReaderType;
   typedef itk::GDCMImageIO ImageIOType;
   ImageIOType::Pointer dicomIO = ImageIOType::New();
+  dicomIO->SetLoadPrivateTags(true);
+  dicomIO->LoadPrivateTagsOn ();
+  dicomIO->LoadSequencesOn ();
   ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(file);
   reader->SetImageIO(dicomIO);
   reader->Update();
 
   // itk Examples_2IO_2DicomImageReadPrintTags
-  typedef itk::MetaDataDictionary   DictionaryType;
-  const  DictionaryType & dictionary = dicomIO->GetMetaDataDictionary();
+  typedef itk::MetaDataDictionary DictionaryType;
+  const DictionaryType & dictionary = dicomIO->GetMetaDataDictionary();
   typedef itk::MetaDataObject< std::string > MetaDataStringType;
   DictionaryType::ConstIterator itr = dictionary.Begin();
   DictionaryType::ConstIterator end = dictionary.End();
-  while( itr != end ) {
-    itk::MetaDataObjectBase::Pointer  entry = itr->second;
+  while (itr != end) {
+    itk::MetaDataObjectBase::Pointer entry = itr->second;
     MetaDataStringType::Pointer entryvalue =
-      dynamic_cast<MetaDataStringType *>( entry.GetPointer() );
+      dynamic_cast<MetaDataStringType*>(entry.GetPointer());
     if (entryvalue) {
-          std::string tagkey   = itr->first;
-          std::string labelId;
-          bool found =  itk::GDCMImageIO::GetLabelFromTag( tagkey, labelId );
-          std::string tagvalue = entryvalue->GetMetaDataObjectValue();
-
-          if (found) {
-            std::cout << "(" << tagkey << ") " << labelId;
-            std::cout << " = " << tagvalue.c_str() << std::endl;
-          }
-          else {
-            std::cout << "(" << tagkey <<  ") " << "Unknown";
-            std::cout << " = " << tagvalue.c_str() << std::endl;
-          }
+      std::string tagkey   = itr->first;
+      std::string labelId;
+      bool found =  itk::GDCMImageIO::GetLabelFromTag( tagkey, labelId );
+      std::string tagvalue = entryvalue->GetMetaDataObjectValue();
+      if (found) {
+        std::cout << "(" << tagkey << ") " << labelId;
+        std::cout << " = " << tagvalue.c_str() << std::endl;
+      }
+      else {
+        std::cout << "(" << tagkey <<  ") " << "Unknown";
+        std::cout << " = " << tagvalue.c_str() << std::endl;
+      }
     }
     ++itr;
   }
