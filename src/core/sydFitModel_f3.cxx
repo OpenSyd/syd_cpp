@@ -36,7 +36,7 @@ void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
 
   // Initialisation
   params_[0] = tac.GetValue(0)/2.0; // A1
-  params_[1] = 0.0; // lambda_1
+  params_[1] = GetLambdaPhysicHours(); // important
   params_[2] = tac.GetValue(0)/2.0; // A2
 
   // need to be created each time
