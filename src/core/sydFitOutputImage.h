@@ -48,6 +48,7 @@ namespace syd {
     }
 
     virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model) = 0;
 
   };
@@ -62,6 +63,7 @@ namespace syd {
       filename = "auc.mhd"; lambda_phys_hours_ = l;
     }
     virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model) {
       double r = model->ComputeAUC(tac, lambda_phys_hours_, use_current_tac);
       iterator.Set(r);
@@ -73,6 +75,7 @@ namespace syd {
   public:
     FitOutputImage_R2(Pointer input):FitOutputImage(input) { filename = "r2.mhd"; }
     virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model) {
       double R2 = model->ComputeR2(tac, use_current_tac);
       iterator.Set(R2);
@@ -84,6 +87,7 @@ namespace syd {
   public:
     FitOutputImage_Model(Pointer input):FitOutputImage(input) { filename = "best_model.mhd"; }
     virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model) {
       int id = model->id_;
       iterator.Set(id);
@@ -95,6 +99,7 @@ namespace syd {
   public:
     FitOutputImage_Iteration(Pointer input):FitOutputImage(input) { filename = "iteration.mhd"; }
     virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model) {
       int it = model->ceres_summary_.num_unsuccessful_steps +
         model->ceres_summary_.num_successful_steps;
@@ -107,6 +112,7 @@ namespace syd {
   public:
     FitOutputImage_Success(Pointer input):FitOutputImage(input) { filename = "success.mhd"; }
     virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model) {
       iterator.Set(1);
     }
@@ -117,6 +123,7 @@ namespace syd {
   public:
     FitOutputImage_EffHalfLife(Pointer input):FitOutputImage(input) { filename = "ehl.mhd"; }
     virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model) {
       double h = model->GetEffHalfLife();
       iterator.Set(h);
@@ -126,10 +133,13 @@ namespace syd {
   /// Store image with nb of points used for fit
   class FitOutputImage_NbOfPointsForFit: public FitOutputImage {
   public:
+    bool restricted_tac_flag_;
     FitOutputImage_NbOfPointsForFit(Pointer input):FitOutputImage(input) { filename = "nbfit.mhd"; }
     virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model) {
-      iterator.Set(tac.size());
+      if (restricted_tac_flag_) iterator.Set(restricted_tac.size());
+      else iterator.Set(tac.size());
     }
   };
 
