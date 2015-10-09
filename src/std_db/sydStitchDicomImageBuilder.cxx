@@ -74,6 +74,8 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
   image->frame_of_reference_uid = a->dicom_frame_of_reference_uid;
   image->dicoms.push_back(a);
   image->dicoms.push_back(b);
+  syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("counts", "Number of counts");
+  image->pixel_value_unit = unit;
   db_->Insert(image); // to obtain an id
 
 

@@ -65,6 +65,10 @@ syd::RoiMaskImageBuilder::InsertRoiMaskImage(const syd::DicomSerie::pointer & di
     // Update files in images
     mask->UpdateFile(db_, mhd_filename, mhd_relative_path);
 
+    // Update units
+    syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("label", "mask image");
+    mask->pixel_value_unit = unit;
+
     // Read image
     typedef unsigned char PixelType;
     typedef itk::Image<PixelType,3> ImageType;

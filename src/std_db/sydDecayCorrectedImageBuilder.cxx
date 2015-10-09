@@ -59,6 +59,8 @@ syd::DecayCorrectedImageBuilder::CreateDecayCorrectedImage(syd::Image::pointer i
   syd::Image::pointer result = syd::Image::New();
   result = input; // copy the fields
   result->id = -1; // but change the ID to insert as a new image.
+  syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("MBq_by_IA", "Activity in MBq by injected activity in MBq");
+  result->pixel_value_unit = unit;
 
   // FIXME --> change equation to take spect acquisition time into account (how to do when 2 spects ?)
 

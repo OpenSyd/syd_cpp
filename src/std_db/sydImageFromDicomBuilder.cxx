@@ -56,6 +56,8 @@ syd::Image::pointer syd::ImageFromDicomBuilder::CreateImageFromDicom(const syd::
       syd::WriteImage<ImageType>(itk_image, mhd_path);
       syd::Tag::pointer tag_ct = db_->FindOrInsertTag("ct", "CT scan image");
       image->AddTag(tag_ct);
+      syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("HU", "Hounsfield Units");
+      image->pixel_value_unit = unit;
     }
     else {
       // No auto tag, we dont know if this is a spect, a pet etc
@@ -67,6 +69,8 @@ syd::Image::pointer syd::ImageFromDicomBuilder::CreateImageFromDicom(const syd::
       db_->UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
       LOG(4) << "Write image on disk " << mhd_path;
       syd::WriteImage<ImageType>(itk_image, mhd_path);
+      syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("counts", "Number of counts");
+      image->pixel_value_unit = unit;
     }
 
   } catch (syd::Exception & e) {

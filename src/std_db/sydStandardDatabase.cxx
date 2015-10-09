@@ -201,6 +201,25 @@ syd::Tag::pointer syd::StandardDatabase::FindOrInsertTag(const std::string & lab
 
 
 // --------------------------------------------------------------------
+syd::PixelValueUnit::pointer syd::StandardDatabase::FindOrInsertUnit(const std::string & name,
+                                                                     const std::string & description)
+{
+  syd::PixelValueUnit::pointer unit;
+  try {
+    odb::query<syd::PixelValueUnit> q = odb::query<syd::PixelValueUnit>::name == name;
+    QueryOne(unit, q);
+  } catch (std::exception & e) {
+    New(unit);
+    unit->name=name;
+    unit->description=description;
+    Insert(unit);
+  }
+  return unit;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::RoiType::pointer syd::StandardDatabase::FindRoiType(const std::string & roiname) const
 {
   syd::RoiType::pointer r;
