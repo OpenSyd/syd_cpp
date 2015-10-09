@@ -330,3 +330,14 @@ std::string syd::Image::ComputeDefaultFilename(syd::Database * db) const
   return mhd_path;
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::FatalIfNoDicom() const
+{
+  if (dicoms.size() == 0) {
+    LOG(FATAL) << "Error the following image does not have associated DicomSerie."
+               << std::endl << this;
+  }
+}
+// --------------------------------------------------

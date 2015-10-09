@@ -119,6 +119,9 @@ namespace syd {
     /// When create a new image, compute a default name. Image *must* be persistant (with correct id)
     std::string ComputeDefaultFilename(syd::Database * db) const;
 
+    /// Check if the image has a dicom. If not fail
+    void FatalIfNoDicom() const;
+
   protected:
     Image();
 
