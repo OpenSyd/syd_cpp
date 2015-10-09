@@ -46,11 +46,9 @@ int main(int argc, char* argv[])
 
   // Get the radionuclide
   std::string radname = args_info.inputs[1];
-  DD(radname);
   syd::Radionuclide::pointer rad;
   odb::query<syd::Radionuclide> q = odb::query<syd::Radionuclide>::name == radname;
   db->QueryOne(rad, q); // will fail if not found
-  DD(rad);
 
   // Get the list of images
   std::vector<syd::IdType> ids;
@@ -63,14 +61,12 @@ int main(int argc, char* argv[])
   if (images.size() == 0) {
     LOG(FATAL) << "No image ids given. I do nothing.";
   }
-  DDS(images);
 
   // Create the builder
   syd::SubstituteRadionuclideImageBuilder builder(db);
   syd::Image::vector result_images;
   // Loop on the images
   for(auto image:images) {
-    DD(image);
     // Create new image
     syd::Image::pointer result = builder.CreateRadionuclideSubstitutedImage(image, rad);
     // Set the tags
