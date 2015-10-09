@@ -66,7 +66,7 @@ namespace syd {
 
     // Input
     void AddInput(ImageType::Pointer image, double time) { images_.push_back(image); times_.push_back(time); }
-    void AddModel(syd::FitModelBase * m) { models_.push_back(m); }
+    void AddModel(syd::FitModelBase * m, int id);// { models_.push_back(m); } // FIXME set and check id
     void AddOutputImage(syd::FitOutputImage * o) { outputs_.push_back(o); }
     void SetMask(ImageType::Pointer m) { mask_ = m; }
 
