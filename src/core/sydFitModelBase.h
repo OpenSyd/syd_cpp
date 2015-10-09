@@ -61,9 +61,8 @@ namespace syd {
     double robust_scaling_;
 
     virtual std::string GetName() const { return name_; }
-    //int GetNumberOfParameters() const { return params_.size(); }
-    int GetK()  const { return params_.size(); } //const { return GetNumberOfParameters(); } // Ka
-    virtual int GetNumberOfExpo() const = 0;//; { return GetNumberOfParameters(); } // Ka
+    int GetK()  const { return params_.size(); }
+    virtual int GetNumberOfExpo() const = 0;
 
     void SetLambdaPhysicHours(double l) { lambda_phys_hours_ = l; }
 
@@ -93,6 +92,11 @@ namespace syd {
 
     virtual double GetA(const int i) const { LOG(FATAL) << "GetA to implement " << GetName(); return 0.0; }
     virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); return 0.0; }
+
+    virtual double GetEffHalfLife() const {
+      double h = GetLambda(0) + GetLambdaPhysicHours();
+      return log(2.0)/h;
+    }
 
     bool start_from_max_flag;
 
