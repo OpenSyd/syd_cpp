@@ -198,7 +198,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   // log
   //  models, threshold, mask
   std::string sm;
-  for(auto m:models_) sm += m->name_+" ";
+  for(auto m:models_) sm += m->name_+" ("+syd::ToString(m->id_)+") ";
   LOG(1) << "Starting fit with models : " << sm << "; "
          << (mask_flag ? "with mask":"no_mask")
          << " ; R2_min = " << R2_min_threshold_
@@ -250,7 +250,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
         ++number_of_pixels_success;
         current_model_ = models_[best];
         // Update output
-        for(auto o:outputs_) o->Update(tac, current_model_);
+        for(auto o:outputs_) o->Update(tac, restricted_tac, current_model_);
       }
 
       // debug points for plot

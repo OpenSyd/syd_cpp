@@ -73,6 +73,9 @@ namespace syd {
     // Main function
     void CreateIntegratedActivityImage();
 
+    // Options
+    void SetRestrictedTACFlag(bool b) { restricted_tac_flag_ = b; }
+
     // Other functions
     void ClearModel() { models_.clear(); }
 
@@ -86,7 +89,6 @@ namespace syd {
     //double robust_scaling_;
     double R2_min_threshold_;
     double image_lambda_phys_in_hour_;
-    bool restricted_tac_flag_;
     std::vector<FitOutputImage*> outputs_;
     ImageType::Pointer mask_;
 
@@ -112,6 +114,9 @@ namespace syd {
     void InitSolver();
     int FitModels(TimeActivityCurve & tac, bool debug_this_point_flag, DebugType * debug_current);
     void InitInputData();
+
+    // If 'true', only use the last part of the tac, from the max value to then end (2 points at min)
+    bool restricted_tac_flag_;
 
     // Options for the solver
     ceres::Solver::Options * ceres_options_;

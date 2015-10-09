@@ -121,10 +121,15 @@ int main(int argc, char* argv[])
   }
 
   // Create some models
+  std::vector<syd::FitModelBase*> models;
   auto f2  = new syd::FitModel_f2;
   auto f3  = new syd::FitModel_f3;
   auto f4a = new syd::FitModel_f4a;
   auto f4  = new syd::FitModel_f4;
+  models.push_back(f2);
+  models.push_back(f3);
+  models.push_back(f4a);
+  models.push_back(f4);
 
   // Create some output types
   auto auc = new syd::FitOutputImage_AUC(im, injection->GetLambdaInHours());
@@ -159,7 +164,8 @@ int main(int argc, char* argv[])
   builder.image_lambda_phys_in_hour_ = injection->GetLambdaInHours();
   builder.debug_only_flag_ = args_info.debug_only_flag;
   builder.R2_min_threshold_ = args_info.r2_min_arg;
-  builder.restricted_tac_flag_ = true; // FIXME
+  builder.SetRestrictedTACFlag(args_info.restricted_tac_flag);
+  nb_points->restricted_tac_flag_ = args_info.restricted_tac_flag;
 
   for(auto d:debug_points) builder.AddDebugPixel(d.name, d.x, d.y, d.z);
   builder.AddOutputImage(auc);
@@ -173,10 +179,25 @@ int main(int argc, char* argv[])
   }
   builder.SetMask(mask);
 
-  builder.AddModel(f2, 2); // no f2 ?
-  builder.AddModel(f3, 3);
-  builder.AddModel(f4a, 4);
-  builder.AddModel(f4, 5); // no f4 ?
+  for(auto i=0; i<args_info.model_given; i++) {
+    std::string n = args_info.model_arg[i];
+    DD(n);
+    bool b = false;
+    for(auto m:models) {
+      if (m->GetName() == n) {
+        builder.AddModel(m, i);
+        b = true;
+      }
+    }
+    if (!b) {
+      std::string km;
+      for(auto m:models) km += m->GetName()+" ";
+      LOG(FATAL) << "Error the model '" << n << "' is not found. Known models are: " << km;
+    }
+  }
+  if (args_info.model_given == 0) {
+    LOG(FATAL) << "At least a model must be given (--model).";
+  }
 
   // Go !
   builder.CreateIntegratedActivityImage();
