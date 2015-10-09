@@ -56,6 +56,8 @@ namespace syd {
     virtual void Callback(odb::callback_event, odb::database&) const;
     virtual void Callback(odb::callback_event, odb::database&);
 
+    double GetLambdaInHours() const;
+
   protected:
     Injection();
 

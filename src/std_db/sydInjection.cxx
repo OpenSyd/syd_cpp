@@ -166,3 +166,11 @@ void syd::Injection::Callback(odb::callback_event event, odb::database & db)
   // }
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+double syd::Injection::GetLambdaInHours() const
+{
+  return log(2.0)/radionuclide->half_life_in_hours;
+}
+// --------------------------------------------------
