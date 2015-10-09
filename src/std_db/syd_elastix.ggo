@@ -2,11 +2,11 @@
 
 package "syd"
 version "0.'"
-usage "syd_elastix <config> <fixed_image> <moving_image*> "
+usage "syd_elastix <config> <fixed_image_id> <moving_images_ids*> "
 description "Parameters are:
-- <config>        : elastix config file
-- <fixed_image>   : id of the fixed image
-- <moving_image*> : ids of the moving image (multiple -> on registration by id)
+- <config>              : elastix config file
+- <fixed_image_id>      : id of the fixed image
+- <moving_images_ids*>  : ids of the moving image (multiple -> one registration by id)
 "
 
 option "options"        p       "Option for elastix (in \" \")"                 string  default="" no

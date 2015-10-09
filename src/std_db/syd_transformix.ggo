@@ -2,9 +2,9 @@
 
 package "syd"
 version "0.4"
-usage "syd_transformix <transform> <image> "
+usage "syd_transformix <image_ids> "
 description "Parameters are:
-- <image>         : ids of the image to transform
+- <image_ids>         : ids of the image to transform
 "
 
 option "transform"   	        -       "List of transform ids (between \"\")"        string    yes
