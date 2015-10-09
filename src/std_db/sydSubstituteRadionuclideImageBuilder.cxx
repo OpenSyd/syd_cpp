@@ -41,11 +41,12 @@ syd::Image::pointer
 syd::SubstituteRadionuclideImageBuilder::CreateRadionuclideSubstitutedImage(syd::Image::pointer input,
                                                                             syd::Radionuclide::pointer rad)
 {
-  DD(input);
-  DD(rad);
-
   // Input image MUST be decay corrected and in MBq by injected MBq units
-  DD("How to check pixel unit ?");
+  if (input->pixel_value_unit->name != "MBq_by_IA") {
+    LOG(WARNING) << "The pixel value unit of the following image is not MBq_by_IA. Maybe an error ?"
+                 << std::endl
+                 << input;
+  }
 
   // Get information
   if (input->dicoms.size() < 1) {
@@ -59,8 +60,6 @@ syd::SubstituteRadionuclideImageBuilder::CreateRadionuclideSubstitutedImage(syd:
 
   double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection->date);
   double lambda = log(2.0)/(rad->half_life_in_hours);
-  DD(time);
-  DD(lambda);
 
   // Create output image
   syd::Image::pointer result = syd::Image::New();
