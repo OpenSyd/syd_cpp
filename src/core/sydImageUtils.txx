@@ -290,14 +290,11 @@ typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType *
     // Find the slice where cumul larger than threshold_cumul
     bool start = false;
     int end=0;
-    double t = threshold_cumul;//150000;
-    //    std::ofstream os("a.txt");
+    double t = threshold_cumul;
     for(auto i=0; i<cumul1.size(); i++) {
-      //os << cumul1[i] << " " << cumul2[i] << std::endl;
       if (cumul2[i] > t and start) end = i;
       if (cumul2[i] > t and !start) start = true;
     }
-    //os.close();
 
     iter1.GoToBegin();
     iter2.GoToBegin();
