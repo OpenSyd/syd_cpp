@@ -97,7 +97,7 @@ void syd::RoiMaskImage::DumpInTable(const syd::Database * d,
                                     const std::string & format) const
 {
   if (ta.GetNumberOfColumns() == 9)  { // FIXME, bug if Image change the nb of col
-    ta.AddColumn("roi", 15);
+    ta.AddColumn("roi", 12);
   }
   syd::Image::DumpInTable(d, ta, format);
   if (format != "file") {
