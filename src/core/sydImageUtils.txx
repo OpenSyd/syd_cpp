@@ -668,3 +668,17 @@ void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, con
   */
 }
 //--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+bool CheckImageSameSizeAndSpacing(const typename ImageType::Pointer a, const typename ImageType::Pointer b)
+{
+  const auto dim = ImageType::ImageDimension;
+  bool r = true;
+  for(auto i=0; i<dim; i++)
+    r = r and (a->GetLargestPossibleRegion().GetSize()[i] == b->GetLargestPossibleRegion().GetSize()[i]) and
+      (a->GetSpacing()[i] == b->GetSpacing()[i]);
+  return r;
+}
+//--------------------------------------------------------------------

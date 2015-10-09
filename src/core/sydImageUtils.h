@@ -112,6 +112,12 @@ namespace syd {
 
 
   //--------------------------------------------------------------------
+  template<class ImageType>
+  bool CheckImageSameSizeAndSpacing(const typename ImageType::Pointer a, const typename ImageType::Pointer b);
+  //--------------------------------------------------------------------
+
+
+  //--------------------------------------------------------------------
   void CopyMHDImage(std::string from, std::string to, int verbose_level=2);
   void RenameMHDImage(std::string from, std::string to, int verbose_level=2);
   void RenameOrCopyMHDImage(std::string from, std::string to, int verbose_level, bool erase);
