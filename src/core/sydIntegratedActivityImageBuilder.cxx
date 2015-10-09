@@ -200,9 +200,9 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   std::string sm;
   for(auto m:models_) sm += m->name_+" ";
   LOG(1) << "Starting fit with models : " << sm << "; "
-         << (mask_flag ? "mask":"no_mask")
-         << " R2_min = " << R2_min_threshold_
-         << (restricted_tac_flag_ ? " with last 3 points of the curve only":"");
+         << (mask_flag ? "with mask":"no_mask")
+         << " ; R2_min = " << R2_min_threshold_
+         << (restricted_tac_flag_ ? " ; fit with last 3 points of the curve only":"; fit on all timepoints");
 
   // main loop
   int x = 0;
@@ -328,6 +328,27 @@ int syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac,
 // --------------------------------------------------------------------
 void syd::IntegratedActivityImageBuilder::InitInputData()
 {
+  // Check image size
+  bool b = true;
+  for(auto image:images_) b = b and syd::CheckImageSameSizeAndSpacing<ImageType>(images_[0], image);
+  if (!b) {
+    LOG(FATAL) << "The images must have the same size/spacing, abort.";
+  }
+
+  // Sort images by time.
+  // http://stackoverflow.com/questions/1577475/c-sorting-and-keeping-track-of-indexes
+  // First, get the index of sorted times
+  std::vector<size_t> idx(images_.size());
+  for (size_t i = 0; i != idx.size(); ++i) idx[i] = i;
+  std::vector<double> t = times_;
+  std::sort(idx.begin(), idx.end(), [t](size_t i1, size_t i2) {return t[i1] < t[i2];});
+  // Sort the times
+  std::sort(times_.begin(), times_.end());
+  // Sort the images
+  std::vector<ImageType::Pointer> temp(images_.size());
+  for(auto i=0; i<idx.size(); i++) temp[i] = images_[idx[i]];
+  for(auto i=0; i<idx.size(); i++) images_[i] = temp[i];
+
   // consider images_ OR create a 4D images ?
   typename Image4DType::SizeType size;
   for(auto i=1; i<4; i++) size[i] = images_[0]->GetLargestPossibleRegion().GetSize()[i-1];
@@ -359,6 +380,10 @@ void syd::IntegratedActivityImageBuilder::InitInputData()
       ++it;
     }
   }
+  syd::WriteImage<Image4DType>(tac_image_, "s4d.mhd");
+
+  // Set the lambda_phys_hours_ for the models
+  for(auto & m:models_) m->lambda_phys_hours_ = image_lambda_phys_in_hour_;
 }
 // --------------------------------------------------------------------
 
@@ -381,5 +406,18 @@ void syd::IntegratedActivityImageBuilder::InitSolver()
     m->SetLambdaPhysicHours(image_lambda_phys_in_hour_);
     // m->robust_scaling_ = robust_scaling_;
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::IntegratedActivityImageBuilder::AddModel(syd::FitModelBase * m, int id)
+{
+  auto p = std::find_if(models_.begin(), models_.end(), [&id](syd::FitModelBase * m)->bool { return m->id_ == id; });
+  if (p != models_.end()) {
+    LOG(FATAL) << "This id already exists in the list of model: " << id;
+  }
+  m->id_ = id;
+  models_.push_back(m);
 }
 // --------------------------------------------------------------------
