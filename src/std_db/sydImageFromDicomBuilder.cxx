@@ -39,7 +39,7 @@ syd::Image::pointer syd::ImageFromDicomBuilder::CreateImageFromDicom(const syd::
   image->type = "mhd";
   db_->Insert(image); // to obtain an id
 
-  std::string mhd_path = image->ComputeDefaultFilename(db_);
+  std::string mhd_path = image->ComputeDefaultAbsolutePath(db_);
 
   // Update the Files
   image->UpdateFile(db_, mhd_path);

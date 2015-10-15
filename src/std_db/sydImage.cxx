@@ -134,7 +134,7 @@ void syd::Image::AddTag(syd::Tag::pointer tag)
   bool found = false;
   int i=0;
   while (i<tags.size() and !found) {
-    if (tags[i]->label == tag->label) found = true;
+    if (tags[i]->id == tag->id) found = true;
     ++i;
   }
   if (!found) tags.push_back(tag);
@@ -148,7 +148,7 @@ void syd::Image::RemoveTag(syd::Tag::pointer tag)
   bool found = false;
   int i=0;
   while (i<tags.size() and !found) {
-    if (tags[i]->label == tag->label) {
+    if (tags[i]->id == tag->id) {
       found = true;
       tags.erase(tags.begin()+i);
     }
@@ -314,7 +314,7 @@ bool syd::Image::IsSameSizeAndSpacingThan(const syd::Image::pointer image) const
 
 
 // --------------------------------------------------
-std::string syd::Image::ComputeDefaultFilename(syd::Database * db) const
+std::string syd::Image::ComputeDefaultAbsolutePath(syd::Database * db) const
 {
   // fast initial check (useful but not sufficient)
   if (id == -1) {

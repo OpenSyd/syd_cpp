@@ -117,7 +117,7 @@ namespace syd {
     std::string SpacingAsString() const { return syd::ArrayToString<double,3>(spacing); }
 
     /// When create a new image, compute a default name. Image *must* be persistant (with correct id)
-    std::string ComputeDefaultFilename(syd::Database * db) const;
+    std::string ComputeDefaultAbsolutePath(syd::Database * db) const;
 
     /// Check if the image has a dicom. If not fail
     void FatalIfNoDicom() const;
