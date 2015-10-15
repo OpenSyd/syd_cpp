@@ -16,6 +16,7 @@ option "gauss"   	        g       "Sigma of preprocess Gaussian filter (0=no)"  
 option "r2_min"   	        -       "Min R2 threshold for model selection"             float default="0.9" no
 option "restricted_tac"         r       "Dont try to fit all the curve, only from max value to the end" flag off
 option "model"                  m       "Set the models use to fit f2 f3 f4a etc"          string multiple no
+option "fill_holes"             f       "Try to fill holes using given radius"             int default="3" no
 
 section "debug"
 option "debug"   	 	-       "File with debug points"                           string    no

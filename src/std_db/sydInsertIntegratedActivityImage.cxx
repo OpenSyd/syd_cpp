@@ -169,8 +169,8 @@ int main(int argc, char* argv[])
 
   for(auto d:debug_points) builder.AddDebugPixel(d.name, d.x, d.y, d.z);
   builder.AddOutputImage(auc);
+  builder.AddOutputImage(success);
   if (args_info.debug_images_flag) {
-    builder.AddOutputImage(success);
     builder.AddOutputImage(r2);
     builder.AddOutputImage(best_model);
     builder.AddOutputImage(iter);
@@ -181,7 +181,6 @@ int main(int argc, char* argv[])
 
   for(auto i=0; i<args_info.model_given; i++) {
     std::string n = args_info.model_arg[i];
-    DD(n);
     bool b = false;
     for(auto m:models) {
       if (m->GetName() == n) {
@@ -210,69 +209,53 @@ int main(int argc, char* argv[])
   builder.SaveDebugPixel("gp/tac.txt");
   builder.SaveDebugModel("gp/models.txt");
 
-  // // Modifiy the mask according to success
-  // auto it_success = success->iterator;
-  // it_success.GoToBegin();
-  // it_mask.GoToBegin();
-  // while (!it_mask.IsAtEnd()) {
-  //   if (it_success.Get() == 1.0) it_mask.Set(0.0);
-  //   ++it_success;
-  //   ++it_mask;
-  // }
-  // if (args_info.debug_images_flag and !args_info.debug_only_flag)
-  //   syd::WriteImage<ImageType>(mask, "mask2.mhd");
 
-  // // Redo with a mask
-  // builder.ClearModel();
-  // builder.debug_data.clear(); // need to reset the debug data
-  // for(auto d:debug_points) builder.AddDebugPixel(d.name, d.x, d.y, d.z);
-  // f3->id_ = 5; // to distinguish from previous
-  // builder.AddModel(f3);
-  // f4a->id_ = 6; // to distinguish from previous
-  // builder.AddModel(f4a);
-  // builder.restricted_tac_flag_ = true;
-  // builder.CreateIntegratedActivityImage();
+  // Option to fill holes
+  if (args_info.fill_holes_given) {
+    // Change the mask, considering success fit
+    auto it_success = success->iterator;
+    Iterator it_mask(mask, mask->GetLargestPossibleRegion());
+    it_success.GoToBegin();
+    it_mask.GoToBegin();
+    while (!it_mask.IsAtEnd()) {
+      if (it_success.Get() == 1.0) it_mask.Set(0.0);
+      ++it_success;
+      ++it_mask;
+    }
+    syd::WriteImage<ImageType>(mask, "mask_fail.mhd");
+    int f = syd::FillHoles<ImageType>(auc->image, mask, args_info.fill_holes_arg);
+    LOG(1) << "Last step: fill remaining holes. " << f << " failed pixels remain.";
+  }
+  if (args_info.debug_images_flag) syd::WriteImage<ImageType>(auc->image, "auc_fill.mhd");
 
-  // // Output
-  // if (args_info.debug_images_flag and !args_info.debug_only_flag)
-  //   for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename+"_2.mhd");
 
-  // // Debug here
-  // builder.SaveDebugPixel("gp/tac_2.txt");
-  // builder.SaveDebugModel("gp/models_2.txt");
+  // Copy all tags of the given images, remove duplicate
+  for(auto im:images) for(auto t:im->tags) tags.push_back(t);
+  auto lower = [](syd::Tag::pointer const & v1, syd::Tag::pointer const & v2) { return v1->id < v2->id; };
+  std::sort(tags.begin(), tags.end(), lower);
+  auto same_id = [](syd::Tag::pointer const & v1, syd::Tag::pointer const & v2) { return v1->id == v2->id; };
+  tags.erase(std::unique(tags.begin(), tags.end(), same_id), tags.end());
 
-  // // update the mask
-  // if (!args_info.debug_only_flag) {
-  //   it_success = success->iterator;
-  //   it_success.GoToBegin();
-  //   it_mask.GoToBegin();
-  //   while (!it_mask.IsAtEnd()) {
-  //     if (it_success.Get() == 1.0) it_mask.Set(0.0);
-  //     ++it_success;
-  //     ++it_mask;
-  //   }
-  //   if (args_info.debug_images_flag and !args_info.debug_only_flag)
-  //     syd::WriteImage<ImageType>(mask, "mask3.mhd");
+  // Insert result in db
+  syd::Image::pointer output;
+  db->New(output);
+  output->CopyFrom(images[0]);
+  for(auto t:tags) output->AddTag(t);
+  output->id = -1; // before insertion
+  db->Insert(output);
 
-  //   int f = syd::FillHoles<ImageType>(auc->image, mask, 2); FIXME
+  // Dump the itk image
+  std::string absolutepath = output->ComputeDefaultAbsolutePath(db);
+  ImageType::Pointer itk_image = auc->image;
+  syd::WriteImage<ImageType>(itk_image, absolutepath);
+  output->UpdateFile(db, absolutepath);
 
-  //   // Deal with remaining failed pixels
-  //   LOG(1) << "Last step: fill remaining holes. " << f << " failed pixels remain.";
+  // Change pixel value
+  syd::PixelValueUnit::pointer v = db->FindOrInsertUnit("MBq.h_by_IA", "Time integrated MBq (MBq.h) by injected activity in MBq");
+  output->pixel_value_unit = v;
+  db->Update(output);
+  LOG(1) << "Inserting Image " << output;
 
-  //   syd::WriteImage<ImageType>(auc->image, "auc3.mhd");
-  // }
-
-  // Output
-  DD("FIXME : insert builder output in the db");
-
-  // Update tags
-  /*
-    for(auto t:tags) image->AddTag(t);
-    db->Update(image);
-    LOG(1) << "Inserting Image " << image;
-  */
-
-  DD("done");
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------
