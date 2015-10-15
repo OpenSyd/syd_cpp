@@ -38,7 +38,8 @@ std::string syd::Radionuclide::ToString() const
      << element << " "
      << atomic_number << " "
      << mass_number << " "
-     << (metastable? "metastable":"");
+     << (metastable? "metastable":"")
+     << max_beta_minus_energy_in_kev;
   return ss.str();
 }
 // --------------------------------------------------
@@ -52,7 +53,8 @@ bool syd::Radionuclide::IsEqual(const pointer p) const
           element == p->element and
           atomic_number == p->atomic_number and
           mass_number == p->mass_number and
-          metastable == p->metastable);
+          metastable == p->metastable and
+          max_beta_minus_energy_in_kev == p->max_beta_minus_energy_in_kev);
 }
 // --------------------------------------------------
 
@@ -67,6 +69,7 @@ void syd::Radionuclide::CopyFrom(const pointer p)
   atomic_number = p->atomic_number;
   mass_number = p->mass_number;
   metastable = p->metastable;
+  max_beta_minus_energy_in_kev = p->max_beta_minus_energy_in_kev;
 }
 // --------------------------------------------------
 
@@ -94,6 +97,7 @@ void syd::Radionuclide::InitPrintTable(const syd::Database * db, syd::PrintTable
   ta.AddColumn("Z", 4);
   ta.AddColumn("A", 4);
   ta.AddColumn("metastable", 12);
+  ta.AddColumn("Q-", 10,1);
 }
 // --------------------------------------------------
 
@@ -101,6 +105,7 @@ void syd::Radionuclide::InitPrintTable(const syd::Database * db, syd::PrintTable
 // --------------------------------------------------
 void syd::Radionuclide::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
 {
-  ta << id << name << half_life_in_hours << element << atomic_number << mass_number << (metastable? "Y":"N");
+  ta << id << name << half_life_in_hours << element << atomic_number << mass_number
+     << (metastable? "Y":"N") << max_beta_minus_energy_in_kev;
 }
 // --------------------------------------------------

@@ -33,13 +33,23 @@ namespace syd {
 #pragma db options("UNIQUE")
     std::string name;
 
+    /// Element name such as Y-90 or Lu-177
     std::string element;
-    double atomic_number; //Z
-    double mass_number; // A
+
+    /// Atomic number Z
+    double atomic_number;
+
+    /// Mass number A
+    double mass_number;
+
+    /// If metastable
     bool metastable;
 
-    /// Half life of the radionuclide in hours
+    /// Half life in hours
     double half_life_in_hours;
+
+    /// Max beta- energy (Q-)
+    double max_beta_minus_energy_in_kev;
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Radionuclide);
