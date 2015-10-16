@@ -59,13 +59,15 @@ syd::DecayCorrectedImageBuilder::CreateDecayCorrectedImage(syd::Image::pointer i
   syd::Image::pointer result = syd::Image::New();
   result = input; // copy the fields
   result->id = -1; // but change the ID to insert as a new image.
-  syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("MBq_by_IA", "Activity in MBq by injected activity in MBq");
+  // syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("MBq_by_IA", "Activity in MBq by injected activity in MBq");
+  // syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("kBq_by_IA", "Activity in kBq by injected activity in MBq");
+  syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("Bq_by_IA", "Activity in Bq by injected activity in MBq");
   result->pixel_value_unit = unit;
 
   // FIXME --> change equation to take spect acquisition time into account (how to do when 2 spects ?)
 
-  // pixel = value x calibration_factor / injected_MBq x exp(lambda x t)
-  double f = calib->factor / injected_activity * exp(lambda * time);
+  // pixel = value / calibration_factor / injected_MBq x exp(lambda x t)
+  double f = 1.0/calib->factor / injected_activity * exp(lambda * time)*1000*1000; // x1000 for MBq to kBq x1000 to Bq
 
   // Change pixel values
   typedef float PixelType;
@@ -73,13 +75,13 @@ syd::DecayCorrectedImageBuilder::CreateDecayCorrectedImage(syd::Image::pointer i
   ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db_->GetAbsolutePath(input));
   itk::ImageRegionIterator<ImageType> iter(itk_image, itk_image->GetLargestPossibleRegion());
   while (!iter.IsAtEnd()) {
-    iter.Set(iter.Get() / f);
+    iter.Set(iter.Get() * f);
     ++iter;
   }
 
   // Create and image file
   db_->Insert(result);
-  std::string mhd_path = result->ComputeDefaultFilename(db_);
+  std::string mhd_path = result->ComputeDefaultAbsolutePath(db_);
   syd::WriteImage<ImageType>(itk_image, mhd_path);
   result->UpdateFile(db_, mhd_path);
 
