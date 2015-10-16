@@ -76,11 +76,14 @@ int main(int argc, char* argv[])
   }
 
   // Check same pixel units (warning)
+  syd::PixelValueUnit::pointer unit = images[0]->pixel_value_unit;
   for(auto image:images) {
-    if (image->pixel_value_unit->name != "MBq_by_IA") {
-      LOG(WARNING) << "I expected pixel value unit to be 'MBq_by_IA', while it is "
+    if (image->pixel_value_unit->id != unit->id) {
+      LOG(WARNING) << "I expected pixel value unit to be the same for all images, while it is "
                    << image->pixel_value_unit->name << "for the image:"
-                   << std::endl << image;
+                   << std::endl << image
+                   << std::endl << " and " << unit->name << " for the image"
+                   << std::endl << images[0];
     }
   }
 
@@ -141,19 +144,24 @@ int main(int argc, char* argv[])
   auto nb_points = new syd::FitOutputImage_NbOfPointsForFit(im);
 
   // Use a mask, consider values of the first spect
+  int nb_pixel = 0.0;
   ImageType::Pointer mask = syd::CreateImageLike<ImageType>(im);
   Iterator it_mask(mask, mask->GetLargestPossibleRegion());
   Iterator it_image(im, im->GetLargestPossibleRegion());
   it_mask.GoToBegin();
   it_image.GoToBegin();
   while (!it_mask.IsAtEnd()) {
-    if (it_image.Get() > args_info.min_activity_arg) it_mask.Set(1.0);
+    if (it_image.Get() > args_info.min_activity_arg) {
+      it_mask.Set(1.0);
+      ++nb_pixel;
+    }
     else it_mask.Set(0.0);
     ++it_mask;
     ++it_image;
   }
   if (args_info.debug_images_flag)
     syd::WriteImage<ImageType>(mask, "mask.mhd");
+  LOG(2) << "I find " << nb_pixel << " pixels to integrate in the mask.";
 
 
   // Create main builder
