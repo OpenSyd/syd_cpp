@@ -41,13 +41,6 @@ syd::Image::pointer
 syd::SubstituteRadionuclideImageBuilder::CreateRadionuclideSubstitutedImage(syd::Image::pointer input,
                                                                             syd::Radionuclide::pointer rad)
 {
-  // Input image MUST be decay corrected and in MBq by injected MBq units
-  if (input->pixel_value_unit->name != "MBq_by_IA") {
-    LOG(WARNING) << "The pixel value unit of the following image is not MBq_by_IA. Maybe an error ?"
-                 << std::endl
-                 << input;
-  }
-
   // Get information
   if (input->dicoms.size() < 1) {
     LOG(FATAL) << "Error this image is not associated with a dicom. ";
@@ -65,8 +58,6 @@ syd::SubstituteRadionuclideImageBuilder::CreateRadionuclideSubstitutedImage(syd:
   syd::Image::pointer result = syd::Image::New();
   result = input; // copy the fields
   result->id = -1; // but change the ID to insert as a new image.
-  syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("MBq_by_IA", "Activity in MBq by injected activity in MBq");
-  result->pixel_value_unit = unit;
 
   // Change pixel values
   typedef float PixelType;
@@ -74,13 +65,13 @@ syd::SubstituteRadionuclideImageBuilder::CreateRadionuclideSubstitutedImage(syd:
   ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db_->GetAbsolutePath(input));
   itk::ImageRegionIterator<ImageType> iter(itk_image, itk_image->GetLargestPossibleRegion());
   while (!iter.IsAtEnd()) {
-    iter.Set(iter.Get() / exp(-lambda * time));
+    iter.Set(iter.Get() * exp(-lambda * time));
     ++iter;
   }
 
   // Create and image file
   db_->Insert(result);
-  std::string mhd_path = result->ComputeDefaultFilename(db_);
+  std::string mhd_path = result->ComputeDefaultAbsolutePath(db_);
   syd::WriteImage<ImageType>(itk_image, mhd_path);
   result->UpdateFile(db_, mhd_path);
 
