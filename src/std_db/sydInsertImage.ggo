@@ -1,0 +1,10 @@
+#File sydInsertImage.ggo
+
+package "syd"
+version "0.1"
+usage "sydInsertImage <filename>"
+description "Insert a mhd image ; must use the --like flag (will change)
+- <filename>      image file to insert
+"
+
+option "like"    -       "Id of the image to copy information from"     int yes

@@ -78,6 +78,11 @@ namespace syd {
                          typename itk::Image<PixelType,3>::Pointer & itk_image,
                          bool computeMD5Flag);
 
+    /// Update image information from a file
+    void UpdateImageInfoFromFile(syd::Image::pointer image,
+                                 std::string filename,
+                                 bool computeMD5Flag=true);
+
   protected:
     /// Insert the tables
     virtual void CreateTables();

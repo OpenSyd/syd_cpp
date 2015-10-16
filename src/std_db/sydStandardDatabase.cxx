@@ -275,3 +275,40 @@ syd::File::pointer syd::StandardDatabase::InsertNewFile(std::string input_path,
   return file;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::UpdateImageInfoFromFile(syd::Image::pointer image,
+                                                    std::string filename,
+                                                    bool computeMD5Flag)
+{
+  // Read itk image header
+  auto header = syd::ReadImageHeader(filename);
+  switch (header->GetComponentType()) {
+  case itk::ImageIOBase::UCHAR:
+    {
+      typedef unsigned char PixelType;
+      typedef itk::Image<PixelType, 3> ImageType;
+      ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
+      UpdateImageInfo<PixelType>(image, itk_image, true);
+      break;
+    }
+  case itk::ImageIOBase::SHORT:
+    {
+      typedef short PixelType;
+      typedef itk::Image<PixelType, 3> ImageType;
+      ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
+      UpdateImageInfo<PixelType>(image, itk_image, true);
+      break;
+    }
+  default:
+    {
+      typedef float PixelType;
+      typedef itk::Image<PixelType, 3> ImageType;
+      ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
+      UpdateImageInfo<PixelType>(image, itk_image, true);
+      break;
+    }
+  }
+}
+// --------------------------------------------------------------------

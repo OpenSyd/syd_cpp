@@ -1,0 +1,8 @@
+#File sydUpdateImage.ggo
+
+package "syd"
+version "0.1"
+usage "sydUpdateImage <image_ids>"
+description "Check the mhd file and update an image info according to the mhd content
+- <image_ids>      ids of the images to update
+"

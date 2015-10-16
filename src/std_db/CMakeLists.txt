@@ -74,6 +74,16 @@ wrap_ggo(sydInsertImageFromDicom_GGO_C sydInsertImageFromDicom.ggo sydCommandLin
 add_executable(sydInsertImageFromDicom sydInsertImageFromDicom.cxx ${sydInsertImageFromDicom_GGO_C})
 target_link_libraries(sydInsertImageFromDicom sydStandardDatabase)
 
+# Create images
+wrap_ggo(sydInsertImage_GGO_C sydInsertImage.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertImage sydInsertImage.cxx ${sydInsertImage_GGO_C})
+target_link_libraries(sydInsertImage sydStandardDatabase)
+
+# Update and check images
+wrap_ggo(sydUpdateImage_GGO_C sydUpdateImage.ggo sydCommandLineDefault.ggo)
+add_executable(sydUpdateImage sydUpdateImage.cxx ${sydUpdateImage_GGO_C})
+target_link_libraries(sydUpdateImage sydStandardDatabase)
+
 # Create images by stitching 2 dicom
 wrap_ggo(sydStitchDicom_GGO_C sydStitchDicom.ggo sydCommandLineDefault.ggo)
 add_executable(sydStitchDicom sydStitchDicom.cxx ${sydStitchDicom_GGO_C})
