@@ -130,6 +130,18 @@ namespace syd {
     }
   };
 
+  /// Store image with lambda
+  class FitOutputImage_Lambda: public FitOutputImage {
+  public:
+    FitOutputImage_Lambda(Pointer input):FitOutputImage(input) { filename = "l1.mhd"; }
+    virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
+                        const syd::FitModelBase * model) {
+      double h = model->GetLambda(0);
+      iterator.Set(h);
+    }
+  };
+
   /// Store image with nb of points used for fit
   class FitOutputImage_NbOfPointsForFit: public FitOutputImage {
   public:
