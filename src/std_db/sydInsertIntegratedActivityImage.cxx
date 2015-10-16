@@ -116,6 +116,7 @@ int main(int argc, char* argv[])
   if (args_info.debug_given) {
     std::string file=args_info.debug_arg;
     std::ifstream is(file);
+    if (!is) LOG(FATAL) << "Cannot open " << file;
     while (is) {
       debug_point d;
       is >> d.name >> d.x >> d.y >> d.z;
@@ -142,6 +143,7 @@ int main(int argc, char* argv[])
   auto success = new syd::FitOutputImage_Success(im);
   auto eff_half_life = new syd::FitOutputImage_EffHalfLife(im);
   auto nb_points = new syd::FitOutputImage_NbOfPointsForFit(im);
+  auto lambda = new syd::FitOutputImage_Lambda(im);
 
   // Use a mask, consider values of the first spect
   int nb_pixel = 0.0;
@@ -184,6 +186,7 @@ int main(int argc, char* argv[])
     builder.AddOutputImage(iter);
     builder.AddOutputImage(eff_half_life);
     builder.AddOutputImage(nb_points);
+    builder.AddOutputImage(lambda);
   }
   builder.SetMask(mask);
 
@@ -192,7 +195,7 @@ int main(int argc, char* argv[])
     bool b = false;
     for(auto m:models) {
       if (m->GetName() == n) {
-        builder.AddModel(m, i);
+        builder.AddModel(m, i+1); // start model id at 1 (such that 0 means no model)
         b = true;
       }
     }
@@ -214,8 +217,8 @@ int main(int argc, char* argv[])
     for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename);
 
   // Debug here
-  builder.SaveDebugPixel("gp/tac.txt");
-  builder.SaveDebugModel("gp/models.txt");
+  builder.SaveDebugPixel("tac.txt");
+  builder.SaveDebugModel("models.txt");
 
 
   // Option to fill holes
@@ -259,7 +262,7 @@ int main(int argc, char* argv[])
   output->UpdateFile(db, absolutepath);
 
   // Change pixel value
-  syd::PixelValueUnit::pointer v = db->FindOrInsertUnit("MBq.h_by_IA", "Time integrated MBq (MBq.h) by injected activity in MBq");
+  syd::PixelValueUnit::pointer v = db->FindOrInsertUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq");
   output->pixel_value_unit = v;
   db->Update(output);
   LOG(1) << "Inserting Image " << output;
