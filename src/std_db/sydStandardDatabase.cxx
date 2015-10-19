@@ -280,6 +280,7 @@ syd::File::pointer syd::StandardDatabase::InsertNewFile(std::string input_path,
 // --------------------------------------------------------------------
 void syd::StandardDatabase::UpdateImageInfoFromFile(syd::Image::pointer image,
                                                     std::string filename,
+                                                    bool flipAxeIfNegativeFlag,
                                                     bool computeMD5Flag)
 {
   // Read itk image header
@@ -290,7 +291,7 @@ void syd::StandardDatabase::UpdateImageInfoFromFile(syd::Image::pointer image,
       typedef unsigned char PixelType;
       typedef itk::Image<PixelType, 3> ImageType;
       ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
-      UpdateImageInfo<PixelType>(image, itk_image, true);
+      UpdateImageInfo<PixelType>(image, itk_image, flipAxeIfNegativeFlag, computeMD5Flag);
       break;
     }
   case itk::ImageIOBase::SHORT:
@@ -298,7 +299,7 @@ void syd::StandardDatabase::UpdateImageInfoFromFile(syd::Image::pointer image,
       typedef short PixelType;
       typedef itk::Image<PixelType, 3> ImageType;
       ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
-      UpdateImageInfo<PixelType>(image, itk_image, true);
+      UpdateImageInfo<PixelType>(image, itk_image, flipAxeIfNegativeFlag, computeMD5Flag);
       break;
     }
   default:
@@ -306,7 +307,7 @@ void syd::StandardDatabase::UpdateImageInfoFromFile(syd::Image::pointer image,
       typedef float PixelType;
       typedef itk::Image<PixelType, 3> ImageType;
       ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
-      UpdateImageInfo<PixelType>(image, itk_image, true);
+      UpdateImageInfo<PixelType>(image, itk_image, flipAxeIfNegativeFlag, computeMD5Flag);
       break;
     }
   }

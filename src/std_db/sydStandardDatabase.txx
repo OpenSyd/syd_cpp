@@ -20,7 +20,8 @@
 // --------------------------------------------------------------------
 template<class PixelType>
 typename itk::Image<PixelType,3>::Pointer
-syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom) const
+syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom,
+                                 bool flipAxeIfNegativeFlag) const
 {
   typedef itk::Image<PixelType,3> ImageType;
 
@@ -57,6 +58,13 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom) const
     EXCEPTION("Error '" << e.what() << "' during ReadImage of dicom: " << dicom);
   }
 
+  // Flip ?
+  if (flipAxeIfNegativeFlag) {
+    if (itk_image->GetDirection()[0][0] < 0) itk_image = syd::FlipImage<ImageType>(itk_image, 0);
+    if (itk_image->GetDirection()[1][1] < 0) itk_image = syd::FlipImage<ImageType>(itk_image, 1);
+    if (itk_image->GetDirection()[2][2] < 0) itk_image = syd::FlipImage<ImageType>(itk_image, 2);
+  }
+
   return itk_image;
 }
 // --------------------------------------------------------------------
@@ -66,6 +74,7 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom) const
 template<class PixelType>
 void syd::StandardDatabase::UpdateImageInfo(syd::Image::pointer image,
                                             typename itk::Image<PixelType,3>::Pointer & itk_image,
+                                            bool flipAxeIfNegativeFlag,
                                             bool computeMD5Flag)
 {
   // Check dimension
@@ -95,6 +104,18 @@ void syd::StandardDatabase::UpdateImageInfo(syd::Image::pointer image,
   image->spacing[0] = itk_image->GetSpacing()[0];
   image->spacing[1] = itk_image->GetSpacing()[1];
   image->spacing[2] = itk_image->GetSpacing()[2];
+
+  // Flip ?
+  if (flipAxeIfNegativeFlag) {
+    bool modified = false;
+    if (itk_image->GetDirection()[0][0] < 0) { itk_image = syd::FlipImage<ImageType>(itk_image, 0); modified = true; }
+    if (itk_image->GetDirection()[1][1] < 0) { itk_image = syd::FlipImage<ImageType>(itk_image, 1); modified = true; }
+    if (itk_image->GetDirection()[2][2] < 0) { itk_image = syd::FlipImage<ImageType>(itk_image, 2); modified = true; }
+    if (modified) {
+      LOG(2) << "Flip image";
+      syd::WriteImage<ImageType>(itk_image, GetAbsolutePath(image));
+    }
+  }
 
   // MD5
   if (computeMD5Flag) {

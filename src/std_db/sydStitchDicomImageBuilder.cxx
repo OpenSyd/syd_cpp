@@ -93,14 +93,14 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
   // Read the dicom images
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
-  ImageType::Pointer image_a = db_->ReadImage<PixelType>(a);
-  ImageType::Pointer image_b = db_->ReadImage<PixelType>(b);
+  ImageType::Pointer image_a = db_->ReadImage<PixelType>(a, true);
+  ImageType::Pointer image_b = db_->ReadImage<PixelType>(b, true);
 
   // Stitch (default values for now, to be changed!)
   ImageType::Pointer output = syd::StitchImages<ImageType>(image_a, image_b, 150000, 4);
 
   // Update the image values
-  db_->UpdateImageInfo<PixelType>(image, output, true); // true = update md5
+  db_->UpdateImageInfo<PixelType>(image, output, true, true); // true = update md5
 
   // Write image
   syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));

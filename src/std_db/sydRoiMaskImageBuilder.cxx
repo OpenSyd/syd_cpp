@@ -76,7 +76,7 @@ syd::RoiMaskImageBuilder::InsertRoiMaskImage(const syd::DicomSerie::pointer & di
     itk_image = syd::ReadImage<ImageType>(filename);
 
     // Update image info
-    db_->UpdateImageInfo<PixelType>(mask, itk_image, true); // true = update md5
+    db_->UpdateImageInfo<PixelType>(mask, itk_image, true, true); // true = update md5
     LOG(4) << "Write image on disk " << mhd_path;
     syd::WriteImage<ImageType>(itk_image, mhd_path);
 

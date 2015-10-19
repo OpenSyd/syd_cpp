@@ -23,6 +23,7 @@
 #include "sydDatabase.h"
 #include "sydTable.h"
 #include "sydImageUtils.h"
+#include "sydImageFlip.h"
 
 // syd tables
 #include "sydPatient-odb.hxx"
@@ -70,18 +71,21 @@ namespace syd {
 
     template<class PixelType>
     typename itk::Image<PixelType,3>::Pointer
-    ReadImage(const syd::DicomSerie::pointer dicom) const;
+    ReadImage(const syd::DicomSerie::pointer dicom,
+              bool flipAxeIfNegativeFlag) const;
 
     /// Update image information from this itk image (type, size, spacing)
     template<class PixelType>
     void UpdateImageInfo(syd::Image::pointer image,
                          typename itk::Image<PixelType,3>::Pointer & itk_image,
+                         bool flipAxeIfNegativeFlag,
                          bool computeMD5Flag);
 
     /// Update image information from a file
     void UpdateImageInfoFromFile(syd::Image::pointer image,
                                  std::string filename,
-                                 bool computeMD5Flag=true);
+                                 bool flipAxeIfNegativeFlag,
+                                 bool computeMD5Flag);
 
   protected:
     /// Insert the tables

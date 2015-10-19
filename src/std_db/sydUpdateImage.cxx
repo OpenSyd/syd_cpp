@@ -62,8 +62,8 @@ int main(int argc, char* argv[])
       }
     }
     if (b) {
-      // read itk image and update information
-      db->UpdateImageInfoFromFile(image, db->GetAbsolutePath(image), true);
+      // read itk image and update information (also flip image if needed);
+      db->UpdateImageInfoFromFile(image, db->GetAbsolutePath(image), true, true);
       // update db
       db->Update(image);
       LOG(1) << "Updating image " << image;

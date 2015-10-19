@@ -49,9 +49,9 @@ syd::Image::pointer syd::ImageFromDicomBuilder::CreateImageFromDicom(const syd::
       typedef short PixelType;
       typedef itk::Image<PixelType,3> ImageType;
       LOG(4) << "Read dicom (short)";
-      ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom);
+      ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom, true);
       LOG(4) << "Update information";
-      db_->UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
+      db_->UpdateImageInfo<PixelType>(image, itk_image, true, true); // true = update md5
       LOG(4) << "Write image on disk " << mhd_path;
       syd::WriteImage<ImageType>(itk_image, mhd_path);
       syd::Tag::pointer tag_ct = db_->FindOrInsertTag("ct", "CT scan image");
@@ -64,9 +64,9 @@ syd::Image::pointer syd::ImageFromDicomBuilder::CreateImageFromDicom(const syd::
       typedef float PixelType;
       typedef itk::Image<PixelType,3> ImageType;
       LOG(4) << "Read dicom (float)";
-      ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom);
+      ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom, true);
       LOG(4) << "Update information";
-      db_->UpdateImageInfo<PixelType>(image, itk_image, true); // true = update md5
+      db_->UpdateImageInfo<PixelType>(image, itk_image, true, true); // true = update md5
       LOG(4) << "Write image on disk " << mhd_path;
       syd::WriteImage<ImageType>(itk_image, mhd_path);
       syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("counts", "Number of counts");

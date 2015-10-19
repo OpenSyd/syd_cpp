@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
   db->Insert(output);
 
   // Update image data (size etc) from file
-  db->UpdateImageInfoFromFile(output, filename);
+  db->UpdateImageInfoFromFile(output, filename, true, true);
 
   // Copy the file in the db
   std::string absolutepath = output->ComputeDefaultAbsolutePath(db);
