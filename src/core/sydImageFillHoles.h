@@ -45,7 +45,7 @@ namespace syd {
     int failure = 0;
     while (!it_mask.IsAtEnd()) {
       if (it_mask.GetCenterPixel() == 1.0) {
-        double  s = 0.0;
+        double s = 0.0;
         int m = 0;
         for(auto i=0; i<n; i++) {
           double v = it_n.GetPixel(i);
@@ -58,7 +58,7 @@ namespace syd {
           ++failure;
         }
         else {
-          s = s/m; // mean of neighbor pixels
+          s = s/(double)m; // mean of neighbor pixels
           it_n.SetCenterPixel(s);
         }
       }
