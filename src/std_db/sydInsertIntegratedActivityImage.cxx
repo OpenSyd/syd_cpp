@@ -26,6 +26,9 @@
 #include "sydImageFillHoles.h"
 #include "sydImage_GaussianFilter.h"
 
+// itk in syd source
+#include <itkMedianWithMaskImageFilter.h>
+
 // syd init
 SYD_STATIC_INIT
 
@@ -135,12 +138,10 @@ int main(int argc, char* argv[])
   models.push_back(f4a);
   models.push_back(f4);
 
-  // Create some output types
-  auto auc = new syd::FitOutputImage_AUC(im, injection->GetLambdaInHours());
+  // Create some optional output types
   auto r2 = new syd::FitOutputImage_R2(im);
   auto best_model = new syd::FitOutputImage_Model(im);
   auto iter = new syd::FitOutputImage_Iteration(im);
-  auto success = new syd::FitOutputImage_Success(im);
   auto eff_half_life = new syd::FitOutputImage_EffHalfLife(im);
   auto nb_points = new syd::FitOutputImage_NbOfPointsForFit(im);
   auto lambda = new syd::FitOutputImage_Lambda(im);
@@ -161,31 +162,27 @@ int main(int argc, char* argv[])
     ++it_mask;
     ++it_image;
   }
-  if (args_info.debug_images_flag)
-    syd::WriteImage<ImageType>(mask, "mask.mhd");
+  if (args_info.debug_images_flag) syd::WriteImage<ImageType>(mask, "mask.mhd");
   LOG(2) << "I find " << nb_pixel << " pixels to integrate in the mask.";
-
 
   // Create main builder
   syd::IntegratedActivityImageBuilder builder;
   for(auto i=0; i<times.size(); i++) builder.AddInput(itk_images[i], times[i]);
 
-  // FIXME
-  builder.image_lambda_phys_in_hour_ = injection->GetLambdaInHours();
-  builder.debug_only_flag_ = args_info.debug_only_flag;
-  builder.R2_min_threshold_ = args_info.r2_min_arg;
+  // Options
+  builder.SetLambdaPhysicHours(injection->GetLambdaInHours());
+  builder.SetDebugOnlyFlag(args_info.debug_only_flag);
+  builder.SetR2MinThreshold(args_info.r2_min_arg);
   builder.SetRestrictedTACFlag(args_info.restricted_tac_flag);
-  nb_points->restricted_tac_flag_ = args_info.restricted_tac_flag;
 
   for(auto d:debug_points) builder.AddDebugPixel(d.name, d.x, d.y, d.z);
-  builder.AddOutputImage(auc);
-  builder.AddOutputImage(success);
   if (args_info.debug_images_flag) {
     builder.AddOutputImage(r2);
     builder.AddOutputImage(best_model);
     builder.AddOutputImage(iter);
     builder.AddOutputImage(eff_half_life);
     builder.AddOutputImage(nb_points);
+    nb_points->restricted_tac_flag_ = args_info.restricted_tac_flag;
     builder.AddOutputImage(lambda);
   }
   builder.SetMask(mask);
@@ -212,17 +209,25 @@ int main(int argc, char* argv[])
   // Go !
   builder.CreateIntegratedActivityImage();
 
-  // Output FIXME
-  if (args_info.debug_images_flag and !args_info.debug_only_flag)
-    for(auto o:builder.outputs_) syd::WriteImage<ImageType>(o->image, o->filename);
+  // Get main output
+  auto auc = builder.GetOutput();
+  auto success = builder.GetSuccessOutput();
 
-  // Debug here
-  builder.SaveDebugPixel("tac.txt");
-  builder.SaveDebugModel("models.txt");
+  // Post processing with median filter
+  if (args_info.median_filter_flag) {
+    LOG(1) << "Post processing: median filter";
+    syd::WriteImage<ImageType>(auc->image, "auc_before_median.mhd");
+    auto filter = itk::MedianWithMaskImageFilter<ImageType, ImageType, ImageType>::New();
+    filter->SetRadius(1);
+    filter->SetInput(auc->image);
+    filter->SetMask(success->image);
+    filter->Update();
+    auc->image = filter->GetOutput();
+  }
 
-
-  // Option to fill holes
+  // Post processing with fill holes
   if (args_info.fill_holes_given) {
+    syd::WriteImage<ImageType>(auc->image, "auc_before_fill_holes.mhd");
     // Change the mask, considering success fit
     auto it_success = success->iterator;
     Iterator it_mask(mask, mask->GetLargestPossibleRegion());
@@ -233,12 +238,17 @@ int main(int argc, char* argv[])
       ++it_success;
       ++it_mask;
     }
-    syd::WriteImage<ImageType>(mask, "mask_fail.mhd");
     int f = syd::FillHoles<ImageType>(auc->image, mask, args_info.fill_holes_arg);
-    LOG(1) << "Last step: fill remaining holes. " << f << " failed pixels remain.";
+    LOG(1) << "Post processing: fill remaining holes. " << f << " failed pixels remain.";
   }
-  if (args_info.debug_images_flag) syd::WriteImage<ImageType>(auc->image, "auc_fill.mhd");
 
+  // Write all debug outputs
+  if (args_info.debug_images_flag and !args_info.debug_only_flag)
+    for(auto o:builder.GetOutputs()) syd::WriteImage<ImageType>(o->image, o->filename);
+
+  // Debug here
+  builder.SaveDebugPixel("tac.txt");
+  builder.SaveDebugModel("models.txt");
 
   // Copy all tags of the given images, remove duplicate
   for(auto im:images) for(auto t:im->tags) tags.push_back(t);

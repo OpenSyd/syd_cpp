@@ -24,13 +24,15 @@
 // itk
 #include <itkImageRegionIterator.h>
 #include <itkImageRegionConstIterator.h>
+#include <itkNoiseImageFilter.h>
 
 // --------------------------------------------------------------------
 syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
 {
-  R2_min_threshold_ = 0.7;
+  SetLambdaPhysicHours(0.0);
+  SetR2MinThreshold(0.9);
+  SetRestrictedTACFlag(false);
   mask_ = 0;
-  restricted_tac_flag_ = false;
 }
 // --------------------------------------------------------------------
 
@@ -69,8 +71,8 @@ void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & fil
   for(auto & d:debug_data) {
     for(auto model:d.models) {
       syd::FitModelBase * subm = model->Clone();
-      subm->lambda_phys_hours_ = 0.0043449876; // 177Lu
-      //subm->lambda_phys_hours_ = 0.010823439; // 90Y
+      //subm->lambda_phys_hours_ = 0.0043449876; // 177Lu
+      subm->lambda_phys_hours_ = 0.010823439; // 90Y FIXME
       subm->name_ = subm->name_+"177Lu";
       d.models.push_back(subm);
     }
@@ -172,6 +174,12 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
   Iterator4D it(tac_image_, tac_image_->GetLargestPossibleRegion());
 
+  // Required output: auc and mask
+  auc_output_ = new syd::FitOutputImage_AUC(images_[0], image_lambda_phys_in_hour_);
+  success_output_ = new syd::FitOutputImage_Success(images_[0]);
+  AddOutputImage(auc_output_);
+  AddOutputImage(success_output_);
+
   // Init mask iterator
   bool mask_flag = false;
   Iterator3D it_mask;
@@ -202,7 +210,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   LOG(1) << "Starting fit with models : " << sm << "; "
          << (mask_flag ? "with mask":"no_mask")
          << " ; R2_min = " << R2_min_threshold_
-         << (restricted_tac_flag_ ? " ; fit with last 3 points of the curve only":"; fit on all timepoints");
+         << (restricted_tac_flag_ ? " ; fit with last points of the curve (from max value)":"; fit on all timepoints");
 
   // main loop
   int x = 0;
@@ -231,9 +239,9 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 
       syd::TimeActivityCurve restricted_tac;
       if (restricted_tac_flag_) {
-        // Select only the end of the curve (min 2 points);
+        // Select only the end of the curve (min 2 points); FIXME ?
         auto m = tac.FindMaxIndex();
-        m = std::min(m, tac.size()-2);
+        m = std::min(m, tac.size()-3);
         for(auto i=m; i<tac.size(); i++)
           restricted_tac.AddValue(tac.GetTime(i), tac.GetValue(i));
       }
@@ -256,7 +264,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
       // debug points for plot
       if (debug_this_point_flag) {
         debug_data[debug_point_current].selected_model = best;
-        debug_data[debug_point_current].tac = tac;
+        debug_data[debug_point_current].tac = tac; // FIXME
         ++debug_point_current;
       }
     }

@@ -66,15 +66,19 @@ namespace syd {
 
     // Input
     void AddInput(ImageType::Pointer image, double time) { images_.push_back(image); times_.push_back(time); }
-    void AddModel(syd::FitModelBase * m, int id);// { models_.push_back(m); } // FIXME set and check id
+    void AddModel(syd::FitModelBase * m, int id);
     void AddOutputImage(syd::FitOutputImage * o) { outputs_.push_back(o); }
     void SetMask(ImageType::Pointer m) { mask_ = m; }
+    void SetLambdaPhysicHours(double l) { image_lambda_phys_in_hour_ = l; }
+    void SetDebugOnlyFlag(bool b) { debug_only_flag_ = b; }
+    void SetR2MinThreshold(double r) { R2_min_threshold_ = r; }
+    void SetRestrictedTACFlag(bool b) { restricted_tac_flag_ = b; }
 
     // Main function
     void CreateIntegratedActivityImage();
-
-    // Options
-    void SetRestrictedTACFlag(bool b) { restricted_tac_flag_ = b; }
+    FitOutputImage_Success * GetSuccessOutput() { return success_output_; }
+    FitOutputImage_AUC * GetOutput() { return auc_output_; }
+    std::vector<FitOutputImage*> & GetOutputs() { return outputs_; }
 
     // Other functions
     void ClearModel() { models_.clear(); }
@@ -84,13 +88,6 @@ namespace syd {
     void SaveDebugModel(const std::string & filename);
     void AddDebugPixel(std::string name, int x, int y, int z);
     bool debug_only_flag_;
-
-    // options
-    //double robust_scaling_;
-    double R2_min_threshold_;
-    double image_lambda_phys_in_hour_;
-    std::vector<FitOutputImage*> outputs_;
-    ImageType::Pointer mask_;
 
     // Debug
     bool current_debug_flag_;
@@ -111,12 +108,20 @@ namespace syd {
     // Current selected models
     syd::FitModelBase * current_model_;
 
+    // Output
+    syd::FitOutputImage_Success * success_output_;
+    syd::FitOutputImage_AUC * auc_output_;
+
     void InitSolver();
     int FitModels(TimeActivityCurve & tac, bool debug_this_point_flag, DebugType * debug_current);
     void InitInputData();
 
     // If 'true', only use the last part of the tac, from the max value to then end (2 points at min)
     bool restricted_tac_flag_;
+    double R2_min_threshold_;
+    double image_lambda_phys_in_hour_;
+    std::vector<FitOutputImage*> outputs_;
+    ImageType::Pointer mask_;
 
     // Options for the solver
     ceres::Solver::Options * ceres_options_;
