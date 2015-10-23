@@ -24,6 +24,7 @@ wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
 wrap_odb(sydStandardDatabase sydImageTransform.h)
 wrap_odb(sydStandardDatabase sydCalibration.h)
 wrap_odb(sydStandardDatabase sydPixelValueUnit.h)
+wrap_odb(sydStandardDatabase sydRoiStatistic.h)
 
 add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
@@ -42,6 +43,7 @@ add_library(sydStandardDatabase SHARED
   sydImageTransform-odb.cxx sydImageTransform.cxx
   sydCalibration-odb.cxx sydCalibration.cxx
   sydPixelValueUnit-odb.cxx sydPixelValueUnit.cxx
+  sydRoiStatistic-odb.cxx sydRoiStatistic.cxx
 
   sydImageFromDicomBuilder.cxx
   sydStitchDicomImageBuilder.cxx
@@ -131,7 +133,7 @@ target_link_libraries(sydInsertSubstituteRadionuclideImage sydStandardDatabase)
 # target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 
 # Insert a new RoiStatistic
-wrap_ggo(sydInsertRoiStatistic sydInsertRoiStatistic.ggo)
+wrap_ggo(sydInsertRoiStatistic_GGO_C sydInsertRoiStatistic.ggo sydCommandLineDefault.ggo)
 add_executable(sydInsertRoiStatistic sydInsertRoiStatistic.cxx ${sydInsertRoiStatistic_GGO_C})
 target_link_libraries(sydInsertRoiStatistic sydStandardDatabase)
 

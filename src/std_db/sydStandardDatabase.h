@@ -39,6 +39,7 @@
 #include "sydImageTransform-odb.hxx"
 #include "sydCalibration-odb.hxx"
 #include "sydPixelValueUnit-odb.hxx"
+#include "sydRoiStatistic-odb.hxx"
 
 // itk
 #include <itkImage.h>

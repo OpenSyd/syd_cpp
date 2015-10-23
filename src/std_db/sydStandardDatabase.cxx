@@ -120,6 +120,7 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::ImageTransform>();
   AddTable<syd::Calibration>();
   AddTable<syd::PixelValueUnit>();
+  AddTable<syd::RoiStatistic>();
 }
 // --------------------------------------------------------------------
 

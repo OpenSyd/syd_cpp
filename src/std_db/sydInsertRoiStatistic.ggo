@@ -2,8 +2,8 @@
 
 package "syd"
 version "0.3"
-usage "sydInsertRoiStatistic <tag> <list of image_ids>"
-description "Create new (mhd) images corrected by the decay of the injection
-- <tag>           name for the tag associated with the new images
-- <image_ids>     list of image id to correct
+usage "sydInsertRoiStatistic <roi> <image_id>"
+description "Compute mean and other stat for image values in the roi mask image
+- <roi>           name of the roi (must have the same frame_of_reference_uid than the image)
+- <image_ids      image id
 "
