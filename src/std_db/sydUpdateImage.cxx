@@ -64,6 +64,17 @@ int main(int argc, char* argv[])
     if (b) {
       // read itk image and update information (also flip image if needed);
       db->UpdateImageInfoFromFile(image, db->GetAbsolutePath(image), true, true);
+
+      // If needed update the unit
+      syd::PixelValueUnit::pointer unit;
+      odb::query<syd::PixelValueUnit> q = odb::query<syd::PixelValueUnit>::name == args_info.pixelunit_arg;
+      try {
+        db->QueryOne(unit, q);
+        image->pixel_value_unit = unit;
+      } catch(std::exception & e) {
+        LOG(WARNING) << "Cannot find the unit '" << args_info.pixelunit_arg << "', ignoring.";
+      }
+
       // update db
       db->Update(image);
       LOG(1) << "Updating image " << image;

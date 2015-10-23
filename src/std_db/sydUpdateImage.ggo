@@ -5,4 +5,8 @@ version "0.1"
 usage "sydUpdateImage <image_ids>"
 description "Check the mhd file and update an image info according to the mhd content
 - <image_ids>      ids of the images to update
+
+The option 'pixelunit' allows to change the pixel value unit.
 "
+
+option "pixelunit"  -       "Name of pixel value unit to attach to the image"                 string no
