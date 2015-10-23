@@ -65,6 +65,25 @@ int main(int argc, char* argv[])
   syd::CopyMHDImage(filename, absolutepath);
   output->UpdateFile(db, absolutepath);
 
+  // Add optional tag
+  if (args_info.tags_given) {
+    syd::Tag::vector tags;
+    db->FindTags(tags, args_info.tags_arg);
+    for(auto t:tags) output->AddTag(t);
+  }
+
+  // Set optional unity
+  if (args_info.pixelunit_given) {
+    syd::PixelValueUnit::pointer unit;
+    odb::query<syd::PixelValueUnit> q = odb::query<syd::PixelValueUnit>::name == args_info.pixelunit_arg;
+    try {
+      db->QueryOne(unit, q);
+      output->pixel_value_unit = unit;
+    } catch(std::exception & e) {
+      LOG(WARNING) << "Cannot find the unit '" << args_info.pixelunit_arg << "', ignoring.";
+    }
+  }
+
   // Update the db
   db->Update(output);
   LOG(1) << "Inserting Image " << output;

@@ -7,4 +7,6 @@ description "Insert a mhd image ; must use the --like flag (will change)
 - <filename>      image file to insert
 "
 
-option "like"    -       "Id of the image to copy information from"     int yes
+option "like"       -       "Id of the image to copy information from"     int yes
+option "tags"       -       "Name of tags to attach to the image (multiple within \"\")"      string no
+option "pixelunit"  -       "Name of pixel value unit to attach to the image"                 string no
