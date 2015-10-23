@@ -130,6 +130,11 @@ target_link_libraries(sydInsertSubstituteRadionuclideImage sydStandardDatabase)
 # add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx sydInsertRoiMaskImage_GGO_C})
 # target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 
+# Insert a new RoiStatistic
+wrap_ggo(sydInsertRoiStatistic sydInsertRoiStatistic.ggo)
+add_executable(sydInsertRoiStatistic sydInsertRoiStatistic.cxx ${sydInsertRoiStatistic_GGO_C})
+target_link_libraries(sydInsertRoiStatistic sydStandardDatabase)
+
 # Create Timepoints
 # wrap_ggo(sydInsertTimepoint sydInsertTimepoint.ggo)
 # add_executable(sydInsertTimepoint sydInsertTimepoint.cxx sydInsertTimepoint_GGO_C})
