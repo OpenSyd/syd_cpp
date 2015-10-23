@@ -85,7 +85,7 @@ void syd::Tag::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, co
   }
   ta.AddColumn("#id");
   ta.AddColumn("label", 20);
-  ta.AddColumn("description", 50);
+  ta.AddColumn("description", 70);
 }
 // --------------------------------------------------
 

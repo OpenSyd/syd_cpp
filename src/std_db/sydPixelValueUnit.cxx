@@ -86,7 +86,7 @@ void syd::PixelValueUnit::InitPrintTable(const syd::Database * db, syd::PrintTab
   }
   ta.AddColumn("#id");
   ta.AddColumn("name", 20);
-  ta.AddColumn("description", 50);
+  ta.AddColumn("description", 70);
 }
 // --------------------------------------------------
 
