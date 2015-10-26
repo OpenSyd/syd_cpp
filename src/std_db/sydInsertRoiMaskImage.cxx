@@ -20,7 +20,7 @@
 #include "sydInsertRoiMaskImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydStandardDatabase.h"
+#include "sydRoiMaskImageBuilder.h"
 #include "sydCommonGengetopt.h"
 
 // syd init
@@ -66,31 +66,10 @@ int main(int argc, char* argv[])
   }
 
   // Create a new RoiMaskImage
-  syd::RoiMaskImage::pointer mask;
-  db->New(mask);
-  mask->roitype = roitype;
-  mask->patient = dicom->patient;
-  mask->dicoms.push_back(dicom);
-  mask->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
-  mask->type = "mhd";
-  syd::Tag::pointer tag_mask = db->FindOrInsertTag("mask", "Mask image");
-  mask->AddTag(tag_mask);
-  syd::PixelValueUnit::pointer unit = db->FindOrInsertUnit("label", "Mask image");
-  mask->pixel_value_unit = unit;
-  db->Insert(mask);
+  syd::RoiMaskImageBuilder builder(db);
+  syd::RoiMaskImage::pointer mask = builder.InsertRoiMaskImage(dicom, roitype, filename);
 
-  // Create filename
-  std::string mhd_path = mask->ComputeDefaultAbsolutePath(db);
-
-  // Copy file
-  syd::CopyMHDImage(filename, mhd_path);
-
-  // Update image info
-  mask->UpdateFile(db, mhd_path, true);
-  db->UpdateImageInfoFromFile(mask, mhd_path, true, true);
-
-  // Update db
-  db->Update(mask);
+  // Final log
   LOG(1) << "Inserting RoiMaskImage " << mask;
 
   // This is the end, my friend.
