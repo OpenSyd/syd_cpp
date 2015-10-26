@@ -4,6 +4,6 @@ package "syd"
 version "0.3"
 usage "sydInsertRoiStatistic <roi> <image_id>"
 description "Compute mean and other stat for image values in the roi mask image
-- <roi>           name of the roi (must have the same frame_of_reference_uid than the image)
-- <image_ids      image id
+- <roi>         name of the roi (must have the same frame_of_reference_uid than the image)
+- <image_id>    image id
 "

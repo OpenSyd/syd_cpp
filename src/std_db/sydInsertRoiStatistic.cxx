@@ -78,11 +78,6 @@ int main(int argc, char* argv[])
   ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));
   MaskImageType::Pointer itk_mask = syd::ReadImage<MaskImageType>(db->GetAbsolutePath(roimask));
 
-  // FIXME what about the number of value in the mask ?
-  // should be in RoiMaskImage ?
-  // int nb_pixels;
-  // double volume;
-
   // If image is a ct, mean = mean HU, could be converted into density ? --> to include into RoiMaskImage ?
   // sydUpdateRoiMaskImage with ct ? bof.
   // no keep as a RoiStatistic special
@@ -116,9 +111,9 @@ int main(int argc, char* argv[])
   stat->max = max;
   stat->sum = sum;
 
+  // Update the db
   db->Insert(stat);
   LOG(1) << "Insert RoiStatistic: " << stat;
-
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------
