@@ -37,7 +37,11 @@ std::string syd::RoiStatistic::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
-     << image->id << " " << mask->id << " "
+     << image->patient->name
+     << image->id << " "
+     << image->pixel_value_unit->name
+     << GetLabels(image->tags)
+     << mask->id << " "
      << mean << " " << std_dev << " "  << n << " "
      << min << " " << max << " " << sum;
   return ss.str();
@@ -95,9 +99,12 @@ void syd::RoiStatistic::InitPrintTable(const syd::Database * db, syd::PrintTable
     return;
   }
   ta.AddColumn("#id");
+  ta.AddColumn("p", 8);
   ta.AddColumn("image", 8);
   ta.AddColumn("mask", 10);
-  ta.AddColumn("mean", 10);
+  ta.AddColumn("unit", 10);
+  ta.AddColumn("tags", 40);
+  ta.AddColumn("mean", 10,5);
   ta.AddColumn("sd", 10);
   ta.AddColumn("n", 10);
   ta.AddColumn("min", 10);
@@ -110,7 +117,9 @@ void syd::RoiStatistic::InitPrintTable(const syd::Database * db, syd::PrintTable
 // --------------------------------------------------
 void syd::RoiStatistic::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
 {
-  ta << id << image->id << mask->roitype->name
+  ta << id << image->patient->name << image->id << mask->roitype->name
+     << image->pixel_value_unit->name
+     << GetLabels(image->tags)
      << mean << std_dev << n << min << max << sum;
 }
 // --------------------------------------------------
