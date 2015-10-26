@@ -21,6 +21,7 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
+#include "sydCommonGengetopt.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -29,41 +30,67 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT(sydInsertRoiMaskImage, 4);
+  SYD_INIT_GGO(sydInsertRoiMaskImage, 3);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  std::string dbname = args_info.inputs[0];
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the roitype
-  syd::RoiType::pointer roitype;
-  db->FindRoiType(roitype, args_info.inputs[1]);
+  syd::RoiType::pointer roitype = db->FindRoiType(args_info.inputs[0]);
 
   // Get the dicom
-  syd::IdType id = atoi(args_info.inputs[2]);
+  syd::IdType id = atoi(args_info.inputs[1]);
   syd::DicomSerie::pointer dicom;
   db->QueryOne(dicom, id);
 
   // Get mask filename
-  std::string filename = args_info.inputs[3];
+  std::string filename = args_info.inputs[2];
 
-  // FIXME DEBUG
-  // Get the tag
-  std::string tagname = args_info.inputs[1];
-  syd::Tag::pointer tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == tagname);
+  // Check if already exist ?
+  syd::RoiMaskImage::vector masks;
+  typedef odb::query<syd::RoiMaskImage> Q;
+  Q q = Q::roitype == roitype->id;
+  db->Query(masks, q);
+  for(auto m:masks) {
+    for(auto d:m->dicoms) {
+      if (d->id == dicom->id) {
+        LOG(FATAL) << "A RoiMaskImage already exist with the same roitype and dicom_id. "
+                   << "Remove it first if you want to replace it. " << std::endl
+                   << "Existing mask is: " << m;
+      }
+    }
+  }
 
-  LOG(FATAL) << "TODO";
+  // Create a new RoiMaskImage
+  syd::RoiMaskImage::pointer mask;
+  db->New(mask);
+  mask->roitype = roitype;
+  mask->patient = dicom->patient;
+  mask->dicoms.push_back(dicom);
+  mask->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
+  mask->type = "mhd";
+  syd::Tag::pointer tag_mask = db->FindOrInsertTag("mask", "Mask image");
+  mask->AddTag(tag_mask);
+  syd::PixelValueUnit::pointer unit = db->FindOrInsertUnit("label", "Mask image");
+  mask->pixel_value_unit = unit;
+  db->Insert(mask);
 
-  // syd::Tag tag = db->QueryOne<syd::Tag>(odb::query<syd::Tag>::label == "mask");
-  // DD(tag);
+  // Create filename
+  std::string mhd_path = mask->ComputeDefaultAbsolutePath(db);
 
-  // Create main builder
-  syd::ImageBuilder b(db);
-  syd::RoiMaskImage mask = b.InsertRoiMaskImage(dicom, roitype, filename);
+  // Copy file
+  syd::CopyMHDImage(filename, mhd_path);
+
+  // Update image info
+  mask->UpdateFile(db, mhd_path, true);
+  db->UpdateImageInfoFromFile(mask, mhd_path, true, true);
+
+  // Update db
+  db->Update(mask);
   LOG(1) << "Inserting RoiMaskImage " << mask;
 
   // This is the end, my friend.

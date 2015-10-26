@@ -1,13 +1,10 @@
 #File sydInsertRoiMaskImage.ggo
 
 package "sydInsertRoiMaskImage"
-usage "sydInsertRoiMaskImage <db> <roitype> <dicom_id> <mask.mhd>"
-version "0.2"
-description "Create a new RoiMaskImage TODO
-- <db>            name of the database
-TODO
+usage "sydInsertRoiMaskImage <roi> <dicom_id> <mask.mhd>"
+version "0.3"
+description "Create a new RoiMaskImage
+- <roi>          name of the roi type ('liver', 'body' etc. see `sydFind -d RoiType`)
+- <dicom_id>     id of the dicom to be attached to the mask
+- <mask.mhd>     filename (will be copied in the db)
 "
-
-option "config"	  	 	-	"Config file"				      string  	no
-option "verbose"   	 	v       "Verbosity level (-1 for silence)"            int       default="0" no
-option "verboseSQL"   	 	-       "Verbose SQL query (debug)"		      flag	off

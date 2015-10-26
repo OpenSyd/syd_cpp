@@ -121,3 +121,20 @@ void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db)
   syd::Image::Callback(event,db);
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+std::string syd::RoiMaskImage::ComputeDefaultAbsolutePath(syd::Database * db) const
+{
+  // fast initial check (useful but not sufficient)
+  if (id == -1) {
+    LOG(FATAL) << "Could not compute a default filename for this image, the object is not persistant: " << this;
+  }
+  std::ostringstream oss;
+  oss << roitype->name << "_" << id << ".mhd";
+  std::string mhd_filename = oss.str();
+  std::string mhd_relative_path = ComputeRelativeFolder()+PATH_SEPARATOR;
+  std::string mhd_path = db->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
+  return mhd_path;
+}
+// --------------------------------------------------

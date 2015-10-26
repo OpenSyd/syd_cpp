@@ -126,11 +126,10 @@ wrap_ggo(sydInsertSubstituteRadionuclideImage_GGO_C sydInsertSubstituteRadionucl
 add_executable(sydInsertSubstituteRadionuclideImage sydInsertSubstituteRadionuclideImage.cxx ${sydInsertSubstituteRadionuclideImage_GGO_C})
 target_link_libraries(sydInsertSubstituteRadionuclideImage sydStandardDatabase)
 
-
-# Insert a new RoiMaskImage (NOT YET)
-# wrap_ggo(sydInsertRoiMaskImage sydInsertRoiMaskImage.ggo)
-# add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx sydInsertRoiMaskImage_GGO_C})
-# target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
+# Insert a new RoiMaskImage
+wrap_ggo(sydInsertRoiMaskImage_GGO_C sydInsertRoiMaskImage.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx ${sydInsertRoiMaskImage_GGO_C})
+target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 
 # Insert a new RoiStatistic
 wrap_ggo(sydInsertRoiStatistic_GGO_C sydInsertRoiStatistic.ggo sydCommandLineDefault.ggo)
