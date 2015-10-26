@@ -263,6 +263,17 @@ void syd::Image::UpdateFile(syd::Database * db,
   db->New(f);
   f->filename = filename;
   f->path = relativepath;
+
+  // Create folder if needed
+  std::string absolute_folder = db->ConvertToAbsolutePath(relativepath);
+  fs::path dir(absolute_folder);
+  if (!fs::exists(dir)) {
+    LOG(4) << "Creating folder: " << absolute_folder;
+    if (!fs::create_directories(dir)) {
+      LOG(FATAL) << "Error, could not create the folder: " << absolute_folder;
+    }
+  }
+
   db->Insert(f);
   files.push_back(f);
   if (extension == "mhd") {
