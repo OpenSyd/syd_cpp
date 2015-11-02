@@ -112,8 +112,9 @@ namespace syd {
 
 
   //--------------------------------------------------------------------
-  template<class ImageType>
-  bool CheckImageSameSizeAndSpacing(const typename ImageType::Pointer a, const typename ImageType::Pointer b);
+  template<int Dimension>
+  bool CheckImageSameSizeAndSpacing(const itk::ImageBase<Dimension> * a,
+                                    const itk::ImageBase<Dimension> * b);
   //--------------------------------------------------------------------
 
 
