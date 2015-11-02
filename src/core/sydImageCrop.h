@@ -22,6 +22,7 @@
 // syd
 #include "sydCommon.h"
 #include "sydFileUtils.h"
+#include "sydImageUtils.h"
 
 // itk
 #include <itkRegionOfInterestImageFilter.h>
