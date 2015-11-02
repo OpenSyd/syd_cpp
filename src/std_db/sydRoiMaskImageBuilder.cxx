@@ -20,7 +20,7 @@
 #include "sydRoiMaskImageBuilder.h"
 
 // --------------------------------------------------------------------
-syd::RoiMaskImageBuilder::RoiMaskImageBuilder(syd::StandardDatabase * db):syd::RoiMaskImageBuilder()
+syd::RoiMaskImageBuilder::RoiMaskImageBuilder(syd::StandardDatabase * db)
 {
   SetDatabase(db);
 }

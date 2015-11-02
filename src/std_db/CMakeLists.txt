@@ -51,6 +51,7 @@ add_library(sydStandardDatabase SHARED
   sydCropImageBuilder.cxx
   sydDecayCorrectedImageBuilder.cxx
   sydSubstituteRadionuclideImageBuilder.cxx
+  sydRoiStatisticBuilder.cxx
 
   )
 ## to declare dependencies
@@ -102,9 +103,9 @@ add_executable(sydCropImage sydCropImage.cxx ${sydCropImage_GGO_C})
 target_link_libraries(sydCropImage sydStandardDatabase)
 
 # Change tag
-wrap_ggo(sydImageTag_GGO_C sydImageTag.ggo sydCommandLineDefault.ggo)
-add_executable(sydImageTag sydImageTag.cxx ${sydImageTag_GGO_C})
-target_link_libraries(sydImageTag sydStandardDatabase)
+wrap_ggo(sydUpdateImageTag_GGO_C sydUpdateImageTag.ggo sydCommandLineDefault.ggo)
+add_executable(sydUpdateImageTag sydUpdateImageTag.cxx ${sydUpdateImageTag_GGO_C})
+target_link_libraries(sydUpdateImageTag sydStandardDatabase)
 
 # Update Radionuclide table
 wrap_ggo(sydUpdateRadionuclide_GGO_C sydUpdateRadionuclide.ggo sydCommandLineDefault.ggo)

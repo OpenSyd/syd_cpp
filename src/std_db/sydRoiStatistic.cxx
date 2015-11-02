@@ -102,14 +102,14 @@ void syd::RoiStatistic::InitPrintTable(const syd::Database * db, syd::PrintTable
   ta.AddColumn("p", 8);
   ta.AddColumn("image", 8);
   ta.AddColumn("mask", 10);
-  ta.AddColumn("unit", 10);
+  ta.AddColumn("unit", 12);
   ta.AddColumn("tags", 40);
-  ta.AddColumn("mean", 10,5);
-  ta.AddColumn("sd", 10);
+  ta.AddColumn("mean", 15,3);
+  ta.AddColumn("sd", 15,3);
   ta.AddColumn("n", 10);
-  ta.AddColumn("min", 10);
-  ta.AddColumn("max", 10);
-  ta.AddColumn("sum", 10);
+  ta.AddColumn("min", 15,3);
+  ta.AddColumn("max", 15,3);
+  ta.AddColumn("sum", 20,3);
 }
 // --------------------------------------------------
 
