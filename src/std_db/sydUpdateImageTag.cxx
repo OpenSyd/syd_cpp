@@ -17,7 +17,7 @@
   ===========================================================================**/
 
 // syd
-#include "sydImageTag_ggo.h"
+#include "sydUpdateImageTag_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
@@ -30,7 +30,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydImageTag, 2);
+  SYD_INIT_GGO(sydUpdateImageTag, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();

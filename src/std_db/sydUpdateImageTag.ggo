@@ -1,8 +1,8 @@
-#File sydImageTag.ggo
+#File sydUpdateImageTag.ggo
 
 package "syd"
-version "0.3"
-usage "sydImageTag <add|rm|view> <tags> <list of image_ids>"
+version "0.4"
+usage "sydUpdateImageTag <add|rm|view> <tags> <list of image_ids>"
 description "Add or remove tags to images
 - <add|rm|view>   add or remove (rm) tag ; or just display them (view)
 - <tags>          names for the tags (separated by spaces, between \" \")
