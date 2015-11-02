@@ -72,7 +72,10 @@ syd::PrintTable & syd::PrintTable::operator<<(const double & value)
 {
   if (current_line == -1) Endl();
   std::stringstream ss;
-  ss << std::fixed << std::setprecision (precision[current_column]) << value;
+  if (fabs(value) < 1e-4 and value != 0.0)
+    ss << std::scientific << std::setprecision (precision[current_column]) << value;
+  else
+    ss << std::fixed << std::setprecision (precision[current_column]) << value;
   values[current_line][current_column] = ss.str();
   current_column++;
   return *this;
@@ -114,7 +117,7 @@ void syd::PrintTable::Print(std::ostream & out)
   out << std::endl;
   for(auto i=0; i<values.size(); i++) {
     for(auto j=0; j<values[i].size(); j++) {
-      if (width[j] != 0) out << std::setw(width[j]) << std::fixed << std::setprecision (precision[j]) << values[i][j];
+      if (width[j] != 0) out << std::setw(width[j]) << values[i][j];
     }
     out << std::endl;
   }
