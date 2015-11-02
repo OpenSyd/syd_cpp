@@ -338,7 +338,7 @@ void syd::IntegratedActivityImageBuilder::InitInputData()
 {
   // Check image size
   bool b = true;
-  for(auto image:images_) b = b and syd::CheckImageSameSizeAndSpacing<ImageType>(images_[0], image);
+  for(auto image:images_) b = b and syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(images_[0], image);
   if (!b) {
     LOG(FATAL) << "The images must have the same size/spacing, abort.";
   }
