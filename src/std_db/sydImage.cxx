@@ -179,7 +179,7 @@ void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, 
       ta.AddColumn("#id", 5);
       ta.AddColumn("p", 8);
       ta.AddColumn("acqui_date", 18);
-      ta.AddColumn("tags", 40);
+      ta.AddColumn("tags", 50);
       ta.AddColumn("size", 12);
       ta.AddColumn("spacing", 25);
       ta.AddColumn("dicom_id", 15);
