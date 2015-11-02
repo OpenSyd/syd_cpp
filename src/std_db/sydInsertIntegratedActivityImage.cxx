@@ -119,7 +119,9 @@ int main(int argc, char* argv[])
   if (args_info.debug_given) {
     std::string file=args_info.debug_arg;
     std::ifstream is(file);
-    if (!is) LOG(FATAL) << "Cannot open " << file;
+    if (!is) {
+      LOG(FATAL) << "Cannot open " << file;
+    }
     while (is) {
       debug_point d;
       is >> d.name >> d.x >> d.y >> d.z;
