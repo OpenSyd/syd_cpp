@@ -30,10 +30,11 @@ namespace syd {
   class RoiStatistic : public syd::Record {
   public:
 
-    /// linked image
+#pragma db not_null
+    /// Linked image
     syd::Image::pointer image;
 
-    /// linked mask
+    /// Linked mask. Maybe null (no mask)
     syd::RoiMaskImage::pointer mask;
 
     /// Stat values

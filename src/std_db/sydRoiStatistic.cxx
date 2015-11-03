@@ -41,7 +41,7 @@ std::string syd::RoiStatistic::ToString() const
      << image->id << " "
      << image->pixel_value_unit->name << " "
      << GetLabels(image->tags) << " "
-     << mask->id << " "
+     << (mask!= NULL? syd::ToString(mask->id):"no_mask") << " "
      << mean << " " << std_dev << " "  << n << " "
      << min << " " << max << " " << sum;
   return ss.str();
@@ -54,7 +54,7 @@ bool syd::RoiStatistic::IsEqual(const pointer p) const
 {
   return (syd::Record::IsEqual(p) and
           image->id == p->image->id and
-          mask->id == p->mask->id and
+          (mask != NULL ? mask->id == p->mask->id:p->mask==NULL) and
           mean == p->mean and
           std_dev == p->std_dev and
           n == p->n and
@@ -117,7 +117,8 @@ void syd::RoiStatistic::InitPrintTable(const syd::Database * db, syd::PrintTable
 // --------------------------------------------------
 void syd::RoiStatistic::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
 {
-  ta << id << image->patient->name << image->id << mask->roitype->name
+  ta << id << image->patient->name << image->id
+     << (mask != NULL ? mask->roitype->name:"no_mask")
      << image->pixel_value_unit->name
      << GetLabels(image->tags)
      << mean << std_dev << n << min << max << sum;
