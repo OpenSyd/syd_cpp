@@ -248,7 +248,7 @@ void syd::Image::DumpInTable(const syd::Database * d,
          << syd::ArrayToString<int, 3>(size) << syd::ArrayToString<double, 3>(spacing);
       std::string dicom;
       for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
-      dicom.pop_back(); // remove last space
+      if (dicom.size() != 0) dicom.pop_back(); // remove last space
       ta << dicom;
       if (pixel_value_unit != NULL) ta << pixel_value_unit->name;
       else ta << "novalue";
