@@ -42,13 +42,6 @@ void CropImageBuilder::CropImageLike(syd::Image::pointer image,
 
   // Update image
   UpdateImage<PixelType>(image, output);
-
-  // Replace image on disk
-  // syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));
-
-  // // Update image information
-  // db_->UpdateImageInfo<PixelType>(image, output, true, true); // recompute md5
-  // db_->Update(image);
 }
 // --------------------------------------------------------------------
 
@@ -67,12 +60,5 @@ void CropImageBuilder::CropImageWithThreshold(syd::Image::pointer image, double 
 
   // Update image
   UpdateImage<PixelType>(image, output);
-
-  // // Replace image on disk
-  // syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));
-
-  // // Update image information
-  // db_->UpdateImageInfo<PixelType>(image, output, true, true); // recompute md5
-  // db_->Update(image);
 }
 // --------------------------------------------------------------------
