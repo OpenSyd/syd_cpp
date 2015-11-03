@@ -19,30 +19,6 @@
 #include "sydFileUtils.h"
 
 // --------------------------------------------------------------------
-// bool syd::FileExists(std::string filename)
-// {
-//   return OFStandard::fileExists(filename.c_str());
-// }
-// --------------------------------------------------------------------
-
-
-// // --------------------------------------------------------------------
-// bool syd::DirExists(std::string folder)
-// {
-//   return OFStandard::dirExists(folder.c_str());
-// }
-// // --------------------------------------------------------------------
-
-
-// // --------------------------------------------------------------------
-// bool syd::FolderExists(std::string folder)
-// {
-//   return OFStandard::dirExists(folder.c_str());
-// }
-// // --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 bool syd::GetWorkingDirectory(std::string & pwd) {
   char cCurrentPath[FILENAME_MAX];
   if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath))) return false;
@@ -89,12 +65,12 @@ bool syd::EqualFiles(std::string in1, std::string in2)
 
 
 // --------------------------------------------------------------------
-void syd::CopyFile(std::string src, std::string dst)
-{
-  std::ifstream isrc(src, std::ios::binary);
-  std::ofstream idst(dst, std::ios::binary);
-  idst << isrc.rdbuf();
-}
+// void syd::CopyFile(std::string src, std::string dst)
+// {
+//   std::ifstream isrc(src, std::ios::binary);
+//   std::ofstream idst(dst, std::ios::binary);
+//   idst << isrc.rdbuf();
+// }
 // --------------------------------------------------------------------
 
 

@@ -55,6 +55,7 @@ namespace syd {
 
   // fs::create_directories(path);
   // fs::exists(path);
+  // fs::copy_file
 
   std::string GetExtension(const std::string filename);
   std::string GetFilenameFromPath(const std::string path);
@@ -64,7 +65,7 @@ namespace syd {
   bool GetWorkingDirectory(std::string & pwd);
   bool EqualFiles(std::ifstream & in1, std::ifstream & in2);
   bool EqualFiles(std::string in1, std::string in2);
-  void CopyFile(std::string src, std::string dst);
+  //void CopyFile(std::string src, std::string dst);
   std::string CreateTemporaryFile(const std::string & folder, const std::string & extension);
   std::string CreateTemporaryDirectory(const std::string & folder);
   int GetPageContent(char const *argv[], std::ostream & os);
