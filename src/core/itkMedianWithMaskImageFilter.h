@@ -61,7 +61,7 @@ namespace itk
     virtual ~MedianWithMaskImageFilter() {}
 
     virtual void ThreadedGenerateData(const OutputImageRegionType & outputRegionForThread,
-                                      ThreadIdType threadId);
+                                      ThreadIdType threadId) override;
 
     typename MaskImageType::Pointer mask_;
     typename MaskImageType::PixelType mask_backgroundvalue_;
