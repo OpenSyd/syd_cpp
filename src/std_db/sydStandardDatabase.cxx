@@ -174,9 +174,9 @@ void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::string 
   Query<Tag>(tags, q);
   if (tags.size() != words.size()) {
     std::string s;
-    for(auto t:tags) s += t->ToString()+" ";
-    EXCEPTION("Cannot find all tags in FindTags: " << names << std::endl
-              << "Find: " << s);
+    for(auto t:tags) s += t->label+" ";
+    EXCEPTION("Cannot find all tags in FindTags. Look for: '" << names
+              << "' but find: '" << s << "'");
   }
 }
 // --------------------------------------------------------------------

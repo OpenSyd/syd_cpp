@@ -39,15 +39,10 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the tag
-  std::string tagname = args_info.inputs[0];
-  syd::Tag::vector tags;
-  db->FindTags(tags, tagname);
-
   // Get the list of dicomserie
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
-  for(auto i=1; i<args_info.inputs_num; i++) {
+  for(auto i=0; i<args_info.inputs_num; i++) {
     ids.push_back(atoi(args_info.inputs[i]));
   }
   syd::DicomSerie::vector dicom_series;
@@ -58,8 +53,8 @@ int main(int argc, char* argv[])
   syd::Image::vector images;
   for(auto d:dicom_series) {
     syd::Image::pointer image = builder.InsertImageFromDicom(d);
-    DD(image);
-    for(auto t:tags) image->AddTag(t);
+    // Set the optional tags
+    db->SetImageTagsFromCommandLine(image, args_info);
     images.push_back(image);
     LOG(1) << "Inserting Image " << image;
   }

@@ -76,7 +76,7 @@ add_executable(sydInsertDicom sydInsertDicom.cxx ${sydInsertDicom_GGO_C})
 target_link_libraries(sydInsertDicom sydStandardDatabase)
 
 # Create images
-wrap_ggo(sydInsertImageFromDicom_GGO_C sydInsertImageFromDicom.ggo sydCommandLineDefault.ggo)
+wrap_ggo(sydInsertImageFromDicom_GGO_C sydInsertImageFromDicom.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo )
 add_executable(sydInsertImageFromDicom sydInsertImageFromDicom.cxx ${sydInsertImageFromDicom_GGO_C})
 target_link_libraries(sydInsertImageFromDicom sydStandardDatabase)
 

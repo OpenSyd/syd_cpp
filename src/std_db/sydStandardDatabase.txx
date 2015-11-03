@@ -68,3 +68,39 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom,
   return itk_image;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class ArgsInfo>
+void syd::StandardDatabase::SetImageTagsFromCommandLine(syd::Image::pointer image, ArgsInfo args_info)
+{
+  // Remove all tags
+  if (args_info.remove_all_tag_flag) image->tags.clear();
+
+  // Remove some tags
+  if (args_info.remove_tag_given) {
+    for(auto i=0; i<args_info.remove_tag_given; i++) {
+      std::string tagname = args_info.remove_tag_arg[i];
+      syd::Tag::vector tags;
+      try {
+        FindTags(tags, tagname);
+      } catch(std::exception & e) { } // ignore unknown tag
+      for(auto t:tags) image->RemoveTag(t);
+    }
+  }
+
+  // Add tags
+  if (args_info.tag_given) {
+    for(auto i=0; i<args_info.tag_given; i++) {
+      std::string tagname = args_info.tag_arg[i];
+      syd::Tag::vector tags;
+      try {
+        FindTags(tags, tagname);
+      } catch(std::exception & e) {
+        LOG(WARNING) << "Some tags are ignored. " << e.what();
+      }
+      for(auto t:tags) image->AddTag(t);
+    }
+  }
+}
+// --------------------------------------------------------------------

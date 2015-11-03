@@ -79,6 +79,9 @@ namespace syd {
     ReadImage(const syd::DicomSerie::pointer dicom,
               bool flipAxeIfNegativeFlag) const;
 
+    template<class ArgsInfo>
+    void SetImageTagsFromCommandLine(syd::Image::pointer image, ArgsInfo args_info);
+
   protected:
     /// Insert the tables
     virtual void CreateTables();

@@ -1,9 +1,8 @@
 #File sydInsertImageFromDicom.ggo
 
 package "syd"
-version "0.3"
-usage "sydInsertImageFromDicom <tag> <list of dicom_ids>"
+version "0.4"
+usage "sydInsertImageFromDicom <list of dicom_ids>"
 description "Create a new (mhd) image for each given dicom
-- <tag>           name for the tag associated with images
 - <dicom_ids>     list of dicom id to insert
 "
