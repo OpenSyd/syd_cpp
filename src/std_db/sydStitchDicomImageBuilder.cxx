@@ -21,22 +21,6 @@
 #include "sydImageUtils.h"
 
 // --------------------------------------------------------------------
-syd::StitchDicomImageBuilder::StitchDicomImageBuilder(syd::StandardDatabase * db):syd::StitchDicomImageBuilder()
-{
-  SetDatabase(db);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::StitchDicomImageBuilder::StitchDicomImageBuilder()
-{
-  db_ = NULL;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 syd::Image::pointer
 syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer a,
                                                   const syd::DicomSerie::pointer b)
@@ -68,23 +52,22 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
   }
 
   // Create the image record
-  syd::Image::pointer image;
-  db_->New(image);
-  image->patient = a->patient;
-  image->frame_of_reference_uid = a->dicom_frame_of_reference_uid;
-  image->dicoms.push_back(a);
+  syd::Image::pointer image = InsertNewMHDImage(a);
   image->dicoms.push_back(b);
   syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("counts", "Number of counts");
   image->pixel_value_unit = unit;
-  db_->Insert(image); // to obtain an id
+  //  RenameToDefaultFilename(image);
 
+  // std::ostringstream oss;
+  // oss << a->dicom_modality << "_" << image->id << ".mhd";
+  // std::string mhd_filename = oss.str();
+  // std::string mhd_relative_path = image->ComputeRelativeFolder()+PATH_SEPARATOR;
+  // std::string mhd_path = db_->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
+  // image->UpdateFile(db_, mhd_filename, mhd_relative_path);
 
-  std::ostringstream oss;
-  oss << a->dicom_modality << "_" << image->id << ".mhd";
-  std::string mhd_filename = oss.str();
-  std::string mhd_relative_path = image->ComputeRelativeFolder()+PATH_SEPARATOR;
-  std::string mhd_path = db_->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
-  image->UpdateFile(db_, mhd_filename, mhd_relative_path);
+  //  UpdateImage
+
+  //  RenameFile(image, mhd_relative_path, mhd_filename);
 
   // Auto tag
   syd::Tag::pointer tag_stitch = db_->FindOrInsertTag("stitch", "Image computed by stitching 2 images");
@@ -100,13 +83,14 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
   ImageType::Pointer output = syd::StitchImages<ImageType>(image_a, image_b, 150000, 4);
 
   // Update the image values
-  db_->UpdateImageInfo<PixelType>(image, output, true, true); // true = update md5
+  //  db_->UpdateImageInfo<PixelType>(image, output, true, true); // true = update md5
 
   // Write image
-  syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));
+  // syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));
 
-  // Insert into the db
-  db_->Update(image);
+  // Update the image info
+  UpdateImage<PixelType>(image, output);
+  //db_->Update(image);
   return image;
 }
 // --------------------------------------------------------------------

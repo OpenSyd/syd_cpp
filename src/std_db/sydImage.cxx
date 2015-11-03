@@ -159,6 +159,36 @@ void syd::Image::RemoveTag(syd::Tag::pointer tag)
 
 
 // --------------------------------------------------
+void syd::Image::AddDicomSerie(syd::DicomSerie::pointer dicom)
+{
+  bool found = false;
+  int i=0;
+  while (i<dicoms.size() and !found) {
+    if (dicoms[i]->id == dicom->id) found = true;
+    ++i;
+  }
+  if (!found) dicoms.push_back(dicom);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::RemoveDicomSerie(syd::DicomSerie::pointer dicom)
+{
+  bool found = false;
+  int i=0;
+  while (i<dicoms.size() and !found) {
+    if (dicoms[i]->id == dicom->id) {
+      found = true;
+      dicoms.erase(dicoms.begin()+i);
+    }
+    ++i;
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
 {
   if (format == "help") {
@@ -235,57 +265,57 @@ std::string syd::Image::ComputeRelativeFolder() const
 
 
 // --------------------------------------------------
-void syd::Image::UpdateFile(syd::Database * db,
-                            const std::string & path,
-                            bool deleteExistingFiles)
-{
-  std::string mhd_relative_path = ComputeRelativeFolder()+PATH_SEPARATOR;
-  std::string mhd_filename = syd::GetFilenameFromPath(path);
-  return UpdateFile(db, mhd_filename, mhd_relative_path, deleteExistingFiles);
-}
+// void syd::Image::UpdateFile(syd::Database * db,
+//                             const std::string & path,
+//                             bool deleteExistingFiles)
+// {
+//   std::string mhd_relative_path = ComputeRelativeFolder()+PATH_SEPARATOR;
+//   std::string mhd_filename = syd::GetFilenameFromPath(path);
+//   return UpdateFile(db, mhd_filename, mhd_relative_path, deleteExistingFiles);
+// }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Image::UpdateFile(syd::Database * db,
-                            const std::string & filename,
-                            const std::string & relativepath,
-                            bool deleteExistingFiles)
-{
-  std::string extension = GetExtension(filename);
-  type = extension;
-  if (files.size() != 0 and deleteExistingFiles) {
-    LOG(FATAL) << "TODO UpdateFile deleteExistingFiles";
-    //    for(auto f:files)
-  }
-  files.clear();
-  syd::File::pointer f;
-  db->New(f);
-  f->filename = filename;
-  f->path = relativepath;
+// void syd::Image::UpdateFile(syd::Database * db,
+//                             const std::string & filename,
+//                             const std::string & relativepath,
+//                             bool deleteExistingFiles)
+// {
+//   std::string extension = GetExtension(filename);
+//   type = extension;
+//   if (files.size() != 0 and deleteExistingFiles) {
+//     LOG(FATAL) << "TODO UpdateFile deleteExistingFiles";
+//     //    for(auto f:files)
+//   }
+//   files.clear();
+//   syd::File::pointer f;
+//   db->New(f);
+//   f->filename = filename;
+//   f->path = relativepath;
 
-  // Create folder if needed
-  std::string absolute_folder = db->ConvertToAbsolutePath(relativepath);
-  fs::path dir(absolute_folder);
-  if (!fs::exists(dir)) {
-    LOG(4) << "Creating folder: " << absolute_folder;
-    if (!fs::create_directories(dir)) {
-      LOG(FATAL) << "Error, could not create the folder: " << absolute_folder;
-    }
-  }
+//   // Create folder if needed
+//   std::string absolute_folder = db->ConvertToAbsolutePath(relativepath);
+//   fs::path dir(absolute_folder);
+//   if (!fs::exists(dir)) {
+//     LOG(4) << "Creating folder: " << absolute_folder;
+//     if (!fs::create_directories(dir)) {
+//       LOG(FATAL) << "Error, could not create the folder: " << absolute_folder;
+//     }
+//   }
 
-  db->Insert(f);
-  files.push_back(f);
-  if (extension == "mhd") {
-    std::string ff = filename;
-    syd::Replace(ff, ".mhd", ".raw");
-    db->New(f);
-    f->filename = ff;
-    f->path = relativepath;
-    db->Insert(f);
-    files.push_back(f);
-  }
-}
+//   db->Insert(f);
+//   files.push_back(f);
+//   if (extension == "mhd") {
+//     std::string ff = filename;
+//     syd::Replace(ff, ".mhd", ".raw");
+//     db->New(f);
+//     f->filename = ff;
+//     f->path = relativepath;
+//     db->Insert(f);
+//     files.push_back(f);
+//   }
+// }
 // --------------------------------------------------
 
 
@@ -325,21 +355,22 @@ bool syd::Image::IsSameSizeAndSpacingThan(const syd::Image::pointer image) const
 
 
 // --------------------------------------------------
-std::string syd::Image::ComputeDefaultAbsolutePath(syd::Database * db) const
-{
-  // fast initial check (useful but not sufficient)
-  if (id == -1) {
-    LOG(FATAL) << "Could not compute a default filename for this image, the object is not persistant: " << this;
-  }
-  std::ostringstream oss;
-  if (dicoms.size() != 0) oss << dicoms[0]->dicom_modality;
-  else  oss << "image";
-  oss << "_" << id << ".mhd";
-  std::string mhd_filename = oss.str();
-  std::string mhd_relative_path = ComputeRelativeFolder()+PATH_SEPARATOR;
-  std::string mhd_path = db->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
-  return mhd_path;
-}
+//FIXME TO put in standarddatabase ?
+// std::string syd::Image::ComputeDefaultAbsolutePath(syd::Database * db) const
+// {
+//   // fast initial check (useful but not sufficient)
+//   if (id == -1) {
+//     LOG(FATAL) << "Could not compute a default filename for this image, the object is not persistant: " << this;
+//   }
+//   std::ostringstream oss;
+//   if (dicoms.size() != 0) oss << dicoms[0]->dicom_modality;
+//   else  oss << "image";
+//   oss << "_" << id << ".mhd";
+//   std::string mhd_filename = oss.str();
+//   std::string mhd_relative_path = ComputeRelativeFolder()+PATH_SEPARATOR;
+//   std::string mhd_path = db->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
+//   return mhd_path;
+// }
 // --------------------------------------------------
 
 
@@ -350,5 +381,48 @@ void syd::Image::FatalIfNoDicom() const
     LOG(FATAL) << "Error the following image does not have associated DicomSerie."
                << std::endl << this;
   }
+}
+// --------------------------------------------------
+
+
+// // --------------------------------------------------
+// void syd::Image::InsertNewEmptyFile(syd::StandardDatabase * db)
+// {
+//   // Create File
+//   syd::File::pointer file;
+//   db->New(file);
+//   // Insert into the db
+//   db->Insert(file);
+//   // Add to the list
+//   files.push_back(file);
+// }
+// // --------------------------------------------------
+
+
+// // --------------------------------------------------
+// void syd::Image::InitAsMHD(syd::StandardDatabase * db)
+// {
+//   if (files.size() != 0) {
+//     EXCEPTION("This image is already attached to Files: " << this);
+//   }
+//   InsertNewEmptyFile(db);
+//   InsertNewEmptyFile(db);
+//   type = "mhd";
+// }
+// // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::CopyTags(syd::Image::pointer image)
+{
+  for(auto t:image->tags) AddTag(t);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::CopyDicomSeries(syd::Image::pointer image)
+{
+  for(auto d:image->dicoms) AddDicomSerie(d);
 }
 // --------------------------------------------------

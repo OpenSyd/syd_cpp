@@ -22,12 +22,12 @@
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
+#include "sydImageBuilderBase.h"
 
 #include "boost/date_time/gregorian/gregorian.hpp" //include all types plus i/o
 #include "boost/date_time/posix_time/posix_time.hpp"
 using namespace boost::gregorian;
 namespace pt = boost::posix_time;
-
 
 // syd init
 SYD_STATIC_INIT
@@ -137,20 +137,23 @@ int main(int argc, char* argv[])
     }
 
     // Create output image
-    syd::Image::pointer output_image;
-    db->New(output_image);
-    output_image->CopyFrom(input_image);
-    output_image->tags.clear(); // dont herit tag
-    output_image->frame_of_reference_uid = transform->fixed_image->frame_of_reference_uid; // copy the ref from the fixed_image
-    db->Insert(output_image);
-    std::ostringstream oss;
-    if (input_image->dicoms.size() == 0) oss << "IMAGE_" << output_image->id << ".mhd";
-    else oss << input_image->dicoms[0]->dicom_modality << "_" << output_image->id << ".mhd";
-    std::string mhd_filename = oss.str();
-    std::string mhd_relative_path = output_image->ComputeRelativeFolder()+PATH_SEPARATOR;
-    std::string mhd_path = db->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
-    output_image->UpdateFile(db, mhd_filename, mhd_relative_path);
-    std::string output_image_path = db->GetAbsolutePath(output_image);
+    syd::ImageBuilderBase builder(db);
+    syd::Image::pointer output_image = builder.InsertNewMHDImageLike(input_image);
+    // db->New(output_image);
+    // output_image->CopyFrom(input_image);
+    //output_image->tags.clear(); // remove the tags
+    // output_image->frame_of_reference_uid = transform->fixed_image->frame_of_reference_uid; // copy the ref from the fixed_image
+    //    db->Insert(output_image);
+    // std::ostringstream oss;
+    // if (input_image->dicoms.size() == 0) oss << "IMAGE_" << output_image->id << ".mhd";
+    // else oss << input_image->dicoms[0]->dicom_modality << "_" << output_image->id << ".mhd";
+    // std::string mhd_filename = oss.str();
+    // std::string mhd_relative_path = output_image->ComputeRelativeFolder()+PATH_SEPARATOR;
+    // std::string mhd_path = db->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
+    // output_image->UpdateFile(db, mhd_filename, mhd_relative_path);
+    // std::string output_image_path = db->GetAbsolutePath(output_image);
+
+    // builder.UpdateImageToFile
 
     // Tag ? ct spect mask to copy ; transform to add
     syd::Tag::vector tags;
@@ -178,6 +181,7 @@ int main(int argc, char* argv[])
       db->Delete(output_image);
     }
     else  {
+      std::string output_image_path = db->GetAbsolutePath(output_image);
       syd::RenameMHDImage(f, output_image_path);
       LOG(1) << "Image computed. Result: " << output_image;
     }

@@ -279,38 +279,138 @@ syd::File::pointer syd::StandardDatabase::InsertNewFile(std::string input_path,
 
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::UpdateImageInfoFromFile(syd::Image::pointer image,
-                                                    std::string filename,
-                                                    bool flipAxeIfNegativeFlag,
-                                                    bool computeMD5Flag)
+// FIXME generalise with template ?
+// syd::File::pointer syd::StandardDatabase::InsertNewEmptyFile()
+// {
+//   syd::File::pointer file;
+//   New(file);
+//   Insert(file);
+//   return file;
+// }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// template<>
+// syd::Image::pointer syd::StandardDatabase::InsertNew()
+// {
+//   syd::Image::pointer image;
+//   New(image);
+//   image->Init(db);
+//   image->AddFile();
+//   image->type = "mhd";
+//   syd::File::pointer file_mhd = InsertNew<syd::File>();
+//   syd::File::pointer file_raw = InsertNew<syd::File>();
+//   image->files.push_back(file_mhd);
+//   image->files.push_back(file_raw);
+//   Insert(image);
+//   return image;
+// }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// template<>
+// syd::RoiMaskImage::pointer syd::StandardDatabase::InsertNew()
+// {
+//   syd::RoiMaskImage::pointer image;
+//   New(image);
+//   image->type = "mhd";
+//   syd::File::pointer file_mhd = InsertNewEmptyFile();
+//   syd::File::pointer file_raw = InsertNewEmptyFile();
+//   image->files.push_back(file_mhd);
+//   image->files.push_back(file_raw);
+//   Insert(image);
+//   return image;
+// }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// // void syd::StandardDatabase::UpdateImageInfoFromFile(syd::Image::pointer image,
+// //                                                     std::string filename,
+// //                                                     bool flipAxeIfNegativeFlag,
+// //                                                     bool computeMD5Flag)
+// // {
+// //   // Read itk image header
+// //   auto header = syd::ReadImageHeader(filename);
+// //   switch (header->GetComponentType()) {
+// //   case itk::ImageIOBase::UCHAR:
+// //     {
+// //       typedef unsigned char PixelType;
+// //       typedef itk::Image<PixelType, 3> ImageType;
+// //       ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
+// //       UpdateImageInfo<PixelType>(image, itk_image, flipAxeIfNegativeFlag, computeMD5Flag);
+// //       break;
+// //     }
+// //   case itk::ImageIOBase::SHORT:
+// //     {
+// //       typedef short PixelType;
+// //       typedef itk::Image<PixelType, 3> ImageType;
+// //       ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
+// //       UpdateImageInfo<PixelType>(image, itk_image, flipAxeIfNegativeFlag, computeMD5Flag);
+// //       break;
+// //     }
+// //   default:
+// //     {
+// //       typedef float PixelType;
+// //       typedef itk::Image<PixelType, 3> ImageType;
+// //       ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
+// //       UpdateImageInfo<PixelType>(image, itk_image, flipAxeIfNegativeFlag, computeMD5Flag);
+// //       break;
+// //     }
+// //   }
+// // }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::CheckOrCreateRelativePath(std::string relative_path)
 {
-  // Read itk image header
-  auto header = syd::ReadImageHeader(filename);
-  switch (header->GetComponentType()) {
-  case itk::ImageIOBase::UCHAR:
-    {
-      typedef unsigned char PixelType;
-      typedef itk::Image<PixelType, 3> ImageType;
-      ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
-      UpdateImageInfo<PixelType>(image, itk_image, flipAxeIfNegativeFlag, computeMD5Flag);
-      break;
-    }
-  case itk::ImageIOBase::SHORT:
-    {
-      typedef short PixelType;
-      typedef itk::Image<PixelType, 3> ImageType;
-      ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
-      UpdateImageInfo<PixelType>(image, itk_image, flipAxeIfNegativeFlag, computeMD5Flag);
-      break;
-    }
-  default:
-    {
-      typedef float PixelType;
-      typedef itk::Image<PixelType, 3> ImageType;
-      ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
-      UpdateImageInfo<PixelType>(image, itk_image, flipAxeIfNegativeFlag, computeMD5Flag);
-      break;
+  // Check directory or create it
+  std::string absolute_folder = ConvertToAbsolutePath(relative_path);
+  DD(absolute_folder);
+  fs::path dir(absolute_folder);
+  if (!fs::exists(dir)) {
+    LOG(4) << "Creating folder: " << absolute_folder;
+    if (!fs::create_directories(dir)) {
+      EXCEPTION("Error, could not create the folder: " << absolute_folder);
     }
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::RenameFile(syd::File::pointer file,
+                                       std::string relative_path,
+                                       std::string filename)
+{
+  // Check directory or create it
+  CheckOrCreateRelativePath(relative_path);
+
+  // Compute paths
+  std::string new_absolute_path = ConvertToAbsolutePath(relative_path+PATH_SEPARATOR+filename);
+  std::string old_absolute_path = GetAbsolutePath(file);
+
+  // Destination exist ?
+  fs::path dir(new_absolute_path);
+  if (fs::exists(dir)) {
+    EXCEPTION("Could not update file '"
+              << old_absolute_path
+              << "', destination already exists: '"
+              << new_absolute_path << "'.");
+  }
+
+  // If file already exist, mv it. Do nothing if does no exist.
+  fs::path old(old_absolute_path);
+  if (fs::exists(old)) {
+    fs::rename(old_absolute_path, new_absolute_path);
+  }
+
+  // Update in the db
+  file->path = relative_path;
+  file->filename = filename;
+  Update(file);
+}
+// --------------------------------------------------

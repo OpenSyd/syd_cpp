@@ -96,12 +96,24 @@ namespace syd {
     /// Remove a tag from the list ; do not update in the db. Do nothing it not found
     void RemoveTag(syd::Tag::pointer tag);
 
-    /// When creating a new image, update the associated file
-    void UpdateFile(syd::Database * db, const std::string & filename,
-                    const std::string & relativepath, bool deleteExistingFiles=false);
+    /// Copy tags from another image
+    void CopyTags(syd::Image::pointer tag);
 
-    /// When creating a new image, update the associated file
-    void UpdateFile(syd::Database * db, const std::string & path, bool deleteExistingFiles=false);
+    /// Add a DicomSerie to the list (check is already exist) ; do not update in the db.
+    void AddDicomSerie(syd::DicomSerie::pointer dicom);
+
+    /// Remove a DicomSerie from the list ; do not update in the db. Do nothing it not found
+    void RemoveDicomSerie(syd::DicomSerie::pointer dicom);
+
+    /// Copy DicomSeries from another image
+    void CopyDicomSeries(syd::Image::pointer image);
+
+    // /// When creating a new image, update the associated file
+    // void UpdateFile(syd::Database * db, const std::string & filename,
+    //                 const std::string & relativepath, bool deleteExistingFiles=false);
+
+    // /// When creating a new image, update the associated file
+    // void UpdateFile(syd::Database * db, const std::string & path, bool deleteExistingFiles=false);
 
     /// Callback : delete the associated files when the image is deleted.
     void Callback(odb::callback_event, odb::database&) const;
@@ -116,8 +128,13 @@ namespace syd {
     /// Return spacing as string such like 0.5x0.5x0.3
     std::string SpacingAsString() const { return syd::ArrayToString<double,3>(spacing); }
 
-    /// When create a new image, compute a default name. Image *must* be persistant (with correct id)
-    std::string ComputeDefaultAbsolutePath(syd::Database * db) const;
+    // /// When create a new image, compute a default name. Image *must* be persistant (with correct id)
+    // std::string ComputeDefaultAbsolutePath(syd::Database * db) const;
+
+
+    // void InsertNewEmptyFile(syd::StandardDatabase * db);
+
+    // void InitAsMHD();
 
     /// Check if the image has a dicom. If not fail
     void FatalIfNoDicom() const;

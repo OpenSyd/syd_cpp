@@ -20,23 +20,6 @@
 #include "sydSubstituteRadionuclideImageBuilder.h"
 
 // --------------------------------------------------------------------
-syd::SubstituteRadionuclideImageBuilder::SubstituteRadionuclideImageBuilder(StandardDatabase * db):SubstituteRadionuclideImageBuilder()
-{
-  SetDatabase(db);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::SubstituteRadionuclideImageBuilder::SubstituteRadionuclideImageBuilder()
-{
-  // init
-  db_ = NULL;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 syd::Image::pointer
 syd::SubstituteRadionuclideImageBuilder::CreateRadionuclideSubstitutedImage(syd::Image::pointer input,
                                                                             syd::Radionuclide::pointer rad)
@@ -55,9 +38,14 @@ syd::SubstituteRadionuclideImageBuilder::CreateRadionuclideSubstitutedImage(syd:
   double lambda = log(2.0)/(rad->half_life_in_hours);
 
   // Create output image
-  syd::Image::pointer result = syd::Image::New();
-  result = input; // copy the fields
-  result->id = -1; // but change the ID to insert as a new image.
+  syd::Image::pointer result = InsertNewMHDImage(input->dicoms[0]);
+  result->pixel_value_unit = input->pixel_value_unit;
+  result->pixel_type = input->pixel_type;
+  result->CopyTags(input);
+  result->CopyDicomSeries(input);
+
+  // result = input; // copy the fields
+  // result->id = -1; // but change the ID to insert as a new image.
 
   // Change pixel values
   typedef float PixelType;
@@ -70,12 +58,7 @@ syd::SubstituteRadionuclideImageBuilder::CreateRadionuclideSubstitutedImage(syd:
   }
 
   // Create and image file
-  db_->Insert(result);
-  std::string mhd_path = result->ComputeDefaultAbsolutePath(db_);
-  syd::WriteImage<ImageType>(itk_image, mhd_path);
-  result->UpdateFile(db_, mhd_path);
-
-  db_->Update(result);
+  UpdateImage<PixelType>(result, itk_image);
   return result;
 }
 // --------------------------------------------------------------------

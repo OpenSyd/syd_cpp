@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
   syd::DecayCorrectedImageBuilder builder(db);
   syd::Image::vector result_images;
   for(auto image:images) {
-    syd::Image::pointer result = builder.CreateDecayCorrectedImage(image, calib);
+    syd::Image::pointer result = builder.InsertDecayCorrectedImage(image, calib);
     for(auto t:tags) result->AddTag(t);
     result_images.push_back(result);
     LOG(1) << "Inserting Image " << result;

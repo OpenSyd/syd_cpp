@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   syd::ImageFromDicomBuilder builder(db);
   syd::Image::vector images;
   for(auto d:dicom_series) {
-    syd::Image::pointer image = builder.CreateImageFromDicom(d);
+    syd::Image::pointer image = builder.InsertImageFromDicom(d);
     for(auto t:tags) image->AddTag(t);
     images.push_back(image);
     LOG(1) << "Inserting Image " << image;

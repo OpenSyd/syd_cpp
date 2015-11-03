@@ -20,25 +20,8 @@
 #include "sydDecayCorrectedImageBuilder.h"
 
 // --------------------------------------------------------------------
-syd::DecayCorrectedImageBuilder::DecayCorrectedImageBuilder(StandardDatabase * db):DecayCorrectedImageBuilder()
-{
-  SetDatabase(db);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::DecayCorrectedImageBuilder::DecayCorrectedImageBuilder()
-{
-  // init
-  db_ = NULL;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 syd::Image::pointer
-syd::DecayCorrectedImageBuilder::CreateDecayCorrectedImage(syd::Image::pointer input,
+syd::DecayCorrectedImageBuilder::InsertDecayCorrectedImage(syd::Image::pointer input,
                                                            syd::Calibration::pointer calib)
 {
   // Get information
@@ -56,13 +39,16 @@ syd::DecayCorrectedImageBuilder::CreateDecayCorrectedImage(syd::Image::pointer i
   double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
 
   // Create output image
-  syd::Image::pointer result = syd::Image::New();
-  result = input; // copy the fields
-  result->id = -1; // but change the ID to insert as a new image.
+  syd::Image::pointer result = InsertNewMHDImage(input->dicoms[0]);
+  // result = input; // copy the fields
+  // result->id = -1; // but change the ID to insert as a new image.
   // syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("MBq_by_IA", "Activity in MBq by injected activity in MBq");
   // syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("kBq_by_IA", "Activity in kBq by injected activity in MBq");
   syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("Bq_by_IA", "Activity in Bq by injected activity in MBq");
   result->pixel_value_unit = unit;
+  result->pixel_type = input->pixel_type;
+  result->CopyTags(input);
+  result->CopyDicomSeries(input);
 
   // FIXME --> change equation to take spect acquisition time into account (how to do when 2 spects ?)
 
@@ -70,7 +56,7 @@ syd::DecayCorrectedImageBuilder::CreateDecayCorrectedImage(syd::Image::pointer i
   double f = 1.0/calib->factor / injected_activity * exp(lambda * time)*1000*1000; // x1000 for MBq to kBq x1000 to Bq
 
   // Change pixel values
-  typedef float PixelType;
+  typedef float PixelType; // (force 'float' pixel type)
   typedef itk::Image<PixelType,3> ImageType;
   ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db_->GetAbsolutePath(input));
   itk::ImageRegionIterator<ImageType> iter(itk_image, itk_image->GetLargestPossibleRegion());
@@ -80,12 +66,15 @@ syd::DecayCorrectedImageBuilder::CreateDecayCorrectedImage(syd::Image::pointer i
   }
 
   // Create and image file
-  db_->Insert(result);
-  std::string mhd_path = result->ComputeDefaultAbsolutePath(db_);
-  syd::WriteImage<ImageType>(itk_image, mhd_path);
-  result->UpdateFile(db_, mhd_path);
+  //  db_->Insert(result);
+  // std::string mhd_path = result->ComputeDefaultAbsolutePath(db_);
+  //  syd::WriteImage<ImageType>(itk_image, mhd_path);
+  //InsertFile<PixelType(result, mhd_path);
+  UpdateImage<PixelType>(result, itk_image);
 
-  db_->Update(result);
+  // result->UpdateFile(db_, mhd_path);
+
+  // db_->Update(result);
   return result;
 }
 // --------------------------------------------------------------------

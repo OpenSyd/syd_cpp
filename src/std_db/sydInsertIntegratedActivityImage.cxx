@@ -24,6 +24,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydIntegratedActivityImageBuilder.h"
 #include "sydImageFillHoles.h"
+#include "sydImageBuilderBase.h"
 #include "sydImage_GaussianFilter.h"
 
 // itk in syd source
@@ -260,18 +261,19 @@ int main(int argc, char* argv[])
   tags.erase(std::unique(tags.begin(), tags.end(), same_id), tags.end());
 
   // Insert result in db
-  syd::Image::pointer output;
-  db->New(output);
-  output->CopyFrom(images[0]);
-  for(auto t:tags) output->AddTag(t);
-  output->id = -1; // before insertion
-  db->Insert(output);
+  syd::ImageBuilderBase bdb(db);
+  syd::Image::pointer output = bdb.InsertNewMHDImageLike(images[0]);
+  // db->New(output);
+  // output->CopyFrom(images[0]);
+  // for(auto t:tags) output->AddTag(t);
+  // output->id = -1; // before insertion
+  // db->Insert(output);
 
   // Dump the itk image
-  std::string absolutepath = output->ComputeDefaultAbsolutePath(db);
-  ImageType::Pointer itk_image = auc->image;
-  syd::WriteImage<ImageType>(itk_image, absolutepath);
-  output->UpdateFile(db, absolutepath);
+  // std::string absolutepath = output->ComputeDefaultAbsolutePath(db);
+  // ImageType::Pointer itk_image = auc->image;
+  // syd::WriteImage<ImageType>(itk_image, absolutepath);
+  bdb.UpdateImage<PixelType>(output, auc->image);//db, absolutepath);
 
   // Change pixel value
   syd::PixelValueUnit::pointer v = db->FindOrInsertUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq");

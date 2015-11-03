@@ -22,22 +22,6 @@
 #include "sydImageUtils.h"
 
 // --------------------------------------------------------------------
-syd::CropImageBuilder::CropImageBuilder(syd::StandardDatabase * db):syd::CropImageBuilder()
-{
-  SetDatabase(db);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::CropImageBuilder::CropImageBuilder()
-{
-  db_ = NULL;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::CropImageBuilder::CropImageLike(syd::Image::pointer image,
                                           const syd::Image::pointer like,
                                           bool resampleFlag,

@@ -10,3 +10,6 @@ The option 'pixelunit' allows to change the pixel value unit.
 "
 
 option "pixelunit"  -       "Name of pixel value unit to attach to the image"                 string no
+option "scale"      s       "Multiply the pixel values"                                       double no
+option "N"          N       "Nb of primary if MC simulation (with tia)"                       double no
+option "tia"        -       "Id of the tia image if MC simulation (with N)"                   int no

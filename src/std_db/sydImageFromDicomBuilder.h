@@ -20,12 +20,7 @@
 #define SYDIMAGEFROMDICOMBUILDER_H
 
 // syd
-#include "sydStandardDatabase.h"
-#include "sydImage.h"
-//#include "sydImageUtils.h"
-
-// itk
-#include <itkImage.h>
+#include "sydImageBuilderBase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -33,24 +28,16 @@ namespace syd {
   /// This class is used to create a Image. A Image is defined
   /// with an injection, a patient, some tag, some associated dicom
   /// series and images.
-  class ImageFromDicomBuilder {
+  class ImageFromDicomBuilder: public syd::ImageBuilderBase {
 
   public:
     /// Constructor.
-    ImageFromDicomBuilder(syd::StandardDatabase * db);
-
-    /// Destructor (empty)
-    ~ImageFromDicomBuilder() {}
+    ImageFromDicomBuilder(syd::StandardDatabase * db):ImageBuilderBase(db) {}
 
     /// Main function: convert a dicom to a mhd image
-    syd::Image::pointer CreateImageFromDicom(const syd::DicomSerie::pointer dicom);
-
-  protected:
-    syd::StandardDatabase * db_;
+    syd::Image::pointer InsertImageFromDicom(const syd::DicomSerie::pointer dicom);
 
   }; // class ImageFromDicomBuilder
-
-#include "sydImageFromDicomBuilder.txx"
 
 } // namespace syd
 // --------------------------------------------------------------------

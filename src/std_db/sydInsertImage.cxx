@@ -51,19 +51,16 @@ int main(int argc, char* argv[])
   db->QueryOne(input, id);
 
   // Create the new image
-  syd::Image::pointer output;
-  db->New(output);
-  output = input; // copy the fields
-  output->id = -1;
-  db->Insert(output);
+  syd::ImageBuilderBase builder(db);
+  syd::Image::pointer output = builder.InsertNewMHDImageLike(input);
 
   // Update image data (size etc) from file
-  db->UpdateImageInfoFromFile(output, filename, true, true);
+  builder.UpdateImageFromFile(output, filename);
 
-  // Copy the file in the db
-  std::string absolutepath = output->ComputeDefaultAbsolutePath(db);
-  syd::CopyMHDImage(filename, absolutepath);
-  output->UpdateFile(db, absolutepath);
+  // // Copy the file in the db
+  // std::string absolutepath = output->ComputeDefaultAbsolutePath(db);
+  // syd::CopyMHDImage(filename, absolutepath);
+  // output->UpdateFile(db, absolutepath);
 
   // Add optional tag
   if (args_info.tags_given) {

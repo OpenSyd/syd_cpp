@@ -71,62 +71,74 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom,
 
 
 // --------------------------------------------------------------------
-template<class PixelType>
-void syd::StandardDatabase::UpdateImageInfo(syd::Image::pointer image,
-                                            typename itk::Image<PixelType,3>::Pointer & itk_image,
-                                            bool flipAxeIfNegativeFlag,
-                                            bool computeMD5Flag)
-{
-  // Check dimension
-  typedef itk::Image<PixelType,3> ImageType;
-  image->dimension = itk_image->GetImageDimension();
+// template<class PixelType>
+// void syd::StandardDatabase::UpdateImageInfo(syd::Image::pointer image,
+//                                             typename itk::Image<PixelType,3>::Pointer & itk_image,
+//                                             bool flipAxeIfNegativeFlag,
+//                                             bool computeMD5Flag)
+// {
+//   // Check dimension
+//   typedef itk::Image<PixelType,3> ImageType;
+//   image->dimension = itk_image->GetImageDimension();
 
-  //   type, size, spacing, dimension
-  if (typeid(PixelType) == typeid(float)) image->pixel_type = "float";
-  else {
-    if (typeid(PixelType) == typeid(short)) image->pixel_type = "short";
-    else {
-      if (typeid(PixelType) == typeid(unsigned char)) image->pixel_type = "uchar";
-      else {
-        EXCEPTION("Cannot create syd::Image from itk image with pixeltype = " << typeid(PixelType).name());
-      }
-    }
-  }
+//   //   type, size, spacing, dimension
+//   if (typeid(PixelType) == typeid(float)) image->pixel_type = "float";
+//   else {
+//     if (typeid(PixelType) == typeid(short)) image->pixel_type = "short";
+//     else {
+//       if (typeid(PixelType) == typeid(unsigned char)) image->pixel_type = "uchar";
+//       else {
+//         EXCEPTION("Cannot create syd::Image from itk image with pixeltype = " << typeid(PixelType).name());
+//       }
+//     }
+//   }
 
-  // Size
-  typedef typename ImageType::RegionType RegionType;
-  const RegionType & region = itk_image->GetLargestPossibleRegion();
-  image->size[0] = region.GetSize()[0];
-  image->size[1] = region.GetSize()[1];
-  image->size[2] = region.GetSize()[2];
+//   // Size
+//   typedef typename ImageType::RegionType RegionType;
+//   const RegionType & region = itk_image->GetLargestPossibleRegion();
+//   image->size[0] = region.GetSize()[0];
+//   image->size[1] = region.GetSize()[1];
+//   image->size[2] = region.GetSize()[2];
 
-  // Spacing
-  image->spacing[0] = itk_image->GetSpacing()[0];
-  image->spacing[1] = itk_image->GetSpacing()[1];
-  image->spacing[2] = itk_image->GetSpacing()[2];
+//   // Spacing
+//   image->spacing[0] = itk_image->GetSpacing()[0];
+//   image->spacing[1] = itk_image->GetSpacing()[1];
+//   image->spacing[2] = itk_image->GetSpacing()[2];
 
-  // Flip ?
-  if (flipAxeIfNegativeFlag) {
-    bool modified = false;
-    if (itk_image->GetDirection()[0][0] < 0) { itk_image = syd::FlipImage<ImageType>(itk_image, 0); modified = true; }
-    if (itk_image->GetDirection()[1][1] < 0) { itk_image = syd::FlipImage<ImageType>(itk_image, 1); modified = true; }
-    if (itk_image->GetDirection()[2][2] < 0) { itk_image = syd::FlipImage<ImageType>(itk_image, 2); modified = true; }
-    if (modified) {
-      LOG(2) << "Flip image";
-      syd::WriteImage<ImageType>(itk_image, GetAbsolutePath(image));
-    }
-  }
+//   // Flip ?
+//   if (flipAxeIfNegativeFlag) {
+//     bool modified = false;
+//     if (itk_image->GetDirection()[0][0] < 0) { itk_image = syd::FlipImage<ImageType>(itk_image, 0); modified = true; }
+//     if (itk_image->GetDirection()[1][1] < 0) { itk_image = syd::FlipImage<ImageType>(itk_image, 1); modified = true; }
+//     if (itk_image->GetDirection()[2][2] < 0) { itk_image = syd::FlipImage<ImageType>(itk_image, 2); modified = true; }
+//     if (modified) {
+//       LOG(2) << "Flip image";
+//       syd::WriteImage<ImageType>(itk_image, GetAbsolutePath(image));
+//     }
+//   }
 
-  // MD5
-  if (computeMD5Flag) {
-    std::string md5 = syd::ComputeImageMD5<ImageType>(itk_image);
-    if (image->type == "mhd") {
-      if (image->files.size() != 2) {
-        LOG(FATAL) << "Error while updating md5 for the image, I expect 2 Files: " << image;
-      }
-      image->files[1]->md5 = md5;
-      Update(image->files[1]);
-    }
-  }
-}
+//   // MD5
+//   if (computeMD5Flag) {
+//     std::string md5 = syd::ComputeImageMD5<ImageType>(itk_image);
+//     if (image->type == "mhd") {
+//       if (image->files.size() != 2) {
+//         LOG(FATAL) << "Error while updating md5 for the image, I expect 2 Files: " << image;
+//       }
+//       image->files[1]->md5 = md5;
+//       Update(image->files[1]);
+//     }
+//   }
+// }
 // --------------------------------------------------------------------
+
+
+// // --------------------------------------------------------------------
+// template<class Table>
+// Table::pointer syd::StandardDatabase::InsertNew()
+// {
+//   Table::pointer r;
+//   New(r);
+//   Insert(r);
+//   return r;
+// }
+// // --------------------------------------------------------------------

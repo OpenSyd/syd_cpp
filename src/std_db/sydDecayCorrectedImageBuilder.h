@@ -20,8 +20,7 @@
 #define SYDDECAYCORRECTEDIMAGEBUILDER_H
 
 // syd
-#include "sydStandardDatabase.h"
-#include "sydImage.h"
+#include "sydImageBuilderBase.h"
 #include "sydCalibration.h"
 
 // --------------------------------------------------------------------
@@ -30,26 +29,14 @@ namespace syd {
   /// Convert a spect image by correcting for the decay.
   /// Input pixel image should be in 'counts' unity
   /// Output pixel will be in MBq by injected MBq  and decay corrected.
-  class DecayCorrectedImageBuilder {
+  class DecayCorrectedImageBuilder: public syd::ImageBuilderBase {
 
   public:
     /// Constructor.
-    DecayCorrectedImageBuilder(StandardDatabase * db);
-
-    /// Destructor (empty)
-    ~DecayCorrectedImageBuilder() {}
-
-    /// Set the pointer to the database
-    void SetDatabase(StandardDatabase * db) { db_ = db; }
+    DecayCorrectedImageBuilder(StandardDatabase * db):ImageBuilderBase(db) {}
 
     /// Main function
-    Image::pointer CreateDecayCorrectedImage(Image::pointer image, Calibration::pointer calib);
-
-  protected:
-    /// Protected constructor. No need to use directly.
-    DecayCorrectedImageBuilder();
-
-    StandardDatabase * db_;
+    Image::pointer InsertDecayCorrectedImage(Image::pointer image, Calibration::pointer calib);
 
   }; // class DecayCorrectedImageBuilder
 } // namespace syd
