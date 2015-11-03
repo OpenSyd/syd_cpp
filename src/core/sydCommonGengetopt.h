@@ -20,51 +20,50 @@
 #define SYDCOMMONGENGETOPT_H
 
 //--------------------------------------------------------------------
-#define GGO2(ggo_filename, args_info)                                                                      \
-  args_info_##ggo_filename args_info;                                                                      \
-  cmdline_parser_##ggo_filename##_params args_params;                                                      \
-  cmdline_parser_##ggo_filename##_params_init(&args_params);                                               \
-  args_params.print_errors = 1;                                                                            \
-  args_params.check_required = 0;                                                                          \
-  args_params.override = 1;                                                                                \
-  args_params.initialize = 1;                                                                              \
-  if(0 != cmdline_parser_##ggo_filename##_ext(argc, argv, &args_info, &args_params) )                      \
-    {                                                                                                      \
-    std::cerr << "Error in cmdline_parser_" #ggo_filename "_ext" << std::endl;                             \
-    exit(1);                                                                                               \
-    }                                                                                                      \
-  std::string configFile;                                                                                  \
-  if(args_info.config_given)                                                                               \
-    configFile = args_info.config_arg;                                                                     \
-  cmdline_parser_##ggo_filename##_free(&args_info);                                                        \
-  if (configFile != "")                                                                                    \
-    {                                                                                                      \
-    if(0 != cmdline_parser_##ggo_filename##_config_file (configFile.c_str(), &args_info, &args_params) )   \
-      {                                                                                                    \
-      std::cerr << "Error in cmdline_parser_" #ggo_filename "_config_file" << std::endl;                   \
-      exit(1);                                                                                             \
-      }                                                                                                    \
-    args_params.initialize = 0;                                                                            \
-    }                                                                                                      \
-  args_params.check_required = 1;                                                                          \
-  if(0 != cmdline_parser_##ggo_filename##_ext(argc, argv, &args_info, &args_params) )                      \
-    {                                                                                                      \
-    std::cerr << "Error in cmdline_parser_" #ggo_filename "_ext" << std::endl;                             \
-    exit(1);                                                                                               \
+#define GGO2(ggo_filename, args_info)                                   \
+  args_info_##ggo_filename args_info;                                   \
+  cmdline_parser_##ggo_filename##_params args_params;                   \
+  cmdline_parser_##ggo_filename##_params_init(&args_params);            \
+  args_params.print_errors = 1;                                         \
+  args_params.check_required = 0;                                       \
+  args_params.override = 1;                                             \
+  args_params.initialize = 1;                                           \
+  if(0 != cmdline_parser_##ggo_filename##_ext(argc, argv, &args_info, &args_params) ) \
+    {                                                                   \
+      std::cerr << "Error in cmdline_parser_" #ggo_filename "_ext" << std::endl; \
+      exit(1);                                                          \
+    }                                                                   \
+  std::string configFile;                                               \
+  if(args_info.config_given)                                            \
+    configFile = args_info.config_arg;                                  \
+  cmdline_parser_##ggo_filename##_free(&args_info);                     \
+  if (configFile != "")                                                 \
+    {                                                                   \
+      if(0 != cmdline_parser_##ggo_filename##_config_file (configFile.c_str(), &args_info, &args_params) ) \
+        {                                                               \
+          std::cerr << "Error in cmdline_parser_" #ggo_filename "_config_file" << std::endl; \
+          exit(1);                                                      \
+        }                                                               \
+      args_params.initialize = 0;                                       \
+    }                                                                   \
+  args_params.check_required = 1;                                       \
+  if(0 != cmdline_parser_##ggo_filename##_ext(argc, argv, &args_info, &args_params) ) \
+    {                                                                   \
+      std::cerr << "Error in cmdline_parser_" #ggo_filename "_ext" << std::endl; \
+      exit(1);                                                          \
     }
 //--------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------
-#define SYD_INIT_GGO(ggo_filename, N)                                   \
-  GGO2(ggo_filename, args_info);                                        \
-  sydlog::Log::SQLFlag() = args_info.verboseSQL_flag;                   \
-  sydlog::Log::LogLevel() = args_info.verbose_arg;                      \
-  if (args_info.inputs_num < N) {                                       \
-    cmdline_parser_##ggo_filename##_print_help();                       \
-      LOG(FATAL) << "Please provide at least "#N" params";              \
+#define SYD_INIT_GGO(ggo_filename, N)                           \
+  GGO2(ggo_filename, args_info);                                \
+  sydlog::Log::SQLFlag() = args_info.verboseSQL_flag;           \
+  sydlog::Log::LogLevel() = args_info.verbose_arg;              \
+  if (args_info.inputs_num < N) {                               \
+    cmdline_parser_##ggo_filename##_print_help();               \
+    LOG(FATAL) << "Please provide at least "#N" params";        \
   }
 //--------------------------------------------------------------------
-
 
 #endif
