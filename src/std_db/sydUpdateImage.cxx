@@ -22,6 +22,7 @@
 #include "sydPluginManager.h"
 #include "sydRoiStatisticBuilder.h"
 #include "sydCommonGengetopt.h"
+#include "sydScaleImageBuilder.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -64,12 +65,12 @@ int main(int argc, char* argv[])
     if (b) {
 
       // Create the update builder
-      // syd::ScaleImageBuilder builder(db);
+      syd::ScaleImageBuilder builder(db);
+      double s = 1.0;
 
       // Need to scale ?
       if (args_info.scale_given) {
-        double s = args_info.scale_arg;
-        DD(s);
+        s = args_info.scale_arg;
         if (args_info.N_given and args_info.tia_given) {
           syd::IdType id = args_info.tia_arg;
           syd::Image::pointer tia;
@@ -77,8 +78,6 @@ int main(int argc, char* argv[])
           syd::RoiStatisticBuilder builder(db);
           builder.SetImage(tia); // no mask, whole image
           syd::RoiStatistic::pointer stat = builder.ComputeStatistic();
-          DD(stat->sum);
-          DD(args_info.N_arg);
           s = s * (stat->sum / args_info.N_arg);
         }
         else {
@@ -86,15 +85,9 @@ int main(int argc, char* argv[])
             LOG(WARNING) << "Option -N and --tia must be both set. Ignoring. ";
           }
         }
-        DD(s);
-
         // scale and update
-        // builder->ScalePixelValue(image, s);
+        builder.ScalePixelValue(image, s);
       }
-
-      // read itk image and update information (also flip image if needed);
-      //      db->UpdateImageInfoFromFile(image, db->GetAbsolutePath(image), true, true);
-      // builder->UpdateImageInfoFromFile(image, true, true);
 
       // If needed update the unit
       if (args_info.pixelunit_given) {
@@ -110,7 +103,7 @@ int main(int argc, char* argv[])
 
       // update db
       db->Update(image);
-      LOG(1) << "Updating image " << image;
+      LOG(1) << "Image was scaled by " << s << ": " << image;
     }
   }
   // This is the end, my friend.
