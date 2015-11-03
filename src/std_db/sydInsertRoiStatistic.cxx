@@ -45,15 +45,31 @@ int main(int argc, char* argv[])
   syd::Image::pointer image;
   db->QueryOne(image, id);
 
-  // Compute the stat
+  // Get the mask
   syd::RoiStatisticBuilder builder(db);
-  builder.SetImage(image);
-  builder.SetRoiType(args_info.inputs[0]);
-  syd::RoiStatistic::pointer stat = builder.ComputeStatistic();
+  syd::RoiMaskImage::pointer mask = builder.FindMask(image, args_info.inputs[0]);
 
-  // Update the db
-  db->Insert(stat);
-  LOG(1) << "Insert RoiStatistic: " << stat;
-  // This is the end, my friend.
+  // Init the RoiStatistic object
+  bool newStat = false;
+  syd::RoiStatistic::pointer stat;
+  if (!builder.Exists(&stat, image, mask)) {
+    db->New(stat);
+    stat->image = image;
+    stat->mask = mask;
+    newStat = true;
+  }
+
+  // Update the value
+  builder.ComputeStatistic(stat);
+
+  // Update
+  if (newStat) {
+    db->Insert(stat);
+    LOG(1) << "Insert RoiStatistic: " << stat;
+  }
+  else {
+    db->Update(stat);
+    LOG(1) << "Update RoiStatistic: " << stat;
+  }
 }
 // --------------------------------------------------------------------

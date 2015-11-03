@@ -37,17 +37,18 @@ namespace syd {
     /// Destructor (empty)
     ~RoiStatisticBuilder() {}
 
-    /// Set the input image (required)
-    void SetImage(syd::Image::pointer im);
+    /// Get the mask of the given image that is of roiname and has the
+    /// same frame_of_reference_uid. Raise exception is not found
+    syd::RoiMaskImage::pointer FindMask(const syd::Image::pointer input,
+                                        const std::string roiname);
 
-    /// Set the mask (not required)
-    void SetRoiMaskImage(syd::RoiMaskImage::pointer m);
-
-    /// Look for the RoiMaskImage associated with this roitype and the image
-    void SetRoiType(std::string name);
+    /// Retrieve a RoiStatistic with the  given image and mask, if exists.
+    bool Exists(syd::RoiStatistic::pointer * stat,
+                const syd::Image::pointer image,
+                const syd::RoiMaskImage::pointer mask);
 
     /// Create a RoiStatistic. It it not inserted into the db
-    syd::RoiStatistic::pointer ComputeStatistic();
+    void ComputeStatistic(syd::RoiStatistic::pointer stat);
 
   protected:
     /// Protected constructor. No need to use directly.
@@ -58,15 +59,6 @@ namespace syd {
 
     /// Pointer to the database
     syd::StandardDatabase * db_;
-
-    /// Pointer to the input image
-    syd::Image::pointer input;
-
-    /// Pointer to the mask
-    syd::RoiMaskImage::pointer mask;
-
-    /// Pointer to the output image
-    syd::Image::pointer output;
 
   }; // class RoiStatisticBuilder
 

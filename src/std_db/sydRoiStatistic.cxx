@@ -37,10 +37,10 @@ std::string syd::RoiStatistic::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
-     << image->patient->name
+     << image->patient->name << " "
      << image->id << " "
-     << image->pixel_value_unit->name
-     << GetLabels(image->tags)
+     << image->pixel_value_unit->name << " "
+     << GetLabels(image->tags) << " "
      << mask->id << " "
      << mean << " " << std_dev << " "  << n << " "
      << min << " " << max << " " << sum;

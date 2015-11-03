@@ -26,46 +26,16 @@
 syd::RoiStatisticBuilder::RoiStatisticBuilder(syd::StandardDatabase * db)
 {
   SetDatabase(db);
-  input = NULL;
-  output = NULL;
-  mask = NULL;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::RoiStatisticBuilder::RoiStatisticBuilder()
-{
-  db_ = NULL;
 }
 // --------------------------------------------------------------------
 
 
 
 // --------------------------------------------------------------------
-void syd::RoiStatisticBuilder::SetImage(syd::Image::pointer im)
+syd::RoiMaskImage::pointer
+syd::RoiStatisticBuilder::FindMask(const syd::Image::pointer input,
+                                   const std::string roiname)
 {
-  input = im;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::RoiStatisticBuilder::SetRoiMaskImage(syd::RoiMaskImage::pointer m)
-{
-  mask = m;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::RoiStatisticBuilder::SetRoiType(std::string roiname)
-{
-  if (input == NULL) {
-    LOG(FATAL) << "Use SetImage before SetRoiType";
-  }
-
-  syd::RoiMaskImage::pointer roimask;
   syd::RoiType::pointer roitype = db_->FindRoiType(roiname);
   typedef odb::query<syd::RoiMaskImage> Q;
   Q q = Q::roitype == roitype->id and Q::frame_of_reference_uid == input->frame_of_reference_uid;
@@ -79,42 +49,47 @@ void syd::RoiStatisticBuilder::SetRoiType(std::string roiname)
     LOG(FATAL) << "Several roimask exist with type '" << roitype->name
                << "' and same frame_of_reference_uid for the image: " << input;
   }
-  SetRoiMaskImage(roimasks[0]);
+  return roimasks[0];
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::RoiStatistic::pointer
-syd::RoiStatisticBuilder::ComputeStatistic()
+bool syd::RoiStatisticBuilder::Exists(syd::RoiStatistic::pointer * stat,
+                                      const syd::Image::pointer image,
+                                      const syd::RoiMaskImage::pointer mask)
 {
-  if (input == NULL) {
-    LOG(FATAL) << "Use SetImage before ComputeStatistic";
+  typedef odb::query<syd::RoiStatistic> Q;
+  Q q = Q::mask == mask->id and Q::image == image->id;
+  try {
+    db_->QueryOne(*stat, q);
+    return true;
+  } catch(std::exception & e) {
+    return false;
   }
+}
+// --------------------------------------------------------------------
 
-  // if (mask == NULL) { // No mask, create a temporary one
-  //   LOG(FATAL) << "Use SetRoiMaskImage before ComputeStatistic";
-  // }
 
-  // log
-  LOG(2) << "Input file: " << db_->GetAbsolutePath(input);
-
+// --------------------------------------------------------------------
+void syd::RoiStatisticBuilder::ComputeStatistic(syd::RoiStatistic::pointer stat)
+{
   // Get the itk images
   typedef float PixelType; // whatever the image
   typedef uchar MaskPixelType;
   typedef itk::Image<PixelType,3> ImageType;
   typedef itk::Image<MaskPixelType,3> MaskImageType;
-  ImageType::Pointer itk_input = syd::ReadImage<ImageType>(db_->GetAbsolutePath(input));
+  ImageType::Pointer itk_input = syd::ReadImage<ImageType>(db_->GetAbsolutePath(stat->image));
   MaskImageType::Pointer itk_mask;
 
-  if (mask == NULL) {
+  if (stat->mask == NULL) {
     LOG(2) << "No mask (create temporary image).";
     itk_mask = syd::CreateImageLike<MaskImageType>(itk_input);
     itk_mask->FillBuffer(1);
   }
   else {
-    itk_mask = syd::ReadImage<MaskImageType>(db_->GetAbsolutePath(mask));
-    LOG(2) << "Input mask: " << db_->GetAbsolutePath(mask);
+    itk_mask = syd::ReadImage<MaskImageType>(db_->GetAbsolutePath(stat->mask));
+    LOG(2) << "Input mask: " << db_->GetAbsolutePath(stat->mask);
   }
 
   // FIXME resampling. Resample mask or image ?
@@ -137,22 +112,13 @@ syd::RoiStatisticBuilder::ComputeStatistic()
   double min = filter->GetMinimum(1);
   double max = filter->GetMaximum(1);
   double sum = filter->GetSum(1);
-  DD(sum);
-  DD(n);
 
-  // New object
-  syd::RoiStatistic::pointer stat;
-  db_->New(stat);
-  stat->image = input;
-  stat->mask = mask;
+  // Update value
   stat->mean = mean;
   stat->std_dev = std;
   stat->n = n;
   stat->min = min;
   stat->max = max;
   stat->sum = sum;
-
-  // Warning stat is not in the db
-  return stat;
 }
 // --------------------------------------------------------------------
