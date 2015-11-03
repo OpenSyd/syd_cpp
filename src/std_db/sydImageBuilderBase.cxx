@@ -54,8 +54,8 @@ syd::Image::pointer syd::ImageBuilderBase::InsertNewMHDImageLike(syd::Image::poi
 syd::Image::pointer syd::ImageBuilderBase::InsertNewMHDImage(syd::Patient::pointer patient)
 {
   syd::Image::pointer image;
-  image->patient = patient;
   db_->New(image);
+  image->patient = patient;
   InitializeMHDFiles(image);
   db_->Insert(image);
   RenameToDefaultFilename(image);
@@ -200,15 +200,3 @@ void syd::ImageBuilderBase::RenameToDefaultFilename(syd::RoiMaskImage::pointer m
   db_->Update(mask);
 }
 // --------------------------------------------------------------------
-
-
-// // --------------------------------------------------------------------
-// void InsertFile(const std::string & filename,
-//                 const std::string & relativepath,
-//                 bool deleteExistingFiles=false);
-// // --------------------------------------------------------------------
-
-
-// // --------------------------------------------------------------------
-// void InsertFile(const std::string & path, bool deleteExistingFiles=false);
-// // --------------------------------------------------------------------

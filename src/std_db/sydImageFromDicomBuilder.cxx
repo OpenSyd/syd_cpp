@@ -24,6 +24,7 @@
 syd::Image::pointer syd::ImageFromDicomBuilder::InsertImageFromDicom(const syd::DicomSerie::pointer dicom)
 {
   syd::Image::pointer image = InsertNewMHDImage(dicom);
+  DD(image);
   // image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
   //  RenameToDefaultFilename(image); //--> once the  dicom is set
   //  db_->Insert(image); // to obtain an id

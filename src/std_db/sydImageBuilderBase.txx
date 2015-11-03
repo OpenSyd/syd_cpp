@@ -22,8 +22,6 @@ template<class PixelType>
 void ImageBuilderBase::UpdateImage(syd::Image::pointer image,
                                    typename itk::Image<PixelType,3>::Pointer & itk_image)
 {
-  DD("UpdateImageToFile template");
-
   // Check dimension
   typedef itk::Image<PixelType,3> ImageType;
   auto dim = itk_image->GetImageDimension();

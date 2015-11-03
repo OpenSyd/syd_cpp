@@ -36,16 +36,17 @@ namespace syd {
     /// Set the pointer to the database
     void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
 
-
-    syd::Image::pointer InsertNewMHDImageLike(syd::Image::pointer image);
+    /// Create and insert an empty image (also create associated file)
     syd::Image::pointer InsertNewMHDImage(syd::Patient::pointer patient);
+
+    /// Create and insert a new image and copy fields
+    syd::Image::pointer InsertNewMHDImageLike(syd::Image::pointer image);
+
+    /// Create and insert an image, using the dicom (patient)
     syd::Image::pointer InsertNewMHDImage(syd::DicomSerie::pointer dicom);
+
+    /// Create and insert a new RoiMaskImage
     syd::RoiMaskImage::pointer InsertNewMHDRoiMaskImage(syd::Patient::pointer patient, syd::RoiType::pointer roitype);
-
-
-    void InitializeMHDFiles(syd::Image::pointer image);
-
-    void CheckMHDImage(syd::Image::pointer image);
 
     /// Update image information from the associated file (pixel type, size, md5 etc)
     void UpdateImageFromFile(syd::Image::pointer image, std::string filename);
@@ -56,16 +57,9 @@ namespace syd {
 
     /// Change the filename to the default one (mv file if already exist)
     void RenameToDefaultFilename(syd::Image::pointer image);
+
+    /// Change the filename to the default one (mv file if already exist)
     void RenameToDefaultFilename(syd::RoiMaskImage::pointer mask);
-
-    // // Create a new (empty) image and insert it in the db, using the
-    // // default filename that uses the dicom modality
-    // syd::Image::pointer InsertNewEmptyImage(syd::DicomSerie & dicom);
-
-    // FIXME
-    // TODO syd::FlipImageIfNegativeAxis<ImageType>(itk_image);
-    // TODO UpdateMD5(syd::Image::pointer);
-
 
   protected:
     /// Protected constructor. No need to use directly.
@@ -74,20 +68,12 @@ namespace syd {
     /// Pointer to the database
     syd::StandardDatabase * db_;
 
-    // /// When creating a new image, create the associated file
-    // void InsertFile(syd::Image::pointer image,
-    //                 const std::string & filename,
-    //                 const std::string & relativepath,
-    //                 bool deleteExistingFiles=false);
+    /// Create the associated Files
+    void InitializeMHDFiles(syd::Image::pointer image);
 
-    // /// When creating a new image, create the associated file
-    // void InsertFile(syd::Image::pointer image,
-    //                 const std::string & path,
-    //                 bool deleteExistingFiles=false);
+    /// Raise exception if the image could not be a mhd (2 Files are present etc)
+    void CheckMHDImage(syd::Image::pointer image);
 
-    // /// When creating a new image, create the associated files with
-    // /// default name. The image *must* be persistant in the db, with an id.
-    // void InsertFiles(syd::Image::pointer image);
 
   }; // class ImageBuilderBase
 

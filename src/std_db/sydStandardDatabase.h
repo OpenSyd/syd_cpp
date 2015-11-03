@@ -65,14 +65,6 @@ namespace syd {
     std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
     std::string GetAbsolutePath(const syd::File::pointer file) const;
 
-    void CheckOrCreateRelativePath(std::string relative_path);
-
-    // syd::File::pointer InsertNewEmptyFile();
-    // syd::Image::pointer InsertNewEmptyImage();
-    // syd::RoiMaskImage::pointer InsertNewEmptyRoiMaskImage();
-    // template<class Table>
-    // Table::pointer InsertNew();
-
     void RenameFile(syd::File::pointer file,
                     std::string relative_path,
                     std::string filename);
@@ -86,19 +78,6 @@ namespace syd {
     typename itk::Image<PixelType,3>::Pointer
     ReadImage(const syd::DicomSerie::pointer dicom,
               bool flipAxeIfNegativeFlag) const;
-
-    // /// Update image information from this itk image (type, size, spacing)
-    // template<class PixelType>
-    // void UpdateImageInfo(syd::Image::pointer image,
-    //                      typename itk::Image<PixelType,3>::Pointer & itk_image,
-    //                      bool flipAxeIfNegativeFlag,
-    //                      bool computeMD5Flag);
-
-    // /// Update image information from a file
-    // void UpdateImageInfoFromFile(syd::Image::pointer image,
-    //                              std::string filename,
-    //                              bool flipAxeIfNegativeFlag,
-    //                              bool computeMD5Flag);
 
   protected:
     /// Insert the tables

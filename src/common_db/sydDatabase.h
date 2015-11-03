@@ -76,6 +76,9 @@ namespace syd {
     // ------------------------------------------------------------------------
 
 
+    /// Consider a relative path check if exist, create if not.
+    void CheckOrCreateRelativePath(std::string relative_path);
+
     /* In the following using:
        std::shared_ptr<RecordType> and std::vector<std::shared_ptr<RecordType>>
        instead of typename RecordType::pointer or RecordType::vector
@@ -241,6 +244,9 @@ namespace syd {
 
 
     static std::map<odb::database *, syd::Database *> ListOfLoadedDatabases;
+
+    // FIXME
+    odb::sqlite::database * GetODB_DB() { return odb_db_; }
 
     // ----------------------------------------------------------------------------------
     protected:

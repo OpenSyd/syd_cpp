@@ -131,6 +131,22 @@ void syd::Database::Dump(std::ostream & os) const
 
 
 // --------------------------------------------------------------------
+void syd::Database::CheckOrCreateRelativePath(std::string relative_path)
+{
+  // Check directory or create it
+  std::string absolute_folder = ConvertToAbsolutePath(relative_path);
+  fs::path dir(absolute_folder);
+  if (!fs::exists(dir)) {
+    LOG(4) << "Creating folder: " << absolute_folder;
+    if (!fs::create_directories(dir)) {
+      EXCEPTION("Error, could not create the folder: " << absolute_folder);
+    }
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Database::Dump(const std::string & table_name, const std::string & format, std::ostream & os) const
 {
   syd::Record::vector records;
