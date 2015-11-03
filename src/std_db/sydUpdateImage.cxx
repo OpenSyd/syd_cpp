@@ -76,8 +76,10 @@ int main(int argc, char* argv[])
           syd::Image::pointer tia;
           db->QueryOne(tia, id);
           syd::RoiStatisticBuilder builder(db);
-          builder.SetImage(tia); // no mask, whole image
-          syd::RoiStatistic::pointer stat = builder.ComputeStatistic();
+          syd::RoiStatistic::pointer stat;
+          db->New(stat);
+          stat->image = tia;
+          builder.ComputeStatistic(stat);// no mask
           s = s * (stat->sum / args_info.N_arg);
         }
         else {
