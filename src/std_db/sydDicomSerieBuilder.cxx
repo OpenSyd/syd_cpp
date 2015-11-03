@@ -423,7 +423,7 @@ namespace syd {
         continue;
       }
       LOG(3) << "Copying " << f << " to " << destination_folders[i] << std::endl;
-      CopyFile(files_to_copy[i].c_str(), destination);
+      fs::copy_file(files_to_copy[i].c_str(), destination);
       loadbar(i,n);
     }
 
