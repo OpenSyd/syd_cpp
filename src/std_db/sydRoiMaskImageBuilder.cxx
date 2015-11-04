@@ -25,6 +25,14 @@ syd::RoiMaskImageBuilder::InsertRoiMaskImage(const syd::DicomSerie::pointer & di
                                              const syd::RoiType::pointer & roitype,
                                              const std::string & filename)
 {
+  // First check if the file is ok
+  fs::path dir(filename);
+  if (!fs::exists(dir)) {
+    EXCEPTION("Could not read the file '" << filename << "'.");
+  }
+  auto fake = syd::ReadImageHeader(filename); // -> will raise an exception if bug
+
+  // Create image
   syd::RoiMaskImage::pointer mask = InsertNewMHDRoiMaskImage(dicom->patient, roitype);
   mask->dicoms.push_back(dicom);
   mask->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
