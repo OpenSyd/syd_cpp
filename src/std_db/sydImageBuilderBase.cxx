@@ -81,6 +81,7 @@ syd::RoiMaskImage::pointer syd::ImageBuilderBase::InsertNewMHDRoiMaskImage(syd::
                                                                            syd::RoiType::pointer roitype)
 {
   syd::RoiMaskImage::pointer mask;
+  db_->New(mask);
   mask->patient = patient;
   mask->roitype = roitype;
   db_->New(mask);
