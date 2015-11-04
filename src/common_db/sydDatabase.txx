@@ -174,7 +174,7 @@ void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
     if (r.get() == 0) {
       EXCEPTION("No matching record in QueryOne(q) for the table '"
                 << RecordType::GetStaticTableName()
-                << ". Last sql query is: "
+                << "'. Last sql query is: "
                 << std::endl << GetLastSQLQuery());
     }
     record = r;
