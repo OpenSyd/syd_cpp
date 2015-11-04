@@ -30,7 +30,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydStitchDicom, 3);
+  SYD_INIT_GGO(sydStitchDicom, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -39,15 +39,10 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the tag
-  std::string tagname = args_info.inputs[0];
-  syd::Tag::vector tags;
-  db->FindTags(tags, tagname);
-
   // Get the dicom series to stitch
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
-  for(auto i=1; i<args_info.inputs_num; i++) {
+  for(auto i=0; i<args_info.inputs_num; i++) {
     ids.push_back(atoi(args_info.inputs[i]));
   }
   syd::DicomSerie::vector dicoms;
@@ -83,7 +78,7 @@ int main(int argc, char* argv[])
            << p.first << std::endl
            << p.second << std::endl;
     syd::Image::pointer image = builder.InsertStitchedImage(p.first, p.second);
-    for(auto t:tags) image->AddTag(t);
+    db->SetImageTagsFromCommandLine(image, args_info);
     images.push_back(image);
     LOG(1) << "Inserting Image " << image;
   }

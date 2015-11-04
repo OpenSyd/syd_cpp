@@ -6,5 +6,5 @@ version "0.3"
 description "Create a new RoiMaskImage
 - <roi>          name of the roi type ('liver', 'body' etc. see `sydFind -d RoiType`)
 - <dicom_id>     id of the dicom to be attached to the mask
-- <mask.mhd>     filename (will be copied in the db)
+- <mask.mhd>     filename that will be copied in the db
 "

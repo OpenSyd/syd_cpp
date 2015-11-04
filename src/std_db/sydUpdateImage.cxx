@@ -104,6 +104,7 @@ int main(int argc, char* argv[])
       }
 
       // update db
+      db->SetImageTagsFromCommandLine(image, args_info);
       db->Update(image);
       LOG(1) << "Image was scaled by " << s << ": " << image;
     }

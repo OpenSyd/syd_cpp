@@ -98,6 +98,7 @@ int main(int argc, char* argv[])
     syd::RoiMaskImageBuilder b(db);
     try {
       syd::RoiMaskImage::pointer mask = b.InsertRoiMaskImage(dicom, roitype, mhd_filename);
+      db->SetImageTagsFromCommandLine(mask, args_info);
       LOG(1) << "Inserting RoiMaskImage " << mask;
     }
     catch(std::exception & e) {

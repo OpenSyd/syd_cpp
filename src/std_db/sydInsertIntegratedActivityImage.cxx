@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   SYD_CERES_STATIC_INIT;
 
   // Init
-  SYD_INIT_GGO(sydInsertIntegratedActivityImage, 2);
+  SYD_INIT_GGO(sydInsertIntegratedActivityImage, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -48,11 +48,6 @@ int main(int argc, char* argv[])
 
   // Get the database
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
-
-  // Get the tag
-  std::string tagname = args_info.inputs[0];
-  syd::Tag::vector tags;
-  db->FindTags(tags, tagname);
 
   // Get the list of images to integrate
   std::vector<syd::IdType> ids;
@@ -253,27 +248,13 @@ int main(int argc, char* argv[])
   builder.SaveDebugPixel("tac.txt");
   builder.SaveDebugModel("models.txt");
 
-  // Copy all tags of the given images, remove duplicate
-  for(auto im:images) for(auto t:im->tags) tags.push_back(t);
-  auto lower = [](syd::Tag::pointer const & v1, syd::Tag::pointer const & v2) { return v1->id < v2->id; };
-  std::sort(tags.begin(), tags.end(), lower);
-  auto same_id = [](syd::Tag::pointer const & v1, syd::Tag::pointer const & v2) { return v1->id == v2->id; };
-  tags.erase(std::unique(tags.begin(), tags.end(), same_id), tags.end());
-
   // Insert result in db
   syd::ImageBuilderBase bdb(db);
   syd::Image::pointer output = bdb.InsertNewMHDImageLike(images[0]);
-  // db->New(output);
-  // output->CopyFrom(images[0]);
-  // for(auto t:tags) output->AddTag(t);
-  // output->id = -1; // before insertion
-  // db->Insert(output);
+  bdb.UpdateImage<PixelType>(output, auc->image);
 
-  // Dump the itk image
-  // std::string absolutepath = output->ComputeDefaultAbsolutePath(db);
-  // ImageType::Pointer itk_image = auc->image;
-  // syd::WriteImage<ImageType>(itk_image, absolutepath);
-  bdb.UpdateImage<PixelType>(output, auc->image);//db, absolutepath);
+  // Tags
+  db->SetImageTagsFromCommandLine(output, args_info);
 
   // Change pixel value
   syd::PixelValueUnit::pointer v = db->FindOrInsertUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq");

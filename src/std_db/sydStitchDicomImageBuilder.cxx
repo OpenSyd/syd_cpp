@@ -56,22 +56,6 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
   image->dicoms.push_back(b);
   syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("counts", "Number of counts");
   image->pixel_value_unit = unit;
-  //  RenameToDefaultFilename(image);
-
-  // std::ostringstream oss;
-  // oss << a->dicom_modality << "_" << image->id << ".mhd";
-  // std::string mhd_filename = oss.str();
-  // std::string mhd_relative_path = image->ComputeRelativeFolder()+PATH_SEPARATOR;
-  // std::string mhd_path = db_->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
-  // image->UpdateFile(db_, mhd_filename, mhd_relative_path);
-
-  //  UpdateImage
-
-  //  RenameFile(image, mhd_relative_path, mhd_filename);
-
-  // Auto tag
-  syd::Tag::pointer tag_stitch = db_->FindOrInsertTag("stitch", "Image computed by stitching 2 images");
-  image->AddTag(tag_stitch);
 
   // Read the dicom images
   typedef float PixelType;
@@ -81,16 +65,7 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
 
   // Stitch (default values for now, to be changed!)
   ImageType::Pointer output = syd::StitchImages<ImageType>(image_a, image_b, 150000, 4);
-
-  // Update the image values
-  //  db_->UpdateImageInfo<PixelType>(image, output, true, true); // true = update md5
-
-  // Write image
-  // syd::WriteImage<ImageType>(output, db_->GetAbsolutePath(image));
-
-  // Update the image info
   UpdateImage<PixelType>(image, output);
-  //db_->Update(image);
   return image;
 }
 // --------------------------------------------------------------------

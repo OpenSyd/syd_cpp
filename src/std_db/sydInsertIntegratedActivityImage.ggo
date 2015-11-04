@@ -1,14 +1,12 @@
 #File sydInsertIntegratedActivityImage.ggo
 
 package "syd"
-version "0.3"
-usage "sydInsertIntegratedActivityImage <tag> <image_ids>"
+version "0.4"
+usage "sydInsertIntegratedActivityImage <image_ids>"
 description "Create a new (mhd) Image for each given dicom
+- <list_of_image_ids>     list of image id to integrate
 
 Input image should be in MBq_by_IA unit;
-
-- <tag>                   name for the tag associated with images
-- <list_of_image_ids>     list of image id to integrate
 "
 
 option "min_activity"   	-       "Dont fit if activity lower than this value"       float default="0.01" no

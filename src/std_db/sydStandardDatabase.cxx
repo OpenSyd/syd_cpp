@@ -183,25 +183,6 @@ void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::string 
 
 
 // --------------------------------------------------------------------
-syd::Tag::pointer syd::StandardDatabase::FindOrInsertTag(const std::string & label,
-                                                         const std::string & description)
-{
-  syd::Tag::pointer tag;
-  try {
-    odb::query<syd::Tag> q = odb::query<syd::Tag>::label == label;
-    QueryOne(tag, q);
-  } catch (std::exception & e) {
-    New(tag);
-    tag->label=label;
-    tag->description=description;
-    Insert(tag);
-  }
-  return tag;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 syd::PixelValueUnit::pointer syd::StandardDatabase::FindOrInsertUnit(const std::string & name,
                                                                      const std::string & description)
 {

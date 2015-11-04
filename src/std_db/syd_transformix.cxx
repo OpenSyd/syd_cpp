@@ -139,27 +139,7 @@ int main(int argc, char* argv[])
     // Create output image
     syd::ImageBuilderBase builder(db);
     syd::Image::pointer output_image = builder.InsertNewMHDImageLike(input_image);
-    // db->New(output_image);
-    // output_image->CopyFrom(input_image);
-    //output_image->tags.clear(); // remove the tags
-    // output_image->frame_of_reference_uid = transform->fixed_image->frame_of_reference_uid; // copy the ref from the fixed_image
-    //    db->Insert(output_image);
-    // std::ostringstream oss;
-    // if (input_image->dicoms.size() == 0) oss << "IMAGE_" << output_image->id << ".mhd";
-    // else oss << input_image->dicoms[0]->dicom_modality << "_" << output_image->id << ".mhd";
-    // std::string mhd_filename = oss.str();
-    // std::string mhd_relative_path = output_image->ComputeRelativeFolder()+PATH_SEPARATOR;
-    // std::string mhd_path = db->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
-    // output_image->UpdateFile(db, mhd_filename, mhd_relative_path);
-    // std::string output_image_path = db->GetAbsolutePath(output_image);
-
-    // builder.UpdateImageToFile
-
-    // Tag ? ct spect mask to copy ; transform to add
-    syd::Tag::vector tags;
-    db->FindTags(tags, args_info.tags_arg);
-    for(auto t:tags) output_image->AddTag(t);
-
+    db->SetImageTagsFromCommandLine(output_image, args_info);
     db->Update(output_image);
 
     // Create command line

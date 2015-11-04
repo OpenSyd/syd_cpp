@@ -57,17 +57,8 @@ int main(int argc, char* argv[])
   // Update image data (size etc) from file
   builder.UpdateImageFromFile(output, filename);
 
-  // // Copy the file in the db
-  // std::string absolutepath = output->ComputeDefaultAbsolutePath(db);
-  // syd::CopyMHDImage(filename, absolutepath);
-  // output->UpdateFile(db, absolutepath);
-
   // Add optional tag
-  if (args_info.tags_given) {
-    syd::Tag::vector tags;
-    db->FindTags(tags, args_info.tags_arg);
-    for(auto t:tags) output->AddTag(t);
-  }
+  db->SetImageTagsFromCommandLine(output, args_info);
 
   // Set optional unity
   if (args_info.pixelunit_given) {
