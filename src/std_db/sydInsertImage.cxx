@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
   db->QueryOne(input, id);
 
   // Create the new image
-  syd::ImageBuilderBase builder(db);
+  syd::ImageBuilder builder(db);
   syd::Image::pointer output = builder.InsertNewMHDImageLike(input);
 
   // Update image data (size etc) from file

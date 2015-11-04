@@ -17,10 +17,10 @@
   ===========================================================================**/
 
 // syd
-#include "sydImageBuilderBase.h"
+#include "sydImageBuilder.h"
 
 // --------------------------------------------------------------------
-void syd::ImageBuilderBase::InitializeMHDFiles(syd::Image::pointer image)
+void syd::ImageBuilder::InitializeMHDFiles(syd::Image::pointer image)
 {
   image->type = "mhd";
   syd::File::pointer file_mhd;
@@ -35,7 +35,7 @@ void syd::ImageBuilderBase::InitializeMHDFiles(syd::Image::pointer image)
 
 
 // --------------------------------------------------------------------
-syd::Image::pointer syd::ImageBuilderBase::InsertNewMHDImageLike(syd::Image::pointer input)
+syd::Image::pointer syd::ImageBuilder::InsertNewMHDImageLike(syd::Image::pointer input)
 {
   syd::Image::pointer image = InsertNewMHDImage(input->patient);
   if (input->dicoms.size() != 0) {
@@ -51,7 +51,7 @@ syd::Image::pointer syd::ImageBuilderBase::InsertNewMHDImageLike(syd::Image::poi
 
 
 // --------------------------------------------------------------------
-syd::Image::pointer syd::ImageBuilderBase::InsertNewMHDImage(syd::Patient::pointer patient)
+syd::Image::pointer syd::ImageBuilder::InsertNewMHDImage(syd::Patient::pointer patient)
 {
   syd::Image::pointer image;
   db_->New(image);
@@ -65,7 +65,7 @@ syd::Image::pointer syd::ImageBuilderBase::InsertNewMHDImage(syd::Patient::point
 
 
 // --------------------------------------------------------------------
-syd::Image::pointer syd::ImageBuilderBase::InsertNewMHDImage(syd::DicomSerie::pointer dicom)
+syd::Image::pointer syd::ImageBuilder::InsertNewMHDImage(syd::DicomSerie::pointer dicom)
 {
   syd::Image::pointer image = InsertNewMHDImage(dicom->patient);
   image->dicoms.push_back(dicom);
@@ -77,7 +77,7 @@ syd::Image::pointer syd::ImageBuilderBase::InsertNewMHDImage(syd::DicomSerie::po
 
 
 // --------------------------------------------------------------------
-syd::RoiMaskImage::pointer syd::ImageBuilderBase::InsertNewMHDRoiMaskImage(syd::Patient::pointer patient,
+syd::RoiMaskImage::pointer syd::ImageBuilder::InsertNewMHDRoiMaskImage(syd::Patient::pointer patient,
                                                                            syd::RoiType::pointer roitype)
 {
   syd::RoiMaskImage::pointer mask;
@@ -93,7 +93,7 @@ syd::RoiMaskImage::pointer syd::ImageBuilderBase::InsertNewMHDRoiMaskImage(syd::
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilderBase::UpdateImageFromFile(syd::Image::pointer image, std::string filename)
+void syd::ImageBuilder::UpdateImageFromFile(syd::Image::pointer image, std::string filename)
 {
   // Read itk image header to get the pixel type
   auto header = syd::ReadImageHeader(filename);
@@ -129,7 +129,7 @@ void syd::ImageBuilderBase::UpdateImageFromFile(syd::Image::pointer image, std::
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilderBase::RenameToDefaultFilename(syd::Image::pointer image)
+void syd::ImageBuilder::RenameToDefaultFilename(syd::Image::pointer image)
 {
   // Check
   CheckMHDImage(image);
@@ -156,7 +156,7 @@ void syd::ImageBuilderBase::RenameToDefaultFilename(syd::Image::pointer image)
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilderBase::CheckMHDImage(syd::Image::pointer image)
+void syd::ImageBuilder::CheckMHDImage(syd::Image::pointer image)
 {
   if (image->type != "mhd") {
     EXCEPTION("I only know 'mhd' as image type, while it is: " << image->type);
@@ -176,7 +176,7 @@ void syd::ImageBuilderBase::CheckMHDImage(syd::Image::pointer image)
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilderBase::RenameToDefaultFilename(syd::RoiMaskImage::pointer mask)
+void syd::ImageBuilder::RenameToDefaultFilename(syd::RoiMaskImage::pointer mask)
 {
   // Check
   CheckMHDImage(mask);

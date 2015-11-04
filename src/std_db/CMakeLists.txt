@@ -45,7 +45,7 @@ add_library(sydStandardDatabase SHARED
   sydPixelValueUnit-odb.cxx sydPixelValueUnit.cxx
   sydRoiStatistic-odb.cxx sydRoiStatistic.cxx
 
-  sydImageBuilderBase.cxx
+  sydImageBuilder.cxx
 
   sydImageFromDicomBuilder.cxx
   sydStitchDicomImageBuilder.cxx

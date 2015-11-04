@@ -20,7 +20,7 @@
 #define SYDSUBSTITUTERADIONUCLIDEIMAGEBUILDER_h
 
 // syd
-#include "sydImageBuilderBase.h"
+#include "sydImageBuilder.h"
 #include "sydCalibration.h"
 
 // --------------------------------------------------------------------
@@ -29,11 +29,11 @@ namespace syd {
   /// Convert a spect image by correcting for the decay.
   /// Input pixel image should be in 'counts' unity
   /// Output pixel will be in MBq by injected MBq  and decay corrected.
-  class SubstituteRadionuclideImageBuilder: public syd::ImageBuilderBase {
+  class SubstituteRadionuclideImageBuilder: public syd::ImageBuilder {
 
   public:
     /// Constructor.
-    SubstituteRadionuclideImageBuilder(StandardDatabase * db):ImageBuilderBase(db) {}
+    SubstituteRadionuclideImageBuilder(StandardDatabase * db):ImageBuilder(db) {}
 
     /// Main function
     Image::pointer CreateRadionuclideSubstitutedImage(Image::pointer image, Radionuclide::pointer rad);

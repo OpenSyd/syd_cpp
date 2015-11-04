@@ -27,11 +27,11 @@ namespace syd {
 
   /// This base class is used to create ImageBuilder class that perform operation on Images
   /// series and images.
-  class ImageBuilderBase {
+  class ImageBuilder {
 
   public:
     /// Constructor.
-    ImageBuilderBase(syd::StandardDatabase * db) { SetDatabase(db); }
+    ImageBuilder(syd::StandardDatabase * db) { SetDatabase(db); }
 
     /// Set the pointer to the database
     void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
@@ -63,7 +63,7 @@ namespace syd {
 
   protected:
     /// Protected constructor. No need to use directly.
-    ImageBuilderBase();
+    ImageBuilder();
 
     /// Pointer to the database
     syd::StandardDatabase * db_;
@@ -75,9 +75,9 @@ namespace syd {
     void CheckMHDImage(syd::Image::pointer image);
 
 
-  }; // class ImageBuilderBase
+  }; // class ImageBuilder
 
-#include "sydImageBuilderBase.txx"
+#include "sydImageBuilder.txx"
 
 } // namespace syd
 // --------------------------------------------------------------------

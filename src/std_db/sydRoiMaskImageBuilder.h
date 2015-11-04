@@ -16,7 +16,7 @@
 #define SYDROIMASKIMAGEBUILDER_H
 
 // syd
-#include "sydImageBuilderBase.h"
+#include "sydImageBuilder.h"
 
 // itk
 #include <itkImageBase.h>
@@ -27,11 +27,11 @@ namespace syd {
   /// This class is used to create a Image. A Image is defined
   /// with an injection, a patient, some tag, some associated dicom
   /// series and images.
-  class RoiMaskImageBuilder: public syd::ImageBuilderBase {
+  class RoiMaskImageBuilder: public syd::ImageBuilder {
 
   public:
     /// Constructor.
-    RoiMaskImageBuilder(syd::StandardDatabase * db):ImageBuilderBase(db) { }
+    RoiMaskImageBuilder(syd::StandardDatabase * db):ImageBuilder(db) { }
 
     /// Create & Insert a RoiMaskImage from an image.mhd
     syd::RoiMaskImage::pointer

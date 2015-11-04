@@ -19,7 +19,7 @@
 
 // --------------------------------------------------------------------
 template<class PixelType>
-void ImageBuilderBase::UpdateImage(syd::Image::pointer image,
+void ImageBuilder::UpdateImage(syd::Image::pointer image,
                                    typename itk::Image<PixelType,3>::Pointer & itk_image)
 {
   // Check dimension

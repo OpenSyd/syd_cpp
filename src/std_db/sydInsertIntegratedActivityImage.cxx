@@ -24,7 +24,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydIntegratedActivityImageBuilder.h"
 #include "sydImageFillHoles.h"
-#include "sydImageBuilderBase.h"
+#include "sydImageBuilder.h"
 #include "sydImage_GaussianFilter.h"
 
 // itk in syd source
@@ -249,7 +249,7 @@ int main(int argc, char* argv[])
   builder.SaveDebugModel("models.txt");
 
   // Insert result in db
-  syd::ImageBuilderBase bdb(db);
+  syd::ImageBuilder bdb(db);
   syd::Image::pointer output = bdb.InsertNewMHDImageLike(images[0]);
   bdb.UpdateImage<PixelType>(output, auc->image);
 

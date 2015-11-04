@@ -22,7 +22,7 @@
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
-#include "sydImageBuilderBase.h"
+#include "sydImageBuilder.h"
 
 #include "boost/date_time/gregorian/gregorian.hpp" //include all types plus i/o
 #include "boost/date_time/posix_time/posix_time.hpp"
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
     }
 
     // Create output image
-    syd::ImageBuilderBase builder(db);
+    syd::ImageBuilder builder(db);
     syd::Image::pointer output_image = builder.InsertNewMHDImageLike(input_image);
     db->SetImageTagsFromCommandLine(output_image, args_info);
     db->Update(output_image);

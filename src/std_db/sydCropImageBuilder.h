@@ -20,7 +20,7 @@
 #define SYDCROPIMAGEBUILDER_H
 
 // syd
-#include "sydImageBuilderBase.h"
+#include "sydImageBuilder.h"
 #include "sydImageCrop.h"
 
 // --------------------------------------------------------------------
@@ -29,11 +29,11 @@ namespace syd {
   /// This class is used to create a Image. A Image is defined
   /// with an injection, a patient, some tag, some associated dicom
   /// series and images.
-  class CropImageBuilder: public syd::ImageBuilderBase {
+  class CropImageBuilder: public syd::ImageBuilder {
 
   public:
     /// Constructor.
-    CropImageBuilder(syd::StandardDatabase * db):ImageBuilderBase(db) {}
+    CropImageBuilder(syd::StandardDatabase * db):ImageBuilder(db) {}
 
     /// Update an image by cropping according to the given mask
     void CropImageLike(syd::Image::pointer image, const syd::Image::pointer like, bool resampleFlag, bool forceFlag=false);

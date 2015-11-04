@@ -20,17 +20,17 @@
 #define SYDSTITCHDICOMIMAGEBUILDER_H
 
 // syd
-#include "sydImageBuilderBase.h"
+#include "sydImageBuilder.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
   /// This class is used to stitch 2 dicoms together and create an image.
-  class StitchDicomImageBuilder: public syd::ImageBuilderBase {
+  class StitchDicomImageBuilder: public syd::ImageBuilder {
 
   public:
     /// Constructor.
-    StitchDicomImageBuilder(syd::StandardDatabase * db):ImageBuilderBase(db) {}
+    StitchDicomImageBuilder(syd::StandardDatabase * db):ImageBuilder(db) {}
 
     /// Create & Insert a new Image by stitching 2 dicoms
     syd::Image::pointer InsertStitchedImage(const syd::DicomSerie::pointer a, const syd::DicomSerie::pointer b);
