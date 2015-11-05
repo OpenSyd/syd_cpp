@@ -30,11 +30,12 @@ namespace syd {
   class RoiStatistic : public syd::Record {
   public:
 
-#pragma db not_null
-    /// Linked image
+#pragma db not_null on_delete(cascade)
+    /// Linked image. If the image is deleted, the RoiStatistic also.
     syd::Image::pointer image;
 
-    /// Linked mask. Maybe null (no mask)
+#pragma db on_delete(cascade)
+    /// Linked mask. May be null (no mask). The RoiStatistic is deleted if the mask is.
     syd::RoiMaskImage::pointer mask;
 
     /// Stat values

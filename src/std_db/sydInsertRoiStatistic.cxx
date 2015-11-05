@@ -40,36 +40,56 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the Image
-  syd::IdType id = atoi(args_info.inputs[1]);
-  syd::Image::pointer image;
-  db->QueryOne(image, id);
-
-  // Get the mask
-  syd::RoiStatisticBuilder builder(db);
-  syd::RoiMaskImage::pointer mask = builder.FindMask(image, args_info.inputs[0]);
-
-  // Init the RoiStatistic object
-  bool newStat = false;
-  syd::RoiStatistic::pointer stat;
-  if (!builder.Exists(&stat, image, mask)) {
-    db->New(stat);
-    stat->image = image;
-    stat->mask = mask;
-    newStat = true;
+  // Get the list of images
+  std::vector<syd::IdType> ids;
+  syd::ReadIdsFromInputPipe(ids);
+  for(auto i=1; i<args_info.inputs_num; i++) {
+    ids.push_back(atoi(args_info.inputs[i]));
+  }
+  syd::Image::vector images;
+  db->Query(images, ids);
+  if (images.size() == 0) {
+    LOG(FATAL) << "No image ids given. I do nothing.";
   }
 
-  // Update the value
-  builder.ComputeStatistic(stat);
-
-  // Update
-  if (newStat) {
-    db->Insert(stat);
-    LOG(1) << "Insert RoiStatistic: " << stat;
-  }
-  else {
-    db->Update(stat);
-    LOG(1) << "Update RoiStatistic: " << stat;
+  // Loop on images
+  for(auto image:images) {
+    // Main builder
+    syd::RoiStatisticBuilder builder(db);
+    // Consider the masks
+    syd::RoiMaskImage::vector masks;
+    if (args_info.inputs[0] == std::string("all")) {
+      typedef odb::query<syd::RoiMaskImage> Q;
+      Q q = Q::frame_of_reference_uid == image->frame_of_reference_uid;
+      db->Query(masks, q);
+    }
+    else {
+      auto m = builder.FindMask(image, args_info.inputs[0]);
+      masks.push_back(m);
+    }
+    // Loop over masks
+    for(auto mask:masks) {
+      // Init the RoiStatistic object
+      bool newStat = false;
+      syd::RoiStatistic::pointer stat;
+      if (!builder.Exists(&stat, image, mask)) {
+        db->New(stat);
+        stat->image = image;
+        stat->mask = mask;
+        newStat = true;
+      }
+      // Update the value
+      builder.ComputeStatistic(stat);
+      // Update
+      if (newStat) {
+        db->Insert(stat);
+        LOG(1) << "Insert RoiStatistic: " << stat;
+      }
+      else {
+        db->Update(stat);
+        LOG(1) << "Update RoiStatistic: " << stat;
+      }
+    }
   }
 }
 // --------------------------------------------------------------------
