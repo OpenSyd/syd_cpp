@@ -58,6 +58,10 @@ int main(int argc, char* argv[])
     }
   }
 
+  if (images.size() == 0) {
+    LOG(1) << "No images, do nothing.";
+  }
+
   // Check & updates the images
   int i=0;
   for(auto image:images) {
