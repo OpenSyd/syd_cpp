@@ -59,14 +59,14 @@ void syd::Calibration::Set(const syd::Database * db, const std::vector<std::stri
 
 
 // --------------------------------------------------
-void syd::Calibration::CopyFrom(const pointer p)
-{
-  syd::Record::CopyFrom(p);
-  image = p->image;
-  for(auto t:p->tags) tags.push_back(t);
-  factor = p->factor;
-  fov_ratio = p->fov_ratio;
-}
+// void syd::Calibration::CopyFrom(const pointer p)
+// {
+//   syd::Record::CopyFrom(p);
+//   image = p->image;
+//   for(auto t:p->tags) tags.push_back(t);
+//   factor = p->factor;
+//   fov_ratio = p->fov_ratio;
+// }
 // --------------------------------------------------
 
 

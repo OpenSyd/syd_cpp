@@ -60,17 +60,17 @@ bool syd::Radionuclide::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-void syd::Radionuclide::CopyFrom(const pointer p)
-{
-  syd::Record::CopyFrom(p);
-  name = p->name;
-  half_life_in_hours = p->half_life_in_hours;
-  element = p->element;
-  atomic_number = p->atomic_number;
-  mass_number = p->mass_number;
-  metastable = p->metastable;
-  max_beta_minus_energy_in_kev = p->max_beta_minus_energy_in_kev;
-}
+// void syd::Radionuclide::CopyFrom(const pointer p)
+// {
+//   syd::Record::CopyFrom(p);
+//   name = p->name;
+//   half_life_in_hours = p->half_life_in_hours;
+//   element = p->element;
+//   atomic_number = p->atomic_number;
+//   mass_number = p->mass_number;
+//   metastable = p->metastable;
+//   max_beta_minus_energy_in_kev = p->max_beta_minus_energy_in_kev;
+// }
 // --------------------------------------------------
 
 

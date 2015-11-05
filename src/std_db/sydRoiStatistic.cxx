@@ -66,22 +66,6 @@ bool syd::RoiStatistic::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-void syd::RoiStatistic::CopyFrom(const pointer p)
-{
-  syd::Record::CopyFrom(p);
-  image = p->image;
-  mask = p->mask;
-  mean = p->mean;
-  std_dev = p->std_dev;
-  n = p->n;
-  min = p->min;
-  max = p->max;
-  sum = p->sum;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::RoiStatistic::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   LOG(FATAL) << "To insert a RoiStatistic, please use sydInsertRoiStatistic";

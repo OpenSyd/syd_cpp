@@ -129,27 +129,9 @@ bool syd::Injection::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-void syd::Injection::CopyFrom(const pointer p)
-{
-  syd::Record::CopyFrom(p);
-  patient = p->patient;
-  radionuclide = p->radionuclide;
-  date = p->date;
-  activity_in_MBq = p->activity_in_MBq;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Injection::Callback(odb::callback_event event, odb::database & db) const
 {
-  // DD("before");
   syd::Record::Callback(event, db);
-  // DD("after");
-  // DD("Callback_const "+syd::ToString(event)+" "+GetTableName());
-  // if (event == odb::callback_event::pre_erase) {
-
-  // }
 }
 // --------------------------------------------------
 
@@ -157,13 +139,7 @@ void syd::Injection::Callback(odb::callback_event event, odb::database & db) con
 // --------------------------------------------------
 void syd::Injection::Callback(odb::callback_event event, odb::database & db)
 {
-  // DD("before");
   syd::Record::Callback(event, db);
-  // DD("after");
-  // DD("Callback "+syd::ToString(event)+" "+GetTableName());
-  // if (event == odb::callback_event::pre_erase) {
-
-  // }
 }
 // --------------------------------------------------
 

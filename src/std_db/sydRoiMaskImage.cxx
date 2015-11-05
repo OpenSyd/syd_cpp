@@ -51,15 +51,6 @@ std::string syd::RoiMaskImage::ComputeRelativeFolder() const
 
 
 // --------------------------------------------------
-void syd::RoiMaskImage::CopyFrom(const pointer p)
-{
-  syd::Image::CopyFrom(p);
-  roitype = p->roitype;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 bool syd::RoiMaskImage::IsEqual(const pointer p) const
 {
   bool b = (syd::Image::IsEqual(p) and

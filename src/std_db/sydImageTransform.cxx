@@ -73,21 +73,6 @@ bool syd::ImageTransform::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-void syd::ImageTransform::CopyFrom(const pointer p)
-{
-  syd::Record::CopyFrom(p);
-  fixed_image = p->fixed_image;
-  moving_image = p->moving_image;
-  fixed_mask = p->fixed_mask;
-  moving_mask = p->moving_mask;
-  config_file = p->config_file;
-  transform_file = p->transform_file;
-  date = p->date;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::ImageTransform::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   LOG(FATAL) << "Set ImageTransform not implemented";

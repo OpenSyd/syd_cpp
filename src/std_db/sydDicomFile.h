@@ -57,11 +57,14 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
+    int count();
+
   protected:
     DicomFile();
 
   }; // end class
-}
+
+} // end syd namespace
 // --------------------------------------------------------------------
 
 #endif

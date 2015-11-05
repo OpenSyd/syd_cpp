@@ -41,16 +41,6 @@ std::string syd::RoiType::ToString() const
 
 
 // --------------------------------------------------
-void syd::RoiType::CopyFrom(const pointer p)
-{
-  syd::Record::CopyFrom(p);
-  name = p->name;
-  description = p->description;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 bool syd::RoiType::IsEqual(const pointer p) const
 {
   bool b = (syd::Record::IsEqual(p) and

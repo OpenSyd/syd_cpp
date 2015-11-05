@@ -48,18 +48,6 @@ std::string syd::Patient::ToString() const
 
 
 // --------------------------------------------------
-void syd::Patient::CopyFrom(const pointer p)
-{
-  syd::Record::CopyFrom(p);
-  name = p->name;
-  study_id = p->study_id;
-  weight_in_kg = p->weight_in_kg;
-  dicom_patientid = p->dicom_patientid;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 bool syd::Patient::IsEqual(const pointer p) const
 {
   return (syd::Record::IsEqual(p) and name == p->name and

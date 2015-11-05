@@ -71,28 +71,6 @@ void syd::Image::Set(const syd::Database * db, const std::vector<std::string> & 
 
 
 // --------------------------------------------------
-void syd::Image::CopyFrom(const pointer p)
-{
-  syd::Record::CopyFrom(p);
-  patient = p->patient;
-  files.clear();
-  tags.clear();
-  dicoms.clear();
-  for(auto f:p->files) files.push_back(f);
-  for(auto t:p->tags) tags.push_back(t);
-  for(auto d:p->dicoms) dicoms.push_back(d);
-  type = p->type;
-  pixel_type = p->pixel_type;
-  dimension = p->dimension;
-  frame_of_reference_uid = p->frame_of_reference_uid;
-  for(auto i=0; i<size.size(); i++) size[i] = p->size[i];
-  for(auto i=0; i<spacing.size(); i++) spacing[i] = p->spacing[i];
-  pixel_value_unit = p->pixel_value_unit;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 bool syd::Image::IsEqual(const pointer p) const
 {
   bool b = (syd::Record::IsEqual(p) and

@@ -89,10 +89,6 @@ namespace syd {
     /// from Record to not have default constructor
     Record();
 
-    /// Copy all fields form the given record (protected to avoid use
-    /// with generic pointer)
-    virtual void CopyFrom(const pointer p);
-
     /// Return true if the record is equal (same id here); (protected
     /// to avoid use with generic pointer)
     virtual bool IsEqual(const pointer p) const;
@@ -123,8 +119,7 @@ namespace syd {
 
 #define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME)           \
   virtual std::string ToString() const;                         \
-  virtual bool IsEqual(const pointer p) const;                  \
-  virtual void CopyFrom(const pointer p);                       \
+  virtual bool IsEqual(const pointer p) const;
 
 #define TABLE_DECLARE_OPTIONAL_FUNCTIONS(TABLE_NAME)                    \
   virtual void Set(const syd::Database * db, const std::vector<std::string> & args); \

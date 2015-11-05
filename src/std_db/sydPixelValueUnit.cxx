@@ -54,16 +54,6 @@ bool syd::PixelValueUnit::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-void syd::PixelValueUnit::CopyFrom(const pointer p)
-{
-  syd::Record::CopyFrom(p);
-  name = p->name;
-  description = p->description;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::PixelValueUnit::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
