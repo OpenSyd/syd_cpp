@@ -1,16 +1,15 @@
 #File sydUpdateImage.ggo
 
 package "syd"
-version "0.1"
+version "0.2"
 usage "sydUpdateImage <image_ids>"
-description "Check the mhd file and update an image info according to the mhd content
+description "Check the mhd file and update an image
 - <image_ids>      ids of the images to update
 
-Some options (see below) may be used to udate the image.
-
-If both -N and --tia are given, pixels are scaled according to the total nb of counts in the tia image,
+Some options (see below) may be used to udate the image (see below). Note: -N and --tia must be set together: in case of dose/edep computed by MonteCarlo, pixels are scaled according to the total nb of counts in the tia image, and the total nb of particles in the simulation (N).
 "
 
+option "file"       -       "Content of the file will replace the image in the db"            string multiple no
 option "pixelunit"  -       "Name of pixel value unit to attach to the image"                 string no
 option "scale"      s       "Multiply the pixel by this value"                                double no
 option "N"          N       "Nb of primary if MC simulation (with tia)"                       double no

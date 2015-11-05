@@ -50,7 +50,16 @@ int main(int argc, char* argv[])
   syd::Image::vector images;
   db->Query(images, ids);
 
+  // Check
+  if (args_info.file_given) {
+    if (images.size() != args_info.file_given) {
+      LOG(FATAL) << "You must provide as many --file as the number of image to update. Here there are "
+                 << images.size() << " images and " << args_info.file_given << " --file option.";
+    }
+  }
+
   // Check & updates the images
+  int i=0;
   for(auto image:images) {
     // check file exist
     bool b = true;
@@ -67,6 +76,13 @@ int main(int argc, char* argv[])
       // Create the update builder
       syd::ScaleImageBuilder builder(db);
       double s = 1.0;
+
+      // If need to import a new mhd ?
+      if (args_info.file_given) {
+        std::string mhd = args_info.file_arg[i];
+        syd::ImageBuilder builder(db);
+        builder.UpdateImageFromFile(image, mhd);
+      }
 
       // Need to scale ?
       if (args_info.scale_given) {
@@ -108,6 +124,9 @@ int main(int argc, char* argv[])
       db->Update(image);
       LOG(1) << "Image was scaled by " << s << ": " << image;
     }
+
+    // Iterate over image nb
+    ++i;
   }
   // This is the end, my friend.
 }
