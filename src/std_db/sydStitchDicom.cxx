@@ -72,17 +72,16 @@ int main(int argc, char* argv[])
 
   // Build stitched images
   syd::StitchDicomImageBuilder builder(db);
-  syd::Image::vector images;
   for(auto p:pairs) {
     LOG(2) << "Stitching dicoms:" << std::endl
            << p.first << std::endl
            << p.second << std::endl;
-    syd::Image::pointer image = builder.InsertStitchedImage(p.first, p.second);
+    syd::Image::pointer image = builder.NewStitchedImage(p.first, p.second);
     db->SetImageTagsFromCommandLine(image, args_info);
-    images.push_back(image);
+    builder.InsertAndRename(image);
     LOG(1) << "Inserting Image " << image;
   }
-  db->Update(images);
+  //  db->Insert(images);
 
   // This is the end, my friend.
 }

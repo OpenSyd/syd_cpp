@@ -36,7 +36,7 @@ namespace syd {
     DecayCorrectedImageBuilder(StandardDatabase * db):ImageBuilder(db) {}
 
     /// Main function
-    Image::pointer InsertDecayCorrectedImage(Image::pointer image, Calibration::pointer calib);
+    Image::pointer NewDecayCorrectedImage(Image::pointer image, Calibration::pointer calib);
 
   }; // class DecayCorrectedImageBuilder
 } // namespace syd

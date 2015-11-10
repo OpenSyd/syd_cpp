@@ -19,8 +19,8 @@
 
 // --------------------------------------------------------------------
 template<class PixelType>
-void ImageBuilder::UpdateImage(syd::Image::pointer image,
-                                   typename itk::Image<PixelType,3>::Pointer & itk_image)
+void ImageBuilder::SetImage(syd::Image::pointer image,
+                            typename itk::Image<PixelType,3>::Pointer & itk_image)
 {
   // Check dimension
   typedef itk::Image<PixelType,3> ImageType;
@@ -81,9 +81,5 @@ void ImageBuilder::UpdateImage(syd::Image::pointer image,
   // MD5
   std::string md5 = syd::ComputeImageMD5<ImageType>(itk_image);
   image->files[1]->md5 = md5;
-  db_->Update(image->files[1]);
-
-  // Final update
-  db_->Update(image);
 }
 // --------------------------------------------------------------------

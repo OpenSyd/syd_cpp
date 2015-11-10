@@ -50,16 +50,14 @@ int main(int argc, char* argv[])
 
   // Create main builder
   syd::ImageFromDicomBuilder builder(db);
-  syd::Image::vector images;
+
   for(auto d:dicom_series) {
-    syd::Image::pointer image = builder.InsertImageFromDicom(d);
+    syd::Image::pointer image = builder.NewImageFromDicom(d);
     // Set the optional tags
     db->SetImageTagsFromCommandLine(image, args_info);
-    images.push_back(image);
+    builder.InsertAndRename(image);
     LOG(1) << "Inserting Image " << image;
   }
-  // Update for tag
-  db->Update(images);
 
   // This is the end, my friend.
 }

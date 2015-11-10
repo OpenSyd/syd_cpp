@@ -35,9 +35,9 @@ namespace syd {
 
     /// Create & Insert a RoiMaskImage from an image.mhd
     syd::RoiMaskImage::pointer
-    InsertRoiMaskImage(const syd::DicomSerie::pointer & dicom,
-                       const syd::RoiType::pointer & roitype,
-                       const std::string & filename);
+    NewRoiMaskImage(const syd::DicomSerie::pointer & dicom,
+                    const syd::RoiType::pointer & roitype,
+                    const std::string & filename);
 
   }; // class RoiMaskImageBuilder
 

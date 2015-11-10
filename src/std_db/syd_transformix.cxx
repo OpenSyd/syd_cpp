@@ -138,9 +138,11 @@ int main(int argc, char* argv[])
 
     // Create output image
     syd::ImageBuilder builder(db);
-    syd::Image::pointer output_image = builder.InsertNewMHDImageLike(input_image);
+    syd::Image::pointer output_image = builder.NewMHDImageLike(input_image);
     db->SetImageTagsFromCommandLine(output_image, args_info);
-    db->Update(output_image);
+
+    // FIXME tmp folder ?
+    DD("create a temp folder ?");
 
     // Create command line
     std::ostringstream cmd;
@@ -158,11 +160,12 @@ int main(int argc, char* argv[])
 
     if (r!=0 || !fs::exists(f)) { // fail
       LOG(1) << "Command fail, removing temporary image";
-      db->Delete(output_image);
+      //db->Delete(output_image);
     }
     else  {
-      std::string output_image_path = db->GetAbsolutePath(output_image);
-      syd::RenameMHDImage(f, output_image_path);
+      syd::ImageBuilder builder(db);
+      builder.CopyImageFromFile(output_image, f);
+      builder.InsertAndRename(output_image);
       LOG(1) << "Image computed. Result: " << output_image;
     }
   }

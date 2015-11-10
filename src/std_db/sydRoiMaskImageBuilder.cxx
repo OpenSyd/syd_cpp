@@ -21,9 +21,9 @@
 
 // --------------------------------------------------------------------
 syd::RoiMaskImage::pointer
-syd::RoiMaskImageBuilder::InsertRoiMaskImage(const syd::DicomSerie::pointer & dicom,
-                                             const syd::RoiType::pointer & roitype,
-                                             const std::string & filename)
+syd::RoiMaskImageBuilder::NewRoiMaskImage(const syd::DicomSerie::pointer & dicom,
+                                          const syd::RoiType::pointer & roitype,
+                                          const std::string & filename)
 {
   // First check if the file is ok
   fs::path dir(filename);
@@ -33,12 +33,12 @@ syd::RoiMaskImageBuilder::InsertRoiMaskImage(const syd::DicomSerie::pointer & di
   auto fake = syd::ReadImageHeader(filename); // -> will raise an exception if bug
 
   // Create image
-  syd::RoiMaskImage::pointer mask = InsertNewMHDRoiMaskImage(dicom->patient, roitype);
+  syd::RoiMaskImage::pointer mask = NewMHDRoiMaskImage(dicom->patient, roitype);
   mask->dicoms.push_back(dicom);
   mask->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
   syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("label", "Mask image");
   mask->pixel_value_unit = unit;
-  UpdateImageFromFile(mask, filename);
+  CopyImageFromFile(mask, filename);
   return mask;
 }
 // --------------------------------------------------------------------

@@ -21,8 +21,8 @@
 
 // --------------------------------------------------------------------
 syd::Image::pointer
-syd::SubstituteRadionuclideImageBuilder::CreateRadionuclideSubstitutedImage(syd::Image::pointer input,
-                                                                            syd::Radionuclide::pointer rad)
+syd::SubstituteRadionuclideImageBuilder::NewRadionuclideSubstitutedImage(syd::Image::pointer input,
+                                                                         syd::Radionuclide::pointer rad)
 {
   // Get information
   if (input->dicoms.size() < 1) {
@@ -38,7 +38,7 @@ syd::SubstituteRadionuclideImageBuilder::CreateRadionuclideSubstitutedImage(syd:
   double lambda = log(2.0)/(rad->half_life_in_hours);
 
   // Create output image
-  syd::Image::pointer result = InsertNewMHDImage(input->dicoms[0]);
+  syd::Image::pointer result = NewMHDImage(input->dicoms[0]);
   result->pixel_value_unit = input->pixel_value_unit;
   result->pixel_type = input->pixel_type;
   result->CopyTags(input);
@@ -58,7 +58,7 @@ syd::SubstituteRadionuclideImageBuilder::CreateRadionuclideSubstitutedImage(syd:
   }
 
   // Create and image file
-  UpdateImage<PixelType>(result, itk_image);
+  SetImage<PixelType>(result, itk_image);
   return result;
 }
 // --------------------------------------------------------------------

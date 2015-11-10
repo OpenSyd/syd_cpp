@@ -41,7 +41,7 @@ void CropImageBuilder::CropImageLike(syd::Image::pointer image,
     output = syd::CropImageLike<ImageType>(itk_image, itk_like);
 
   // Update image
-  UpdateImage<PixelType>(image, output);
+  SetImage<PixelType>(image, output);
 }
 // --------------------------------------------------------------------
 
@@ -59,6 +59,6 @@ void CropImageBuilder::CropImageWithThreshold(syd::Image::pointer image, double 
   auto output = syd::CropImageWithLowerThreshold<ImageType>(itk_image, lower_threshold);
 
   // Update image
-  UpdateImage<PixelType>(image, output);
+  SetImage<PixelType>(image, output);
 }
 // --------------------------------------------------------------------

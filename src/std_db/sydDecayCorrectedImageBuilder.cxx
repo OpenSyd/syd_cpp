@@ -21,8 +21,8 @@
 
 // --------------------------------------------------------------------
 syd::Image::pointer
-syd::DecayCorrectedImageBuilder::InsertDecayCorrectedImage(syd::Image::pointer input,
-                                                           syd::Calibration::pointer calib)
+syd::DecayCorrectedImageBuilder::NewDecayCorrectedImage(syd::Image::pointer input,
+                                                        syd::Calibration::pointer calib)
 {
   // Get information
   if (input->dicoms.size() < 1) {
@@ -39,7 +39,7 @@ syd::DecayCorrectedImageBuilder::InsertDecayCorrectedImage(syd::Image::pointer i
   double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
 
   // Create output image
-  syd::Image::pointer result = InsertNewMHDImage(input->dicoms[0]);
+  syd::Image::pointer result = NewMHDImage(input->dicoms[0]);
   // result = input; // copy the fields
   // result->id = -1; // but change the ID to insert as a new image.
   // syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("MBq_by_IA", "Activity in MBq by injected activity in MBq");
@@ -65,16 +65,8 @@ syd::DecayCorrectedImageBuilder::InsertDecayCorrectedImage(syd::Image::pointer i
     ++iter;
   }
 
-  // Create and image file
-  //  db_->Insert(result);
-  // std::string mhd_path = result->ComputeDefaultAbsolutePath(db_);
-  //  syd::WriteImage<ImageType>(itk_image, mhd_path);
-  //InsertFile<PixelType(result, mhd_path);
-  UpdateImage<PixelType>(result, itk_image);
-
-  // result->UpdateFile(db_, mhd_path);
-
-  // db_->Update(result);
+  // Set the image
+  SetImage<PixelType>(result, itk_image);
   return result;
 }
 // --------------------------------------------------------------------

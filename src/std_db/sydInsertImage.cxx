@@ -52,10 +52,8 @@ int main(int argc, char* argv[])
 
   // Create the new image
   syd::ImageBuilder builder(db);
-  syd::Image::pointer output = builder.InsertNewMHDImageLike(input);
-
-  // Update image data (size etc) from file
-  builder.UpdateImageFromFile(output, filename);
+  syd::Image::pointer output = builder.NewMHDImageLike(input);
+  builder.CopyImageFromFile(output, filename);
 
   // Add optional tag
   db->SetImageTagsFromCommandLine(output, args_info);
@@ -72,8 +70,8 @@ int main(int argc, char* argv[])
     }
   }
 
-  // Update the db
-  db->Update(output);
+  // Insert in the db
+  builder.InsertAndRename(output);
   LOG(1) << "Inserting Image " << output;
   // This is the end, my friend.
 }

@@ -21,9 +21,9 @@
 #include "sydImageUtils.h"
 
 // --------------------------------------------------------------------
-syd::Image::pointer syd::ImageFromDicomBuilder::InsertImageFromDicom(const syd::DicomSerie::pointer dicom)
+syd::Image::pointer syd::ImageFromDicomBuilder::NewImageFromDicom(const syd::DicomSerie::pointer dicom)
 {
-  syd::Image::pointer image = InsertNewMHDImage(dicom);
+  syd::Image::pointer image = NewMHDImage(dicom);
 
   try {
     if (dicom->dicom_modality == "CT") {
@@ -34,7 +34,7 @@ syd::Image::pointer syd::ImageFromDicomBuilder::InsertImageFromDicom(const syd::
       LOG(4) << "Update information";
       syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("HU", "Hounsfield Units");
       image->pixel_value_unit = unit;
-      UpdateImage<PixelType>(image, itk_image);
+      SetImage<PixelType>(image, itk_image);
     }
     else {
       typedef float PixelType;
@@ -44,7 +44,7 @@ syd::Image::pointer syd::ImageFromDicomBuilder::InsertImageFromDicom(const syd::
       LOG(4) << "Update information";
       syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("counts", "Number of counts");
       image->pixel_value_unit = unit;
-      UpdateImage<PixelType>(image, itk_image);
+      SetImage<PixelType>(image, itk_image);
     }
 
   } catch (syd::Exception & e) {

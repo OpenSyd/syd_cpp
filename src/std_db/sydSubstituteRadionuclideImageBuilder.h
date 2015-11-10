@@ -36,7 +36,7 @@ namespace syd {
     SubstituteRadionuclideImageBuilder(StandardDatabase * db):ImageBuilder(db) {}
 
     /// Main function
-    Image::pointer CreateRadionuclideSubstitutedImage(Image::pointer image, Radionuclide::pointer rad);
+    Image::pointer NewRadionuclideSubstitutedImage(Image::pointer image, Radionuclide::pointer rad);
 
   }; // class SubstituteRadionuclideImageBuilder
 } // namespace syd

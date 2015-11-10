@@ -100,10 +100,10 @@ void syd::DicomSerie::InitPrintTable(const syd::Database * db, syd::PrintTable &
     std::cout << "Available formats for table 'DicomSerie': " << std::endl
               << "\tdefault: " << std::endl
               << "\tsize: " << std::endl
-              << "\tpath: (warning could be slow)" << std::endl;
+              << "\tfile: (warning could be slow)" << std::endl;
     return;
   }
-  if (format == "path") {
+  if (format == "file") {
     ta.AddColumn("#id");
     ta.AddColumn("#path", 120, 0, false);
   }
@@ -128,7 +128,7 @@ void syd::DicomSerie::InitPrintTable(const syd::Database * db, syd::PrintTable &
 // --------------------------------------------------
 void syd::DicomSerie::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
 {
-  if (format == "path") {
+  if (format == "file") {
     ta << id;
     //Look for associated file (this is slow !)
     syd::DicomFile::vector dfiles;

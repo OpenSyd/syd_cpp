@@ -22,6 +22,7 @@
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
+#include "sydFileBuilder.h"
 
 #include "boost/date_time/posix_time/posix_time.hpp"
 namespace pt = boost::posix_time;
@@ -50,7 +51,7 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the elastix config file
-  std::string config_file = args_info.inputs[0];
+  std::string config_filename = args_info.inputs[0];
 
   // Read ids from the command line and the pipe
   std::vector<syd::IdType> ids;
@@ -98,15 +99,29 @@ int main(int argc, char* argv[])
     if (args_info.mMask_given) transfo->moving_mask = moving_mask;
     db->Insert(transfo); // insert to get id
 
-    std::string f = syd::GetFilenameFromPath(config_file);
-    std::string output_dir = transfo->ComputeRelativeFolder();
+    std::string f = syd::GetFilenameFromPath(config_filename);
+    std::string output_dir = transfo->ComputeRelativeFolder(); // new transfo inserted
     bool b = fs::create_directories(db->ConvertToAbsolutePath(output_dir));
     if (!b) {
       LOG(FATAL) << "Error while creating " << output_dir;
     }
 
-    transfo->config_file = db->InsertNewFile(config_file, f, output_dir, true); // copy
-    transfo->transform_file = db->InsertNewFile("", "TransformParameters.0.txt", output_dir, false); // do not copy
+    // OLD
+    //    transfo->config_file = db->InsertNewFile(config_filename, f, output_dir, true); // copy
+    // NEW
+    syd::FileBuilder fb(db);
+    transfo->config_file = fb.NewFile();
+    fb.CopyFile(transfo->config_file, config_filename);
+    std::string fff = syd::GetFilenameFromPath(config_filename);
+    fb.RenameFile(transfo->config_file, output_dir, fff);
+    db->Insert(transfo->config_file);
+
+    // OLD
+    // transfo->transform_file = db->InsertNewFile("", "TransformParameters.0.txt", output_dir, false); // do not copy
+    transfo->transform_file = fb.NewFile();
+    transfo->transform_file->filename = "TransformParameters.0.txt";
+    transfo->transform_file->path = output_dir;
+    db->Insert(transfo->transform_file);
 
     namespace pt = boost::posix_time;
     std::ostringstream msg;
@@ -125,7 +140,7 @@ int main(int argc, char* argv[])
     cmd << "elastix -f " << fixed_image_path
         << " -m " << moving_image_path
         << " -out " << db->ConvertToAbsolutePath(output_dir)
-        << " -p " << config_file;
+        << " -p " << config_filename;
     // masks
     if (fixed_mask != NULL) cmd << " -fMask " << fixed_mask_path;
     if (moving_mask != NULL) cmd << " -mMask " << moving_mask_path;
@@ -134,7 +149,7 @@ int main(int argc, char* argv[])
     os << msg.str() << std::endl
        << fixed_image->id << " " << fixed_image_path << std::endl
        << moving_image->id << " " << moving_image_path << std::endl
-       << config_file << std::endl
+       << config_filename << std::endl
        << cmd.str();
     os.close();
 

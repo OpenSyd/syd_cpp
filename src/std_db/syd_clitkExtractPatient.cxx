@@ -97,8 +97,10 @@ int main(int argc, char* argv[])
     syd::DicomSerie::pointer dicom = image->dicoms[0];
     syd::RoiMaskImageBuilder b(db);
     try {
-      syd::RoiMaskImage::pointer mask = b.InsertRoiMaskImage(dicom, roitype, mhd_filename);
+      syd::RoiMaskImage::pointer mask = b.NewRoiMaskImage(dicom, roitype, mhd_filename);
       db->SetImageTagsFromCommandLine(mask, args_info);
+      syd::ImageBuilder builder(db);
+      builder.InsertAndRename(mask);
       LOG(1) << "Inserting RoiMaskImage " << mask;
     }
     catch(std::exception & e) {

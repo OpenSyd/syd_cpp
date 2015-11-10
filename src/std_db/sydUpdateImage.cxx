@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
       if (args_info.file_given) {
         std::string mhd = args_info.file_arg[i];
         syd::ImageBuilder builder(db);
-        builder.UpdateImageFromFile(image, mhd);
+        builder.CopyImageFromFile(image, mhd);
       }
 
       // Need to scale ?

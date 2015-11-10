@@ -36,30 +36,38 @@ namespace syd {
     /// Set the pointer to the database
     void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
 
-    /// Create and insert an empty image (also create associated file)
-    syd::Image::pointer InsertNewMHDImage(syd::Patient::pointer patient);
+    /// Create an empty image (also create associated file). Not inserted in the db.
+    syd::Image::pointer NewMHDImage(syd::Patient::pointer patient);
 
-    /// Create and insert a new image and copy fields
-    syd::Image::pointer InsertNewMHDImageLike(syd::Image::pointer image);
+    /// Create a new image and copy fields. Not inserted in the db.
+    syd::Image::pointer NewMHDImageLike(syd::Image::pointer image);
 
-    /// Create and insert an image, using the dicom (patient)
-    syd::Image::pointer InsertNewMHDImage(syd::DicomSerie::pointer dicom);
+    /// Create an image, using the dicom (patient). Not inserted in the db.
+    syd::Image::pointer NewMHDImage(syd::DicomSerie::pointer dicom);
 
-    /// Create and insert a new RoiMaskImage
-    syd::RoiMaskImage::pointer InsertNewMHDRoiMaskImage(syd::Patient::pointer patient, syd::RoiType::pointer roitype);
+    /// Create and insert a new RoiMaskImage. Not inserted in the db.
+    syd::RoiMaskImage::pointer NewMHDRoiMaskImage(syd::Patient::pointer patient,
+                                                  syd::RoiType::pointer roitype);
 
-    /// Update image information from the associated file (pixel type, size, md5 etc)
-    void UpdateImageFromFile(syd::Image::pointer image, std::string filename);
+    /// Copy the file image to an Image, updating all information  (pixel type, size, md5 etc). DB not updated
+    void CopyImageFromFile(syd::Image::pointer image, std::string filename);
 
-    /// Update image information from an itk image, and write the image file in the db (type, size, spacing, md5)
+    /// Set the image content from an itk image, and write it to the image file in the db (type, size, spacing, md5). DB not updated
     template<class PixelType>
-    void UpdateImage(syd::Image::pointer image, typename itk::Image<PixelType,3>::Pointer & itk_image);
+    void SetImage(syd::Image::pointer image,
+                  typename itk::Image<PixelType,3>::Pointer & itk_image);
 
-    /// Change the filename to the default one (mv file if already exist)
+    /// Change the filename to the default one (mv file if already exist). DB not updated.
     void RenameToDefaultFilename(syd::Image::pointer image);
 
-    /// Change the filename to the default one (mv file if already exist)
+    /// Change the filename to the default one (mv file if already exist). DB not updated.
     void RenameToDefaultFilename(syd::RoiMaskImage::pointer mask);
+
+    /// helper: Insert, renametodefaultfilename and update
+    void InsertAndRename(syd::Image::pointer image);
+
+    /// helper: Insert, renametodefaultfilename and update
+    void InsertAndRename(syd::RoiMaskImage::pointer mask);
 
   protected:
     /// Protected constructor. No need to use directly.

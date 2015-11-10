@@ -59,18 +59,14 @@ int main(int argc, char* argv[])
 
   // Create the builder
   syd::SubstituteRadionuclideImageBuilder builder(db);
-  syd::Image::vector result_images;
   // Loop on the images
   for(auto image:images) {
     // Create new image
-    syd::Image::pointer result = builder.CreateRadionuclideSubstitutedImage(image, rad);
-    db->SetImageTagsFromCommandLine(image, args_info);
-    result_images.push_back(result);
+    syd::Image::pointer result = builder.NewRadionuclideSubstitutedImage(image, rad);
+    db->SetImageTagsFromCommandLine(result, args_info);
+    builder.InsertAndRename(image);
     LOG(1) << "Inserting Image " << result;
   }
-
-  // Update for tag
-  db->Update(result_images);
 
   // This is the end, my friend.
 }

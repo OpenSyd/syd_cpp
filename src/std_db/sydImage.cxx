@@ -20,6 +20,7 @@
 #include "sydImage.h"
 #include "sydStandardDatabase.h"
 #include "sydDicomSerie.h"
+#include "sydImageBuilder.h"
 #include "sydTag.h"
 
 // --------------------------------------------------------------------
@@ -252,6 +253,27 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
   if (event == odb::callback_event::post_erase) {
     for(auto f:files) db.erase(f);
   }
+  if (event == odb::callback_event::pre_persist) {
+    // insert the file with odb::database not the syd::database
+    for(auto f:files) db.persist(f);
+  }
+  if (event == odb::callback_event::pre_update) {
+    // update the file with odb::database not the syd::database
+    for(auto f:files) db.update(f);
+  }
+  /*
+  if (event == odb::callback_event::post_persist) {
+    DD("image post persist");
+    DD(id);
+    //rename ? need StandardDatabase ?
+    syd::StandardDatabase * sdb = dynamic_cast<syd::StandardDatabase*>(db_);
+    // sdb->Insert(files[0]);
+    // const syd::Image::pointer image(this);
+    // syd::ImageBuilder builder(sdb);
+    // builder.RenameToDefaultFilename(image);
+    // sdb->Dump();
+  }
+  */
 }
 // --------------------------------------------------
 

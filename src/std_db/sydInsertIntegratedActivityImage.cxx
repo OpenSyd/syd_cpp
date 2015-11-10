@@ -23,6 +23,8 @@
 #include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
 #include "sydIntegratedActivityImageBuilder.h"
+#include "sydSubstituteRadionuclideImageBuilder.h"
+#include "sydRoiStatisticBuilder.h"
 #include "sydImageFillHoles.h"
 #include "sydImageBuilder.h"
 #include "sydImage_GaussianFilter.h"
@@ -105,6 +107,20 @@ int main(int argc, char* argv[])
     itk_images.push_back(im);
   }
   im = itk_images[0]; // consider the first image for the following
+
+  // Apply radionuclide substitution
+  if (args_info.substitute_given) {
+    std::string radname = args_info.substitute_arg;
+    syd::Radionuclide::pointer rad;
+    odb::query<syd::Radionuclide> q = odb::query<syd::Radionuclide>::name == radname;
+    db->QueryOne(rad, q); // will fail if not found
+    syd::SubstituteRadionuclideImageBuilder builder(db);
+    LOG(2) << "Substitute spect data with radionuclide: " << rad;
+    for(auto & image:images) {
+      DD(image);
+      image = builder.NewRadionuclideSubstitutedImage(image, rad);
+    }
+  }
 
   // Consider the debug points
   struct debug_point {
@@ -250,8 +266,8 @@ int main(int argc, char* argv[])
 
   // Insert result in db
   syd::ImageBuilder bdb(db);
-  syd::Image::pointer output = bdb.InsertNewMHDImageLike(images[0]);
-  bdb.UpdateImage<PixelType>(output, auc->image);
+  syd::Image::pointer output = bdb.NewMHDImageLike(images[0]);
+  bdb.SetImage<PixelType>(output, auc->image);
 
   // Tags
   db->SetImageTagsFromCommandLine(output, args_info);
@@ -259,7 +275,8 @@ int main(int argc, char* argv[])
   // Change pixel value
   syd::PixelValueUnit::pointer v = db->FindOrInsertUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq");
   output->pixel_value_unit = v;
-  db->Update(output);
+
+  bdb.InsertAndRename(output);
   LOG(1) << "Inserting Image " << output;
 
   // This is the end, my friend.

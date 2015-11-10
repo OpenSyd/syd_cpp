@@ -22,8 +22,8 @@
 
 // --------------------------------------------------------------------
 syd::Image::pointer
-syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer a,
-                                                  const syd::DicomSerie::pointer b)
+syd::StitchDicomImageBuilder::NewStitchedImage(const syd::DicomSerie::pointer a,
+                                               const syd::DicomSerie::pointer b)
 {
   // Check a and b modality
   if (a->dicom_modality != b->dicom_modality) {
@@ -52,7 +52,7 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
   }
 
   // Create the image record
-  syd::Image::pointer image = InsertNewMHDImage(a);
+  syd::Image::pointer image = NewMHDImage(a);
   image->dicoms.push_back(b);
   syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("counts", "Number of counts");
   image->pixel_value_unit = unit;
@@ -65,7 +65,7 @@ syd::StitchDicomImageBuilder::InsertStitchedImage(const syd::DicomSerie::pointer
 
   // Stitch (default values for now, to be changed!)
   ImageType::Pointer output = syd::StitchImages<ImageType>(image_a, image_b, 150000, 4);
-  UpdateImage<PixelType>(image, output);
+  SetImage<PixelType>(image, output);
   return image;
 }
 // --------------------------------------------------------------------

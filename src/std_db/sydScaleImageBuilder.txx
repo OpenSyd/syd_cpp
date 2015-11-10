@@ -32,6 +32,6 @@ void syd::ScaleImageBuilder::ScalePixelValue(syd::Image::pointer image, double s
   syd::ScaleImage<ImageType>(itk_image, s);
 
   // Update image
-  UpdateImage<PixelType>(image, itk_image);
+  SetImage<PixelType>(image, itk_image);
 }
 // --------------------------------------------------------------------

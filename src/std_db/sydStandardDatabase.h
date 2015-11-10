@@ -64,15 +64,6 @@ namespace syd {
     std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
     std::string GetAbsolutePath(const syd::File::pointer file) const;
 
-    void RenameFile(syd::File::pointer file,
-                    std::string relative_path,
-                    std::string filename);
-
-    syd::File::pointer InsertNewFile(std::string input_path,
-                                     std::string filename,
-                                     std::string path,
-                                     bool copy=false);
-
     template<class PixelType>
     typename itk::Image<PixelType,3>::Pointer
     ReadImage(const syd::DicomSerie::pointer dicom,

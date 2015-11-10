@@ -117,12 +117,24 @@ void syd::ImageTransform::DumpInTable(const syd::Database * d, syd::PrintTable &
 void syd::ImageTransform::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event, db);
+
   if (event == odb::callback_event::post_erase) {
     if (config_file != NULL) db.erase(config_file);
     if (transform_file != NULL) db.erase(transform_file);
     std::string f = db_->ConvertToAbsolutePath(ComputeRelativeFolder());
     fs::remove_all(f);
   }
+
+  if (event == odb::callback_event::pre_persist) {
+    if (config_file !=NULL) db.persist(config_file);
+    if (transform_file !=NULL) db.persist(transform_file);
+  }
+
+  if (event == odb::callback_event::pre_update) {
+    if (config_file !=NULL) db.update(config_file);
+    if (transform_file !=NULL) db.update(transform_file);
+  }
+
 }
 // --------------------------------------------------
 

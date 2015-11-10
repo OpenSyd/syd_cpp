@@ -35,7 +35,7 @@ namespace syd {
     ImageFromDicomBuilder(syd::StandardDatabase * db):ImageBuilder(db) {}
 
     /// Main function: convert a dicom to a mhd image
-    syd::Image::pointer InsertImageFromDicom(const syd::DicomSerie::pointer dicom);
+    syd::Image::pointer NewImageFromDicom(const syd::DicomSerie::pointer dicom);
 
   }; // class ImageFromDicomBuilder
 

@@ -24,8 +24,8 @@
 syd::File::File():syd::Record()
 {
   // default value
-  filename = "unset"; // must be unique
-  path = "unset";
+  filename = "unset";
+  path = "";
   md5 = "unset";
 }
 // --------------------------------------------------

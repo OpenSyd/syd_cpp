@@ -65,16 +65,12 @@ int main(int argc, char* argv[])
 
   // Create main builder
   syd::DecayCorrectedImageBuilder builder(db);
-  syd::Image::vector result_images;
   for(auto image:images) {
-    syd::Image::pointer result = builder.InsertDecayCorrectedImage(image, calib);
-    db->SetImageTagsFromCommandLine(image, args_info);
-    result_images.push_back(result);
+    syd::Image::pointer result = builder.NewDecayCorrectedImage(image, calib);
+    db->SetImageTagsFromCommandLine(result, args_info);
+    builder.InsertAndRename(result);
     LOG(1) << "Inserting Image " << result;
   }
-
-  // Update for tag
-  db->Update(result_images);
 
   // This is the end, my friend.
 }

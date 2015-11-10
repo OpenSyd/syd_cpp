@@ -85,7 +85,7 @@ void syd::RoiStatistic::InitPrintTable(const syd::Database * db, syd::PrintTable
   ta.AddColumn("#id");
   ta.AddColumn("p", 8);
   ta.AddColumn("image", 8);
-  ta.AddColumn("mask", 10);
+  ta.AddColumn("mask", 15);
   ta.AddColumn("unit", 12);
   ta.AddColumn("tags", 40);
   ta.AddColumn("mean", 15,3);

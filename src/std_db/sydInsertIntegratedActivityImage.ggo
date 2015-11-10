@@ -6,7 +6,8 @@ usage "sydInsertIntegratedActivityImage <image_ids>"
 description "Create a new (mhd) Image for each given dicom
 - <list_of_image_ids>     list of image id to integrate
 
-Input image should be in MBq_by_IA unit;
+Input images should be in MBq_by_IA unit.
+If input images are decay corrected, use --substitute Y-90 (for example) to add Y-90 decay before computing the tia.
 "
 
 option "min_activity"   	-       "Dont fit if activity lower than this value"       float default="0.01" no
@@ -16,6 +17,8 @@ option "restricted_tac"         r       "Dont try to fit all the curve, only fro
 option "model"                  m       "Set the models use to fit f2 f3 f4a etc"          string multiple no
 option "median_filter"          -       "Apply median filter at the end"                   flag off
 option "fill_holes"             f       "Try to fill holes using given radius"             int default="3" no
+
+option "substitute"             s       "Change the radionuclide before computing"         string no
 
 section "debug"
 option "debug"   	 	-       "File with debug points"                           string    no

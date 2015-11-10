@@ -18,82 +18,78 @@
 
 // syd
 #include "sydImageBuilder.h"
+#include "sydFileBuilder.h"
 
 // --------------------------------------------------------------------
 void syd::ImageBuilder::InitializeMHDFiles(syd::Image::pointer image)
 {
   image->type = "mhd";
-  syd::File::pointer file_mhd;
-  db_->New(file_mhd);
-  syd::File::pointer file_raw;
-  db_->New(file_raw);
+  syd::FileBuilder fb(db_);
+  syd::File::pointer file_mhd = fb.NewFile(".mhd");
+  syd::File::pointer file_raw = fb.NewFile();
+  std::string f = file_mhd->filename;
+  syd::Replace(f, ".mhd", ".raw");
+  fb.RenameFile(file_raw, file_raw->path, f);
   image->files.push_back(file_mhd);
   image->files.push_back(file_raw);
-  db_->Insert(image->files);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::Image::pointer syd::ImageBuilder::InsertNewMHDImageLike(syd::Image::pointer input)
+syd::Image::pointer syd::ImageBuilder::NewMHDImageLike(syd::Image::pointer input)
 {
-  syd::Image::pointer image = InsertNewMHDImage(input->patient);
+  syd::Image::pointer image = NewMHDImage(input->patient);
   if (input->dicoms.size() != 0) {
     image->CopyDicomSeries(input);
     image->frame_of_reference_uid = input->frame_of_reference_uid;
   }
   image->CopyTags(input);
   image->pixel_value_unit = input->pixel_value_unit;
-  RenameToDefaultFilename(image);
   return image;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::Image::pointer syd::ImageBuilder::InsertNewMHDImage(syd::Patient::pointer patient)
+syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::Patient::pointer patient)
 {
   syd::Image::pointer image;
   db_->New(image);
   image->patient = patient;
   InitializeMHDFiles(image);
-  db_->Insert(image);
-  RenameToDefaultFilename(image);
   return image;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::Image::pointer syd::ImageBuilder::InsertNewMHDImage(syd::DicomSerie::pointer dicom)
+syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::DicomSerie::pointer dicom)
 {
-  syd::Image::pointer image = InsertNewMHDImage(dicom->patient);
+  syd::Image::pointer image = NewMHDImage(dicom->patient);
   image->dicoms.push_back(dicom);
   image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
-  RenameToDefaultFilename(image);
   return image;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::RoiMaskImage::pointer syd::ImageBuilder::InsertNewMHDRoiMaskImage(syd::Patient::pointer patient,
-                                                                           syd::RoiType::pointer roitype)
+syd::RoiMaskImage::pointer syd::ImageBuilder::NewMHDRoiMaskImage(syd::Patient::pointer patient,
+                                                                 syd::RoiType::pointer roitype)
 {
   syd::RoiMaskImage::pointer mask;
   db_->New(mask);
   mask->patient = patient;
   mask->roitype = roitype;
   InitializeMHDFiles(mask);
-  db_->Insert(mask);
-  RenameToDefaultFilename(mask);
   return mask;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::ImageBuilder::UpdateImageFromFile(syd::Image::pointer image, std::string filename)
+void syd::ImageBuilder::CopyImageFromFile(syd::Image::pointer image, std::string filename)
 {
   // Read itk image header to get the pixel type
   auto header = syd::ReadImageHeader(filename);
@@ -103,7 +99,7 @@ void syd::ImageBuilder::UpdateImageFromFile(syd::Image::pointer image, std::stri
       typedef unsigned char PixelType;
       typedef itk::Image<PixelType, 3> ImageType;
       ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
-      UpdateImage<PixelType>(image, itk_image);
+      SetImage<PixelType>(image, itk_image);
       break;
     }
   case itk::ImageIOBase::SHORT:
@@ -111,7 +107,7 @@ void syd::ImageBuilder::UpdateImageFromFile(syd::Image::pointer image, std::stri
       typedef short PixelType;
       typedef itk::Image<PixelType, 3> ImageType;
       ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
-      UpdateImage<PixelType>(image, itk_image);
+      SetImage<PixelType>(image, itk_image);
       break;
     }
   default:
@@ -119,11 +115,10 @@ void syd::ImageBuilder::UpdateImageFromFile(syd::Image::pointer image, std::stri
       typedef float PixelType;
       typedef itk::Image<PixelType, 3> ImageType;
       ImageType::Pointer itk_image = syd::ReadImage<ImageType>(filename);
-      UpdateImage<PixelType>(image, itk_image);
+      SetImage<PixelType>(image, itk_image);
       break;
     }
   }
-
 }
 // --------------------------------------------------------------------
 
@@ -145,12 +140,9 @@ void syd::ImageBuilder::RenameToDefaultFilename(syd::Image::pointer image)
   std::string mhd_relative_path = image->ComputeRelativeFolder()+PATH_SEPARATOR;
   std::string mhd_path = db_->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
 
-  // Set the files
-  db_->RenameFile(image->files[0], mhd_relative_path, mhd_filename);
-  db_->RenameFile(image->files[1], mhd_relative_path, raw_filename);
-
-  // Update
-  db_->Update(image);
+  // Rename the files
+  syd::FileBuilder fb(db_);
+  fb.RenameMHDFile(image->files[0], image->files[1], mhd_relative_path, mhd_filename);
 }
 // --------------------------------------------------------------------
 
@@ -193,10 +185,27 @@ void syd::ImageBuilder::RenameToDefaultFilename(syd::RoiMaskImage::pointer mask)
   std::string mhd_path = db_->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
 
   // Set the files
-  db_->RenameFile(mask->files[0], mhd_relative_path, mhd_filename);
-  db_->RenameFile(mask->files[1], mhd_relative_path, raw_filename);
+  syd::FileBuilder fb(db_);
+  fb.RenameMHDFile(mask->files[0], mask->files[1], mhd_relative_path, mhd_filename);
+}
+// --------------------------------------------------------------------
 
-  // Update
+
+// --------------------------------------------------------------------
+void syd::ImageBuilder::InsertAndRename(syd::Image::pointer image)
+{
+  db_->Insert(image);
+  RenameToDefaultFilename(image);
+  db_->Update(image);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ImageBuilder::InsertAndRename(syd::RoiMaskImage::pointer mask)
+{
+  db_->Insert(mask);
+  RenameToDefaultFilename(mask);
   db_->Update(mask);
 }
 // --------------------------------------------------------------------

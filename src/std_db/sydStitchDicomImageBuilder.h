@@ -33,7 +33,7 @@ namespace syd {
     StitchDicomImageBuilder(syd::StandardDatabase * db):ImageBuilder(db) {}
 
     /// Create & Insert a new Image by stitching 2 dicoms
-    syd::Image::pointer InsertStitchedImage(const syd::DicomSerie::pointer a, const syd::DicomSerie::pointer b);
+    syd::Image::pointer NewStitchedImage(const syd::DicomSerie::pointer a, const syd::DicomSerie::pointer b);
 
   }; // class StitchDicomImageBuilder
 
