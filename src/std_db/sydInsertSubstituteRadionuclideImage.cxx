@@ -30,7 +30,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertSubstituteRadionuclideImage, 2);
+  SYD_INIT_GGO(sydInsertSubstituteRadionuclideImage, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     // Create new image
     syd::Image::pointer result = builder.NewRadionuclideSubstitutedImage(image, rad);
     db->SetImageTagsFromCommandLine(result, args_info);
-    builder.InsertAndRename(image);
+    builder.InsertAndRename(result);
     LOG(1) << "Inserting Image " << result;
   }
 
