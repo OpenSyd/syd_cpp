@@ -138,7 +138,8 @@ void syd::Database::CheckOrCreateRelativePath(std::string relative_path)
   fs::path dir(absolute_folder);
   if (!fs::exists(dir)) {
     LOG(4) << "Creating folder: " << absolute_folder;
-    if (!fs::create_directories(dir)) {
+    fs::create_directories(dir);
+    if (!fs::exists(dir)) {
       EXCEPTION("Error, could not create the folder: " << absolute_folder);
     }
   }
