@@ -88,6 +88,21 @@ int main(int argc, char* argv[])
     }
   }
 
+  // Apply radionuclide substitution. The temporary images are not
+  // inserted into the db (but files are created on disk and deleted
+  // at the end).
+  if (args_info.substitute_given) {
+    std::string radname = args_info.substitute_arg;
+    syd::Radionuclide::pointer rad;
+    odb::query<syd::Radionuclide> q = odb::query<syd::Radionuclide>::name == radname;
+    db->QueryOne(rad, q); // will fail if not found
+    syd::SubstituteRadionuclideImageBuilder builder(db);
+    LOG(2) << "Substitute spect data with radionuclide: " << rad;
+    for(auto & image:images) {
+      image = builder.NewRadionuclideSubstitutedImage(image, rad);
+    }
+  }
+
   // image type
   typedef float PixelType;
   typedef itk::Image<PixelType,3> ImageType;
@@ -107,20 +122,6 @@ int main(int argc, char* argv[])
     itk_images.push_back(im);
   }
   im = itk_images[0]; // consider the first image for the following
-
-  // Apply radionuclide substitution
-  if (args_info.substitute_given) {
-    std::string radname = args_info.substitute_arg;
-    syd::Radionuclide::pointer rad;
-    odb::query<syd::Radionuclide> q = odb::query<syd::Radionuclide>::name == radname;
-    db->QueryOne(rad, q); // will fail if not found
-    syd::SubstituteRadionuclideImageBuilder builder(db);
-    LOG(2) << "Substitute spect data with radionuclide: " << rad;
-    for(auto & image:images) {
-      DD(image);
-      image = builder.NewRadionuclideSubstitutedImage(image, rad);
-    }
-  }
 
   // Consider the debug points
   struct debug_point {
@@ -278,6 +279,14 @@ int main(int argc, char* argv[])
 
   bdb.InsertAndRename(output);
   LOG(1) << "Inserting Image " << output;
+
+  // Remove temporary files (not persistant in the db)
+  if (args_info.substitute_given) {
+      for(auto & image:images) {
+      DD(image);
+      for(auto f:image->files) fs::remove_all(db->GetAbsolutePath(f));
+    }
+  }
 
   // This is the end, my friend.
 }
