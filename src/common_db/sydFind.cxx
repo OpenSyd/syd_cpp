@@ -30,13 +30,19 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(sydFind, 1);
+  SYD_INIT_GGO(sydFind, 0);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
 
   // Get the database
   syd::Database * db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
+
+  // Simple dump if not arg
+  if (args_info.inputs_num == 0) {
+    db->Dump(std::cout);
+    return EXIT_SUCCESS;
+  }
 
   // Get the table name
   std::string table_name = args_info.inputs[0];

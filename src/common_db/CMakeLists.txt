@@ -47,13 +47,6 @@ target_link_libraries(sydInsert sydCommonDatabase)
 
 
 #----------------------------------------------------------
-wrap_ggo(sydDump_GGO_C sydDump.ggo sydCommandLineDefault.ggo)
-add_executable(sydDump sydDump.cxx ${sydDump_GGO_C})
-target_link_libraries(sydDump sydCommonDatabase)
-#----------------------------------------------------------
-
-
-#----------------------------------------------------------
 wrap_ggo(sydFind_GGO_C sydFind.ggo sydCommandLineDefault.ggo)
 add_executable(sydFind sydFind.cxx ${sydFind_GGO_C})
 target_link_libraries(sydFind sydCommonDatabase)
