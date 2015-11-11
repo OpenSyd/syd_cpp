@@ -6,7 +6,11 @@ usage "sydFind <table> <pattern> "
 description "Find the ids of elements in the table that match the pattern. Parameters are:
 - <table>     name of the table
 - <pattern>   list of words to match, all words must match (logical 'AND').
+
+If without any arg: print nb of elements by tables.
+
 Case sensitive.
+
 Use --exclude option to exclude words.
 Use --dump to output details of the found records instead of only the ids.
 "
