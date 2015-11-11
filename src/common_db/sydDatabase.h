@@ -246,7 +246,7 @@ namespace syd {
     static std::map<odb::database *, syd::Database *> ListOfLoadedDatabases;
 
     // FIXME
-    odb::sqlite::database * GetODB_DB() { return odb_db_; }
+    odb::sqlite::database * GetODB_DB() const { return odb_db_; }
 
     // ----------------------------------------------------------------------------------
     protected:

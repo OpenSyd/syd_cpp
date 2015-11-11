@@ -89,6 +89,25 @@ template<> void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & 
 template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records, const std::string & type) const;
 template<> void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & records, const std::string & type) const;
 
+
+  /// Declaration needed for TABLE_GET_NUMBER_OF_ELEMENTS (by default,
+  /// if not defined, the nb of elem is counted by query. Work but
+  /// slow.
+  template<> long syd::Database::GetNumberOfElements<Patient>() const;
+  template<> long syd::Database::GetNumberOfElements<Injection>() const;
+  template<> long syd::Database::GetNumberOfElements<Radionuclide>() const;
+  template<> long syd::Database::GetNumberOfElements<Tag>() const;
+  template<> long syd::Database::GetNumberOfElements<File>() const;
+  template<> long syd::Database::GetNumberOfElements<DicomFile>() const;
+  template<> long syd::Database::GetNumberOfElements<DicomSerie>() const;
+  template<> long syd::Database::GetNumberOfElements<Image>() const;
+  template<> long syd::Database::GetNumberOfElements<RoiType>() const;
+  template<> long syd::Database::GetNumberOfElements<RoiMaskImage>() const;
+  template<> long syd::Database::GetNumberOfElements<ImageTransform>() const;
+  template<> long syd::Database::GetNumberOfElements<Calibration>() const;
+  template<> long syd::Database::GetNumberOfElements<PixelValueUnit>() const;
+  template<> long syd::Database::GetNumberOfElements<RoiStatistic>() const;
+
 } // namespace syd
 
 // --------------------------------------------------------------------

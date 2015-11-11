@@ -57,7 +57,7 @@ namespace syd {
     File();
 
   }; // end of class
-}
+} // end namespace
 // --------------------------------------------------------------------
 
 #endif

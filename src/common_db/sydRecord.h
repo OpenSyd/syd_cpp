@@ -68,17 +68,17 @@ namespace syd {
 
     /// Default function to print an element (must be inline here).
     friend std::ostream& operator<<(std::ostream& os, const Record & p) {
-    os << p.ToString();
-    return os;
-  }
+      os << p.ToString();
+      return os;
+    }
 
     /// Default function to print a pointer to an element (must be inline here).
     template<class R>
     friend std::ostream& operator<<(std::ostream& os, const std::shared_ptr<R> p) {
-    // FIXME      if (p.get() == 0) os << "[NULL]";
-    os << p->ToString();
-    return os;
-  }
+      // FIXME      if (p.get() == 0) os << "[NULL]";
+      os << p->ToString();
+      return os;
+    }
 
     virtual void Callback(odb::callback_event, odb::database&) const;
     virtual void Callback(odb::callback_event, odb::database&);
@@ -108,7 +108,9 @@ namespace syd {
 
   }; // end of class
 
-    /// odb::access is needed for polymorphism
+  /// odb::access is needed for polymorphism
+  /// Also define a view that can count the nb of elements in a table
+  /// http://comments.gmane.org/gmane.comp.lang.c%2B%2B.odb.user/1602
 #define TABLE_DEFINE(TABLE_NAME)                                        \
   typedef std::shared_ptr<TABLE_NAME> pointer;                          \
   typedef std::vector<pointer> vector;                                  \
@@ -116,9 +118,16 @@ namespace syd {
   virtual std::string GetTableName() const { return #TABLE_NAME; }      \
   static std::string GetStaticTableName() { return #TABLE_NAME; }       \
   static pointer New() { return pointer(new TABLE_NAME); }              \
+  struct TABLE_NAME##_count                                             \
+  {                                                                     \
+    int count;                                                          \
+  };                                                                    \
+  PRAGMA_DB(view(TABLE_NAME##_count) object(TABLE_NAME))                \
+  PRAGMA_DB(member(TABLE_NAME##_count::count)                           \
+            column("count(" + TABLE_NAME::id + ")"))
 
-#define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME)           \
-  virtual std::string ToString() const;                         \
+#define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME)   \
+  virtual std::string ToString() const;                 \
   virtual bool IsEqual(const pointer p) const;
 
 #define TABLE_DECLARE_OPTIONAL_FUNCTIONS(TABLE_NAME)                    \
@@ -126,8 +135,23 @@ namespace syd {
   virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const; \
   virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
 
+  /// To be define in db.cxx (and declared in db.h) to allow fast
+  /// computation of the nb of elements in a table.
+  /// http://comments.gmane.org/gmane.comp.lang.c%2B%2B.odb.user/1602
+#define TABLE_GET_NUMBER_OF_ELEMENTS(TABLE_NAME)                        \
+  template<>                                                            \
+  long syd::Database::GetNumberOfElements<TABLE_NAME>() const           \
+  {                                                                     \
+    typedef odb::query<TABLE_NAME> query;                               \
+    odb::transaction t (odb_db_->begin());                              \
+    TABLE_NAME::TABLE_NAME##_count ec(odb_db_->query_value<TABLE_NAME::TABLE_NAME##_count> \
+                                      (odb::query<TABLE_NAME>::id != 0)); \
+    auto c = ec.count;                                                  \
+    t.commit ();                                                        \
+    return c;                                                           \
+  }
 
 } // end namespace
-  // --------------------------------------------------------------------
+// --------------------------------------------------------------------
 
 #endif

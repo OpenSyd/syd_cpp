@@ -236,3 +236,23 @@ std::string syd::StandardDatabase::GetAbsolutePath(const syd::File::pointer file
   return ConvertToAbsolutePath(f);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+namespace syd {
+  TABLE_GET_NUMBER_OF_ELEMENTS(Patient)
+  TABLE_GET_NUMBER_OF_ELEMENTS(Injection)
+  TABLE_GET_NUMBER_OF_ELEMENTS(Radionuclide)
+  TABLE_GET_NUMBER_OF_ELEMENTS(Tag)
+  TABLE_GET_NUMBER_OF_ELEMENTS(File)
+  TABLE_GET_NUMBER_OF_ELEMENTS(DicomFile)
+  TABLE_GET_NUMBER_OF_ELEMENTS(DicomSerie)
+  TABLE_GET_NUMBER_OF_ELEMENTS(Image)
+  TABLE_GET_NUMBER_OF_ELEMENTS(RoiType);
+  TABLE_GET_NUMBER_OF_ELEMENTS(RoiMaskImage);
+  TABLE_GET_NUMBER_OF_ELEMENTS(ImageTransform);
+  TABLE_GET_NUMBER_OF_ELEMENTS(Calibration);
+  TABLE_GET_NUMBER_OF_ELEMENTS(PixelValueUnit);
+  TABLE_GET_NUMBER_OF_ELEMENTS(RoiStatistic);
+}
+// --------------------------------------------------------------------

@@ -264,7 +264,7 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
 template<class RecordType>
 long syd::Database::GetNumberOfElements() const
 {
-  // Brute force. This is inefficient. Should use view and COUNT. // FIXME
+  // Brute force. This is inefficient. Should use view and count.
   std::vector<std::shared_ptr<RecordType>> records;
   Query(records);
   return records.size();
