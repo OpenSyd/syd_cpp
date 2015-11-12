@@ -283,7 +283,6 @@ int main(int argc, char* argv[])
   // Remove temporary files (not persistant in the db)
   if (args_info.substitute_given) {
       for(auto & image:images) {
-      DD(image);
       for(auto f:image->files) fs::remove_all(db->GetAbsolutePath(f));
     }
   }

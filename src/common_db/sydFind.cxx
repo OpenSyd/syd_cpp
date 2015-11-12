@@ -81,6 +81,12 @@ int main(int argc, char* argv[])
     db->Dump(results, args_info.format_arg);
   }
 
+  // // Check
+  // if (args_info.check_flag) {
+  //   DD("check");
+  //   //    for(auto r:records)
+  // }
+
   // This is the end, my friend.
   return EXIT_SUCCESS;
 }

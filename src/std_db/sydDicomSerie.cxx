@@ -73,27 +73,6 @@ bool syd::DicomSerie::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-// void syd::DicomSerie::CopyFrom(const pointer p)
-// {
-//   syd::Record::CopyFrom(p);
-//   patient = p->patient;
-//   acquisition_date = p->acquisition_date;
-//   reconstruction_date = p->reconstruction_date;
-//   dicom_study_uid = p->dicom_study_uid;
-//   dicom_series_uid = p->dicom_series_uid;
-//   dicom_frame_of_reference_uid = p->dicom_frame_of_reference_uid;
-//   dicom_modality = p->dicom_modality;
-//   dicom_manufacturer = p->dicom_manufacturer;
-//   dicom_description = p->dicom_description;
-//   for(auto i=0; i< size.size(); i++) {
-//     size[i] = p->size[i];
-//     spacing[i] = p->spacing[i];
-//   }
-// }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::DicomSerie::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
 {
   if (format == "help") {
