@@ -107,6 +107,12 @@ int main(int argc, char* argv[])
             LOG(WARNING) << "Option -N and --tia must be both set. Ignoring. ";
           }
         }
+
+        // Is scale is squared ?
+        if (args_info.squared_scale_flag) {
+          s = s*s;
+        }
+
         // scale and update
         builder.ScalePixelValue(image, s);
       }
