@@ -38,14 +38,7 @@ syd::SubstituteRadionuclideImageBuilder::NewRadionuclideSubstitutedImage(syd::Im
   double lambda = log(2.0)/(rad->half_life_in_hours);
 
   // Create output image
-  syd::Image::pointer result = NewMHDImage(input->dicoms[0]);
-  result->pixel_value_unit = input->pixel_value_unit;
-  result->pixel_type = input->pixel_type;
-  result->CopyTags(input);
-  result->CopyDicomSeries(input);
-
-  // result = input; // copy the fields
-  // result->id = -1; // but change the ID to insert as a new image.
+  syd::Image::pointer result = NewMHDImageLike(input);
 
   // Change pixel values
   typedef float PixelType;
