@@ -65,9 +65,7 @@ int main(int argc, char* argv[])
     }
     catch (std::exception & e) {
       LOG(FATAL) << "Cannot delete " << ids.size() << " elements of table "
-                 << tablename
-                 << ". Probably because elements from another table need them and should be deleted first"
-                 << " (foreign key constraint). " << std::endl
+                 << tablename << std::endl
                  << e.what();
     }
   }
