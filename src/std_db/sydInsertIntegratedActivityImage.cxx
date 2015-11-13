@@ -76,6 +76,9 @@ int main(int argc, char* argv[])
     LOG(FATAL) << "The image do not have the same injection.";
   }
 
+  // Sort images
+  db->Sort<syd::Image>(images);
+
   // Check same pixel units (warning)
   syd::PixelValueUnit::pointer unit = images[0]->pixel_value_unit;
   for(auto image:images) {
@@ -87,6 +90,15 @@ int main(int argc, char* argv[])
                    << std::endl << images[0];
     }
   }
+
+  // image type
+  typedef float PixelType;
+  typedef itk::Image<PixelType,3> ImageType;
+  typedef itk::ImageRegionIterator<ImageType> Iterator;
+  typedef itk::NeighborhoodIterator<ImageType> NIterator;
+
+  // Read and keep initial image (for mask)
+  ImageType::Pointer initial_image = syd::ReadImage<ImageType>(db->GetAbsolutePath(images[0]));
 
   // Apply radionuclide substitution. The temporary images are not
   // inserted into the db (but files are created on disk and deleted
@@ -102,12 +114,6 @@ int main(int argc, char* argv[])
       image = builder.NewRadionuclideSubstitutedImage(image, rad);
     }
   }
-
-  // image type
-  typedef float PixelType;
-  typedef itk::Image<PixelType,3> ImageType;
-  typedef itk::ImageRegionIterator<ImageType> Iterator;
-  typedef itk::NeighborhoodIterator<ImageType> NIterator;
 
   // Read the images+times and set to the builder
   std::string starting_date = injection->date;
@@ -163,9 +169,10 @@ int main(int argc, char* argv[])
 
   // Use a mask, consider values of the first spect
   int nb_pixel = 0.0;
-  ImageType::Pointer mask = syd::CreateImageLike<ImageType>(im);
+  ImageType::Pointer mask = syd::CreateImageLike<ImageType>(initial_image);
+  syd::WriteImage<ImageType>(initial_image, "initia.mhd");
   Iterator it_mask(mask, mask->GetLargestPossibleRegion());
-  Iterator it_image(im, im->GetLargestPossibleRegion());
+  Iterator it_image(initial_image, initial_image->GetLargestPossibleRegion());
   it_mask.GoToBegin();
   it_image.GoToBegin();
   while (!it_mask.IsAtEnd()) {
