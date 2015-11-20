@@ -97,8 +97,26 @@ int main(int argc, char* argv[])
   typedef itk::ImageRegionIterator<ImageType> Iterator;
   typedef itk::NeighborhoodIterator<ImageType> NIterator;
 
-  // Read and keep initial image (for mask)
-  ImageType::Pointer initial_image = syd::ReadImage<ImageType>(db->GetAbsolutePath(images[0]));
+  // Read and keep initial image with max value (for mask)
+  std::vector<ImageType::Pointer> initial_images;
+  std::vector<Iterator> it;
+  for(auto image:images) {
+    auto im = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));
+    initial_images.push_back(im);
+    Iterator i = Iterator(im, im->GetLargestPossibleRegion());
+    i.GoToBegin();
+    it.push_back(i);
+  }
+  ImageType::Pointer initial_image = syd::CreateImageLike<ImageType>(initial_images[0]);
+  Iterator iter_all(initial_image, initial_image->GetLargestPossibleRegion());
+  while (!it[0].IsAtEnd()) {
+    PixelType maxi = it[0].Get();
+    for(auto & itt:it) maxi = std::max(maxi, itt.Get());
+    iter_all.Set(maxi);
+    ++iter_all;
+    for(auto & itt:it) ++itt;
+  }
+  syd::WriteImage<ImageType>(initial_image, "initia.mhd");
 
   // Apply radionuclide substitution. The temporary images are not
   // inserted into the db (but files are created on disk and deleted
@@ -170,7 +188,6 @@ int main(int argc, char* argv[])
   // Use a mask, consider values of the first spect
   int nb_pixel = 0.0;
   ImageType::Pointer mask = syd::CreateImageLike<ImageType>(initial_image);
-  syd::WriteImage<ImageType>(initial_image, "initia.mhd");
   Iterator it_mask(mask, mask->GetLargestPossibleRegion());
   Iterator it_image(initial_image, initial_image->GetLargestPossibleRegion());
   it_mask.GoToBegin();
@@ -196,6 +213,9 @@ int main(int argc, char* argv[])
   builder.SetDebugOnlyFlag(args_info.debug_only_flag);
   builder.SetR2MinThreshold(args_info.r2_min_arg);
   builder.SetRestrictedTACFlag(args_info.restricted_tac_flag);
+  if (args_info.add_time_given and args_info.add_value_given) {
+    builder.SetAdditionalPoint(true, args_info.add_time_arg, args_info.add_value_arg);
+  }
 
   for(auto d:debug_points) builder.AddDebugPixel(d.name, d.x, d.y, d.z);
   if (args_info.debug_images_flag) {

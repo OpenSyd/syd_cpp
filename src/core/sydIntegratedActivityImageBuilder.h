@@ -73,6 +73,7 @@ namespace syd {
     void SetDebugOnlyFlag(bool b) { debug_only_flag_ = b; }
     void SetR2MinThreshold(double r) { R2_min_threshold_ = r; }
     void SetRestrictedTACFlag(bool b) { restricted_tac_flag_ = b; }
+    void SetAdditionalPoint(bool b, double time, double value);
 
     // Main function
     void CreateIntegratedActivityImage();
@@ -127,6 +128,11 @@ namespace syd {
     ceres::Solver::Options * ceres_options_;
     ceres::Solver::Summary ceres_summary_;
     ceres::Solver::Summary current_ceres_summary_;
+
+    // When the biological half life is known
+    bool additional_point_flag_;
+    double additional_point_time_;
+    double additional_point_value_;
 
   }; // class IntegratedActivityImageBuilder
 

@@ -233,8 +233,23 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
       ++number_of_pixels_in_mask;
       // Create current tac
       for(auto i=0; i<images_.size(); i++) {
-        tac.SetValue(i, it.Get());
+        tac.SetValue(i, std::max((float)0.0, it.Get())); // FIXME
         ++it; // next value
+      }
+
+      if (additional_point_flag_) {
+        int n = images_.size();
+        double last_value = tac.GetValue(n-1);
+        double value = last_value * additional_point_value_;
+        double time = tac.GetTime(n-1) + additional_point_time_;
+        if (tac.size() == n) {
+          tac.AddValue(time, value);
+        }
+        else {
+          tac.SetTime(n, time);
+          tac.SetValue(n, value);
+        }
+        //DD(tac);
       }
 
       syd::TimeActivityCurve restricted_tac;
@@ -427,5 +442,15 @@ void syd::IntegratedActivityImageBuilder::AddModel(syd::FitModelBase * m, int id
   }
   m->id_ = id;
   models_.push_back(m);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::IntegratedActivityImageBuilder::SetAdditionalPoint(bool b, double time, double value)
+{
+  additional_point_flag_ = b;
+  additional_point_time_ = time;
+  additional_point_value_ = value;
 }
 // --------------------------------------------------------------------

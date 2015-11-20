@@ -20,6 +20,9 @@ option "fill_holes"             f       "Try to fill holes using given radius"  
 
 option "substitute"             s       "Change the radionuclide before computing"         string no
 
+option "add_time"               -       "Add a point to the tac (bio HL) time"             double no
+option "add_value"              -       "Add a point to the tac (bio HL) value"            double no
+
 section "debug"
 option "debug"   	 	-       "File with debug points"                           string    no
 option "debug_only"   	 	-       "Do not create the image, only compute for point"  flag off
