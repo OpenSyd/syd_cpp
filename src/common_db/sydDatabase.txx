@@ -228,8 +228,8 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
   }
   catch (const odb::exception& e) {
     EXCEPTION("Error during Query(r, q) for the table '" << RecordType::GetStaticTableName()
-              << "'. Last sql query is: "
-              << std::endl << GetLastSQLQuery());
+              << "'. ODB error is:" << e.what() << std::endl
+              << "Last sql query is: " << GetLastSQLQuery());
   }
 }
 // --------------------------------------------------------------------
@@ -251,10 +251,7 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
                           const std::vector<syd::IdType> & ids) const
 {
   if (ids.size() == 0) return;
-  odb::query<RecordType> q(odb::query<RecordType>::id == ids[0]);
-  for(auto id:ids) {
-    q = q or odb::query<RecordType>::id == id;
-  }
+  odb::query<RecordType> q(odb::query<RecordType>::id.in_range(ids.begin(), ids.end()));
   Query(records, q);
 }
 // --------------------------------------------------------------------
