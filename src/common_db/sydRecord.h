@@ -63,6 +63,11 @@ namespace syd {
     /// Add a line in the given
     virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
 
+    //FIXME
+    virtual void InitTable(syd::PrintTable & table);
+    virtual void DumpInTable(syd::PrintTable & table);
+
+
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const = 0;
 
@@ -134,6 +139,10 @@ namespace syd {
   virtual void Set(const syd::Database * db, const std::vector<std::string> & args); \
   virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const; \
   virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+
+  //
+  // virtual void InitTable(syd::PrintTable & table);
+  // virtual void DumpInTable(syd::PrintTable & table);
 
   /// To be define in db.cxx (and declared in db.h) to allow fast
   /// computation of the nb of elements in a table.

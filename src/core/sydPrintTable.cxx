@@ -17,6 +17,7 @@
   ===========================================================================**/
 
 #include "sydPrintTable.h"
+#include <algorithm>
 
 //------------------------------------------------------------------
 syd::PrintTable::PrintTable()
@@ -100,6 +101,21 @@ syd::PrintTable & syd::PrintTable::operator<<(const std::string & value)
 //------------------------------------------------------------------
 
 
+void syd::PrintTable::Set(int col, const std::string & value)
+{
+  values[current_line][col] = v;
+  return *this;
+}
+
+void syd::PrintTable::Set(int col, const double & value)
+{
+  std::stringstream ss;
+  ss << std::scientific << std::setprecision(3) << value; //FIXME
+  values[current_line][col] = ss.str();
+  return *this;
+}
+
+
 //------------------------------------------------------------------
 void syd::PrintTable::SkipLine()
 {
@@ -111,6 +127,9 @@ void syd::PrintTable::SkipLine()
 //------------------------------------------------------------------
 void syd::PrintTable::Print(std::ostream & out)
 {
+  /// OLD
+
+  /*
   for(auto i=0; i<headers.size(); i++) {
     if (width[i] != 0) out << std::setw(width[i]) << headers[i];
   }
@@ -118,6 +137,30 @@ void syd::PrintTable::Print(std::ostream & out)
   for(auto i=0; i<values.size(); i++) {
     for(auto j=0; j<values[i].size(); j++) {
       if (width[j] != 0) out << std::setw(width[j]) << values[i][j];
+    }
+    out << std::endl;
+  }
+  out << std::flush;
+  */
+
+  //// NEW
+
+  // Compute optimal column width
+  for(auto col=0; col<headers.size(); col++) {
+    unsigned long m = headers[col].size();
+    for(auto row=0; row<values.size(); row++)
+      m = std::max(m, values[row][col].size());
+    //    if (m > max width change ....
+    width[col] = m+1;
+  }
+
+  for(auto col=0; col<headers.size(); col++) {
+    if (width[col] != 0) out << std::setw(width[col]) << headers[col];
+  }
+  out << std::endl;
+  for(auto row=0; row<values.size(); row++) {
+    for(auto col=0; col<headers.size(); col++) {
+      if (width[col] != 0) out << std::setw(width[col]) << values[row][col];
     }
     out << std::endl;
   }

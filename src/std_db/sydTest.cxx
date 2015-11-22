@@ -38,12 +38,13 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
-  // get count
-  DD(db->GetNumberOfElements("File"));
-  DD(db->GetNumberOfElements<syd::File>());
-  DD(db->GetNumberOfElements<syd::Image>());
-  DD(db->GetNumberOfElements<syd::DicomFile>());
-
+  if (0) {
+    // get count
+    DD(db->GetNumberOfElements("File"));
+    DD(db->GetNumberOfElements<syd::File>());
+    DD(db->GetNumberOfElements<syd::Image>());
+    DD(db->GetNumberOfElements<syd::DicomFile>());
+  }
 
   if (0) {
 

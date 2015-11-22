@@ -33,20 +33,39 @@ namespace syd {
     void Init();
     PrintTable & operator<<(const double & value);
     PrintTable & operator<<(const std::string & value);
+
+    void Set(int col, const std::string & value);
+    void Set(int col, const double & value);
+
+    void Set(const std::string & col, const std::string & value);
+    void Set(const std::string & col, const double & value);
+
     void SkipLine();
     void Print(std::ostream & out);
     void SetColumnWidth(int col, int width);
     int GetNumberOfColumns() const { return headers.size(); }
     void Endl();
+
+    template<class RecordType>
+    void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
+              std::ostream & os=std::cout);
+
+    template<class RecordType>
+    void InitTable();
+
   protected:
     std::vector<std::vector<std::string>> values;
     std::vector<std::string> headers;
     std::vector<int> width;
+
     std::vector<int> precision;
     std::vector<bool> trunc_by_end;
     int current_line;
     int current_column;
+
   };
+
+#include "sydPrintTable.txx"
 
 } // end namespace
 

@@ -327,3 +327,87 @@ void syd::Image::CopyDicomSeries(syd::Image::pointer image)
   for(auto d:image->dicoms) AddDicomSerie(d);
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::InitTable(syd::PrintTable & table)
+{
+  DD("InitTable for Image");
+
+
+  ta.AddColumn("#id", 5);
+  ta.AddColumn("p", 8);
+  ta.AddColumn("acqui_date", 18);
+  ta.AddColumn("tags", 50);
+  ta.AddColumn("size", 12);
+  ta.AddColumn("spacing", 25);
+  ta.AddColumn("dicom_id", 15);
+  ta.AddColumn("unit", 12);
+  ta.AddColumn("ref_frame", 20, 0, false);
+
+  /*
+  ta.AddColumn("id", 3);
+  ta.AddColumn2("p", 8);
+  ta.AddColumn2("acqui_date", 18);
+  ta.AddColumn2("tags", 50);
+  ta.AddColumn2("files", 20);
+  ta.AddColumn2("dicom", 15);
+  ta.AddColumn2("type", 5); // mhd ?
+  ta.AddColumn2("pixel_type", 5);
+  ta.AddColumn2("unit", 12);
+  ta.AddColumn2("ref_frame", 20);//, 0, false);
+  ta.AddColumn2("dimension", 5);
+  ta.AddColumn2("size", 12);
+  ta.AddColumn2("spacing", 25);
+  ta.AddColumn2("filelist", 25);
+
+  ta.AddFormat("default",
+               "id", "p", "acqui_date", "tags", "size", "spacing", "dicom",
+               "unit", "ref_frame");
+
+  //   ta.AddFormat("id" -->auto
+  ta.AddFormat("file", "id", "file");
+  ta.AddFormat("filelist", "filelist", false); // false = no column title
+
+  */
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable(syd::PrintTable & ta)
+{
+  DD("DumpInTable for Image");
+  DD(*this);
+
+  // Check nb of columns
+  if (ta.GetNumberOfColumns() != 9) {
+    InitPrintTable(ta);
+  }
+
+  ta.Set("id", id);
+  ta.Set("p", patient->name);
+  if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
+  else ta.Set("acqui_date", dicoms[0]->acquisition_date);
+
+    ta << GetLabels(tags);
+    ta << syd::ArrayToString<int, 3>(size);
+    ta << syd::ArrayToString<double, 3>(spacing);
+    std::string dicom;
+    for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
+    if (dicom.size() != 0) dicom.pop_back(); // remove last space
+    ta << dicom;
+    if (pixel_value_unit != NULL) ta << pixel_value_unit->name;
+      else ta << "novalue";
+    ta << frame_of_reference_uid;  }
+
+/*
+  std::string f = ta->GetFormat();
+  if (f == "file") {
+    if (files.size() == 0) ta << "no_file";
+    else ta << files[0]->GetAbsolutePath(db_);
+  }
+  if (f == "default") {
+  */
+}
+// --------------------------------------------------

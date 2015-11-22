@@ -124,11 +124,17 @@ namespace syd {
     /// Check if the image has a dicom. If not fail
     void FatalIfNoDicom() const;
 
+    //FIXME
+   virtual void InitTable(syd::PrintTable & table);
+   virtual void DumpInTable(syd::PrintTable & table);
+
+
   protected:
     Image();
 
   }; // end class
   // --------------------------------------------------------------------
+
 
 } // end namespace
 // --------------------------------------------------------------------

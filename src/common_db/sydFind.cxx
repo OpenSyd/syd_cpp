@@ -78,7 +78,10 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
   }
   else {
-    db->Dump(results, args_info.format_arg);
+    syd::PrintTable table;
+    // table.SetFormat(args_info.format_arg);
+    //db->Dump(results, args_info.format_arg);
+    table.Dump<syd::Record>(results);
   }
 
   // // Check
