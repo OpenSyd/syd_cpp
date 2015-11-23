@@ -82,7 +82,7 @@ namespace syd {
 
 
 template<> void syd::Table<syd::Image>::Sort(syd::Image::vector & records, const std::string & type) const;
-template<> void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & records, const std::string & type) const;
+// template<> void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & records, const std::string & type) const;
 template<> void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & records, const std::string & type) const;
 template<> void syd::Table<syd::Patient>::Sort(syd::Patient::vector & records, const std::string & type) const;
 template<> void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & records, const std::string & type) const;
