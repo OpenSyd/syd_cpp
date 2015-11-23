@@ -335,15 +335,15 @@ void syd::Image::InitTable(syd::PrintTable & table)
   DD("InitTable for Image");
 
 
-  ta.AddColumn("#id", 5);
-  ta.AddColumn("p", 8);
-  ta.AddColumn("acqui_date", 18);
-  ta.AddColumn("tags", 50);
-  ta.AddColumn("size", 12);
-  ta.AddColumn("spacing", 25);
-  ta.AddColumn("dicom_id", 15);
-  ta.AddColumn("unit", 12);
-  ta.AddColumn("ref_frame", 20, 0, false);
+  table.AddColumn("#id", 5);
+  table.AddColumn("p", 8);
+  table.AddColumn("acqui_date", 18);
+  // ta.AddColumn("tags", 50);
+  // ta.AddColumn("size", 12);
+  // ta.AddColumn("spacing", 25);
+  // ta.AddColumn("dicom_id", 15);
+  // ta.AddColumn("unit", 12);
+  // ta.AddColumn("ref_frame", 20, 0, false);
 
   /*
   ta.AddColumn("id", 3);
@@ -377,29 +377,41 @@ void syd::Image::InitTable(syd::PrintTable & table)
 // --------------------------------------------------
 void syd::Image::DumpInTable(syd::PrintTable & ta)
 {
-  DD("DumpInTable for Image");
-  DD(*this);
+  // DD("DumpInTable for Image");
+  // DD(*this);
 
   // Check nb of columns
-  if (ta.GetNumberOfColumns() != 9) {
-    InitPrintTable(ta);
+  if (!ta.ColumnsAreDefined("Image")) {
+    DD("add img col");
+    //    InitPrintTable(ta);
+    ta.AddColumn("#id", 5);
+    ta.AddColumn("p", 8);
+    ta.AddColumn("acqui_date", 18);
+    ta.AddColumn("tags", 50);
+    ta.AddColumn("size", 12);
+    ta.AddColumn("spacing", 25);
+    ta.AddColumn("dicom", 15);
+    ta.AddColumn("unit", 12);
+    //ta.AddColumn("ref_frame", 20, 0, false);
+    ta.SetColumnsAreDefined("Image");
   }
 
+  //  DD(id);
   ta.Set("id", id);
   ta.Set("p", patient->name);
   if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
   else ta.Set("acqui_date", dicoms[0]->acquisition_date);
 
-    ta << GetLabels(tags);
-    ta << syd::ArrayToString<int, 3>(size);
-    ta << syd::ArrayToString<double, 3>(spacing);
-    std::string dicom;
-    for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
-    if (dicom.size() != 0) dicom.pop_back(); // remove last space
-    ta << dicom;
-    if (pixel_value_unit != NULL) ta << pixel_value_unit->name;
-      else ta << "novalue";
-    ta << frame_of_reference_uid;  }
+  ta.Set("tags", GetLabels(tags));
+  ta.Set("size", syd::ArrayToString<int, 3>(size));
+  ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
+  std::string dicom;
+  for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
+  if (dicom.size() != 0) dicom.pop_back(); // remove last space
+  ta.Set("dicom", dicom);
+  if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
+  else ta.Set("unit", "-");
+  //ta.Set("ref_frame", frame_of_reference_uid);
 
 /*
   std::string f = ta->GetFormat();

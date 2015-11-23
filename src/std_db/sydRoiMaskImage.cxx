@@ -128,3 +128,21 @@ std::string syd::RoiMaskImage::ComputeDefaultAbsolutePath(syd::Database * db) co
   return mhd_path;
 }
 // --------------------------------------------------
+
+
+
+// --------------------------------------------------
+void syd::RoiMaskImage::DumpInTable(syd::PrintTable & ta)
+{
+  DD("dumpintable roimaskimage");
+  syd::Image::DumpInTable(ta);
+
+  if (!ta.ColumnsAreDefined("RoiMaskImage")) {
+    DD("add 1 col");
+    ta.AddColumn("roi", 12);
+    ta.SetColumnsAreDefined("RoiMaskImage");
+  }
+
+  ta.Set("roi", roitype->name);
+
+}

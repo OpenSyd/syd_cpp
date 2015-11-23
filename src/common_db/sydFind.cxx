@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
   db->Grep(results, records, patterns, exclude);
 
   // Sort
-  db->Sort(results);
+  db->Sort(results); //FIXME bug mix RoiMaskImage and image.
 
   // Dump results
   if (!args_info.dump_flag) {
@@ -78,6 +78,7 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
   }
   else {
+    DD("here");
     syd::PrintTable table;
     // table.SetFormat(args_info.format_arg);
     //db->Dump(results, args_info.format_arg);

@@ -22,8 +22,24 @@
 // syd
 #include "sydCommon.h"
 
+// std
+#include <map>
+
 //--------------------------------------------------------------------
 namespace syd {
+
+
+  struct PrintColumn { // FIXME change name TableColumn
+    int width;
+    std::string title;
+    int index;
+  };
+
+  struct PrintRow {
+    std::vector<std::string> values;
+  };
+
+
 
   /// Helpers class to dump a table (line/column) of values, controling the precision and the column size
   class PrintTable {
@@ -43,8 +59,14 @@ namespace syd {
     void SkipLine();
     void Print(std::ostream & out);
     void SetColumnWidth(int col, int width);
-    int GetNumberOfColumns() const { return headers.size(); }
+    //    int GetNumberOfColumns() const { return headers.size(); }
+    int GetNumberOfColumns() const { return columns_.size(); }
     void Endl();
+
+
+    bool ColumnsAreDefined(const std::string & table_name);
+
+    void SetColumnsAreDefined(const std::string & table_name);
 
     template<class RecordType>
     void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
@@ -63,6 +85,12 @@ namespace syd {
     int current_line;
     int current_column;
 
+
+    std::vector<syd::PrintColumn> columns_;
+    std::vector<syd::PrintRow> rows_;
+    void DumpRow(const syd::PrintRow & row, std::ostream & out);
+    std::map<std::string, int> map_column;
+    std::map<std::string, bool> map_column_defined;
   };
 
 #include "sydPrintTable.txx"
