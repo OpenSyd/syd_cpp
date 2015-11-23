@@ -68,6 +68,8 @@ namespace syd {
 
     void SetColumnsAreDefined(const std::string & table_name);
 
+    const std::string & GetFormat() const { return format_; }
+
     template<class RecordType>
     void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
               std::ostream & os=std::cout);
@@ -91,6 +93,9 @@ namespace syd {
     void DumpRow(const syd::PrintRow & row, std::ostream & out);
     std::map<std::string, int> map_column;
     std::map<std::string, bool> map_column_defined;
+
+    std::string format_;
+
   };
 
 #include "sydPrintTable.txx"

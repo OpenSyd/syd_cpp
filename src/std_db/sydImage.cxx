@@ -262,7 +262,7 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
     for(auto f:files) db.update(f);
   }
   /*
-  if (event == odb::callback_event::post_persist) {
+    if (event == odb::callback_event::post_persist) {
     DD("image post persist");
     DD(id);
     //rename ? need StandardDatabase ?
@@ -272,7 +272,7 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
     // syd::ImageBuilder builder(sdb);
     // builder.RenameToDefaultFilename(image);
     // sdb->Dump();
-  }
+    }
   */
 }
 // --------------------------------------------------
@@ -330,14 +330,33 @@ void syd::Image::CopyDicomSeries(syd::Image::pointer image)
 
 
 // --------------------------------------------------
-void syd::Image::InitTable(syd::PrintTable & table)
+void syd::Image::InitTable(syd::PrintTable & ta)
 {
   DD("InitTable for Image");
 
+  std::string f = ta.GetFormat();
 
-  table.AddColumn("#id", 5);
-  table.AddColumn("p", 8);
-  table.AddColumn("acqui_date", 18);
+  if (f == "default") {
+    ta.AddColumn("id", 5);
+    ta.AddColumn("p", 8);
+    ta.AddColumn("acqui_date", 18);
+    ta.AddColumn("tags", 50);
+    ta.AddColumn("size", 12);
+    ta.AddColumn("spacing", 25);
+    ta.AddColumn("dicom", 15);
+    ta.AddColumn("unit", 12);
+    //ta.AddColumn("ref_frame", 20, 0, false);
+  }
+  if (f == "file") {
+    ta.AddColumn("id", 5);
+    ta.AddColumn("file", 8);
+  }
+
+  //  ta.SetColumnsAreDefined("Image");
+
+  // table.AddColumn("#id", 5);
+  // table.AddColumn("p", 8);
+  // table.AddColumn("acqui_date", 18);
   // ta.AddColumn("tags", 50);
   // ta.AddColumn("size", 12);
   // ta.AddColumn("spacing", 25);
@@ -346,28 +365,28 @@ void syd::Image::InitTable(syd::PrintTable & table)
   // ta.AddColumn("ref_frame", 20, 0, false);
 
   /*
-  ta.AddColumn("id", 3);
-  ta.AddColumn2("p", 8);
-  ta.AddColumn2("acqui_date", 18);
-  ta.AddColumn2("tags", 50);
-  ta.AddColumn2("files", 20);
-  ta.AddColumn2("dicom", 15);
-  ta.AddColumn2("type", 5); // mhd ?
-  ta.AddColumn2("pixel_type", 5);
-  ta.AddColumn2("unit", 12);
-  ta.AddColumn2("ref_frame", 20);//, 0, false);
-  ta.AddColumn2("dimension", 5);
-  ta.AddColumn2("size", 12);
-  ta.AddColumn2("spacing", 25);
-  ta.AddColumn2("filelist", 25);
+    ta.AddColumn("id", 3);
+    ta.AddColumn2("p", 8);
+    ta.AddColumn2("acqui_date", 18);
+    ta.AddColumn2("tags", 50);
+    ta.AddColumn2("files", 20);
+    ta.AddColumn2("dicom", 15);
+    ta.AddColumn2("type", 5); // mhd ?
+    ta.AddColumn2("pixel_type", 5);
+    ta.AddColumn2("unit", 12);
+    ta.AddColumn2("ref_frame", 20);//, 0, false);
+    ta.AddColumn2("dimension", 5);
+    ta.AddColumn2("size", 12);
+    ta.AddColumn2("spacing", 25);
+    ta.AddColumn2("filelist", 25);
 
-  ta.AddFormat("default",
-               "id", "p", "acqui_date", "tags", "size", "spacing", "dicom",
-               "unit", "ref_frame");
+    ta.AddFormat("default",
+    "id", "p", "acqui_date", "tags", "size", "spacing", "dicom",
+    "unit", "ref_frame");
 
-  //   ta.AddFormat("id" -->auto
-  ta.AddFormat("file", "id", "file");
-  ta.AddFormat("filelist", "filelist", false); // false = no column title
+    //   ta.AddFormat("id" -->auto
+    ta.AddFormat("file", "id", "file");
+    ta.AddFormat("filelist", "filelist", false); // false = no column title
 
   */
 }
@@ -381,45 +400,40 @@ void syd::Image::DumpInTable(syd::PrintTable & ta)
   // DD(*this);
 
   // Check nb of columns
-  if (!ta.ColumnsAreDefined("Image")) {
-    DD("add img col");
-    //    InitPrintTable(ta);
-    ta.AddColumn("#id", 5);
-    ta.AddColumn("p", 8);
-    ta.AddColumn("acqui_date", 18);
-    ta.AddColumn("tags", 50);
-    ta.AddColumn("size", 12);
-    ta.AddColumn("spacing", 25);
-    ta.AddColumn("dicom", 15);
-    ta.AddColumn("unit", 12);
-    //ta.AddColumn("ref_frame", 20, 0, false);
-    ta.SetColumnsAreDefined("Image");
+
+
+
+  if (f == "default") {
+    ta.Set("id", id);
+    ta.Set("p", patient->name);
+    if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
+    else ta.Set("acqui_date", dicoms[0]->acquisition_date);
+
+    ta.Set("tags", GetLabels(tags));
+    ta.Set("size", syd::ArrayToString<int, 3>(size));
+    ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
+    std::string dicom;
+    for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
+    if (dicom.size() != 0) dicom.pop_back(); // remove last space
+    ta.Set("dicom", dicom);
+    if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
+    else ta.Set("unit", "-");
+    //ta.Set("ref_frame", frame_of_reference_uid);
   }
 
-  //  DD(id);
-  ta.Set("id", id);
-  ta.Set("p", patient->name);
-  if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
-  else ta.Set("acqui_date", dicoms[0]->acquisition_date);
-
-  ta.Set("tags", GetLabels(tags));
-  ta.Set("size", syd::ArrayToString<int, 3>(size));
-  ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
-  std::string dicom;
-  for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
-  if (dicom.size() != 0) dicom.pop_back(); // remove last space
-  ta.Set("dicom", dicom);
-  if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
-  else ta.Set("unit", "-");
-  //ta.Set("ref_frame", frame_of_reference_uid);
-
-/*
-  std::string f = ta->GetFormat();
   if (f == "file") {
+    ta.Set("id", id);
+    if (files.size() == 0) ta.Set("file", "no_file");
+    else ta.Set("file", files[0]->GetAbsolutePath(db_));
+  }
+
+  /*
+    std::string f = ta->GetFormat();
+    if (f == "file") {
     if (files.size() == 0) ta << "no_file";
     else ta << files[0]->GetAbsolutePath(db_);
-  }
-  if (f == "default") {
+    }
+    if (f == "default") {
   */
 }
 // --------------------------------------------------

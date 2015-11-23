@@ -181,6 +181,7 @@ void syd::PrintTable::Print(std::ostream & out)
   }
 
   // Dump headers
+  out << "#";
   for(auto col:columns_) { // FIXME order
     if (col.width != 0) out << std::setw(col.width) << col.title;
   }
