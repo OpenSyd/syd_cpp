@@ -78,6 +78,8 @@ namespace syd {
 
     int GetColmun(std::string col);
 
+    void AddRow();
+
     template<class RecordType>
     void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
               std::ostream & os=std::cout);
@@ -95,7 +97,7 @@ namespace syd {
     int current_line;
     int current_column;
 
-
+    std::string current_table_;
     std::vector<syd::PrintColumn> columns_;
     std::vector<syd::PrintRow> rows_;
     void DumpRow(const syd::PrintRow & row, std::ostream & out);

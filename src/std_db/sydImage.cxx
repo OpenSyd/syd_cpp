@@ -359,7 +359,7 @@ void syd::Image::InitTable(syd::PrintTable & ta)
 // --------------------------------------------------
 void syd::Image::DumpInTable(syd::PrintTable & ta)
 {
-  auto f = ta.GetFormat(); // sure it exists
+  auto f = ta.GetFormat();
 
   if (f == "default") {
     ta.Set("id", id);

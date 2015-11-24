@@ -16,7 +16,7 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include "sydPrintTable.h"
+//#include "sydPrintTable.h"
 
 
 // ------------------------------------------------------------------------
@@ -35,6 +35,7 @@ void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & record
                          const std::string & format,
                          std::ostream & os) const
 {
+  /*
   if (records.size() == 0) return;
   std::string f = format;
 
@@ -74,6 +75,7 @@ void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & record
     }
     ta.Print(os);
   }
+  */
 }
 // --------------------------------------------------------------------
 

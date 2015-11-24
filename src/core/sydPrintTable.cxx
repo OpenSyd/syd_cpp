@@ -175,7 +175,7 @@ void syd::PrintTable::Print(std::ostream & out)
 {
   // Compute optimal column width
   for(auto & col:columns_) {
-    unsigned long m = 0;//col.width; // requested min and or max? FIXME
+    unsigned long m = col.title.size();//col.width; // requested min and or max? FIXME
     if (col.width != 0) {
       for(auto row:rows_) {
         if (col.index < row.values.size())
@@ -187,13 +187,12 @@ void syd::PrintTable::Print(std::ostream & out)
   }
 
   // Dump headers
-  //out << "#";
+  out << "# Table: " << current_table_ << ". Number of rows: " << rows_.size() << std::endl;
   bool first = true;
   for(auto col:columns_) { // FIXME order
     if (col.width != 0) {
-      if (first) {
-        std::string s = "#"+col.title;
-        out << std::setw(col.width) << s;
+      if (first) { // special case for first column, start with #
+        out << "#" << std::setw(col.width-1) << col.title;
         first = false;
       }
       else out << std::setw(col.width) << col.title;
@@ -258,4 +257,16 @@ void syd::PrintTable::SetFormat(std::string name)
 {
   current_format_name_ = name;
   if (name == "") current_format_name_ = "default";
+}
+
+
+void syd::PrintTable::AddRow()
+{
+  syd::PrintRow ro;
+  rows_.push_back(ro);
+  auto & row = rows_.back();
+  row.values.resize(columns_.size());
+  // initialize
+  for(auto & v:row.values) v="-"; // Set to empty values
+  //    DDS(row.values);
 }
