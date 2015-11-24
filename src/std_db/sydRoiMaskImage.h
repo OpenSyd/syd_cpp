@@ -51,7 +51,9 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
-   virtual void DumpInTable(syd::PrintTable & table);
+    // FIXME
+    virtual void InitTable(syd::PrintTable & table);
+    virtual void DumpInTable(syd::PrintTable & table);
 
   protected:
     RoiMaskImage();

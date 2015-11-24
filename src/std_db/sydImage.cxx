@@ -332,10 +332,11 @@ void syd::Image::CopyDicomSeries(syd::Image::pointer image)
 // --------------------------------------------------
 void syd::Image::InitTable(syd::PrintTable & ta)
 {
-  DD("InitTable for Image");
+  // Define the formats
+  ta.AddFormat("file", "Display the filename");
 
+  // Set the columns
   std::string f = ta.GetFormat();
-
   if (f == "default") {
     ta.AddColumn("id", 5);
     ta.AddColumn("p", 8);
@@ -351,44 +352,6 @@ void syd::Image::InitTable(syd::PrintTable & ta)
     ta.AddColumn("id", 5);
     ta.AddColumn("file", 8);
   }
-
-  //  ta.SetColumnsAreDefined("Image");
-
-  // table.AddColumn("#id", 5);
-  // table.AddColumn("p", 8);
-  // table.AddColumn("acqui_date", 18);
-  // ta.AddColumn("tags", 50);
-  // ta.AddColumn("size", 12);
-  // ta.AddColumn("spacing", 25);
-  // ta.AddColumn("dicom_id", 15);
-  // ta.AddColumn("unit", 12);
-  // ta.AddColumn("ref_frame", 20, 0, false);
-
-  /*
-    ta.AddColumn("id", 3);
-    ta.AddColumn2("p", 8);
-    ta.AddColumn2("acqui_date", 18);
-    ta.AddColumn2("tags", 50);
-    ta.AddColumn2("files", 20);
-    ta.AddColumn2("dicom", 15);
-    ta.AddColumn2("type", 5); // mhd ?
-    ta.AddColumn2("pixel_type", 5);
-    ta.AddColumn2("unit", 12);
-    ta.AddColumn2("ref_frame", 20);//, 0, false);
-    ta.AddColumn2("dimension", 5);
-    ta.AddColumn2("size", 12);
-    ta.AddColumn2("spacing", 25);
-    ta.AddColumn2("filelist", 25);
-
-    ta.AddFormat("default",
-    "id", "p", "acqui_date", "tags", "size", "spacing", "dicom",
-    "unit", "ref_frame");
-
-    //   ta.AddFormat("id" -->auto
-    ta.AddFormat("file", "id", "file");
-    ta.AddFormat("filelist", "filelist", false); // false = no column title
-
-  */
 }
 // --------------------------------------------------
 
@@ -396,12 +359,7 @@ void syd::Image::InitTable(syd::PrintTable & ta)
 // --------------------------------------------------
 void syd::Image::DumpInTable(syd::PrintTable & ta)
 {
-  // DD("DumpInTable for Image");
-  // DD(*this);
-
-  // Check nb of columns
-
-
+  auto f = ta.GetFormat(); // sure it exists
 
   if (f == "default") {
     ta.Set("id", id);
@@ -426,14 +384,5 @@ void syd::Image::DumpInTable(syd::PrintTable & ta)
     if (files.size() == 0) ta.Set("file", "no_file");
     else ta.Set("file", files[0]->GetAbsolutePath(db_));
   }
-
-  /*
-    std::string f = ta->GetFormat();
-    if (f == "file") {
-    if (files.size() == 0) ta << "no_file";
-    else ta << files[0]->GetAbsolutePath(db_);
-    }
-    if (f == "default") {
-  */
 }
 // --------------------------------------------------

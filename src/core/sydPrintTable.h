@@ -39,6 +39,10 @@ namespace syd {
     std::vector<std::string> values;
   };
 
+  struct PrintFormat {
+    std::string name;
+    std::string help;
+  };
 
 
   /// Helpers class to dump a table (line/column) of values, controling the precision and the column size
@@ -68,7 +72,11 @@ namespace syd {
 
     void SetColumnsAreDefined(const std::string & table_name);
 
-    const std::string & GetFormat() const { return format_; }
+    const std::string & GetFormat() const { return current_format_name_; }
+    void AddFormat(std::string name, std::string help);
+    void SetFormat(std::string name);
+
+    int GetColmun(std::string col);
 
     template<class RecordType>
     void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
@@ -94,7 +102,8 @@ namespace syd {
     std::map<std::string, int> map_column;
     std::map<std::string, bool> map_column_defined;
 
-    std::string format_;
+    std::string current_format_name_;
+    std::vector<syd::PrintFormat> formats_;
 
   };
 

@@ -23,6 +23,7 @@
 syd::PrintTable::PrintTable()
 {
   Init();
+  current_format_name_ = "default";
 }
 //------------------------------------------------------------------
 
@@ -30,6 +31,10 @@ syd::PrintTable::PrintTable()
 //------------------------------------------------------------------
 void syd::PrintTable::AddColumn(std::string name, int w, int digit, bool trunc_by_end_flag)
 {
+  if (GetColmun(name) != -1) {
+    LOG(FATAL) << "Error redefined column " << name;
+  }
+
   PrintColumn c;
   columns_.push_back(c);
   auto & col = columns_.back();
@@ -39,6 +44,7 @@ void syd::PrintTable::AddColumn(std::string name, int w, int digit, bool trunc_b
 
   map_column[name]=col.index; // index
 
+  // Update already existing rows
   for(auto row:rows_) {
     if (row.values.size() != columns_.size()) row.values.resize(columns_.size());
   }
@@ -181,9 +187,17 @@ void syd::PrintTable::Print(std::ostream & out)
   }
 
   // Dump headers
-  out << "#";
+  //out << "#";
+  bool first = true;
   for(auto col:columns_) { // FIXME order
-    if (col.width != 0) out << std::setw(col.width) << col.title;
+    if (col.width != 0) {
+      if (first) {
+        std::string s = "#"+col.title;
+        out << std::setw(col.width) << s;
+        first = false;
+      }
+      else out << std::setw(col.width) << col.title;
+    }
   }
   out << std::endl;
 
@@ -219,4 +233,29 @@ bool syd::PrintTable::ColumnsAreDefined(const std::string & table_name) {
 void syd::PrintTable::SetColumnsAreDefined(const std::string & table_name)
 {
   map_column_defined[table_name] = true;
+}
+
+
+void syd::PrintTable::AddFormat(std::string name, std::string help)
+{
+  syd::PrintFormat f;
+  f.name = name;
+  f.help = help;
+  formats_.push_back(f);
+}
+
+
+int syd::PrintTable::GetColmun(std::string col)
+{
+  auto iter = std::find_if(columns_.begin(), columns_.end(),
+                           [&col](const syd::PrintColumn & c) { return c.title == col; });
+  if (iter == columns_.end()) return -1;
+  return iter-columns_.begin();
+}
+
+
+void syd::PrintTable::SetFormat(std::string name)
+{
+  current_format_name_ = name;
+  if (name == "") current_format_name_ = "default";
 }

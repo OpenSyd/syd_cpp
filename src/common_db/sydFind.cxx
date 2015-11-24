@@ -80,6 +80,7 @@ int main(int argc, char* argv[])
   else {
     DD("here");
     syd::PrintTable table;
+    table.SetFormat(args_info.format_arg);
     // table.SetFormat(args_info.format_arg);
     //db->Dump(results, args_info.format_arg);
     table.Dump<syd::Record>(results);

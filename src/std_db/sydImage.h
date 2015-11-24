@@ -125,9 +125,8 @@ namespace syd {
     void FatalIfNoDicom() const;
 
     //FIXME
-   virtual void InitTable(syd::PrintTable & table);
-   virtual void DumpInTable(syd::PrintTable & table);
-
+    virtual void InitTable(syd::PrintTable & table);
+    virtual void DumpInTable(syd::PrintTable & table);
 
   protected:
     Image();
