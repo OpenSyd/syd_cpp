@@ -16,5 +16,5 @@ Use --dump to output details of the found records instead of only the ids.
 "
 
 option "exclude"    e   "Exclude pattern (multiple)"	         string         no multiple
-option "dump"       d   "Dump results instead of displaying ids" flag           off
+option "list"       l   "Dump list of ids"                       flag           off
 option "format"     f   "Format when dump results"               string         default="" no

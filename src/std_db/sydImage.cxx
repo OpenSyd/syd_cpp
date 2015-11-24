@@ -375,14 +375,12 @@ void syd::Image::DumpInTable(syd::PrintTable & ta)
     if (dicom.size() != 0) dicom.pop_back(); // remove last space
     ta.Set("dicom", dicom);
     if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
-    else ta.Set("unit", "-");
     //ta.Set("ref_frame", frame_of_reference_uid);
   }
 
   if (f == "file") {
     ta.Set("id", id);
-    if (files.size() == 0) ta.Set("file", "no_file");
-    else ta.Set("file", files[0]->GetAbsolutePath(db_));
+    if (files.size() != 0) ta.Set("file", files[0]->GetAbsolutePath(db_));
   }
 }
 // --------------------------------------------------

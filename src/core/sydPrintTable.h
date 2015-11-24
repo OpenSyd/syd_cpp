@@ -76,7 +76,7 @@ namespace syd {
     void AddFormat(std::string name, std::string help);
     void SetFormat(std::string name);
 
-    int GetColmun(std::string col);
+    int GetColumn(std::string col);
 
     void AddRow();
 

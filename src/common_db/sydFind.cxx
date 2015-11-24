@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
   db->Sort(results, table_name);
 
   // Dump results
-  if (!args_info.dump_flag) {
+  if (args_info.list_flag) {
     // Get ids
     std::vector<syd::IdType> ids;
     for(auto r:results) ids.push_back(r->id);

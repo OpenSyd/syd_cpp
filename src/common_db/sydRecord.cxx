@@ -45,28 +45,30 @@ bool syd::Record::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------------------------
+// FIXME TO REMOVE
 void syd::Record::InitPrintTable(const syd::Database * db,
                                  syd::PrintTable & ta,
                                  const std::string & format) const
 {
-  ta.AddColumn("#id", 5);
-  ta.AddColumn("#fields", 80);
+  // ta.AddColumn("#id", 5);
+  // ta.AddColumn("#fields", 80);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
+// FIXME TO REMOVE
 void syd::Record::DumpInTable(const syd::Database * db,
                               syd::PrintTable & ta,
                               const std::string & format) const
 {
-  ta << id << ToString();
+  // ta << id << ToString();
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::Record::InitTable(syd::PrintTable & table)
+void syd::Record::InitTable(syd::PrintTable & table) const
 {
   table.AddColumn("id");
   table.AddColumn("fields");
@@ -75,7 +77,7 @@ void syd::Record::InitTable(syd::PrintTable & table)
 
 
 // --------------------------------------------------------------------
-void syd::Record::DumpInTable(syd::PrintTable & table)
+void syd::Record::DumpInTable(syd::PrintTable & table) const
 {
   table.Set("id", id);
   table.Set("fields", ToString());

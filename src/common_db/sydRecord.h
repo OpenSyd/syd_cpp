@@ -57,15 +57,17 @@ namespace syd {
     /// Set the values of the fields from some string.
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
 
-    /// Initialise a PrintTable according to the format
+    /// Initialise a PrintTable
+    virtual void InitTable(syd::PrintTable & table) const;
+    /// Add a line in the given PrintTable
+    virtual void DumpInTable(syd::PrintTable & table) const;
+
+
+    // FIXME TO REMOVE
     virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
-
-    /// Add a line in the given
     virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+    // FIXME TO REMOVE
 
-    //FIXME
-    virtual void InitTable(syd::PrintTable & table);
-    virtual void DumpInTable(syd::PrintTable & table);
 
 
     /// Use to write the element as a string (must be overloaded)
@@ -139,6 +141,8 @@ namespace syd {
   virtual void Set(const syd::Database * db, const std::vector<std::string> & args); \
   virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const; \
   virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+
+  // FIXME REMOVE INITPRINTTABLE and DUMPINTABLE
 
   //
   // virtual void InitTable(syd::PrintTable & table);

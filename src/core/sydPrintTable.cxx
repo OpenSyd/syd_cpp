@@ -31,7 +31,7 @@ syd::PrintTable::PrintTable()
 //------------------------------------------------------------------
 void syd::PrintTable::AddColumn(std::string name, int w, int digit, bool trunc_by_end_flag)
 {
-  if (GetColmun(name) != -1) {
+  if (GetColumn(name) != -1) {
     LOG(FATAL) << "Error redefined column " << name;
   }
 
@@ -121,45 +121,47 @@ syd::PrintTable & syd::PrintTable::operator<<(const std::string & value)
 //------------------------------------------------------------------
 
 
+//------------------------------------------------------------------
 void syd::PrintTable::Set(int col, const std::string & value)
 {
-  // DD("Set");
-  // DD(col);
-  // DD(value);
   auto & row = rows_.back(); // last one is current one
-  // DDS(row.values);
-  // DD(row.values.size());
   if (row.values.size() != columns_.size()) row.values.resize(columns_.size());
   row.values[col] = value;
 }
+//------------------------------------------------------------------
 
+
+//------------------------------------------------------------------
 void syd::PrintTable::Set(const std::string & col_name, const std::string & value)
 {
-  // DD(map_column[col_name]);
-  // DD(value);
-  if (map_column.find(col_name) == map_column.end()) { // FIXME -> put function
-    DD("not find");
+  if (GetColumn(col_name) == -1) {
     EXCEPTION("Error cannot set column named '" << col_name << "'.");
   }
-  else Set(map_column[col_name], value);
-}
-
-void syd::PrintTable::Set(const std::string & col_name, const double & value)
-{
-  // DD(map_column[col_name]);
-  // DD(value);
   Set(map_column[col_name], value);
 }
+//------------------------------------------------------------------
 
+
+//------------------------------------------------------------------
+void syd::PrintTable::Set(const std::string & col_name, const double & value)
+{
+  if (GetColumn(col_name) == -1) {
+    EXCEPTION("Error cannot set column named '" << col_name << "'.");
+  }
+  Set(map_column[col_name], value);
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
 void syd::PrintTable::Set(int col, const double & value)
 {
-  //DD("set double");
-  //DD(value);
   std::stringstream ss;
   //  ss << std::fixed << std::scientific << std::setprecision(0) << value; //FIXME
   ss << std::fixed << std::setprecision(0) << value; //FIXME
   Set(col, ss.str());
 }
+//------------------------------------------------------------------
 
 
 //------------------------------------------------------------------
@@ -187,7 +189,7 @@ void syd::PrintTable::Print(std::ostream & out)
   }
 
   // Dump headers
-  out << "# Table: " << current_table_ << ". Number of rows: " << rows_.size() << std::endl;
+  out << "#Table: " << current_table_ << ". Number of rows: " << rows_.size() << std::endl;
   bool first = true;
   for(auto col:columns_) { // FIXME order
     if (col.width != 0) {
@@ -211,6 +213,7 @@ void syd::PrintTable::Print(std::ostream & out)
 //------------------------------------------------------------------
 
 
+//------------------------------------------------------------------
 void syd::PrintTable::DumpRow(const syd::PrintRow & row, std::ostream & out)
 {
   for(auto col:columns_) {
@@ -219,22 +222,27 @@ void syd::PrintTable::DumpRow(const syd::PrintRow & row, std::ostream & out)
     out << std::setw(col.width) << s;
   }
 }
+//------------------------------------------------------------------
 
 
+//------------------------------------------------------------------
 bool syd::PrintTable::ColumnsAreDefined(const std::string & table_name) {
   // FIXME depend on format
   if (map_column_defined.find(table_name) != map_column_defined.end())
     return map_column_defined[table_name];
   else return false;
 }
+//------------------------------------------------------------------
 
 
+//------------------------------------------------------------------
 void syd::PrintTable::SetColumnsAreDefined(const std::string & table_name)
 {
   map_column_defined[table_name] = true;
 }
 
 
+//------------------------------------------------------------------
 void syd::PrintTable::AddFormat(std::string name, std::string help)
 {
   syd::PrintFormat f;
@@ -242,24 +250,30 @@ void syd::PrintTable::AddFormat(std::string name, std::string help)
   f.help = help;
   formats_.push_back(f);
 }
+//------------------------------------------------------------------
 
 
-int syd::PrintTable::GetColmun(std::string col)
+//------------------------------------------------------------------
+int syd::PrintTable::GetColumn(std::string col)
 {
   auto iter = std::find_if(columns_.begin(), columns_.end(),
                            [&col](const syd::PrintColumn & c) { return c.title == col; });
   if (iter == columns_.end()) return -1;
   return iter-columns_.begin();
 }
+//------------------------------------------------------------------
 
 
+//------------------------------------------------------------------
 void syd::PrintTable::SetFormat(std::string name)
 {
   current_format_name_ = name;
   if (name == "") current_format_name_ = "default";
 }
+//------------------------------------------------------------------
 
 
+//------------------------------------------------------------------
 void syd::PrintTable::AddRow()
 {
   syd::PrintRow ro;
@@ -268,5 +282,5 @@ void syd::PrintTable::AddRow()
   row.values.resize(columns_.size());
   // initialize
   for(auto & v:row.values) v="-"; // Set to empty values
-  //    DDS(row.values);
 }
+//------------------------------------------------------------------
