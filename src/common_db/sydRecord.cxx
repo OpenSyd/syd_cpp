@@ -68,9 +68,8 @@ void syd::Record::DumpInTable(const syd::Database * db,
 // --------------------------------------------------------------------
 void syd::Record::InitTable(syd::PrintTable & table)
 {
-  DD("default InitTable");
-  table.AddColumn("#id", 5);
-  table.AddColumn("#fields", 80);
+  table.AddColumn("id");
+  table.AddColumn("fields");
 }
 // --------------------------------------------------------------------
 
@@ -78,7 +77,8 @@ void syd::Record::InitTable(syd::PrintTable & table)
 // --------------------------------------------------------------------
 void syd::Record::DumpInTable(syd::PrintTable & table)
 {
-  table << id << ToString();
+  table.Set("id", id);
+  table.Set("fields", ToString());
 }
 // --------------------------------------------------------------------
 

@@ -23,7 +23,6 @@
 template<>
 void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & type) const
 {
-  DD("sort image");
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
               if (a->dicoms.size() == 0) return true;
@@ -35,23 +34,17 @@ void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & ty
 
 
 // --------------------------------------------------
-/*
+
 template<>
 void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v, const std::string & type) const
 {
-  DD("sort roimaskimage");
-  syd::Image::vector im;
-  for(auto & r:v) im.push_back(r);
-  Sort<syd::Image>(im, type);
-  //  Sort<syd::Image>(v, type);
-  // std::sort(begin(v), end(v),
-  //           [v](pointer a, pointer b) {
-  //             if (a->dicoms.size() == 0) return true;
-  //             if (b->dicoms.size() == 0) return false;
-  //             return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
-  //           });
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) {
+              if (a->dicoms.size() == 0) return true;
+              if (b->dicoms.size() == 0) return false;
+              return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
+            });
 }
-*/
 // --------------------------------------------------
 
 

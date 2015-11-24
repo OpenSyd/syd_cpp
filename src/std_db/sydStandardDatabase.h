@@ -81,13 +81,13 @@ namespace syd {
 #include "sydStandardDatabase.txx"
 
 
-template<> void syd::Table<syd::Image>::Sort(syd::Image::vector & records, const std::string & type) const;
-// template<> void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & records, const std::string & type) const;
-template<> void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & records, const std::string & type) const;
-template<> void syd::Table<syd::Patient>::Sort(syd::Patient::vector & records, const std::string & type) const;
-template<> void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & records, const std::string & type) const;
-template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records, const std::string & type) const;
-template<> void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & records, const std::string & type) const;
+  template<> void syd::Table<syd::Image>::Sort(syd::Image::vector & records, const std::string & type) const;
+  template<> void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & records, const std::string & type) const;
+  template<> void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & records, const std::string & type) const;
+  template<> void syd::Table<syd::Patient>::Sort(syd::Patient::vector & records, const std::string & type) const;
+  template<> void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & records, const std::string & type) const;
+  template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records, const std::string & type) const;
+  template<> void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & records, const std::string & type) const;
 
 
   /// Declaration needed for TABLE_GET_NUMBER_OF_ELEMENTS (by default,

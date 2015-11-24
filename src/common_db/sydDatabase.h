@@ -104,7 +104,7 @@ namespace syd {
     void Insert(generic_record_pointer record);
 
     /// Insert several elements. The type of the element is unknown
-    void Insert(generic_record_vector record);
+    void Insert(generic_record_vector record, const std::string & table_name);
 
     /// Insert an element
     template<class RecordType>
@@ -121,7 +121,7 @@ namespace syd {
     void Update(generic_record_pointer record);
 
     /// Update several elements. The type of the element is unknown
-    void Update(generic_record_vector record);
+    void Update(generic_record_vector record, const std::string & table_name);
 
     /// Update an element
     template<class RecordType>
@@ -202,13 +202,15 @@ namespace syd {
     template<class RecordType>
     void Sort(std::vector<std::shared_ptr<RecordType>> & records, const std::string & type="") const;
     /// Sort generic records
-    virtual void Sort(generic_record_vector & records, const std::string & type="") const;
+    virtual void Sort(generic_record_vector & records,
+                      const std::string & table_name,
+                      const std::string & type="") const;
     // ------------------------------------------------------------------------
 
 
 
     // ------------------------------------------------------------------------
-    void Delete(generic_record_vector & records);
+    void Delete(generic_record_vector & records, const std::string & table_name);
     template<class RecordType>
     void Delete(std::shared_ptr<RecordType> record);
     template<class RecordType>
@@ -236,12 +238,11 @@ namespace syd {
     std::string GetListOfTableNames() const;
 
     /// Get the number of elements in the table
-    long GetNumberOfElements(const std::string table_name) const;
+    long GetNumberOfElements(const std::string & table_name) const;
 
     /// Get the number of elements in the table, knowing the type
     template<class RecordType>
     long GetNumberOfElements() const;
-
 
     static std::map<odb::database *, syd::Database *> ListOfLoadedDatabases;
 

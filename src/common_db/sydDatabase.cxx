@@ -166,11 +166,10 @@ void syd::Database::Insert(generic_record_pointer record)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Insert(generic_record_vector records)
+void syd::Database::Insert(generic_record_vector records, const std::string & table_name)
 {
   if (records.size() == 0) return;
-  //Check Type //FIXME
-  GetTable(records[0]->GetTableName())->Insert(records);
+  GetTable(table_name)->Insert(records);
 }
 // --------------------------------------------------------------------
 
@@ -184,11 +183,10 @@ void syd::Database::Update(generic_record_pointer record)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Update(generic_record_vector records)
+void syd::Database::Update(generic_record_vector records, const std::string & table_name)
 {
   if (records.size() == 0) return;
-  //Check Type //FIXME
-  GetTable(records[0]->GetTableName())->Update(records);
+  GetTable(table_name)->Update(records);
 }
 // --------------------------------------------------------------------
 
@@ -230,7 +228,8 @@ syd::Database::New(const std::string & table_name) const
 
 
 // --------------------------------------------------------------------
-void syd::Database::Set(generic_record_pointer record, const std::vector<std::string> & args) const
+void syd::Database::Set(generic_record_pointer record,
+                        const std::vector<std::string> & args) const
 {
   record->Set(this, args);
 }
@@ -267,7 +266,7 @@ void syd::Database::Query(generic_record_vector & records,
 
 
 // --------------------------------------------------------------------
-long syd::Database::GetNumberOfElements(const std::string table_name) const
+long syd::Database::GetNumberOfElements(const std::string & table_name) const
 {
   return GetTable(table_name)->GetNumberOfElements();
 }
@@ -275,18 +274,18 @@ long syd::Database::GetNumberOfElements(const std::string table_name) const
 
 
 // --------------------------------------------------------------------
-void syd::Database::Sort(generic_record_vector & records, const std::string & type) const
+void syd::Database::Sort(generic_record_vector & records, const std::string & table_name, const std::string & type) const
 {
   if (records.size() == 0) return;
-  GetTable(records[0]->GetTableName())->Sort(records, type);
+  GetTable(table_name)->Sort(records, type);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::Database::Delete(generic_record_vector & records)
+void syd::Database::Delete(generic_record_vector & records, const std::string & table_name)
 {
   if (records.size() == 0) return;
-  GetTable(records[0]->GetTableName())->Delete(records);
+  GetTable(table_name)->Delete(records);
 }
 // --------------------------------------------------------------------
