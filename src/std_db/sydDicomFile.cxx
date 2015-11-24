@@ -110,3 +110,27 @@ void syd::DicomFile::Callback(odb::callback_event event, odb::database & db)
   }
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomFile::InitTable(syd::PrintTable & ta) const
+{
+  ta.AddColumn("id");
+  ta.AddColumn("serie");
+  ta.AddColumn("nb");
+  ta.AddColumn("file");
+  ta.AddColumn("sop_uid");
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomFile::DumpInTable(syd::PrintTable & ta) const
+{
+  ta.Set("id", id);
+  ta.Set("serie", dicom_serie->id);
+  ta.Set("nb", dicom_instance_number);
+  ta.Set("file", file->filename);
+  ta.Set("sop_uid", dicom_sop_uid);
+}
+// --------------------------------------------------

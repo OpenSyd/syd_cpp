@@ -29,12 +29,13 @@ syd::PrintTable::PrintTable()
 
 
 //------------------------------------------------------------------
-void syd::PrintTable::AddColumn(std::string name, int w, int digit, bool trunc_by_end_flag)
+syd::PrintColumn & syd::PrintTable::AddColumn(std::string name, int w, int digit, bool trunc_by_end_flag)
 {
   if (GetColumn(name) != -1) {
     LOG(FATAL) << "Error redefined column " << name;
   }
 
+  // Create new column
   PrintColumn c;
   columns_.push_back(c);
   auto & col = columns_.back();
@@ -42,20 +43,15 @@ void syd::PrintTable::AddColumn(std::string name, int w, int digit, bool trunc_b
   col.width = w;
   col.index = columns_.size()-1; // last
 
+  // Default index
   map_column[name]=col.index; // index
 
   // Update already existing rows
   for(auto row:rows_) {
     if (row.values.size() != columns_.size()) row.values.resize(columns_.size());
   }
-
-  // if (w == -1) w = name.size()+1;
-  // headers.push_back(name);
-  // width.push_back(w);
-  // precision.push_back(digit);
-  // // Later
-  // if (current_line != -1) values[current_line].resize(headers.size());
-  // trunc_by_end.push_back(trunc_by_end_flag);
+  // return ref
+  return columns_.back();
 }
 //------------------------------------------------------------------
 
@@ -126,7 +122,13 @@ void syd::PrintTable::Set(int col, const std::string & value)
 {
   auto & row = rows_.back(); // last one is current one
   if (row.values.size() != columns_.size()) row.values.resize(columns_.size());
-  row.values[col] = value;
+  auto & c = columns_[col];
+  std::string v = value;
+  if (value.size() > c.max_width) {
+    if (c.trunc_by_end_flag) v = value.substr(0,c.max_width-4)+"...";
+    else v = "..."+value.substr(v.size()-c.max_width+4,v.size());
+  }
+  row.values[col] = v;
 }
 //------------------------------------------------------------------
 
@@ -158,7 +160,7 @@ void syd::PrintTable::Set(int col, const double & value)
 {
   std::stringstream ss;
   //  ss << std::fixed << std::scientific << std::setprecision(0) << value; //FIXME
-  ss << std::fixed << std::setprecision(0) << value; //FIXME
+  ss << std::fixed << std::setprecision(columns_[col].precision) << value; //FIXME
   Set(col, ss.str());
 }
 //------------------------------------------------------------------
@@ -177,7 +179,7 @@ void syd::PrintTable::Print(std::ostream & out)
 {
   // Compute optimal column width
   for(auto & col:columns_) {
-    unsigned long m = col.title.size();//col.width; // requested min and or max? FIXME
+    unsigned long m = col.title.size();
     if (col.width != 0) {
       for(auto row:rows_) {
         if (col.index < row.values.size())
@@ -185,6 +187,7 @@ void syd::PrintTable::Print(std::ostream & out)
         //    if (m > max width change ....
       }
       col.width = m+1; // FIXME spacing between col
+      col.width = std::min(col.width, col.max_width);
     }
   }
 

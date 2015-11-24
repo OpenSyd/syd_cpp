@@ -51,6 +51,9 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&);
     void EraseAssociatedFile() const;
 
+    virtual void InitTable(syd::PrintTable & table) const;
+    virtual void DumpInTable(syd::PrintTable & table) const;
+
     std::string GetAbsolutePath(const syd::Database * db);
 
   protected:

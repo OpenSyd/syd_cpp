@@ -33,6 +33,9 @@ namespace syd {
     int width;
     std::string title;
     int index;
+    int precision=0;
+    int max_width=99;
+    bool trunc_by_end_flag=false;
   };
 
   struct PrintRow {
@@ -49,7 +52,7 @@ namespace syd {
   class PrintTable {
   public:
     PrintTable();
-    void AddColumn(std::string name, int width=-1, int digit=0, bool trunc_by_end_flag=true);
+    syd::PrintColumn & AddColumn(std::string name, int width=-1, int digit=0, bool trunc_by_end_flag=true);
     void Init();
     PrintTable & operator<<(const double & value);
     PrintTable & operator<<(const std::string & value);

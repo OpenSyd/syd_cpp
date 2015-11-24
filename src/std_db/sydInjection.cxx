@@ -117,6 +117,35 @@ void syd::Injection::DumpInTable(const syd::Database * db, syd::PrintTable & ta,
 
 
 // --------------------------------------------------
+void syd::Injection::InitTable(syd::PrintTable & ta) const
+{
+  ta.AddColumn("id");
+  ta.AddColumn("p");
+  ta.AddColumn("rad");
+  ta.AddColumn("date");
+  auto & col = ta.AddColumn("A(MBq)");
+  col.precision = 2;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Injection::DumpInTable(syd::PrintTable & ta) const
+{
+  std::string pname = "unset";
+  if (patient != NULL) pname = patient->name;
+  std::string rad = "unset";
+  if (radionuclide != NULL) rad = radionuclide->name;
+  ta.Set("id", id);
+  ta.Set("p", pname);
+  ta.Set("rad", rad);
+  ta.Set("date", date);
+  ta.Set("A(MBq)", activity_in_MBq);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 bool syd::Injection::IsEqual(const pointer p) const
 {
   return (syd::Record::IsEqual(p) and

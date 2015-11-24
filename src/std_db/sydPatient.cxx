@@ -130,9 +130,7 @@ void syd::Patient::InitTable(syd::PrintTable & ta) const
   ta.AddColumn("sid");
   ta.AddColumn("w(kg)");
   ta.AddColumn("dicom");
-
-  if (ta.GetFormat() == "injection")
-    ta.AddColumn("injection"); // advanced dump format, compute the nb of injections
+  ta.AddColumn("injection");
 }
 // --------------------------------------------------
 
@@ -142,21 +140,16 @@ void syd::Patient::DumpInTable(syd::PrintTable & ta) const
 {
   auto f = ta.GetFormat();
 
-  if (f == "default" or f == "injection") {
-    ta.Set("id",id);
-    ta.Set("p", name);
-    ta.Set("sid", study_id);
-    ta.Set("w(kg)", weight_in_kg);
-    ta.Set("dicom", dicom_patientid);
-  }
-
-  if (f == "injection") {
-    syd::StandardDatabase* db = (syd::StandardDatabase*)(db_);
-    syd::Injection::vector injections;
-    odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
-    db->Query(injections, q);
-    ta.Set("injection", injections.size());
-  }
+  ta.Set("id",id);
+  ta.Set("p", name);
+  ta.Set("sid", study_id);
+  ta.Set("w(kg)", weight_in_kg);
+  ta.Set("dicom", dicom_patientid);
+  syd::StandardDatabase* db = (syd::StandardDatabase*)(db_);
+  syd::Injection::vector injections;
+  odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
+  db->Query(injections, q);
+  ta.Set("injection", injections.size());
 }
 // --------------------------------------------------
 

@@ -99,6 +99,27 @@ void syd::Tag::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const 
 
 
 // --------------------------------------------------
+void syd::Tag::InitTable(syd::PrintTable & ta) const
+{
+  ta.AddColumn("id");
+  ta.AddColumn("label");
+  auto & col = ta.AddColumn("description");
+  col.max_width = 20;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Tag::DumpInTable(syd::PrintTable & ta) const
+{
+  ta.Set("id", id);
+  ta.Set("label", label);
+  ta.Set("description", description);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 std::string syd::GetLabels(const syd::Tag::vector & tags)
 {
   std::ostringstream os;

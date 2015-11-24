@@ -153,3 +153,40 @@ std::string syd::File::GetAbsolutePath(const syd::Database * db)
   return apath;
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::File::InitTable(syd::PrintTable & ta) const
+{
+  ta.AddFormat("md5", "Display the md5 value");
+  ta.AddFormat("path", "Display the complete image path");
+
+  auto & f = ta.GetFormat();
+  ta.AddColumn("id");
+
+  if (f == "default" or f == "md5") {
+    ta.AddColumn("filename");
+    ta.AddColumn("folder");
+    if (f == "md5") ta.AddColumn("md5");
+    else ta.AddColumn("md5?");
+  }
+  if (f == "path") ta.AddColumn("path");
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::File::DumpInTable(syd::PrintTable & ta) const
+{
+  auto & f = ta.GetFormat();
+  ta.Set("id", id);
+  if (f == "default" or f == "md5") {
+    ta.Set("file", filename);
+    ta.Set("folder", path);
+    if (f == "md5") ta.Set("md5", md5);
+    else ta.Set("md5?", (md5=="unset" ? "no_md5":"md5"));
+  }
+  if (f == "path")
+    ta.Set("path", std::string(path+PATH_SEPARATOR+filename));
+}
+// --------------------------------------------------
