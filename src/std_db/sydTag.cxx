@@ -74,37 +74,14 @@ void syd::Tag::Set(const syd::Database * db, const std::vector<std::string> & ar
 // --------------------------------------------------
 
 
-
-// --------------------------------------------------
-void syd::Tag::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
-{
-  if (format == "help") {
-    std::cout << "Available formats for table 'Tag': " << std::endl
-              << "\tdefault: id label description" << std::endl;
-    return;
-  }
-  ta.AddColumn("#id");
-  ta.AddColumn("label", 20);
-  ta.AddColumn("description", 70);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Tag::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
-{
-  ta << id << label << description;
-}
-// --------------------------------------------------
-
-
 // --------------------------------------------------
 void syd::Tag::InitTable(syd::PrintTable & ta) const
 {
   ta.AddColumn("id");
   ta.AddColumn("label");
   auto & col = ta.AddColumn("description");
-  col.max_width = 20;
+  col.max_width = 80;
+  col.trunc_by_end_flag = true;
 }
 // --------------------------------------------------
 

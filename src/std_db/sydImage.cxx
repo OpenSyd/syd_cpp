@@ -171,74 +171,6 @@ void syd::Image::RemoveDicomSerie(syd::DicomSerie::pointer dicom)
 
 
 // --------------------------------------------------
-void syd::Image::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
-{
-  if (format == "help") {
-    std::cout << "Available formats for table 'Image': " << std::endl
-              << "\tdefault: id patient tags size spacing dicoms" << std::endl
-              << "\tfile: full path" << std::endl
-              << "\tfilelist: full path as a line" << std::endl;
-    return;
-  }
-  if (format == "file") {
-    ta.AddColumn("#file", 100);
-  }
-  else {
-    if (format == "filelist") {
-      // no column
-    }
-    else {
-      ta.AddColumn("#id", 5);
-      ta.AddColumn("p", 8);
-      ta.AddColumn("acqui_date", 18);
-      ta.AddColumn("tags", 50);
-      ta.AddColumn("size", 12);
-      ta.AddColumn("spacing", 25);
-      ta.AddColumn("dicom_id", 15);
-      ta.AddColumn("unit", 12);
-      ta.AddColumn("ref_frame", 20, 0, false);
-    }
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::DumpInTable(const syd::Database * d,
-                             syd::PrintTable & ta,
-                             const std::string & format) const
-{
-  if (format == "file") {
-    if (files.size() == 0) {
-      ta << "no_file";
-      return;
-    }
-    ta << files[0]->GetAbsolutePath(d);
-  }
-  else {
-    if (format == "filelist") {
-      std::cout << files[0]->GetAbsolutePath(d) << " ";
-    }
-    else {
-      ta << id << patient->name;
-      if (dicoms.size() == 0) ta << "no_dicom";
-      else ta << dicoms[0]->acquisition_date;
-      ta << GetLabels(tags)
-         << syd::ArrayToString<int, 3>(size) << syd::ArrayToString<double, 3>(spacing);
-      std::string dicom;
-      for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
-      if (dicom.size() != 0) dicom.pop_back(); // remove last space
-      ta << dicom;
-      if (pixel_value_unit != NULL) ta << pixel_value_unit->name;
-      else ta << "novalue";
-      ta << frame_of_reference_uid;
-    }
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 std::string syd::Image::ComputeRelativeFolder() const
 {
   return patient->name;
@@ -330,34 +262,40 @@ void syd::Image::CopyDicomSeries(syd::Image::pointer image)
 
 
 // --------------------------------------------------
-void syd::Image::InitTable(syd::PrintTable & ta)
+void syd::Image::InitTable(syd::PrintTable & ta) const
 {
   // Define the formats
   ta.AddFormat("file", "Display the filename");
+  ta.AddFormat("filelist", "List of files without line break");
 
   // Set the columns
-  std::string f = ta.GetFormat();
+  auto & f = ta.GetFormat();
   if (f == "default") {
-    ta.AddColumn("id", 5);
-    ta.AddColumn("p", 8);
-    ta.AddColumn("acqui_date", 18);
-    ta.AddColumn("tags", 50);
-    ta.AddColumn("size", 12);
-    ta.AddColumn("spacing", 25);
-    ta.AddColumn("dicom", 15);
-    ta.AddColumn("unit", 12);
-    //ta.AddColumn("ref_frame", 20, 0, false);
+    ta.AddColumn("id");
+    ta.AddColumn("p");
+    ta.AddColumn("acqui_date");
+    ta.AddColumn("tags");
+    ta.AddColumn("size");
+    ta.AddColumn("spacing");
+    ta.AddColumn("dicom");
+    ta.AddColumn("unit");
+    auto & c = ta.AddColumn("ref_frame");
+    c.max_width = 20;
+    c.trunc_by_end_flag = false;
   }
   if (f == "file") {
-    ta.AddColumn("id", 5);
-    ta.AddColumn("file", 8);
+    ta.AddColumn("id");
+    ta.AddColumn("file");
+  }
+  if (f == "filelist") {
+    ta.AddColumn("file");
   }
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Image::DumpInTable(syd::PrintTable & ta)
+void syd::Image::DumpInTable(syd::PrintTable & ta) const
 {
   auto f = ta.GetFormat();
 
@@ -375,12 +313,16 @@ void syd::Image::DumpInTable(syd::PrintTable & ta)
     if (dicom.size() != 0) dicom.pop_back(); // remove last space
     ta.Set("dicom", dicom);
     if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
-    //ta.Set("ref_frame", frame_of_reference_uid);
+    ta.Set("ref_frame", frame_of_reference_uid);
   }
 
   if (f == "file") {
     ta.Set("id", id);
     if (files.size() != 0) ta.Set("file", files[0]->GetAbsolutePath(db_));
+  }
+
+  if (f == "filelist") {
+    if (files.size() != 0) std::cout << files[0]->GetAbsolutePath(db_) << " ";
   }
 }
 // --------------------------------------------------

@@ -65,25 +65,21 @@ void syd::PixelValueUnit::Set(const syd::Database * db, const std::vector<std::s
 // --------------------------------------------------
 
 
-
 // --------------------------------------------------
-void syd::PixelValueUnit::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+void syd::PixelValueUnit::InitTable(syd::PrintTable & ta) const
 {
-  if (format == "help") {
-    std::cout << "Available formats for table 'PixelValueUnit': " << std::endl
-              << "\tdefault: id name description" << std::endl;
-    return;
-  }
-  ta.AddColumn("#id");
-  ta.AddColumn("name", 20);
-  ta.AddColumn("description", 70);
+  ta.AddColumn("id");
+  ta.AddColumn("name");
+  ta.AddColumn("description");
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::PixelValueUnit::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+void syd::PixelValueUnit::DumpInTable(syd::PrintTable & ta) const
 {
-  ta << id << name << description;
+  ta.Set("id", id);
+  ta.Set("name", name);
+  ta.Set("description", description);
 }
 // --------------------------------------------------

@@ -86,41 +86,6 @@ void syd::Patient::Set(const syd::Database * db,
 
 
 // --------------------------------------------------
-void syd::Patient::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
-{
-  if (format == "help") {
-    std::cout << "Available formats for table 'Patient': " << std::endl
-              << "\tdefault: id name study_id weight dicom" << std::endl
-              << "\tinjection: add a column with the number of associated injections" << std::endl;
-    return;
-  }
-  ta.AddColumn("#id");
-  ta.AddColumn("name", 8);
-  ta.AddColumn("sid", 5);
-  ta.AddColumn("w(kg)", 10);
-  ta.AddColumn("dicom", 20);
-  if (format == "injection")
-    ta.AddColumn("nb_inj", 10); // advanced dump format, compute the nb of injections
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Patient::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
-{
-  ta << id << name << study_id << weight_in_kg << dicom_patientid;
-  if (format == "injection") {
-    syd::StandardDatabase* db = (syd::StandardDatabase*)(d);
-    syd::Injection::vector injections;
-    odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
-    db->Query(injections, q);
-    ta << injections.size();
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Patient::InitTable(syd::PrintTable & ta) const
 {
   ta.AddFormat("injection", "Display nb of associated injections");

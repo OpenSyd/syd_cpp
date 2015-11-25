@@ -64,55 +64,6 @@ void syd::File::Set(const syd::Database * db, const std::vector<std::string> & a
 
 
 // --------------------------------------------------
-void syd::File::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
-{
-  if (format == "help") {
-    std::cout << "Available formats for table 'File': " << std::endl
-              << "\tdefault: id filename path md5(y/n)" << std::endl
-              << "\tmd5: id filename path md5(complete)" << std::endl
-              << "\tmpath: id pathname" << std::endl;
-    return;
-  }
-  ta.AddColumn("#id");
-  if (format == "md5") {
-    ta.AddColumn("filename", 40);
-    ta.AddColumn("path", 30);
-    ta.AddColumn("md5", 40);
-  }
-  else {
-    if (format == "path") {
-      ta.AddColumn("path", 100);
-    }
-    else {
-      ta.AddColumn("filename", 40);
-      ta.AddColumn("path", 30);
-      ta.AddColumn("md5?", 10);
-    }
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::File::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
-{
-  ta << id;
-  if (format == "md5") {
-    ta << filename  << path << md5;
-  }
-  else {
-    if (format == "path") {
-      ta << std::string(path+PATH_SEPARATOR+filename);
-    }
-    else {
-      ta << filename  << path << (md5=="unset" ? "no_md5":"md5");
-    }
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event,db);
@@ -159,7 +110,7 @@ std::string syd::File::GetAbsolutePath(const syd::Database * db)
 void syd::File::InitTable(syd::PrintTable & ta) const
 {
   ta.AddFormat("md5", "Display the md5 value");
-  ta.AddFormat("path", "Display the complete image path");
+  ta.AddFormat("file", "Display the complete image path");
 
   auto & f = ta.GetFormat();
   ta.AddColumn("id");
@@ -170,7 +121,7 @@ void syd::File::InitTable(syd::PrintTable & ta) const
     if (f == "md5") ta.AddColumn("md5");
     else ta.AddColumn("md5?");
   }
-  if (f == "path") ta.AddColumn("path");
+  if (f == "file") ta.AddColumn("file");
 }
 // --------------------------------------------------
 
@@ -181,12 +132,12 @@ void syd::File::DumpInTable(syd::PrintTable & ta) const
   auto & f = ta.GetFormat();
   ta.Set("id", id);
   if (f == "default" or f == "md5") {
-    ta.Set("file", filename);
+    ta.Set("filename", filename);
     ta.Set("folder", path);
     if (f == "md5") ta.Set("md5", md5);
     else ta.Set("md5?", (md5=="unset" ? "no_md5":"md5"));
   }
-  if (f == "path")
-    ta.Set("path", std::string(path+PATH_SEPARATOR+filename));
+  if (f == "file")
+    ta.Set("file", std::string(path+PATH_SEPARATOR+filename));
 }
 // --------------------------------------------------

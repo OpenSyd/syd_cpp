@@ -67,9 +67,8 @@ namespace syd {
 
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
 
-    virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
-
-    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
+    virtual void InitTable(syd::PrintTable & table) const;
+    virtual void DumpInTable(syd::PrintTable & table) const;
 
     virtual void Callback(odb::callback_event, odb::database&) const;
 

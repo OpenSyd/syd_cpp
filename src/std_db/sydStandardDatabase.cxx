@@ -33,8 +33,19 @@ void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & ty
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
+template<>
+void syd::Table<syd::Injection>::Sort(syd::Injection::vector & v, const std::string & type) const
+{
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) {
+              return a->date < b->date;
+            });
+}
+// --------------------------------------------------------------------
 
+
+// --------------------------------------------------
 template<>
 void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v, const std::string & type) const
 {

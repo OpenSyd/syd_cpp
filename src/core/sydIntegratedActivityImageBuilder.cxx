@@ -43,9 +43,9 @@ void syd::IntegratedActivityImageBuilder::SaveDebugPixel(const std::string & fil
   if (debug_data.size() < 1) return;
 
   syd::PrintTable ta;
-  ta.AddColumn("time", 10, 4);
+  ta.AddColumn("time");
   for(auto d:debug_data) {
-    ta.AddColumn(d.name, 10, 1);
+    ta.AddColumn(d.name);
   }
   ta.Init();
   auto tac = debug_data[0].tac;
@@ -91,11 +91,11 @@ void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & fil
 
   // Set table column name
   syd::PrintTable ta;
-  ta.AddColumn("time", 10, 4);
+  ta.AddColumn("time");
   for(auto d:debug_data) {
     for(auto model:d.models) {
       std::string name = d.name+"_"+model->GetName();
-      ta.AddColumn(name, 20,1);
+      ta.AddColumn(name);
     }
   }
   ta.Init();

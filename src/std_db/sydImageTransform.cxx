@@ -81,39 +81,6 @@ void syd::ImageTransform::Set(const syd::Database * db, const std::vector<std::s
 
 
 // --------------------------------------------------
-void syd::ImageTransform::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
-{
-  if (format == "help") {
-    std::cout << "Available formats for table 'ImageTransform': " << std::endl
-              << "\tdefault: " << std::endl;
-    return;
-  }
-  ta.AddColumn("#id", 5);
-  ta.AddColumn("p", 7);
-  ta.AddColumn("fixed", 8);
-  ta.AddColumn("moving", 8);
-  ta.AddColumn("config", 40);
-  ta.AddColumn("date", 25);
-  ta.AddColumn("ref_frame", 30, 0, false);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::ImageTransform::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
-{
-  ta << id
-     << fixed_image->patient->name
-     << fixed_image->id
-     << moving_image->id
-     << (config_file == NULL ? "unset":config_file->filename)
-     << date
-     << fixed_image->frame_of_reference_uid;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::ImageTransform::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event, db);
@@ -145,5 +112,33 @@ std::string syd::ImageTransform::ComputeRelativeFolder() const
   syd::Patient::pointer patient = fixed_image->patient;
   std::string p = patient->ComputeRelativeFolder()+PATH_SEPARATOR+"transform"+PATH_SEPARATOR+syd::ToString(id);
   return p;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::ImageTransform::InitTable(syd::PrintTable & ta) const
+{
+  ta.AddColumn("id");
+  ta.AddColumn("p");
+  ta.AddColumn("fixed");
+  ta.AddColumn("moving");
+  ta.AddColumn("config");
+  ta.AddColumn("date");
+  ta.AddColumn("ref_frame");
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::ImageTransform::DumpInTable(syd::PrintTable & ta) const
+{
+  ta.Set("id", id);
+  ta.Set("p", fixed_image->patient->name);
+  ta.Set("fixed", fixed_image->id);
+  ta.Set("moving", moving_image->id);
+  ta.Set("config", (config_file == NULL ? "unset":config_file->filename));
+  ta.Set("date", date);
+  ta.Set("ref_frame", fixed_image->frame_of_reference_uid);
 }
 // --------------------------------------------------

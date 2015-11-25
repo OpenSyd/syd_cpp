@@ -75,36 +75,38 @@ void syd::RoiStatistic::Set(const syd::Database * db, const std::vector<std::str
 
 
 // --------------------------------------------------
-void syd::RoiStatistic::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
 {
-  if (format == "help") {
-    std::cout << "Available formats for table 'RoiStatistic': " << std::endl
-              << "\tdefault: id name description" << std::endl;
-    return;
-  }
-  ta.AddColumn("#id");
-  ta.AddColumn("p", 8);
-  ta.AddColumn("image", 8);
-  ta.AddColumn("mask", 15);
-  ta.AddColumn("unit", 12);
-  ta.AddColumn("tags", 40);
-  ta.AddColumn("mean", 15,3);
-  ta.AddColumn("sd", 15,3);
-  ta.AddColumn("n", 10);
-  ta.AddColumn("min", 15,3);
-  ta.AddColumn("max", 15,3);
-  ta.AddColumn("sum", 20,3);
+  ta.AddColumn("id");
+  ta.AddColumn("p");
+  ta.AddColumn("image");
+  ta.AddColumn("mask");
+  ta.AddColumn("unit");
+  ta.AddColumn("tags");
+  ta.AddColumn("mean",3);
+  ta.AddColumn("sd",3);
+  ta.AddColumn("n");
+  ta.AddColumn("min",3);
+  ta.AddColumn("max",3);
+  ta.AddColumn("sum",1);
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::RoiStatistic::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
 {
-  ta << id << image->patient->name << image->id
-     << (mask != NULL ? mask->roitype->name:"no_mask")
-     << image->pixel_value_unit->name
-     << GetLabels(image->tags)
-     << mean << std_dev << n << min << max << sum;
+  ta.Set("id", id);
+  ta.Set("p", image->patient->name);
+  ta.Set("image", image->id);
+  ta.Set("mask", (mask != NULL ? mask->roitype->name:"no_mask"));
+  ta.Set("unit", image->pixel_value_unit->name);
+  ta.Set("tags", GetLabels(image->tags));
+  ta.Set("mean", mean);
+  ta.Set("sd", std_dev);
+  ta.Set("n", n);
+  ta.Set("min", min);
+  ta.Set("max", max);
+  ta.Set("sum", sum);
 }
 // --------------------------------------------------

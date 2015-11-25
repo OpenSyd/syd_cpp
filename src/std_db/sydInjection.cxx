@@ -85,38 +85,6 @@ void syd::Injection::Set(const syd::Database * d, const std::vector<std::string>
 
 
 // --------------------------------------------------
-void syd::Injection::InitPrintTable(const syd::Database * db,
-                                    syd::PrintTable & ta,
-                                    const std::string & format) const
-{
-  if (format == "help") {
-    std::cout << "Available formats for table 'Injection': " << std::endl
-              << "\tdefault: id radionuclide date activity" << std::endl;
-    //              << "\tinjection: add a column with the number of associated injections" << std::endl;
-    return;
-  }
-  ta.AddColumn("#id");
-  ta.AddColumn("p", 15);
-  ta.AddColumn("rad", 15);
-  ta.AddColumn("injec_date", 20);
-  ta.AddColumn("A(MBq)", 10,2);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Injection::DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
-{
-  std::string pname = "unset";
-  if (patient != NULL) pname = patient->name;
-  std::string rad = "unset";
-  if (radionuclide != NULL) rad = radionuclide->name;
-  ta << id << pname << rad << date << activity_in_MBq;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Injection::InitTable(syd::PrintTable & ta) const
 {
   ta.AddColumn("id");

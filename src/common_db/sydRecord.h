@@ -59,16 +59,9 @@ namespace syd {
 
     /// Initialise a PrintTable
     virtual void InitTable(syd::PrintTable & table) const;
-    /// Add a line in the given PrintTable
+
+   /// Add a line in the given PrintTable
     virtual void DumpInTable(syd::PrintTable & table) const;
-
-
-    // FIXME TO REMOVE
-    virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
-    virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
-    // FIXME TO REMOVE
-
-
 
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const = 0;
@@ -138,15 +131,7 @@ namespace syd {
   virtual bool IsEqual(const pointer p) const;
 
 #define TABLE_DECLARE_OPTIONAL_FUNCTIONS(TABLE_NAME)                    \
-  virtual void Set(const syd::Database * db, const std::vector<std::string> & args); \
-  virtual void InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const; \
-  virtual void DumpInTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const;
-
-  // FIXME REMOVE INITPRINTTABLE and DUMPINTABLE
-
-  //
-  // virtual void InitTable(syd::PrintTable & table);
-  // virtual void DumpInTable(syd::PrintTable & table);
+  virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
 
   /// To be define in db.cxx (and declared in db.h) to allow fast
   /// computation of the nb of elements in a table.

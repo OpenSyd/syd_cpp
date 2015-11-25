@@ -43,6 +43,9 @@ namespace syd {
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(PixelValueUnit);
     // ------------------------------------------------------------------------
 
+    virtual void InitTable(syd::PrintTable & table) const;
+    virtual void DumpInTable(syd::PrintTable & table) const;
+
   protected:
     PixelValueUnit();
 

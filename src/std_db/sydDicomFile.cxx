@@ -66,31 +66,6 @@ void syd::DicomFile::Set(const syd::Database * db, const std::vector<std::string
 
 
 // --------------------------------------------------
-void syd::DicomFile::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
-{
-  if (format == "help") {
-    std::cout << "Available formats for table 'DicomFile': " << std::endl
-              << "\tdefault: id serie_id dicom_instance_nb file dop_uid" << std::endl;
-    return;
-  }
-  ta.AddColumn("#id",4);
-  ta.AddColumn("serie", 7);
-  ta.AddColumn("nb", 8);
-  ta.AddColumn("file", 40);
-  ta.AddColumn("sop_uid", 20);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::DicomFile::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
-{
-  ta << id << dicom_serie->id << dicom_instance_number << file->filename << dicom_sop_uid;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::DicomFile::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event, db);

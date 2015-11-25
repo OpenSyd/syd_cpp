@@ -83,35 +83,6 @@ void syd::Radionuclide::Set(const syd::Database * db, const std::vector<std::str
 
 
 // --------------------------------------------------
-void syd::Radionuclide::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
-{
-  if (format == "help") {
-    std::cout << "Available formats for table 'Radionuclide': " << std::endl
-              << "\tdefault: id name half_life_in_hours" << std::endl;
-    return;
-  }
-  ta.AddColumn("#id");
-  ta.AddColumn("name", 25);
-  ta.AddColumn("HL(h)", 10,2);
-  ta.AddColumn("element", 10);
-  ta.AddColumn("Z", 4);
-  ta.AddColumn("A", 4);
-  ta.AddColumn("metastable", 12);
-  ta.AddColumn("Q-", 10,1);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Radionuclide::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
-{
-  ta << id << name << half_life_in_hours << element << atomic_number << mass_number
-     << (metastable? "Y":"N") << max_beta_minus_energy_in_kev;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Radionuclide::InitTable(syd::PrintTable & ta) const
 {
   ta.AddColumn("id");

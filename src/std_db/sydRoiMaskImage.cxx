@@ -69,35 +69,6 @@ void syd::RoiMaskImage::Set(const syd::Database * db, const std::vector<std::str
 
 
 // --------------------------------------------------
-void syd::RoiMaskImage::InitPrintTable(const syd::Database * db,
-                                       syd::PrintTable & ta,
-                                       const std::string & format) const
-{
-  syd::Image::InitPrintTable(db, ta, format);
-  if (format != "file") {
-    ta.AddColumn("roi", 15);
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::RoiMaskImage::DumpInTable(const syd::Database * d,
-                                    syd::PrintTable & ta,
-                                    const std::string & format) const
-{
-  if (ta.GetNumberOfColumns() == 9)  { // FIXME, bug if Image change the nb of col
-    ta.AddColumn("roi", 12);
-  }
-  syd::Image::DumpInTable(d, ta, format);
-  if (format != "file") {
-    ta << roitype->name;
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Image::Callback(event,db);
@@ -131,7 +102,7 @@ std::string syd::RoiMaskImage::ComputeDefaultAbsolutePath(syd::Database * db) co
 
 
 // --------------------------------------------------
-void syd::RoiMaskImage::InitTable(syd::PrintTable & ta)
+void syd::RoiMaskImage::InitTable(syd::PrintTable & ta) const
 {
   // Need to check if Image::InitTable has been already called. If not we do it.
    if (ta.GetFormat() == "default") {
@@ -146,7 +117,7 @@ void syd::RoiMaskImage::InitTable(syd::PrintTable & ta)
 
 
 // --------------------------------------------------
-void syd::RoiMaskImage::DumpInTable(syd::PrintTable & ta)
+void syd::RoiMaskImage::DumpInTable(syd::PrintTable & ta) const
 {
   syd::Image::DumpInTable(ta);
   if (ta.GetFormat() == "default") {

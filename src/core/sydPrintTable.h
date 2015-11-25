@@ -52,7 +52,9 @@ namespace syd {
   class PrintTable {
   public:
     PrintTable();
-    syd::PrintColumn & AddColumn(std::string name, int width=-1, int digit=0, bool trunc_by_end_flag=true);
+
+
+    syd::PrintColumn & AddColumn(std::string name, int precision=0);
     void Init();
     PrintTable & operator<<(const double & value);
     PrintTable & operator<<(const std::string & value);

@@ -64,23 +64,20 @@ void syd::RoiType::Set(const syd::Database * db, const std::vector<std::string> 
 
 
 // --------------------------------------------------
-void syd::RoiType::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+void syd::RoiType::InitTable(syd::PrintTable & ta) const
 {
-  if (format == "help") {
-    std::cout << "Available formats for table 'RoiType': " << std::endl
-              << "\tdefault: id name study_id weight dicom" << std::endl;
-    return;
-  }
-  ta.AddColumn("#id");
-  ta.AddColumn("name", 20);
-  ta.AddColumn("description", 80);
+  ta.AddColumn("id");
+  ta.AddColumn("name");
+  ta.AddColumn("description");
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::RoiType::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+void syd::RoiType::DumpInTable(syd::PrintTable & ta) const
 {
-  ta << id << name << description;
+  ta.Set("id", id);
+  ta.Set("name", name);
+  ta.Set("description", description);
 }
 // --------------------------------------------------

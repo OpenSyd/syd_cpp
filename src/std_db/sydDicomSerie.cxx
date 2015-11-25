@@ -73,67 +73,6 @@ bool syd::DicomSerie::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-void syd::DicomSerie::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
-{
-  if (format == "help") {
-    std::cout << "Available formats for table 'DicomSerie': " << std::endl
-              << "\tdefault: " << std::endl
-              << "\tsize: " << std::endl
-              << "\tfile: (warning could be slow)" << std::endl;
-    return;
-  }
-  if (format == "file") {
-    ta.AddColumn("#id");
-    ta.AddColumn("#path", 120, 0, false);
-  }
-  else {
-    ta.AddColumn("#id");
-    ta.AddColumn("p", 8);
-    ta.AddColumn("inj", 12);
-    ta.AddColumn("mod", 5);
-    ta.AddColumn("acqui_date", 20);
-    ta.AddColumn("recon_date", 20);
-    if (format == "size") {
-      ta.AddColumn("size", 12);
-      ta.AddColumn("spacing", 25);
-    }
-    else
-      ta.AddColumn("description", 90);
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::DicomSerie::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
-{
-  if (format == "file") {
-    ta << id;
-    //Look for associated file (this is slow !)
-    syd::DicomFile::vector dfiles;
-    typedef odb::query<syd::DicomFile> QDF;
-    QDF q = QDF::dicom_serie == id;
-    d->Query(dfiles, q);
-    if (dfiles.size() >= 1) ta << dfiles[0]->file->GetAbsolutePath(d);
-    else ta << d->ConvertToAbsolutePath(dfiles[0]->file->path);
-  }
-  else {
-    ta << id << patient->name;
-    if (injection == NULL) ta << "no_inj";
-    else ta << injection->radionuclide->name;
-    ta << dicom_modality
-       << acquisition_date
-       << reconstruction_date;
-    if (format == "size") {
-      ta << syd::ArrayToString<int, 3>(size) << syd::ArrayToString<double, 3>(spacing);
-    }
-    else ta << std::string(dicom_description+" "+dicom_manufacturer);
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 std::string syd::DicomSerie::ComputeRelativeFolder() const
 {
   if (patient == NULL) {
@@ -159,6 +98,7 @@ std::string syd::DicomSerie::ComputeRelativeFolder() const
 // --------------------------------------------------
 void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db) const
 {
+  syd::Record::Callback(event,db);
   // Special case: when a serie is deleted, the linked DicomFile will
   // be deleted by the oncascade, but the callback is not called to
   // erase the file, so we do it here.
@@ -181,5 +121,72 @@ void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db) co
 // --------------------------------------------------
 void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db)
 {
+  syd::Record::Callback(event,db);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomSerie::InitTable(syd::PrintTable & ta) const
+{
+  ta.AddFormat("size", "Print image size");
+  ta.AddFormat("file", "Print first dicom filename (slow!)");
+
+  auto & f = ta.GetFormat();
+
+  if (f == "file") {
+    ta.AddColumn("id");
+    ta.AddColumn("path", 120);
+  }
+  if (f == "default" or f == "size") {
+    ta.AddColumn("id");
+    ta.AddColumn("p");
+    ta.AddColumn("inj");
+    ta.AddColumn("mod");
+    ta.AddColumn("acqui_date");
+    ta.AddColumn("recon_date");
+    if (f == "size") {
+      ta.AddColumn("size");
+      ta.AddColumn("spacing");
+    }
+    else {
+      auto & c = ta.AddColumn("description", 100);
+      c.trunc_by_end_flag = true;
+    }
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomSerie::DumpInTable(syd::PrintTable & ta) const
+{
+  auto & f = ta.GetFormat();
+
+  if (f == "file") {
+    ta.Set("id", id);
+    //Look for associated file (this is slow !)
+    syd::DicomFile::vector dfiles;
+    typedef odb::query<syd::DicomFile> QDF;
+    QDF q = QDF::dicom_serie == id;
+    db_->Query<syd::DicomFile>(dfiles, q);
+    if (dfiles.size() >= 1) ta.Set("path", dfiles[0]->file->GetAbsolutePath(db_));
+    else ta.Set("path", db_->ConvertToAbsolutePath(dfiles[0]->file->path));
+  }
+
+  if (f == "default" or f == "size") {
+    ta.Set("id", id);
+    ta.Set("p", patient->name);
+    if (injection == NULL) ta.Set("inj", "no_inj");
+    else ta.Set("inj", injection->radionuclide->name);
+    ta.Set("mod", dicom_modality);
+    ta.Set("acqui_date", acquisition_date);
+    ta.Set("recon_date", reconstruction_date);
+    if (f == "size") {
+      ta.Set("size", syd::ArrayToString<int, 3>(size));
+      ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
+    }
+    else ta.Set("description", std::string(dicom_description+" "+dicom_manufacturer));
+  }
 }
 // --------------------------------------------------

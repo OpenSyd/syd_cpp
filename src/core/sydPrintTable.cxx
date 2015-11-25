@@ -29,7 +29,7 @@ syd::PrintTable::PrintTable()
 
 
 //------------------------------------------------------------------
-syd::PrintColumn & syd::PrintTable::AddColumn(std::string name, int w, int digit, bool trunc_by_end_flag)
+syd::PrintColumn & syd::PrintTable::AddColumn(std::string name, int precision)
 {
   if (GetColumn(name) != -1) {
     LOG(FATAL) << "Error redefined column " << name;
@@ -40,8 +40,8 @@ syd::PrintColumn & syd::PrintTable::AddColumn(std::string name, int w, int digit
   columns_.push_back(c);
   auto & col = columns_.back();
   col.title = name;
-  col.width = w;
   col.index = columns_.size()-1; // last
+  col.precision = precision;
 
   // Default index
   map_column[name]=col.index; // index

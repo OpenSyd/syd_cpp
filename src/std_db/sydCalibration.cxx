@@ -113,24 +113,22 @@ void syd::Calibration::RemoveTag(syd::Tag::pointer tag)
 
 
 // --------------------------------------------------
-void syd::Calibration::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+void syd::Calibration::InitTable(syd::PrintTable & ta) const
 {
-  if (format == "help") {
-    std::cout << "Available formats for table 'Calibration': default " << std::endl;
-    return;
-  }
-  ta.AddColumn("#id", 5);
-  ta.AddColumn("p", 8);
-  ta.AddColumn("image", 8);
-  ta.AddColumn("tags", 20);
-  ta.AddColumn("factor", 10,2);
-  ta.AddColumn("fov_ratio", 10,2);
+  ta.AddColumn("id");
+  ta.AddColumn("p");
+  ta.AddColumn("image");
+  ta.AddColumn("tags");
+  auto & c = ta.AddColumn("factor");
+  c.precision = 3;
+  auto & cc = ta.AddColumn("fov_ratio");
+  cc.precision = 3;
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Calibration::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+void syd::Calibration::DumpInTable(syd::PrintTable & ta) const
 {
   std::string iname;
   std::string pname;
@@ -140,8 +138,11 @@ void syd::Calibration::DumpInTable(const syd::Database * d, syd::PrintTable & ta
     if (image->patient == NULL) pname = "patient_unset";
     pname = image->patient->name;
   }
-  ta << id << pname
-     << iname << GetLabels(tags)
-     << factor << fov_ratio;
+  ta.Set("id", id);
+  ta.Set("p", pname);
+  ta.Set("image", iname);
+  ta.Set("tags", GetLabels(tags));
+  ta.Set("factor", factor);
+  ta.Set("fov_ratio", fov_ratio);
 }
 // --------------------------------------------------
