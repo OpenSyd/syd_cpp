@@ -81,19 +81,19 @@ void ext::Patient::Set(const syd::Database * db,
 
 
 // --------------------------------------------------
-void ext::Patient::InitPrintTable(const syd::Database * db, syd::PrintTable & ta, const std::string & format) const
+void ext::Patient::InitTable(syd::PrintTable & ta) const
 {
-  syd::Patient::InitPrintTable(db, ta, format);
-  ta.AddColumn("birth", 20);
+  syd::Patient::InitTable(ta);
+  ta.AddColumn("birth");
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void ext::Patient::DumpInTable(const syd::Database * d, syd::PrintTable & ta, const std::string & format) const
+void ext::Patient::DumpInTable(syd::PrintTable & ta) const
 {
-  syd::Patient::DumpInTable(d, ta, format);
-  ta << birth_date;
+  syd::Patient::DumpInTable(ta);
+  ta.Set("birth", birth_date);
 }
 // --------------------------------------------------
 
