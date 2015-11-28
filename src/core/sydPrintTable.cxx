@@ -102,8 +102,7 @@ void syd::PrintTable::Set(const std::string & col_name, const double & value)
 void syd::PrintTable::Set(int col, const double & value)
 {
   std::stringstream ss;
-  //  ss << std::fixed << std::scientific << std::setprecision(0) << value; //FIXME
-  ss << std::fixed << std::setprecision(columns_[col].precision) << value; //FIXME
+  ss << std::fixed << std::setprecision(columns_[col].precision) << value;
   Set(col, ss.str());
 }
 //------------------------------------------------------------------
@@ -121,7 +120,7 @@ void syd::PrintTable::Print(std::ostream & out)
           m = std::max(m, row.values[col.index].size());
         //    if (m > max width change ....
       }
-      col.width = m+1; // FIXME spacing between col
+      col.width = m+1; // spacing between col
       col.width = std::min(col.width, col.max_width);
     }
   }
