@@ -87,7 +87,7 @@ void syd::Radionuclide::InitTable(syd::PrintTable & ta) const
 {
   ta.AddColumn("id");
   ta.AddColumn("name");
-  ta.AddColumn("HL(h)");
+  ta.AddColumn("HL(h)",2);
   ta.AddColumn("element");
   ta.AddColumn("Z");
   ta.AddColumn("A");
