@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
       db->Set(r, args);
       records.push_back(r);
     }
-    db->Insert(records);
+    db->Insert(records, "Patient");
     records.clear();
     db->Query(records, "Patient");
     if (records.size() != 12)  {

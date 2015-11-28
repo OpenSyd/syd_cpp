@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
       args[1] = syd::ToString(22+atoi(args[1].c_str()));
       db->Set(p, args);
     }
-    db->Update(p);
+    db->Update(p, "Patient");
     p.clear();
     db->Query(p, "Patient", ids);
     std::cout << "Update " << p.size() << std::endl;
