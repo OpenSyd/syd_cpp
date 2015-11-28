@@ -53,6 +53,7 @@ namespace syd {
 
     /// Return the name of the table
     virtual std::string GetTableName() const = 0;
+    static std::string GetStaticTableName() { return "Record"; }
 
     /// Set the values of the fields from some string.
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
