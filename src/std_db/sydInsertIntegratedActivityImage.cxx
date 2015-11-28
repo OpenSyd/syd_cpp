@@ -292,6 +292,9 @@ int main(int argc, char* argv[])
   builder.SaveDebugPixel("tac.txt");
   builder.SaveDebugModel("models.txt");
 
+
+  // Here auc image ? --> parameter for integration
+
   // Insert result in db
   syd::ImageBuilder bdb(db);
   syd::Image::pointer output = bdb.NewMHDImageLike(images[0]);

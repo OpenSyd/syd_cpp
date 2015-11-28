@@ -50,11 +50,11 @@ void syd::IntegratedActivityImageBuilder::SaveDebugPixel(const std::string & fil
   ta.Init();
   auto tac = debug_data[0].tac;
   for(auto t=0; t<tac.size(); t++) {
-    ta << tac.GetTime(t);
+    ta.Set("time", tac.GetTime(t));
     for(auto d:debug_data) {
-      ta << d.tac.GetValue(t);
+      ta.Set(d.name, d.tac.GetValue(t));
     }
-    ta.Endl();
+    //ta.Endl();
   }
   std::ofstream os(filename);
   ta.Print(os);
@@ -100,11 +100,13 @@ void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & fil
   }
   ta.Init();
 
+  EXCEPTION("not implemented. sTODO ");
+
   // Set values
   for(auto t=0; t<tacs[0]->size(); t++) {
-    ta << tacs[0]->GetTime(t);
-    for(auto tac:tacs) ta << tac->GetValue(t);
-    ta.Endl();
+    ta.Set("time", tacs[0]->GetTime(t));
+    // FIXME     for(auto tac:tacs) ta.Set( << tac->GetValue(t);
+    //    ta.Endl();
   }
 
   // Dump

@@ -42,6 +42,7 @@ syd::PrintColumn & syd::PrintTable::AddColumn(std::string name, int precision)
   col.title = name;
   col.index = columns_.size()-1; // last
   col.precision = precision;
+  col.width = name.size(); // default, will be changed later
 
   // Default index
   map_column[name]=col.index; // index
@@ -57,14 +58,6 @@ syd::PrintColumn & syd::PrintTable::AddColumn(std::string name, int precision)
 
 
 //------------------------------------------------------------------
-void syd::PrintTable::SetColumnWidth(int col, int w)
-{
-  width[col] = w;
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
 void syd::PrintTable::Init()
 {
   current_line = -1;
@@ -74,61 +67,11 @@ void syd::PrintTable::Init()
 
 
 //------------------------------------------------------------------
-void syd::PrintTable::Endl()
-{
-  std::vector<std::string> line(headers.size());
-  values.push_back(line);
-  current_line++;
-  current_column = 0;
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-syd::PrintTable & syd::PrintTable::operator<<(const double & value)
-{
-  if (current_line == -1) Endl();
-  std::stringstream ss;
-  if (fabs(value) < 1e-4 and value != 0.0)
-    ss << std::scientific << std::setprecision (precision[current_column]) << value;
-  else
-    ss << std::fixed << std::setprecision (precision[current_column]) << value;
-  values[current_line][current_column] = ss.str();
-  current_column++;
-  return *this;
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-syd::PrintTable & syd::PrintTable::operator<<(const std::string & value)
-{
-  if (current_line == -1) Endl();
-  // Trunc string if too big
-  std::string v = value;
-  if (v.size() >= width[current_column]) {
-    if (trunc_by_end[current_column]) v = value.substr(0,width[current_column]-4)+"...";
-    else v = "..."+value.substr(v.size()-width[current_column]+4,v.size());
-  }
-  values[current_line][current_column] = v;
-  current_column++;
-  return *this;
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
 void syd::PrintTable::Set(int col, const std::string & value)
 {
   auto & row = rows_.back(); // last one is current one
   if (row.values.size() != columns_.size()) row.values.resize(columns_.size());
-  auto & c = columns_[col];
-  std::string v = value;
-  if (value.size() > c.max_width) {
-    if (c.trunc_by_end_flag) v = value.substr(0,c.max_width-4)+"...";
-    else v = "..."+value.substr(v.size()-c.max_width+4,v.size());
-  }
-  row.values[col] = v;
+  row.values[col] = value;
 }
 //------------------------------------------------------------------
 
@@ -167,14 +110,6 @@ void syd::PrintTable::Set(int col, const double & value)
 
 
 //------------------------------------------------------------------
-void syd::PrintTable::SkipLine()
-{
-  for(auto i=0; i<headers.size(); i++) *this << " ";
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
 void syd::PrintTable::Print(std::ostream & out)
 {
   // Compute optimal column width
@@ -188,6 +123,19 @@ void syd::PrintTable::Print(std::ostream & out)
       }
       col.width = m+1; // FIXME spacing between col
       col.width = std::min(col.width, col.max_width);
+    }
+  }
+
+  // Trunc if needed
+  for(auto & row:rows_) {
+    for(int c=0; c<row.values.size(); c++) {
+      auto & col = columns_[c];
+      std::string v = row.values[c];
+      if (v.size() > col.max_width) {
+        if (col.trunc_by_end_flag) v = v.substr(0,col.max_width-4)+"...";
+        else v = "..."+v.substr(v.size()-col.max_width+4,v.size());
+      }
+      row.values[c] = v;
     }
   }
 
@@ -226,23 +174,6 @@ void syd::PrintTable::DumpRow(const syd::PrintRow & row, std::ostream & out)
   }
 }
 //------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-bool syd::PrintTable::ColumnsAreDefined(const std::string & table_name) {
-  // FIXME depend on format
-  if (map_column_defined.find(table_name) != map_column_defined.end())
-    return map_column_defined[table_name];
-  else return false;
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-void syd::PrintTable::SetColumnsAreDefined(const std::string & table_name)
-{
-  map_column_defined[table_name] = true;
-}
 
 
 //------------------------------------------------------------------

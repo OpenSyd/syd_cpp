@@ -48,57 +48,37 @@ namespace syd {
   };
 
 
-  /// Helpers class to dump a table (line/column) of values, controling the precision and the column size
+  /// Helpers class to dump a table (line/column) of values,
+  /// controling the precision and the column size
   class PrintTable {
   public:
     PrintTable();
 
+    void Init();
 
     syd::PrintColumn & AddColumn(std::string name, int precision=0);
-    void Init();
-    PrintTable & operator<<(const double & value);
-    PrintTable & operator<<(const std::string & value);
+    void AddRow();
 
     void Set(int col, const std::string & value);
     void Set(int col, const double & value);
-
     void Set(const std::string & col, const std::string & value);
     void Set(const std::string & col, const double & value);
 
-    void SkipLine();
     void Print(std::ostream & out);
-    void SetColumnWidth(int col, int width);
-    //    int GetNumberOfColumns() const { return headers.size(); }
+
     int GetNumberOfColumns() const { return columns_.size(); }
-    void Endl();
-
-
-    bool ColumnsAreDefined(const std::string & table_name);
-
-    void SetColumnsAreDefined(const std::string & table_name);
+    int GetColumn(std::string col);
 
     const std::string & GetFormat() const { return current_format_name_; }
     void AddFormat(std::string name, std::string help);
     void SetFormat(std::string name);
 
-    int GetColumn(std::string col);
-
-    void AddRow();
-
     template<class RecordType>
     void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
               std::ostream & os=std::cout);
 
-    template<class RecordType>
-    void InitTable();
-
   protected:
     std::vector<std::vector<std::string>> values;
-    std::vector<std::string> headers;
-    std::vector<int> width;
-
-    std::vector<int> precision;
-    std::vector<bool> trunc_by_end;
     int current_line;
     int current_column;
 
@@ -107,7 +87,6 @@ namespace syd {
     std::vector<syd::PrintRow> rows_;
     void DumpRow(const syd::PrintRow & row, std::ostream & out);
     std::map<std::string, int> map_column;
-    std::map<std::string, bool> map_column_defined;
 
     std::string current_format_name_;
     std::vector<syd::PrintFormat> formats_;
