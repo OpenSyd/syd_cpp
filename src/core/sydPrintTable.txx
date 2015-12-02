@@ -44,8 +44,11 @@ void syd::PrintTable::Dump(const std::vector<std::shared_ptr<RecordType>> & reco
     return;
   }
 
-  // Check format here ?
-  if (GetNumberOfColumns() == 0) {
+  // Check that format name exists
+  auto f = GetFormat();
+  auto p = std::find_if(formats_.begin(), formats_.end(),
+                        [&f](const syd::PrintFormat &v) { return v.name == f; });
+  if (p == formats_.end()) {
     std::ostringstream ss;
     for(auto f:formats_) {
       ss << "\t- " << f.name << ": "  << f.help << std::endl;

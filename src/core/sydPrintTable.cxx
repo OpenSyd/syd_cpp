@@ -24,6 +24,7 @@ syd::PrintTable::PrintTable()
 {
   Init();
   current_format_name_ = "default";
+  header_flag_ = true;
 }
 //------------------------------------------------------------------
 
@@ -139,26 +140,28 @@ void syd::PrintTable::Print(std::ostream & out)
   }
 
   // Dump headers
-  out << "#Table: " << current_table_ << ". Number of rows: " << rows_.size() << std::endl;
-  bool first = true;
-  for(auto col:columns_) { // FIXME order
-    if (col.width != 0) {
-      if (first) { // special case for first column, start with #
-        out << "#" << std::setw(col.width-1) << col.title;
-        first = false;
+  if (header_flag_) {
+    out << "#Table: " << current_table_ << ". Number of rows: " << rows_.size() << std::endl;
+    bool first = true;
+    for(auto col:columns_) { // FIXME order
+      if (col.width != 0) {
+        if (first) { // special case for first column, start with #
+          out << "#" << std::setw(col.width-1) << col.title;
+          first = false;
+        }
+        else out << std::setw(col.width) << col.title;
       }
-      else out << std::setw(col.width) << col.title;
     }
+    out << std::endl;
   }
-  out << std::endl;
 
   // Dump values
   for(auto & row:rows_) {
     DumpRow(row, out);
-    out << std::endl;
+    if (columns_.size() != 0) out << std::endl; // prevent empty line when no row
   }
+  if (columns_.size() == 0) out << std::endl;
   out << std::flush;
-
 }
 //------------------------------------------------------------------
 

@@ -288,7 +288,8 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
     ta.AddColumn("file");
   }
   if (f == "filelist") {
-    ta.AddColumn("file");
+    // ta.AddColumn("file"); // no columnb
+    ta.SetHeaderFlag(false);
   }
 }
 // --------------------------------------------------

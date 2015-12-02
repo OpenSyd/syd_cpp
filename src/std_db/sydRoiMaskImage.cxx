@@ -112,6 +112,9 @@ void syd::RoiMaskImage::InitTable(syd::PrintTable & ta) const
   if (ta.GetFormat() == "file") {
     if (ta.GetColumn("id") == -1) syd::Image::InitTable(ta);
   }
+  if (ta.GetFormat() == "filelist") {
+    //if (ta.GetColumn("file") == -1) syd::Image::InitTable(ta);
+  }
 }
 // --------------------------------------------------
 

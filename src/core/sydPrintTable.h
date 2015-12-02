@@ -77,6 +77,9 @@ namespace syd {
     void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
               std::ostream & os=std::cout);
 
+    void SetHeaderFlag(bool b) { header_flag_= b; }
+    bool GetHeaderFlag() const { return header_flag_; }
+
   protected:
     std::vector<std::vector<std::string>> values;
     int current_line;
@@ -90,6 +93,8 @@ namespace syd {
 
     std::string current_format_name_;
     std::vector<syd::PrintFormat> formats_;
+
+    bool header_flag_;
 
   };
 
