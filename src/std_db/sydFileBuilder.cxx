@@ -66,10 +66,13 @@ void syd::FileBuilder::RenameFile(syd::File::pointer file,
 
 
 // --------------------------------------------------------------------
-void syd::FileBuilder::CopyFile(syd::File::pointer file, std::string absolute_path)
+void syd::FileBuilder::CopyFile(syd::File::pointer file, std::string absolute_path, bool overwriteIfExist)
 {
   std::string path = db_->GetAbsolutePath(file);
-  fs::copy_file(absolute_path, path);
+  if (overwriteIfExist)
+    fs::copy_file(absolute_path, path, fs::copy_option::overwrite_if_exists);
+  else
+    fs::copy_file(absolute_path, path);
 }
 // --------------------------------------------------------------------
 

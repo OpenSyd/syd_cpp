@@ -40,7 +40,7 @@ namespace syd {
     syd::File::pointer NewFile(std::string extension="");
 
     /// Copy the content of absolute_path inside the file. DB not updated.
-    void CopyFile(syd::File::pointer file, std::string absolute_path);
+    void CopyFile(syd::File::pointer file, std::string absolute_path, bool overwriteIfExist=false);
 
      /// Change the filename. DB not updated.
     void RenameFile(syd::File::pointer file,
