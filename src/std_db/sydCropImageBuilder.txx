@@ -37,8 +37,10 @@ void CropImageBuilder::CropImageLike(syd::Image::pointer image,
   typename ImageType::Pointer output;
   if (resampleFlag)
     output = syd::ResampleAndCropImageLike<ImageType>(itk_image, itk_like, interpolationType, default_pixel);
-  else
+  else {
+    LOG(FATAL) << "Bug ? use -s option";
     output = syd::CropImageLike<ImageType>(itk_image, itk_like);
+  }
 
   // Update image
   SetImage<PixelType>(image, output);
