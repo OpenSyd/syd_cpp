@@ -84,27 +84,37 @@ int main(int argc, char* argv[])
     std::string element;
     double Qminus=0.0;
     while(std::getline(iss, line)) {
-      std::string w1, w2, w3;
-      iss >> w1 >> w2 >> w3;
-      //DD(w1); DD(w2); DD(w3);
-      if (w1 == "Z") Z = atoi(w3.c_str());
-      if (w1 == "Half-life") {
-        std::string unity = w2;
-        iss >> w3; // 4th words
-        HL = atof(w3.c_str());
-        if (w2 == "(d)") HL*=24.0;
-        else { if (w2 == "(s)") HL/=3600;
-          else { if (w2 == "(min)") HL /= 60;
-            else { if (w2 != "(h)") {
-                LOG(FATAL) << "I dont know the unity : " << w2 << " for the Half-life."
-                           << std::endl << page;
+      std::string w1;
+      std::vector<std::string> w;
+      syd::GetWords(w, line);
+
+      int i=0;
+      while (i<w.size()) {
+        w1 = w[i]; // first word
+
+        // Z
+        if (w1 == "Z") Z = atoi(w[i+2].c_str());
+
+        // HL
+        if (w1 == "Half-life") {
+          std::string unity = w[i+1];
+          HL = atof(w[i+3].c_str());
+          if (unity == "(d)") HL*=24.0;
+          else { if (unity == "(s)") HL/=3600;
+            else { if (unity == "(min)") HL /= 60;
+              else { if (unity != "(h)") {
+                  LOG(FATAL) << "I dont know the unity : " << unity << " for the Half-life."
+                             << std::endl << page;
+                }
               }
             }
           }
         }
+
+        if (w1 == "Element") element = w[i+2];
+        if (w1 == "Q-") Qminus = atof(w[i+2].c_str());
+        i++;
       }
-      if (w1 == "Element") element = w3;
-      if (w1 == "Q-") Qminus = atof(w3.c_str());
     }
 
     // Get 'A'
