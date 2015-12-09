@@ -40,6 +40,7 @@ ExternalProject_Add(itk
   -DBUILD_EXAMPLES:BOOL=OFF
   -DBUILD_TESTING:BOOL=OFF
   -DCMAKE_CXX_COMPILER:FILE=${CMAKE_CXX_COMPILER}
+  -DCMAKE_C_COMPILER:FILE=${CMAKE_C_COMPILER}
   )
 set(itk_dir ${build_prefix}/itk)
 #=========================================================
@@ -87,10 +88,10 @@ set(odb_sqlite_libraries ${install_prefix}/lib64)
 # dcmtk
 ExternalProject_Add(dcmtk
   SOURCE_DIR ${source_prefix}/dcmtk
-  URL ftp://dicom.offis.de/pub/dicom/offis/software/dcmtk/dcmtk360/dcmtk-3.6.0.tar.gz
+  #URL ftp://dicom.offis.de/pub/dicom/offis/software/dcmtk/dcmtk360/dcmtk-3.6.0.tar.gz
   #URL ftp://dicom.offis.de/pub/dicom/offis/software/dcmtk/dcmtk360/bin/dcmtk-3.6.0-linux-i686-static.tar.bz2
   GIT_REPOSITORY http://git.dcmtk.org/dcmtk.git
-  GIT_TAG DCMTK-3.6.1_20140617
+  GIT_TAG DCMTK-3.6.1_20150924
   CMAKE_ARGS
   -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/${proj}
   -DCMAKE_BUILD_TYPE:STRING=${build_type}
@@ -98,6 +99,7 @@ ExternalProject_Add(dcmtk
   -DBUILD_APPS:BOOL=OFF
   -DDCMTK_WITH_DOXYGEN:BOOL=OFF
   -DCMAKE_CXX_COMPILER:FILE=${CMAKE_CXX_COMPILER}
+  -DCMAKE_C_COMPILER:FILE=${CMAKE_C_COMPILER}
   )
 
 set(DCMTK_DIR ${source_prefix}/dcmtk)
@@ -157,6 +159,7 @@ ExternalProject_Add(ceres
   -DGLOG_INCLUDE_DIR:PATH=${glog_include_dir}
   -DCXX11:BOOL=ON
   -DCMAKE_CXX_COMPILER:FILE=${CMAKE_CXX_COMPILER}
+  -DCMAKE_C_COMPILER:FILE=${CMAKE_C_COMPILER}
   )
 
 # var env
