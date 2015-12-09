@@ -104,6 +104,9 @@ std::string syd::RoiMaskImage::ComputeDefaultAbsolutePath(syd::Database * db) co
 // --------------------------------------------------
 void syd::RoiMaskImage::InitTable(syd::PrintTable & ta) const
 {
+  ta.AddFormat("file", "Display the filename");
+  ta.AddFormat("filelist", "List of files without line break");
+
   // Need to check if Image::InitTable has been already called. If not we do it.
    if (ta.GetFormat() == "default") {
     if (ta.GetColumn("id") == -1) syd::Image::InitTable(ta);
@@ -113,7 +116,7 @@ void syd::RoiMaskImage::InitTable(syd::PrintTable & ta) const
     if (ta.GetColumn("id") == -1) syd::Image::InitTable(ta);
   }
   if (ta.GetFormat() == "filelist") {
-    //if (ta.GetColumn("file") == -1) syd::Image::InitTable(ta);
+    ta.SetHeaderFlag(false);
   }
 }
 // --------------------------------------------------
