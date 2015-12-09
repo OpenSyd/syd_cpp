@@ -60,6 +60,9 @@ namespace syd {
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
 
+    /// Check if the associated files exist on disk
+    virtual syd::CheckResult Check() const;
+
   protected:
     DicomFile();
 

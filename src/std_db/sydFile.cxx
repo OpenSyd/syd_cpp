@@ -20,7 +20,7 @@
 #include "sydFile.h"
 #include "sydStandardDatabase.h"
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 syd::File::File():syd::Record()
 {
   // default value
@@ -28,10 +28,10 @@ syd::File::File():syd::Record()
   path = "";
   md5 = "unset";
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 std::string syd::File::ToString() const
 {
   std::stringstream ss ;
@@ -41,10 +41,10 @@ std::string syd::File::ToString() const
      << (md5 == "unset"? "no_md5":"md5");
   return ss.str();
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 bool syd::File::IsEqual(const pointer p) const
 {
   return (syd::Record::IsEqual(p) and
@@ -52,18 +52,18 @@ bool syd::File::IsEqual(const pointer p) const
           path == p->path and
           md5 == p->md5);
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::File::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   LOG(FATAL) << "Not possible in insert file directly";
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event,db);
@@ -71,10 +71,10 @@ void syd::File::Callback(odb::callback_event event, odb::database & db) const
     EraseAssociatedFile();
   }
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db)
 {
   syd::Record::Callback(event,db);
@@ -82,10 +82,10 @@ void syd::File::Callback(odb::callback_event event, odb::database & db)
     EraseAssociatedFile();
   }
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::File::EraseAssociatedFile() const
 {
   //  syd::StandardDatabase * db = static_cast<syd::StandardDatabase*>(db_);
@@ -94,19 +94,19 @@ void syd::File::EraseAssociatedFile() const
     LOG(WARNING) << "Could not delete the file " << p;
   }
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
-std::string syd::File::GetAbsolutePath(const syd::Database * db)
+// --------------------------------------------------------------------
+std::string syd::File::GetAbsolutePath(const syd::Database * db) const
 {
   std::string apath = db->ConvertToAbsolutePath(path+PATH_SEPARATOR+filename);
   return apath;
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::File::InitTable(syd::PrintTable & ta) const
 {
   ta.AddFormat("md5", "Display the md5 value");
@@ -123,10 +123,10 @@ void syd::File::InitTable(syd::PrintTable & ta) const
   }
   if (f == "file") ta.AddColumn("file");
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::File::DumpInTable(syd::PrintTable & ta) const
 {
   auto & f = ta.GetFormat();
@@ -140,4 +140,19 @@ void syd::File::DumpInTable(syd::PrintTable & ta) const
   if (f == "file")
     ta.Set("file", std::string(path+PATH_SEPARATOR+filename));
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::CheckResult syd::File::Check() const
+{
+  // Test if file exist
+  std::string s = GetAbsolutePath(db_);
+  syd::CheckResult r;
+  if (!fs::exists(s)) {
+    r.success = false;
+    r.description = "the file "+s+" is not found";
+  }
+  return r;
+}
+// --------------------------------------------------------------------

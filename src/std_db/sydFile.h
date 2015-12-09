@@ -54,7 +54,9 @@ namespace syd {
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
 
-    std::string GetAbsolutePath(const syd::Database * db);
+    std::string GetAbsolutePath(const syd::Database * db) const;
+
+    virtual syd::CheckResult Check() const;
 
   protected:
     File();

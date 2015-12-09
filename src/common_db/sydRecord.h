@@ -22,6 +22,7 @@
 // syd
 #include "sydCommon.h"
 #include "sydPrintTable.h"
+#include "sydCheckResult.h"
 
 // odb
 #include <odb/callback.hxx>
@@ -61,7 +62,7 @@ namespace syd {
     /// Initialise a PrintTable
     virtual void InitTable(syd::PrintTable & table) const;
 
-   /// Add a line in the given PrintTable
+    /// Add a line in the given PrintTable
     virtual void DumpInTable(syd::PrintTable & table) const;
 
     /// Use to write the element as a string (must be overloaded)
@@ -84,6 +85,8 @@ namespace syd {
     virtual void Callback(odb::callback_event, odb::database&) const;
     virtual void Callback(odb::callback_event, odb::database&);
 
+    /// Check the record. Usually check the file on disk
+    virtual syd::CheckResult Check() const;
 
   protected:
     /// This default constructor allow to oblige class that inherit

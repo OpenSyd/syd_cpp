@@ -85,11 +85,25 @@ int main(int argc, char* argv[])
     table.Dump<syd::Record>(results);
   }
 
-  // // Check
-  // if (args_info.check_flag) {
-  //   DD("check");
-  //   //    for(auto r:records)
-  // }
+  // Check
+  if (args_info.check_flag) {
+    LOG(1) << "Checking ...";
+    std::vector<syd::IdType> ids_error;
+    int i=0;
+    int n = results.size();
+    for(auto r:results) {
+      auto res = r->Check();
+      if (!res.success) {
+        LOG(WARNING) << "Error for " << r << ": " << res.description;
+        ids_error.push_back(r->id);
+      }
+      syd::loadbar(i,n);
+      ++i;
+    }
+    for(auto i:ids_error) std::cout << i << " ";
+    if (ids_error.size() != 0) std::cout << std::endl;
+    LOG(1) << "Number of error: " << ids_error.size() << "                            ";
+  }
 
   // This is the end, my friend.
   return EXIT_SUCCESS;

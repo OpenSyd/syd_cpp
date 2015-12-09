@@ -190,3 +190,20 @@ void syd::DicomSerie::DumpInTable(syd::PrintTable & ta) const
   }
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::CheckResult syd::DicomSerie::Check() const
+{
+  syd::CheckResult r;
+
+  //Look for associated file (this is slow !)
+  syd::DicomFile::vector dfiles;
+  typedef odb::query<syd::DicomFile> QDF;
+  QDF q = QDF::dicom_serie == id;
+  db_->Query<syd::DicomFile>(dfiles, q);
+  for(auto d:dfiles) r.merge(d->Check());
+
+  return r;
+}
+// --------------------------------------------------------------------

@@ -62,7 +62,7 @@ void syd::Record::DumpInTable(syd::PrintTable & table) const
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::Record::SetDatabasePointer(odb::callback_event event, odb::database & d) const
 {
   //DD("SetDatabasePointer " + GetTableName()+" " + syd::ToString(event));
@@ -73,10 +73,10 @@ void syd::Record::SetDatabasePointer(odb::callback_event event, odb::database & 
   }
   db_ = search->second;
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::Record::Callback(odb::callback_event event, odb::database & db) const
 {
   // Events in Callback const : persist, update, erase
@@ -85,14 +85,23 @@ void syd::Record::Callback(odb::callback_event event, odb::database & db) const
   if (event == odb::callback_event::pre_persist or
       event == odb::callback_event::post_load) SetDatabasePointer(event, db);
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::Record::Callback(odb::callback_event event, odb::database & db)
 {
   // Events in Callback non-const : load
   //DD("Record::Callback non const "+syd::ToString(event)+" "+GetTableName());
   if (event == odb::callback_event::post_load) SetDatabasePointer(event, db);
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::CheckResult syd::Record::Check() const
+{
+  syd::CheckResult r;
+  return r;
+}
+// --------------------------------------------------------------------

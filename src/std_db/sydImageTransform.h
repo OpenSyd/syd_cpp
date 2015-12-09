@@ -74,6 +74,9 @@ namespace syd {
 
     virtual std::string ComputeRelativeFolder() const;
 
+    /// Check if the associated files exist on disk
+    virtual syd::CheckResult Check() const;
+
   protected:
     ImageTransform();
 

@@ -15,6 +15,7 @@ Use --exclude option to exclude words.
 Use --dump to output details of the found records instead of only the ids.
 "
 
-option "exclude"    e   "Exclude pattern (multiple)"	         string         no multiple
-option "list"       l   "Dump list of ids"                       flag           off
-option "format"     f   "Format when dump results"               string         default="" no
+option "exclude"    e   "Exclude pattern (multiple)"	           string  no multiple
+option "list"       l   "Dump list of ids"                         flag    off
+option "format"     f   "Format when dump results"                 string  default="" no
+option "check"      c   "Check files associated to found records"  flag    off

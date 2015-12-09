@@ -326,3 +326,14 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   }
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::CheckResult syd::Image::Check() const
+{
+  syd::CheckResult r;
+  for(auto f:files) r.merge(f->Check());
+  for(auto d:dicoms) r.merge(d->Check());
+  return r;
+}
+// --------------------------------------------------------------------

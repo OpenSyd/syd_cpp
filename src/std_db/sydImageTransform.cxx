@@ -142,3 +142,18 @@ void syd::ImageTransform::DumpInTable(syd::PrintTable & ta) const
   ta.Set("ref_frame", fixed_image->frame_of_reference_uid);
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::CheckResult syd::ImageTransform::Check() const
+{
+  syd::CheckResult r;
+  if (config_file != NULL) r.merge(config_file->Check());
+  if (transform_file != NULL) r.merge(transform_file->Check());
+  r.merge(fixed_image->Check());
+  r.merge(moving_image->Check());
+  if (fixed_mask != NULL) r.merge(fixed_mask->Check());
+  if (moving_mask != NULL) r.merge(moving_mask->Check());
+  return r;
+}
+// --------------------------------------------------------------------

@@ -109,3 +109,11 @@ void syd::DicomFile::DumpInTable(syd::PrintTable & ta) const
   ta.Set("sop_uid", dicom_sop_uid);
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::CheckResult syd::DicomFile::Check() const
+{
+  return file->Check();
+}
+// --------------------------------------------------------------------

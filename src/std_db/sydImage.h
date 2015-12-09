@@ -124,9 +124,14 @@ namespace syd {
     /// Check if the image has a dicom. If not fail
     void FatalIfNoDicom() const;
 
-    //FIXME
+    /// Initialise a PrintTable
     virtual void InitTable(syd::PrintTable & table) const;
+
+    /// Add a line in the given PrintTable
     virtual void DumpInTable(syd::PrintTable & table) const;
+
+    /// Check if the associated files exist on disk
+    virtual syd::CheckResult Check() const;
 
   protected:
     Image();
