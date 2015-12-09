@@ -111,7 +111,7 @@ int main(int argc, char* argv[])
     // NEW
     syd::FileBuilder fb(db);
     transfo->config_file = fb.NewFile();
-    fb.CopyFile(transfo->config_file, config_filename);
+    fb.CopyFile(transfo->config_file, config_filename, true); // overwrite because temporary file
     std::string fff = syd::GetFilenameFromPath(config_filename);
     fb.RenameFile(transfo->config_file, output_dir, fff);
     db->Insert(transfo->config_file);
