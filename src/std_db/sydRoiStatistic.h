@@ -27,7 +27,7 @@ namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::RoiStatistic")
   /// Simple table to store a label and a description
-  class RoiStatistic : public syd::Record {
+  class RoiStatistic : public syd::RecordWithHistory {
   public:
 
 #pragma db not_null on_delete(cascade)

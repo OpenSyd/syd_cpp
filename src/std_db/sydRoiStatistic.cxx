@@ -23,7 +23,7 @@
 #include <set>
 
 // --------------------------------------------------
-syd::RoiStatistic::RoiStatistic():syd::Record()
+syd::RoiStatistic::RoiStatistic():syd::RecordWithHistory()
 {
   image = NULL;
   mask = NULL;
@@ -77,7 +77,8 @@ void syd::RoiStatistic::Set(const syd::Database * db, const std::vector<std::str
 // --------------------------------------------------
 void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
 {
-  ta.AddColumn("id");
+  syd::RecordWithHistory::InitTable(ta);
+  //  ta.AddColumn("id");
   ta.AddColumn("p");
   ta.AddColumn("image");
   ta.AddColumn("mask");
@@ -96,7 +97,8 @@ void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
 {
-  ta.Set("id", id);
+  syd::RecordWithHistory::DumpInTable(ta);
+  //  ta.Set("id", id);
   ta.Set("p", image->patient->name);
   ta.Set("image", image->id);
   ta.Set("mask", (mask != NULL ? mask->roitype->name:"no_mask"));

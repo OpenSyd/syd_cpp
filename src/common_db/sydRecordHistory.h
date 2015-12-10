@@ -42,6 +42,8 @@ namespace syd {
     TABLE_DECLARE_MANDATORY_FUNCTIONS(RecordHistory);
     // ------------------------------------------------------------------------
 
+    void Set(const syd::Database * db, const std::vector<std::string> & arg);
+
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
 

@@ -53,12 +53,26 @@ bool syd::RecordHistory::IsEqual(const pointer p) const
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------
+void syd::RecordHistory::Set(const syd::Database * db, const std::vector<std::string> & arg)
+{
+  if (arg.size() < 2) {
+    LOG(FATAL) << "To insert a Tag, please set <insertion_date> <update_date>";
+  }
+
+  insertion_date = arg[0];
+  update_date = arg[1];
+}
+// --------------------------------------------------
+
+
+
 // --------------------------------------------------------------------
 void syd::RecordHistory::InitTable(syd::PrintTable & ta) const
 {
   ta.AddColumn("id"); // FIXME to change for filelist ?
-  ta.AddColumn("insert");
-  ta.AddColumn("update");
+  ta.AddColumn("insertion_date");
+  ta.AddColumn("update_date");
 }
 // --------------------------------------------------------------------
 
@@ -67,7 +81,7 @@ void syd::RecordHistory::InitTable(syd::PrintTable & ta) const
 void syd::RecordHistory::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
-  ta.Set("insert", insertion_date);
-  ta.Set("update", update_date);
+  ta.Set("insertion_date", insertion_date);
+  ta.Set("update_date", update_date);
 }
 // --------------------------------------------------------------------
