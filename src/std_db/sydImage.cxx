@@ -24,7 +24,7 @@
 #include "sydTag.h"
 
 // --------------------------------------------------------------------
-syd::Image::Image():syd::Record()
+syd::Image::Image():syd::RecordWithHistory()
 {
   type = "unset";
   pixel_type = "unset";
@@ -181,7 +181,7 @@ std::string syd::Image::ComputeRelativeFolder() const
 // --------------------------------------------------
 void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 {
-  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db);
   if (event == odb::callback_event::post_erase) {
     for(auto f:files) db.erase(f);
   }
@@ -193,19 +193,6 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
     // update the file with odb::database not the syd::database
     for(auto f:files) db.update(f);
   }
-  /*
-    if (event == odb::callback_event::post_persist) {
-    DD("image post persist");
-    DD(id);
-    //rename ? need StandardDatabase ?
-    syd::StandardDatabase * sdb = dynamic_cast<syd::StandardDatabase*>(db_);
-    // sdb->Insert(files[0]);
-    // const syd::Image::pointer image(this);
-    // syd::ImageBuilder builder(sdb);
-    // builder.RenameToDefaultFilename(image);
-    // sdb->Dump();
-    }
-  */
 }
 // --------------------------------------------------
 
@@ -213,7 +200,7 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 // --------------------------------------------------
 void syd::Image::Callback(odb::callback_event event, odb::database & db)
 {
-  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db);
   if (event == odb::callback_event::post_erase) {
     for(auto f:files) db.erase(f);
   }
@@ -264,14 +251,16 @@ void syd::Image::CopyDicomSeries(syd::Image::pointer image)
 // --------------------------------------------------
 void syd::Image::InitTable(syd::PrintTable & ta) const
 {
+  syd::RecordWithHistory::InitTable(ta);
+
   // Define the formats
   ta.AddFormat("file", "Display the filename");
   ta.AddFormat("filelist", "List of files without line break");
 
   // Set the columns
   auto & f = ta.GetFormat();
-  if (f == "default") {
-    ta.AddColumn("id");
+  if (f == "default" or f == "history") {
+    //    ta.AddColumn("id");
     ta.AddColumn("p");
     ta.AddColumn("acqui_date");
     ta.AddColumn("tags");
@@ -284,10 +273,11 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
     c.trunc_by_end_flag = false;
   }
   if (f == "file") {
-    ta.AddColumn("id");
+    //    ta.AddColumn("id");
     ta.AddColumn("file");
   }
   if (f == "filelist") {
+    //FIXME remove column id
     ta.SetHeaderFlag(false);
   }
 }
@@ -297,10 +287,11 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::Image::DumpInTable(syd::PrintTable & ta) const
 {
+  syd::RecordWithHistory::DumpInTable(ta);
   auto f = ta.GetFormat();
 
-  if (f == "default") {
-    ta.Set("id", id);
+  if (f == "default" or f == "history") {
+    //    ta.Set("id", id); <--- already done in RecordWithHistory
     ta.Set("p", patient->name);
     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
     else ta.Set("acqui_date", dicoms[0]->acquisition_date);
@@ -317,7 +308,7 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   }
 
   if (f == "file") {
-    ta.Set("id", id);
+    //    ta.Set("id", id);
     if (files.size() != 0) ta.Set("file", files[0]->GetAbsolutePath(db_));
   }
 

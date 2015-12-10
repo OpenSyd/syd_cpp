@@ -47,6 +47,7 @@
 // boost
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
+#include "boost/date_time/posix_time/posix_time.hpp"
 namespace fs = boost::filesystem;
 
 //--------------------------------------------------------------------
@@ -67,6 +68,8 @@ namespace syd {
 
   /// A 'valid' date is something like "2015-04-01 10:00"
   bool IsDateValid(std::string d);
+
+  std::string Now();
   //--------------------------------------------------------------------
 
 

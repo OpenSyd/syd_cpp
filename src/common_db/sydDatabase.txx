@@ -97,14 +97,7 @@ void syd::Database::Insert(std::vector<std::shared_ptr<RecordType>> records)
 {
   try {
     odb::transaction t (odb_db_->begin());
-    for(auto & record:records) {
-      //      record->history
-      DD("TODO record history here");
-      //      syd::RecordHistory
-
-
-      odb_db_->persist(*record);
-    }
+    for(auto & record:records) odb_db_->persist(*record);
     t.commit();
   }
   catch (const odb::exception& e) {

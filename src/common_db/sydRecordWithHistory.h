@@ -30,12 +30,15 @@ namespace syd {
   public:
 
     /// FIXME
-    syd::RecordHistory::pointer history;
+    /// It is 'mutable' because is changed in the const Callback.
+    mutable syd::RecordHistory::pointer history;
 
     // FIXME : set, equal etc
 
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
+
+    virtual void Callback(odb::callback_event, odb::database&) const;
 
   protected:
     RecordWithHistory();

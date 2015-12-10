@@ -37,7 +37,7 @@ namespace syd {
   /// Store information about a dicom image (serie). Element of table
   /// 'Image' stored in a db. Contains information about a dicom
   /// image.
-  class Image : public syd::Record {
+  class Image : public syd::RecordWithHistory {
   public:
 
 #pragma db not_null

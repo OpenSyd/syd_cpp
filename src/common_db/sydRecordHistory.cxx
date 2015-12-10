@@ -23,8 +23,8 @@
 // --------------------------------------------------------------------
 syd::RecordHistory::RecordHistory():syd::Record()
 {
-  insertion_date = "insertion_date_not_set";
-  update_date = "update_date_not_set";
+  insertion_date = "unknown";
+  update_date = "unknown";
 }
 // --------------------------------------------------------------------
 

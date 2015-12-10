@@ -157,6 +157,19 @@ bool syd::IsDateValid(std::string d)
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+std::string syd::Now()
+{
+  namespace pt = boost::posix_time;
+  std::ostringstream msg;
+  const pt::ptime now = pt::second_clock::local_time();
+  pt::time_facet*const ff = new pt::time_facet("%Y-%m-%d %H:%M:%S");
+  msg.imbue(std::locale(msg.getloc(),ff));
+  msg << now;
+  return msg.str();
+}
+// --------------------------------------------------------------------
+
 //------------------------------------------------------------------
 // skip line which begin with a sharp '#'
 void syd::SkipComment(std::istream & is)
