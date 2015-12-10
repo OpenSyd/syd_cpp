@@ -23,6 +23,8 @@
 #include "sydException.h"
 #include "sydDatabaseInformation-odb.hxx"
 #include "sydRecord-odb.hxx"
+#include "sydRecordHistory-odb.hxx"
+#include "sydRecordWithHistory-odb.hxx"
 #include "sydTableBase.h"
 
 // odb

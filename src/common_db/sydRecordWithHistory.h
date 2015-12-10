@@ -16,49 +16,34 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTAG_H
-#define SYDTAG_H
+#ifndef SYDRECORDWITHHISTORY_H
+#define SYDRECORDWITHHISTORY_H
 
 // syd
-#include "sydRecordWithHistory.h"
+#include "sydRecordHistory.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Tag")
-  /// Simple table to store a label and a description
-  class Tag : public syd::RecordWithHistory {
+#pragma db object abstract pointer(std::shared_ptr) callback(Callback)
+  class RecordWithHistory: public syd::Record  {
   public:
 
-#pragma db options("UNIQUE")
-    /// Label of the tag (name)
-    std::string label;
+    /// FIXME
+    syd::RecordHistory::pointer history;
 
-    /// Description associated with the tag
-    std::string description;
-
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(Tag);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Tag);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Tag);
-    // ------------------------------------------------------------------------
+    // FIXME : set, equal etc
 
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
 
   protected:
-    Tag();
+    RecordWithHistory();
 
-  }; // end of class
+  };
 
-  // Helper functions
 
-  // Print the list of tag labels
-  std::string GetLabels(const syd::Tag::vector & tags);
-
-  // Check if all tags are in the first list
-  bool IsAllTagsIn(syd::Tag::vector & input_tags, syd::Tag::vector & to_search_tags);
-}
+} // end namespace
 // --------------------------------------------------------------------
 
 #endif

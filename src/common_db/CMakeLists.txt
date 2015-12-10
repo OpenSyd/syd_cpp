@@ -10,12 +10,14 @@ wrap_odb(sydCore sydDatabaseInformation.h)
 wrap_odb(sydCore sydDatabaseSchemaName.h)
 wrap_odb(sydCore sydRecord.h)
 wrap_odb(sydCore sydRecordHistory.h)
+wrap_odb(sydCore sydRecordWithHistory.h)
 
 set(sydCommonDatabase_src
   sydDatabaseSchemaName-odb.cxx
   sydDatabaseInformation-odb.cxx
   sydRecord-odb.cxx sydRecord.cxx
   sydRecordHistory-odb.cxx sydRecordHistory.cxx
+  sydRecordWithHistory-odb.cxx sydRecordWithHistory.cxx
   sydDatabase.cxx
   sydDatabaseManager.cxx
   sydDatabaseInformation.cxx

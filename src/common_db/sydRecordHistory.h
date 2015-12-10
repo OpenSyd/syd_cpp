@@ -51,25 +51,6 @@ namespace syd {
   }; // end of class
 
 
-
-
-  class RecordWithHistory: public syd::Record  {
-  public:
-
-    /// FIXME
-#pragma db not_null
-    syd::RecordHistory::pointer history;
-
-  // protected:
-  //   RecordHistory();
-
-  };
-
-
-
-
-
-
 } // end namespace
 // --------------------------------------------------------------------
 

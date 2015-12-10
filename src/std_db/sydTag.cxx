@@ -23,7 +23,7 @@
 #include <set>
 
 // --------------------------------------------------
-syd::Tag::Tag():syd::Record()
+syd::Tag::Tag():syd::RecordWithHistory()
 {
   label = "unset";
   description = "unset";
@@ -77,7 +77,8 @@ void syd::Tag::Set(const syd::Database * db, const std::vector<std::string> & ar
 // --------------------------------------------------
 void syd::Tag::InitTable(syd::PrintTable & ta) const
 {
-  ta.AddColumn("id");
+  syd::RecordWithHistory::InitTable(ta);
+  //  ta.AddColumn("id");
   ta.AddColumn("label");
   auto & col = ta.AddColumn("description");
   col.max_width = 80;
@@ -89,7 +90,8 @@ void syd::Tag::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::Tag::DumpInTable(syd::PrintTable & ta) const
 {
-  ta.Set("id", id);
+  //ta.Set("id", id);
+  syd::RecordWithHistory::DumpInTable(ta);
   ta.Set("label", label);
   ta.Set("description", description);
 }

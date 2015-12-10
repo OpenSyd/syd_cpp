@@ -17,57 +17,43 @@
   ===========================================================================**/
 
 // syd
-#include "sydRecordHistory.h"
-//#include "sydStandardDatabase.h"
+#include "sydRecordWithHistory.h"
 
 // --------------------------------------------------------------------
-syd::RecordHistory::RecordHistory():syd::Record()
+syd::RecordWithHistory::RecordWithHistory():syd::Record()
 {
-  insertion_date = "insertion_date_not_set";
-  update_date = "update_date_not_set";
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::string syd::RecordHistory::ToString() const
+void syd::RecordWithHistory::InitTable(syd::PrintTable & ta) const
 {
-  std::stringstream ss ;
-  ss << id << " "
-    //<< record->id << " "
-     << insertion_date << " "
-     << update_date;
-  return ss.str();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-bool syd::RecordHistory::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and
-          //record->IsEqual(p->record) and
-          insertion_date == p->insertion_date and
-          update_date == p->update_date);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::RecordHistory::InitTable(syd::PrintTable & ta) const
-{
+  ta.AddFormat("history", "Display the history of the records");
   ta.AddColumn("id"); // FIXME to change for filelist ?
-  ta.AddColumn("insert");
-  ta.AddColumn("update");
+
+  auto & f = ta.GetFormat();
+  if (f == "history") {
+    ta.AddColumn("insert");
+    ta.AddColumn("update");
+  }
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::RecordHistory::DumpInTable(syd::PrintTable & ta) const
+void syd::RecordWithHistory::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
-  ta.Set("insert", insertion_date);
-  ta.Set("update", update_date);
+  auto & f = ta.GetFormat();
+  if (f == "history") {
+    if (history == NULL) {
+      LOG(WARNING) << "Error no history ?";
+      ta.Set("insert", "NULL");
+      ta.Set("update", "NULL");
+    }
+    ta.Set("insert", history->insertion_date);
+    ta.Set("update", history->update_date);
+  }
 }
 // --------------------------------------------------------------------
