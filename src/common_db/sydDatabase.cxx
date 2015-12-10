@@ -45,6 +45,14 @@ syd::Database::~Database()
 
 
 // --------------------------------------------------------------------
+// void syd::Database::CreateTables()
+// {
+//   AddTable<syd::RecordHistory>();
+// }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Database::Read(std::string filename)
 {
   filename_ = filename;

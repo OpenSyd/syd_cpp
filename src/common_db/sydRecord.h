@@ -32,7 +32,8 @@
 namespace syd {
 
   class Database;
-  struct RecordStat;
+  //  class RecordHistory;
+  //  struct RecordStat;
 
   /// Base class for all record (or element, or row) in a table
 #pragma db object abstract pointer(std::shared_ptr)  callback(Callback)
@@ -152,6 +153,41 @@ namespace syd {
     t.commit ();                                                        \
     return c;                                                           \
   }
+
+
+  /*
+#pragma db object pointer(std::shared_ptr) table("syd::RecordHistory")
+  //callback(Callback)
+  /// Store information about the history for a RecordHistory
+  class RecordHistory: public syd::Record  {
+  public:
+
+// #pragma db id auto
+//     /// Main key (automated, unique)
+//     IdType id;
+
+    //    syd::Record::pointer record; // back pointer ?
+
+    std::string insertion_date;
+    std::string update_date;
+
+    // ------------------------------------------------------------------------
+    TABLE_DEFINE(RecordHistory);
+    TABLE_DECLARE_MANDATORY_FUNCTIONS(RecordHistory);
+    // ------------------------------------------------------------------------
+
+    virtual void InitTable(syd::PrintTable & table) const;
+    virtual void DumpInTable(syd::PrintTable & table) const;
+
+  protected:
+    RecordHistory();
+
+  }; // end of class
+  */
+
+
+
+
 
 } // end namespace
 // --------------------------------------------------------------------

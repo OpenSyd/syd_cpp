@@ -9,11 +9,13 @@ set(SCHEMA_NAME sydCommonDatabase)
 wrap_odb(sydCore sydDatabaseInformation.h)
 wrap_odb(sydCore sydDatabaseSchemaName.h)
 wrap_odb(sydCore sydRecord.h)
+wrap_odb(sydCore sydRecordHistory.h)
 
 set(sydCommonDatabase_src
   sydDatabaseSchemaName-odb.cxx
   sydDatabaseInformation-odb.cxx
   sydRecord-odb.cxx sydRecord.cxx
+  sydRecordHistory-odb.cxx sydRecordHistory.cxx
   sydDatabase.cxx
   sydDatabaseManager.cxx
   sydDatabaseInformation.cxx

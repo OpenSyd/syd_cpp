@@ -26,6 +26,7 @@
 #include "sydImageFlip.h"
 
 // syd tables
+#include "sydRecordHistory-odb.hxx"
 #include "sydPatient-odb.hxx"
 #include "sydInjection-odb.hxx"
 #include "sydRadionuclide-odb.hxx"

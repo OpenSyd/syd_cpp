@@ -119,6 +119,8 @@ void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & v, cons
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {
+  //  syd::Database::CreateTables();
+  AddTable<syd::RecordHistory>();
   AddTable<syd::Patient>();
   AddTable<syd::Injection>();
   AddTable<syd::Radionuclide>();
