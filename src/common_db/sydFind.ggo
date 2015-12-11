@@ -19,3 +19,4 @@ option "exclude"    e   "Exclude pattern (multiple)"	           string  no multi
 option "list"       l   "Dump list of ids"                         flag    off
 option "format"     f   "Format when dump results"                 string  default="" no
 option "check"      c   "Check files associated to found records"  flag    off
+option "noheader"   -   "Do not display table header"              flag    off
