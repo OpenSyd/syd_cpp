@@ -254,13 +254,13 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
   syd::RecordWithHistory::InitTable(ta);
 
   // Define the formats
+  auto & f = ta.GetFormat();
   ta.AddFormat("file", "Display the filename");
   ta.AddFormat("filelist", "List of files without line break");
 
   // Set the columns
-  auto & f = ta.GetFormat();
   if (f == "default" or f == "history") {
-    //    ta.AddColumn("id");
+    if (ta.GetColumn("id") == -1) ta.AddColumn("id");
     ta.AddColumn("p");
     ta.AddColumn("acqui_date");
     ta.AddColumn("tags");
@@ -273,11 +273,10 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
     c.trunc_by_end_flag = false;
   }
   if (f == "file") {
-    //    ta.AddColumn("id");
+    ta.AddColumn("id");
     ta.AddColumn("file");
   }
   if (f == "filelist") {
-    //FIXME remove column id
     ta.SetHeaderFlag(false);
   }
 }
@@ -295,7 +294,6 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
     ta.Set("p", patient->name);
     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
     else ta.Set("acqui_date", dicoms[0]->acquisition_date);
-
     ta.Set("tags", GetLabels(tags));
     ta.Set("size", syd::ArrayToString<int, 3>(size));
     ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
@@ -308,7 +306,7 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   }
 
   if (f == "file") {
-    //    ta.Set("id", id);
+    //    ta.Set("id", id);  <--- already done in RecordWithHistory
     if (files.size() != 0) ta.Set("file", files[0]->GetAbsolutePath(db_));
   }
 

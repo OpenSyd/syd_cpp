@@ -104,20 +104,11 @@ std::string syd::RoiMaskImage::ComputeDefaultAbsolutePath(syd::Database * db) co
 // --------------------------------------------------
 void syd::RoiMaskImage::InitTable(syd::PrintTable & ta) const
 {
-  ta.AddFormat("file", "Display the filename");
-  ta.AddFormat("filelist", "List of files without line break");
-
-  // Need to check if Image::InitTable has been already called. If not we do it.
-   if (ta.GetFormat() == "default") {
-    if (ta.GetColumn("id") == -1) syd::Image::InitTable(ta);
+  syd::Image::InitTable(ta);
+  auto & f = ta.GetFormat();
+  if (f == "default" or f == "history") {
     ta.AddColumn("roi", 12);
-  }
-  if (ta.GetFormat() == "file") {
-    if (ta.GetColumn("id") == -1) syd::Image::InitTable(ta);
-  }
-  if (ta.GetFormat() == "filelist") {
-    ta.SetHeaderFlag(false);
-  }
+   }
 }
 // --------------------------------------------------
 
@@ -126,9 +117,11 @@ void syd::RoiMaskImage::InitTable(syd::PrintTable & ta) const
 void syd::RoiMaskImage::DumpInTable(syd::PrintTable & ta) const
 {
   syd::Image::DumpInTable(ta);
-  if (ta.GetFormat() == "default") {
-    // Additional column if needed
-    if (ta.GetColumn("roi") == -1) InitTable(ta);
+  auto & f = ta.GetFormat();
+  if (f == "default" or f == "history") {
+    // Check if additional column is needed (because InitTable could
+    // have been called on a syd::Image not a RoiMaskImage.
+    if (ta.GetColumn("roi") == -1) ta.AddColumn("roi", 12);
     ta.Set("roi", roitype->name);
   }
 }

@@ -59,10 +59,9 @@ void syd::RecordWithHistory::Callback(odb::callback_event event, odb::database &
 void syd::RecordWithHistory::InitTable(syd::PrintTable & ta) const
 {
   ta.AddFormat("history", "Display the history of the records");
-  ta.AddColumn("id"); // FIXME to change for filelist ?
-
   auto & f = ta.GetFormat();
   if (f == "history") {
+    ta.AddColumn("id");
     ta.AddColumn("inserted");
     ta.AddColumn("updated");
   }
@@ -73,7 +72,7 @@ void syd::RecordWithHistory::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------------------------
 void syd::RecordWithHistory::DumpInTable(syd::PrintTable & ta) const
 {
-  ta.Set("id", id);
+  if (ta.GetColumn("id") != -1) ta.Set("id", id);
   auto & f = ta.GetFormat();
   if (f == "history") {
     if (history == NULL) {

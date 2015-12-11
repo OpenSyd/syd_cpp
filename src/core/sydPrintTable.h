@@ -72,6 +72,7 @@ namespace syd {
     const std::string & GetFormat() const { return current_format_name_; }
     void AddFormat(std::string name, std::string help);
     void SetFormat(std::string name);
+    std::vector<syd::PrintFormat> & GetFormats() { return formats_; }
 
     template<class RecordType>
     void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
