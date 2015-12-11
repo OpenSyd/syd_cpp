@@ -127,7 +127,6 @@ int main(int argc, char* argv[])
     out << "(ResultImagePixelType " << input_image->pixel_type << ")" << std::endl;
     out.close();
 
-
     // Check frame_of_reference_uid
     if (input_image->frame_of_reference_uid != transform->moving_image->frame_of_reference_uid) {
       LOG(WARNING) << "Error the frame_of_reference_uid of the input image is different from the one of the moving_image of the transform" << std::endl
@@ -141,8 +140,13 @@ int main(int argc, char* argv[])
     syd::Image::pointer output_image = builder.NewMHDImageLike(input_image);
     db->SetImageTagsFromCommandLine(output_image, args_info);
 
-    // FIXME tmp folder ?
-    DD("create a temp folder ?");
+    // Change the frame_of_reference_uid, will be the one of fiwed
+    // image in the ImageTransform
+    output_image->frame_of_reference_uid = transform->fixed_image->frame_of_reference_uid;
+
+    // FIXME tmp folder ? (when parallel computation)
+    DD("TODO: create a temp folder ?");
+    //DD(db->ConvertToAbsolutePath(output_image->ComputeRelativeFolder()));
 
     // Create command line
     std::ostringstream cmd;
