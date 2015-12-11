@@ -31,9 +31,9 @@ find_package(Git REQUIRED)
 ExternalProject_Add(itk
   SOURCE_DIR ${source_prefix}/itk
   GIT_REPOSITORY git://itk.org/ITK.git
-  GIT_TAG v4.8.1
+  GIT_TAG v4.8.2
   CMAKE_ARGS
-  -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/${proj}
+  -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/
   -DCMAKE_BUILD_TYPE:STRING=${build_type}
   -DBUILD_SHARED_LIBS:BOOL=OFF
   -DITK_DYNAMIC_LOADING:BOOL=OFF
@@ -41,6 +41,10 @@ ExternalProject_Add(itk
   -DBUILD_TESTING:BOOL=OFF
   -DCMAKE_CXX_COMPILER:FILE=${CMAKE_CXX_COMPILER}
   -DCMAKE_C_COMPILER:FILE=${CMAKE_C_COMPILER}
+  -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+  -DITK_BUILD_DEFAULT_MODULES:BOOL=OFF
+  -DITKGroup_Segmentation:BOOL=ON
+  -DITKGroup_Filtering:BOOL=ON
   )
 set(itk_dir ${build_prefix}/itk)
 #=========================================================
@@ -93,7 +97,7 @@ ExternalProject_Add(dcmtk
   GIT_REPOSITORY http://git.dcmtk.org/dcmtk.git
   GIT_TAG DCMTK-3.6.1_20150924
   CMAKE_ARGS
-  -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/${proj}
+  -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}
   -DCMAKE_BUILD_TYPE:STRING=${build_type}
   -DBUILD_SHARED_LIBS:BOOL=OFF
   -DBUILD_APPS:BOOL=OFF
@@ -102,7 +106,7 @@ ExternalProject_Add(dcmtk
   -DCMAKE_C_COMPILER:FILE=${CMAKE_C_COMPILER}
   )
 
-set(DCMTK_DIR ${source_prefix}/dcmtk)
+set(DCMTK_DIR ${install_prefix})
 
 
 #=========================================================
@@ -118,18 +122,35 @@ ExternalProject_Add(boost
   INSTALL_COMMAND ${source_prefix}/boost/b2 install
   )
 
+set(boost_includedir ${install_prefix}/include)
+set(boost_librarydir ${install_prefix}/lib/)
+
 #=========================================================
 # Ceres-solver
 ExternalProject_Add(eigen
-  # URL http://bitbucket.org/eigen/eigen/get/3.2.7.tar.bz2
-  ## URL not possible because require ssl cmake (not in cluster)
+	 # URL http://bitbucket.org/eigen/eigen/get/3.2.7.tar.bz2
+  ## URL  not possible because require ssl cmake (not in cluster)
   GIT_REPOSITORY https://github.com/RLovelett/eigen
   GIT_TAG 3.3-alpha1
+#1.2 --> no SparseQR
+#2-beta1
+#3-alpha1
   SOURCE_DIR ${source_prefix}/eigen
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory "${source_prefix}/eigen/Eigen" "${install_prefix}/eigen/Eigen" && ${CMAKE_COMMAND} -E copy_directory "${source_prefix}/eigen/unsupported" "${install_prefix}/eigen/unsupported"
-  )
+ CONFIGURE_COMMAND ""
+ BUILD_COMMAND ""
+
+#  CMAKE_ARGS
+#   -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}
+#   -DCMAKE_BUILD_TYPE:STRING=${build_type}
+#   -DCMAKE_CXX_COMPILER:FILE=${CMAKE_CXX_COMPILER}
+#   -DCMAKE_C_COMPILER:FILE=${CMAKE_C_COMPILER}
+#   -DBUILD_TESTING:BOOL=FALSE
+#   -DEIGEN_BUILD_PKGCONFIG:BOOL=TRUE
+#   -DEIGEN_TEST_C++0x:BOOL=TRUE
+
+INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory "${source_prefix}/eigen/Eigen" "${install_prefix}/eigen/Eigen" && ${CMAKE_COMMAND} -E copy_directory "${source_prefix}/eigen/unsupported" "${install_prefix}/eigen/unsupported"
+
+)
 
 set(eigen_include_dir ${install_prefix}/eigen)
 
@@ -145,10 +166,11 @@ set(glog_include_dir ${install_prefix}/include)
 
 ExternalProject_Add(ceres
   DEPENDS eigen glog
-  SOURCE_DIR ${source_prefix}/ceres-solver
+  SOURCE_DIR ${source_prefix}/ceres
   GIT_REPOSITORY https://ceres-solver.googlesource.com/ceres-solver
+  GIT_TAG 1.11.0
   CMAKE_ARGS
-  -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/${proj}
+  -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}
   -DCMAKE_BUILD_TYPE:STRING=${build_type}
   -DBUILD_SHARED_LIBS:BOOL=OFF
   -DBUILD_DOCUMENTATION:BOOL=OFF
@@ -160,6 +182,7 @@ ExternalProject_Add(ceres
   -DCXX11:BOOL=ON
   -DCMAKE_CXX_COMPILER:FILE=${CMAKE_CXX_COMPILER}
   -DCMAKE_C_COMPILER:FILE=${CMAKE_C_COMPILER}
+  -DEXPORT_BUILD_DIR:BOOL=ON
   )
 
 # var env
@@ -168,14 +191,15 @@ ExternalProject_Add(ceres
 # SYD
 
 ExternalProject_Add(syd
-  DEPENDS ceres odb_compiler odb_lib odb_sqlite dcmtk boost itk
+  #DEPENDS ceres odb_compiler odb_lib odb_sqlite dcmtk boost itk
   SOURCE_DIR ${source_prefix}/syd
   GIT_REPOSITORY https://github.com/OpenSyd/syd.git
   CMAKE_ARGS
-  -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}/${proj}
+  -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}
   -DCMAKE_BUILD_TYPE:STRING=${build_type}
   -DBUILD_SHARED_LIBS:BOOL=OFF
   -DDCMTK_DIR:PATH=${DCMTK_DIR}
+  -DEIGEN_INCLUDE_DIR:PATH=${eigen_include_dir}
   -DCeres_DIR:PATH=${ceres_dir}
   -DITK_DIR:PATH=${itk_dir}
   -DODB_EXECUTABLE:FILE=${odb_exec}
@@ -184,7 +208,10 @@ ExternalProject_Add(syd
   -DODB_LIBRARY_PATH:PATH=${odb_library_path}
   -DODB_SQLITE_INCLUDE_DIRS:PATH=${odb_sqlite_include_dirs}
   -DODB_SQLITE_LIBRARIES:PATH=${odb_sqlite_libraries}
-  -DBoost_DIR=PATH=${install_prefix}
+  -DCMAKE_CXX_COMPILER:FILE=${CMAKE_CXX_COMPILER}
+  -DCMAKE_C_COMPILER:FILE=${CMAKE_C_COMPILER}
+  -DBOOST_INCLUDEDIR:PATH=${boost_includedir}
+  -DBOOST_LIBRARYDIR:PATH=${boost_librarydir}
   )
 
 #=========================================================
