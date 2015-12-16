@@ -229,6 +229,9 @@ int main(int argc, char* argv[])
   }
   builder.SetMask(mask);
 
+  // FIXME add option for auc images
+
+
   for(auto i=0; i<args_info.model_given; i++) {
     std::string n = args_info.model_arg[i];
     bool b = false;
@@ -291,9 +294,6 @@ int main(int argc, char* argv[])
   // Debug here
   builder.SaveDebugPixel("tac.txt");
   builder.SaveDebugModel("models.txt");
-
-
-  // Here auc image ? --> parameter for integration
 
   // Insert result in db
   syd::ImageBuilder bdb(db);
