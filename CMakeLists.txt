@@ -12,14 +12,16 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 # Policy for shared library on OSX
-cmake_policy(SET CMP0042 NEW) # CMake 3.0
+if (APPLE)
+  cmake_policy(SET CMP0042 NEW) # CMake 3.0
+endif (APPLE)
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
 # Use c++11
 #SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-c++11-compat -Winconsistent-missing-override")
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-c++11-compat")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-c++11-compat")
 
 #----------------------------------------------------------
 
