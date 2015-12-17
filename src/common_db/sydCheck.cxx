@@ -96,7 +96,7 @@ int main(int argc, char* argv[])
     for(auto f:missing_files) LOG(1) << f;
   }
 
-  if (args_info.delete_flag) {
+  if (args_info.delete_flag and missing_files.size() > 0) {
     std::string m="";
     if (sydlog::Log::LogLevel() == 0) m = " (use -v1 to see the file)";
     std::cout << redColor
@@ -105,7 +105,10 @@ int main(int argc, char* argv[])
     char c;
     std::cin >> c;
     if (c =='y') {
-      //    for(auto f:missing_files) fs::remove(f);
+      for(auto f:missing_files) {
+        LOG(1) << "Deleting " << f << " ...";
+        fs::remove(f);
+      }
       LOG(0) << "Files deleted.";
     }
     else LOG(0) << "Abort.";
