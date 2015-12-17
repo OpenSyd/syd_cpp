@@ -23,6 +23,7 @@
 #include "sydException.h"
 #include "sydDatabaseInformation-odb.hxx"
 #include "sydRecord-odb.hxx"
+#include "sydFile-odb.hxx"
 #include "sydRecordHistory-odb.hxx"
 #include "sydRecordWithHistory-odb.hxx"
 #include "sydTableBase.h"
@@ -74,7 +75,7 @@ namespace syd {
    std::string GetDatabaseAbsoluteFolder() const { return absolute_folder_; }
 
     /// Return absolute path from a relative one
-    std::string ConvertToAbsolutePath(std::string relative_path) const { return absolute_folder_+PATH_SEPARATOR+relative_path; }
+    std::string ConvertToAbsolutePath(std::string relative_path) const;
     // ------------------------------------------------------------------------
 
 

@@ -45,14 +45,6 @@ syd::Database::~Database()
 
 
 // --------------------------------------------------------------------
-// void syd::Database::CreateTables()
-// {
-//   AddTable<syd::RecordHistory>();
-// }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Database::Read(std::string filename)
 {
   filename_ = filename;
@@ -92,7 +84,8 @@ void syd::Database::Read(std::string filename)
 
   absolute_folder_ = database_path+PATH_SEPARATOR+relative_folder_;
   if (!fs::exists(absolute_folder_)) {
-    EXCEPTION("The folder '" << absolute_folder_ << "' does not exist.");
+    //EXCEPTION("The folder '" << absolute_folder_ << "' does not exist.");
+    LOG(WARNING) << "The folder '" << absolute_folder_ << "' does not exist.";
   }
 
   // Install tracer
@@ -126,7 +119,11 @@ void syd::Database::Dump(std::ostream & os) const
 {
   os << "Database file  : " << GetFilename() << std::endl;
   os << "Database schema: " << GetDatabaseSchema() << std::endl;
-  os << "Database folder: " << GetDatabaseRelativeFolder() << std::endl;
+  os << "Database folder: " << GetDatabaseRelativeFolder();
+  if (!fs::exists(GetDatabaseAbsoluteFolder()))
+    os << warningColor << " -> does not exist ("
+       << GetDatabaseAbsoluteFolder() << ")" << resetColor;
+  os << std::endl;
   for(auto i=map_.begin(); i != map_.end(); i++) {
     int n = GetNumberOfElements(i->first);
     os << "Table: " << std::setw(15) << i->first << " " <<  std::setw(10) << n;
@@ -134,6 +131,25 @@ void syd::Database::Dump(std::ostream & os) const
     else os << " element" << std::endl;
   }
   os << std::flush;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Database::ConvertToAbsolutePath(std::string relative_path) const
+{
+  // remove duplicate '/'
+  std::string s = absolute_folder_+PATH_SEPARATOR+relative_path;
+  std::string p;
+  p += PATH_SEPARATOR;
+  p += PATH_SEPARATOR;
+  std::size_t found = std::string::npos;
+  do {
+    found = s.find(p);
+    if (found != std::string::npos) s.erase(found, 1);
+
+  } while (found != std::string::npos);
+  return s;
 }
 // --------------------------------------------------------------------
 
