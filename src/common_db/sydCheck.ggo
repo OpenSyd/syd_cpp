@@ -1,0 +1,8 @@
+#File sydCheck.ggo
+
+package "syd"
+version "0.1"
+usage "sydCheck <table> <list_of_ids>"
+description "Check TODO"
+
+option "folder"   	 	f       "Folder to look for file"       string no
