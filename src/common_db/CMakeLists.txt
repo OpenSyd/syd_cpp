@@ -12,12 +12,17 @@ wrap_odb(sydCore sydRecord.h)
 wrap_odb(sydCore sydRecordHistory.h)
 wrap_odb(sydCore sydRecordWithHistory.h)
 
+wrap_odb(sydCore sydFile.h)
+
 set(sydCommonDatabase_src
   sydDatabaseSchemaName-odb.cxx
   sydDatabaseInformation-odb.cxx
   sydRecord-odb.cxx sydRecord.cxx
   sydRecordHistory-odb.cxx sydRecordHistory.cxx
   sydRecordWithHistory-odb.cxx sydRecordWithHistory.cxx
+
+  sydFile-odb.cxx sydFile.cxx
+
   sydDatabase.cxx
   sydDatabaseManager.cxx
   sydDatabaseInformation.cxx
@@ -61,4 +66,11 @@ target_link_libraries(sydFind sydCommonDatabase)
 wrap_ggo(sydDelete_GGO_C sydDelete.ggo sydCommandLineDefault.ggo)
 add_executable(sydDelete sydDelete.cxx ${sydDelete_GGO_C})
 target_link_libraries(sydDelete sydCommonDatabase)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydCheck_GGO_C sydCheck.ggo sydCommandLineDefault.ggo)
+add_executable(sydCheck sydCheck.cxx ${sydCheck_GGO_C})
+target_link_libraries(sydCheck sydCommonDatabase)
 #----------------------------------------------------------

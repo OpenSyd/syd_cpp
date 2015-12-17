@@ -18,7 +18,8 @@
 
 // syd
 #include "sydFile.h"
-#include "sydStandardDatabase.h"
+//#include "sydStandardDatabase.h"
+#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
 syd::File::File():syd::Record()
