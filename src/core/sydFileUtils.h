@@ -72,15 +72,7 @@ namespace syd {
 
   void SearchForFilesInFolder(std::vector<std::string> & files,
                               std::string folder,
-                              std::string pattern,
                               bool recurse);
-  void SearchForFilesInFolder(OFList<OFString> & inputFiles,
-                              std::string folder,
-                              std::string pattern,
-                              bool recurse);
-
-
-
 } // end namespace syd
 //--------------------------------------------------------------------
 

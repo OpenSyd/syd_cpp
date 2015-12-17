@@ -268,63 +268,21 @@ int syd::GetPageContent(char const *argv[], std::ostream & os) {
 //------------------------------------------------------------------
 void syd::SearchForFilesInFolder(std::vector<std::string> & files,
                                  std::string folder,
-                                 std::string pattern,
                                  bool recurse)
 {
-  OFList<OFString> inputFiles;
-  syd::SearchForFilesInFolder(inputFiles, folder, pattern, recurse);
   files.clear();
-  for(auto f:inputFiles) {
-    files.push_back(f.c_str());
-  }
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-void syd::SearchForFilesInFolder(OFList<OFString> & inputFiles,
-                                 std::string folder,
-                                 std::string pattern,
-                                 bool recurseFlag)
-{
-  // Search for all the files in the directory
-  inputFiles.clear();
-  std::string absolute_folder = folder;
-  ConvertToAbsolutePath(absolute_folder);
-  LOG(2) << "Search for files in " << folder;
-
-  OFString scanPattern = pattern.c_str();
-  OFString dirPrefix = "";
-  OFBool recurse = recurseFlag;//OFTrue;
-  size_t found=0;
-  if (fs::exists(absolute_folder)) {
-    found = OFStandard::searchDirectoryRecursively(absolute_folder.c_str(),
-                                                   inputFiles, scanPattern,
-                                                   dirPrefix, recurse);
+  if (recurse) {
+    for (fs::recursive_directory_iterator end, dir(folder); dir != end; ++dir) {
+      std::string s = dir->path().string();
+      if (!fs::is_directory(s))
+        files.push_back(dir->path().string());
+    }
   }
   else {
-    LOG(FATAL) << "The directory " << absolute_folder << " does not exist.";
-  }
-  // I dont know why but sometimes, the recursive search find the same
-  // files several times. Here is a workaournd to remove duplicate
-  // files. To remove duplicate : conversion to set.
-  int n_before = inputFiles.size();
-  std::vector<OFString> v;
-  for(auto i=inputFiles.begin(); i!=inputFiles.end(); i++) v.push_back(*i);
-  std::set<OFString> s (v.begin(), v.end() );
-  v.assign( s.begin(), s.end() );
-  inputFiles.clear();
-  for(auto i=v.begin(); i<v.end(); i++) inputFiles.push_back(*i);
-  int n_after = inputFiles.size();
-  if (n_before != n_after) {
-    LOG(WARNING) << "Found duplicated files, I ignore them.";
-  }
-
-  if (inputFiles.size() > 0) {
-    LOG(2) << "Found " << inputFiles.size() << " files. Now searching for dicom.";
-  }
-  else {
-    LOG(WARNING) << "No files found.";
+    for ( fs::directory_iterator end, dir(folder); dir != end; ++dir ) {
+      if (!fs::is_directory(dir->path()))
+        files.push_back(dir->path().string());
+    }
   }
 }
 //------------------------------------------------------------------

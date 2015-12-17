@@ -39,25 +39,23 @@ int main(int argc, char* argv[])
   syd::Database * db;
   db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
 
-  //  db->Dump(std::cout);
-
+  // Consider folder to search in. Convert to absolute path to be
+  // compared to absolute path in the db.
   std::string folder= db->GetDatabaseAbsoluteFolder();
   if (args_info.folder_given) folder = args_info.folder_arg;
-  DD(folder);
+  syd::ConvertToAbsolutePath(folder);
 
-  // list of files folder
+  // List of files folder
   std::vector<std::string> complete_filenames;
-  syd::SearchForFilesInFolder(complete_filenames, folder, "*", true);
+  syd::SearchForFilesInFolder(complete_filenames, folder, args_info.recurse_flag);
   std::sort(complete_filenames.begin(), complete_filenames.end());
-  //DDS(files);
 
-  // extract the filename (without path)
+  // Extract the filename (without path)
   std::vector<std::string> filenames;
   for(auto f:complete_filenames) {
     filenames.push_back(syd::GetFilenameFromPath(f));
   }
-  DDS(filenames);
-  DDS(complete_filenames);
+  LOG(1) << "Found " << filenames.size() << " files in the folder.";
 
   // For each look in files for folder, then files
   syd::File::vector files;
@@ -70,28 +68,48 @@ int main(int argc, char* argv[])
               std::string bb = a->GetAbsolutePath(db);
               return aa > bb;
             });
-  DDS(files);
-  DD(files.size());
-  DD(files[0]->GetAbsolutePath(db));
-  DD(complete_filenames[0]);
+
+  std::vector<std::string> missing_files;
+  int n = complete_filenames.size();
+  int i=0;
   for(auto f:complete_filenames) {
-    DD(f);
     auto r = std::find_if(files.begin(), files.end(),
                           [f, db](syd::File::pointer & file) {
-                            DD(f);
-                            DD(file->GetAbsolutePath(db));
-                            bool b = (f == file->GetAbsolutePath(db));
-                            DD(b);
-                            return b;
-                          });
+                            return (f == file->GetAbsolutePath(db)); });
     if (r == files.end()) {
-      DD("not found");
+      missing_files.push_back(f);
     }
     else {
-      DD("found");
+      LOG(2) << *r << " is in the db.   ";
+      files.erase(r);
     }
+    if (!args_info.no_loadbar_flag)  syd::loadbar(i,n);
+    ++i;
   }
 
+  // Print the results, and delete if needed
+  if (missing_files.size() == 0) {
+    LOG(1) << "All the " << complete_filenames.size() << " files are in the db.";
+  }
+  else {
+    LOG(0) << "There are " << missing_files.size() << " files that are *not* in the db. ";
+    for(auto f:missing_files) LOG(1) << f;
+  }
+
+  if (args_info.delete_flag) {
+    std::string m="";
+    if (sydlog::Log::LogLevel() == 0) m = " (use -v1 to see the file)";
+    std::cout << redColor
+              << "Really delete " << missing_files.size()
+              << " files (y/n)" << m << " ? " << resetColor;
+    char c;
+    std::cin >> c;
+    if (c =='y') {
+      //    for(auto f:missing_files) fs::remove(f);
+      LOG(0) << "Files deleted.";
+    }
+    else LOG(0) << "Abort.";
+  }
 
   // This is the end, my friend.
 }

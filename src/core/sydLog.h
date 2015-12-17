@@ -39,6 +39,7 @@ namespace sydlog {
 
   static const char * resetColor = "\x1b[0m";
   static const char * fatalColor = "\x1b[31m";
+  static const char * redColor = "\x1b[31m";
   static const char * warningColor = "\x1b[33m";
 
   std::string NowTime();

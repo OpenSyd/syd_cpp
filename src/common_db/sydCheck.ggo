@@ -5,4 +5,7 @@ version "0.1"
 usage "sydCheck <table> <list_of_ids>"
 description "Check TODO"
 
-option "folder"   	 	f       "Folder to look for file"       string no
+option "folder"   f       "Folder to look for file"       string no
+option "recurse"  r       "Recurse folder"                flag off
+option "delete"   d       "Delete files that are outside the db (dangerous)"    flag off
+option "no_loadbar"   n   "If 'on': do not display load bar"       flag off

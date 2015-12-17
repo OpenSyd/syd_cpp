@@ -53,9 +53,6 @@ namespace syd {
     /// If the file already exist in the db, we delete it and insert a new one
     void SetForceUpdateFlag(bool b) { forceUpdateFlag_ = b; }
 
-    /// Return a list of files to be considered as dicom
-    //    void SearchForFilesInFolder(std::string folder, OFList<OFString> & inputFiles);
-
     /// Create a DicomSerie/DicomFile (still not inserted into the db,
     /// use UpdateDicomSerie for that)
     void CreateDicomSerieFromFile(std::string filename);

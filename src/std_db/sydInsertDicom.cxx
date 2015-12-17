@@ -57,15 +57,20 @@ int main(int argc, char* argv[])
   b.SetInjection(injection); // FIXME change to SetPatient if no injection
   b.SetForcePatientFlag(args_info.forcePatient_flag);
   //  b.SetForceUpdateFlag(args_info.forceUpdate_flag); //FIXME
-  for(auto f:folders) {
-    OFList<OFString> files;
-    syd::SearchForFilesInFolder(files, f, "*", true);
+  for(auto folder:folders) {
+    LOG(2) << "Search for files in " << folder;
+    if (!fs::exists(folder.c_str())) {
+      LOG(WARNING) << "The directory " << folder << " does not exist.";
+      continue;
+    }
+    std::vector<std::string> files;
+    syd::SearchForFilesInFolder(files, folder, true);
     int n = files.size();
     int i=0;
     LOG(1) << "Searching for dicom series in " << files.size() << " files ...";
     for(auto f:files) {
       syd::loadbar(i,n);
-      b.CreateDicomSerieFromFile(f.c_str());
+      b.CreateDicomSerieFromFile(f);
       ++i;
     }
   }

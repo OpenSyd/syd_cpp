@@ -65,54 +65,6 @@ namespace syd {
 
 
   // --------------------------------------------------------------------
-  /*  void DicomSerieBuilder::SearchForFilesInFolder(std::string folder,
-                                                 OFList<OFString> & inputFiles)
-  {
-    // Search for all the files in the directory
-    inputFiles.clear();
-    std::string absolute_folder = folder;
-    ConvertToAbsolutePath(absolute_folder);
-    LOG(2) << "Search for files in " << folder;
-
-    OFString scanPattern = "*"; // or *dcm ?
-    OFString dirPrefix = "";
-    OFBool recurse = OFTrue;
-    size_t found=0;
-    if (fs::exists(absolute_folder)) {
-      found = OFStandard::searchDirectoryRecursively(absolute_folder.c_str(),
-                                                     inputFiles, scanPattern,
-                                                     dirPrefix, recurse);
-    }
-    else {
-      LOG(FATAL) << "The directory " << absolute_folder << " does not exist.";
-    }
-    // I dont know why but sometimes, the recursive search find the same
-    // files several times. Here is a workaournd to remove duplicate
-    // files. To remove duplicate : conversion to set.
-    int n_before = inputFiles.size();
-    std::vector<OFString> v;
-    for(auto i=inputFiles.begin(); i!=inputFiles.end(); i++) v.push_back(*i);
-    std::set<OFString> s (v.begin(), v.end() );
-    v.assign( s.begin(), s.end() );
-    inputFiles.clear();
-    for(auto i=v.begin(); i<v.end(); i++) inputFiles.push_back(*i);
-    int n_after = inputFiles.size();
-    if (n_before != n_after) {
-      LOG(WARNING) << "Found duplicated files, I ignore them.";
-    }
-
-    if (inputFiles.size() > 0) {
-      LOG(2) << "Found " << inputFiles.size() << " files. Now searching for dicom.";
-    }
-    else {
-      LOG(WARNING) << "No files found.";
-    }
-  }
-  */
-  // --------------------------------------------------------------------
-
-
-  // --------------------------------------------------------------------
   void DicomSerieBuilder::CreateDicomSerieFromFile(std::string filename)
   {
     // Open the file
@@ -239,17 +191,6 @@ namespace syd {
     // Nothing found
     return false;
   }
-  // --------------------------------------------------------------------
-
-
-  // --------------------------------------------------------------------
-  /// Do not check if the serie already exist
-  // DicomSerie::pointer DicomSerieBuilder::CreateDicomSerie(const std::string & filename, DcmObject * dset)
-  // {
-  //   DicomSerie::pointer serie = DicomSerie::New();
-  //   UpdateDicomSerie(serie, filename, dset);
-  //   return serie;
-  // }
   // --------------------------------------------------------------------
 
 
