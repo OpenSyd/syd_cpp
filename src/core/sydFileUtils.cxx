@@ -277,7 +277,6 @@ void syd::SearchForFilesInFolder(std::vector<std::string> & files,
   for(auto f:inputFiles) {
     files.push_back(f.c_str());
   }
-  DD(files.size());
 }
 //------------------------------------------------------------------
 
@@ -288,8 +287,6 @@ void syd::SearchForFilesInFolder(OFList<OFString> & inputFiles,
                                  std::string pattern,
                                  bool recurseFlag)
 {
-  DDF();
-
   // Search for all the files in the directory
   inputFiles.clear();
   std::string absolute_folder = folder;
