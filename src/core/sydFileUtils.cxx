@@ -17,6 +17,7 @@
   ===========================================================================**/
 
 #include "sydFileUtils.h"
+#include <set>
 
 // --------------------------------------------------------------------
 bool syd::GetWorkingDirectory(std::string & pwd) {
@@ -260,5 +261,73 @@ int syd::GetPageContent(char const *argv[], std::ostream & os) {
   }
 
   return 0;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::SearchForFilesInFolder(std::vector<std::string> & files,
+                                 std::string folder,
+                                 std::string pattern,
+                                 bool recurse)
+{
+  OFList<OFString> inputFiles;
+  syd::SearchForFilesInFolder(inputFiles, folder, pattern, recurse);
+  files.clear();
+  for(auto f:inputFiles) {
+    files.push_back(f.c_str());
+  }
+  DD(files.size());
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::SearchForFilesInFolder(OFList<OFString> & inputFiles,
+                                 std::string folder,
+                                 std::string pattern,
+                                 bool recurseFlag)
+{
+  DDF();
+
+  // Search for all the files in the directory
+  inputFiles.clear();
+  std::string absolute_folder = folder;
+  ConvertToAbsolutePath(absolute_folder);
+  LOG(2) << "Search for files in " << folder;
+
+  OFString scanPattern = pattern.c_str();
+  OFString dirPrefix = "";
+  OFBool recurse = recurseFlag;//OFTrue;
+  size_t found=0;
+  if (fs::exists(absolute_folder)) {
+    found = OFStandard::searchDirectoryRecursively(absolute_folder.c_str(),
+                                                   inputFiles, scanPattern,
+                                                   dirPrefix, recurse);
+  }
+  else {
+    LOG(FATAL) << "The directory " << absolute_folder << " does not exist.";
+  }
+  // I dont know why but sometimes, the recursive search find the same
+  // files several times. Here is a workaournd to remove duplicate
+  // files. To remove duplicate : conversion to set.
+  int n_before = inputFiles.size();
+  std::vector<OFString> v;
+  for(auto i=inputFiles.begin(); i!=inputFiles.end(); i++) v.push_back(*i);
+  std::set<OFString> s (v.begin(), v.end() );
+  v.assign( s.begin(), s.end() );
+  inputFiles.clear();
+  for(auto i=v.begin(); i<v.end(); i++) inputFiles.push_back(*i);
+  int n_after = inputFiles.size();
+  if (n_before != n_after) {
+    LOG(WARNING) << "Found duplicated files, I ignore them.";
+  }
+
+  if (inputFiles.size() > 0) {
+    LOG(2) << "Found " << inputFiles.size() << " files. Now searching for dicom.";
+  }
+  else {
+    LOG(WARNING) << "No files found.";
+  }
 }
 //------------------------------------------------------------------

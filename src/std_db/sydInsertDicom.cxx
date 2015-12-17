@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
   //  b.SetForceUpdateFlag(args_info.forceUpdate_flag); //FIXME
   for(auto f:folders) {
     OFList<OFString> files;
-    b.SearchForFilesInFolder(f, files);
+    syd::SearchForFilesInFolder(files, f, "*", true);
     int n = files.size();
     int i=0;
     LOG(1) << "Searching for dicom series in " << files.size() << " files ...";

@@ -54,7 +54,7 @@ namespace syd {
     void SetForceUpdateFlag(bool b) { forceUpdateFlag_ = b; }
 
     /// Return a list of files to be considered as dicom
-    void SearchForFilesInFolder(std::string folder, OFList<OFString> & inputFiles);
+    //    void SearchForFilesInFolder(std::string folder, OFList<OFString> & inputFiles);
 
     /// Create a DicomSerie/DicomFile (still not inserted into the db,
     /// use UpdateDicomSerie for that)

@@ -65,10 +65,21 @@ namespace syd {
   bool GetWorkingDirectory(std::string & pwd);
   bool EqualFiles(std::ifstream & in1, std::ifstream & in2);
   bool EqualFiles(std::string in1, std::string in2);
-  //void CopyFile(std::string src, std::string dst);
+
   std::string CreateTemporaryFile(const std::string & folder, const std::string & extension);
   std::string CreateTemporaryDirectory(const std::string & folder);
   int GetPageContent(char const *argv[], std::ostream & os);
+
+  void SearchForFilesInFolder(std::vector<std::string> & files,
+                              std::string folder,
+                              std::string pattern,
+                              bool recurse);
+  void SearchForFilesInFolder(OFList<OFString> & inputFiles,
+                              std::string folder,
+                              std::string pattern,
+                              bool recurse);
+
+
 
 } // end namespace syd
 //--------------------------------------------------------------------

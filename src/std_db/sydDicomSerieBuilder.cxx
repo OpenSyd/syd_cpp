@@ -65,7 +65,8 @@ namespace syd {
 
 
   // --------------------------------------------------------------------
-  void DicomSerieBuilder::SearchForFilesInFolder(std::string folder, OFList<OFString> & inputFiles)
+  /*  void DicomSerieBuilder::SearchForFilesInFolder(std::string folder,
+                                                 OFList<OFString> & inputFiles)
   {
     // Search for all the files in the directory
     inputFiles.clear();
@@ -107,6 +108,7 @@ namespace syd {
       LOG(WARNING) << "No files found.";
     }
   }
+  */
   // --------------------------------------------------------------------
 
 
