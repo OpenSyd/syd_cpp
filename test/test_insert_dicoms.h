@@ -10,8 +10,8 @@ void insert_dicoms(ext::ExtendedDatabase * db, syd::Injection::pointer injection
   syd::DicomSerieBuilder b(db);
   b.SetInjection(injection);
   b.SetForcePatientFlag(true);
-  OFList<OFString> files;
-  b.SearchForFilesInFolder(folder, files);
+  std::vector<std::string> files;
+  syd::SearchForFilesInFolder(files, folder, true);
   for(auto f:files) b.CreateDicomSerieFromFile(f.c_str());
   b.InsertDicomSeries();
 
