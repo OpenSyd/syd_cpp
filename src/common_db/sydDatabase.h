@@ -41,6 +41,11 @@ namespace syd {
   template<class Record> class Table;
   template<class DatabaseSchema> class DatabaseCreator;
 
+  // I dont know how to retrieve this value, so I fix it here. IT is
+  // used to split large query, in particular the ones with with
+  // "in_range".
+  const unsigned int SQLITE_MAX_VARIABLE_NUMBER = 999;
+
   /// This is the base class of all databases. Manage a sqlite
   /// database and an associated folder (containing images). Provide
   /// convenient functions to perform basic queries. The database is

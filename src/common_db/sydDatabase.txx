@@ -253,8 +253,12 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
                           const std::vector<syd::IdType> & ids) const
 {
   if (ids.size() == 0) return;
-  odb::query<RecordType> q(odb::query<RecordType>::id.in_range(ids.begin(), ids.end()));
-  Query(records, q);
+  for(auto i=0; i<ids.size(); i+=SQLITE_MAX_VARIABLE_NUMBER) {
+    auto ibegin = ids.begin()+i;
+    auto iend = std::min(ids.begin()+i+SQLITE_MAX_VARIABLE_NUMBER, ids.end());
+    odb::query<RecordType> q(odb::query<RecordType>::id.in_range(ibegin, iend));
+    Query(records, q);
+  }
 }
 // --------------------------------------------------------------------
 

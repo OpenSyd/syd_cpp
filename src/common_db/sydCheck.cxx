@@ -59,9 +59,15 @@ int main(int argc, char* argv[])
 
   // For each look in files for folder, then files
   syd::File::vector files;
-  typedef odb::query<syd::File> Q;
-  Q q = Q::filename.in_range(filenames.begin(), filenames.end());
-  db->Query(files, q);
+  auto max = syd::SQLITE_MAX_VARIABLE_NUMBER;
+  if (filenames.size() > max) {
+    for(auto i=0; i<filenames.size(); i+=max) {
+      typedef odb::query<syd::File> Q;
+      Q q = Q::filename.in_range(filenames.begin()+i,
+                                 std::min(filenames.begin()+i+max, filenames.end()));
+      db->Query(files, q);
+    }
+  }
   std::sort(files.begin(), files.end(),
             [db](const syd::File::pointer & a, const syd::File::pointer & b) {
               std::string aa = a->GetAbsolutePath(db);
