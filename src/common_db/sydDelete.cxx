@@ -22,6 +22,8 @@
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
 
+#include <cstdio>
+
 // syd init
 SYD_STATIC_INIT
 
@@ -60,7 +62,15 @@ int main(int argc, char* argv[])
     try {
       syd::Record::vector v;
       db->Query(v, tablename, ids);
-      db->Delete(v, tablename);
+      LOG(0) << "Really delete " << v.size() << " elements (y/n) ?";
+      char c;
+      std::scanf("%c", &c);
+      if (c =='y') {
+        db->Delete(v, tablename);
+      }
+      else {
+        LOG(FATAL) << "Abort.";
+      }
       n = v.size();
     }
     catch (std::exception & e) {
