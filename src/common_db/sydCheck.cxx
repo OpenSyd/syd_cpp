@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
               << "Really delete " << missing_files.size()
               << " files (y/n)" << m << " ? " << resetColor;
     char c;
-    std::cin >> c;
+    std::scanf("%c", &c);
     if (c =='y') {
       for(auto f:missing_files) {
         LOG(1) << "Deleting " << f << " ...";
