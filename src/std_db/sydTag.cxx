@@ -53,16 +53,6 @@ bool syd::Tag::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-// void syd::Tag::CopyFrom(const pointer p)
-// {
-//   syd::Record::CopyFrom(p);
-//   label = p->label;
-//   description = p->description;
-// }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Tag::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
@@ -78,7 +68,7 @@ void syd::Tag::Set(const syd::Database * db, const std::vector<std::string> & ar
 void syd::Tag::InitTable(syd::PrintTable & ta) const
 {
   syd::RecordWithHistory::InitTable(ta);
-  //  ta.AddColumn("id");
+  if (ta.GetColumn("id") == -1) ta.AddColumn("id");
   ta.AddColumn("label");
   auto & col = ta.AddColumn("description");
   col.max_width = 80;
@@ -90,7 +80,6 @@ void syd::Tag::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::Tag::DumpInTable(syd::PrintTable & ta) const
 {
-  //ta.Set("id", id);
   syd::RecordWithHistory::DumpInTable(ta);
   ta.Set("label", label);
   ta.Set("description", description);
