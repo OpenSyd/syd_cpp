@@ -20,3 +20,7 @@ SET(SYD_VERSION_PATCH "@SYD_VERSION_PATCH@")
 #----------------------------------------------------------
 # The location of the UseSYD.cmake file.
 SET(SYD_USE_FILE "@SYD_USE_FILE@")
+
+#----------------------------------------------------------
+# (needed in odb compiler)
+SET(DCMTK_INCLUDE_DIR_BASE "@DCMTK_INCLUDE_DIR_BASE@")
