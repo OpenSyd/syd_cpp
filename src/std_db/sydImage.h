@@ -76,7 +76,7 @@ namespace syd {
     std::array<double, 3> spacing;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(Image);
+    TABLE_DEFINE(Image, "syd::Image");
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Image);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Image);
     // ------------------------------------------------------------------------

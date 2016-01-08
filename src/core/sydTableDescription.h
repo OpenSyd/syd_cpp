@@ -16,42 +16,32 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDPIXELVALUEUNIT_H
-#define SYDPIXELVALUEUNIT_H
+#ifndef SYDTABLEDESCRIPTION_H
+#define SYDTABLEDESCRIPTION_H
 
 // syd
-#include "sydRecord.h"
+#include "sydCommon.h"
+#include "sydFieldDescription.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::PixelValueUnit")
-  /// Simple table to store a label and a description
-  class PixelValueUnit : public syd::Record {
+  /// Describe the content of a Table, from a OO point of view, and
+  /// make the link with underlying sql description.
+  class TableDescription {
+
   public:
 
-#pragma db options("UNIQUE")
-    /// Label of the tag (name)
-    std::string name;
-
-    /// Description associated with the tag
-    std::string description;
-
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(PixelValueUnit, "syd::PixelValueUnit");
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(PixelValueUnit);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(PixelValueUnit);
-    // ------------------------------------------------------------------------
-
-    virtual void InitTable(syd::PrintTable & table) const;
-    virtual void DumpInTable(syd::PrintTable & table) const;
+    syd::FieldDescription & GetField(std::string field_name);
+    std::string GetName() const { return name; }
 
   protected:
-    PixelValueUnit();
+    std::string name;
+    std::vector<syd::FieldDescription> fields_;
 
-  }; // end of class
+  };
 
-}
+} // end namespace
 // --------------------------------------------------------------------
 
 #endif

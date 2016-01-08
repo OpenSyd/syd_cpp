@@ -30,6 +30,10 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-c++11-compat")
 # Basic variables
 set(SYD_SOURCE_DIR ${PROJECT_SOURCE_DIR})
 set(SYD_BINARY_DIR ${PROJECT_BINARY_DIR})
+set(SYD_INCLUDE_FILES " ")
+set(SYD_CMAKE_FILES " ")
+set(SYD_LIB_FILES " ")
+set(SYD_BIN_FILES " ")
 #----------------------------------------------------------
 
 
@@ -148,4 +152,15 @@ endif(BUILD_TESTING)
 if(BUILD_TESTING)
   add_subdirectory(test)
 endif(BUILD_TESTING)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# DD(SYD_INCLUDE_FILES)
+# set(SYD_CMAKE_FILES  ${PROJECT_SOURCE_DIR}/cmake/UseSYD.cmake)
+# INSTALL(FILES ${SYD_INCLUDE_FILES} DESTINATION include)
+# INSTALL(FILES ${SYD_CMAKE_FILES} DESTINATION cmake)
+# INSTALL(FILES ${SYD_LIB_FILES} DESTINATION lib)
+# INSTALL(FILES ${SYD_BIN_FILES} DESTINATION bin)
+
 #----------------------------------------------------------

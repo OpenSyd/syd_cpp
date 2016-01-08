@@ -27,6 +27,7 @@
 #include "sydRecordHistory-odb.hxx"
 #include "sydRecordWithHistory-odb.hxx"
 #include "sydTableBase.h"
+#include "sydDatabaseDescription.h"
 
 // odb
 #include <odb/sqlite/database.hxx>
@@ -83,6 +84,9 @@ namespace syd {
     std::string ConvertToAbsolutePath(std::string relative_path) const;
     // ------------------------------------------------------------------------
 
+    /// Build or return the description of the schema of the database,
+    /// with relation between OO names and sql names
+    syd::DatabaseDescription & GetDescription();
 
     /// Consider a relative path check if exist, create if not.
     void CheckOrCreateRelativePath(std::string relative_path);
@@ -138,6 +142,9 @@ namespace syd {
     /// Update several elements
     template<class RecordType>
     void Update(std::vector<std::shared_ptr<RecordType>> records);
+
+    /// Update only one field of a element. The type of the element is unknown
+    void Update(generic_record_pointer record, std::string field_name, std::string value_name);
     // ------------------------------------------------------------------------
 
 
@@ -302,6 +309,9 @@ namespace syd {
 
     /// Store current sql query for debug purpose
     std::string current_sql_query_;
+
+    /// Description of the database (read in xml)
+    syd::DatabaseDescription description_;
 
   };
 

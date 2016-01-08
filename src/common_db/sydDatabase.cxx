@@ -207,6 +207,20 @@ void syd::Database::Update(generic_record_pointer record)
 
 
 // --------------------------------------------------------------------
+void syd::Database::Update(generic_record_pointer record,
+                           std::string field_name,
+                           std::string value_name)
+{
+  std::string table_name = record->GetTableName();
+  DD(table_name);
+  // auto d = GetDescription();
+  // auto t = d.GetTable(table_name);
+  // std::string sql = "UPDATE
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Database::Update(generic_record_vector records, const std::string & table_name)
 {
   if (records.size() == 0) return;
@@ -311,5 +325,53 @@ void syd::Database::Delete(generic_record_vector & records, const std::string & 
 {
   if (records.size() == 0) return;
   GetTable(table_name)->Delete(records);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::DatabaseDescription & syd::Database::GetDescription()
+{
+  DDF();
+  if (!description_.IsInitialized()) {
+    DD("read");
+
+    // Read all xml files
+    char * env = getenv ("SYD_PLUGIN");
+    if (!env) {
+      EXCEPTION("Could not find SYD_PLUGIN. Please set this variable to the folder to look for xml database description.");
+    }
+    std::vector<std::string> ll;
+    std::string senv(env);
+    std::stringstream ss (senv);
+    std::string tok;
+    char delimiter = ':';
+    while(std::getline(ss, tok, delimiter)) {
+      ll.push_back(tok);
+    }
+    for(auto l:ll) {
+      DD(l);
+      fs::path p(l);
+      fs::directory_iterator end_itr;
+      for ( fs::directory_iterator itr(p); itr != end_itr; ++itr ) {
+        if (itr->path().extension().string() == ".xml") {
+          DD(itr->path());
+        }
+      }
+    }
+
+    // loop on tables
+    auto tables = GetMapOfTables();
+    for(auto t:tables) {
+      DD(t.first);
+      auto r = t.second->New(); // fake
+      DD(r->GetSQLTableName());
+      ///  get xml files from env + table name
+      ///  open xml
+      ///  read table hierarchie, read field hierarchie
+    }
+    description_.SetInitialized(true);
+  }
+  return description_;
 }
 // --------------------------------------------------------------------

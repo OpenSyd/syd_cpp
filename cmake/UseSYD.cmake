@@ -23,6 +23,7 @@ find_package(Boost REQUIRED date_time system filesystem)
 include_directories( ${Boost_INCLUDE_DIR} )
 message(STATUS "Boost is found")
 
+
 #----------------------------------------------------------
 # Add include directories needed to use SYD.
 include_directories(BEFORE ${SYD_INCLUDE_DIRS})
@@ -53,9 +54,14 @@ macro(WRAP_ODB ODB_SRCS)
       ${CMAKE_CURRENT_BINARY_DIR}/${ODB_HXX})
     if(EXISTS ${ODB_FILES_ABS})
       add_custom_command(OUTPUT ${ODB_OUTPUT}
-        COMMAND ${ODB_EXECUTABLE}
-        ARGS --std c++11 --database sqlite -I${DCMTK_INCLUDE_DIR_BASE} -I${SYD_SOURCE_DIR}/src/std_db -I${SYD_SOURCE_DIR}/src/core  -I${SYD_SOURCE_DIR}/src/common_db  --generate-schema --schema-format embedded --generate-query --sqlite-override-null --schema-name ${SCHEMA_NAME} ${ODB_FILES_ABS}
+        COMMAND ${SYD_SOURCE_DIR}/cmake/odb-command.sh
+        ARGS ${ODB_EXECUTABLE} ${DCMTK_INCLUDE_DIR_BASE} ${SYD_SOURCE_DIR} ${SCHEMA_NAME} ${CMAKE_BINARY_DIR}/lib ${ODB_FILES_ABS}
         DEPENDS ${ODB_FILES_ABS})
+
+      # add_custom_command(OUTPUT ${ODB_OUTPUT}
+      #   COMMAND ${ODB_EXECUTABLE}
+      #   ARGS --std c++11 --database sqlite -I${DCMTK_INCLUDE_DIR_BASE} -I${SYD_SOURCE_DIR}/src/std_db -I${SYD_SOURCE_DIR}/src/core  -I${SYD_SOURCE_DIR}/src/common_db  --generate-schema --schema-format embedded  --generate-query --sqlite-override-null --schema-name ${SCHEMA_NAME} ${ODB_FILES_ABS}
+      #   DEPENDS ${ODB_FILES_ABS})
     else()
       message(FATAL_ERROR "Error odb cannot file the following file: " ${ODB_FILES_ABS})
     endif()

@@ -60,7 +60,7 @@ namespace syd {
     std::string date;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(ImageTransform);
+    TABLE_DEFINE(ImageTransform, "syd::ImageTransform");
     TABLE_DECLARE_MANDATORY_FUNCTIONS(ImageTransform);
     // ------------------------------------------------------------------------
 

@@ -38,7 +38,7 @@ namespace syd {
     std::string description;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(Tag);
+    TABLE_DEFINE(Tag, "syd::Tag");
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Tag);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Tag);
     // ------------------------------------------------------------------------

@@ -38,6 +38,77 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
+  // get db description
+  // print info
+  /*
+  auto d = db->GetDatabaseDescription();
+  DD(d.GetDatabaseSchemaName());
+  auto tables = db->GetTables();
+  for(auto t:tables) {
+    DD(t.GetName());   // Patient
+    auto fields = db->GetFields();
+    for(auto f:fields) {
+      DD(f.GetName());    // Image size
+      //      DD(f.GetSQLName()); // Image_size
+    }
+  }
+  */
+
+
+  // auto map = odb::access::object_traits_impl< ::syd::Patient, odb::id_sqlite >::map;
+  // auto type_map = map->type_map_;
+
+
+  syd::Record::pointer r;
+  syd::IdType id = 21;
+  db->QueryOne(r, "Patient", id);
+  DD(r);
+  //  db->Update(r, "name", "toto");
+
+  DD(r->GetSQLTableName());
+
+  std::string table_sql_name = "syd::Patient";
+  std::string field_sql_name = "dicom_patientid";
+  std::string value = syd::Now();
+
+  auto d = db->GetDescription();  // d is DatabaseDescription
+  auto t = d.GetTable("Patient"); // t is TableDescription
+
+  //  t.GetSQLNames(table_sql_name, field_sql_name, "dicom_patientid");
+
+  auto f = t.GetField("dicom_patientid"); // f is FieldDescription
+  f.GetSQLNames(table_sql_name, field_sql_name);
+
+  DD(table_sql_name);
+  DD(field_sql_name);
+  exit(0);
+
+
+  std::ostringstream sql;
+  sql << "UPDATE \"" << table_sql_name << "\""
+      << " SET " << field_sql_name << " = \"" << value << "\""
+      << " WHERE id=" << id;
+  DD(sql.str());
+  //  update "syd::Patient" set dicom_patientid="BIDON" where id=21;
+
+  {
+  auto odb_db = db->GetODB_DB();
+  odb::transaction t (odb_db->begin ());
+  odb_db->execute (sql.str());
+  t.commit ();
+
+  db->QueryOne(r, "Patient", id); // need to reload !
+  DD(r);
+  }
+
+  /*
+    - get the table from table name
+    - object by id
+    - perform sql "update" using sql table_name and sql field name
+    - check return, get result
+   */
+
+  // ------------------------------------------------------------------
   if (0) {
     // get count
     DD(db->GetNumberOfElements("File"));
@@ -46,8 +117,8 @@ int main(int argc, char* argv[])
     DD(db->GetNumberOfElements<syd::DicomFile>());
   }
 
+  // ------------------------------------------------------------------
   if (0) {
-
     std::string filename="/Users/dsarrut/src/images/synfrizz3/db/synfrizz.db";
     auto db = new odb::sqlite::database(filename, SQLITE_OPEN_READWRITE, true);
     DD("done");
@@ -68,31 +139,30 @@ int main(int argc, char* argv[])
     // odb::transaction t (db->begin ());
     // odb::schema_catalog::migrate(*db);
     t.commit ();
-
-
-
-    {}
-    if (0) {
-
-      // Load plugin
-      syd::PluginManager::GetInstance()->Load();
-      syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
-      syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
-
-      db->Dump("Image");
-
-      syd::Image::vector images;
-      db->Query(images);
-
-      for(auto image:images) {
-        DD(image);
-        image->frame_of_reference_uid = image->dicoms[0]->dicom_frame_of_reference_uid;
-        DD(image);
-      }
-      db->Update(images);
-
-    }
   }
+
+  // ------------------------------------------------------------------
+  if (0) {
+
+    // Load plugin
+    syd::PluginManager::GetInstance()->Load();
+    syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
+    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+
+    db->Dump("Image");
+
+    syd::Image::vector images;
+    db->Query(images);
+
+    for(auto image:images) {
+      DD(image);
+      image->frame_of_reference_uid = image->dicoms[0]->dicom_frame_of_reference_uid;
+      DD(image);
+    }
+    db->Update(images);
+  }
+
+  // ------------------------------------------------------------------
   DD("end");
   // This is the end, my friend.
 }

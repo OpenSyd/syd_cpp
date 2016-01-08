@@ -16,41 +16,22 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDROITYPE_H
-#define SYDROITYPE_H
-
 // syd
-#include "sydRecord.h"
+#include "sydDatabaseDescription.h"
 
 // --------------------------------------------------------------------
-namespace syd {
+syd::TableDescription &
+syd::DatabaseDescription::GetTable(std::string table_name)
+{
+  DDF();
+  DD(table_name);
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::RoiType")
-  /// Store information about a type of ROI (liver, kidney etc)
-  class RoiType : public syd::Record {
-  public:
-
-#pragma db options("UNIQUE")
-    /// Name of the roi (unique)
-    std::string name;
-
-    /// Description associated with the roitype
-    std::string description;
-
-     // ------------------------------------------------------------------------
-    TABLE_DEFINE(RoiType, "syd::RoiType");
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(RoiType);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(RoiType);
-    // ------------------------------------------------------------------------
-
-    virtual void InitTable(syd::PrintTable & table) const;
-    virtual void DumpInTable(syd::PrintTable & table) const;
-
-  protected:
-    RoiType();
-
-  }; // end class
+  auto it = std::find_if(tables_.begin(), tables_.end(),
+                         [&table_name](syd::TableDescription & t)
+                         { return t.GetName() == table_name; } );
+  if (it == tables_.end()) {
+    LOG(FATAL) << "table not found";
+  }
+  return *it;
 }
 // --------------------------------------------------------------------
-
-#endif
