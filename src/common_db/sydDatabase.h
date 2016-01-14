@@ -84,10 +84,6 @@ namespace syd {
     std::string ConvertToAbsolutePath(std::string relative_path) const;
     // ------------------------------------------------------------------------
 
-    /// Build or return the description of the schema of the database,
-    /// with relation between OO names and sql names
-    syd::DatabaseDescription & GetDescription();
-
     /// Consider a relative path check if exist, create if not.
     void CheckOrCreateRelativePath(std::string relative_path);
 
@@ -233,7 +229,6 @@ namespace syd {
     // ------------------------------------------------------------------------
 
 
-
     // ------------------------------------------------------------------------
     /// Call back for SQL query to the DB. For debug purpose only
     void TraceCallback(const char* sql);
@@ -263,6 +258,13 @@ namespace syd {
 
     // FIXME
     odb::sqlite::database * GetODB_DB() const { return odb_db_; }
+
+
+    // FIXME
+    void InitDatabaseDescription();
+    syd::DatabaseDescription * GetDatabaseDescription() { return description_; }
+    syd::DatabaseDescription * description_;
+
 
     // ----------------------------------------------------------------------------------
     protected:
@@ -309,9 +311,6 @@ namespace syd {
 
     /// Store current sql query for debug purpose
     std::string current_sql_query_;
-
-    /// Description of the database (read in xml)
-    syd::DatabaseDescription description_;
 
   };
 

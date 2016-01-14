@@ -330,9 +330,19 @@ void syd::Database::Delete(generic_record_vector & records, const std::string & 
 
 
 // --------------------------------------------------------------------
-syd::DatabaseDescription & syd::Database::GetDescription()
+void syd::Database::InitDatabaseDescription()
 {
-  DDF();
+  description_ = new DatabaseDescription();
+  description_->SetDatabaseName(GetDatabaseSchema());
+
+  for(auto m:GetMapOfTables()) {
+    auto & table_name = m.first;
+    auto table = m.second;
+    table->InitTableDescription(description_);
+    description_->AddTableDescription(table->GetTableDescription());
+  }
+
+  /*
   if (!description_.IsInitialized()) {
     DD("read");
 
@@ -373,5 +383,6 @@ syd::DatabaseDescription & syd::Database::GetDescription()
     description_.SetInitialized(true);
   }
   return description_;
+  */
 }
 // --------------------------------------------------------------------
