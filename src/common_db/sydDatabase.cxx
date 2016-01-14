@@ -342,13 +342,17 @@ void syd::Database::InitDatabaseDescription()
 
 // --------------------------------------------------------------------
 void syd::Database::Update(generic_record_pointer record,
-                           std::string fieldname,
+                           std::string field_name,
                            std::string value)
 {
   std::string table_name = record->GetTableName();
   auto desc = GetDatabaseDescription();
-  auto tdesc = desc->GetTableDescription(table_name);
-  syd::FieldDescription * field = tdesc->GetField(fieldname);
+  syd::TableDescription * tdesc;
+  bool b = desc->FindTableDescription(table_name, &tdesc);
+  if (!b) EXCEPTION("Could not find the table " << table_name);
+  syd::FieldDescription * field;
+  b = tdesc->FindField(field_name, &field);
+  if (!b) EXCEPTION("Could not find the field " << field_name);
 
   std::string table_sql_name = field->GetSQLTableName();
   std::string field_sql_name = field->GetName();
@@ -393,15 +397,39 @@ sqlite3 * syd::Database::GetSqliteHandle()
 // --------------------------------------------------------------------
 void syd::Database::CheckDatabaseSchema()
 {
-  DDF();
-
   // FIXME -> check it is already open
 
   // Read sql db schema
-  auto sql_desc = new syd::DatabaseDescription;
+  auto sql_desc = new syd::DatabaseDescription; // sql db description
   ReadDatabaseSchemaFromFile(sql_desc);
 
   // Check
+  auto desc = GetDatabaseDescription(); // OO db description
+  for(auto t:desc->GetTablesDescription()) {
+    if (t->GetTableName() == "Record") continue; // FIXME temporary, to remove !
+    for(auto f:t->GetFields()) {
+      syd::TableDescription * d;
+      bool b = sql_desc->FindTableDescription(f->GetSQLTableName(), &d);
+      if (!b) {
+        LOG(FATAL) << "The table '"
+                   << f->GetSQLTableName()
+                   << "' is needed and not found in the db. You should migrate the db. ";
+      }
+      else {
+        syd::FieldDescription * field;
+        b = d->FindField(f->GetName(), &field);
+        if (!b) {
+          LOG(FATAL) << "The field '"
+                     << f->GetName()
+                     << "' is needed and not found in the db. You should migrate the db. ";
+        }
+        else {
+          LOG(1) << t->GetTableName() << "." << f->GetName() << " is found (in "
+                 << f->GetSQLTableName() << "." << f->GetName() << ")";
+        }
+      }
+    }
+  }
 
 }
 // --------------------------------------------------------------------

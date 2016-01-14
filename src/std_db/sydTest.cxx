@@ -39,42 +39,6 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
   {
-    auto odb_db = db->GetODB_DB();
-    odb::transaction t (odb_db->begin ());
-    auto r = odb_db->execute ("PRAGMA table_info(\"syd::Patient\")");
-    t.commit();
-    DD(r);
-
-    odb::sqlite::connection_ptr c (odb_db->connection ());
-    sqlite3 * sdb(c->handle());
-
-    {
-    sqlite3_stmt * stmt;
-    auto rc = sqlite3_prepare_v2(sdb, "pragma table_info ('syd::Patient')", -1, &stmt, NULL);
-    DD(rc);
-    if (rc==SQLITE_OK) {
-      //will continue to go down the rows (columns in your table) till there are no more
-      while(sqlite3_step(stmt) == SQLITE_ROW) {
-        printf("%s %s\n", sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2));
-        //do something with colName because it contains the column's name
-      }
-    }
-    }
-
-    {
-    sqlite3_stmt * stmt;
-    auto rc = sqlite3_prepare_v2(sdb, "select * from SQLITE_MASTER", -1, &stmt, NULL);
-    DD(rc);
-    if (rc==SQLITE_OK) {
-      //will continue to go down the rows (columns in your table) till there are no more
-      while(sqlite3_step(stmt) == SQLITE_ROW) {
-        printf("%s %s %s\n", sqlite3_column_text(stmt, 0),
-               sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2));
-        //do something with colName because it contains the column's name
-      }
-    }
-    }
-
     db->CheckDatabaseSchema();
 
   }

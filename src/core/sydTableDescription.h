@@ -32,8 +32,10 @@ namespace syd {
 
   public:
 
-    syd::FieldDescription * GetField(std::string field_name);
+    bool FindField(std::string field_name, syd::FieldDescription ** f);
+    std::vector<syd::FieldDescription*> & GetFields() { return fields_; }
     std::string GetTableName() const { return table_name_; }
+    std::string GetSQLTableName() const { return sql_name_; }
 
     void SetTableName(std::string table_name, std::string sql_name);
     void AddField(std::string name, std::string type);

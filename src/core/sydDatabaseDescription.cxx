@@ -31,14 +31,14 @@ std::ostream& syd::DatabaseDescription::Print(std::ostream & os) const
 
 
 // --------------------------------------------------------------------
-syd::TableDescription * syd::DatabaseDescription::GetTableDescription(std::string table_name)
+bool syd::DatabaseDescription::FindTableDescription(std::string table_name,
+                                                    syd::TableDescription ** d)
 {
   auto it = std::find_if(tables_.begin(), tables_.end(),
                          [&table_name](syd::TableDescription * t)
                          { return t->GetTableName() == table_name; } );
-  if (it == tables_.end()) {
-    LOG(FATAL) << "Description not found for table " << table_name;
-  }
-  return *it;
+  if (it == tables_.end()) return false;
+  *d = *it;
+  return true;
 }
 // --------------------------------------------------------------------

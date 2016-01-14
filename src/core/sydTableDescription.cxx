@@ -32,16 +32,14 @@ std::ostream & syd::TableDescription::Print(std::ostream & os) const
 
 
 // --------------------------------------------------------------------
-syd::FieldDescription *
-syd::TableDescription::GetField(std::string field_name)
+bool syd::TableDescription::FindField(std::string field_name, syd::FieldDescription ** f)
 {
   auto it = std::find_if(fields_.begin(), fields_.end(),
                          [&field_name](syd::FieldDescription * t)
                          { return t->GetName() == field_name; } );
-  if (it == fields_.end()) {
-    EXCEPTION("Field '" << field_name << " not found.");
-  }
-  return *it;
+  if (it == fields_.end()) return false;
+  *f = *it;
+  return true;
 }
 // --------------------------------------------------------------------
 
