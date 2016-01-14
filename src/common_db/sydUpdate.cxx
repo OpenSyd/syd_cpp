@@ -53,7 +53,8 @@ int main(int argc, char* argv[])
   try {
     db->QueryOne(r, tablename, id);
   } catch(std::exception & e) {
-    LOG(FATAL) << "Cannot find the element " << id << " in the table " << tablename;
+    LOG(FATAL) << "Cannot find the element " << id << " in the table " << tablename
+               << ". The error is: " << e.what();
   }
 
   // Update

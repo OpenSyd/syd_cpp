@@ -37,7 +37,7 @@ syd::TableDescription * syd::DatabaseDescription::GetTableDescription(std::strin
                          [&table_name](syd::TableDescription * t)
                          { return t->GetTableName() == table_name; } );
   if (it == tables_.end()) {
-    LOG(FATAL) << "table not found";
+    LOG(FATAL) << "Description not found for table " << table_name;
   }
   return *it;
 }
