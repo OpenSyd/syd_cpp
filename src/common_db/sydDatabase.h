@@ -263,7 +263,11 @@ namespace syd {
     void InitDatabaseDescription();
     syd::DatabaseDescription * GetDatabaseDescription();
     syd::DatabaseDescription * description_;
-
+    void CheckDatabaseSchema();
+    sqlite3 * GetSqliteHandle();
+    void ReadDatabaseSchemaFromFile(syd::DatabaseDescription * desc);
+    void ReadTableSchemaFromFile(syd::TableDescription * table,
+                                 std::string table_name);
 
     // ----------------------------------------------------------------------------------
     protected:
@@ -312,6 +316,10 @@ namespace syd {
     std::string current_sql_query_;
 
   };
+
+
+  // Helpers function to simplify native sqlite query
+  std::string sqlite3_column_text_string(sqlite3_stmt * stmt, int iCol);
 
 #include "sydDatabase.txx"
 

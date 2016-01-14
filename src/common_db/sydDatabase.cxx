@@ -371,3 +371,97 @@ void syd::Database::Update(generic_record_pointer record,
 
 }
 // --------------------------------------------------------------------
+
+
+
+//------------------------------------------------------------------
+std::string syd::sqlite3_column_text_string(sqlite3_stmt * stmt, int iCol)
+{
+  return reinterpret_cast<const char*>(sqlite3_column_text(stmt, iCol));
+}
+//------------------------------------------------------------------
+
+
+sqlite3 * syd::Database::GetSqliteHandle()
+{
+  odb::sqlite::connection_ptr c (odb_db_->connection ());
+  sqlite3 * sdb(c->handle());
+  return sdb;
+}
+
+
+// --------------------------------------------------------------------
+void syd::Database::CheckDatabaseSchema()
+{
+  DDF();
+
+  // FIXME -> check it is already open
+
+  // Read sql db schema
+  auto sql_desc = new syd::DatabaseDescription;
+  ReadDatabaseSchemaFromFile(sql_desc);
+
+  // Check
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::ReadDatabaseSchemaFromFile(syd::DatabaseDescription * desc)
+{
+  // get the list of sql tables
+  std::vector<std::string> table_names;
+  sqlite3 * sdb = GetSqliteHandle();
+  sqlite3_stmt * stmt;
+  auto rc = sqlite3_prepare_v2(sdb, "select * from SQLITE_MASTER", -1, &stmt, NULL);
+  if (rc==SQLITE_OK) {
+    /* Loop on result with the following structure:
+       TABLE sqlite_master
+       type TEXT, name TEXT, tbl_name TEXT, rootpage INTEGER, sql TEXT  */
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+      std::string type = sqlite3_column_text_string(stmt, 0);
+      if (type == "table") {
+        std::string table_name = sqlite3_column_text_string(stmt, 2);
+        table_names.push_back(table_name);
+      }
+    }
+  }
+  else {
+    EXCEPTION("Could not retrieve the list of tables in the db");
+  }
+
+  // Read table description
+  for(auto table_name:table_names) {
+    auto ta = new syd::TableDescription;
+    ReadTableSchemaFromFile(ta, table_name);
+    desc->AddTableDescription(ta);
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::ReadTableSchemaFromFile(syd::TableDescription * table,
+                                            std::string table_name)
+{
+  table->SetTableName(table_name, table_name);
+
+  sqlite3 * sdb = GetSqliteHandle();
+  sqlite3_stmt * stmt;
+  std::string q = "PRAGMA table_info(\""+table_name+"\")";
+  auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
+  if (rc==SQLITE_OK) {
+    /* Loop on result with the following structure:
+       cid name type notnull dflt_value  pk */
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+      std::string name = sqlite3_column_text_string(stmt, 1);
+      std::string type = sqlite3_column_text_string(stmt, 2);
+      table->AddField(name, type);
+    }
+  }
+  else {
+    EXCEPTION("Could not retrieve the list of tables in the db");
+  }
+}
+// --------------------------------------------------------------------

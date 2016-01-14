@@ -38,68 +38,53 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
-  // get db description
-  // print info
-  /*
-  auto d = db->GetDatabaseDescription();
-  DD(d.GetDatabaseSchemaName());
-  auto tables = db->GetTables();
-  for(auto t:tables) {
-    DD(t.GetName());   // Patient
-    auto fields = db->GetFields();
-    for(auto f:fields) {
-      DD(f.GetName());    // Image size
-      //      DD(f.GetSQLName()); // Image_size
-    }
-  }
-  */
-
-  // auto map = odb::access::object_traits_impl< ::syd::Patient, odb::id_sqlite >::map;
-  // auto type_map = map->type_map_;
-
-  DD("here");
-  db->InitDatabaseDescription();
-  auto desc = db->GetDatabaseDescription();
-  DD(*desc);
-
-  syd::Record::pointer r;
-  syd::IdType id = 21;
-  db->QueryOne(r, "Patient", id);
-  DD(r);
-  //  db->Update(r, "name", "toto");
-
-  auto tdesc = desc->GetTableDescription("Patient");
-  DD(tdesc);
-  //  auto field = tdesc->GetField("dicom_patientid");
-  auto field = tdesc->GetField("birth_date");
-  DD(field);
-
-  std::string table_sql_name = field->GetSQLTableName();
-  std::string field_sql_name = field->GetName();
-  std::string value = syd::Now();
-
-  std::ostringstream sql;
-  sql << "UPDATE \"" << table_sql_name << "\""
-      << " SET " << field_sql_name << " = \"" << value << "\""
-      << " WHERE id=" << id;
-  DD(sql.str());
-  //  update "syd::Patient" set dicom_patientid="BIDON" where id=21;
-
   {
     auto odb_db = db->GetODB_DB();
     odb::transaction t (odb_db->begin ());
-    odb_db->execute (sql.str());
-    t.commit ();
-    db->QueryOne(r, "Patient", id); // need to reload !
+    auto r = odb_db->execute ("PRAGMA table_info(\"syd::Patient\")");
+    t.commit();
     DD(r);
+
+    odb::sqlite::connection_ptr c (odb_db->connection ());
+    sqlite3 * sdb(c->handle());
+
+    {
+    sqlite3_stmt * stmt;
+    auto rc = sqlite3_prepare_v2(sdb, "pragma table_info ('syd::Patient')", -1, &stmt, NULL);
+    DD(rc);
+    if (rc==SQLITE_OK) {
+      //will continue to go down the rows (columns in your table) till there are no more
+      while(sqlite3_step(stmt) == SQLITE_ROW) {
+        printf("%s %s\n", sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2));
+        //do something with colName because it contains the column's name
+      }
+    }
+    }
+
+    {
+    sqlite3_stmt * stmt;
+    auto rc = sqlite3_prepare_v2(sdb, "select * from SQLITE_MASTER", -1, &stmt, NULL);
+    DD(rc);
+    if (rc==SQLITE_OK) {
+      //will continue to go down the rows (columns in your table) till there are no more
+      while(sqlite3_step(stmt) == SQLITE_ROW) {
+        printf("%s %s %s\n", sqlite3_column_text(stmt, 0),
+               sqlite3_column_text(stmt, 1), sqlite3_column_text(stmt, 2));
+        //do something with colName because it contains the column's name
+      }
+    }
+    }
+
+    db->CheckDatabaseSchema();
+
   }
 
-  /*
-    - get the table from table name
-    - object by id
-    - perform sql "update" using sql table_name and sql field name
-    - check return, get result
-   */
+  // ------------------------------------------------------------------
+  if (0) {
+    db->InitDatabaseDescription();
+    auto desc = db->GetDatabaseDescription();
+    DD(*desc);
+  }
 
   // ------------------------------------------------------------------
   if (0) {
