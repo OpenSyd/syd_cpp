@@ -23,6 +23,7 @@
 #include "sydCommon.h"
 #include "sydPrintTable.h"
 #include "sydCheckResult.h"
+#include "sydTableDescription.h"
 
 // odb
 #include <odb/callback.hxx>
@@ -90,6 +91,11 @@ namespace syd {
 
     /// Check the record. Usually check the file on disk
     virtual syd::CheckResult Check() const;
+
+
+    // FIXME
+    virtual void InitTableDescription(syd::TableDescription * description);
+
 
   protected:
     /// This default constructor allow to oblige class that inherit
