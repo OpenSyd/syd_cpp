@@ -160,7 +160,7 @@ syd::CheckResult syd::File::Check() const
 
 
 // --------------------------------------------------------------------
-void syd::File::InitTableDescription(syd::TableDescription * description)
+void syd::File::InitTableDescription(syd::TableDescription * description) const
 {
   syd::Record::InitTableDescription(description);
   description->SetTableName("File", "syd::File"); // OO name + sql name

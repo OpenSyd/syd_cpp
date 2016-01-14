@@ -72,7 +72,7 @@ namespace syd {
 
 
     // FIXME
-    virtual void InitTableDescription(syd::TableDescription * description);
+    virtual void InitTableDescription(syd::TableDescription * description) const;
 
   protected:
     Patient();
