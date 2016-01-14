@@ -32,12 +32,20 @@ namespace syd {
 
   public:
 
-    std::string GetName() const { return name; }
+    void SetName(std::string name, std::string type);
+    std::string GetName() const { return name_; }
 
-    void GetSQLNames(std::string & table_sql_name, std::string & field_sql_name) const;
+    std::string GetSQLTableName() const;
+    void SetSQLTableName(std::string name);
+
+    friend std::ostream& operator<<(std::ostream& os, const FieldDescription & d) { return d.Print(os); }
+    friend std::ostream& operator<<(std::ostream& os, const FieldDescription * d) { return d->Print(os); }
+    std::ostream & Print(std::ostream & os) const;
 
   protected:
-    std::string name;
+    std::string sql_table_name_;
+    std::string name_;
+    std::string type_;
 
   };
 

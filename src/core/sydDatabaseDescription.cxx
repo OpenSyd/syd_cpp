@@ -19,16 +19,25 @@
 // syd
 #include "sydDatabaseDescription.h"
 
+
 // --------------------------------------------------------------------
-syd::TableDescription &
-syd::DatabaseDescription::GetTable(std::string table_name)
+std::ostream& syd::DatabaseDescription::Print(std::ostream & os) const
+{
+  os << name << ": " << tables_.size() <<  " tables.";
+  for(auto t:tables_) os << std::endl << *t;
+  return os;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::TableDescription * syd::DatabaseDescription::GetTable(std::string table_name)
 {
   DDF();
   DD(table_name);
-
   auto it = std::find_if(tables_.begin(), tables_.end(),
-                         [&table_name](syd::TableDescription & t)
-                         { return t.GetName() == table_name; } );
+                         [&table_name](syd::TableDescription * t)
+                         { return t->GetTableName() == table_name; } );
   if (it == tables_.end()) {
     LOG(FATAL) << "table not found";
   }

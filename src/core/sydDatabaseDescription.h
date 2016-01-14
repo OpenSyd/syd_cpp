@@ -34,12 +34,21 @@ namespace syd {
 
     void SetInitialized(bool b) { initializedFlag_ = b; }
     bool IsInitialized() const { return initializedFlag_ == true; }
-    syd::TableDescription & GetTable(std::string table_name);
+    syd::TableDescription * GetTable(std::string table_name);
+
+    void SetDatabaseName(std::string n) { name = n; }
+
+    // FIXME pointer + check already exist
+    void AddTableDescription(syd::TableDescription * t) { tables_.push_back(t); }
+
+    friend std::ostream& operator<<(std::ostream & os, const DatabaseDescription & d) { return d.Print(os); }
+    friend std::ostream& operator<<(std::ostream & os, const DatabaseDescription * d) { return d->Print(os); }
+    std::ostream & Print(std::ostream & os) const;
 
   protected:
     bool initializedFlag_;
     std::string name;
-    std::vector<syd::TableDescription> tables_;
+    std::vector<syd::TableDescription*> tables_;
 
   }; // end class
 
