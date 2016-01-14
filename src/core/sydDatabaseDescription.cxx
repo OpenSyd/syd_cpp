@@ -31,10 +31,8 @@ std::ostream& syd::DatabaseDescription::Print(std::ostream & os) const
 
 
 // --------------------------------------------------------------------
-syd::TableDescription * syd::DatabaseDescription::GetTable(std::string table_name)
+syd::TableDescription * syd::DatabaseDescription::GetTableDescription(std::string table_name)
 {
-  DDF();
-  DD(table_name);
   auto it = std::find_if(tables_.begin(), tables_.end(),
                          [&table_name](syd::TableDescription * t)
                          { return t->GetTableName() == table_name; } );

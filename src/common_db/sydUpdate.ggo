@@ -1,0 +1,6 @@
+#File sydUpdate.ggo
+
+package "sydUpdate"
+version "0.1"
+usage "sydUpdate <table> <field> <value> <id>"
+description "Update the field <field> of the element <id> in the table <table>."

@@ -162,7 +162,7 @@ syd::CheckResult syd::File::Check() const
 // --------------------------------------------------------------------
 void syd::File::InitTableDescription(syd::TableDescription * description)
 {
-  DDF();
+  syd::Record::InitTableDescription(description);
   description->SetTableName("File", "syd::File"); // OO name + sql name
   description->AddField("filename", "string");
   description->AddField("path", "string");

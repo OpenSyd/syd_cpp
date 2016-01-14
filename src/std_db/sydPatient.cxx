@@ -163,6 +163,7 @@ void syd::Patient::Callback(odb::callback_event event, odb::database & db)
 // --------------------------------------------------------------------
 void syd::Patient::InitTableDescription(syd::TableDescription * description)
 {
+  syd::Record::InitTableDescription(description);
   description->SetTableName("Patient", "syd::Patient"); // OO name + sql name
   description->AddField("name", "string");
   description->AddField("study_id", "IdType");

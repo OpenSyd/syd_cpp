@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
   DD(r);
   //  db->Update(r, "name", "toto");
 
-  auto tdesc = desc->GetTable("Patient");
+  auto tdesc = desc->GetTableDescription("Patient");
   DD(tdesc);
   //  auto field = tdesc->GetField("dicom_patientid");
   auto field = tdesc->GetField("birth_date");
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
   DD(sql.str());
   //  update "syd::Patient" set dicom_patientid="BIDON" where id=21;
 
-  if (0) {
+  {
     auto odb_db = db->GetODB_DB();
     odb::transaction t (odb_db->begin ());
     odb_db->execute (sql.str());

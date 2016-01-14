@@ -23,8 +23,8 @@
 // --------------------------------------------------------------------
 std::ostream & syd::TableDescription::Print(std::ostream & os) const
 {
-  os << table_name_ << " " << sql_name_
-     << " : " << fields_.size() <<  " fields. ";
+  os << table_name_ << " (" << sql_name_
+     << ") : " << fields_.size() <<  " fields. ";
   for(auto f:fields_) os << std::endl << "\t" << f;
   return os;
 }
@@ -39,7 +39,7 @@ syd::TableDescription::GetField(std::string field_name)
                          [&field_name](syd::FieldDescription * t)
                          { return t->GetName() == field_name; } );
   if (it == fields_.end()) {
-    LOG(FATAL) << "field not found";
+    EXCEPTION("Field '" << field_name << " not found.");
   }
   return *it;
 }
@@ -51,6 +51,10 @@ void syd::TableDescription::SetTableName(std::string table_name, std::string sql
 {
   table_name_ = table_name;
   sql_name_ = sql_name;
+  // Check already defined field (inherited)
+  for(auto f:fields_) {
+    if (f->GetSQLTableName() == "") f->SetSQLTableName(sql_name);
+  }
 }
 // --------------------------------------------------------------------
 

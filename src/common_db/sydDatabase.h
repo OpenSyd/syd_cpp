@@ -259,10 +259,9 @@ namespace syd {
     // FIXME
     odb::sqlite::database * GetODB_DB() const { return odb_db_; }
 
-
     // FIXME
     void InitDatabaseDescription();
-    syd::DatabaseDescription * GetDatabaseDescription() { return description_; }
+    syd::DatabaseDescription * GetDatabaseDescription();
     syd::DatabaseDescription * description_;
 
 

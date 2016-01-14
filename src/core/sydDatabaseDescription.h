@@ -34,7 +34,7 @@ namespace syd {
 
     void SetInitialized(bool b) { initializedFlag_ = b; }
     bool IsInitialized() const { return initializedFlag_ == true; }
-    syd::TableDescription * GetTable(std::string table_name);
+    syd::TableDescription * GetTableDescription(std::string table_name);
 
     void SetDatabaseName(std::string n) { name = n; }
 

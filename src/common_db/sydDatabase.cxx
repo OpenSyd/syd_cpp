@@ -32,7 +32,7 @@ void trace_callback( void* udp, const char* sql ) {
 // --------------------------------------------------------------------
 syd::Database::Database()
 {
-
+  description_ = NULL;
 }
 // --------------------------------------------------------------------
 
@@ -207,20 +207,6 @@ void syd::Database::Update(generic_record_pointer record)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Update(generic_record_pointer record,
-                           std::string field_name,
-                           std::string value_name)
-{
-  std::string table_name = record->GetTableName();
-  DD(table_name);
-  // auto d = GetDescription();
-  // auto t = d.GetTable(table_name);
-  // std::string sql = "UPDATE
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Database::Update(generic_record_vector records, const std::string & table_name)
 {
   if (records.size() == 0) return;
@@ -330,6 +316,15 @@ void syd::Database::Delete(generic_record_vector & records, const std::string & 
 
 
 // --------------------------------------------------------------------
+syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
+{
+  if (description_ == NULL) InitDatabaseDescription();
+  return description_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Database::InitDatabaseDescription()
 {
   description_ = new DatabaseDescription();
@@ -341,48 +336,38 @@ void syd::Database::InitDatabaseDescription()
     table->InitTableDescription(description_);
     description_->AddTableDescription(table->GetTableDescription());
   }
+}
+// --------------------------------------------------------------------
 
-  /*
-  if (!description_.IsInitialized()) {
-    DD("read");
 
-    // Read all xml files
-    char * env = getenv ("SYD_PLUGIN");
-    if (!env) {
-      EXCEPTION("Could not find SYD_PLUGIN. Please set this variable to the folder to look for xml database description.");
-    }
-    std::vector<std::string> ll;
-    std::string senv(env);
-    std::stringstream ss (senv);
-    std::string tok;
-    char delimiter = ':';
-    while(std::getline(ss, tok, delimiter)) {
-      ll.push_back(tok);
-    }
-    for(auto l:ll) {
-      DD(l);
-      fs::path p(l);
-      fs::directory_iterator end_itr;
-      for ( fs::directory_iterator itr(p); itr != end_itr; ++itr ) {
-        if (itr->path().extension().string() == ".xml") {
-          DD(itr->path());
-        }
-      }
-    }
+// --------------------------------------------------------------------
+void syd::Database::Update(generic_record_pointer record,
+                           std::string fieldname,
+                           std::string value)
+{
+  std::string table_name = record->GetTableName();
+  auto desc = GetDatabaseDescription();
+  auto tdesc = desc->GetTableDescription(table_name);
+  syd::FieldDescription * field = tdesc->GetField(fieldname);
 
-    // loop on tables
-    auto tables = GetMapOfTables();
-    for(auto t:tables) {
-      DD(t.first);
-      auto r = t.second->New(); // fake
-      DD(r->GetSQLTableName());
-      ///  get xml files from env + table name
-      ///  open xml
-      ///  read table hierarchie, read field hierarchie
-    }
-    description_.SetInitialized(true);
+  std::string table_sql_name = field->GetSQLTableName();
+  std::string field_sql_name = field->GetName();
+  std::string v = value;
+
+  std::ostringstream sql;
+  sql << "UPDATE \"" << table_sql_name << "\""
+      << " SET " << field_sql_name << " = \"" << v << "\""
+      << " WHERE id=" << record->id;
+
+  try {
+    odb::transaction t (odb_db_->begin ());
+    odb_db_->execute (sql.str());
+    t.commit ();
+  } catch (const odb::exception& e) {
+    EXCEPTION("Error during the following sql query: " << std::endl
+              << sql.str() << std::endl
+              << "Error is:" << e.what());
   }
-  return description_;
-  */
+
 }
 // --------------------------------------------------------------------
