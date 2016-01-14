@@ -58,6 +58,9 @@ namespace syd {
 
     virtual syd::CheckResult Check() const;
 
+    // FIXME
+    virtual void InitTableDescription(syd::TableDescription * description);
+
   protected:
     File();
 

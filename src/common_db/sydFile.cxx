@@ -157,3 +157,15 @@ syd::CheckResult syd::File::Check() const
   return r;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::File::InitTableDescription(syd::TableDescription * description)
+{
+  DDF();
+  description->SetTableName("File", "syd::File"); // OO name + sql name
+  description->AddField("filename", "string");
+  description->AddField("path", "string");
+  description->AddField("md5", "string");
+}
+// --------------------------------------------------------------------

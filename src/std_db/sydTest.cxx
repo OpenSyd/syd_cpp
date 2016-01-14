@@ -54,10 +54,13 @@ int main(int argc, char* argv[])
   }
   */
 
-
   // auto map = odb::access::object_traits_impl< ::syd::Patient, odb::id_sqlite >::map;
   // auto type_map = map->type_map_;
 
+  DD("here");
+  db->InitDatabaseDescription();
+  auto desc = db->GetDatabaseDescription();
+  DD(*desc);
 
   syd::Record::pointer r;
   syd::IdType id = 21;
@@ -65,24 +68,15 @@ int main(int argc, char* argv[])
   DD(r);
   //  db->Update(r, "name", "toto");
 
-  DD(r->GetSQLTableName());
+  auto tdesc = desc->GetTable("Patient");
+  DD(tdesc);
+  //  auto field = tdesc->GetField("dicom_patientid");
+  auto field = tdesc->GetField("birth_date");
+  DD(field);
 
-  std::string table_sql_name = "syd::Patient";
-  std::string field_sql_name = "dicom_patientid";
+  std::string table_sql_name = field->GetSQLTableName();
+  std::string field_sql_name = field->GetName();
   std::string value = syd::Now();
-
-  auto d = db->GetDescription();  // d is DatabaseDescription
-  auto t = d.GetTable("Patient"); // t is TableDescription
-
-  //  t.GetSQLNames(table_sql_name, field_sql_name, "dicom_patientid");
-
-  auto f = t.GetField("dicom_patientid"); // f is FieldDescription
-  f.GetSQLNames(table_sql_name, field_sql_name);
-
-  DD(table_sql_name);
-  DD(field_sql_name);
-  exit(0);
-
 
   std::ostringstream sql;
   sql << "UPDATE \"" << table_sql_name << "\""
@@ -91,14 +85,13 @@ int main(int argc, char* argv[])
   DD(sql.str());
   //  update "syd::Patient" set dicom_patientid="BIDON" where id=21;
 
-  {
-  auto odb_db = db->GetODB_DB();
-  odb::transaction t (odb_db->begin ());
-  odb_db->execute (sql.str());
-  t.commit ();
-
-  db->QueryOne(r, "Patient", id); // need to reload !
-  DD(r);
+  if (0) {
+    auto odb_db = db->GetODB_DB();
+    odb::transaction t (odb_db->begin ());
+    odb_db->execute (sql.str());
+    t.commit ();
+    db->QueryOne(r, "Patient", id); // need to reload !
+    DD(r);
   }
 
   /*
