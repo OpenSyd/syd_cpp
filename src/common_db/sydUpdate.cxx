@@ -63,8 +63,10 @@ int main(int argc, char* argv[])
     db->QueryOne(r, tablename, id);
     LOG(1) << "Update done: " << r->ToString();
   } catch (std::exception & e) {
-    auto t = db->GetDatabaseDescription()->GetTableDescription(tablename);
-    LOG(FATAL) << e.what() << std::endl << "Table is " << t;
+    syd::TableDescription * t;
+    bool b = db->GetDatabaseDescription()->GetTableDescription(tablename, t);
+    if (b) LOG(FATAL) << e.what() << std::endl << "Table is " << t;
+    else LOG(FATAL) << e.what() << std::endl << "Table " << tablename << " is not found.";
   }
 
   // This is the end, my friend.
