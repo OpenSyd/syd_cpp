@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     LOG(1) << "Update done: " << r->ToString();
   } catch (std::exception & e) {
     syd::TableDescription * t;
-    bool b = db->GetDatabaseDescription()->GetTableDescription(tablename, t);
+    bool b = db->GetDatabaseDescription()->FindTableDescription(tablename, &t);
     if (b) LOG(FATAL) << e.what() << std::endl << "Table is " << t;
     else LOG(FATAL) << e.what() << std::endl << "Table " << tablename << " is not found.";
   }
