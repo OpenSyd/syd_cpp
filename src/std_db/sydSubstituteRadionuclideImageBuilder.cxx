@@ -35,7 +35,7 @@ syd::SubstituteRadionuclideImageBuilder::NewRadionuclideSubstitutedImage(syd::Im
   }
 
   double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection->date);
-  double lambda = log(2.0)/(rad->half_life_in_hours);
+  double lambda = rad->GetLambdaInHours();
 
   // Create output image
   syd::Image::pointer result = NewMHDImageLike(input);
