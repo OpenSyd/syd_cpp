@@ -60,6 +60,8 @@ namespace syd {
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
 
+    double GetLambdaInHours() const;
+
   protected:
     Radionuclide();
 

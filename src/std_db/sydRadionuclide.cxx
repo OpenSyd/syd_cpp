@@ -111,3 +111,11 @@ void syd::Radionuclide::DumpInTable(syd::PrintTable & ta) const
   ta.Set("Q-(keV)", max_beta_minus_energy_in_kev);
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+double syd::Radionuclide::GetLambdaInHours() const
+{
+  return log(2.0)/half_life_in_hours;
+}
+// --------------------------------------------------
