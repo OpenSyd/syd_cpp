@@ -38,6 +38,19 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
+  {
+    db->CheckDatabaseSchema();
+
+  }
+
+  // ------------------------------------------------------------------
+  if (0) {
+    db->InitDatabaseDescription();
+    auto desc = db->GetDatabaseDescription();
+    DD(*desc);
+  }
+
+  // ------------------------------------------------------------------
   if (0) {
     // get count
     DD(db->GetNumberOfElements("File"));
@@ -46,8 +59,8 @@ int main(int argc, char* argv[])
     DD(db->GetNumberOfElements<syd::DicomFile>());
   }
 
+  // ------------------------------------------------------------------
   if (0) {
-
     std::string filename="/Users/dsarrut/src/images/synfrizz3/db/synfrizz.db";
     auto db = new odb::sqlite::database(filename, SQLITE_OPEN_READWRITE, true);
     DD("done");
@@ -68,31 +81,30 @@ int main(int argc, char* argv[])
     // odb::transaction t (db->begin ());
     // odb::schema_catalog::migrate(*db);
     t.commit ();
-
-
-
-    {}
-    if (0) {
-
-      // Load plugin
-      syd::PluginManager::GetInstance()->Load();
-      syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
-      syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
-
-      db->Dump("Image");
-
-      syd::Image::vector images;
-      db->Query(images);
-
-      for(auto image:images) {
-        DD(image);
-        image->frame_of_reference_uid = image->dicoms[0]->dicom_frame_of_reference_uid;
-        DD(image);
-      }
-      db->Update(images);
-
-    }
   }
+
+  // ------------------------------------------------------------------
+  if (0) {
+
+    // Load plugin
+    syd::PluginManager::GetInstance()->Load();
+    syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
+    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+
+    db->Dump("Image");
+
+    syd::Image::vector images;
+    db->Query(images);
+
+    for(auto image:images) {
+      DD(image);
+      image->frame_of_reference_uid = image->dicoms[0]->dicom_frame_of_reference_uid;
+      DD(image);
+    }
+    db->Update(images);
+  }
+
+  // ------------------------------------------------------------------
   DD("end");
   // This is the end, my friend.
 }

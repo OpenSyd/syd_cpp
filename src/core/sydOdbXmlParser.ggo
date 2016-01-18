@@ -1,0 +1,8 @@
+#File sydOdbXmlParser
+
+package "sydOdbXmlParser"
+usage "sydOdbXmlParser DEBUG"
+version "0.3"
+description "DEBUG do not use"
+
+option "config"	    -	"Config file where to read options (overwritten by command line options)"	 string  	no

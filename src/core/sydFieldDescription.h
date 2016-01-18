@@ -16,42 +16,40 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDPIXELVALUEUNIT_H
-#define SYDPIXELVALUEUNIT_H
+#ifndef SYDFIELDDESCRIPTION_H
+#define SYDFIELDDESCRIPTION_H
 
 // syd
-#include "sydRecord.h"
+#include "sydCommon.h"
+//#include "sydTableDescription.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::PixelValueUnit")
-  /// Simple table to store a label and a description
-  class PixelValueUnit : public syd::Record {
+  /// Describe the content of a Field, from a OO point of view, and
+  /// make the link with underlying sql description.
+  class FieldDescription {
+
   public:
 
-#pragma db options("UNIQUE")
-    /// Label of the tag (name)
-    std::string name;
+    void SetName(std::string name, std::string type);
+    std::string GetName() const { return name_; }
 
-    /// Description associated with the tag
-    std::string description;
+    std::string GetSQLTableName() const;
+    void SetSQLTableName(std::string name);
 
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(PixelValueUnit, "syd::PixelValueUnit");
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(PixelValueUnit);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(PixelValueUnit);
-    // ------------------------------------------------------------------------
-
-    virtual void InitTable(syd::PrintTable & table) const;
-    virtual void DumpInTable(syd::PrintTable & table) const;
+    friend std::ostream& operator<<(std::ostream& os, const FieldDescription & d) { return d.Print(os); }
+    friend std::ostream& operator<<(std::ostream& os, const FieldDescription * d) { return d->Print(os); }
+    std::ostream & Print(std::ostream & os) const;
 
   protected:
-    PixelValueUnit();
+    std::string sql_table_name_;
+    std::string name_;
+    std::string type_;
 
-  }; // end of class
+  };
 
-}
+} // end namespace
 // --------------------------------------------------------------------
 
 #endif

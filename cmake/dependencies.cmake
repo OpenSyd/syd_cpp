@@ -7,6 +7,7 @@ include_directories(${DCMTK_INCLUDE_DIRS})
 # Later, in odb, we need the base include path, so we compute it here
 list(GET DCMTK_INCLUDE_DIRS 0 DCMTK_INCLUDE_DIR_BASE)
 set(DCMTK_INCLUDE_DIR_BASE ${DCMTK_INCLUDE_DIR_BASE}/../..)
+
 #----------------------------------------------------------
 
 

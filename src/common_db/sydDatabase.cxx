@@ -32,7 +32,7 @@ void trace_callback( void* udp, const char* sql ) {
 // --------------------------------------------------------------------
 syd::Database::Database()
 {
-
+  description_ = NULL;
 }
 // --------------------------------------------------------------------
 
@@ -311,5 +311,185 @@ void syd::Database::Delete(generic_record_vector & records, const std::string & 
 {
   if (records.size() == 0) return;
   GetTable(table_name)->Delete(records);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
+{
+  if (description_ == NULL) InitDatabaseDescription();
+  return description_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::InitDatabaseDescription()
+{
+  description_ = new DatabaseDescription();
+  description_->SetDatabaseName(GetDatabaseSchema());
+
+  for(auto m:GetMapOfTables()) {
+    auto & table_name = m.first;
+    auto table = m.second;
+    table->InitTableDescription(description_);
+    description_->AddTableDescription(table->GetTableDescription());
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Update(generic_record_pointer record,
+                           std::string field_name,
+                           std::string value)
+{
+  std::string table_name = record->GetTableName();
+  auto desc = GetDatabaseDescription();
+  syd::TableDescription * tdesc;
+  bool b = desc->FindTableDescription(table_name, &tdesc);
+  if (!b) EXCEPTION("Could not find the table " << table_name);
+  syd::FieldDescription * field;
+  b = tdesc->FindField(field_name, &field);
+  if (!b) EXCEPTION("Could not find the field " << field_name);
+
+  std::string table_sql_name = field->GetSQLTableName();
+  std::string field_sql_name = field->GetName();
+  std::string v = value;
+
+  std::ostringstream sql;
+  sql << "UPDATE \"" << table_sql_name << "\""
+      << " SET " << field_sql_name << " = \"" << v << "\""
+      << " WHERE id=" << record->id;
+
+  try {
+    odb::transaction t (odb_db_->begin ());
+    odb_db_->execute (sql.str());
+    t.commit ();
+  } catch (const odb::exception& e) {
+    EXCEPTION("Error during the following sql query: " << std::endl
+              << sql.str() << std::endl
+              << "Error is:" << e.what());
+  }
+
+}
+// --------------------------------------------------------------------
+
+
+
+//------------------------------------------------------------------
+std::string syd::sqlite3_column_text_string(sqlite3_stmt * stmt, int iCol)
+{
+  return reinterpret_cast<const char*>(sqlite3_column_text(stmt, iCol));
+}
+//------------------------------------------------------------------
+
+
+sqlite3 * syd::Database::GetSqliteHandle()
+{
+  odb::sqlite::connection_ptr c (odb_db_->connection ());
+  sqlite3 * sdb(c->handle());
+  return sdb;
+}
+
+
+// --------------------------------------------------------------------
+void syd::Database::CheckDatabaseSchema()
+{
+  // FIXME -> check it is already open
+
+  // Read sql db schema
+  auto sql_desc = new syd::DatabaseDescription; // sql db description
+  ReadDatabaseSchemaFromFile(sql_desc);
+
+  // Check
+  auto desc = GetDatabaseDescription(); // OO db description
+  for(auto t:desc->GetTablesDescription()) {
+    if (t->GetTableName() == "Record") continue; // FIXME temporary, to remove !
+    for(auto f:t->GetFields()) {
+      syd::TableDescription * d;
+      bool b = sql_desc->FindTableDescription(f->GetSQLTableName(), &d);
+      if (!b) {
+        LOG(FATAL) << "The table '"
+                   << f->GetSQLTableName()
+                   << "' is needed and not found in the db. You should migrate the db. ";
+      }
+      else {
+        syd::FieldDescription * field;
+        b = d->FindField(f->GetName(), &field);
+        if (!b) {
+          LOG(FATAL) << "The field '"
+                     << f->GetName()
+                     << "' is needed and not found in the db. You should migrate the db. ";
+        }
+        else {
+          LOG(1) << t->GetTableName() << "." << f->GetName() << " is found (in "
+                 << f->GetSQLTableName() << "." << f->GetName() << ")";
+        }
+      }
+    }
+  }
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::ReadDatabaseSchemaFromFile(syd::DatabaseDescription * desc)
+{
+  // get the list of sql tables
+  std::vector<std::string> table_names;
+  sqlite3 * sdb = GetSqliteHandle();
+  sqlite3_stmt * stmt;
+  auto rc = sqlite3_prepare_v2(sdb, "select * from SQLITE_MASTER", -1, &stmt, NULL);
+  if (rc==SQLITE_OK) {
+    /* Loop on result with the following structure:
+       TABLE sqlite_master
+       type TEXT, name TEXT, tbl_name TEXT, rootpage INTEGER, sql TEXT  */
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+      std::string type = sqlite3_column_text_string(stmt, 0);
+      if (type == "table") {
+        std::string table_name = sqlite3_column_text_string(stmt, 2);
+        table_names.push_back(table_name);
+      }
+    }
+  }
+  else {
+    EXCEPTION("Could not retrieve the list of tables in the db");
+  }
+
+  // Read table description
+  for(auto table_name:table_names) {
+    auto ta = new syd::TableDescription;
+    ReadTableSchemaFromFile(ta, table_name);
+    desc->AddTableDescription(ta);
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::ReadTableSchemaFromFile(syd::TableDescription * table,
+                                            std::string table_name)
+{
+  table->SetTableName(table_name, table_name);
+
+  sqlite3 * sdb = GetSqliteHandle();
+  sqlite3_stmt * stmt;
+  std::string q = "PRAGMA table_info(\""+table_name+"\")";
+  auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
+  if (rc==SQLITE_OK) {
+    /* Loop on result with the following structure:
+       cid name type notnull dflt_value  pk */
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+      std::string name = sqlite3_column_text_string(stmt, 1);
+      std::string type = sqlite3_column_text_string(stmt, 2);
+      table->AddField(name, type);
+    }
+  }
+  else {
+    EXCEPTION("Could not retrieve the list of tables in the db");
+  }
 }
 // --------------------------------------------------------------------

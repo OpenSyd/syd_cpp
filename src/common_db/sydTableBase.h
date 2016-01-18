@@ -22,9 +22,7 @@
 // syd
 #include "sydDD.h"
 #include "sydLog.h"
-//#include "sydCommon.h"
-//#include "sydRecord.h"
-//#include "sydDatabase.h"
+#include "sydDatabaseDescription.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -61,6 +59,11 @@ namespace syd {
     virtual void Sort(record_vector & records, const std::string & type) const = 0;
 
     virtual void Delete(record_vector & v) const = 0;
+
+    // FIXME
+    virtual void InitTableDescription(syd::DatabaseDescription * d) = 0;
+    syd::TableDescription * GetTableDescription() { return description_; }
+    syd::TableDescription * description_;
 
   };
 

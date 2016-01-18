@@ -84,7 +84,7 @@ namespace syd {
     std::array<double, 3> spacing;
 
      // ------------------------------------------------------------------------
-    TABLE_DEFINE(DicomSerie);
+    TABLE_DEFINE(DicomSerie, "syd::DicomSerie");
     TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomSerie);
     // ------------------------------------------------------------------------
 

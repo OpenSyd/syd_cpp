@@ -29,6 +29,8 @@ namespace syd {
   class PatientStat;
   class StandardDatabase;
 
+#pragma db model version(1, 1)
+
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Patient") callback(Callback)
   /// Store information about a patient (id, study_id, name etc).
   class Patient: public syd::Record {
@@ -49,7 +51,7 @@ namespace syd {
     std::string dicom_patientid;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(Patient);
+    TABLE_DEFINE(Patient, "syd::Patient");
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Patient);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Patient);
     // ------------------------------------------------------------------------
@@ -67,6 +69,10 @@ namespace syd {
 
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
+
+
+    // FIXME
+    virtual void InitTableDescription(syd::TableDescription * description) const;
 
   protected:
     Patient();

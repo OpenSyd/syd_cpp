@@ -42,7 +42,7 @@ namespace syd {
     std::string md5;
 
      // ------------------------------------------------------------------------
-    TABLE_DEFINE(File);
+    TABLE_DEFINE(File, "syd::File");
     TABLE_DECLARE_MANDATORY_FUNCTIONS(File);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(File);
     // ------------------------------------------------------------------------
@@ -57,6 +57,9 @@ namespace syd {
     std::string GetAbsolutePath(const syd::Database * db) const;
 
     virtual syd::CheckResult Check() const;
+
+    // FIXME
+    virtual void InitTableDescription(syd::TableDescription * description) const;
 
   protected:
     File();

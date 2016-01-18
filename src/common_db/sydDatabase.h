@@ -27,6 +27,7 @@
 #include "sydRecordHistory-odb.hxx"
 #include "sydRecordWithHistory-odb.hxx"
 #include "sydTableBase.h"
+#include "sydDatabaseDescription.h"
 
 // odb
 #include <odb/sqlite/database.hxx>
@@ -83,7 +84,6 @@ namespace syd {
     std::string ConvertToAbsolutePath(std::string relative_path) const;
     // ------------------------------------------------------------------------
 
-
     /// Consider a relative path check if exist, create if not.
     void CheckOrCreateRelativePath(std::string relative_path);
 
@@ -138,6 +138,9 @@ namespace syd {
     /// Update several elements
     template<class RecordType>
     void Update(std::vector<std::shared_ptr<RecordType>> records);
+
+    /// Update only one field of a element. The type of the element is unknown
+    void Update(generic_record_pointer record, std::string field_name, std::string value_name);
     // ------------------------------------------------------------------------
 
 
@@ -226,7 +229,6 @@ namespace syd {
     // ------------------------------------------------------------------------
 
 
-
     // ------------------------------------------------------------------------
     /// Call back for SQL query to the DB. For debug purpose only
     void TraceCallback(const char* sql);
@@ -256,6 +258,16 @@ namespace syd {
 
     // FIXME
     odb::sqlite::database * GetODB_DB() const { return odb_db_; }
+
+    // FIXME
+    void InitDatabaseDescription();
+    syd::DatabaseDescription * GetDatabaseDescription();
+    syd::DatabaseDescription * description_;
+    void CheckDatabaseSchema();
+    sqlite3 * GetSqliteHandle();
+    void ReadDatabaseSchemaFromFile(syd::DatabaseDescription * desc);
+    void ReadTableSchemaFromFile(syd::TableDescription * table,
+                                 std::string table_name);
 
     // ----------------------------------------------------------------------------------
     protected:
@@ -304,6 +316,10 @@ namespace syd {
     std::string current_sql_query_;
 
   };
+
+
+  // Helpers function to simplify native sqlite query
+  std::string sqlite3_column_text_string(sqlite3_stmt * stmt, int iCol);
 
 #include "sydDatabase.txx"
 

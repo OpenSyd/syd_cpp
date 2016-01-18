@@ -161,3 +161,13 @@ void syd::Table<RecordType>::Delete(generic_record_vector & records) const
   db_->Delete<RecordType>(specific_records);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// template<class RecordType>
+// void syd::Table<RecordType>::InitDescription()
+// {
+//   DD("InitDescription default impl");
+//   // FIXME: no need, only to facilitate devel
+// }
+// --------------------------------------------------------------------

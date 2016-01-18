@@ -23,6 +23,7 @@
 #include "sydCommon.h"
 #include "sydPrintTable.h"
 #include "sydCheckResult.h"
+#include "sydTableDescription.h"
 
 // odb
 #include <odb/callback.hxx>
@@ -36,7 +37,7 @@ namespace syd {
   //  struct RecordStat;
 
   /// Base class for all record (or element, or row) in a table
-#pragma db object abstract pointer(std::shared_ptr)  callback(Callback)
+#pragma db object abstract pointer(std::shared_ptr) callback(Callback)
   class Record {
   public:
 
@@ -55,7 +56,9 @@ namespace syd {
 
     /// Return the name of the table
     virtual std::string GetTableName() const = 0;
+    virtual std::string GetSQLTableName() const = 0;
     static std::string GetStaticTableName() { return "Record"; }
+    static std::string GetStaticSQLTableName() { return "syd::Record"; }
 
     /// Set the values of the fields from some string.
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
@@ -89,6 +92,11 @@ namespace syd {
     /// Check the record. Usually check the file on disk
     virtual syd::CheckResult Check() const;
 
+
+    // FIXME
+    virtual void InitTableDescription(syd::TableDescription * description) const;
+
+
   protected:
     /// This default constructor allow to oblige class that inherit
     /// from Record to not have default constructor
@@ -116,12 +124,14 @@ namespace syd {
   /// odb::access is needed for polymorphism
   /// Also define a view that can count the nb of elements in a table
   /// http://comments.gmane.org/gmane.comp.lang.c%2B%2B.odb.user/1602
-#define TABLE_DEFINE(TABLE_NAME)                                        \
+#define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)                        \
   typedef std::shared_ptr<TABLE_NAME> pointer;                          \
   typedef std::vector<pointer> vector;                                  \
   friend class odb::access;                                             \
   virtual std::string GetTableName() const { return #TABLE_NAME; }      \
+  virtual std::string GetSQLTableName() const { return #SQL_TABLE_NAME; } \
   static std::string GetStaticTableName() { return #TABLE_NAME; }       \
+  static std::string GetStaticTableNameSQLTableName() { return #SQL_TABLE_NAME; } \
   static pointer New() { return pointer(new TABLE_NAME); }              \
   struct TABLE_NAME##_count                                             \
   {                                                                     \

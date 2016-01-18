@@ -11,10 +11,9 @@
 # Standard database : StandardDatabase
 set(SCHEMA_NAME StandardDatabase)
 
-wrap_odb(sydStandardDatabase sydPatient.h)
-wrap_odb(sydStandardDatabase sydRadionuclide.h)
-wrap_odb(sydStandardDatabase sydTag.h)
-#wrap_odb(sydStandardDatabase sydFile.h)
+wrap_odb(sydStandardDatabase sydPatient.h) ## <--- to put in common_db ?
+wrap_odb(sydStandardDatabase sydRadionuclide.h) ## in common_db ?
+wrap_odb(sydStandardDatabase sydTag.h)  ## <--- to put in common_db ?
 wrap_odb(sydStandardDatabase sydInjection.h)
 wrap_odb(sydStandardDatabase sydDicomSerie.h)
 wrap_odb(sydStandardDatabase sydDicomFile.h)
@@ -33,7 +32,6 @@ add_library(sydStandardDatabase SHARED
   sydRadionuclide-odb.cxx sydRadionuclide.cxx
   sydTag-odb.cxx sydTag.cxx
   sydInjection-odb.cxx sydInjection.cxx
-#  sydFile-odb.cxx sydFile.cxx
   sydDicomSerie-odb.cxx sydDicomSerie.cxx
   sydDicomFile-odb.cxx sydDicomFile.cxx
   sydDicomSerieBuilder.cxx

@@ -74,3 +74,10 @@ wrap_ggo(sydCheck_GGO_C sydCheck.ggo sydCommandLineDefault.ggo)
 add_executable(sydCheck sydCheck.cxx ${sydCheck_GGO_C})
 target_link_libraries(sydCheck sydCommonDatabase)
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydUpdate_GGO_C sydUpdate.ggo sydCommandLineDefault.ggo)
+add_executable(sydUpdate sydUpdate.cxx ${sydUpdate_GGO_C})
+target_link_libraries(sydUpdate sydCommonDatabase)
+#----------------------------------------------------------
