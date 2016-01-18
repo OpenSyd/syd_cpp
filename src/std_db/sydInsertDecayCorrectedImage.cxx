@@ -51,22 +51,10 @@ int main(int argc, char* argv[])
     LOG(FATAL) << "No image ids given. I do nothing.";
   }
 
-  // We only consider the calibration of the first image
-  syd::Calibration::pointer calib;
-  typedef odb::query<syd::Calibration> QC;
-  QC q = QC::image == images[0]->id;
-  try {
-      db->QueryOne(calib, q);
-  } catch(std::exception & e) {
-    LOG(FATAL) << "Error while searching calibration for this image: " << images[0]
-               << "." << std::endl << e.what();
-  }
-  LOG(2) << "Using calibration factor: " << calib->factor << " (id= " << calib->id << ")";
-
   // Create main builder
   syd::DecayCorrectedImageBuilder builder(db);
   for(auto image:images) {
-    syd::Image::pointer result = builder.NewDecayCorrectedImage(image, calib);
+    syd::Image::pointer result = builder.NewDecayCorrectedImage(image);
     db->SetImageTagsFromCommandLine(result, args_info);
     builder.InsertAndRename(result);
     LOG(1) << "Inserting Image " << result;

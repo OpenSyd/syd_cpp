@@ -20,46 +20,52 @@
 #include "sydDecayCorrectedImageBuilder.h"
 
 // --------------------------------------------------------------------
+/*=========================================================================
+  Program:   syd
+
+  Authors belong to:
+  - University of LYON              http://www.universite-lyon.fr/
+  - Léon Bérard cancer center       http://www.centreleonberard.fr
+  - CREATIS CNRS laboratory         http://www.creatis.insa-lyon.fr
+
+  This software is distributed WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.  See the copyright notices for more information.
+
+  It is distributed under dual licence
+
+  - BSD        See included LICENSE.txt file
+  - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
+  ===========================================================================**/
+
+#include "sydDecayCorrectedImageBuilder.h"
+
+// --------------------------------------------------------------------
 syd::Image::pointer
-syd::DecayCorrectedImageBuilder::NewDecayCorrectedImage(syd::Image::pointer input,
-                                                        syd::Calibration::pointer calib)
+syd::DecayCorrectedImageBuilder::NewDecayCorrectedImage(syd::Image::pointer input)
 {
-  // Get information
-  if (input->dicoms.size() < 1) {
-    LOG(FATAL) << "Error this image is not associated with a dicom. ";
-  }
+  // Get dicom information
+  if (input->dicoms.size() < 1)  EXCEPTION("This image is not associated with a dicom: " << input);
+
   syd::DicomSerie::pointer dicom = input->dicoms[0];
   syd::Injection::pointer injection = dicom->injection;
-  if (injection == NULL) {
-    LOG(FATAL) << "Error this dicom is not associated with an injection :" << input->dicoms[0];
-  }
+  if (injection == NULL) EXCEPTION("The associated dicom is not associated with an injection :" << input->dicoms[0]);
 
   double injected_activity = injection->activity_in_MBq;
   double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection->date);
-  double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
+  double lambda = injection->GetLambdaInHours();
+
+  // Scale the image
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db_->GetAbsolutePath(input));
+  double f = exp(lambda * time); // decay correction: multiply by exp(lambda x time)
+  syd::ScaleImage<ImageType>(itk_image, f);
 
   // Create output image
-  syd::Image::pointer result = NewMHDImageLike(input);//->dicoms[0]);
-  syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("Bq_by_IA", "Activity in Bq by injected activity in MBq");
-  result->pixel_value_unit = unit;
-
-  // FIXME --> change equation to take spect acquisition time into account (how to do when 2 spects ?)
-
-  // pixel = value / calibration_factor / injected_MBq x exp(lambda x t)
-  double f = 1.0/calib->factor / injected_activity * exp(lambda * time)*1000*1000; // x1000 for MBq to kBq x1000 to Bq
-
-  // Change pixel values
-  typedef float PixelType; // (force 'float' pixel type)
-  typedef itk::Image<PixelType,3> ImageType;
-  ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db_->GetAbsolutePath(input));
-  itk::ImageRegionIterator<ImageType> iter(itk_image, itk_image->GetLargestPossibleRegion());
-  while (!iter.IsAtEnd()) {
-    iter.Set(iter.Get() * f);
-    ++iter;
-  }
-
-  // Set the image
+  syd::Image::pointer result = NewMHDImageLike(input);
   SetImage<PixelType>(result, itk_image);
   return result;
 }
+// --------------------------------------------------------------------
 // --------------------------------------------------------------------

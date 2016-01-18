@@ -28,7 +28,7 @@ namespace syd {
 
   /// Convert a spect image by correcting for the decay.
   /// Input pixel image should be in 'counts' unity
-  /// Output pixel will be in MBq by injected MBq  and decay corrected.
+  /// Output pixel will decay corrected.
   class DecayCorrectedImageBuilder: public syd::ImageBuilder {
 
   public:
@@ -36,7 +36,7 @@ namespace syd {
     DecayCorrectedImageBuilder(StandardDatabase * db):ImageBuilder(db) {}
 
     /// Main function
-    Image::pointer NewDecayCorrectedImage(Image::pointer image, Calibration::pointer calib);
+    Image::pointer NewDecayCorrectedImage(Image::pointer image);
 
   }; // class DecayCorrectedImageBuilder
 } // namespace syd
