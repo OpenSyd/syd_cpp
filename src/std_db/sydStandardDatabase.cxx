@@ -116,6 +116,22 @@ void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & v, cons
 // --------------------------------------------------
 
 
+// --------------------------------------------------
+template<>
+void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & v, const std::string & order) const
+{
+  std::sort(begin(v), end(v),
+            [v](pointer a, pointer b) {
+              if (a->image->dicoms.size() == 0) return true;
+              if (b->image->dicoms.size() == 0) return false;
+              return a->image->dicoms[0]->acquisition_date < b->image->dicoms[0]->acquisition_date;
+            });
+}
+// --------------------------------------------------
+
+
+
+
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {
