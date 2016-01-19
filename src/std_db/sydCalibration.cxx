@@ -120,7 +120,7 @@ void syd::Calibration::InitTable(syd::PrintTable & ta) const
   ta.AddColumn("image");
   ta.AddColumn("tags");
   auto & c = ta.AddColumn("factor");
-  c.precision = 3;
+  c.precision = 8;
   auto & cc = ta.AddColumn("fov_ratio");
   cc.precision = 3;
 }
