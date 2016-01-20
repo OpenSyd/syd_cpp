@@ -50,7 +50,13 @@ int main(int argc, char* argv[])
   if (args_info.inputs_num > 1 and args_info.inputs[1] == std::string("all")) {
     syd::Record::vector v;
     db->Query(v, tablename);
-    db->Delete(v, tablename);
+    LOG(0) << "Really delete " << v.size() << " elements (y/n) ?";
+    char c;
+    std::scanf("%c", &c);
+    if (c =='y') db->Delete(v, tablename);
+    else {
+      LOG(FATAL) << "Abort.";
+    }
     n = v.size();
   }
   else {
