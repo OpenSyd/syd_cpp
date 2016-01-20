@@ -106,6 +106,10 @@ namespace syd {
   int ExecuteCommandLine(const std::string & cmd, int logLevel);
   //--------------------------------------------------------------------
 
+
+  // Test if a string is an integer
+  bool IsInteger(const std::string & s);
+
 #include "sydCommon.txx"
 
 } // end namespace

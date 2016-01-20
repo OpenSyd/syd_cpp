@@ -316,3 +316,15 @@ int syd::ExecuteCommandLine(const std::string & cmd, int logLevel)
   return 0; // ok
 }
 //------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+// http://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int
+bool syd::IsInteger(const std::string & s)
+{
+  if (s.empty() || ((!isdigit(s[0])) && (s[0] != '-') && (s[0] != '+'))) return false ;
+  char * p ;
+  strtol(s.c_str(), &p, 10) ;
+  return (*p == 0) ;
+}
+//------------------------------------------------------------------
