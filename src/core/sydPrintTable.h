@@ -81,6 +81,8 @@ namespace syd {
     void SetHeaderFlag(bool b) { header_flag_= b; }
     bool GetHeaderFlag() const { return header_flag_; }
 
+    std::ostream & GetCurrentOutput() { return *mCurrentOutput; }
+
   protected:
     std::vector<std::vector<std::string>> values;
     int current_line;
@@ -96,6 +98,7 @@ namespace syd {
     std::vector<syd::PrintFormat> formats_;
 
     bool header_flag_;
+    std::ostream * mCurrentOutput;
 
   };
 

@@ -21,12 +21,13 @@
 //------------------------------------------------------------------
 template<class RecordType>
 void syd::PrintTable::Dump(const std::vector<std::shared_ptr<RecordType>> & records,
-                           //const typename RecordType::vector & records,
                            std::ostream & os)
 {
   if (records.size() == 0) return;
 
   // Initialisation
+  std::streambuf * buf = os.rdbuf();
+  mCurrentOutput = new std::ostream(buf);
   current_table_ = records[0]->GetTableName();
   if (GetFormat() == "") SetFormat("default");
   AddFormat("help", "Display list of formats and stop");
