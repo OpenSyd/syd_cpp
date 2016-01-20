@@ -77,7 +77,7 @@ void syd::Injection::Set(const syd::Database * d, const std::vector<std::string>
   radionuclide = rad;
   date = args[2];
   if (!IsDateValid(date)) {
-    LOG(FATAL) << "The date is not valid for this injection:" << this;
+    LOG(FATAL) << "The date is not valid for this injection: " << date;
   }
   activity_in_MBq = atof(args[3].c_str());
 }
