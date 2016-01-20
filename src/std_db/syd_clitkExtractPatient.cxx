@@ -44,7 +44,13 @@ int main(int argc, char* argv[])
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
   for(auto i=0; i<args_info.inputs_num; i++) ids.push_back(atoi(args_info.inputs[i]));
 
-  syd::RoiType::pointer roitype = db->FindRoiType("body");
+  syd::RoiType::pointer roitype;
+  try {
+    roitype = db->FindRoiType("body");
+  } catch(std::exception & e) {
+    LOG(FATAL) << "Error, the RoiType body cannot be found. Please insert it before using this tool."
+               << std::endl << "Error is: " << e.what();
+  }
 
   // Loop on ids
   syd::Image::vector images;

@@ -3,7 +3,7 @@
 package "syd"
 version "0.4"
 usage "syd_clitkExtractPatient <list_of_image_ids>"
-description "Use clitkExtractPatient to build a mask image of images."
+description "Use clitkExtractPatient to build a mask image of images. The RoiType named 'body' *must exist in the db."
 
 option "options"   	 	p       "Option for clitkExtractPatient (in \" \")"   string    default="--verboseStep" no
 option "opening"   	 	o       "Option final clitkMorphoMath opening"        flag      off
