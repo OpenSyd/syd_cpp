@@ -45,8 +45,34 @@ int main(int argc, char* argv[])
 
   // Get the injection
   std::string inj = args_info.inputs[1];
-  auto injection = db->FindInjection(patient, inj);
-  // FIXME 0 if no injection
+  syd::Injection::pointer injection;
+  if (syd::IsInteger(inj)) { // this is an injection id
+    try {
+      db->QueryOne(injection, atoi(inj.c_str())); // exception if not found
+      if (injection->patient->id != patient->id) EXCEPTION(""); // exception if not the same patient
+    } catch(std::exception & e) {
+      LOG(FATAL) << "Cannot find injection id '" << inj << "' for this patient.";
+    }
+  }
+  else { // try to find injections with same radionuclide
+    syd::Injection::vector injections;
+    odb::query<syd::Injection> q =
+      odb::query<syd::Injection>::patient == patient->id and
+      odb::query<syd::Injection>::radionuclide->name == inj;
+    db->Query(injections, q);
+    if (injections.size() == 0) {
+      LOG(FATAL) << "Cannot find injection with radionuclide '" << inj << "' for this patient.";
+    }
+    if (injections.size() > 1) {
+      std::string s;
+      for(auto i:injections) s += "\t"+i->ToString()+'\n';
+      s.pop_back();// remove last endline
+      LOG(FATAL) << "I found several injections of the radionuclide '" << inj
+                 << "', please choose only one (give the id):" << std::endl << s;
+    }
+    injection = injections[0];
+  }
+  LOG(1) << "Associated injection: " << injection;
 
   // Get the list of folders to look for
   std::vector<std::string> folders;
@@ -54,9 +80,9 @@ int main(int argc, char* argv[])
 
   // Dicom insertion
   syd::DicomSerieBuilder b(db);
-  b.SetInjection(injection); // FIXME change to SetPatient if no injection
+  b.SetInjection(injection); // FIXME change to SetPatient if no injection ?
   b.SetForcePatientFlag(args_info.forcePatient_flag);
-  //  b.SetForceUpdateFlag(args_info.forceUpdate_flag); //FIXME
+  //  b.SetForceUpdateFlag(args_info.forceUpdate_flag); //FIXME ?
   for(auto folder:folders) {
     LOG(2) << "Search for files in " << folder;
     if (!fs::exists(folder.c_str())) {
