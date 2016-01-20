@@ -209,8 +209,11 @@ namespace syd {
     std::string InstanceCreationTime = GetTagValueString(dset, "InstanceCreationTime");
     std::string acquisition_date = ConvertDicomDateToStringDate(AcquisitionDate, AcquisitionTime);
     std::string reconstruction_date = ConvertDicomDateToStringDate(ContentDate, ContentTime);
+
     if (reconstruction_date.empty())
       reconstruction_date = ConvertDicomDateToStringDate(InstanceCreationDate, InstanceCreationTime);
+    if (acquisition_date.empty())
+      acquisition_date = ConvertDicomDateToStringDate(InstanceCreationDate, InstanceCreationTime);
 
     // Injection must be before the acquisition
     if (DateDifferenceInHours(acquisition_date, injection_->date) < 0) {
