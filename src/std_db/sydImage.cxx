@@ -313,7 +313,7 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   }
 
   if (f == "filelist") {
-    if (files.size() != 0) std::cout << files[0]->GetAbsolutePath(db_) << " ";
+    if (files.size() != 0) ta.GetCurrentOutput() << files[0]->GetAbsolutePath(db_) << " ";
   }
 }
 // --------------------------------------------------

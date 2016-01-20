@@ -68,6 +68,18 @@ int main(int argc, char* argv[])
   // Sort
   db->Sort(results, table_name);
 
+  // Consider vv flag
+  std::string format = args_info.format_arg;
+  std::streambuf * buf = std::cout.rdbuf();
+  std::ostringstream oss;
+  if (args_info.vv_flag or args_info.vvs_flag) {
+    if (args_info.vv_flag) oss << "vv ";
+    if (args_info.vvs_flag) oss << "vv --sequence ";
+    format = "filelist";
+    buf = oss.rdbuf();
+  }
+  std::ostream os(buf);
+
   // Dump results
   if (args_info.list_flag) {
     // Get ids
@@ -79,9 +91,16 @@ int main(int argc, char* argv[])
   }
   else {
     syd::PrintTable table;
-    table.SetFormat(args_info.format_arg);
+    table.SetFormat(format);
     table.SetHeaderFlag(!args_info.noheader_flag);
-    table.Dump<syd::Record>(results);
+    try {
+      table.Dump<syd::Record>(results, os);
+    } catch (std::exception & e) {
+      if (args_info.vv_flag or args_info.vvs_flag) {
+        LOG(FATAL) << "Error, results *must* be images with filenames to be able to be open with vv"
+                   << std::endl << "Query error is: " << e.what();
+      }
+    }
   }
 
   // Check
@@ -102,6 +121,16 @@ int main(int argc, char* argv[])
     for(auto i:ids_error) std::cout << i << " ";
     if (ids_error.size() != 0) std::cout << std::endl;
     LOG(1) << "Number of error: " << ids_error.size() << "                            ";
+  }
+
+  // VV
+  if (args_info.vv_flag or args_info.vvs_flag) {
+    LOG(1) << "Executing the following command: " << std::endl << oss.str();
+    int r = syd::ExecuteCommandLine(oss.str(), 2);
+    // Stop if error in cmd
+    if (r == -1) {
+      LOG(WARNING) << "Error while executing the following command: " << std::endl << oss.str();
+    }
   }
 
   // This is the end, my friend.
