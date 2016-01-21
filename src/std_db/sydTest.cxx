@@ -24,6 +24,12 @@
 #include "sydStandardDatabase.h"
 //#include "extExtendedDatabase.h"
 
+
+#define SFZ_VERSION      SYD_VERSION + 0x02 00 00 // 02 + (xx.yy)
+#define SFZ_BASE_VERSION SYD_VERSION + 0x01 00 00 // 01 + (xx.yy)
+
+//#pragma db model version(SFZ_BASE_VERSION, SFZ_VERSION)
+
 // Init syd
 SYD_STATIC_INIT
 
@@ -38,9 +44,9 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
-  {
+  // ------------------------------------------------------------------
+  if (0) {
     db->CheckDatabaseSchema();
-
   }
 
   // ------------------------------------------------------------------
@@ -60,26 +66,43 @@ int main(int argc, char* argv[])
   }
 
   // ------------------------------------------------------------------
-  if (0) {
-    std::string filename="/Users/dsarrut/src/images/synfrizz3/db/synfrizz.db";
-    auto db = new odb::sqlite::database(filename, SQLITE_OPEN_READWRITE, true);
-    DD("done");
+  // Trial migration ?
+  if (1) {
+    std::string filename="bidon.db";
+    std::string schema_name = "SynfrizzDatabase";
+    DD(filename);
+    DD(schema_name);
+    auto db = new odb::sqlite::database(filename, SQLITE_OPEN_READWRITE| SQLITE_OPEN_CREATE, true);
+    DD(SYD_VERSION);
+    std::cout << std::hex << SYD_VERSION << std::endl;
 
-    odb::schema_version v (db->schema_version ());
+    DD(SFZ_VERSION);
+    std::cout << std::hex << SFZ_VERSION << std::endl;
+
+    DD("open done");
+    exit(0);
+
+    DD(args_info.inputs[0]);
+    if (std::string(args_info.inputs[0]) =="1") {
+      DD("CREATION");
+      odb::connection_ptr c (db->connection ());
+      //    c->execute ("PRAGMA foreign_keys=ON");
+      odb::transaction t (db->begin ());
+      odb::schema_catalog::create_schema(*db, schema_name, true);
+      t.commit ();
+      DD("create done");
+    }
+
+    odb::schema_version v (db->schema_version(schema_name));
     DD(v);
-    // odb::schema_version cv (odb::schema_catalog::current_version (*db));
-    // DD("ici");
-    // odb::schema_version bv (odb::schema_catalog::base_version (*db));
-
-    // DD(v);
-    // DD(bv);
-    // DD(cv);
+    odb::schema_version cv (odb::schema_catalog::current_version (*db, schema_name));
+    DD(cv);
+    odb::schema_version bv (odb::schema_catalog::base_version (*db, schema_name));
+    DD(bv);
 
     odb::transaction t (db->begin ());
-    odb::schema_catalog::create_schema (*db);
+    odb::schema_catalog::migrate(*db, 3, schema_name);
     DD("here");
-    // odb::transaction t (db->begin ());
-    // odb::schema_catalog::migrate(*db);
     t.commit ();
   }
 

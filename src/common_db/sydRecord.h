@@ -24,6 +24,7 @@
 #include "sydPrintTable.h"
 #include "sydCheckResult.h"
 #include "sydTableDescription.h"
+#include "sydVersion.h"
 
 // odb
 #include <odb/callback.hxx>
