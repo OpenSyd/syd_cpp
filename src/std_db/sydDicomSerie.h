@@ -86,7 +86,13 @@ namespace syd {
     /// Acquisition duration (in sec)
     double duration_sec;
 
-     // ------------------------------------------------------------------------
+    /// Pixel scale
+    double pixel_scale;
+
+    /// Pixel Offset
+    double pixel_offset;
+
+    // ------------------------------------------------------------------------
     TABLE_DEFINE(DicomSerie, "syd::DicomSerie");
     TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomSerie);
     // ------------------------------------------------------------------------
