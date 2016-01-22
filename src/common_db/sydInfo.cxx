@@ -70,6 +70,15 @@ int main(int argc, char* argv[])
     else os << " element" << std::endl;
   }
 
+  std::string table_name = "DicomSerie";
+  auto d = db->GetDatabaseDescription();
+  d->Print(os);
+  syd::TableDescription * dt;
+  bool b = d->FindTableDescription(table_name, &dt);
+  if (!b) {
+    LOG(FATAL) << "Cannot find the table " << table_name;
+  }
+  dt->Print(os);
 
   // This is the end, my friend.
   return EXIT_SUCCESS;
