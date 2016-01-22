@@ -271,6 +271,12 @@ namespace syd {
 
     void MigrateSchema();
 
+    /// Type of the map that contains the association between names and tables
+    typedef std::map<std::string, TableBase*> MapOfTablesType;
+
+    /// Return the map that contains the association between names and tables
+    MapOfTablesType & GetMapOfTables() { return map_; }
+
     // ----------------------------------------------------------------------------------
     protected:
     // Create an empty database
@@ -286,17 +292,11 @@ namespace syd {
     template<class Record>
     void AddTable();
 
-    /// Type of the map that contains the association between names and tables
-    typedef std::map<std::string, TableBase*> MapOfTablesType;
-
     /// Map that contains the association between names and tables
     MapOfTablesType map_;
 
     /// Copy of the map with the table name in lowercase (for comparison)
     MapOfTablesType map_lowercase_;
-
-    /// Return the map that contains the association between names and tables
-    MapOfTablesType & GetMapOfTables() { return map_; }
 
     /// The sqlite database
     //std::unique_ptr<odb::sqlite::database> db_;

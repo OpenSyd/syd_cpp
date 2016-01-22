@@ -38,100 +38,38 @@ int main(int argc, char* argv[])
   // Get the database
   syd::Database * db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
 
-  // Simple dump if not arg
-  if (args_info.inputs_num == 0) {
-    db->Dump(std::cout);
-    return EXIT_SUCCESS;
+  // define output (could be changeed later)
+  auto & os = std::cout;
+
+  // Retrive versions
+  auto odb_db = db->GetODB_DB();
+  odb::schema_version file_version (odb_db->schema_version(db->GetDatabaseSchema()));
+  odb::schema_version current_version
+    (odb::schema_catalog::current_version (*odb_db, db->GetDatabaseSchema()));
+  odb::schema_version base_version
+    (odb::schema_catalog::base_version (*odb_db, db->GetDatabaseSchema()));
+
+  // Basics informations
+  os << "Database file  : " << db->GetFilename() << std::endl;
+  os << "Database schema: " << db->GetDatabaseSchema() << " " ;
+  if (current_version == file_version) os << syd::GetVersionAsString(current_version) << std::endl;
+  else { // never here because Read do the migration
+    os << warningColor << " file version is " << syd::GetVersionAsString(file_version)
+       << " while syd version is " << syd::GetVersionAsString(current_version) << std::endl;
+  }
+  os << "Database folder: " << db->GetDatabaseRelativeFolder();
+  if (!fs::exists(db->GetDatabaseAbsoluteFolder()))
+    os << warningColor << " -> does not exist ("
+       << db->GetDatabaseAbsoluteFolder() << ")" << resetColor;
+  os << std::endl;
+  auto map = db->GetMapOfTables();
+  for(auto i=map.begin(); i != map.end(); i++) {
+    int n = db->GetNumberOfElements(i->first);
+    os << "Table: " << std::setw(15) << i->first << " " <<  std::setw(10) << n;
+    if (n>1) os << " elements" << std::endl;
+    else os << " element" << std::endl;
   }
 
-  // Get the table name
-  std::string table_name = args_info.inputs[0];
-
-  // Prepare the list of arguments
-  std::vector<std::string> patterns;
-  for(auto i=1; i<args_info.inputs_num; i++)
-    patterns.push_back(args_info.inputs[i]);
-
-  // Prepare the list of arguments
-  std::vector<std::string> exclude;
-  for(auto i=0; i<args_info.exclude_given; i++)
-    exclude.push_back(args_info.exclude_arg[i]);
-
-  // Info
-  syd::Record::vector records;
-  db->Query(records, table_name);
-
-  // Grep
-  syd::Record::vector results;
-  db->Grep(results, records, patterns, exclude);
-
-  // Sort
-  db->Sort(results, table_name);
-
-  // Consider vv flag
-  std::string format = args_info.format_arg;
-  std::streambuf * buf = std::cout.rdbuf();
-  std::ostringstream oss;
-  if (args_info.vv_flag or args_info.vvs_flag) {
-    if (args_info.vv_flag) oss << "vv ";
-    if (args_info.vvs_flag) oss << "vv --sequence ";
-    format = "filelist";
-    buf = oss.rdbuf();
-  }
-  std::ostream os(buf);
-
-  // Dump results
-  if (args_info.list_flag) {
-    // Get ids
-    std::vector<syd::IdType> ids;
-    for(auto r:results) ids.push_back(r->id);
-    if (ids.size() == 0) return EXIT_SUCCESS;
-    for(auto id:ids) std::cout << id << " ";
-    std::cout << std::endl;
-  }
-  else {
-    syd::PrintTable table;
-    table.SetFormat(format);
-    table.SetHeaderFlag(!args_info.noheader_flag);
-    try {
-      table.Dump<syd::Record>(results, os);
-    } catch (std::exception & e) {
-      if (args_info.vv_flag or args_info.vvs_flag) {
-        LOG(FATAL) << "Error, results *must* be images with filenames to be able to be open with vv"
-                   << std::endl << "Query error is: " << e.what();
-      }
-    }
-  }
-
-  // Check
-  if (args_info.check_flag) {
-    LOG(1) << "Checking ...";
-    std::vector<syd::IdType> ids_error;
-    int i=0;
-    int n = results.size();
-    for(auto r:results) {
-      auto res = r->Check();
-      if (!res.success) {
-        LOG(WARNING) << "Error for " << r << ": " << res.description;
-        ids_error.push_back(r->id);
-      }
-      syd::loadbar(i,n);
-      ++i;
-    }
-    for(auto i:ids_error) std::cout << i << " ";
-    if (ids_error.size() != 0) std::cout << std::endl;
-    LOG(1) << "Number of error: " << ids_error.size() << "                            ";
-  }
-
-  // VV
-  if (args_info.vv_flag or args_info.vvs_flag) {
-    LOG(1) << "Executing the following command: " << std::endl << oss.str();
-    int r = syd::ExecuteCommandLine(oss.str(), 2);
-    // Stop if error in cmd
-    if (r == -1) {
-      LOG(WARNING) << "Error while executing the following command: " << std::endl << oss.str();
-    }
-  }
 
   // This is the end, my friend.
   return EXIT_SUCCESS;
