@@ -25,8 +25,6 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db model version(1, 1)
-
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::RecordHistory") callback(Callback)
   /// Store information about the history for a RecordHistory
   class RecordHistory: public syd::Record {

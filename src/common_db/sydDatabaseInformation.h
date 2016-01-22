@@ -27,8 +27,6 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db model version(1, 1)
-
 #pragma db object table("db_info")
   class DatabaseInformation {
   public:
