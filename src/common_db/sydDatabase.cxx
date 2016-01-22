@@ -94,18 +94,11 @@ void syd::Database::Read(std::string filename)
   sqlite3_trace (handle, trace_callback, this);
 
   // Check version etc
-  DD(GetDatabaseSchema());
   odb::schema_version file_version (odb_db_->schema_version(GetDatabaseSchema()));
   odb::schema_version current_version
     (odb::schema_catalog::current_version (*odb_db_, GetDatabaseSchema()));
   odb::schema_version base_version
     (odb::schema_catalog::base_version (*odb_db_, GetDatabaseSchema()));
-  DD(file_version);
-  DD(current_version);
-  DD(base_version);
-  DD(GetVersionAsString(file_version));
-  DD(GetVersionAsString(current_version));
-  DD(GetVersionAsString(base_version));
 
   if (file_version != current_version) { // should migrate ?
     LOG(WARNING) << "The version of the db schema in the file " << filename
@@ -529,9 +522,8 @@ void syd::Database::ReadTableSchemaFromFile(syd::TableDescription * table,
 void syd::Database::MigrateSchema()
 {
   // First make a copy !
-  LOG(1) << "Backup current file";
+  LOG(0) << "Backup current file";
   std::string backup = GetFilename()+".backup";
-  DD(backup);
   while (fs::exists(backup)) {
     backup = backup+".backup";
   }
@@ -549,12 +541,11 @@ void syd::Database::MigrateSchema()
       if (n != "sydCommonDatabase") schema_names.push_back(n);
     }
   }
-  DDS(schema_names);
 
   // try migrate
   odb::schema_version current_version
     (odb::schema_catalog::current_version (*odb_db_, GetDatabaseSchema()));
-  LOG(1) << "Try migration to version " << GetVersionAsString(current_version);
+  LOG(0) << "Try migration to version " << GetVersionAsString(current_version);
   try {
     odb::transaction t (odb_db_->begin ());
     int n=schema_names.size()-1;
@@ -562,7 +553,7 @@ void syd::Database::MigrateSchema()
       auto schema = schema_names[i];
       auto version = current_version;
       for(auto x=0; x<n-i; x++) version = version/0x100;
-      LOG(1) << "Migration of schema '" << schema << "' to version " << GetVersionAsString(version);
+      LOG(0) << "Migration of schema '" << schema << "' to version " << GetVersionAsString(version);
       odb::schema_catalog::migrate(*odb_db_, version, schema);
     }
     t.commit();
