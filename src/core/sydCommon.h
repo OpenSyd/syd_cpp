@@ -107,8 +107,16 @@ namespace syd {
   //--------------------------------------------------------------------
 
 
+  // --------------------------------------------------------------------
   // Test if a string is an integer
   bool IsInteger(const std::string & s);
+  // --------------------------------------------------------------------
+
+
+  // --------------------------------------------------------------------
+  unsigned long long GetVersionNumber(unsigned long long v, int n);
+  std::string GetVersionAsString(unsigned long long v);
+  // --------------------------------------------------------------------
 
 #include "sydCommon.txx"
 

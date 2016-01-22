@@ -93,6 +93,35 @@ void syd::Database::Read(std::string filename)
   sqlite3* handle (c->handle ());
   sqlite3_trace (handle, trace_callback, this);
 
+  // Check version etc
+  DD(GetDatabaseSchema());
+  odb::schema_version file_version (odb_db_->schema_version(GetDatabaseSchema()));
+  odb::schema_version current_version
+    (odb::schema_catalog::current_version (*odb_db_, GetDatabaseSchema()));
+  odb::schema_version base_version
+    (odb::schema_catalog::base_version (*odb_db_, GetDatabaseSchema()));
+  DD(file_version);
+  DD(current_version);
+  DD(base_version);
+  DD(GetVersionAsString(file_version));
+  DD(GetVersionAsString(current_version));
+  DD(GetVersionAsString(base_version));
+
+  if (file_version != current_version) { // should migrate ?
+    LOG(WARNING) << "The version of the db schema in the file " << filename
+                 << " is " << GetVersionAsString(file_version)
+                 << " while the current version is "
+                 << GetVersionAsString(current_version) << std::endl
+                 << "You need db migration (but it is not always possible). "
+                 << "Should I try (a backup is made before) ? ";
+    char c;
+    std::scanf("%c", &c);
+    if (c =='y') MigrateSchema();
+    else {
+      LOG(FATAL) << "Abort.";
+    }
+  }
+
   // Define the tables
   CreateTables();
 
@@ -377,21 +406,22 @@ void syd::Database::Update(generic_record_pointer record,
 // --------------------------------------------------------------------
 
 
-
-//------------------------------------------------------------------
+//---------------------------------------------------------------------
 std::string syd::sqlite3_column_text_string(sqlite3_stmt * stmt, int iCol)
 {
   return reinterpret_cast<const char*>(sqlite3_column_text(stmt, iCol));
 }
-//------------------------------------------------------------------
+//---------------------------------------------------------------------
 
 
+//---------------------------------------------------------------------
 sqlite3 * syd::Database::GetSqliteHandle()
 {
   odb::sqlite::connection_ptr c (odb_db_->connection ());
   sqlite3 * sdb(c->handle());
   return sdb;
 }
+//---------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
@@ -490,6 +520,57 @@ void syd::Database::ReadTableSchemaFromFile(syd::TableDescription * table,
   }
   else {
     EXCEPTION("Could not retrieve the list of tables in the db");
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::MigrateSchema()
+{
+  // First make a copy !
+  LOG(1) << "Backup current file";
+  std::string backup = GetFilename()+".backup";
+  DD(backup);
+  while (fs::exists(backup)) {
+    backup = backup+".backup";
+  }
+  fs::copy_file(GetFilename(), backup);
+
+  // Retrieve the schemas hierarchy
+  std::vector<std::string> schema_names;
+  odb::sqlite::connection_ptr c (odb_db_->connection ());
+  sqlite3 * sdb(c->handle());
+  sqlite3_stmt * stmt;
+  auto rc = sqlite3_prepare_v2(sdb, "select name from schema_version order by version;", -1, &stmt, NULL);
+  if (rc==SQLITE_OK) {
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+      std::string n = syd::sqlite3_column_text_string(stmt, 0);
+      if (n != "sydCommonDatabase") schema_names.push_back(n);
+    }
+  }
+  DDS(schema_names);
+
+  // try migrate
+  odb::schema_version current_version
+    (odb::schema_catalog::current_version (*odb_db_, GetDatabaseSchema()));
+  LOG(1) << "Try migration to version " << GetVersionAsString(current_version);
+  try {
+    odb::transaction t (odb_db_->begin ());
+    int n=schema_names.size()-1;
+    for(auto i=0; i<schema_names.size(); i++) {
+      auto schema = schema_names[i];
+      auto version = current_version;
+      for(auto x=0; x<n-i; x++) version = version/0x100;
+      LOG(1) << "Migration of schema '" << schema << "' to version " << GetVersionAsString(version);
+      odb::schema_catalog::migrate(*odb_db_, version, schema);
+    }
+    t.commit();
+  } catch(std::exception & e) {
+    LOG(FATAL) << "Error during schema migration. The error is " << e.what()
+               << std::endl
+               << "Try to alter the db schema manually with sqlite3 ..."
+               << "(good luck !)";
   }
 }
 // --------------------------------------------------------------------

@@ -328,3 +328,31 @@ bool syd::IsInteger(const std::string & s)
   return (*p == 0) ;
 }
 //------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+unsigned long long syd::GetVersionNumber(unsigned long long v, int n)
+{
+  if (n == 0) return (v & 0xFF);
+  else return GetVersionNumber(v / 0x100, n-1);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetVersionAsString(unsigned long long v)
+{
+  auto temp = v;
+  int n=1;
+  while (temp > 0xFF) { // how many levels ? (xx.yy.zz.ww)
+    n++;
+    temp = temp / 0x100;
+  }
+  std::ostringstream oss;
+  oss << std::hex;
+  for(auto i=n-1; i>=0; i--) oss << GetVersionNumber(v, i) << ".";
+  std::string s = oss.str();
+  s.pop_back(); // remove last "."
+  return s;
+}
+// --------------------------------------------------------------------

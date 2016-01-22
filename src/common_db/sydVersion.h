@@ -19,12 +19,33 @@
 #ifndef SYDVERSION_H
 #define SYDVERSION_H
 
-// Change the version here everytime the database scheme is changed
-#define SYD_VERSION      0x0002 // 00.02
-#define SYD_BASE_VERSION 0x0001 // 00.01
+// Change the version here everytime the database scheme is changed.
+// http://www.codesynthesis.com/products/odb/doc/manual.xhtml#13.2
+
+// We keep the model version close to prevent compiling changes. If
+// the change is legitimate: 1) open and 2) increment the
+// version. 3) Once checked, close again.
+#define SYD_VERSION      0102 // version 1.2 (current version)
+#define SYD_BASE_VERSION 0101 // version 1.1 (base version <--- mean that we can migrate from this version to current one)
+
+
+// Log:
+// 1.2 : add 'duration' in table DicomSerie
+// 1.1 : initial version
+
+
+// Ugly trick below ... (you have been warn)
+
+// Concatenate 0x before the version number
+// First argument of BUILD_VERSION is ignored here. It will be used in derived schema
+// Example :
+// #pragma db model version(BUILD_VERSION(SYD_BASE_VERSION,NEW_BASE_VERSION), BUILD_VERSION(SYD_VERSION,NEW_VERSION), closed)
+// http://stackoverflow.com/questions/1489932/how-to-concatenate-twice-with-the-c-preprocessor-and-expand-a-macro-as-in-arg
+#define PASTER(x,y) 0x ## x ## ## y
+#define BUILD_VERSION(x,y)  PASTER(x,y)
 
 #ifdef ODB_COMPILER
-#pragma db model version(SYD_BASE_VERSION, SYD_VERSION)
+#pragma db model version(BUILD_VERSION(,SYD_BASE_VERSION), BUILD_VERSION(,SYD_VERSION))
 #endif
 
 #endif

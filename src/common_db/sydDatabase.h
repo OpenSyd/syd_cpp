@@ -269,6 +269,8 @@ namespace syd {
     void ReadTableSchemaFromFile(syd::TableDescription * table,
                                  std::string table_name);
 
+    void MigrateSchema();
+
     // ----------------------------------------------------------------------------------
     protected:
     // Create an empty database

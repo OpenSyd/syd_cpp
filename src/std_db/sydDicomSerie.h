@@ -83,6 +83,9 @@ namespace syd {
     /// Image spacing aka size of the pixel (in mm)
     std::array<double, 3> spacing;
 
+    /// Acquisition duration (in sec)
+    double duration_sec;
+
      // ------------------------------------------------------------------------
     TABLE_DEFINE(DicomSerie, "syd::DicomSerie");
     TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomSerie);

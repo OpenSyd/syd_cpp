@@ -56,13 +56,19 @@ void syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
 
   // Create schema
   odb::sqlite::database db(filename, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE, false);
+  DDS(schemas);
   try {
     odb::connection_ptr c (db.connection ());
     c->execute ("PRAGMA foreign_keys=ON");
     odb::transaction t (db.begin ());
     odb::schema_catalog::create_schema(db, "sydCommonDatabase"); // common schema
     // Specific list of schemas
-    for(auto s:schemas) odb::schema_catalog::create_schema(db, s);
+    for(auto s=schemas.rbegin(); s != schemas.rend(); ++s) {
+      DD(*s);
+      DD(odb::schema_catalog::exists(db, *s));
+      odb::schema_catalog::create_schema(db, *s);
+    }
+    DD("toto");
     t.commit ();
   }
   catch (const odb::exception& e) {
