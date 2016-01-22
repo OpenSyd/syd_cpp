@@ -1,0 +1,25 @@
+#File sydInfo.ggo
+
+package "syd"
+version "0.4"
+usage "sydInfo TODO <table> <pattern> "
+description "Info the ids of elements in the table that match the pattern. Parameters are:
+- <table>     name of the table
+- <pattern>   list of words to match, all words must match (logical 'AND').
+
+If without any arg: print nb of elements by tables.
+
+Case sensitive.
+
+Use --exclude option to exclude words.
+Use --dump to output details of the found records instead of only the ids.
+"
+
+option "exclude"    e   "Exclude pattern (multiple)"	           string  no multiple
+option "list"       l   "Dump list of ids"                         flag    off
+option "format"     f   "Format when dump results"                 string  default="" no
+option "check"      c   "Check files associated to found records"  flag    off
+option "noheader"   -   "Do not display table header"              flag    off
+
+option "vv"         -   "Open images with vv (result must be image)" flag    off
+option "vvs"        -   "Open images with vv --sequence (result must be images)" flag    off

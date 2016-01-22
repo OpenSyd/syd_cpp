@@ -21,9 +21,7 @@ set(sydCommonDatabase_src
   sydRecord-odb.cxx sydRecord-schema.cxx  sydRecord.cxx
   sydRecordHistory-odb.cxx sydRecordHistory-schema.cxx  sydRecordHistory.cxx
   sydRecordWithHistory-odb.cxx sydRecordWithHistory-schema.cxx  sydRecordWithHistory.cxx
-
   sydFile-odb.cxx sydFile-schema.cxx sydFile.cxx
-
   sydDatabase.cxx
   sydDatabaseManager.cxx
   sydDatabaseInformation.cxx
@@ -81,4 +79,11 @@ target_link_libraries(sydCheck sydCommonDatabase)
 wrap_ggo(sydUpdate_GGO_C sydUpdate.ggo sydCommandLineDefault.ggo)
 add_executable(sydUpdate sydUpdate.cxx ${sydUpdate_GGO_C})
 target_link_libraries(sydUpdate sydCommonDatabase)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+wrap_ggo(sydInfo_GGO_C sydInfo.ggo sydCommandLineDefault.ggo)
+add_executable(sydInfo sydInfo.cxx ${sydInfo_GGO_C})
+target_link_libraries(sydInfo sydCommonDatabase)
 #----------------------------------------------------------
