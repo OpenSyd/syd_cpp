@@ -28,24 +28,22 @@ wrap_odb(sydStandardDatabase sydRoiStatistic.h)
 add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
   sydStandardDatabasePlugin.cxx
-  sydPatient-odb.cxx sydPatient.cxx
-  sydRadionuclide-odb.cxx sydRadionuclide.cxx
-  sydTag-odb.cxx sydTag.cxx
-  sydInjection-odb.cxx sydInjection.cxx
-  sydDicomSerie-odb.cxx sydDicomSerie.cxx
-  sydDicomFile-odb.cxx sydDicomFile.cxx
+  sydPatient-odb.cxx sydPatient-schema.cxx  sydPatient.cxx
+  sydRadionuclide-odb.cxx sydRadionuclide-schema.cxx  sydRadionuclide.cxx
+  sydTag-odb.cxx sydTag-schema.cxx  sydTag.cxx
+  sydInjection-odb.cxx sydInjection-schema.cxx  sydInjection.cxx
+  sydDicomSerie-odb.cxx sydDicomSerie-schema.cxx  sydDicomSerie.cxx
+  sydDicomFile-odb.cxx sydDicomFile-schema.cxx  sydDicomFile.cxx
   sydDicomSerieBuilder.cxx
-  sydImage-odb.cxx sydImage.cxx
-  sydRoiType-odb.cxx sydRoiType.cxx
-  sydRoiMaskImage-odb.cxx sydRoiMaskImage.cxx
-  sydImageTransform-odb.cxx sydImageTransform.cxx
-  sydCalibration-odb.cxx sydCalibration.cxx
-  sydPixelValueUnit-odb.cxx sydPixelValueUnit.cxx
-  sydRoiStatistic-odb.cxx sydRoiStatistic.cxx
-
+  sydImage-odb.cxx sydImage-schema.cxx  sydImage.cxx
+  sydRoiType-odb.cxx sydRoiType-schema.cxx  sydRoiType.cxx
+  sydRoiMaskImage-odb.cxx sydRoiMaskImage-schema.cxx  sydRoiMaskImage.cxx
+  sydImageTransform-odb.cxx sydImageTransform-schema.cxx  sydImageTransform.cxx
+  sydCalibration-odb.cxx sydCalibration-schema.cxx  sydCalibration.cxx
+  sydPixelValueUnit-odb.cxx sydPixelValueUnit-schema.cxx  sydPixelValueUnit.cxx
+  sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
   sydImageBuilder.cxx
   sydFileBuilder.cxx
-
   sydImageFromDicomBuilder.cxx
   sydStitchDicomImageBuilder.cxx
   sydRoiMaskImageBuilder.cxx
@@ -54,8 +52,8 @@ add_library(sydStandardDatabase SHARED
   sydSubstituteRadionuclideImageBuilder.cxx
   sydRoiStatisticBuilder.cxx
   sydScaleImageBuilder.cxx
-
   )
+
 ## to declare dependencies
 target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})
 
