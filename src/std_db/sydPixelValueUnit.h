@@ -38,7 +38,7 @@ namespace syd {
     std::string description;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(PixelValueUnit, "syd::PixelValueUnit");
+    TABLE_DEFINE(PixelValueUnit, syd::PixelValueUnit);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(PixelValueUnit);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(PixelValueUnit);
     // ------------------------------------------------------------------------

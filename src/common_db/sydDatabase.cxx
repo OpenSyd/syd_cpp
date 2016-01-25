@@ -338,31 +338,6 @@ void syd::Database::Delete(generic_record_vector & records, const std::string & 
 
 
 // --------------------------------------------------------------------
-syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
-{
-  if (description_ == NULL) InitDatabaseDescription();
-  return description_;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::InitDatabaseDescription()
-{
-  description_ = new DatabaseDescription();
-  description_->SetDatabaseName(GetDatabaseSchema());
-
-  for(auto m:GetMapOfTables()) {
-    auto & table_name = m.first;
-    auto table = m.second;
-    table->InitTableDescription(description_);
-    description_->AddTableDescription(table->GetTableDescription());
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Database::Update(generic_record_pointer record,
                            std::string field_name,
                            std::string value)
@@ -418,6 +393,7 @@ sqlite3 * syd::Database::GetSqliteHandle()
 
 
 // --------------------------------------------------------------------
+//FIXME TO REMOVE ?
 void syd::Database::CheckDatabaseSchema()
 {
   // FIXME -> check it is already open
@@ -454,6 +430,67 @@ void syd::Database::CheckDatabaseSchema()
     }
   }
 
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
+{
+  if (description_ == NULL) InitDatabaseDescription();
+  return description_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::InitDatabaseDescription()
+{
+  description_ = new DatabaseDescription();
+  description_->SetDatabaseName(GetDatabaseSchema());
+
+  // Create a first (almost empty) description for all tables. The
+  // table name and sql name are set. The field 'id' also.
+  for(auto m:GetMapOfTables()) {
+    auto & table_name = m.first;
+    auto table = m.second;
+    //    table->InitTableDescription(description_);
+    syd::TableDescription * td = new syd::TableDescription;
+    // record_pointer fake = RecordType::New();
+    //   description_ = new TableDescription();
+    //   fake->InitTableDescription(description_); // or static
+    td->SetTableName(table->GetTableName(), table->GetSQLTableName());
+    td->AddField("id", "int");
+    description_->AddTableDescription(td);
+    DD(td);
+  }
+
+  // Read the db description in the file
+  sql_description_ = new syd::DatabaseDescription;
+  ReadDatabaseSchemaFromFile(sql_description_);
+
+  // Add the fields to the OO database
+  for(auto td:description_->GetTablesDescription()) {
+    auto table_name = td->GetTableName();
+    auto sql_table_name = td->GetSQLTableName();
+    DD(table_name);
+    DD(sql_table_name);
+
+    // Find the corresponding sql table
+    syd::TableDescription * sdt;
+    bool b = sql_description_->FindTableDescription(sql_table_name, &sdt);
+    if (!b) {
+      LOG(FATAL) << "Error, cannot find sql table " << sql_table_name
+                 << " in the file (needed for table " << table_name << ")";
+    }
+
+    // update the TableDescription with the field of std
+    for(auto f:sdt->GetFields()) {
+      if (f->GetName() == "id") continue;     // already st by InitTableDescription
+      if (f->GetName() == "typeid") continue; // not useful for user
+      td->AddField(f);
+    }
+  }
 }
 // --------------------------------------------------------------------
 

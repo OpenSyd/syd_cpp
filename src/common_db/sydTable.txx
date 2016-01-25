@@ -164,10 +164,29 @@ void syd::Table<RecordType>::Delete(generic_record_vector & records) const
 
 
 // --------------------------------------------------------------------
-// template<class RecordType>
-// void syd::Table<RecordType>::InitDescription()
-// {
-//   DD("InitDescription default impl");
-//   // FIXME: no need, only to facilitate devel
-// }
+template<class RecordType>
+std::string syd::Table<RecordType>::GetTableName()
+{
+  //  record_pointer fake = RecordType::New();
+  return RecordType::GetStaticTableName();
+}
+
+
 // --------------------------------------------------------------------
+template<class RecordType>
+std::string syd::Table<RecordType>::GetSQLTableName()
+{
+  // record_pointer fake = RecordType::New();
+  // return fake->GetSQLTableName();
+  return RecordType::GetStaticSQLTableName();
+}
+
+
+
+    // std::string GetSQLTableName();
+    // // //virtual void InitDescription();
+    // // virtual void InitTableDescription(syd::DatabaseDescription * d) {
+    // //   record_pointer fake = RecordType::New();
+    // //   description_ = new TableDescription();
+    // //   fake->InitTableDescription(description_); // or static
+    // // }

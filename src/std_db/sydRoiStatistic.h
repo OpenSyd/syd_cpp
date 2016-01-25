@@ -47,7 +47,7 @@ namespace syd {
     double sum;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(RoiStatistic, "syd::RoiStatistic");
+    TABLE_DEFINE(RoiStatistic, syd::RoiStatistic);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(RoiStatistic);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(RoiStatistic);
     // ------------------------------------------------------------------------

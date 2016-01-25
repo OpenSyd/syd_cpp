@@ -71,53 +71,8 @@ int main(int argc, char* argv[])
 
   // ------------------------------------------------------------------
   // Trial migration ?
-  if (1) {
-    // std::string filename="bidon.db";
-    // std::string schema_name = "SynfrizzDatabase";
-    // DD(filename);
-    // DD(schema_name);
-    // auto db = new odb::sqlite::database(filename, SQLITE_OPEN_READWRITE| SQLITE_OPEN_CREATE, true);
-    DD(ASYD_VERSION);
-    std::cout << std::hex << SYD_VERSION << std::endl;
-    std::cout << std::hex
-              << (ASYD_VERSION & 0xFF0000)/0xFFFF << "."
-              << (ASYD_VERSION & 0x00FF00)/0xFF << "."
-              << (ASYD_VERSION & 0x0000FF)
-              << std::endl;
+  if (0) {
 
-    DD(SFZ_VERSION);
-    std::cout << std::hex << SFZ_VERSION << std::endl;
-
-    std::cout << std::hex
-              << (SFZ_VERSION & 0xFF0000)/0xFFFF << "."
-              << (SFZ_VERSION & 0x00FF00)/0xFF << "."
-              << (SFZ_VERSION & 0x0000FF)
-              << std::endl;
-    DD("open done");
-        exit(0);
-
-    DD(args_info.inputs[0]);
-    // if (std::string(args_info.inputs[0]) =="1") {
-    //   DD("CREATION");
-    //   odb::connection_ptr c (db->connection ());
-    //   //    c->execute ("PRAGMA foreign_keys=ON");
-    //   odb::transaction t (db->begin ());
-    //   odb::schema_catalog::create_schema(*db, schema_name, true);
-    //   t.commit ();
-    //   DD("create done");
-    // }
-
-    // odb::schema_version v (db->schema_version(schema_name));
-    // DD(v);
-    // odb::schema_version cv (odb::schema_catalog::current_version (*db, schema_name));
-    // DD(cv);
-    // odb::schema_version bv (odb::schema_catalog::base_version (*db, schema_name));
-    // DD(bv);
-
-    // odb::transaction t (db->begin ());
-    // odb::schema_catalog::migrate(*db, 3, schema_name);
-    // DD("here");
-    // t.commit ();
   }
 
   // ------------------------------------------------------------------

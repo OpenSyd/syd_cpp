@@ -34,6 +34,7 @@ namespace syd {
 
     void SetName(std::string name, std::string type);
     std::string GetName() const { return name_; }
+    std::string GetType() const { return type_; }
 
     std::string GetSQLTableName() const;
     void SetSQLTableName(std::string name);

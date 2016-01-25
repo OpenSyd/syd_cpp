@@ -66,3 +66,14 @@ void syd::TableDescription::AddField(std::string name, std::string type)
   fields_.push_back(f);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TableDescription::AddField(const syd::FieldDescription * ff)
+{
+  syd::FieldDescription * f = new syd::FieldDescription;
+  f->SetSQLTableName(sql_name_);
+  f->SetName(ff->GetName(), ff->GetType());
+  fields_.push_back(f);
+}
+// --------------------------------------------------------------------

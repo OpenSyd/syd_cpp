@@ -60,10 +60,12 @@ namespace syd {
 
     virtual void Delete(record_vector & v) const = 0;
 
-    // FIXME
-    virtual void InitTableDescription(syd::DatabaseDescription * d) = 0;
-    syd::TableDescription * GetTableDescription() { return description_; }
-    syd::TableDescription * description_;
+    /// Used to initialise the description of the table
+    //    virtual void InitTableDescription(syd::DatabaseDescription * d) = 0;
+    virtual std::string GetTableName() = 0;
+    virtual std::string GetSQLTableName() = 0;
+    // syd::TableDescription * GetTableDescription() { return description_; }
+    // syd::TableDescription * description_;
 
   };
 

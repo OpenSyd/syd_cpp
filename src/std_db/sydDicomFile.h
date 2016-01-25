@@ -49,7 +49,7 @@ namespace syd {
     int dicom_instance_number;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(DicomFile, "syd::DicomFile");
+    TABLE_DEFINE(DicomFile, syd::DicomFile);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomFile);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(DicomFile);
     // ------------------------------------------------------------------------

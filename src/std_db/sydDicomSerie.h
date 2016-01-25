@@ -93,7 +93,7 @@ namespace syd {
     double pixel_offset;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(DicomSerie, "syd::DicomSerie");
+    TABLE_DEFINE(DicomSerie, syd::DicomSerie);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomSerie);
     // ------------------------------------------------------------------------
 

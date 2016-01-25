@@ -49,7 +49,7 @@ namespace syd {
     std::string dicom_patientid;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(Patient, "syd::Patient");
+    TABLE_DEFINE(Patient, syd::Patient);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Patient);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Patient);
     // ------------------------------------------------------------------------
@@ -68,9 +68,8 @@ namespace syd {
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
 
-
     // FIXME
-    virtual void InitTableDescription(syd::TableDescription * description) const;
+    //    virtual void InitTableDescription(syd::TableDescription * description) const;
 
   protected:
     Patient();

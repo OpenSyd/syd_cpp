@@ -38,7 +38,7 @@ namespace syd {
     std::string description;
 
      // ------------------------------------------------------------------------
-    TABLE_DEFINE(RoiType, "syd::RoiType");
+    TABLE_DEFINE(RoiType, syd::RoiType);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(RoiType);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(RoiType);
     // ------------------------------------------------------------------------

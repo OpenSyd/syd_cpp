@@ -39,6 +39,7 @@ namespace syd {
 
     void SetTableName(std::string table_name, std::string sql_name);
     void AddField(std::string name, std::string type);
+    void AddField(const syd::FieldDescription * f);
 
     friend std::ostream& operator<<(std::ostream& os,
                                     const TableDescription & d) { return d.Print(os); }

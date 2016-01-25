@@ -36,7 +36,7 @@ namespace syd {
     std::string update_date;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(RecordHistory, "syd::RecordHistory");
+    TABLE_DEFINE(RecordHistory, syd::RecordHistory);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(RecordHistory);
     // ------------------------------------------------------------------------
 

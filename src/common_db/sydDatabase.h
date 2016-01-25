@@ -254,21 +254,19 @@ namespace syd {
     template<class RecordType>
     long GetNumberOfElements() const;
 
-    static std::map<odb::database *, syd::Database *> ListOfLoadedDatabases;
-
     // FIXME
     odb::sqlite::database * GetODB_DB() const { return odb_db_; }
+    sqlite3 * GetSqliteHandle();
 
     // FIXME
-    void InitDatabaseDescription();
     syd::DatabaseDescription * GetDatabaseDescription();
-    syd::DatabaseDescription * description_;
-    void CheckDatabaseSchema();
-    sqlite3 * GetSqliteHandle();
-    void ReadDatabaseSchemaFromFile(syd::DatabaseDescription * desc);
-    void ReadTableSchemaFromFile(syd::TableDescription * table,
-                                 std::string table_name);
 
+    // FIXME to remove ?
+    void CheckDatabaseSchema();
+
+
+    /// Allow to migrate the schema when the db version in the file is
+    /// different from the syd version.
     void MigrateSchema();
 
     /// Type of the map that contains the association between names and tables
@@ -276,6 +274,9 @@ namespace syd {
 
     /// Return the map that contains the association between names and tables
     MapOfTablesType & GetMapOfTables() { return map_; }
+
+    /// Store a list of all loaded database (to be able to retrive the db from a record)
+    static std::map<odb::database *, syd::Database *> ListOfLoadedDatabases;
 
     // ----------------------------------------------------------------------------------
     protected:
@@ -317,6 +318,21 @@ namespace syd {
     /// Store current sql query for debug purpose
     std::string current_sql_query_;
 
+    /// Create the database schema description
+    void InitDatabaseDescription();
+
+    /// Store the OO db schema description
+    syd::DatabaseDescription * description_;
+
+    /// Store the sql db schema description (from the file)
+    syd::DatabaseDescription * sql_description_;
+
+    /// Read the description from sqlite file
+    void ReadDatabaseSchemaFromFile(syd::DatabaseDescription * desc);
+
+    /// Read the table description from sqlite file
+    void ReadTableSchemaFromFile(syd::TableDescription * table,
+                                 std::string table_name);
   };
 
 

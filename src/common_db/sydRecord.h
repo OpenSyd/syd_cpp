@@ -93,10 +93,8 @@ namespace syd {
     /// Check the record. Usually check the file on disk
     virtual syd::CheckResult Check() const;
 
-
     // FIXME
     virtual void InitTableDescription(syd::TableDescription * description) const;
-
 
   protected:
     /// This default constructor allow to oblige class that inherit
@@ -132,7 +130,7 @@ namespace syd {
   virtual std::string GetTableName() const { return #TABLE_NAME; }      \
   virtual std::string GetSQLTableName() const { return #SQL_TABLE_NAME; } \
   static std::string GetStaticTableName() { return #TABLE_NAME; }       \
-  static std::string GetStaticTableNameSQLTableName() { return #SQL_TABLE_NAME; } \
+  static std::string GetStaticSQLTableName() { return #SQL_TABLE_NAME; } \
   static pointer New() { return pointer(new TABLE_NAME); }              \
   struct TABLE_NAME##_count                                             \
   {                                                                     \

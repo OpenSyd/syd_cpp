@@ -110,7 +110,7 @@ syd::CheckResult syd::Record::Check() const
 // --------------------------------------------------------------------
 void syd::Record::InitTableDescription(syd::TableDescription * description) const
 {
-  description->SetTableName("Record", "");
+  description->SetTableName(GetTableName(), GetSQLTableName());
   description->AddField("id", "int");
 }
 // --------------------------------------------------------------------

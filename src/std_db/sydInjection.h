@@ -48,7 +48,7 @@ namespace syd {
     double activity_in_MBq;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(Injection, "syd::Injection");
+    TABLE_DEFINE(Injection, syd::Injection);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Injection);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Injection);
     // ------------------------------------------------------------------------

@@ -50,7 +50,7 @@ namespace syd {
     double fov_ratio;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(Calibration, "syd::Calibration");
+    TABLE_DEFINE(Calibration, syd::Calibration);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Calibration);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(Calibration);
     // ------------------------------------------------------------------------
