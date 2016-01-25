@@ -29,6 +29,7 @@ std::ostream & syd::TableDescription::Print(std::ostream & os) const
      << ") : " << oss.str()
      << fields_.size() <<  " fields. ";
   for(auto f:fields_) os << std::endl << "\t" << f;
+  os << std::endl;
   return os;
 }
 // --------------------------------------------------------------------

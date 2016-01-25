@@ -72,18 +72,17 @@ int main(int argc, char* argv[])
     else os << " element" << std::endl;
   }
 
-  std::string table_name = "DicomSerie";
+  // Info about table
   auto dd = db->GetDatabaseDescription();
-  DD(dd);
-
-  /*
-  syd::TableDescription * dt;
-  bool b = d->FindTableDescription(table_name, &dt);
-  if (!b) {
-    LOG(FATAL) << "Cannot find the table " << table_name;
+  for(auto i=0; i<args_info.inputs_num; i++) {
+    auto table_name = args_info.inputs[i];
+    syd::TableDescription * dt;
+    bool b = dd->FindTableDescription(table_name, &dt);
+    if (!b) {
+      LOG(FATAL) << "Cannot find the table " << table_name;
+    }
+    dt->Print(os);
   }
-  dt->Print(os);
-  */
 
   // This is the end, my friend.
   return EXIT_SUCCESS;

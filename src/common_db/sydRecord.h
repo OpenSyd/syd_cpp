@@ -23,7 +23,6 @@
 #include "sydCommon.h"
 #include "sydPrintTable.h"
 #include "sydCheckResult.h"
-//#include "sydTable.h"
 #include "sydVersion.h"
 
 // odb
@@ -34,8 +33,6 @@
 namespace syd {
 
   class Database;
-  //  class RecordHistory;
-  //  struct RecordStat;
 
   /// Base class for all record (or element, or row) in a table
 #pragma db object abstract pointer(std::shared_ptr) callback(Callback)
@@ -58,10 +55,8 @@ namespace syd {
     /// Return the name of the table
     virtual std::string GetTableName() const = 0;
     virtual std::string GetSQLTableName() const = 0;
-    virtual std::string GetInheritTableName() const = 0;
     static std::string GetStaticTableName() { return "Record"; }
     static std::string GetStaticSQLTableName() { return "syd::Record"; }
-    static std::string GetStaticInheritTableName() { return "toto"; }
     static void InitInheritance() { }
 
     /// Set the values of the fields from some string.
@@ -134,10 +129,8 @@ namespace syd {
   friend class odb::access;                                             \
   virtual std::string GetTableName() const { return #TABLE_NAME; }      \
   virtual std::string GetSQLTableName() const { return #SQL_TABLE_NAME; } \
-  virtual std::string GetInheritTableName() const { return #INHERIT_TABLE_NAME; } \
   static std::string GetStaticTableName() { return #TABLE_NAME; }       \
   static std::string GetStaticSQLTableName() { return #SQL_TABLE_NAME; } \
-  static std::string GetStaticInheritTableName() { return #INHERIT_TABLE_NAME; } \
   static void InitInheritance() {                                       \
     INHERIT_TABLE_NAME::InitInheritance();                              \
     inherit_sql_tables_map_[#TABLE_NAME].push_back(INHERIT_TABLE_NAME::GetStaticSQLTableName()); } \

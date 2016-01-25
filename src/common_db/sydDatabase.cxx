@@ -446,7 +446,6 @@ syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
 // --------------------------------------------------------------------
 void syd::Database::InitDatabaseDescription()
 {
-  DDF();
   description_ = new DatabaseDescription();
   description_->SetDatabaseName(GetDatabaseSchema());
 
