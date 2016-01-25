@@ -34,8 +34,8 @@ namespace syd {
 
     void SetInitialized(bool b) { initializedFlag_ = b; }
     bool IsInitialized() const { return initializedFlag_ == true; }
-    bool FindTableDescription(std::string table_name,
-                              syd::TableDescription ** d);
+    bool FindTableDescription(std::string table_name, syd::TableDescription ** d);
+    bool FindTableDescriptionFromSQLName(std::string table_name, syd::TableDescription ** d);
 
     std::vector<syd::TableDescription*> & GetTablesDescription() { return tables_; }
 

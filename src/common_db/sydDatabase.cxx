@@ -458,13 +458,29 @@ void syd::Database::InitDatabaseDescription()
     table->InitTableDescription(description_); // init the description
     syd::TableDescription & td = table->GetTableDescription();
     // add the TableDescription to the DatabaseDescription
-    DD(td);
     description_->AddTableDescription(&td);
   }
 
   // Read the db description in the file
   sql_description_ = new syd::DatabaseDescription;
   ReadDatabaseSchemaFromFile(sql_description_);
+
+  // Look for fields of type vector ?
+  for(auto sqlt:sql_description_->GetTablesDescription()) {
+    auto fields = sqlt->GetFields();
+    if (fields.size() == 3) {
+      if ((fields[0]->GetName() == "object_id") and (fields[1]->GetName() == "index")) {
+        std::string n = sqlt->GetSQLTableName();
+        auto found = n.find("_");
+        auto table_name = n.substr(0,found);
+        auto field_name = n.substr(found+1, n.size());
+        syd::TableDescription * sdt;
+        bool b  = description_->FindTableDescriptionFromSQLName(table_name, &sdt);
+        std::string type = "vector_of_"+fields[2]->GetType();
+        sdt->AddField(field_name, type);
+      }
+    }
+  }
 
   // Add the fields to the OO database
   for(auto td:description_->GetTablesDescription()) {
@@ -490,11 +506,7 @@ void syd::Database::InitDatabaseDescription()
     auto table = GetMapOfTables()[table_name];
     for(auto h:table->GetInheritSQLTableNames()) {
       if (h != "syd::Record") {
-        bool b = sql_description_->FindTableDescription(h, &sdt);
-        if (!b) {
-          LOG(FATAL) << "Cannot find the inherited sql table '" << h
-                     << "' of table '" << table_name << "'.";
-        }
+        description_->FindTableDescriptionFromSQLName(h, &sdt);
         for(auto f:sdt->GetFields()) {
           if (f->GetName() == "id") continue;     // already st by InitTableDescription
           if (f->GetName() == "typeid") continue; // not useful for user
@@ -503,8 +515,6 @@ void syd::Database::InitDatabaseDescription()
       }
     }
   }
-
-  // Look for fields of type vector ?
 
 }
 // --------------------------------------------------------------------

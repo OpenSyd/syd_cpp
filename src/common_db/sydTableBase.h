@@ -67,9 +67,6 @@ namespace syd {
     virtual std::string GetSQLTableName() const = 0;
 
     /// Return the OO name of the inherit table
-    virtual std::string GetInheritTableName() const = 0;
-
-    /// Return the OO name of the inherit table
     virtual std::vector<std::string> & GetInheritSQLTableNames() const = 0;
 
     /// Return the table description

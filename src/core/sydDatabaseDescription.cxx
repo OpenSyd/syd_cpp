@@ -42,3 +42,17 @@ bool syd::DatabaseDescription::FindTableDescription(std::string table_name,
   return true;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::DatabaseDescription::FindTableDescriptionFromSQLName(std::string table_name,
+                                                               syd::TableDescription ** d)
+{
+  auto it = std::find_if(tables_.begin(), tables_.end(),
+                         [&table_name](syd::TableDescription * t)
+                         { return t->GetSQLTableName() == table_name; } );
+  if (it == tables_.end()) return false;
+  *d = *it;
+  return true;
+}
+// --------------------------------------------------------------------

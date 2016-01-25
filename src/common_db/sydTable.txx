@@ -193,33 +193,12 @@ std::string syd::Table<RecordType>::GetSQLTableName() const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-std::string syd::Table<RecordType>::GetInheritTableName() const
-{
-  return RecordType::GetStaticInheritTableName();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
 std::vector<std::string> & syd::Table<RecordType>::GetInheritSQLTableNames() const
 {
   static bool already_here = false;
-  DD(already_here);
-  DD(RecordType::GetStaticTableName());
   if (!already_here) RecordType::InitInheritance();
   return syd::Record::inherit_sql_tables_map_[RecordType::GetStaticTableName()];
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-// template<class RecordType>
-// void syd::Table<RecordType>::AddInheritSQLTable(std::string t)
-// {
-//   DDF();
-//   //inherit_tables_.push_back(t);
-// }
 // --------------------------------------------------------------------
 
 
@@ -229,7 +208,6 @@ void syd::Table<RecordType>::InitTableDescription(syd::DatabaseDescription * /*d
 {
   table_description_.SetTableName(GetTableName());
   table_description_.SetSQLTableName(GetSQLTableName());
-  table_description_.SetInheritTableName(GetInheritTableName());
   table_description_.AddField("id", "int");
 }
 // --------------------------------------------------------------------
