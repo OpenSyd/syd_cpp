@@ -60,13 +60,27 @@ namespace syd {
 
     virtual void Delete(record_vector & v) const = 0;
 
-    /// Used to initialise the description of the table
-    //    virtual void InitTableDescription(syd::DatabaseDescription * d) = 0;
-    virtual std::string GetTableName() = 0;
-    virtual std::string GetSQLTableName() = 0;
-    // syd::TableDescription * GetTableDescription() { return description_; }
-    // syd::TableDescription * description_;
+    /// Return the OO name of the table
+    virtual std::string GetTableName() const = 0;
 
+    /// Return the SQL name of the table
+    virtual std::string GetSQLTableName() const = 0;
+
+    /// Return the OO name of the inherit table
+    virtual std::string GetInheritTableName() const = 0;
+
+    /// Return the OO name of the inherit table
+    virtual std::vector<std::string> & GetInheritSQLTableNames() const = 0;
+
+    /// Return the table description
+    syd::TableDescription & GetTableDescription() { return table_description_; }
+
+    /// Build the initial description of the table
+    virtual void InitTableDescription(syd::DatabaseDescription * d) = 0;
+
+  protected:
+    std::string inherit_table_name_;
+    syd::TableDescription table_description_;
   };
 
 } // end namespace

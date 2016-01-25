@@ -20,6 +20,16 @@
 
 
 // --------------------------------------------------------------------
+/// Constructor, set the pointer to the database
+template<class RecordType>
+syd::Table<RecordType>::Table(syd::Database * d):TableBase()
+{
+  db_ = d;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 template<class RecordType>
 typename syd::Table<RecordType>::generic_record_pointer
 syd::Table<RecordType>::New() const
@@ -165,28 +175,61 @@ void syd::Table<RecordType>::Delete(generic_record_vector & records) const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-std::string syd::Table<RecordType>::GetTableName()
+std::string syd::Table<RecordType>::GetTableName() const
 {
-  //  record_pointer fake = RecordType::New();
   return RecordType::GetStaticTableName();
 }
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class RecordType>
-std::string syd::Table<RecordType>::GetSQLTableName()
+std::string syd::Table<RecordType>::GetSQLTableName() const
 {
-  // record_pointer fake = RecordType::New();
-  // return fake->GetSQLTableName();
   return RecordType::GetStaticSQLTableName();
 }
+// --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+template<class RecordType>
+std::string syd::Table<RecordType>::GetInheritTableName() const
+{
+  return RecordType::GetStaticInheritTableName();
+}
+// --------------------------------------------------------------------
 
-    // std::string GetSQLTableName();
-    // // //virtual void InitDescription();
-    // // virtual void InitTableDescription(syd::DatabaseDescription * d) {
-    // //   record_pointer fake = RecordType::New();
-    // //   description_ = new TableDescription();
-    // //   fake->InitTableDescription(description_); // or static
-    // // }
+
+// --------------------------------------------------------------------
+template<class RecordType>
+std::vector<std::string> & syd::Table<RecordType>::GetInheritSQLTableNames() const
+{
+  static bool already_here = false;
+  DD(already_here);
+  DD(RecordType::GetStaticTableName());
+  if (!already_here) RecordType::InitInheritance();
+  return syd::Record::inherit_sql_tables_map_[RecordType::GetStaticTableName()];
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// template<class RecordType>
+// void syd::Table<RecordType>::AddInheritSQLTable(std::string t)
+// {
+//   DDF();
+//   //inherit_tables_.push_back(t);
+// }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Table<RecordType>::InitTableDescription(syd::DatabaseDescription * /*d*/) // unused for the moment
+{
+  table_description_.SetTableName(GetTableName());
+  table_description_.SetSQLTableName(GetSQLTableName());
+  table_description_.SetInheritTableName(GetInheritTableName());
+  table_description_.AddField("id", "int");
+}
+// --------------------------------------------------------------------

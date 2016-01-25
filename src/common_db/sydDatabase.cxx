@@ -446,6 +446,7 @@ syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
 // --------------------------------------------------------------------
 void syd::Database::InitDatabaseDescription()
 {
+  DDF();
   description_ = new DatabaseDescription();
   description_->SetDatabaseName(GetDatabaseSchema());
 
@@ -454,15 +455,11 @@ void syd::Database::InitDatabaseDescription()
   for(auto m:GetMapOfTables()) {
     auto & table_name = m.first;
     auto table = m.second;
-    //    table->InitTableDescription(description_);
-    syd::TableDescription * td = new syd::TableDescription;
-    // record_pointer fake = RecordType::New();
-    //   description_ = new TableDescription();
-    //   fake->InitTableDescription(description_); // or static
-    td->SetTableName(table->GetTableName(), table->GetSQLTableName());
-    td->AddField("id", "int");
-    description_->AddTableDescription(td);
+    table->InitTableDescription(description_); // init the description
+    syd::TableDescription & td = table->GetTableDescription();
+    // add the TableDescription to the DatabaseDescription
     DD(td);
+    description_->AddTableDescription(&td);
   }
 
   // Read the db description in the file
@@ -473,8 +470,6 @@ void syd::Database::InitDatabaseDescription()
   for(auto td:description_->GetTablesDescription()) {
     auto table_name = td->GetTableName();
     auto sql_table_name = td->GetSQLTableName();
-    DD(table_name);
-    DD(sql_table_name);
 
     // Find the corresponding sql table
     syd::TableDescription * sdt;
@@ -490,7 +485,27 @@ void syd::Database::InitDatabaseDescription()
       if (f->GetName() == "typeid") continue; // not useful for user
       td->AddField(f);
     }
+
+    // If inherit
+    auto table = GetMapOfTables()[table_name];
+    for(auto h:table->GetInheritSQLTableNames()) {
+      if (h != "syd::Record") {
+        bool b = sql_description_->FindTableDescription(h, &sdt);
+        if (!b) {
+          LOG(FATAL) << "Cannot find the inherited sql table '" << h
+                     << "' of table '" << table_name << "'.";
+        }
+        for(auto f:sdt->GetFields()) {
+          if (f->GetName() == "id") continue;     // already st by InitTableDescription
+          if (f->GetName() == "typeid") continue; // not useful for user
+          td->AddField(f);
+        }
+      }
+    }
   }
+
+  // Look for fields of type vector ?
+
 }
 // --------------------------------------------------------------------
 
@@ -533,7 +548,8 @@ void syd::Database::ReadDatabaseSchemaFromFile(syd::DatabaseDescription * desc)
 void syd::Database::ReadTableSchemaFromFile(syd::TableDescription * table,
                                             std::string table_name)
 {
-  table->SetTableName(table_name, table_name);
+  table->SetTableName(table_name);
+  table->SetSQLTableName(table_name);
 
   sqlite3 * sdb = GetSqliteHandle();
   sqlite3_stmt * stmt;

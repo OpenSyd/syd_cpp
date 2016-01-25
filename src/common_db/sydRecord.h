@@ -23,7 +23,7 @@
 #include "sydCommon.h"
 #include "sydPrintTable.h"
 #include "sydCheckResult.h"
-#include "sydTableDescription.h"
+//#include "sydTable.h"
 #include "sydVersion.h"
 
 // odb
@@ -58,8 +58,11 @@ namespace syd {
     /// Return the name of the table
     virtual std::string GetTableName() const = 0;
     virtual std::string GetSQLTableName() const = 0;
+    virtual std::string GetInheritTableName() const = 0;
     static std::string GetStaticTableName() { return "Record"; }
     static std::string GetStaticSQLTableName() { return "syd::Record"; }
+    static std::string GetStaticInheritTableName() { return "toto"; }
+    static void InitInheritance() { }
 
     /// Set the values of the fields from some string.
     virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
@@ -94,7 +97,7 @@ namespace syd {
     virtual syd::CheckResult Check() const;
 
     // FIXME
-    virtual void InitTableDescription(syd::TableDescription * description) const;
+    static std::map<std::string, std::vector<std::string> > inherit_sql_tables_map_;
 
   protected:
     /// This default constructor allow to oblige class that inherit
@@ -120,17 +123,24 @@ namespace syd {
 
   }; // end of class
 
+
   /// odb::access is needed for polymorphism
   /// Also define a view that can count the nb of elements in a table
   /// http://comments.gmane.org/gmane.comp.lang.c%2B%2B.odb.user/1602
-#define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)                        \
+
+#define TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, INHERIT_TABLE_NAME)    \
   typedef std::shared_ptr<TABLE_NAME> pointer;                          \
   typedef std::vector<pointer> vector;                                  \
   friend class odb::access;                                             \
   virtual std::string GetTableName() const { return #TABLE_NAME; }      \
   virtual std::string GetSQLTableName() const { return #SQL_TABLE_NAME; } \
+  virtual std::string GetInheritTableName() const { return #INHERIT_TABLE_NAME; } \
   static std::string GetStaticTableName() { return #TABLE_NAME; }       \
   static std::string GetStaticSQLTableName() { return #SQL_TABLE_NAME; } \
+  static std::string GetStaticInheritTableName() { return #INHERIT_TABLE_NAME; } \
+  static void InitInheritance() {                                       \
+    INHERIT_TABLE_NAME::InitInheritance();                              \
+    inherit_sql_tables_map_[#TABLE_NAME].push_back(INHERIT_TABLE_NAME::GetStaticSQLTableName()); } \
   static pointer New() { return pointer(new TABLE_NAME); }              \
   struct TABLE_NAME##_count                                             \
   {                                                                     \
@@ -139,6 +149,10 @@ namespace syd {
   PRAGMA_DB(view(TABLE_NAME##_count) object(TABLE_NAME))                \
   PRAGMA_DB(member(TABLE_NAME##_count::count)                           \
             column("count(" + TABLE_NAME::id + ")"))
+
+#define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)        \
+  TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, syd::Record)
+
 
 #define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME)   \
   virtual std::string ToString() const;                 \
@@ -162,41 +176,6 @@ namespace syd {
     t.commit ();                                                        \
     return c;                                                           \
   }
-
-
-  /*
-#pragma db object pointer(std::shared_ptr) table("syd::RecordHistory")
-  //callback(Callback)
-  /// Store information about the history for a RecordHistory
-  class RecordHistory: public syd::Record  {
-  public:
-
-// #pragma db id auto
-//     /// Main key (automated, unique)
-//     IdType id;
-
-    //    syd::Record::pointer record; // back pointer ?
-
-    std::string insertion_date;
-    std::string update_date;
-
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(RecordHistory);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(RecordHistory);
-    // ------------------------------------------------------------------------
-
-    virtual void InitTable(syd::PrintTable & table) const;
-    virtual void DumpInTable(syd::PrintTable & table) const;
-
-  protected:
-    RecordHistory();
-
-  }; // end of class
-  */
-
-
-
-
 
 } // end namespace
 // --------------------------------------------------------------------

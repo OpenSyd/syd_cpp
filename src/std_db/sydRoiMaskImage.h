@@ -36,7 +36,7 @@ namespace syd {
     syd::RoiType::pointer roitype;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(RoiMaskImage, syd::RoiMaskImage);
+    TABLE_DEFINE_I(RoiMaskImage, syd::RoiMaskImage, syd::Image);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(RoiMaskImage);
     TABLE_DECLARE_OPTIONAL_FUNCTIONS(RoiMaskImage);
     // ------------------------------------------------------------------------

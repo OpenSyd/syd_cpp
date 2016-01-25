@@ -21,10 +21,11 @@
 
 // syd
 #include "sydCommon.h"
-//#include "sydTableDescription.h"
 
 // --------------------------------------------------------------------
 namespace syd {
+
+  class TableDescription;
 
   /// Describe the content of a Field, from a OO point of view, and
   /// make the link with underlying sql description.
@@ -32,19 +33,21 @@ namespace syd {
 
   public:
 
+    FieldDescription(syd::TableDescription * t);
+
     void SetName(std::string name, std::string type);
     std::string GetName() const { return name_; }
     std::string GetType() const { return type_; }
 
     std::string GetSQLTableName() const;
-    void SetSQLTableName(std::string name);
+    // void SetSQLTableName(std::string name);
 
     friend std::ostream& operator<<(std::ostream& os, const FieldDescription & d) { return d.Print(os); }
     friend std::ostream& operator<<(std::ostream& os, const FieldDescription * d) { return d->Print(os); }
     std::ostream & Print(std::ostream & os) const;
 
   protected:
-    std::string sql_table_name_;
+    syd::TableDescription * table_;
     std::string name_;
     std::string type_;
 

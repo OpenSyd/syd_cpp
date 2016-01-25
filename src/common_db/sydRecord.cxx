@@ -20,6 +20,10 @@
 #include "sydRecord.h"
 #include "sydDatabase.h"
 
+
+// Define static member
+std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
+
 // --------------------------------------------------------------------
 syd::Record::Record()
 {
@@ -108,9 +112,9 @@ syd::CheckResult syd::Record::Check() const
 
 
 // --------------------------------------------------------------------
-void syd::Record::InitTableDescription(syd::TableDescription * description) const
-{
-  description->SetTableName(GetTableName(), GetSQLTableName());
-  description->AddField("id", "int");
-}
+// void syd::Record::InitTableDescription(syd::TableDescription * description) const
+// {
+//   description->SetTableName(GetTableName(), GetSQLTableName());
+//   description->AddField("id", "int");
+// }
 // --------------------------------------------------------------------

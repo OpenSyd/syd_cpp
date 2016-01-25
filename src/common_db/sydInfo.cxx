@@ -63,6 +63,8 @@ int main(int argc, char* argv[])
        << db->GetDatabaseAbsoluteFolder() << ")" << resetColor;
   os << std::endl;
   auto map = db->GetMapOfTables();
+  if (map.size() > 1) os << map.size() << " tables" << std::endl;
+  else os << map.size() << " table" << std::endl;
   for(auto i=map.begin(); i != map.end(); i++) {
     int n = db->GetNumberOfElements(i->first);
     os << "Table: " << std::setw(15) << i->first << " " <<  std::setw(10) << n;
@@ -73,7 +75,6 @@ int main(int argc, char* argv[])
   std::string table_name = "DicomSerie";
   auto dd = db->GetDatabaseDescription();
   DD(dd);
-
 
   /*
   syd::TableDescription * dt;

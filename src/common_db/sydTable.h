@@ -21,7 +21,7 @@
 
 // syd
 //#include "sydTableBase.h"
-#include "sydDatabase.h"
+//#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -40,9 +40,8 @@ namespace syd {
     typedef typename RecordType::pointer pointer;
     typedef typename RecordType::vector vector;
 
-
     /// Constructor, set the pointer to the database
-    Table(syd::Database * d):TableBase() { db_ = d;}
+    Table(syd::Database * d);
 
     //// Default New, create a new record of the correct type, return a generic syd::Record
     virtual typename syd::Record::pointer New() const;
@@ -80,10 +79,18 @@ namespace syd {
     virtual void Delete(generic_record_vector & records) const;
 
     /// Return the OO name of the table
-    virtual std::string GetTableName();
+    virtual std::string GetTableName() const;
 
     /// Return the SQL name of the table
-    virtual std::string GetSQLTableName();
+    virtual std::string GetSQLTableName() const;
+
+    /// Return the SQL name of the table
+    virtual std::string GetInheritTableName() const;
+    virtual std::vector<std::string> & GetInheritSQLTableNames() const;
+    //    static void AddInheritSQLTable(std::string t);
+
+    /// Build the initial description of the table (not done at creation, only when needed)
+    virtual void InitTableDescription(syd::DatabaseDescription * d);
 
   protected:
     syd::Database * db_;
