@@ -18,6 +18,14 @@
 
 // syd
 #include "sydFieldDescription.h"
+#include "sydTableDescription.h"
+
+// --------------------------------------------------------------------
+syd::FieldDescription::FieldDescription(syd::TableDescription * t)
+{
+  table_ = t;
+}
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
@@ -32,17 +40,17 @@ std::ostream & syd::FieldDescription::Print(std::ostream & os) const
 // --------------------------------------------------------------------
 std::string syd::FieldDescription::GetSQLTableName() const
 {
-  return sql_table_name_;
+  return table_->GetSQLTableName();
 }
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-void syd::FieldDescription::SetSQLTableName(std::string name)
-{
-  sql_table_name_ = name;
-}
-// --------------------------------------------------------------------
+// // --------------------------------------------------------------------
+// void syd::FieldDescription::SetSQLTableName(std::string name)
+// {
+//   sql_table_name_ = name;
+// }
+// // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
