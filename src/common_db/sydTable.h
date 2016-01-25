@@ -79,15 +79,11 @@ namespace syd {
     /// Delete several records
     virtual void Delete(generic_record_vector & records) const;
 
-    // FIXME
+    /// Return the OO name of the table
     virtual std::string GetTableName();
+
+    /// Return the SQL name of the table
     virtual std::string GetSQLTableName();
-    // //virtual void InitDescription();
-    // virtual void InitTableDescription(syd::DatabaseDescription * d) {
-    //   record_pointer fake = RecordType::New();
-    //   description_ = new TableDescription();
-    //   fake->InitTableDescription(description_); // or static
-    // }
 
   protected:
     syd::Database * db_;
