@@ -133,6 +133,11 @@ namespace syd {
     /// Check if the associated files exist on disk
     virtual syd::CheckResult Check() const;
 
+    /// Compute the nb of hours between the injection and the
+    /// acquisition date. Retrieve the injection from the dicom if not
+    /// given as parameters
+    double GetHoursFromInjection(syd::Injection::pointer injection=NULL) const;
+
   protected:
     Image();
 

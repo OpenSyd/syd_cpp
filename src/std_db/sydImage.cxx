@@ -68,7 +68,7 @@ std::string syd::Image::ToString() const
 // --------------------------------------------------
 void syd::Image::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
-  LOG(FATAL) << "To insert Image, please use sydInsertImageFromDicom";
+  LOG(FATAL) << "To insert Image, please use sydInsertImage or sydInsertImageFromDicom";
 }
 // --------------------------------------------------
 
@@ -326,5 +326,28 @@ syd::CheckResult syd::Image::Check() const
   for(auto f:files) r.merge(f->Check());
   for(auto d:dicoms) r.merge(d->Check());
   return r;
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+double syd::Image::GetHoursFromInjection(syd::Injection::pointer injection) const
+{
+  std::string inj_date;
+  if (injection == NULL) {
+    if (dicoms.size() > 0) inj_date = dicoms[0]->injection->date;
+    else {
+      LOG(FATAL) << "No dicom attached to this image, cannot compute the time from injection date "
+                 << ToString() << std::endl;
+    }
+  }
+  else inj_date = injection->date;
+  if (dicoms.size() == 0) {
+    LOG(FATAL) << "No dicom attached to this image, cannot compute the time from injection date "
+                 << ToString() << std::endl;
+  }
+  double time = syd::DateDifferenceInHours(dicoms[0]->acquisition_date, inj_date);
+  return time;
 }
 // --------------------------------------------------------------------
