@@ -60,7 +60,7 @@ void syd::Record::InitTable(syd::PrintTable & table) const
 // --------------------------------------------------------------------
 void syd::Record::DumpInTable(syd::PrintTable & table) const
 {
-  table.Set("id", id);
+  // table.Set("id", id);
   table.Set("fields", ToString());
 }
 // --------------------------------------------------------------------
