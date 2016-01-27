@@ -100,7 +100,7 @@ void syd::Database::Read(std::string filename)
   odb::schema_version base_version
     (odb::schema_catalog::base_version (*odb_db_, GetDatabaseSchema()));
 
-  if (file_version != current_version) { // should migrate ?
+  if (file_version < current_version) { // should migrate ?
     LOG(WARNING) << "The version of the db schema in the file " << filename
                  << " is " << GetVersionAsString(file_version)
                  << " while the current version is "
@@ -113,6 +113,13 @@ void syd::Database::Read(std::string filename)
     else {
       LOG(FATAL) << "Abort.";
     }
+  }
+  if (file_version > current_version) {
+    LOG(FATAL) << "The database version in the file is newer ("
+               << GetVersionAsString(file_version)
+               << ") than the syd database version ("
+               << GetVersionAsString(current_version)
+               << "), upgrade syd.";
   }
 
   // Define the tables
