@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
     try {
       syd::Record::vector v;
       db->Query(v, tablename, ids);
-      LOG(0) << "Really delete " << v.size() << " elements (y/n) ?";
+      std::cout << "Really delete " << v.size() << " elements (y/n) ? ";
       char c;
       std::scanf("%c", &c);
       if (c =='y') {
