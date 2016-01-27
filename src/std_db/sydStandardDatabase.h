@@ -55,6 +55,7 @@ namespace syd {
     virtual ~StandardDatabase() { }
 
     syd::Patient::pointer FindPatient(const std::string & name_or_study_id) const;
+    syd::Radionuclide::pointer FindRadionuclide(const std::string & name) const;
     syd::Injection::pointer FindInjection(const syd::Patient::pointer patient,
                                           const std::string & name_or_study_id) const;
     void FindTags(syd::Tag::vector & tags, const std::string & names) const;

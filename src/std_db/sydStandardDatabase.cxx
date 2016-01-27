@@ -174,6 +174,22 @@ syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & nam
 
 
 // --------------------------------------------------------------------
+syd::Radionuclide::pointer syd::StandardDatabase::FindRadionuclide(const std::string & name) const
+{
+  syd::Radionuclide::pointer rad;
+  odb::query<syd::Radionuclide> q = odb::query<syd::Radionuclide>::name == name;
+  try {
+    QueryOne(rad, q);
+  } catch(std::exception & e) {
+    EXCEPTION("Cannot find Radionuclide " << name << std::endl
+              << "Error message is: " << e.what());
+  }
+  return rad;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient::pointer patient,
                                                              const std::string & name_or_study_id) const
 {
