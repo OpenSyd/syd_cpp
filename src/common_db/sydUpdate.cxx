@@ -29,7 +29,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(sydUpdate, 1);
+  SYD_INIT_GGO(sydUpdate, 4);
 
   // Get params
   std::string tablename = args_info.inputs[0];
