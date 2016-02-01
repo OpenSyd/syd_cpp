@@ -113,7 +113,7 @@ add_executable(sydUpdateRadionuclide sydUpdateRadionuclide.cxx ${sydUpdateRadion
 target_link_libraries(sydUpdateRadionuclide sydStandardDatabase)
 
 # Insert / Update calibration for an image
-wrap_ggo(sydInsertCalibration_GGO_C sydInsertCalibration.ggo sydCommandLineDefault.ggo)
+wrap_ggo(sydInsertCalibration_GGO_C sydInsertCalibration.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 add_executable(sydInsertCalibration sydInsertCalibration.cxx ${sydInsertCalibration_GGO_C})
 target_link_libraries(sydInsertCalibration sydStandardDatabase)
 

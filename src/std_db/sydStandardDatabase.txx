@@ -104,3 +104,39 @@ void syd::StandardDatabase::SetImageTagsFromCommandLine(syd::Image::pointer imag
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class ArgsInfo, class RecordType>
+void syd::StandardDatabase::SetTagsFromCommandLine(typename RecordType::pointer record, ArgsInfo args_info)
+{
+  // Remove all tags
+  if (args_info.remove_all_tag_flag) record->tags.clear();
+
+  // Remove some tags
+  if (args_info.remove_tag_given) {
+    for(auto i=0; i<args_info.remove_tag_given; i++) {
+      std::string tagname = args_info.remove_tag_arg[i];
+      syd::Tag::vector tags;
+      try {
+        FindTags(tags, tagname);
+      } catch(std::exception & e) { } // ignore unknown tag
+      for(auto t:tags) record->RemoveTag(t);
+    }
+  }
+
+  // Add tags
+  if (args_info.tag_given) {
+    for(auto i=0; i<args_info.tag_given; i++) {
+      std::string tagname = args_info.tag_arg[i];
+      syd::Tag::vector tags;
+      try {
+        FindTags(tags, tagname);
+      } catch(std::exception & e) {
+        LOG(WARNING) << "Some tags are ignored. " << e.what();
+      }
+      for(auto t:tags) record->AddTag(t);
+    }
+  }
+}
+// --------------------------------------------------------------------

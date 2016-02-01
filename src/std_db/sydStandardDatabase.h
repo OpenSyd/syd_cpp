@@ -74,6 +74,9 @@ namespace syd {
     template<class ArgsInfo>
     void SetImageTagsFromCommandLine(syd::Image::pointer image, ArgsInfo args_info);
 
+    template<class ArgsInfo, class RecordType>
+    void SetTagsFromCommandLine(typename RecordType::pointer record, ArgsInfo args_info);
+
   protected:
     /// Insert the tables
     virtual void CreateTables();

@@ -30,7 +30,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertCalibration, 1);
+  SYD_INIT_GGO(sydInsertCalibration, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -39,83 +39,93 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the tag
-  std::string tagname = args_info.inputs[0];
-  syd::Tag::vector tags;
-  db->FindTags(tags, tagname);
-
-  // Get the image
-  syd::IdType image_id = atoi(args_info.inputs[1]);
-  syd::Image::pointer image;
-  db->QueryOne(image, image_id);
-
-  // Check
-  if (image->dicoms.size() == 0) {
-    LOG(FATAL) << "Error, the image is not associated with a dicom. ";
-  }
-  syd::DicomSerie::pointer dicom = image->dicoms[0];
-  if (dicom->injection == NULL) {
-    LOG(FATAL) << "Error, the dicom is not associated with an injection.";
-  }
-  syd::Injection::pointer injection = dicom->injection;
-
-  // Already exist or not ?
-  syd::Calibration::vector calibrations;
-  syd::Calibration::pointer calibration;
-  int n=0;
-  typedef odb::query<syd::Calibration> CQ;
-  CQ q = CQ::image == image->id;
-  db->Query(calibrations, q);
-  for(auto c:calibrations) {
-    if (syd::IsAllTagsIn(c->tags, tags)) {
-      if (n==1) {
-        LOG(FATAL) << "Error, at least two calibrations match the image and the tags list."
-                   << std::endl << image
-                   << std::endl << syd::GetLabels(tags);
-      }
-      ++n;
-      calibration = c;
-    }
-  }
-  if (n==0) { //not found, we create
-    LOG(2) << "Create a new Calibration record";
-    calibration = syd::Calibration::New();
-    calibration->image = image;
-    for(auto t:tags) calibration->tags.push_back(t);
-    db->Insert(calibration);
-  }
-  else {
-    LOG(2) << "Update Calibration";
-  }
-
-  // Now we update the values
-  double f = atof(args_info.inputs[2])/100.0;
+  // Get the fow ratio
+  double f = atof(args_info.inputs[0])/100.0;
   if (f < 0.0 or f > 100.0) {
     LOG(FATAL) << "Error the fov_ratio must be [0:100] %";
   }
-  calibration->fov_ratio = f;
 
-  double injected_activity = injection->activity_in_MBq;
-  double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection->date);
-  double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
-  double activity_at_acquisition = injected_activity * exp(-lambda * time);
-
-  // Compute the image total counts
-  typedef float PixelType;
-  typedef itk::Image<PixelType,3> ImageType;
-  ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));
-  itk::ImageRegionConstIterator<ImageType> iter(itk_image, itk_image->GetLargestPossibleRegion());
-  double total_counts = 0;
-  while (!iter.IsAtEnd()) {
-    total_counts += iter.Get();
-    ++iter;
+  // Get the image
+  std::vector<syd::IdType> ids;
+  syd::ReadIdsFromInputPipe(ids);
+  for(auto i=1; i<args_info.inputs_num; i++) {
+    ids.push_back(atoi(args_info.inputs[i]));
+  }
+  syd::Image::vector images;
+  db->Query(images, ids);
+  if (images.size() == 0) {
+    LOG(FATAL) << "No image ids given. I do nothing.";
   }
 
-  // Compute the calibration and update
-  double k = total_counts / activity_at_acquisition * f;
-  calibration->factor = k;
-  db->Update(calibration);
-  LOG(1) << calibration;
+  // Loop on images
+  for(auto image:images) {
+    // Check
+    if (image->dicoms.size() == 0) {
+      LOG(FATAL) << "Error, the image is not associated with a dicom. ";
+    }
+    syd::DicomSerie::pointer dicom = image->dicoms[0];
+    if (dicom->injection == NULL) {
+      LOG(FATAL) << "Error, the dicom is not associated with an injection.";
+    }
+    syd::Injection::pointer injection = dicom->injection;
+
+    // Already exist or not ?
+    std::string status;
+    syd::Calibration::vector calibrations;
+    syd::Calibration::pointer calibration;
+    typedef odb::query<syd::Calibration> CQ;
+    CQ q = CQ::image == image->id;
+    db->Query(calibrations, q);
+    int n = calibrations.size();
+    if (n >= 1) {
+      syd::Tag::vector tags = calibrations[0]->tags;
+      int m=0;
+      for(auto c:calibrations) {
+        if (syd::IsAllTagsIn(c->tags, tags)) {
+          if (m == 1) {
+            LOG(FATAL) << "Error, at least two calibrations match the image and the tags list."
+                       << std::endl << image
+                       << std::endl << syd::GetLabels(tags);
+          }
+          ++m;
+          calibration = c;
+        }
+      }
+    }
+    if (n==0) { //not found, we create
+      status = "(new)";
+      calibration = syd::Calibration::New();
+      calibration->image = image;
+      db->Insert(calibration);
+    }
+    else status = "(updated)";
+
+    // Now we update the values
+    calibration->fov_ratio = f;
+
+    double injected_activity = injection->activity_in_MBq;
+    double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection->date);
+    double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
+    double activity_at_acquisition = injected_activity * exp(-lambda * time);
+
+    // Compute the image total counts
+    typedef float PixelType;
+    typedef itk::Image<PixelType,3> ImageType;
+    ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));
+    itk::ImageRegionConstIterator<ImageType> iter(itk_image, itk_image->GetLargestPossibleRegion());
+    double total_counts = 0;
+    while (!iter.IsAtEnd()) {
+      total_counts += iter.Get();
+      ++iter;
+    }
+
+    // Compute the calibration and update
+    double k = total_counts / activity_at_acquisition * f;
+    calibration->factor = k;
+    db->SetTagsFromCommandLine<args_info_sydInsertCalibration,syd::Calibration>(calibration, args_info);
+    db->Update(calibration);
+    LOG(1) << calibration << " " << status;
+  }
 
   // This is the end, my friend.
 }
