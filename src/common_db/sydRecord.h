@@ -94,6 +94,9 @@ namespace syd {
     // FIXME
     static std::map<std::string, std::vector<std::string> > inherit_sql_tables_map_;
 
+    /// Return the db where this record is stored
+    syd::Database * GetDatabase() { return db_; }
+
   protected:
     /// This default constructor allow to oblige class that inherit
     /// from Record to not have default constructor
