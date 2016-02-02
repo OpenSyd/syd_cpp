@@ -1,0 +1,13 @@
+#File sydUpdateDoseImage.ggo
+
+package "syd"
+version "0.3"
+usage "sydUpdateDoseImage <tia_id> <N> <image_id>"
+description "Scale the dose image according to the nb of particles (N) used to perform the Monte-Carlo simulation, and according to the integrated activity (tia). Scaling factor is s * sum_cts(tia) / N.
+- <tia_id>      id of the associated image source (time integrated activity)
+- <N>           nb of particles in the MC simulation
+- <image_id>    id of the image to scale.
+"
+
+option "scale"     s "Multiply the pixel by this value"                 double no
+option "pixelunit" - "Name of pixel value unit to attach to the image"  string no
