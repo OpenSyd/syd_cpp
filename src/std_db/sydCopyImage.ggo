@@ -1,0 +1,6 @@
+#File sydCopyImage.ggo
+
+package "syd"
+version "0.2"
+usage "sydCopyImage <ids>"
+description "Insert copy of images in the database."

@@ -84,11 +84,23 @@ wrap_ggo(sydInsertImage_GGO_C
 add_executable(sydInsertImage sydInsertImage.cxx ${sydInsertImage_GGO_C})
 target_link_libraries(sydInsertImage sydStandardDatabase)
 
-# Update and check images
+# Copy an image
+wrap_ggo(sydCopyImage_GGO_C
+  sydCopyImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+add_executable(sydCopyImage sydCopyImage.cxx ${sydCopyImage_GGO_C})
+target_link_libraries(sydCopyImage sydStandardDatabase)
+
+# Update image
 wrap_ggo(sydUpdateImage_GGO_C
   sydUpdateImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 add_executable(sydUpdateImage sydUpdateImage.cxx ${sydUpdateImage_GGO_C})
 target_link_libraries(sydUpdateImage sydStandardDatabase)
+
+# Update a dose image
+wrap_ggo(sydUpdateDoseImage_GGO_C
+  sydUpdateDoseImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+add_executable(sydUpdateDoseImage sydUpdateDoseImage.cxx ${sydUpdateDoseImage_GGO_C})
+target_link_libraries(sydUpdateDoseImage sydStandardDatabase)
 
 # Create images by stitching 2 dicom
 wrap_ggo(sydStitchDicom_GGO_C
