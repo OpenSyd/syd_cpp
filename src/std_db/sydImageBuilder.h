@@ -69,6 +69,9 @@ namespace syd {
     /// helper: Insert, renametodefaultfilename and update
     void InsertAndRename(syd::RoiMaskImage::pointer mask);
 
+    /// Search and set the pixel value unit
+    void SetImagePixelValueUnit(syd::Image::pointer image, std::string pixel_unit);
+
   protected:
     /// Protected constructor. No need to use directly.
     ImageBuilder();
@@ -81,7 +84,6 @@ namespace syd {
 
     /// Raise exception if the image could not be a mhd (2 Files are present etc)
     void CheckMHDImage(syd::Image::pointer image);
-
 
   }; // class ImageBuilder
 

@@ -209,3 +209,19 @@ void syd::ImageBuilder::InsertAndRename(syd::RoiMaskImage::pointer mask)
   db_->Update(mask);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ImageBuilder::SetImagePixelValueUnit(syd::Image::pointer image, std::string pixel_unit)
+{
+  DDF();
+  syd::PixelValueUnit::pointer unit;
+  odb::query<syd::PixelValueUnit> q = odb::query<syd::PixelValueUnit>::name == pixel_unit;
+  try {
+    db_->QueryOne(unit, q);
+    image->pixel_value_unit = unit;
+  } catch(std::exception & e) {
+    LOG(FATAL) << "Cannot find the unit '" << pixel_unit << "'.";
+  }
+}
+// --------------------------------------------------------------------
