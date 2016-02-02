@@ -58,7 +58,7 @@ std::string syd::Image::ToString() const
   ss << frame_of_reference_uid << " ";
   if (pixel_value_unit != NULL) ss << pixel_value_unit->name;
   else ss << "pixel_value_unit_unset";
-  ss << history->insertion_date << " "
+  ss << " " << history->insertion_date << " "
      << history->update_date;
   return ss.str();
 }
@@ -113,7 +113,7 @@ std::string syd::Image::GetModality() const
 
 
 // --------------------------------------------------
-void syd::Image::AddTag(syd::Tag::pointer tag)
+void syd::Image::AddTag(const syd::Tag::pointer tag)
 {
   bool found = false;
   int i=0;
@@ -127,7 +127,7 @@ void syd::Image::AddTag(syd::Tag::pointer tag)
 
 
 // --------------------------------------------------
-void syd::Image::RemoveTag(syd::Tag::pointer tag)
+void syd::Image::RemoveTag(const syd::Tag::pointer tag)
 {
   bool found = false;
   int i=0;
@@ -235,7 +235,7 @@ void syd::Image::FatalIfNoDicom() const
 
 
 // --------------------------------------------------
-void syd::Image::CopyTags(syd::Image::pointer image)
+void syd::Image::CopyTags(const syd::Image::pointer image)
 {
   for(auto t:image->tags) AddTag(t);
 }
@@ -261,7 +261,7 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
   ta.AddFormat("filelist", "List of files without line break");
 
   // Set the columns
-  if (f == "default" or f == "history") {
+  if (f == "default") {
     if (ta.GetColumn("id") == -1) ta.AddColumn("id");
     ta.AddColumn("p");
     ta.AddColumn("acqui_date");
@@ -269,6 +269,16 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
     ta.AddColumn("size");
     ta.AddColumn("spacing");
     ta.AddColumn("dicom");
+    ta.AddColumn("unit");
+    auto & c = ta.AddColumn("ref_frame");
+    c.max_width = 20;
+    c.trunc_by_end_flag = false;
+  }
+  if (f == "history") {
+    if (ta.GetColumn("id") == -1) ta.AddColumn("id");
+    ta.AddColumn("p");
+    ta.AddColumn("acqui_date");
+    ta.AddColumn("tags");
     ta.AddColumn("unit");
     auto & c = ta.AddColumn("ref_frame");
     c.max_width = 20;
@@ -291,7 +301,7 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   syd::RecordWithHistory::DumpInTable(ta);
   auto f = ta.GetFormat();
 
-  if (f == "default" or f == "history") {
+  if (f == "default") {
     //    ta.Set("id", id); <--- already done in RecordWithHistory
     ta.Set("p", patient->name);
     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
@@ -303,6 +313,16 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
     for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
     if (dicom.size() != 0) dicom.pop_back(); // remove last space
     ta.Set("dicom", dicom);
+    if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
+    ta.Set("ref_frame", frame_of_reference_uid);
+  }
+
+  if (f == "history") {
+    //    ta.Set("id", id); <--- already done in RecordWithHistory
+    ta.Set("p", patient->name);
+    if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
+    else ta.Set("acqui_date", dicoms[0]->acquisition_date);
+    ta.Set("tags", GetLabels(tags));
     if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
     ta.Set("ref_frame", frame_of_reference_uid);
   }

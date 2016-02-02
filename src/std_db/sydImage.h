@@ -91,13 +91,13 @@ namespace syd {
     std::string GetModality() const;
 
     /// Add a tag to the list (check is already exist) ; do not update in the db.
-    void AddTag(syd::Tag::pointer tag);
+    void AddTag(const syd::Tag::pointer tag);
 
     /// Remove a tag from the list ; do not update in the db. Do nothing it not found
-    void RemoveTag(syd::Tag::pointer tag);
+    void RemoveTag(const syd::Tag::pointer tag);
 
     /// Copy tags from another image
-    void CopyTags(syd::Image::pointer tag);
+    void CopyTags(const syd::Image::pointer tag);
 
     /// Add a DicomSerie to the list (check is already exist) ; do not update in the db.
     void AddDicomSerie(syd::DicomSerie::pointer dicom);
