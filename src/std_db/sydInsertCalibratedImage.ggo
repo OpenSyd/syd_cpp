@@ -1,0 +1,13 @@
+#File sydInsertCalibratedImage.ggo
+
+package "syd"
+version "0.2"
+usage "sydInsertCalibratedImage <pixel_unit> <calib_tag> <image_ids>"
+description "Retrieve the calibration associated with the tag and the image, create a copy of the image and scale the pixel values with the calibration factor.
+
+- <pixel_unit>     new pixel unit after the calibration (something like
+                   \"MBq/IA_MBq\", for MBq by Injected Activity in MBq)
+- <calib_tag>      tags to get the syd::Calibration
+                   (could be several word in \"\")
+- <image_ids>      ids of the images to update
+"

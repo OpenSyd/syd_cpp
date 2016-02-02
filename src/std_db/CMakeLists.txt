@@ -96,6 +96,12 @@ wrap_ggo(sydUpdateImage_GGO_C
 add_executable(sydUpdateImage sydUpdateImage.cxx ${sydUpdateImage_GGO_C})
 target_link_libraries(sydUpdateImage sydStandardDatabase)
 
+# Insert a new image with a calibration
+wrap_ggo(sydInsertCalibratedImage_GGO_C
+  sydInsertCalibratedImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertCalibratedImage sydInsertCalibratedImage.cxx ${sydInsertCalibratedImage_GGO_C})
+target_link_libraries(sydInsertCalibratedImage sydStandardDatabase)
+
 # Update a dose image
 wrap_ggo(sydUpdateDoseImage_GGO_C
   sydUpdateDoseImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
