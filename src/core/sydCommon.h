@@ -79,7 +79,7 @@ namespace syd {
   template<class T>
   std::string ToString(const T & t);
   template<class T, int N>
-  std::string ArrayToString(const std::array<T, N> & t);
+  std::string ArrayToString(const std::array<T, N> & t, int precision=1);
   void SkipComment(std::istream & is);
   bool Replace(std::string& str, const std::string& from, const std::string& to);
   void GetWords(std::vector<std::string> & words, const std::string & phrase);

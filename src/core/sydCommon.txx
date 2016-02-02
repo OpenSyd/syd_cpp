@@ -31,11 +31,11 @@ std::string ToString(const T & t)
 //--------------------------------------------------------------------
 // Convert array to string with 'x'
 template<class T, int N>
-std::string ArrayToString(const std::array<T, N> & t)
+std::string ArrayToString(const std::array<T, N> & t, int precision)
 {
   std::ostringstream myStream;
-  for(auto i=0; i<N-1; i++) myStream << t[i] << "x";
-  myStream << t[N-1] << std::flush;
+  for(auto i=0; i<N-1; i++) myStream << std::fixed << std::setprecision(precision) << t[i] << "x";
+  myStream << std::setprecision(precision) << t[N-1] << std::flush;
   return(myStream.str());
 }
 //--------------------------------------------------------------------
