@@ -20,12 +20,12 @@
 #include "sydScaleImageBuilder.h"
 
 // --------------------------------------------------------------------
-void syd::ScaleImageBuilder::ScalePixelValue(syd::Image::pointer image, double s)
+void syd::ScaleImageBuilder::Scale(syd::Image::pointer image, double s)
 {
 
-  if (image->pixel_type == "float")  ScalePixelValue<float>(image, s);
-  else if (image->pixel_type == "short")  ScalePixelValue<short>(image, s);
-  else if (image->pixel_type == "unsigned char")  ScalePixelValue<unsigned char>(image, s);
+  if (image->pixel_type == "float")  Scale<float>(image, s);
+  else if (image->pixel_type == "short")  Scale<short>(image, s);
+  else if (image->pixel_type == "unsigned char")  Scale<unsigned char>(image, s);
   else {
     LOG(FATAL) << "Unknown pixel_type: " << image->pixel_type;
   }

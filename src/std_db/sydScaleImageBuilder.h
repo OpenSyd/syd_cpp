@@ -26,21 +26,20 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// This class is used to create a Image. A Image is defined
-  /// with an injection, a patient, some tag, some associated dicom
-  /// series and images.
+  /// Class to scale an image
   class ScaleImageBuilder: public syd::ImageBuilder {
 
   public:
     /// Constructor.
     ScaleImageBuilder(syd::StandardDatabase * db):ImageBuilder(db) {}
 
-    // Multiply the pixel values by a scalar
-    void ScalePixelValue(syd::Image::pointer image, double s);
+    /// Multiply the pixel values by a scalar
+    void Scale(syd::Image::pointer image, double s);
 
   protected:
+    /// templatized function, selected according to the pixel type
     template<class PixelType>
-    void ScalePixelValue(syd::Image::pointer image, double s);
+    void Scale(syd::Image::pointer image, double s);
 
   }; // class ScaleImageBuilder
 

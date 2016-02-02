@@ -21,7 +21,7 @@
 
 // --------------------------------------------------------------------
 template<class PixelType>
-void syd::ScaleImageBuilder::ScalePixelValue(syd::Image::pointer image, double s)
+void syd::ScaleImageBuilder::Scale(syd::Image::pointer image, double s)
 {
   // load itk image
   typedef itk::Image<PixelType,3> ImageType;
