@@ -56,12 +56,12 @@ void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int v
   if (!fs::exists(old_path_raw)) {
     LOG(FATAL) << "Rename MHD : Error path (raw) not exist : " << old_path_raw;
   }
-  if (fs::exists(new_path)) {
-    LOG(WARNING) << "Rename MHD : path (mhd) to rename already exist : " << new_path;
-  }
-  if (fs::exists(new_path_raw)) {
-    LOG(WARNING) << "Rename MHD : path (raw) to rename already exist : " << new_path_raw;
-  }
+  // if (fs::exists(new_path)) {
+  //   LOG(WARNING) << "Rename MHD : path (mhd) to rename already exist : " << new_path;
+  // }
+  // if (fs::exists(new_path_raw)) {
+  //   LOG(WARNING) << "Rename MHD : path (raw) to rename already exist : " << new_path_raw;
+  // }
 
   // verbose
   if (erase) {
