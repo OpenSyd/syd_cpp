@@ -7,5 +7,5 @@ description "Insert a mhd image ; must use the --like flag (will change)
 - <filename>      image file to insert
 "
 
-option "like"       -       "Id of the image to copy information from"          int    yes
-option "pixelunit"  -       "Name of pixel value unit to attach to the image"   string no
+option "like"       -  "Id of the image to copy information (patient, dicoms)" int yes
+option "pixelunit"  -  "Name of pixel value unit to attach to the image" string no
