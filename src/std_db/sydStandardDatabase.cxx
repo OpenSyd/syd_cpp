@@ -302,3 +302,34 @@ namespace syd {
   TABLE_GET_NUMBER_OF_ELEMENTS(RoiStatistic);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Image::pointer image,
+                                                                 const std::string & calib_tag)
+{
+  syd::Tag::vector tags;
+  FindTags(tags,calib_tag);
+  syd::Calibration::vector calibrations;
+  syd::Calibration::pointer calibration;
+  typedef odb::query<syd::Calibration> QT;
+  QT q = QT::image == image->id;
+  Query(calibrations, q);
+  int n=0;
+  for(auto c:calibrations) {
+    if (syd::IsAllTagsIn(c->tags, tags)) {
+      if (n>0) {
+        EXCEPTION("Several calibrations are associated with this image. "
+                  << "I dont know which one to choose. "
+                  << "Use tags to discriminate");
+      }
+      ++n;
+      calibration = c;
+    }
+  }
+  if (calibrations.size() < 1) {
+    EXCEPTION("Cannot find calibration for this image: " << image);
+  }
+  return calibration;
+}
+// --------------------------------------------------------------------

@@ -61,6 +61,8 @@ namespace syd {
     void FindTags(syd::Tag::vector & tags, const std::string & names) const;
     syd::PixelValueUnit::pointer FindOrInsertUnit(const std::string & name, const std::string & description);
     syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
+    syd::Calibration::pointer FindCalibration(const syd::Image::pointer Image,
+                                              const std::string & calib_tag);
 
     std::string GetAbsolutePath(const syd::Image::pointer image) const;
     std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
