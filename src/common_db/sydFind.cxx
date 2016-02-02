@@ -133,6 +133,16 @@ int main(int argc, char* argv[])
     }
   }
 
+  // Delete
+  if (args_info.delete_flag) {
+      std::cout << "Really delete " << results.size() << " element"
+                << (results.size() > 1 ? "s ":" ") << "(y/n) ? ";
+      char c;
+      std::scanf("%c", &c);
+      if (c =='y') db->Delete(results, table_name);
+      else { LOG(FATAL) << "Abort."; }
+  }
+
   // This is the end, my friend.
   return EXIT_SUCCESS;
 }
