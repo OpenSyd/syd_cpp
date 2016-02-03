@@ -63,7 +63,6 @@ int main(int argc, char* argv[])
     std::vector<std::string> tag_names;
     for(auto i=0; i<args_info.tag_given; i++)
       syd::GetWords(tag_names, args_info.tag_arg[i]);
-    DDS(tag_names);
     db->QueryByTag(records, table_name, tag_names);
   }
   else { // Query all record
@@ -95,7 +94,7 @@ int main(int argc, char* argv[])
     std::vector<syd::IdType> ids;
     for(auto r:results) ids.push_back(r->id);
     if (ids.size() == 0) return EXIT_SUCCESS;
-    for(auto id:ids) std::cout << id << " ";
+    for(auto id:ids) std::cout << id << (id != ids.back() ? " ":"");
     std::cout << std::endl;
   }
   else {
