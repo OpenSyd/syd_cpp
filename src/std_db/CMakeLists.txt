@@ -159,9 +159,9 @@ target_link_libraries(sydDicomInfo sydStandardDatabase)
 
 
 # Change tag
-wrap_ggo(sydUpdateImageTag_GGO_C sydUpdateImageTag.ggo sydCommandLineDefault.ggo)
-add_executable(sydUpdateImageTag sydUpdateImageTag.cxx ${sydUpdateImageTag_GGO_C})
-target_link_libraries(sydUpdateImageTag sydStandardDatabase)
+# wrap_ggo(sydUpdateImageTag_GGO_C sydUpdateImageTag.ggo sydCommandLineDefault.ggo)
+# add_executable(sydUpdateImageTag sydUpdateImageTag.cxx ${sydUpdateImageTag_GGO_C})
+# target_link_libraries(sydUpdateImageTag sydStandardDatabase)
 
 # Update Radionuclide table
 wrap_ggo(sydUpdateRadionuclide_GGO_C sydUpdateRadionuclide.ggo sydCommandLineDefault.ggo)
