@@ -51,6 +51,9 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
+  // Check pixelvalueunit
+  auto punit = db->FindPixelValueUnit(args_info.pixelunit_arg);
+
   // Get the list of images to integrate
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
@@ -304,9 +307,7 @@ int main(int argc, char* argv[])
   db->SetImageTagsFromCommandLine(output, args_info);
 
   // Change pixel value
-  syd::PixelValueUnit::pointer v = db->FindOrInsertUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq");
-  output->pixel_value_unit = v;
-
+  output->pixel_value_unit = punit;
   bdb.InsertAndRename(output);
   LOG(1) << "Inserting Image " << output;
 
