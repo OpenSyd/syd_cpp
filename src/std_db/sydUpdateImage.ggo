@@ -3,15 +3,12 @@
 package "syd"
 version "0.2"
 usage "sydUpdateImage <image_ids>"
-description "Check the mhd file and update an image
+description "Update information associated with an image, and/or scale.
 - <image_ids>      ids of the images to update
 
-Some options (see below) may be used to udate the image (see below). Note: -N and --tia must be set together: in case of dose/edep computed by MonteCarlo, pixels are scaled according to the total nb of counts in the tia image, and the total nb of particles in the simulation (N).
 "
 
-option "file"       -       "Content of the file will replace the image in the db"            string multiple no
-option "pixelunit"  -       "Name of pixel value unit to attach to the image"                 string no
-option "scale"      s       "Multiply the pixel by this value"                                double no
-option "squared_scale" -    "Square the scaling factor (for dose_squared)"                    flag   off
-option "N"          N       "Nb of primary if MC simulation (with tia)"                       double no
-option "tia"        -       "Id of the tia image if MC simulation (with N)"                   int    no
+option "file"          -       "Content of the file will replace the image in the db"            string multiple no
+option "pixelunit"     -       "Name of pixel value unit to attach to the image"                 string no
+option "scale"         s       "Multiply the pixel by this value"                                double no
+option "squared_scale" -       "Square the scaling factor (for dose_squared)"                    flag   off

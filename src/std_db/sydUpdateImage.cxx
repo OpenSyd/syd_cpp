@@ -64,80 +64,42 @@ int main(int argc, char* argv[])
 
   // Check & updates the images
   int i=0;
-  for(auto image:images) {
+  syd::ScaleImageBuilder builder(db);
+  for(auto index=0; index<images.size(); index++) {
+    auto image = images[index];
     // check file exist
-    bool b = true;
     for(auto file:image->files) {
       std::string s = file->GetAbsolutePath(db);
       if (!fs::exists(s)) {
         LOG(WARNING) << "Image: " << image << std::endl
                      << "--> the file '" << s << "' does not exist." << std::endl;
-        b = false;
+        continue;
       }
     }
-    if (b) {
 
-      // Create the update builder
-      syd::ScaleImageBuilder builder(db);
-      double s = 1.0;
-
-      // If need to import a new mhd ?
-      if (args_info.file_given) {
-        std::string mhd = args_info.file_arg[i];
-        syd::ImageBuilder builder(db);
-        builder.CopyImageFromFile(image, mhd);
-      }
-
-      // Need to scale ?
-      if (args_info.scale_given) {
-        s = args_info.scale_arg;
-        if (args_info.N_given and args_info.tia_given) {
-          syd::IdType id = args_info.tia_arg;
-          syd::Image::pointer tia;
-          db->QueryOne(tia, id);
-          syd::RoiStatisticBuilder builder(db);
-          syd::RoiStatistic::pointer stat;
-          db->New(stat);
-          stat->image = tia;
-          builder.ComputeStatistic(stat);// no mask
-          s = s * (stat->sum / args_info.N_arg);
-        }
-        else {
-          if (args_info.N_given or args_info.tia_given) {
-            LOG(WARNING) << "Option -N and --tia must be both set. Ignoring. ";
-          }
-        }
-
-        // Is scale is squared ?
-        if (args_info.squared_scale_flag) {
-          s = s*s;
-        }
-
-        // scale and update
-        builder.ScalePixelValue(image, s);
-      }
-
-      // If needed update the unit
-      if (args_info.pixelunit_given) {
-        syd::PixelValueUnit::pointer unit;
-        odb::query<syd::PixelValueUnit> q = odb::query<syd::PixelValueUnit>::name == args_info.pixelunit_arg;
-        try {
-          db->QueryOne(unit, q);
-          image->pixel_value_unit = unit;
-        } catch(std::exception & e) {
-          LOG(WARNING) << "Cannot find the unit '" << args_info.pixelunit_arg << "', ignoring.";
-        }
-      }
-
-      // update db
-      db->SetImageTagsFromCommandLine(image, args_info);
-      db->Update(image);
-      LOG(1) << "Image was scaled by " << s << ": " << image;
+    // Need to import a new mhd ?
+    if (args_info.file_given) {
+      std::string mhd = args_info.file_arg[i];
+      syd::ImageBuilder builder(db);
+      builder.CopyImageFromFile(image, mhd);
     }
 
-    // Iterate over image nb
-    ++i;
+    // Need to scale ?
+    double s = 1.0;
+    if (args_info.scale_given) {
+      s = args_info.scale_arg;
+      if (args_info.squared_scale_flag) s = s*s;
+      builder.Scale(image, s);
+    }
+
+    // update db
+    db->SetImageTagsFromCommandLine(image, args_info);
+    if (args_info.pixelunit_given) builder.SetImagePixelValueUnit(image, args_info.pixelunit_arg);
+    db->Update(image);
+    if (s != 1) LOG(1) << "Image was scaled by " << s << ": " << image;
+    else LOG(1) << "Image was updated: " << image;
   }
+
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------
