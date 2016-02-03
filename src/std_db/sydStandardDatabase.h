@@ -60,6 +60,7 @@ namespace syd {
                                           const std::string & name_or_study_id) const;
     void FindTags(syd::Tag::vector & tags, const std::string & names) const;
     syd::PixelValueUnit::pointer FindOrInsertUnit(const std::string & name, const std::string & description);
+    syd::PixelValueUnit::pointer FindPixelValueUnit(const std::string & name);
     syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
     syd::Calibration::pointer FindCalibration(const syd::Image::pointer Image,
                                               const std::string & calib_tag);

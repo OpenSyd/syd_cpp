@@ -229,20 +229,35 @@ void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::string 
 
 
 // --------------------------------------------------------------------
-syd::PixelValueUnit::pointer syd::StandardDatabase::FindOrInsertUnit(const std::string & name,
-                                                                     const std::string & description)
+syd::PixelValueUnit::pointer syd::StandardDatabase::FindPixelValueUnit(const std::string & name)
 {
   syd::PixelValueUnit::pointer unit;
   try {
     odb::query<syd::PixelValueUnit> q = odb::query<syd::PixelValueUnit>::name == name;
     QueryOne(unit, q);
   } catch (std::exception & e) {
+    EXCEPTION("Cannot find the pixelvalueunit " << name);
+  }
+  return unit;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::PixelValueUnit::pointer syd::StandardDatabase::FindOrInsertUnit(const std::string & name,
+                                                                     const std::string & description)
+{
+  try {
+    syd::PixelValueUnit::pointer unit = FindPixelValueUnit(name);
+    return unit;
+  } catch (std::exception & e) {
+    syd::PixelValueUnit::pointer unit;
     New(unit);
     unit->name=name;
     unit->description=description;
     Insert(unit);
+    return unit;
   }
-  return unit;
 }
 // --------------------------------------------------------------------
 
