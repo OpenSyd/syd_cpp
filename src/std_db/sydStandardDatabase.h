@@ -79,6 +79,13 @@ namespace syd {
     template<class ArgsInfo, class RecordType>
     void SetTagsFromCommandLine(typename RecordType::pointer record, ArgsInfo args_info);
 
+    /// Query by tag
+    virtual void QueryByTag(generic_record_vector & records,
+                            const std::string table_name,
+                            const std::vector<std::string> & tag_names) const;
+
+    void QueryImageByTag(syd::Image::vector & images, const std::string & tag_name) const;
+
   protected:
     /// Insert the tables
     virtual void CreateTables();

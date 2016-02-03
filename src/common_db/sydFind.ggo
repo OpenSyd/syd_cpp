@@ -11,6 +11,8 @@ If without any arg: print nb of elements by tables.
 
 Case sensitive.
 
+
+
 Use --exclude option to exclude words.
 Use --dump to output details of the found records instead of only the ids.
 "
@@ -21,6 +23,8 @@ option "format"     f   "Format when dump results"                 string  defau
 option "check"      c   "Check files associated to found records"  flag    off
 option "noheader"   -   "Do not display table header"              flag    off
 option "delete"     d   "Delete all find element"                  flag    off
+
+option "tag"        t   "List of tag to match (all)"               string  no multiple
 
 option "vv"         -   "Open images with vv (result must be image)" flag    off
 option "vvs"        -   "Open images with vv --sequence (result must be images)" flag    off

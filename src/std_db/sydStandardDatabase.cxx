@@ -333,3 +333,75 @@ syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Imag
   return calibration;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
+                                       const std::string table_name,
+                                       const std::vector<std::string> & tag_names) const
+{
+  if (tag_names.size() == 0) {
+    Query(records, table_name);
+    return;
+  }
+  if (table_name == "Image") {
+    syd::Image::vector images;
+    QueryImageByTag(images, tag_names[0]);
+    for(auto image:images) {
+      int n=0;
+      for(auto t:tag_names) { // brute force search !!
+        auto iter = std::find_if(image->tags.begin(), image->tags.end(),
+                                 [&t](syd::Tag::pointer & tag)->bool { return tag->label == t;} );
+        if (iter == image->tags.end()) continue;
+        else ++n;
+      }
+      if (n == tag_names.size()) records.push_back(image);
+    }
+    return;
+  }
+  EXCEPTION("Query by tag could only be used with syd::Image");
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// Specific query to match image with a tag name, in order to speed up
+// a bit the FindImageByTag.
+void syd::StandardDatabase::QueryImageByTag(syd::Image::vector & images,
+                                            const std::string & tag_name) const
+{
+  std::vector<syd::IdType> ids; // resulting id of the images
+
+  // Create request code
+  std::ostringstream sql; // request
+  std::string t1="\"syd::Image\"";
+  std::string t2="\"syd::Image_tags\"";
+  std::string t3="\"syd::Tag\"";
+  sql << "select " << t1 << ".id ";
+  sql << "from   " << t1 << "," << t2 << "," << t3 << " ";
+  sql << "where  " << t1 << ".id == " << t2 << ".object_id ";
+  sql << "and    " << t2 << ".value == " << t3 << ".id ";
+  sql << "and " << t3 << ".label==" << "\"" << tag_name << "\" ";
+  sql << ";";
+
+  // Native query
+  try {
+  odb::sqlite::connection_ptr c (odb_db_->connection ());
+  sqlite3 * sdb(c->handle());
+  sqlite3_stmt * stmt;
+  std::string s = sql.str();
+  auto rc = sqlite3_prepare_v2(sdb, s.c_str(), -1, &stmt, NULL);
+  if (rc==SQLITE_OK) {
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+      std::string n = syd::sqlite3_column_text_string(stmt, 0);
+      ids.push_back(atoi(n.c_str()));
+    }
+  }
+  } catch(std::exception & e) {
+    EXCEPTION("Error during sql query. Error is " << e.what());
+  }
+
+  // Retrieve images
+  Query(images, ids);
+}
+// --------------------------------------------------------------------

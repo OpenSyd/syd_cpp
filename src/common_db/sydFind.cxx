@@ -57,9 +57,18 @@ int main(int argc, char* argv[])
   for(auto i=0; i<args_info.exclude_given; i++)
     exclude.push_back(args_info.exclude_arg[i]);
 
-  // Find
+  // Find all records
   syd::Record::vector records;
-  db->Query(records, table_name);
+  if (args_info.tag_given) {
+    std::vector<std::string> tag_names;
+    for(auto i=0; i<args_info.tag_given; i++)
+      syd::GetWords(tag_names, args_info.tag_arg[i]);
+    DDS(tag_names);
+    db->QueryByTag(records, table_name, tag_names);
+  }
+  else { // Query all record
+    db->Query(records, table_name);
+  }
 
   // Grep
   syd::Record::vector results;
