@@ -91,6 +91,10 @@ syd::RoiMaskImage::pointer syd::ImageBuilder::NewMHDRoiMaskImage(syd::Patient::p
 // --------------------------------------------------------------------
 void syd::ImageBuilder::CopyImageFromFile(syd::Image::pointer image, std::string filename)
 {
+  if (!fs::exists(filename)) {
+    EXCEPTION("The file '" << filename << "' cannot be found.");
+  }
+
   // Read itk image header to get the pixel type
   auto header = syd::ReadImageHeader(filename);
   switch (header->GetComponentType()) {
