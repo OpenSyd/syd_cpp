@@ -61,13 +61,8 @@ int main(int argc, char* argv[])
   // Set optional unity
   if (args_info.pixelunit_given) {
     syd::PixelValueUnit::pointer unit;
-    odb::query<syd::PixelValueUnit> q = odb::query<syd::PixelValueUnit>::name == args_info.pixelunit_arg;
-    try {
-      db->QueryOne(unit, q);
-      output->pixel_value_unit = unit;
-    } catch(std::exception & e) {
-      LOG(WARNING) << "Cannot find the unit '" << args_info.pixelunit_arg << "', ignoring.";
-    }
+    unit = db->FindPixelValueUnit(args_info.pixelunit_arg);
+    output->pixel_value_unit = unit;
   }
 
   // Insert in the db
