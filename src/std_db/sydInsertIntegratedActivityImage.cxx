@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
   SYD_CERES_STATIC_INIT;
 
   // Init
-  SYD_INIT_GGO(sydInsertIntegratedActivityImage, 1);
+  SYD_INIT_GGO(sydInsertIntegratedActivityImage, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   // Get the list of images to integrate
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
-  for(auto i=1; i<args_info.inputs_num; i++) {
+  for(auto i=0; i<args_info.inputs_num; i++) {
     ids.push_back(atoi(args_info.inputs[i]));
   }
   syd::Image::vector images;
@@ -66,9 +66,6 @@ int main(int argc, char* argv[])
     LOG(1) << "No images.";
     return EXIT_SUCCESS;
   }
-  std::stringstream s;
-  for(auto image:images) { s << image->id << " "; }
-  LOG(1) << images.size() << " images will be used: " << s.str();
 
   // Check same injection date
   images[0]->FatalIfNoDicom();
@@ -84,6 +81,9 @@ int main(int argc, char* argv[])
 
   // Sort images
   db->Sort<syd::Image>(images);
+  std::stringstream s;
+  for(auto image:images) { s << image->id << " "; }
+  LOG(1) << images.size() << " images will be used: " << s.str();
 
   // Check same pixel units (warning)
   syd::PixelValueUnit::pointer unit = images[0]->pixel_value_unit;
@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
     ++iter_all;
     for(auto & itt:it) ++itt;
   }
-  syd::WriteImage<ImageType>(initial_image, "initia.mhd");
+  //syd::WriteImage<ImageType>(initial_image, "initia.mhd");
 
   // Apply radionuclide substitution. The temporary images are not
   // inserted into the db (but files are created on disk and deleted
@@ -235,9 +235,6 @@ int main(int argc, char* argv[])
   }
   builder.SetMask(mask);
 
-  // FIXME add option for auc images
-
-
   for(auto i=0; i<args_info.model_given; i++) {
     std::string n = args_info.model_arg[i];
     bool b = false;
@@ -267,7 +264,7 @@ int main(int argc, char* argv[])
   // Post processing with median filter
   if (args_info.median_filter_flag) {
     LOG(1) << "Post processing: median filter";
-    syd::WriteImage<ImageType>(auc->image, "auc_before_median.mhd");
+    if (args_info.debug_images_flag) syd::WriteImage<ImageType>(auc->image, "auc_before_median.mhd");
     auto filter = itk::MedianWithMaskImageFilter<ImageType, ImageType, ImageType>::New();
     filter->SetRadius(1);
     filter->SetInput(auc->image);
@@ -278,7 +275,7 @@ int main(int argc, char* argv[])
 
   // Post processing with fill holes
   if (args_info.fill_holes_given) {
-    syd::WriteImage<ImageType>(auc->image, "auc_before_fill_holes.mhd");
+    if (args_info.debug_images_flag) syd::WriteImage<ImageType>(auc->image, "auc_before_fill_holes.mhd");
     // Change the mask, considering success fit
     auto it_success = success->iterator;
     Iterator it_mask(mask, mask->GetLargestPossibleRegion());
