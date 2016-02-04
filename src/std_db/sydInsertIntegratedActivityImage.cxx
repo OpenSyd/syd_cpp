@@ -66,6 +66,9 @@ int main(int argc, char* argv[])
     LOG(1) << "No images.";
     return EXIT_SUCCESS;
   }
+  std::stringstream s;
+  for(auto image:images) { s << image->id << " "; }
+  LOG(1) << images.size() << " images will be used: " << s.str();
 
   // Check same injection date
   images[0]->FatalIfNoDicom();
