@@ -7,7 +7,7 @@ description "Create and insert images, multiplying im1 with im2
 - <image_1_id>       id of the first image
 - <image_2_ids>      ids of the images to multiply by image1
 
-Note that tags are copied from the image_1.
+Note that tags are copied from the image_2.
 
 "
 option "pixelunit" -  "Name of pixel value unit to resulting image"  string yes

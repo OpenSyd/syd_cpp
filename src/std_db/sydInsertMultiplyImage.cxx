@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
 
     // Insert the new image
     LOG(2) << "Store in the db";
-    auto output = builder.NewMHDImageLike(image1);
+    auto output = builder.NewMHDImageLike(image2);
     builder.SetImage<PixelType>(output, itk_image2);
     builder.InsertAndRename(output);
     db->SetImageTagsFromCommandLine(output, args_info);
