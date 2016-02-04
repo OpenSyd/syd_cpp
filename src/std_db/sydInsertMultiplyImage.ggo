@@ -1,0 +1,13 @@
+#File sydInsertMultiplyImage.ggo
+
+package "syd"
+version "0.2"
+usage "sydInsertMultiplyImage <image_1_id> <image_2_ids>"
+description "Create and insert images, multiplying im1 with im2
+- <image_1_id>       id of the first image
+- <image_2_ids>      ids of the images to multiply by image1
+
+Note that tags are copied from the image_1.
+
+"
+option "pixelunit" -  "Name of pixel value unit to resulting image"  string yes

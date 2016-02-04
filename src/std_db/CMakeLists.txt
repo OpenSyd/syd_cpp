@@ -64,13 +64,8 @@ add_executable(sydTest sydTest.cxx ${sydTest_GGO_C})
 target_link_libraries(sydTest sydStandardDatabase)
 
 ##############################
-# Specific tools (usable for StandardDatabase or db that inherit from it)
-
-
-##############################
 # Image related tool
 ##############################
-
 
 # Create images
 wrap_ggo(sydInsertImageFromDicom_GGO_C
@@ -95,6 +90,12 @@ wrap_ggo(sydUpdateImage_GGO_C
   sydUpdateImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 add_executable(sydUpdateImage sydUpdateImage.cxx ${sydUpdateImage_GGO_C})
 target_link_libraries(sydUpdateImage sydStandardDatabase)
+
+# Multiply image
+wrap_ggo(sydInsertMultiplyImage_GGO_C
+  sydInsertMultiplyImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertMultiplyImage sydInsertMultiplyImage.cxx ${sydInsertMultiplyImage_GGO_C})
+target_link_libraries(sydInsertMultiplyImage sydStandardDatabase)
 
 # Insert a new image with a calibration
 wrap_ggo(sydInsertCalibratedImage_GGO_C
@@ -145,6 +146,10 @@ add_executable(sydInsertIntegratedActivityImage sydInsertIntegratedActivityImage
 target_link_libraries(sydInsertIntegratedActivityImage sydStandardDatabase)
 
 
+##############################
+# Other tools
+##############################
+
 
 # Create DicomSeries
 wrap_ggo(sydInsertDicom_GGO_C sydInsertDicom.ggo sydCommandLineDefault.ggo)
@@ -156,12 +161,6 @@ target_link_libraries(sydInsertDicom sydStandardDatabase)
 wrap_ggo(sydDicomInfo_GGO_C sydDicomInfo.ggo sydCommandLineDefault.ggo)
 add_executable(sydDicomInfo sydDicomInfo.cxx ${sydDicomInfo_GGO_C})
 target_link_libraries(sydDicomInfo sydStandardDatabase)
-
-
-# Change tag
-# wrap_ggo(sydUpdateImageTag_GGO_C sydUpdateImageTag.ggo sydCommandLineDefault.ggo)
-# add_executable(sydUpdateImageTag sydUpdateImageTag.cxx ${sydUpdateImageTag_GGO_C})
-# target_link_libraries(sydUpdateImageTag sydStandardDatabase)
 
 # Update Radionuclide table
 wrap_ggo(sydUpdateRadionuclide_GGO_C sydUpdateRadionuclide.ggo sydCommandLineDefault.ggo)
@@ -178,8 +177,6 @@ target_link_libraries(sydInsertCalibration sydStandardDatabase)
 wrap_ggo(sydInsertRoiStatistic_GGO_C sydInsertRoiStatistic.ggo sydCommandLineDefault.ggo)
 add_executable(sydInsertRoiStatistic sydInsertRoiStatistic.cxx ${sydInsertRoiStatistic_GGO_C})
 target_link_libraries(sydInsertRoiStatistic sydStandardDatabase)
-
-
 
 #----------------------------------------------------------
 #----------------------------------------------------------
