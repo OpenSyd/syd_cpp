@@ -185,7 +185,7 @@ namespace syd {
     /// Query by tag (virtual, will be overloaded by specific db)
     virtual void QueryByTag(generic_record_vector & records,
                             const std::string table_name,
-                            const std::vector<std::string> & tag_names) const;
+                            const std::vector<std::string> & tag_names);
 
     /// Find (grep)
     template<class RecordType>

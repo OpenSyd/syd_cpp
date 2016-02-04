@@ -321,7 +321,7 @@ void syd::Database::Query(generic_record_vector & records,
 // --------------------------------------------------------------------
 void syd::Database::QueryByTag(generic_record_vector & records,
                                const std::string table_name,
-                               const std::vector<std::string> & tag_names) const
+                               const std::vector<std::string> & tag_names)
 {
   LOG(FATAL) << "QueryByTag must be overloaded";
 }

@@ -353,28 +353,26 @@ syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Imag
 // --------------------------------------------------------------------
 void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
                                        const std::string table_name,
-                                       const std::vector<std::string> & tag_names) const
+                                       const std::vector<std::string> & tag_names)
 {
-  if (tag_names.size() == 0) {
-    Query(records, table_name);
+  if (table_name == "Image") return QueryByTag<syd::Image>(records, tag_names);
+  //  if (table_name == "Calibration") return QueryByTag<syd::RoiStatistic>(records, tag_names);
+
+  if (table_name == "RoiStatistic") {
+    // Specific case here, we search in the image associated with the RoiStatistic
+    syd::Record::vector images;
+    QueryByTag(images, "Image", tag_names);
+    std::vector<syd::IdType> ids;
+    for(auto image:images) ids.push_back(image->id);
+    syd::RoiStatistic::vector stats;
+    typedef odb::query<syd::RoiStatistic> Q;
+    Q q = Q::image.in_range(ids.begin(), ids.end());
+    Query<syd::RoiStatistic>(stats, q);
+    for(auto s:stats) records.push_back(s);
     return;
   }
-  if (table_name == "Image") {
-    syd::Image::vector images;
-    QueryImageByTag(images, tag_names[0]);
-    for(auto image:images) {
-      int n=0;
-      for(auto t:tag_names) { // brute force search !!
-        auto iter = std::find_if(image->tags.begin(), image->tags.end(),
-                                 [&t](syd::Tag::pointer & tag)->bool { return tag->label == t;} );
-        if (iter == image->tags.end()) continue;
-        else ++n;
-      }
-      if (n == tag_names.size()) records.push_back(image);
-    }
-    return;
-  }
-  EXCEPTION("Query by tag could only be used with syd::Image");
+
+  EXCEPTION("Query by tag could only be used with table that contains tags");
 }
 // --------------------------------------------------------------------
 
@@ -382,7 +380,7 @@ void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
 // --------------------------------------------------------------------
 // Specific query to match image with a tag name, in order to speed up
 // a bit the FindImageByTag.
-void syd::StandardDatabase::QueryImageByTag(syd::Image::vector & images,
+/*void syd::StandardDatabase::QueryImageByTag(syd::Image::vector & images,
                                             const std::string & tag_name) const
 {
   std::vector<syd::IdType> ids; // resulting id of the images
@@ -419,4 +417,5 @@ void syd::StandardDatabase::QueryImageByTag(syd::Image::vector & images,
   // Retrieve images
   Query(images, ids);
 }
+*/
 // --------------------------------------------------------------------
