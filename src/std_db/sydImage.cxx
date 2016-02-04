@@ -259,6 +259,7 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
   auto & f = ta.GetFormat();
   ta.AddFormat("file", "Display the filename");
   ta.AddFormat("filelist", "List of files without line break");
+  ta.AddFormat("timing", "Display time in hours from injection");
 
   // Set the columns
   if (f == "default") {
@@ -273,6 +274,12 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
     auto & c = ta.AddColumn("ref_frame");
     c.max_width = 20;
     c.trunc_by_end_flag = false;
+  }
+  if (f == "timing") {
+    if (ta.GetColumn("id") == -1) ta.AddColumn("id");
+    ta.AddColumn("p");
+    ta.AddColumn("t", 2);
+    ta.AddColumn("tags");
   }
   if (f == "history") {
     if (ta.GetColumn("id") == -1) ta.AddColumn("id");
@@ -315,6 +322,13 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
     ta.Set("dicom", dicom);
     if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
     ta.Set("ref_frame", frame_of_reference_uid);
+  }
+
+  if (f == "timing") {
+    ta.Set("p", patient->name);
+    ta.Set("tags", GetLabels(tags));
+    double t = GetHoursFromInjection();
+    ta.Set("t", t);
   }
 
   if (f == "history") {
