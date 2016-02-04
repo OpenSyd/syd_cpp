@@ -33,6 +33,7 @@ syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
   SetR2MinThreshold(0.9);
   SetRestrictedTACFlag(false);
   mask_ = 0;
+  additional_point_flag_ = false;
 }
 // --------------------------------------------------------------------
 
@@ -251,7 +252,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
           tac.SetTime(n, time);
           tac.SetValue(n, value);
         }
-        //DD(tac);
       }
 
       syd::TimeActivityCurve restricted_tac;
@@ -405,7 +405,7 @@ void syd::IntegratedActivityImageBuilder::InitInputData()
       ++it;
     }
   }
-  syd::WriteImage<Image4DType>(tac_image_, "s4d.mhd");
+  //syd::WriteImage<Image4DType>(tac_image_, "s4d.mhd");
 
   // Set the lambda_phys_hours_ for the models
   for(auto & m:models_) m->lambda_phys_hours_ = image_lambda_phys_in_hour_;
