@@ -80,7 +80,7 @@ namespace syd {
 // --------------------------------------------------------------------
 double syd::FitModelBase::Integrate(double a, double b, double l_phys) const
 {
-  double x;
+  double x=0.0;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
     double l = GetLambda(k) + l_phys;
