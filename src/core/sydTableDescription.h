@@ -48,7 +48,7 @@ namespace syd {
                                     const TableDescription & d) { return d.Print(os); }
     friend std::ostream& operator<<(std::ostream& os,
                                     const TableDescription * d) { return d->Print(os); }
-    std::ostream & Print(std::ostream & os) const;
+    std::ostream & Print(std::ostream & os=std::cout) const;
 
   protected:
     std::string table_name_;

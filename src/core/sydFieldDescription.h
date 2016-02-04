@@ -44,7 +44,7 @@ namespace syd {
 
     friend std::ostream& operator<<(std::ostream& os, const FieldDescription & d) { return d.Print(os); }
     friend std::ostream& operator<<(std::ostream& os, const FieldDescription * d) { return d->Print(os); }
-    std::ostream & Print(std::ostream & os) const;
+    std::ostream & Print(std::ostream & os=std::cout) const;
 
   protected:
     syd::TableDescription * table_;
