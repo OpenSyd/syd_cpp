@@ -60,6 +60,9 @@ namespace syd {
     /// Insert the created DicomSerie/DicomFile into the db
     void InsertDicomSeries();
 
+    /// Update the information from the file
+    void UpdateDicomSerie(DicomSerie::pointer serie);
+
   protected:
     /// Protected constructor. No need to use directly.
     DicomSerieBuilder();

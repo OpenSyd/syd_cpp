@@ -156,6 +156,11 @@ wrap_ggo(sydInsertDicom_GGO_C sydInsertDicom.ggo sydCommandLineDefault.ggo)
 add_executable(sydInsertDicom sydInsertDicom.cxx ${sydInsertDicom_GGO_C})
 target_link_libraries(sydInsertDicom sydStandardDatabase)
 
+# Update DicomSerie
+wrap_ggo(sydUpdateDicomSerie_GGO_C
+  sydUpdateDicomSerie.ggo sydCommandLineDefault.ggo)
+add_executable(sydUpdateDicomSerie sydUpdateDicomSerie.cxx ${sydUpdateDicomSerie_GGO_C})
+target_link_libraries(sydUpdateDicomSerie sydStandardDatabase)
 
 # Dump content of the dicom
 wrap_ggo(sydDicomInfo_GGO_C sydDicomInfo.ggo sydCommandLineDefault.ggo)

@@ -43,6 +43,14 @@ namespace syd {
     e = new DcmDictEntry(0x0020, 0x0013, EVR_IS, "InstanceNumber", 0, DcmVariableVM, NULL, true, NULL);
     globalDataDict.addEntry(e);
 
+    // NumberofFramesinRotation
+    e = new DcmDictEntry(0x0054, 0x0053, EVR_US, "NumberofFramesinRotation", 0, DcmVariableVM, NULL, true, NULL);
+    globalDataDict.addEntry(e);
+
+    // NumberofRotations
+    e = new DcmDictEntry(0x0054, 0x0051, EVR_US, "NumberofRotations", 0, DcmVariableVM, NULL, true, NULL);
+    globalDataDict.addEntry(e);
+
     // init
     patient_ = NULL;
     injection_ = NULL;
@@ -195,6 +203,42 @@ namespace syd {
 
 
   // --------------------------------------------------------------------
+  /// Update the field
+  void DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie)
+  {
+    // Find associated DicomFile
+    syd::DicomFile::vector files;
+    typedef odb::query<syd::DicomFile> Q;
+    Q q = Q::dicom_serie == serie->id;
+    db_->Query(files, q);
+    DD(files.size());
+    if (files.size() ==0) {
+      EXCEPTION("No DicomFile for this DicomSerie");
+    }
+
+    // Set the current injection/patient
+    injection_ = serie->injection;
+    patient_ = serie->patient;
+
+    // Open the first file
+    auto filename = db_->GetAbsolutePath(files[0]);
+    DD(filename);
+    DcmFileFormat dfile;
+    bool b = OpenDicomFile(filename, dfile);
+    if (!b) {  // this is not a dicom file
+      LOG(WARNING) << "Error the file '" << filename << "' is not a dicom file.";
+      return;
+    }
+    DD("here");
+    DcmObject * dset = dfile.getAndRemoveDataset();
+    UpdateDicomSerie(serie, filename, dset);
+    DD(serie);
+    DD("done");
+  }
+  // --------------------------------------------------------------------
+
+
+  // --------------------------------------------------------------------
   /// Do not check if the serie already exist
   void DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
                                            const std::string & filename,
@@ -210,6 +254,7 @@ namespace syd {
     std::string acquisition_date = ConvertDicomDateToStringDate(AcquisitionDate, AcquisitionTime);
     std::string reconstruction_date = ConvertDicomDateToStringDate(ContentDate, ContentTime);
 
+    DD(reconstruction_date);
     if (reconstruction_date.empty())
       reconstruction_date = ConvertDicomDateToStringDate(InstanceCreationDate, InstanceCreationTime);
     if (acquisition_date.empty())
@@ -226,6 +271,7 @@ namespace syd {
     std::string patientID = GetTagValueString(dset, "PatientID");
     std::string patientName = GetTagValueString(dset, "PatientName");
 
+    DD(patientName);
     if (!forcePatientFlag_) {
       LOG(3) << "Check patient dicom_patientid is the same than the given patient";
       if (patient_->dicom_patientid != patientID) {
@@ -244,6 +290,7 @@ namespace syd {
     serie->patient = patient_;
     serie->injection = injection_;
 
+    DD(serie);
     // Modality
     serie->dicom_modality = GetTagValueString(dset, "Modality");
 
@@ -272,6 +319,7 @@ namespace syd {
     std::string device=Manufacturer+" "+ManufacturerModelName;
     serie->dicom_manufacturer = device;
 
+    DD(device);
     // Image size
     int rows = GetTagValueUShort(dset, "Rows");
     int columns = GetTagValueUShort(dset, "Columns");
@@ -301,6 +349,25 @@ namespace syd {
     // other (needed ?)
     // std::string TableTraverse = GetTagValueString(dset, "TableTraverse");
     // std::string InstanceNumber = GetTagValueString(dset, "InstanceNumber");
+
+    // Pixel scale
+    double ps = 1.0;
+    DD(ps);
+    //    ps = GetTagValueDouble(dset, "PixelScale");
+    //DD(ps);
+    serie->pixel_scale = ps;
+
+    // Duration
+    // NumberofRotations
+    // Number of Frames
+    //double d = GetTagValueDouble(dset, "ActualFrameDuration");
+    double d = atof(GetTagValueString(dset, "ActualFrameDuration").c_str());
+    DD(d); // ok
+    double f = GetTagValueUShort(dset, "NumberofFramesinRotation");
+    DD(f); // ok
+    double r = GetTagValueUShort(dset, "NumberofRotations");
+    DD(r);
+
   }
   // --------------------------------------------------------------------
 

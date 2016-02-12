@@ -1,0 +1,9 @@
+#File sydUpdateDicomSerie.ggo
+
+package "syd"
+version "0.2"
+usage "sydUpdateDicomSerie <dicom_ids>"
+description "Update information associated with a DicomSerie (read again the file)
+- <dicom_ids>      ids of the dicom to update
+
+"
