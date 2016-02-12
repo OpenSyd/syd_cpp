@@ -129,7 +129,7 @@ void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db)
 // --------------------------------------------------
 void syd::DicomSerie::InitTable(syd::PrintTable & ta) const
 {
-  ta.AddFormat("size", "Print image size");
+  ta.AddFormat("details", "Print image details");
   ta.AddFormat("file", "Print first dicom filename (slow!)");
 
   auto & f = ta.GetFormat();
@@ -138,21 +138,27 @@ void syd::DicomSerie::InitTable(syd::PrintTable & ta) const
     ta.AddColumn("id");
     ta.AddColumn("path", 120);
   }
-  if (f == "default" or f == "size") {
+  if (f == "default") {
     ta.AddColumn("id");
     ta.AddColumn("p");
     ta.AddColumn("inj");
     ta.AddColumn("mod");
     ta.AddColumn("acqui_date");
     ta.AddColumn("recon_date");
-    if (f == "size") {
-      ta.AddColumn("size");
-      ta.AddColumn("spacing");
-    }
-    else {
-      auto & c = ta.AddColumn("description", 100);
-      c.trunc_by_end_flag = true;
-    }
+    auto & c = ta.AddColumn("description", 100);
+    c.trunc_by_end_flag = true;
+  }
+  if (f == "details") {
+    ta.AddColumn("id");
+    ta.AddColumn("p");
+    ta.AddColumn("inj");
+    ta.AddColumn("mod");
+    ta.AddColumn("acqui_date");
+    ta.AddColumn("recon_date");
+    ta.AddColumn("size");
+    ta.AddColumn("spacing");
+    ta.AddColumn("duration(s)");
+    ta.AddColumn("scale");
   }
 }
 // --------------------------------------------------
@@ -174,7 +180,7 @@ void syd::DicomSerie::DumpInTable(syd::PrintTable & ta) const
     else ta.Set("path", db_->ConvertToAbsolutePath(dfiles[0]->file->path));
   }
 
-  if (f == "default" or f == "size") {
+  if (f == "default") {
     ta.Set("id", id);
     ta.Set("p", patient->name);
     if (injection == NULL) ta.Set("inj", "no_inj");
@@ -182,11 +188,20 @@ void syd::DicomSerie::DumpInTable(syd::PrintTable & ta) const
     ta.Set("mod", dicom_modality);
     ta.Set("acqui_date", acquisition_date);
     ta.Set("recon_date", reconstruction_date);
-    if (f == "size") {
-      ta.Set("size", syd::ArrayToString<int, 3>(size));
-      ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
-    }
-    else ta.Set("description", std::string(dicom_description+" "+dicom_manufacturer));
+    ta.Set("description", std::string(dicom_description+" "+dicom_manufacturer));
+  }
+  if (f == "details") {
+    ta.Set("id", id);
+    ta.Set("p", patient->name);
+    if (injection == NULL) ta.Set("inj", "no_inj");
+    else ta.Set("inj", injection->radionuclide->name);
+    ta.Set("mod", dicom_modality);
+    ta.Set("acqui_date", acquisition_date);
+    ta.Set("recon_date", reconstruction_date);
+    ta.Set("size", syd::ArrayToString<int, 3>(size));
+    ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
+    ta.Set("duration(s)", duration_sec);
+    ta.Set("scale", pixel_scale);
   }
 }
 // --------------------------------------------------
