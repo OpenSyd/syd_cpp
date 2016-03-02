@@ -145,7 +145,8 @@ void syd::StandardDatabase::SetTagsFromCommandLine(typename RecordType::pointer 
 // --------------------------------------------------------------------
 template<class RecordType>
 void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
-                                       const std::vector<std::string> & tag_names)
+                                       const std::vector<std::string> & tag_names,
+                                       const std::string & patient_name)
 {
   if (tag_names.size() == 0) {
     Query(records, RecordType::GetStaticTableName());
@@ -153,7 +154,7 @@ void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
   }
 
   typename RecordType::vector temp;
-  QueryByTag<RecordType>(temp, tag_names[0]);
+  QueryByTag<RecordType>(temp, tag_names[0], patient_name);
   for(auto record:temp) {
     int n=0;
     for(auto t:tag_names) { // brute force search !!
@@ -174,7 +175,8 @@ void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
 // a bit the FindImageByTag.
 template<class RecordType>
 void syd::StandardDatabase::QueryByTag(typename RecordType::vector & records,
-                                       const std::string & tag_name)
+                                       const std::string & tag_name,
+                                       const std::string & patient_name)
 {
   std::vector<syd::IdType> ids; // resulting id of the records
 
@@ -192,6 +194,10 @@ void syd::StandardDatabase::QueryByTag(typename RecordType::vector & records,
   sql << "where  " << t1 << ".id == " << t2 << ".object_id ";
   sql << "and    " << t2 << ".value == " << t3 << ".id ";
   sql << "and " << t3 << ".label==" << "\"" << tag_name << "\" ";
+  if (patient_name != "all") {
+    syd::Patient::pointer p = FindPatient(patient_name);
+    sql << " and " << t1 << ".patient == \"" << p->id << "\" ";
+  }
   sql << ";";
 
   // Native query

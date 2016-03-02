@@ -88,12 +88,14 @@ namespace syd {
     /// Query by tag, type specific function
     template<class RecordType>
     void QueryByTag(generic_record_vector & records,
-                    const std::vector<std::string> & tag_names);
+                    const std::vector<std::string> & tag_names,
+                    const std::string & patient_name="all");
 
     /// Query by tag, type specific, for a single tag
     template<class RecordType>
     void QueryByTag(typename RecordType::vector & records,
-                    const std::string & tag_name);
+                    const std::string & tag_name,
+                    const std::string & patient_name="all");
   protected:
     /// Insert the tables
     virtual void CreateTables();
