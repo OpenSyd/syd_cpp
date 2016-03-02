@@ -31,7 +31,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydUpdateImage, 1);
+  SYD_INIT_GGO(sydUpdateImage, 0);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
