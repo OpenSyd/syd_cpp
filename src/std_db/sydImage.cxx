@@ -127,6 +127,30 @@ void syd::Image::AddTag(const syd::Tag::pointer tag)
 
 
 // --------------------------------------------------
+void syd::Image::AddTags(const std::string tag_names)
+{
+  if (GetDatabase() == NULL) {
+    LOG(FATAL) << "Error, no db associated with this image (not insert in the db ?)";
+  }
+  syd::StandardDatabase * db = static_cast<syd::StandardDatabase*>(GetDatabase());
+  syd::Tag::vector tags;
+  db->FindTags(tags, tag_names);
+  for(auto t:tags) AddTag(t);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::AddTags(const std::vector<std::string> & tag_names)
+{
+  std::string x;
+  for(auto t:tag_names) x = x + t + " ";
+  AddTags(x);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 void syd::Image::RemoveTag(const syd::Tag::pointer tag)
 {
   bool found = false;

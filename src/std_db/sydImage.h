@@ -92,6 +92,8 @@ namespace syd {
 
     /// Add a tag to the list (check is already exist) ; do not update in the db.
     void AddTag(const syd::Tag::pointer tag);
+    void AddTags(const std::vector<std::string> & tags);
+    void AddTags(const std::string tags);
 
     /// Remove a tag from the list ; do not update in the db. Do nothing it not found
     void RemoveTag(const syd::Tag::pointer tag);
