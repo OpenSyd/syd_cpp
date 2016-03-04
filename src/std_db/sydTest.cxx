@@ -49,15 +49,15 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
 
   // ------------------------------------------------------------------
-  if (0) {
-    db->CheckDatabaseSchema();
+  // view
+  if (1) {
+
   }
+
 
   // ------------------------------------------------------------------
   if (0) {
-    db->InitDatabaseDescription();
-    auto desc = db->GetDatabaseDescription();
-    DD(*desc);
+    db->CheckDatabaseSchema();
   }
 
   // ------------------------------------------------------------------
@@ -67,12 +67,6 @@ int main(int argc, char* argv[])
     DD(db->GetNumberOfElements<syd::File>());
     DD(db->GetNumberOfElements<syd::Image>());
     DD(db->GetNumberOfElements<syd::DicomFile>());
-  }
-
-  // ------------------------------------------------------------------
-  // Trial migration ?
-  if (0) {
-
   }
 
   // ------------------------------------------------------------------
