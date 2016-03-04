@@ -144,7 +144,7 @@ void syd::StandardDatabase::SetTagsFromCommandLine(typename RecordType::pointer 
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
+void syd::StandardDatabase::QueryByTags(generic_record_vector & records,
                                        const std::vector<std::string> & tag_names,
                                        const std::string & patient_name)
 {
@@ -166,6 +166,20 @@ void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
     if (n == tag_names.size()) records.push_back(record);
   }
 
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::StandardDatabase::QueryByTags(typename RecordType::vector & records,
+                                        const std::vector<std::string> & tag_names,
+                                        const std::string & patient_name)
+{
+  syd::Record::vector temp;
+  records.clear();
+  QueryByTags<RecordType>(temp, tag_names, patient_name);
+  for(auto t:temp) records.push_back(std::static_pointer_cast<RecordType>(t));
 }
 // --------------------------------------------------------------------
 
@@ -219,5 +233,18 @@ void syd::StandardDatabase::QueryByTag(typename RecordType::vector & records,
 
   // Retrieve records
   Query(records, ids);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::StandardDatabase::SortAndPrint(typename RecordType::vector & records)
+{
+  Sort(records);
+  syd::PrintTable table;
+  table.SetFormat("default");
+  table.SetHeaderFlag(false);
+  table.Dump(records, std::cout);
 }
 // --------------------------------------------------------------------

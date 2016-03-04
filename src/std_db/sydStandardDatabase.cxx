@@ -355,7 +355,7 @@ void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
                                        const std::string table_name,
                                        const std::vector<std::string> & tag_names)
 {
-  if (table_name == "Image") return QueryByTag<syd::Image>(records, tag_names);
+  if (table_name == "Image") return QueryByTags<syd::Image>(records, tag_names);
   //  if (table_name == "Calibration") return QueryByTag<syd::RoiStatistic>(records, tag_names);
 
   if (table_name == "RoiStatistic") {
