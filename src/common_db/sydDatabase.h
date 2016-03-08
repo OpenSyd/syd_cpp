@@ -42,7 +42,7 @@ namespace syd {
   template<class Record> class Table;
   template<class DatabaseSchema> class DatabaseCreator;
 
-  // I dont know how to retrieve this value, so I fix it here. IT is
+  // I dont know how to retrieve this value, so I fix it here. It is
   // used to split large query, in particular the ones with with
   // "in_range".
   const unsigned int SQLITE_MAX_VARIABLE_NUMBER = 999;
@@ -143,11 +143,6 @@ namespace syd {
     void Update(generic_record_pointer record, std::string field_name, std::string value_name);
     // ------------------------------------------------------------------------
 
-
-    // ------------------------------------------------------------------------
-    /// Set parameter of an element. 'Set' must be overwritten in the Record.
-    virtual void Set(generic_record_pointer record, const std::vector<std::string> & args) const;
-    // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------

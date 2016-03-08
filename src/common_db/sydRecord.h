@@ -60,7 +60,7 @@ namespace syd {
     static void InitInheritance() { }
 
     /// Set the values of the fields from some string.
-    virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
+    virtual void Set(const std::vector<std::string> & args);
 
     /// Initialise a PrintTable
     virtual void InitTable(syd::PrintTable & table) const;
@@ -153,9 +153,6 @@ namespace syd {
 #define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME)   \
   virtual std::string ToString() const;                 \
   virtual bool IsEqual(const pointer p) const;
-
-#define TABLE_DECLARE_OPTIONAL_FUNCTIONS(TABLE_NAME)                    \
-  virtual void Set(const syd::Database * db, const std::vector<std::string> & args);
 
   /// To be define in db.cxx (and declared in db.h) to allow fast
   /// computation of the nb of elements in a table.

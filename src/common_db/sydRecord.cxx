@@ -32,10 +32,18 @@ syd::Record::Record()
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-void syd::Record::Set(const syd::Database * db, const std::vector<std::string> & args)
+void syd::Record::CheckIfPersistant()
 {
-  LOG(FATAL) << "The function Set(db, args) must be implemented for table " << GetTableName();
+
+}
+
+
+// --------------------------------------------------------------------
+void syd::Record::Set(const std::vector<std::string> & args)
+{
+  // Check if persist
+  CheckIfPersistant();
+  LOG(FATAL) << "The function Set(args) must be implemented for table " << GetTableName();
 }
 // --------------------------------------------------------------------
 
@@ -108,13 +116,4 @@ syd::CheckResult syd::Record::Check() const
   syd::CheckResult r;
   return r;
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-// void syd::Record::InitTableDescription(syd::TableDescription * description) const
-// {
-//   description->SetTableName(GetTableName(), GetSQLTableName());
-//   description->AddField("id", "int");
-// }
 // --------------------------------------------------------------------
