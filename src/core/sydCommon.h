@@ -83,6 +83,7 @@ namespace syd {
   void SkipComment(std::istream & is);
   bool Replace(std::string& str, const std::string& from, const std::string& to);
   void GetWords(std::vector<std::string> & words, const std::string & phrase);
+  void SetWords(std::string & phrase, const std::vector<std::string> & words);
   // trim from start
   std::string &ltrim(std::string &s);
   // trim from end
