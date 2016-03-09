@@ -20,6 +20,7 @@ Use --dump to output details of the found records instead of only the ids.
 option "exclude"    e   "Exclude pattern (multiple)"	           string  no multiple
 option "list"       l   "Dump list of ids"                         flag    off
 option "format"     f   "Format when dump results"                 string  default="" no
+option "col"        -   "Change column precision or size, e.g. '7 p 5' (col nb, p or s, value)" string no multiple
 option "check"      c   "Check files associated to found records"  flag    off
 option "noheader"   -   "Do not display table header"              flag    off
 option "delete"     d   "Delete all find element"                  flag    off
