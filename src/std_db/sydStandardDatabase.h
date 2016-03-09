@@ -59,6 +59,7 @@ namespace syd {
     syd::Injection::pointer FindInjection(const syd::Patient::pointer patient,
                                           const std::string & name_or_study_id) const;
     void FindTags(syd::Tag::vector & tags, const std::string & names) const;
+    void FindTags(syd::Tag::vector & tags, const std::vector<std::string> & names) const;
     syd::PixelValueUnit::pointer FindOrInsertUnit(const std::string & name, const std::string & description);
     syd::PixelValueUnit::pointer FindPixelValueUnit(const std::string & name);
     syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
@@ -79,6 +80,9 @@ namespace syd {
 
     template<class ArgsInfo, class RecordType>
     void SetTagsFromCommandLine(typename RecordType::pointer record, ArgsInfo args_info);
+
+    template<class ArgsInfo>
+    void UpdateTagsFromCommandLine(syd::Tag::vector & tags, ArgsInfo & args_info);
 
     /// Query by tag, generic function
     virtual void QueryByTag(generic_record_vector & records,

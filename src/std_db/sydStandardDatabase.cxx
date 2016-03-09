@@ -216,12 +216,22 @@ void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::string 
 {
   std::vector<std::string> words;
   syd::GetWords(words, names);
-  odb::query<Tag> q = odb::query<Tag>::label.in_range(words.begin(), words.end());
+  FindTags(tags, words);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::vector<std::string> & names) const
+{
+  odb::query<Tag> q = odb::query<Tag>::label.in_range(names.begin(), names.end());
   Query<Tag>(tags, q);
-  if (tags.size() != words.size()) {
+  if (tags.size() != names.size()) {
     std::string s;
     for(auto t:tags) s += t->label+" ";
-    EXCEPTION("Cannot find all tags in FindTags. Look for: '" << names
+    std::string w;
+    syd::SetWords(w, names);
+    EXCEPTION("Cannot find all tags in FindTags. Look for: '" << w
               << "' but find: '" << s << "'");
   }
 }
