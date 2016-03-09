@@ -20,7 +20,6 @@
 #include "sydRecord.h"
 #include "sydDatabase.h"
 
-
 // Define static member
 std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
 
@@ -112,9 +111,12 @@ syd::CheckResult syd::Record::Check() const
 
 
 // --------------------------------------------------------------------
-// void syd::Record::InitTableDescription(syd::TableDescription * description) const
-// {
-//   description->SetTableName(GetTableName(), GetSQLTableName());
-//   description->AddField("id", "int");
-// }
+syd::Database * syd::Record::GetDatabase() const
+{
+  if (db_ == NULL) {
+    EXCEPTION("Error in 'GetDatabase', the current record from table'"
+              << GetStaticTableName << "' is not persistant. Insert it in the db before.");
+  }
+  return db_;
+}
 // --------------------------------------------------------------------

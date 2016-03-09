@@ -95,7 +95,11 @@ namespace syd {
     static std::map<std::string, std::vector<std::string> > inherit_sql_tables_map_;
 
     /// Return the db where this record is stored
-    syd::Database * GetDatabase() { return db_; }
+    syd::Database * GetDatabase() const;
+
+    /// Return the db where this record is stored and consider it as a DatabaseType
+    template<class DatabaseType>
+    DatabaseType * GetDatabase() const;
 
   protected:
     /// This default constructor allow to oblige class that inherit
@@ -121,6 +125,8 @@ namespace syd {
 
   }; // end of class
 
+
+#include "sydRecord.txx"
 
   /// odb::access is needed for polymorphism
   /// Also define a view that can count the nb of elements in a table
