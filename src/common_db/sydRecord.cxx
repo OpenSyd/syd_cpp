@@ -115,7 +115,7 @@ syd::Database * syd::Record::GetDatabase() const
 {
   if (db_ == NULL) {
     EXCEPTION("Error in 'GetDatabase', the current record from table'"
-              << GetStaticTableName << "' is not persistant. Insert it in the db before.");
+              << GetTableName() << "' is not persistant. Insert it in the db before.");
   }
   return db_;
 }
