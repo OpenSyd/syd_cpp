@@ -166,7 +166,8 @@ int main(int argc, char* argv[])
     db->New(stat);
     stat->image = tia;
     rsbuilder.ComputeStatistic(stat);// no mask
-    double scale = (stat->sum / N / 1000.0);
+    N = N/1000.0; // 1000 because tia is in kBq.h
+    double scale = (3600 * 100) * (stat->sum/N); // 100 because in cGy
     for(auto & m:map_images) {
       syd::Image::pointer image = m.second;
       std::string type = m.first;
