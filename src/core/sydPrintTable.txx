@@ -32,7 +32,7 @@ void syd::PrintTable::Dump(const std::vector<std::shared_ptr<RecordType>> & reco
   if (GetFormat() == "") SetFormat("default");
   AddFormat("help", "Display list of formats and stop");
   AddFormat("default", "Default format");
-  records[0]->InitTable(*this);
+  //  records[0]->InitTable(*this); // MUST BE CALLED Before !
 
   // Display help if needed
   if (GetFormat() == "help") {

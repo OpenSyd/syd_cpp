@@ -110,6 +110,17 @@ void syd::PrintTable::Set(int col, const double & value)
 
 
 //------------------------------------------------------------------
+void syd::PrintTable::SetColumnPrecision(int col, int precision)
+{
+  if (columns_.size() <= col) {
+    LOG(FATAL) << "No column " << col << " only " << columns_.size() << " columns in table.";
+  }
+  columns_[col].precision = precision;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
 void syd::PrintTable::Print(std::ostream & out)
 {
   // Compute optimal column width
