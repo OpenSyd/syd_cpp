@@ -58,6 +58,12 @@ namespace syd {
 
   // Check if all tags are in the first list
   bool IsAllTagsIn(syd::Tag::vector & input_tags, syd::Tag::vector & to_search_tags);
+
+  int AddTag(syd::Tag::vector & tags, const syd::Tag::vector & tags_to_add);
+  int AddTag(syd::Tag::vector & tags, const syd::Tag::pointer & tag_to_add);
+  int RemoveTag(syd::Tag::vector & tags, const syd::Tag::vector & tags_to_remove);
+  int RemoveTag(syd::Tag::vector & tags, const syd::Tag::pointer & tag_to_remove);
+
 }
 // --------------------------------------------------------------------
 
