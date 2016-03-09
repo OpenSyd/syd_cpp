@@ -48,7 +48,6 @@ int main(int argc, char* argv[])
 
   // Loop on mhd files and txt (no folder recursive yet)
   fs::path folder(folder_name);
-  DD(folder);
   if (!fs::exists(folder)) {
     LOG(FATAL) << "Folder '" << folder << "' does not exist.";
   }
@@ -105,7 +104,8 @@ int main(int argc, char* argv[])
         tag_names = {rad_name, study_name, type};
         db->QueryByTags<syd::Image>(inputs, tag_names, patient_name);
         if (inputs.size() != 0) {
-          LOG(FATAL) << "Image " << type << " already exist for this patient/rad: " << inputs[0];
+          LOG(WARNING) << "Image " << type << " already exist for this patient/rad: " << inputs[0] << " (skip)";
+          continue;
         }
 
         // Create image
@@ -132,7 +132,7 @@ int main(int argc, char* argv[])
         output->pixel_value_unit = u;
 
         // Insert in the db
-        builder.InsertAndRename(output);
+        if (!args_info.dry_run_flag) builder.InsertAndRename(output);
         LOG(1) << "File: " << file;
         LOG(1) << "      "  << output;
         map_images[type] = output;
@@ -160,27 +160,29 @@ int main(int argc, char* argv[])
   }
 
   // Scale dose if needed
-  syd::RoiStatisticBuilder rsbuilder(db);
-  syd::RoiStatistic::pointer stat;
-  db->New(stat);
-  stat->image = tia;
-  rsbuilder.ComputeStatistic(stat);// no mask
-  double scale = (stat->sum / N / 1000.0);
-  for(auto & m:map_images) {
-    syd::Image::pointer image = m.second;
-    std::string type = m.first;
-    // Scale
-    double s = scale;
-    if (type == "dose_squared" or type == "edep_squared") s = scale*scale;
-    if (type == "dose" or type == "edep" or
-        type == "dose_squared" or type == "edep_squared") {
-      syd::ScaleImageBuilder builder(db);
-      builder.Scale(image, s);
-      // unit
-      image->pixel_value_unit = db->FindPixelValueUnit("cGy/IA[MBq]");
-      // Update
-      LOG(1) << "Scaling: " << image;
-      db->Update(image);
+  if (N != 0) {
+    syd::RoiStatisticBuilder rsbuilder(db);
+    syd::RoiStatistic::pointer stat;
+    db->New(stat);
+    stat->image = tia;
+    rsbuilder.ComputeStatistic(stat);// no mask
+    double scale = (stat->sum / N / 1000.0);
+    for(auto & m:map_images) {
+      syd::Image::pointer image = m.second;
+      std::string type = m.first;
+      // Scale
+      double s = scale;
+      if (type == "dose_squared" or type == "edep_squared") s = scale*scale;
+      if (type == "dose" or type == "edep" or
+          type == "dose_squared" or type == "edep_squared") {
+        syd::ScaleImageBuilder builder(db);
+        builder.Scale(image, s);
+        // unit
+        image->pixel_value_unit = db->FindPixelValueUnit("cGy/IA[MBq]");
+        // Update
+        LOG(1) << "Scaling: " << image;
+        if (!args_info.dry_run_flag) db->Update(image);
+      }
     }
   }
 
