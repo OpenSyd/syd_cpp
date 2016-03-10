@@ -363,7 +363,7 @@ syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Imag
 // --------------------------------------------------------------------
 void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
                                        const std::string table_name,
-                                       const std::vector<std::string> & tag_names)
+                                       const std::vector<std::string> & tag_names) // need patient name ?
 {
   if (table_name == "Image") return QueryByTags<syd::Image>(records, tag_names);
   //  if (table_name == "Calibration") return QueryByTag<syd::RoiStatistic>(records, tag_names);
