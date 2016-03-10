@@ -115,41 +115,41 @@ std::string syd::Image::GetModality() const
 
 
 // --------------------------------------------------
-void syd::Image::AddTag(const syd::Tag::pointer tag)
-{
-  bool found = false;
-  int i=0;
-  while (i<tags.size() and !found) {
-    if (tags[i]->id == tag->id) found = true;
-    ++i;
-  }
-  if (!found) tags.push_back(tag);
-}
+// void syd::Image::AddTag(const syd::Tag::pointer tag)
+// {
+//   bool found = false;
+//   int i=0;
+//   while (i<tags.size() and !found) {
+//     if (tags[i]->id == tag->id) found = true;
+//     ++i;
+//   }
+//   if (!found) tags.push_back(tag);
+// }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Image::AddTags(const std::string tag_names)
-{
-  if (GetDatabase() == NULL) {
-    LOG(FATAL) << "Error, no db associated with this image (not insert in the db ?)";
-  }
-  syd::StandardDatabase * db = static_cast<syd::StandardDatabase*>(GetDatabase());
-  syd::Tag::vector tags;
-  db->FindTags(tags, tag_names);
-  for(auto t:tags) AddTag(t);
-}
-// --------------------------------------------------
+// void syd::Image::AddTags(const std::string tag_names)
+// {
+//   if (GetDatabase() == NULL) {
+//     LOG(FATAL) << "Error, no db associated with this image (not insert in the db ?)";
+//   }
+//   syd::StandardDatabase * db = static_cast<syd::StandardDatabase*>(GetDatabase());
+//   syd::Tag::vector tags;
+//   db->FindTags(tags, tag_names);
+//   for(auto t:tags) AddTag(t);
+// }
+// // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Image::AddTags(const std::vector<std::string> & tag_names)
-{
-  std::string x;
-  for(auto t:tag_names) x = x + t + " ";
-  AddTags(x);
-}
-// --------------------------------------------------
+// void syd::Image::AddTags(const std::vector<std::string> & tag_names)
+// {
+//   std::string x;
+//   for(auto t:tag_names) x = x + t + " ";
+//   AddTags(x);
+// }
+// // --------------------------------------------------
 
 
 // --------------------------------------------------
@@ -263,7 +263,7 @@ void syd::Image::FatalIfNoDicom() const
 // --------------------------------------------------
 void syd::Image::CopyTags(const syd::Image::pointer image)
 {
-  for(auto t:image->tags) AddTag(t);
+  for(auto t:image->tags) AddTag(tags, t);//AddTag(t);
 }
 // --------------------------------------------------
 

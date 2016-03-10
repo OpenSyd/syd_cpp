@@ -90,10 +90,10 @@ namespace syd {
     /// Return the modality of the dicom linked to this image
     std::string GetModality() const;
 
-    /// Add a tag to the list (check is already exist) ; do not update in the db.
-    void AddTag(const syd::Tag::pointer tag);
-    void AddTags(const std::vector<std::string> & tags);
-    void AddTags(const std::string tags);
+    // /// Add a tag to the list (check is already exist) ; do not update in the db.
+    // void AddTag(const syd::Tag::pointer tag);
+    // void AddTags(const std::vector<std::string> & tags);
+    // void AddTags(const std::string tags);
 
     /// Remove a tag from the list ; do not update in the db. Do nothing it not found
     void RemoveTag(const syd::Tag::pointer tag);
@@ -114,7 +114,7 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
-    /// Test if the image is the same size and spacing than the param
+    /// Test if the image is the same size and spacing than the param FIXME --> not in class !!
     bool IsSameSizeAndSpacingThan(const syd::Image::pointer image) const;
 
     /// Return size as string such like 128x128x64
