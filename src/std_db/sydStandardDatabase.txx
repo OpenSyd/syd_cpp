@@ -277,10 +277,12 @@ void syd::StandardDatabase::QueryByTag(typename RecordType::vector & records,
 template<class RecordType>
 void syd::StandardDatabase::SortAndPrint(typename RecordType::vector & records)
 {
+  if (records.size() == 0) return;
   Sort(records);
   syd::PrintTable table;
   table.SetFormat("default");
   table.SetHeaderFlag(false);
+  records[0]->InitTable(table);
   table.Dump(records, std::cout);
 }
 // --------------------------------------------------------------------
