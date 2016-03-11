@@ -40,8 +40,9 @@ namespace syd {
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Tag, syd::Tag);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Tag);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Tag);
     // ------------------------------------------------------------------------
+
+    void Set(const std::vector<std::string> & arg);
 
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
@@ -58,6 +59,12 @@ namespace syd {
 
   // Check if all tags are in the first list
   bool IsAllTagsIn(syd::Tag::vector & input_tags, syd::Tag::vector & to_search_tags);
+
+  int AddTag(syd::Tag::vector & tags, const syd::Tag::vector & tags_to_add);
+  int AddTag(syd::Tag::vector & tags, const syd::Tag::pointer & tag_to_add);
+  int RemoveTag(syd::Tag::vector & tags, const syd::Tag::vector & tags_to_remove);
+  int RemoveTag(syd::Tag::vector & tags, const syd::Tag::pointer & tag_to_remove);
+
 }
 // --------------------------------------------------------------------
 

@@ -33,7 +33,7 @@ Table<RecordType> * syd::Database::GetTable() const
 template<class RecordType>
 void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & records,
                          const std::string & format,
-                         std::ostream & os) const
+                         std::ostream & os)
 {
   /*
   if (records.size() == 0) return;
@@ -265,12 +265,16 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
 
 // --------------------------------------------------------------------
 template<class RecordType>
-long syd::Database::GetNumberOfElements() const
+long syd::Database::GetNumberOfElements()
 {
+  DD("GetNumberOfElements template");
+
+  // FIXME TO remove
   // Brute force. This is inefficient. Should use view and count.
   std::vector<std::shared_ptr<RecordType>> records;
   Query(records);
-  return records.size();
+  DD(records.size());
+  return GetNumberOfElements<RecordType>();
 }
 // --------------------------------------------------------------------
 

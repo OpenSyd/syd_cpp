@@ -52,8 +52,9 @@ std::string syd::Injection::ToString() const
 
 
 // --------------------------------------------------
-void syd::Injection::Set(const syd::Database * d, const std::vector<std::string> & args)
+void syd::Injection::Set(const std::vector<std::string> & args)
 {
+  CheckIfPersistant();
   if (args.size() < 4) {
     LOG(FATAL) << "Provide <patient> <radionuclide> <date> <activity_in_MBq>. "
                << std::endl
@@ -61,7 +62,7 @@ void syd::Injection::Set(const syd::Database * d, const std::vector<std::string>
                << " <radionuclide> can be a name or an id";
   }
 
-  syd::StandardDatabase* db = (syd::StandardDatabase*)(d);
+  auto db = GetDatabase<syd::StandardDatabase>();
   std::string patient_name = args[0];
   auto p = db->FindPatient(patient_name);
   patient = p;

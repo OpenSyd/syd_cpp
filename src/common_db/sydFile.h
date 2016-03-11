@@ -42,7 +42,6 @@ namespace syd {
      // ------------------------------------------------------------------------
     TABLE_DEFINE(File, syd::File);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(File);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(File);
     // ------------------------------------------------------------------------
 
     void Callback(odb::callback_event, odb::database&) const;

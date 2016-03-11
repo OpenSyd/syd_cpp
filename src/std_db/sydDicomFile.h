@@ -51,7 +51,6 @@ namespace syd {
     // ------------------------------------------------------------------------
     TABLE_DEFINE(DicomFile, syd::DicomFile);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomFile);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(DicomFile);
     // ------------------------------------------------------------------------
 
     void Callback(odb::callback_event, odb::database&) const;

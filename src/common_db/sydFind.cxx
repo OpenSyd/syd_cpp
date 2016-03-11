@@ -98,9 +98,29 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
   }
   else {
+    if (results.size() == 0) {
+      LOG(1) << "No records match";
+      return EXIT_SUCCESS;
+    }
     syd::PrintTable table;
     table.SetFormat(format);
     table.SetHeaderFlag(!args_info.noheader_flag);
+    results[0]->InitTable(table);
+    for(auto i=0; i<args_info.col_given; i++) {
+      std::string s = args_info.col_arg[i];
+      std::vector<std::string> w;
+      syd::GetWords(w, s);
+      if (w.size() != 3) {
+        LOG(FATAL) << "Format must be 3 strings: 'num_col' 'p' 'value'";
+      }
+      int col = atoi(w[0].c_str());
+      if (w[1] != "p") {
+        LOG(FATAL) << "Format not known. Must be 'p'.";
+      }
+      int v = atoi(w[2].c_str());
+      table.SetColumnPrecision(col, v);
+    }
+
     try {
       table.Dump<syd::Record>(results, os);
     } catch (std::exception & e) {

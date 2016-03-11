@@ -216,12 +216,22 @@ void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::string 
 {
   std::vector<std::string> words;
   syd::GetWords(words, names);
-  odb::query<Tag> q = odb::query<Tag>::label.in_range(words.begin(), words.end());
+  FindTags(tags, words);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::vector<std::string> & names) const
+{
+  odb::query<Tag> q = odb::query<Tag>::label.in_range(names.begin(), names.end());
   Query<Tag>(tags, q);
-  if (tags.size() != words.size()) {
+  if (tags.size() != names.size()) {
     std::string s;
     for(auto t:tags) s += t->label+" ";
-    EXCEPTION("Cannot find all tags in FindTags. Look for: '" << names
+    std::string w;
+    syd::SetWords(w, names);
+    EXCEPTION("Cannot find all tags in FindTags. Look for: '" << w
               << "' but find: '" << s << "'");
   }
 }
@@ -300,26 +310,6 @@ std::string syd::StandardDatabase::GetAbsolutePath(const syd::File::pointer file
 
 
 // --------------------------------------------------------------------
-namespace syd {
-  TABLE_GET_NUMBER_OF_ELEMENTS(Patient)
-  TABLE_GET_NUMBER_OF_ELEMENTS(Injection)
-  TABLE_GET_NUMBER_OF_ELEMENTS(Radionuclide)
-  TABLE_GET_NUMBER_OF_ELEMENTS(Tag)
-  TABLE_GET_NUMBER_OF_ELEMENTS(File)
-  TABLE_GET_NUMBER_OF_ELEMENTS(DicomFile)
-  TABLE_GET_NUMBER_OF_ELEMENTS(DicomSerie)
-  TABLE_GET_NUMBER_OF_ELEMENTS(Image)
-  TABLE_GET_NUMBER_OF_ELEMENTS(RoiType);
-  TABLE_GET_NUMBER_OF_ELEMENTS(RoiMaskImage);
-  TABLE_GET_NUMBER_OF_ELEMENTS(ImageTransform);
-  TABLE_GET_NUMBER_OF_ELEMENTS(Calibration);
-  TABLE_GET_NUMBER_OF_ELEMENTS(PixelValueUnit);
-  TABLE_GET_NUMBER_OF_ELEMENTS(RoiStatistic);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Image::pointer image,
                                                                  const std::string & calib_tag)
 {
@@ -353,7 +343,7 @@ syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Imag
 // --------------------------------------------------------------------
 void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
                                        const std::string table_name,
-                                       const std::vector<std::string> & tag_names)
+                                       const std::vector<std::string> & tag_names) // need patient name ?
 {
   if (table_name == "Image") return QueryByTags<syd::Image>(records, tag_names);
   //  if (table_name == "Calibration") return QueryByTag<syd::RoiStatistic>(records, tag_names);
@@ -374,48 +364,4 @@ void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
 
   EXCEPTION("Query by tag could only be used with table that contains tags");
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-// Specific query to match image with a tag name, in order to speed up
-// a bit the FindImageByTag.
-/*void syd::StandardDatabase::QueryImageByTag(syd::Image::vector & images,
-                                            const std::string & tag_name) const
-{
-  std::vector<syd::IdType> ids; // resulting id of the images
-
-  // Create request code
-  std::ostringstream sql; // request
-  std::string t1="\"syd::Image\"";
-  std::string t2="\"syd::Image_tags\"";
-  std::string t3="\"syd::Tag\"";
-  sql << "select " << t1 << ".id ";
-  sql << "from   " << t1 << "," << t2 << "," << t3 << " ";
-  sql << "where  " << t1 << ".id == " << t2 << ".object_id ";
-  sql << "and    " << t2 << ".value == " << t3 << ".id ";
-  sql << "and " << t3 << ".label==" << "\"" << tag_name << "\" ";
-  sql << ";";
-
-  // Native query
-  try {
-  odb::sqlite::connection_ptr c (odb_db_->connection ());
-  sqlite3 * sdb(c->handle());
-  sqlite3_stmt * stmt;
-  std::string s = sql.str();
-  auto rc = sqlite3_prepare_v2(sdb, s.c_str(), -1, &stmt, NULL);
-  if (rc==SQLITE_OK) {
-    while(sqlite3_step(stmt) == SQLITE_ROW) {
-      std::string n = syd::sqlite3_column_text_string(stmt, 0);
-      ids.push_back(atoi(n.c_str()));
-    }
-  }
-  } catch(std::exception & e) {
-    EXCEPTION("Error during sql query. Error is " << e.what());
-  }
-
-  // Retrieve images
-  Query(images, ids);
-}
-*/
 // --------------------------------------------------------------------

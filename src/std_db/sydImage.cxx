@@ -58,19 +58,13 @@ std::string syd::Image::ToString() const
   ss << frame_of_reference_uid << " ";
   if (pixel_value_unit != NULL) ss << pixel_value_unit->name;
   else ss << "pixel_value_unit_unset";
-  ss << " " << history->insertion_date << " "
-     << history->update_date;
+  if (history) {
+    ss << " " << history->insertion_date << " "
+       << history->update_date;
+  }
   return ss.str();
 }
 // --------------------------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "To insert Image, please use sydInsertImage or sydInsertImageFromDicom";
-}
-// --------------------------------------------------
 
 
 // --------------------------------------------------

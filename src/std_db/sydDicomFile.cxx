@@ -58,14 +58,6 @@ bool syd::DicomFile::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-void syd::DicomFile::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "Cannot insert DicomFile with 'Set'. Use sydInsertDicom.";
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::DicomFile::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event, db);

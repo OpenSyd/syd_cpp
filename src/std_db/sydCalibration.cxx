@@ -51,26 +51,6 @@ std::string syd::Calibration::ToString() const
 
 
 // --------------------------------------------------
-void syd::Calibration::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "To insert Calibration ... TODO ";
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-// void syd::Calibration::CopyFrom(const pointer p)
-// {
-//   syd::Record::CopyFrom(p);
-//   image = p->image;
-//   for(auto t:p->tags) tags.push_back(t);
-//   factor = p->factor;
-//   fov_ratio = p->fov_ratio;
-// }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 bool syd::Calibration::IsEqual(const pointer p) const
 {
   bool b = (syd::Record::IsEqual(p) and

@@ -119,6 +119,8 @@ void syd::DatabaseManager::Create(const std::string & db_schema_name,
               << "Known type are: " << os.str() << std::endl
               << "Try to insert this typename via plugin.");
   }
+  DD("Create");
+  DD(db_schema_name);
   it->second->Create(db_schema_name, filename, folder, force_overwrite);
 }
 // --------------------------------------------------------------------

@@ -52,9 +52,9 @@ bool ext::Patient::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-void ext::Patient::Set(const syd::Database * db, const std::vector<std::string> & arg)
+void ext::Patient::Set(const std::vector<std::string> & arg)
 {
-  syd::Patient::Set(db, arg);
+  syd::Patient::Set(arg);
   if (arg.size() > 4) {
     if (!syd::IsDateValid(arg[4])) {
       LOG(FATAL) << "Error " << arg[4] << " is not a valid date. Use 'YYYY-MM-DD hh:mm' format, such as 2013-05-17 12:00.";
@@ -67,14 +67,13 @@ void ext::Patient::Set(const syd::Database * db, const std::vector<std::string> 
 
 
 // --------------------------------------------------
-void ext::Patient::Set(const syd::Database * db,
-                       const std::string & pname,
+void ext::Patient::Set(const std::string & pname,
                        const syd::IdType & pstudy_id,
                        const double pweight_in_kg,
                        const std::string pdicom_patientid,
                        const std::string pbirth_date)
 {
-  syd::Patient::Set(db, pname, pstudy_id, pweight_in_kg, pdicom_patientid);
+  syd::Patient::Set(pname, pstudy_id, pweight_in_kg, pdicom_patientid);
   birth_date = pbirth_date;
 }
 // --------------------------------------------------

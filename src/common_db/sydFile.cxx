@@ -57,14 +57,6 @@ bool syd::File::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------------------------
-void syd::File::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "Not possible in insert file directly";
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event,db);

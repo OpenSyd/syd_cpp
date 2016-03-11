@@ -91,11 +91,20 @@ namespace syd {
     /// Check the record. Usually check the file on disk
     virtual syd::CheckResult Check() const;
 
+
+    /// Return true if the record is persistent (in the db)
+    bool IsPersistent() const;
+    void CheckIfPersistant() const;
+
     // FIXME
     static std::map<std::string, std::vector<std::string> > inherit_sql_tables_map_;
 
     /// Return the db where this record is stored
-    syd::Database * GetDatabase() { return db_; }
+    syd::Database * GetDatabase() const;
+
+    /// Return the db where this record is stored and consider it as a DatabaseType
+    template<class DatabaseType>
+    DatabaseType * GetDatabase() const;
 
   protected:
     /// This default constructor allow to oblige class that inherit
@@ -107,10 +116,10 @@ namespace syd {
     virtual bool IsEqual(const pointer p) const;
 
     /// This field will store a pointer to the db and is not save in
-    /// the db (transient). Moreover, we need to set this pointer at
-    /// the creation of the object (load or persist). odb call the
-    /// const version of the callback, so to be able to change this
-    /// pointer, we declare it mutable.
+    /// the db (transient). We set this pointer at the creation of the
+    /// object (load or persist). odb call the const version of the
+    /// callback, so to be able to change this pointer, we declare it
+    /// mutable.
 #pragma db transient
     mutable syd::Database * db_;
 
@@ -122,10 +131,9 @@ namespace syd {
   }; // end of class
 
 
-  /// odb::access is needed for polymorphism
-  /// Also define a view that can count the nb of elements in a table
-  /// http://comments.gmane.org/gmane.comp.lang.c%2B%2B.odb.user/1602
+#include "sydRecord.txx"
 
+  /// odb::access is needed for polymorphism
 #define TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, INHERIT_TABLE_NAME)    \
   typedef std::shared_ptr<TABLE_NAME> pointer;                          \
   typedef std::vector<pointer> vector;                                  \
@@ -137,14 +145,8 @@ namespace syd {
   static void InitInheritance() {                                       \
     INHERIT_TABLE_NAME::InitInheritance();                              \
     inherit_sql_tables_map_[#TABLE_NAME].push_back(INHERIT_TABLE_NAME::GetStaticSQLTableName()); } \
-  static pointer New() { return pointer(new TABLE_NAME); }              \
-  struct TABLE_NAME##_count                                             \
-  {                                                                     \
-    int count;                                                          \
-  };                                                                    \
-  PRAGMA_DB(view(TABLE_NAME##_count) object(TABLE_NAME))                \
-  PRAGMA_DB(member(TABLE_NAME##_count::count)                           \
-            column("count(" + TABLE_NAME::id + ")"))
+  static pointer New() { return pointer(new TABLE_NAME); }
+
 
 #define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)        \
   TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, syd::Record)
@@ -154,21 +156,6 @@ namespace syd {
   virtual std::string ToString() const;                 \
   virtual bool IsEqual(const pointer p) const;
 
-  /// To be define in db.cxx (and declared in db.h) to allow fast
-  /// computation of the nb of elements in a table.
-  /// http://comments.gmane.org/gmane.comp.lang.c%2B%2B.odb.user/1602
-#define TABLE_GET_NUMBER_OF_ELEMENTS(TABLE_NAME)                        \
-  template<>                                                            \
-  long syd::Database::GetNumberOfElements<TABLE_NAME>() const           \
-  {                                                                     \
-    typedef odb::query<TABLE_NAME> query;                               \
-    odb::transaction t (odb_db_->begin());                              \
-    TABLE_NAME::TABLE_NAME##_count ec(odb_db_->query_value<TABLE_NAME::TABLE_NAME##_count> \
-                                      (odb::query<TABLE_NAME>::id != 0)); \
-    auto c = ec.count;                                                  \
-    t.commit ();                                                        \
-    return c;                                                           \
-  }
 
 } // end namespace
 // --------------------------------------------------------------------

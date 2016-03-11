@@ -16,39 +16,13 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-// syd
-#include "sydInsert_ggo.h"
-#include "sydDatabaseManager.h"
-#include "sydPluginManager.h"
-#include "sydCommonGengetopt.h"
-
-// syd init
-SYD_STATIC_INIT
 
 // --------------------------------------------------------------------
-int main(int argc, char* argv[])
+template<class DatabaseType>
+DatabaseType * syd::Record::GetDatabase() const
 {
-  // Init command line
-  SYD_INIT_GGO(sydInsert, 1);
-
-  // Get params
-  std::string tablename = args_info.inputs[0];
-  std::vector<std::string> args;
-  for(auto i=1; i<args_info.inputs_num; i++)
-    args.push_back(args_info.inputs[i]);
-
-  // Load plugin
-  syd::PluginManager::GetInstance()->Load();
-
-    // Load the database
-  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
-
-  // Insert
-  syd::Record::pointer e = db->New(tablename);
-  e->Set(args);
-  db->Insert(e);
-  LOG(1) << "Insertion done: " << e->ToString();
-
-  // This is the end, my friend.
+  // Static cast, no check
+  DatabaseType * dbt = static_cast<DatabaseType*>(GetDatabase());
+  return dbt;
 }
 // --------------------------------------------------------------------

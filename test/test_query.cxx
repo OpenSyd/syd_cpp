@@ -45,16 +45,16 @@ int main(int argc, char* argv[])
   /// Insert element
   ext::Patient::pointer p1;
   db->New(p1);
-  p1->Set(db, "toto", 1, 50,  "XXYYZZ", "2002-08-09 10:00");
+  p1->Set("toto", 1, 50,  "XXYYZZ", "2002-08-09 10:00");
   ext::Patient::pointer p2;
   db->New(p2);
-  p2->Set(db, "titi", 2, 150, "AXXYYZZ", "2005-02-01 17:00");
+  p2->Set("titi", 2, 150, "AXXYYZZ", "2005-02-01 17:00");
   ext::Patient::pointer p3;
   db->New(p3);
-  p3->Set(db, "tutu", 3, 60,  "BXXYYZZ", "2009-07-17 09:00");
+  p3->Set("tutu", 3, 60,  "BXXYYZZ", "2009-07-17 09:00");
   ext::Patient::pointer p4;
   db->New(p4);
-  p4->Set(db, "tata", 4, 80,  "CXXYYZZ", "2002-08-09 10:00");
+  p4->Set("tata", 4, 80,  "CXXYYZZ", "2002-08-09 10:00");
 
   db->Insert(p1);
   db->Insert(p2);

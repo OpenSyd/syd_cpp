@@ -68,6 +68,7 @@ namespace syd {
 
     int GetNumberOfColumns() const { return columns_.size(); }
     int GetColumn(std::string col);
+    void SetColumnPrecision(int col, int precision);
 
     const std::string & GetFormat() const { return current_format_name_; }
     void AddFormat(std::string name, std::string help);

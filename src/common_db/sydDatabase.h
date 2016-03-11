@@ -193,10 +193,12 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// Generic dump, display the list of tables
-    virtual void Dump(std::ostream & os = std::cout) const;
+    virtual void Dump(std::ostream & os = std::cout);
 
     /// Display all elements of a given tables
-    void Dump(const std::string & table_name, const std::string & format="", std::ostream & os=std::cout) const;
+    void Dump(const std::string & table_name,
+              const std::string & format="",
+              std::ostream & os=std::cout);
 
     /// Dump the given records (according to a format). (Templated
     /// needed because dont know how to substitute vector<ppatient>
@@ -204,7 +206,7 @@ namespace syd {
     template<class RecordType>
     void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
               const std::string & format="",
-              std::ostream & os=std::cout) const;
+              std::ostream & os=std::cout);
     // ------------------------------------------------------------------------
 
 
@@ -247,23 +249,26 @@ namespace syd {
     /// Return a string with the list of the table names
     std::string GetListOfTableNames() const;
 
-    /// Get the number of elements in the table
-    long GetNumberOfElements(const std::string & table_name) const;
+    /// Return (compute the first time) the db SQL description
+    syd::DatabaseDescription * GetDatabaseDescription();
+
+    /// Return the sql descriptio of the table
+    syd::TableDescription * GetTableDescription(const std::string & table_name);
+
+    /// Get the number of elements in the table (cannot be const
+    /// because create db description)
+    long GetNumberOfElements(const std::string & table_name);
 
     /// Get the number of elements in the table, knowing the type
     template<class RecordType>
-    long GetNumberOfElements() const;
+    long GetNumberOfElements();
 
     // FIXME
     odb::sqlite::database * GetODB_DB() const { return odb_db_; }
-    sqlite3 * GetSqliteHandle();
-
-    // FIXME
-    syd::DatabaseDescription * GetDatabaseDescription();
+    sqlite3 * GetSqliteHandle() const;
 
     // FIXME to remove ?
     void CheckDatabaseSchema();
-
 
     /// Allow to migrate the schema when the db version in the file is
     /// different from the syd version.

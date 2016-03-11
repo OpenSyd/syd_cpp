@@ -61,14 +61,6 @@ bool syd::RoiMaskImage::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-void syd::RoiMaskImage::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "To insert a RoiMaskImage, use sydInsertRoiMaskImage";
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Image::Callback(event,db);

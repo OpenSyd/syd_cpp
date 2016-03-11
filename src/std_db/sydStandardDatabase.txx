@@ -107,6 +107,42 @@ void syd::StandardDatabase::SetImageTagsFromCommandLine(syd::Image::pointer imag
 
 
 // --------------------------------------------------------------------
+template<class ArgsInfo>
+void syd::StandardDatabase::UpdateTagsFromCommandLine(syd::Tag::vector & tags, ArgsInfo & args_info)
+{
+  // Remove all tags
+  if (args_info.remove_all_tag_flag) tags.clear();
+
+  // Remove some tags
+  if (args_info.remove_tag_given) {
+    for(auto i=0; i<args_info.remove_tag_given; i++) {
+      std::string tagname = args_info.remove_tag_arg[i];
+      syd::Tag::vector tags_temp;
+      try {
+        FindTags(tags_temp, tagname);
+      } catch(std::exception & e) { } // ignore unknown tag
+      RemoveTag(tags, tags_temp);
+    }
+  }
+
+  // Add tags
+  if (args_info.tag_given) {
+    for(auto i=0; i<args_info.tag_given; i++) {
+      std::string tagname = args_info.tag_arg[i];
+      syd::Tag::vector tags_temp;
+      try {
+        FindTags(tags_temp, tagname);
+      } catch(std::exception & e) {
+        LOG(WARNING) << "Some tags are ignored. " << e.what();
+      }
+      AddTag(tags, tags_temp);
+    }
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 template<class ArgsInfo, class RecordType>
 void syd::StandardDatabase::SetTagsFromCommandLine(typename RecordType::pointer record, ArgsInfo args_info)
 {
@@ -241,10 +277,12 @@ void syd::StandardDatabase::QueryByTag(typename RecordType::vector & records,
 template<class RecordType>
 void syd::StandardDatabase::SortAndPrint(typename RecordType::vector & records)
 {
+  if (records.size() == 0) return;
   Sort(records);
   syd::PrintTable table;
   table.SetFormat("default");
   table.SetHeaderFlag(false);
+  records[0]->InitTable(table);
   table.Dump(records, std::cout);
 }
 // --------------------------------------------------------------------

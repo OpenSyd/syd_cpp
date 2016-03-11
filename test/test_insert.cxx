@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
     syd::Database * db = m->Read(dbname);
     db->Dump();
     auto patient = db->New("Patient");
-    db->Set(patient, args);
+    patient->Set(args);
     std::cout << "Before insertion " << patient << std::endl;
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
     std::cout << "Open ext as generic Database" << std::endl;
     syd::Database * db = m->Read<syd::Database>(ext_dbname);
     auto patient = db->New("Patient");
-    db->Set(patient, args);
+    patient->Set(args);
     std::cout << "Before insertion " << patient << std::endl;
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
     db->New(patient);
     args[0] = "titi";
     args[1] = "2";
-    db->Set(patient, args);
+    patient->Set(args);
     std::cout << "Before insertion " << patient << std::endl;
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
     db->New(patient);
     args[0] = "titi";
     args[1] = "2";
-    db->Set(patient, args); // in that case the birth_date is not initialized
+    patient->Set(args); // in that case the birth_date is not initialized
     std::cout << "Before insertion " << patient << std::endl;
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
     db->New(patient);
     args[0] = "tutu";
     args[1] = "3";
-    db->Set(patient, args);
+    patient->Set(args);
     std::cout << "Before insertion " << patient << std::endl;
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
@@ -140,16 +140,16 @@ int main(int argc, char* argv[])
     ext::Patient::vector patients;
     ext::Patient::pointer p;
     db->New(p);
-    p->Set(db, "atoto", 10, 50,  "XXYYZZ", "2002-08-09 10:00");
+    p->Set("atoto", 10, 50,  "XXYYZZ", "2002-08-09 10:00");
     patients.push_back(p);
     db->New(p);
-    p->Set(db, "atiti", 20, 150, "AXXYYZZ", "2005-02-01 17:00");
+    p->Set("atiti", 20, 150, "AXXYYZZ", "2005-02-01 17:00");
     patients.push_back(p);
     db->New(p);
-    p->Set(db, "atutu", 30, 60,  "BXXYYZZ", "2009-07-17 09:00");
+    p->Set("atutu", 30, 60,  "BXXYYZZ", "2009-07-17 09:00");
     patients.push_back(p);
     db->New(p);
-    p->Set(db, "atata", 40, 80,  "CXXYYZZ", "2002-08-09 10:00");
+    p->Set("atata", 40, 80,  "CXXYYZZ", "2002-08-09 10:00");
     patients.push_back(p);
 
     db->Insert(patients);
@@ -170,7 +170,7 @@ int main(int argc, char* argv[])
       auto r = db->New("Patient");
       args[0] = "toto_"+args[0];
       args[1] = syd::ToString(66+atoi(args[1].c_str()));
-      db->Set(r, args);
+      r->Set(args);
       records.push_back(r);
     }
     db->Insert(records, "Patient");

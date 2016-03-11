@@ -66,15 +66,6 @@ bool syd::RoiStatistic::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-void syd::RoiStatistic::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "To insert a RoiStatistic, please use sydInsertRoiStatistic";
-}
-// --------------------------------------------------
-
-
-
-// --------------------------------------------------
 void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
 {
   syd::RecordWithHistory::InitTable(ta);

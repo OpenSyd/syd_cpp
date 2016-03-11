@@ -38,7 +38,6 @@ namespace syd {
     // ------------------------------------------------------------------------
     TABLE_DEFINE_I(RoiMaskImage, syd::RoiMaskImage, syd::Image);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(RoiMaskImage);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(RoiMaskImage);
     // ------------------------------------------------------------------------
 
     /// Standard folder

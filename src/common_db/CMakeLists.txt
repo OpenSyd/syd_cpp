@@ -11,7 +11,6 @@ wrap_odb(sydCore sydDatabaseSchemaName.h)
 wrap_odb(sydCore sydRecord.h)
 wrap_odb(sydCore sydRecordHistory.h)
 wrap_odb(sydCore sydRecordWithHistory.h)
-
 wrap_odb(sydCore sydFile.h)
 
 set(sydCommonDatabase_src

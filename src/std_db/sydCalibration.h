@@ -52,7 +52,6 @@ namespace syd {
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Calibration, syd::Calibration);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Calibration);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Calibration);
     // ------------------------------------------------------------------------
 
     /// Add a tag to the list (check is already exist) ; do not update in the db.

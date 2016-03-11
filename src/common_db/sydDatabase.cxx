@@ -144,7 +144,7 @@ void syd::Database::TraceCallback(const char* sql)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Dump(std::ostream & os) const
+void syd::Database::Dump(std::ostream & os)
 {
   os << "Database file  : " << GetFilename() << std::endl;
   os << "Database schema: " << GetDatabaseSchema() << std::endl;
@@ -201,7 +201,9 @@ void syd::Database::CheckOrCreateRelativePath(std::string relative_path)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Dump(const std::string & table_name, const std::string & format, std::ostream & os) const
+void syd::Database::Dump(const std::string & table_name,
+                         const std::string & format,
+                         std::ostream & os)
 {
   syd::Record::vector records;
   Query(records, table_name); // get all records
@@ -219,7 +221,8 @@ void syd::Database::Insert(generic_record_pointer record)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Insert(generic_record_vector records, const std::string & table_name)
+void syd::Database::Insert(generic_record_vector records,
+                           const std::string & table_name)
 {
   if (records.size() == 0) return;
   GetTable(table_name)->Insert(records);
@@ -236,7 +239,8 @@ void syd::Database::Update(generic_record_pointer record)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Update(generic_record_vector records, const std::string & table_name)
+void syd::Database::Update(generic_record_vector records,
+                           const std::string & table_name)
 {
   if (records.size() == 0) return;
   GetTable(table_name)->Update(records);
@@ -320,15 +324,43 @@ void syd::Database::QueryByTag(generic_record_vector & records,
 
 
 // --------------------------------------------------------------------
-long syd::Database::GetNumberOfElements(const std::string & table_name) const
+long syd::Database::GetNumberOfElements(const std::string & table_name)
 {
-  return GetTable(table_name)->GetNumberOfElements();
+  //return GetTable(table_name)->GetNumberOfElements();
+  DD("GetNumberOfElements with table name");
+
+  // native query
+  auto tdesc = GetTableDescription(table_name);
+  auto table_sql_name = tdesc->GetSQLTableName();
+  std::ostringstream sql;
+  sql << "SELECT COUNT(*) FROM " << table_sql_name;
+  DD(sql.str());
+
+  sqlite3 * sdb = GetSqliteHandle();
+  sqlite3_stmt * stmt;
+  auto rc = sqlite3_prepare_v2(sdb, sql.str().c_str(), -1, &stmt, NULL);
+  long nb = 0;
+  if (rc==SQLITE_OK) {
+    /* Loop on result with the following structure:
+       TABLE sqlite_master
+       type TEXT, name TEXT, tbl_name TEXT, rootpage INTEGER, sql TEXT  */
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+      nb = sqlite3_column_int(stmt, 0);
+      DD(nb);
+    }
+  }
+  else {
+    EXCEPTION("Could not retrieve the list of tables in the db");
+  }
+  return nb;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::Database::Sort(generic_record_vector & records, const std::string & table_name, const std::string & type) const
+void syd::Database::Sort(generic_record_vector & records,
+                         const std::string & table_name,
+                         const std::string & type) const
 {
   if (records.size() == 0) return;
   GetTable(table_name)->Sort(records, type);
@@ -337,7 +369,8 @@ void syd::Database::Sort(generic_record_vector & records, const std::string & ta
 
 
 // --------------------------------------------------------------------
-void syd::Database::Delete(generic_record_vector & records, const std::string & table_name)
+void syd::Database::Delete(generic_record_vector & records,
+                           const std::string & table_name)
 {
   if (records.size() == 0) return;
   GetTable(table_name)->Delete(records);
@@ -364,7 +397,7 @@ void syd::Database::Update(generic_record_pointer record,
   std::string v = value;
 
   std::ostringstream sql;
-  sql << "UPDATE \"" << table_sql_name << "\""
+  sql << "UPDATE " << table_sql_name
       << " SET " << field_sql_name << " = \"" << v << "\""
       << " WHERE id=" << record->id;
 
@@ -391,9 +424,9 @@ std::string syd::sqlite3_column_text_string(sqlite3_stmt * stmt, int iCol)
 
 
 //---------------------------------------------------------------------
-sqlite3 * syd::Database::GetSqliteHandle()
+sqlite3 * syd::Database::GetSqliteHandle() const
 {
-  odb::sqlite::connection_ptr c (odb_db_->connection ());
+  odb::sqlite::connection_ptr c (odb_db_->connection());
   sqlite3 * sdb(c->handle());
   return sdb;
 }
@@ -447,6 +480,18 @@ syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
 {
   if (description_ == NULL) InitDatabaseDescription();
   return description_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::TableDescription * syd::Database::GetTableDescription(const std::string & table_name)
+{
+  auto desc = GetDatabaseDescription();
+  syd::TableDescription * tdesc;
+  bool b = desc->FindTableDescription(table_name, &tdesc);
+  if (!b) EXCEPTION("Could not find the table " << table_name);
+  return tdesc;
 }
 // --------------------------------------------------------------------
 
@@ -543,6 +588,7 @@ void syd::Database::ReadDatabaseSchemaFromFile(syd::DatabaseDescription * desc)
       std::string type = sqlite3_column_text_string(stmt, 0);
       if (type == "table") {
         std::string table_name = sqlite3_column_text_string(stmt, 2);
+        table_name = "\""+table_name+"\""; // add the "" around the full name
         table_names.push_back(table_name);
       }
     }
@@ -570,7 +616,7 @@ void syd::Database::ReadTableSchemaFromFile(syd::TableDescription * table,
 
   sqlite3 * sdb = GetSqliteHandle();
   sqlite3_stmt * stmt;
-  std::string q = "PRAGMA table_info(\""+table_name+"\")";
+  std::string q = "PRAGMA table_info("+table_name+")";
   auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
   if (rc==SQLITE_OK) {
     /* Loop on result with the following structure:

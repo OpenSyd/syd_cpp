@@ -106,6 +106,15 @@ void syd::GetWords(std::vector<std::string> & words, const std::string & phrase)
 
 
 // --------------------------------------------------------------------
+void syd::SetWords(std::string & phrase, const std::vector<std::string> & words)
+{
+  for(auto & w:words) phrase += w+" ";
+  if (words.size() > 1) phrase.pop_back(); // remove last " ";
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 double syd::DateDifferenceInHours(std::string end, std::string start)
 {
   tm startDate;

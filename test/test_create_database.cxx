@@ -28,7 +28,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   Log::SQLFlag() = false;
-  Log::LogLevel() = 1;
+  Log::LogLevel() = 5;
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();

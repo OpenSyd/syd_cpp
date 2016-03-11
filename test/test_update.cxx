@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     for(auto i=0; i<5; i++) {
       ext::Patient::pointer patient;
       db->New(patient);
-      db->Set(patient, args);
+      patient->Set(args);
       args[0] = "toto_"+args[0];
       args[1] = syd::ToString(22+atoi(args[1].c_str()));
       patients.push_back(patient);
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
     db->QueryOne(p, "Patient", 1);
     std::cout << "Get " << p << std::endl;
     args[0] = "titi";
-    db->Set(p, args);
+    p->Set(args);
     db->Update(p);
     std::cout << "Update " << p << std::endl;
   }
@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
     std::cout << "Get " << p << std::endl;
     args[0] = "titi2";
     args[1] = syd::ToString(123);
-    db->Set(p, args);
+    p->Set(args);
     db->Update(p);
 
     ext::Patient::pointer pref;
@@ -118,7 +118,7 @@ int main(int argc, char* argv[])
       db->New(p);
       args[0] = "toto_"+args[0];
       args[1] = syd::ToString(22+atoi(args[1].c_str()));
-      db->Set(p, args);
+      p->Set(args);
     }
     db->Update(p, "Patient");
     p.clear();
@@ -138,7 +138,7 @@ int main(int argc, char* argv[])
       auto pp = p[i];
       args[0] = "tutu_"+args[0];
       args[1] = syd::ToString(22+atoi(args[1].c_str()));
-      db->Set(pp, args);
+      pp->Set(args);
     }
     db->Update(p);
     p.clear();

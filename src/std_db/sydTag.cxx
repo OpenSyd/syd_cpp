@@ -53,7 +53,7 @@ bool syd::Tag::IsEqual(const pointer p) const
 
 
 // --------------------------------------------------
-void syd::Tag::Set(const syd::Database * db, const std::vector<std::string> & arg)
+void syd::Tag::Set(const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
     LOG(FATAL) << "To insert a Tag, please set <label> <description>";
@@ -111,5 +111,61 @@ bool syd::IsAllTagsIn(syd::Tag::vector & input_tags, syd::Tag::vector & to_searc
                         std::back_inserter(v3),
                         [](const syd::Tag::pointer a, const syd::Tag::pointer b) { return a->label > b->label; } );
   return (v3.size() == to_search_tags.size());
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::AddTag(syd::Tag::vector & tags, const syd::Tag::vector & tags_to_add)
+{
+  int n = 0;
+  for(auto t:tags_to_add) n += AddTag(tags, t);
+  return n;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::AddTag(syd::Tag::vector & tags, const syd::Tag::pointer & tag_to_add)
+{
+  // (rather use a set instead of a tag to keep it ordered ?)
+  bool found = false;
+  int i=0;
+  while (i<tags.size() and !found) {
+    if (tags[i]->id == tag_to_add->id) found = true;
+    ++i;
+  }
+  if (!found) {
+    tags.push_back(tag_to_add);
+    return 1;
+  }
+  else return 0;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::RemoveTag(syd::Tag::vector & tags, const syd::Tag::vector & tags_to_remove)
+{
+  int n = 0;
+  for(auto t:tags_to_remove) n += RemoveTag(tags, t);
+  return n;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::RemoveTag(syd::Tag::vector & tags, const syd::Tag::pointer & tag_to_remove)
+{
+  // (rather use a set instead of a tag to keep it ordered ?)
+  int i=0;
+  while (i<tags.size()) {
+    if (tags[i]->id == tag_to_remove->id) {
+      tags.erase(tags.begin()+i);
+      return 1;
+    }
+    ++i;
+  }
+  return 0;
 }
 // --------------------------------------------------

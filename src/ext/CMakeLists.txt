@@ -5,6 +5,8 @@ include_directories(${SYD_BINARY_DIR}/src/core)
 include_directories(${SYD_SOURCE_DIR}/src/std_db)
 
 ## test extend db
+# find_package(SYD REQUIRED)
+# include(${SYD_USE_FILE})
 set(SCHEMA_NAME ExtendedDatabase)
 wrap_odb(extExtendedDatabase extPatient.h)
 

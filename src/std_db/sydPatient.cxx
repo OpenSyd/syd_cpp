@@ -73,8 +73,7 @@ void syd::Patient::Set(const std::vector<std::string> & arg)
 
 
 // --------------------------------------------------
-void syd::Patient::Set(const syd::Database * db,
-                       const std::string & pname,
+void syd::Patient::Set(const std::string & pname,
                        const IdType & pstudy_id,
                        const double pweight_in_kg,
                        const std::string pdicom_patientid)

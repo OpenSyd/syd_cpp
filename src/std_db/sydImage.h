@@ -78,7 +78,6 @@ namespace syd {
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Image, syd::Image);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Image);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Image);
     // ------------------------------------------------------------------------
 
     /// Standard folder
