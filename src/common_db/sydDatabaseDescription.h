@@ -23,14 +23,21 @@
 #include "sydCommon.h"
 #include "sydTableDescription.h"
 
+//#include "sydDatabase.h"
+
 // --------------------------------------------------------------------
 namespace syd {
+
+  class Database;
 
   /// Describe the content of a database, from a OO point of view, and
   /// make the link with underlying sql description.
   class DatabaseDescription {
 
   public:
+    void Init(syd::Database * db); // FIXME to set const
+
+    void ReadDatabaseSchema(syd::Database * db);
 
     void SetInitialized(bool b) { initializedFlag_ = b; }
     bool IsInitialized() const { return initializedFlag_ == true; }
@@ -39,13 +46,15 @@ namespace syd {
 
     std::vector<syd::TableDescription*> & GetTablesDescription() { return tables_; }
 
-    void SetDatabaseName(std::string n) { name = n; }
+    //    void SetDatabaseName(std::string n) { name = n; }
 
     // FIXME pointer + check already exist
     void AddTableDescription(syd::TableDescription * t) { tables_.push_back(t); }
 
-    friend std::ostream& operator<<(std::ostream & os, const DatabaseDescription & d) { return d.Print(os); }
-    friend std::ostream& operator<<(std::ostream & os, const DatabaseDescription * d) { return d->Print(os); }
+    friend std::ostream& operator<<(std::ostream & os,
+                                    const DatabaseDescription & d) { return d.Print(os); }
+    friend std::ostream& operator<<(std::ostream & os,
+                                    const DatabaseDescription * d) { return d->Print(os); }
     std::ostream & Print(std::ostream & os = std::cout) const;
 
   protected:

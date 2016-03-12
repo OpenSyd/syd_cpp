@@ -15,6 +15,9 @@ wrap_odb(sydCore sydFile.h)
 
 set(sydCommonDatabase_src
   sydVersion.h
+  sydDatabaseDescription.cxx
+  sydTableDescription.cxx
+  sydFieldDescription.cxx
   sydDatabaseSchemaName-odb.cxx sydDatabaseSchemaName-schema.cxx
   sydDatabaseInformation-odb.cxx sydDatabaseInformation-schema.cxx
   sydRecord-odb.cxx sydRecord-schema.cxx  sydRecord.cxx

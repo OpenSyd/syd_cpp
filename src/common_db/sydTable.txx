@@ -202,12 +202,12 @@ std::vector<std::string> & syd::Table<RecordType>::GetInheritSQLTableNames() con
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-template<class RecordType>
-void syd::Table<RecordType>::InitTableDescription(syd::DatabaseDescription * /*d*/) // unused for the moment
-{
-  table_description_.SetTableName(GetTableName());
-  table_description_.SetSQLTableName(GetSQLTableName());
-  table_description_.AddField("id", "int");
-}
-// --------------------------------------------------------------------
+// // --------------------------------------------------------------------
+// template<class RecordType>
+// void syd::Table<RecordType>::InitTableDescription(syd::DatabaseDescription * /*d*/) // unused for the moment
+// {
+//   table_description_.SetTableName(GetTableName());
+//   table_description_.SetSQLTableName(GetSQLTableName());
+//   table_description_.AddField("id", "int");
+// }
+// // --------------------------------------------------------------------

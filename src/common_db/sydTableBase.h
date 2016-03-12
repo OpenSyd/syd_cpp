@@ -70,14 +70,11 @@ namespace syd {
     virtual std::vector<std::string> & GetInheritSQLTableNames() const = 0;
 
     /// Return the table description
-    syd::TableDescription & GetTableDescription() { return table_description_; }
-
-    /// Build the initial description of the table
-    virtual void InitTableDescription(syd::DatabaseDescription * d) = 0;
+    //syd::TableDescription & GetTableDescription() { return table_description_; }
 
   protected:
     std::string inherit_table_name_;
-    syd::TableDescription table_description_;
+    ///    syd::TableDescription table_description_;
   };
 
 } // end namespace

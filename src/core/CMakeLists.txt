@@ -14,9 +14,6 @@ add_library(sydCore
   sydException.cxx
   sydDicomCommon.cxx
   sydPrintTable.cxx
-  sydDatabaseDescription.cxx
-  sydTableDescription.cxx
-  sydFieldDescription.cxx
 )
 
 target_link_libraries(sydCore

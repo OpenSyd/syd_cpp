@@ -18,7 +18,7 @@
 
 // syd
 #include "sydTableDescription.h"
-
+#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
 std::ostream & syd::TableDescription::Print(std::ostream & os) const
@@ -63,5 +63,36 @@ void syd::TableDescription::AddField(const syd::FieldDescription * ff)
   syd::FieldDescription * f = new syd::FieldDescription(this);
   f->SetName(ff->GetName(), ff->GetType());
   fields_.push_back(f);
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+void syd::TableDescription::ReadTableSchema(syd::Database * db,
+                                            std::string table_name)
+{
+  DD("ReadTableSchemaFromFile");
+  SetTableName(table_name);
+  SetSQLTableName(table_name);
+
+  DD(table_name);
+
+  sqlite3 * sdb = db->GetSqliteHandle();
+  sqlite3_stmt * stmt;
+  std::string q = "PRAGMA table_info("+table_name+")";
+  auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
+  if (rc==SQLITE_OK) {
+    /* Loop on result with the following structure:
+       cid name type notnull dflt_value  pk */
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+      std::string name = sqlite3_column_text_string(stmt, 1);
+      std::string type = sqlite3_column_text_string(stmt, 2);
+      AddField(name, type);
+    }
+  }
+  else {
+    EXCEPTION("Could not retrieve the list of tables in the db");
+  }
 }
 // --------------------------------------------------------------------
