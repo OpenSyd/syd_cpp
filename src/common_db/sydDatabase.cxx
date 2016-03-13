@@ -436,7 +436,7 @@ void syd::Database::CheckDatabaseSchema()
 
   // Read sql db schema
   auto sql_desc = new syd::DatabaseDescription; // sql db description
-  ReadDatabaseSchemaFromFile(sql_desc);
+  sql_desc->ReadDatabaseSchema(this);
 
   // Check
   auto desc = GetDatabaseDescription(); // OO db description
@@ -473,7 +473,10 @@ void syd::Database::CheckDatabaseSchema()
 // --------------------------------------------------------------------
 syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
 {
-  if (description_ == NULL) InitDatabaseDescription();
+  if (description_ == NULL) {
+    description_ = new DatabaseDescription();
+    description_->Init(this);
+  }
   return description_;
 }
 // --------------------------------------------------------------------
@@ -487,171 +490,6 @@ syd::TableDescription * syd::Database::GetTableDescription(const std::string & t
   bool b = desc->FindTableDescription(table_name, &tdesc);
   if (!b) EXCEPTION("Could not find the table " << table_name);
   return tdesc;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::InitDatabaseDescription()
-{
-  description_ = new DatabaseDescription();
-  description_->Init(this);
-
-  /*
-
-  // Create a first (almost empty) description for all tables. The
-  // table name and sql name are set. The field 'id' also.
-  for(auto m:GetMapOfTables()) {
-    auto & table_name = m.first;
-    auto table = m.second;
-    table->InitTableDescription(description_); // init the description
-    syd::TableDescription & td = table->GetTableDescription();
-    // add the TableDescription to the DatabaseDescription
-    description_->AddTableDescription(&td);
-  }
-
-  // Read the db description in the file
-  sql_description_ = new syd::DatabaseDescription;
-  ReadDatabaseSchemaFromFile(sql_description_);
-
-  DD("first");
-  sql_description_->Print();
-  DD("end");
-
-  // Look for fields of type vector ?
-  for(auto sqlt:sql_description_->GetTablesDescription()) {
-    auto fields = sqlt->GetFields();
-    DDS(fields);
-    if (fields.size() == 3) {
-      if ((fields[0]->GetName() == "object_id") and (fields[1]->GetName() == "index")) {
-        // In this case, field is a vector
-        std::string n = sqlt->GetSQLTableName();
-        DD(n);
-        auto found = n.find("_");
-        auto table_name = n.substr(0,found)+"\"";
-        DD(table_name);
-        auto field_name = n.substr(found+1, n.size()-1); // ignore last char "
-        syd::TableDescription * sdt;
-        bool b  = description_->FindTableDescriptionFromSQLName(table_name, &sdt);
-        DD(b);
-        std::string type = "vector_of_"+fields[2]->GetType();
-        DD(type);
-        sdt->AddField(field_name, type);
-        DD("ffff");
-      }
-    }
-  }
-
-  DD("before OO");
-
-  // Add the fields to the OO database
-  for(auto td:description_->GetTablesDescription()) {
-    auto table_name = td->GetTableName();
-    auto sql_table_name = td->GetSQLTableName();
-    DD(sql_table_name);
-
-    // Find the corresponding sql table
-    syd::TableDescription * sdt;
-    bool b = sql_description_->FindTableDescription(sql_table_name, &sdt);
-    if (!b) {
-      LOG(FATAL) << "Error, cannot find sql table " << sql_table_name
-                 << " in the file (needed for table " << table_name << ")";
-    }
-
-    // update the TableDescription with the field of std
-    for(auto f:sdt->GetFields()) {
-      if (f->GetName() == "id") continue;     // already st by InitTableDescription
-      if (f->GetName() == "typeid") continue; // not useful for user
-      td->AddField(f);
-    }
-
-    // If inherit
-    DD("inherit");
-    auto table = GetMapOfTables()[table_name];
-    for(auto h:table->GetInheritSQLTableNames()) {
-      if (h != "syd::Record") {
-        description_->FindTableDescriptionFromSQLName(h, &sdt);
-        for(auto f:sdt->GetFields()) {
-          if (f->GetName() == "id") continue;     // already st by InitTableDescription
-          if (f->GetName() == "typeid") continue; // not useful for user
-          td->AddField(f);
-        }
-      }
-    }
-  }
-  DD("after inherit");
-  description_->Print();
-  DD("here");
-  sql_description_->Print();
-  */
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::ReadDatabaseSchemaFromFile(syd::DatabaseDescription * desc)
-{
-  /*
-  // get the list of sql tables
-  std::vector<std::string> table_names;
-  sqlite3 * sdb = GetSqliteHandle();
-  sqlite3_stmt * stmt;
-  auto rc = sqlite3_prepare_v2(sdb, "select * from SQLITE_MASTER", -1, &stmt, NULL);
-  if (rc==SQLITE_OK) {
-    /// Loop on result with the following structure:
-    //   TABLE sqlite_master
-     //  type TEXT, name TEXT, tbl_name TEXT, rootpage INTEGER, sql TEXT  /
-    while(sqlite3_step(stmt) == SQLITE_ROW) {
-      std::string type = sqlite3_column_text_string(stmt, 0);
-      if (type == "table") {
-        std::string table_name = sqlite3_column_text_string(stmt, 2);
-        table_name = "\""+table_name+"\""; // add the "" around the full name
-        table_names.push_back(table_name);
-      }
-    }
-  }
-  else {
-    EXCEPTION("Could not retrieve the list of tables in the db");
-  }
-
-  // Read table description
-  for(auto table_name:table_names) {
-    auto ta = new syd::TableDescription;
-    ReadTableSchemaFromFile(ta, table_name);
-    desc->AddTableDescription(ta);
-  }
-*/
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Database::ReadTableSchemaFromFile(syd::TableDescription * table,
-                                            std::string table_name)
-{
-  /*
-  table->SetTableName(table_name);
-  table->SetSQLTableName(table_name);
-
-  DD(table_name);
-
-  sqlite3 * sdb = GetSqliteHandle();
-  sqlite3_stmt * stmt;
-  std::string q = "PRAGMA table_info("+table_name+")";
-  auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
-  if (rc==SQLITE_OK) {
-    // Loop on result with the following structure:
-    //   cid name type notnull dflt_value  pk /
-    while(sqlite3_step(stmt) == SQLITE_ROW) {
-      std::string name = sqlite3_column_text_string(stmt, 1);
-      std::string type = sqlite3_column_text_string(stmt, 2);
-      table->AddField(name, type);
-    }
-  }
-  else {
-    EXCEPTION("Could not retrieve the list of tables in the db");
-  }
-*/
 }
 // --------------------------------------------------------------------
 

@@ -213,7 +213,8 @@ namespace syd {
     // ------------------------------------------------------------------------
     /// Sort records (to be specialized in record->Sort
     template<class RecordType>
-    void Sort(std::vector<std::shared_ptr<RecordType>> & records, const std::string & type="") const;
+    void Sort(std::vector<std::shared_ptr<RecordType>> & records,
+              const std::string & type="") const;
     /// Sort generic records
     virtual void Sort(generic_record_vector & records,
                       const std::string & table_name,
@@ -323,21 +324,12 @@ namespace syd {
     /// Store current sql query for debug purpose
     std::string current_sql_query_;
 
-    /// Create the database schema description
-    void InitDatabaseDescription();
-
     /// Store the OO db schema description
     syd::DatabaseDescription * description_;
 
     /// Store the sql db schema description (from the file)
-    syd::DatabaseDescription * sql_description_;
+    //    syd::DatabaseDescription * sql_description_;
 
-    /// Read the description from sqlite file
-    void ReadDatabaseSchemaFromFile(syd::DatabaseDescription * desc);
-
-    /// Read the table description from sqlite file
-    void ReadTableSchemaFromFile(syd::TableDescription * table,
-                                 std::string table_name);
   };
 
 
