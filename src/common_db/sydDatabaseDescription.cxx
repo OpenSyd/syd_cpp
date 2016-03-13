@@ -33,11 +33,8 @@ std::ostream& syd::DatabaseDescription::Print(std::ostream & os) const
 // --------------------------------------------------------------------
 void syd::DatabaseDescription::Init(syd::Database * db)
 {
-  DD("DatabaseDescription init");
-
   // Set the schema name
   name = db->GetDatabaseSchema();
-  DD(name);
 
   // Step 1: create a first description for all tables. The table name
   // and sql name are set. The field 'id' also.
@@ -51,52 +48,36 @@ void syd::DatabaseDescription::Init(syd::Database * db)
     tdesc->AddField("id", "int");
     AddTableDescription(tdesc);
   }
-  DD("Step1 DONE");
-  Print();
-  DD("Step1 DONE");
 
   // Read the db description in the file
   auto sql_description = new syd::DatabaseDescription;
   sql_description->ReadDatabaseSchema(db);
 
-  DD("first");
-  //  sql_description->Print();
-  DD("end");
-
   // Look for fields of type vector ?
   for(auto sqlt:sql_description->GetTablesDescription()) {
     auto fields = sqlt->GetFields();
-    DDS(fields);
     if (fields.size() == 3) {
       if ((fields[0]->GetName() == "object_id") and (fields[1]->GetName() == "index")) {
         // In this case, field is a vector
         std::string n = sqlt->GetSQLTableName();
-        DD(n);
         auto found = n.find("_");
         auto table_name = n.substr(0,found)+"\"";
-        DD(table_name);
         auto field_name = n.substr(found+1, n.size()-1); // ignore last char "
         syd::TableDescription * sdt;
         bool b  = FindTableDescriptionFromSQLName(table_name, &sdt);
         if (!b) {
           LOG(FATAL) << "Internal error, cannot find table " << table_name;
         }
-        DD(b);
         std::string type = "vector_of_"+fields[2]->GetType();
-        DD(type);
         sdt->AddField(field_name, type);
-        DD("ffff");
       }
     }
   }
-
-  DD("before OO");
 
   // Add the fields to the OO database
   for(auto td:GetTablesDescription()) {
     auto table_name = td->GetTableName();
     auto sql_table_name = td->GetSQLTableName();
-    DD(sql_table_name);
 
     // Find the corresponding sql table
     syd::TableDescription * sdt;
@@ -114,7 +95,6 @@ void syd::DatabaseDescription::Init(syd::Database * db)
     }
 
     // If inherit
-    DD("inherit");
     auto table = db->GetMapOfTables()[table_name];
     for(auto h:table->GetInheritSQLTableNames()) {
       if (h != "syd::Record") {
@@ -127,9 +107,6 @@ void syd::DatabaseDescription::Init(syd::Database * db)
       }
     }
   }
-  DD("after inherit");
-  Print();
-  DD("end");
 }
 // --------------------------------------------------------------------
 
@@ -165,13 +142,8 @@ void syd::DatabaseDescription::ReadDatabaseSchema(syd::Database * db)
     ta->ReadTableSchema(db, table_name);
     AddTableDescription(ta);
   }
-  DD("end read table description");
 }
 // --------------------------------------------------------------------
-
-
-
-
 
 
 // --------------------------------------------------------------------

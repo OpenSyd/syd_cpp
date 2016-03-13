@@ -59,7 +59,6 @@ bool syd::Patient::IsEqual(const pointer p) const
 // --------------------------------------------------
 void syd::Patient::Set(const std::vector<std::string> & arg)
 {
-  CheckIfPersistant();
   if (arg.size() < 2) {
     LOG(FATAL) << "To insert patient, please set <name> <study_id> "
                << "[<weight_in_kg> <dicom_patientid>]";

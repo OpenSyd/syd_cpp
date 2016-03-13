@@ -326,18 +326,11 @@ void syd::Database::QueryByTag(generic_record_vector & records,
 // --------------------------------------------------------------------
 long syd::Database::GetNumberOfElements(const std::string & table_name)
 {
-  //return GetTable(table_name)->GetNumberOfElements();
-  DD("GetNumberOfElements with table name");
-
   // native query
-  DD(table_name);
   auto tdesc = GetTableDescription(table_name);
-  tdesc->Print();
   auto table_sql_name = tdesc->GetSQLTableName();
-  DD(table_sql_name);
   std::ostringstream sql;
   sql << "SELECT COUNT(*) FROM " << table_sql_name;
-  DD(sql.str());
 
   sqlite3 * sdb = GetSqliteHandle();
   sqlite3_stmt * stmt;
@@ -349,7 +342,6 @@ long syd::Database::GetNumberOfElements(const std::string & table_name)
        type TEXT, name TEXT, tbl_name TEXT, rootpage INTEGER, sql TEXT  */
     while(sqlite3_step(stmt) == SQLITE_ROW) {
       nb = sqlite3_column_int(stmt, 0);
-      DD(nb);
     }
   }
   else {
@@ -490,7 +482,6 @@ syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
 // --------------------------------------------------------------------
 syd::TableDescription * syd::Database::GetTableDescription(const std::string & table_name)
 {
-  DD(table_name);
   auto desc = GetDatabaseDescription();
   syd::TableDescription * tdesc;
   bool b = desc->FindTableDescription(table_name, &tdesc);
@@ -503,9 +494,7 @@ syd::TableDescription * syd::Database::GetTableDescription(const std::string & t
 // --------------------------------------------------------------------
 void syd::Database::InitDatabaseDescription()
 {
-  DD("InitDatabaseDescription");
   description_ = new DatabaseDescription();
-  //  description_->SetDatabaseName(GetDatabaseSchema());
   description_->Init(this);
 
   /*

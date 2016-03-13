@@ -72,11 +72,8 @@ void syd::TableDescription::AddField(const syd::FieldDescription * ff)
 void syd::TableDescription::ReadTableSchema(syd::Database * db,
                                             std::string table_name)
 {
-  DD("ReadTableSchemaFromFile");
   SetTableName(table_name);
   SetSQLTableName(table_name);
-
-  DD(table_name);
 
   sqlite3 * sdb = db->GetSqliteHandle();
   sqlite3_stmt * stmt;
