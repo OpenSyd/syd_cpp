@@ -69,7 +69,7 @@ void syd::TableDescription::AddField(const syd::FieldDescription * ff)
 
 
 // --------------------------------------------------------------------
-void syd::TableDescription::ReadTableSchema(syd::Database * db,
+void syd::TableDescription::ReadTableSchema(const syd::Database * db,
                                             std::string table_name)
 {
   SetTableName(table_name);

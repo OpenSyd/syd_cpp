@@ -268,7 +268,7 @@ namespace syd {
     odb::sqlite::database * GetODB_DB() const { return odb_db_; }
     sqlite3 * GetSqliteHandle() const;
 
-    // FIXME to remove ?
+    // FIXME to remove ? (never used)
     void CheckDatabaseSchema();
 
     /// Allow to migrate the schema when the db version in the file is
@@ -279,7 +279,7 @@ namespace syd {
     typedef std::map<std::string, TableBase*> MapOfTablesType;
 
     /// Return the map that contains the association between names and tables
-    MapOfTablesType & GetMapOfTables() { return map_; }
+    const MapOfTablesType & GetMapOfTables() const { return map_; }
 
     /// Store a list of all loaded database (to be able to retrive the db from a record)
     static std::map<odb::database *, syd::Database *> ListOfLoadedDatabases;

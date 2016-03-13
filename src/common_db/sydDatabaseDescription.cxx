@@ -31,7 +31,7 @@ std::ostream& syd::DatabaseDescription::Print(std::ostream & os) const
 
 
 // --------------------------------------------------------------------
-void syd::DatabaseDescription::Init(syd::Database * db)
+void syd::DatabaseDescription::Init(const syd::Database * db)
 {
   // Set the schema name
   name = db->GetDatabaseSchema();
@@ -95,7 +95,8 @@ void syd::DatabaseDescription::Init(syd::Database * db)
     }
 
     // If inherit
-    auto table = db->GetMapOfTables()[table_name];
+    auto table = db->GetMapOfTables().at(table_name);
+    // (.at because [table_name] is non const)
     for(auto h:table->GetInheritSQLTableNames()) {
       if (h != "syd::Record") {
         FindTableDescriptionFromSQLName(h, &sdt);
@@ -112,7 +113,7 @@ void syd::DatabaseDescription::Init(syd::Database * db)
 
 
 // --------------------------------------------------------------------
-void syd::DatabaseDescription::ReadDatabaseSchema(syd::Database * db)
+void syd::DatabaseDescription::ReadDatabaseSchema(const syd::Database * db)
 {
   // get the list of sql tables
   std::vector<std::string> table_names;

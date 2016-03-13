@@ -35,9 +35,9 @@ namespace syd {
   class DatabaseDescription {
 
   public:
-    void Init(syd::Database * db); // FIXME to set const
+    void Init(const syd::Database * db); // FIXME to set const
 
-    void ReadDatabaseSchema(syd::Database * db);
+    void ReadDatabaseSchema(const syd::Database * db);
 
     void SetInitialized(bool b) { initializedFlag_ = b; }
     bool IsInitialized() const { return initializedFlag_ == true; }
@@ -45,8 +45,6 @@ namespace syd {
     bool FindTableDescriptionFromSQLName(std::string table_name, syd::TableDescription ** d);
 
     std::vector<syd::TableDescription*> & GetTablesDescription() { return tables_; }
-
-    //    void SetDatabaseName(std::string n) { name = n; }
 
     // FIXME pointer + check already exist
     void AddTableDescription(syd::TableDescription * t) { tables_.push_back(t); }

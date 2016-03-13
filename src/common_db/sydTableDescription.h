@@ -37,7 +37,7 @@ namespace syd {
     bool FindField(std::string field_name, syd::FieldDescription ** f);
     std::vector<syd::FieldDescription*> & GetFields() { return fields_; }
 
-    void ReadTableSchema(syd::Database * db,
+    void ReadTableSchema(const syd::Database * db,
                          std::string table_name);
 
     std::string GetTableName() const { return table_name_; }
