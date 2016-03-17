@@ -353,16 +353,14 @@ namespace syd {
     // Pixel scale
     double ps = 1.0;
     ps = GetTagValueDouble(dset, "PixelScale");
-    DD(ps);
+    if (ps == 0.0) ps = 1.0;
     serie->pixel_scale = ps;
 
-    // Duration
-    // NumberofRotations
-    // Number of Frames
-    //double d = GetTagValueDouble(dset, "ActualFrameDuration");
-    double d = atof(GetTagValueString(dset, "ActualFrameDuration").c_str());
+    // Duration in sec
+    double d = atof(GetTagValueString(dset, "ActualFrameDuration").c_str()); // in msec
     double f = GetTagValueUShort(dset, "NumberofFramesinRotation");
     double r = GetTagValueUShort(dset, "NumberofRotations");
+    serie->duration_sec = d/1000.0*f*r;
   }
   // --------------------------------------------------------------------
 
