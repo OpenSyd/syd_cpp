@@ -92,11 +92,7 @@ int main(int argc, char* argv[])
 
     ext::Patient::pointer pref;
     db->New(pref);
-    pref->name = p->name;
-    pref->study_id = p->study_id;
-    pref->weight_in_kg = p->weight_in_kg;
-    pref->dicom_patientid = p->dicom_patientid;
-    //    pref->CopyFrom(p); //FIXME
+    *pref = *p; // standard copy
     db->QueryOne(p, p->id);
     if (!p->IsEqual(pref)) {
       LOG(FATAL) << "Error update single generic. p is " << p << " and pref " << pref;
