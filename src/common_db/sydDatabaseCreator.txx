@@ -63,7 +63,6 @@ void syd::DatabaseCreator<DatabaseType>::Create(std::string dbtype,
     odb::schema_catalog::create_schema(db, "sydCommonDatabase"); // common schema
     // Specific list of schemas
     for(auto s=schemas.rbegin(); s != schemas.rend(); ++s) {
-      DD(*s);
       odb::schema_catalog::create_schema(db, *s);
     }
     t.commit ();

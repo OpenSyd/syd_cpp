@@ -36,7 +36,7 @@ namespace ext {
     std::string birth_date;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(Patient, "ext::Patient");
+    TABLE_DEFINE(Patient, ext::Patient);
     TABLE_DECLARE_MANDATORY_FUNCTIONS(Patient);
     // ------------------------------------------------------------------------
     virtual void Set(const std::vector<std::string> & args);
