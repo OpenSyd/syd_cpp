@@ -77,8 +77,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Image, syd::Image);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Image);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     /// Standard folder
     virtual std::string ComputeRelativeFolder() const;

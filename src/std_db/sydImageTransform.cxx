@@ -55,14 +55,6 @@ std::string syd::ImageTransform::ToString() const
 
 
 // --------------------------------------------------
-void syd::ImageTransform::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "Set ImageTransform not implemented";
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::ImageTransform::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event, db);

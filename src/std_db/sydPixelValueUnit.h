@@ -39,8 +39,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(PixelValueUnit, syd::PixelValueUnit);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(PixelValueUnit);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     void Set(const std::vector<std::string> & arg);
     virtual void InitTable(syd::PrintTable & table) const;

@@ -41,8 +41,10 @@ namespace syd {
 
      // ------------------------------------------------------------------------
     TABLE_DEFINE(File, syd::File);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(File);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);

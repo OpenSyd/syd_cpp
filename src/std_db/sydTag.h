@@ -39,8 +39,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Tag, syd::Tag);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Tag);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     void Set(const std::vector<std::string> & arg);
 

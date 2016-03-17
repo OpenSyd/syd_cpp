@@ -50,8 +50,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Patient, syd::Patient);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Patient);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     /// Additional Set function to shorter patient inclusion
     virtual void Set(const std::vector<std::string> & args);

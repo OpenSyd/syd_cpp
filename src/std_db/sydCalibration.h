@@ -51,8 +51,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Calibration, syd::Calibration);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Calibration);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     /// Add a tag to the list (check is already exist) ; do not update in the db.
     void AddTag(syd::Tag::pointer tag);

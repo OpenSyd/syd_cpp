@@ -42,6 +42,16 @@ bool syd::Record::IsPersistent() const
 
 
 // --------------------------------------------------------------------
+std::string syd::Record::ToString() const
+{
+  std::stringstream ss ;
+  ss << id;
+  return ss.str();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Record::CheckIfPersistant() const
 {
   if (IsPersistent()) return;

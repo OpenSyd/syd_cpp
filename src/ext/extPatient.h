@@ -37,8 +37,11 @@ namespace ext {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Patient, ext::Patient);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Patient);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
+
     virtual void Set(const std::vector<std::string> & args);
     virtual void Set(const std::string & pname,
                      const syd::IdType & pstudy_id, const double pweight_in_kg=-1,

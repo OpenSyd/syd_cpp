@@ -149,11 +149,6 @@ namespace syd {
 #define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)        \
   TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, syd::Record)
 
-
-#define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME)   \
-  virtual std::string ToString() const;
-
-
 bool IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2);
 
 } // end namespace

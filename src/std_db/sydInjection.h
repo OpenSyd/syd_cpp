@@ -49,8 +49,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Injection, syd::Injection);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Injection);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     void Set(const std::vector<std::string> & args);
 

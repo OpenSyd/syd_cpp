@@ -94,8 +94,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(DicomSerie, syd::DicomSerie);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomSerie);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     virtual std::string ComputeRelativeFolder() const;
 
