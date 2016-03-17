@@ -39,16 +39,11 @@ int main(int argc, char* argv[])
   std::string ext_dbname = "test_insert.ext.db";
   std::string folder = "test";
 
-  std::vector<std::string> args;
-  args.push_back("toto");
-  args.push_back("1");
-  args.push_back("50");
-  args.push_back("XXXXX");
-  args.push_back("2002-08-09 10:00");
+  std::vector<std::string> args = {"toto", "1", "50", "XXXXX", "2002-08-09 10:00"};
 
   //----------------------------------------------------------------
   {  // StandardDatabase
-    std::cout << "Create db " << std::endl;
+    std::cout << "Create two db " << std::endl;
     m->Create("StandardDatabase", dbname, folder, true);
     m->Create("ExtendedDatabase", ext_dbname, folder, true);
   }
@@ -153,9 +148,9 @@ int main(int argc, char* argv[])
     patients.push_back(p);
 
     db->Insert(patients);
-
     ext::Patient::vector vp;
     db->Query(vp);
+
     if (vp.size() != 7)  {
       LOG(FATAL) << "Error while inserting multiple ext patient in ext db";
     }
@@ -177,6 +172,7 @@ int main(int argc, char* argv[])
     db->Insert(records, "Patient");
     records.clear();
     db->Query(records, "Patient");
+    DDS(records);
     if (records.size() != 12)  {
       LOG(FATAL) << "Error while inserting generic multiple ext patient in ext db";
     }

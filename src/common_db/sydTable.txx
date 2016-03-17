@@ -34,9 +34,10 @@ template<class RecordType>
 typename syd::Table<RecordType>::generic_record_pointer
 syd::Table<RecordType>::New()
 {
-  typename RecordType::pointer record;
-  db_->New<RecordType>(record);
-  return record;
+  // This is the only place to create a new record.
+  auto p = RecordType::New();
+  p->SetDatabasePointer(db_);
+  return p;
 }
 // --------------------------------------------------------------------
 
