@@ -44,7 +44,8 @@ std::string syd::DicomSerie::ToString() const
      << ArrayToString<int, 3>(size) << " "
      << ArrayToString<double, 3>(spacing) << " "
      << dicom_manufacturer << " "
-     << dicom_description;
+     << dicom_description
+     << (pixel_scale == 1.0 ? "":syd::ToString(pixel_scale));
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -158,7 +159,7 @@ void syd::DicomSerie::InitTable(syd::PrintTable & ta) const
     ta.AddColumn("size");
     ta.AddColumn("spacing");
     ta.AddColumn("duration(s)");
-    ta.AddColumn("scale");
+    ta.AddColumn("scale",3);
   }
 }
 // --------------------------------------------------

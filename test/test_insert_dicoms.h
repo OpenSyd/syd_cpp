@@ -2,7 +2,9 @@
 #include "sydDicomSerieBuilder.h"
 
 
-void insert_dicoms(ext::ExtendedDatabase * db, syd::Injection::pointer injection, std::string folder) {
+void insert_dicoms(ext::ExtendedDatabase * db,
+                   syd::Injection::pointer injection,
+                   std::string folder) {
 
   int a = Log::LogLevel();
   Log::LogLevel() = 0;
