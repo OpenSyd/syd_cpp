@@ -67,21 +67,21 @@ int main(int argc, char* argv[])
     syd::Record::pointer r;
     db->QueryOne(r, "Patient", 1);
     std::cout << "QueryOne record: " << r << std::endl;
-    // if (!r->IsEqual(p1)) {
-    //   LOG(FATAL) << "Error while comparing r and p1: " << r << " " << p1;
-    // }
+    if (!syd::IsEqual(r, p1)) {
+      LOG(FATAL) << "Error while comparing r and p1: " << r << " " << p1;
+    }
 
     syd::Patient::pointer p;
     db->QueryOne(p, 1);
     std::cout << "QueryOne syd::Patient " << p << std::endl;
-    if (!p->IsEqual(p1)) {
+    if (!syd::IsEqual(p, p1)) {
       LOG(FATAL) << "Error while comparing p and p1: " << p << " " << p1;
     }
 
     ext::Patient::pointer q;
     db->QueryOne(q, 1);
     std::cout << "QueryOne ext::Patient " << q << std::endl;
-    if (!q->IsEqual(p1)) {
+    if (!syd::IsEqual(q, p1)) {
       LOG(FATAL) << "Error while comparing p and p1: " << q << " " << p1;
     }
     //DD(&q); DD(&p1); -> not the same object, but similar in the db
@@ -97,7 +97,7 @@ int main(int argc, char* argv[])
     Q query(Q::name == "tata");
     ext::Patient::pointer patient;
     db->QueryOne(patient, query);
-    if (!patient->IsEqual(p4)) {
+    if (!syd::IsEqual(patient, p4)) {
       LOG(FATAL) << "Error while comparing p and p4: " << patient << " <--> " << p4;
     }
   }
@@ -110,9 +110,9 @@ int main(int argc, char* argv[])
     typedef odb::query<ext::Patient> Q;
     Q query(Q::name != "titi");
     db->Query(patients, query);
-    if (!p1->IsEqual(patients[0]) or
-        !p3->IsEqual(patients[1]) or
-        !p4->IsEqual(patients[2])) {
+    if (!syd::IsEqual(p1, patients[0]) or
+        !syd::IsEqual(p3, patients[1]) or
+        !syd::IsEqual(p4, patients[2])) {
       LOG(FATAL) << "Error while Query n patients";
     }
     std::cout << "Query n patients: " << patients.size() << std::endl;
@@ -121,10 +121,10 @@ int main(int argc, char* argv[])
   {
     ext::Patient::vector patients;
     db->Query(patients);
-    if (!p1->IsEqual(patients[0]) or
-        !p2->IsEqual(patients[1]) or
-        !p3->IsEqual(patients[2]) or
-        !p4->IsEqual(patients[3])) {
+    if (!syd::IsEqual(p1, patients[0]) or
+        !syd::IsEqual(p2, patients[1]) or
+        !syd::IsEqual(p3, patients[2]) or
+        !syd::IsEqual(p4, patients[3])) {
       LOG(FATAL) << "Error while Query all patients";
     }
     std::cout << "Query all n patients: " << patients.size() << std::endl;
@@ -137,8 +137,8 @@ int main(int argc, char* argv[])
   {
     ext::Patient::vector patients;
     db->Query(patients, ids);
-    if (!p1->IsEqual(patients[0]) or
-        !p3->IsEqual(patients[1])) {
+    if (!syd::IsEqual(p1, patients[0]) or
+        !syd::IsEqual(p3, patients[1])) {
       LOG(FATAL) << "Error while Query patients by ids";
     }
     std::cout << "Query patients by ids: " << patients.size() << std::endl;
@@ -146,10 +146,10 @@ int main(int argc, char* argv[])
   {
     syd::Record::vector records;
     db->Query(records, "Patient", ids);
-    // if (!records[0]->IsEqual(p1) or
-    //     !records[1]->IsEqual(p3)) {
-    //   LOG(FATAL) << "Error while Query generic patients by ids";
-    // }
+    if (!syd::IsEqual(records[0], p1) or
+        !syd::IsEqual(records[1], p3)) {
+      LOG(FATAL) << "Error while Query generic patients by ids";
+    }
     std::cout << "Query generic by ids: " << records.size() << std::endl;
   }
 

@@ -42,17 +42,6 @@ std::string syd::RecordHistory::ToString() const
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-bool syd::RecordHistory::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and
-          //record->IsEqual(p->record) and
-          insertion_date == p->insertion_date and
-          update_date == p->update_date);
-}
-// --------------------------------------------------------------------
-
-
 // --------------------------------------------------
 void syd::RecordHistory::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {

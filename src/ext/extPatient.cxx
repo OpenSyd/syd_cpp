@@ -44,14 +44,6 @@ std::string ext::Patient::ToString() const
 
 
 // --------------------------------------------------
-bool ext::Patient::IsEqual(const pointer p) const
-{
-  return (syd::Patient::IsEqual(p) and birth_date == p->birth_date);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void ext::Patient::Set(const std::vector<std::string> & arg)
 {
   syd::Patient::Set(arg);

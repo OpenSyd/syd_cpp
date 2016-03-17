@@ -50,22 +50,6 @@ std::string syd::RoiStatistic::ToString() const
 
 
 // --------------------------------------------------
-bool syd::RoiStatistic::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and
-          image->id == p->image->id and
-          (mask != NULL ? mask->id == p->mask->id:p->mask==NULL) and
-          mean == p->mean and
-          std_dev == p->std_dev and
-          n == p->n and
-          min == p->min and
-          max == p->max and
-          sum == p->sum);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
 {
   syd::RecordWithHistory::InitTable(ta);

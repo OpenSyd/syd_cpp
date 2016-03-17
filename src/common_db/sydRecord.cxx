@@ -62,14 +62,6 @@ void syd::Record::Set(const std::vector<std::string> & args)
 
 
 // --------------------------------------------------------------------
-bool syd::Record::IsEqual(const pointer p) const
-{
-  return (id == p->id);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Record::InitTable(syd::PrintTable & table) const
 {
   table.AddColumn("id");
@@ -144,5 +136,13 @@ syd::Database * syd::Record::GetDatabase() const
               << GetTableName() << "' is not persistant. Insert it in the db before.");
   }
   return db_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2)
+{
+  return (r1->ToString() == r2->ToString());
 }
 // --------------------------------------------------------------------

@@ -46,18 +46,6 @@ std::string syd::DicomFile::ToString() const
 
 
 // --------------------------------------------------
-bool syd::DicomFile::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and
-          file->id == p->file->id and
-          dicom_serie->id == p->dicom_serie->id and
-          dicom_sop_uid == p->dicom_sop_uid and
-          dicom_instance_number == p->dicom_instance_number);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::DicomFile::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event, db);

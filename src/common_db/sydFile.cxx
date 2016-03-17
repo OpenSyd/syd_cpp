@@ -46,17 +46,6 @@ std::string syd::File::ToString() const
 
 
 // --------------------------------------------------------------------
-bool syd::File::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and
-          filename == p->filename and
-          path == p->path and
-          md5 == p->md5);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event,db);

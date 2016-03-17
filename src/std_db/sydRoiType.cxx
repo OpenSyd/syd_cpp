@@ -41,17 +41,6 @@ std::string syd::RoiType::ToString() const
 
 
 // --------------------------------------------------
-bool syd::RoiType::IsEqual(const pointer p) const
-{
-  bool b = (syd::Record::IsEqual(p) and
-            name == p->name and
-            description == p->description);
-  return b;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::RoiType::Set(const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {

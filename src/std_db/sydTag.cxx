@@ -44,15 +44,6 @@ std::string syd::Tag::ToString() const
 
 
 // --------------------------------------------------
-bool syd::Tag::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and label == p->label and
-          description == p->description);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Tag::Set(const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {

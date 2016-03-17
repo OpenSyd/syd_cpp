@@ -68,27 +68,6 @@ std::string syd::Image::ToString() const
 
 
 // --------------------------------------------------
-bool syd::Image::IsEqual(const pointer p) const
-{
-  bool b = (syd::Record::IsEqual(p) and
-            patient->id == p->patient->id);
-  for(auto i=0; i<files.size(); i++) b = b and files[i]->id == p->files[i]->id;
-  for(auto i=0; i<tags.size(); i++) b = b and tags[i]->id == p->tags[i]->id;
-  for(auto i=0; i<dicoms.size(); i++) b = b and dicoms[i]->id == p->dicoms[i]->id;
-  b  =  b and
-    type == p->type and
-    pixel_type == p->pixel_type and
-    dimension == p->dimension and
-    pixel_value_unit == p->pixel_value_unit and
-    frame_of_reference_uid == p->frame_of_reference_uid;
-  for(auto i=0; i<size.size(); i++) b = b and size[i] == p->size[i];
-  for(auto i=0; i<spacing.size(); i++) b = b and spacing[i] == p->spacing[i];
-  return b;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 std::string syd::Image::GetAcquisitionDate() const
 {
   if (dicoms.size() == 0) return "unknown_date";

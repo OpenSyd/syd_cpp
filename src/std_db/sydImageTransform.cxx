@@ -55,24 +55,6 @@ std::string syd::ImageTransform::ToString() const
 
 
 // --------------------------------------------------
-bool syd::ImageTransform::IsEqual(const pointer p) const
-{
-  bool b = syd::Record::IsEqual(p) and
-    fixed_image->id == p->fixed_image->id and
-    moving_image->id == p->moving_image->id and
-    fixed_mask->id == p->fixed_mask->id and
-    moving_mask->id == p->moving_mask->id and
-    config_file->id == p->config_file->id and
-    transform_file->id == p->transform_file->id and
-    date == p->date;
-  if (!b) return b;
-  for(auto i=0; i< tags.size(); i++)  b = b and (tags[i]->id == p->tags[i]->id); // if not same order ?
-  return b;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::ImageTransform::Set(const syd::Database * db, const std::vector<std::string> & arg)
 {
   LOG(FATAL) << "Set ImageTransform not implemented";

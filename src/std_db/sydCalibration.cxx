@@ -51,18 +51,6 @@ std::string syd::Calibration::ToString() const
 
 
 // --------------------------------------------------
-bool syd::Calibration::IsEqual(const pointer p) const
-{
-  bool b = (syd::Record::IsEqual(p) and
-            image->id == p->image->id);
-  for(auto i=0; i<tags.size(); i++) b = b and tags[i]->id == p->tags[i]->id;
-  b  =  b and factor == p->factor and fov_ratio == p->fov_ratio;
-  return b;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Calibration::AddTag(syd::Tag::pointer tag)
 {
   bool found = false;

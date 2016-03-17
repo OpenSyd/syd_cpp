@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
     db->New(pref);
     *pref = *p; // standard copy
     db->QueryOne(p, p->id);
-    if (!p->IsEqual(pref)) {
+    if (!syd::IsEqual(p, pref)) {
       LOG(FATAL) << "Error update single generic. p is " << p << " and pref " << pref;
     }
     std::cout << "Update " << p << std::endl;

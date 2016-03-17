@@ -113,10 +113,6 @@ namespace syd {
     /// from Record to not have default constructor
     Record();
 
-    /// Return true if the record is equal (same id here); (protected
-    /// to avoid use with generic pointer)
-    virtual bool IsEqual(const pointer p) const;
-
     /// This field will store a pointer to the db and is not save in
     /// the db (transient). We set this pointer at the creation of the
     /// object (load or persist). odb call the const version of the
@@ -155,9 +151,10 @@ namespace syd {
 
 
 #define TABLE_DECLARE_MANDATORY_FUNCTIONS(TABLE_NAME)   \
-  virtual std::string ToString() const;                 \
-  virtual bool IsEqual(const pointer p) const;
+  virtual std::string ToString() const;
 
+
+bool IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2);
 
 } // end namespace
 // --------------------------------------------------------------------
