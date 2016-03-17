@@ -277,7 +277,7 @@ std::string syd::Database::GetListOfTableNames() const
 
 // --------------------------------------------------------------------
 syd::Database::generic_record_pointer
-syd::Database::New(const std::string & table_name) const
+syd::Database::New(const std::string & table_name)
 {
   return GetTable(table_name)->New();
 }

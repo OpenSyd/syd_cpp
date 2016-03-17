@@ -320,10 +320,11 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records, con
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Database::New(std::shared_ptr<RecordType> & record) const
+void syd::Database::New(std::shared_ptr<RecordType> & record)
 {
   auto p = GetTable(RecordType::GetStaticTableName())->New();
   record = std::dynamic_pointer_cast<RecordType>(p);
+  record->SetDatabasePointer(this);
 }
 // --------------------------------------------------------------------
 

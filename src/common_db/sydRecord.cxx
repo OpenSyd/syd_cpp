@@ -100,6 +100,14 @@ void syd::Record::SetDatabasePointer(odb::callback_event event, odb::database & 
 
 
 // --------------------------------------------------------------------
+void syd::Record::SetDatabasePointer(syd::Database * db)
+{
+  db_ = db;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Record::Callback(odb::callback_event event, odb::database & db) const
 {
   // Events in Callback const : persist, update, erase

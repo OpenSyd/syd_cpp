@@ -59,6 +59,9 @@ namespace syd {
     static std::string GetStaticSQLTableName() { return "syd::Record"; }
     static void InitInheritance() { }
 
+    /// Set the db
+    virtual void SetDatabasePointer(syd::Database * db);
+
     /// Set the values of the fields from some string.
     virtual void Set(const std::vector<std::string> & args);
 

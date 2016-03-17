@@ -38,7 +38,7 @@ namespace syd {
     typedef syd::Record::pointer record_pointer;
     typedef syd::Record::vector record_vector;
 
-    virtual record_pointer New() const = 0;
+    virtual record_pointer New() = 0;
 
     virtual void Insert(record_pointer record) const = 0;
 
