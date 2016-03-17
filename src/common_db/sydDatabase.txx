@@ -309,7 +309,8 @@ void syd::Database::Grep(std::vector<std::shared_ptr<RecordType>> & output,
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records, const std::string & order) const
+void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records,
+                         const std::string & order) const
 {
   if (records.size() == 0) return;
   auto t = GetTable<RecordType>();
@@ -322,7 +323,7 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records, con
 template<class RecordType>
 void syd::Database::New(std::shared_ptr<RecordType> & record)
 {
-  auto p = GetTable(RecordType::GetStaticTableName())->New();
+  auto p = RecordType::New();
   record = std::dynamic_pointer_cast<RecordType>(p);
   record->SetDatabasePointer(this);
 }

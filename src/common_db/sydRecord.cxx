@@ -45,9 +45,9 @@ bool syd::Record::IsPersistent() const
 void syd::Record::CheckIfPersistant() const
 {
   if (IsPersistent()) return;
-  LOG(FATAL) << "This record of table'" << GetTableName()
-             << " is not persistent (not in the db)." << std::endl
-             << ToString();
+  EXCEPTION("This record of table '" << GetTableName()
+            << " is not persistent (not in the db)." << std::endl
+            << ToString());
 }
 // --------------------------------------------------------------------
 

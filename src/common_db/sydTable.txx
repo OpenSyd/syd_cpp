@@ -34,7 +34,9 @@ template<class RecordType>
 typename syd::Table<RecordType>::generic_record_pointer
 syd::Table<RecordType>::New()
 {
-  return RecordType::New();
+  typename RecordType::pointer record;
+  db_->New<RecordType>(record);
+  return record;
 }
 // --------------------------------------------------------------------
 
@@ -43,7 +45,6 @@ syd::Table<RecordType>::New()
 template<class RecordType>
 void syd::Table<RecordType>::Insert(generic_record_pointer record) const
 {
-  //  auto p = std::dynamic_pointer_cast<Record>(record);
   auto p = std::static_pointer_cast<RecordType>(record);
   db_->Insert<RecordType>(p);
 }
