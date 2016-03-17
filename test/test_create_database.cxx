@@ -44,13 +44,13 @@ int main(int argc, char* argv[])
 
   {
     std::cout << "Open as generic Database" << std::endl;
-    syd::Database * db = m->Read(dbname);
+    syd::Database * db = m->Open(dbname);
     db->Dump(std::cout);
   }
 
   {
     std::cout << "Open as StandardDatabase" << std::endl;
-    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+    syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(dbname);
     db->Dump(std::cout);
   }
 
@@ -62,19 +62,19 @@ int main(int argc, char* argv[])
 
   {
     std::cout << "Open as generic Database" << std::endl;
-    syd::Database * db = m->Read(ext_dbname);
+    syd::Database * db = m->Open(ext_dbname);
     db->Dump(std::cout);
   }
 
   {
     std::cout << "Open as StandardDatabase" << std::endl;
-    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(ext_dbname);
+    syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(ext_dbname);
     db->Dump(std::cout);
   }
 
   {
     std::cout << "Open as ExtendedDatabase" << std::endl;
-    ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
+    ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
     db->Dump(std::cout);
   }
 

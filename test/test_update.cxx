@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
     m->Create("ExtendedDatabase", ext_dbname, folder, true);
   }
 
-  syd::Database * db = m->Read(ext_dbname);
+  syd::Database * db = m->Open(ext_dbname);
 
   // Insert elements
   {

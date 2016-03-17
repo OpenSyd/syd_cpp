@@ -40,7 +40,7 @@ int main(int argc, char* argv[])
   m->Create("ExtendedDatabase", ext_dbname, folder, true);
 
   // Read the database
-  ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
+  ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
 
   /// Insert element
   ext::Patient::pointer p1;

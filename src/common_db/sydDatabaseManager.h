@@ -42,11 +42,11 @@ namespace syd {
     static DatabaseManager * GetInstance();
 
     /// Open and read a database (automatically find the correct schema)
-    Database * Read(std::string filename);
+    Database * Open(std::string filename);
 
     /// Open and read a database of the given schema
     template<class DatabaseSchema>
-    DatabaseSchema * Read(const std::string & filename);
+    DatabaseSchema * Open(const std::string & filename);
 
     /// Create a new empty database of the given db_schema_name
     void Create(const std::string & db_schema_name, const std::string & filename,

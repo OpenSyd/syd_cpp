@@ -45,7 +45,7 @@ syd::Database::~Database()
 
 
 // --------------------------------------------------------------------
-void syd::Database::Read(std::string filename)
+void syd::Database::Open(std::string filename)
 {
   filename_ = filename;
   // Open the DB

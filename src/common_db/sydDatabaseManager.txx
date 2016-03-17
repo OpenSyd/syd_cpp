@@ -36,9 +36,9 @@ DatabaseCreator<DatabaseSchema> * syd::DatabaseManager::RegisterDatabaseSchema(c
 
 // --------------------------------------------------------------------
 template<class DatabaseSchema>
-DatabaseSchema * syd::DatabaseManager::Read(const std::string & filename)
+DatabaseSchema * syd::DatabaseManager::Open(const std::string & filename)
 {
-  syd::Database * db = Read(filename);
+  syd::Database * db = Open(filename);
   // Check it the db inherit (or is) a DatabaseSchema;
   if (dynamic_cast<DatabaseSchema*>(db) == 0) {
     EXCEPTION("Error the db '" << filename

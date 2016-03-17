@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   std::string ext_dbname = "test_dump.ext.db";
   std::string folder = "test";
   m->Create("ExtendedDatabase", ext_dbname, folder, true);
-  ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
+  ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
 
   // Insert some records
   ext::Patient::pointer p1;

@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
   //----------------------------------------------------------------
   {
     std::cout << "Open std as generic Database" << std::endl;
-    syd::Database * db = m->Read(dbname);
+    syd::Database * db = m->Open(dbname);
     db->Dump();
     auto patient = db->New("Patient");
     patient->Set(args);
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   //----------------------------------------------------------------
   {
     std::cout << "Open ext as generic Database" << std::endl;
-    syd::Database * db = m->Read<syd::Database>(ext_dbname);
+    syd::Database * db = m->Open<syd::Database>(ext_dbname);
     auto patient = db->New("Patient");
     patient->Set(args);
     std::cout << "Before insertion " << patient << std::endl;
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
   //----------------------------------------------------------------
   {
     std::cout << "Open std as StandardDatabase" << std::endl;
-    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+    syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(dbname);
     syd::Patient::pointer patient;
     db->New(patient);
     args[0] = "titi";
@@ -103,7 +103,7 @@ int main(int argc, char* argv[])
   //----------------------------------------------------------------
   {
     std::cout << "Open ext as StandardDatabase" << std::endl;
-    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(ext_dbname);
+    syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(ext_dbname);
     syd::Patient::pointer patient;
     db->New(patient);
     args[0] = "titi";
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
   //----------------------------------------------------------------
   {
     std::cout << "Open ext as ExtendedDatabase" << std::endl;
-    ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
+    ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
     ext::Patient::pointer patient;
     db->New(patient);
     args[0] = "tutu";
@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
 
   //----------------------------------------------------------------
   {
-    ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
+    ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
     ext::Patient::vector patients;
     ext::Patient::pointer p;
     db->New(p);
@@ -164,7 +164,7 @@ int main(int argc, char* argv[])
 
   //----------------------------------------------------------------
   {
-    syd::Database * db = m->Read(ext_dbname);
+    syd::Database * db = m->Open(ext_dbname);
     syd::Record::vector records;
     for(auto i=0; i<5; i++) {
       auto r = db->New("Patient");
@@ -173,6 +173,7 @@ int main(int argc, char* argv[])
       r->Set(args);
       records.push_back(r);
     }
+    DDS(records);
     db->Insert(records, "Patient");
     records.clear();
     db->Query(records, "Patient");

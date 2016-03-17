@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
 
   // Load the database
-  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
+  syd::Database * db = syd::DatabaseManager::GetInstance()->Open(args_info.db_arg);
 
   // Get the element
   syd::Record::pointer r;

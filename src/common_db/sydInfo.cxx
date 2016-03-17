@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
 
   // Get the database
-  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
+  syd::Database * db = syd::DatabaseManager::GetInstance()->Open(args_info.db_arg);
 
   // define output (could be changeed later)
   auto & os = std::cout;

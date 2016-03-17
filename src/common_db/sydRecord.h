@@ -94,7 +94,6 @@ namespace syd {
     /// Check the record. Usually check the file on disk
     virtual syd::CheckResult Check() const;
 
-
     /// Return true if the record is persistent (in the db)
     bool IsPersistent() const;
     void CheckIfPersistant() const;

@@ -290,7 +290,7 @@ namespace syd {
     Database();
 
     /// Main function to open a database
-    void Read(std::string filename);
+    void Open(std::string filename);
 
     /// Must be overwritten by concrete classes.
     virtual void CreateTables() = 0;

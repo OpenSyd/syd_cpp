@@ -34,7 +34,7 @@ syd::DatabaseManager * syd::DatabaseManager::GetInstance()
 
 
 // --------------------------------------------------------------------
-syd::Database * syd::DatabaseManager::Read(std::string filename)
+syd::Database * syd::DatabaseManager::Open(std::string filename)
 {
   // Get the real filename from the environment variable is filename is 'default'
   if (filename == "default") {
@@ -96,7 +96,7 @@ syd::Database * syd::DatabaseManager::Read(std::string filename)
               << filename << " is not found. " << std::endl
               << "Try to insert this typename via plugin.");
   }
-  return it->second->Read(filename);
+  return it->second->Open(filename);
 }
 // --------------------------------------------------------------------
 

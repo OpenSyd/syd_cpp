@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // ------------------------------------------------------------------
   // view
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
     // Load plugin
     syd::PluginManager::GetInstance()->Load();
     syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
-    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+    syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
     db->Dump("Image");
 

@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the dicom series to stitch
   std::vector<syd::IdType> ids;

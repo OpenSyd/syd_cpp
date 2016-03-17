@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
 
   // Load the database
   syd::Database * db;
-  db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
+  db = syd::DatabaseManager::GetInstance()->Open(args_info.db_arg);
 
   // Consider folder to search in. Convert to absolute path to be
   // compared to absolute path in the db.

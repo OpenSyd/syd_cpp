@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 
   // Create the database
   m->Create(dbtype, dbname, folder);
-  syd::Database * db = m->Read(dbname);
+  syd::Database * db = m->Open(dbname);
   LOG(1) << "Database " << dbname << " of type '" << dbtype << "' created.";
   LOG(2) << "List of tables: " << db->GetListOfTableNames();
 

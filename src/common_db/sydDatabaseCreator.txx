@@ -19,10 +19,10 @@
 
 // --------------------------------------------------------------------
 template<class DatabaseType>
-Database * syd::DatabaseCreator<DatabaseType>::Read(std::string filename)
+Database * syd::DatabaseCreator<DatabaseType>::Open(std::string filename)
 {
   syd::Database * db = new DatabaseType();
-  db->Read(filename);
+  db->Open(filename);
   return db;
 }
 // --------------------------------------------------------------------
