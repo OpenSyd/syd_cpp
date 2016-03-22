@@ -85,7 +85,7 @@ void syd::StandardDatabase::SetImageTagsFromCommandLine(syd::Image::pointer imag
       try {
         FindTags(tags, tagname);
       } catch(std::exception & e) { } // ignore unknown tag
-      for(auto t:tags) image->RemoveTag(t);
+      for(auto t:tags) image->RemoveTag(t); // FIXME to change in RemoveTag(image->tags, t);
     }
   }
 
@@ -99,7 +99,7 @@ void syd::StandardDatabase::SetImageTagsFromCommandLine(syd::Image::pointer imag
       } catch(std::exception & e) {
         LOG(WARNING) << "Some tags are ignored. " << e.what();
       }
-      for(auto t:tags) image->AddTag(t);
+      for(auto t:tags) AddTag(image->tags, t);
     }
   }
 }
