@@ -79,6 +79,13 @@ int main(int argc, char* argv[])
   LOG(1) << "Database " << dbname << " of type '" << dbtype << "' created.";
   LOG(2) << "List of tables: " << db->GetListOfTableNames();
 
+  // Insert default records if needed
+  std::string def = args_info.default_table_arg;
+  DD(def);
+  if (def != "none") {
+    db->InsertDefaultRecords(def);
+  }
+
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

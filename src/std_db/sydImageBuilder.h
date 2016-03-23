@@ -20,21 +20,18 @@
 #define SYDIMAGEBUILDERBASE_H
 
 // syd
-#include "sydStandardDatabase.h"
+#include "sydDatabaseFilter.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
   /// This base class is used to create ImageBuilder class that perform operation on Images
   /// series and images.
-  class ImageBuilder {
+  class ImageBuilder: public syd::DatabaseFilter {
 
   public:
     /// Constructor.
-    ImageBuilder(syd::StandardDatabase * db) { SetDatabase(db); }
-
-    /// Set the pointer to the database
-    void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
+    ImageBuilder(syd::StandardDatabase * db):DatabaseFilter(db) { }
 
     /// Create an empty image (also create associated file). Not inserted in the db.
     syd::Image::pointer NewMHDImage(syd::Patient::pointer patient);
@@ -73,12 +70,6 @@ namespace syd {
     void SetImagePixelValueUnit(syd::Image::pointer image, std::string pixel_unit);
 
   protected:
-    /// Protected constructor. No need to use directly.
-    ImageBuilder();
-
-    /// Pointer to the database
-    syd::StandardDatabase * db_;
-
     /// Create the associated Files
     void InitializeMHDFiles(syd::Image::pointer image);
 

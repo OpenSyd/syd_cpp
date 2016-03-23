@@ -18,6 +18,7 @@
 
 // syd
 #include "sydStandardDatabase.h"
+#include "sydUpdateRadionuclideFilter.h"
 
 // --------------------------------------------------------------------
 template<>
@@ -363,5 +364,45 @@ void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
   }
 
   EXCEPTION("Query by tag could only be used with table that contains tags");
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
+{
+  if (def == "none") return;
+
+  // Add some radionuclide
+  LOG(1) << "Adding some default radionuclides ...";
+  std::vector<std::string> rads = {"C-11", "O-15", "F-18", "P-32", "P-33",
+                                   "Cu-64", "Cu-67", "Ga-68", "Sr-89",
+                                   "Y-90", "Zr-89", "Tc-99m", "Rh-103m",
+                                   "In-111", "Sn-117m", "I-123", "I-124",
+                                   "I-125", "I-131", "Sm-153", "Ho-166",
+                                   "Er-169", "Lu-177", "Re-186", "Re-188",
+                                   "Tl-201", "Pb-212", "Bi-212", "Bi-213",
+                                   "At-211", "Ra-223", "Ac-225", "Th-227"};
+  // "Rb-82" ?
+  auto a = sydlog::Log::LogLevel();
+  sydlog::Log::LogLevel() = 0; // to avoid displaying all insertion
+  syd::UpdateRadionuclideFilter f(this);
+  f.Update(rads);
+  sydlog::Log::LogLevel() = a; // get back to initial verbose value
+  syd::Radionuclide::vector r;
+  Query(r);
+  LOG(1) << r.size() << " radionuclides have been added.";
+
+
+  // Add some tags
+  //std::vector<std::
+
+
+  // Add some PixelValueUnit
+
+
+  // Add some RoiType
+
+
 }
 // --------------------------------------------------------------------

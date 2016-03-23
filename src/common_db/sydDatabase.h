@@ -121,6 +121,9 @@ namespace syd {
     /// Insert several elements
     template<class RecordType>
     void Insert(std::vector<std::shared_ptr<RecordType>> records);
+
+    /// Automatically insert some default records (should be overloaded)
+    virtual void InsertDefaultRecords(const std::string & def) {}
     // ------------------------------------------------------------------------
 
 
@@ -326,9 +329,6 @@ namespace syd {
 
     /// Store the OO db schema description
     syd::DatabaseDescription * description_;
-
-    /// Store the sql db schema description (from the file)
-    //    syd::DatabaseDescription * sql_description_;
 
   };
 

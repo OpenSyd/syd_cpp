@@ -52,6 +52,7 @@ add_library(sydStandardDatabase SHARED
   sydSubstituteRadionuclideImageBuilder.cxx
   sydRoiStatisticBuilder.cxx
   sydScaleImageBuilder.cxx
+  sydUpdateRadionuclideFilter.cxx
   )
 
 ## to declare dependencies
