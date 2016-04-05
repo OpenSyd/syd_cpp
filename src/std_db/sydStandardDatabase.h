@@ -112,6 +112,11 @@ namespace syd {
     template<class RecordType>
     void SortAndPrint(typename RecordType::vector & records);
 
+    /// Insert a new tag
+    Tag::pointer NewTag(const std::string & name, const std::string & description);
+    PixelValueUnit::pointer NewPixelValueUnit(const std::string & name, const std::string & description);
+    RoiType::pointer NewRoiType(const std::string & name, const std::string & description);
+
   protected:
     /// Insert the tables
     virtual void CreateTables();

@@ -81,10 +81,7 @@ int main(int argc, char* argv[])
 
   // Insert default records if needed
   std::string def = args_info.default_table_arg;
-  DD(def);
-  if (def != "none") {
-    db->InsertDefaultRecords(def);
-  }
+  db->InsertDefaultRecords(def);
 
   // This is the end, my friend.
 }

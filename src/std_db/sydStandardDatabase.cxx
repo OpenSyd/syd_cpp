@@ -384,25 +384,130 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
                                    "Tl-201", "Pb-212", "Bi-212", "Bi-213",
                                    "At-211", "Ra-223", "Ac-225", "Th-227"};
   // "Rb-82" ?
-  auto a = sydlog::Log::LogLevel();
-  sydlog::Log::LogLevel() = 0; // to avoid displaying all insertion
+  // create  rad
+  syd::Radionuclide::vector radionuclides;
   syd::UpdateRadionuclideFilter f(this);
-  f.Update(rads);
-  sydlog::Log::LogLevel() = a; // get back to initial verbose value
-  syd::Radionuclide::vector r;
-  Query(r);
-  LOG(1) << r.size() << " radionuclides have been added.";
+  for(auto rad_name:rads) {
+    syd::Radionuclide::pointer r;
+    New(r);
+    r->name = rad_name;
+    f.GetDataFromWeb(r);
+    radionuclides.push_back(r);
+  }
+  Insert(radionuclides);
+  LOG(1) << radionuclides.size() << " radionuclides have been added.";
 
+  // Add some default tags
+  syd::Tag::vector tags;
+  tags.push_back(NewTag("ct", "CT image"));
+  tags.push_back(NewTag("spect", "SPECT image"));
+  tags.push_back(NewTag("pet", "PET image"));
+  tags.push_back(NewTag("stitch", "Image computed by stitching 2 images"));
+  tags.push_back(NewTag("dose", "Dose distribution image"));
+  tags.push_back(NewTag("edep", "Edep distribution image"));
+  tags.push_back(NewTag("dose_squared", "Squared dose distribution image (for MC simulations)"));
+  tags.push_back(NewTag("edep_squared", "Squared edep distribution image (for MC simulations)"));
+  tags.push_back(NewTag("dose_uncertainty", "Dose relative uncertainty distribution image (for MC simulations)"));
+  tags.push_back(NewTag("edep_uncertainty", "Edep relative uncertainty distribution image (for MC simulations)"));
+  tags.push_back(NewTag("spect_dc", "Decay corrected activity image"));
+  tags.push_back(NewTag("activity", "Activity image (calibrated)"));
+  tags.push_back(NewTag("S-matrix", "S-matrix image"));
+  tags.push_back(NewTag("dose_rate", "Dose rate image"));
+  for(auto r:radionuclides) {
+    tags.push_back(NewTag(r->name, "Radionuclide " + r->name));
+  }
+  Insert(tags);
+  LOG(1) << tags.size() << " tags have been added.";
 
-  // Add some tags
-  //std::vector<std::
+  // Add some default PixelValueUnit
+  syd::PixelValueUnit::vector units;
+  units.push_back(NewPixelValueUnit("%", "Percentage (such as relative uncertainty)"));
+  units.push_back(NewPixelValueUnit("HU", "Hounsfield Units"));
+  units.push_back(NewPixelValueUnit("counts", "Number of counts (by pixel)"));
+  units.push_back(NewPixelValueUnit("label", "Mask image label"));
+  units.push_back(NewPixelValueUnit("Gy", "Absorbed dose in Gy"));
+  units.push_back(NewPixelValueUnit("cGy", "Absorbed dose in cGy")); // FIXME
+  units.push_back(NewPixelValueUnit("MeV", "Deposited energy in MeV"));
 
+  units.push_back(NewPixelValueUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq"));
+  units.push_back(NewPixelValueUnit("Bq_by_IA", "Activity in Bq by injected activity in MBq"));
+  units.push_back(NewPixelValueUnit("MBq.h/IA[MBq]", "time integrated activity MBq.h by injected activity"));
+  units.push_back(NewPixelValueUnit("MBq/IA[MBq]", "Activity in MBq by injected activity in MBq"));
 
-  // Add some PixelValueUnit
+  units.push_back(NewPixelValueUnit("cGy/IA[MBq]", "Dose in cGy by injected activity"));
+  units.push_back(NewPixelValueUnit("cGy/h/IA[MBq]", "Dose rate in cGy by hour by injected activity"));
+  units.push_back(NewPixelValueUnit("cGy/kBq.h/IA[MBq]", "Dose in cGy by tia kBq.h by injected activity (for S matrix)"));
+  units.push_back(NewPixelValueUnit("kBq.h/IA[MBq]", "time integrated activity kBq.h by injected activity"));
+  units.push_back(NewPixelValueUnit("kBq/IA[MBq]", "Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelValueUnit("kBq_by_IA", "Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelValueUnit("mGy/Bq.sec", "Dose by cumulated activity"));
 
+  Insert(units);
+  LOG(1) << units.size() << " PixelValueUnit have been added.";
 
   // Add some RoiType
+  syd::RoiType::vector rois;
+  rois.push_back(NewRoiType("body", "Contour of the patient"));
+  rois.push_back(NewRoiType("liver", "Contour of the liver"));
+  rois.push_back(NewRoiType("spleen", "Contour of the spleen"));
+  rois.push_back(NewRoiType("heart", "Contour of the cardiac region"));
+  rois.push_back(NewRoiType("left_kidney", "Contour of the left kidney"));
+  rois.push_back(NewRoiType("right_kidney", "Contour of the right kidney"));
+  rois.push_back(NewRoiType("left_lung", "Contour of the left lung"));
+  rois.push_back(NewRoiType("right_lung", "Contour of the right lung"));
+  rois.push_back(NewRoiType("lung", "Contour of both lungs"));
+  rois.push_back(NewRoiType("bone_marrow", "Contour of the L2-L4 lumbar vertebrae"));
+  rois.push_back(NewRoiType("lesion", "Lesion"));
+  for(auto i=1; i<30; i++) { // start at 1
+    std::ostringstream oss;
+    if (i < 10) oss << "lesion0" << i;
+    else oss << "lesion" << i;
+    rois.push_back(NewRoiType(oss.str(), "Lesion "+ToString(i)));
+  }
+  Insert(rois);
+  LOG(1) << rois.size() << " RoiType have been added.";
+
+}
+// --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+syd::Tag::pointer
+syd::StandardDatabase::NewTag(const std::string & name,
+                              const std::string & description)
+{
+  syd::Tag::pointer tag;
+  New(tag);
+  tag->label = name;
+  tag->description = description;
+  return tag;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::PixelValueUnit::pointer
+syd::StandardDatabase::NewPixelValueUnit(const std::string & name,
+                                         const std::string & description)
+{
+  syd::PixelValueUnit::pointer v;
+  New(v);
+  v->name = name;
+  v->description = description;
+  return v;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiType::pointer
+syd::StandardDatabase::NewRoiType(const std::string & name,
+                                  const std::string & description)
+{
+  syd::RoiType::pointer v;
+  New(v);
+  v->name = name;
+  v->description = description;
+  return v;
 }
 // --------------------------------------------------------------------
