@@ -184,7 +184,6 @@ void syd::StandardDatabase::QueryByTags(generic_record_vector & records,
                                         const std::vector<std::string> & tag_names,
                                         const std::string & patient_name)
 {
-  DDS(tag_names);
   if (tag_names.size() == 0) {
     Query(records, RecordType::GetStaticTableName());
     return;
@@ -192,7 +191,6 @@ void syd::StandardDatabase::QueryByTags(generic_record_vector & records,
 
   typename RecordType::vector temp;
   QueryByTag<RecordType>(temp, tag_names[0], patient_name);
-  DDS(temp);
   for(auto record:temp) {
     int n=0;
     for(auto t:tag_names) { // brute force search !!
@@ -203,7 +201,6 @@ void syd::StandardDatabase::QueryByTags(generic_record_vector & records,
     }
     if (n == tag_names.size()) records.push_back(record);
   }
-  DDS(records);
 }
 // --------------------------------------------------------------------
 
