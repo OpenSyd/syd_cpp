@@ -47,11 +47,16 @@ int main(int argc, char* argv[])
     db->Query(rad);
     for(auto r:rad) radnames.push_back(r->name);
   }
-  else radnames.push_back(radname);
+  else {
+    for(auto i=0; i<args_info.inputs_num; i++)
+      radnames.push_back(args_info.inputs[i]);
+  }
 
   syd::UpdateRadionuclideFilter filter(db);
   filter.SetURL(args_info.url_arg, args_info.path_arg);
-  filter.Update(radnames);
+  auto rads = filter.Update(radnames);
+  for(auto r:rads)
+    LOG(1) << "Update " << r;
 
   // This is the end, my friend.
 }
