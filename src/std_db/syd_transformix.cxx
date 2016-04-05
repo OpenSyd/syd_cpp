@@ -82,10 +82,12 @@ int main(int argc, char* argv[])
       }
     }
     if (found == -1) {
-      LOG(FATAL) << "Error, could not find adequate ImageTransform for image:" << image;
+      LOG(WARNING) << "Could not find adequate ImageTransform for image (ignore):" << image;
     }
-    images.push_back(image);
-    transforms.push_back(initial_transforms[found]);
+    else {
+      images.push_back(image);
+      transforms.push_back(initial_transforms[found]);
+    }
   }
 
   // Loop

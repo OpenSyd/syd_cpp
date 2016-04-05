@@ -328,7 +328,7 @@ long syd::Database::GetNumberOfElements(const std::string & table_name)
 {
   // native query
   auto tdesc = GetTableDescription(table_name);
-  auto table_sql_name = tdesc->GetSQLTableName();
+  auto table_sql_name = AddDoubleQuoteAround(tdesc->GetSQLTableName());
   std::ostringstream sql;
   sql << "SELECT COUNT(*) FROM " << table_sql_name;
 
@@ -387,8 +387,8 @@ void syd::Database::Update(generic_record_pointer record,
   b = tdesc->FindField(field_name, &field);
   if (!b) EXCEPTION("Could not find the field " << field_name);
 
-  std::string table_sql_name = field->GetSQLTableName();
-  std::string field_sql_name = field->GetName();
+  std::string table_sql_name = AddDoubleQuoteAround(field->GetSQLTableName());
+  std::string field_sql_name = AddDoubleQuoteAround(field->GetName());
   std::string v = value;
 
   std::ostringstream sql;
