@@ -44,7 +44,7 @@ void syd::DatabaseDescription::Init(const syd::Database * db)
     //    table->InitTableDescription(description_); // init the description
     syd::TableDescription * tdesc = new syd::TableDescription();
     tdesc->SetTableName(table->GetTableName());
-    tdesc->SetSQLTableName("\""+table->GetSQLTableName()+"\"");
+    tdesc->SetSQLTableName(table->GetSQLTableName());
     tdesc->AddField("id", "int");
     AddTableDescription(tdesc);
   }
@@ -61,8 +61,8 @@ void syd::DatabaseDescription::Init(const syd::Database * db)
         // In this case, field is a vector
         std::string n = sqlt->GetSQLTableName();
         auto found = n.find("_");
-        auto table_name = n.substr(0,found)+"\"";
-        auto field_name = n.substr(found+1, n.size()-1); // ignore last char "
+        auto table_name = n.substr(0,found);
+        auto field_name = n.substr(found+1, n.size());
         syd::TableDescription * sdt;
         bool b  = FindTableDescriptionFromSQLName(table_name, &sdt);
         if (!b) {
@@ -128,7 +128,6 @@ void syd::DatabaseDescription::ReadDatabaseSchema(const syd::Database * db)
       std::string type = sqlite3_column_text_string(stmt, 0);
       if (type == "table") {
         std::string table_name = sqlite3_column_text_string(stmt, 2);
-        table_name = "\""+table_name+"\""; // add the "" around the full name
         table_names.push_back(table_name);
       }
     }

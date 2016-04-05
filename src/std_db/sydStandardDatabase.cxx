@@ -402,6 +402,8 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   tags.push_back(NewTag("ct", "CT image"));
   tags.push_back(NewTag("spect", "SPECT image"));
   tags.push_back(NewTag("pet", "PET image"));
+  tags.push_back(NewTag("init", "Initial data"));
+  tags.push_back(NewTag("register", "Registered and warped image"));
   tags.push_back(NewTag("stitch", "Image computed by stitching 2 images"));
   tags.push_back(NewTag("dose", "Dose distribution image"));
   tags.push_back(NewTag("edep", "Edep distribution image"));

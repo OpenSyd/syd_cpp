@@ -45,14 +45,6 @@ std::string syd::FieldDescription::GetSQLTableName() const
 // --------------------------------------------------------------------
 
 
-// // --------------------------------------------------------------------
-// void syd::FieldDescription::SetSQLTableName(std::string name)
-// {
-//   sql_table_name_ = name;
-// }
-// // --------------------------------------------------------------------
-
-
 // --------------------------------------------------------------------
 void syd::FieldDescription::SetName(std::string name, std::string type)
 {

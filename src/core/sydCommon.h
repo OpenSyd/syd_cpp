@@ -90,6 +90,7 @@ namespace syd {
   std::string &rtrim(std::string &s);
   // trim from both ends
   std::string &trim(std::string &s);
+  std::string AddDoubleQuoteAround(const std::string & s);
   //--------------------------------------------------------------------
 
 

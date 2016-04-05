@@ -181,9 +181,10 @@ void syd::StandardDatabase::SetTagsFromCommandLine(typename RecordType::pointer 
 // --------------------------------------------------------------------
 template<class RecordType>
 void syd::StandardDatabase::QueryByTags(generic_record_vector & records,
-                                       const std::vector<std::string> & tag_names,
-                                       const std::string & patient_name)
+                                        const std::vector<std::string> & tag_names,
+                                        const std::string & patient_name)
 {
+  DDS(tag_names);
   if (tag_names.size() == 0) {
     Query(records, RecordType::GetStaticTableName());
     return;
@@ -191,6 +192,7 @@ void syd::StandardDatabase::QueryByTags(generic_record_vector & records,
 
   typename RecordType::vector temp;
   QueryByTag<RecordType>(temp, tag_names[0], patient_name);
+  DDS(temp);
   for(auto record:temp) {
     int n=0;
     for(auto t:tag_names) { // brute force search !!
@@ -201,7 +203,7 @@ void syd::StandardDatabase::QueryByTags(generic_record_vector & records,
     }
     if (n == tag_names.size()) records.push_back(record);
   }
-
+  DDS(records);
 }
 // --------------------------------------------------------------------
 
@@ -236,9 +238,9 @@ void syd::StandardDatabase::QueryByTag(typename RecordType::vector & records,
 
   // Create request code
   std::ostringstream sql; // request
-  std::string t1="\""+table_desc->GetSQLTableName()+"\"";       // "\"syd::Image\"";
-  std::string t2="\""+table_desc->GetSQLTableName()+"_tags\"";  // "\"syd::Image_tags\"";
-  std::string t3="\"syd::Tag\"";
+  std::string t1= AddDoubleQuoteAround(table_desc->GetSQLTableName());
+  std::string t2= AddDoubleQuoteAround(table_desc->GetSQLTableName()+"_tags");
+  std::string t3= AddDoubleQuoteAround("syd::Tag");
   sql << "select " << t1 << ".id ";
   sql << "from   " << t1 << "," << t2 << "," << t3 << " ";
   sql << "where  " << t1 << ".id == " << t2 << ".object_id ";
@@ -252,17 +254,17 @@ void syd::StandardDatabase::QueryByTag(typename RecordType::vector & records,
 
   // Native query
   try {
-  odb::sqlite::connection_ptr c (odb_db_->connection ());
-  sqlite3 * sdb(c->handle());
-  sqlite3_stmt * stmt;
-  std::string s = sql.str();
-  auto rc = sqlite3_prepare_v2(sdb, s.c_str(), -1, &stmt, NULL);
-  if (rc==SQLITE_OK) {
-    while(sqlite3_step(stmt) == SQLITE_ROW) {
-      std::string n = syd::sqlite3_column_text_string(stmt, 0);
-      ids.push_back(atoi(n.c_str()));
+    odb::sqlite::connection_ptr c (odb_db_->connection ());
+    sqlite3 * sdb(c->handle());
+    sqlite3_stmt * stmt;
+    std::string s = sql.str();
+    auto rc = sqlite3_prepare_v2(sdb, s.c_str(), -1, &stmt, NULL);
+    if (rc==SQLITE_OK) {
+      while(sqlite3_step(stmt) == SQLITE_ROW) {
+        std::string n = syd::sqlite3_column_text_string(stmt, 0);
+        ids.push_back(atoi(n.c_str()));
+      }
     }
-  }
   } catch(std::exception & e) {
     EXCEPTION("Error during sql query. Error is " << e.what());
   }

@@ -77,7 +77,7 @@ void syd::TableDescription::ReadTableSchema(const syd::Database * db,
 
   sqlite3 * sdb = db->GetSqliteHandle();
   sqlite3_stmt * stmt;
-  std::string q = "PRAGMA table_info("+table_name+")";
+  std::string q = "PRAGMA table_info("+AddDoubleQuoteAround(table_name)+")";
   auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
   if (rc==SQLITE_OK) {
     /* Loop on result with the following structure:

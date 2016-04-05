@@ -365,3 +365,12 @@ std::string syd::GetVersionAsString(unsigned long long v)
   return s;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::AddDoubleQuoteAround(const std::string & s)
+{
+  std::string a = "\""+s+"\""; // add the "" around the full name
+  return a;
+}
+// --------------------------------------------------------------------
