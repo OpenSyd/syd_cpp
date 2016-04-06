@@ -346,8 +346,7 @@ void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
                                        const std::string table_name,
                                        const std::vector<std::string> & tag_names) // need patient name ?
 {
-  std::string t = table_name;
-  std::transform(t.begin(), t.end(), t.begin(), ::tolower);
+  std::string t = syd::ToLowerCase(table_name);
 
   if (t == "image") return QueryByTags<syd::Image>(records, tag_names);
   //  if (table_name == "Calibration") return QueryByTag<syd::RoiStatistic>(records, tag_names);
@@ -418,6 +417,7 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   tags.push_back(NewTag("activity", "Activity image (calibrated)"));
   tags.push_back(NewTag("S-matrix", "S-matrix image"));
   tags.push_back(NewTag("dose_rate", "Dose rate image"));
+  tags.push_back(NewTag("tia", "Time Integrated Activity"));
   for(auto r:radionuclides) {
     tags.push_back(NewTag(r->name, "Radionuclide " + r->name));
   }

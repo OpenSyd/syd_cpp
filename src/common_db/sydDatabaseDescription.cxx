@@ -150,9 +150,10 @@ void syd::DatabaseDescription::ReadDatabaseSchema(const syd::Database * db)
 bool syd::DatabaseDescription::FindTableDescription(std::string table_name,
                                                     syd::TableDescription ** d)
 {
+  std::string tn = ToLowerCase(table_name);
   auto it = std::find_if(tables_.begin(), tables_.end(),
-                         [&table_name](syd::TableDescription * t)
-                         { return t->GetTableName() == table_name; } );
+                         [&tn](syd::TableDescription * t)
+                         { return ToLowerCase(t->GetTableName()) == tn; } );
   if (it == tables_.end()) return false;
   *d = *it;
   return true;
