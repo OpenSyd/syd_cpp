@@ -153,25 +153,6 @@ int main(int argc, char* argv[])
   }
   im = itk_images[0]; // consider the first image for the following
 
-  // Consider the debug points
-  struct debug_point {
-    std::string name;
-    int x,y,z;
-  };
-  std::vector<debug_point> debug_points;
-  if (args_info.debug_given) {
-    std::string file=args_info.debug_arg;
-    std::ifstream is(file);
-    if (!is) {
-      LOG(FATAL) << "Cannot open " << file;
-    }
-    while (is) {
-      debug_point d;
-      is >> d.name >> d.x >> d.y >> d.z;
-      if (is and d.name[0] != '#') debug_points.push_back(d);
-    }
-  }
-
   // Create some models
   std::vector<syd::FitModelBase*> models;
   auto f2  = new syd::FitModel_f2;
@@ -210,20 +191,27 @@ int main(int argc, char* argv[])
   if (args_info.debug_images_flag) syd::WriteImage<ImageType>(mask, "mask.mhd");
   LOG(2) << "I find " << nb_pixel << " pixels to integrate in the mask.";
 
+
   // Create main builder
   syd::IntegratedActivityImageBuilder builder;
+
+  // search the roi if needed
+  if (args_info.roi_only_given) {
+    // load roi image
+    //    builder.SetComputeOnlyInROIFlag(roi);
+  }
+
+  // Set input images
   for(auto i=0; i<times.size(); i++) builder.AddInput(itk_images[i], times[i]);
 
   // Options
   builder.SetLambdaPhysicHours(injection->GetLambdaInHours());
-  builder.SetDebugOnlyFlag(args_info.debug_only_flag);
   builder.SetR2MinThreshold(args_info.r2_min_arg);
   builder.SetRestrictedTACFlag(args_info.restricted_tac_flag);
   if (args_info.add_time_given and args_info.add_value_given) {
     builder.SetAdditionalPoint(true, args_info.add_time_arg, args_info.add_value_arg);
   }
 
-  for(auto d:debug_points) builder.AddDebugPixel(d.name, d.x, d.y, d.z);
   if (args_info.debug_images_flag) {
     builder.AddOutputImage(r2);
     builder.AddOutputImage(best_model);
@@ -255,7 +243,10 @@ int main(int argc, char* argv[])
   }
 
   // Go !
-  builder.CreateIntegratedActivityImage();
+  if (args_info.roi_only_given)
+    builder.CreateIntegratedActivityInROI();
+  else
+    builder.CreateIntegratedActivityImage();
 
   // Get main output
   auto auc = builder.GetOutput();
@@ -291,12 +282,10 @@ int main(int argc, char* argv[])
   }
 
   // Write all debug outputs
-  if (args_info.debug_images_flag and !args_info.debug_only_flag)
-    for(auto o:builder.GetOutputs()) syd::WriteImage<ImageType>(o->image, o->filename);
-
-  // Debug here
-  builder.SaveDebugPixel("tac.txt");
-  builder.SaveDebugModel("models.txt");
+  if (args_info.debug_images_flag) {
+    for(auto o:builder.GetOutputs())
+      syd::WriteImage<ImageType>(o->image, o->filename);
+  }
 
   // Insert result in db
   syd::ImageBuilder bdb(db);

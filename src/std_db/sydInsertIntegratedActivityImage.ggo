@@ -17,13 +17,10 @@ option "model"           m "Set the models use to fit f2 f3 f4a etc"          st
 option "median_filter"   - "Apply median filter at the end"                   flag off
 option "fill_holes"      f "Try to fill holes using given radius"             int default="3" no
 option "substitute"      s "Change the radionuclide before computing"         string no
+option "roi_only"        - "Compute the TIA in a ROI only (not all pixels)"   string no
 option "add_time"        - "Add a point to the tac (bio HL) time"             double no
 option "add_value"       - "Add a point to the tac (bio HL) value"            double no
 option "pixelunit"       - "Name of pixel value unit to attach to the image"  string yes
-
-section "debug"
-option "debug"   	  - "File with debug points"                           string    no
-option "debug_only"   	  - "Do not create the image, only compute for point"  flag off
-option "debug_images"     - "Output some debug images"                         flag off
+option "debug_images"    - "Output some debug images"                         flag off
 
 #option "robust_scaling"    - "Ceres scaling Loss robust"                        float default="0.1" no

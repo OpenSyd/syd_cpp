@@ -39,118 +39,51 @@ syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::SaveDebugPixel(const std::string & filename) const
+void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityInROI()
 {
-  if (debug_data.size() < 1) return;
-
-  syd::PrintTable ta;
-  ta.AddColumn("time");
-  for(auto d:debug_data) {
-    ta.AddColumn(d.name);
-  }
-  ta.Init();
-  auto tac = debug_data[0].tac;
-  for(auto t=0; t<tac.size(); t++) {
-    ta.Set("time", tac.GetTime(t));
-    for(auto d:debug_data) {
-      ta.Set(d.name, d.tac.GetValue(t));
-    }
-    //ta.Endl();
-  }
-  std::ofstream os(filename);
-  ta.Print(os);
-  os.close();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & filename)
-{
-  if (debug_data.size() < 1) return;
-
-  for(auto & d:debug_data) {
-    for(auto model:d.models) {
-      syd::FitModelBase * subm = model->Clone();
-      //subm->lambda_phys_hours_ = 0.0043449876; // 177Lu
-      subm->lambda_phys_hours_ = 0.010823439; // 90Y FIXME
-      subm->name_ = subm->name_+"177Lu";
-      d.models.push_back(subm);
-    }
+  DD("CreateIntegratedActivityInROI");
+  /*
+  // use roistat in inputs images
+  syd::RoiStatistic::vector stats;
+  syd::RoiStatisticBuilder builder(db_);
+  for(auto im:images_) {
+    DD(im);
+    syd::RoiStatistic::pointer stat;
+    db_->New(stat);
+    stat->image = im;
+    stat->mask = roi;
+    //builder.SetEmptyPixelValue(args_info.empty_value_arg);
+    //builder.SetEmptyPixelValueFlag(true);
+    builder.ComputeStatistic(stat);
+    stats.push_back(stat);
+    DD(stat);
   }
 
+  // Init solver
+  InitSolver();
 
-  // Create tac from the models
-  auto tac = debug_data[0].tac;
-  std::vector<syd::TimeActivityCurve*> tacs;
-  for(auto d:debug_data) {
-    for(auto model:d.models) {
-      syd::TimeActivityCurve * t = model->GetTAC(0, tac.GetTime(tac.size()-1), 200);
-      tacs.push_back(t);
-    }
+  // Build tac (with add value etc), restricted etc
+  TimeActivityCurve tac;
+  for(auto t:times_) tac.AddValue(t, 0.0);
+  int i=0;
+  for(auto stat:stats) {
+    tac.SetValue(i, stat->mean);
+    ++i;
   }
+  DD(tac);
 
-  // Set table column name
-  syd::PrintTable ta;
-  ta.AddColumn("time");
-  for(auto d:debug_data) {
-    for(auto model:d.models) {
-      std::string name = d.name+"_"+model->GetName();
-      ta.AddColumn(name);
-    }
-  }
-  ta.Init();
+  DD("TODO additional_point_flag_ restricted_tac_flag_");
+  //  if (additional_point_flag_);
+  //  if (restricted_tac_flag_);
 
-  EXCEPTION("not implemented. sTODO ");
+  // Solve
+  int best;
+  best = FitModels(tac, debug_this_point_flag, &debug_data[debug_point_current]);
+  DD(best);
 
-  // Set values
-  for(auto t=0; t<tacs[0]->size(); t++) {
-    ta.Set("time", tacs[0]->GetTime(t));
-    // FIXME     for(auto tac:tacs) ta.Set( << tac->GetValue(t);
-    //    ta.Endl();
-  }
+  // output as RoiStatistic (not inserted here). What about tag ?
 
-  // Dump
-  std::ofstream os(filename);
-  ta.Print(os);
-  os.close();
-
-  // Other debug
-  for(auto d:debug_data) {
-    std::cout << d.name << " "  << std::endl;
-    for(auto i=0; i< d.models.size(); i++) {
-      auto model = d.models[i];
-      std::string p;
-      for(auto pp:model->GetParameters()) p = p+syd::ToString(pp)+" ";
-      std::cout << " " << model->GetName() << " " //<< model->ceres_summary_.BriefReport() << " "
-                << p
-                << (i == d.selected_model ? "**Selected**":"")
-                << " R2 = " << model->ComputeR2(d.tac, restricted_tac_flag_)
-                << " AICc = " << model->ComputeAICc(d.tac)
-                << " AUC = " << model->ComputeAUC(d.tac, model->lambda_phys_hours_, restricted_tac_flag_)
-                << " l = " << model->lambda_phys_hours_
-                << std::endl;
-    }
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::AddDebugPixel(std::string name, int x, int y, int z)
-{
-  if (images_.size() == 0) {
-    LOG(FATAL) << "Only use AddDebugPixel after SetInput";
-  }
-  auto size = images_[0]->GetLargestPossibleRegion().GetSize();
-  int index = z*size[0]*size[1] + y*size[0] + x;
-  DebugType debug;
-  debug.name = name;
-  debug.x = x;
-  debug.y = y;
-  debug.z = z;
-  debug.index = index;
-  debug_data.push_back(debug);
+  */
 }
 // --------------------------------------------------------------------
 
@@ -198,14 +131,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
     o->use_current_tac = restricted_tac_flag_;
   }
 
-  // debug init, sort point by index
-  bool debug_this_point_flag;
-  int debug_point_current=0;
-  std::sort(begin(debug_data), end(debug_data),
-            [](DebugType a, DebugType b) {
-              return a.index < b.index; });
-  if(debug_data.size() == 0) debug_point_current = -1;
-
   // log
   //  models, threshold, mask
   std::string sm;
@@ -222,14 +147,8 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   int number_of_pixels_success = 0;
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
 
-    // Consider current point, is it a debug point ?
-    if (debug_point_current != -1 and x == debug_data[debug_point_current].index) debug_this_point_flag = true;
-    else debug_this_point_flag = false;
-
     // Check if pixel is in the mask
-    if (((mask_flag and it_mask.Get() == 0) and !debug_this_point_flag)
-        or
-        (debug_only_flag_ and !debug_this_point_flag)) { // skip it
+    if (mask_flag and it_mask.Get() == 0) { // skip it
       for(auto i=0; i<images_.size(); i++) ++it;
     }
     else {
@@ -266,9 +185,9 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
       // Solve
       int best;
       if (restricted_tac_flag_)
-        best = FitModels(restricted_tac, debug_this_point_flag, &debug_data[debug_point_current]);
+        best = FitModels(restricted_tac);
       else
-        best = FitModels(tac, debug_this_point_flag, &debug_data[debug_point_current]);
+        best = FitModels(tac);
 
       // Set the current selected model, update the output
       if (best != -1) {
@@ -278,12 +197,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
         for(auto o:outputs_) o->Update(tac, restricted_tac, current_model_);
       }
 
-      // debug points for plot
-      if (debug_this_point_flag) {
-        debug_data[debug_point_current].selected_model = best;
-        debug_data[debug_point_current].tac = tac; // FIXME
-        ++debug_point_current;
-      }
     }
 
     // Next debug images
@@ -305,23 +218,12 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 
 
 // --------------------------------------------------------------------
-int syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac,
-                                                   bool debug_this_point_flag,
-                                                   DebugType * debug_current)
+int syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac)
 {
   for(auto model:models_) {
     ceres::Problem problem;// New problem each time. (I did not manage to change that)
     model->SetProblemResidual(&problem, tac);
     ceres::Solve(*ceres_options_, &problem, &model->ceres_summary_); // Go !
-
-    if (debug_this_point_flag) {
-      syd::FitModelBase * mm = model->Clone();
-      debug_current->models.push_back(mm);
-      // Copy the current tac
-      syd::TimeActivityCurve * c = new TimeActivityCurve;
-      c->CopyFrom(tac);
-      mm->current_tac = c;
-    }
   }
 
   // Select the best model

@@ -27,18 +27,6 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  class DebugType {
-  public:
-    int index;
-    int x;
-    int y;
-    int z;
-    syd::TimeActivityCurve tac;
-    std::vector<syd::FitModelBase*> models;
-    std::string name;
-    int selected_model;
-  };
-
   class ModelResult {
   public:
     syd::FitModelBase * model;
@@ -70,29 +58,19 @@ namespace syd {
     void AddOutputImage(syd::FitOutputImage * o) { outputs_.push_back(o); }
     void SetMask(ImageType::Pointer m) { mask_ = m; }
     void SetLambdaPhysicHours(double l) { image_lambda_phys_in_hour_ = l; }
-    void SetDebugOnlyFlag(bool b) { debug_only_flag_ = b; }
     void SetR2MinThreshold(double r) { R2_min_threshold_ = r; }
     void SetRestrictedTACFlag(bool b) { restricted_tac_flag_ = b; }
     void SetAdditionalPoint(bool b, double time, double value);
 
     // Main function
     void CreateIntegratedActivityImage();
+    void CreateIntegratedActivityInROI();
     FitOutputImage_Success * GetSuccessOutput() { return success_output_; }
     FitOutputImage_AUC * GetOutput() { return auc_output_; }
     std::vector<FitOutputImage*> & GetOutputs() { return outputs_; }
 
     // Other functions
     void ClearModel() { models_.clear(); }
-
-    // Debug
-    void SaveDebugPixel(const std::string & filename) const;
-    void SaveDebugModel(const std::string & filename);
-    void AddDebugPixel(std::string name, int x, int y, int z);
-    bool debug_only_flag_;
-
-    // Debug
-    bool current_debug_flag_;
-    std::vector<DebugType> debug_data;
 
   protected:
 
@@ -114,7 +92,7 @@ namespace syd {
     syd::FitOutputImage_AUC * auc_output_;
 
     void InitSolver();
-    int FitModels(TimeActivityCurve & tac, bool debug_this_point_flag, DebugType * debug_current);
+    int FitModels(TimeActivityCurve & tac);
     void InitInputData();
 
     // If 'true', only use the last part of the tac, from the max value to then end (2 points at min)
