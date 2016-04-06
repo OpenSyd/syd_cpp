@@ -374,3 +374,13 @@ std::string syd::AddDoubleQuoteAround(const std::string & s)
   return a;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::ToLowerCase(const std::string & s)
+{
+  std::string t = s;
+  std::transform(t.begin(), t.end(), t.begin(), ::tolower);
+  return t;
+}
+// --------------------------------------------------------------------

@@ -91,6 +91,7 @@ namespace syd {
   // trim from both ends
   std::string &trim(std::string &s);
   std::string AddDoubleQuoteAround(const std::string & s);
+  std::string ToLowerCase(const std::string & s);
   //--------------------------------------------------------------------
 
 
