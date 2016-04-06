@@ -346,10 +346,13 @@ void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
                                        const std::string table_name,
                                        const std::vector<std::string> & tag_names) // need patient name ?
 {
-  if (table_name == "Image") return QueryByTags<syd::Image>(records, tag_names);
+  std::string t = table_name;
+  std::transform(t.begin(), t.end(), t.begin(), ::tolower);
+
+  if (t == "image") return QueryByTags<syd::Image>(records, tag_names);
   //  if (table_name == "Calibration") return QueryByTag<syd::RoiStatistic>(records, tag_names);
 
-  if (table_name == "RoiStatistic") {
+  if (t == "roistatistic") {
     // Specific case here, we search in the image associated with the RoiStatistic
     syd::Record::vector images;
     QueryByTag(images, "Image", tag_names);
