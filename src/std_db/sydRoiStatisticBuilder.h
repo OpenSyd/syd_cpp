@@ -50,6 +50,12 @@ namespace syd {
     /// Create a RoiStatistic. It it not inserted into the db
     void ComputeStatistic(syd::RoiStatistic::pointer stat);
 
+    /// Set the empty pixel value
+    void SetEmptyPixelValue(double  e) { emptyPixelValue_ = e; }
+
+    /// Consider or not an empty pixel value
+    void SetEmptyPixelValueFlag(bool b) { useEmptyPixelValueFlag_ = b; }
+
   protected:
     /// Protected constructor. No need to use directly.
     RoiStatisticBuilder();
@@ -59,6 +65,12 @@ namespace syd {
 
     /// Pointer to the database
     syd::StandardDatabase * db_;
+
+    // Use an empty pixel value (not count in the computation)
+    bool useEmptyPixelValueFlag_;
+
+    // Empty pixel value (not count in the computation)
+    double emptyPixelValue_;
 
   }; // class RoiStatisticBuilder
 

@@ -79,6 +79,10 @@ int main(int argc, char* argv[])
         newStat = true;
       }
       // Update the value
+      if (args_info.empty_value_given) {
+        builder.SetEmptyPixelValue(args_info.empty_value_arg);
+        builder.SetEmptyPixelValueFlag(true);
+      }
       builder.ComputeStatistic(stat);
       // Update
       if (newStat) {
