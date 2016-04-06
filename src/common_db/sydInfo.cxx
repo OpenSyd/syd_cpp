@@ -50,26 +50,28 @@ int main(int argc, char* argv[])
     (odb::schema_catalog::base_version (*odb_db, db->GetDatabaseSchema()));
 
   // Basics informations
-  os << "Database file  : " << db->GetFilename() << std::endl;
-  os << "Database schema: " << db->GetDatabaseSchema() << " " ;
-  if (current_version == file_version) os << syd::GetVersionAsString(current_version) << std::endl;
-  else { // never here because Read do the migration
-    os << warningColor << " file version is " << syd::GetVersionAsString(file_version)
-       << " while syd version is " << syd::GetVersionAsString(current_version) << std::endl;
-  }
-  os << "Database folder: " << db->GetDatabaseRelativeFolder();
-  if (!fs::exists(db->GetDatabaseAbsoluteFolder()))
-    os << warningColor << " -> does not exist ("
-       << db->GetDatabaseAbsoluteFolder() << ")" << resetColor;
-  os << std::endl;
-  auto map = db->GetMapOfTables();
-  if (map.size() > 1) os << map.size() << " tables" << std::endl;
-  else os << map.size() << " table" << std::endl;
-  for(auto i=map.begin(); i != map.end(); i++) {
-    int n = db->GetNumberOfElements(i->first);
-    os << "Table: " << std::setw(15) << i->first << " " <<  std::setw(10) << n;
-    if (n>1) os << " elements" << std::endl;
-    else os << " element" << std::endl;
+  if (args_info.inputs_num == 0) {
+    os << "Database file  : " << db->GetFilename() << std::endl;
+    os << "Database schema: " << db->GetDatabaseSchema() << " " ;
+    if (current_version == file_version) os << syd::GetVersionAsString(current_version) << std::endl;
+    else { // never here because Read do the migration
+      os << warningColor << " file version is " << syd::GetVersionAsString(file_version)
+         << " while syd version is " << syd::GetVersionAsString(current_version) << std::endl;
+    }
+    os << "Database folder: " << db->GetDatabaseRelativeFolder();
+    if (!fs::exists(db->GetDatabaseAbsoluteFolder()))
+      os << warningColor << " -> does not exist ("
+         << db->GetDatabaseAbsoluteFolder() << ")" << resetColor;
+    os << std::endl;
+    auto map = db->GetMapOfTables();
+    if (map.size() > 1) os << map.size() << " tables" << std::endl;
+    else os << map.size() << " table" << std::endl;
+    for(auto i=map.begin(); i != map.end(); i++) {
+      int n = db->GetNumberOfElements(i->first);
+      os << "Table: " << std::setw(15) << i->first << " " <<  std::setw(10) << n;
+      if (n>1) os << " elements" << std::endl;
+      else os << " element" << std::endl;
+    }
   }
 
   // Info about table
@@ -82,6 +84,7 @@ int main(int argc, char* argv[])
       LOG(FATAL) << "Cannot find the table " << table_name;
     }
     dt->Print(os);
+    os << "The table contains " << db->GetNumberOfElements(table_name) << " elements." << std::endl;
   }
 
   // This is the end, my friend.
