@@ -25,6 +25,7 @@
 #include <itkImageRegionIterator.h>
 #include <itkImageRegionConstIterator.h>
 #include <itkNoiseImageFilter.h>
+#include <itkLabelStatisticsImageFilter.h>
 
 // --------------------------------------------------------------------
 syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
@@ -42,35 +43,36 @@ syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
 void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityInROI()
 {
   DD("CreateIntegratedActivityInROI");
-  /*
-  // use roistat in inputs images
-  syd::RoiStatistic::vector stats;
-  syd::RoiStatisticBuilder builder(db_);
-  for(auto im:images_) {
-    DD(im);
-    syd::RoiStatistic::pointer stat;
-    db_->New(stat);
-    stat->image = im;
-    stat->mask = roi;
-    //builder.SetEmptyPixelValue(args_info.empty_value_arg);
-    //builder.SetEmptyPixelValueFlag(true);
-    builder.ComputeStatistic(stat);
-    stats.push_back(stat);
-    DD(stat);
-  }
 
-  // Init solver
-  InitSolver();
+  // Resize mask like all the images (consider first is the same than
+  // the others, checked by InitInputData)
+  DD("resample mask");
+  MaskImageType::Pointer mask = roi_mask_;
+  if (!syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(mask, images_[0]))
+    mask = syd::ResampleAndCropImageLike<MaskImageType>(mask, images_[0], 0, 0);
 
   // Build tac (with add value etc), restricted etc
   TimeActivityCurve tac;
   for(auto t:times_) tac.AddValue(t, 0.0);
+  DD(tac);
+
+  // compute mean in roi
   int i=0;
-  for(auto stat:stats) {
-    tac.SetValue(i, stat->mean);
+  for(auto image:images_) {
+    typedef itk::LabelStatisticsImageFilter<ImageType, MaskImageType> FilterType;
+    typename FilterType::Pointer filter=FilterType::New();
+    filter->SetInput(image);
+    filter->SetLabelInput(mask);
+    filter->Update();
+    double mean = filter->GetMean(1);
+    tac.SetValue(i, mean);
+    DD(filter->GetCount(1));
     ++i;
   }
   DD(tac);
+
+  // Init solver
+  InitSolver();
 
   DD("TODO additional_point_flag_ restricted_tac_flag_");
   //  if (additional_point_flag_);
@@ -78,12 +80,21 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityInROI()
 
   // Solve
   int best;
-  best = FitModels(tac, debug_this_point_flag, &debug_data[debug_point_current]);
+  best = FitModels(tac);
   DD(best);
 
-  // output as RoiStatistic (not inserted here). What about tag ?
+  if (best != -1) {
+    current_model_ = models_[best];
+    // Update output
+    for(auto o:outputs_) o->Update(tac, tac, current_model_); // FIXME restricted_tac
 
-  */
+    DD(auc_output_->value);
+
+  }
+
+
+
+  // output as RoiStatistic (not inserted here). What about tag ?
 }
 // --------------------------------------------------------------------
 
@@ -111,8 +122,8 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   Iterator4D it(tac_image_, tac_image_->GetLargestPossibleRegion());
 
   // Required output: auc and mask
-  auc_output_ = new syd::FitOutputImage_AUC(images_[0], image_lambda_phys_in_hour_);
-  success_output_ = new syd::FitOutputImage_Success(images_[0]);
+  auc_output_ = new syd::FitOutputImage_AUC(image_lambda_phys_in_hour_);
+  success_output_ = new syd::FitOutputImage_Success();
   AddOutputImage(auc_output_);
   AddOutputImage(success_output_);
 
@@ -127,6 +138,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 
   // Init output iterators
   for(auto & o:outputs_) {
+    o->InitImage(images_[0]); // allocate images
     o->iterator.GoToBegin();
     o->use_current_tac = restricted_tac_flag_;
   }

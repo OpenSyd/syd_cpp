@@ -27,6 +27,10 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  class FitOutputImage;
+  class FitOutputImage_Success;
+  class FitOutputImage_AUC;
+
   class ModelResult {
   public:
     syd::FitModelBase * model;
@@ -52,10 +56,14 @@ namespace syd {
     typedef itk::ImageRegionIterator<ImageType> Iterator3D;
     typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
 
+    typedef unsigned char MaskPixelType;
+    typedef itk::Image<MaskPixelType,3> MaskImageType;
+
     // Input
     void AddInput(ImageType::Pointer image, double time) { images_.push_back(image); times_.push_back(time); }
     void AddModel(syd::FitModelBase * m, int id);
     void AddOutputImage(syd::FitOutputImage * o) { outputs_.push_back(o); }
+    void SetRoiMaskImage(MaskImageType::Pointer m) { roi_mask_ = m; }
     void SetMask(ImageType::Pointer m) { mask_ = m; }
     void SetLambdaPhysicHours(double l) { image_lambda_phys_in_hour_ = l; }
     void SetR2MinThreshold(double r) { R2_min_threshold_ = r; }
@@ -77,6 +85,7 @@ namespace syd {
     // Input
     std::vector<ImageType::Pointer> images_;
     std::vector<double> times_;
+    MaskImageType::Pointer roi_mask_;
 
     // Computed 4D images that merge all 3D images
     Image4DType::Pointer tac_image_;

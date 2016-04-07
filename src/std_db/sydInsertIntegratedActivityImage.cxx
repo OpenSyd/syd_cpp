@@ -102,6 +102,8 @@ int main(int argc, char* argv[])
   typedef itk::Image<PixelType,3> ImageType;
   typedef itk::ImageRegionIterator<ImageType> Iterator;
   typedef itk::NeighborhoodIterator<ImageType> NIterator;
+  typedef unsigned char MaskPixelType;
+  typedef itk::Image<MaskPixelType,3> MaskImageType;
 
   // Read and keep initial image with max value (for mask)
   std::vector<ImageType::Pointer> initial_images;
@@ -165,16 +167,17 @@ int main(int argc, char* argv[])
   models.push_back(f4);
 
   // Create some optional output types
-  auto r2 = new syd::FitOutputImage_R2(im);
-  auto best_model = new syd::FitOutputImage_Model(im);
-  auto iter = new syd::FitOutputImage_Iteration(im);
-  auto eff_half_life = new syd::FitOutputImage_EffHalfLife(im);
-  auto nb_points = new syd::FitOutputImage_NbOfPointsForFit(im);
-  auto lambda = new syd::FitOutputImage_Lambda(im);
+  auto r2 = new syd::FitOutputImage_R2();
+  auto best_model = new syd::FitOutputImage_Model();
+  auto iter = new syd::FitOutputImage_Iteration();
+  auto eff_half_life = new syd::FitOutputImage_EffHalfLife();
+  auto nb_points = new syd::FitOutputImage_NbOfPointsForFit();
+  auto lambda = new syd::FitOutputImage_Lambda();
 
   // Use a mask, consider values of the first spect
   int nb_pixel = 0.0;
-  ImageType::Pointer mask = syd::CreateImageLike<ImageType>(initial_image);
+  ImageType::Pointer mask;
+  mask = syd::CreateImageLike<ImageType>(initial_image);
   Iterator it_mask(mask, mask->GetLargestPossibleRegion());
   Iterator it_image(initial_image, initial_image->GetLargestPossibleRegion());
   it_mask.GoToBegin();
@@ -197,8 +200,16 @@ int main(int argc, char* argv[])
 
   // search the roi if needed
   if (args_info.roi_only_given) {
-    // load roi image
-    //    builder.SetComputeOnlyInROIFlag(roi);
+    std::string roi_name = args_info.roi_only_arg;
+    syd::RoiType::pointer roitype = db->FindRoiType(roi_name);
+    syd::RoiMaskImage::pointer roi;
+    odb::query<syd::RoiMaskImage> q =
+      odb::query<syd::RoiMaskImage>::roitype == roitype->id and
+      odb::query<syd::RoiMaskImage>::frame_of_reference_uid == images[0]->frame_of_reference_uid;
+    db->QueryOne(roi, q);
+    DD(roi);
+    auto mask = syd::ReadImage<MaskImageType>(db->GetAbsolutePath(roi));
+    builder.SetRoiMaskImage(mask);
   }
 
   // Set input images
@@ -248,63 +259,68 @@ int main(int argc, char* argv[])
   else
     builder.CreateIntegratedActivityImage();
 
-  // Get main output
-  auto auc = builder.GetOutput();
-  auto success = builder.GetSuccessOutput();
+  // output image
+  if (!args_info.roi_only_given) {
 
-  // Post processing with median filter
-  if (args_info.median_filter_flag) {
-    LOG(1) << "Post processing: median filter";
-    if (args_info.debug_images_flag) syd::WriteImage<ImageType>(auc->image, "auc_before_median.mhd");
-    auto filter = itk::MedianWithMaskImageFilter<ImageType, ImageType, ImageType>::New();
-    filter->SetRadius(1);
-    filter->SetInput(auc->image);
-    filter->SetMask(success->image);
-    filter->Update();
-    auc->image = filter->GetOutput();
-  }
+    // Get main output
+    auto auc = builder.GetOutput();
+    auto success = builder.GetSuccessOutput();
 
-  // Post processing with fill holes
-  if (args_info.fill_holes_given) {
-    if (args_info.debug_images_flag) syd::WriteImage<ImageType>(auc->image, "auc_before_fill_holes.mhd");
-    // Change the mask, considering success fit
-    auto it_success = success->iterator;
-    Iterator it_mask(mask, mask->GetLargestPossibleRegion());
-    it_success.GoToBegin();
-    it_mask.GoToBegin();
-    while (!it_mask.IsAtEnd()) {
-      if (it_success.Get() == 1.0) it_mask.Set(0.0);
-      ++it_success;
-      ++it_mask;
+    // Post processing with median filter
+    if (args_info.median_filter_flag) {
+      LOG(1) << "Post processing: median filter";
+      if (args_info.debug_images_flag) syd::WriteImage<ImageType>(auc->image, "auc_before_median.mhd");
+      auto filter = itk::MedianWithMaskImageFilter<ImageType, ImageType, ImageType>::New();
+      filter->SetRadius(1);
+      filter->SetInput(auc->image);
+      filter->SetMask(success->image);
+      filter->Update();
+      auc->image = filter->GetOutput();
     }
-    int f = syd::FillHoles<ImageType>(auc->image, mask, args_info.fill_holes_arg);
-    LOG(1) << "Post processing: fill remaining holes. " << f << " failed pixels remain.";
-  }
 
-  // Write all debug outputs
-  if (args_info.debug_images_flag) {
-    for(auto o:builder.GetOutputs())
-      syd::WriteImage<ImageType>(o->image, o->filename);
-  }
+    // Post processing with fill holes
+    if (args_info.fill_holes_given) {
+      if (args_info.debug_images_flag) syd::WriteImage<ImageType>(auc->image, "auc_before_fill_holes.mhd");
+      // Change the mask, considering success fit
+      auto it_success = success->iterator;
+      Iterator it_mask(mask, mask->GetLargestPossibleRegion());
+      it_success.GoToBegin();
+      it_mask.GoToBegin();
+      while (!it_mask.IsAtEnd()) {
+        if (it_success.Get() == 1.0) it_mask.Set(0.0);
+        ++it_success;
+        ++it_mask;
+      }
+      int f = syd::FillHoles<ImageType>(auc->image, mask, args_info.fill_holes_arg);
+      LOG(1) << "Post processing: fill remaining holes. " << f << " failed pixels remain.";
+    }
 
-  // Insert result in db
-  syd::ImageBuilder bdb(db);
-  syd::Image::pointer output = bdb.NewMHDImageLike(images[0]);
-  bdb.SetImage<PixelType>(output, auc->image);
+    // Write all debug outputs
+    if (args_info.debug_images_flag) {
+      for(auto o:builder.GetOutputs())
+        syd::WriteImage<ImageType>(o->image, o->filename);
+    }
 
-  // Tags
-  db->SetImageTagsFromCommandLine(output, args_info);
+    // Insert result in db
+    syd::ImageBuilder bdb(db);
+    syd::Image::pointer output = bdb.NewMHDImageLike(images[0]);
+    bdb.SetImage<PixelType>(output, auc->image);
 
-  // Change pixel value
-  output->pixel_value_unit = punit;
-  bdb.InsertAndRename(output);
-  LOG(1) << "Inserting Image " << output;
+    // Tags
+    db->SetImageTagsFromCommandLine(output, args_info);
 
-  // Remove temporary files (not persistant in the db)
-  if (args_info.substitute_given) {
+    // Change pixel value
+    output->pixel_value_unit = punit;
+    bdb.InsertAndRename(output);
+    LOG(1) << "Inserting Image " << output;
+
+    // Remove temporary files (not persistant in the db)
+    if (args_info.substitute_given) {
       for(auto & image:images) {
-      for(auto f:image->files) fs::remove_all(db->GetAbsolutePath(f));
+        for(auto f:image->files) fs::remove_all(db->GetAbsolutePath(f));
+      }
     }
+
   }
 
   // This is the end, my friend.
