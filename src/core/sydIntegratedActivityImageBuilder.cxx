@@ -71,6 +71,12 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityInROI()
   }
   DD(tac);
 
+  // output
+  auc_output_ = new syd::FitOutputImage_AUC(image_lambda_phys_in_hour_);
+  success_output_ = new syd::FitOutputImage_Success();
+  AddOutputImage(auc_output_);
+  AddOutputImage(success_output_);
+
   // Init solver
   InitSolver();
 
@@ -85,9 +91,12 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityInROI()
 
   if (best != -1) {
     current_model_ = models_[best];
+    DD(current_model_->GetName());
     // Update output
-    for(auto o:outputs_) o->Update(tac, tac, current_model_); // FIXME restricted_tac
-
+    for(auto o:outputs_) {
+      DD(o->filename);
+      o->Update(tac, tac, current_model_); // FIXME restricted_tac
+    }
     DD(auc_output_->value);
 
   }
