@@ -35,21 +35,19 @@ namespace syd {
     typedef ImageType::Pointer Pointer;
     typedef itk::ImageRegionIterator<ImageType> Iterator;
 
+    FitOutputImage();
+    void InitImage(Pointer input);
+    void SetValue(double v);
+    virtual void Update(const syd::TimeActivityCurve & tac,
+                        const syd::TimeActivityCurve & restricted_tac,
+                        const syd::FitModelBase * model) = 0;
+
     Pointer image;
     Iterator iterator;
     std::string filename;
     bool use_current_tac;
-
-    FitOutputImage(Pointer input) {
-      image = syd::CreateImageLike<ImageType>(input);
-      iterator = Iterator(image, image->GetLargestPossibleRegion());
-      image->FillBuffer(0.0);
-      use_current_tac = false;
-    }
-
-    virtual void Update(const syd::TimeActivityCurve & tac,
-                        const syd::TimeActivityCurve & restricted_tac,
-                        const syd::FitModelBase * model) = 0;
+    double value_;
+    bool UseImageFlag_;
 
   };
 
@@ -58,101 +56,74 @@ namespace syd {
   class FitOutputImage_AUC: public FitOutputImage {
   public:
     double lambda_phys_hours_;
-    FitOutputImage_AUC(Pointer input, double l):FitOutputImage(input)
-    {
-      filename = "auc.mhd"; lambda_phys_hours_ = l;
-    }
+    FitOutputImage_AUC(double l);
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::TimeActivityCurve & restricted_tac,
-                        const syd::FitModelBase * model) {
-      double r = model->ComputeAUC(tac, lambda_phys_hours_, use_current_tac);
-      iterator.Set(r);
-    }
+                        const syd::FitModelBase * model);
   };
 
   /// Compute and store the coefficient of determination
   class FitOutputImage_R2: public FitOutputImage {
   public:
-    FitOutputImage_R2(Pointer input):FitOutputImage(input) { filename = "r2.mhd"; }
+    FitOutputImage_R2();
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::TimeActivityCurve & restricted_tac,
-                        const syd::FitModelBase * model) {
-      double R2 = model->ComputeR2(tac, use_current_tac);
-      iterator.Set(R2);
-    }
+                        const syd::FitModelBase * model);
   };
 
   /// Compute and store the id of the selected model
   class FitOutputImage_Model: public FitOutputImage {
   public:
-    FitOutputImage_Model(Pointer input):FitOutputImage(input) { filename = "best_model.mhd"; }
+    FitOutputImage_Model();
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::TimeActivityCurve & restricted_tac,
-                        const syd::FitModelBase * model) {
-      int id = model->id_;
-      iterator.Set(id);
-    }
+                        const syd::FitModelBase * model);
   };
 
   /// Compute and store the number of iterations needed to converge
   class FitOutputImage_Iteration: public FitOutputImage {
   public:
-    FitOutputImage_Iteration(Pointer input):FitOutputImage(input) { filename = "iteration.mhd"; }
+    FitOutputImage_Iteration();
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::TimeActivityCurve & restricted_tac,
-                        const syd::FitModelBase * model) {
-      int it = model->ceres_summary_.num_unsuccessful_steps +
-        model->ceres_summary_.num_successful_steps;
-      iterator.Set(it);
-    }
+                        const syd::FitModelBase * model);
   };
 
   /// Store a binary image, pixel is '1' if the fit process is a success
   class FitOutputImage_Success: public FitOutputImage {
   public:
-    FitOutputImage_Success(Pointer input):FitOutputImage(input) { filename = "success.mhd"; }
+    FitOutputImage_Success();
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::TimeActivityCurve & restricted_tac,
-                        const syd::FitModelBase * model) {
-      iterator.Set(1);
-    }
+                        const syd::FitModelBase * model);
   };
 
   /// Store image with effective half life (l1+l_phys, first expo only)
   class FitOutputImage_EffHalfLife: public FitOutputImage {
   public:
-    FitOutputImage_EffHalfLife(Pointer input):FitOutputImage(input) { filename = "ehl.mhd"; }
+    FitOutputImage_EffHalfLife();
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::TimeActivityCurve & restricted_tac,
-                        const syd::FitModelBase * model) {
-      double h = model->GetEffHalfLife();
-      iterator.Set(h);
-    }
+                        const syd::FitModelBase * model);
   };
 
   /// Store image with lambda
   class FitOutputImage_Lambda: public FitOutputImage {
   public:
-    FitOutputImage_Lambda(Pointer input):FitOutputImage(input) { filename = "l1.mhd"; }
+    FitOutputImage_Lambda();
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::TimeActivityCurve & restricted_tac,
-                        const syd::FitModelBase * model) {
-      double h = model->GetLambda(0);
-      iterator.Set(h);
-    }
+                        const syd::FitModelBase * model);
   };
 
   /// Store image with nb of points used for fit
   class FitOutputImage_NbOfPointsForFit: public FitOutputImage {
   public:
     bool restricted_tac_flag_;
-    FitOutputImage_NbOfPointsForFit(Pointer input):FitOutputImage(input) { filename = "nbfit.mhd"; }
+    FitOutputImage_NbOfPointsForFit();
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::TimeActivityCurve & restricted_tac,
-                        const syd::FitModelBase * model) {
-      if (restricted_tac_flag_) iterator.Set(restricted_tac.size());
-      else iterator.Set(tac.size());
-    }
+                        const syd::FitModelBase * model);
   };
 
 } // end namespace
