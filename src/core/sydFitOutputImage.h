@@ -46,8 +46,8 @@ namespace syd {
     Iterator iterator;
     std::string filename;
     bool use_current_tac;
-    double value_;
-    bool UseImageFlag_;
+    double value;
+    bool UseImageFlag;
 
   };
 

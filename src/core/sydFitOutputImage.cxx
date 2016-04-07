@@ -24,7 +24,7 @@
 syd::FitOutputImage::FitOutputImage()
 {
   use_current_tac = false;
-  UseImageFlag_ = false;
+  UseImageFlag = false;
 }
 // --------------------------------------------------------------------
 
@@ -35,7 +35,7 @@ void syd::FitOutputImage::InitImage(Pointer input)
   image = syd::CreateImageLike<ImageType>(input);
   iterator = Iterator(image, image->GetLargestPossibleRegion());
   image->FillBuffer(0.0);
-  UseImageFlag_ = true;
+  UseImageFlag = true;
 }
 // --------------------------------------------------------------------
 
@@ -43,8 +43,8 @@ void syd::FitOutputImage::InitImage(Pointer input)
 // --------------------------------------------------------------------
 void syd::FitOutputImage::SetValue(double v)
 {
-  if (UseImageFlag_) iterator.Set(v);
-  else value_ = v;
+  if (UseImageFlag) iterator.Set(v);
+  else value = v;
 }
 // --------------------------------------------------------------------
 
@@ -63,7 +63,10 @@ void syd::FitOutputImage_AUC::Update(const syd::TimeActivityCurve & tac,
                                      const syd::TimeActivityCurve & restricted_tac,
                                      const syd::FitModelBase * model)
 {
+  DD("Update auc");
   double r = model->ComputeAUC(tac, lambda_phys_hours_, use_current_tac);
+  DD(r);
+  DD(tac);
   SetValue(r);
 }
 // --------------------------------------------------------------------
