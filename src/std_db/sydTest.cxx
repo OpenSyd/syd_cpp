@@ -53,27 +53,6 @@ int main(int argc, char* argv[])
   // TimePoints
   if (1) {
 
-    // input image/mask
-    syd::IdType id = atoi(args_info.inputs[0]); DD(id);
-    syd::Image::pointer image;
-    db->QueryOne(image, id);
-    DD(image);
-    syd::RoiMaskImage::pointer mask;
-    mask = db->FindRoiMaskImage(image, "liver");
-    DD(mask);
-
-    syd::Image::vector images;
-    images.push_back(image);
-
-    syd::TimePoints::pointer tac;
-    db->New(tac);
-    DD(tac);
-
-    syd::TimePointsBuilder builder(db);
-    builder.ComputeTimePoints(tac, images, mask); // auto pixelvalue
-    // add tags
-    // insert.
-
   }
 
 
