@@ -65,6 +65,8 @@ namespace syd {
     syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
     syd::Calibration::pointer FindCalibration(const syd::Image::pointer Image,
                                               const std::string & calib_tag);
+    syd::RoiMaskImage::pointer FindRoiMaskImage(const syd::Image::pointer image,
+                                                const std::string & roi_name);
 
     /// Automatically insert some default records
     void InsertDefaultRecords(const std::string & def);

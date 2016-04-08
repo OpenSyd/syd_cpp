@@ -202,11 +202,7 @@ int main(int argc, char* argv[])
   if (args_info.roi_only_given) {
     std::string roi_name = args_info.roi_only_arg;
     syd::RoiType::pointer roitype = db->FindRoiType(roi_name);
-    syd::RoiMaskImage::pointer roi;
-    odb::query<syd::RoiMaskImage> q =
-      odb::query<syd::RoiMaskImage>::roitype == roitype->id and
-      odb::query<syd::RoiMaskImage>::frame_of_reference_uid == images[0]->frame_of_reference_uid;
-    db->QueryOne(roi, q);
+    syd::RoiMaskImage::pointer roi = db->FindRoiMaskImage(images[0], roi_name);
     DD(roi);
     auto mask = syd::ReadImage<MaskImageType>(db->GetAbsolutePath(roi));
     builder.SetRoiMaskImage(mask);

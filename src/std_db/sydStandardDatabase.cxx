@@ -240,6 +240,22 @@ void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::vector<
 
 
 // --------------------------------------------------------------------
+syd::RoiMaskImage::pointer
+syd::StandardDatabase::FindRoiMaskImage(const syd::Image::pointer image,
+                                        const std::string & roi_name)
+{
+  syd::RoiType::pointer roitype = FindRoiType(roi_name);
+  syd::RoiMaskImage::pointer roi;
+  odb::query<syd::RoiMaskImage> q =
+    odb::query<syd::RoiMaskImage>::roitype == roitype->id and
+    odb::query<syd::RoiMaskImage>::frame_of_reference_uid == image->frame_of_reference_uid;
+  QueryOne(roi, q);
+  return roi;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::PixelValueUnit::pointer syd::StandardDatabase::FindPixelValueUnit(const std::string & name)
 {
   syd::PixelValueUnit::pointer unit;
