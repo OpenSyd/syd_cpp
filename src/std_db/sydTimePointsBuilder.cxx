@@ -45,7 +45,8 @@ void syd::TimePointsBuilder::SetRoiMaskImage(const syd::RoiMaskImage::pointer m)
 
 
 // --------------------------------------------------------------------
-void syd::TimePointsBuilder::ComputeTimePoints(syd::TimePoints::pointer tac)
+syd::TimePoints::pointer
+syd::TimePointsBuilder::ComputeTimePoints()
 {
   DD("ComputeTimePoints");
 
@@ -83,6 +84,7 @@ void syd::TimePointsBuilder::ComputeTimePoints(syd::TimePoints::pointer tac)
 
   // Check if already exist ?
   syd::TimePoints::vector timepoints;
+  syd::TimePoints::pointer tac;
   odb::query<syd::TimePoints> q = odb::query<syd::TimePoints>::mask == mask->id;
   db_->Query(timepoints,q);
   DDS(timepoints);
@@ -103,7 +105,8 @@ void syd::TimePointsBuilder::ComputeTimePoints(syd::TimePoints::pointer tac)
   DD(found);
   if (found == 0) {
     db_->New(tac);
-    //    tac->pixel_value_unit ?
+    tac->images = images;
+    tac->mask = mask;
   }
   if (found == 1) {
     DD(tac);
@@ -170,6 +173,7 @@ void syd::TimePointsBuilder::ComputeTimePoints(syd::TimePoints::pointer tac)
     tac->std_deviations[i] = stddevs[i];
   }
   DD(tac);
-
+  DD("done");
+  return tac;
 }
 // --------------------------------------------------------------------

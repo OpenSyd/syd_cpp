@@ -21,10 +21,11 @@
 
 // --------------------------------------------------------------------
 syd::TimePoints::TimePoints():
+  syd::Record(),
   syd::RecordWithTags(),
   syd::RecordWithHistory()
 {
-  DD("TimePoints constructor");
+  DD(id);
 }
 // --------------------------------------------------------------------
 
@@ -64,12 +65,18 @@ void syd::TimePoints::Callback(odb::callback_event event, odb::database & db)
 // --------------------------------------------------------------------
 void syd::TimePoints::InitTable(syd::PrintTable & ta) const
 {
-  syd::RecordWithHistory::InitTable(ta);
   auto f = ta.GetFormat();
 
   // Set the columns
-  if (f == "default" or f == "history") {
-    if (ta.GetColumn("id") == -1) ta.AddColumn("id");
+  if (f == "default") {
+    ta.AddColumn("id");
+    ta.AddColumn("nb");
+    ta.AddColumn("tags");
+  }
+
+  if (f == "history") {
+    ta.AddColumn("id");
+    syd::RecordWithHistory::InitTable(ta);
     ta.AddColumn("nb");
     ta.AddColumn("tags");
   }
@@ -85,7 +92,14 @@ void syd::TimePoints::DumpInTable(syd::PrintTable & ta) const
   auto f = ta.GetFormat();
 
   if (f == "default") {
-    //    ta.Set("id", id); <--- already done in RecordWithHistory
+    ta.Set("id", id);
+    ta.Set("tags", GetLabels(tags));
+    ta.Set("nb", times.size());
+  }
+
+  if (f == "history") {
+    ta.Set("id", id);
+    syd::RecordWithHistory::DumpInTable(ta);
     ta.Set("tags", GetLabels(tags));
     ta.Set("nb", times.size());
   }

@@ -61,20 +61,22 @@ int main(int argc, char* argv[])
   DD(mask);
 
   // Create (or update) the tac
-  syd::TimePoints::pointer tac;
   syd::TimePointsBuilder builder(db);
   builder.SetImages(images);
   builder.SetRoiMaskImage(mask);
-  builder.ComputeTimePoints(tac);
+  syd::TimePoints::pointer tac = builder.ComputeTimePoints();
 
   // Set tags
   DD(tac);
+  //  db->SetTagsFromCommandLine(tac, args_info);
+  //DD(tac);
 
   // Insert or update
-  //  if (tac->IsPersistent()) db->Update(tac);
-  //else db->Insert(tac);
-
+  DD(tac->IsPersistent());
+  if (tac->IsPersistent()) db->Update(tac);
+  else db->Insert(tac);
 
   // This is the end, my friend.
+    return EXIT_SUCCESS;
 }
 // --------------------------------------------------------------------

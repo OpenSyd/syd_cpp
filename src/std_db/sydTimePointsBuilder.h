@@ -38,7 +38,7 @@ namespace syd {
     void SetRoiMaskImage(const syd::RoiMaskImage::pointer mask);
 
     /// Compute a TimePoints with mean pixels values in a roi images
-    void ComputeTimePoints(syd::TimePoints::pointer tac);
+    syd::TimePoints::pointer ComputeTimePoints();
 
   protected:
     syd::Image::vector images;
