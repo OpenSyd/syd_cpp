@@ -26,7 +26,7 @@ std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_
 // --------------------------------------------------------------------
 syd::Record::Record()
 {
-  id = -1;
+  id = 0;
   db_ = NULL;
 }
 // --------------------------------------------------------------------
@@ -35,7 +35,7 @@ syd::Record::Record()
 // --------------------------------------------------------------------
 bool syd::Record::IsPersistent() const
 {
-  if (db_ == NULL) return false;
+  if (id == 0) return false;
   return true;
 }
 // --------------------------------------------------------------------
