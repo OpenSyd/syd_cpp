@@ -34,12 +34,15 @@ namespace syd {
     /// Destructor (empty)
     ~TimePointsBuilder() {}
 
+    void SetImages(const syd::Image::vector images);
+    void SetRoiMaskImage(const syd::RoiMaskImage::pointer mask);
+
     /// Compute a TimePoints with mean pixels values in a roi images
-    void ComputeTimePoints(syd::TimePoints::pointer tac,
-                           const syd::Image::vector images,
-                           const syd::RoiMaskImage::pointer mask);
+    void ComputeTimePoints(syd::TimePoints::pointer tac);
 
   protected:
+    syd::Image::vector images;
+    syd::RoiMaskImage::pointer mask;
 
   }; // class TimePointsBuilder
 

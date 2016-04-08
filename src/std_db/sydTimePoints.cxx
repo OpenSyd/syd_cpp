@@ -35,7 +35,7 @@ std::string syd::TimePoints::ToString() const
   std::stringstream ss ;
   ss << id << " "
      << times.size() << " "
-     << GetLabels(tags);
+     << GetLabels(tags) << " ";
   for(auto i=0; i<times.size(); i++)
     ss << times[i] << " " << values[i] << " ";
   return ss.str();

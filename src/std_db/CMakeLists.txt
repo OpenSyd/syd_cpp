@@ -148,6 +148,12 @@ add_executable(sydInsertIntegratedActivityImage sydInsertIntegratedActivityImage
 target_link_libraries(sydInsertIntegratedActivityImage sydStandardDatabase)
 
 
+# Create image of integrated activity
+wrap_ggo(sydInsertTimePoints_GGO_C sydInsertTimePoints.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertTimePoints sydInsertTimePoints.cxx ${sydInsertTimePoints_GGO_C})
+target_link_libraries(sydInsertTimePoints sydStandardDatabase)
+
+
 ##############################
 # Other tools
 ##############################

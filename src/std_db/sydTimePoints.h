@@ -43,9 +43,6 @@ namespace syd {
     /// List values
     std::vector<double> values;
 
-    /// Associated tags
-    //    syd::Tag::vector tags;
-
     /// Associated std dev (not required)
     std::vector<double> std_deviations;
 

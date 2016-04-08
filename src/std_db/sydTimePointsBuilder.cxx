@@ -28,11 +28,90 @@ syd::TimePointsBuilder::TimePointsBuilder(syd::StandardDatabase * db):
 
 
 // --------------------------------------------------------------------
-void syd::TimePointsBuilder::ComputeTimePoints(syd::TimePoints::pointer tac,
-                                               const syd::Image::vector images,
-                                               const syd::RoiMaskImage::pointer mask)
+void syd::TimePointsBuilder::SetImages(const syd::Image::vector im)
+{
+  images = im;
+  db_->Sort<syd::Image>(images);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimePointsBuilder::SetRoiMaskImage(const syd::RoiMaskImage::pointer m)
+{
+  mask = m;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimePointsBuilder::ComputeTimePoints(syd::TimePoints::pointer tac)
 {
   DD("ComputeTimePoints");
+
+  // Check
+  if (images.size() ==0) {
+    EXCEPTION("Cannot compute TimePoints, no images. Use SetImages first");
+  }
+  if (!mask) {
+    EXCEPTION("Cannot compute TimePoints, no mask. Use SetRoiMaskImage first");
+  }
+
+  // Check same injection date
+  images[0]->FatalIfNoDicom();
+  syd::Injection::pointer injection = images[0]->dicoms[0]->injection;
+  bool b = true;
+  for(auto image:images) {
+    image->FatalIfNoDicom();
+    b = b and (injection->id == image->dicoms[0]->injection->id);
+  }
+  if (!b) {
+    EXCEPTION("The images do not have the same injection.");
+  }
+
+  // Check same pixel units (warning)
+  syd::PixelValueUnit::pointer unit = images[0]->pixel_value_unit;
+  for(auto image:images) {
+    if (image->pixel_value_unit->id != unit->id) {
+      LOG(WARNING) << "I expected pixel value unit to be the same for all images, while it is "
+                   << image->pixel_value_unit->name << "for the image:"
+                   << std::endl << image
+                   << std::endl << " and " << unit->name << " for the image"
+                   << std::endl << images[0];
+    }
+  }
+
+  // Check if already exist ?
+  syd::TimePoints::vector timepoints;
+  odb::query<syd::TimePoints> q = odb::query<syd::TimePoints>::mask == mask->id;
+  db_->Query(timepoints,q);
+  DDS(timepoints);
+  auto n = images.size();
+  int found = 0;
+  for(auto t:timepoints) {
+    if (t->images.size() == n) {
+      bool b = true;
+      for(auto i=0; i<n; i++) {
+        if (t->images[i]->id != images[i]->id) b = false;
+      }
+      if (b) {
+        ++found;
+        tac = t; // found a similar timepoints !
+      }
+    }
+  }
+  DD(found);
+  if (found == 0) {
+    db_->New(tac);
+    //    tac->pixel_value_unit ?
+  }
+  if (found == 1) {
+    DD(tac);
+    // update ? check history ?
+  }
+  if (found > 1) {
+    EXCEPTION("Several TimePoints found with the same set of images/mask. Abort");
+  }
 
   // image type
   typedef float PixelType;
@@ -40,17 +119,13 @@ void syd::TimePointsBuilder::ComputeTimePoints(syd::TimePoints::pointer tac,
   typedef unsigned char MaskPixelType;
   typedef itk::Image<MaskPixelType,3> MaskImageType;
 
-  // Sort images by date
-  syd::Image::vector sorted_images = images;
-  db_->Sort<syd::Image>(sorted_images);
-
   // Get the times
-  std::vector<double> times = syd::GetTimesFromInjection(db_, sorted_images);
+  std::vector<double> times = syd::GetTimesFromInjection(db_, images);
   DDS(times);
 
   // read all itk images
   std::vector<ImageType::Pointer> itk_images;
-  for(auto image:sorted_images) {
+  for(auto image:images) {
     auto itk_image = syd::ReadImage<ImageType>(db_->GetAbsolutePath(image));
     itk_images.push_back(itk_image);
   }
@@ -86,7 +161,6 @@ void syd::TimePointsBuilder::ComputeTimePoints(syd::TimePoints::pointer tac,
   DDS(stddevs);
 
   // Create tac
-  auto n = times.size();
   tac->times.resize(n);
   tac->values.resize(n);
   tac->std_deviations.resize(n);
