@@ -34,9 +34,8 @@
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Image") callback(Callback)
-  /// Store information about a dicom image (serie). Element of table
-  /// 'Image' stored in a db. Contains information about a dicom
-  /// image.
+
+  /// Store information about an image stored in a db (file, size etc)
   class Image : public syd::RecordWithHistory {
   public:
 
