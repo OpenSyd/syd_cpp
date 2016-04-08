@@ -29,6 +29,7 @@
 #include "sydTag.h"
 #include "sydDicomSerie.h"
 #include "sydPixelValueUnit.h"
+#include "sydRecordWithHistory.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -36,7 +37,8 @@ namespace syd {
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Image") callback(Callback)
 
   /// Store information about an image stored in a db (file, size etc)
-  class Image : public syd::RecordWithHistory {
+  class Image : public syd::Record,
+                public syd::RecordWithHistory {
   public:
 
 #pragma db not_null

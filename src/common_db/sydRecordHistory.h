@@ -30,8 +30,6 @@ namespace syd {
   class RecordHistory: public syd::Record {
   public:
 
-    //    syd::Record::pointer record; // back pointer ?
-
     std::string insertion_date;
     std::string update_date;
 

@@ -25,7 +25,7 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  //#pragma db object abstract pointer(std::shared_ptr)
+  #pragma db object abstract pointer(std::shared_ptr)
   //callback(Callback)
   class RecordWithTags  {
   public:

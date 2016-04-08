@@ -13,7 +13,7 @@ wrap_odb(sydCore sydRecordHistory.h)
 wrap_odb(sydCore sydRecordWithHistory.h)
 wrap_odb(sydCore sydFile.h)
 wrap_odb(sydCore sydTag.h)
-##wrap_odb(sydCore sydRecordWithTags.h)
+wrap_odb(sydCore sydRecordWithTags.h)
 
 set(sydCommonDatabase_src
   sydVersion.h
@@ -27,7 +27,7 @@ set(sydCommonDatabase_src
   sydRecordWithHistory-odb.cxx sydRecordWithHistory-schema.cxx  sydRecordWithHistory.cxx
   sydFile-odb.cxx sydFile-schema.cxx sydFile.cxx
   sydTag-odb.cxx sydTag-schema.cxx  sydTag.cxx
-  #sydRecordWithTags-odb.cxx sydRecordWithTags-schema.cxx
+  sydRecordWithTags-odb.cxx sydRecordWithTags-schema.cxx
   sydRecordWithTags.cxx
   sydDatabase.cxx
   sydDatabaseManager.cxx

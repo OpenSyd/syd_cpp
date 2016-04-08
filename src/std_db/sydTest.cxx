@@ -22,17 +22,18 @@
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
+#include "sydTimePointsBuilder.h"
 //#include "extExtendedDatabase.h"
 
 
-#define ASYD_VERSION      0x0304 // 01.02
-#define ASYD_BASE_VERSION 0x0101 // 01.01
+// #define ASYD_VERSION      0x0304 // 01.02
+// #define ASYD_BASE_VERSION 0x0101 // 01.01
 
 
-#define SFZ_VERSION      SYD_VERSION + 0x010000 // 01.xx.yy
-#define SFZ_BASE_VERSION SYD_BASE_VERSION + 0x010000 // 01.xx.yy
+// #define SFZ_VERSION      SYD_VERSION + 0x010000 // 01.xx.yy
+// #define SFZ_BASE_VERSION SYD_BASE_VERSION + 0x010000 // 01.xx.yy
 
-#pragma db model version(SFZ_BASE_VERSION, SFZ_VERSION)
+// #pragma db model version(SFZ_BASE_VERSION, SFZ_VERSION)
 
 // Init syd
 SYD_STATIC_INIT
@@ -49,8 +50,29 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // ------------------------------------------------------------------
-  // view
+  // TimePoints
   if (1) {
+
+    // input image/mask
+    syd::IdType id = atoi(args_info.inputs[0]); DD(id);
+    syd::Image::pointer image;
+    db->QueryOne(image, id);
+    DD(image);
+    syd::RoiMaskImage::pointer mask;
+    mask = db->FindRoiMaskImage(image, "liver");
+    DD(mask);
+
+    syd::Image::vector images;
+    images.push_back(image);
+
+    syd::TimePoints::pointer tac;
+    db->New(tac);
+    DD(tac);
+
+    syd::TimePointsBuilder builder(db);
+    builder.ComputeTimePoints(tac, images, mask); // auto pixelvalue
+    // add tags
+    // insert.
 
   }
 

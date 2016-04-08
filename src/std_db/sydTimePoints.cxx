@@ -46,7 +46,8 @@ std::string syd::TimePoints::ToString() const
 // --------------------------------------------------------------------
 void syd::TimePoints::Callback(odb::callback_event event, odb::database & db) const
 {
-  syd::RecordWithHistory::Callback(event, db);
+  syd::Record::Callback(event, db);
+  syd::RecordWithHistory::Callback(event, db, db_);
 }
 // --------------------------------------------------------------------
 
@@ -54,7 +55,8 @@ void syd::TimePoints::Callback(odb::callback_event event, odb::database & db) co
 // --------------------------------------------------------------------
 void syd::TimePoints::Callback(odb::callback_event event, odb::database & db)
 {
-  syd::RecordWithHistory::Callback(event, db);
+  syd::Record::Callback(event, db);
+  syd::RecordWithHistory::Callback(event, db, db_);
 }
 // --------------------------------------------------------------------
 

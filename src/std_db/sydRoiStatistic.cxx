@@ -23,7 +23,9 @@
 #include <set>
 
 // --------------------------------------------------
-syd::RoiStatistic::RoiStatistic():syd::RecordWithHistory()
+syd::RoiStatistic::RoiStatistic():
+  syd::Record(),
+  syd::RecordWithHistory()
 {
   image = NULL;
   mask = NULL;
@@ -52,6 +54,7 @@ std::string syd::RoiStatistic::ToString() const
 // --------------------------------------------------
 void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
 {
+  syd::Record::InitTable(ta);
   syd::RecordWithHistory::InitTable(ta);
   //  ta.AddColumn("id");
   if (ta.GetColumn("id") == -1) ta.AddColumn("id");
@@ -73,6 +76,7 @@ void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
 {
+  syd::Record::DumpInTable(ta);
   syd::RecordWithHistory::DumpInTable(ta);
   //ta.Set("id", id);
   ta.Set("p", image->patient->name);

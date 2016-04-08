@@ -21,7 +21,7 @@
 #include "sydDatabase.h"
 
 // --------------------------------------------------------------------
-syd::RecordWithHistory::RecordWithHistory():syd::Record()
+syd::RecordWithHistory::RecordWithHistory()
 {
 }
 // --------------------------------------------------------------------
@@ -29,24 +29,24 @@ syd::RecordWithHistory::RecordWithHistory():syd::Record()
 
 
 // --------------------------------------------------------------------
-void syd::RecordWithHistory::Callback(odb::callback_event event, odb::database & db) const
+void syd::RecordWithHistory::Callback(odb::callback_event event,
+                                      odb::database & odb,
+                                      syd::Database * db) const
 {
-  syd::Record::Callback(event, db);
-
   if (event == odb::callback_event::pre_persist) {
-    db_->New<syd::RecordHistory>(history);
+    db->New<syd::RecordHistory>(history);
     history->insertion_date = syd::Now();
     history->update_date = history->insertion_date;
-    db.persist(history);
+    odb.persist(history);
   }
 
   if (event == odb::callback_event::pre_update) {
     if (history->id == 1) { // it means the creation date is unknown
-      db_->New<syd::RecordHistory>(history);
-      db.persist(history);
+      db->New<syd::RecordHistory>(history);
+      odb.persist(history);
     }
     history->update_date = syd::Now();
-    db.update(history);
+    odb.update(history);
   }
 
   // Events in Callback const : persist, update, erase
@@ -61,7 +61,6 @@ void syd::RecordWithHistory::InitTable(syd::PrintTable & ta) const
   ta.AddFormat("history", "Display the history of the records");
   auto & f = ta.GetFormat();
   if (f == "history") {
-    ta.AddColumn("id");
     ta.AddColumn("inserted");
     ta.AddColumn("updated");
   }
@@ -72,7 +71,6 @@ void syd::RecordWithHistory::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------------------------
 void syd::RecordWithHistory::DumpInTable(syd::PrintTable & ta) const
 {
-  if (ta.GetColumn("id") != -1) ta.Set("id", id);
   auto & f = ta.GetFormat();
   if (f == "history") {
     if (history == NULL) {

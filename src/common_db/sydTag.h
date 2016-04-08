@@ -20,14 +20,14 @@
 #define SYDTAG_H
 
 // syd
-#include "sydRecordWithHistory.h"
+#include "sydRecord.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Tag")
   /// Simple table to store a label and a description
-  class Tag : public syd::RecordWithHistory {
+  class Tag : public syd::Record {
   public:
 
 #pragma db options("UNIQUE")

@@ -142,7 +142,8 @@ std::string syd::Image::ComputeRelativeFolder() const
 // --------------------------------------------------
 void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 {
-  syd::RecordWithHistory::Callback(event,db);
+  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db, db_);
   if (event == odb::callback_event::post_erase) {
     for(auto f:files) db.erase(f);
   }
@@ -161,7 +162,8 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 // --------------------------------------------------
 void syd::Image::Callback(odb::callback_event event, odb::database & db)
 {
-  syd::RecordWithHistory::Callback(event,db);
+  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db, db_);
   if (event == odb::callback_event::post_erase) {
     for(auto f:files) db.erase(f);
   }
@@ -212,6 +214,7 @@ void syd::Image::CopyDicomSeries(syd::Image::pointer image)
 // --------------------------------------------------
 void syd::Image::InitTable(syd::PrintTable & ta) const
 {
+  syd::Record::InitTable(ta);
   syd::RecordWithHistory::InitTable(ta);
 
   // Define the formats
@@ -264,6 +267,7 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::Image::DumpInTable(syd::PrintTable & ta) const
 {
+  syd::Record::DumpInTable(ta);
   syd::RecordWithHistory::DumpInTable(ta);
   auto f = ta.GetFormat();
 

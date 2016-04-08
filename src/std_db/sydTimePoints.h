@@ -25,13 +25,15 @@
 // syd
 #include "sydRoiMaskImage.h"
 #include "sydRecordWithTags.h"
+#include "sydRecordWithHistory.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::TimePoints") callback(Callback)
   /// Store information about a time activity curve (TimePoints).
-  class TimePoints : public syd::RecordWithHistory,
+  class TimePoints : public syd::Record,
+                     public syd::RecordWithHistory,
                      public syd::RecordWithTags {
   public:
 
@@ -40,6 +42,9 @@ namespace syd {
 
     /// List values
     std::vector<double> values;
+
+    /// Associated tags
+    //    syd::Tag::vector tags;
 
     /// Associated std dev (not required)
     std::vector<double> std_deviations;
@@ -52,6 +57,14 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(TimePoints, syd::TimePoints);
+
+  // static void InitInheritance() {
+  //   syd::RecordWithHistory::InitInheritance(); // add record
+  //   //    syd::RecordWithTags::InitInheritance(); // add nothing
+  //   inherit_sql_tables_map_["TimePoints"].push_back(syd::RecordWithHistory::GetStaticSQLTableName());
+  //   //    inherit_sql_tables_map_["TimePoints"].push_back(syd::RecordWithTags::GetStaticSQLTableName());
+  // }
+
     // ------------------------------------------------------------------------
 
     /// Write the element as a string
