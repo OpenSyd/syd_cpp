@@ -13,7 +13,6 @@ set(SCHEMA_NAME StandardDatabase)
 
 wrap_odb(sydStandardDatabase sydPatient.h) ## <--- to put in common_db ?
 wrap_odb(sydStandardDatabase sydRadionuclide.h) ## in common_db ?
-wrap_odb(sydStandardDatabase sydTag.h)  ## <--- to put in common_db ?
 wrap_odb(sydStandardDatabase sydInjection.h)
 wrap_odb(sydStandardDatabase sydDicomSerie.h)
 wrap_odb(sydStandardDatabase sydDicomFile.h)
@@ -24,13 +23,13 @@ wrap_odb(sydStandardDatabase sydImageTransform.h)
 wrap_odb(sydStandardDatabase sydCalibration.h)
 wrap_odb(sydStandardDatabase sydPixelValueUnit.h)
 wrap_odb(sydStandardDatabase sydRoiStatistic.h)
+wrap_odb(sydStandardDatabase sydTimePoints.h)
 
 add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
   sydStandardDatabasePlugin.cxx
   sydPatient-odb.cxx sydPatient-schema.cxx  sydPatient.cxx
   sydRadionuclide-odb.cxx sydRadionuclide-schema.cxx  sydRadionuclide.cxx
-  sydTag-odb.cxx sydTag-schema.cxx  sydTag.cxx
   sydInjection-odb.cxx sydInjection-schema.cxx  sydInjection.cxx
   sydDicomSerie-odb.cxx sydDicomSerie-schema.cxx  sydDicomSerie.cxx
   sydDicomFile-odb.cxx sydDicomFile-schema.cxx  sydDicomFile.cxx
@@ -42,6 +41,7 @@ add_library(sydStandardDatabase SHARED
   sydCalibration-odb.cxx sydCalibration-schema.cxx  sydCalibration.cxx
   sydPixelValueUnit-odb.cxx sydPixelValueUnit-schema.cxx  sydPixelValueUnit.cxx
   sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
+  sydTimePoints-odb.cxx sydTimePoints-schema.cxx  sydTimePoints.cxx
   sydImageBuilder.cxx
   sydFileBuilder.cxx
   sydImageFromDicomBuilder.cxx
@@ -53,6 +53,7 @@ add_library(sydStandardDatabase SHARED
   sydRoiStatisticBuilder.cxx
   sydScaleImageBuilder.cxx
   sydUpdateRadionuclideFilter.cxx
+  sydTimePointsBuilder.cxx
   )
 
 ## to declare dependencies

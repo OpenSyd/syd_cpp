@@ -152,6 +152,7 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::Calibration>();
   AddTable<syd::PixelValueUnit>();
   AddTable<syd::RoiStatistic>();
+  AddTable<syd::TimePoints>();
 }
 // --------------------------------------------------------------------
 

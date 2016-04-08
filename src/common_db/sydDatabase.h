@@ -26,6 +26,8 @@
 #include "sydFile-odb.hxx"
 #include "sydRecordHistory-odb.hxx"
 #include "sydRecordWithHistory-odb.hxx"
+#include "sydTag-odb.hxx"
+#include "sydRecordWithTags-odb.hxx"
 #include "sydTableBase.h"
 #include "sydDatabaseDescription.h"
 
