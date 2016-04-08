@@ -214,9 +214,6 @@ void syd::Image::CopyDicomSeries(syd::Image::pointer image)
 // --------------------------------------------------
 void syd::Image::InitTable(syd::PrintTable & ta) const
 {
-  syd::Record::InitTable(ta);
-  syd::RecordWithHistory::InitTable(ta);
-
   // Define the formats
   auto & f = ta.GetFormat();
   ta.AddFormat("file", "Display the filename");
@@ -225,7 +222,7 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
 
   // Set the columns
   if (f == "default") {
-    if (ta.GetColumn("id") == -1) ta.AddColumn("id");
+    ta.AddColumn("id");
     ta.AddColumn("p");
     ta.AddColumn("acqui_date");
     ta.AddColumn("tags");
@@ -238,13 +235,13 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
     c.trunc_by_end_flag = false;
   }
   if (f == "timing") {
-    if (ta.GetColumn("id") == -1) ta.AddColumn("id");
+    ta.AddColumn("id");
     ta.AddColumn("p");
     ta.AddColumn("t", 2);
     ta.AddColumn("tags");
   }
   if (f == "history") {
-    if (ta.GetColumn("id") == -1) ta.AddColumn("id");
+    syd::RecordWithHistory::InitTable(ta);
     ta.AddColumn("p");
     ta.AddColumn("acqui_date");
     ta.AddColumn("tags");
@@ -267,12 +264,11 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::Image::DumpInTable(syd::PrintTable & ta) const
 {
-  syd::Record::DumpInTable(ta);
   syd::RecordWithHistory::DumpInTable(ta);
   auto f = ta.GetFormat();
 
   if (f == "default") {
-    //    ta.Set("id", id); <--- already done in RecordWithHistory
+    ta.Set("id", id);
     ta.Set("p", patient->name);
     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
     else ta.Set("acqui_date", dicoms[0]->acquisition_date);
@@ -288,6 +284,7 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   }
 
   if (f == "timing") {
+    ta.Set("id", id);
     ta.Set("p", patient->name);
     ta.Set("tags", GetLabels(tags));
     double t = GetHoursFromInjection();
@@ -295,7 +292,7 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   }
 
   if (f == "history") {
-    //    ta.Set("id", id); <--- already done in RecordWithHistory
+    ta.Set("id", id);
     ta.Set("p", patient->name);
     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
     else ta.Set("acqui_date", dicoms[0]->acquisition_date);
@@ -305,7 +302,7 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   }
 
   if (f == "file") {
-    //    ta.Set("id", id);  <--- already done in RecordWithHistory
+    ta.Set("id", id);
     if (files.size() != 0) ta.Set("file", files[0]->GetAbsolutePath(db_));
   }
 
