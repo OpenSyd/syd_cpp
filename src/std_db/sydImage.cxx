@@ -86,44 +86,6 @@ std::string syd::Image::GetModality() const
 
 
 // --------------------------------------------------
-// void syd::Image::AddTag(const syd::Tag::pointer tag)
-// {
-//   bool found = false;
-//   int i=0;
-//   while (i<tags.size() and !found) {
-//     if (tags[i]->id == tag->id) found = true;
-//     ++i;
-//   }
-//   if (!found) tags.push_back(tag);
-// }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-// void syd::Image::AddTags(const std::string tag_names)
-// {
-//   if (GetDatabase() == NULL) {
-//     LOG(FATAL) << "Error, no db associated with this image (not insert in the db ?)";
-//   }
-//   syd::StandardDatabase * db = static_cast<syd::StandardDatabase*>(GetDatabase());
-//   syd::Tag::vector tags;
-//   db->FindTags(tags, tag_names);
-//   for(auto t:tags) AddTag(t);
-// }
-// // --------------------------------------------------
-
-
-// --------------------------------------------------
-// void syd::Image::AddTags(const std::vector<std::string> & tag_names)
-// {
-//   std::string x;
-//   for(auto t:tag_names) x = x + t + " ";
-//   AddTags(x);
-// }
-// // --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Image::RemoveTag(const syd::Tag::pointer tag)
 {
   bool found = false;
@@ -380,5 +342,27 @@ double syd::Image::GetHoursFromInjection(syd::Injection::pointer injection) cons
   }
   double time = syd::DateDifferenceInHours(dicoms[0]->acquisition_date, inj_date);
   return time;
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+std::vector<double> & syd::GetTimesFromInjection(syd::StandardDatabase * db,
+                                                 const syd::Image::vector images)
+{
+  std::vector<double> * times = new std::vector<double>;
+  syd::Image::vector sorted_images = images;
+  db->Sort<syd::Image>(sorted_images);
+  DDS(images);
+  DDS(sorted_images);
+  syd::Injection::pointer injection = sorted_images[0]->dicoms[0]->injection;
+  std::string starting_date = injection->date;
+  for(auto image:sorted_images) {
+    double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
+    times->push_back(t);
+  }
+  DDS(*times);
+  return *times; // FIXME
 }
 // --------------------------------------------------------------------
