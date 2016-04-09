@@ -303,7 +303,7 @@ int main(int argc, char* argv[])
     bdb.SetImage<PixelType>(output, auc->image);
 
     // Tags
-    db->SetImageTagsFromCommandLine(output, args_info);
+    db->UpdateTagsFromCommandLine(output->tags, args_info);
 
     // Change pixel value
     output->pixel_value_unit = punit;

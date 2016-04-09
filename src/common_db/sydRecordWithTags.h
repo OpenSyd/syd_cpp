@@ -26,15 +26,17 @@
 namespace syd {
 
   #pragma db object abstract pointer(std::shared_ptr)
-  //callback(Callback)
   class RecordWithTags  {
   public:
 
+    /// Define pointer type
+    typedef std::shared_ptr<RecordWithTags> pointer;
+
+    /// Define vectortype
+    typedef std::vector<pointer> vector;
+
     /// List of tags
     syd::Tag::vector tags;
-
-    // Add tag, remove tag, print etc
-
 
   protected:
     RecordWithTags();

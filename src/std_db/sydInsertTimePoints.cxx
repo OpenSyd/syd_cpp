@@ -68,8 +68,8 @@ int main(int argc, char* argv[])
 
   // Set tags
   DD(tac);
-  //  db->SetTagsFromCommandLine(tac, args_info);
-  //DD(tac);
+  db->UpdateTagsFromCommandLine(tac->tags, args_info);
+  DD(tac);
 
   // Insert or update
   DD(tac->IsPersistent());

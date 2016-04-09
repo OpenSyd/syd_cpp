@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
           db->QueryOne(mask, q);
           LOG(1) << "Find 'body' mask for the image: " << mask;
           b.CropImageLike(image, mask, args_info.resample_flag , args_info.force_flag); // false = dont resample
-          db->SetImageTagsFromCommandLine(image, args_info);
+          db->UpdateTagsFromCommandLine(image->tags, args_info);
         } catch (std::exception & e) {
           LOG(WARNING) << "Could not crop the image: " << image
                        << std::endl << "Error is: " << e.what();

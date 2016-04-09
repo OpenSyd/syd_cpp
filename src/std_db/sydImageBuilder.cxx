@@ -44,7 +44,7 @@ syd::Image::pointer syd::ImageBuilder::NewMHDImageLike(syd::Image::pointer input
     image->CopyDicomSeries(input);
     image->frame_of_reference_uid = input->frame_of_reference_uid;
   }
-  image->CopyTags(input);
+  AddTag(image->tags, input->tags);
   image->pixel_value_unit = input->pixel_value_unit;
   return image;
 }

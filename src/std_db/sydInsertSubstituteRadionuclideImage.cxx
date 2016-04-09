@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   for(auto image:images) {
     // Create new image
     syd::Image::pointer result = builder.NewRadionuclideSubstitutedImage(image, rad);
-    db->SetImageTagsFromCommandLine(result, args_info);
+    db->UpdateTagsFromCommandLine(result->tags, args_info);
     builder.InsertAndRename(result);
     LOG(1) << "Inserting Image " << result;
   }

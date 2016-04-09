@@ -86,22 +86,6 @@ std::string syd::Image::GetModality() const
 
 
 // --------------------------------------------------
-void syd::Image::RemoveTag(const syd::Tag::pointer tag)
-{
-  bool found = false;
-  int i=0;
-  while (i<tags.size() and !found) {
-    if (tags[i]->id == tag->id) {
-      found = true;
-      tags.erase(tags.begin()+i);
-    }
-    ++i;
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Image::AddDicomSerie(syd::DicomSerie::pointer dicom)
 {
   bool found = false;
@@ -191,14 +175,6 @@ void syd::Image::FatalIfNoDicom() const
     LOG(FATAL) << "Error the following image does not have associated DicomSerie."
                << std::endl << this;
   }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::CopyTags(const syd::Image::pointer image)
-{
-  for(auto t:image->tags) AddTag(tags, t);//AddTag(t);
 }
 // --------------------------------------------------
 

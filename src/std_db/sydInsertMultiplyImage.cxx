@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
     auto output = builder.NewMHDImageLike(image2);
     builder.SetImage<PixelType>(output, itk_image2);
     builder.InsertAndRename(output);
-    db->SetImageTagsFromCommandLine(output, args_info);
+    db->UpdateTagsFromCommandLine(output->tags, args_info);
     if (args_info.pixelunit_given) builder.SetImagePixelValueUnit(output, args_info.pixelunit_arg);
     db->Update(output);
     LOG(1) << "Image inserted: " << output;

@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
   builder.CopyImageFromFile(output, filename);
 
   // Add optional tag
-  db->SetImageTagsFromCommandLine(output, args_info);
+  db->UpdateTagsFromCommandLine(output->tags, args_info);
 
   // Set optional unity
   if (args_info.pixelunit_given) {

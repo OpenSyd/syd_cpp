@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
   syd::DecayCorrectedImageBuilder builder(db);
   for(auto image:images) {
     syd::Image::pointer result = builder.NewDecayCorrectedImage(image);
-    db->SetImageTagsFromCommandLine(result, args_info);
+    db->UpdateTagsFromCommandLine(result->tags, args_info);
     builder.InsertAndRename(result);
     LOG(1) << "Inserting Image " << result;
   }

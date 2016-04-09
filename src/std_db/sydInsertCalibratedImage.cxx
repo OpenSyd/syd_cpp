@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
     double s = 1.0/calibration->factor / injection->activity_in_MBq;
     // Create an (empty) copy
     auto output = builder.NewMHDImageLike(image);
-    db->SetImageTagsFromCommandLine(output, args_info);
+    db->UpdateTagsFromCommandLine(output->tags, args_info);
     output->pixel_value_unit = unit;
     // Load the itk image
     ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));

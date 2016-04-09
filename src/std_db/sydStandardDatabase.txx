@@ -71,7 +71,7 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom,
 
 
 // --------------------------------------------------------------------
-template<class ArgsInfo>
+/*template<class ArgsInfo>
 void syd::StandardDatabase::SetImageTagsFromCommandLine(syd::Image::pointer image, ArgsInfo args_info)
 {
   // Remove all tags
@@ -103,6 +103,7 @@ void syd::StandardDatabase::SetImageTagsFromCommandLine(syd::Image::pointer imag
     }
   }
 }
+*/
 // --------------------------------------------------------------------
 
 
@@ -143,21 +144,25 @@ void syd::StandardDatabase::UpdateTagsFromCommandLine(syd::Tag::vector & tags, A
 
 
 // --------------------------------------------------------------------
-template<class ArgsInfo, class RecordType>
-void syd::StandardDatabase::SetTagsFromCommandLine(typename RecordType::pointer record, ArgsInfo args_info)
+/*template<class ArgsInfo>
+void syd::StandardDatabase::SetTagsFromCommandLine(syd::RecordWithTags::pointer record,
+                                                   ArgsInfo args_info)
 {
+  // Get list of tags
+  syd::Tag::vector & tags = record->tags;
+
   // Remove all tags
-  if (args_info.remove_all_tag_flag) record->tags.clear();
+  if (args_info.remove_all_tag_flag) tags.clear();
 
   // Remove some tags
   if (args_info.remove_tag_given) {
     for(auto i=0; i<args_info.remove_tag_given; i++) {
       std::string tagname = args_info.remove_tag_arg[i];
-      syd::Tag::vector tags;
+      syd::Tag::vector tags_to_remove;
       try {
-        FindTags(tags, tagname);
+        FindTags(tags_to_remove, tagname);
       } catch(std::exception & e) { } // ignore unknown tag
-      for(auto t:tags) record->RemoveTag(t);
+      RemoveTag(tags, tags_to_remove);
     }
   }
 
@@ -165,16 +170,17 @@ void syd::StandardDatabase::SetTagsFromCommandLine(typename RecordType::pointer 
   if (args_info.tag_given) {
     for(auto i=0; i<args_info.tag_given; i++) {
       std::string tagname = args_info.tag_arg[i];
-      syd::Tag::vector tags;
+      syd::Tag::vector tags_to_add;
       try {
-        FindTags(tags, tagname);
+        FindTags(tags_to_add, tagname);
       } catch(std::exception & e) {
         LOG(WARNING) << "Some tags are ignored. " << e.what();
       }
-      for(auto t:tags) record->AddTag(t);
+      AddTag(tags, tags_to_add);
     }
   }
 }
+*/
 // --------------------------------------------------------------------
 
 

@@ -92,17 +92,6 @@ namespace syd {
     /// Return the modality of the dicom linked to this image
     std::string GetModality() const;
 
-    // /// Add a tag to the list (check is already exist) ; do not update in the db.
-    // void AddTag(const syd::Tag::pointer tag);
-    // void AddTags(const std::vector<std::string> & tags);
-    // void AddTags(const std::string tags);
-
-    /// Remove a tag from the list ; do not update in the db. Do nothing it not found
-    void RemoveTag(const syd::Tag::pointer tag);
-
-    /// Copy tags from another image
-    void CopyTags(const syd::Image::pointer tag);
-
     /// Add a DicomSerie to the list (check is already exist) ; do not update in the db.
     void AddDicomSerie(syd::DicomSerie::pointer dicom);
 

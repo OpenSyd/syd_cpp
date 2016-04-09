@@ -29,6 +29,12 @@ namespace syd {
   class RecordWithHistory {
   public:
 
+    /// Define pointer type
+    typedef std::shared_ptr<RecordWithHistory> pointer;
+
+    /// Define vectortype
+    typedef std::vector<pointer> vector;
+
     /// Store the history. It is 'mutable' because is changed in the const Callback.
     mutable syd::RecordHistory::pointer history;
 

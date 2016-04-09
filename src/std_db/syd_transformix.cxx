@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
     // Create output image
     syd::ImageBuilder builder(db);
     syd::Image::pointer output_image = builder.NewMHDImageLike(input_image);
-    db->SetImageTagsFromCommandLine(output_image, args_info);
+    db->UpdateTagsFromCommandLine(output_image->tags, args_info);
 
     // Change the frame_of_reference_uid, will be the one of fiwed
     // image in the ImageTransform

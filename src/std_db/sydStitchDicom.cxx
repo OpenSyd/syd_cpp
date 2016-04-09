@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
            << p.first << std::endl
            << p.second << std::endl;
     syd::Image::pointer image = builder.NewStitchedImage(p.first, p.second);
-    db->SetImageTagsFromCommandLine(image, args_info);
+    db->UpdateTagsFromCommandLine(image->tags, args_info);
     builder.InsertAndRename(image);
     LOG(1) << "Inserting Image " << image;
   }

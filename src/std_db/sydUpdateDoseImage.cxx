@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
   if (args_info.pixelunit_given) builder.SetImagePixelValueUnit(image, args_info.pixelunit_arg);
 
   // Set the tag if needed
-  db->SetImageTagsFromCommandLine(image, args_info);
+  db->UpdateTagsFromCommandLine(image->tags, args_info);
 
   // Finally update the image in the db
   db->Update(image);

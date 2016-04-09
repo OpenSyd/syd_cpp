@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
     }
 
     // update db
-    db->SetImageTagsFromCommandLine(image, args_info);
+    db->UpdateTagsFromCommandLine(image->tags, args_info);
     if (args_info.pixelunit_given) builder.SetImagePixelValueUnit(image, args_info.pixelunit_arg);
     db->Update(image);
     if (s != 1) LOG(1) << "Image was scaled by " << s << ": " << image;

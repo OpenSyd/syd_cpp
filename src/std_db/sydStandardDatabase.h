@@ -81,11 +81,12 @@ namespace syd {
     ReadImage(const syd::DicomSerie::pointer dicom,
               bool flipAxeIfNegativeFlag) const;
 
-    template<class ArgsInfo>
-    void SetImageTagsFromCommandLine(syd::Image::pointer image, ArgsInfo args_info);
+    // template<class ArgsInfo>
+    // void SetImageTagsFromCommandLine(syd::Image::pointer image, ArgsInfo args_info);
 
-    template<class ArgsInfo, class RecordType>
-    void SetTagsFromCommandLine(typename RecordType::pointer record, ArgsInfo args_info);
+    // template<class ArgsInfo>
+    // void SetTagsFromCommandLine(syd::RecordWithTags::pointer record,
+    //                             ArgsInfo args_info);
 
     template<class ArgsInfo>
     void UpdateTagsFromCommandLine(syd::Tag::vector & tags, ArgsInfo & args_info);

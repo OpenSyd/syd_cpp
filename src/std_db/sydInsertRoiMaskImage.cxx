@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
   // Create a new RoiMaskImage
   syd::RoiMaskImageBuilder builder(db);
   syd::RoiMaskImage::pointer mask = builder.NewRoiMaskImage(dicom, roitype, filename);
-  db->SetImageTagsFromCommandLine(mask, args_info);
+  db->UpdateTagsFromCommandLine(mask->tags, args_info);
   builder.InsertAndRename(mask);
   LOG(1) << "Inserting RoiMaskImage " << mask;
 

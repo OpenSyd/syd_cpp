@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
   for(auto d:dicom_series) {
     syd::Image::pointer image = builder.NewImageFromDicom(d);
     // Set the optional tags
-    db->SetImageTagsFromCommandLine(image, args_info);
+    db->UpdateTagsFromCommandLine(image->tags, args_info);
     builder.InsertAndRename(image);
     LOG(1) << "Inserting Image " << image;
   }

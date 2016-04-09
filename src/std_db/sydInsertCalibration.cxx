@@ -122,7 +122,7 @@ int main(int argc, char* argv[])
     // Compute the calibration and update
     double k = total_counts / activity_at_acquisition * f;
     calibration->factor = k;
-    db->SetTagsFromCommandLine<args_info_sydInsertCalibration,syd::Calibration>(calibration, args_info);
+    db->UpdateTagsFromCommandLine(calibration->tags, args_info);
     db->Update(calibration);
     LOG(1) << calibration << " " << status;
   }
