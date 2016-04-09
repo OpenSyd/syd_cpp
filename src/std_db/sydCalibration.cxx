@@ -21,7 +21,9 @@
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
-syd::Calibration::Calibration():syd::Record()
+syd::Calibration::Calibration():
+  syd::Record(),
+  syd::RecordWithTags()
 {
   image = NULL;
   factor = 1.0;
@@ -48,36 +50,6 @@ std::string syd::Calibration::ToString() const
   return ss.str();
 }
 // --------------------------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Calibration::AddTag(syd::Tag::pointer tag)
-{
-  bool found = false;
-  int i=0;
-  while (i<tags.size() and !found) {
-    if (tags[i]->label == tag->label) found = true;
-    ++i;
-  }
-  if (!found) tags.push_back(tag);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Calibration::RemoveTag(syd::Tag::pointer tag)
-{
-  bool found = false;
-  int i=0;
-  while (i<tags.size() and !found) {
-    if (tags[i]->label == tag->label) {
-      found = true;
-      tags.erase(tags.begin()+i);
-    }
-    ++i;
-  }
-}
-// --------------------------------------------------
 
 
 // --------------------------------------------------

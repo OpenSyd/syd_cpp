@@ -71,45 +71,9 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom,
 
 
 // --------------------------------------------------------------------
-/*template<class ArgsInfo>
-void syd::StandardDatabase::SetImageTagsFromCommandLine(syd::Image::pointer image, ArgsInfo args_info)
-{
-  // Remove all tags
-  if (args_info.remove_all_tag_flag) image->tags.clear();
-
-  // Remove some tags
-  if (args_info.remove_tag_given) {
-    for(auto i=0; i<args_info.remove_tag_given; i++) {
-      std::string tagname = args_info.remove_tag_arg[i];
-      syd::Tag::vector tags;
-      try {
-        FindTags(tags, tagname);
-      } catch(std::exception & e) { } // ignore unknown tag
-      for(auto t:tags) image->RemoveTag(t); // FIXME to change in RemoveTag(image->tags, t);
-    }
-  }
-
-  // Add tags
-  if (args_info.tag_given) {
-    for(auto i=0; i<args_info.tag_given; i++) {
-      std::string tagname = args_info.tag_arg[i];
-      syd::Tag::vector tags;
-      try {
-        FindTags(tags, tagname);
-      } catch(std::exception & e) {
-        LOG(WARNING) << "Some tags are ignored. " << e.what();
-      }
-      for(auto t:tags) AddTag(image->tags, t);
-    }
-  }
-}
-*/
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 template<class ArgsInfo>
-void syd::StandardDatabase::UpdateTagsFromCommandLine(syd::Tag::vector & tags, ArgsInfo & args_info)
+void syd::StandardDatabase::UpdateTagsFromCommandLine(syd::Tag::vector & tags,
+                                                      ArgsInfo & args_info)
 {
   // Remove all tags
   if (args_info.remove_all_tag_flag) tags.clear();
@@ -140,47 +104,6 @@ void syd::StandardDatabase::UpdateTagsFromCommandLine(syd::Tag::vector & tags, A
     }
   }
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-/*template<class ArgsInfo>
-void syd::StandardDatabase::SetTagsFromCommandLine(syd::RecordWithTags::pointer record,
-                                                   ArgsInfo args_info)
-{
-  // Get list of tags
-  syd::Tag::vector & tags = record->tags;
-
-  // Remove all tags
-  if (args_info.remove_all_tag_flag) tags.clear();
-
-  // Remove some tags
-  if (args_info.remove_tag_given) {
-    for(auto i=0; i<args_info.remove_tag_given; i++) {
-      std::string tagname = args_info.remove_tag_arg[i];
-      syd::Tag::vector tags_to_remove;
-      try {
-        FindTags(tags_to_remove, tagname);
-      } catch(std::exception & e) { } // ignore unknown tag
-      RemoveTag(tags, tags_to_remove);
-    }
-  }
-
-  // Add tags
-  if (args_info.tag_given) {
-    for(auto i=0; i<args_info.tag_given; i++) {
-      std::string tagname = args_info.tag_arg[i];
-      syd::Tag::vector tags_to_add;
-      try {
-        FindTags(tags_to_add, tagname);
-      } catch(std::exception & e) {
-        LOG(WARNING) << "Some tags are ignored. " << e.what();
-      }
-      AddTag(tags, tags_to_add);
-    }
-  }
-}
-*/
 // --------------------------------------------------------------------
 
 

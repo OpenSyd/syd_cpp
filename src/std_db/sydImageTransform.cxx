@@ -22,7 +22,8 @@
 #include "sydFile.h"
 
 // --------------------------------------------------------------------
-syd::ImageTransform::ImageTransform():Record()
+syd::ImageTransform::ImageTransform()
+  :Record(), RecordWithTags()
 {
   date = "unset";
   fixed_image = NULL;

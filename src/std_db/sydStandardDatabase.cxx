@@ -36,7 +36,8 @@ void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & ty
 
 // --------------------------------------------------------------------
 template<>
-void syd::Table<syd::Injection>::Sort(syd::Injection::vector & v, const std::string & type) const
+void syd::Table<syd::Injection>::Sort(syd::Injection::vector & v,
+                                      const std::string & type) const
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
@@ -48,7 +49,8 @@ void syd::Table<syd::Injection>::Sort(syd::Injection::vector & v, const std::str
 
 // --------------------------------------------------
 template<>
-void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v, const std::string & type) const
+void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v,
+                                         const std::string & type) const
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
@@ -62,7 +64,8 @@ void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v, const st
 
 // --------------------------------------------------
 template<>
-void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & v, const std::string & order) const
+void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & v,
+                                       const std::string & order) const
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
@@ -73,7 +76,8 @@ void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & v, const std::s
 
 // --------------------------------------------------
 template<>
-void syd::Table<syd::Patient>::Sort(syd::Patient::vector & v, const std::string & order) const
+void syd::Table<syd::Patient>::Sort(syd::Patient::vector & v,
+                                    const std::string & order) const
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) { return a->study_id < b->study_id; });
@@ -83,7 +87,8 @@ void syd::Table<syd::Patient>::Sort(syd::Patient::vector & v, const std::string 
 
 // --------------------------------------------------
 template<>
-void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & v, const std::string & order) const
+void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & v,
+                                         const std::string & order) const
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) { return a->atomic_number < b->atomic_number; });
@@ -93,7 +98,8 @@ void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & v, const st
 
 // --------------------------------------------------
 template<>
-void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & v, const std::string & order) const
+void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & v,
+                                        const std::string & order) const
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
@@ -107,7 +113,8 @@ void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & v, const std:
 
 // --------------------------------------------------
 template<>
-void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & v, const std::string & order) const
+void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & v,
+                                           const std::string & order) const
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
@@ -119,7 +126,8 @@ void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & v, cons
 
 // --------------------------------------------------
 template<>
-void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & v, const std::string & order) const
+void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & v,
+                                         const std::string & order) const
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
@@ -224,7 +232,8 @@ void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::string 
 
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::vector<std::string> & names) const
+void syd::StandardDatabase::FindTags(syd::Tag::vector & tags,
+                                     const std::vector<std::string> & names) const
 {
   odb::query<Tag> q = odb::query<Tag>::label.in_range(names.begin(), names.end());
   Query<Tag>(tags, q);

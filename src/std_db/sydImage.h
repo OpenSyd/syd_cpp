@@ -30,6 +30,7 @@
 #include "sydDicomSerie.h"
 #include "sydPixelValueUnit.h"
 #include "sydRecordWithHistory.h"
+#include "sydRecordWithTags.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -38,15 +39,14 @@ namespace syd {
 
   /// Store information about an image stored in a db (file, size etc)
   class Image : public syd::Record,
-                public syd::RecordWithHistory {
+                public syd::RecordWithHistory,
+                public syd::RecordWithTags
+  {
   public:
 
 #pragma db not_null
     /// Foreign key, it must exist in the Patient table.
     syd::Patient::pointer patient;
-
-    /// Associated tags
-    syd::Tag::vector tags;
 
     /// List of associated files (will be deleted when the image is deleted)
     syd::File::vector files;

@@ -23,8 +23,6 @@
 // --------------------------------------------------------------------
 syd::Injection::Injection():syd::Record()
 {
-  patient = NULL;
-  radionuclide = NULL;
   date = "unset";
   activity_in_MBq = 0.0;
 }

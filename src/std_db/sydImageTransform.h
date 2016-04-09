@@ -28,7 +28,10 @@ namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::ImageTransform") callback(Callback)
   /// Store information about a geometrical transformation from one image space to another.
-  class ImageTransform : public syd::Record {
+  class ImageTransform :
+    public syd::Record,
+    public syd::RecordWithTags
+  {
   public:
 
 #pragma db not_null on_delete(cascade)
@@ -38,9 +41,6 @@ namespace syd {
 #pragma db not_null on_delete(cascade)
     /// Moving image. Foreign key
     syd::Image::pointer moving_image;
-
-    /// Associated tags
-    syd::Tag::vector tags;
 
     /// Mask of fixed image. Can be null.
     syd::RoiMaskImage::pointer fixed_mask;

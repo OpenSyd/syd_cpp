@@ -35,7 +35,7 @@ syd::Record::Record()
 // --------------------------------------------------------------------
 bool syd::Record::IsPersistent() const
 {
-  if (id == 0) return false;
+  if (db_ == NULL) return false;
   return true;
 }
 // --------------------------------------------------------------------

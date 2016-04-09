@@ -133,7 +133,6 @@ int main(int argc, char* argv[])
     }
   }
 
-  DD("End");
   return EXIT_SUCCESS;
   // This is the end, my friend.
 }
