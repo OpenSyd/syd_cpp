@@ -63,10 +63,7 @@ void syd::FitOutputImage_AUC::Update(const syd::TimeActivityCurve & tac,
                                      const syd::TimeActivityCurve & restricted_tac,
                                      const syd::FitModelBase * model)
 {
-  DD("Update auc");
   double r = model->ComputeAUC(tac, lambda_phys_hours_, use_current_tac);
-  DD(r);
-  DD(tac);
   SetValue(r);
 }
 // --------------------------------------------------------------------
