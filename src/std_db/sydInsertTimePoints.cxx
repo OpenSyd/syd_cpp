@@ -69,8 +69,14 @@ int main(int argc, char* argv[])
   db->UpdateTagsFromCommandLine(tac->tags, args_info);
 
   // Insert or update
-  if (tac->IsPersistent()) db->Update(tac);
-  else db->Insert(tac);
+  if (tac->IsPersistent()) {
+    LOG(1) << "Update " << tac;
+    db->Update(tac);
+  }
+  else {
+    db->Insert(tac);
+    LOG(1) << "Insert " << tac;
+  }
 
   // This is the end, my friend.
   return EXIT_SUCCESS;

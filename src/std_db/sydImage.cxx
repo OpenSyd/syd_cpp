@@ -331,15 +331,12 @@ std::vector<double> & syd::GetTimesFromInjection(syd::StandardDatabase * db,
   std::vector<double> * times = new std::vector<double>;
   syd::Image::vector sorted_images = images;
   db->Sort<syd::Image>(sorted_images);
-  DDS(images);
-  DDS(sorted_images);
   syd::Injection::pointer injection = sorted_images[0]->dicoms[0]->injection;
   std::string starting_date = injection->date;
   for(auto image:sorted_images) {
     double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
     times->push_back(t);
   }
-  DDS(*times);
-  return *times; // FIXME
+  return *times;
 }
 // --------------------------------------------------------------------
