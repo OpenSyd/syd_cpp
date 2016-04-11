@@ -125,13 +125,17 @@ target_link_libraries(sydCropImage sydStandardDatabase)
 
 # Create decay corrected image
 wrap_ggo(sydInsertDecayCorrectedImage_GGO_C
-  sydInsertDecayCorrectedImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+  sydInsertDecayCorrectedImage.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
 add_executable(sydInsertDecayCorrectedImage sydInsertDecayCorrectedImage.cxx ${sydInsertDecayCorrectedImage_GGO_C})
 target_link_libraries(sydInsertDecayCorrectedImage sydStandardDatabase)
 
 # Create image with a different radionuclide
 wrap_ggo(sydInsertSubstituteRadionuclideImage_GGO_C
-  sydInsertSubstituteRadionuclideImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+  sydInsertSubstituteRadionuclideImage.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
 add_executable(sydInsertSubstituteRadionuclideImage
   sydInsertSubstituteRadionuclideImage.cxx ${sydInsertSubstituteRadionuclideImage_GGO_C})
 target_link_libraries(sydInsertSubstituteRadionuclideImage sydStandardDatabase)
@@ -143,9 +147,24 @@ add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx ${sydInsertRoiMas
 target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 
 # Create image of integrated activity
-wrap_ggo(sydInsertIntegratedActivityImage_GGO_C sydInsertIntegratedActivityImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-add_executable(sydInsertIntegratedActivityImage sydInsertIntegratedActivityImage.cxx ${sydInsertIntegratedActivityImage_GGO_C})
+wrap_ggo(sydInsertIntegratedActivityImage_GGO_C
+  sydInsertIntegratedActivityImage.ggo
+  sydInsertIntegratedActivityCommon.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertIntegratedActivityImage
+  sydInsertIntegratedActivityImage.cxx ${sydInsertIntegratedActivityImage_GGO_C})
 target_link_libraries(sydInsertIntegratedActivityImage sydStandardDatabase)
+
+# compute integrated activity in a ROI
+wrap_ggo(sydInsertIntegratedActivityROI_GGO_C
+  sydInsertIntegratedActivityROI.ggo
+  sydInsertIntegratedActivityCommon.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertIntegratedActivityROI
+  sydInsertIntegratedActivityROI.cxx ${sydInsertIntegratedActivityROI_GGO_C})
+target_link_libraries(sydInsertIntegratedActivityROI sydStandardDatabase)
 
 
 # Create image of integrated activity

@@ -62,8 +62,12 @@ int main(int argc, char* argv[])
   }
   syd::Image::vector images;
   db->Query(images, ids);
-  if (images.size() ==0) {
+  if (images.size() == 0) {
     LOG(1) << "No images.";
+    return EXIT_SUCCESS;
+  }
+  if (images.size() == 1) {
+    LOG(1) << "Cannot integrate a single image.";
     return EXIT_SUCCESS;
   }
 
@@ -83,7 +87,7 @@ int main(int argc, char* argv[])
   db->Sort<syd::Image>(images);
   std::stringstream s;
   for(auto image:images) { s << image->id << " "; }
-  LOG(1) << images.size() << " images will be used: " << s.str();
+  LOG(2) << images.size() << " images will be used: " << s.str();
 
   // Check same pixel units (warning)
   syd::PixelValueUnit::pointer unit = images[0]->pixel_value_unit;
@@ -126,21 +130,6 @@ int main(int argc, char* argv[])
   }
   //syd::WriteImage<ImageType>(initial_image, "initia.mhd");
 
-  // Apply radionuclide substitution. The temporary images are not
-  // inserted into the db (but files are created on disk and deleted
-  // at the end).
-  if (args_info.substitute_given) {
-    std::string radname = args_info.substitute_arg;
-    syd::Radionuclide::pointer rad;
-    odb::query<syd::Radionuclide> q = odb::query<syd::Radionuclide>::name == radname;
-    db->QueryOne(rad, q); // will fail if not found
-    syd::SubstituteRadionuclideImageBuilder builder(db);
-    LOG(2) << "Substitute spect data with radionuclide: " << rad;
-    for(auto & image:images) {
-      image = builder.NewRadionuclideSubstitutedImage(image, rad);
-    }
-  }
-
   // Read the images+times and set to the builder
   std::string starting_date = injection->date;
   ImageType::Pointer im;
@@ -155,7 +144,7 @@ int main(int argc, char* argv[])
   }
   im = itk_images[0]; // consider the first image for the following
 
-  // Create some models
+  // Create some models //FIXME --> use a function (create default model) to do that
   std::vector<syd::FitModelBase*> models;
   auto f2  = new syd::FitModel_f2;
   auto f3  = new syd::FitModel_f3;
@@ -198,16 +187,6 @@ int main(int argc, char* argv[])
   // Create main builder
   syd::IntegratedActivityImageBuilder builder;
 
-  // search the roi if needed
-  if (args_info.roi_only_given) {
-    std::string roi_name = args_info.roi_only_arg;
-    syd::RoiType::pointer roitype = db->FindRoiType(roi_name);
-    syd::RoiMaskImage::pointer roi = db->FindRoiMaskImage(images[0], roi_name);
-    DD(roi);
-    auto mask = syd::ReadImage<MaskImageType>(db->GetAbsolutePath(roi));
-    builder.SetRoiMaskImage(mask);
-  }
-
   // Set input images
   for(auto i=0; i<times.size(); i++) builder.AddInput(itk_images[i], times[i]);
 
@@ -230,6 +209,7 @@ int main(int argc, char* argv[])
   }
   builder.SetMask(mask);
 
+  // Ad the models to the builder
   for(auto i=0; i<args_info.model_given; i++) {
     std::string n = args_info.model_arg[i];
     bool b = false;
@@ -250,74 +230,61 @@ int main(int argc, char* argv[])
   }
 
   // Go !
-  if (args_info.roi_only_given)
-    builder.CreateIntegratedActivityInROI();
-  else
-    builder.CreateIntegratedActivityImage();
+  builder.CreateIntegratedActivityImage();
 
-  // output image
-  if (!args_info.roi_only_given) {
+  // Get main output
+  auto auc = builder.GetOutput();
+  auto success = builder.GetSuccessOutput();
 
-    // Get main output
-    auto auc = builder.GetOutput();
-    auto success = builder.GetSuccessOutput();
-
-    // Post processing with median filter
-    if (args_info.median_filter_flag) {
-      LOG(1) << "Post processing: median filter";
-      if (args_info.debug_images_flag) syd::WriteImage<ImageType>(auc->image, "auc_before_median.mhd");
-      auto filter = itk::MedianWithMaskImageFilter<ImageType, ImageType, ImageType>::New();
-      filter->SetRadius(1);
-      filter->SetInput(auc->image);
-      filter->SetMask(success->image);
-      filter->Update();
-      auc->image = filter->GetOutput();
-    }
-
-    // Post processing with fill holes
-    if (args_info.fill_holes_given) {
-      if (args_info.debug_images_flag) syd::WriteImage<ImageType>(auc->image, "auc_before_fill_holes.mhd");
-      // Change the mask, considering success fit
-      auto it_success = success->iterator;
-      Iterator it_mask(mask, mask->GetLargestPossibleRegion());
-      it_success.GoToBegin();
-      it_mask.GoToBegin();
-      while (!it_mask.IsAtEnd()) {
-        if (it_success.Get() == 1.0) it_mask.Set(0.0);
-        ++it_success;
-        ++it_mask;
-      }
-      int f = syd::FillHoles<ImageType>(auc->image, mask, args_info.fill_holes_arg);
-      LOG(1) << "Post processing: fill remaining holes. " << f << " failed pixels remain.";
-    }
-
-    // Write all debug outputs
-    if (args_info.debug_images_flag) {
-      for(auto o:builder.GetOutputs())
-        syd::WriteImage<ImageType>(o->image, o->filename);
-    }
-
-    // Insert result in db
-    syd::ImageBuilder bdb(db);
-    syd::Image::pointer output = bdb.NewMHDImageLike(images[0]);
-    bdb.SetImage<PixelType>(output, auc->image);
-
-    // Tags
-    db->UpdateTagsFromCommandLine(output->tags, args_info);
-
-    // Change pixel value
-    output->pixel_value_unit = punit;
-    bdb.InsertAndRename(output);
-    LOG(1) << "Inserting Image " << output;
-
-    // Remove temporary files (not persistant in the db)
-    if (args_info.substitute_given) {
-      for(auto & image:images) {
-        for(auto f:image->files) fs::remove_all(db->GetAbsolutePath(f));
-      }
-    }
-
+  // Post processing with median filter
+  if (args_info.median_filter_flag) {
+    LOG(1) << "Post processing: median filter";
+    if (args_info.debug_images_flag)
+      syd::WriteImage<ImageType>(auc->image, "auc_before_median.mhd");
+    auto filter = itk::MedianWithMaskImageFilter<ImageType, ImageType, ImageType>::New();
+    filter->SetRadius(1);
+    filter->SetInput(auc->image);
+    filter->SetMask(success->image);
+    filter->Update();
+    auc->image = filter->GetOutput();
   }
+
+  // Post processing with fill holes
+  if (args_info.fill_holes_given) {
+    if (args_info.debug_images_flag)
+      syd::WriteImage<ImageType>(auc->image, "auc_before_fill_holes.mhd");
+    // Change the mask, considering success fit
+    auto it_success = success->iterator;
+    Iterator it_mask(mask, mask->GetLargestPossibleRegion());
+    it_success.GoToBegin();
+    it_mask.GoToBegin();
+    while (!it_mask.IsAtEnd()) {
+      if (it_success.Get() == 1.0) it_mask.Set(0.0);
+      ++it_success;
+      ++it_mask;
+    }
+    int f = syd::FillHoles<ImageType>(auc->image, mask, args_info.fill_holes_arg);
+    LOG(1) << "Post processing: fill remaining holes. " << f << " failed pixels remain.";
+  }
+
+  // Write all debug outputs
+  if (args_info.debug_images_flag) {
+    for(auto o:builder.GetOutputs())
+      syd::WriteImage<ImageType>(o->image, o->filename);
+  }
+
+  // Insert result in db
+  syd::ImageBuilder bdb(db);
+  syd::Image::pointer output = bdb.NewMHDImageLike(images[0]);
+  bdb.SetImage<PixelType>(output, auc->image);
+
+  // Tags
+  db->UpdateTagsFromCommandLine(output->tags, args_info);
+
+  // Change pixel value
+  output->pixel_value_unit = punit;
+  bdb.InsertAndRename(output);
+  LOG(1) << "Inserting Image " << output;
 
   // This is the end, my friend.
 }

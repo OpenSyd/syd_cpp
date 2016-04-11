@@ -3,24 +3,13 @@
 package "syd"
 version "0.4"
 usage "sydInsertIntegratedActivityImage <image_ids>"
-description "Create a new (mhd) Image for each given dicom
+description "Create a new image with TIA in every pixels
 - <list_of_image_ids>     list of image id to integrate
-
-If input images are decay corrected, use --substitute Y-90 (for example) to add Y-90 decay before computing the tia.
 "
 
 option "min_activity"    - "Dont fit if activity lower than this value"       float default="0.01" no
 option "gauss"   	 g "Sigma of preprocess Gaussian filter (0=no)"       float default="0" no
-option "r2_min"   	 - "Min R2 threshold for model selection"             float default="0.9" no
-option "restricted_tac"  r "Fit only end of the curve (max to end)"           flag off
-option "model"           m "Set the models use to fit f2 f3 f4a etc"          string multiple no
 option "median_filter"   - "Apply median filter at the end"                   flag off
 option "fill_holes"      f "Try to fill holes using given radius"             int default="3" no
-option "substitute"      s "Change the radionuclide before computing"         string no
-option "roi_only"        - "Compute the TIA in a ROI only (not all pixels)"   string no
-option "add_time"        - "Add a point to the tac (bio HL) time"             double no
-option "add_value"       - "Add a point to the tac (bio HL) value"            double no
 option "pixelunit"       - "Name of pixel value unit to attach to the image"  string yes
 option "debug_images"    - "Output some debug images"                         flag off
-
-#option "robust_scaling"    - "Ceres scaling Loss robust"                        float default="0.1" no
