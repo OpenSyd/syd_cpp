@@ -24,6 +24,7 @@ wrap_odb(sydStandardDatabase sydCalibration.h)
 wrap_odb(sydStandardDatabase sydPixelValueUnit.h)
 wrap_odb(sydStandardDatabase sydRoiStatistic.h)
 wrap_odb(sydStandardDatabase sydTimePoints.h)
+wrap_odb(sydStandardDatabase sydFitResult.h)
 
 add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
@@ -42,6 +43,7 @@ add_library(sydStandardDatabase SHARED
   sydPixelValueUnit-odb.cxx sydPixelValueUnit-schema.cxx  sydPixelValueUnit.cxx
   sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
   sydTimePoints-odb.cxx sydTimePoints-schema.cxx  sydTimePoints.cxx
+  sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
   sydImageBuilder.cxx
   sydFileBuilder.cxx
   sydImageFromDicomBuilder.cxx

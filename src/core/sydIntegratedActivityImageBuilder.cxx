@@ -42,36 +42,7 @@ syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
 // --------------------------------------------------------------------
 void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityInROI()
 {
-  DD("CreateIntegratedActivityInROI");
-
-  // Resize mask like all the images (consider first is the same than
-  // the others, checked by InitInputData)
-  DD("resample mask");
-  MaskImageType::Pointer mask = roi_mask_;
-  if (!syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(mask, images_[0]))
-    mask = syd::ResampleAndCropImageLike<MaskImageType>(mask, images_[0], 0, 0);
-
-  // Build tac (with add value etc), restricted etc
-  TimeActivityCurve tac;
-  for(auto t:times_) tac.AddValue(t, 0.0);
-  DD(tac);
-
-  // compute mean in roi
-  int i=0;
-  for(auto image:images_) {
-    typedef itk::LabelStatisticsImageFilter<ImageType, MaskImageType> FilterType;
-    typename FilterType::Pointer filter=FilterType::New();
-    filter->SetInput(image);
-    filter->SetLabelInput(mask);
-    filter->Update();
-    double mean = filter->GetMean(1);
-    tac.SetValue(i, mean);
-    DD(filter->GetCount(1));
-    ++i;
-  }
-  DD(tac);
-
-  // output
+  // auto output
   auc_output_ = new syd::FitOutputImage_AUC(image_lambda_phys_in_hour_);
   success_output_ = new syd::FitOutputImage_Success();
   AddOutputImage(auc_output_);
@@ -80,30 +51,17 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityInROI()
   // Init solver
   InitSolver();
 
-  DD("TODO additional_point_flag_ restricted_tac_flag_");
-  //  if (additional_point_flag_);
-  //  if (restricted_tac_flag_);
-
   // Solve
   int best;
-  best = FitModels(tac);
-  DD(best);
+  best = FitModels(tac_);
 
   if (best != -1) {
     current_model_ = models_[best];
     DD(current_model_->GetName());
-    // Update output
-    for(auto o:outputs_) {
-      DD(o->filename);
-      o->Update(tac, tac, current_model_); // FIXME restricted_tac
+    for(auto o:outputs_) { // Update the outputs
+      o->Update(tac_, tac_, current_model_);
     }
-    DD(auc_output_->value);
-
   }
-
-
-
-  // output as RoiStatistic (not inserted here). What about tag ?
 }
 // --------------------------------------------------------------------
 

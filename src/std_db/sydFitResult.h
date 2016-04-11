@@ -16,73 +16,63 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTIMEPOINTS_H
-#define SYDTIMEPOINTS_H
-
-// std
-#include <array>
+#ifndef SYDFITRESULT_H
+#define SYDFITRESULT_H
 
 // syd
-#include "sydRoiMaskImage.h"
-#include "sydRecordWithTags.h"
-#include "sydRecordWithHistory.h"
-#include "sydTimeActivityCurve.h"
+#include "sydTimePoints.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::TimePoints") callback(Callback)
-  /// Store information about a time activity curve (TimePoints).
-  class TimePoints : public syd::Record,
-                     public syd::RecordWithHistory,
-                     public syd::RecordWithTags {
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::FitResult") callback(Callback)
+  /// Table to store the result of a fit process on a TAC time curve activity
+  class FitResult : public syd::Record,
+                    public syd::RecordWithHistory,
+                    public syd::RecordWithTags {
   public:
 
-    /// List of times
-    std::vector<double> times;
+#pragma db not_null on_delete(cascade)
+    /// Linked Timepoints. If the tp is deleted, the FitResult also.
+    syd::TimePoints::pointer timepoints;
 
-    /// List values
-    std::vector<double> values;
+    /// Values of the parameters for the fit
+    std::vector<double> params;
 
-    /// Associated std dev (not required)
-    std::vector<double> std_deviations;
+    /// Area under the curve (integral)
+    double auc;
 
-    /// Associated images (not required)
-    syd::Image::vector images;
+    /// Residual (after the fit)
+    double r2;
 
-    /// Associated mask (not required)
-    syd::RoiMaskImage::pointer mask;
+    /// model name (f3, f4a etc)
+    std::string model_name;
+
+    /// Index of the first value used for the fit (not 0 if
+    /// "restricted" option is used)
+    int first_index;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(TimePoints, syd::TimePoints);
+    TABLE_DEFINE(FitResult, syd::FitResult);
     // ------------------------------------------------------------------------
 
     /// Write the element as a string
     virtual std::string ToString() const;
 
-    /// Callback (const)
-    void Callback(odb::callback_event, odb::database&) const;
-
     /// Callback
+    void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
-    /// Initialise a PrintTable
+    /// Print table init
     virtual void InitTable(syd::PrintTable & table) const;
 
-    /// Add a line in the given PrintTable
+    /// Print table dump
     virtual void DumpInTable(syd::PrintTable & table) const;
 
-    /// Check if the history are ok
-    virtual syd::CheckResult Check() const; //FIXME
-
-    // Helper function, build a TAC
-    void GetTAC(syd::TimeActivityCurve & tac);
-
   protected:
-    TimePoints();
+    FitResult();
 
-  }; // end class
-  // --------------------------------------------------------------------
+  }; // end of class
 
 } // end namespace
 // --------------------------------------------------------------------

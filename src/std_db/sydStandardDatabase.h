@@ -42,6 +42,7 @@
 #include "sydPixelValueUnit-odb.hxx"
 #include "sydRoiStatistic-odb.hxx"
 #include "sydTimePoints-odb.hxx"
+#include "sydFitResult-odb.hxx"
 
 // itk
 #include <itkImage.h>

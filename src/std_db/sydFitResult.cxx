@@ -17,10 +17,10 @@
   ===========================================================================**/
 
 // syd
-#include "sydTimePoints.h"
+#include "sydFitResult.h"
 
 // --------------------------------------------------------------------
-syd::TimePoints::TimePoints():
+syd::FitResult::FitResult():
   syd::Record(),
   syd::RecordWithTags(),
   syd::RecordWithHistory()
@@ -30,21 +30,24 @@ syd::TimePoints::TimePoints():
 
 
 // --------------------------------------------------------------------
-std::string syd::TimePoints::ToString() const
+std::string syd::FitResult::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
-     << times.size() << " "
-     << GetLabels(tags) << " ";
-  for(auto i=0; i<times.size(); i++)
-    ss << times[i] << " " << values[i] << " ";
+     << timepoints->id << " "
+     << GetLabels(tags) << " "
+     << model_name << " "
+     << auc << " "
+     << r2 << " "
+     << first_index << " |";
+  for(auto p:params) ss << " " << p;
   return ss.str();
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::TimePoints::Callback(odb::callback_event event, odb::database & db) const
+void syd::FitResult::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event, db);
   syd::RecordWithHistory::Callback(event, db, db_);
@@ -53,7 +56,7 @@ void syd::TimePoints::Callback(odb::callback_event event, odb::database & db) co
 
 
 // --------------------------------------------------------------------
-void syd::TimePoints::Callback(odb::callback_event event, odb::database & db)
+void syd::FitResult::Callback(odb::callback_event event, odb::database & db)
 {
   syd::Record::Callback(event, db);
   syd::RecordWithHistory::Callback(event, db, db_);
@@ -62,28 +65,33 @@ void syd::TimePoints::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------------------------
-void syd::TimePoints::InitTable(syd::PrintTable & ta) const
+void syd::FitResult::InitTable(syd::PrintTable & ta) const
 {
   auto f = ta.GetFormat();
 
   // Set the columns
   if (f == "default") {
     ta.AddColumn("id");
+    ta.AddColumn("tp");
     ta.AddColumn("nb");
-    ta.AddColumn("mask");
-    ta.AddColumn("img");
     ta.AddColumn("tags");
-    for(auto i=0; i<times.size(); i++)
-      ta.AddColumn("t"+syd::ToString(i), 1);
-    for(auto i=0; i<times.size(); i++)
-      ta.AddColumn("v"+syd::ToString(i), 10);
+    ta.AddColumn("model");
+    ta.AddColumn("auc");
+    ta.AddColumn("r2");
+    ta.AddColumn("i");
+    for(auto i=0; i<params.size(); i++)
+      ta.AddColumn("p"+syd::ToString(i), 1);
   }
 
   if (f == "history") {
     ta.AddColumn("id");
     syd::RecordWithHistory::InitTable(ta);
-    ta.AddColumn("nb");
+    ta.AddColumn("tp");
     ta.AddColumn("tags");
+    ta.AddColumn("model");
+    ta.AddColumn("auc");
+    ta.AddColumn("r2");
+    ta.AddColumn("i");
   }
 
 }
@@ -91,57 +99,37 @@ void syd::TimePoints::InitTable(syd::PrintTable & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::TimePoints::DumpInTable(syd::PrintTable & ta) const
+void syd::FitResult::DumpInTable(syd::PrintTable & ta) const
 {
   syd::RecordWithHistory::DumpInTable(ta);
   auto f = ta.GetFormat();
 
   if (f == "default") {
     ta.Set("id", id);
+    ta.Set("tp", timepoints->id);
+    ta.Set("nb", timepoints->times.size());
     ta.Set("tags", GetLabels(tags));
-    if (mask != NULL) ta.Set("mask", mask->roitype->name);
-    else ta.Set("mask", "no_mask");
-    if (images.size() > 0) {
-      std::string s;
-      for(auto i:images) s += syd::ToString(i->id)+",";
-      s.pop_back();
-      ta.Set("img", s);
-    }
-    else ta.Set("img", "no_img");
-    ta.Set("nb", times.size());
-    for(auto i=0; i<times.size(); i++)
-      ta.Set("t"+syd::ToString(i), times[i]);
-    for(auto i=0; i<times.size(); i++)
-      ta.Set("v"+syd::ToString(i), values[i]);
+    ta.Set("model", model_name);
+    ta.Set("auc", auc);
+    ta.Set("r2", r2);
+    ta.Set("i", first_index);
+    for(auto i=0; i<params.size(); i++)
+      ta.Set("p"+syd::ToString(i), params[i]);
   }
 
   if (f == "history") {
     ta.Set("id", id);
     syd::RecordWithHistory::DumpInTable(ta);
+    ta.AddColumn("id");
+    syd::RecordWithHistory::InitTable(ta);
+    ta.Set("tp", timepoints->id);
+    ta.Set("nb", timepoints->times.size());
     ta.Set("tags", GetLabels(tags));
-    ta.Set("nb", times.size());
+    ta.Set("model", model_name);
+    ta.Set("auc", auc);
+    ta.Set("r2", r2);
+    ta.Set("i", first_index);
   }
 
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::CheckResult syd::TimePoints::Check() const
-{
-  DD(" FIXME check TimePoints history ");
-  syd::CheckResult r;
-  return r;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::TimePoints::GetTAC(syd::TimeActivityCurve & tac)
-{
-  tac.clear();
-  for(auto i=0; i<times.size(); i++) {
-    tac.AddValue(times[i], values[i], std_deviations[i]);
-  }
 }
 // --------------------------------------------------------------------
