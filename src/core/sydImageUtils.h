@@ -119,8 +119,8 @@ namespace syd {
 
 
   //--------------------------------------------------------------------
-  void CopyMHDImage(std::string from, std::string to, int verbose_level=2);
-  void RenameMHDImage(std::string from, std::string to, int verbose_level=2);
+  void CopyMHDImage(std::string from, std::string to, int verbose_level=3);
+  void RenameMHDImage(std::string from, std::string to, int verbose_level=3);
   void RenameOrCopyMHDImage(std::string from, std::string to, int verbose_level, bool erase);
   void DeleteMHDImage(std::string filename);
   std::string PointToString(const itk::Point<double,3> & t);
