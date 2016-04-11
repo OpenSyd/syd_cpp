@@ -58,7 +58,6 @@ int main(int argc, char* argv[])
   // Get the mask
   std::string roi_name = args_info.inputs[0];
   syd::RoiMaskImage::pointer mask = db->FindRoiMaskImage(images[0], roi_name);
-  DD(mask);
 
   // Create (or update) the tac
   syd::TimePointsBuilder builder(db);
@@ -67,16 +66,13 @@ int main(int argc, char* argv[])
   syd::TimePoints::pointer tac = builder.ComputeTimePoints();
 
   // Set tags
-  DD(tac);
   db->UpdateTagsFromCommandLine(tac->tags, args_info);
-  DD(tac);
 
   // Insert or update
-  DD(tac->IsPersistent());
   if (tac->IsPersistent()) db->Update(tac);
   else db->Insert(tac);
 
   // This is the end, my friend.
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 // --------------------------------------------------------------------

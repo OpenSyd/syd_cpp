@@ -48,8 +48,6 @@ void syd::TimePointsBuilder::SetRoiMaskImage(const syd::RoiMaskImage::pointer m)
 syd::TimePoints::pointer
 syd::TimePointsBuilder::ComputeTimePoints()
 {
-  DD("ComputeTimePoints");
-
   // Check
   if (images.size() ==0) {
     EXCEPTION("Cannot compute TimePoints, no images. Use SetImages first");
@@ -87,7 +85,6 @@ syd::TimePointsBuilder::ComputeTimePoints()
   syd::TimePoints::pointer tac;
   odb::query<syd::TimePoints> q = odb::query<syd::TimePoints>::mask == mask->id;
   db_->Query(timepoints,q);
-  DDS(timepoints);
   auto n = images.size();
   int found = 0;
   for(auto t:timepoints) {
@@ -102,15 +99,10 @@ syd::TimePointsBuilder::ComputeTimePoints()
       }
     }
   }
-  DD(found);
   if (found == 0) {
     db_->New(tac);
     tac->images = images;
     tac->mask = mask;
-  }
-  if (found == 1) {
-    DD(tac);
-    // update ? check history ?
   }
   if (found > 1) {
     EXCEPTION("Several TimePoints found with the same set of images/mask. Abort");
@@ -124,7 +116,6 @@ syd::TimePointsBuilder::ComputeTimePoints()
 
   // Get the times
   std::vector<double> times = syd::GetTimesFromInjection(db_, images);
-  DDS(times);
 
   // read all itk images
   std::vector<ImageType::Pointer> itk_images;
@@ -132,7 +123,6 @@ syd::TimePointsBuilder::ComputeTimePoints()
     auto itk_image = syd::ReadImage<ImageType>(db_->GetAbsolutePath(image));
     itk_images.push_back(itk_image);
   }
-  DD("read done");
 
   // declare itk mask
   MaskImageType::Pointer itk_mask;
@@ -144,7 +134,6 @@ syd::TimePointsBuilder::ComputeTimePoints()
     // resample the mask as the first itk image
     if (!itk_mask or
         !syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(itk_mask, itk_image)) {
-      DD("read and resample")
       itk_mask = syd::ReadImage<MaskImageType>(db_->GetAbsolutePath(mask));
       itk_mask = syd::ResampleAndCropImageLike<MaskImageType>(itk_mask, itk_image, 0, 0);
     }
@@ -160,10 +149,8 @@ syd::TimePointsBuilder::ComputeTimePoints()
     means.push_back(mean);
     stddevs.push_back(stddev);
   }
-  DDS(means);
-  DDS(stddevs);
 
-  // Create tac
+  // Set tac
   tac->times.resize(n);
   tac->values.resize(n);
   tac->std_deviations.resize(n);
@@ -172,8 +159,6 @@ syd::TimePointsBuilder::ComputeTimePoints()
     tac->values[i] = means[i];
     tac->std_deviations[i] = stddevs[i];
   }
-  DD(tac);
-  DD("done");
   return tac;
 }
 // --------------------------------------------------------------------

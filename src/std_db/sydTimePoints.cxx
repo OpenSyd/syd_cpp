@@ -25,7 +25,6 @@ syd::TimePoints::TimePoints():
   syd::RecordWithTags(),
   syd::RecordWithHistory()
 {
-  DD(id);
 }
 // --------------------------------------------------------------------
 
@@ -71,7 +70,13 @@ void syd::TimePoints::InitTable(syd::PrintTable & ta) const
   if (f == "default") {
     ta.AddColumn("id");
     ta.AddColumn("nb");
+    ta.AddColumn("mask");
+    ta.AddColumn("img");
     ta.AddColumn("tags");
+    for(auto i=0; i<times.size(); i++)
+      ta.AddColumn("t"+syd::ToString(i), 1);
+    for(auto i=0; i<times.size(); i++)
+      ta.AddColumn("v"+syd::ToString(i), 10);
   }
 
   if (f == "history") {
@@ -94,7 +99,20 @@ void syd::TimePoints::DumpInTable(syd::PrintTable & ta) const
   if (f == "default") {
     ta.Set("id", id);
     ta.Set("tags", GetLabels(tags));
+    if (mask != NULL) ta.Set("mask", mask->roitype->name);
+    else ta.Set("mask", "no_mask");
+    if (images.size() > 0) {
+      std::string s;
+      for(auto i:images) s += syd::ToString(i->id)+",";
+      s.pop_back();
+      ta.Set("img", s);
+    }
+    else ta.Set("img", "no_img");
     ta.Set("nb", times.size());
+    for(auto i=0; i<times.size(); i++)
+      ta.Set("t"+syd::ToString(i), times[i]);
+    for(auto i=0; i<times.size(); i++)
+      ta.Set("v"+syd::ToString(i), values[i]);
   }
 
   if (f == "history") {
