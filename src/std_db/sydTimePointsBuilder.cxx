@@ -99,12 +99,10 @@ syd::TimePointsBuilder::ComputeTimePoints()
       }
     }
   }
-  DD(found);
   if (found == 0) {
     db_->New(tac);
     tac->images = images;
     tac->mask = mask;
-    DD(tac);
   }
   if (found > 1) {
     EXCEPTION("Several TimePoints found with the same set of images/mask. Abort");
