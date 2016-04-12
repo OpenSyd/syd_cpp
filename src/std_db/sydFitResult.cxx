@@ -50,14 +50,9 @@ std::string syd::FitResult::ToString() const
 // --------------------------------------------------------------------
 void syd::FitResult::Callback(odb::callback_event event, odb::database & db) const
 {
-  DD("Callback_Event const");
-  DD(event);
   syd::Record::Callback(event, db);
-  DD("after rec");
   syd::RecordWithHistory::Callback(event, db, db_);
-  DD("after rec H");
   syd::RecordWithMD5Signature::Callback(event, db, db_);
-  DD("after rec MD5");
 }
 // --------------------------------------------------------------------
 
@@ -65,8 +60,6 @@ void syd::FitResult::Callback(odb::callback_event event, odb::database & db) con
 // --------------------------------------------------------------------
 void syd::FitResult::Callback(odb::callback_event event, odb::database & db)
 {
-  DD("Callback_Event");
-  DD(event);
   syd::Record::Callback(event, db);
   syd::RecordWithHistory::Callback(event, db, db_);
   syd::RecordWithMD5Signature::Callback(event, db, db_);
