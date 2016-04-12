@@ -26,11 +26,16 @@
 // the change is legitimate: 1) open and 2) increment the
 // version. 3) Once checked, close again.
 // It  means that we can migrate from base version to current version)
-#define SYD_VERSION      0106 // version 1.3 (current version)
+#define SYD_VERSION      0111 // version 1.11 (current version)
 #define SYD_BASE_VERSION 0101 // version 1.1 (base version)
 
 
 // Log:
+// 1.11 :
+// 1.10 : md5 unique field
+// 1.9 : fitresult with md5
+// 1.8 : (md5 unique)
+// 1.7 : md5
 // 1.6 : FitResult
 // 1.5 : TimePoints
 // 1.3 : add pixel_scale, pixel_offset in table DicomSerie

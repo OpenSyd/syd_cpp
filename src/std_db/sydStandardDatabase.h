@@ -116,6 +116,12 @@ namespace syd {
     PixelValueUnit::pointer NewPixelValueUnit(const std::string & name, const std::string & description);
     RoiType::pointer NewRoiType(const std::string & name, const std::string & description);
 
+
+    /// Find a record with the same MD5 than the input
+    template<class RecordType>
+    bool FindSameMD5(const typename RecordType::pointer input,
+                     typename RecordType::pointer & output);
+
   protected:
     /// Insert the tables
     virtual void CreateTables();

@@ -23,7 +23,8 @@
 syd::TimePoints::TimePoints():
   syd::Record(),
   syd::RecordWithTags(),
-  syd::RecordWithHistory()
+  syd::RecordWithHistory(),
+  syd::RecordWithMD5Signature()
 {
 }
 // --------------------------------------------------------------------
@@ -48,6 +49,7 @@ void syd::TimePoints::Callback(odb::callback_event event, odb::database & db) co
 {
   syd::Record::Callback(event, db);
   syd::RecordWithHistory::Callback(event, db, db_);
+  syd::RecordWithMD5Signature::Callback(event, db, db_);
 }
 // --------------------------------------------------------------------
 
@@ -57,6 +59,7 @@ void syd::TimePoints::Callback(odb::callback_event event, odb::database & db)
 {
   syd::Record::Callback(event, db);
   syd::RecordWithHistory::Callback(event, db, db_);
+  syd::RecordWithMD5Signature::Callback(event, db, db_);
 }
 // --------------------------------------------------------------------
 
@@ -84,6 +87,13 @@ void syd::TimePoints::InitTable(syd::PrintTable & ta) const
     syd::RecordWithHistory::InitTable(ta);
     ta.AddColumn("nb");
     ta.AddColumn("tags");
+  }
+
+  if (f == "md5") {
+    ta.AddColumn("id");
+    ta.AddColumn("nb");
+    ta.AddColumn("tags");
+    syd::RecordWithMD5Signature::InitTable(ta);
   }
 
 }
@@ -131,6 +141,12 @@ void syd::TimePoints::DumpInTable(syd::PrintTable & ta) const
     ta.Set("nb", times.size());
   }
 
+  if (f == "md5") {
+    ta.Set("id", id);
+    ta.Set("tags", GetLabels(tags));
+    ta.Set("nb", times.size());
+    syd::RecordWithMD5Signature::DumpInTable(ta);
+  }
 }
 // --------------------------------------------------------------------
 
@@ -152,5 +168,18 @@ void syd::TimePoints::GetTAC(syd::TimeActivityCurve & tac)
   for(auto i=0; i<times.size(); i++) {
     tac.AddValue(times[i], values[i], std_deviations[i]);
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::TimePoints::ToStringForMD5() const
+{
+  std::stringstream ss;
+  for(auto i=0; i<times.size(); i++) {
+    ss << std::setprecision(30)
+       << times[i] << values[0] << std_deviations[i];
+  }
+  return ss.str();
 }
 // --------------------------------------------------------------------

@@ -1,32 +1,9 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
-  <changeset version="272">
-    <alter-table name="syd::TimePoints">
-      <add-column name="md5" type="TEXT" null="true" options="UNIQUE"/>
-      <drop-column name="md5_new"/>
-    </alter-table>
-  </changeset>
-
-  <changeset version="265">
-    <alter-table name="syd::TimePoints">
-      <add-column name="md5_new" type="TEXT" null="true" options="UNIQUE"/>
-      <drop-column name="md5"/>
-    </alter-table>
-  </changeset>
-
-  <changeset version="263">
-    <alter-table name="syd::TimePoints">
-      <add-column name="md5" type="TEXT" null="true"/>
-    </alter-table>
-  </changeset>
-
-  <changeset version="262"/>
-
-  <changeset version="261"/>
-
-  <changeset version="260">
+  <changeset version="273">
     <add-table name="syd::TimePoints" kind="polymorphic root object">
       <column name="id" type="INTEGER" null="true"/>
       <column name="history" type="INTEGER" null="true"/>
+      <column name="md5" type="TEXT" null="true" options="UNIQUE"/>
       <column name="typeid" type="TEXT" null="true"/>
       <column name="mask" type="INTEGER" null="true"/>
       <primary-key auto="true">

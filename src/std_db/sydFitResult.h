@@ -29,7 +29,8 @@ namespace syd {
   /// Table to store the result of a fit process on a TAC time curve activity
   class FitResult : public syd::Record,
                     public syd::RecordWithHistory,
-                    public syd::RecordWithTags {
+                    public syd::RecordWithTags,
+                    public syd::RecordWithMD5Signature{
   public:
 
 #pragma db not_null on_delete(cascade)
@@ -58,6 +59,9 @@ namespace syd {
 
     /// Write the element as a string
     virtual std::string ToString() const;
+
+    /// Build a string to compute MD5
+    virtual std::string ToStringForMD5() const;
 
     /// Callback
     void Callback(odb::callback_event, odb::database&) const;

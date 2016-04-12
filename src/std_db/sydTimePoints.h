@@ -26,6 +26,7 @@
 #include "sydRoiMaskImage.h"
 #include "sydRecordWithTags.h"
 #include "sydRecordWithHistory.h"
+#include "sydRecordWithMD5Signature.h"
 #include "sydTimeActivityCurve.h"
 
 // --------------------------------------------------------------------
@@ -35,7 +36,8 @@ namespace syd {
   /// Store information about a time activity curve (TimePoints).
   class TimePoints : public syd::Record,
                      public syd::RecordWithHistory,
-                     public syd::RecordWithTags {
+                     public syd::RecordWithTags,
+                     public syd::RecordWithMD5Signature {
   public:
 
     /// List of times
@@ -59,6 +61,9 @@ namespace syd {
 
     /// Write the element as a string
     virtual std::string ToString() const;
+
+    /// Build a string to compute MD5
+    virtual std::string ToStringForMD5() const;
 
     /// Callback (const)
     void Callback(odb::callback_event, odb::database&) const;

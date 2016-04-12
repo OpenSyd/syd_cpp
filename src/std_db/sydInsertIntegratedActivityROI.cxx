@@ -105,7 +105,18 @@ int main(int argc, char* argv[])
     tp2 = tp; // copy
     tp2->times.push_back(args_info.add_time_given);
     tp2->values.push_back(args_info.add_value_given);
-    db->Insert(tp2);
+    syd::TimePoints::pointer tp3;
+    if (db->FindSameMD5<syd::TimePoints>(tp2, tp3)) {
+      tp2 = tp3; // already exist, we retrieve it
+      LOG(1) << "Retrieve existing TimePoints with additional point: "
+             << std::endl << "\t" << tp3;
+    }
+    else {
+      // does not exist, we insert
+      db->Insert(tp2);
+      LOG(1) << "Insert new TimePoints with one additional point: "
+             << std::endl << "\t" << tp2;
+    }
   }
 
   // Set input TAC
@@ -158,7 +169,14 @@ int main(int argc, char* argv[])
   res->params = models[mi]->GetParameters();
   res->first_index = first_index;
   db->UpdateTagsFromCommandLine(res->tags, args_info);
-  db->Insert(res);
+  syd::FitResult::pointer temp;
+  if (db->FindSameMD5<syd::FitResult>(res, temp)) {
+    LOG(1) << "Same FitResult already exists, no modification";
+  }
+  else {
+    db->Insert(res);
+    LOG(1) << "Insert " << res;
+  }
 
   // This is the end, my friend.
 }

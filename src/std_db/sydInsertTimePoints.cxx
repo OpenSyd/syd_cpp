@@ -39,9 +39,6 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Check pixelvalueunit
-  //auto punit = db->FindPixelValueUnit(args_info.pixelunit_arg);
-
   // Get the list of images to integrate
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
@@ -64,6 +61,7 @@ int main(int argc, char* argv[])
   builder.SetImages(images);
   builder.SetRoiMaskImage(mask);
   syd::TimePoints::pointer tac = builder.ComputeTimePoints();
+  DD(tac);
 
   // Set tags
   db->UpdateTagsFromCommandLine(tac->tags, args_info);

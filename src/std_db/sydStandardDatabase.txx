@@ -214,3 +214,24 @@ void syd::StandardDatabase::SortAndPrint(typename RecordType::vector & records)
   table.Dump(records, std::cout);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+bool syd::StandardDatabase::FindSameMD5(const typename RecordType::pointer input,
+                                        typename RecordType::pointer & output)
+{
+  DD("FindSameMD5");
+  auto m = input->ComputeMD5();
+  DD(m);
+  odb::query<RecordType> q = odb::query<RecordType>::md5 == m;
+  try {
+    QueryOne(output, q);
+  } catch (std::exception & e) {
+    DD(e.what());
+    return false;
+  }
+  DD(output);
+  return true;
+}
+// --------------------------------------------------------------------

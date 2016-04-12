@@ -23,7 +23,8 @@
 syd::FitResult::FitResult():
   syd::Record(),
   syd::RecordWithTags(),
-  syd::RecordWithHistory()
+  syd::RecordWithHistory(),
+  syd::RecordWithMD5Signature()
 {
 }
 // --------------------------------------------------------------------
@@ -49,8 +50,14 @@ std::string syd::FitResult::ToString() const
 // --------------------------------------------------------------------
 void syd::FitResult::Callback(odb::callback_event event, odb::database & db) const
 {
+  DD("Callback_Event const");
+  DD(event);
   syd::Record::Callback(event, db);
+  DD("after rec");
   syd::RecordWithHistory::Callback(event, db, db_);
+  DD("after rec H");
+  syd::RecordWithMD5Signature::Callback(event, db, db_);
+  DD("after rec MD5");
 }
 // --------------------------------------------------------------------
 
@@ -58,8 +65,11 @@ void syd::FitResult::Callback(odb::callback_event event, odb::database & db) con
 // --------------------------------------------------------------------
 void syd::FitResult::Callback(odb::callback_event event, odb::database & db)
 {
+  DD("Callback_Event");
+  DD(event);
   syd::Record::Callback(event, db);
   syd::RecordWithHistory::Callback(event, db, db_);
+  syd::RecordWithMD5Signature::Callback(event, db, db_);
 }
 // --------------------------------------------------------------------
 
@@ -94,6 +104,14 @@ void syd::FitResult::InitTable(syd::PrintTable & ta) const
     ta.AddColumn("i");
   }
 
+  if (f == "md5") {
+    ta.AddColumn("id");
+    ta.AddColumn("tp");
+    ta.AddColumn("nb");
+    ta.AddColumn("tags");
+    syd::RecordWithMD5Signature::InitTable(ta);
+  }
+
 }
 // --------------------------------------------------------------------
 
@@ -113,6 +131,14 @@ void syd::FitResult::DumpInTable(syd::PrintTable & ta) const
     ta.Set("auc", auc);
     ta.Set("r2", r2);
     ta.Set("i", first_index);
+
+    // Add additional column if the nb of values is larger
+    int nb_col = 8;
+    int previous_nb = (ta.GetNumberOfColumns()-nb_col);
+    for(auto i=previous_nb; i<params.size(); i++) {
+      ta.AddColumn("p"+syd::ToString(i), 1);
+    }
+
     for(auto i=0; i<params.size(); i++)
       ta.Set("p"+syd::ToString(i), params[i]);
   }
@@ -131,5 +157,23 @@ void syd::FitResult::DumpInTable(syd::PrintTable & ta) const
     ta.Set("i", first_index);
   }
 
+  if (f == "md5") {
+    ta.Set("id", id);
+    ta.Set("tags", GetLabels(tags));
+    ta.Set("tp", timepoints->id);
+    ta.Set("nb", timepoints->times.size());
+    syd::RecordWithMD5Signature::DumpInTable(ta);
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::FitResult::ToStringForMD5() const
+{
+  std::stringstream ss;
+  for(auto p:params) ss << std::setprecision(30) << p;
+  ss << auc << r2 << model_name << first_index << timepoints->ToStringForMD5();
+  return ss.str();
 }
 // --------------------------------------------------------------------
