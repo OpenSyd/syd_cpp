@@ -34,15 +34,12 @@ void syd::RecordWithMD5Signature::Callback(odb::callback_event event,
                                            syd::Database * db) const
 {
   if (event == odb::callback_event::pre_persist) {
-    DD("persist with md5");
     md5 = ComputeMD5();
   }
 
   if (event == odb::callback_event::pre_update) {
-    DD("Update with md5");
     md5 = ComputeMD5();
   }
-
   // Events in Callback const : persist, update, erase
   // event load can only be here if the non-const version does not exist
 }
