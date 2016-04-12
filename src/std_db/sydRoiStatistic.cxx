@@ -61,7 +61,7 @@ void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
   ta.AddColumn("mask");
   ta.AddColumn("unit");
   ta.AddColumn("tags");
-  ta.AddColumn("mean",3);
+  ta.AddColumn("mean",5);
   ta.AddColumn("sd",3);
   ta.AddColumn("n");
   ta.AddColumn("min",3);

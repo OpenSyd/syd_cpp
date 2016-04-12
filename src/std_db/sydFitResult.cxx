@@ -79,11 +79,11 @@ void syd::FitResult::InitTable(syd::PrintTable & ta) const
     ta.AddColumn("nb");
     ta.AddColumn("tags");
     ta.AddColumn("model");
-    ta.AddColumn("auc");
-    ta.AddColumn("r2");
+    ta.AddColumn("auc",5);
+    ta.AddColumn("r2",5);
     ta.AddColumn("i");
     for(auto i=0; i<params.size(); i++)
-      ta.AddColumn("p"+syd::ToString(i), 1);
+      ta.AddColumn("p"+syd::ToString(i), 2);
   }
 
   if (f == "history") {
@@ -92,8 +92,8 @@ void syd::FitResult::InitTable(syd::PrintTable & ta) const
     ta.AddColumn("tp");
     ta.AddColumn("tags");
     ta.AddColumn("model");
-    ta.AddColumn("auc");
-    ta.AddColumn("r2");
+    ta.AddColumn("auc",5);
+    ta.AddColumn("r2",5);
     ta.AddColumn("i");
   }
 

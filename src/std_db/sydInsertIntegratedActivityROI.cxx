@@ -171,8 +171,7 @@ int main(int argc, char* argv[])
   db->UpdateTagsFromCommandLine(res->tags, args_info);
   syd::FitResult::pointer temp;
   if (db->FindSameMD5<syd::FitResult>(res, temp)) {
-    db->Update(temp);
-    LOG(1) << "Same FitResult already exists, update.";
+    LOG(1) << "Same FitResult already exists, no modification";
   }
   else {
     db->Insert(res);

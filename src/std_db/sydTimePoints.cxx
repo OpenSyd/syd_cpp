@@ -36,6 +36,7 @@ std::string syd::TimePoints::ToString() const
   std::stringstream ss ;
   ss << id << " "
      << times.size() << " "
+     << (mask == NULL ? "no_mask":mask->roitype->name) << " "
      << GetLabels(tags) << " ";
   for(auto i=0; i<times.size(); i++)
     ss << times[i] << " " << values[i] << " ";
