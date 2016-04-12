@@ -65,6 +65,8 @@ void syd::TimePoints::Callback(odb::callback_event event, odb::database & db)
 void syd::TimePoints::InitTable(syd::PrintTable & ta) const
 {
   auto f = ta.GetFormat();
+  DD(f);
+  DD(*this);
 
   // Set the columns
   if (f == "default") {
@@ -95,6 +97,7 @@ void syd::TimePoints::DumpInTable(syd::PrintTable & ta) const
 {
   syd::RecordWithHistory::DumpInTable(ta);
   auto f = ta.GetFormat();
+  DD(*this);
 
   if (f == "default") {
     ta.Set("id", id);
@@ -109,6 +112,15 @@ void syd::TimePoints::DumpInTable(syd::PrintTable & ta) const
     }
     else ta.Set("img", "no_img");
     ta.Set("nb", times.size());
+
+    // Add additional column if the nb of values is larger
+    int nb_col = 5;
+    int previous_nb = (ta.GetNumberOfColumns()-nb_col)/2.0;
+    for(auto i=previous_nb; i<times.size(); i++) {
+      ta.AddColumn("t"+syd::ToString(i), 1);
+      ta.AddColumn("v"+syd::ToString(i), 1);
+    }
+
     for(auto i=0; i<times.size(); i++)
       ta.Set("t"+syd::ToString(i), times[i]);
     for(auto i=0; i<times.size(); i++)
