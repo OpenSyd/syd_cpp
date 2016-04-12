@@ -1,0 +1,80 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="272"/>
+
+  <changeset version="265"/>
+
+  <changeset version="262"/>
+
+  <changeset version="261"/>
+
+  <changeset version="259">
+    <add-table name="syd::DicomSerie" kind="polymorphic root object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="typeid" type="TEXT" null="true"/>
+      <column name="patient" type="INTEGER" null="true"/>
+      <column name="injection" type="INTEGER" null="true"/>
+      <column name="acquisition_date" type="TEXT" null="true"/>
+      <column name="reconstruction_date" type="TEXT" null="true"/>
+      <column name="dicom_study_uid" type="TEXT" null="true"/>
+      <column name="dicom_series_uid" type="TEXT" null="true"/>
+      <column name="dicom_frame_of_reference_uid" type="TEXT" null="true"/>
+      <column name="dicom_modality" type="TEXT" null="true"/>
+      <column name="dicom_manufacturer" type="TEXT" null="true"/>
+      <column name="dicom_description" type="TEXT" null="true"/>
+      <column name="duration_sec" type="REAL" null="true"/>
+      <column name="pixel_scale" type="REAL" null="true"/>
+      <column name="pixel_offset" type="REAL" null="true"/>
+      <primary-key auto="true">
+        <column name="id"/>
+      </primary-key>
+      <foreign-key name="patient_fk" deferrable="DEFERRED">
+        <column name="patient"/>
+        <references table="syd::Patient">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <foreign-key name="injection_fk" deferrable="DEFERRED">
+        <column name="injection"/>
+        <references table="syd::Injection">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::DicomSerie_size" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::DicomSerie">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::DicomSerie_size_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::DicomSerie_size_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+    <add-table name="syd::DicomSerie_spacing" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="REAL" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::DicomSerie">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::DicomSerie_spacing_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::DicomSerie_spacing_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+  </changeset>
+
+  <model version="257"/>
+</changelog>

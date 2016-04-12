@@ -1,0 +1,22 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="259">
+    <add-table name="syd::Tag" kind="polymorphic root object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="history" type="INTEGER" null="true"/>
+      <column name="typeid" type="TEXT" null="true"/>
+      <column name="label" type="TEXT" null="true" options="UNIQUE"/>
+      <column name="description" type="TEXT" null="true"/>
+      <primary-key auto="true">
+        <column name="id"/>
+      </primary-key>
+      <foreign-key name="history_fk" deferrable="DEFERRED">
+        <column name="history"/>
+        <references table="syd::RecordHistory">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
+  <model version="257"/>
+</changelog>

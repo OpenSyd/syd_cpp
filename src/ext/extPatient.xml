@@ -1,0 +1,17 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="ExtendedDatabase" version="1">
+  <model version="1">
+    <table name="ext::Patient" kind="polymorphic derived object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="birth_date" type="TEXT" null="true"/>
+      <primary-key>
+        <column name="id"/>
+      </primary-key>
+      <foreign-key name="id_fk" on-delete="CASCADE">
+        <column name="id"/>
+        <references table="syd::Patient">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </table>
+  </model>
+</changelog>

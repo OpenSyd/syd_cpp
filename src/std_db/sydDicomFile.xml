@@ -1,0 +1,37 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="272"/>
+
+  <changeset version="265"/>
+
+  <changeset version="262"/>
+
+  <changeset version="261"/>
+
+  <changeset version="259">
+    <add-table name="syd::DicomFile" kind="polymorphic root object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="typeid" type="TEXT" null="true"/>
+      <column name="file" type="INTEGER" null="true"/>
+      <column name="dicom_serie" type="INTEGER" null="true"/>
+      <column name="dicom_sop_uid" type="TEXT" null="true" options="UNIQUE"/>
+      <column name="dicom_instance_number" type="INTEGER" null="true"/>
+      <primary-key auto="true">
+        <column name="id"/>
+      </primary-key>
+      <foreign-key name="file_fk" deferrable="DEFERRED" on-delete="CASCADE">
+        <column name="file"/>
+        <references table="syd::File">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <foreign-key name="dicom_serie_fk" deferrable="DEFERRED" on-delete="CASCADE">
+        <column name="dicom_serie"/>
+        <references table="syd::DicomSerie">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
+  <model version="257"/>
+</changelog>
