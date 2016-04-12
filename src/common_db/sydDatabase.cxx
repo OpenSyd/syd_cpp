@@ -521,7 +521,7 @@ void syd::Database::MigrateSchema()
   // try migrate
   odb::schema_version current_version
     (odb::schema_catalog::current_version (*odb_db_, GetDatabaseSchema()));
-  LOG(0) << "Try migration to version " << GetVersionAsString(current_version);
+  LOG(0) << "Try migrate to version " << GetVersionAsString(current_version) << " (" << current_version << ")";
   try {
     odb::transaction t (odb_db_->begin ());
     int n=schema_names.size()-1;
