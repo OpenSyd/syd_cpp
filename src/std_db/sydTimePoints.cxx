@@ -65,8 +65,6 @@ void syd::TimePoints::Callback(odb::callback_event event, odb::database & db)
 void syd::TimePoints::InitTable(syd::PrintTable & ta) const
 {
   auto f = ta.GetFormat();
-  DD(f);
-  DD(*this);
 
   // Set the columns
   if (f == "default") {
@@ -75,10 +73,10 @@ void syd::TimePoints::InitTable(syd::PrintTable & ta) const
     ta.AddColumn("mask");
     ta.AddColumn("img");
     ta.AddColumn("tags");
-    for(auto i=0; i<times.size(); i++)
+    for(auto i=0; i<times.size(); i++) {
       ta.AddColumn("t"+syd::ToString(i), 1);
-    for(auto i=0; i<times.size(); i++)
       ta.AddColumn("v"+syd::ToString(i), 10);
+    }
   }
 
   if (f == "history") {
@@ -97,7 +95,6 @@ void syd::TimePoints::DumpInTable(syd::PrintTable & ta) const
 {
   syd::RecordWithHistory::DumpInTable(ta);
   auto f = ta.GetFormat();
-  DD(*this);
 
   if (f == "default") {
     ta.Set("id", id);

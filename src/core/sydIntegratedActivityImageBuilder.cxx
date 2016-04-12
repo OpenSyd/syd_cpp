@@ -57,7 +57,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityInROI()
 
   if (best != -1) {
     current_model_ = models_[best];
-    DD(current_model_->GetName());
     for(auto o:outputs_) { // Update the outputs
       o->Update(tac_, tac_, current_model_);
     }

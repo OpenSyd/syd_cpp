@@ -54,15 +54,10 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Check pixelvalueunit
-  //  auto punit = db->FindPixelValueUnit(args_info.pixelunit_arg);
-
   // Get timepoint to integrate
   syd::IdType id = atoi(args_info.inputs[0]);
-  DD(id);
   syd::TimePoints::pointer tp;
   db->QueryOne(tp, id);
-  DD(tp);
 
   // Check
   if (tp->images.size() == 0) {
@@ -96,15 +91,9 @@ int main(int argc, char* argv[])
 
   builder.AddOutputImage(r2);
   builder.AddOutputImage(best_model);
-  // builder.AddOutputImage(iter);
-  // builder.AddOutputImage(eff_half_life);
-  // builder.AddOutputImage(nb_points);
-  // nb_points->restricted_tac_flag_ = args_info.restricted_tac_flag;
-  //  builder.AddOutputImage(lambda);
 
   // Options
   syd::Injection::pointer injection = tp->images[0]->dicoms[0]->injection;
-  DD(injection);
   builder.SetLambdaPhysicHours(injection->GetLambdaInHours());
   builder.SetR2MinThreshold(args_info.r2_min_arg);
   builder.SetRestrictedTACFlag(args_info.restricted_tac_flag);
@@ -114,29 +103,25 @@ int main(int argc, char* argv[])
   if (args_info.add_time_given and args_info.add_value_given) {
     db->New(tp2);
     tp2 = tp; // copy
-    DD(tp2);
     tp2->times.push_back(args_info.add_time_given);
     tp2->values.push_back(args_info.add_value_given);
-    DD(tp2);
     db->Insert(tp2);
   }
 
   // Set input TAC
   syd::TimeActivityCurve tac;
   tp2->GetTAC(tac);
-  DD(tac);
 
   // restricted
   syd::TimeActivityCurve restricted_tac = tac;
   unsigned int first_index = 0;
   if (args_info.restricted_tac_flag) {
-    // Select only the end of the curve (min 2 points); FIXME ?
+    // Select only the end of the curve (min 2 points);
     first_index = tac.FindMaxIndex();
     first_index = std::min(first_index, tac.size()-3);
     for(auto i=first_index; i<tac.size(); i++)
       restricted_tac.AddValue(tac.GetTime(i), tac.GetValue(i));
   }
-  DD(restricted_tac);
   builder.SetInputTAC(restricted_tac);
 
   // Set the models
@@ -161,7 +146,6 @@ int main(int argc, char* argv[])
 
   // Go !
   builder.CreateIntegratedActivityInROI();
-  DD("done");
 
   // output ROI
   syd::FitResult::pointer res;
@@ -172,10 +156,9 @@ int main(int argc, char* argv[])
   auto mi = best_model->value;
   res->model_name = models[mi]->GetName();
   res->params = models[mi]->GetParameters();
-  DDS(res->params);
   res->first_index = first_index;
   db->UpdateTagsFromCommandLine(res->tags, args_info);
-  DD(res);
+  db->Insert(res);
 
   // This is the end, my friend.
 }
