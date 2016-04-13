@@ -263,12 +263,12 @@ namespace syd {
     if (acquisition_date.empty())
       acquisition_date = ConvertDicomDateToStringDate(InstanceCreationDate, InstanceCreationTime);
 
-    // Injection must be before the acquisition
-    if (DateDifferenceInHours(acquisition_date, injection_->date) < 0) {
-      LOG(FATAL) << "Error, try to create a dicomserie with a date before the injection."
-                 << std::endl << "Injection : " << injection_
-                 << std::endl << "Date : " << acquisition_date;
-    }
+    // // Injection must be before the acquisition
+    // if (DateDifferenceInHours(acquisition_date, injection_->date) < 0) {
+    //   LOG(FATAL) << "Error, try to create a dicomserie with a date before the injection."
+    //              << std::endl << "Injection : " << injection_
+    //              << std::endl << "Date : " << acquisition_date;
+    // }
 
     // Patient, injection (do not check here that injection is really associated with the patient)
     std::string patientID = GetTagValueString(dset, "PatientID");
