@@ -35,20 +35,29 @@ namespace syd {
     // Insert some tags that not always known in the dicom dictionary
 
     // DatasetName
-    DcmDictEntry * e = new DcmDictEntry(0x0011, 0x1012, EVR_LO, "DatasetName", 0, DcmVariableVM, NULL, true, NULL);
+    DcmDictEntry * e = new DcmDictEntry(0x0011, 0x1012, EVR_LO, "DatasetName", 0,
+                                        DcmVariableVM, NULL, true, NULL);
     DcmDataDictionary &globalDataDict = dcmDataDict.wrlock();
     globalDataDict.addEntry(e);
 
     // InstanceNumber
-    e = new DcmDictEntry(0x0020, 0x0013, EVR_IS, "InstanceNumber", 0, DcmVariableVM, NULL, true, NULL);
+    e = new DcmDictEntry(0x0020, 0x0013, EVR_IS, "InstanceNumber", 0,
+                         DcmVariableVM, NULL, true, NULL);
     globalDataDict.addEntry(e);
 
     // NumberofFramesinRotation
-    e = new DcmDictEntry(0x0054, 0x0053, EVR_US, "NumberofFramesinRotation", 0, DcmVariableVM, NULL, true, NULL);
+    e = new DcmDictEntry(0x0054, 0x0053, EVR_US, "NumberofFramesinRotation", 0,
+                         DcmVariableVM, NULL, true, NULL);
     globalDataDict.addEntry(e);
 
     // NumberofRotations
-    e = new DcmDictEntry(0x0054, 0x0051, EVR_US, "NumberofRotations", 0, DcmVariableVM, NULL, true, NULL);
+    e = new DcmDictEntry(0x0054, 0x0051, EVR_US, "NumberofRotations", 0,
+                         DcmVariableVM, NULL, true, NULL);
+    globalDataDict.addEntry(e);
+
+    // PixelScale
+    e = new DcmDictEntry(0x0011, 0x103B, EVR_FD, "PixelScale", 0,
+                         DcmVariableVM, NULL, true, NULL);
     globalDataDict.addEntry(e);
 
     // init
@@ -211,7 +220,6 @@ namespace syd {
     typedef odb::query<syd::DicomFile> Q;
     Q q = Q::dicom_serie == serie->id;
     db_->Query(files, q);
-    DD(files.size());
     if (files.size() ==0) {
       EXCEPTION("No DicomFile for this DicomSerie");
     }
@@ -222,18 +230,14 @@ namespace syd {
 
     // Open the first file
     auto filename = db_->GetAbsolutePath(files[0]);
-    DD(filename);
     DcmFileFormat dfile;
     bool b = OpenDicomFile(filename, dfile);
     if (!b) {  // this is not a dicom file
       LOG(WARNING) << "Error the file '" << filename << "' is not a dicom file.";
       return;
     }
-    DD("here");
     DcmObject * dset = dfile.getAndRemoveDataset();
     UpdateDicomSerie(serie, filename, dset);
-    DD(serie);
-    DD("done");
   }
   // --------------------------------------------------------------------
 
@@ -254,7 +258,6 @@ namespace syd {
     std::string acquisition_date = ConvertDicomDateToStringDate(AcquisitionDate, AcquisitionTime);
     std::string reconstruction_date = ConvertDicomDateToStringDate(ContentDate, ContentTime);
 
-    DD(reconstruction_date);
     if (reconstruction_date.empty())
       reconstruction_date = ConvertDicomDateToStringDate(InstanceCreationDate, InstanceCreationTime);
     if (acquisition_date.empty())
@@ -271,7 +274,6 @@ namespace syd {
     std::string patientID = GetTagValueString(dset, "PatientID");
     std::string patientName = GetTagValueString(dset, "PatientName");
 
-    DD(patientName);
     if (!forcePatientFlag_) {
       LOG(3) << "Check patient dicom_patientid is the same than the given patient";
       if (patient_->dicom_patientid != patientID) {
@@ -290,7 +292,6 @@ namespace syd {
     serie->patient = patient_;
     serie->injection = injection_;
 
-    DD(serie);
     // Modality
     serie->dicom_modality = GetTagValueString(dset, "Modality");
 
@@ -319,7 +320,6 @@ namespace syd {
     std::string device=Manufacturer+" "+ManufacturerModelName;
     serie->dicom_manufacturer = device;
 
-    DD(device);
     // Image size
     int rows = GetTagValueUShort(dset, "Rows");
     int columns = GetTagValueUShort(dset, "Columns");
@@ -352,22 +352,15 @@ namespace syd {
 
     // Pixel scale
     double ps = 1.0;
-    DD(ps);
-    //    ps = GetTagValueDouble(dset, "PixelScale");
-    //DD(ps);
+    ps = GetTagValueDouble(dset, "PixelScale");
+    if (ps == 0.0) ps = 1.0;
     serie->pixel_scale = ps;
 
-    // Duration
-    // NumberofRotations
-    // Number of Frames
-    //double d = GetTagValueDouble(dset, "ActualFrameDuration");
-    double d = atof(GetTagValueString(dset, "ActualFrameDuration").c_str());
-    DD(d); // ok
+    // Duration in sec
+    double d = atof(GetTagValueString(dset, "ActualFrameDuration").c_str()); // in msec
     double f = GetTagValueUShort(dset, "NumberofFramesinRotation");
-    DD(f); // ok
     double r = GetTagValueUShort(dset, "NumberofRotations");
-    DD(r);
-
+    serie->duration_sec = d/1000.0*f*r;
   }
   // --------------------------------------------------------------------
 
