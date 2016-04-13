@@ -67,13 +67,24 @@ int main(int argc, char* argv[])
     itk_image2 = syd::ResampleAndCropImageLike<ImageType>(itk_image2, itk_image1, 1, 0.0);
 
     // Multiply
-    LOG(2) << "Multiply images " << id1 << " by image " << image2->id;
-    typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> FilterType;
-    typename FilterType::Pointer filter = FilterType::New();
-    filter->SetInput1(itk_image1);
-    filter->SetInput2(itk_image2);
-    filter->Update();
-    itk_image2 = filter->GetOutput();
+    if (!args_info.inverse_flag) {
+      LOG(2) << "Multiply images " << id1 << " by image " << image2->id;
+      typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> FilterType;
+      typename FilterType::Pointer filter = FilterType::New();
+      filter->SetInput1(itk_image1);
+      filter->SetInput2(itk_image2);
+      filter->Update();
+      itk_image2 = filter->GetOutput();
+    }
+    else {
+      LOG(2) << "Divide images " << id1 << " by image " << image2->id;
+      typedef itk::DivideImageFilter<ImageType, ImageType, ImageType> FilterType;
+      typename FilterType::Pointer filter = FilterType::New();
+      filter->SetInput1(itk_image1);
+      filter->SetInput2(itk_image2);
+      filter->Update();
+      itk_image2 = filter->GetOutput();
+    }
 
     // Insert the new image
     LOG(2) << "Store in the db";
