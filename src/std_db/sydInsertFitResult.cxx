@@ -17,7 +17,7 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertIntegratedActivityROI_ggo.h"
+#include "sydInsertFitResult_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   SYD_CERES_STATIC_INIT;
 
   // Init
-  SYD_INIT_GGO(sydInsertIntegratedActivityROI, 1);
+  SYD_INIT_GGO(sydInsertFitResult, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();

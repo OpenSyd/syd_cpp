@@ -159,14 +159,14 @@ add_executable(sydInsertIntegratedActivityImage
 target_link_libraries(sydInsertIntegratedActivityImage sydStandardDatabase)
 
 # compute integrated activity in a ROI
-wrap_ggo(sydInsertIntegratedActivityROI_GGO_C
-  sydInsertIntegratedActivityROI.ggo
+wrap_ggo(sydInsertFitResult_GGO_C
+  sydInsertFitResult.ggo
   sydInsertIntegratedActivityCommon.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineDefault.ggo)
-add_executable(sydInsertIntegratedActivityROI
-  sydInsertIntegratedActivityROI.cxx ${sydInsertIntegratedActivityROI_GGO_C})
-target_link_libraries(sydInsertIntegratedActivityROI sydStandardDatabase)
+add_executable(sydInsertFitResult
+  sydInsertFitResult.cxx ${sydInsertFitResult_GGO_C})
+target_link_libraries(sydInsertFitResult sydStandardDatabase)
 
 
 # Create image of integrated activity
