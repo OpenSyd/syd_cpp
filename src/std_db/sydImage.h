@@ -51,7 +51,9 @@ namespace syd {
     /// List of associated files (will be deleted when the image is deleted)
     syd::File::vector files;
 
-    /// Dicoms that serve to compute this image (could be empty).
+    /// Dicoms related to the image (could be empty). Allow to
+    /// retrieve Injection, date. A mask image is not necessarily
+    /// converted from a dicom, but associated with dicom information.
     syd::DicomSerie::vector dicoms;
 
     /// Type of the image (mhd by default)
