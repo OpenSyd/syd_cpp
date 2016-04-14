@@ -1,0 +1,8 @@
+#File sydInsertFitResult.ggo
+
+package "syd"
+version "0.4"
+usage "sydInsertFitResult <timepoints_id>"
+description "Compute the TIA for the timepoints
+- <timepoints_id>>     id of the timespoints to fit
+"

@@ -17,7 +17,7 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertIntegratedActivityROI_ggo.h"
+#include "sydInsertFitResult_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   SYD_CERES_STATIC_INIT;
 
   // Init
-  SYD_INIT_GGO(sydInsertIntegratedActivityROI, 1);
+  SYD_INIT_GGO(sydInsertFitResult, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -153,6 +153,10 @@ int main(int argc, char* argv[])
   }
   if (args_info.model_given == 0) {
     LOG(FATAL) << "At least a model must be given (--model).";
+  }
+  models = builder.GetModels(); // only a part of the models
+  if (models.size() == 0) {
+    LOG(FATAL) << "Error, no models given. Use for example 'f3,f4a,f4'";
   }
 
   // Go !

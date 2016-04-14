@@ -79,6 +79,7 @@ namespace syd {
 
     // Other functions
     void ClearModel() { models_.clear(); }
+    std::vector<syd::FitModelBase*> & GetModels() { return models_; }
 
   protected:
 
