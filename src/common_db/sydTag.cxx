@@ -58,8 +58,7 @@ void syd::Tag::Set(const std::vector<std::string> & arg)
 // --------------------------------------------------
 void syd::Tag::InitTable(syd::PrintTable & ta) const
 {
-  syd::Record::InitTable(ta);
-  if (ta.GetColumn("id") == -1) ta.AddColumn("id");
+  ta.AddColumn("id");
   ta.AddColumn("label");
   auto & col = ta.AddColumn("description");
   col.max_width = 80;
@@ -71,7 +70,7 @@ void syd::Tag::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::Tag::DumpInTable(syd::PrintTable & ta) const
 {
-  syd::Record::DumpInTable(ta);
+  ta.Set("id", id);
   ta.Set("label", label);
   ta.Set("description", description);
 }
