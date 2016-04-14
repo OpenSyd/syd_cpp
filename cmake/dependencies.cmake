@@ -29,3 +29,13 @@ include_directories(${CERES_INCLUDE_DIRS})
 # Find Gengetopt
 find_package(Gengetopt)
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# optional plot python
+OPTION(SYD_PLOT_MODULE "Plot module (require Python)." OFF)
+IF(SYD_PLOT_MODULE)
+  find_package(PythonLibs REQUIRED)
+  include_directories(${PYTHON_INCLUDE_DIR})
+ENDIF(SYD_PLOT_MODULE)
+#----------------------------------------------------------

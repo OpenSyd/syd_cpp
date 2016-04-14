@@ -1,0 +1,6 @@
+#File sydTest.ggo
+
+package "sydTest"
+usage "sydTest DEBUG"
+version "0.3"
+description "DEBUG do not use"
