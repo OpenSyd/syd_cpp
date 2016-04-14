@@ -11,3 +11,4 @@ Note that tags are copied from the image_2.
 
 "
 option "pixelunit" -  "Name of pixel value unit to resulting image"  string yes
+option "inverse"   -  "If st, perform division instead of mult."     flag off
