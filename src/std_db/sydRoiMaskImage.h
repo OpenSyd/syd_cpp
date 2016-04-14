@@ -22,6 +22,7 @@
 // syd
 #include "sydImage.h"
 #include "sydRoiType.h"
+#include "sydTableBase.h"
 
 // --------------------------------------------------------------------
 namespace syd {

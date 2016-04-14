@@ -157,8 +157,8 @@ void syd::DicomSerie::InitTable(syd::PrintTable & ta) const
     ta.AddColumn("recon_date");
     ta.AddColumn("size");
     ta.AddColumn("spacing");
-    ta.AddColumn("duration(s)");
-    ta.AddColumn("scale");
+    ta.AddColumn("duration(s)",1);
+    ta.AddColumn("scale",3);
   }
 }
 // --------------------------------------------------

@@ -34,6 +34,11 @@ syd::Image::pointer syd::ImageFromDicomBuilder::NewImageFromDicom(const syd::Dic
       LOG(4) << "Update information";
       syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("HU", "Hounsfield Units");
       image->pixel_value_unit = unit;
+      // Scale if needed
+      if (dicom->pixel_scale != 1.0) {
+        LOG(3) << "Scale by pixel_scale = " << dicom->pixel_scale;
+        syd::ScaleImage<ImageType>(itk_image, dicom->pixel_scale);
+      }
       SetImage<PixelType>(image, itk_image);
     }
     else {
@@ -44,6 +49,12 @@ syd::Image::pointer syd::ImageFromDicomBuilder::NewImageFromDicom(const syd::Dic
       LOG(4) << "Update information";
       syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("counts", "Number of counts");
       image->pixel_value_unit = unit;
+      // Scale if needed
+      if (dicom->pixel_scale != 1.0) {
+        LOG(3) << "Scale by pixel_scale = " << dicom->pixel_scale;
+        syd::ScaleImage<ImageType>(itk_image, dicom->pixel_scale);
+      }
+      // Set image
       SetImage<PixelType>(image, itk_image);
     }
 
