@@ -154,6 +154,10 @@ int main(int argc, char* argv[])
   if (args_info.model_given == 0) {
     LOG(FATAL) << "At least a model must be given (--model).";
   }
+  models = builder.GetModels(); // only a part of the models
+  if (models.size() == 0) {
+    LOG(FATAL) << "Error, no models given. Use for example 'f3,f4a,f4'";
+  }
 
   // Go !
   builder.CreateIntegratedActivityInROI();

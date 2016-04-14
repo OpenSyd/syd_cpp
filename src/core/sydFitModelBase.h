@@ -69,6 +69,7 @@ namespace syd {
     double GetLambdaPhysicHours() const { return lambda_phys_hours_; }
     std::vector<double> & GetParameters() { return params_; }
     const std::vector<double> & GetParameters() const { return params_; }
+    void SetParameters(std::vector<double> & p);
 
     virtual FitModelBase * Clone() const = 0;
     virtual void SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac);

@@ -67,6 +67,15 @@ syd::TimeActivityCurve * syd::FitModelBase::GetTAC(double first_time, double las
 
 
 // --------------------------------------------------------------------
+void syd::FitModelBase::SetParameters(std::vector<double> & p)
+{
+  params_.clear();
+  params_ = p;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 namespace syd {
   std::ostream& operator<<(std::ostream& os, const FitModelBase & p)
   {
