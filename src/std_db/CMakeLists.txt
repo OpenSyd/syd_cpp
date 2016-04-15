@@ -23,7 +23,7 @@ wrap_odb(sydStandardDatabase sydImageTransform.h)
 wrap_odb(sydStandardDatabase sydCalibration.h)
 wrap_odb(sydStandardDatabase sydPixelValueUnit.h)
 wrap_odb(sydStandardDatabase sydRoiStatistic.h)
-wrap_odb(sydStandardDatabase sydTimePoints.h)
+wrap_odb(sydStandardDatabase sydTimepoints.h)
 wrap_odb(sydStandardDatabase sydFitResult.h)
 
 add_library(sydStandardDatabase SHARED
@@ -42,7 +42,7 @@ add_library(sydStandardDatabase SHARED
   sydCalibration-odb.cxx sydCalibration-schema.cxx  sydCalibration.cxx
   sydPixelValueUnit-odb.cxx sydPixelValueUnit-schema.cxx  sydPixelValueUnit.cxx
   sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
-  sydTimePoints-odb.cxx sydTimePoints-schema.cxx  sydTimePoints.cxx
+  sydTimepoints-odb.cxx sydTimepoints-schema.cxx  sydTimepoints.cxx
   sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
   sydImageBuilder.cxx
   sydFileBuilder.cxx
@@ -55,7 +55,7 @@ add_library(sydStandardDatabase SHARED
   sydRoiStatisticBuilder.cxx
   sydScaleImageBuilder.cxx
   sydUpdateRadionuclideFilter.cxx
-  sydTimePointsBuilder.cxx
+  sydTimepointsBuilder.cxx
   )
 
 ## to declare dependencies
@@ -170,9 +170,9 @@ target_link_libraries(sydInsertFitResult sydStandardDatabase)
 
 
 # Create image of integrated activity
-wrap_ggo(sydInsertTimePoints_GGO_C sydInsertTimePoints.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-add_executable(sydInsertTimePoints sydInsertTimePoints.cxx ${sydInsertTimePoints_GGO_C})
-target_link_libraries(sydInsertTimePoints sydStandardDatabase)
+wrap_ggo(sydInsertTimepoints_GGO_C sydInsertTimepoints.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertTimepoints sydInsertTimepoints.cxx ${sydInsertTimepoints_GGO_C})
+target_link_libraries(sydInsertTimepoints sydStandardDatabase)
 
 
 ##############################

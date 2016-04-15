@@ -13,13 +13,13 @@
   ===========================================================================**/
 
 // syd
-#include "sydTimePointsBuilder.h"
+#include "sydTimepointsBuilder.h"
 
 // itk
 #include <itkLabelStatisticsImageFilter.h>
 
 // --------------------------------------------------------------------
-syd::TimePointsBuilder::TimePointsBuilder(syd::StandardDatabase * db):
+syd::TimepointsBuilder::TimepointsBuilder(syd::StandardDatabase * db):
   syd::DatabaseFilter(db)
 {
 
@@ -28,7 +28,7 @@ syd::TimePointsBuilder::TimePointsBuilder(syd::StandardDatabase * db):
 
 
 // --------------------------------------------------------------------
-void syd::TimePointsBuilder::SetImages(const syd::Image::vector im)
+void syd::TimepointsBuilder::SetImages(const syd::Image::vector im)
 {
   images = im;
   db_->Sort<syd::Image>(images);
@@ -37,7 +37,7 @@ void syd::TimePointsBuilder::SetImages(const syd::Image::vector im)
 
 
 // --------------------------------------------------------------------
-void syd::TimePointsBuilder::SetRoiMaskImage(const syd::RoiMaskImage::pointer m)
+void syd::TimepointsBuilder::SetRoiMaskImage(const syd::RoiMaskImage::pointer m)
 {
   mask = m;
 }
@@ -45,15 +45,15 @@ void syd::TimePointsBuilder::SetRoiMaskImage(const syd::RoiMaskImage::pointer m)
 
 
 // --------------------------------------------------------------------
-syd::TimePoints::pointer
-syd::TimePointsBuilder::ComputeTimePoints()
+syd::Timepoints::pointer
+syd::TimepointsBuilder::ComputeTimepoints()
 {
   // Check
   if (images.size() ==0) {
-    EXCEPTION("Cannot compute TimePoints, no images. Use SetImages first");
+    EXCEPTION("Cannot compute Timepoints, no images. Use SetImages first");
   }
   if (!mask) {
-    EXCEPTION("Cannot compute TimePoints, no mask. Use SetRoiMaskImage first");
+    EXCEPTION("Cannot compute Timepoints, no mask. Use SetRoiMaskImage first");
   }
 
   // Check same injection date
@@ -81,9 +81,9 @@ syd::TimePointsBuilder::ComputeTimePoints()
   }
 
   // Check if already exist ? (same images)
-  syd::TimePoints::vector timepoints;
-  syd::TimePoints::pointer tac;
-  odb::query<syd::TimePoints> q = odb::query<syd::TimePoints>::mask == mask->id;
+  syd::Timepoints::vector timepoints;
+  syd::Timepoints::pointer tac;
+  odb::query<syd::Timepoints> q = odb::query<syd::Timepoints>::mask == mask->id;
   db_->Query(timepoints,q);
   auto n = images.size();
   int found = 0;
@@ -105,7 +105,7 @@ syd::TimePointsBuilder::ComputeTimePoints()
     tac->mask = mask;
   }
   if (found > 1) {
-    EXCEPTION("Several TimePoints found with the same set of images/mask. Abort");
+    EXCEPTION("Several Timepoints found with the same set of images/mask. Abort");
   }
 
   // image type

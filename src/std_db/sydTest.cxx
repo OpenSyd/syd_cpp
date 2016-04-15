@@ -22,7 +22,7 @@
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
-#include "sydTimePointsBuilder.h"
+#include "sydTimepointsBuilder.h"
 //#include "extExtendedDatabase.h"
 
 
@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // ------------------------------------------------------------------
-  // TimePoints
+  // Timepoints
   if (1) {
 
   }

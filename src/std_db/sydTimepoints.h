@@ -32,9 +32,9 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::TimePoints") callback(Callback)
-  /// Store information about a time activity curve (TimePoints).
-  class TimePoints : public syd::Record,
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Timepoints") callback(Callback)
+  /// Store information about a time activity curve (Timepoints).
+  class Timepoints : public syd::Record,
                      public syd::RecordWithHistory,
                      public syd::RecordWithTags,
                      public syd::RecordWithMD5Signature {
@@ -56,7 +56,7 @@ namespace syd {
     syd::RoiMaskImage::pointer mask;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(TimePoints, syd::TimePoints);
+    TABLE_DEFINE(Timepoints, syd::Timepoints);
     // ------------------------------------------------------------------------
 
     /// Write the element as a string
@@ -84,7 +84,7 @@ namespace syd {
     void GetTAC(syd::TimeActivityCurve & tac);
 
   protected:
-    TimePoints();
+    Timepoints();
 
   }; // end class
   // --------------------------------------------------------------------

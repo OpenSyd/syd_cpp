@@ -56,15 +56,15 @@ int main(int argc, char* argv[])
 
   // Get timepoint to integrate
   syd::IdType id = atoi(args_info.inputs[0]);
-  syd::TimePoints::pointer tp;
+  syd::Timepoints::pointer tp;
   db->QueryOne(tp, id);
 
   // Check
   if (tp->images.size() == 0) {
-    LOG(FATAL) << "TimePoints not associated with an image. Abort";
+    LOG(FATAL) << "Timepoints not associated with an image. Abort";
   }
   if (tp->images[0]->dicoms.size() == 0) {
-    LOG(FATAL) << "TimePoints image not associated with a dicom (needed for injection). Abort";
+    LOG(FATAL) << "Timepoints image not associated with a dicom (needed for injection). Abort";
   }
 
   // Create some models
@@ -105,22 +105,22 @@ int main(int argc, char* argv[])
   // FIXME builder.SetRestrictedTACFlag(args_info.restricted_tac_flag);
 
   // additional values
-  syd::TimePoints::pointer tp2 = tp;
+  syd::Timepoints::pointer tp2 = tp;
   if (args_info.add_time_given and args_info.add_value_given) {
     db->New(tp2);
     tp2 = tp; // copy
     tp2->times.push_back(args_info.add_time_given);
     tp2->values.push_back(args_info.add_value_given);
-    syd::TimePoints::pointer tp3;
-    if (db->FindSameMD5<syd::TimePoints>(tp2, tp3)) {
+    syd::Timepoints::pointer tp3;
+    if (db->FindSameMD5<syd::Timepoints>(tp2, tp3)) {
       tp2 = tp3; // already exist, we retrieve it
-      LOG(1) << "Retrieve existing TimePoints with additional point: "
+      LOG(1) << "Retrieve existing Timepoints with additional point: "
              << std::endl << "\t" << tp3;
     }
     else {
       // does not exist, we insert
       db->Insert(tp2);
-      LOG(1) << "Insert new TimePoints with one additional point: "
+      LOG(1) << "Insert new Timepoints with one additional point: "
              << std::endl << "\t" << tp2;
     }
   }

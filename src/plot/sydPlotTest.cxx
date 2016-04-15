@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
   syd::FitResult::pointer fr;
   db->QueryOne(fr, atoi(args_info.inputs[0]));
 
-  syd::TimePoints::pointer tp = fr->timepoints;
+  syd::Timepoints::pointer tp = fr->timepoints;
 
   // data
   sydPyRun_SimpleString("times", tp->times);

@@ -17,10 +17,10 @@
   ===========================================================================**/
 
 // syd
-#include "sydTimePoints.h"
+#include "sydTimepoints.h"
 
 // --------------------------------------------------------------------
-syd::TimePoints::TimePoints():
+syd::Timepoints::Timepoints():
   syd::Record(),
   syd::RecordWithTags(),
   syd::RecordWithHistory(),
@@ -31,7 +31,7 @@ syd::TimePoints::TimePoints():
 
 
 // --------------------------------------------------------------------
-std::string syd::TimePoints::ToString() const
+std::string syd::Timepoints::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
@@ -46,7 +46,7 @@ std::string syd::TimePoints::ToString() const
 
 
 // --------------------------------------------------------------------
-void syd::TimePoints::Callback(odb::callback_event event, odb::database & db) const
+void syd::Timepoints::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event, db);
   syd::RecordWithHistory::Callback(event, db, db_);
@@ -56,7 +56,7 @@ void syd::TimePoints::Callback(odb::callback_event event, odb::database & db) co
 
 
 // --------------------------------------------------------------------
-void syd::TimePoints::Callback(odb::callback_event event, odb::database & db)
+void syd::Timepoints::Callback(odb::callback_event event, odb::database & db)
 {
   syd::Record::Callback(event, db);
   syd::RecordWithHistory::Callback(event, db, db_);
@@ -66,7 +66,7 @@ void syd::TimePoints::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------------------------
-void syd::TimePoints::InitTable(syd::PrintTable & ta) const
+void syd::Timepoints::InitTable(syd::PrintTable & ta) const
 {
   auto f = ta.GetFormat();
 
@@ -102,7 +102,7 @@ void syd::TimePoints::InitTable(syd::PrintTable & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::TimePoints::DumpInTable(syd::PrintTable & ta) const
+void syd::Timepoints::DumpInTable(syd::PrintTable & ta) const
 {
   syd::RecordWithHistory::DumpInTable(ta);
   auto f = ta.GetFormat();
@@ -153,9 +153,9 @@ void syd::TimePoints::DumpInTable(syd::PrintTable & ta) const
 
 
 // --------------------------------------------------------------------
-syd::CheckResult syd::TimePoints::Check() const
+syd::CheckResult syd::Timepoints::Check() const
 {
-  DD(" FIXME check TimePoints history ");
+  DD(" FIXME check Timepoints history ");
   syd::CheckResult r;
   return r;
 }
@@ -163,7 +163,7 @@ syd::CheckResult syd::TimePoints::Check() const
 
 
 // --------------------------------------------------------------------
-void syd::TimePoints::GetTAC(syd::TimeActivityCurve & tac)
+void syd::Timepoints::GetTAC(syd::TimeActivityCurve & tac)
 {
   tac.clear();
   for(auto i=0; i<times.size(); i++) {
@@ -174,7 +174,7 @@ void syd::TimePoints::GetTAC(syd::TimeActivityCurve & tac)
 
 
 // --------------------------------------------------------------------
-std::string syd::TimePoints::ToStringForMD5() const
+std::string syd::Timepoints::ToStringForMD5() const
 {
   std::stringstream ss;
   for(auto i=0; i<times.size(); i++) {

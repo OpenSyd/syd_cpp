@@ -17,11 +17,11 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertTimePoints_ggo.h"
+#include "sydInsertTimepoints_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
-#include "sydTimePointsBuilder.h"
+#include "sydTimepointsBuilder.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -30,7 +30,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertTimePoints, 2);
+  SYD_INIT_GGO(sydInsertTimepoints, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -57,10 +57,10 @@ int main(int argc, char* argv[])
   syd::RoiMaskImage::pointer mask = db->FindRoiMaskImage(images[0], roi_name);
 
   // Create (or update) the tac
-  syd::TimePointsBuilder builder(db);
+  syd::TimepointsBuilder builder(db);
   builder.SetImages(images);
   builder.SetRoiMaskImage(mask);
-  syd::TimePoints::pointer tac = builder.ComputeTimePoints();
+  syd::Timepoints::pointer tac = builder.ComputeTimepoints();
 
   // Set tags
   db->UpdateTagsFromCommandLine(tac->tags, args_info);

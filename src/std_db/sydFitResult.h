@@ -20,7 +20,7 @@
 #define SYDFITRESULT_H
 
 // syd
-#include "sydTimePoints.h"
+#include "sydTimepoints.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -35,7 +35,7 @@ namespace syd {
 
 #pragma db not_null on_delete(cascade)
     /// Linked Timepoints. If the tp is deleted, the FitResult also.
-    syd::TimePoints::pointer timepoints;
+    syd::Timepoints::pointer timepoints;
 
     /// Values of the parameters for the fit
     std::vector<double> params;

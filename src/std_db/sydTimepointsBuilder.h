@@ -22,29 +22,29 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// This class is used to create a TimePoints (a set of
+  /// This class is used to create a Timepoints (a set of
   /// times/values), from image and a mask, using the mean of the
   /// pixels inside the roi.
-  class TimePointsBuilder: public syd::DatabaseFilter {
+  class TimepointsBuilder: public syd::DatabaseFilter {
 
   public:
     /// Constructor.
-    TimePointsBuilder(syd::StandardDatabase * db);
+    TimepointsBuilder(syd::StandardDatabase * db);
 
     /// Destructor (empty)
-    ~TimePointsBuilder() {}
+    ~TimepointsBuilder() {}
 
     void SetImages(const syd::Image::vector images);
     void SetRoiMaskImage(const syd::RoiMaskImage::pointer mask);
 
-    /// Compute a TimePoints with mean pixels values in a roi images
-    syd::TimePoints::pointer ComputeTimePoints();
+    /// Compute a Timepoints with mean pixels values in a roi images
+    syd::Timepoints::pointer ComputeTimepoints();
 
   protected:
     syd::Image::vector images;
     syd::RoiMaskImage::pointer mask;
 
-  }; // class TimePointsBuilder
+  }; // class TimepointsBuilder
 
 } // namespace syd
 // --------------------------------------------------------------------

@@ -41,7 +41,7 @@
 #include "sydCalibration-odb.hxx"
 #include "sydPixelValueUnit-odb.hxx"
 #include "sydRoiStatistic-odb.hxx"
-#include "sydTimePoints-odb.hxx"
+#include "sydTimepoints-odb.hxx"
 #include "sydFitResult-odb.hxx"
 
 // itk

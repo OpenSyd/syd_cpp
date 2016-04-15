@@ -160,7 +160,7 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::Calibration>();
   AddTable<syd::PixelValueUnit>();
   AddTable<syd::RoiStatistic>();
-  AddTable<syd::TimePoints>();
+  AddTable<syd::Timepoints>();
   AddTable<syd::FitResult>();
 }
 // --------------------------------------------------------------------
@@ -376,7 +376,7 @@ void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
   std::string t = syd::ToLowerCase(table_name);
 
   if (t == "image") return QueryByTags<syd::Image>(records, tag_names);
-  if (t == "timepoints") return QueryByTags<syd::TimePoints>(records, tag_names);
+  if (t == "timepoints") return QueryByTags<syd::Timepoints>(records, tag_names);
 
   if (t == "roistatistic") {
     // Specific case here, we search in the image associated with the RoiStatistic
