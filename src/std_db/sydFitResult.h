@@ -53,6 +53,9 @@ namespace syd {
     /// "restricted" option is used)
     int first_index;
 
+    /// Number of iterations
+    int iterations;
+
     // ------------------------------------------------------------------------
     TABLE_DEFINE(FitResult, syd::FitResult);
     // ------------------------------------------------------------------------

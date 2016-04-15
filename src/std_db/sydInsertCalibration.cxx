@@ -64,10 +64,7 @@ int main(int argc, char* argv[])
       LOG(FATAL) << "Error, the image is not associated with a dicom. ";
     }
     syd::DicomSerie::pointer dicom = image->dicoms[0];
-    if (dicom->injection == NULL) {
-      LOG(FATAL) << "Error, the dicom is not associated with an injection.";
-    }
-    syd::Injection::pointer injection = dicom->injection;
+    syd::Injection::pointer injection = image->injection;
 
     // Already exist or not ?
     std::string status;

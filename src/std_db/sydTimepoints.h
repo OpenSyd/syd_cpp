@@ -40,6 +40,14 @@ namespace syd {
                      public syd::RecordWithMD5Signature {
   public:
 
+#pragma db not_null
+    /// Foreign key, it must exist in the Patient table
+    syd::Patient::pointer patient;
+
+#pragma db not_null
+    /// Foreign key, it must exist in the Injection table (could be a 'fake' injection)
+    syd::Injection::pointer injection;
+
     /// List of times
     std::vector<double> times;
 

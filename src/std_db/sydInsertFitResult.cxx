@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
   builder.AddOutputImage(iter);
 
   // Options
-  syd::Injection::pointer injection = tp->images[0]->dicoms[0]->injection;
+  syd::Injection::pointer injection = tp->images[0]->injection;
   auto rad = db->FindRadionuclide("Y-90");
   injection->radionuclide = rad;
   injection->activity_in_MBq = 1.0;

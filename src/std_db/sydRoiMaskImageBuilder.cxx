@@ -33,7 +33,7 @@ syd::RoiMaskImageBuilder::NewRoiMaskImage(const syd::DicomSerie::pointer & dicom
   auto fake = syd::ReadImageHeader(filename); // -> will raise an exception if bug
 
   // Create image
-  syd::RoiMaskImage::pointer mask = NewMHDRoiMaskImage(dicom->patient, roitype);
+  syd::RoiMaskImage::pointer mask = NewMHDRoiMaskImage(dicom->patient, roitype, dicom->injection);
   mask->dicoms.push_back(dicom);
   mask->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
   syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("label", "Mask image");

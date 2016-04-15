@@ -5,6 +5,8 @@
       <column name="history" type="INTEGER" null="true"/>
       <column name="md5" type="TEXT" null="true" options="UNIQUE"/>
       <column name="typeid" type="TEXT" null="true"/>
+      <column name="patient" type="INTEGER" null="true"/>
+      <column name="injection" type="INTEGER" null="true"/>
       <column name="mask" type="INTEGER" null="true"/>
       <primary-key auto="true">
         <column name="id"/>
@@ -12,6 +14,18 @@
       <foreign-key name="history_fk" deferrable="DEFERRED">
         <column name="history"/>
         <references table="syd::RecordHistory">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <foreign-key name="patient_fk" deferrable="DEFERRED">
+        <column name="patient"/>
+        <references table="syd::Patient">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <foreign-key name="injection_fk" deferrable="DEFERRED">
+        <column name="injection"/>
+        <references table="syd::Injection">
           <column name="id"/>
         </references>
       </foreign-key>

@@ -58,11 +58,11 @@ syd::TimepointsBuilder::ComputeTimepoints()
 
   // Check same injection date
   images[0]->FatalIfNoDicom();
-  syd::Injection::pointer injection = images[0]->dicoms[0]->injection;
+  syd::Injection::pointer injection = images[0]->injection;
   bool b = true;
   for(auto image:images) {
     image->FatalIfNoDicom();
-    b = b and (injection->id == image->dicoms[0]->injection->id);
+    b = b and (injection->id == image->injection->id);
   }
   if (!b) {
     EXCEPTION("The images do not have the same injection.");

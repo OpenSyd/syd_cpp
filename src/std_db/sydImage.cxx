@@ -46,7 +46,8 @@ std::string syd::Image::ToString() const
   else name = patient->name;
   std::stringstream ss ;
   ss << id << " "
-     << name << " ";
+     << name << " "
+     << injection->radionuclide->name << " ";
   if (files.size() == 0) ss << "(no files) ";
   //for(auto f:files) ss << f->filename << " "; // only first is usually useful
   else ss << files[0]->filename << " ";
@@ -128,6 +129,7 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event,db);
   syd::RecordWithHistory::Callback(event,db, db_);
+
   if (event == odb::callback_event::post_erase) {
     for(auto f:files) db.erase(f);
   }
@@ -200,6 +202,7 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
   if (f == "default") {
     ta.AddColumn("id");
     ta.AddColumn("p");
+    ta.AddColumn("inj");
     ta.AddColumn("acqui_date");
     ta.AddColumn("tags");
     ta.AddColumn("size");
@@ -246,6 +249,7 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   if (f == "default") {
     ta.Set("id", id);
     ta.Set("p", patient->name);
+    ta.Set("inj", injection->radionuclide->name);
     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
     else ta.Set("acqui_date", dicoms[0]->acquisition_date);
     ta.Set("tags", GetLabels(tags));
@@ -302,17 +306,9 @@ syd::CheckResult syd::Image::Check() const
 
 
 // --------------------------------------------------------------------
-double syd::Image::GetHoursFromInjection(syd::Injection::pointer injection) const
+double syd::Image::GetHoursFromInjection() const
 {
-  std::string inj_date;
-  if (injection == NULL) {
-    if (dicoms.size() > 0) inj_date = dicoms[0]->injection->date;
-    else {
-      LOG(FATAL) << "No dicom attached to this image, cannot compute the time from injection date "
-                 << ToString() << std::endl;
-    }
-  }
-  else inj_date = injection->date;
+  std::string inj_date = injection->date;
   if (dicoms.size() == 0) {
     LOG(FATAL) << "No dicom attached to this image, cannot compute the time from injection date "
                  << ToString() << std::endl;
@@ -331,7 +327,7 @@ std::vector<double> & syd::GetTimesFromInjection(syd::StandardDatabase * db,
   std::vector<double> * times = new std::vector<double>;
   syd::Image::vector sorted_images = images;
   db->Sort<syd::Image>(sorted_images);
-  syd::Injection::pointer injection = sorted_images[0]->dicoms[0]->injection;
+  syd::Injection::pointer injection = sorted_images[0]->injection;
   std::string starting_date = injection->date;
   for(auto image:sorted_images) {
     double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);

@@ -48,6 +48,10 @@ namespace syd {
     /// Foreign key, it must exist in the Patient table.
     syd::Patient::pointer patient;
 
+#pragma db not_null
+    /// Foreign key, it must exist in the Injection table (could be a 'fake' injection)
+    syd::Injection::pointer injection;
+
     /// List of associated files (will be deleted when the image is deleted)
     syd::File::vector files;
 
@@ -129,9 +133,8 @@ namespace syd {
     virtual syd::CheckResult Check() const;
 
     /// Compute the nb of hours between the injection and the
-    /// acquisition date. Retrieve the injection from the dicom if not
-    /// given as parameters
-    double GetHoursFromInjection(syd::Injection::pointer injection=NULL) const;
+    /// acquisition date.
+    double GetHoursFromInjection() const;
 
   protected:
     Image();

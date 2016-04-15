@@ -44,7 +44,8 @@ namespace syd {
 
     /// Create and insert a new RoiMaskImage. Not inserted in the db.
     syd::RoiMaskImage::pointer NewMHDRoiMaskImage(syd::Patient::pointer patient,
-                                                  syd::RoiType::pointer roitype);
+                                                  syd::RoiType::pointer roitype,
+                                                  syd::Injection::pointer inj);
 
     /// Copy the file image to an Image, updating all information  (pixel type, size, md5 etc). DB not updated
     void CopyImageFromFile(syd::Image::pointer image, std::string filename);

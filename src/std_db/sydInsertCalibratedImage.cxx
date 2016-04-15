@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   for(auto image:images) {
     // Get the corresponding calibration
     image->FatalIfNoDicom();
-    auto injection = image->dicoms[0]->injection;
+    auto injection = image->injection;
     syd::Calibration::pointer calibration = db->FindCalibration(image, calib_tag);
     double s = 1.0/calibration->factor / injection->activity_in_MBq;
     // Create an (empty) copy

@@ -50,9 +50,16 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // ------------------------------------------------------------------
-  // Timepoints
-  if (1) {
-
+  // Correct images
+  if (0) {
+    syd::Image::vector images;
+    db->Query(images); // all
+    DD(images.size());
+    for(auto image:images) {
+      image->injection = image->dicoms[0]->injection;
+    }
+    DD("done");
+    db->Update(images);
   }
 
 

@@ -3,7 +3,7 @@
 package "syd"
 version "1.1"
 usage "sydInsertSubstituteRadionuclideImage <rad> <list of image_ids>"
-description "Create new (mhd) images with a different radionuclide. Need that the input image is decay corrected.
+description "Create new (mhd) images with a different radionuclide. The input image *NEED* to be decay corrected first.
 - <rad>           name or id of the radionuclide
 - <image_ids>     list of image id to correct
 "

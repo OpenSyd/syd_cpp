@@ -29,10 +29,7 @@ syd::SubstituteRadionuclideImageBuilder::NewRadionuclideSubstitutedImage(syd::Im
     LOG(FATAL) << "Error this image is not associated with a dicom. ";
   }
   syd::DicomSerie::pointer dicom = input->dicoms[0];
-  syd::Injection::pointer injection = dicom->injection;
-  if (injection == NULL) {
-    LOG(FATAL) << "Error this dicom is not associated with an injection :" << input->dicoms[0];
-  }
+  syd::Injection::pointer injection = input->injection;
 
   double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection->date);
   double lambda = rad->GetLambdaInHours();
@@ -52,6 +49,31 @@ syd::SubstituteRadionuclideImageBuilder::NewRadionuclideSubstitutedImage(syd::Im
 
   // Create and image file
   SetImage<PixelType>(result, itk_image);
+
+  // Change the injection (because it is substituted now !)
+  syd::Injection::pointer new_injection;
+  db_->New(new_injection);
+  new_injection->patient = injection->patient;
+  new_injection->radionuclide = rad;
+  new_injection->date = injection->date;
+  new_injection->activity_in_MBq = 1.0;
+  odb::query<syd::Injection> q =
+    odb::query<syd::Injection>::patient == new_injection->patient->id and
+    odb::query<syd::Injection>::radionuclide == new_injection->radionuclide->id and
+    odb::query<syd::Injection>::date == new_injection->date and
+    odb::query<syd::Injection>::activity_in_MBq == new_injection->activity_in_MBq;
+  syd::Injection::vector temp;
+  db_->Query(temp, q);
+  if (temp.size() == 0) {
+    LOG(1) << "Create Injection: " << new_injection;
+    db_->Insert(new_injection);
+    result->injection = new_injection;
+  }
+  if (temp.size() >= 1) {
+    result->injection = temp[0];
+  }
+
+  // End
   return result;
 }
 // --------------------------------------------------------------------
