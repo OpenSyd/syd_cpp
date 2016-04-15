@@ -61,7 +61,6 @@ int main(int argc, char* argv[])
  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // start
-  DD("here");
   Py_Initialize();
 
   // init
@@ -81,10 +80,8 @@ int main(int argc, char* argv[])
   // Get tac data
   syd::FitResult::pointer fr;
   db->QueryOne(fr, atoi(args_info.inputs[0]));
-  DD(fr);
 
   syd::TimePoints::pointer tp = fr->timepoints;
-  DD(tp);
 
   // data
   sydPyRun_SimpleString("times", tp->times);
@@ -95,37 +92,54 @@ int main(int argc, char* argv[])
   double last = tp->times[tp->times.size()-1];
   double l = last-tp->times[0];
   auto times = arange<double>(tp->times[0], last, l/100.0);
-  DDS(times);
 
   syd::FitModelBase * model;
   if (fr->model_name == "f3") model = new syd::FitModel_f3;
   if (fr->model_name == "f4a") model = new syd::FitModel_f4a;
   if (fr->model_name == "f4") model = new syd::FitModel_f4;
   model->SetParameters(fr->params);
-  DDS(model->GetParameters());
+
+  auto rad = db->FindRadionuclide("Y-90");
+  syd::Injection::pointer injection = tp->images[0]->dicoms[0]->injection;
+  injection->radionuclide = rad;
+  injection->activity_in_MBq = 1.0;
+  model->SetLambdaPhysicHours(injection->GetLambdaInHours());
+  DD(injection);
 
   std::vector<double> values;
   for(auto t:times) {
     values.push_back(model->GetValue(t));
   }
-  DDS(values);
+  syd::TimeActivityCurve tac;
+  tp->GetTAC(tac);
+  DD(tac);
+  DDS(model->GetParameters());
+  DD(model->ComputeR2(tac));
+  DD(model->GetName());
 
   // data
   sydPyRun_SimpleString("t", times);
   sydPyRun_SimpleString("v", values);
-  PyRun_SimpleString("plt.plot(t, v, '-')");
+  std::stringstream label;
+  label << tp->mask->roitype->name << " "
+        << fr->model_name << " " << fr->id << " " << tp->id;
+  std::stringstream ss;
+  ss << "plt.plot(t, v, '-', label='" << label.str() << "')";
+  PyRun_SimpleString(ss.str().c_str());
 
   {
     std::stringstream ss;
     ss //<< "plt.tight_layout()" << std::endl
        //<< "plt.savefig('foo.pdf',dpi=180)" << std::endl
+      << "plt.legend(loc='upper right', frameon=False)" << std::endl
+      << "plt.xlabel('Times from injection in hours')" << std::endl
+      << "plt.ylabel('Activity')" << std::endl
        << "plt.show()";
     PyRun_SimpleString(ss.str().c_str());
   }
 
 
   // ------------------------------------------------------------------
-  DD("end");
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

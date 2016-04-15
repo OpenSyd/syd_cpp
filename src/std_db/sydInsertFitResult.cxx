@@ -91,12 +91,18 @@ int main(int argc, char* argv[])
 
   builder.AddOutputImage(r2);
   builder.AddOutputImage(best_model);
+  builder.AddOutputImage(iter);
 
   // Options
   syd::Injection::pointer injection = tp->images[0]->dicoms[0]->injection;
+  auto rad = db->FindRadionuclide("Y-90");
+  injection->radionuclide = rad;
+  injection->activity_in_MBq = 1.0;
   builder.SetLambdaPhysicHours(injection->GetLambdaInHours());
+  DD(injection);
+  DD(injection->GetLambdaInHours());
   builder.SetR2MinThreshold(args_info.r2_min_arg);
-  builder.SetRestrictedTACFlag(args_info.restricted_tac_flag);
+  // FIXME builder.SetRestrictedTACFlag(args_info.restricted_tac_flag);
 
   // additional values
   syd::TimePoints::pointer tp2 = tp;
@@ -127,6 +133,7 @@ int main(int argc, char* argv[])
   syd::TimeActivityCurve restricted_tac = tac;
   unsigned int first_index = 0;
   if (args_info.restricted_tac_flag) {
+    restricted_tac.clear();
     // Select only the end of the curve (min 2 points);
     first_index = tac.FindMaxIndex();
     first_index = std::min(first_index, tac.size()-3);
@@ -168,19 +175,29 @@ int main(int argc, char* argv[])
   res->timepoints = tp2;
   res->auc = builder.GetOutput()->value;
   res->r2 = r2->value;
-  auto mi = best_model->value;
-  res->model_name = models[mi]->GetName();
-  res->params = models[mi]->GetParameters();
-  res->first_index = first_index;
-  db->UpdateTagsFromCommandLine(res->tags, args_info);
-  syd::FitResult::pointer temp;
-  if (db->FindSameMD5<syd::FitResult>(res, temp)) {
-    LOG(1) << "Same FitResult already exists, no modification"
-           << std::endl << temp;
+  auto mi = best_model->value-1; // because start at one
+  if (mi != -1) {
+    res->model_name = models[mi]->GetName();
+    res->params = models[mi]->GetParameters();
+    res->first_index = first_index;
+    DD(iter->value);
+    DD(models[mi]->ComputeR2(tac));
+    DD(tac);
+    DDS(models[mi]->GetParameters());
+    DDS(res->params);
+    db->UpdateTagsFromCommandLine(res->tags, args_info);
+    syd::FitResult::pointer temp;
+    if (db->FindSameMD5<syd::FitResult>(res, temp)) {
+      LOG(1) << "Same FitResult already exists, no modification"
+             << std::endl << temp;
+    }
+    else {
+      db->Insert(res);
+      LOG(1) << "Insert " << res;
+    }
   }
   else {
-    db->Insert(res);
-    LOG(1) << "Insert " << res;
+    LOG(WARNING) << "Fit do not converge.";
   }
 
   // This is the end, my friend.
