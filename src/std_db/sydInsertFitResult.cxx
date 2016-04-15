@@ -67,17 +67,6 @@ int main(int argc, char* argv[])
     LOG(FATAL) << "Timepoints image not associated with a dicom (needed for injection). Abort";
   }
 
-  // Create some models
-  std::vector<syd::FitModelBase*> models;
-  auto f2  = new syd::FitModel_f2;
-  auto f3  = new syd::FitModel_f3;
-  auto f4a = new syd::FitModel_f4a;
-  auto f4  = new syd::FitModel_f4;
-  models.push_back(f2);
-  models.push_back(f3);
-  models.push_back(f4a);
-  models.push_back(f4);
-
   // Create main builder
   syd::IntegratedActivityImageBuilder builder;
 
@@ -94,15 +83,10 @@ int main(int argc, char* argv[])
   builder.AddOutputImage(iter);
 
   // Options
-  syd::Injection::pointer injection = tp->images[0]->injection;
-  auto rad = db->FindRadionuclide("Y-90");
-  injection->radionuclide = rad;
-  injection->activity_in_MBq = 1.0;
+  syd::Injection::pointer injection = tp->injection;
   builder.SetLambdaPhysicHours(injection->GetLambdaInHours());
   DD(injection);
-  DD(injection->GetLambdaInHours());
   builder.SetR2MinThreshold(args_info.r2_min_arg);
-  // FIXME builder.SetRestrictedTACFlag(args_info.restricted_tac_flag);
 
   // additional values
   syd::Timepoints::pointer tp2 = tp;
@@ -143,25 +127,10 @@ int main(int argc, char* argv[])
   builder.SetInputTAC(restricted_tac);
 
   // Set the models
-  for(auto i=0; i<args_info.model_given; i++) {
-    std::string n = args_info.model_arg[i];
-    bool b = false;
-    for(auto m:models) {
-      if (m->GetName() == n) {
-        builder.AddModel(m, i+1); // start model id at 1 (such that 0 means no model)
-        b = true;
-      }
-    }
-    if (!b) {
-      std::string km;
-      for(auto m:models) km += m->GetName()+" ";
-      LOG(FATAL) << "Error the model '" << n << "' is not found. Known models are: " << km;
-    }
-  }
-  if (args_info.model_given == 0) {
-    LOG(FATAL) << "At least a model must be given (--model).";
-  }
-  models = builder.GetModels(); // only a part of the models
+  std::vector<std::string> model_names;
+  for(auto i=0; i<args_info.model_given; i++) model_names.push_back(args_info.model_arg[i]);
+  builder.SetModels(model_names);
+  auto models = builder.GetModels();
   if (models.size() == 0) {
     LOG(FATAL) << "Error, no models given. Use for example 'f3,f4a,f4'";
   }
@@ -180,7 +149,7 @@ int main(int argc, char* argv[])
     res->model_name = models[mi]->GetName();
     res->params = models[mi]->GetParameters();
     res->first_index = first_index;
-    DD(iter->value);
+    res->iterations = iter->value;
     DD(models[mi]->ComputeR2(tac));
     DD(tac);
     DDS(models[mi]->GetParameters());

@@ -151,7 +151,7 @@ target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 # Create image of integrated activity
 wrap_ggo(sydInsertIntegratedActivityImage_GGO_C
   sydInsertIntegratedActivityImage.ggo
-  sydInsertIntegratedActivityCommon.ggo
+  sydCommandLineWithFitOptions.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertIntegratedActivityImage
@@ -161,7 +161,7 @@ target_link_libraries(sydInsertIntegratedActivityImage sydStandardDatabase)
 # compute integrated activity in a ROI
 wrap_ggo(sydInsertFitResult_GGO_C
   sydInsertFitResult.ggo
-  sydInsertIntegratedActivityCommon.ggo
+  sydCommandLineWithFitOptions.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertFitResult

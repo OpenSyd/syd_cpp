@@ -35,12 +35,16 @@ std::string syd::FitResult::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
+     << timepoints->patient->name << " "
+     << timepoints->injection->radionuclide->name << " "
      << timepoints->id << " "
      << GetLabels(tags) << " "
      << model_name << " "
      << auc << " "
      << r2 << " "
-     << first_index << " |";
+     << first_index << " "
+     << iterations
+     << " |";
   for(auto p:params) ss << " " << p;
   return ss.str();
 }
@@ -75,6 +79,8 @@ void syd::FitResult::InitTable(syd::PrintTable & ta) const
   // Set the columns
   if (f == "default") {
     ta.AddColumn("id");
+    ta.AddColumn("p");
+    ta.AddColumn("inj");
     ta.AddColumn("tp");
     ta.AddColumn("nb");
     ta.AddColumn("tags");
@@ -88,6 +94,8 @@ void syd::FitResult::InitTable(syd::PrintTable & ta) const
 
   if (f == "history") {
     ta.AddColumn("id");
+    ta.AddColumn("p");
+    ta.AddColumn("inj");
     syd::RecordWithHistory::InitTable(ta);
     ta.AddColumn("tp");
     ta.AddColumn("tags");
@@ -99,6 +107,8 @@ void syd::FitResult::InitTable(syd::PrintTable & ta) const
 
   if (f == "md5") {
     ta.AddColumn("id");
+    ta.AddColumn("p");
+    ta.AddColumn("inj");
     ta.AddColumn("tp");
     ta.AddColumn("nb");
     ta.AddColumn("tags");
@@ -117,6 +127,8 @@ void syd::FitResult::DumpInTable(syd::PrintTable & ta) const
 
   if (f == "default") {
     ta.Set("id", id);
+    ta.Set("p", timepoints->patient->name);
+    ta.Set("inj", timepoints->injection->radionuclide->name);
     ta.Set("tp", timepoints->id);
     ta.Set("nb", timepoints->times.size());
     ta.Set("tags", GetLabels(tags));
@@ -138,6 +150,8 @@ void syd::FitResult::DumpInTable(syd::PrintTable & ta) const
 
   if (f == "history") {
     ta.Set("id", id);
+    ta.Set("p", timepoints->patient->name);
+    ta.Set("inj", timepoints->injection->radionuclide->name);
     syd::RecordWithHistory::DumpInTable(ta);
     ta.AddColumn("id");
     syd::RecordWithHistory::InitTable(ta);
@@ -152,6 +166,8 @@ void syd::FitResult::DumpInTable(syd::PrintTable & ta) const
 
   if (f == "md5") {
     ta.Set("id", id);
+    ta.Set("p", timepoints->patient->name);
+    ta.Set("inj", timepoints->injection->radionuclide->name);
     ta.Set("tags", GetLabels(tags));
     ta.Set("tp", timepoints->id);
     ta.Set("nb", timepoints->times.size());

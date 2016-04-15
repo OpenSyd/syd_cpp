@@ -35,6 +35,38 @@ syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
   SetRestrictedTACFlag(false);
   mask_ = 0;
   additional_point_flag_ = false;
+  auto f2  = new syd::FitModel_f2;
+  auto f3  = new syd::FitModel_f3;
+  auto f4a = new syd::FitModel_f4a;
+  auto f4  = new syd::FitModel_f4;
+  all_models_.push_back(f2);
+  all_models_.push_back(f3);
+  all_models_.push_back(f4a);
+  all_models_.push_back(f4);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::IntegratedActivityImageBuilder::SetModels(const std::vector<std::string> & model_names)
+{
+  int i=0;
+  // Look for model from the given names
+  for(auto & name:model_names) {
+    bool b = false;
+    for(auto model:all_models_) {
+      if (model->GetName() == name) {
+        AddModel(model, i+1); // start model id at 1 (such that 0 means no model)
+        b = true;
+        ++i;
+      }
+    }
+    if (!b) {
+      std::string km;
+      for(auto model:all_models_) km += model->GetName()+" ";
+      LOG(FATAL) << "Error the model '" << name << "' is not found. Known models are: " << km;
+    }
+  }
 }
 // --------------------------------------------------------------------
 

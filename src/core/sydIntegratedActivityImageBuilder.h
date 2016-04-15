@@ -80,6 +80,7 @@ namespace syd {
     // Other functions
     void ClearModel() { models_.clear(); }
     std::vector<syd::FitModelBase*> & GetModels() { return models_; }
+    void SetModels(const std::vector<std::string> & model_names);
 
   protected:
 
@@ -93,6 +94,7 @@ namespace syd {
 
     // List of all tested models
     std::vector<syd::FitModelBase*> models_;
+    std::vector<syd::FitModelBase*> all_models_;
 
     // Current selected models
     syd::FitModelBase * current_model_;

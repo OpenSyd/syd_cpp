@@ -144,17 +144,6 @@ int main(int argc, char* argv[])
   }
   im = itk_images[0]; // consider the first image for the following
 
-  // Create some models //FIXME --> use a function (create default model) to do that
-  std::vector<syd::FitModelBase*> models;
-  auto f2  = new syd::FitModel_f2;
-  auto f3  = new syd::FitModel_f3;
-  auto f4a = new syd::FitModel_f4a;
-  auto f4  = new syd::FitModel_f4;
-  models.push_back(f2);
-  models.push_back(f3);
-  models.push_back(f4a);
-  models.push_back(f4);
-
   // Create some optional output types
   auto r2 = new syd::FitOutputImage_R2();
   auto best_model = new syd::FitOutputImage_Model();
@@ -210,23 +199,12 @@ int main(int argc, char* argv[])
   builder.SetMask(mask);
 
   // Ad the models to the builder
-  for(auto i=0; i<args_info.model_given; i++) {
-    std::string n = args_info.model_arg[i];
-    bool b = false;
-    for(auto m:models) {
-      if (m->GetName() == n) {
-        builder.AddModel(m, i+1); // start model id at 1 (such that 0 means no model)
-        b = true;
-      }
-    }
-    if (!b) {
-      std::string km;
-      for(auto m:models) km += m->GetName()+" ";
-      LOG(FATAL) << "Error the model '" << n << "' is not found. Known models are: " << km;
-    }
-  }
-  if (args_info.model_given == 0) {
-    LOG(FATAL) << "At least a model must be given (--model).";
+  std::vector<std::string> model_names;
+  for(auto i=0; i<args_info.model_given; i++) model_names.push_back(args_info.model_arg[i]);
+  builder.SetModels(model_names);
+  auto models = builder.GetModels();
+  if (models.size() == 0) {
+    LOG(FATAL) << "Error, no models given. Use for example 'f3,f4a,f4'";
   }
 
   // Go !
