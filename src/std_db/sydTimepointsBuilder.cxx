@@ -159,6 +159,8 @@ syd::TimepointsBuilder::ComputeTimepoints()
     tac->values[i] = means[i];
     tac->std_deviations[i] = stddevs[i];
   }
+  tac->patient = images[0]->patient;
+  tac->injection = images[0]->injection;
   return tac;
 }
 // --------------------------------------------------------------------

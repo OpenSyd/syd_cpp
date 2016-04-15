@@ -35,6 +35,8 @@ std::string syd::Timepoints::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
+     << patient->name << " "
+     << injection->radionuclide->name << " "
      << times.size() << " "
      << (mask == NULL ? "no_mask":mask->roitype->name) << " "
      << GetLabels(tags) << " ";
@@ -73,6 +75,8 @@ void syd::Timepoints::InitTable(syd::PrintTable & ta) const
   // Set the columns
   if (f == "default") {
     ta.AddColumn("id");
+    ta.AddColumn("p");
+    ta.AddColumn("inj");
     ta.AddColumn("nb");
     ta.AddColumn("mask");
     ta.AddColumn("img");
@@ -85,6 +89,7 @@ void syd::Timepoints::InitTable(syd::PrintTable & ta) const
 
   if (f == "history") {
     ta.AddColumn("id");
+    ta.AddColumn("p");
     syd::RecordWithHistory::InitTable(ta);
     ta.AddColumn("nb");
     ta.AddColumn("tags");
@@ -92,6 +97,7 @@ void syd::Timepoints::InitTable(syd::PrintTable & ta) const
 
   if (f == "md5") {
     ta.AddColumn("id");
+    ta.AddColumn("p");
     ta.AddColumn("nb");
     ta.AddColumn("tags");
     syd::RecordWithMD5Signature::InitTable(ta);
@@ -109,6 +115,8 @@ void syd::Timepoints::DumpInTable(syd::PrintTable & ta) const
 
   if (f == "default") {
     ta.Set("id", id);
+    ta.Set("p", patient->name);
+    ta.Set("inj", injection->radionuclide->name);
     ta.Set("tags", GetLabels(tags));
     if (mask != NULL) ta.Set("mask", mask->roitype->name);
     else ta.Set("mask", "no_mask");
@@ -137,6 +145,7 @@ void syd::Timepoints::DumpInTable(syd::PrintTable & ta) const
 
   if (f == "history") {
     ta.Set("id", id);
+    ta.Set("p", patient->name);
     syd::RecordWithHistory::DumpInTable(ta);
     ta.Set("tags", GetLabels(tags));
     ta.Set("nb", times.size());
@@ -144,6 +153,7 @@ void syd::Timepoints::DumpInTable(syd::PrintTable & ta) const
 
   if (f == "md5") {
     ta.Set("id", id);
+    ta.Set("p", patient->name);
     ta.Set("tags", GetLabels(tags));
     ta.Set("nb", times.size());
     syd::RecordWithMD5Signature::DumpInTable(ta);

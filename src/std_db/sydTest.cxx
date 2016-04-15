@@ -50,6 +50,21 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // ------------------------------------------------------------------
+  // Correct tp
+  if (0) {
+    syd::Timepoints::vector tps;
+    db->Query(tps); // all
+    DD(tps.size());
+    for(auto tp:tps) {
+      tp->patient = tp->images[0]->patient;
+      tp->injection = tp->images[0]->injection;
+    }
+    DD("done");
+    db->Update(tps);
+  }
+
+
+  // ------------------------------------------------------------------
   // Correct images
   if (0) {
     syd::Image::vector images;
