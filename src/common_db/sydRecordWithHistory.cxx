@@ -41,12 +41,12 @@ void syd::RecordWithHistory::Callback(odb::callback_event event,
   }
 
   if (event == odb::callback_event::pre_update) {
-    if (history->id == 1) { // it means the creation date is unknown
-      db->New<syd::RecordHistory>(history);
-      odb.persist(history);
-    }
     history->update_date = syd::Now();
     odb.update(history);
+  }
+
+  if (event == odb::callback_event::pre_erase) {
+    if (history != NULL) odb.erase(history);
   }
 
   // Events in Callback const : persist, update, erase
