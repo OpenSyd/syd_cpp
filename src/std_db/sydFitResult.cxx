@@ -76,10 +76,11 @@ void syd::FitResult::InitTable(syd::PrintTable & ta) const
 {
   auto f = ta.GetFormat();
 
-  // Set the columns
+    // Set the columns
   if (f == "default") {
     ta.AddColumn("id");
     ta.AddColumn("p");
+    ta.AddColumn("m");
     ta.AddColumn("inj");
     ta.AddColumn("tp");
     ta.AddColumn("nb");
@@ -87,9 +88,10 @@ void syd::FitResult::InitTable(syd::PrintTable & ta) const
     ta.AddColumn("model");
     ta.AddColumn("auc",5);
     ta.AddColumn("r2",5);
-    ta.AddColumn("i");
+    ta.AddColumn("index");
+    ta.AddColumn("iter");
     for(auto i=0; i<params.size(); i++)
-      ta.AddColumn("p"+syd::ToString(i), 2);
+      ta.AddColumn("p"+syd::ToString(i), 4);
   }
 
   if (f == "history") {
@@ -128,6 +130,7 @@ void syd::FitResult::DumpInTable(syd::PrintTable & ta) const
   if (f == "default") {
     ta.Set("id", id);
     ta.Set("p", timepoints->patient->name);
+    ta.Set("m", (timepoints->mask == NULL ? "no_mask":timepoints->mask->roitype->name));
     ta.Set("inj", timepoints->injection->radionuclide->name);
     ta.Set("tp", timepoints->id);
     ta.Set("nb", timepoints->times.size());
@@ -135,10 +138,11 @@ void syd::FitResult::DumpInTable(syd::PrintTable & ta) const
     ta.Set("model", model_name);
     ta.Set("auc", auc);
     ta.Set("r2", r2);
-    ta.Set("i", first_index);
+    ta.Set("index", first_index);
+    ta.Set("iter", iterations);
 
-    // Add additional column if the nb of values is larger
-    int nb_col = 8;
+    // Add additional column if the nb of values for this record is larger than the previous
+    int nb_col = 12;
     int previous_nb = (ta.GetNumberOfColumns()-nb_col);
     for(auto i=previous_nb; i<params.size(); i++) {
       ta.AddColumn("p"+syd::ToString(i), 1);
@@ -182,7 +186,7 @@ std::string syd::FitResult::ToStringForMD5() const
 {
   std::stringstream ss;
   for(auto p:params) ss << std::setprecision(30) << p;
-  ss << auc << r2 << model_name << first_index << timepoints->ToStringForMD5();
+  ss << auc << r2 << model_name << first_index << timepoints->ToStringForMD5() << iterations;
   return ss.str();
 }
 // --------------------------------------------------------------------

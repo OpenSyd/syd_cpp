@@ -85,7 +85,6 @@ int main(int argc, char* argv[])
   // Options
   syd::Injection::pointer injection = tp->injection;
   builder.SetLambdaPhysicHours(injection->GetLambdaInHours());
-  DD(injection);
   builder.SetR2MinThreshold(args_info.r2_min_arg);
 
   // additional values
@@ -142,18 +141,14 @@ int main(int argc, char* argv[])
   syd::FitResult::pointer res;
   db->New(res);
   res->timepoints = tp2;
-  res->auc = builder.GetOutput()->value;
-  res->r2 = r2->value;
   auto mi = best_model->value-1; // because start at one
   if (mi != -1) {
+    res->auc = builder.GetOutput()->value;
+    res->r2 = r2->value;
     res->model_name = models[mi]->GetName();
     res->params = models[mi]->GetParameters();
     res->first_index = first_index;
     res->iterations = iter->value;
-    DD(models[mi]->ComputeR2(tac));
-    DD(tac);
-    DDS(models[mi]->GetParameters());
-    DDS(res->params);
     db->UpdateTagsFromCommandLine(res->tags, args_info);
     syd::FitResult::pointer temp;
     if (db->FindSameMD5<syd::FitResult>(res, temp)) {
