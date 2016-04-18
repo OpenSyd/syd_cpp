@@ -141,6 +141,7 @@ int main(int argc, char* argv[])
   syd::FitResult::pointer res;
   db->New(res);
   res->timepoints = tp2;
+
   auto mi = best_model->value-1; // because start at one
   if (mi != -1) {
     res->auc = builder.GetOutput()->value;
@@ -150,6 +151,7 @@ int main(int argc, char* argv[])
     res->first_index = first_index;
     res->iterations = iter->value;
     db->UpdateTagsFromCommandLine(res->tags, args_info);
+
     syd::FitResult::pointer temp;
     if (db->FindSameMD5<syd::FitResult>(res, temp)) {
       LOG(1) << "Same FitResult already exists, no modification"
