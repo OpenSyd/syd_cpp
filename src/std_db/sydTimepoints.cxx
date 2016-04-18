@@ -187,6 +187,8 @@ void syd::Timepoints::GetTAC(syd::TimeActivityCurve & tac)
 std::string syd::Timepoints::ToStringForMD5() const
 {
   std::stringstream ss;
+  ss << patient->id
+     << injection->id;
   for(auto i=0; i<times.size(); i++) {
     ss << std::setprecision(30)
        << times[i] << values[0] << std_deviations[i];
