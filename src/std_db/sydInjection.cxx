@@ -52,10 +52,8 @@ std::string syd::Injection::ToString() const
 // --------------------------------------------------
 void syd::Injection::Set(const std::vector<std::string> & args)
 {
-  try {
-    CheckIfPersistant();
-  } catch(std::exception & e) {
-    LOG(FATAL) << "To use Set on an Injection, the record must be inserted in the db before.";
+  if (db_ == NULL) {
+    LOG(FATAL) << "To use Set on an Injection, the db must be set before.";
   }
   if (args.size() < 4) {
     LOG(FATAL) << "Provide <patient> <radionuclide> <date> <activity_in_MBq>. "
