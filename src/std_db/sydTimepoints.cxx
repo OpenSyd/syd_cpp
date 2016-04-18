@@ -130,7 +130,7 @@ void syd::Timepoints::DumpInTable(syd::PrintTable & ta) const
     ta.Set("nb", times.size());
 
     // Add additional column if the nb of values is larger
-    int nb_col = 5;
+    int nb_col = 6;
     int previous_nb = (ta.GetNumberOfColumns()-nb_col)/2.0;
     for(auto i=previous_nb; i<times.size(); i++) {
       ta.AddColumn("t"+syd::ToString(i), 1);
