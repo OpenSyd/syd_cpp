@@ -141,9 +141,9 @@ syd::CheckResult syd::Record::Check() const
 // --------------------------------------------------------------------
 syd::Database * syd::Record::GetDatabase() const
 {
-  if (!IsPersistent()) {
+  if (db_ == NULL) {
     EXCEPTION("Error in 'GetDatabase', the current record from table'"
-              << GetTableName() << "' is not persistant. Insert it in the db before.");
+              << GetTableName() << "' has no db yet. Use SetDatabasePointer before.");
   }
   return db_;
 }
