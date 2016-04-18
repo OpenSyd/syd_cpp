@@ -445,6 +445,7 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   tags.push_back(NewTag("S-matrix", "S-matrix image"));
   tags.push_back(NewTag("dose_rate", "Dose rate image"));
   tags.push_back(NewTag("tia", "Time Integrated Activity"));
+  tags.push_back(NewTag("mask", "Mask image"));
   for(auto r:radionuclides) {
     tags.push_back(NewTag(r->name, "Radionuclide " + r->name));
   }
