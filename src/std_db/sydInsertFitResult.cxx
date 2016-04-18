@@ -92,8 +92,8 @@ int main(int argc, char* argv[])
   if (args_info.add_time_given and args_info.add_value_given) {
     db->New(tp2);
     tp2 = tp; // copy
-    tp2->times.push_back(args_info.add_time_given);
-    tp2->values.push_back(args_info.add_value_given);
+    tp2->times.push_back(args_info.add_time_arg + tp->times.back());
+    tp2->values.push_back(args_info.add_value_arg * tp->values.back());
     syd::Timepoints::pointer tp3;
     if (db->FindSameMD5<syd::Timepoints>(tp2, tp3)) {
       tp2 = tp3; // already exist, we retrieve it
