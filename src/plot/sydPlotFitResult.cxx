@@ -67,9 +67,9 @@ int main(int argc, char* argv[])
           << tp->patient->name << " "
           << tp->mask->roitype->name << " "
           << tp->injection->radionuclide->name << " "
-          << f->model_name << " "
-          << "auc="  << f->auc
-          << "r2= " << f->r2 << " (" << f->iterations << ")";
+          << f->model_name
+          << " auc="  << f->auc
+          << " r2= " << f->r2 << " (" << f->iterations << ")";
 
     // Fit
     syd::FitModelBase * model;
@@ -84,17 +84,17 @@ int main(int argc, char* argv[])
     auto times = syd::arange<double>(tp->times[0], last, l/100.0); // FIXME param
     std::vector<double> values;
     for(auto t:times) values.push_back(model->GetValue(t));
-    builder.AddCurve(times, values, "-", label.str());
+    builder.AddCurve(times, values, "-", label.str(), "color=base_line.get_color()");
+    delete model;
   }
 
   // axes labels
   builder.Add("plt.xlabel('Times from injection in hours')");
   builder.Add("plt.ylabel('Activity')");
 
-  // Plot
+  // Ending part
   if (args_info.pdf_given) builder.AddPdfOutput(args_info.pdf_arg);
   builder.AddEndPart();
-  builder.Run();
 
   // Get and save output
   if (args_info.output_given) {
@@ -103,6 +103,9 @@ int main(int argc, char* argv[])
     os << o;
     os.close();
   }
+
+  // Plot
+  builder.Run();
 
   // ------------------------------------------------------------------
   // This is the end, my friend.
