@@ -1,0 +1,11 @@
+#File sydPlotFitResult.ggo
+
+package "syd"
+version "0.1"
+usage "sydPlotFitResult <fitresult_ids>"
+description "Plot a set of FitResult curve
+- <fitresult_ids>     list of FitResult id to plot
+"
+
+option "output"	    o	"Output python file for script" string no
+option "pdf"	    p	"Output pdf file" string no

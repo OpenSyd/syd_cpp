@@ -38,7 +38,8 @@ namespace syd {
     void AddCurve(const std::vector<double> & x,
                   const std::vector<double> & y,
                   const std::string & plot_type,
-                  const std::string & label);
+                  const std::string & label="",
+                  const std::string & params="");
     void Add(const std::string & line);
     void AddEndPart();
     void AddPdfOutput(const std::string & filename);

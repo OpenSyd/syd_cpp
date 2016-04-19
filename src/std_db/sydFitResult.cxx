@@ -37,6 +37,7 @@ std::string syd::FitResult::ToString() const
   ss << id << " "
      << timepoints->patient->name << " "
      << timepoints->injection->radionuclide->name << " "
+     << (timepoints->mask == NULL ? "no_mask":timepoints->mask->roitype->name) << " "
      << timepoints->id << " "
      << GetLabels(tags) << " "
      << model_name << " "

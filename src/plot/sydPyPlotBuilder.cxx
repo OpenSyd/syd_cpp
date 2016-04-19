@@ -59,7 +59,8 @@ void syd::PyPlotBuilder::Add(const std::string & line)
 void syd::PyPlotBuilder::AddCurve(const std::vector<double> & x,
                                   const std::vector<double> & y,
                                   const std::string & plot_type,
-                                  const std::string & label)
+                                  const std::string & label,
+                                  const std::string & params)
 {
   script_ << "curve_" << current_curve_nb_ << "_x = [";
   for(auto v:x) script_ << v << ",";
@@ -70,8 +71,9 @@ void syd::PyPlotBuilder::AddCurve(const std::vector<double> & x,
   script_ << "plt.plot("
           << "curve_" << current_curve_nb_ << "_x,"
           << "curve_" << current_curve_nb_ << "_y, "
-          << "'" << plot_type << "', "
-          << "label='" << label << "')" << std::endl;
+          << "'" << plot_type << "'";
+  if (label != "") script_ << ", " << "label='" << label << "'";
+  script_ << "," << params << ")" << std::endl;
   ++current_curve_nb_;
 }
 // --------------------------------------------------------------------
@@ -99,7 +101,7 @@ void syd::PyPlotBuilder::AddEndPart()
   script_ << "#-------------------------------------------------------"
           << std::endl << std::endl
           << "plt.tight_layout()" << std::endl
-          << "plt.legend(loc='upper right', frameon=False)" << std::endl
+          << "plt.legend(loc='upper right', frameon=False, fontsize=9)" << std::endl
           << "plt.show()" << std::endl;
 }
 // --------------------------------------------------------------------

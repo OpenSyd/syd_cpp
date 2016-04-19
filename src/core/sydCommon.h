@@ -121,6 +121,12 @@ namespace syd {
   std::string GetVersionAsString(unsigned long long v);
   // --------------------------------------------------------------------
 
+
+  // --------------------------------------------------------------------
+  template<typename T>
+  std::vector<T> arange(T start, T stop, T step = 1);
+  // --------------------------------------------------------------------
+
 #include "sydCommon.txx"
 
 } // end namespace
