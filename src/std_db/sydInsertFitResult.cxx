@@ -98,13 +98,13 @@ int main(int argc, char* argv[])
     if (db->FindSameMD5<syd::Timepoints>(tp2, tp3)) {
       tp2 = tp3; // already exist, we retrieve it
       LOG(1) << "Retrieve existing Timepoints with additional point: "
-             << std::endl << "\t" << tp3;
+             << tp3;
     }
     else {
       // does not exist, we insert
       db->Insert(tp2);
       LOG(1) << "Insert new Timepoints with one additional point: "
-             << std::endl << "\t" << tp2;
+             << tp2;
     }
   }
 
