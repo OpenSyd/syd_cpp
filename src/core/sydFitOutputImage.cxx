@@ -92,6 +92,7 @@ void syd::FitOutputImage_R2::Update(const syd::TimeActivityCurve & tac,
 syd::FitOutputImage_Model::FitOutputImage_Model():FitOutputImage()
 {
   filename = "best_model.mhd";
+  SetValue(0);
 }
 // --------------------------------------------------------------------
 
