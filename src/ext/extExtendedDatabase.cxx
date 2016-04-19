@@ -38,5 +38,6 @@ void ext::ExtendedDatabase::CreateTables()
   AddTable<syd::PixelValueUnit>();
   AddTable<syd::RoiStatistic>();
   AddTable<syd::Timepoints>();
+  AddTable<syd::FitResult>();
 }
 // --------------------------------------------------------------------
