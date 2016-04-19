@@ -39,7 +39,10 @@ void syd::PyPlotBuilder::Initialize()
           << "\tmatplotlib.use('Qt5Agg') # only for linux, not on mac" << std::endl
           << "import matplotlib.pyplot as plt" << std::endl
           << "import matplotlib.pyplot as plt" << std::endl
-          << "fig, ax = plt.subplots()" << std::endl;
+          << "fig, ax = plt.subplots()" << std::endl
+          << "#-------------------------------------------------------"
+          << std::endl << std::endl;
+  Py_Initialize();
 }
 // --------------------------------------------------------------------
 
@@ -61,14 +64,14 @@ void syd::PyPlotBuilder::AddCurve(const std::vector<double> & x,
   script_ << "curve_" << current_curve_nb_ << "_x = [";
   for(auto v:x) script_ << v << ",";
   script_ << "]" << std::endl;
-  script_ << "curve_" << current_curve_nb_ << "_x = [";
+  script_ << "curve_" << current_curve_nb_ << "_y = [";
   for(auto v:y) script_ << v << ",";
   script_ << "]" << std::endl;
   script_ << "plt.plot("
-     << "curve_" << current_curve_nb_ << "_x,"
-     << "curve_" << current_curve_nb_ << "_y, "
-     << plot_type << ", " << label << ")" << std::endl;
-  DD(script_.str());
+          << "curve_" << current_curve_nb_ << "_x,"
+          << "curve_" << current_curve_nb_ << "_y, "
+          << "'" << plot_type << "', "
+          << "label='" << label << "')" << std::endl;
   ++current_curve_nb_;
 }
 // --------------------------------------------------------------------
@@ -85,9 +88,11 @@ std::string syd::PyPlotBuilder::GetOutput() const
 // --------------------------------------------------------------------
 void syd::PyPlotBuilder::Show()
 {
-  DD("show");
-  script_ << "plt.legend(loc='upper right', frameon=False)" << std::endl
-          <<  "plt.show()" << std::endl;
-  PyRun_SimpleString(script_.str());
+  script_ << "#-------------------------------------------------------"
+          << std::endl << std::endl
+          << "plt.tight_layout()" << std::endl
+          << "plt.legend(loc='upper right', frameon=False)" << std::endl
+          << "plt.show()" << std::endl;
+  PyRun_SimpleString(GetOutput().c_str());
 }
 // --------------------------------------------------------------------

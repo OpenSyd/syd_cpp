@@ -31,7 +31,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(sydPlotTimepoints, 1);
+  SYD_INIT_GGO(sydPlotTimepoints, 0);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
   // Get the list of timepoints
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
-  for(auto i=1; i<args_info.inputs_num; i++) {
+  for(auto i=0; i<args_info.inputs_num; i++) {
     ids.push_back(atoi(args_info.inputs[i]));
   }
   syd::Timepoints::vector timepoints;
