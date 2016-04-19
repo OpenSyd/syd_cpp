@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
- syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // start
   Py_Initialize();
@@ -94,15 +94,13 @@ int main(int argc, char* argv[])
   auto times = arange<double>(tp->times[0], last, l/100.0);
 
   syd::FitModelBase * model;
+  if (fr->model_name == "f2") model = new syd::FitModel_f2;
   if (fr->model_name == "f3") model = new syd::FitModel_f3;
   if (fr->model_name == "f4a") model = new syd::FitModel_f4a;
   if (fr->model_name == "f4") model = new syd::FitModel_f4;
   model->SetParameters(fr->params);
 
-  auto rad = db->FindRadionuclide("Y-90");
-  syd::Injection::pointer injection = tp->images[0]->dicoms[0]->injection;
-  injection->radionuclide = rad;
-  injection->activity_in_MBq = 1.0;
+  syd::Injection::pointer injection = tp->injection;
   model->SetLambdaPhysicHours(injection->GetLambdaInHours());
   DD(injection);
 
@@ -134,7 +132,7 @@ int main(int argc, char* argv[])
       << "plt.legend(loc='upper right', frameon=False)" << std::endl
       << "plt.xlabel('Times from injection in hours')" << std::endl
       << "plt.ylabel('Activity')" << std::endl
-       << "plt.show()";
+      << "plt.show()";
     PyRun_SimpleString(ss.str().c_str());
   }
 

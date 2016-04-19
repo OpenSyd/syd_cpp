@@ -50,6 +50,12 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // ------------------------------------------------------------------
+  // test
+  if (1) {
+
+  }
+
+  // ------------------------------------------------------------------
   // Correct tp
   if (0) {
     syd::Timepoints::vector tps;

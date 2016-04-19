@@ -1,0 +1,10 @@
+#File sydPlotTimepoints.ggo
+
+package "syd"
+version "0.1"
+usage "sydPlotTimepoints <timepoints_ids>"
+description "Plot a set of Timepoints curve
+- <timepoints_ids>     list of timepoints id to plot
+"
+
+option "output"	    -	"Output python file for script" string no
