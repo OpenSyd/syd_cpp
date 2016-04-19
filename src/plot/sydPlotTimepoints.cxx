@@ -65,18 +65,18 @@ int main(int argc, char* argv[])
   builder.Add("plt.xlabel('Times from injection in hours')");
   builder.Add("plt.ylabel('Activity')");
 
+  // Plot
+  if (args_info.pdf_given) builder.AddPdfOutput(args_info.pdf_arg);
+  builder.AddEndPart();
+  builder.Run();
+
   // Get and save output
   if (args_info.output_given) {
     auto o = builder.GetOutput();
-    DD(o);
     std::ofstream os(args_info.output_arg);
     os << o;
     os.close();
   }
-
-  // Plot
-  builder.Show();
-
 
   // ------------------------------------------------------------------
   // This is the end, my friend.

@@ -7,4 +7,5 @@ description "Plot a set of Timepoints curve
 - <timepoints_ids>     list of timepoints id to plot
 "
 
-option "output"	    -	"Output python file for script" string no
+option "output"	    o	"Output python file for script" string no
+option "pdf"	    p	"Output pdf file" string no

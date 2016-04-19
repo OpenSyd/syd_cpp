@@ -40,14 +40,15 @@ namespace syd {
                   const std::string & plot_type,
                   const std::string & label);
     void Add(const std::string & line);
+    void AddEndPart();
+    void AddPdfOutput(const std::string & filename);
     std::string GetOutput() const;
-    void Show();
+    void Run();
     void Initialize();
 
   protected:
     int current_curve_nb_;
     std::stringstream script_;
-
 
   }; // class PyPlotBuilder
 } // namespace syd

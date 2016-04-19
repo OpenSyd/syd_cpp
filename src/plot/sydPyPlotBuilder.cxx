@@ -86,13 +86,28 @@ std::string syd::PyPlotBuilder::GetOutput() const
 
 
 // --------------------------------------------------------------------
-void syd::PyPlotBuilder::Show()
+void syd::PyPlotBuilder::Run()
+{
+  PyRun_SimpleString(GetOutput().c_str());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::PyPlotBuilder::AddEndPart()
 {
   script_ << "#-------------------------------------------------------"
           << std::endl << std::endl
           << "plt.tight_layout()" << std::endl
           << "plt.legend(loc='upper right', frameon=False)" << std::endl
           << "plt.show()" << std::endl;
-  PyRun_SimpleString(GetOutput().c_str());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::PyPlotBuilder::AddPdfOutput(const std::string & filename)
+{
+  script_ << "plt.savefig('" << filename << "',dpi=180)" << std::endl;
 }
 // --------------------------------------------------------------------
