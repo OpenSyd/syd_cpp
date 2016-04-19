@@ -40,6 +40,9 @@ void syd::PyPlotBuilder::Initialize()
           << "import matplotlib.pyplot as plt" << std::endl
           << "import matplotlib.pyplot as plt" << std::endl
           << "fig, ax = plt.subplots()" << std::endl
+          // << "current_palette = sns.color_palette('Set1', n)"<< std::endl
+          // << "# sns.palplot(current_palette)" << std::endl
+          // << "color = iter(current_palette)" << std::endl
           << "#-------------------------------------------------------"
           << std::endl << std::endl;
   Py_Initialize();
@@ -68,7 +71,7 @@ void syd::PyPlotBuilder::AddCurve(const std::vector<double> & x,
   script_ << "curve_" << current_curve_nb_ << "_y = [";
   for(auto v:y) script_ << v << ",";
   script_ << "]" << std::endl;
-  script_ << "plt.plot("
+  script_ << "base_line, = plt.plot("
           << "curve_" << current_curve_nb_ << "_x,"
           << "curve_" << current_curve_nb_ << "_y, "
           << "'" << plot_type << "'";
