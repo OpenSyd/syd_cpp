@@ -5,6 +5,9 @@ add_library(sydPlot SHARED
   sydPyPlotBuilder.cxx
   )
 
+## to declare dependencies
+target_link_libraries(sydPlot sydCore ${PYTHON_LIBRARY})
+
 #----------------------------------------------------------
 # Not really a tool, for debug only
 wrap_ggo(sydPlotTest_GGO_C sydPlotTest.ggo ../std_db/sydCommandLineDefault.ggo)
