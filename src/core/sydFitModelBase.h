@@ -47,7 +47,7 @@ namespace syd {
   public:
 
     FitModelBase();
-    ~FitModelBase() {}
+    virtual ~FitModelBase() {}
 
     class ResidualBaseType {
     public:
