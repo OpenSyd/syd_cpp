@@ -127,6 +127,17 @@ namespace syd {
   std::vector<T> arange(T start, T stop, T step = 1);
   // --------------------------------------------------------------------
 
+
+  // --------------------------------------------------------------------
+  template <typename T, typename Compare>
+  std::vector<std::size_t> sort_permutation(const std::vector<T>& vec,
+                                            Compare compare);
+  template <typename T>
+  std::vector<T> apply_permutation(const std::vector<T>& vec,
+                                   const std::vector<std::size_t>& p);
+  // --------------------------------------------------------------------
+
+
 #include "sydCommon.txx"
 
 } // end namespace
