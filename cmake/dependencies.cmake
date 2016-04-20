@@ -35,7 +35,7 @@ find_package(Gengetopt)
 # optional plot python
 OPTION(SYD_PLOT_MODULE "Plot module (require Python)." OFF)
 IF(SYD_PLOT_MODULE)
-  find_package(PythonLibs REQUIRED)
+  find_package(PythonLibs 3 REQUIRED)
   include_directories(${PYTHON_INCLUDE_DIR})
 ENDIF(SYD_PLOT_MODULE)
 #----------------------------------------------------------
