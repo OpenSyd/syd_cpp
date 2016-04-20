@@ -84,6 +84,7 @@ void syd::Timepoints::InitTable(syd::PrintTable & ta) const
     for(auto i=0; i<times.size(); i++) {
       ta.AddColumn("t"+syd::ToString(i), 1);
       ta.AddColumn("v"+syd::ToString(i), 10);
+      // ta.AddColumn("u"+syd::ToString(i), 4);
     }
   }
 
@@ -130,17 +131,20 @@ void syd::Timepoints::DumpInTable(syd::PrintTable & ta) const
     ta.Set("nb", times.size());
 
     // Add additional column if the nb of values is larger
-    int nb_col = 6;
+    int nb_col = 7;
     int previous_nb = (ta.GetNumberOfColumns()-nb_col)/2.0;
     for(auto i=previous_nb; i<times.size(); i++) {
       ta.AddColumn("t"+syd::ToString(i), 1);
-      ta.AddColumn("v"+syd::ToString(i), 1);
+      ta.AddColumn("v"+syd::ToString(i), 10);
+      // ta.AddColumn("u"+syd::ToString(i), 4);
     }
 
     for(auto i=0; i<times.size(); i++)
       ta.Set("t"+syd::ToString(i), times[i]);
     for(auto i=0; i<times.size(); i++)
       ta.Set("v"+syd::ToString(i), values[i]);
+    // for(auto i=0; i<times.size(); i++)
+    //   ta.Set("u"+syd::ToString(i), std_deviations[i]);
   }
 
   if (f == "history") {
