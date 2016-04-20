@@ -37,7 +37,7 @@ void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   // Initialisation
   params_[0] = tac.GetValue(0)/2.0; // A1
   params_[1] = GetLambdaPhysicHours(); // important
-  params_[2] = tac.GetValue(0)/2.0; // A2
+  params_[2] = -tac.GetValue(0)/2.0; // A2
 
   // need to be created each time
   residuals_.clear();
@@ -52,9 +52,11 @@ void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
                               &params_[0], &params_[1], &params_[2]);
   }
 
+  /*
   problem->SetParameterLowerBound(&params_[0], 0, 0.0);
   problem->SetParameterLowerBound(&params_[1], 0, -0.9*GetLambdaPhysicHours());
   problem->SetParameterLowerBound(&params_[2], 0, 0.0);
+  */
 }
 // --------------------------------------------------------------------
 

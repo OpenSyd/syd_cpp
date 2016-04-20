@@ -30,7 +30,7 @@ namespace syd {
   public:
 
     FitModel_f4();
-    ~FitModel_f4();
+    virtual ~FitModel_f4() {}
 
     virtual int GetNumberOfExpo() const { return 2;}
 
