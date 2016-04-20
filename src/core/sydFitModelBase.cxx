@@ -178,7 +178,6 @@ double syd::FitModelBase::ComputeSS(const syd::TimeActivityCurve & tac) const
 {
   double SS = 0.0;
   for(auto i=0; i<tac.size(); i++) {
-    //std::cout << tac.GetTime(i) << " " << tac.GetValue(i) << " " << GetValue(tac.GetTime(i)) << std::endl;
     SS += pow(tac.GetValue(i)-GetValue(tac.GetTime(i)),2);
   }
   return SS;

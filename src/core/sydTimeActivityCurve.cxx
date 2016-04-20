@@ -18,7 +18,6 @@
 
 // syd
 #include "sydTimeActivityCurve.h"
-#include "sydCommon.h"
 
 // --------------------------------------------------------------------
 syd::TimeActivityCurve::TimeActivityCurve()
@@ -47,11 +46,7 @@ void syd::TimeActivityCurve::AddValue(double time, double value, double variance
 // --------------------------------------------------------------------
 void syd::TimeActivityCurve::SortByTime()
 {
-  auto p = syd::sort_permutation(times,
-                                 [](double const& a, double const& b){ return (a<b); });
-  times = syd::apply_permutation(times, p);
-  values = syd::apply_permutation(values, p);
-  variances = syd::apply_permutation(variances, p);
+  LOG(FATAL) << "TODO TimeActivityCurve::SortByTime";
 }
 // --------------------------------------------------------------------
 

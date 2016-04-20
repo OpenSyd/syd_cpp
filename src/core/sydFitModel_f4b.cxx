@@ -72,8 +72,7 @@ syd::FitModel_f4b::ResidualType::operator()(const T* const A1,
                                            const T* const lambda_2,
                                            T* residual) const
 {
-  residual[0] = (T(y_) - (
-                          A1[0]*exp(-(lambda_1[0]+lambda) * T(x_)) +
+  residual[0] = (T(y_) - (A1[0]*exp(-(lambda_1[0]+lambda) * T(x_)) +
                           (100.0-A1[0])*exp(-(lambda_2[0]+lambda) * T(x_))
                           ));
   return true;
@@ -88,9 +87,8 @@ double syd::FitModel_f4b::GetValue(const double & t) const
   const double lambda_1 = params_[1];
   const double lambda_2 = params_[2];
   const double l = lambda_phys_hours_;
-  return
-    A1 * exp(-(l+lambda_1)*t) +
-    (100.0-A1)*exp(-(l+lambda_2)*t);
+  return A1 * (exp(-(l+lambda_1)*t) -
+               exp(-(l+lambda_2)*t));
 }
 // --------------------------------------------------------------------
 
