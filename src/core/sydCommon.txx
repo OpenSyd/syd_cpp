@@ -16,8 +16,6 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include <numeric>
-
 
 //--------------------------------------------------------------------
 // Convert float, double ... to string
