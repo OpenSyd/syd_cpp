@@ -72,11 +72,15 @@ int main(int argc, char* argv[])
           << " r2= " << f->r2 << " (" << f->iterations << ")";
 
     // Fit
-    syd::FitModelBase * model;
+    syd::FitModelBase * model=NULL;
     if (f->model_name == "f2") model = new syd::FitModel_f2;
     if (f->model_name == "f3") model = new syd::FitModel_f3;
     if (f->model_name == "f4a") model = new syd::FitModel_f4a;
+    if (f->model_name == "f4b") model = new syd::FitModel_f4b;
     if (f->model_name == "f4") model = new syd::FitModel_f4;
+    if (model == NULL) {
+      LOG(FATAL) << "Model " << f->model_name << " unknown.";
+    }
     model->SetParameters(f->params);
     model->SetLambdaPhysicHours(tp->injection->GetLambdaInHours());
     double last = tp->times[tp->times.size()-1];
