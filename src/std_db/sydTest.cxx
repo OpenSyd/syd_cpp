@@ -52,7 +52,11 @@ int main(int argc, char* argv[])
   // ------------------------------------------------------------------
   // test
   if (1) {
-
+    syd::Image::vector images;
+    typedef odb::query<syd::Image> query;
+    query q = query::patient == 1;
+    db->Query(images, q);
+    DDS(images);
   }
 
   // ------------------------------------------------------------------

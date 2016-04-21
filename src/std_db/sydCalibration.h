@@ -31,10 +31,10 @@ namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Calibration") callback(Callback)
 
-
   /// Store information about a calibration factor to quantitatively
   /// interpret pixel in images.
-  class Calibration : public syd::Record, public syd::RecordWithTags {
+  class Calibration : public syd::Record,
+                      public syd::RecordWithTags {
   public:
 
 #pragma db not_null on_delete(cascade)

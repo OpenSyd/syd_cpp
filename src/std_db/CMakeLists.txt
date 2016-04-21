@@ -63,7 +63,7 @@ target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})
 
 ##############################
 # Not really a tool, for debug only
-wrap_ggo(sydTest_GGO_C sydTest.ggo sydCommandLineDefault.ggo)
+wrap_ggo(sydTest_GGO_C sydTest.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 add_executable(sydTest sydTest.cxx ${sydTest_GGO_C})
 target_link_libraries(sydTest sydStandardDatabase)
 
@@ -208,7 +208,7 @@ target_link_libraries(sydInsertCalibration sydStandardDatabase)
 
 
 # Insert a new RoiStatistic
-wrap_ggo(sydInsertRoiStatistic_GGO_C sydInsertRoiStatistic.ggo sydCommandLineDefault.ggo)
+wrap_ggo(sydInsertRoiStatistic_GGO_C sydInsertRoiStatistic.ggo sydCommandLineWithTags.ggo  sydCommandLineDefault.ggo)
 add_executable(sydInsertRoiStatistic sydInsertRoiStatistic.cxx ${sydInsertRoiStatistic_GGO_C})
 target_link_libraries(sydInsertRoiStatistic sydStandardDatabase)
 

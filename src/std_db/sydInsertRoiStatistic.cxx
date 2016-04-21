@@ -76,6 +76,7 @@ int main(int argc, char* argv[])
         db->New(stat);
         stat->image = image;
         stat->mask = mask;
+        stat->tags = image->tags; // copy tags
         newStat = true;
       }
       // Update the value
@@ -84,6 +85,10 @@ int main(int argc, char* argv[])
         builder.SetEmptyPixelValueFlag(true);
       }
       builder.ComputeStatistic(stat);
+
+      // Tags
+      db->UpdateTagsFromCommandLine(stat->tags, args_info);
+
       // Update
       if (newStat) {
         db->Insert(stat);

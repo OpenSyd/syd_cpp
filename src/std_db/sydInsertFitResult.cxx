@@ -119,7 +119,8 @@ int main(int argc, char* argv[])
     restricted_tac.clear();
     // Select only the end of the curve (min 2 points);
     first_index = tac.FindMaxIndex();
-    first_index = std::min(first_index, tac.size()-3);
+    first_index = std::min(first_index, tac.size()-3); // FIXME
+    //    first_index = std::max((unsigned int)0, first_index);
     for(auto i=first_index; i<tac.size(); i++)
       restricted_tac.AddValue(tac.GetTime(i), tac.GetValue(i));
   }
@@ -131,7 +132,7 @@ int main(int argc, char* argv[])
   builder.SetModels(model_names);
   auto models = builder.GetModels();
   if (models.size() == 0) {
-    LOG(FATAL) << "Error, no models given. Use for example 'f3,f4a,f4'";
+    LOG(FATAL) << "Error, no models given. Use for example 'f3,f4a,f4,f4b'";
   }
 
   // Go !

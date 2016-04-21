@@ -25,7 +25,8 @@
 // --------------------------------------------------
 syd::RoiStatistic::RoiStatistic():
   syd::Record(),
-  syd::RecordWithHistory()
+  syd::RecordWithHistory(),
+  syd::RecordWithTags()
 {
   image = NULL;
   mask = NULL;
@@ -42,7 +43,7 @@ std::string syd::RoiStatistic::ToString() const
      << image->patient->name << " "
      << image->id << " "
      << image->pixel_value_unit->name << " "
-     << GetLabels(image->tags) << " "
+     << GetLabels(tags) << " "
      << (mask!= NULL? syd::ToString(mask->roitype->name):"no_mask") << " "
      << mean << " " << std_dev << " "  << n << " "
      << min << " " << max << " " << sum;
@@ -80,7 +81,7 @@ void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
   ta.Set("image", image->id);
   ta.Set("mask", (mask != NULL ? mask->roitype->name:"no_mask"));
   ta.Set("unit", image->pixel_value_unit->name);
-  ta.Set("tags", GetLabels(image->tags));
+  ta.Set("tags", GetLabels(tags));
   ta.Set("mean", mean);
   ta.Set("sd", std_dev);
   ta.Set("n", n);
