@@ -85,12 +85,12 @@ int main(int argc, char* argv[])
 
   // Check a similar image does not already exist
   if (!args_info.force_flag) {
-    syd::Image::vector similar_images;
+    syd::Image::vector similar_images = db->FindImages(injection->patient);
     syd::Tag::vector itags = images[0]->tags;
     db->UpdateTagsFromCommandLine(itags, args_info);
     std::vector<std::string> tags;
     for(auto & t:itags) tags.push_back(t->label); // copy from image0
-    db->QueryByTags<syd::Image>(similar_images, tags, injection->patient->name);
+    similar_images = syd::KeepRecordIfContainsAllTags<syd::Image>(similar_images, tags);
     if (similar_images.size() > 0) {
       LOG(FATAL) << "Error a similar image (same patient + tag + injection) already exist. Use --force to bypass this test";
     }
