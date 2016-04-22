@@ -23,17 +23,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
 #include "sydTimepointsBuilder.h"
-//#include "extExtendedDatabase.h"
-
-
-// #define ASYD_VERSION      0x0304 // 01.02
-// #define ASYD_BASE_VERSION 0x0101 // 01.01
-
-
-// #define SFZ_VERSION      SYD_VERSION + 0x010000 // 01.xx.yy
-// #define SFZ_BASE_VERSION SYD_BASE_VERSION + 0x010000 // 01.xx.yy
-
-// #pragma db model version(SFZ_BASE_VERSION, SFZ_VERSION)
+#include "sydRecordHelpers.h"
 
 // Init syd
 SYD_STATIC_INIT
@@ -52,11 +42,6 @@ int main(int argc, char* argv[])
   // ------------------------------------------------------------------
   // test
   if (1) {
-    syd::Image::vector images;
-    typedef odb::query<syd::Image> query;
-    query q = query::patient == 1;
-    db->Query(images, q);
-    DDS(images);
   }
 
   // ------------------------------------------------------------------

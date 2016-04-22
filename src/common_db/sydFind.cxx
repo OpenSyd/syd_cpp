@@ -21,6 +21,7 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
+#include "sydRecordHelpers.h"
 
 // Init syd
 SYD_STATIC_INIT
@@ -59,14 +60,14 @@ int main(int argc, char* argv[])
 
   // Find all records
   syd::Record::vector records;
-  if (args_info.tag_given) {
-    std::vector<std::string> tag_names;
-    for(auto i=0; i<args_info.tag_given; i++)
-      syd::GetWords(tag_names, args_info.tag_arg[i]);
-    db->QueryByTag(records, table_name, tag_names);
-  }
-  else { // Query all record
-    db->Query(records, table_name);
+  db->Query(records, table_name); // query all
+
+  // Only keep the ones with the given tags (we do not check that the tags exist)
+  if (args_info.tag_given and records.size() >0) {
+      std::vector<std::string> tag_names;
+      for(auto i=0; i<args_info.tag_given; i++)
+        syd::GetWords(tag_names, args_info.tag_arg[i]);
+      records = syd::KeepRecordIfContainsAllTags<syd::Record>(records, tag_names);
   }
 
   // Grep

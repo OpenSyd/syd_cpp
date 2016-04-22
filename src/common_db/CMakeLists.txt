@@ -35,7 +35,9 @@ set(sydCommonDatabase_src
   sydDatabaseManager.cxx
   sydDatabaseInformation.cxx
   sydPluginManager.cxx
-  sydDatabaseInformation.cxx)
+  sydDatabaseInformation.cxx
+  sydRecordHelpers.cxx
+  )
 
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   # with clang on osx (apple), needed for static member def

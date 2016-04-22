@@ -127,10 +127,18 @@ namespace syd {
     virtual void SetDatabasePointer(odb::callback_event event, odb::database & d) const;
 
   }; // end of class
+  // --------------------------------------------------------------------
 
+
+
+  // --------------------------------------------------------------------
+  bool IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2);
 
 #include "sydRecord.txx"
+  // --------------------------------------------------------------------
 
+
+  // --------------------------------------------------------------------
   /// odb::access is needed for polymorphism
 #define TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, INHERIT_TABLE_NAME)    \
   typedef std::shared_ptr<TABLE_NAME> pointer;                          \
@@ -149,7 +157,6 @@ namespace syd {
 #define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)        \
   TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, syd::Record)
 
-bool IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2);
 
 } // end namespace
 // --------------------------------------------------------------------
