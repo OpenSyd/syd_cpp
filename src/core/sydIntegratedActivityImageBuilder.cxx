@@ -38,10 +38,12 @@ syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
   auto f2  = new syd::FitModel_f2;
   auto f3  = new syd::FitModel_f3;
   auto f4a = new syd::FitModel_f4a;
+  auto f4b = new syd::FitModel_f4b;
   auto f4  = new syd::FitModel_f4;
   all_models_.push_back(f2);
   all_models_.push_back(f3);
   all_models_.push_back(f4a);
+  all_models_.push_back(f4b);
   all_models_.push_back(f4);
 }
 // --------------------------------------------------------------------
@@ -86,6 +88,15 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityInROI()
   // Solve
   int best;
   best = FitModels(tac_);
+
+  // Print
+  for(auto m:models_) {
+    DD(m->GetName());
+    DD(m->ComputeR2(tac_));
+    DD(m->ComputeSS(tac_));
+    DD(m->ComputeAUC(tac_, image_lambda_phys_in_hour_));
+    DD(m->ceres_summary_.FullReport());
+  }
 
   if (best != -1) {
     current_model_ = models_[best];
@@ -241,7 +252,7 @@ int syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac)
   int best = -1;
   double R2_threshold = R2_min_threshold_;
   double best_AICc = 666;
-  double best_R2 = 0.0;
+  double best_R2 = -99999999990.0;
   for(auto i=0; i<models_.size(); i++) {
     auto & m = models_[i];
     if (m->IsAcceptable()) {
@@ -335,6 +346,13 @@ void syd::IntegratedActivityImageBuilder::InitSolver()
   ceres_options_->linear_solver_type = ceres::DENSE_QR; // because few parameters/data
   ceres_options_->minimizer_progress_to_stdout = false;
   ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
+
+  DD(ceres_options_->min_line_search_step_size);
+  DD(ceres_options_->max_line_search_step_contraction);
+  DD(ceres_options_->function_tolerance);
+  DD(ceres_options_->parameter_tolerance);
+  DD(ceres_options_->num_threads);
+
   //ceres_options_->trust_region_strategy_type = ceres::DOGLEG;// (LM seems faster)
   //ceres_options_->dogleg_type = ceres::SUBSPACE_DOGLEG;
   ceres_options_->logging_type = ceres::SILENT;
