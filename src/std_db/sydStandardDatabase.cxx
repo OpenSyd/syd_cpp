@@ -176,10 +176,29 @@ syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & nam
   try {
     QueryOne(patient, q);
   } catch(std::exception & e) {
-    EXCEPTION("Error in FindPatient with param: " << name_or_study_id << std::endl
+    EXCEPTION("No patient with name/sid = '" << name_or_study_id << "' found." << std::endl
               << "Error message is: " << e.what());
   }
   return patient;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::StandardDatabase::FindImages(const syd::Patient::pointer patient) const
+{
+  odb::query<syd::Image> q = odb::query<syd::Image>::patient == patient->id;
+  syd::Image::vector images;
+  Query(images, q);
+  return images;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::StandardDatabase::FindImages(const std::string & patient_name) const
+{
+  return FindImages(FindPatient(patient_name));
 }
 // --------------------------------------------------------------------
 
@@ -364,35 +383,6 @@ syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Imag
     EXCEPTION("Cannot find calibration for this image: " << image);
   }
   return calibration;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::StandardDatabase::QueryByTag(generic_record_vector & records,
-                                       const std::string table_name,
-                                       const std::vector<std::string> & tag_names) // need patient name ?
-{
-  std::string t = syd::ToLowerCase(table_name);
-
-  if (t == "image") return QueryByTags<syd::Image>(records, tag_names);
-  if (t == "timepoints") return QueryByTags<syd::Timepoints>(records, tag_names);
-
-  if (t == "roistatistic") {
-    // Specific case here, we search in the image associated with the RoiStatistic
-    syd::Record::vector images;
-    QueryByTag(images, "Image", tag_names);
-    std::vector<syd::IdType> ids;
-    for(auto image:images) ids.push_back(image->id);
-    syd::RoiStatistic::vector stats;
-    typedef odb::query<syd::RoiStatistic> Q;
-    Q q = Q::image.in_range(ids.begin(), ids.end());
-    Query<syd::RoiStatistic>(stats, q);
-    for(auto s:stats) records.push_back(s);
-    return;
-  }
-
-  EXCEPTION("Query by tag could only be used with table that contains tags");
 }
 // --------------------------------------------------------------------
 

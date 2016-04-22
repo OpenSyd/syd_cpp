@@ -23,6 +23,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydRoiStatisticBuilder.h"
 #include "sydScaleImageBuilder.h"
+#include "sydRecordHelpers.h"
 
 #include <boost/tokenizer.hpp>
 
@@ -89,9 +90,9 @@ int main(int argc, char* argv[])
 
       if (type != "") {
         // Find image to copy info (dicom etc)
-        syd::Image::vector inputs;
+        syd::Image::vector inputs = db->FindImages(patient_name);
         std::vector<std::string> tag_names = {rad_name, study_name, "tia"};
-        db->QueryByTags<syd::Image>(inputs, tag_names, patient_name);
+        inputs = syd::KeepRecordIfContainsAllTags<syd::Image>(inputs, tag_names);
         if (inputs.size() < 1) {
           LOG(FATAL) << "Cannot find initial image to copy";
         }
@@ -102,7 +103,8 @@ int main(int argc, char* argv[])
 
         // Check if such an image already exist
         tag_names = {rad_name, study_name, type};
-        db->QueryByTags<syd::Image>(inputs, tag_names, patient_name);
+        inputs = db->FindImages(patient_name);
+        inputs = syd::KeepRecordIfContainsAllTags<syd::Image>(inputs, tag_names);
         if (inputs.size() != 0) {
           LOG(WARNING) << "Image " << type << " already exist for this patient/rad: " << inputs[0] << " (skip)";
           continue;

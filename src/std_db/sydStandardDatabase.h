@@ -70,6 +70,8 @@ namespace syd {
                                               const std::string & calib_tag);
     syd::RoiMaskImage::pointer FindRoiMaskImage(const syd::Image::pointer image,
                                                 const std::string & roi_name);
+    syd::Image::vector FindImages(const std::string & patient_name) const;
+    syd::Image::vector FindImages(const syd::Patient::pointer patient) const;
 
     /// Automatically insert some default records
     void InsertDefaultRecords(const std::string & def);
@@ -85,28 +87,6 @@ namespace syd {
 
     template<class ArgsInfo>
     void UpdateTagsFromCommandLine(syd::Tag::vector & tags, ArgsInfo & args_info);
-
-    /// Query by tag, generic function
-    virtual void QueryByTag(generic_record_vector & records,
-                            const std::string table_name,
-                            const std::vector<std::string> & tag_names);
-
-    /// Query by tag, type specific function
-    template<class RecordType>
-    void QueryByTags(generic_record_vector & records,
-                    const std::vector<std::string> & tag_names,
-                    const std::string & patient_name="all");
-
-    /// Query by tag, type specific, for a single tag
-    template<class RecordType>
-    void QueryByTag(typename RecordType::vector & records,
-                    const std::string & tag_name,
-                    const std::string & patient_name="all");
-
-    template<class RecordType>
-    void QueryByTags(typename RecordType::vector & records,
-                     const std::vector<std::string> & tag_names,
-                     const std::string & patient_name="all");
 
     template<class RecordType>
     void SortAndPrint(typename RecordType::vector & records);
