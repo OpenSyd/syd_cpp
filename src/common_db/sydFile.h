@@ -48,7 +48,6 @@ namespace syd {
 
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
-    void EraseAssociatedFile() const;
 
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
@@ -59,6 +58,8 @@ namespace syd {
 
   protected:
     File();
+
+    void SetFilenamesToErase() const;
 
   }; // end of class
 } // end namespace

@@ -341,12 +341,16 @@ void syd::Database::Delete(std::shared_ptr<RecordType> record)
     t.commit();
   }
   catch (const odb::exception& e) {
+    files_to_delete_.clear();
     EXCEPTION("Error while deleting element "
               << record << " in the table '" << RecordType::GetStaticTableName()
               << "', message is: " << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());
   }
+  // post deletion for files
+  DD("post deletion 1 record");
+  DeleteFiles();
 }
 // ------------------------------------------------------------------------
 
@@ -361,6 +365,7 @@ void syd::Database::Delete(std::vector<std::shared_ptr<RecordType>> & records)
     t.commit();
   }
   catch (const odb::exception& e) {
+    files_to_delete_.clear();
     EXCEPTION("Error while deleting "
               << records.size() << " elements in the table '"
               << RecordType::GetStaticTableName()
@@ -368,5 +373,8 @@ void syd::Database::Delete(std::vector<std::shared_ptr<RecordType>> & records)
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());
   }
+  // post deletion for files
+  DD("post deletion n records");
+  DeleteFiles();
 }
 // ------------------------------------------------------------------------

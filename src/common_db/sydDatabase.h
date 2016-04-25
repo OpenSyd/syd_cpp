@@ -229,6 +229,9 @@ namespace syd {
     void Delete(std::shared_ptr<RecordType> record);
     template<class RecordType>
     void Delete(std::vector<std::shared_ptr<RecordType>> & records);
+
+    /// Add a file to the files to delete (used by sydFile)
+    void AddFilenameToDelete(const std::string & f);
     // ------------------------------------------------------------------------
 
 
@@ -298,6 +301,11 @@ namespace syd {
     /// Declare a new table in the database
     template<class Record>
     void AddTable();
+
+    /// Delete files when needed
+    void DeleteFiles();
+
+    std::vector<std::string> files_to_delete_;
 
     /// Map that contains the association between names and tables
     MapOfTablesType map_;

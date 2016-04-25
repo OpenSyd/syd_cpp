@@ -364,6 +364,27 @@ void syd::Database::Delete(generic_record_vector & records,
 
 
 // --------------------------------------------------------------------
+void syd::Database::DeleteFiles()
+{
+  for(auto f:files_to_delete_) {
+    if (std::remove(f.c_str()) != 0) {
+      LOG(WARNING) << "Could not delete the file " << f;
+    }
+  }
+  files_to_delete_.clear();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::AddFilenameToDelete(const std::string & f)
+{
+  files_to_delete_.push_back(f);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Database::Update(generic_record_pointer record,
                            std::string field_name,
                            std::string value)
