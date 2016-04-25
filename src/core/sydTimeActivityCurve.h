@@ -27,6 +27,7 @@ using namespace sydlog;
 
 // std
 #include <vector>
+#include <memory>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -34,6 +35,10 @@ namespace syd {
   class TimeActivityCurve
   {
   public:
+
+    typedef std::shared_ptr<TimeActivityCurve> pointer;
+
+    static pointer New() { return std::make_shared<syd::TimeActivityCurve>(); }
 
     TimeActivityCurve();
     ~TimeActivityCurve();
@@ -54,6 +59,12 @@ namespace syd {
     unsigned int FindMaxIndex();
     double Integrate_Trapeze(int start, int end) const;
     void clear();
+
+    void reserve(int n) {
+      times.reserve(n);
+      values.reserve(n);
+      variances.reserve(n);
+    }
 
     friend std::ostream& operator<<(std::ostream& os, const TimeActivityCurve & p);
 

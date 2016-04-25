@@ -70,9 +70,12 @@ namespace syd {
     void SetRestrictedTACFlag(bool b) { restricted_tac_flag_ = b; }
     void SetAdditionalPoint(bool b, double time, double value);
 
+    void GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
+                          syd::TimeActivityCurve::pointer restricted_tac);
+
     // Main function
     void CreateIntegratedActivityImage();
-    void CreateIntegratedActivityInROI();
+    void CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac);
     FitOutputImage_Success * GetSuccessOutput() { return success_output_; }
     FitOutputImage_AUC * GetOutput() { return auc_output_; }
     std::vector<FitOutputImage*> & GetOutputs() { return outputs_; }
@@ -104,7 +107,7 @@ namespace syd {
     syd::FitOutputImage_AUC * auc_output_;
 
     void InitSolver();
-    int FitModels(TimeActivityCurve & tac);
+    int FitModels(syd::TimeActivityCurve::pointer tac);
     void InitInputData();
 
     // If 'true', only use the last part of the tac, from the max value to then end (2 points at min)

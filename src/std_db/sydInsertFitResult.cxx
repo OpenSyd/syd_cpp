@@ -109,22 +109,9 @@ int main(int argc, char* argv[])
   }
 
   // Set input TAC
-  syd::TimeActivityCurve tac;
-  tp2->GetTAC(tac);
-
-  // restricted
-  syd::TimeActivityCurve restricted_tac = tac;
-  unsigned int first_index = 0;
-  if (args_info.restricted_tac_flag) {
-    restricted_tac.clear();
-    // Select only the end of the curve (min 2 points);
-    first_index = tac.FindMaxIndex();
-    first_index = std::min(first_index, tac.size()-3); // FIXME
-    //    first_index = std::max((unsigned int)0, first_index);
-    for(auto i=first_index; i<tac.size(); i++)
-      restricted_tac.AddValue(tac.GetTime(i), tac.GetValue(i));
-  }
-  builder.SetInputTAC(restricted_tac);
+  syd::TimeActivityCurve::pointer tac = syd::TimeActivityCurve::New();
+  tp2->GetTAC(*tac);
+  DD(*tac);
 
   // Set the models
   std::vector<std::string> model_names;
@@ -136,7 +123,8 @@ int main(int argc, char* argv[])
   }
 
   // Go !
-  builder.CreateIntegratedActivityInROI();
+  builder.SetRestrictedTACFlag(args_info.restricted_tac_flag);
+  builder.CreateIntegratedActivity(tac);
 
   // output ROI
   syd::FitResult::pointer res;
@@ -149,7 +137,10 @@ int main(int argc, char* argv[])
     res->r2 = r2->value;
     res->model_name = models[mi]->GetName();
     res->params = models[mi]->GetParameters();
-    res->first_index = first_index;
+    res->first_index = 0; :/ FIXME
+    if (args_info.restricted_tac_flag) {
+      DD("TODO RESTRICTED_TAC_FLAG");
+    }
     res->iterations = iter->value;
     db->UpdateTagsFromCommandLine(res->tags, args_info);
 

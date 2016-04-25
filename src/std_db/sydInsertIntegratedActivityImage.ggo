@@ -7,7 +7,7 @@ description "Create a new image with TIA in every pixels
 - <list_of_image_ids>     list of image id to integrate
 "
 
-option "min_activity"    - "Dont fit if activity lower than this value"       float default="0.01" no
+option "min_activity"    - "Dont fit if activity lower than this value"       float default="0" no
 option "gauss"   	 g "Sigma of preprocess Gaussian filter (0=no)"       float default="0" no
 option "median_filter"   - "Apply median filter at the end"                   flag off
 option "fill_holes"      f "Try to fill holes using given radius"             int default="3" no
