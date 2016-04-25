@@ -349,7 +349,6 @@ void syd::Database::Delete(std::shared_ptr<RecordType> record)
               << std::endl << GetLastSQLQuery());
   }
   // post deletion for files
-  DD("post deletion 1 record");
   DeleteFiles();
 }
 // ------------------------------------------------------------------------
@@ -374,7 +373,6 @@ void syd::Database::Delete(std::vector<std::shared_ptr<RecordType>> & records)
               << std::endl << GetLastSQLQuery());
   }
   // post deletion for files
-  DD("post deletion n records");
   DeleteFiles();
 }
 // ------------------------------------------------------------------------
