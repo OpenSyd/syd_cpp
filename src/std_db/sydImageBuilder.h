@@ -34,7 +34,8 @@ namespace syd {
     ImageBuilder(syd::StandardDatabase * db):DatabaseFilter(db) { }
 
     /// Create an empty image (also create associated file). Not inserted in the db.
-    syd::Image::pointer NewMHDImage(syd::Patient::pointer patient);
+    //    syd::Image::pointer NewMHDImage(syd::Patient::pointer patient);
+    syd::Image::pointer NewMHDImage(syd::Injection::pointer injection);
 
     /// Create a new image and copy fields. Not inserted in the db.
     syd::Image::pointer NewMHDImageLike(syd::Image::pointer image);

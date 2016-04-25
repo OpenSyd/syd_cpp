@@ -49,35 +49,19 @@ typename syd::Record::vector syd::BindFrom(const typename RecordType::vector & r
 // --------------------------------------------------------------------
 
 
-// template<class RecordType>
-// void syd::KeepIds(syd::Record::vector & records, const typename RecordType::vector & toKeep)
-// {
-//   DD("ok");
-//   for(auto s:toKeep) {
-
-//   }
-// }
+// --------------------------------------------------------------------
+template<class RecordType>
+typename RecordType::vector
+syd::KeepRecordIfContainsAllTags(const typename RecordType::vector & records,
+                                 const std::string & tag_name)
+{
+  std::vector<std::string> t = {tag_name};
+  return KeepRecordIfContainsAllTags<RecordType>(records, t);
+}
 // --------------------------------------------------------------------
 
 
-
-/*
-syd::Record::vector
-KeepRecordIfContainsAllTags(const syd::Record::vector & records,
-                            const std::vector<std::string> & tag_names)
-{
-  syd::Record::vector results;
-  for(auto record:records) {
-    auto x = std::dynamic_pointer_cast<syd::RecordWithTags>(record);
-    if (x == NULL) {
-      LOG(FATAL) << "The record does not contains tags, it is a " << record->GetTableName();
-    }
-    if (ContainsAllTags(x, tag_names)) results.push_back(record);
-  }
-  return results;
-}
-*/
-
+// --------------------------------------------------------------------
 template<class RecordType>
 typename RecordType::vector
 syd::KeepRecordIfContainsAllTags(const typename RecordType::vector & records,
@@ -93,3 +77,4 @@ syd::KeepRecordIfContainsAllTags(const typename RecordType::vector & records,
   }
   return results;
 }
+// --------------------------------------------------------------------

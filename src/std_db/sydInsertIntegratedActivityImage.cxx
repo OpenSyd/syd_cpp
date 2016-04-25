@@ -28,6 +28,7 @@
 #include "sydImageFillHoles.h"
 #include "sydImageBuilder.h"
 #include "sydImage_GaussianFilter.h"
+#include "sydRecordHelpers.h"
 
 // itk in syd source
 #include <itkMedianWithMaskImageFilter.h>

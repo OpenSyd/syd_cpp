@@ -35,6 +35,11 @@ namespace syd {
   KeepRecordIfContainsAllTags(const typename RecordType::vector & records,
                               const std::vector<std::string> & tag_names);
 
+  template<class RecordType>
+  typename RecordType::vector
+  KeepRecordIfContainsAllTags(const typename RecordType::vector & records,
+                              const std::string & tag_name);
+
   bool ContainsAllTags(const syd::RecordWithTags::pointer & record,
                        const std::vector<std::string> & tag_names);
 
