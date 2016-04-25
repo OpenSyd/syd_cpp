@@ -131,7 +131,6 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
   syd::RecordWithHistory::Callback(event,db, db_);
 
   if (event == odb::callback_event::post_erase) {
-    DD("image post erase const");
     for(auto f:files) db.erase(f);
   }
   if (event == odb::callback_event::pre_persist) {
@@ -152,7 +151,6 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db)
   syd::Record::Callback(event,db);
   syd::RecordWithHistory::Callback(event,db, db_);
   if (event == odb::callback_event::post_erase) {
-    DD("image post erase");
     for(auto f:files) db.erase(f);
   }
 }
