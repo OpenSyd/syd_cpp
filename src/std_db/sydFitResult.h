@@ -20,6 +20,7 @@
 #define SYDFITRESULT_H
 
 // syd
+#include "sydFitModels.h"
 #include "sydTimepoints.h"
 
 // --------------------------------------------------------------------
@@ -75,6 +76,9 @@ namespace syd {
 
     /// Print table dump
     virtual void DumpInTable(syd::PrintTable & table) const;
+
+    /// Create a model from the current result
+    syd::FitModelBase * NewModel();
 
   protected:
     FitResult();

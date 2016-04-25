@@ -191,3 +191,22 @@ std::string syd::FitResult::ToStringForMD5() const
   return ss.str();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::FitModelBase * syd::FitResult::NewModel()
+{
+  syd::FitModelBase * model=NULL;
+  if (model_name == "f2") model = new syd::FitModel_f2;
+  if (model_name == "f3") model = new syd::FitModel_f3;
+  if (model_name == "f4a") model = new syd::FitModel_f4a;
+  if (model_name == "f4b") model = new syd::FitModel_f4b;
+  if (model_name == "f4") model = new syd::FitModel_f4;
+  if (model == NULL) {
+    LOG(FATAL) << "Model " << model_name << " unknown.";
+  }
+  model->SetParameters(params);
+  model->SetLambdaPhysicHours(timepoints->injection->GetLambdaInHours());
+  return model;
+}
+// --------------------------------------------------------------------
