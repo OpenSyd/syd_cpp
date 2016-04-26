@@ -23,7 +23,6 @@
 // --------------------------------------------------------------------
 syd::FitOutputImage::FitOutputImage()
 {
-  use_current_tac = false;
   UseImageFlag = false;
 }
 // --------------------------------------------------------------------
@@ -58,11 +57,26 @@ syd::FitOutputImage_AUC::FitOutputImage_AUC():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_AUC::Update(const syd::TimeActivityCurve & tac,
-                                     const syd::TimeActivityCurve & restricted_tac,
-                                     const syd::FitModelBase * model)
+void syd::FitOutputImage_AUC::Update()
 {
-  double r = model->ComputeAUC(tac, use_current_tac);
+  double r = model_->ComputeAUC(initial_tac_, index_);
+  SetValue(r);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::FitOutputImage_Integrate::FitOutputImage_Integrate():FitOutputImage()
+{
+  filename = "integrate.mhd";
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitOutputImage_Integrate::Update()
+{
+  double r = model_->Integrate();
   SetValue(r);
 }
 // --------------------------------------------------------------------
@@ -77,11 +91,9 @@ syd::FitOutputImage_R2::FitOutputImage_R2():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_R2::Update(const syd::TimeActivityCurve & tac,
-                                    const syd::TimeActivityCurve & restricted_tac,
-                                    const syd::FitModelBase * model)
+void syd::FitOutputImage_R2::Update()
 {
-  double R2 = model->ComputeR2(tac, use_current_tac);
+  double R2 = model_->ComputeR2(working_tac_);
   SetValue(R2);
 }
 // --------------------------------------------------------------------
@@ -97,11 +109,9 @@ syd::FitOutputImage_Model::FitOutputImage_Model():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Model::Update(const syd::TimeActivityCurve & tac,
-                                       const syd::TimeActivityCurve & restricted_tac,
-                                       const syd::FitModelBase * model)
+void syd::FitOutputImage_Model::Update()
 {
-  int id = model->id_;
+  int id = model_->id_;
   SetValue(id);
 }
 // --------------------------------------------------------------------
@@ -116,12 +126,10 @@ syd::FitOutputImage_Iteration::FitOutputImage_Iteration():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Iteration::Update(const syd::TimeActivityCurve & tac,
-                                           const syd::TimeActivityCurve & restricted_tac,
-                                           const syd::FitModelBase * model)
+void syd::FitOutputImage_Iteration::Update()
 {
-  int it = model->ceres_summary_.num_unsuccessful_steps +
-    model->ceres_summary_.num_successful_steps;
+  int it = model_->ceres_summary_.num_unsuccessful_steps +
+    model_->ceres_summary_.num_successful_steps;
   SetValue(it);
 }
 // --------------------------------------------------------------------
@@ -136,9 +144,7 @@ syd::FitOutputImage_Success::FitOutputImage_Success():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Success::Update(const syd::TimeActivityCurve & tac,
-                                       const syd::TimeActivityCurve & restricted_tac,
-                                       const syd::FitModelBase * model)
+void syd::FitOutputImage_Success::Update()
 {
   SetValue(1);
 }
@@ -154,11 +160,9 @@ syd::FitOutputImage_EffHalfLife::FitOutputImage_EffHalfLife():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_EffHalfLife::Update(const syd::TimeActivityCurve & tac,
-                                             const syd::TimeActivityCurve & restricted_tac,
-                                             const syd::FitModelBase * model)
+void syd::FitOutputImage_EffHalfLife::Update()
 {
-  double h = model->GetEffHalfLife();
+  double h = model_->GetEffHalfLife();
   SetValue(h);
 }
 // --------------------------------------------------------------------
@@ -173,11 +177,9 @@ syd::FitOutputImage_Lambda::FitOutputImage_Lambda():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Lambda::Update(const syd::TimeActivityCurve & tac,
-                                        const syd::TimeActivityCurve & restricted_tac,
-                                        const syd::FitModelBase * model)
+void syd::FitOutputImage_Lambda::Update()
 {
-  double h = model->GetLambda(0);
+  double h = model_->GetLambda(0);
   SetValue(h);
 }
 // --------------------------------------------------------------------
@@ -192,11 +194,8 @@ syd::FitOutputImage_NbOfPointsForFit::FitOutputImage_NbOfPointsForFit():FitOutpu
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_NbOfPointsForFit::Update(const syd::TimeActivityCurve & tac,
-                                                  const syd::TimeActivityCurve & restricted_tac,
-                                                  const syd::FitModelBase * model)
+void syd::FitOutputImage_NbOfPointsForFit::Update()
 {
-  if (restricted_tac_flag_) SetValue(restricted_tac.size());
-  else SetValue(tac.size());
+  SetValue(working_tac_->size());
 }
 // --------------------------------------------------------------------

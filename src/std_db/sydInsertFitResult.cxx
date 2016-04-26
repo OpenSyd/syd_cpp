@@ -111,7 +111,6 @@ int main(int argc, char* argv[])
   // Set input TAC
   syd::TimeActivityCurve::pointer tac = syd::TimeActivityCurve::New();
   tp2->GetTAC(*tac);
-  DD(*tac);
 
   // Set the models
   std::vector<std::string> model_names;
@@ -133,14 +132,12 @@ int main(int argc, char* argv[])
 
   auto mi = best_model->value-1; // because start at one
   if (mi != -1) {
-    res->auc = builder.GetOutput()->value;
+    if (args_info.restricted_tac_flag) res->auc = builder.GetAUCOutput()->value;
+    else res->auc = models[mi]->Integrate();
     res->r2 = r2->value;
     res->model_name = models[mi]->GetName();
     res->params = models[mi]->GetParameters();
-    res->first_index = 0; // FIXME
-    if (args_info.restricted_tac_flag) {
-      DD("TODO RESTRICTED_TAC_FLAG");
-    }
+    res->first_index = builder.GetAUCOutput()->index_;
     res->iterations = iter->value;
     db->UpdateTagsFromCommandLine(res->tags, args_info);
 

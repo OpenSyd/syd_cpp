@@ -207,7 +207,6 @@ int main(int argc, char* argv[])
     builder.AddOutputImage(iter);
     builder.AddOutputImage(eff_half_life);
     builder.AddOutputImage(nb_points);
-    nb_points->restricted_tac_flag_ = args_info.restricted_tac_flag;
     builder.AddOutputImage(lambda);
   }
   builder.SetMask(mask);
@@ -225,7 +224,7 @@ int main(int argc, char* argv[])
   builder.CreateIntegratedActivityImage();
 
   // Get main output
-  auto auc = builder.GetOutput();
+  auto auc = builder.GetAUCOutput();
   auto success = builder.GetSuccessOutput();
 
   // Post processing with median filter

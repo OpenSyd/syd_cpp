@@ -84,10 +84,11 @@ namespace syd {
     double Integrate(double a, double b) const;
     double Integrate() const;
 
-    double ComputeAUC(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
-    double ComputeR2(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
-    double ComputeAICc(const syd::TimeActivityCurve & tac) const;
-    double ComputeSS(const syd::TimeActivityCurve & tac) const;
+    double ComputeAUC_OLD(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
+    double ComputeAUC(const syd::TimeActivityCurve::pointer tac, int index) const;
+    double ComputeR2(const syd::TimeActivityCurve::pointer tac) const;
+    double ComputeAICc(const syd::TimeActivityCurve::pointer tac) const;
+    double ComputeSS(const syd::TimeActivityCurve::pointer tac) const;
     bool IsAICcValid(int N) const;
     virtual bool IsAcceptable() const;
 

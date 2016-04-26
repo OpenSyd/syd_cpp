@@ -30,6 +30,7 @@ namespace syd {
   class FitOutputImage;
   class FitOutputImage_Success;
   class FitOutputImage_AUC;
+  class FitOutputImage_Integrate;
 
   class ModelResult {
   public:
@@ -70,14 +71,15 @@ namespace syd {
     void SetRestrictedTACFlag(bool b) { restricted_tac_flag_ = b; }
     void SetAdditionalPoint(bool b, double time, double value);
 
-    void GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
-                          syd::TimeActivityCurve::pointer restricted_tac);
+    int GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
+                         syd::TimeActivityCurve::pointer restricted_tac);
 
     // Main function
     void CreateIntegratedActivityImage();
     void CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac);
     FitOutputImage_Success * GetSuccessOutput() { return success_output_; }
-    FitOutputImage_AUC * GetOutput() { return auc_output_; }
+    FitOutputImage_AUC * GetAUCOutput() { return auc_output_; }
+    FitOutputImage_Integrate * GetIntegrateOutput() { return integrate_output_; }
     std::vector<FitOutputImage*> & GetOutputs() { return outputs_; }
 
     // Other functions
@@ -105,6 +107,7 @@ namespace syd {
     // Output
     syd::FitOutputImage_Success * success_output_;
     syd::FitOutputImage_AUC * auc_output_;
+    syd::FitOutputImage_Integrate * integrate_output_;
 
     void InitSolver();
     int FitModels(syd::TimeActivityCurve::pointer tac);

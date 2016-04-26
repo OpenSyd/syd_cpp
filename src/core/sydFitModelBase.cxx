@@ -115,7 +115,7 @@ double syd::FitModelBase::Integrate() const
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac, bool use_current_tac) const
+double syd::FitModelBase::ComputeAUC_OLD(const syd::TimeActivityCurve & tac, bool use_current_tac) const
 {
   // Simple integration if full model
   if (!use_current_tac) return Integrate();
@@ -146,25 +146,39 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac, bool us
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve & tac, bool use_current_tac) const
+double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve::pointer tac, int index) const
 {
-  const syd::TimeActivityCurve * current = &tac;
-  if (use_current_tac) {
-    if (!current_tac) {
-      LOG(FATAL) << "Could not compute ComputeAUC with restricted tac, 'current_tac' must be set";
-    }
-    current = current_tac;
-  }
+  double AUC = 0.0;
 
+  // Integrate from 0 to first time of the restricted tac
+  double starting_part_model = Integrate(0.0, tac->GetTime(index));
+
+  // Integrate from 0 to infinity
+  double total = Integrate();
+
+  // Trapeze intregration of the first curve part
+  double paralelogram_part = tac->Integrate_Trapeze(0, index);
+
+  // Final AUC is total integration, minus start model integration, plus trapez part.
+  AUC = total - starting_part_model + paralelogram_part;
+
+  return AUC;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve::pointer tac) const
+{
   double mean = 0.0;
-  for(auto i=0; i<current->size(); i++) mean += current->GetValue(i);
-  mean = mean / (double)current->size();
+  for(auto i=0; i<tac->size(); i++) mean += tac->GetValue(i);
+  mean = mean / (double)tac->size();
 
-  double SS_res = ComputeSS(*current);
+  double SS_res = ComputeSS(tac);
 
   double SS_tot = 0.0;
-  for(auto i=0; i<current->size(); i++) {
-    SS_tot += pow(current->GetValue(i)-mean, 2);
+  for(auto i=0; i<tac->size(); i++) {
+    SS_tot += pow(tac->GetValue(i)-mean, 2);
   }
 
   double R2 = 1.0 - (SS_res/SS_tot);
@@ -174,12 +188,12 @@ double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve & tac, bool use
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeSS(const syd::TimeActivityCurve & tac) const
+double syd::FitModelBase::ComputeSS(const syd::TimeActivityCurve::pointer tac) const
 {
   double SS = 0.0;
-  for(auto i=0; i<tac.size(); i++) {
+  for(auto i=0; i<tac->size(); i++) {
     //std::cout << tac.GetTime(i) << " " << tac.GetValue(i) << " " << GetValue(tac.GetTime(i)) << std::endl;
-    SS += pow(tac.GetValue(i)-GetValue(tac.GetTime(i)),2);
+    SS += pow(tac->GetValue(i)-GetValue(tac->GetTime(i)),2);
   }
   return SS;
 }
@@ -196,12 +210,12 @@ bool syd::FitModelBase::IsAICcValid(int N) const
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeAICc(const syd::TimeActivityCurve & tac) const
+double syd::FitModelBase::ComputeAICc(const syd::TimeActivityCurve::pointer tac) const
 {
   // See Glatting 2007 equ (4)
   // See Kletting 2013 eq (5) / (6) and erratum
   // See Burnham2011 and others
-  double N = tac.size();
+  double N = tac->size();
   double K = GetK();
   double SS = ComputeSS(tac);
 
