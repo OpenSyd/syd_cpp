@@ -81,10 +81,10 @@ namespace syd {
 
     friend std::ostream& operator<<(std::ostream& os, const FitModelBase & p);
 
-    double Integrate(double a, double b, double l_phys) const;
-    double Integrate(double l_phys) const;
+    double Integrate(double a, double b) const;
+    double Integrate() const;
 
-    double ComputeAUC(const syd::TimeActivityCurve & tac, double l_phys, bool use_current_tac=false) const;
+    double ComputeAUC(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
     double ComputeR2(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
     double ComputeAICc(const syd::TimeActivityCurve & tac) const;
     double ComputeSS(const syd::TimeActivityCurve & tac) const;
@@ -93,11 +93,7 @@ namespace syd {
 
     virtual double GetA(const int i) const { LOG(FATAL) << "GetA to implement " << GetName(); return 0.0; }
     virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); return 0.0; }
-
-    virtual double GetEffHalfLife() const {
-      double h = GetLambda(0) + GetLambdaPhysicHours();
-      return log(2.0)/h;
-    }
+    virtual double GetEffHalfLife() const;
 
     bool start_from_max_flag;
 

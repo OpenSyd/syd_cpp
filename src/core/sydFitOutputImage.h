@@ -55,8 +55,7 @@ namespace syd {
   /// Compute and store the AUC (Area Under the Curve)
   class FitOutputImage_AUC: public FitOutputImage {
   public:
-    double lambda_phys_hours_;
-    FitOutputImage_AUC(double l);
+    FitOutputImage_AUC();
     virtual void Update(const syd::TimeActivityCurve & tac,
                         const syd::TimeActivityCurve & restricted_tac,
                         const syd::FitModelBase * model);

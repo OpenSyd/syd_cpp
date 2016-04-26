@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
     res->r2 = r2->value;
     res->model_name = models[mi]->GetName();
     res->params = models[mi]->GetParameters();
-    res->first_index = 0; :/ FIXME
+    res->first_index = 0; // FIXME
     if (args_info.restricted_tac_flag) {
       DD("TODO RESTRICTED_TAC_FLAG");
     }

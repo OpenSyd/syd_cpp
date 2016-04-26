@@ -77,18 +77,14 @@ void syd::IntegratedActivityImageBuilder::SetModels(const std::vector<std::strin
 void syd::IntegratedActivityImageBuilder::GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
                                                            syd::TimeActivityCurve::pointer restricted_tac)
 {
-  DD("GetRestrictedTac");
-  DD(restricted_tac->size());
-  restricted_tac->reserve(initial_tac->size());
-  DD(restricted_tac->size());
+  restricted_tac->clear();
 
   // Select only the end of the curve (min 2 points);
   auto first_index = initial_tac->FindMaxIndex();
-  first_index = std::min(first_index, initial_tac->size()-3); // FIXME
-    //    first_index = std::max((unsigned int)0, first_index);
-  for(auto i=first_index; i<initial_tac->size(); i++)
+  first_index = std::min(first_index, initial_tac->size()-3);
+  for(auto i=first_index; i<initial_tac->size(); i++) {
     restricted_tac->AddValue(initial_tac->GetTime(i), initial_tac->GetValue(i));
-  DD(*restricted_tac);
+  }
 }
 // --------------------------------------------------------------------
 
@@ -97,7 +93,7 @@ void syd::IntegratedActivityImageBuilder::GetRestrictedTac(syd::TimeActivityCurv
 void syd::IntegratedActivityImageBuilder::CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac)
 {
   // auto output
-  auc_output_ = new syd::FitOutputImage_AUC(image_lambda_phys_in_hour_);
+  auc_output_ = new syd::FitOutputImage_AUC();
   success_output_ = new syd::FitOutputImage_Success();
   AddOutputImage(auc_output_);
   AddOutputImage(success_output_);
@@ -122,8 +118,8 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivity(syd::TimeActi
     DD(m->GetName());
     DD(m->ComputeR2(*working_tac));
     DD(m->ComputeSS(*working_tac));
-    DD(m->ComputeAUC(*working_tac, image_lambda_phys_in_hour_, true)); // FIXME true = paralelogram
-    DD(m->ComputeAUC(*initial_tac, image_lambda_phys_in_hour_, true));
+    DD(m->ComputeAUC(*working_tac, true)); // FIXME true = paralelogram
+    DD(m->ComputeAUC(*initial_tac, true));
     // DD(m->ceres_summary_.FullReport());
   }
 
@@ -151,7 +147,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   // create initial tac with the times
   syd::TimeActivityCurve::pointer initial_tac = syd::TimeActivityCurve::New();
   for(auto t:times_) initial_tac->AddValue(t, 0.0);
-  DD(initial_tac);
+  DD(*initial_tac);
 
   // restricted tac ?
   syd::TimeActivityCurve::pointer working_tac;
@@ -169,7 +165,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   Iterator4D it(tac_image_, tac_image_->GetLargestPossibleRegion());
 
   // Required output: auc and mask
-  auc_output_ = new syd::FitOutputImage_AUC(image_lambda_phys_in_hour_);
+  auc_output_ = new syd::FitOutputImage_AUC();
   success_output_ = new syd::FitOutputImage_Success();
   AddOutputImage(auc_output_);
   AddOutputImage(success_output_);
@@ -214,7 +210,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
       ++number_of_pixels_in_mask;
       // Create current tac
       for(auto i=0; i<images_.size(); i++) {
-        // tac.SetValue(i, std::max((float)0.0, it.Get())); // FIXME
         initial_tac->SetValue(i, it.Get());
         ++it; // next value
       }
@@ -235,11 +230,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
       }
       */
 
-      if (restricted_tac_flag_) {
-        DD("restricted_tac_flag_");
-        GetRestrictedTac(initial_tac, working_tac);
-        DD(working_tac);
-      }
+      if (restricted_tac_flag_) GetRestrictedTac(initial_tac, working_tac);
 
       // Solve
       int best = FitModels(working_tac);
@@ -276,7 +267,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 // --------------------------------------------------------------------
 int syd::IntegratedActivityImageBuilder::FitModels(syd::TimeActivityCurve::pointer tac)
 {
-  DD(*tac);
   for(auto model:models_) {
     ceres::Problem problem;// New problem each time. (I did not manage to change that)
     model->SetProblemResidual(&problem, *tac);
@@ -287,14 +277,11 @@ int syd::IntegratedActivityImageBuilder::FitModels(syd::TimeActivityCurve::point
   int best = -1;
   double R2_threshold = R2_min_threshold_;
   double best_AICc = 666;
-  double best_R2 = -99999999990.0;
+  double best_R2 = 0.0;
   for(auto i=0; i<models_.size(); i++) {
     auto & m = models_[i];
-    DD(m->GetName());
     if (m->IsAcceptable()) {
       double R2 = m->ComputeR2(*tac);
-      DD(R2);
-      DD(m->ComputeAUC(*tac, image_lambda_phys_in_hour_));
       if (R2 > R2_threshold and R2 > best_R2) {
         double AICc;
         bool b = m->IsAICcValid(tac->size());
@@ -359,10 +346,18 @@ void syd::IntegratedActivityImageBuilder::InitInputData()
   for(auto image:images_) {
     iterators.push_back(Iterator3D(image, image->GetLargestPossibleRegion()));
   }
+  bool negative_values = false;
   for(auto & iter:iterators) iter.GoToBegin();
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
     for(auto & iter:iterators) {
-      it.Set(iter.Get());
+      if (iter.Get() < 0.0) {
+        if (!negative_values) {
+          LOG(WARNING) << "Find negative count values in the input images, change to 0.";
+          negative_values = true;
+        }
+        it.Set(0.0);
+      }
+      else it.Set(iter.Get());
       ++iter;
       ++it;
     }

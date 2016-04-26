@@ -50,10 +50,9 @@ void syd::FitOutputImage::SetValue(double v)
 
 
 // --------------------------------------------------------------------
-syd::FitOutputImage_AUC::FitOutputImage_AUC(double l):FitOutputImage()
+syd::FitOutputImage_AUC::FitOutputImage_AUC():FitOutputImage()
 {
   filename = "auc.mhd";
-  lambda_phys_hours_ = l;
 }
 // --------------------------------------------------------------------
 
@@ -63,8 +62,7 @@ void syd::FitOutputImage_AUC::Update(const syd::TimeActivityCurve & tac,
                                      const syd::TimeActivityCurve & restricted_tac,
                                      const syd::FitModelBase * model)
 {
-  double r = model->ComputeAUC(tac, lambda_phys_hours_, use_current_tac);
-  DD(r);
+  double r = model->ComputeAUC(tac, use_current_tac);
   SetValue(r);
 }
 // --------------------------------------------------------------------
