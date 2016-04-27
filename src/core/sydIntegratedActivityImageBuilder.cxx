@@ -93,12 +93,6 @@ int syd::IntegratedActivityImageBuilder::GetRestrictedTac(syd::TimeActivityCurve
 // --------------------------------------------------------------------
 void syd::IntegratedActivityImageBuilder::CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac)
 {
-  // auto output
-  // auc_output_ = new syd::FitOutputImage_AUC();
-  // success_output_ = new syd::FitOutputImage_Success();
-  // AddOutputImage(auc_output_);
-  // AddOutputImage(success_output_);
-
   // Init solver
   InitSolver();
 
@@ -122,10 +116,10 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivity(syd::TimeActi
 
   if (best != -1) {
     current_model_ = models_[best];
-    auc_output_->index_ = index;
+    if (restricted_tac_flag_) auc_output_->index_ = index;
     for(auto o:outputs_) { // Update the outputs
       o->model_ = current_model_;
-      o->Update();//*initial_tac, *working_tac, current_model_);// FIXME must be set before
+      o->Update();
     }
   }
 }
@@ -237,7 +231,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
         // Update output
         for(auto o:outputs_) {
           o->model_ = current_model_;
-          o->Update();//*initial_tac, *working_tac, current_model_);
+          o->Update();
         }
       }
     }

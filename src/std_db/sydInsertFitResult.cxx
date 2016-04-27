@@ -132,12 +132,14 @@ int main(int argc, char* argv[])
 
   auto mi = best_model->value-1; // because start at one
   if (mi != -1) {
-    if (args_info.restricted_tac_flag) res->auc = builder.GetAUCOutput()->value;
+    if (args_info.restricted_tac_flag)
+      res->auc = builder.GetAUCOutput()->value;
     else res->auc = models[mi]->Integrate();
     res->r2 = r2->value;
     res->model_name = models[mi]->GetName();
     res->params = models[mi]->GetParameters();
-    res->first_index = builder.GetAUCOutput()->index_;
+    if (args_info.restricted_tac_flag) res->first_index = builder.GetAUCOutput()->index_;
+    else res->first_index = 0;
     res->iterations = iter->value;
     db->UpdateTagsFromCommandLine(res->tags, args_info);
 

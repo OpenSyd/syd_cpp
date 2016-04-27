@@ -78,9 +78,8 @@ namespace syd {
     void CreateIntegratedActivityImage();
     void CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac);
     syd::FitOutputImage_Success * GetSuccessOutput() { return success_output_; }
-    //    syd::FitOutputImage * GetOutput() { if (restricted_tac_flag_) return auc_output_; else return integrate_output_; }
-    //    syd::FitOutputImage * GetOutput() { return dynamic_cast<syd::FitOutputImage*>(auc_output_); }
     syd::FitOutputImage * GetOutput();
+    syd::FitOutputImage_AUC * GetAUCOutput() { return auc_output_; }
     std::vector<syd::FitOutputImage*> & GetOutputs() { return outputs_; }
 
     // Other functions
