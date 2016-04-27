@@ -48,8 +48,6 @@ void syd::TimepointsBuilder::SetRoiMaskImage(const syd::RoiMaskImage::pointer m)
 syd::Timepoints::pointer
 syd::TimepointsBuilder::ComputeTimepoints()
 {
-  DD("ComputeTimepoints");
-
   // Check
   if (images.size() ==0) {
     EXCEPTION("Cannot compute Timepoints, no images. Use SetImages first");
@@ -58,12 +56,9 @@ syd::TimepointsBuilder::ComputeTimepoints()
     EXCEPTION("Cannot compute Timepoints, no mask. Use SetRoiMaskImage first");
   }
 
-  DDS(images);
-
   // Check same injection date
   images[0]->FatalIfNoDicom();
   syd::Injection::pointer injection = images[0]->injection;
-  DD(injection);
   bool b = true;
   for(auto image:images) {
     image->FatalIfNoDicom();
@@ -75,7 +70,6 @@ syd::TimepointsBuilder::ComputeTimepoints()
 
   // Check same pixel units (warning)
   syd::PixelValueUnit::pointer unit = images[0]->pixel_value_unit;
-  DD(unit);
   for(auto image:images) {
     if (image->pixel_value_unit->id != unit->id) {
       LOG(WARNING) << "I expected pixel value unit to be the same for all images, while it is "
@@ -85,7 +79,6 @@ syd::TimepointsBuilder::ComputeTimepoints()
                    << std::endl << images[0];
     }
   }
-  DDS(images);
 
   // Check if already exist ? (same images)
   syd::Timepoints::vector timepoints;
@@ -114,7 +107,6 @@ syd::TimepointsBuilder::ComputeTimepoints()
   if (found > 1) {
     EXCEPTION("Several Timepoints found with the same set of images/mask. Abort");
   }
-  DDS(timepoints);
 
   // image type
   typedef float PixelType;
@@ -124,7 +116,6 @@ syd::TimepointsBuilder::ComputeTimepoints()
 
   // Get the times
   std::vector<double> times = syd::GetTimesFromInjection(db_, images);
-  DDS(times);
 
   // read all itk images
   std::vector<ImageType::Pointer> itk_images;
