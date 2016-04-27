@@ -94,10 +94,10 @@ int syd::IntegratedActivityImageBuilder::GetRestrictedTac(syd::TimeActivityCurve
 void syd::IntegratedActivityImageBuilder::CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac)
 {
   // auto output
-  auc_output_ = new syd::FitOutputImage_AUC();
-  success_output_ = new syd::FitOutputImage_Success();
-  AddOutputImage(auc_output_);
-  AddOutputImage(success_output_);
+  // auc_output_ = new syd::FitOutputImage_AUC();
+  // success_output_ = new syd::FitOutputImage_Success();
+  // AddOutputImage(auc_output_);
+  // AddOutputImage(success_output_);
 
   // Init solver
   InitSolver();
@@ -161,14 +161,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
   Iterator4D it(tac_image_, tac_image_->GetLargestPossibleRegion());
 
-  // Required output: auc and mask
-  auc_output_ = new syd::FitOutputImage_AUC();
-  AddOutputImage(auc_output_);
-  success_output_ = new syd::FitOutputImage_Success();
-  AddOutputImage(success_output_);
-  integrate_output_ = new syd::FitOutputImage_Integrate();
-  AddOutputImage(integrate_output_);
-
   // Init mask iterator
   bool mask_flag = false;
   Iterator3D it_mask;
@@ -230,8 +222,10 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
       }
       */
       int index = 0;
-      if (restricted_tac_flag_) index = GetRestrictedTac(initial_tac, working_tac);
-      auc_output_->index_ = index; // needed to compute with paralelogram method
+      if (restricted_tac_flag_) {
+        index = GetRestrictedTac(initial_tac, working_tac);
+        auc_output_->index_ = index; // needed to compute with paralelogram method
+      }
 
       // Solve
       int best = FitModels(working_tac);
@@ -400,6 +394,18 @@ void syd::IntegratedActivityImageBuilder::InitSolver()
     m->SetLambdaPhysicHours(image_lambda_phys_in_hour_);
     // m->robust_scaling_ = robust_scaling_;
   }
+
+  // Required output: auc, mask, integrated
+  if (restricted_tac_flag_) {
+    auc_output_ = new syd::FitOutputImage_AUC();
+    AddOutputImage(auc_output_);
+  }
+  else {
+    integrate_output_ = new syd::FitOutputImage_Integrate();
+    AddOutputImage(integrate_output_);
+  }
+  success_output_ = new syd::FitOutputImage_Success();
+  AddOutputImage(success_output_);
 }
 // --------------------------------------------------------------------
 
@@ -423,5 +429,16 @@ void syd::IntegratedActivityImageBuilder::SetAdditionalPoint(bool b, double time
   additional_point_flag_ = b;
   additional_point_time_ = time;
   additional_point_value_ = value;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::FitOutputImage * syd::IntegratedActivityImageBuilder::GetOutput()
+{
+  if (restricted_tac_flag_)
+    return auc_output_;
+  else
+    return integrate_output_;
 }
 // --------------------------------------------------------------------

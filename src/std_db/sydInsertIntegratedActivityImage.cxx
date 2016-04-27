@@ -165,6 +165,7 @@ int main(int argc, char* argv[])
   auto eff_half_life = new syd::FitOutputImage_EffHalfLife();
   auto nb_points = new syd::FitOutputImage_NbOfPointsForFit();
   auto lambda = new syd::FitOutputImage_Lambda();
+  //  auto integrated = new syd::FitOutputImage_Integrate();
 
   // Use a mask, consider values of the first spect
   int nb_pixel = 0.0;
@@ -224,26 +225,26 @@ int main(int argc, char* argv[])
   builder.CreateIntegratedActivityImage();
 
   // Get main output
-  auto auc = builder.GetAUCOutput();
+  auto fit_output = builder.GetOutput();
   auto success = builder.GetSuccessOutput();
 
   // Post processing with median filter
   if (args_info.median_filter_flag) {
     LOG(1) << "Post processing: median filter";
     if (args_info.debug_images_flag)
-      syd::WriteImage<ImageType>(auc->image, "auc_before_median.mhd");
+      syd::WriteImage<ImageType>(fit_output->image, "auc_before_median.mhd");
     auto filter = itk::MedianWithMaskImageFilter<ImageType, ImageType, ImageType>::New();
     filter->SetRadius(1);
-    filter->SetInput(auc->image);
+    filter->SetInput(fit_output->image);
     filter->SetMask(success->image);
     filter->Update();
-    auc->image = filter->GetOutput();
+    fit_output->image = filter->GetOutput();
   }
 
   // Post processing with fill holes
   if (args_info.fill_holes_given) {
     if (args_info.debug_images_flag)
-      syd::WriteImage<ImageType>(auc->image, "auc_before_fill_holes.mhd");
+      syd::WriteImage<ImageType>(fit_output->image, "auc_before_fill_holes.mhd");
     // Change the mask, considering success fit
     auto it_success = success->iterator;
     Iterator it_mask(mask, mask->GetLargestPossibleRegion());
@@ -254,7 +255,7 @@ int main(int argc, char* argv[])
       ++it_success;
       ++it_mask;
     }
-    int f = syd::FillHoles<ImageType>(auc->image, mask, args_info.fill_holes_arg);
+    int f = syd::FillHoles<ImageType>(fit_output->image, mask, args_info.fill_holes_arg);
     LOG(1) << "Post processing: fill remaining holes. " << f << " failed pixels remain.";
   }
 
@@ -267,7 +268,7 @@ int main(int argc, char* argv[])
   // Insert result in db
   syd::ImageBuilder bdb(db);
   syd::Image::pointer output = bdb.NewMHDImageLike(images[0]);
-  bdb.SetImage<PixelType>(output, auc->image);
+  bdb.SetImage<PixelType>(output, fit_output->image);
 
   // Tags
   db->UpdateTagsFromCommandLine(output->tags, args_info);
