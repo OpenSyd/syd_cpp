@@ -164,3 +164,20 @@ syd::TimepointsBuilder::ComputeTimepoints()
   return tac;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimepointsBuilder::SetFromModel(syd::Timepoints::pointer timepoints,
+                                          const std::vector<double> & times,
+                                          const syd::FitModelBase * model)
+{
+  timepoints->times.clear();
+  timepoints->values.clear();
+  timepoints->std_deviations.clear();
+  for(auto i=0; i<times.size(); i++) {
+    timepoints->times.push_back(times[i]);
+    timepoints->values.push_back(model->GetValue(times[i]));
+    timepoints->std_deviations.push_back(0.0);
+  }
+}
+// --------------------------------------------------------------------

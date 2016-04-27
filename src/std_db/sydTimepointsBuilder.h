@@ -40,6 +40,10 @@ namespace syd {
     /// Compute a Timepoints with mean pixels values in a roi images
     syd::Timepoints::pointer ComputeTimepoints();
 
+    /// Set values from model computation
+    void SetFromModel(syd::Timepoints::pointer timepoints,
+                      const std::vector<double> & times,
+                      const syd::FitModelBase * model);
   protected:
     syd::Image::vector images;
     syd::RoiMaskImage::pointer mask;
