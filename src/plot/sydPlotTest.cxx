@@ -108,9 +108,9 @@ int main(int argc, char* argv[])
   for(auto t:times) {
     values.push_back(model->GetValue(t));
   }
-  syd::TimeActivityCurve tac;
-  tp->GetTAC(tac);
-  DD(tac);
+  auto tac = syd::TimeActivityCurve::New();
+  tp->GetTAC(*tac);
+  DD(*tac);
   DDS(model->GetParameters());
   DD(model->ComputeR2(tac));
   DD(model->GetName());
