@@ -7,4 +7,4 @@ description "Delete the given elements in a table.
 - <table>         name of the table
 - <ids>           list of elements id to delete. Can be 'all' to delete all elements.
 "
-#option "force"   	 	f       "Dont ask confirmation"		        flag		off
+option "force" f "Dont ask confirmation. DANGEROUS. You have been warned." flag off

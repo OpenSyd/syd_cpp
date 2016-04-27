@@ -165,12 +165,17 @@ int main(int argc, char* argv[])
   // Delete
   if (args_info.delete_flag) {
     if (results.size() > 0) {
-      std::cout << "Really delete " << results.size() << " element"
-                << (results.size() > 1 ? "s ":" ") << "(y/n) ? ";
-      char c;
-      std::scanf("%c", &c);
-      if (c =='y') db->Delete(results, table_name);
-      else { LOG(FATAL) << "Abort."; }
+      if (!args_info.force_flag) {
+        std::cout << "Really delete " << results.size() << " element"
+                  << (results.size() > 1 ? "s ":" ") << "(y/n) ? ";
+        char c;
+        std::scanf("%c", &c);
+        if (c =='y') db->Delete(results, table_name);
+        else { LOG(FATAL) << "Abort."; }
+      }
+      else {
+        db->Delete(results, table_name);
+      }
     }
   }
 

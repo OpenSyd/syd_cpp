@@ -29,3 +29,5 @@ option "tag"        t   "List of tag to match (all)"               string  no mu
 
 option "vv"         -   "Open images with vv (result must be image)" flag    off
 option "vvs"        -   "Open images with vv --sequence (result must be images)" flag    off
+
+option "force" - "Dont ask confirmation if --delete. DANGEROUS. You have been warned." flag off
