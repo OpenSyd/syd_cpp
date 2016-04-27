@@ -132,11 +132,11 @@ void syd::Database::Update(std::vector<std::shared_ptr<RecordType>> records)
     t.commit();
   }
   catch (const odb::exception& e) {
-    LOG(FATAL) << "Cannot update " << records.size()
-               << " element(s) in the table '" << RecordType::GetStaticTableName()
-               << "'. The error is: "  << e.what()
-               << std::endl << "And last sql query is: "
-               << std::endl << GetLastSQLQuery();
+    EXCEPTION("Cannot update " << records.size()
+              << " element(s) in the table '" << RecordType::GetStaticTableName()
+              << "'. The error is: "  << e.what()
+              << std::endl << "And last sql query is: "
+              << std::endl << GetLastSQLQuery());
   }
 }
 // --------------------------------------------------------------------
