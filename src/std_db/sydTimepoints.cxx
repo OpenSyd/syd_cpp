@@ -195,7 +195,7 @@ std::string syd::Timepoints::ToStringForMD5() const
      << injection->id;
   for(auto i=0; i<times.size(); i++) {
     ss << std::setprecision(30)
-       << times[i] << values[0] << std_deviations[i];
+       << times[i] << values[i] << std_deviations[i];
   }
   return ss.str();
 }
