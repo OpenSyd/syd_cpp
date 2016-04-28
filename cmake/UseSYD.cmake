@@ -83,5 +83,6 @@ include_directories(${SYD_BINARY_DIR}/src/)
 include_directories(${SYD_BINARY_DIR}/src/common_db)
 include_directories(${SYD_BINARY_DIR}/src/core)
 include_directories(${SYD_BINARY_DIR}/src/std_db)
+include_directories(${SYD_BINARY_DIR}/src/plot)
 include_directories(${SYD_BINARY_DIR}/src/ext)
 # ----------------------------------------------------------
