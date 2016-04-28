@@ -17,7 +17,7 @@
   ===========================================================================**/
 
 // syd
-#include "sydIntegratedActivityImageBuilder.h"
+#include "sydTimeIntegratedActivityFilter.h"
 #include "sydImageUtils.h"
 #include "sydPrintTable.h"
 
@@ -28,7 +28,7 @@
 #include <itkLabelStatisticsImageFilter.h>
 
 // --------------------------------------------------------------------
-syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
+syd::TimeIntegratedActivityFilter::TimeIntegratedActivityFilter()
 {
   SetLambdaPhysicHours(0.0);
   SetR2MinThreshold(0.9);
@@ -50,7 +50,7 @@ syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::SetModels(const std::vector<std::string> & model_names)
+void syd::TimeIntegratedActivityFilter::SetModels(const std::vector<std::string> & model_names)
 {
   int i=0;
   // Look for model from the given names
@@ -74,7 +74,7 @@ void syd::IntegratedActivityImageBuilder::SetModels(const std::vector<std::strin
 
 
 // --------------------------------------------------------------------
-int syd::IntegratedActivityImageBuilder::GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
+int syd::TimeIntegratedActivityFilter::GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
                                                           syd::TimeActivityCurve::pointer restricted_tac)
 {
   restricted_tac->clear();
@@ -91,7 +91,7 @@ int syd::IntegratedActivityImageBuilder::GetRestrictedTac(syd::TimeActivityCurve
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac)
+void syd::TimeIntegratedActivityFilter::CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac)
 {
   // Init solver
   InitSolver();
@@ -127,7 +127,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivity(syd::TimeActi
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
+void syd::TimeIntegratedActivityFilter::CreateIntegratedActivityImage()
 {
   // typedef
   typedef float PixelType;
@@ -256,7 +256,7 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 
 
 // --------------------------------------------------------------------
-int syd::IntegratedActivityImageBuilder::FitModels(syd::TimeActivityCurve::pointer tac)
+int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer tac)
 {
   for(auto model:models_) {
     ceres::Problem problem;// New problem each time. (I did not manage to change that)
@@ -291,7 +291,7 @@ int syd::IntegratedActivityImageBuilder::FitModels(syd::TimeActivityCurve::point
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::InitInputData()
+void syd::TimeIntegratedActivityFilter::InitInputData()
 {
   // Check image size
   bool b = true;
@@ -362,7 +362,7 @@ void syd::IntegratedActivityImageBuilder::InitInputData()
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::InitSolver()
+void syd::TimeIntegratedActivityFilter::InitSolver()
 {
   // Solve
   ceres_options_ = new ceres::Solver::Options;
@@ -405,7 +405,7 @@ void syd::IntegratedActivityImageBuilder::InitSolver()
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::AddModel(syd::FitModelBase * m, int id)
+void syd::TimeIntegratedActivityFilter::AddModel(syd::FitModelBase * m, int id)
 {
   auto p = std::find_if(models_.begin(), models_.end(), [&id](syd::FitModelBase * m)->bool { return m->id_ == id; });
   if (p != models_.end()) {
@@ -418,7 +418,7 @@ void syd::IntegratedActivityImageBuilder::AddModel(syd::FitModelBase * m, int id
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::SetAdditionalPoint(bool b, double time, double value)
+void syd::TimeIntegratedActivityFilter::SetAdditionalPoint(bool b, double time, double value)
 {
   additional_point_flag_ = b;
   additional_point_time_ = time;
@@ -428,7 +428,7 @@ void syd::IntegratedActivityImageBuilder::SetAdditionalPoint(bool b, double time
 
 
 // --------------------------------------------------------------------
-syd::FitOutputImage * syd::IntegratedActivityImageBuilder::GetOutput()
+syd::FitOutputImage * syd::TimeIntegratedActivityFilter::GetOutput()
 {
   if (restricted_tac_flag_)
     return auc_output_;

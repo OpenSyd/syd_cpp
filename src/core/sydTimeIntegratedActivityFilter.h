@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDINTEGRATEDACTIVITYIMAGEBUILDER_H
-#define SYDINTEGRATEDACTIVITYIMAGEBUILDER_H
+#ifndef SYDTIMEINTEGRATEDACTIVITYFILTER_H
+#define SYDTIMEINTEGRATEDACTIVITYFILTER_H
 
 // syd
 #include "sydImageUtils.h"
@@ -42,14 +42,14 @@ namespace syd {
   };
 
   /// This class is used to create a pixel-based integrated activity.
-  class IntegratedActivityImageBuilder {
+  class TimeIntegratedActivityFilter {
 
   public:
     /// Constructor.
-    IntegratedActivityImageBuilder();
+    TimeIntegratedActivityFilter();
 
     /// Destructor (empty)
-    ~IntegratedActivityImageBuilder() {}
+    ~TimeIntegratedActivityFilter() {}
 
     typedef float PixelType;
     typedef itk::Image<PixelType,3> ImageType;
@@ -130,9 +130,7 @@ namespace syd {
     double additional_point_time_;
     double additional_point_value_;
 
-  }; // class IntegratedActivityImageBuilder
-
-#include "sydIntegratedActivityImageBuilder.txx"
+  }; // class TimeIntegratedActivityFilter
 
 } // namespace syd
 // --------------------------------------------------------------------

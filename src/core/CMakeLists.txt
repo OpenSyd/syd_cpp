@@ -51,7 +51,7 @@ add_library(sydFit
   sydFitModel_f4b.cxx
   sydFitModel_f4c.cxx
   sydFitOutputImage.cxx
-  sydIntegratedActivityImageBuilder.cxx
+  sydTimeIntegratedActivityFilter.cxx
 )
 
 target_link_libraries(sydFit ${CERES_LIBRARIES})
@@ -69,7 +69,7 @@ set(SYD_INCLUDE_FILES ${SYD_INCLUDE_FILES}
   sydDD.h
   sydException.h
 
-  sydIntegratedActivityImageBuilder.h
+  sydTimeIntegratedActivityFilter.h
   itkMedianWithMaskImageFilter.h
   sydImageCrop.h
   sydImageFillHoles.h

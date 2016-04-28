@@ -19,7 +19,7 @@
 #ifndef SYDFITOUTPUTIMAGE_H
 #define SYDFITOUTPUTIMAGE_H
 
-#include "sydIntegratedActivityImageBuilder.h"
+#include "sydTimeIntegratedActivityFilter.h"
 #include "sydImageUtils.h"
 
 namespace syd {

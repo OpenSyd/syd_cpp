@@ -17,12 +17,12 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertIntegratedActivityImage_ggo.h"
+#include "sydInsertTimeIntegratedActivityImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
-#include "sydIntegratedActivityImageBuilder.h"
+#include "sydTimeIntegratedActivityFilter.h"
 #include "sydSubstituteRadionuclideImageBuilder.h"
 #include "sydRoiStatisticBuilder.h"
 #include "sydImageFillHoles.h"
@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   SYD_CERES_STATIC_INIT;
 
   // Init
-  SYD_INIT_GGO(sydInsertIntegratedActivityImage, 2);
+  SYD_INIT_GGO(sydInsertTimeIntegratedActivityImage, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
 
 
   // Create main builder
-  syd::IntegratedActivityImageBuilder builder;
+  syd::TimeIntegratedActivityFilter builder;
 
   // Set input images
   for(auto i=0; i<times.size(); i++) builder.AddInput(itk_images[i], times[i]);

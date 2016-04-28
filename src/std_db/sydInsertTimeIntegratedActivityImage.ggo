@@ -1,8 +1,8 @@
-#File sydInsertIntegratedActivityImage.ggo
+#File sydInsertTimeIntegratedActivityImage.ggo
 
 package "syd"
 version "0.4"
-usage "sydInsertIntegratedActivityImage <image_ids>"
+usage "sydInsertTimeIntegratedActivityImage <image_ids>"
 description "Create a new image with TIA in every pixels
 - <list_of_image_ids>     list of image id to integrate
 "
