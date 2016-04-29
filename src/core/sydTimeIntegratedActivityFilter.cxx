@@ -284,6 +284,10 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityFilter::InitInputData()
 {
+  if (images_.size() < 2) {
+    EXCEPTION("Provide at least 2 images before");
+  }
+
   // Check image size
   bool b = true;
   for(auto image:images_) b = b and syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(images_[0], image);
