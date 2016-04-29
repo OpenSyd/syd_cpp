@@ -97,6 +97,7 @@ syd::RoiMaskImage::pointer syd::ImageBuilder::NewMHDRoiMaskImage(syd::Patient::p
   mask->patient = patient;
   mask->roitype = roitype;
   mask->injection = inj;
+  mask->pixel_value_unit = db_->FindPixelValueUnit("no_unit");
   InitializeMHDFiles(mask);
   return mask;
 }
