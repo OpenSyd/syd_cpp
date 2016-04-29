@@ -18,6 +18,7 @@
 
 // syd
 #include "sydTimeIntegratedActivityImageBuilder.h"
+#include "sydImage_GaussianFilter.h"
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageBuilder::TimeIntegratedActivityImageBuilder(syd::StandardDatabase * db):
@@ -85,17 +86,17 @@ void syd::TimeIntegratedActivityImageBuilder::SetPostProcessingFillHoles(int rad
 std::string syd::TimeIntegratedActivityImageBuilder::PrintOptions() const
 {
   std::stringstream s;
-  s << "Input images: ";
-  for(auto im:inputs_) s << im->id;
-  s << std::endl;
-  s << "R2 min = " << R2_min_threshold_ << std::endl
-    << "Restricted = " << restricted_tac_flag_ << std::endl
-    << "Models = ";
+  s << "Input images=";
+  for(auto im:inputs_) s << im->id << " ";
+  s << "min_r2=" << R2_min_threshold_
+    << " restricted=" << restricted_tac_flag_
+    << " models=";
   for(auto m:models_) s << m->GetName() << " ";
-  s << std::endl
-    << "Mask = " << min_activity_ << std::endl
-    << "Post median = " << median_flag_ << std::endl
-    << "Post fill holes = " << fill_holes_radius_ << std::endl;
+  s
+    << " pre_mask=" << min_activity_
+    << " pre_gauss=" << gauss_
+    << " post_median=" << median_flag_
+    << " post_fill_holes=" << fill_holes_radius_;
   return s.str();
 }
 // --------------------------------------------------------------------
@@ -104,8 +105,6 @@ std::string syd::TimeIntegratedActivityImageBuilder::PrintOptions() const
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage()
 {
-  DD("Go");
-
   // Sort images
   db_->Sort<syd::Image>(inputs_);
 
@@ -136,14 +135,7 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
   }
 
   // Create mask if needed
-  if (min_activity_ > 0.0) {
-    LOG(FATAL) << "TODO min_activity_";
-  }
-
-  // Gauss if needed
-  if (gauss_ > 0.0) {
-    LOG(FATAL) << "TODO gauss";
-  }
+  RunPreProcessing(initial_images);
 
   // FIXME additional point
 
@@ -168,12 +160,60 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
   }
 
   // Go !
+  std::string sm;
+  for(auto m:models_) sm += m->name_+" ("+syd::ToString(m->id_)+") ";
+  LOG(2) << "Starting fit: models= " << sm << "; "
+         << (min_activity_>0.0 ? "with mask":"no_mask")
+         << " pixels=" << nb_pixels_
+         << " R2_min= " << R2_min_threshold_
+         << (restricted_tac_flag_ ? " restricted":" non restricted");
   CreateIntegratedActivityImage();
 
   // create the output image
   tia_ = NewMHDImageLike(inputs_[0]);
   auto fit_output = GetOutput();
   SetImage<PixelType>(tia_, fit_output->image);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimeIntegratedActivityImageBuilder::RunPreProcessing(std::vector<ImageType::Pointer> & images)
+{
+  // Mask
+  if (min_activity_> 0.0) {
+    // Create image with max value along the sequence
+    ImageType::Pointer first_image = images[0];
+    ImageType::Pointer mask = syd::CreateImageLike<ImageType>(first_image);
+    std::vector<Iterator3D> it;
+    for(auto image:images) {
+      Iterator3D i = Iterator3D(image, image->GetLargestPossibleRegion());
+      i.GoToBegin();
+      it.push_back(i);
+    }
+    Iterator3D it_mask(mask, mask->GetLargestPossibleRegion());
+    nb_pixels_ = 0.0;
+    while (!it_mask.IsAtEnd()) {
+      PixelType maxi = it[0].Get();
+      for(auto & itt:it) maxi = std::max(maxi, itt.Get());
+      if (maxi > min_activity_) {
+        it_mask.Set(1);
+        ++nb_pixels_;
+      }
+      else it_mask.Set(0);
+      ++it_mask;
+      for(auto & itt:it) ++itt;
+    }
+    SetMask(mask);
+  }
+  else {
+    nb_pixels_ = images[0]->GetLargestPossibleRegion().GetNumberOfPixels();
+  }
+
+  // Gauss
+  if (gauss_ > 0.0)
+    for(auto & image:images)
+      image = syd::GaussianFilter<ImageType>(image, gauss_);
 }
 // --------------------------------------------------------------------
 

@@ -91,6 +91,15 @@ int main(int argc, char* argv[])
   builder.CreateTimeIntegratedActivityImage();
   builder.RunPostProcessing();
 
+  // Debug images
+  if (args_info.debug_images_flag) {
+    typedef syd::TimeIntegratedActivityImageBuilder::ImageType ImageType;
+    for(auto o:builder.GetOutputs()) {
+      DD(o->filename);
+      syd::WriteImage<ImageType>(o->image, o->filename);
+    }
+  }
+
   // Insert in db
   syd::Image::pointer tia = builder.GetTimeIntegratedActivityImage();
   db->UpdateTagsFromCommandLine(tia->tags, args_info);

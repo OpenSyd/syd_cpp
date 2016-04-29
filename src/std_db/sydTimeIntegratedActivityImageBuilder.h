@@ -49,6 +49,7 @@ namespace syd {
     std::string PrintOptions() const;
 
     // Main functions
+    void RunPreProcessing(std::vector<ImageType::Pointer> & images);
     void CreateTimeIntegratedActivityImage();
     void RunPostProcessing();
 
@@ -62,6 +63,7 @@ namespace syd {
     bool median_flag_;
     int fill_holes_radius_;
     double gauss_;
+    int nb_pixels_;
 
     syd::Image::pointer tia_;
 

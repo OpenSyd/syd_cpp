@@ -172,15 +172,6 @@ void syd::TimeIntegratedActivityFilter::CreateIntegratedActivityImage()
     o->working_tac_ = working_tac;;
   }
 
-  // log
-  //  models, threshold, mask
-  std::string sm;
-  for(auto m:models_) sm += m->name_+" ("+syd::ToString(m->id_)+") ";
-  LOG(2) << "Starting fit with models : " << sm << "; "
-         << (mask_flag ? "with mask":"no_mask")
-         << " ; R2_min = " << R2_min_threshold_
-         << (restricted_tac_flag_ ? " ; fit with last points of the curve (from max value)":"; fit on all timepoints");
-
   // main loop
   int x = 0;
   int n = images_[0]->GetLargestPossibleRegion().GetNumberOfPixels();
