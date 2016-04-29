@@ -122,6 +122,7 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
   if (!b) {
     EXCEPTION("The image do not have the same injection.");
   }
+  SetLambdaPhysicHours(injection->GetLambdaInHours());
 
   // Get inputs times
   std::string starting_date = injection->date;
