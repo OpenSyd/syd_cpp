@@ -170,11 +170,15 @@ int main(int argc, char* argv[])
                   << (results.size() > 1 ? "s ":" ") << "(y/n) ? ";
         char c;
         std::scanf("%c", &c);
-        if (c =='y') db->Delete(results, table_name);
+        if (c =='y') {
+          db->Delete(results, table_name);
+          LOG(1) << results.size() << " elements deleted.";
+        }
         else { LOG(FATAL) << "Abort."; }
       }
       else {
         db->Delete(results, table_name);
+        LOG(1) << results.size() << " elements deleted.";
       }
     }
   }
