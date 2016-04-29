@@ -19,6 +19,10 @@
 // syd
 #include "sydTimeIntegratedActivityImageBuilder.h"
 #include "sydImage_GaussianFilter.h"
+#include "sydImageFillHoles.h"
+
+// itk
+#include <itkMedianWithMaskImageFilter.h>
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageBuilder::TimeIntegratedActivityImageBuilder(syd::StandardDatabase * db):
@@ -221,7 +225,24 @@ void syd::TimeIntegratedActivityImageBuilder::RunPreProcessing(std::vector<Image
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageBuilder::RunPostProcessing()
 {
-  DD("todo post process");
+  auto output = GetOutput()->image;
+  auto mask = success_output_->image;
 
+  // Median
+  if (median_flag_) {
+    LOG(1) << "Post processing: median filter";
+    auto filter = itk::MedianWithMaskImageFilter<ImageType, ImageType, ImageType>::New();
+    filter->SetRadius(1);
+    filter->SetInput(output);
+    filter->SetMask(mask);
+    filter->Update();
+    output = filter->GetOutput();
+  }
+
+  // Fill_Holes
+  if (fill_holes_radius_ > 0) {
+    int f = syd::FillHoles<ImageType>(output, mask, fill_holes_radius_);
+    LOG(1) << "Post processing: fill remaining holes. " << f << " failed pixels remain.";
+  }
 }
 // --------------------------------------------------------------------
