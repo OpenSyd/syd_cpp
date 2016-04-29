@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
   }
 
   // Create main builder
-  syd::IntegratedActivityImageBuilder builder;
+  syd::TimeIntegratedActivityFilter builder;
 
   // Create some optional output types
   auto r2 = new syd::FitOutputImage_R2();
@@ -115,6 +115,8 @@ int main(int argc, char* argv[])
   // Set the models
   std::vector<std::string> model_names;
   for(auto i=0; i<args_info.model_given; i++) model_names.push_back(args_info.model_arg[i]);
+  if (model_names.size() == 0)
+    model_names.push_back("f4a"); // default model
   builder.SetModels(model_names);
   auto models = builder.GetModels();
   if (models.size() == 0) {
