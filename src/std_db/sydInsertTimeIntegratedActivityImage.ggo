@@ -11,6 +11,6 @@ option "min_activity"    - "Dont fit if activity lower than this value"       fl
 option "gauss"   	 g "Sigma of preprocess Gaussian filter (0=no)"       float default="0" no
 option "median_filter"   - "Apply median filter at the end"                   flag off
 option "fill_holes"      f "Try to fill holes using given radius"             int default="3" no
-option "pixelunit"       - "Name of pixel value unit to attach to the image"  string yes
+option "pixelunit"       - "Name of pixel value unit to attach to the image"  string no
 option "debug_images"    - "Output some debug images"                         flag off
 option "force"           - "Insert image even if another with similar tags exist" flag off

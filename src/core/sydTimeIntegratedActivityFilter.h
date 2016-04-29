@@ -61,31 +61,36 @@ namespace syd {
     typedef itk::Image<MaskPixelType,3> MaskImageType;
 
     // Input
+    void SetR2MinThreshold(double r) { R2_min_threshold_ = r; }
+    void SetRestrictedTACFlag(bool b) { restricted_tac_flag_ = b; }
+    void SetModels(const std::vector<std::string> & model_names);
+
+    // Internal inputs
     void AddInput(ImageType::Pointer image, double time) { images_.push_back(image); times_.push_back(time); }
     void SetInputTAC(syd::TimeActivityCurve & tac) { tac_ = tac; }
     void AddModel(syd::FitModelBase * m, int id);
     void AddOutputImage(syd::FitOutputImage * o) { outputs_.push_back(o); }
     void SetMask(ImageType::Pointer m) { mask_ = m; }
     void SetLambdaPhysicHours(double l) { image_lambda_phys_in_hour_ = l; }
-    void SetR2MinThreshold(double r) { R2_min_threshold_ = r; }
-    void SetRestrictedTACFlag(bool b) { restricted_tac_flag_ = b; }
     void SetAdditionalPoint(bool b, double time, double value);
 
+    // Helpers
     int GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
                          syd::TimeActivityCurve::pointer restricted_tac);
+    // Other functions
+    void ClearModel() { models_.clear(); }
+    std::vector<syd::FitModelBase*> & GetModels() { return models_; }
 
     // Main function
     void CreateIntegratedActivityImage();
     void CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac);
+
+    // Outputs
     syd::FitOutputImage_Success * GetSuccessOutput() { return success_output_; }
     syd::FitOutputImage * GetOutput();
     syd::FitOutputImage_AUC * GetAUCOutput() { return auc_output_; }
     std::vector<syd::FitOutputImage*> & GetOutputs() { return outputs_; }
 
-    // Other functions
-    void ClearModel() { models_.clear(); }
-    std::vector<syd::FitModelBase*> & GetModels() { return models_; }
-    void SetModels(const std::vector<std::string> & model_names);
 
   protected:
 

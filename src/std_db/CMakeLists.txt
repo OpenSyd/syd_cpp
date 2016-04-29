@@ -52,6 +52,7 @@ add_library(sydStandardDatabase SHARED
   sydCropImageBuilder.cxx
   sydDecayCorrectedImageBuilder.cxx
   sydSubstituteRadionuclideImageBuilder.cxx
+  sydTimeIntegratedActivityImageBuilder.cxx
   sydRoiStatisticBuilder.cxx
   sydScaleImageBuilder.cxx
   sydUpdateRadionuclideFilter.cxx

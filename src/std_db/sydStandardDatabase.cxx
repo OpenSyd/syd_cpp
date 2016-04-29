@@ -444,6 +444,7 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
 
   // Add some default PixelValueUnit
   syd::PixelValueUnit::vector units;
+  units.push_back(NewPixelValueUnit("no_unit", "Default fake unit when unset."));
   units.push_back(NewPixelValueUnit("%", "Percentage (such as relative uncertainty)"));
   units.push_back(NewPixelValueUnit("HU", "Hounsfield Units"));
   units.push_back(NewPixelValueUnit("counts", "Number of counts (by pixel)"));

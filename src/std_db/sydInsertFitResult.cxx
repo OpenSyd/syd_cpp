@@ -22,7 +22,7 @@
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
-#include "sydIntegratedActivityImageBuilder.h"
+#include "sydTimeIntegratedActivityFilter.h"
 #include "sydSubstituteRadionuclideImageBuilder.h"
 #include "sydRoiStatisticBuilder.h"
 #include "sydImageFillHoles.h"
