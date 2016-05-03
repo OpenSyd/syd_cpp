@@ -192,7 +192,6 @@ double syd::FitModelBase::ComputeSS(const syd::TimeActivityCurve::pointer tac) c
 {
   double SS = 0.0;
   for(auto i=0; i<tac->size(); i++) {
-    //std::cout << tac.GetTime(i) << " " << tac.GetValue(i) << " " << GetValue(tac.GetTime(i)) << std::endl;
     SS += pow(tac->GetValue(i)-GetValue(tac->GetTime(i)),2);
   }
   return SS;
@@ -204,7 +203,28 @@ double syd::FitModelBase::ComputeSS(const syd::TimeActivityCurve::pointer tac) c
 bool syd::FitModelBase::IsAICcValid(int N) const
 {
   double K = GetK();
-  return (K+1+2) <= N;
+  //  return (K+1+2) <= N; // relative weighting
+  return (K+2) <= N; // for absolute weighting
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModelBase::ComputeAIC(const syd::TimeActivityCurve::pointer tac) const
+{
+  // See Glatting 2007 equ (4)
+  // See Kletting 2013 eq (5) / (6) and erratum
+  // See Burnham2011 and others
+  double N = tac->size();
+  double K = GetK();
+  double SS = ComputeSS(tac); // RSS residual sum of squares
+
+  // std::log is ln (natural logarithm), least square fit with normally dist errors
+  // See Glatting2007 eq(4)
+  // See Burnham2011
+  double L = N*std::log(SS/N);// likelihood
+  double AIC = L + 2*K; //N * std::log(SS/N) + 2.0*(K+1) ;
+  return AIC;
 }
 // --------------------------------------------------------------------
 
@@ -217,17 +237,13 @@ double syd::FitModelBase::ComputeAICc(const syd::TimeActivityCurve::pointer tac)
   // See Burnham2011 and others
   double N = tac->size();
   double K = GetK();
-  double SS = ComputeSS(tac);
 
-  double AIC = N * log(SS/N) + 2.0*(K+1) ;  // std::log is ln (natural logarithm), least square fit with normally dist errors
-  //double AICc = AIC + (2*(K+1.0)*(K+2.0))/(N-K-2.0); // relative -> but issue if N-K-2 too low.
-  double AICc = AIC + (2*K*(K+1))/(N-K-1); // absolute
-
-  if (K+2 > N)  AICc = 666; // not applicable
-  //  if (K+3 > N)  AICc = 666; // not applicable
-
-  // std::cout << std::endl << name_ << " N=" << N << " K=" << K << " SS= " << SS
-  //           << " -> " << AIC << " " << AICc << std::endl;
+  // std::log is ln (natural logarithm), least square fit with normally dist errors
+  // See Glatting2007 eq(4)
+  double AIC = ComputeAIC(tac);
+  // See Kletting2014
+  //  double AICc = AIC + (2.0*K*(K+1.0))/(N-K-1.0); // absolute
+  double AICc = AIC +  (2.0*K*(K+1.0))/(N-K-1.0);
 
   return AICc;
 }

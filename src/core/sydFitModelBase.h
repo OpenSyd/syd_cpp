@@ -88,6 +88,7 @@ namespace syd {
     double ComputeAUC(const syd::TimeActivityCurve::pointer tac, int index) const;
     double ComputeR2(const syd::TimeActivityCurve::pointer tac) const;
     double ComputeAICc(const syd::TimeActivityCurve::pointer tac) const;
+    double ComputeAIC(const syd::TimeActivityCurve::pointer tac) const;
     double ComputeSS(const syd::TimeActivityCurve::pointer tac) const;
     bool IsAICcValid(int N) const;
     virtual bool IsAcceptable() const;
