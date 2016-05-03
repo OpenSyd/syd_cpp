@@ -39,7 +39,8 @@ void syd::PyPlotBuilder::Initialize()
           << "\tmatplotlib.use('Qt5Agg') # only for linux, not on mac" << std::endl
           << "import matplotlib.pyplot as plt" << std::endl
           << "import matplotlib.pyplot as plt" << std::endl
-          << "fig, ax = plt.subplots()" << std::endl
+          << "fig, ax1 = plt.subplots()" << std::endl
+          // << "ax2 = ax1.twinx()" << std::endl
           // << "current_palette = sns.color_palette('Set1', n)"<< std::endl
           // << "# sns.palplot(current_palette)" << std::endl
           // << "color = iter(current_palette)" << std::endl
@@ -71,7 +72,7 @@ void syd::PyPlotBuilder::AddCurve(const std::vector<double> & x,
   script_ << "curve_" << current_curve_nb_ << "_y = [";
   for(auto v:y) script_ << v << ",";
   script_ << "]" << std::endl;
-  script_ << "base_line, = plt.plot("
+  script_ << "base_line, = ax1.plot("
           << "curve_" << current_curve_nb_ << "_x,"
           << "curve_" << current_curve_nb_ << "_y, "
           << "'" << plot_type << "'";
@@ -104,7 +105,7 @@ void syd::PyPlotBuilder::AddEndPart()
   script_ << "#-------------------------------------------------------"
           << std::endl << std::endl
           << "plt.tight_layout()" << std::endl
-          << "plt.legend(loc='upper right', frameon=False, fontsize=9)" << std::endl
+          << "ax1.legend(loc='upper right', frameon=False, fontsize=9)" << std::endl
           << "plt.show()" << std::endl;
 }
 // --------------------------------------------------------------------
