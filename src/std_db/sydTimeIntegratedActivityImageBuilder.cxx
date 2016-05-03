@@ -132,6 +132,13 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
     times.push_back(t);
   }
 
+  if (times_.size() != 0) {
+    DD("Change time");
+    times = times_;
+    DDS(times);
+  }
+
+
   // Load initial itk_images
   std::vector<ImageType::Pointer> initial_images;
   for(auto image:inputs_) {

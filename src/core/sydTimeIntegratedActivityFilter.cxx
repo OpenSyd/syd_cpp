@@ -256,26 +256,53 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
   }
 
   // Select the best model
+  bool verbose = 1;
+  if (verbose) DD(*tac);
   int best = -1;
   double R2_threshold = R2_min_threshold_;
-  double best_AICc = 666;
+  double min_AICc = 666.0;
   double best_R2 = 0.0;
   for(auto i=0; i<models_.size(); i++) {
     auto & m = models_[i];
+    double R2 = m->ComputeR2(tac);
+    if (verbose) std::cout << m->GetName()
+              << " SS = " << m->ComputeSS(tac)
+              << " R2 = " << R2;
+    if (R2 > R2_threshold) { // and R2 > best_R2) {
+      double AICc;
+      bool b = 0;//m->IsAICcValid(tac->size()); //FIXME
+      if (b) AICc = m->ComputeAICc(tac);
+      else AICc = m->ComputeAIC(tac);
+      if (verbose) std::cout << " " << b
+        << " AICc = " << m->ComputeAICc(tac) << "  AIC = " << m->ComputeAIC(tac);
+      if (AICc < min_AICc) {
+        best = i;
+        min_AICc = AICc;
+        best_R2 = R2;
+      }
+    }
+    if (verbose) std::cout << " AUC = " << m->Integrate() << std::endl;
+
+    /*
     if (m->IsAcceptable()) {
       double R2 = m->ComputeR2(tac);
       if (R2 > R2_threshold and R2 > best_R2) {
         double AICc;
         bool b = m->IsAICcValid(tac->size());
         if (b) AICc = m->ComputeAICc(tac);
-        if (!b or AICc < best_AICc) { // if AICc not valid, consider it is ok
+        else AIC = m->ComputeAIC(tac); // FIXME
+        if (AICc < min_AICc) {
           best = i;
           best_AICc = AICc;
           best_R2 = R2;
         }
       }
     }
+    */
+
   }
+  if (verbose) DD(models_[best]->GetName());
+
   return best;
 }
 // --------------------------------------------------------------------
@@ -361,18 +388,18 @@ void syd::TimeIntegratedActivityFilter::InitSolver()
 {
   // Solve
   ceres_options_ = new ceres::Solver::Options;
-  ceres_options_->max_num_iterations = 50;
+  ceres_options_->max_num_iterations = 100;
   ceres_options_->linear_solver_type = ceres::DENSE_QR; // because few parameters/data
   ceres_options_->minimizer_progress_to_stdout = false;
   ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
 
-  /*
   DD(ceres_options_->min_line_search_step_size);
   DD(ceres_options_->max_line_search_step_contraction);
   DD(ceres_options_->function_tolerance);
   DD(ceres_options_->parameter_tolerance);
   DD(ceres_options_->num_threads);
-  */
+
+  // ceres_options_->function_tolerance = 1e-8;
 
   //ceres_options_->trust_region_strategy_type = ceres::DOGLEG;// (LM seems faster)
   //ceres_options_->dogleg_type = ceres::SUBSPACE_DOGLEG;

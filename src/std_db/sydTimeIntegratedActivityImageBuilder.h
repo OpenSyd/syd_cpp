@@ -44,6 +44,7 @@ namespace syd {
     void SetDebugImagesFlag(bool debug);
     void SetPostProcessingMedianFilter(bool median);
     void SetPostProcessingFillHoles(int radius);
+    void SetTimes(std::vector<double> & times) { times_ = times; }
 
     // Helper
     std::string PrintOptions() const;
