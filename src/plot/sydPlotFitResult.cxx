@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the list of timepoints
+  // Get the list of fitresult
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
   for(auto i=0; i<args_info.inputs_num; i++) {
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
     model->SetLambdaPhysicHours(tp->injection->GetLambdaInHours());
     double last = tp->times[tp->times.size()-1];
     double l = last-tp->times[0];
-    auto times = syd::arange<double>(tp->times[0], last, l/100.0); // FIXME param
+    auto times = syd::arange<double>(0, last, l/100.0); // FIXME param
     std::vector<double> values;
     for(auto t:times) values.push_back(model->GetValue(t));
     builder.AddCurve(times, values, "-", label.str(), "color=base_line.get_color()");
