@@ -44,7 +44,8 @@ namespace syd {
     void SetDebugImagesFlag(bool debug);
     void SetPostProcessingMedianFilter(bool median);
     void SetPostProcessingFillHoles(int radius);
-    void SetTimes(std::vector<double> & times) { times_ = times; }
+    void SetTimes(std::vector<double> times) { times_ = times; use_time_from_image_flag_ = false; }
+    void UseTimesFromImage(bool b) { use_time_from_image_flag_ = b; }
 
     // Helper
     std::string PrintOptions() const;
@@ -59,6 +60,7 @@ namespace syd {
 
   protected:
     syd::Image::vector inputs_;
+    bool use_time_from_image_flag_;
     double min_activity_;
     bool debug_images_flag_;
     bool median_flag_;

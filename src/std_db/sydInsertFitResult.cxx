@@ -111,6 +111,7 @@ int main(int argc, char* argv[])
   // Set input TAC
   syd::TimeActivityCurve::pointer tac = syd::TimeActivityCurve::New();
   tp2->GetTAC(*tac);
+  //  for(auto i=0; i<tac->size(); i++) tac->SetValue(i, tac->GetValue(i)*10); // DEBUG
 
   // Set the models
   std::vector<std::string> model_names;

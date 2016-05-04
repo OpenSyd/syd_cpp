@@ -270,9 +270,10 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
               << " R2 = " << R2;
     if (R2 > R2_threshold) { // and R2 > best_R2) {
       double AICc;
-      bool b = 0;//m->IsAICcValid(tac->size()); //FIXME
+      bool b = m->IsAICcValid(tac->size()); //FIXME
       if (b) AICc = m->ComputeAICc(tac);
-      else AICc = m->ComputeAIC(tac);
+      // else
+      //AICc = m->ComputeAIC(tac);
       if (verbose) std::cout << " " << b
         << " AICc = " << m->ComputeAICc(tac) << "  AIC = " << m->ComputeAIC(tac);
       if (AICc < min_AICc) {
@@ -281,7 +282,12 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
         best_R2 = R2;
       }
     }
-    if (verbose) std::cout << " AUC = " << m->Integrate() << std::endl;
+    if (verbose) {
+      int iter = models_[i]->ceres_summary_.num_unsuccessful_steps +
+        models_[i]->ceres_summary_.num_successful_steps;
+      std::cout << " AUC = " << m->Integrate()
+                << " iter=" << iter << std::endl;
+    }
 
     /*
     if (m->IsAcceptable()) {
@@ -301,7 +307,7 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
     */
 
   }
-  if (verbose) DD(models_[best]->GetName());
+  if (verbose and best != -1) DD(models_[best]->GetName());
 
   return best;
 }
@@ -393,11 +399,13 @@ void syd::TimeIntegratedActivityFilter::InitSolver()
   ceres_options_->minimizer_progress_to_stdout = false;
   ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
 
+  /*
   DD(ceres_options_->min_line_search_step_size);
   DD(ceres_options_->max_line_search_step_contraction);
   DD(ceres_options_->function_tolerance);
   DD(ceres_options_->parameter_tolerance);
   DD(ceres_options_->num_threads);
+  */
 
   // ceres_options_->function_tolerance = 1e-8;
 

@@ -29,6 +29,7 @@ syd::TimeIntegratedActivityImageBuilder::TimeIntegratedActivityImageBuilder(syd:
   syd::ImageBuilder(db),
   syd::TimeIntegratedActivityFilter()
 {
+  UseTimesFromImage(false);
   min_activity_ = 0.0;
   debug_images_flag_ = false;
   median_flag_ = false;
@@ -116,7 +117,7 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
   syd::Injection::pointer injection = inputs_[0]->injection;
   bool b = true;
   for(auto image:inputs_) {
-    image->FatalIfNoDicom();
+    // image->FatalIfNoDicom();
     b = b and (injection->id == image->injection->id);
   }
   if (!b) {
@@ -124,20 +125,20 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
   }
   SetLambdaPhysicHours(injection->GetLambdaInHours());
 
-  // Get inputs times
-  std::string starting_date = injection->date;
-  std::vector<double> times;
-  for(auto image:inputs_) {
-    double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
-    times.push_back(t);
+  // Get inputs times from image or from user
+  std::vector<double> temp_times;
+  if (use_time_from_image_flag_) {
+    std::string starting_date = injection->date;
+    for(auto image:inputs_) {
+      double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
+      temp_times.push_back(t);
+    }
   }
-
-  if (times_.size() != 0) {
-    DD("Change time");
-    times = times_;
-    DDS(times);
+  else temp_times = times_;
+  if (temp_times.size() != inputs_.size()) {
+    LOG(FATAL) << "Error nb of 'times' must be the same than nb of images, while : "
+               << times_.size() << " " << inputs_.size();
   }
-
 
   // Load initial itk_images
   std::vector<ImageType::Pointer> initial_images;
@@ -152,8 +153,9 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
   // FIXME additional point
 
   // Set inputs
-  for(auto i=0; i<times.size(); i++)
-    AddInput(initial_images[i], times[i]);
+  times_.clear(); // important
+  for(auto i=0; i<temp_times.size(); i++)
+    AddInput(initial_images[i], temp_times[i]);
 
   // debug image if needed
   if (debug_images_flag_) {
