@@ -39,6 +39,16 @@ syd::Image::Image():syd::RecordWithHistory()
 
 
 // --------------------------------------------------------------------
+syd::Image::~Image()
+{
+  // DD("delete image");
+  // DDS(files);
+  /// FIXME --> remove temporary file if needed
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 std::string syd::Image::ToString() const
 {
   std::string name;

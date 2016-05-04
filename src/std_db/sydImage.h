@@ -44,6 +44,8 @@ namespace syd {
   {
   public:
 
+    virtual ~Image();
+
 #pragma db not_null
     /// Foreign key, it must exist in the Patient table.
     syd::Patient::pointer patient;
