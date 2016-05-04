@@ -35,8 +35,8 @@ std::string syd::Timepoints::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
-     << patient->name << " "
-     << injection->radionuclide->name << " "
+     << (patient == NULL ? "no_patient":patient->name) << " "
+     << (injection == NULL ? "no_inj":injection->radionuclide->name) << " "
      << times.size() << " "
      << (mask == NULL ? "no_mask":mask->roitype->name) << " "
      << GetLabels(tags) << " ";

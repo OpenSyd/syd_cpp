@@ -34,12 +34,15 @@ syd::FitResult::FitResult():
 std::string syd::FitResult::ToString() const
 {
   std::stringstream ss ;
-  ss << id << " "
-     << timepoints->patient->name << " "
-     << timepoints->injection->radionuclide->name << " "
-     << (timepoints->mask == NULL ? "no_mask":timepoints->mask->roitype->name) << " "
-     << timepoints->id << " "
-     << GetLabels(tags) << " "
+  ss << id << " ";
+  if (timepoints != NULL) {
+    ss << timepoints->patient->name << " "
+       << timepoints->injection->radionuclide->name << " "
+       << (timepoints->mask == NULL ? "no_mask":timepoints->mask->roitype->name) << " "
+       << timepoints->id << " ";
+  }
+  else ss << "no_tp ";
+  ss << GetLabels(tags) << " "
      << model_name << " "
      << auc << " "
      << r2 << " "
