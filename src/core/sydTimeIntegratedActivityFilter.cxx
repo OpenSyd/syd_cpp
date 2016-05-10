@@ -251,6 +251,7 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
 {
   for(auto model:models_) {
     ceres::Problem problem;// New problem each time. (I did not manage to change that)
+    model->ComputeStartingParametersValues(tac);
     model->SetProblemResidual(&problem, *tac);
     ceres::Solve(*ceres_options_, &problem, &model->ceres_summary_); // Go !
   }

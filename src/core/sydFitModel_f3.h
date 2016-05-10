@@ -45,6 +45,8 @@ namespace syd {
     // 1, 1, 1 ==> (nb of residuals=1), 1 for each param.
     typedef ceres::AutoDiffCostFunction<ResidualType, 1, 1, 1, 1> CostFctType;
 
+    void ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac);
+
     virtual int GetNumberOfExpo() const { return 2; }
     virtual double GetA(const int i) const;
     virtual double GetLambda(const int i) const;

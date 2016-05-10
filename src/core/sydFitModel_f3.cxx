@@ -29,15 +29,36 @@ syd::FitModel_f3::FitModel_f3():FitModelBase()
 // --------------------------------------------------------------------
 
 
+
+// --------------------------------------------------------------------
+void syd::FitModel_f3::ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac)
+{
+  // Select only the end of the curve (min 2 points);
+  auto first_index = tac->FindMaxIndex();
+  first_index = std::min(first_index, tac->size()-3);
+
+  // Initialisation
+  params_[0] = 0.0;
+  params_[1] = GetLambdaPhysicHours();
+  params_[2] = 0.0;
+
+  // log linear fit, simple mean to estimate the A2 parameters
+  int n = tac->size()-first_index;
+  double b = 0.0;
+  for(auto i=first_index; i<tac->size(); i++) {
+    b += log(tac->GetValue(i)) - (-GetLambdaPhysicHours() * tac->GetTime(i));
+  }
+  b /= n;
+  params_[2] = exp(b);
+}
+// --------------------------------------------------------------------
+
+
+
 // --------------------------------------------------------------------
 void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac)
 {
   syd::FitModelBase::SetProblemResidual(problem, tac);
-
-  // Initialisation
-  params_[0] = tac.GetValue(0)/2.0; // A1
-  params_[1] = GetLambdaPhysicHours(); // important
-  params_[2] = -tac.GetValue(0)/2.0; // A2
 
   // need to be created each time
   residuals_.clear();
