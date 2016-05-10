@@ -51,6 +51,8 @@ namespace syd {
     double GetValue(unsigned int i) const { return values[i]; }
     double GetTime(unsigned int i) const { return times[i]; }
     double GetVariance(unsigned int i) const { return variances[i]; }
+    std::vector<double> GetTimes() const { return times; }
+    std::vector<double> GetValues() const { return values; }
 
     void CopyFrom(syd::TimeActivityCurve & tac);
 

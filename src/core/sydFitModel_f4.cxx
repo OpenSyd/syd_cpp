@@ -30,15 +30,68 @@ syd::FitModel_f4::FitModel_f4():FitModelBase()
 
 
 // --------------------------------------------------------------------
+void syd::FitModel_f4::ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac)
+{
+  DD("ok");
+
+  // FIXME GetRestrictedTac
+  auto restricted_tac = syd::TimeActivityCurve::New();
+  auto first_part_tac = syd::TimeActivityCurve::New();
+
+  // Select only the end of the curve (min 2 points);
+  auto first_index = tac->FindMaxIndex();
+  first_index = std::min(first_index, tac->size()-3);
+  for(auto i=first_index; i<tac->size(); i++) {
+    restricted_tac->AddValue(tac->GetTime(i), tac->GetValue(i));
+  }
+
+  // Initialisation
+  params_[0] = 0.0;
+  params_[1] = 0.0;
+  params_[2] = 0.0;
+  params_[3] = 0.0;
+
+  // Second part of the curve
+  Eigen::Vector2d x;
+  LogLinearFit(x, tac, first_index, tac->size());
+  double c = x(0);
+  double d = x(1);
+  params_[2] = c;  // x(0) = log c     --> A1 = exp(x(0))
+  params_[3] = -GetLambdaPhysicHours()-d;// x(1) = -(l1+lp)  --> l1 = -x(1)-lp
+
+  // Create modified curve
+  bool negative=false;
+  for(auto i=0; i<first_index+1; i++) {
+    double t = tac->GetTime(i);
+    double v = tac->GetValue(i) - c*exp(d*t);
+    if (v<0) negative = true;
+    v = log(v);
+    first_part_tac->AddValue(t, v);
+  }
+  if (!negative) {
+    DD("second fit");
+    LogLinearFit(x, first_part_tac);
+    params_[0] = x(0);
+    params_[1] = -GetLambdaPhysicHours()-x(1);
+
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::FitModel_f4::SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac)
 {
   syd::FitModelBase::SetProblemResidual(problem, tac);
 
   // Initialisation
-  params_[0] = tac.GetValue(0); // A1
-  params_[1] = GetLambdaPhysicHours(); // l1
-  params_[2] = -tac.GetValue(0); // A2 start away from A1
-  params_[3] = 0.0;//-GetLambdaPhysicHours()/2.0; // l2
+  /*
+    params_[0] = tac.GetValue(0); // A1
+    params_[1] = GetLambdaPhysicHours(); // l1
+    params_[2] = -tac.GetValue(0); // A2 start away from A1
+    params_[3] = 0.0;//-GetLambdaPhysicHours()/2.0; // l2
+  */
+
 
   // need to be created each time
   residuals_.clear();

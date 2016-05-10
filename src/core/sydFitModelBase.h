@@ -90,12 +90,19 @@ namespace syd {
     double ComputeAICc(const syd::TimeActivityCurve::pointer tac) const;
     double ComputeAIC(const syd::TimeActivityCurve::pointer tac) const;
     double ComputeSS(const syd::TimeActivityCurve::pointer tac) const;
+    virtual void ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac) {
+      DD("ComputeStartingParametersValues not implemented ");
+    }
     bool IsAICcValid(int N) const;
     virtual bool IsAcceptable() const;
 
     virtual double GetA(const int i) const { LOG(FATAL) << "GetA to implement " << GetName(); return 0.0; }
     virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); return 0.0; }
     virtual double GetEffHalfLife() const;
+
+    void LogLinearFit(Eigen::Vector2d & x,
+                      const syd::TimeActivityCurve::pointer tac,
+                      int start=0, int end=-1);
 
     bool start_from_max_flag;
 

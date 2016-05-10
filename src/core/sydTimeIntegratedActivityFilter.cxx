@@ -75,7 +75,7 @@ void syd::TimeIntegratedActivityFilter::SetModels(const std::vector<std::string>
 
 // --------------------------------------------------------------------
 int syd::TimeIntegratedActivityFilter::GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
-                                                          syd::TimeActivityCurve::pointer restricted_tac)
+                                                        syd::TimeActivityCurve::pointer restricted_tac)
 {
   restricted_tac->clear();
 

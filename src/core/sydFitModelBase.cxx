@@ -272,3 +272,25 @@ double syd::FitModelBase::GetEffHalfLife() const
   return log(2.0)/h;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// Fit y = c*exp(d*x)
+// linearize : log(y) = log(c) + dx
+void syd::FitModelBase::LogLinearFit(Eigen::Vector2d & x,
+                                     const syd::TimeActivityCurve::pointer tac,
+                                     int start, int end)
+{
+  if (end == -1) end = tac->size();
+  int n = end-start;
+  Eigen::MatrixXd A(n,2);
+  Eigen::VectorXd b(n);
+  for(auto i=start; i<end; i++) {
+    A(i-start,0) = 1.0;
+    A(i-start,1) = tac->GetTime(i);
+    b(i-start) = log(tac->GetValue(i));
+  }
+  x = A.householderQr().solve(b);
+  x(0) = exp(x(0));
+}
+// --------------------------------------------------------------------
