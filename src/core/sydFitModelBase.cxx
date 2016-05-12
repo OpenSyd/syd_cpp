@@ -174,7 +174,7 @@ double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve::pointer tac) c
   for(auto i=0; i<tac->size(); i++) mean += tac->GetValue(i);
   mean = mean / (double)tac->size();
 
-  double SS_res = ComputeSS(tac);
+  double SS_res = ComputeRSS(tac);
 
   double SS_tot = 0.0;
   for(auto i=0; i<tac->size(); i++) {
@@ -188,7 +188,7 @@ double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve::pointer tac) c
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeSS(const syd::TimeActivityCurve::pointer tac) const
+double syd::FitModelBase::ComputeRSS(const syd::TimeActivityCurve::pointer tac) const
 {
   double SS = 0.0;
   for(auto i=0; i<tac->size(); i++) {
@@ -217,13 +217,19 @@ double syd::FitModelBase::ComputeAIC(const syd::TimeActivityCurve::pointer tac) 
   // See Burnham2011 and others
   double N = tac->size();
   double K = GetK();
-  double SS = ComputeSS(tac); // RSS residual sum of squares
+  double RSS = ComputeRSS(tac); // RSS residual sum of squares
 
   // std::log is ln (natural logarithm), least square fit with normally dist errors
   // See Glatting2007 eq(4)
   // See Burnham2011
-  double L = N*std::log(SS/N);// likelihood
+  double L = N*std::log(RSS/N);// likelihood FIXME / N ???
   double AIC = L + 2*K; //N * std::log(SS/N) + 2.0*(K+1) ;
+
+  // AIC = k + n [Ln( 2(pi) RSS/(n-k) ) +1],
+  // AIC = K + N*(std::log(2*M_PI) * RSS/(N-K) + 1.0);
+
+  //  double BIC = L + (K+1)*log(N);
+  //return BIC;
   return AIC;
 }
 // --------------------------------------------------------------------
@@ -243,7 +249,9 @@ double syd::FitModelBase::ComputeAICc(const syd::TimeActivityCurve::pointer tac)
   double AIC = ComputeAIC(tac);
   // See Kletting2014
   //  double AICc = AIC + (2.0*K*(K+1.0))/(N-K-1.0); // absolute
-  double AICc = AIC +  (2.0*K*(K+1.0))/(N-K-1.0);
+  double d = N-K-1.0;
+  if (N-K-1.0 < 1.0) d = 1;
+  double AICc = AIC +  (2.0*K*(K+1.0))/d;//(N-K-1.0);
 
   return AICc;
 }

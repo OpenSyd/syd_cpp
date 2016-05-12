@@ -85,13 +85,17 @@ void syd::FitModel_f4::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   }
   // FIXME --> could be templated by CostFctType and param_nb ?
   for(auto i=0; i<tac.size(); i++) {
-    problem->AddResidualBlock(new CostFctType(residuals_[i]), NULL, &params_[0], &params_[1], &params_[2], &params_[3]);
+    problem->AddResidualBlock(new CostFctType(residuals_[i]), NULL,
+                              &params_[0], &params_[1], &params_[2], &params_[3]);
   }
 
-  // problem->SetParameterLowerBound(&params_[0], 0, 0.0);   // A1 positive
-  problem->SetParameterLowerBound(&params_[1], 0, -0.9*GetLambdaPhysicHours()); // positive
-  // problem->SetParameterLowerBound(&params_[2], 0, 0.0);   // A2 positive
-  problem->SetParameterLowerBound(&params_[3], 0, -0.9*GetLambdaPhysicHours());   // l2 positive
+  //  problem->SetParameterLowerBound(&params_[0], 0, 0.0);   // A1 positive
+  //problem->SetParameterLowerBound(&params_[2], 0, 0.0);   // A2 positive
+
+  problem->SetParameterLowerBound(&params_[1], 0, 0);//-0.9*GetLambdaPhysicHours());
+  problem->SetParameterLowerBound(&params_[3], 0, 0);//-0.9*GetLambdaPhysicHours());
+  //  problem->SetParameterUpperBound(&params_[1], 0, GetLambdaPhysicHours());
+  //problem->SetParameterUpperBound(&params_[3], 0, GetLambdaPhysicHours());
 
 
   //problem->SetParameterUpperBound(&params_[1], 0, 0.0);//GetLambdaPhysicHours()*2.0); // positive

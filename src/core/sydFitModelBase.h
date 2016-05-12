@@ -89,7 +89,7 @@ namespace syd {
     double ComputeR2(const syd::TimeActivityCurve::pointer tac) const;
     double ComputeAICc(const syd::TimeActivityCurve::pointer tac) const;
     double ComputeAIC(const syd::TimeActivityCurve::pointer tac) const;
-    double ComputeSS(const syd::TimeActivityCurve::pointer tac) const;
+    double ComputeRSS(const syd::TimeActivityCurve::pointer tac) const;
     virtual void ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac) {
       DD("ComputeStartingParametersValues not implemented ");
     }

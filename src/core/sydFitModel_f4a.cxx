@@ -32,25 +32,23 @@ syd::FitModel_f4a::FitModel_f4a():FitModelBase()
 // --------------------------------------------------------------------
 void syd::FitModel_f4a::ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac)
 {
-  DD("f4a");
   // Select only the end of the curve (min 2 points);
   auto first_index = tac->FindMaxIndex();
   first_index = std::min(first_index, tac->size()-3);
 
   // Initialisation
-  params_[0] = 0.0;
+  params_[0] = tac->GetValue(0);
   params_[1] = 0.0;
-  params_[2] = 0.0;
+  params_[2] = -0.8*GetLambdaPhysicHours();
 
   // Second part of the curve
-  Eigen::Vector2d x;
+  /*  Eigen::Vector2d x;
   LogLinearFit(x, tac, first_index, tac->size());
   double c = x(0);
   double d = x(1);
   params_[0] = c;  // x(0) = log c     --> A1 = exp(x(0))
   params_[1] = -GetLambdaPhysicHours()-d;// x(1) = -(l1+lp)  --> l1 = -x(1)-lp
-
-  DDS(params_);
+  */
 }
 // --------------------------------------------------------------------
 

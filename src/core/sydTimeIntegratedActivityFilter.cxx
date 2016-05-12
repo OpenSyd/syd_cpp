@@ -257,7 +257,7 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
   }
 
   // Select the best model
-  bool verbose = 1;
+  bool verbose = 0;
   if (verbose) DD(*tac);
   int best = -1;
   double R2_threshold = R2_min_threshold_;
@@ -267,14 +267,15 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
     auto & m = models_[i];
     double R2 = m->ComputeR2(tac);
     if (verbose) std::cout << m->GetName()
-              << " SS = " << m->ComputeSS(tac)
+              << " SS = " << m->ComputeRSS(tac)
               << " R2 = " << R2;
     if (R2 > R2_threshold) { // and R2 > best_R2) {
       double AICc;
       bool b = m->IsAICcValid(tac->size()); //FIXME
-      if (b) AICc = m->ComputeAICc(tac);
+      //if (b) AICc = m->ComputeAICc(tac);
       // else
-      //AICc = m->ComputeAIC(tac);
+      AICc = m->ComputeAIC(tac);
+      //AICc = m->ComputeAICc(tac);
       if (verbose) std::cout << " " << b
         << " AICc = " << m->ComputeAICc(tac) << "  AIC = " << m->ComputeAIC(tac);
       if (AICc < min_AICc) {
@@ -324,7 +325,8 @@ void syd::TimeIntegratedActivityFilter::InitInputData()
 
   // Check image size
   bool b = true;
-  for(auto image:images_) b = b and syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(images_[0], image);
+  for(auto image:images_)
+    b = b and syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(images_[0], image);
   if (!b) {
     LOG(FATAL) << "The images must have the same size/spacing, abort.";
   }

@@ -72,10 +72,16 @@ int main(int argc, char* argv[])
   for(auto i=0; i<args_info.model_given; i++)
     model_names.push_back(args_info.model_arg[i]);
   if (model_names.size() == 0)
-    model_names.push_back("f4a"); // default model
+    model_names.push_back("f4"); // default model
+
+  // Get times
+  db->Sort<syd::Image>(images);
+  std::vector<double> times;
+  for(auto im:images) times.push_back(im->GetHoursFromInjection());
 
   // main builder
   syd::TimeIntegratedActivityImageBuilder builder(db);
+  builder.SetTimes(times);
   builder.SetInput(images);
   builder.SetPreProcessingGaussianFilter(args_info.gauss_arg);
   builder.SetMinimumValueMask(args_info.min_activity_arg);
