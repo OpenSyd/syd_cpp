@@ -82,8 +82,10 @@ void syd::FitModel_f4a::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
   //  problem->SetParameterLowerBound(&params_[0], 0, 0.0);
 
   // If l1 is negative, means uptake. If too negative, could be continuous uptake.
-  problem->SetParameterLowerBound(&params_[1], 0, -0.9*GetLambdaPhysicHours()); // could not be equal to l_phys !
-  problem->SetParameterLowerBound(&params_[2], 0, -0.9*GetLambdaPhysicHours());
+  problem->SetParameterLowerBound(&params_[1], 0, 0.0);
+  problem->SetParameterLowerBound(&params_[2], 0, 0.0);
+  problem->SetParameterUpperBound(&params_[2], 0, 10*GetLambdaPhysicHours());
+  problem->SetParameterUpperBound(&params_[2], 0, 10*GetLambdaPhysicHours());
 
 }
 // --------------------------------------------------------------------
