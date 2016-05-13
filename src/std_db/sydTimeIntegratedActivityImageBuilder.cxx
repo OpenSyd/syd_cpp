@@ -162,15 +162,17 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
     auto r2 = new syd::FitOutputImage_R2();
     auto best_model = new syd::FitOutputImage_Model();
     auto iter = new syd::FitOutputImage_Iteration();
-    auto eff_half_life = new syd::FitOutputImage_EffHalfLife();
-    auto nb_points = new syd::FitOutputImage_NbOfPointsForFit();
-    auto lambda = new syd::FitOutputImage_Lambda();
+    //auto eff_half_life = new syd::FitOutputImage_EffHalfLife();
+    //auto nb_points = new syd::FitOutputImage_NbOfPointsForFit();
+    //auto lambda = new syd::FitOutputImage_Lambda();
+    auto image_params = new syd::FitOutputImage_ModelParams();
     AddOutputImage(r2);
     AddOutputImage(best_model);
     AddOutputImage(iter);
-    AddOutputImage(eff_half_life);
-    AddOutputImage(nb_points);
-    AddOutputImage(lambda);
+    //AddOutputImage(eff_half_life);
+    //AddOutputImage(nb_points);
+    //AddOutputImage(lambda);
+    AddOutputImage(image_params);
   }
 
   // Go !
@@ -254,5 +256,62 @@ void syd::TimeIntegratedActivityImageBuilder::RunPostProcessing()
     int f = syd::FillHoles<ImageType>(output, mask, fill_holes_radius_);
     LOG(1) << "Post processing: fill remaining holes. " << f << " failed pixels remain.";
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimeIntegratedActivityImageBuilder::InsertOutputImagesInDB(std::vector<std::string> & tag_names)
+{
+  for(auto o:outputs_) {
+    // ignore some debug
+    if (o->filename == "integrate.mhd") continue;
+    if (o->filename == "auc.mhd") continue;
+
+    // create the output image
+    auto output_image = NewMHDImageLike(inputs_[0]);
+    // special case for 4D image params
+    if (o->filename == "params.mhd") {
+      syd::FitOutputImage_ModelParams * oo =
+        static_cast<syd::FitOutputImage_ModelParams*>(o);
+      typedef syd::FitOutputImage_ModelParams::Image4DType Image4DType;
+      syd::WriteImage<Image4DType>(oo->image_4d, db_->GetAbsolutePath(output_image));
+      std::string md5 = syd::ComputeImageMD5<Image4DType>(oo->image_4d);
+      output_image->files[1]->md5 = md5;
+    }
+    else {
+      SetImage<PixelType>(output_image, o->image);
+    }
+    // Tags
+    syd::Tag::pointer tag;
+    db_->FindTag(tag, o->tag);
+    AddTag(output_image->tags, tag);
+
+    syd::Tag::vector tags;
+    db_->FindTags(tags, tag_names);
+    AddTag(output_image->tags, tags);
+
+    // PixelUnits
+    // TODO
+
+    // update
+    InsertAndRename(output_image);
+    DD(output_image);
+  }
+
+  if (mask_) {
+    auto mask_image = NewMHDImageLike(inputs_[0]);
+    SetImage<PixelType>(mask_image, mask_);
+    // Tags
+    syd::Tag::pointer tag;
+    db_->FindTag(tag, "fit_initial_mask");
+    AddTag(mask_image->tags, tag);
+    syd::Tag::vector tags;
+    db_->FindTags(tags, tag_names);
+    AddTag(mask_image->tags, tags);
+    InsertAndRename(mask_image);
+    DD(mask_image);
+  }
+
 }
 // --------------------------------------------------------------------

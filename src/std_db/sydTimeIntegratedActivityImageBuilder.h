@@ -54,6 +54,7 @@ namespace syd {
     void RunPreProcessing(std::vector<ImageType::Pointer> & images);
     void CreateTimeIntegratedActivityImage();
     void RunPostProcessing();
+    void InsertOutputImagesInDB(std::vector<std::string> & tag_names);
 
     // Output
     syd::Image::pointer GetTimeIntegratedActivityImage() { return tia_; }

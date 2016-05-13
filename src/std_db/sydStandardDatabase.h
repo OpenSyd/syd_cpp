@@ -62,6 +62,8 @@ namespace syd {
                                           const std::string & name_or_study_id) const;
     void FindTags(syd::Tag::vector & tags, const std::string & names) const;
     void FindTags(syd::Tag::vector & tags, const std::vector<std::string> & names) const;
+    void FindTag(syd::Tag::pointer & tag,
+                 const std::string & name) const;
     syd::PixelValueUnit::pointer FindOrInsertUnit(const std::string & name,
                                                   const std::string & description);
     syd::PixelValueUnit::pointer FindPixelValueUnit(const std::string & name);

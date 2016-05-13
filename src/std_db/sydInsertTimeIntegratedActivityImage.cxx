@@ -79,6 +79,11 @@ int main(int argc, char* argv[])
   std::vector<double> times;
   for(auto im:images) times.push_back(im->GetHoursFromInjection());
 
+  // debug fla
+  bool debug=false;
+  if (args_info.debug_images_in_db_flag) debug = true;
+  if (args_info.debug_images_flag) debug = true;
+
   // main builder
   syd::TimeIntegratedActivityImageBuilder builder(db);
   builder.SetTimes(times);
@@ -88,7 +93,7 @@ int main(int argc, char* argv[])
   builder.SetR2MinThreshold(args_info.r2_min_arg);
   builder.SetRestrictedTACFlag(args_info.restricted_tac_flag);
   builder.SetModels(model_names);
-  builder.SetDebugImagesFlag(args_info.debug_images_flag);
+  builder.SetDebugImagesFlag(debug);
   builder.SetPostProcessingMedianFilter(args_info.median_filter_flag);
   builder.SetPostProcessingFillHoles(args_info.fill_holes_arg);
   LOG(1) << builder.PrintOptions();
@@ -98,12 +103,15 @@ int main(int argc, char* argv[])
   builder.RunPostProcessing();
 
   // Debug images
-  if (args_info.debug_images_flag) {
+  if (debug) {
     typedef syd::TimeIntegratedActivityImageBuilder::ImageType ImageType;
-    for(auto o:builder.GetOutputs()) {
-      DD(o->filename);
-      syd::WriteImage<ImageType>(o->image, o->filename);
-    }
+    for(auto o:builder.GetOutputs()) o->WriteImage();
+  }
+  if (args_info.debug_images_in_db_flag) {
+    std::vector<std::string> tag_names;
+    for(auto i=0; i<args_info.tag_given; i++)
+      tag_names.push_back(args_info.tag_arg[i]);
+    builder.InsertOutputImagesInDB(tag_names);
   }
 
   // Insert in db

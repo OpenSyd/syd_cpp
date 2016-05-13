@@ -242,11 +242,28 @@ syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient:
 
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::FindTags(syd::Tag::vector & tags, const std::string & names) const
+void syd::StandardDatabase::FindTags(syd::Tag::vector & tags,
+                                     const std::string & names) const
 {
   std::vector<std::string> words;
   syd::GetWords(words, names);
   FindTags(tags, words);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::StandardDatabase::FindTag(syd::Tag::pointer & tag,
+                                    const std::string & name) const
+{
+  syd::Tag::vector tags;
+  FindTags(tags, name);
+  if (tags.size() != 1) {
+    EXCEPTION("Error in FindTag '" << name << "', I find "
+              << tags.size() << " tags";
+              );
+  }
+  tag = tags[0];
 }
 // --------------------------------------------------------------------
 
@@ -436,6 +453,14 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   tags.push_back(NewTag("dose_rate", "Dose rate image"));
   tags.push_back(NewTag("tia", "Time Integrated Activity"));
   tags.push_back(NewTag("mask", "Mask image"));
+
+  tags.push_back(NewTag("fit_r2", "Fit R2 result"));
+  tags.push_back(NewTag("fit_best_model", "Fit nb of best model result"));
+  tags.push_back(NewTag("fit_nb_iterations", "Fit nb of iterations"));
+  tags.push_back(NewTag("fit_success", "Fit binary success/fail"));
+  tags.push_back(NewTag("fit_initial_mask", "Fit binary initial mask"));
+  tags.push_back(NewTag("fit_params", "Fit 4D parameters"));
+
   for(auto r:radionuclides) {
     tags.push_back(NewTag(r->name, "Radionuclide " + r->name));
   }

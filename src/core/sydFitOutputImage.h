@@ -37,9 +37,11 @@ namespace syd {
     typedef itk::ImageRegionIterator<ImageType> Iterator;
 
     FitOutputImage();
-    void InitImage(Pointer input);
+    virtual void InitImage(Pointer input);
     void SetValue(double v);
     virtual void Update() = 0;
+    virtual void Iterate();
+    virtual void WriteImage();
 
     Pointer image;
     Iterator iterator;
@@ -49,6 +51,7 @@ namespace syd {
     syd::TimeActivityCurve::pointer initial_tac_;
     syd::TimeActivityCurve::pointer working_tac_;
     syd::FitModelBase * model_;
+    std::string tag;
   };
 
 
@@ -116,6 +119,28 @@ namespace syd {
     FitOutputImage_NbOfPointsForFit();
     virtual void Update();
   };
+
+  /// Store the model params in a 4D image
+  class FitOutputImage_ModelParams: public FitOutputImage {
+  public:
+    typedef float PixelType;
+    typedef itk::Image<PixelType,4> Image4DType;
+    typedef Image4DType::Pointer Pointer4D;
+    typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
+
+    virtual void InitImage(Pointer input);
+    //    void SetValue(double v);
+    virtual void Update();
+    virtual void Iterate();
+    virtual void WriteImage();
+
+    Pointer4D image_4d;
+    std::vector<double> values;
+    PixelType * raw_pointer;
+    int offset;
+    FitOutputImage_ModelParams();
+  };
+
 
 } // end namespace
 

@@ -1,0 +1,10 @@
+#File sydInsertPixelTimepoints.ggo
+
+package "syd"
+version "0.4"
+usage "sydInsertPixelTimepoints <image_ids>"
+description "Create a new Timepoints from the pixels values in all images
+- <image_ids>     list of image id for the sequence
+"
+
+option "pixel"  -  "Pixel coord in mm"       float yes multiple(3)

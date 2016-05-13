@@ -13,4 +13,5 @@ option "median_filter"   - "Apply median filter at the end"                   fl
 option "fill_holes"      f "Try to fill holes using given radius (no if -1)"  int default="-1" no
 option "pixelunit"       - "Name of pixel value unit to attach to the image"  string no
 option "debug_images"    - "Output some debug images"                         flag off
+option "debug_images_in_db"    - "Output some debug images and insert in db"                         flag off
 option "force"           - "Insert image even if another with similar tags exist" flag off

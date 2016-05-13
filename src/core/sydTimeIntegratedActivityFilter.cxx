@@ -228,7 +228,7 @@ void syd::TimeIntegratedActivityFilter::CreateIntegratedActivityImage()
     }
 
     // Next debug images
-    for(auto o:outputs_) ++o->iterator;
+    for(auto o:outputs_) o->Iterate();
 
     // progress bar
     ++x;
@@ -431,7 +431,7 @@ void syd::TimeIntegratedActivityFilter::InitSolver()
     integrate_output_ = new syd::FitOutputImage_Integrate();
     AddOutputImage(integrate_output_);
   }
-  success_output_ = new syd::FitOutputImage_Success();
+  success_output_ = new syd::FitOutputImage_Success(); // needed output
   AddOutputImage(success_output_);
 }
 // --------------------------------------------------------------------
