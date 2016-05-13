@@ -80,12 +80,23 @@ int syd::TimeIntegratedActivityFilter::GetRestrictedTac(syd::TimeActivityCurve::
   restricted_tac->clear();
 
   // Select only the end of the curve (min 2 points);
-  auto first_index = initial_tac->FindMaxIndex();
+  /*auto first_index = initial_tac->FindMaxIndex();
   first_index = std::min(first_index, initial_tac->size()-3);
   for(auto i=first_index; i<initial_tac->size(); i++) {
     restricted_tac->AddValue(initial_tac->GetTime(i), initial_tac->GetValue(i));
   }
   return first_index;
+  */
+  double previous_value = 0;
+  int i;
+  for(i=initial_tac->size()-1; i==0; i--) {
+    if (initial_tac->GetValue(i) < previous_value) break;
+    else previous_value = initial_tac->GetValue(i);
+  }
+  i = std::min((double)i, (double)initial_tac->size()-3);
+  for(int j=i; j<initial_tac->size(); j++)
+    restricted_tac->AddValue(initial_tac->GetTime(j), initial_tac->GetValue(j));
+  return i;
 }
 // --------------------------------------------------------------------
 
