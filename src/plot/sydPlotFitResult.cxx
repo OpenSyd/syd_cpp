@@ -56,16 +56,16 @@ int main(int argc, char* argv[])
 
   // Loop on Fit results
   for(auto f:fitresults) {
-    // Timepoints
+
+    // get timepoints
     auto tp = f->timepoints;
-    builder.AddCurve(tp->times, tp->values, "-o", "", "linewidth=2");
 
     // Label
     std::stringstream label;
     label << f->id << " "
           << tp->id << " "
           << tp->patient->name << " "
-          << tp->mask->roitype->name << " "
+          << (tp->mask != NULL ? tp->mask->roitype->name:"no_mask") << " "
           << tp->injection->radionuclide->name << " "
           << f->model_name
           << " auc="  << f->auc
@@ -83,11 +83,22 @@ int main(int argc, char* argv[])
     }
     model->SetParameters(f->params);
     model->SetLambdaPhysicHours(tp->injection->GetLambdaInHours());
+    double auc = model->Integrate();
+
+    // Scale
+    if (!args_info.norm_flag) auc = 1.0;
+    else auc = tp->values[0];
+    for(auto & v:tp->values) v /= auc;
+
+    // Timepoints
+    builder.AddCurve(tp->times, tp->values, "-o", "", "linewidth=2");
+
+    // Models
     double last = tp->times[tp->times.size()-1];
     double l = last-tp->times[0];
     auto times = syd::arange<double>(0, last, l/100.0); // FIXME param
     std::vector<double> values;
-    for(auto t:times) values.push_back(model->GetValue(t));
+    for(auto t:times) values.push_back(model->GetValue(t)/auc);
     builder.AddCurve(times, values, "-", label.str(), "color=base_line.get_color()");
     delete model;
   }

@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
   // Get the list of images to integrate
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
-  for(auto i=0; i<args_info.inputs_num; i++) {
+  for(auto i=1; i<args_info.inputs_num; i++) {
     ids.push_back(atoi(args_info.inputs[i]));
   }
   syd::Image::vector images;

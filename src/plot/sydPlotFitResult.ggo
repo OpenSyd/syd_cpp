@@ -7,5 +7,7 @@ description "Plot a set of FitResult curve
 - <fitresult_ids>     list of FitResult id to plot
 "
 
+
+option "norm"	    n	"Divide by auc" flag off
 option "output"	    o	"Output python file for script" string no
 option "pdf"	    p	"Output pdf file" string no

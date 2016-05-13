@@ -40,6 +40,16 @@ void syd::TimepointsBuilder::SetImages(const syd::Image::vector im)
 void syd::TimepointsBuilder::SetRoiMaskImage(const syd::RoiMaskImage::pointer m)
 {
   mask = m;
+  pixel.clear();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimepointsBuilder::SetPixel(std::vector<double> & p)
+{
+  pixel = p;
+  mask = NULL;
 }
 // --------------------------------------------------------------------
 
@@ -52,8 +62,9 @@ syd::TimepointsBuilder::ComputeTimepoints()
   if (images.size() ==0) {
     EXCEPTION("Cannot compute Timepoints, no images. Use SetImages first");
   }
-  if (!mask) {
-    EXCEPTION("Cannot compute Timepoints, no mask. Use SetRoiMaskImage first");
+
+  if (!mask and pixel.size() ==0) {
+    EXCEPTION("Cannot compute Timepoints, no mask or pixel. Use SetRoiMaskImage or SetPixel first");
   }
 
   // Check same injection date
@@ -78,6 +89,10 @@ syd::TimepointsBuilder::ComputeTimepoints()
                    << std::endl << " and " << unit->name << " for the image"
                    << std::endl << images[0];
     }
+  }
+
+  if (!mask) {
+    return ComputeTimepointsForPixel();
   }
 
   // Check if already exist ? (same images)
@@ -107,12 +122,6 @@ syd::TimepointsBuilder::ComputeTimepoints()
   if (found > 1) {
     EXCEPTION("Several Timepoints found with the same set of images/mask. Abort");
   }
-
-  // image type
-  typedef float PixelType;
-  typedef itk::Image<PixelType,3> ImageType;
-  typedef unsigned char MaskPixelType;
-  typedef itk::Image<MaskPixelType,3> MaskImageType;
 
   // Get the times
   std::vector<double> times = syd::GetTimesFromInjection(db_, images);
@@ -179,5 +188,54 @@ void syd::TimepointsBuilder::SetFromModel(syd::Timepoints::pointer timepoints,
     timepoints->values.push_back(model->GetValue(times[i]));
     timepoints->std_deviations.push_back(0.0);
   }
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+syd::Timepoints::pointer
+syd::TimepointsBuilder::ComputeTimepointsForPixel()
+{
+  DDS(pixel);
+
+  // Create tac
+  syd::Timepoints::pointer tac;
+  db_->New(tac);
+  tac->images = images;
+  tac->mask = NULL;
+
+  // Get the times
+  std::vector<double> times = syd::GetTimesFromInjection(db_, images);
+
+  // read all itk images
+  std::vector<ImageType::Pointer> itk_images;
+  for(auto image:images) {
+    auto itk_image = syd::ReadImage<ImageType>(db_->GetAbsolutePath(image));
+    itk_images.push_back(itk_image);
+  }
+
+  // Get pixel index
+  ImageType::IndexType index;
+  ImageType::PointType point;
+  point[0] = pixel[0];
+  point[1] = pixel[1];
+  point[2] = pixel[2];
+  itk_images[0]->TransformPhysicalPointToIndex(point, index);
+  DD(index);
+
+  // Set tac
+  auto n = itk_images.size();
+  tac->times.resize(n);
+  tac->values.resize(n);
+  tac->std_deviations.resize(n);
+  for(auto i=0; i<n; i++) {
+    tac->times[i] = times[i];
+    tac->values[i] = itk_images[i]->GetPixel(index);
+    tac->std_deviations[i] = 0.0;
+  }
+  tac->patient = images[0]->patient;
+  tac->injection = images[0]->injection;
+  return tac;
 }
 // --------------------------------------------------------------------

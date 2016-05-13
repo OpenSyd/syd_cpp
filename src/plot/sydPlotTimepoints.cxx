@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
     std::stringstream label;
     label << tp->id << " "
           << tp->patient->name << " "
-          << tp->mask->roitype->name << " "
+          << (tp->mask != NULL ? tp->mask->roitype->name:"no_mask") << " "
           << tp->injection->radionuclide->name;
     builder.AddCurve(tp->times, tp->values, "-o", label.str());
   }

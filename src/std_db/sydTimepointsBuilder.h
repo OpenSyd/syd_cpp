@@ -34,11 +34,19 @@ namespace syd {
     /// Destructor (empty)
     ~TimepointsBuilder() {}
 
+    // image type
+    typedef float PixelType;
+    typedef itk::Image<PixelType,3> ImageType;
+    typedef unsigned char MaskPixelType;
+    typedef itk::Image<MaskPixelType,3> MaskImageType;
+
     void SetImages(const syd::Image::vector images);
     void SetRoiMaskImage(const syd::RoiMaskImage::pointer mask);
+    void SetPixel(std::vector<double> & p);
 
     /// Compute a Timepoints with mean pixels values in a roi images
     syd::Timepoints::pointer ComputeTimepoints();
+    syd::Timepoints::pointer ComputeTimepointsForPixel();
 
     /// Set values from model computation
     void SetFromModel(syd::Timepoints::pointer timepoints,
@@ -47,6 +55,7 @@ namespace syd {
   protected:
     syd::Image::vector images;
     syd::RoiMaskImage::pointer mask;
+    std::vector<double> pixel;
 
   }; // class TimepointsBuilder
 
