@@ -408,8 +408,9 @@ void syd::TimeIntegratedActivityFilter::InitSolver()
 {
   // Solve
   ceres_options_ = new ceres::Solver::Options;
-  ceres_options_->max_num_iterations = 100;
+  ceres_options_->max_num_iterations = 50;
   ceres_options_->linear_solver_type = ceres::DENSE_QR; // because few parameters/data
+  //  ceres_options_->linear_solver_type = ceres::DENSE_SCHUR;
   ceres_options_->minimizer_progress_to_stdout = false;
   ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
 

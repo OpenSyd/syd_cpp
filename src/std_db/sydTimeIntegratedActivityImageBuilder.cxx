@@ -23,6 +23,7 @@
 
 // itk
 #include <itkMedianWithMaskImageFilter.h>
+#include <itkXorImageFilter.h>
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageBuilder::TimeIntegratedActivityImageBuilder(syd::StandardDatabase * db):
@@ -237,24 +238,48 @@ void syd::TimeIntegratedActivityImageBuilder::RunPreProcessing(std::vector<Image
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageBuilder::RunPostProcessing()
 {
-  auto output = GetOutput()->image;
-  auto mask = success_output_->image;
+  if (median_flag_ or fill_holes_radius_>0) {
+    auto output = GetOutput()->image;
+    auto success = success_output_->image;
+    auto initial_mask = mask_;
 
-  // Median
-  if (median_flag_) {
-    LOG(1) << "Post processing: median filter";
-    auto filter = itk::MedianWithMaskImageFilter<ImageType, ImageType, ImageType>::New();
-    filter->SetRadius(1);
-    filter->SetInput(output);
-    filter->SetMask(mask);
+    typedef itk::CastImageFilter<ImageType, MaskImageType> CastFilterType;
+    CastFilterType::Pointer cast1 = CastFilterType::New();
+    cast1->SetInput(initial_mask);
+    CastFilterType::Pointer cast2 = CastFilterType::New();
+    cast2->SetInput(success);
+    typedef itk::XorImageFilter<MaskImageType, MaskImageType> FilterType;
+    FilterType::Pointer filter = FilterType::New();
+    filter->SetInput1(cast1->GetOutput());
+    filter->SetInput2(cast2->GetOutput());
     filter->Update();
-    output = filter->GetOutput();
-  }
+    auto working_mask = filter->GetOutput();
+    typedef itk::CastImageFilter<MaskImageType, ImageType> CastFilterType2;
+    CastFilterType2::Pointer cast3 = CastFilterType2::New();
+    cast3->SetInput(working_mask);
+    cast3->Update();
 
-  // Fill_Holes
-  if (fill_holes_radius_ > 0) {
-    int f = syd::FillHoles<ImageType>(output, mask, fill_holes_radius_);
-    LOG(1) << "Post processing: fill remaining holes. " << f << " failed pixels remain.";
+    // Median
+    if (median_flag_) {
+      LOG(FATAL) << "Not implemented yet";
+      LOG(1) << "Post processing: median filter";
+      auto filter = itk::MedianWithMaskImageFilter<ImageType, ImageType, ImageType>::New();
+      filter->SetRadius(1);
+      filter->SetInput(output);
+      filter->SetMask(cast3->GetOutput());
+      filter->Update();
+      output = filter->GetOutput();
+    }
+
+    // Fill_Holes
+    if (fill_holes_radius_ > 0) {
+      int f = syd::FillHoles<ImageType>(output,  cast3->GetOutput(), fill_holes_radius_);
+      LOG(1) << "Post processing: fill remaining holes. " << f << " failed pixels remain.";
+      // syd::WriteImage<ImageType>(output, "fill_holes.mhd");
+    }
+
+    //GetOutput()->image = output;
+    SetImage<PixelType>(tia_, output); // set the real output
   }
 }
 // --------------------------------------------------------------------
