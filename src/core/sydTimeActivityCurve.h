@@ -60,6 +60,7 @@ namespace syd {
 
     unsigned int FindMaxIndex();
     double Integrate_Trapeze(int start, int end) const;
+    double GetIntegralBeforeFirstTimepoint() const;
     void clear();
 
     void reserve(int n) {

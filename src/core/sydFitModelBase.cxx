@@ -151,16 +151,27 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve::pointer tac, 
   double AUC = 0.0;
 
   // Integrate from 0 to first time of the restricted tac
-  double starting_part_model = Integrate(0.0, tac->GetTime(index));
+  double starting_part_model = Integrate(0.0, tac->GetTime(index)); //params are times
 
   // Integrate from 0 to infinity
   double total = Integrate();
 
   // Trapeze intregration of the first curve part
-  double paralelogram_part = tac->Integrate_Trapeze(0, index);
+  double paralelogram_part = tac->Integrate_Trapeze(0, index); // params are index
+
+  // Consider from times=0 to the first time, according to slope between 2 first timepoints
+  double r = tac->GetIntegralBeforeFirstTimepoint();
 
   // Final AUC is total integration, minus start model integration, plus trapez part.
-  AUC = total - starting_part_model + paralelogram_part;
+  AUC = total - starting_part_model + paralelogram_part + r;
+
+  DDS(GetParameters());
+  std::cout << "Compute auc tmax=" << tac->GetTime(index)
+            << " total= " << total
+            << " start_part=" << starting_part_model
+            << " trapez= " << paralelogram_part
+            << " r=" << r
+            << "   --> " << AUC << std::endl;
 
   return AUC;
 }

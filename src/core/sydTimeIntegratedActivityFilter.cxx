@@ -78,22 +78,16 @@ int syd::TimeIntegratedActivityFilter::GetRestrictedTac(syd::TimeActivityCurve::
                                                         syd::TimeActivityCurve::pointer restricted_tac)
 {
   restricted_tac->clear();
-
-  // Select only the end of the curve (min 2 points);
-  /*auto first_index = initial_tac->FindMaxIndex();
-  first_index = std::min(first_index, initial_tac->size()-3);
-  for(auto i=first_index; i<initial_tac->size(); i++) {
-    restricted_tac->AddValue(initial_tac->GetTime(i), initial_tac->GetValue(i));
-  }
-  return first_index;
-  */
+  // Select only the end of the curve from the largest value find from
+  // the end
   double previous_value = 0;
   int i;
-  for(i=initial_tac->size()-1; i==0; i--) {
+  for(i=initial_tac->size()-1; i>=0; i--) {
     if (initial_tac->GetValue(i) < previous_value) break;
     else previous_value = initial_tac->GetValue(i);
   }
-  i = std::min((double)i, (double)initial_tac->size()-3);
+  i++;
+  i = std::min((double)i, (double)initial_tac->size()-3); /// at min 3 points
   for(int j=i; j<initial_tac->size(); j++)
     restricted_tac->AddValue(initial_tac->GetTime(j), initial_tac->GetValue(j));
   return i;
@@ -231,7 +225,7 @@ void syd::TimeIntegratedActivityFilter::CreateIntegratedActivityImage()
         ++number_of_pixels_success;
         current_model_ = models_[best];
         // Update output
-        for(auto o:outputs_) {
+        for(auto & o:outputs_) {
           o->model_ = current_model_;
           o->Update();
         }
@@ -268,7 +262,7 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
   }
 
   // Select the best model
-  bool verbose = 0;
+  bool verbose = 1;
   if (verbose) DD(*tac);
   int best = -1;
   double R2_threshold = R2_min_threshold_;

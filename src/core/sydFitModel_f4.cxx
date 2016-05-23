@@ -68,6 +68,7 @@ void syd::FitModel_f4::ComputeStartingParametersValues(const syd::TimeActivityCu
 
     }
   }
+  DDS(params_);
 }
 // --------------------------------------------------------------------
 
