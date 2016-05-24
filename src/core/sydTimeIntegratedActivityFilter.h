@@ -85,6 +85,8 @@ namespace syd {
     void CreateIntegratedActivityImage();
     void CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac);
 
+    std::vector<double> GetTimes() { return times_; }
+
     // Outputs
     syd::FitOutputImage_Success * GetSuccessOutput() { return success_output_; }
     syd::FitOutputImage * GetOutput();

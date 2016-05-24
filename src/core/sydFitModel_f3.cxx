@@ -34,7 +34,7 @@ syd::FitModel_f3::FitModel_f3():FitModelBase()
 void syd::FitModel_f3::ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac)
 {
   // Select only the end of the curve (min 2 points);
-  auto first_index = tac->FindMaxIndex();
+  auto first_index = tac->FindIndexOfMaxValue();
   first_index = std::min(first_index, tac->size()-3);
 
   // Initialisation

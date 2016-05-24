@@ -80,14 +80,7 @@ int syd::TimeIntegratedActivityFilter::GetRestrictedTac(syd::TimeActivityCurve::
   restricted_tac->clear();
   // Select only the end of the curve from the largest value find from
   // the end
-  double previous_value = 0;
-  int i;
-  for(i=initial_tac->size()-1; i>=0; i--) {
-    if (initial_tac->GetValue(i) < previous_value) break;
-    else previous_value = initial_tac->GetValue(i);
-  }
-  i++;
-  i = std::min((double)i, (double)initial_tac->size()-3); /// at min 3 points
+  int i = initial_tac->FindIndexOfMaxValueFromTheEnd(3);
   for(int j=i; j<initial_tac->size(); j++)
     restricted_tac->AddValue(initial_tac->GetTime(j), initial_tac->GetValue(j));
   return i;
@@ -145,6 +138,7 @@ void syd::TimeIntegratedActivityFilter::CreateIntegratedActivityImage()
   // create initial tac with the times
   syd::TimeActivityCurve::pointer initial_tac = syd::TimeActivityCurve::New();
   for(auto t:times_) initial_tac->AddValue(t, 0.0);
+
 
   // restricted tac ?
   syd::TimeActivityCurve::pointer working_tac;
@@ -262,7 +256,7 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
   }
 
   // Select the best model
-  bool verbose = 1;
+  bool verbose = 0;
   if (verbose) DD(*tac);
   int best = -1;
   double R2_threshold = R2_min_threshold_;
