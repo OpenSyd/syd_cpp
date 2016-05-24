@@ -88,6 +88,7 @@ namespace syd {
     std::vector<double> GetTimes() { return times_; }
 
     // Outputs
+    void ClearOutputs() { outputs_.clear(); }
     syd::FitOutputImage_Success * GetSuccessOutput() { return success_output_; }
     syd::FitOutputImage * GetOutput();
     syd::FitOutputImage_AUC * GetAUCOutput() { return auc_output_; }

@@ -141,7 +141,6 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
                << times_.size() << " " << inputs_.size();
   }
 
-  DDS(times_);
   // Load initial itk_images
   std::vector<ImageType::Pointer> initial_images;
   for(auto image:inputs_) {
@@ -152,10 +151,9 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
   // Create mask if needed
   RunPreProcessing(initial_images);
 
-  // FIXME additional point
-
   // Set inputs
   times_.clear(); // important
+  images_.clear();
   for(auto i=0; i<temp_times.size(); i++)
     AddInput(initial_images[i], temp_times[i]);
 
@@ -322,7 +320,6 @@ void syd::TimeIntegratedActivityImageBuilder::InsertOutputImagesInDB(std::vector
 
     // update
     InsertAndRename(output_image);
-    DD(output_image);
   }
 
   if (mask_) {
@@ -336,7 +333,6 @@ void syd::TimeIntegratedActivityImageBuilder::InsertOutputImagesInDB(std::vector
     db_->FindTags(tags, tag_names);
     AddTag(mask_image->tags, tags);
     InsertAndRename(mask_image);
-    DD(mask_image);
   }
 
 }
