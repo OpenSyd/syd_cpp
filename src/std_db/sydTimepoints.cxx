@@ -200,3 +200,19 @@ std::string syd::Timepoints::ToStringForMD5() const
   return ss.str();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Timepoints::CopyFrom(const syd::Timepoints::pointer & from)
+{
+  // Do not copy id, history, md5
+  syd::RecordWithTags::CopyFrom(from);
+  patient = from->patient;
+  injection = from->injection;
+  times = from->times;
+  values = from->values;
+  std_deviations = from->std_deviations;
+  images = from->images;
+  mask = from->mask;
+}
+// --------------------------------------------------------------------

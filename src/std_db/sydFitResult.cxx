@@ -213,3 +213,19 @@ syd::FitModelBase * syd::FitResult::NewModel()
   return model;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitResult::CopyFrom(const syd::FitResult::pointer & from)
+{
+  // Do not copy id, history, md5
+  syd::RecordWithTags::CopyFrom(from);
+  timepoints = from->timepoints;
+  params = from->params;
+  auc = from->auc;
+  r2 = from->r2;
+  model_name = from->model_name;
+  first_index = from->first_index;
+  iterations = from->iterations;
+}
+// --------------------------------------------------------------------

@@ -77,6 +77,9 @@ namespace syd {
     /// Print table dump
     virtual void DumpInTable(syd::PrintTable & table) const;
 
+    // Copy
+    void CopyFrom(const syd::FitResult::pointer & from);
+
     /// Create a model from the current result
     syd::FitModelBase * NewModel();
 
