@@ -19,6 +19,7 @@
 // syd
 #include "sydTimeActivityCurve.h"
 #include "sydCommon.h"
+#include <random>
 
 // --------------------------------------------------------------------
 syd::TimeActivityCurve::TimeActivityCurve()
@@ -152,5 +153,20 @@ void syd::TimeActivityCurve::CopyFrom(syd::TimeActivityCurve & tac)
     values.push_back(tac.GetValue(i));
     variances.push_back(tac.GetVariance(i));
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::TimeActivityCurve::pointer syd::TimeActivityCurve::GetPoissonNoiseTAC(std::default_random_engine & generator)
+{
+  auto tac = New();
+  for(auto i=0; i<size(); i++){
+    auto v = GetValue(i);
+    std::poisson_distribution<int> distribution(v);
+    v = distribution(generator);
+    tac->AddValue(times[i], v);
+  }
+  return tac;
 }
 // --------------------------------------------------------------------

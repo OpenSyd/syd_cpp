@@ -28,6 +28,7 @@ using namespace sydlog;
 // std
 #include <vector>
 #include <memory>
+#include <random>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -55,9 +56,9 @@ namespace syd {
     double GetValue(unsigned int i) const { return values[i]; }
     double GetTime(unsigned int i) const { return times[i]; }
     double GetVariance(unsigned int i) const { return variances[i]; }
-    std::vector<double> GetTimes() const { return times; }
-    std::vector<double> GetValues() const { return values; }
-    std::vector<double> GetVariances() const { return variances; }
+    std::vector<double> & GetTimes() { return times; }
+    std::vector<double> & GetValues() { return values; }
+    std::vector<double> & GetVariances() { return variances; }
 
     // Functions
     void CopyFrom(syd::TimeActivityCurve & tac);
@@ -68,6 +69,7 @@ namespace syd {
     double ComputeIntegralBeforeFirstTimepoint() const;
     void Clear() { clear(); }
     void clear(); // like vector
+    pointer GetPoissonNoiseTAC(std::default_random_engine & generator);
 
     // Print
     friend std::ostream& operator<<(std::ostream& os, const TimeActivityCurve & p);
