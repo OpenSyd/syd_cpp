@@ -33,7 +33,7 @@ syd::FitModel_f4a::FitModel_f4a():FitModelBase()
 void syd::FitModel_f4a::ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac)
 {
   // Select only the end of the curve (min 2 points);
-  auto first_index = tac->FindMaxIndex();
+  auto first_index = tac->FindIndexOfMaxValue();
   first_index = std::min(first_index, tac->size()-3);
 
   // Initialisation
@@ -159,5 +159,13 @@ bool syd::FitModel_f4a::IsAcceptable() const
     //if (l<-0.2*GetLambdaPhysicHours()) is_ok = false;
   }
   return is_ok;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitModel_f4a::Scale(double s)
+{
+  params_[0] *= s;
 }
 // --------------------------------------------------------------------

@@ -42,13 +42,19 @@ namespace syd {
   // This is needed only once in the main to ensure that solver is SILENT
 #define SYD_CERES_STATIC_INIT google::InitGoogleLogging("");
 
-  class FitModelBase
-  {
+  // Base class for a fit model (multi exponential)
+  class FitModelBase {
   public:
 
+    // Types (no 'New' because the class is abstract)
+    typedef std::shared_ptr<FitModelBase> pointer;
+    typedef std::vector<pointer> vector;
+
+    // Constructors
     FitModelBase();
     virtual ~FitModelBase() {}
 
+    // Nested class to store residual
     class ResidualBaseType {
     public:
       ResidualBaseType(double x, double y, double l): x_(x), y_(y), lambda(l) {}
@@ -70,10 +76,12 @@ namespace syd {
     std::vector<double> & GetParameters() { return params_; }
     const std::vector<double> & GetParameters() const { return params_; }
     void SetParameters(std::vector<double> & p);
+    virtual void Scale(double s) = 0;
 
     virtual FitModelBase * Clone() const = 0;
     virtual void SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac);
-    virtual syd::TimeActivityCurve * GetTAC(double first_time, double last_time, int n) const;
+    virtual syd::TimeActivityCurve::pointer GetTAC(double first_time, double last_time, int n) const;
+    syd::TimeActivityCurve::pointer GetTAC(const std::vector<double> & times) const;
 
     virtual double GetValue(const double & time) const = 0;
 

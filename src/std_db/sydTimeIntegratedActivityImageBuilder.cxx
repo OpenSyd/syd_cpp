@@ -151,10 +151,9 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
   // Create mask if needed
   RunPreProcessing(initial_images);
 
-  // FIXME additional point
-
   // Set inputs
   times_.clear(); // important
+  images_.clear();
   for(auto i=0; i<temp_times.size(); i++)
     AddInput(initial_images[i], temp_times[i]);
 
@@ -321,7 +320,6 @@ void syd::TimeIntegratedActivityImageBuilder::InsertOutputImagesInDB(std::vector
 
     // update
     InsertAndRename(output_image);
-    DD(output_image);
   }
 
   if (mask_) {
@@ -335,8 +333,44 @@ void syd::TimeIntegratedActivityImageBuilder::InsertOutputImagesInDB(std::vector
     db_->FindTags(tags, tag_names);
     AddTag(mask_image->tags, tags);
     InsertAndRename(mask_image);
-    DD(mask_image);
   }
 
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimeIntegratedActivityImageBuilder::Fit(syd::FitResult::pointer f)
+{
+  /*
+  DD("Fit");
+  DD(f);
+
+  // Get the associated timepoints
+  auto tp = f->timepoints;
+  SetTimes(tp->times);
+  std::vector<std::string> model_names;
+  model_names.push_back(f->model_name);
+  SetModels(model_names);
+  DD(PrintOptions());
+  // syd::TimeActivityCurve::pointer tac = syd::TimeActivityCurve::New();
+  // tp->GetTAC(*tac);
+  // DD(tac);
+
+  auto m = f->NewModel();
+  auto tac = m->GetTAC(0, 150, 20);
+
+  // Go !
+  CreateIntegratedActivity(*tac);
+  DD("done");
+
+  // Set results
+  f->auc = current_model_->Integrate();
+  f->params = current_model_->GetParameters();
+  f->first_index = 0;
+  f->r2 = 0.0;
+  f->iterations = 0.0;
+  DD(f);
+  */
 }
 // --------------------------------------------------------------------

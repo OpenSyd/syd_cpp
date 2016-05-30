@@ -91,6 +91,9 @@ namespace syd {
     // Helper function, build a TAC
     void GetTAC(syd::TimeActivityCurve & tac);
 
+    // Copy
+    void CopyFrom(const syd::Timepoints::pointer & from);
+
   protected:
     Timepoints();
 

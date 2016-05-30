@@ -64,6 +64,7 @@ namespace syd {
     void SetR2MinThreshold(double r) { R2_min_threshold_ = r; }
     void SetRestrictedTACFlag(bool b) { restricted_tac_flag_ = b; }
     void SetModels(const std::vector<std::string> & model_names);
+    void SetModel(const std::string & model_name);
 
     // Internal inputs
     void AddInput(ImageType::Pointer image, double time) { images_.push_back(image); times_.push_back(time); }
@@ -77,15 +78,20 @@ namespace syd {
     // Helpers
     int GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
                          syd::TimeActivityCurve::pointer restricted_tac);
+    bool GetRestrictedTacFlag() const { return restricted_tac_flag_; }
+
     // Other functions
     void ClearModel() { models_.clear(); }
     std::vector<syd::FitModelBase*> & GetModels() { return models_; }
 
     // Main function
     void CreateIntegratedActivityImage();
-    void CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac);
+    syd::FitModelBase* CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac);
+
+    std::vector<double> GetTimes() { return times_; }
 
     // Outputs
+    void ClearOutputs() { outputs_.clear(); }
     syd::FitOutputImage_Success * GetSuccessOutput() { return success_output_; }
     syd::FitOutputImage * GetOutput();
     syd::FitOutputImage_AUC * GetAUCOutput() { return auc_output_; }

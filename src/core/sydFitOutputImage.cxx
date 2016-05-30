@@ -70,6 +70,7 @@ syd::FitOutputImage_AUC::FitOutputImage_AUC():FitOutputImage()
 {
   filename = "auc.mhd";
   tag = "fit_auc";
+  index_ = 0;
 }
 // --------------------------------------------------------------------
 

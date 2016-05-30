@@ -19,6 +19,7 @@
 // syd
 #include "sydTimeActivityCurve.h"
 #include "sydCommon.h"
+#include <random>
 
 // --------------------------------------------------------------------
 syd::TimeActivityCurve::TimeActivityCurve()
@@ -57,9 +58,25 @@ void syd::TimeActivityCurve::SortByTime()
 
 
 // --------------------------------------------------------------------
-unsigned int syd::TimeActivityCurve::FindMaxIndex()
+unsigned int syd::TimeActivityCurve::FindIndexOfMaxValueFromTheEnd(unsigned int min_nb_of_values) const
 {
-  double max=0.0;
+  double previous_value = std::numeric_limits<double>::lowest();
+  int i; // not unsigned (required for the loop)
+  for(i=size()-1; i>=0; i--) {
+    if (GetValue(i) < previous_value) break;
+    else previous_value = GetValue(i);
+  }
+  i++;
+  i = std::min(i, (int)(size()-min_nb_of_values));
+  return i;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+unsigned int syd::TimeActivityCurve::FindIndexOfMaxValue() const
+{
+  double max = std::numeric_limits<double>::lowest();
   unsigned int max_index=0;
   for (auto i = 0; i < size(); ++i) {
     if (GetValue(i) >= max) {
@@ -81,12 +98,17 @@ namespace syd {
       os << p.GetTime(i) << " " << p.GetValue(i) << " ; ";
     return os;
   }
+
+  std::ostream& operator<<(std::ostream& os, const TimeActivityCurve::pointer p)
+  {
+    return os << *p;
+  }
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-double syd::TimeActivityCurve::GetIntegralBeforeFirstTimepoint() const
+double syd::TimeActivityCurve::ComputeIntegralBeforeFirstTimepoint() const
 {
   double a = GetTime(0);
   double b = GetTime(1);
@@ -101,46 +123,12 @@ double syd::TimeActivityCurve::GetIntegralBeforeFirstTimepoint() const
 
 
 // --------------------------------------------------------------------
-double syd::TimeActivityCurve::Integrate_Trapeze(int start, int end) const
+double syd::TimeActivityCurve::ComputeIntegralByTrapezoidRule(int start, int end) const
 {
   double r = 0.0;
-  if (end >= size()-1) {
-    LOG(FATAL) << "Could not Integrate_Trapeze with end index = " << end;
-  }
-
-  /*
-  for(int i=start; i<end; ++i) {
-    // First solution with paralelogram
-    double a = GetValue(i);
-    double b = GetValue(i+1);
-    double d = GetTime(i+1)-GetTime(i);
-    r = r + d*(a+b)/2.0;
-  */
-    /*
-    // Alternative : fit monoexpo curve at each point
-    double t1 = tac_->GetTime(i);
-    double t2 = tac_->GetTime(i+1);
-    double A1 = tac_->GetValue(i);
-    double A2 = tac_->GetValue(i+1);
-    double lambda = 1.0/((t2-t1)/log(A1/A2));
-    double A = A1/exp(-lambda*t1);
-    //   double B = A2/exp(-lambda*t2);
-    double integral = syd::IntegrateMonoExpo(A, lambda, t1, t2);
-    r += integral;
-    */
-
-    /* debug
-       std::cout << t1 << " " << A1 << "      " << t2 << " " << A2 << std::endl;
-       std::cout << "paral = " << d*(a+b)/2.0 << " and int= " << integral << std::endl;
-       std::cout << lambda << " " << A << " " << B << std::endl;
-    */
-
-    //}
-
   double a = GetTime(start);
   double b = GetTime(end);
   r = (b-a)*((GetValue(start)+GetValue(end))/2.0);
-
   return r;
 }
 // --------------------------------------------------------------------
@@ -149,7 +137,9 @@ double syd::TimeActivityCurve::Integrate_Trapeze(int start, int end) const
 // --------------------------------------------------------------------
 void syd::TimeActivityCurve::clear()
 {
-  times.clear(); values.clear(); variances.clear();
+  times.clear();
+  values.clear();
+  variances.clear();
 }
 // --------------------------------------------------------------------
 
@@ -163,5 +153,20 @@ void syd::TimeActivityCurve::CopyFrom(syd::TimeActivityCurve & tac)
     values.push_back(tac.GetValue(i));
     variances.push_back(tac.GetVariance(i));
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::TimeActivityCurve::pointer syd::TimeActivityCurve::GetPoissonNoiseTAC(std::default_random_engine & generator)
+{
+  auto tac = New();
+  for(auto i=0; i<size(); i++){
+    auto v = GetValue(i);
+    std::poisson_distribution<int> distribution(v);
+    v = distribution(generator);
+    tac->AddValue(times[i], v);
+  }
+  return tac;
 }
 // --------------------------------------------------------------------

@@ -34,7 +34,7 @@ syd::FitModel_f3::FitModel_f3():FitModelBase()
 void syd::FitModel_f3::ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac)
 {
   // Select only the end of the curve (min 2 points);
-  auto first_index = tac->FindMaxIndex();
+  auto first_index = tac->FindIndexOfMaxValue();
   first_index = std::min(first_index, tac->size()-3);
 
   // Initialisation
@@ -138,5 +138,14 @@ double syd::FitModel_f3::GetLambda(const int i) const
 {
   if (i==0) return params_[1];
   else return 0.0;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitModel_f3::Scale(double s)
+{
+  params_[0] *= s;
+  params_[2] *= s;
 }
 // --------------------------------------------------------------------

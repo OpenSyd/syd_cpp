@@ -56,6 +56,7 @@ namespace syd {
     virtual double GetLambda(const int i) const;
 
     virtual void ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac);
+    virtual void Scale(double s);
 
   protected:
     std::vector<ResidualType*> residuals_;
