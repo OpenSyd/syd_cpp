@@ -38,7 +38,7 @@ namespace syd {
     typedef syd::Record::pointer record_pointer;
     typedef syd::Record::vector record_vector;
 
-    virtual record_pointer New() const = 0;
+    virtual record_pointer New() = 0;
 
     virtual void Insert(record_pointer record) const = 0;
 
@@ -70,14 +70,11 @@ namespace syd {
     virtual std::vector<std::string> & GetInheritSQLTableNames() const = 0;
 
     /// Return the table description
-    syd::TableDescription & GetTableDescription() { return table_description_; }
-
-    /// Build the initial description of the table
-    virtual void InitTableDescription(syd::DatabaseDescription * d) = 0;
+    //syd::TableDescription & GetTableDescription() { return table_description_; }
 
   protected:
     std::string inherit_table_name_;
-    syd::TableDescription table_description_;
+    ///    syd::TableDescription table_description_;
   };
 
 } // end namespace

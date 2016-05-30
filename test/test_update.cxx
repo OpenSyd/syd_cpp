@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
     m->Create("ExtendedDatabase", ext_dbname, folder, true);
   }
 
-  syd::Database * db = m->Read(ext_dbname);
+  syd::Database * db = m->Open(ext_dbname);
 
   // Insert elements
   {
@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     for(auto i=0; i<5; i++) {
       ext::Patient::pointer patient;
       db->New(patient);
-      db->Set(patient, args);
+      patient->Set(args);
       args[0] = "toto_"+args[0];
       args[1] = syd::ToString(22+atoi(args[1].c_str()));
       patients.push_back(patient);
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
     db->QueryOne(p, "Patient", 1);
     std::cout << "Get " << p << std::endl;
     args[0] = "titi";
-    db->Set(p, args);
+    p->Set(args);
     db->Update(p);
     std::cout << "Update " << p << std::endl;
   }
@@ -87,18 +87,14 @@ int main(int argc, char* argv[])
     std::cout << "Get " << p << std::endl;
     args[0] = "titi2";
     args[1] = syd::ToString(123);
-    db->Set(p, args);
+    p->Set(args);
     db->Update(p);
 
     ext::Patient::pointer pref;
     db->New(pref);
-    pref->name = p->name;
-    pref->study_id = p->study_id;
-    pref->weight_in_kg = p->weight_in_kg;
-    pref->dicom_patientid = p->dicom_patientid;
-    //    pref->CopyFrom(p); //FIXME
+    *pref = *p; // standard copy
     db->QueryOne(p, p->id);
-    if (!p->IsEqual(pref)) {
+    if (!syd::IsEqual(p, pref)) {
       LOG(FATAL) << "Error update single generic. p is " << p << " and pref " << pref;
     }
     std::cout << "Update " << p << std::endl;
@@ -118,7 +114,7 @@ int main(int argc, char* argv[])
       db->New(p);
       args[0] = "toto_"+args[0];
       args[1] = syd::ToString(22+atoi(args[1].c_str()));
-      db->Set(p, args);
+      p->Set(args);
     }
     db->Update(p, "Patient");
     p.clear();
@@ -138,7 +134,7 @@ int main(int argc, char* argv[])
       auto pp = p[i];
       args[0] = "tutu_"+args[0];
       args[1] = syd::ToString(22+atoi(args[1].c_str()));
-      db->Set(pp, args);
+      pp->Set(args);
     }
     db->Update(p);
     p.clear();

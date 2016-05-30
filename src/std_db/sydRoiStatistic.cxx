@@ -23,7 +23,10 @@
 #include <set>
 
 // --------------------------------------------------
-syd::RoiStatistic::RoiStatistic():syd::RecordWithHistory()
+syd::RoiStatistic::RoiStatistic():
+  syd::Record(),
+  syd::RecordWithHistory(),
+  syd::RecordWithTags()
 {
   image = NULL;
   mask = NULL;
@@ -40,7 +43,7 @@ std::string syd::RoiStatistic::ToString() const
      << image->patient->name << " "
      << image->id << " "
      << image->pixel_value_unit->name << " "
-     << GetLabels(image->tags) << " "
+     << GetLabels(tags) << " "
      << (mask!= NULL? syd::ToString(mask->roitype->name):"no_mask") << " "
      << mean << " " << std_dev << " "  << n << " "
      << min << " " << max << " " << sum;
@@ -50,42 +53,16 @@ std::string syd::RoiStatistic::ToString() const
 
 
 // --------------------------------------------------
-bool syd::RoiStatistic::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and
-          image->id == p->image->id and
-          (mask != NULL ? mask->id == p->mask->id:p->mask==NULL) and
-          mean == p->mean and
-          std_dev == p->std_dev and
-          n == p->n and
-          min == p->min and
-          max == p->max and
-          sum == p->sum);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::RoiStatistic::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "To insert a RoiStatistic, please use sydInsertRoiStatistic";
-}
-// --------------------------------------------------
-
-
-
-// --------------------------------------------------
 void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
 {
   syd::RecordWithHistory::InitTable(ta);
-  //  ta.AddColumn("id");
   if (ta.GetColumn("id") == -1) ta.AddColumn("id");
   ta.AddColumn("p");
   ta.AddColumn("image");
   ta.AddColumn("mask");
   ta.AddColumn("unit");
   ta.AddColumn("tags");
-  ta.AddColumn("mean",3);
+  ta.AddColumn("mean",5);
   ta.AddColumn("sd",3);
   ta.AddColumn("n");
   ta.AddColumn("min",3);
@@ -99,12 +76,12 @@ void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
 void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
 {
   syd::RecordWithHistory::DumpInTable(ta);
-  //ta.Set("id", id);
+  ta.Set("id", id);
   ta.Set("p", image->patient->name);
   ta.Set("image", image->id);
   ta.Set("mask", (mask != NULL ? mask->roitype->name:"no_mask"));
   ta.Set("unit", image->pixel_value_unit->name);
-  ta.Set("tags", GetLabels(image->tags));
+  ta.Set("tags", GetLabels(tags));
   ta.Set("mean", mean);
   ta.Set("sd", std_dev);
   ta.Set("n", n);

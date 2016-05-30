@@ -1,0 +1,78 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="275">
+    <add-table name="syd::RoiStatistic_tags" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::RoiStatistic">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::RoiStatistic_tags_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::RoiStatistic_tags_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::Tag">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
+  <changeset version="274"/>
+
+  <changeset version="273"/>
+
+  <changeset version="272"/>
+
+  <changeset version="265"/>
+
+  <changeset version="262"/>
+
+  <changeset version="261"/>
+
+  <changeset version="259">
+    <add-table name="syd::RoiStatistic" kind="polymorphic root object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="history" type="INTEGER" null="true"/>
+      <column name="typeid" type="TEXT" null="true"/>
+      <column name="image" type="INTEGER" null="true"/>
+      <column name="mask" type="INTEGER" null="true"/>
+      <column name="mean" type="REAL" null="true"/>
+      <column name="std_dev" type="REAL" null="true"/>
+      <column name="n" type="REAL" null="true"/>
+      <column name="min" type="REAL" null="true"/>
+      <column name="max" type="REAL" null="true"/>
+      <column name="sum" type="REAL" null="true"/>
+      <primary-key auto="true">
+        <column name="id"/>
+      </primary-key>
+      <foreign-key name="history_fk" deferrable="DEFERRED">
+        <column name="history"/>
+        <references table="syd::RecordHistory">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <foreign-key name="image_fk" deferrable="DEFERRED" on-delete="CASCADE">
+        <column name="image"/>
+        <references table="syd::Image">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <foreign-key name="mask_fk" deferrable="DEFERRED" on-delete="CASCADE">
+        <column name="mask"/>
+        <references table="syd::RoiMaskImage">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
+  <model version="257"/>
+</changelog>

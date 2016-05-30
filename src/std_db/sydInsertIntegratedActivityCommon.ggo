@@ -1,0 +1,9 @@
+#File sydCommandLineWithFitOptions.ggo
+
+option "r2_min" - "Min R2 threshold for model selection" float default="0.9" no
+option "restricted_tac"  r "Fit only end of the curve (max to end)" flag off
+option "model" m "Set the model list use to fit f2 f3 f4a etc" string multiple default="f2,f3,f4a,f4" no
+option "add_time" - "Add a point to the tac (bio HL) time" double no
+option "add_value" - "Add a point to the tac (bio HL) value" double no
+
+#option "robust_scaling"    - "Ceres scaling Loss robust"           float default="0.1" no

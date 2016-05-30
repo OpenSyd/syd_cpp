@@ -13,7 +13,6 @@ set(SCHEMA_NAME StandardDatabase)
 
 wrap_odb(sydStandardDatabase sydPatient.h) ## <--- to put in common_db ?
 wrap_odb(sydStandardDatabase sydRadionuclide.h) ## in common_db ?
-wrap_odb(sydStandardDatabase sydTag.h)  ## <--- to put in common_db ?
 wrap_odb(sydStandardDatabase sydInjection.h)
 wrap_odb(sydStandardDatabase sydDicomSerie.h)
 wrap_odb(sydStandardDatabase sydDicomFile.h)
@@ -24,13 +23,14 @@ wrap_odb(sydStandardDatabase sydImageTransform.h)
 wrap_odb(sydStandardDatabase sydCalibration.h)
 wrap_odb(sydStandardDatabase sydPixelValueUnit.h)
 wrap_odb(sydStandardDatabase sydRoiStatistic.h)
+wrap_odb(sydStandardDatabase sydTimepoints.h)
+wrap_odb(sydStandardDatabase sydFitResult.h)
 
 add_library(sydStandardDatabase SHARED
   sydStandardDatabase.cxx
   sydStandardDatabasePlugin.cxx
   sydPatient-odb.cxx sydPatient-schema.cxx  sydPatient.cxx
   sydRadionuclide-odb.cxx sydRadionuclide-schema.cxx  sydRadionuclide.cxx
-  sydTag-odb.cxx sydTag-schema.cxx  sydTag.cxx
   sydInjection-odb.cxx sydInjection-schema.cxx  sydInjection.cxx
   sydDicomSerie-odb.cxx sydDicomSerie-schema.cxx  sydDicomSerie.cxx
   sydDicomFile-odb.cxx sydDicomFile-schema.cxx  sydDicomFile.cxx
@@ -42,6 +42,8 @@ add_library(sydStandardDatabase SHARED
   sydCalibration-odb.cxx sydCalibration-schema.cxx  sydCalibration.cxx
   sydPixelValueUnit-odb.cxx sydPixelValueUnit-schema.cxx  sydPixelValueUnit.cxx
   sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
+  sydTimepoints-odb.cxx sydTimepoints-schema.cxx  sydTimepoints.cxx
+  sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
   sydImageBuilder.cxx
   sydFileBuilder.cxx
   sydImageFromDicomBuilder.cxx
@@ -50,8 +52,11 @@ add_library(sydStandardDatabase SHARED
   sydCropImageBuilder.cxx
   sydDecayCorrectedImageBuilder.cxx
   sydSubstituteRadionuclideImageBuilder.cxx
+  sydTimeIntegratedActivityImageBuilder.cxx
   sydRoiStatisticBuilder.cxx
   sydScaleImageBuilder.cxx
+  sydUpdateRadionuclideFilter.cxx
+  sydTimepointsBuilder.cxx
   )
 
 ## to declare dependencies
@@ -59,7 +64,7 @@ target_link_libraries(sydStandardDatabase ${SYD_CORE_LIBRARIES})
 
 ##############################
 # Not really a tool, for debug only
-wrap_ggo(sydTest_GGO_C sydTest.ggo sydCommandLineDefault.ggo)
+wrap_ggo(sydTest_GGO_C sydTest.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 add_executable(sydTest sydTest.cxx ${sydTest_GGO_C})
 target_link_libraries(sydTest sydStandardDatabase)
 
@@ -123,13 +128,17 @@ target_link_libraries(sydCropImage sydStandardDatabase)
 
 # Create decay corrected image
 wrap_ggo(sydInsertDecayCorrectedImage_GGO_C
-  sydInsertDecayCorrectedImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+  sydInsertDecayCorrectedImage.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
 add_executable(sydInsertDecayCorrectedImage sydInsertDecayCorrectedImage.cxx ${sydInsertDecayCorrectedImage_GGO_C})
 target_link_libraries(sydInsertDecayCorrectedImage sydStandardDatabase)
 
 # Create image with a different radionuclide
 wrap_ggo(sydInsertSubstituteRadionuclideImage_GGO_C
-  sydInsertSubstituteRadionuclideImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+  sydInsertSubstituteRadionuclideImage.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
 add_executable(sydInsertSubstituteRadionuclideImage
   sydInsertSubstituteRadionuclideImage.cxx ${sydInsertSubstituteRadionuclideImage_GGO_C})
 target_link_libraries(sydInsertSubstituteRadionuclideImage sydStandardDatabase)
@@ -141,9 +150,36 @@ add_executable(sydInsertRoiMaskImage sydInsertRoiMaskImage.cxx ${sydInsertRoiMas
 target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 
 # Create image of integrated activity
-wrap_ggo(sydInsertIntegratedActivityImage_GGO_C sydInsertIntegratedActivityImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-add_executable(sydInsertIntegratedActivityImage sydInsertIntegratedActivityImage.cxx ${sydInsertIntegratedActivityImage_GGO_C})
-target_link_libraries(sydInsertIntegratedActivityImage sydStandardDatabase)
+wrap_ggo(sydInsertTimeIntegratedActivityImage_GGO_C
+  sydInsertTimeIntegratedActivityImage.ggo
+  sydCommandLineWithFitOptions.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertTimeIntegratedActivityImage
+  sydInsertTimeIntegratedActivityImage.cxx ${sydInsertTimeIntegratedActivityImage_GGO_C})
+target_link_libraries(sydInsertTimeIntegratedActivityImage sydStandardDatabase)
+
+# compute integrated activity in a ROI
+wrap_ggo(sydInsertFitResult_GGO_C
+  sydInsertFitResult.ggo
+  sydCommandLineWithFitOptions.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertFitResult
+  sydInsertFitResult.cxx ${sydInsertFitResult_GGO_C})
+target_link_libraries(sydInsertFitResult sydStandardDatabase)
+
+
+# insert a timepoints from a roi / image
+wrap_ggo(sydInsertTimepoints_GGO_C sydInsertTimepoints.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertTimepoints sydInsertTimepoints.cxx ${sydInsertTimepoints_GGO_C})
+target_link_libraries(sydInsertTimepoints sydStandardDatabase)
+
+
+# insert a timepoints from a pixel coord
+wrap_ggo(sydInsertPixelTimepoints_GGO_C sydInsertPixelTimepoints.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertPixelTimepoints sydInsertPixelTimepoints.cxx ${sydInsertPixelTimepoints_GGO_C})
+target_link_libraries(sydInsertPixelTimepoints sydStandardDatabase)
 
 
 ##############################
@@ -179,7 +215,7 @@ target_link_libraries(sydInsertCalibration sydStandardDatabase)
 
 
 # Insert a new RoiStatistic
-wrap_ggo(sydInsertRoiStatistic_GGO_C sydInsertRoiStatistic.ggo sydCommandLineDefault.ggo)
+wrap_ggo(sydInsertRoiStatistic_GGO_C sydInsertRoiStatistic.ggo sydCommandLineWithTags.ggo  sydCommandLineDefault.ggo)
 add_executable(sydInsertRoiStatistic sydInsertRoiStatistic.cxx ${sydInsertRoiStatistic_GGO_C})
 target_link_libraries(sydInsertRoiStatistic sydStandardDatabase)
 

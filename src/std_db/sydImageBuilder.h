@@ -20,24 +20,22 @@
 #define SYDIMAGEBUILDERBASE_H
 
 // syd
-#include "sydStandardDatabase.h"
+#include "sydDatabaseFilter.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
   /// This base class is used to create ImageBuilder class that perform operation on Images
   /// series and images.
-  class ImageBuilder {
+  class ImageBuilder: public syd::DatabaseFilter {
 
   public:
     /// Constructor.
-    ImageBuilder(syd::StandardDatabase * db) { SetDatabase(db); }
-
-    /// Set the pointer to the database
-    void SetDatabase(syd::StandardDatabase * db) { db_ = db; }
+    ImageBuilder(syd::StandardDatabase * db):DatabaseFilter(db) { }
 
     /// Create an empty image (also create associated file). Not inserted in the db.
-    syd::Image::pointer NewMHDImage(syd::Patient::pointer patient);
+    //    syd::Image::pointer NewMHDImage(syd::Patient::pointer patient);
+    syd::Image::pointer NewMHDImage(syd::Injection::pointer injection);
 
     /// Create a new image and copy fields. Not inserted in the db.
     syd::Image::pointer NewMHDImageLike(syd::Image::pointer image);
@@ -47,7 +45,8 @@ namespace syd {
 
     /// Create and insert a new RoiMaskImage. Not inserted in the db.
     syd::RoiMaskImage::pointer NewMHDRoiMaskImage(syd::Patient::pointer patient,
-                                                  syd::RoiType::pointer roitype);
+                                                  syd::RoiType::pointer roitype,
+                                                  syd::Injection::pointer inj);
 
     /// Copy the file image to an Image, updating all information  (pixel type, size, md5 etc). DB not updated
     void CopyImageFromFile(syd::Image::pointer image, std::string filename);
@@ -73,12 +72,6 @@ namespace syd {
     void SetImagePixelValueUnit(syd::Image::pointer image, std::string pixel_unit);
 
   protected:
-    /// Protected constructor. No need to use directly.
-    ImageBuilder();
-
-    /// Pointer to the database
-    syd::StandardDatabase * db_;
-
     /// Create the associated Files
     void InitializeMHDFiles(syd::Image::pointer image);
 

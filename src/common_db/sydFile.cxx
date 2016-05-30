@@ -46,30 +46,11 @@ std::string syd::File::ToString() const
 
 
 // --------------------------------------------------------------------
-bool syd::File::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and
-          filename == p->filename and
-          path == p->path and
-          md5 == p->md5);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::File::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "Not possible in insert file directly";
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event,db);
-  if (event == odb::callback_event::pre_erase) {
-    EraseAssociatedFile();
+  if (event == odb::callback_event::post_erase) {
+    SetFilenamesToErase();
   }
 }
 // --------------------------------------------------------------------
@@ -79,21 +60,17 @@ void syd::File::Callback(odb::callback_event event, odb::database & db) const
 void syd::File::Callback(odb::callback_event event, odb::database & db)
 {
   syd::Record::Callback(event,db);
-  if (event == odb::callback_event::pre_erase) {
-    EraseAssociatedFile();
+  if (event == odb::callback_event::post_erase) {
+    SetFilenamesToErase();
   }
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::File::EraseAssociatedFile() const
+void syd::File::SetFilenamesToErase() const
 {
-  //  syd::StandardDatabase * db = static_cast<syd::StandardDatabase*>(db_);
-  std::string p = db_->ConvertToAbsolutePath(path+PATH_SEPARATOR+filename);
-  if (std::remove(p.c_str()) != 0) {
-    LOG(WARNING) << "Could not delete the file " << p;
-  }
+  db_->AddFilenameToDelete(db_->ConvertToAbsolutePath(path+PATH_SEPARATOR+filename));
 }
 // --------------------------------------------------------------------
 

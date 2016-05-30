@@ -29,28 +29,37 @@
 #include "sydTag.h"
 #include "sydDicomSerie.h"
 #include "sydPixelValueUnit.h"
+#include "sydRecordWithHistory.h"
+#include "sydRecordWithTags.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Image") callback(Callback)
-  /// Store information about a dicom image (serie). Element of table
-  /// 'Image' stored in a db. Contains information about a dicom
-  /// image.
-  class Image : public syd::RecordWithHistory {
+
+  /// Store information about an image stored in a db (file, size etc)
+  class Image : public syd::Record,
+                public syd::RecordWithHistory,
+                public syd::RecordWithTags
+  {
   public:
+
+    virtual ~Image();
 
 #pragma db not_null
     /// Foreign key, it must exist in the Patient table.
     syd::Patient::pointer patient;
 
-    /// Associated tags
-    syd::Tag::vector tags;
+#pragma db not_null
+    /// Foreign key, it must exist in the Injection table (could be a 'fake' injection)
+    syd::Injection::pointer injection;
 
     /// List of associated files (will be deleted when the image is deleted)
     syd::File::vector files;
 
-    /// Dicoms that serve to compute this image (could be empty).
+    /// Dicoms related to the image (could be empty). Allow to
+    /// retrieve Injection, date. A mask image is not necessarily
+    /// converted from a dicom, but associated with dicom information.
     syd::DicomSerie::vector dicoms;
 
     /// Type of the image (mhd by default)
@@ -77,9 +86,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Image, syd::Image);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Image);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Image);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     /// Standard folder
     virtual std::string ComputeRelativeFolder() const;
@@ -89,17 +99,6 @@ namespace syd {
 
     /// Return the modality of the dicom linked to this image
     std::string GetModality() const;
-
-    // /// Add a tag to the list (check is already exist) ; do not update in the db.
-    // void AddTag(const syd::Tag::pointer tag);
-    // void AddTags(const std::vector<std::string> & tags);
-    // void AddTags(const std::string tags);
-
-    /// Remove a tag from the list ; do not update in the db. Do nothing it not found
-    void RemoveTag(const syd::Tag::pointer tag);
-
-    /// Copy tags from another image
-    void CopyTags(const syd::Image::pointer tag);
 
     /// Add a DicomSerie to the list (check is already exist) ; do not update in the db.
     void AddDicomSerie(syd::DicomSerie::pointer dicom);
@@ -136,15 +135,18 @@ namespace syd {
     virtual syd::CheckResult Check() const;
 
     /// Compute the nb of hours between the injection and the
-    /// acquisition date. Retrieve the injection from the dicom if not
-    /// given as parameters
-    double GetHoursFromInjection(syd::Injection::pointer injection=NULL) const;
+    /// acquisition date.
+    double GetHoursFromInjection() const;
 
   protected:
     Image();
 
   }; // end class
   // --------------------------------------------------------------------
+
+
+  std::vector<double> & GetTimesFromInjection(syd::StandardDatabase * db,
+                                              const syd::Image::vector images);
 
 
 } // end namespace

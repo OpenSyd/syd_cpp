@@ -75,9 +75,13 @@ int main(int argc, char* argv[])
 
   // Create the database
   m->Create(dbtype, dbname, folder);
-  syd::Database * db = m->Read(dbname);
+  syd::Database * db = m->Open(dbname);
   LOG(1) << "Database " << dbname << " of type '" << dbtype << "' created.";
   LOG(2) << "List of tables: " << db->GetListOfTableNames();
+
+  // Insert default records if needed
+  std::string def = args_info.default_table_arg;
+  db->InsertDefaultRecords(def);
 
   // This is the end, my friend.
 }

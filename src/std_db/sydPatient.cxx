@@ -48,19 +48,11 @@ std::string syd::Patient::ToString() const
 
 
 // --------------------------------------------------
-bool syd::Patient::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and name == p->name and
-          study_id == p->study_id and dicom_patientid == p->dicom_patientid);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Patient::Set(const syd::Database * db, const std::vector<std::string> & arg)
+void syd::Patient::Set(const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
-    LOG(FATAL) << "To insert patient, please set <name> <study_id> [<weight_in_kg> <dicom_patientid>]";
+    LOG(FATAL) << "To insert patient, please set <name> <study_id> "
+               << "[<weight_in_kg> <dicom_patientid>]";
   }
   name = arg[0];
   study_id = atoi(arg[1].c_str());
@@ -71,8 +63,7 @@ void syd::Patient::Set(const syd::Database * db, const std::vector<std::string> 
 
 
 // --------------------------------------------------
-void syd::Patient::Set(const syd::Database * db,
-                       const std::string & pname,
+void syd::Patient::Set(const std::string & pname,
                        const IdType & pstudy_id,
                        const double pweight_in_kg,
                        const std::string pdicom_patientid)

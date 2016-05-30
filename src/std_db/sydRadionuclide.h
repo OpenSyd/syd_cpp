@@ -53,9 +53,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Radionuclide, syd::Radionuclide);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Radionuclide);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Radionuclide);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;

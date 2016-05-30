@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the radionuclide
   std::string radname = args_info.inputs[0];
@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
   for(auto image:images) {
     // Create new image
     syd::Image::pointer result = builder.NewRadionuclideSubstitutedImage(image, rad);
-    db->SetImageTagsFromCommandLine(result, args_info);
+    db->UpdateTagsFromCommandLine(result->tags, args_info);
     builder.InsertAndRename(result);
     LOG(1) << "Inserting Image " << result;
   }

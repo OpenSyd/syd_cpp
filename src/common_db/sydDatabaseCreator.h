@@ -31,7 +31,7 @@ namespace syd {
   class DatabaseCreatorBase {
 
   public:
-    virtual Database * Read(std::string filename) = 0;
+    virtual Database * Open(std::string filename) = 0;
     virtual void Create(std::string dbtype, std::string filename, std::string folder, bool force) = 0;
     void AddSchemaName(std::string n) { schemas.push_back(n); }
 
@@ -44,7 +44,7 @@ namespace syd {
   class DatabaseCreator:public DatabaseCreatorBase {
   public:
     /// Main function to open a db ; read the file and build the tables
-    virtual Database * Read(std::string filename);
+    virtual Database * Open(std::string filename);
 
     /// Main function to create the db and consider all schemas
     virtual void Create(std::string dbtype, std::string filename, std::string folder, bool force);

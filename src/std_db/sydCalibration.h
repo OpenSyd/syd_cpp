@@ -24,24 +24,23 @@
 
 // syd
 #include "sydImage.h"
-#include "sydTag.h"
+#include "sydRecordWithTags.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Calibration") callback(Callback)
 
-
-  /// Store information about a calibration factor to quantitatively interpret pixel in images.
-  class Calibration : public syd::Record {
+  /// Store information about a calibration factor to quantitatively
+  /// interpret pixel in images.
+  class Calibration : public syd::Record,
+                      public syd::RecordWithTags {
   public:
 
 #pragma db not_null on_delete(cascade)
-    /// Foreign key, it must exist in the Image table. If the image is deleted, the calibration also.
+    /// Foreign key, it must exist in the Image table. If the image is
+    /// deleted, the calibration also.
     syd::Image::pointer image;
-
-    /// Associated tags
-    syd::Tag::vector tags;
 
     /// Final calibration factor
     double factor;
@@ -51,19 +50,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Calibration, syd::Calibration);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Calibration);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Calibration);
     // ------------------------------------------------------------------------
 
-    /// Add a tag to the list (check is already exist) ; do not update in the db.
-    void AddTag(syd::Tag::pointer tag);
-
-    /// Remove a tag from the list ; do not update in the db. Do nothing it not found
-    void RemoveTag(syd::Tag::pointer tag);
-
-    /// Callback : delete the associated files when the image is deleted.
-    // void Callback(odb::callback_event, odb::database&) const;
-    // void Callback(odb::callback_event, odb::database&);
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;

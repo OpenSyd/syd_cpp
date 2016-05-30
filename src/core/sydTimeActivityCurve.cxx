@@ -18,6 +18,7 @@
 
 // syd
 #include "sydTimeActivityCurve.h"
+#include "sydCommon.h"
 
 // --------------------------------------------------------------------
 syd::TimeActivityCurve::TimeActivityCurve()
@@ -46,7 +47,11 @@ void syd::TimeActivityCurve::AddValue(double time, double value, double variance
 // --------------------------------------------------------------------
 void syd::TimeActivityCurve::SortByTime()
 {
-  LOG(FATAL) << "TODO TimeActivityCurve::SortByTime";
+  auto p = syd::sort_permutation(times,
+                                 [](double const& a, double const& b){ return (a<b); });
+  times = syd::apply_permutation(times, p);
+  values = syd::apply_permutation(values, p);
+  variances = syd::apply_permutation(variances, p);
 }
 // --------------------------------------------------------------------
 
@@ -81,18 +86,36 @@ namespace syd {
 
 
 // --------------------------------------------------------------------
+double syd::TimeActivityCurve::GetIntegralBeforeFirstTimepoint() const
+{
+  double a = GetTime(0);
+  double b = GetTime(1);
+  double va = GetValue(0);
+  double vb = GetValue(1);
+  double m = (vb-va)/(b-a);
+  double c = va - m*a;
+  double r = a*(va + c)/2.0;
+  return r;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 double syd::TimeActivityCurve::Integrate_Trapeze(int start, int end) const
 {
   double r = 0.0;
   if (end >= size()-1) {
     LOG(FATAL) << "Could not Integrate_Trapeze with end index = " << end;
   }
+
+  /*
   for(int i=start; i<end; ++i) {
     // First solution with paralelogram
     double a = GetValue(i);
     double b = GetValue(i+1);
     double d = GetTime(i+1)-GetTime(i);
     r = r + d*(a+b)/2.0;
+  */
     /*
     // Alternative : fit monoexpo curve at each point
     double t1 = tac_->GetTime(i);
@@ -112,7 +135,12 @@ double syd::TimeActivityCurve::Integrate_Trapeze(int start, int end) const
        std::cout << lambda << " " << A << " " << B << std::endl;
     */
 
-  }
+    //}
+
+  double a = GetTime(start);
+  double b = GetTime(end);
+  r = (b-a)*((GetValue(start)+GetValue(end))/2.0);
+
   return r;
 }
 // --------------------------------------------------------------------

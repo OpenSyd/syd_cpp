@@ -21,6 +21,7 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
+#include "sydRecordHelpers.h"
 
 // Init syd
 SYD_STATIC_INIT
@@ -36,7 +37,7 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
 
   // Get the database
-  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
+  syd::Database * db = syd::DatabaseManager::GetInstance()->Open(args_info.db_arg);
 
   // Simple dump if not arg
   if (args_info.inputs_num == 0) {
@@ -59,14 +60,14 @@ int main(int argc, char* argv[])
 
   // Find all records
   syd::Record::vector records;
-  if (args_info.tag_given) {
-    std::vector<std::string> tag_names;
-    for(auto i=0; i<args_info.tag_given; i++)
-      syd::GetWords(tag_names, args_info.tag_arg[i]);
-    db->QueryByTag(records, table_name, tag_names);
-  }
-  else { // Query all record
-    db->Query(records, table_name);
+  db->Query(records, table_name); // query all
+
+  // Only keep the ones with the given tags (we do not check that the tags exist)
+  if (args_info.tag_given and records.size() >0) {
+      std::vector<std::string> tag_names;
+      for(auto i=0; i<args_info.tag_given; i++)
+        syd::GetWords(tag_names, args_info.tag_arg[i]);
+      records = syd::KeepRecordIfContainsAllTags<syd::Record>(records, tag_names);
   }
 
   // Grep
@@ -164,12 +165,21 @@ int main(int argc, char* argv[])
   // Delete
   if (args_info.delete_flag) {
     if (results.size() > 0) {
-      std::cout << "Really delete " << results.size() << " element"
-                << (results.size() > 1 ? "s ":" ") << "(y/n) ? ";
-      char c;
-      std::scanf("%c", &c);
-      if (c =='y') db->Delete(results, table_name);
-      else { LOG(FATAL) << "Abort."; }
+      if (!args_info.force_flag) {
+        std::cout << "Really delete " << results.size() << " element"
+                  << (results.size() > 1 ? "s ":" ") << "(y/n) ? ";
+        char c;
+        std::scanf("%c", &c);
+        if (c =='y') {
+          db->Delete(results, table_name);
+          LOG(1) << results.size() << " elements deleted.";
+        }
+        else { LOG(FATAL) << "Abort."; }
+      }
+      else {
+        db->Delete(results, table_name);
+        LOG(1) << results.size() << " elements deleted.";
+      }
     }
   }
 

@@ -26,6 +26,8 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  class Database;
+
   /// Describe the content of a Table, from a OO point of view, and
   /// make the link with underlying sql description.
   class TableDescription {
@@ -34,6 +36,9 @@ namespace syd {
 
     bool FindField(std::string field_name, syd::FieldDescription ** f);
     std::vector<syd::FieldDescription*> & GetFields() { return fields_; }
+
+    void ReadTableSchema(const syd::Database * db,
+                         std::string table_name);
 
     std::string GetTableName() const { return table_name_; }
     std::string GetSQLTableName() const { return sql_table_name_; }

@@ -50,12 +50,14 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Patient, syd::Patient);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Patient);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Patient);
     // ------------------------------------------------------------------------
 
+    /// Write the element as a string
+    virtual std::string ToString() const;
+
     /// Additional Set function to shorter patient inclusion
-    virtual void Set(const syd::Database * db, const std::string & pname,
+    virtual void Set(const std::vector<std::string> & args);
+    virtual void Set(const std::string & pname,
                      const IdType & pstudy_id, const double pweight_in_kg=-1,
                      const std::string pdicom_patientid="unset");
 

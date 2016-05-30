@@ -41,6 +41,8 @@
 #include "sydCalibration-odb.hxx"
 #include "sydPixelValueUnit-odb.hxx"
 #include "sydRoiStatistic-odb.hxx"
+#include "sydTimepoints-odb.hxx"
+#include "sydFitResult-odb.hxx"
 
 // itk
 #include <itkImage.h>
@@ -60,11 +62,21 @@ namespace syd {
                                           const std::string & name_or_study_id) const;
     void FindTags(syd::Tag::vector & tags, const std::string & names) const;
     void FindTags(syd::Tag::vector & tags, const std::vector<std::string> & names) const;
-    syd::PixelValueUnit::pointer FindOrInsertUnit(const std::string & name, const std::string & description);
+    void FindTag(syd::Tag::pointer & tag,
+                 const std::string & name) const;
+    syd::PixelValueUnit::pointer FindOrInsertUnit(const std::string & name,
+                                                  const std::string & description);
     syd::PixelValueUnit::pointer FindPixelValueUnit(const std::string & name);
     syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
     syd::Calibration::pointer FindCalibration(const syd::Image::pointer Image,
                                               const std::string & calib_tag);
+    syd::RoiMaskImage::pointer FindRoiMaskImage(const syd::Image::pointer image,
+                                                const std::string & roi_name);
+    syd::Image::vector FindImages(const std::string & patient_name) const;
+    syd::Image::vector FindImages(const syd::Patient::pointer patient) const;
+
+    /// Automatically insert some default records
+    void InsertDefaultRecords(const std::string & def);
 
     std::string GetAbsolutePath(const syd::Image::pointer image) const;
     std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
@@ -76,38 +88,21 @@ namespace syd {
               bool flipAxeIfNegativeFlag) const;
 
     template<class ArgsInfo>
-    void SetImageTagsFromCommandLine(syd::Image::pointer image, ArgsInfo args_info);
-
-    template<class ArgsInfo, class RecordType>
-    void SetTagsFromCommandLine(typename RecordType::pointer record, ArgsInfo args_info);
-
-    template<class ArgsInfo>
     void UpdateTagsFromCommandLine(syd::Tag::vector & tags, ArgsInfo & args_info);
-
-    /// Query by tag, generic function
-    virtual void QueryByTag(generic_record_vector & records,
-                            const std::string table_name,
-                            const std::vector<std::string> & tag_names);
-
-    /// Query by tag, type specific function
-    template<class RecordType>
-    void QueryByTags(generic_record_vector & records,
-                    const std::vector<std::string> & tag_names,
-                    const std::string & patient_name="all");
-
-    /// Query by tag, type specific, for a single tag
-    template<class RecordType>
-    void QueryByTag(typename RecordType::vector & records,
-                    const std::string & tag_name,
-                    const std::string & patient_name="all");
-
-    template<class RecordType>
-    void QueryByTags(typename RecordType::vector & records,
-                     const std::vector<std::string> & tag_names,
-                     const std::string & patient_name="all");
 
     template<class RecordType>
     void SortAndPrint(typename RecordType::vector & records);
+
+    /// Insert a new tag
+    Tag::pointer NewTag(const std::string & name, const std::string & description);
+    PixelValueUnit::pointer NewPixelValueUnit(const std::string & name, const std::string & description);
+    RoiType::pointer NewRoiType(const std::string & name, const std::string & description);
+
+
+    /// Find a record with the same MD5 than the input
+    template<class RecordType>
+    bool FindSameMD5(const typename RecordType::pointer input,
+                     typename RecordType::pointer & output);
 
   protected:
     /// Insert the tables
@@ -136,25 +131,6 @@ namespace syd {
                                                         const std::string & type) const;
   template<> void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & records,
                                                       const std::string & type) const;
-
-
-  /// Declaration needed for TABLE_GET_NUMBER_OF_ELEMENTS (by default,
-  /// if not defined, the nb of elem is counted by query. Work but
-  /// slow.
-  template<> long syd::Database::GetNumberOfElements<Patient>() const;
-  template<> long syd::Database::GetNumberOfElements<Injection>() const;
-  template<> long syd::Database::GetNumberOfElements<Radionuclide>() const;
-  template<> long syd::Database::GetNumberOfElements<Tag>() const;
-  template<> long syd::Database::GetNumberOfElements<File>() const;
-  template<> long syd::Database::GetNumberOfElements<DicomFile>() const;
-  template<> long syd::Database::GetNumberOfElements<DicomSerie>() const;
-  template<> long syd::Database::GetNumberOfElements<Image>() const;
-  template<> long syd::Database::GetNumberOfElements<RoiType>() const;
-  template<> long syd::Database::GetNumberOfElements<RoiMaskImage>() const;
-  template<> long syd::Database::GetNumberOfElements<ImageTransform>() const;
-  template<> long syd::Database::GetNumberOfElements<Calibration>() const;
-  template<> long syd::Database::GetNumberOfElements<PixelValueUnit>() const;
-  template<> long syd::Database::GetNumberOfElements<RoiStatistic>() const;
 
 } // namespace syd
 

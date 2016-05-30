@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the roitype
   syd::RoiType::pointer roitype = db->FindRoiType(args_info.inputs[0]);
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
   // Create a new RoiMaskImage
   syd::RoiMaskImageBuilder builder(db);
   syd::RoiMaskImage::pointer mask = builder.NewRoiMaskImage(dicom, roitype, filename);
-  db->SetImageTagsFromCommandLine(mask, args_info);
+  db->UpdateTagsFromCommandLine(mask->tags, args_info);
   builder.InsertAndRename(mask);
   LOG(1) << "Inserting RoiMaskImage " << mask;
 

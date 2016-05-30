@@ -46,43 +46,6 @@ std::string syd::Radionuclide::ToString() const
 
 
 // --------------------------------------------------
-bool syd::Radionuclide::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and name == p->name and
-          half_life_in_hours == p->half_life_in_hours and
-          element == p->element and
-          atomic_number == p->atomic_number and
-          mass_number == p->mass_number and
-          metastable == p->metastable and
-          max_beta_minus_energy_in_kev == p->max_beta_minus_energy_in_kev);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-// void syd::Radionuclide::CopyFrom(const pointer p)
-// {
-//   syd::Record::CopyFrom(p);
-//   name = p->name;
-//   half_life_in_hours = p->half_life_in_hours;
-//   element = p->element;
-//   atomic_number = p->atomic_number;
-//   mass_number = p->mass_number;
-//   metastable = p->metastable;
-//   max_beta_minus_energy_in_kev = p->max_beta_minus_energy_in_kev;
-// }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Radionuclide::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "To insert Radionuclide, please sydRadionuclideUpdate";
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Radionuclide::InitTable(syd::PrintTable & ta) const
 {
   ta.AddColumn("id");

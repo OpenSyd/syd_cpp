@@ -67,6 +67,15 @@ syd::TimeActivityCurve * syd::FitModelBase::GetTAC(double first_time, double las
 
 
 // --------------------------------------------------------------------
+void syd::FitModelBase::SetParameters(std::vector<double> & p)
+{
+  params_.clear();
+  params_ = p;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 namespace syd {
   std::ostream& operator<<(std::ostream& os, const FitModelBase & p)
   {
@@ -78,12 +87,12 @@ namespace syd {
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::Integrate(double a, double b, double l_phys) const
+double syd::FitModelBase::Integrate(double a, double b) const
 {
   double x=0.0;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
-    double l = GetLambda(k) + l_phys;
+    double l = GetLambda(k) + GetLambdaPhysicHours();
     x += A/l * (exp(-l*a) - exp(-l*b)) ;
   }
   return x;
@@ -92,12 +101,12 @@ double syd::FitModelBase::Integrate(double a, double b, double l_phys) const
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::Integrate(double l_phys) const
+double syd::FitModelBase::Integrate() const
 {
   double x = 0.0;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
-    double l = GetLambda(k) + l_phys;
+    double l = GetLambda(k) + GetLambdaPhysicHours();
     x += A/l;
   }
   return x;
@@ -106,10 +115,10 @@ double syd::FitModelBase::Integrate(double l_phys) const
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac, double l_phys, bool use_current_tac) const
+double syd::FitModelBase::ComputeAUC_OLD(const syd::TimeActivityCurve & tac, bool use_current_tac) const
 {
   // Simple integration if full model
-  if (!use_current_tac) return Integrate(l_phys);
+  if (!use_current_tac) return Integrate();
 
   // If not, we consider the current_tac as the restricted one
   if (!current_tac) {
@@ -118,10 +127,10 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac, double 
   double AUC = 0.0;
 
   // Integrate from 0 to first time of the restricted_tac
-  double starting_part_model = Integrate(0.0, current_tac->GetTime(0), l_phys);
+  double starting_part_model = Integrate(0.0, current_tac->GetTime(0));
 
   // Integrate from 0 to infinity
-  double total = Integrate(l_phys);
+  double total = Integrate();
 
   // Trapeze intregration of the first curve part
   int index = 0;
@@ -137,25 +146,50 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve & tac, double 
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve & tac, bool use_current_tac) const
+double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve::pointer tac, int index) const
 {
-  const syd::TimeActivityCurve * current = &tac;
-  if (use_current_tac) {
-    if (!current_tac) {
-      LOG(FATAL) << "Could not compute ComputeAUC with restricted tac, 'current_tac' must be set";
-    }
-    current = current_tac;
-  }
+  double AUC = 0.0;
 
+  // Integrate from 0 to first time of the restricted tac
+  double starting_part_model = Integrate(0.0, tac->GetTime(index)); //params are times
+
+  // Integrate from 0 to infinity
+  double total = Integrate();
+
+  // Trapeze intregration of the first curve part
+  double paralelogram_part = tac->Integrate_Trapeze(0, index); // params are index
+
+  // Consider from times=0 to the first time, according to slope between 2 first timepoints
+  double r = tac->GetIntegralBeforeFirstTimepoint();
+
+  // Final AUC is total integration, minus start model integration, plus trapez part.
+  AUC = total - starting_part_model + paralelogram_part + r;
+
+  DDS(GetParameters());
+  std::cout << "Compute auc tmax=" << tac->GetTime(index)
+            << " total= " << total
+            << " start_part=" << starting_part_model
+            << " trapez= " << paralelogram_part
+            << " r=" << r
+            << "   --> " << AUC << std::endl;
+
+  return AUC;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve::pointer tac) const
+{
   double mean = 0.0;
-  for(auto i=0; i<current->size(); i++) mean += current->GetValue(i);
-  mean = mean / (double)current->size();
+  for(auto i=0; i<tac->size(); i++) mean += tac->GetValue(i);
+  mean = mean / (double)tac->size();
 
-  double SS_res = ComputeSS(*current);
+  double SS_res = ComputeRSS(tac);
 
   double SS_tot = 0.0;
-  for(auto i=0; i<current->size(); i++) {
-    SS_tot += pow(current->GetValue(i)-mean, 2);
+  for(auto i=0; i<tac->size(); i++) {
+    SS_tot += pow(tac->GetValue(i)-mean, 2);
   }
 
   double R2 = 1.0 - (SS_res/SS_tot);
@@ -165,11 +199,11 @@ double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve & tac, bool use
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeSS(const syd::TimeActivityCurve & tac) const
+double syd::FitModelBase::ComputeRSS(const syd::TimeActivityCurve::pointer tac) const
 {
   double SS = 0.0;
-  for(auto i=0; i<tac.size(); i++) {
-    SS += pow(tac.GetValue(i)-GetValue(tac.GetTime(i)),2);
+  for(auto i=0; i<tac->size(); i++) {
+    SS += pow(tac->GetValue(i)-GetValue(tac->GetTime(i)),2);
   }
   return SS;
 }
@@ -180,30 +214,55 @@ double syd::FitModelBase::ComputeSS(const syd::TimeActivityCurve & tac) const
 bool syd::FitModelBase::IsAICcValid(int N) const
 {
   double K = GetK();
-  return (K+1+2) <= N;
+  //  return (K+1+2) <= N; // relative weighting
+  return (K+2) <= N; // for absolute weighting
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-double syd::FitModelBase::ComputeAICc(const syd::TimeActivityCurve & tac) const
+double syd::FitModelBase::ComputeAIC(const syd::TimeActivityCurve::pointer tac) const
 {
   // See Glatting 2007 equ (4)
   // See Kletting 2013 eq (5) / (6) and erratum
   // See Burnham2011 and others
-  double N = tac.size();
+  double N = tac->size();
   double K = GetK();
-  double SS = ComputeSS(tac);
+  double RSS = ComputeRSS(tac); // RSS residual sum of squares
 
-  double AIC = N * log(SS/N) + 2.0*(K+1) ;  // std::log is ln (natural logarithm), least square fit with normally dist errors
-  //double AICc = AIC + (2*(K+1.0)*(K+2.0))/(N-K-2.0); // relative -> but issue if N-K-2 too low.
-  double AICc = AIC + (2*K*(K+1))/(N-K-1); // absolute
+  // std::log is ln (natural logarithm), least square fit with normally dist errors
+  // See Glatting2007 eq(4)
+  // See Burnham2011
+  double L = N*std::log(RSS/N);// likelihood FIXME / N ???
+  double AIC = L + 2*K; //N * std::log(SS/N) + 2.0*(K+1) ;
 
-  if (K+2 > N)  AICc = 666; // not applicable
-  //  if (K+3 > N)  AICc = 666; // not applicable
+  // AIC = k + n [Ln( 2(pi) RSS/(n-k) ) +1],
+  // AIC = K + N*(std::log(2*M_PI) * RSS/(N-K) + 1.0);
 
-  // std::cout << std::endl << name_ << " N=" << N << " K=" << K << " SS= " << SS
-  //           << " -> " << AIC << " " << AICc << std::endl;
+  //  double BIC = L + (K+1)*log(N);
+  //return BIC;
+  return AIC;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModelBase::ComputeAICc(const syd::TimeActivityCurve::pointer tac) const
+{
+  // See Glatting 2007 equ (4)
+  // See Kletting 2013 eq (5) / (6) and erratum
+  // See Burnham2011 and others
+  double N = tac->size();
+  double K = GetK();
+
+  // std::log is ln (natural logarithm), least square fit with normally dist errors
+  // See Glatting2007 eq(4)
+  double AIC = ComputeAIC(tac);
+  // See Kletting2014
+  //  double AICc = AIC + (2.0*K*(K+1.0))/(N-K-1.0); // absolute
+  double d = N-K-1.0;
+  if (N-K-1.0 < 1.0) d = 1;
+  double AICc = AIC +  (2.0*K*(K+1.0))/d;//(N-K-1.0);
 
   return AICc;
 }
@@ -221,5 +280,36 @@ bool syd::FitModelBase::IsAcceptable() const
     // if (l<0.2*GetLambdaPhysicHours()) is_ok = false; // too slow decay
   }
   return is_ok;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModelBase::GetEffHalfLife() const
+{
+  double h = GetLambda(0) + GetLambdaPhysicHours();
+  return log(2.0)/h;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// Fit y = c*exp(d*x)
+// linearize : log(y) = log(c) + dx
+void syd::FitModelBase::LogLinearFit(Eigen::Vector2d & x,
+                                     const syd::TimeActivityCurve::pointer tac,
+                                     int start, int end)
+{
+  if (end == -1) end = tac->size();
+  int n = end-start;
+  Eigen::MatrixXd A(n,2);
+  Eigen::VectorXd b(n);
+  for(auto i=start; i<end; i++) {
+    A(i-start,0) = 1.0;
+    A(i-start,1) = tac->GetTime(i);
+    b(i-start) = log(tac->GetValue(i));
+  }
+  x = A.householderQr().solve(b);
+  x(0) = exp(x(0));
 }
 // --------------------------------------------------------------------

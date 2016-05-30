@@ -14,9 +14,6 @@ add_library(sydCore
   sydException.cxx
   sydDicomCommon.cxx
   sydPrintTable.cxx
-  sydDatabaseDescription.cxx
-  sydTableDescription.cxx
-  sydFieldDescription.cxx
 )
 
 target_link_libraries(sydCore
@@ -53,7 +50,8 @@ add_library(sydFit
   sydFitModel_f4a.cxx
   sydFitModel_f4b.cxx
   sydFitModel_f4c.cxx
-  sydIntegratedActivityImageBuilder.cxx
+  sydFitOutputImage.cxx
+  sydTimeIntegratedActivityFilter.cxx
 )
 
 target_link_libraries(sydFit ${CERES_LIBRARIES})
@@ -71,7 +69,7 @@ set(SYD_INCLUDE_FILES ${SYD_INCLUDE_FILES}
   sydDD.h
   sydException.h
 
-  sydIntegratedActivityImageBuilder.h
+  sydTimeIntegratedActivityFilter.h
   itkMedianWithMaskImageFilter.h
   sydImageCrop.h
   sydImageFillHoles.h

@@ -72,43 +72,8 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom,
 
 // --------------------------------------------------------------------
 template<class ArgsInfo>
-void syd::StandardDatabase::SetImageTagsFromCommandLine(syd::Image::pointer image, ArgsInfo args_info)
-{
-  // Remove all tags
-  if (args_info.remove_all_tag_flag) image->tags.clear();
-
-  // Remove some tags
-  if (args_info.remove_tag_given) {
-    for(auto i=0; i<args_info.remove_tag_given; i++) {
-      std::string tagname = args_info.remove_tag_arg[i];
-      syd::Tag::vector tags;
-      try {
-        FindTags(tags, tagname);
-      } catch(std::exception & e) { } // ignore unknown tag
-      for(auto t:tags) image->RemoveTag(t); // FIXME to change in RemoveTag(image->tags, t);
-    }
-  }
-
-  // Add tags
-  if (args_info.tag_given) {
-    for(auto i=0; i<args_info.tag_given; i++) {
-      std::string tagname = args_info.tag_arg[i];
-      syd::Tag::vector tags;
-      try {
-        FindTags(tags, tagname);
-      } catch(std::exception & e) {
-        LOG(WARNING) << "Some tags are ignored. " << e.what();
-      }
-      for(auto t:tags) AddTag(image->tags, t);
-    }
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class ArgsInfo>
-void syd::StandardDatabase::UpdateTagsFromCommandLine(syd::Tag::vector & tags, ArgsInfo & args_info)
+void syd::StandardDatabase::UpdateTagsFromCommandLine(syd::Tag::vector & tags,
+                                                      ArgsInfo & args_info)
 {
   // Remove all tags
   if (args_info.remove_all_tag_flag) tags.clear();
@@ -143,137 +108,6 @@ void syd::StandardDatabase::UpdateTagsFromCommandLine(syd::Tag::vector & tags, A
 
 
 // --------------------------------------------------------------------
-template<class ArgsInfo, class RecordType>
-void syd::StandardDatabase::SetTagsFromCommandLine(typename RecordType::pointer record, ArgsInfo args_info)
-{
-  // Remove all tags
-  if (args_info.remove_all_tag_flag) record->tags.clear();
-
-  // Remove some tags
-  if (args_info.remove_tag_given) {
-    for(auto i=0; i<args_info.remove_tag_given; i++) {
-      std::string tagname = args_info.remove_tag_arg[i];
-      syd::Tag::vector tags;
-      try {
-        FindTags(tags, tagname);
-      } catch(std::exception & e) { } // ignore unknown tag
-      for(auto t:tags) record->RemoveTag(t);
-    }
-  }
-
-  // Add tags
-  if (args_info.tag_given) {
-    for(auto i=0; i<args_info.tag_given; i++) {
-      std::string tagname = args_info.tag_arg[i];
-      syd::Tag::vector tags;
-      try {
-        FindTags(tags, tagname);
-      } catch(std::exception & e) {
-        LOG(WARNING) << "Some tags are ignored. " << e.what();
-      }
-      for(auto t:tags) record->AddTag(t);
-    }
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void syd::StandardDatabase::QueryByTags(generic_record_vector & records,
-                                       const std::vector<std::string> & tag_names,
-                                       const std::string & patient_name)
-{
-  if (tag_names.size() == 0) {
-    Query(records, RecordType::GetStaticTableName());
-    return;
-  }
-
-  typename RecordType::vector temp;
-  QueryByTag<RecordType>(temp, tag_names[0], patient_name);
-  for(auto record:temp) {
-    int n=0;
-    for(auto t:tag_names) { // brute force search !!
-      auto iter = std::find_if(record->tags.begin(), record->tags.end(),
-                               [&t](syd::Tag::pointer & tag)->bool { return tag->label == t;} );
-      if (iter == record->tags.end()) continue;
-      else ++n;
-    }
-    if (n == tag_names.size()) records.push_back(record);
-  }
-
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void syd::StandardDatabase::QueryByTags(typename RecordType::vector & records,
-                                        const std::vector<std::string> & tag_names,
-                                        const std::string & patient_name)
-{
-  syd::Record::vector temp;
-  records.clear();
-  QueryByTags<RecordType>(temp, tag_names, patient_name);
-  for(auto t:temp) records.push_back(std::static_pointer_cast<RecordType>(t));
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-// Specific query to match image with a tag name, in order to speed up
-// a bit the FindImageByTag.
-template<class RecordType>
-void syd::StandardDatabase::QueryByTag(typename RecordType::vector & records,
-                                       const std::string & tag_name,
-                                       const std::string & patient_name)
-{
-  std::vector<syd::IdType> ids; // resulting id of the records
-
-  auto desc = GetDatabaseDescription();
-  syd::TableDescription * table_desc;
-  desc->FindTableDescription(RecordType::GetStaticTableName(), &table_desc);
-
-  // Create request code
-  std::ostringstream sql; // request
-  std::string t1="\""+table_desc->GetSQLTableName()+"\"";       // "\"syd::Image\"";
-  std::string t2="\""+table_desc->GetSQLTableName()+"_tags\"";  // "\"syd::Image_tags\"";
-  std::string t3="\"syd::Tag\"";
-  sql << "select " << t1 << ".id ";
-  sql << "from   " << t1 << "," << t2 << "," << t3 << " ";
-  sql << "where  " << t1 << ".id == " << t2 << ".object_id ";
-  sql << "and    " << t2 << ".value == " << t3 << ".id ";
-  sql << "and " << t3 << ".label==" << "\"" << tag_name << "\" ";
-  if (patient_name != "all") {
-    syd::Patient::pointer p = FindPatient(patient_name);
-    sql << " and " << t1 << ".patient == \"" << p->id << "\" ";
-  }
-  sql << ";";
-
-  // Native query
-  try {
-  odb::sqlite::connection_ptr c (odb_db_->connection ());
-  sqlite3 * sdb(c->handle());
-  sqlite3_stmt * stmt;
-  std::string s = sql.str();
-  auto rc = sqlite3_prepare_v2(sdb, s.c_str(), -1, &stmt, NULL);
-  if (rc==SQLITE_OK) {
-    while(sqlite3_step(stmt) == SQLITE_ROW) {
-      std::string n = syd::sqlite3_column_text_string(stmt, 0);
-      ids.push_back(atoi(n.c_str()));
-    }
-  }
-  } catch(std::exception & e) {
-    EXCEPTION("Error during sql query. Error is " << e.what());
-  }
-
-  // Retrieve records
-  Query(records, ids);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 template<class RecordType>
 void syd::StandardDatabase::SortAndPrint(typename RecordType::vector & records)
 {
@@ -284,5 +118,22 @@ void syd::StandardDatabase::SortAndPrint(typename RecordType::vector & records)
   table.SetHeaderFlag(false);
   records[0]->InitTable(table);
   table.Dump(records, std::cout);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+bool syd::StandardDatabase::FindSameMD5(const typename RecordType::pointer input,
+                                        typename RecordType::pointer & output)
+{
+  auto m = input->ComputeMD5();
+  odb::query<RecordType> q = odb::query<RecordType>::md5 == m;
+  try {
+    QueryOne(output, q);
+  } catch (std::exception & e) {
+    return false;
+  }
+  return true;
 }
 // --------------------------------------------------------------------

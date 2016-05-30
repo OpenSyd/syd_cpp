@@ -43,14 +43,16 @@ namespace syd {
     for(auto i=0; i<3; i++) n *= it_n.GetSize(i);
 
     int failure = 0;
+    const double background = 0;
     while (!it_mask.IsAtEnd()) {
-      if (it_mask.GetCenterPixel() == 1.0) {
+      if (it_mask.GetCenterPixel() != background) { // background is 0
         double s = 0.0;
         int m = 0;
         for(auto i=0; i<n; i++) {
           double v = it_n.GetPixel(i);
           double vm = it_mask.GetPixel(i);
-          if (vm != 1 and v != 0) { s+=v; ++m; }
+          // do not consider foreground values nor 0.0 values
+          if (vm == background and v != 0) { s+=v; ++m; }
         }
         if (m == 0) {
           LOG(WARNING) << "Too large hole to fill (no pixels in mask around this one). index is "

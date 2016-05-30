@@ -26,9 +26,9 @@
 syd::RoiStatisticBuilder::RoiStatisticBuilder(syd::StandardDatabase * db)
 {
   SetDatabase(db);
+  SetEmptyPixelValueFlag(false);
 }
 // --------------------------------------------------------------------
-
 
 
 // --------------------------------------------------------------------
@@ -92,13 +92,32 @@ void syd::RoiStatisticBuilder::ComputeStatistic(syd::RoiStatistic::pointer stat)
     LOG(2) << "Input mask: " << db_->GetAbsolutePath(stat->mask);
   }
 
+
   // FIXME resampling. Resample mask or image ?
   // start by resampling the mask
   // If need resample input: consider total pixel counts.
 
+
   // Check same size / spacing
   if (!syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(itk_mask, itk_input))
     itk_mask = syd::ResampleAndCropImageLike<MaskImageType>(itk_mask, itk_input, 0, 0);
+
+  // Add "empty" values to the mask
+  if (useEmptyPixelValueFlag_) {
+    // loop itk_input ; change itk_mask
+    typedef itk::ImageRegionConstIterator<ImageType> ConstIteratorType;
+    typedef itk::ImageRegionIterator<MaskImageType> IteratorType;
+    ConstIteratorType iter1(itk_input,itk_input->GetLargestPossibleRegion());
+    IteratorType iter2(itk_mask,itk_mask->GetLargestPossibleRegion());
+    iter1.GoToBegin();
+    iter2.GoToBegin();
+    while (!iter1.IsAtEnd()) {
+      typename ImageType::PixelType v1 = iter1.Get();
+      typename ImageType::PixelType v2 = iter2.Get();
+      if (v1 == emptyPixelValue_) iter2.Set(0);// 0 is background
+      ++iter1; ++iter2;
+    }
+  }
 
   // Statistics
   typedef itk::LabelStatisticsImageFilter<ImageType, MaskImageType> FilterType;

@@ -18,13 +18,12 @@
 
 // syd
 #include "sydTableDescription.h"
-
+#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
 std::ostream & syd::TableDescription::Print(std::ostream & os) const
 {
   std::ostringstream oss;
-  //if (GetInheritSQLTableNames()[0] != "syd::Record") oss << "[inherit from " << GetInheritSQLTableNames()[0] << "] ";
   os << table_name_ << " (" << sql_table_name_
      << ") : " << oss.str()
      << fields_.size() <<  " fields. ";
@@ -52,7 +51,6 @@ bool syd::TableDescription::FindField(std::string field_name, syd::FieldDescript
 void syd::TableDescription::AddField(std::string name, std::string type)
 {
   syd::FieldDescription * f = new syd::FieldDescription(this);
-  //f->SetSQLTableName(sql_name_);
   f->SetName(name, type);
   fields_.push_back(f);
 }
@@ -63,8 +61,35 @@ void syd::TableDescription::AddField(std::string name, std::string type)
 void syd::TableDescription::AddField(const syd::FieldDescription * ff)
 {
   syd::FieldDescription * f = new syd::FieldDescription(this);
-  //f->SetSQLTableName(sql_name_);
   f->SetName(ff->GetName(), ff->GetType());
   fields_.push_back(f);
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+void syd::TableDescription::ReadTableSchema(const syd::Database * db,
+                                            std::string table_name)
+{
+  SetTableName(table_name);
+  SetSQLTableName(table_name);
+
+  sqlite3 * sdb = db->GetSqliteHandle();
+  sqlite3_stmt * stmt;
+  std::string q = "PRAGMA table_info("+AddDoubleQuoteAround(table_name)+")";
+  auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
+  if (rc==SQLITE_OK) {
+    /* Loop on result with the following structure:
+       cid name type notnull dflt_value  pk */
+    while(sqlite3_step(stmt) == SQLITE_ROW) {
+      std::string name = sqlite3_column_text_string(stmt, 1);
+      std::string type = sqlite3_column_text_string(stmt, 2);
+      AddField(name, type);
+    }
+  }
+  else {
+    EXCEPTION("Could not retrieve the list of tables in the db");
+  }
 }
 // --------------------------------------------------------------------

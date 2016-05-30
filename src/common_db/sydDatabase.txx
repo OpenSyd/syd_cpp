@@ -33,7 +33,7 @@ Table<RecordType> * syd::Database::GetTable() const
 template<class RecordType>
 void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & records,
                          const std::string & format,
-                         std::ostream & os) const
+                         std::ostream & os)
 {
   /*
   if (records.size() == 0) return;
@@ -101,11 +101,11 @@ void syd::Database::Insert(std::vector<std::shared_ptr<RecordType>> records)
     t.commit();
   }
   catch (const odb::exception& e) {
-    LOG(FATAL) << "Cannot insert " << records.size()
-               << " element(s) in the table '" << RecordType::GetStaticTableName()
-               << "'. The error is: "  << e.what()
-               << std::endl << "And last sql query is: "
-               << std::endl << GetLastSQLQuery();
+    EXCEPTION("Cannot insert " << records.size()
+              << " element(s) in the table '" << RecordType::GetStaticTableName()
+              << "'. The error is: "  << e.what()
+              << std::endl << "And last sql query is: "
+              << std::endl << GetLastSQLQuery());
   }
 }
 // --------------------------------------------------------------------
@@ -132,11 +132,11 @@ void syd::Database::Update(std::vector<std::shared_ptr<RecordType>> records)
     t.commit();
   }
   catch (const odb::exception& e) {
-    LOG(FATAL) << "Cannot update " << records.size()
-               << " element(s) in the table '" << RecordType::GetStaticTableName()
-               << "'. The error is: "  << e.what()
-               << std::endl << "And last sql query is: "
-               << std::endl << GetLastSQLQuery();
+    EXCEPTION("Cannot update " << records.size()
+              << " element(s) in the table '" << RecordType::GetStaticTableName()
+              << "'. The error is: "  << e.what()
+              << std::endl << "And last sql query is: "
+              << std::endl << GetLastSQLQuery());
   }
 }
 // --------------------------------------------------------------------
@@ -265,12 +265,16 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
 
 // --------------------------------------------------------------------
 template<class RecordType>
-long syd::Database::GetNumberOfElements() const
+long syd::Database::GetNumberOfElements()
 {
+  DD("GetNumberOfElements template");
+
+  // FIXME TO remove
   // Brute force. This is inefficient. Should use view and count.
   std::vector<std::shared_ptr<RecordType>> records;
   Query(records);
-  return records.size();
+  DD(records.size());
+  return GetNumberOfElements<RecordType>();
 }
 // --------------------------------------------------------------------
 
@@ -305,7 +309,8 @@ void syd::Database::Grep(std::vector<std::shared_ptr<RecordType>> & output,
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records, const std::string & order) const
+void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records,
+                         const std::string & order) const
 {
   if (records.size() == 0) return;
   auto t = GetTable<RecordType>();
@@ -316,9 +321,11 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records, con
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Database::New(std::shared_ptr<RecordType> & record) const
+void syd::Database::New(std::shared_ptr<RecordType> & record)
 {
+  // We consider the tablename of the given type.
   auto p = GetTable(RecordType::GetStaticTableName())->New();
+  // the type of the created record could be of a class that inherit from RecordType
   record = std::dynamic_pointer_cast<RecordType>(p);
 }
 // --------------------------------------------------------------------
@@ -334,12 +341,15 @@ void syd::Database::Delete(std::shared_ptr<RecordType> record)
     t.commit();
   }
   catch (const odb::exception& e) {
+    files_to_delete_.clear();
     EXCEPTION("Error while deleting element "
               << record << " in the table '" << RecordType::GetStaticTableName()
               << "', message is: " << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());
   }
+  // post deletion for files
+  DeleteFiles();
 }
 // ------------------------------------------------------------------------
 
@@ -354,6 +364,7 @@ void syd::Database::Delete(std::vector<std::shared_ptr<RecordType>> & records)
     t.commit();
   }
   catch (const odb::exception& e) {
+    files_to_delete_.clear();
     EXCEPTION("Error while deleting "
               << records.size() << " elements in the table '"
               << RecordType::GetStaticTableName()
@@ -361,5 +372,7 @@ void syd::Database::Delete(std::vector<std::shared_ptr<RecordType>> & records)
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());
   }
+  // post deletion for files
+  DeleteFiles();
 }
 // ------------------------------------------------------------------------

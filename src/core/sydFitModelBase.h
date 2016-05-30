@@ -47,7 +47,7 @@ namespace syd {
   public:
 
     FitModelBase();
-    ~FitModelBase() {}
+    virtual ~FitModelBase() {}
 
     class ResidualBaseType {
     public:
@@ -69,6 +69,7 @@ namespace syd {
     double GetLambdaPhysicHours() const { return lambda_phys_hours_; }
     std::vector<double> & GetParameters() { return params_; }
     const std::vector<double> & GetParameters() const { return params_; }
+    void SetParameters(std::vector<double> & p);
 
     virtual FitModelBase * Clone() const = 0;
     virtual void SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac);
@@ -80,23 +81,28 @@ namespace syd {
 
     friend std::ostream& operator<<(std::ostream& os, const FitModelBase & p);
 
-    double Integrate(double a, double b, double l_phys) const;
-    double Integrate(double l_phys) const;
+    double Integrate(double a, double b) const;
+    double Integrate() const;
 
-    double ComputeAUC(const syd::TimeActivityCurve & tac, double l_phys, bool use_current_tac=false) const;
-    double ComputeR2(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
-    double ComputeAICc(const syd::TimeActivityCurve & tac) const;
-    double ComputeSS(const syd::TimeActivityCurve & tac) const;
+    double ComputeAUC_OLD(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
+    double ComputeAUC(const syd::TimeActivityCurve::pointer tac, int index) const;
+    double ComputeR2(const syd::TimeActivityCurve::pointer tac) const;
+    double ComputeAICc(const syd::TimeActivityCurve::pointer tac) const;
+    double ComputeAIC(const syd::TimeActivityCurve::pointer tac) const;
+    double ComputeRSS(const syd::TimeActivityCurve::pointer tac) const;
+    virtual void ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac) {
+      DD("ComputeStartingParametersValues not implemented ");
+    }
     bool IsAICcValid(int N) const;
     virtual bool IsAcceptable() const;
 
     virtual double GetA(const int i) const { LOG(FATAL) << "GetA to implement " << GetName(); return 0.0; }
     virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); return 0.0; }
+    virtual double GetEffHalfLife() const;
 
-    virtual double GetEffHalfLife() const {
-      double h = GetLambda(0) + GetLambdaPhysicHours();
-      return log(2.0)/h;
-    }
+    void LogLinearFit(Eigen::Vector2d & x,
+                      const syd::TimeActivityCurve::pointer tac,
+                      int start=0, int end=-1);
 
     bool start_from_max_flag;
 

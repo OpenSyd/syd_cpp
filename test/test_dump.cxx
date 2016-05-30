@@ -38,21 +38,21 @@ int main(int argc, char* argv[])
   std::string ext_dbname = "test_dump.ext.db";
   std::string folder = "test";
   m->Create("ExtendedDatabase", ext_dbname, folder, true);
-  ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
+  ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
 
   // Insert some records
   ext::Patient::pointer p1;
-  db->New(p1);;
-  p1->Set(db, "toto", 1, 50,  "XXYYZZ", "2002-08-09 10:00");
+  db->New(p1);
+  p1->Set("toto", 1, 50,  "XXYYZZ", "2002-08-09 10:00");
   ext::Patient::pointer p2;
   db->New(p2);
-  p2->Set(db, "titi", 2, 150, "AXXYYZZ", "2005-02-01 17:00");
+  p2->Set("titi", 2, 150, "AXXYYZZ", "2005-02-01 17:00");
   ext::Patient::pointer p3;
   db->New(p3);
-  p3->Set(db, "tutu", 3, 60,  "BXXYYZZ", "2009-07-17 09:00");
+  p3->Set("tutu", 3, 60,  "BXXYYZZ", "2009-07-17 09:00");
   ext::Patient::pointer p4;
   db->New(p4);
-  p4->Set(db, "tata", 4, 80,  "CXXYYZZ", "2002-08-09 10:00");
+  p4->Set("tata", 4, 80,  "CXXYYZZ", "2002-08-09 10:00");
 
   db->Insert(p1);
   db->Insert(p2);
@@ -70,17 +70,17 @@ int main(int argc, char* argv[])
 
   db->New(inj);
   arg[0] = "toto"; arg[1] = "Indium111"; arg[2] = "2003-12-04 12:23"; arg[3] = "160.21";
-  db->Set(inj, arg);
+  inj->Set(arg);
   db->Insert(inj);
 
   db->New(inj);
   arg[0] = "titi"; arg[1] = "Indium111"; arg[2] = "2013-02-14 17:23"; arg[3] = "360.33";
-  db->Set(inj, arg);
+  inj->Set(arg);
   db->Insert(inj);
 
   db->New(inj);
   arg[0] = "titi"; arg[1] = "Indium111"; arg[2] = "2013-04-14 17:23"; arg[3] = "960.33";
-  db->Set(inj, arg);
+  inj->Set(arg);
   db->Insert(inj);
 
   // Dump knowing the record type

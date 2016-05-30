@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the image
   std::vector<syd::IdType> ids;
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
           db->QueryOne(mask, q);
           LOG(1) << "Find 'body' mask for the image: " << mask;
           b.CropImageLike(image, mask, args_info.resample_flag , args_info.force_flag); // false = dont resample
-          db->SetImageTagsFromCommandLine(image, args_info);
+          db->UpdateTagsFromCommandLine(image->tags, args_info);
         } catch (std::exception & e) {
           LOG(WARNING) << "Could not crop the image: " << image
                        << std::endl << "Error is: " << e.what();

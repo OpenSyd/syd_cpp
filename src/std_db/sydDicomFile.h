@@ -50,9 +50,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(DicomFile, syd::DicomFile);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(DicomFile);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(DicomFile);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);

@@ -26,6 +26,7 @@
 #include <cmath>
 #include <sstream>
 #include <algorithm>
+#include <numeric>
 
 // To get current working directory
 // http://stackoverflow.com/questions/143174/how-do-i-get-the-directory-that-a-program-is-running-from
@@ -90,6 +91,8 @@ namespace syd {
   std::string &rtrim(std::string &s);
   // trim from both ends
   std::string &trim(std::string &s);
+  std::string AddDoubleQuoteAround(const std::string & s);
+  std::string ToLowerCase(const std::string & s);
   //--------------------------------------------------------------------
 
 
@@ -118,6 +121,23 @@ namespace syd {
   unsigned long long GetVersionNumber(unsigned long long v, int n);
   std::string GetVersionAsString(unsigned long long v);
   // --------------------------------------------------------------------
+
+
+  // --------------------------------------------------------------------
+  template<typename T>
+  std::vector<T> arange(T start, T stop, T step = 1);
+  // --------------------------------------------------------------------
+
+
+  // --------------------------------------------------------------------
+  template <typename T, typename Compare>
+  std::vector<std::size_t> sort_permutation(const std::vector<T>& vec,
+                                            Compare compare);
+  template <typename T>
+  std::vector<T> apply_permutation(const std::vector<T>& vec,
+                                   const std::vector<std::size_t>& p);
+  // --------------------------------------------------------------------
+
 
 #include "sydCommon.txx"
 

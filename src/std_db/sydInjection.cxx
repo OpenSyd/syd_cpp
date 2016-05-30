@@ -23,8 +23,6 @@
 // --------------------------------------------------------------------
 syd::Injection::Injection():syd::Record()
 {
-  patient = NULL;
-  radionuclide = NULL;
   date = "unset";
   activity_in_MBq = 0.0;
 }
@@ -52,8 +50,11 @@ std::string syd::Injection::ToString() const
 
 
 // --------------------------------------------------
-void syd::Injection::Set(const syd::Database * d, const std::vector<std::string> & args)
+void syd::Injection::Set(const std::vector<std::string> & args)
 {
+  if (db_ == NULL) {
+    LOG(FATAL) << "To use Set on an Injection, the db must be set before.";
+  }
   if (args.size() < 4) {
     LOG(FATAL) << "Provide <patient> <radionuclide> <date> <activity_in_MBq>. "
                << std::endl
@@ -61,7 +62,7 @@ void syd::Injection::Set(const syd::Database * d, const std::vector<std::string>
                << " <radionuclide> can be a name or an id";
   }
 
-  syd::StandardDatabase* db = (syd::StandardDatabase*)(d);
+  auto db = GetDatabase<syd::StandardDatabase>();
   std::string patient_name = args[0];
   auto p = db->FindPatient(patient_name);
   patient = p;
@@ -109,18 +110,6 @@ void syd::Injection::DumpInTable(syd::PrintTable & ta) const
   ta.Set("rad", rad);
   ta.Set("date", date);
   ta.Set("A(MBq)", activity_in_MBq);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-bool syd::Injection::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and
-          patient->id == p->patient->id and
-          radionuclide->id == p->radionuclide->id and
-          date == p->date and
-          activity_in_MBq == p->activity_in_MBq);
 }
 // --------------------------------------------------
 

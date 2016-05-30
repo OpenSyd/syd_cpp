@@ -41,11 +41,11 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
 
     // Load the database
-  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
+  syd::Database * db = syd::DatabaseManager::GetInstance()->Open(args_info.db_arg);
 
   // Insert
   syd::Record::pointer e = db->New(tablename);
-  db->Set(e, args);
+  e->Set(args);
   db->Insert(e);
   LOG(1) << "Insertion done: " << e->ToString();
 

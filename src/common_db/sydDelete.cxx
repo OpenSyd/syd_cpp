@@ -37,13 +37,10 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
 
   // Load the database
-  syd::Database * db = syd::DatabaseManager::GetInstance()->Read(args_info.db_arg);
+  syd::Database * db = syd::DatabaseManager::GetInstance()->Open(args_info.db_arg);
 
   // Get the table name
   std::string tablename = args_info.inputs[0];
-
-  // Set option
-  // FIXME db->SetDeleteForceFlag(args_info.force_flag);
 
   // Get the list of ids
   int n=0;
@@ -70,14 +67,19 @@ int main(int argc, char* argv[])
       syd::Record::vector v;
       db->Query(v, tablename, ids);
       if (v.size() == 0) return 1;
-      std::cout << "Really delete " << v.size() << " element" << (v.size() > 1 ? "s ":" ") << "(y/n) ? ";
-      char c;
-      std::scanf("%c", &c);
-      if (c =='y') {
-        db->Delete(v, tablename);
+      if (!args_info.force_flag) {
+        std::cout << "Really delete " << v.size() << " element" << (v.size() > 1 ? "s ":" ") << "(y/n) ? ";
+        char c;
+        std::scanf("%c", &c);
+        if (c =='y') {
+          db->Delete(v, tablename);
+        }
+        else {
+          LOG(FATAL) << "Abort.";
+        }
       }
       else {
-        LOG(FATAL) << "Abort.";
+        db->Delete(v, tablename);
       }
       n = v.size();
     }

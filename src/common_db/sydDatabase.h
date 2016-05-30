@@ -26,6 +26,8 @@
 #include "sydFile-odb.hxx"
 #include "sydRecordHistory-odb.hxx"
 #include "sydRecordWithHistory-odb.hxx"
+#include "sydTag-odb.hxx"
+#include "sydRecordWithTags-odb.hxx"
 #include "sydTableBase.h"
 #include "sydDatabaseDescription.h"
 
@@ -42,7 +44,7 @@ namespace syd {
   template<class Record> class Table;
   template<class DatabaseSchema> class DatabaseCreator;
 
-  // I dont know how to retrieve this value, so I fix it here. IT is
+  // I dont know how to retrieve this value, so I fix it here. It is
   // used to split large query, in particular the ones with with
   // "in_range".
   const unsigned int SQLITE_MAX_VARIABLE_NUMBER = 999;
@@ -99,11 +101,11 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// Create a new record of the specified table.
-    std::shared_ptr<Record> New(const std::string & table_name) const;
+    std::shared_ptr<Record> New(const std::string & table_name);
 
     /// Create a new record of the table given by RecordType
     template<class RecordType>
-    void New(std::shared_ptr<RecordType> & record) const;
+    void New(std::shared_ptr<RecordType> & record);
     // ------------------------------------------------------------------------
 
 
@@ -121,6 +123,9 @@ namespace syd {
     /// Insert several elements
     template<class RecordType>
     void Insert(std::vector<std::shared_ptr<RecordType>> records);
+
+    /// Automatically insert some default records (should be overloaded)
+    virtual void InsertDefaultRecords(const std::string & def) {}
     // ------------------------------------------------------------------------
 
 
@@ -143,11 +148,6 @@ namespace syd {
     void Update(generic_record_pointer record, std::string field_name, std::string value_name);
     // ------------------------------------------------------------------------
 
-
-    // ------------------------------------------------------------------------
-    /// Set parameter of an element. 'Set' must be overwritten in the Record.
-    virtual void Set(generic_record_pointer record, const std::vector<std::string> & args) const;
-    // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
@@ -182,11 +182,6 @@ namespace syd {
     /// Query all records of the given tables
     void Query(generic_record_vector & records, const std::string table_name) const;
 
-    /// Query by tag (virtual, will be overloaded by specific db)
-    virtual void QueryByTag(generic_record_vector & records,
-                            const std::string table_name,
-                            const std::vector<std::string> & tag_names);
-
     /// Find (grep)
     template<class RecordType>
     void Grep(std::vector<std::shared_ptr<RecordType>> & output,
@@ -198,10 +193,12 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// Generic dump, display the list of tables
-    virtual void Dump(std::ostream & os = std::cout) const;
+    virtual void Dump(std::ostream & os = std::cout);
 
     /// Display all elements of a given tables
-    void Dump(const std::string & table_name, const std::string & format="", std::ostream & os=std::cout) const;
+    void Dump(const std::string & table_name,
+              const std::string & format="",
+              std::ostream & os=std::cout);
 
     /// Dump the given records (according to a format). (Templated
     /// needed because dont know how to substitute vector<ppatient>
@@ -209,14 +206,15 @@ namespace syd {
     template<class RecordType>
     void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
               const std::string & format="",
-              std::ostream & os=std::cout) const;
+              std::ostream & os=std::cout);
     // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
     /// Sort records (to be specialized in record->Sort
     template<class RecordType>
-    void Sort(std::vector<std::shared_ptr<RecordType>> & records, const std::string & type="") const;
+    void Sort(std::vector<std::shared_ptr<RecordType>> & records,
+              const std::string & type="") const;
     /// Sort generic records
     virtual void Sort(generic_record_vector & records,
                       const std::string & table_name,
@@ -231,6 +229,9 @@ namespace syd {
     void Delete(std::shared_ptr<RecordType> record);
     template<class RecordType>
     void Delete(std::vector<std::shared_ptr<RecordType>> & records);
+
+    /// Add a file to the files to delete (used by sydFile)
+    void AddFilenameToDelete(const std::string & f);
     // ------------------------------------------------------------------------
 
 
@@ -252,23 +253,26 @@ namespace syd {
     /// Return a string with the list of the table names
     std::string GetListOfTableNames() const;
 
-    /// Get the number of elements in the table
-    long GetNumberOfElements(const std::string & table_name) const;
+    /// Return (compute the first time) the db SQL description
+    syd::DatabaseDescription * GetDatabaseDescription();
+
+    /// Return the sql descriptio of the table
+    syd::TableDescription * GetTableDescription(const std::string & table_name);
+
+    /// Get the number of elements in the table (cannot be const
+    /// because create db description)
+    long GetNumberOfElements(const std::string & table_name);
 
     /// Get the number of elements in the table, knowing the type
     template<class RecordType>
-    long GetNumberOfElements() const;
+    long GetNumberOfElements();
 
     // FIXME
     odb::sqlite::database * GetODB_DB() const { return odb_db_; }
-    sqlite3 * GetSqliteHandle();
+    sqlite3 * GetSqliteHandle() const;
 
-    // FIXME
-    syd::DatabaseDescription * GetDatabaseDescription();
-
-    // FIXME to remove ?
+    // FIXME to remove ? (never used)
     void CheckDatabaseSchema();
-
 
     /// Allow to migrate the schema when the db version in the file is
     /// different from the syd version.
@@ -278,7 +282,7 @@ namespace syd {
     typedef std::map<std::string, TableBase*> MapOfTablesType;
 
     /// Return the map that contains the association between names and tables
-    MapOfTablesType & GetMapOfTables() { return map_; }
+    const MapOfTablesType & GetMapOfTables() const { return map_; }
 
     /// Store a list of all loaded database (to be able to retrive the db from a record)
     static std::map<odb::database *, syd::Database *> ListOfLoadedDatabases;
@@ -289,7 +293,7 @@ namespace syd {
     Database();
 
     /// Main function to open a database
-    void Read(std::string filename);
+    void Open(std::string filename);
 
     /// Must be overwritten by concrete classes.
     virtual void CreateTables() = 0;
@@ -297,6 +301,11 @@ namespace syd {
     /// Declare a new table in the database
     template<class Record>
     void AddTable();
+
+    /// Delete files when needed
+    void DeleteFiles();
+
+    std::vector<std::string> files_to_delete_;
 
     /// Map that contains the association between names and tables
     MapOfTablesType map_;
@@ -323,21 +332,9 @@ namespace syd {
     /// Store current sql query for debug purpose
     std::string current_sql_query_;
 
-    /// Create the database schema description
-    void InitDatabaseDescription();
-
     /// Store the OO db schema description
     syd::DatabaseDescription * description_;
 
-    /// Store the sql db schema description (from the file)
-    syd::DatabaseDescription * sql_description_;
-
-    /// Read the description from sqlite file
-    void ReadDatabaseSchemaFromFile(syd::DatabaseDescription * desc);
-
-    /// Read the table description from sqlite file
-    void ReadTableSchemaFromFile(syd::TableDescription * table,
-                                 std::string table_name);
   };
 
 

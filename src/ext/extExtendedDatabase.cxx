@@ -22,6 +22,7 @@
 // --------------------------------------------------------------------
 void ext::ExtendedDatabase::CreateTables()
 {
+  AddTable<syd::RecordHistory>();
   AddTable<ext::Patient>();
   AddTable<syd::Injection>();
   AddTable<syd::Radionuclide>();
@@ -29,7 +30,14 @@ void ext::ExtendedDatabase::CreateTables()
   AddTable<syd::File>();
   AddTable<syd::DicomFile>();
   AddTable<syd::DicomSerie>();
-  // AddTable<syd::Image>();
-  // AddTable<syd::RoiType>();
+  AddTable<syd::Image>();
+  AddTable<syd::RoiType>();
+  AddTable<syd::RoiMaskImage>();
+  AddTable<syd::ImageTransform>();
+  AddTable<syd::Calibration>();
+  AddTable<syd::PixelValueUnit>();
+  AddTable<syd::RoiStatistic>();
+  AddTable<syd::Timepoints>();
+  AddTable<syd::FitResult>();
 }
 // --------------------------------------------------------------------

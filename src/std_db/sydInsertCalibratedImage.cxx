@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the pixel value unit
   std::string pvu = args_info.inputs[0];
@@ -63,12 +63,12 @@ int main(int argc, char* argv[])
   for(auto image:images) {
     // Get the corresponding calibration
     image->FatalIfNoDicom();
-    auto injection = image->dicoms[0]->injection;
+    auto injection = image->injection;
     syd::Calibration::pointer calibration = db->FindCalibration(image, calib_tag);
     double s = 1.0/calibration->factor / injection->activity_in_MBq;
     // Create an (empty) copy
     auto output = builder.NewMHDImageLike(image);
-    db->SetImageTagsFromCommandLine(output, args_info);
+    db->UpdateTagsFromCommandLine(output->tags, args_info);
     output->pixel_value_unit = unit;
     // Load the itk image
     ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));

@@ -25,7 +25,10 @@
   function moves the two files and change the header to be linked with
   the renamed .raw file.
  */
-void syd::RenameOrCopyMHDImage(std::string old_path, std::string new_path, int verbose_level, bool erase)
+void syd::RenameOrCopyMHDImage(std::string old_path,
+                               std::string new_path,
+                               int verbose_level,
+                               bool erase)
 {
   // Check if not the same
   if (old_path == new_path) {

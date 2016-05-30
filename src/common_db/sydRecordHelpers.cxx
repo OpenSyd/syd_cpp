@@ -15,3 +15,22 @@
   - BSD        See included LICENSE.txt file
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
+
+
+#include "sydRecordHelpers.h"
+
+// --------------------------------------------------------------------
+bool syd::ContainsAllTags(const syd::RecordWithTags::pointer & record,
+                          const std::vector<std::string> & tag_names)
+{
+  int n=0;
+  for(auto t:tag_names) { // brute force search !!
+    auto iter = std::find_if(record->tags.begin(), record->tags.end(),
+                             [&t](syd::Tag::pointer & tag)->bool { return tag->label == t;} );
+    if (iter == record->tags.end()) continue;
+    else ++n;
+  }
+  if (n == tag_names.size()) return true;
+  return false;
+}
+// --------------------------------------------------------------------

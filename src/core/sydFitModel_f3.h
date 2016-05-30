@@ -30,7 +30,7 @@ namespace syd {
   public:
 
     FitModel_f3();
-    ~FitModel_f3();
+    virtual ~FitModel_f3() {}
 
     class ResidualType: public FitModelBase::ResidualBaseType {
     public:
@@ -44,6 +44,8 @@ namespace syd {
 
     // 1, 1, 1 ==> (nb of residuals=1), 1 for each param.
     typedef ceres::AutoDiffCostFunction<ResidualType, 1, 1, 1, 1> CostFctType;
+
+    void ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac);
 
     virtual int GetNumberOfExpo() const { return 2; }
     virtual double GetA(const int i) const;

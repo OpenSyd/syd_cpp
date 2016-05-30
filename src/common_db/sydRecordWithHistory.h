@@ -25,26 +25,30 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object abstract pointer(std::shared_ptr) callback(Callback)
-  class RecordWithHistory: public syd::Record  {
+#pragma db object abstract pointer(std::shared_ptr)
+  class RecordWithHistory {
   public:
 
-    /// FIXME
-    /// It is 'mutable' because is changed in the const Callback.
-    mutable syd::RecordHistory::pointer history;
+    /// Define pointer type
+    typedef std::shared_ptr<RecordWithHistory> pointer;
 
-    // FIXME : set, equal etc
+    /// Define vectortype
+    typedef std::vector<pointer> vector;
+
+    /// Store the history. It is 'mutable' because is changed in the const Callback.
+    mutable syd::RecordHistory::pointer history;
 
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
 
-    virtual void Callback(odb::callback_event, odb::database&) const;
+    virtual void Callback(odb::callback_event,
+                          odb::database & odb,
+                          syd::Database * db) const;
 
   protected:
     RecordWithHistory();
 
   };
-
 
 } // end namespace
 // --------------------------------------------------------------------

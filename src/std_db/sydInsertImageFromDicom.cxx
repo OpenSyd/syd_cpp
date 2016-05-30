@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the list of dicomserie
   std::vector<syd::IdType> ids;
@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
   for(auto d:dicom_series) {
     syd::Image::pointer image = builder.NewImageFromDicom(d);
     // Set the optional tags
-    db->SetImageTagsFromCommandLine(image, args_info);
+    db->UpdateTagsFromCommandLine(image->tags, args_info);
     builder.InsertAndRename(image);
     LOG(1) << "Inserting Image " << image;
   }

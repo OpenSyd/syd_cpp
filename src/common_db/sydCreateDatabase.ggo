@@ -13,3 +13,4 @@ will load the library libStandardDatabase.so (or dylib) that contains the databa
 
 option "overwrite"  f       "Force overwrite even if the file exist"            flag	off
 option "list"       l       "Print list of available DB schema (then stop)"	flag	off
+option "default_table"    -       "Create some default elements (radionuclides, tags etc). 'all', 'none', etc "	string default="all" no

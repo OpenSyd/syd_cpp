@@ -1,0 +1,59 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="275"/>
+
+  <changeset version="274"/>
+
+  <changeset version="273"/>
+
+  <changeset version="272"/>
+
+  <changeset version="265"/>
+
+  <changeset version="262"/>
+
+  <changeset version="261"/>
+
+  <changeset version="259">
+    <add-table name="syd::Calibration" kind="polymorphic root object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="typeid" type="TEXT" null="true"/>
+      <column name="image" type="INTEGER" null="true"/>
+      <column name="factor" type="REAL" null="true"/>
+      <column name="fov_ratio" type="REAL" null="true"/>
+      <primary-key auto="true">
+        <column name="id"/>
+      </primary-key>
+      <foreign-key name="image_fk" deferrable="DEFERRED" on-delete="CASCADE">
+        <column name="image"/>
+        <references table="syd::Image">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::Calibration_tags" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::Calibration">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::Calibration_tags_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::Calibration_tags_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::Tag">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
+  <model version="257"/>
+</changelog>

@@ -39,10 +39,12 @@ namespace syd {
 
      // ------------------------------------------------------------------------
     TABLE_DEFINE(RoiType, syd::RoiType);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(RoiType);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(RoiType);
     // ------------------------------------------------------------------------
 
+    /// Write the element as a string
+    virtual std::string ToString() const;
+
+    void Set(const std::vector<std::string> & arg);
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
 

@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
 
   //----------------------------------------------------------------
   std::cout << "Open as ext Database" << std::endl;
-  ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
+  ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
 
   //----------------------------------------------------------------
   insert_patients(db);
@@ -64,8 +64,6 @@ int main(int argc, char* argv[])
     insert_dicoms(db, inj, "dicom");
     db->Dump("DicomSerie");
   }
-  exit(0);
-
 
   //----------------------------------------------------------------
   std::cout << std::endl << std::endl;

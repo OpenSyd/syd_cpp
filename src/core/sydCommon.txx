@@ -16,6 +16,7 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+
 //--------------------------------------------------------------------
 // Convert float, double ... to string
 template<class T>
@@ -37,5 +38,45 @@ std::string ArrayToString(const std::array<T, N> & t, int precision)
   for(auto i=0; i<N-1; i++) myStream << std::fixed << std::setprecision(precision) << t[i] << "x";
   myStream << std::setprecision(precision) << t[N-1] << std::flush;
   return(myStream.str());
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<typename T>
+std::vector<T> arange(T start, T stop, T step)
+{
+  std::vector<T> values;
+  for (T value = start; value < stop; value += step)
+    values.push_back(value);
+  return values;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+// http://stackoverflow.com/questions/17074324/how-can-i-sort-two-vectors-in-the-same-way-with-criteria-that-uses-only-one-of
+template <typename T, typename Compare>
+std::vector<std::size_t> sort_permutation(const std::vector<T>& vec,
+                                          Compare compare)
+{
+    std::vector<std::size_t> p(vec.size());
+    std::iota(p.begin(), p.end(), 0);
+    std::sort(p.begin(), p.end(),
+        [&](std::size_t i, std::size_t j){ return compare(vec[i], vec[j]); });
+    return p;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template <typename T>
+std::vector<T> apply_permutation(const std::vector<T>& vec,
+                                 const std::vector<std::size_t>& p)
+{
+    std::vector<T> sorted_vec(p.size());
+    std::transform(p.begin(), p.end(), sorted_vec.begin(),
+        [&](std::size_t i){ return vec[i]; });
+    return sorted_vec;
 }
 //--------------------------------------------------------------------

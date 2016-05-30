@@ -44,17 +44,7 @@ std::string syd::PixelValueUnit::ToString() const
 
 
 // --------------------------------------------------
-bool syd::PixelValueUnit::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and
-          name == p->name and
-          description == p->description);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::PixelValueUnit::Set(const syd::Database * db, const std::vector<std::string> & arg)
+void syd::PixelValueUnit::Set(const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
     LOG(FATAL) << "To insert a PixelValueUnit, please set <name> <description>";

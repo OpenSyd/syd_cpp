@@ -30,15 +30,15 @@ namespace syd {
   class RecordHistory: public syd::Record {
   public:
 
-    //    syd::Record::pointer record; // back pointer ?
-
     std::string insertion_date;
     std::string update_date;
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(RecordHistory, syd::RecordHistory);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(RecordHistory);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     void Set(const syd::Database * db, const std::vector<std::string> & arg);
 

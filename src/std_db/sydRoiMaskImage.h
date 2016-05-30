@@ -38,9 +38,10 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE_I(RoiMaskImage, syd::RoiMaskImage, syd::Image);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(RoiMaskImage);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(RoiMaskImage);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     /// Standard folder
     virtual std::string ComputeRelativeFolder() const;

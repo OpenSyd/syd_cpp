@@ -11,3 +11,5 @@ If several images id are given, the corresponding roi is search for each image.
 
 If <roi> is set to 'all', all RoiMaskImage with the same frame_of_reference_uid are considered.
 "
+
+option "empty_value" e "Empty pixel value (does not count in the stat)"	float no

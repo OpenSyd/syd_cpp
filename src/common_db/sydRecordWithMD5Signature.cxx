@@ -17,46 +17,65 @@
   ===========================================================================**/
 
 // syd
-#include "sydFieldDescription.h"
-#include "sydTableDescription.h"
+#include "sydRecordWithMD5Signature.h"
+#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
-syd::FieldDescription::FieldDescription(syd::TableDescription * t)
+syd::RecordWithMD5Signature::RecordWithMD5Signature()
 {
-  table_ = t;
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+void syd::RecordWithMD5Signature::Callback(odb::callback_event event,
+                                           odb::database & odb,
+                                           syd::Database * db) const
+{
+  if (event == odb::callback_event::pre_persist) {
+    md5 = ComputeMD5();
+  }
+
+  if (event == odb::callback_event::pre_update) {
+    md5 = ComputeMD5();
+  }
+  // Events in Callback const : persist, update, erase
+  // event load can only be here if the non-const version does not exist
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::ostream & syd::FieldDescription::Print(std::ostream & os) const
+void syd::RecordWithMD5Signature::InitTable(syd::PrintTable & ta) const
 {
-  os << name_ << " " << type_;
-  return os;
+  ta.AddFormat("md5", "Display the MD5 signature of the records");
+  auto & f = ta.GetFormat();
+  if (f == "md5") {
+    ta.AddColumn("md5");
+  }
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::string syd::FieldDescription::GetSQLTableName() const
+void syd::RecordWithMD5Signature::DumpInTable(syd::PrintTable & ta) const
 {
-  return table_->GetSQLTableName();
+  auto & f = ta.GetFormat();
+  if (f == "md5") {
+    ta.Set("md5", md5);
+  }
 }
 // --------------------------------------------------------------------
 
 
-// // --------------------------------------------------------------------
-// void syd::FieldDescription::SetSQLTableName(std::string name)
-// {
-//   sql_table_name_ = name;
-// }
-// // --------------------------------------------------------------------
-
-
 // --------------------------------------------------------------------
-void syd::FieldDescription::SetName(std::string name, std::string type)
+std::string syd::RecordWithMD5Signature::ComputeMD5() const
 {
-  name_ = name;
-  type_ = type;
+  MD5 m;
+  auto s = ToStringForMD5();
+  m.update((char*)s.c_str(), s.size());
+  m.finalize();
+  return m.hexdigest();
 }
 // --------------------------------------------------------------------

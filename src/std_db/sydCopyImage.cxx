@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the list of images to copy
   std::vector<syd::IdType> ids;
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
   for(auto image:images) {
     // Copy the information
     syd::Image::pointer output = builder.NewMHDImageLike(image);
-    db->SetImageTagsFromCommandLine(output, args_info);
+    db->UpdateTagsFromCommandLine(output->tags, args_info);
     // Copy the file
     std::string filename = syd::CreateTemporaryFile(db->GetDatabaseAbsoluteFolder(), ".mhd");
     syd::CopyMHDImage(db->GetAbsolutePath(image), filename);

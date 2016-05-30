@@ -39,6 +39,16 @@ syd::Image::Image():syd::RecordWithHistory()
 
 
 // --------------------------------------------------------------------
+syd::Image::~Image()
+{
+  // DD("delete image");
+  // DDS(files);
+  /// FIXME --> remove temporary file if needed
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 std::string syd::Image::ToString() const
 {
   std::string name;
@@ -46,7 +56,8 @@ std::string syd::Image::ToString() const
   else name = patient->name;
   std::stringstream ss ;
   ss << id << " "
-     << name << " ";
+     << name << " "
+     << injection->radionuclide->name << " ";
   if (files.size() == 0) ss << "(no files) ";
   //for(auto f:files) ss << f->filename << " "; // only first is usually useful
   else ss << files[0]->filename << " ";
@@ -68,35 +79,6 @@ std::string syd::Image::ToString() const
 
 
 // --------------------------------------------------
-void syd::Image::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "To insert Image, please use sydInsertImage or sydInsertImageFromDicom";
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-bool syd::Image::IsEqual(const pointer p) const
-{
-  bool b = (syd::Record::IsEqual(p) and
-            patient->id == p->patient->id);
-  for(auto i=0; i<files.size(); i++) b = b and files[i]->id == p->files[i]->id;
-  for(auto i=0; i<tags.size(); i++) b = b and tags[i]->id == p->tags[i]->id;
-  for(auto i=0; i<dicoms.size(); i++) b = b and dicoms[i]->id == p->dicoms[i]->id;
-  b  =  b and
-    type == p->type and
-    pixel_type == p->pixel_type and
-    dimension == p->dimension and
-    pixel_value_unit == p->pixel_value_unit and
-    frame_of_reference_uid == p->frame_of_reference_uid;
-  for(auto i=0; i<size.size(); i++) b = b and size[i] == p->size[i];
-  for(auto i=0; i<spacing.size(); i++) b = b and spacing[i] == p->spacing[i];
-  return b;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 std::string syd::Image::GetAcquisitionDate() const
 {
   if (dicoms.size() == 0) return "unknown_date";
@@ -110,60 +92,6 @@ std::string syd::Image::GetModality() const
 {
   if (dicoms.size() == 0) return "unknown_modality";
   else return dicoms[0]->dicom_modality;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-// void syd::Image::AddTag(const syd::Tag::pointer tag)
-// {
-//   bool found = false;
-//   int i=0;
-//   while (i<tags.size() and !found) {
-//     if (tags[i]->id == tag->id) found = true;
-//     ++i;
-//   }
-//   if (!found) tags.push_back(tag);
-// }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-// void syd::Image::AddTags(const std::string tag_names)
-// {
-//   if (GetDatabase() == NULL) {
-//     LOG(FATAL) << "Error, no db associated with this image (not insert in the db ?)";
-//   }
-//   syd::StandardDatabase * db = static_cast<syd::StandardDatabase*>(GetDatabase());
-//   syd::Tag::vector tags;
-//   db->FindTags(tags, tag_names);
-//   for(auto t:tags) AddTag(t);
-// }
-// // --------------------------------------------------
-
-
-// --------------------------------------------------
-// void syd::Image::AddTags(const std::vector<std::string> & tag_names)
-// {
-//   std::string x;
-//   for(auto t:tag_names) x = x + t + " ";
-//   AddTags(x);
-// }
-// // --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::RemoveTag(const syd::Tag::pointer tag)
-{
-  bool found = false;
-  int i=0;
-  while (i<tags.size() and !found) {
-    if (tags[i]->id == tag->id) {
-      found = true;
-      tags.erase(tags.begin()+i);
-    }
-    ++i;
-  }
 }
 // --------------------------------------------------
 
@@ -209,7 +137,9 @@ std::string syd::Image::ComputeRelativeFolder() const
 // --------------------------------------------------
 void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 {
-  syd::RecordWithHistory::Callback(event,db);
+  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db, db_);
+
   if (event == odb::callback_event::post_erase) {
     for(auto f:files) db.erase(f);
   }
@@ -228,7 +158,8 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 // --------------------------------------------------
 void syd::Image::Callback(odb::callback_event event, odb::database & db)
 {
-  syd::RecordWithHistory::Callback(event,db);
+  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db, db_);
   if (event == odb::callback_event::post_erase) {
     for(auto f:files) db.erase(f);
   }
@@ -254,16 +185,8 @@ void syd::Image::FatalIfNoDicom() const
 {
   if (dicoms.size() == 0) {
     LOG(FATAL) << "Error the following image does not have associated DicomSerie."
-               << std::endl << this;
+               << std::endl << *this;
   }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::CopyTags(const syd::Image::pointer image)
-{
-  for(auto t:image->tags) AddTag(tags, t);//AddTag(t);
 }
 // --------------------------------------------------
 
@@ -279,8 +202,6 @@ void syd::Image::CopyDicomSeries(syd::Image::pointer image)
 // --------------------------------------------------
 void syd::Image::InitTable(syd::PrintTable & ta) const
 {
-  syd::RecordWithHistory::InitTable(ta);
-
   // Define the formats
   auto & f = ta.GetFormat();
   ta.AddFormat("file", "Display the filename");
@@ -289,8 +210,9 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
 
   // Set the columns
   if (f == "default") {
-    if (ta.GetColumn("id") == -1) ta.AddColumn("id");
+    ta.AddColumn("id");
     ta.AddColumn("p");
+    ta.AddColumn("inj");
     ta.AddColumn("acqui_date");
     ta.AddColumn("tags");
     ta.AddColumn("size");
@@ -302,13 +224,13 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
     c.trunc_by_end_flag = false;
   }
   if (f == "timing") {
-    if (ta.GetColumn("id") == -1) ta.AddColumn("id");
+    ta.AddColumn("id");
     ta.AddColumn("p");
     ta.AddColumn("t", 2);
     ta.AddColumn("tags");
   }
   if (f == "history") {
-    if (ta.GetColumn("id") == -1) ta.AddColumn("id");
+    syd::RecordWithHistory::InitTable(ta);
     ta.AddColumn("p");
     ta.AddColumn("acqui_date");
     ta.AddColumn("tags");
@@ -335,8 +257,9 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   auto f = ta.GetFormat();
 
   if (f == "default") {
-    //    ta.Set("id", id); <--- already done in RecordWithHistory
+    ta.Set("id", id);
     ta.Set("p", patient->name);
+    ta.Set("inj", injection->radionuclide->name);
     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
     else ta.Set("acqui_date", dicoms[0]->acquisition_date);
     ta.Set("tags", GetLabels(tags));
@@ -351,6 +274,7 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   }
 
   if (f == "timing") {
+    ta.Set("id", id);
     ta.Set("p", patient->name);
     ta.Set("tags", GetLabels(tags));
     double t = GetHoursFromInjection();
@@ -358,7 +282,7 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   }
 
   if (f == "history") {
-    //    ta.Set("id", id); <--- already done in RecordWithHistory
+    ta.Set("id", id);
     ta.Set("p", patient->name);
     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
     else ta.Set("acqui_date", dicoms[0]->acquisition_date);
@@ -368,7 +292,7 @@ void syd::Image::DumpInTable(syd::PrintTable & ta) const
   }
 
   if (f == "file") {
-    //    ta.Set("id", id);  <--- already done in RecordWithHistory
+    ta.Set("id", id);
     if (files.size() != 0) ta.Set("file", files[0]->GetAbsolutePath(db_));
   }
 
@@ -392,22 +316,33 @@ syd::CheckResult syd::Image::Check() const
 
 
 // --------------------------------------------------------------------
-double syd::Image::GetHoursFromInjection(syd::Injection::pointer injection) const
+double syd::Image::GetHoursFromInjection() const
 {
-  std::string inj_date;
-  if (injection == NULL) {
-    if (dicoms.size() > 0) inj_date = dicoms[0]->injection->date;
-    else {
-      LOG(FATAL) << "No dicom attached to this image, cannot compute the time from injection date "
-                 << ToString() << std::endl;
-    }
-  }
-  else inj_date = injection->date;
+  std::string inj_date = injection->date;
   if (dicoms.size() == 0) {
     LOG(FATAL) << "No dicom attached to this image, cannot compute the time from injection date "
                  << ToString() << std::endl;
   }
   double time = syd::DateDifferenceInHours(dicoms[0]->acquisition_date, inj_date);
   return time;
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+std::vector<double> & syd::GetTimesFromInjection(syd::StandardDatabase * db,
+                                                 const syd::Image::vector images)
+{
+  std::vector<double> * times = new std::vector<double>;
+  syd::Image::vector sorted_images = images;
+  db->Sort<syd::Image>(sorted_images);
+  syd::Injection::pointer injection = sorted_images[0]->injection;
+  std::string starting_date = injection->date;
+  for(auto image:sorted_images) {
+    double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
+    times->push_back(t);
+  }
+  return *times;
 }
 // --------------------------------------------------------------------

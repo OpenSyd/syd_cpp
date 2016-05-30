@@ -44,7 +44,7 @@ namespace syd {
     Table(syd::Database * d);
 
     //// Default New, create a new record of the correct type, return a generic syd::Record
-    virtual typename syd::Record::pointer New() const;
+    virtual typename syd::Record::pointer New();
 
     /// Insert a new element in the table (knowing is type)
     virtual void Insert(generic_record_pointer record) const;
@@ -59,10 +59,12 @@ namespace syd {
     virtual void Update(generic_record_vector records) const;
 
     /// Query a single element by its id
-    virtual void QueryOne(generic_record_pointer & record, const syd::IdType & id) const;
+    virtual void QueryOne(generic_record_pointer & record,
+                          const syd::IdType & id) const;
 
     /// Query several elements by their id
-    virtual void Query(generic_record_vector & records, const std::vector<syd::IdType> & ids) const;
+    virtual void Query(generic_record_vector & records,
+                       const std::vector<syd::IdType> & ids) const;
 
     /// Query all elements
     virtual void Query(generic_record_vector & records) const;
@@ -88,7 +90,7 @@ namespace syd {
     virtual std::vector<std::string> & GetInheritSQLTableNames() const;
 
     /// Build the initial description of the table (not done at creation, only when needed)
-    virtual void InitTableDescription(syd::DatabaseDescription * d);
+    //    virtual void InitTableDescription(syd::DatabaseDescription * d);
 
   protected:
     syd::Database * db_;
@@ -98,7 +100,6 @@ namespace syd {
 
 
 #include "sydTable.txx"
-
 
 // --------------------------------------------------------------------
 

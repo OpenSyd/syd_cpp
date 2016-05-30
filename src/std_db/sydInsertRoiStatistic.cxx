@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the list of images
   std::vector<syd::IdType> ids;
@@ -76,10 +76,19 @@ int main(int argc, char* argv[])
         db->New(stat);
         stat->image = image;
         stat->mask = mask;
+        stat->tags = image->tags; // copy tags
         newStat = true;
       }
       // Update the value
+      if (args_info.empty_value_given) {
+        builder.SetEmptyPixelValue(args_info.empty_value_arg);
+        builder.SetEmptyPixelValueFlag(true);
+      }
       builder.ComputeStatistic(stat);
+
+      // Tags
+      db->UpdateTagsFromCommandLine(stat->tags, args_info);
+
       // Update
       if (newStat) {
         db->Insert(stat);

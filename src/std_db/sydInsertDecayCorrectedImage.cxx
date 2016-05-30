@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the list of images
   std::vector<syd::IdType> ids;
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
   syd::DecayCorrectedImageBuilder builder(db);
   for(auto image:images) {
     syd::Image::pointer result = builder.NewDecayCorrectedImage(image);
-    db->SetImageTagsFromCommandLine(result, args_info);
+    db->UpdateTagsFromCommandLine(result->tags, args_info);
     builder.InsertAndRename(result);
     LOG(1) << "Inserting Image " << result;
   }

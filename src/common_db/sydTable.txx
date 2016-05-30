@@ -32,9 +32,12 @@ syd::Table<RecordType>::Table(syd::Database * d):TableBase()
 // --------------------------------------------------------------------
 template<class RecordType>
 typename syd::Table<RecordType>::generic_record_pointer
-syd::Table<RecordType>::New() const
+syd::Table<RecordType>::New()
 {
-  return RecordType::New();
+  // This is the only place to create a new record.
+  auto p = RecordType::New();
+  p->SetDatabasePointer(db_);
+  return p;
 }
 // --------------------------------------------------------------------
 
@@ -43,7 +46,6 @@ syd::Table<RecordType>::New() const
 template<class RecordType>
 void syd::Table<RecordType>::Insert(generic_record_pointer record) const
 {
-  //  auto p = std::dynamic_pointer_cast<Record>(record);
   auto p = std::static_pointer_cast<RecordType>(record);
   db_->Insert<RecordType>(p);
 }
@@ -137,7 +139,8 @@ long syd::Table<RecordType>::GetNumberOfElements() const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Table<RecordType>::Sort(generic_record_vector & records, const std::string & type) const
+void syd::Table<RecordType>::Sort(generic_record_vector & records,
+                                  const std::string & type) const
 {
   typename RecordType::vector specific_records;
   for(auto r:records) {
@@ -198,16 +201,5 @@ std::vector<std::string> & syd::Table<RecordType>::GetInheritSQLTableNames() con
   static bool already_here = false;
   if (!already_here) RecordType::InitInheritance();
   return syd::Record::inherit_sql_tables_map_[RecordType::GetStaticTableName()];
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void syd::Table<RecordType>::InitTableDescription(syd::DatabaseDescription * /*d*/) // unused for the moment
-{
-  table_description_.SetTableName(GetTableName());
-  table_description_.SetSQLTableName(GetSQLTableName());
-  table_description_.AddField("id", "int");
 }
 // --------------------------------------------------------------------

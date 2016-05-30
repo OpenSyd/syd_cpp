@@ -21,7 +21,9 @@
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
-syd::Calibration::Calibration():syd::Record()
+syd::Calibration::Calibration():
+  syd::Record(),
+  syd::RecordWithTags()
 {
   image = NULL;
   factor = 1.0;
@@ -48,68 +50,6 @@ std::string syd::Calibration::ToString() const
   return ss.str();
 }
 // --------------------------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Calibration::Set(const syd::Database * db, const std::vector<std::string> & arg)
-{
-  LOG(FATAL) << "To insert Calibration ... TODO ";
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-// void syd::Calibration::CopyFrom(const pointer p)
-// {
-//   syd::Record::CopyFrom(p);
-//   image = p->image;
-//   for(auto t:p->tags) tags.push_back(t);
-//   factor = p->factor;
-//   fov_ratio = p->fov_ratio;
-// }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-bool syd::Calibration::IsEqual(const pointer p) const
-{
-  bool b = (syd::Record::IsEqual(p) and
-            image->id == p->image->id);
-  for(auto i=0; i<tags.size(); i++) b = b and tags[i]->id == p->tags[i]->id;
-  b  =  b and factor == p->factor and fov_ratio == p->fov_ratio;
-  return b;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Calibration::AddTag(syd::Tag::pointer tag)
-{
-  bool found = false;
-  int i=0;
-  while (i<tags.size() and !found) {
-    if (tags[i]->label == tag->label) found = true;
-    ++i;
-  }
-  if (!found) tags.push_back(tag);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Calibration::RemoveTag(syd::Tag::pointer tag)
-{
-  bool found = false;
-  int i=0;
-  while (i<tags.size() and !found) {
-    if (tags[i]->label == tag->label) {
-      found = true;
-      tags.erase(tags.begin()+i);
-    }
-    ++i;
-  }
-}
-// --------------------------------------------------
 
 
 // --------------------------------------------------

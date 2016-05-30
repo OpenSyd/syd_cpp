@@ -1,0 +1,17 @@
+#File sydInsertTimeIntegratedActivityImage.ggo
+
+package "syd"
+version "0.4"
+usage "sydInsertTimeIntegratedActivityImage <image_ids>"
+description "Create a new image with TIA in every pixels
+- <list_of_image_ids>     list of image id to integrate
+"
+
+option "min_activity"    - "Dont fit if activity lower than this value"       float default="0" no
+option "gauss"   	 g "Sigma of preprocess Gaussian filter (0=no)"       float default="0" no
+option "median_filter"   - "Apply median filter at the end"                   flag off
+option "fill_holes"      f "Try to fill holes using given radius (no if -1)"  int default="-1" no
+option "pixelunit"       - "Name of pixel value unit to attach to the image"  string no
+option "debug_images"    - "Output some debug images"                         flag off
+option "debug_images_in_db"    - "Output some debug images and insert in db"                         flag off
+option "force"           - "Insert image even if another with similar tags exist" flag off

@@ -30,15 +30,53 @@ syd::FitModel_f4::FitModel_f4():FitModelBase()
 
 
 // --------------------------------------------------------------------
+void syd::FitModel_f4::ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac)
+{
+  // Select only the end of the curve (min 2 points);
+  auto first_index = tac->FindMaxIndex();
+  first_index = std::min(first_index, tac->size()-3);
+
+  // Initialisation
+  params_[0] = 0.0;
+  params_[1] = 0.0;
+  params_[2] = 0.0;
+  params_[3] = 0.0;
+
+  // Second part of the curve
+  Eigen::Vector2d x;
+  LogLinearFit(x, tac, first_index, tac->size());
+  double c = x(0);
+  double d = x(1);
+  params_[2] = c;  // x(0) = log c     --> A1 = exp(x(0))
+  params_[3] = -GetLambdaPhysicHours()-d;// x(1) = -(l1+lp)  --> l1 = -x(1)-lp
+
+  // Create modified curve
+  bool negative=false;
+  if (first_index>=2) {
+    auto first_part_tac = syd::TimeActivityCurve::New();
+    for(auto i=0; i<first_index+1; i++) {
+      double t = tac->GetTime(i);
+      double v = tac->GetValue(i) - c*exp(d*t);
+      if (v<0) negative = true;
+      v = log(v);
+      first_part_tac->AddValue(t, v);
+    }
+    if (!negative) {
+      LogLinearFit(x, first_part_tac);
+      params_[0] = x(0);
+      params_[1] = -GetLambdaPhysicHours()-x(1);
+
+    }
+  }
+  DDS(params_);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::FitModel_f4::SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac)
 {
   syd::FitModelBase::SetProblemResidual(problem, tac);
-
-  // Initialisation
-  params_[0] = tac.GetValue(0)/2.0; // A1
-  params_[1] = GetLambdaPhysicHours(); // l1
-  params_[2] = 0.0;//tac.GetValue(0)/2.0; // A2
-  params_[3] = GetLambdaPhysicHours()/2.0; // l2
 
   // need to be created each time
   residuals_.clear();
@@ -48,13 +86,19 @@ void syd::FitModel_f4::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   }
   // FIXME --> could be templated by CostFctType and param_nb ?
   for(auto i=0; i<tac.size(); i++) {
-    problem->AddResidualBlock(new CostFctType(residuals_[i]), NULL, &params_[0], &params_[1], &params_[2], &params_[3]);
+    problem->AddResidualBlock(new CostFctType(residuals_[i]), NULL,
+                              &params_[0], &params_[1], &params_[2], &params_[3]);
   }
 
-  problem->SetParameterLowerBound(&params_[0], 0, 0.0);   // A1 positive
-  problem->SetParameterLowerBound(&params_[1], 0, 0.0); // l1 GetLambdaPhysicHours()); // positive
-  problem->SetParameterLowerBound(&params_[2], 0, 0.0);   // A2 positive
-  problem->SetParameterLowerBound(&params_[3], 0, 0.0);   // l2 positive
+  //  problem->SetParameterLowerBound(&params_[0], 0, 0.0);   // A1 positive
+  //problem->SetParameterLowerBound(&params_[2], 0, 0.0);   // A2 positive
+
+  problem->SetParameterLowerBound(&params_[1], 0, 0);//-0.9*GetLambdaPhysicHours());
+  problem->SetParameterLowerBound(&params_[3], 0, 0);//-0.9*GetLambdaPhysicHours());
+  problem->SetParameterUpperBound(&params_[1], 0, 10*GetLambdaPhysicHours());
+  problem->SetParameterUpperBound(&params_[3], 0, 10*GetLambdaPhysicHours());
+
+
   //problem->SetParameterUpperBound(&params_[1], 0, 0.0);//GetLambdaPhysicHours()*2.0); // positive
   // problem->SetParameterLowerBound(&params_[3], 0, 0.1*GetLambdaPhysicHours()); // positive
   // problem->SetParameterUpperBound(&params_[3], 0, GetLambdaPhysicHours()); // positive
@@ -76,10 +120,10 @@ syd::FitModelBase * syd::FitModel_f4::Clone() const
 template <typename T>
 bool
 syd::FitModel_f4::ResidualType::operator()(const T* const A1,
-                                            const T* const l1,
-                                            const T* const A2,
-                                            const T* const l2,
-                                            T* residual) const
+                                           const T* const l1,
+                                           const T* const A2,
+                                           const T* const l2,
+                                           T* residual) const
 {
   residual[0] = (T(y_) - (
                           A1[0]*exp(-(l1[0]+lambda) * T(x_)) +
@@ -98,7 +142,7 @@ double syd::FitModel_f4::GetValue(const double & t) const
   const double A2 = params_[2];
   const double l2 = params_[3];
   const double l = lambda_phys_hours_;
-  return A1 * exp(-(l+l1)*t) + A1 * exp(-(l+l2)*t);
+  return A1 * exp(-(l+l1)*t) + A2 * exp(-(l+l2)*t);
 }
 // --------------------------------------------------------------------
 

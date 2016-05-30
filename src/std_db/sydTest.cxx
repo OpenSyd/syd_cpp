@@ -22,17 +22,8 @@
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
-//#include "extExtendedDatabase.h"
-
-
-#define ASYD_VERSION      0x0304 // 01.02
-#define ASYD_BASE_VERSION 0x0101 // 01.01
-
-
-#define SFZ_VERSION      SYD_VERSION + 0x010000 // 01.xx.yy
-#define SFZ_BASE_VERSION SYD_BASE_VERSION + 0x010000 // 01.xx.yy
-
-#pragma db model version(SFZ_BASE_VERSION, SFZ_VERSION)
+#include "sydTimepointsBuilder.h"
+#include "sydRecordHelpers.h"
 
 // Init syd
 SYD_STATIC_INIT
@@ -46,12 +37,41 @@ int main(int argc, char* argv[])
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // ------------------------------------------------------------------
-  // view
+  // test
   if (1) {
+    auto images = db->FindImages("t");
+    DDS(images);
+  }
 
+  // ------------------------------------------------------------------
+  // Correct tp
+  if (0) {
+    syd::Timepoints::vector tps;
+    db->Query(tps); // all
+    DD(tps.size());
+    for(auto tp:tps) {
+      tp->patient = tp->images[0]->patient;
+      tp->injection = tp->images[0]->injection;
+    }
+    DD("done");
+    db->Update(tps);
+  }
+
+
+  // ------------------------------------------------------------------
+  // Correct images
+  if (0) {
+    syd::Image::vector images;
+    db->Query(images); // all
+    DD(images.size());
+    for(auto image:images) {
+      image->injection = image->dicoms[0]->injection;
+    }
+    DD("done");
+    db->Update(images);
   }
 
 
@@ -75,7 +95,7 @@ int main(int argc, char* argv[])
     // Load plugin
     syd::PluginManager::GetInstance()->Load();
     syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
-    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+    syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
     db->Dump("Image");
 

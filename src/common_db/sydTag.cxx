@@ -23,7 +23,7 @@
 #include <set>
 
 // --------------------------------------------------
-syd::Tag::Tag():syd::RecordWithHistory()
+syd::Tag::Tag():syd::Record()
 {
   label = "unset";
   description = "unset";
@@ -44,16 +44,7 @@ std::string syd::Tag::ToString() const
 
 
 // --------------------------------------------------
-bool syd::Tag::IsEqual(const pointer p) const
-{
-  return (syd::Record::IsEqual(p) and label == p->label and
-          description == p->description);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Tag::Set(const syd::Database * db, const std::vector<std::string> & arg)
+void syd::Tag::Set(const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
     LOG(FATAL) << "To insert a Tag, please set <label> <description>";
@@ -67,8 +58,7 @@ void syd::Tag::Set(const syd::Database * db, const std::vector<std::string> & ar
 // --------------------------------------------------
 void syd::Tag::InitTable(syd::PrintTable & ta) const
 {
-  syd::RecordWithHistory::InitTable(ta);
-  if (ta.GetColumn("id") == -1) ta.AddColumn("id");
+  ta.AddColumn("id");
   ta.AddColumn("label");
   auto & col = ta.AddColumn("description");
   col.max_width = 80;
@@ -80,7 +70,7 @@ void syd::Tag::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::Tag::DumpInTable(syd::PrintTable & ta) const
 {
-  syd::RecordWithHistory::DumpInTable(ta);
+  ta.Set("id", id);
   ta.Set("label", label);
   ta.Set("description", description);
 }

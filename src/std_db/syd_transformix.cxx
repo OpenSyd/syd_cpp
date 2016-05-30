@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Read the ImageTransform
   std::vector<syd::IdType> tids;
@@ -82,10 +82,12 @@ int main(int argc, char* argv[])
       }
     }
     if (found == -1) {
-      LOG(FATAL) << "Error, could not find adequate ImageTransform for image:" << image;
+      LOG(WARNING) << "Could not find adequate ImageTransform for image (ignore):" << image;
     }
-    images.push_back(image);
-    transforms.push_back(initial_transforms[found]);
+    else {
+      images.push_back(image);
+      transforms.push_back(initial_transforms[found]);
+    }
   }
 
   // Loop
@@ -138,7 +140,7 @@ int main(int argc, char* argv[])
     // Create output image
     syd::ImageBuilder builder(db);
     syd::Image::pointer output_image = builder.NewMHDImageLike(input_image);
-    db->SetImageTagsFromCommandLine(output_image, args_info);
+    db->UpdateTagsFromCommandLine(output_image->tags, args_info);
 
     // Change the frame_of_reference_uid, will be the one of fiwed
     // image in the ImageTransform

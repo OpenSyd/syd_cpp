@@ -37,7 +37,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the fow ratio
   double f = atof(args_info.inputs[0])/100.0;
@@ -64,10 +64,7 @@ int main(int argc, char* argv[])
       LOG(FATAL) << "Error, the image is not associated with a dicom. ";
     }
     syd::DicomSerie::pointer dicom = image->dicoms[0];
-    if (dicom->injection == NULL) {
-      LOG(FATAL) << "Error, the dicom is not associated with an injection.";
-    }
-    syd::Injection::pointer injection = dicom->injection;
+    syd::Injection::pointer injection = image->injection;
 
     // Already exist or not ?
     std::string status;
@@ -122,7 +119,7 @@ int main(int argc, char* argv[])
     // Compute the calibration and update
     double k = total_counts / activity_at_acquisition * f;
     calibration->factor = k;
-    db->SetTagsFromCommandLine<args_info_sydInsertCalibration,syd::Calibration>(calibration, args_info);
+    db->UpdateTagsFromCommandLine(calibration->tags, args_info);
     db->Update(calibration);
     LOG(1) << calibration << " " << status;
   }

@@ -17,42 +17,38 @@
   ===========================================================================**/
 
 // syd
-#include "sydDatabaseDescription.h"
+#include "sydFieldDescription.h"
+#include "sydTableDescription.h"
+
+// --------------------------------------------------------------------
+syd::FieldDescription::FieldDescription(syd::TableDescription * t)
+{
+  table_ = t;
+}
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::ostream& syd::DatabaseDescription::Print(std::ostream & os) const
+std::ostream & syd::FieldDescription::Print(std::ostream & os) const
 {
-  os << name << ": " << tables_.size() <<  " tables.";
-  for(auto t:tables_) os << std::endl << *t;
+  os << name_ << " " << type_;
   return os;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-bool syd::DatabaseDescription::FindTableDescription(std::string table_name,
-                                                    syd::TableDescription ** d)
+std::string syd::FieldDescription::GetSQLTableName() const
 {
-  auto it = std::find_if(tables_.begin(), tables_.end(),
-                         [&table_name](syd::TableDescription * t)
-                         { return t->GetTableName() == table_name; } );
-  if (it == tables_.end()) return false;
-  *d = *it;
-  return true;
+  return table_->GetSQLTableName();
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-bool syd::DatabaseDescription::FindTableDescriptionFromSQLName(std::string table_name,
-                                                               syd::TableDescription ** d)
+void syd::FieldDescription::SetName(std::string name, std::string type)
 {
-  auto it = std::find_if(tables_.begin(), tables_.end(),
-                         [&table_name](syd::TableDescription * t)
-                         { return t->GetSQLTableName() == table_name; } );
-  if (it == tables_.end()) return false;
-  *d = *it;
-  return true;
+  name_ = name;
+  type_ = type;
 }
 // --------------------------------------------------------------------

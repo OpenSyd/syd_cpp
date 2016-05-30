@@ -39,16 +39,11 @@ int main(int argc, char* argv[])
   std::string ext_dbname = "test_insert.ext.db";
   std::string folder = "test";
 
-  std::vector<std::string> args;
-  args.push_back("toto");
-  args.push_back("1");
-  args.push_back("50");
-  args.push_back("XXXXX");
-  args.push_back("2002-08-09 10:00");
+  std::vector<std::string> args = {"toto", "1", "50", "XXXXX", "2002-08-09 10:00"};
 
   //----------------------------------------------------------------
   {  // StandardDatabase
-    std::cout << "Create db " << std::endl;
+    std::cout << "Create two db " << std::endl;
     m->Create("StandardDatabase", dbname, folder, true);
     m->Create("ExtendedDatabase", ext_dbname, folder, true);
   }
@@ -56,10 +51,10 @@ int main(int argc, char* argv[])
   //----------------------------------------------------------------
   {
     std::cout << "Open std as generic Database" << std::endl;
-    syd::Database * db = m->Read(dbname);
+    syd::Database * db = m->Open(dbname);
     db->Dump();
     auto patient = db->New("Patient");
-    db->Set(patient, args);
+    patient->Set(args);
     std::cout << "Before insertion " << patient << std::endl;
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
@@ -71,9 +66,9 @@ int main(int argc, char* argv[])
   //----------------------------------------------------------------
   {
     std::cout << "Open ext as generic Database" << std::endl;
-    syd::Database * db = m->Read<syd::Database>(ext_dbname);
+    syd::Database * db = m->Open<syd::Database>(ext_dbname);
     auto patient = db->New("Patient");
-    db->Set(patient, args);
+    patient->Set(args);
     std::cout << "Before insertion " << patient << std::endl;
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
@@ -85,12 +80,12 @@ int main(int argc, char* argv[])
   //----------------------------------------------------------------
   {
     std::cout << "Open std as StandardDatabase" << std::endl;
-    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(dbname);
+    syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(dbname);
     syd::Patient::pointer patient;
     db->New(patient);
     args[0] = "titi";
     args[1] = "2";
-    db->Set(patient, args);
+    patient->Set(args);
     std::cout << "Before insertion " << patient << std::endl;
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
@@ -103,12 +98,12 @@ int main(int argc, char* argv[])
   //----------------------------------------------------------------
   {
     std::cout << "Open ext as StandardDatabase" << std::endl;
-    syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(ext_dbname);
+    syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(ext_dbname);
     syd::Patient::pointer patient;
     db->New(patient);
     args[0] = "titi";
     args[1] = "2";
-    db->Set(patient, args); // in that case the birth_date is not initialized
+    patient->Set(args); // in that case the birth_date is not initialized
     std::cout << "Before insertion " << patient << std::endl;
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
@@ -120,12 +115,12 @@ int main(int argc, char* argv[])
   //----------------------------------------------------------------
   {
     std::cout << "Open ext as ExtendedDatabase" << std::endl;
-    ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
+    ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
     ext::Patient::pointer patient;
     db->New(patient);
     args[0] = "tutu";
     args[1] = "3";
-    db->Set(patient, args);
+    patient->Set(args);
     std::cout << "Before insertion " << patient << std::endl;
     db->Insert(patient);
     std::cout << "After insertion " << patient << std::endl;
@@ -136,26 +131,26 @@ int main(int argc, char* argv[])
 
   //----------------------------------------------------------------
   {
-    ext::ExtendedDatabase * db = m->Read<ext::ExtendedDatabase>(ext_dbname);
+    ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
     ext::Patient::vector patients;
     ext::Patient::pointer p;
     db->New(p);
-    p->Set(db, "atoto", 10, 50,  "XXYYZZ", "2002-08-09 10:00");
+    p->Set("atoto", 10, 50,  "XXYYZZ", "2002-08-09 10:00");
     patients.push_back(p);
     db->New(p);
-    p->Set(db, "atiti", 20, 150, "AXXYYZZ", "2005-02-01 17:00");
+    p->Set("atiti", 20, 150, "AXXYYZZ", "2005-02-01 17:00");
     patients.push_back(p);
     db->New(p);
-    p->Set(db, "atutu", 30, 60,  "BXXYYZZ", "2009-07-17 09:00");
+    p->Set("atutu", 30, 60,  "BXXYYZZ", "2009-07-17 09:00");
     patients.push_back(p);
     db->New(p);
-    p->Set(db, "atata", 40, 80,  "CXXYYZZ", "2002-08-09 10:00");
+    p->Set("atata", 40, 80,  "CXXYYZZ", "2002-08-09 10:00");
     patients.push_back(p);
 
     db->Insert(patients);
-
     ext::Patient::vector vp;
     db->Query(vp);
+
     if (vp.size() != 7)  {
       LOG(FATAL) << "Error while inserting multiple ext patient in ext db";
     }
@@ -164,18 +159,20 @@ int main(int argc, char* argv[])
 
   //----------------------------------------------------------------
   {
-    syd::Database * db = m->Read(ext_dbname);
+    syd::Database * db = m->Open(ext_dbname);
     syd::Record::vector records;
     for(auto i=0; i<5; i++) {
       auto r = db->New("Patient");
       args[0] = "toto_"+args[0];
       args[1] = syd::ToString(66+atoi(args[1].c_str()));
-      db->Set(r, args);
+      r->Set(args);
       records.push_back(r);
     }
+    DDS(records);
     db->Insert(records, "Patient");
     records.clear();
     db->Query(records, "Patient");
+    DDS(records);
     if (records.size() != 12)  {
       LOG(FATAL) << "Error while inserting generic multiple ext patient in ext db";
     }

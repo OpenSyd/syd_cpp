@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the tia image
   syd::IdType id = atoi(args_info.inputs[0]);
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
   if (args_info.pixelunit_given) builder.SetImagePixelValueUnit(image, args_info.pixelunit_arg);
 
   // Set the tag if needed
-  db->SetImageTagsFromCommandLine(image, args_info);
+  db->UpdateTagsFromCommandLine(image->tags, args_info);
 
   // Finally update the image in the db
   db->Update(image);

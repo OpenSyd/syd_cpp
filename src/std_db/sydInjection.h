@@ -49,9 +49,12 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Injection, syd::Injection);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(Injection);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(Injection);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
+
+    void Set(const std::vector<std::string> & args);
 
     virtual void Callback(odb::callback_event, odb::database&) const;
     virtual void Callback(odb::callback_event, odb::database&);

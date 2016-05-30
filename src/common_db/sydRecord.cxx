@@ -26,23 +26,47 @@ std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_
 // --------------------------------------------------------------------
 syd::Record::Record()
 {
-  id = -1;
+  id = 0;
+  db_ = NULL;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::Record::Set(const syd::Database * db, const std::vector<std::string> & args)
+bool syd::Record::IsPersistent() const
 {
-  LOG(FATAL) << "The function Set(db, args) must be implemented for table " << GetTableName();
+  if (db_ == NULL or id==0) return false;
+  return true;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-bool syd::Record::IsEqual(const pointer p) const
+std::string syd::Record::ToString() const
 {
-  return (id == p->id);
+  std::stringstream ss ;
+  ss << id;
+  return ss.str();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Record::CheckIfPersistant() const
+{
+  if (IsPersistent()) return;
+  EXCEPTION("This record of table '" << GetTableName()
+            << " is not persistent (not in the db)." << std::endl
+            << ToString());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Record::Set(const std::vector<std::string> & args)
+{
+  LOG(FATAL) << "No function Set(args) for table " << GetTableName()
+             << ". Use alternative tool to insert an element.";
 }
 // --------------------------------------------------------------------
 
@@ -59,7 +83,6 @@ void syd::Record::InitTable(syd::PrintTable & table) const
 // --------------------------------------------------------------------
 void syd::Record::DumpInTable(syd::PrintTable & table) const
 {
-  // table.Set("id", id);
   table.Set("fields", ToString());
 }
 // --------------------------------------------------------------------
@@ -68,7 +91,6 @@ void syd::Record::DumpInTable(syd::PrintTable & table) const
 // --------------------------------------------------------------------
 void syd::Record::SetDatabasePointer(odb::callback_event event, odb::database & d) const
 {
-  //DD("SetDatabasePointer " + GetTableName()+" " + syd::ToString(event));
   auto search = syd::Database::ListOfLoadedDatabases.find(&d);
   if (search == syd::Database::ListOfLoadedDatabases.end()) {
     LOG(FATAL) << "Error during callback in an object " << GetTableName()
@@ -80,11 +102,18 @@ void syd::Record::SetDatabasePointer(odb::callback_event event, odb::database & 
 
 
 // --------------------------------------------------------------------
+void syd::Record::SetDatabasePointer(syd::Database * db)
+{
+  db_ = db;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Record::Callback(odb::callback_event event, odb::database & db) const
 {
   // Events in Callback const : persist, update, erase
   // event load can only be here if the non-const version does not exist
-  // DD("Record::Callback_const "+syd::ToString(event)+" "+GetTableName());
   if (event == odb::callback_event::pre_persist or
       event == odb::callback_event::post_load) SetDatabasePointer(event, db);
 }
@@ -95,7 +124,6 @@ void syd::Record::Callback(odb::callback_event event, odb::database & db) const
 void syd::Record::Callback(odb::callback_event event, odb::database & db)
 {
   // Events in Callback non-const : load
-  //DD("Record::Callback non const "+syd::ToString(event)+" "+GetTableName());
   if (event == odb::callback_event::post_load) SetDatabasePointer(event, db);
 }
 // --------------------------------------------------------------------
@@ -115,8 +143,16 @@ syd::Database * syd::Record::GetDatabase() const
 {
   if (db_ == NULL) {
     EXCEPTION("Error in 'GetDatabase', the current record from table'"
-              << GetTableName() << "' is not persistant. Insert it in the db before.");
+              << GetTableName() << "' has no db yet. Use SetDatabasePointer before.");
   }
   return db_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2)
+{
+  return (r1->ToString() == r2->ToString());
 }
 // --------------------------------------------------------------------

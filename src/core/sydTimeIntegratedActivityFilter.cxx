@@ -17,7 +17,7 @@
   ===========================================================================**/
 
 // syd
-#include "sydIntegratedActivityImageBuilder.h"
+#include "sydTimeIntegratedActivityFilter.h"
 #include "sydImageUtils.h"
 #include "sydPrintTable.h"
 
@@ -25,138 +25,114 @@
 #include <itkImageRegionIterator.h>
 #include <itkImageRegionConstIterator.h>
 #include <itkNoiseImageFilter.h>
+#include <itkLabelStatisticsImageFilter.h>
 
 // --------------------------------------------------------------------
-syd::IntegratedActivityImageBuilder::IntegratedActivityImageBuilder()
+syd::TimeIntegratedActivityFilter::TimeIntegratedActivityFilter()
 {
   SetLambdaPhysicHours(0.0);
   SetR2MinThreshold(0.9);
   SetRestrictedTACFlag(false);
   mask_ = 0;
   additional_point_flag_ = false;
+  auto f2  = new syd::FitModel_f2;
+  auto f3  = new syd::FitModel_f3;
+  auto f4a = new syd::FitModel_f4a;
+  auto f4b = new syd::FitModel_f4b;
+  auto f4  = new syd::FitModel_f4;
+  all_models_.push_back(f2);
+  all_models_.push_back(f3);
+  all_models_.push_back(f4a);
+  all_models_.push_back(f4b);
+  all_models_.push_back(f4);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::SaveDebugPixel(const std::string & filename) const
+void syd::TimeIntegratedActivityFilter::SetModels(const std::vector<std::string> & model_names)
 {
-  if (debug_data.size() < 1) return;
-
-  syd::PrintTable ta;
-  ta.AddColumn("time");
-  for(auto d:debug_data) {
-    ta.AddColumn(d.name);
-  }
-  ta.Init();
-  auto tac = debug_data[0].tac;
-  for(auto t=0; t<tac.size(); t++) {
-    ta.Set("time", tac.GetTime(t));
-    for(auto d:debug_data) {
-      ta.Set(d.name, d.tac.GetValue(t));
+  int i=0;
+  // Look for model from the given names
+  for(auto & name:model_names) {
+    bool b = false;
+    for(auto model:all_models_) {
+      if (model->GetName() == name) {
+        AddModel(model, i+1); // start model id at 1 (such that 0 means no model)
+        b = true;
+        ++i;
+      }
     }
-    //ta.Endl();
+    if (!b) {
+      std::string km;
+      for(auto model:all_models_) km += model->GetName()+" ";
+      LOG(FATAL) << "Error the model '" << name << "' is not found. Known models are: " << km;
+    }
   }
-  std::ofstream os(filename);
-  ta.Print(os);
-  os.close();
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::SaveDebugModel(const std::string & filename)
+int syd::TimeIntegratedActivityFilter::GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
+                                                        syd::TimeActivityCurve::pointer restricted_tac)
 {
-  if (debug_data.size() < 1) return;
-
-  for(auto & d:debug_data) {
-    for(auto model:d.models) {
-      syd::FitModelBase * subm = model->Clone();
-      //subm->lambda_phys_hours_ = 0.0043449876; // 177Lu
-      subm->lambda_phys_hours_ = 0.010823439; // 90Y FIXME
-      subm->name_ = subm->name_+"177Lu";
-      d.models.push_back(subm);
-    }
+  restricted_tac->clear();
+  // Select only the end of the curve from the largest value find from
+  // the end
+  double previous_value = 0;
+  int i;
+  for(i=initial_tac->size()-1; i>=0; i--) {
+    if (initial_tac->GetValue(i) < previous_value) break;
+    else previous_value = initial_tac->GetValue(i);
   }
-
-
-  // Create tac from the models
-  auto tac = debug_data[0].tac;
-  std::vector<syd::TimeActivityCurve*> tacs;
-  for(auto d:debug_data) {
-    for(auto model:d.models) {
-      syd::TimeActivityCurve * t = model->GetTAC(0, tac.GetTime(tac.size()-1), 200);
-      tacs.push_back(t);
-    }
-  }
-
-  // Set table column name
-  syd::PrintTable ta;
-  ta.AddColumn("time");
-  for(auto d:debug_data) {
-    for(auto model:d.models) {
-      std::string name = d.name+"_"+model->GetName();
-      ta.AddColumn(name);
-    }
-  }
-  ta.Init();
-
-  EXCEPTION("not implemented. sTODO ");
-
-  // Set values
-  for(auto t=0; t<tacs[0]->size(); t++) {
-    ta.Set("time", tacs[0]->GetTime(t));
-    // FIXME     for(auto tac:tacs) ta.Set( << tac->GetValue(t);
-    //    ta.Endl();
-  }
-
-  // Dump
-  std::ofstream os(filename);
-  ta.Print(os);
-  os.close();
-
-  // Other debug
-  for(auto d:debug_data) {
-    std::cout << d.name << " "  << std::endl;
-    for(auto i=0; i< d.models.size(); i++) {
-      auto model = d.models[i];
-      std::string p;
-      for(auto pp:model->GetParameters()) p = p+syd::ToString(pp)+" ";
-      std::cout << " " << model->GetName() << " " //<< model->ceres_summary_.BriefReport() << " "
-                << p
-                << (i == d.selected_model ? "**Selected**":"")
-                << " R2 = " << model->ComputeR2(d.tac, restricted_tac_flag_)
-                << " AICc = " << model->ComputeAICc(d.tac)
-                << " AUC = " << model->ComputeAUC(d.tac, model->lambda_phys_hours_, restricted_tac_flag_)
-                << " l = " << model->lambda_phys_hours_
-                << std::endl;
-    }
-  }
+  i++;
+  i = std::min((double)i, (double)initial_tac->size()-3); /// at min 3 points
+  for(int j=i; j<initial_tac->size(); j++)
+    restricted_tac->AddValue(initial_tac->GetTime(j), initial_tac->GetValue(j));
+  return i;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::AddDebugPixel(std::string name, int x, int y, int z)
+void syd::TimeIntegratedActivityFilter::CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac)
 {
-  if (images_.size() == 0) {
-    LOG(FATAL) << "Only use AddDebugPixel after SetInput";
+  // Init solver
+  InitSolver();
+
+  // restricted tac ?
+  syd::TimeActivityCurve::pointer working_tac;
+  int index = 0;
+  if (restricted_tac_flag_) {
+    working_tac = syd::TimeActivityCurve::New();
+    index = GetRestrictedTac(initial_tac, working_tac);
   }
-  auto size = images_[0]->GetLargestPossibleRegion().GetSize();
-  int index = z*size[0]*size[1] + y*size[0] + x;
-  DebugType debug;
-  debug.name = name;
-  debug.x = x;
-  debug.y = y;
-  debug.z = z;
-  debug.index = index;
-  debug_data.push_back(debug);
+  else working_tac = initial_tac;
+
+  for(auto o:outputs_) {
+    o->initial_tac_ = initial_tac;
+    o->working_tac_ = working_tac;
+  }
+
+  // Solve
+  int best;
+  best = FitModels(working_tac);
+
+  if (best != -1) {
+    current_model_ = models_[best];
+    if (restricted_tac_flag_) auc_output_->index_ = index;
+    for(auto o:outputs_) { // Update the outputs
+      o->model_ = current_model_;
+      o->Update();
+    }
+  }
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
+void syd::TimeIntegratedActivityFilter::CreateIntegratedActivityImage()
 {
   // typedef
   typedef float PixelType;
@@ -167,8 +143,15 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   InitInputData();
 
   // create initial tac with the times
-  TimeActivityCurve tac;
-  for(auto t:times_) tac.AddValue(t, 0.0);
+  syd::TimeActivityCurve::pointer initial_tac = syd::TimeActivityCurve::New();
+  for(auto t:times_) initial_tac->AddValue(t, 0.0);
+
+  // restricted tac ?
+  syd::TimeActivityCurve::pointer working_tac;
+  if (restricted_tac_flag_) {
+    working_tac = syd::TimeActivityCurve::New();
+  }
+  else working_tac = initial_tac;
 
   // Init solver
   InitSolver();
@@ -176,12 +159,6 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   // Init main iterator
   typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
   Iterator4D it(tac_image_, tac_image_->GetLargestPossibleRegion());
-
-  // Required output: auc and mask
-  auc_output_ = new syd::FitOutputImage_AUC(images_[0], image_lambda_phys_in_hour_);
-  success_output_ = new syd::FitOutputImage_Success(images_[0]);
-  AddOutputImage(auc_output_);
-  AddOutputImage(success_output_);
 
   // Init mask iterator
   bool mask_flag = false;
@@ -194,26 +171,11 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 
   // Init output iterators
   for(auto & o:outputs_) {
+    o->InitImage(images_[0]); // allocate images
     o->iterator.GoToBegin();
-    o->use_current_tac = restricted_tac_flag_;
+    o->initial_tac_ = initial_tac;
+    o->working_tac_ = working_tac;;
   }
-
-  // debug init, sort point by index
-  bool debug_this_point_flag;
-  int debug_point_current=0;
-  std::sort(begin(debug_data), end(debug_data),
-            [](DebugType a, DebugType b) {
-              return a.index < b.index; });
-  if(debug_data.size() == 0) debug_point_current = -1;
-
-  // log
-  //  models, threshold, mask
-  std::string sm;
-  for(auto m:models_) sm += m->name_+" ("+syd::ToString(m->id_)+") ";
-  LOG(1) << "Starting fit with models : " << sm << "; "
-         << (mask_flag ? "with mask":"no_mask")
-         << " ; R2_min = " << R2_min_threshold_
-         << (restricted_tac_flag_ ? " ; fit with last points of the curve (from max value)":"; fit on all timepoints");
 
   // main loop
   int x = 0;
@@ -222,24 +184,19 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
   int number_of_pixels_success = 0;
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
 
-    // Consider current point, is it a debug point ?
-    if (debug_point_current != -1 and x == debug_data[debug_point_current].index) debug_this_point_flag = true;
-    else debug_this_point_flag = false;
-
     // Check if pixel is in the mask
-    if (((mask_flag and it_mask.Get() == 0) and !debug_this_point_flag)
-        or
-        (debug_only_flag_ and !debug_this_point_flag)) { // skip it
+    if (mask_flag and it_mask.Get() == 0) { // skip it
       for(auto i=0; i<images_.size(); i++) ++it;
     }
     else {
       ++number_of_pixels_in_mask;
       // Create current tac
       for(auto i=0; i<images_.size(); i++) {
-        tac.SetValue(i, std::max((float)0.0, it.Get())); // FIXME
+        initial_tac->SetValue(i, it.Get());
         ++it; // next value
       }
 
+      /*
       if (additional_point_flag_) {
         int n = images_.size();
         double last_value = tac.GetValue(n-1);
@@ -253,45 +210,35 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
           tac.SetValue(n, value);
         }
       }
-
-      syd::TimeActivityCurve restricted_tac;
+      */
+      int index = 0;
       if (restricted_tac_flag_) {
-        // Select only the end of the curve (min 2 points); FIXME ?
-        auto m = tac.FindMaxIndex();
-        m = std::min(m, tac.size()-3);
-        for(auto i=m; i<tac.size(); i++)
-          restricted_tac.AddValue(tac.GetTime(i), tac.GetValue(i));
+        index = GetRestrictedTac(initial_tac, working_tac);
+        auc_output_->index_ = index; // needed to compute with paralelogram method
       }
 
       // Solve
-      int best;
-      if (restricted_tac_flag_)
-        best = FitModels(restricted_tac, debug_this_point_flag, &debug_data[debug_point_current]);
-      else
-        best = FitModels(tac, debug_this_point_flag, &debug_data[debug_point_current]);
+      int best = FitModels(working_tac);
 
       // Set the current selected model, update the output
       if (best != -1) {
         ++number_of_pixels_success;
         current_model_ = models_[best];
         // Update output
-        for(auto o:outputs_) o->Update(tac, restricted_tac, current_model_);
-      }
-
-      // debug points for plot
-      if (debug_this_point_flag) {
-        debug_data[debug_point_current].selected_model = best;
-        debug_data[debug_point_current].tac = tac; // FIXME
-        ++debug_point_current;
+        for(auto & o:outputs_) {
+          o->model_ = current_model_;
+          o->Update();
+        }
       }
     }
 
     // Next debug images
-    for(auto o:outputs_) ++o->iterator;
+    for(auto o:outputs_) o->Iterate();
 
     // progress bar
     ++x;
-    loadbar(x,n);
+
+    if (sydlog::Log::LogLevel() > 0) loadbar(x,n);
 
     // Next in mask
     if (mask_flag) ++it_mask;
@@ -305,57 +252,86 @@ void syd::IntegratedActivityImageBuilder::CreateIntegratedActivityImage()
 
 
 // --------------------------------------------------------------------
-int syd::IntegratedActivityImageBuilder::FitModels(TimeActivityCurve & tac,
-                                                   bool debug_this_point_flag,
-                                                   DebugType * debug_current)
+int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer tac)
 {
   for(auto model:models_) {
     ceres::Problem problem;// New problem each time. (I did not manage to change that)
-    model->SetProblemResidual(&problem, tac);
+    model->ComputeStartingParametersValues(tac);
+    model->SetProblemResidual(&problem, *tac);
     ceres::Solve(*ceres_options_, &problem, &model->ceres_summary_); // Go !
-
-    if (debug_this_point_flag) {
-      syd::FitModelBase * mm = model->Clone();
-      debug_current->models.push_back(mm);
-      // Copy the current tac
-      syd::TimeActivityCurve * c = new TimeActivityCurve;
-      c->CopyFrom(tac);
-      mm->current_tac = c;
-    }
   }
 
   // Select the best model
+  bool verbose = 1;
+  if (verbose) DD(*tac);
   int best = -1;
   double R2_threshold = R2_min_threshold_;
-  double best_AICc = 666;
+  double min_AICc = 666.0;
   double best_R2 = 0.0;
   for(auto i=0; i<models_.size(); i++) {
     auto & m = models_[i];
+    double R2 = m->ComputeR2(tac);
+    if (verbose) std::cout << m->GetName()
+              << " SS = " << m->ComputeRSS(tac)
+              << " R2 = " << R2;
+    if (R2 > R2_threshold) { // and R2 > best_R2) {
+      double AICc;
+      bool b = m->IsAICcValid(tac->size()); //FIXME
+      //if (b) AICc = m->ComputeAICc(tac);
+      // else
+      AICc = m->ComputeAIC(tac);
+      //AICc = m->ComputeAICc(tac);
+      if (verbose) std::cout << " " << b
+        << " AICc = " << m->ComputeAICc(tac) << "  AIC = " << m->ComputeAIC(tac);
+      if (AICc < min_AICc) {
+        best = i;
+        min_AICc = AICc;
+        best_R2 = R2;
+      }
+    }
+    if (verbose) {
+      int iter = models_[i]->ceres_summary_.num_unsuccessful_steps +
+        models_[i]->ceres_summary_.num_successful_steps;
+      std::cout << " AUC = " << m->Integrate()
+                << " iter=" << iter << std::endl;
+    }
+
+    /*
     if (m->IsAcceptable()) {
       double R2 = m->ComputeR2(tac);
       if (R2 > R2_threshold and R2 > best_R2) {
         double AICc;
-        bool b = m->IsAICcValid(tac.size());
+        bool b = m->IsAICcValid(tac->size());
         if (b) AICc = m->ComputeAICc(tac);
-        if (!b or AICc < best_AICc) { // if AICc not valid, consider it is ok
+        else AIC = m->ComputeAIC(tac); // FIXME
+        if (AICc < min_AICc) {
           best = i;
           best_AICc = AICc;
           best_R2 = R2;
         }
       }
     }
+    */
+
   }
+  if (verbose and best != -1) DD(models_[best]->GetName());
+
   return best;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::InitInputData()
+void syd::TimeIntegratedActivityFilter::InitInputData()
 {
+  if (images_.size() < 2) {
+    EXCEPTION("Provide at least 2 images before");
+  }
+
   // Check image size
   bool b = true;
-  for(auto image:images_) b = b and syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(images_[0], image);
+  for(auto image:images_)
+    b = b and syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(images_[0], image);
   if (!b) {
     LOG(FATAL) << "The images must have the same size/spacing, abort.";
   }
@@ -397,10 +373,18 @@ void syd::IntegratedActivityImageBuilder::InitInputData()
   for(auto image:images_) {
     iterators.push_back(Iterator3D(image, image->GetLargestPossibleRegion()));
   }
+  bool negative_values = false;
   for(auto & iter:iterators) iter.GoToBegin();
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
     for(auto & iter:iterators) {
-      it.Set(iter.Get());
+      if (iter.Get() < 0.0) {
+        if (!negative_values) {
+          LOG(WARNING) << "Find negative count values in the input images, change to 0.";
+          negative_values = true;
+        }
+        it.Set(0.0);
+      }
+      else it.Set(iter.Get());
       ++iter;
       ++it;
     }
@@ -414,14 +398,26 @@ void syd::IntegratedActivityImageBuilder::InitInputData()
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::InitSolver()
+void syd::TimeIntegratedActivityFilter::InitSolver()
 {
   // Solve
   ceres_options_ = new ceres::Solver::Options;
   ceres_options_->max_num_iterations = 50;
   ceres_options_->linear_solver_type = ceres::DENSE_QR; // because few parameters/data
+  //  ceres_options_->linear_solver_type = ceres::DENSE_SCHUR;
   ceres_options_->minimizer_progress_to_stdout = false;
   ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
+
+  /*
+  DD(ceres_options_->min_line_search_step_size);
+  DD(ceres_options_->max_line_search_step_contraction);
+  DD(ceres_options_->function_tolerance);
+  DD(ceres_options_->parameter_tolerance);
+  DD(ceres_options_->num_threads);
+  */
+
+  // ceres_options_->function_tolerance = 1e-8;
+
   //ceres_options_->trust_region_strategy_type = ceres::DOGLEG;// (LM seems faster)
   //ceres_options_->dogleg_type = ceres::SUBSPACE_DOGLEG;
   ceres_options_->logging_type = ceres::SILENT;
@@ -431,12 +427,24 @@ void syd::IntegratedActivityImageBuilder::InitSolver()
     m->SetLambdaPhysicHours(image_lambda_phys_in_hour_);
     // m->robust_scaling_ = robust_scaling_;
   }
+
+  // Required output: auc, mask, integrated
+  if (restricted_tac_flag_) {
+    auc_output_ = new syd::FitOutputImage_AUC();
+    AddOutputImage(auc_output_);
+  }
+  else {
+    integrate_output_ = new syd::FitOutputImage_Integrate();
+    AddOutputImage(integrate_output_);
+  }
+  success_output_ = new syd::FitOutputImage_Success(); // needed output
+  AddOutputImage(success_output_);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::AddModel(syd::FitModelBase * m, int id)
+void syd::TimeIntegratedActivityFilter::AddModel(syd::FitModelBase * m, int id)
 {
   auto p = std::find_if(models_.begin(), models_.end(), [&id](syd::FitModelBase * m)->bool { return m->id_ == id; });
   if (p != models_.end()) {
@@ -449,10 +457,21 @@ void syd::IntegratedActivityImageBuilder::AddModel(syd::FitModelBase * m, int id
 
 
 // --------------------------------------------------------------------
-void syd::IntegratedActivityImageBuilder::SetAdditionalPoint(bool b, double time, double value)
+void syd::TimeIntegratedActivityFilter::SetAdditionalPoint(bool b, double time, double value)
 {
   additional_point_flag_ = b;
   additional_point_time_ = time;
   additional_point_value_ = value;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::FitOutputImage * syd::TimeIntegratedActivityFilter::GetOutput()
+{
+  if (restricted_tac_flag_)
+    return auc_output_;
+  else
+    return integrate_output_;
 }
 // --------------------------------------------------------------------

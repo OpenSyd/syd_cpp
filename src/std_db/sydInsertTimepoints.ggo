@@ -1,0 +1,9 @@
+#File sydInsertTimepoints.ggo
+
+package "syd"
+version "0.4"
+usage "sydInsertTimepoints <roi> <image_ids>"
+description "Create a new Timepoints from the mean pixels values in the roi for every images
+- <image_ids>     list of image id to integrate
+- <mask>          roi name
+"

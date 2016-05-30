@@ -1,0 +1,32 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="275"/>
+
+  <changeset version="274"/>
+
+  <changeset version="272"/>
+
+  <changeset version="265"/>
+
+  <changeset version="262"/>
+
+  <changeset version="261"/>
+
+  <changeset version="259">
+    <add-table name="syd::Radionuclide" kind="polymorphic root object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="typeid" type="TEXT" null="true"/>
+      <column name="name" type="TEXT" null="true" options="UNIQUE"/>
+      <column name="element" type="TEXT" null="true"/>
+      <column name="atomic_number" type="REAL" null="true"/>
+      <column name="mass_number" type="REAL" null="true"/>
+      <column name="metastable" type="INTEGER" null="true"/>
+      <column name="half_life_in_hours" type="REAL" null="true"/>
+      <column name="max_beta_minus_energy_in_kev" type="REAL" null="true"/>
+      <primary-key auto="true">
+        <column name="id"/>
+      </primary-key>
+    </add-table>
+  </changeset>
+
+  <model version="257"/>
+</changelog>

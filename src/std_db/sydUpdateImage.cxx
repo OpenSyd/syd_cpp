@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the ids
   std::vector<syd::IdType> ids;
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
     }
 
     // update db
-    db->SetImageTagsFromCommandLine(image, args_info);
+    db->UpdateTagsFromCommandLine(image->tags, args_info);
     if (args_info.pixelunit_given) builder.SetImagePixelValueUnit(image, args_info.pixelunit_arg);
     db->Update(image);
     if (s != 1) LOG(1) << "Image was scaled by " << s << ": " << image;

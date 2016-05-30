@@ -41,13 +41,13 @@ namespace syd {
 
      // ------------------------------------------------------------------------
     TABLE_DEFINE(File, syd::File);
-    TABLE_DECLARE_MANDATORY_FUNCTIONS(File);
-    TABLE_DECLARE_OPTIONAL_FUNCTIONS(File);
     // ------------------------------------------------------------------------
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
-    void EraseAssociatedFile() const;
 
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
@@ -58,6 +58,8 @@ namespace syd {
 
   protected:
     File();
+
+    void SetFilenamesToErase() const;
 
   }; // end of class
 } // end namespace

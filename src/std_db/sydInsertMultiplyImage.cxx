@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Read<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the image1 id
   syd::IdType id1 = atoi(args_info.inputs[0]);
@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
     auto output = builder.NewMHDImageLike(image2);
     builder.SetImage<PixelType>(output, itk_image2);
     builder.InsertAndRename(output);
-    db->SetImageTagsFromCommandLine(output, args_info);
+    db->UpdateTagsFromCommandLine(output->tags, args_info);
     if (args_info.pixelunit_given) builder.SetImagePixelValueUnit(output, args_info.pixelunit_arg);
     db->Update(output);
     LOG(1) << "Image inserted: " << output;
