@@ -52,9 +52,9 @@ void syd::FitModelBase::CopyFrom(const syd::FitModelBase * model)
 
 
 // --------------------------------------------------------------------
-syd::TimeActivityCurve * syd::FitModelBase::GetTAC(double first_time, double last_time, int n) const
+syd::TimeActivityCurve::pointer syd::FitModelBase::GetTAC(double first_time, double last_time, int n) const
 {
-  syd::TimeActivityCurve * tac = new syd::TimeActivityCurve;
+  auto tac = syd::TimeActivityCurve::New();
   double step = (last_time-first_time)/(double)n;
   double time = first_time;
   for(auto i=0; i<n; i++) {
@@ -178,12 +178,12 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve::pointer tac, 
 
   //DDS(GetParameters());
   /*
-  std::cout << "Compute auc tmax=" << tac->GetTime(index)
-            << " total= " << total
-            << " start_part=" << starting_part_model
-            << " trapez= " << paralelogram_part
-            << " r=" << r
-            << "   --> " << AUC << std::endl;
+    std::cout << "Compute auc tmax=" << tac->GetTime(index)
+    << " total= " << total
+    << " start_part=" << starting_part_model
+    << " trapez= " << paralelogram_part
+    << " r=" << r
+    << "   --> " << AUC << std::endl;
   */
 
   return AUC;
