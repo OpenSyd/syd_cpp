@@ -200,7 +200,7 @@ itk::ImageIOBase::Pointer syd::ReadImageHeader(const std::string & filename)
 
 
 //--------------------------------------------------------------------
-void WriteImage(typename itk::ImageBase<3>::Pointer image, std::string filename)
+void syd::WriteImage(typename itk::ImageBase<3>::Pointer image, std::string filename)
 {
   typedef itk::ImageBase<3> ImageBaseType;
   //  DD(image->GetComponentTypeAsString(image->GetComponentType()));
