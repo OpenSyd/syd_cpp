@@ -74,6 +74,16 @@ void syd::TimeIntegratedActivityFilter::SetModels(const std::vector<std::string>
 
 
 // --------------------------------------------------------------------
+void syd::TimeIntegratedActivityFilter::SetModel(const std::string & model_name)
+{
+  std::vector<std::string> m;
+  m.push_back(model_name);
+  SetModels(m);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 int syd::TimeIntegratedActivityFilter::GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
                                                         syd::TimeActivityCurve::pointer restricted_tac)
 {
@@ -89,7 +99,7 @@ int syd::TimeIntegratedActivityFilter::GetRestrictedTac(syd::TimeActivityCurve::
 
 
 // --------------------------------------------------------------------
-void syd::TimeIntegratedActivityFilter::CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac)
+syd::FitModelBase * syd::TimeIntegratedActivityFilter::CreateIntegratedActivity(syd::TimeActivityCurve::pointer initial_tac)
 {
   // Init solver
   InitSolver();
@@ -119,7 +129,9 @@ void syd::TimeIntegratedActivityFilter::CreateIntegratedActivity(syd::TimeActivi
       o->model_ = current_model_;
       o->Update();
     }
+    return current_model_;
   }
+  else return NULL;
 }
 // --------------------------------------------------------------------
 
@@ -253,6 +265,7 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
     model->ComputeStartingParametersValues(tac);
     model->SetProblemResidual(&problem, *tac);
     ceres::Solve(*ceres_options_, &problem, &model->ceres_summary_); // Go !
+    //    DD(model->ceres_summary_.FullReport());
   }
 
   // Select the best model
@@ -284,9 +297,14 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
       }
     }
     if (verbose) {
+      double auc_trap = 0.0;
+      if (auc_output_) {
+        auc_trap = m->ComputeAUC(auc_output_->initial_tac_, auc_output_->index_);
+      }
       int iter = models_[i]->ceres_summary_.num_unsuccessful_steps +
         models_[i]->ceres_summary_.num_successful_steps;
-      std::cout << " AUC = " << m->Integrate()
+      std::cout << " AUC_int = " << m->Integrate()
+                << " AUC_tra = " << auc_trap
                 << " iter=" << iter << std::endl;
     }
 
@@ -396,7 +414,7 @@ void syd::TimeIntegratedActivityFilter::InitSolver()
 {
   // Solve
   ceres_options_ = new ceres::Solver::Options;
-  ceres_options_->max_num_iterations = 50;
+  ceres_options_->max_num_iterations = 500;
   ceres_options_->linear_solver_type = ceres::DENSE_QR; // because few parameters/data
   //  ceres_options_->linear_solver_type = ceres::DENSE_SCHUR;
   ceres_options_->minimizer_progress_to_stdout = false;
@@ -410,7 +428,7 @@ void syd::TimeIntegratedActivityFilter::InitSolver()
   DD(ceres_options_->num_threads);
   */
 
-  // ceres_options_->function_tolerance = 1e-8;
+  //ceres_options_->function_tolerance = 1e-8;
 
   //ceres_options_->trust_region_strategy_type = ceres::DOGLEG;// (LM seems faster)
   //ceres_options_->dogleg_type = ceres::SUBSPACE_DOGLEG;
