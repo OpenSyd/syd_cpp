@@ -37,8 +37,8 @@ void syd::FitModel_f4::ComputeStartingParametersValues(const syd::TimeActivityCu
   first_index = std::min(first_index, tac->size()-3);
 
   // Initialisation
-  params_[0] = 0.0;
-  params_[1] = 0.0;
+  params_[0] = tac->GetValue(0);
+  params_[1] = GetLambdaPhysicHours();
   params_[2] = 0.0;
   params_[3] = 0.0;
 
@@ -68,6 +68,8 @@ void syd::FitModel_f4::ComputeStartingParametersValues(const syd::TimeActivityCu
 
     }
   }
+  if (params_[1]<0.0) params_[1] = 0.0;
+  if (params_[3]<0.0) params_[3] = 0.0;
 }
 // --------------------------------------------------------------------
 
@@ -160,5 +162,14 @@ double syd::FitModel_f4::GetLambda(const int i) const
 {
   if (i==0) return params_[1];
   else return params_[3];
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitModel_f4::Scale(double s)
+{
+  params_[0] *= s;
+  params_[2] *= s;
 }
 // --------------------------------------------------------------------

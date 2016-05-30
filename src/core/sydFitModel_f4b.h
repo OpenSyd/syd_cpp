@@ -53,6 +53,8 @@ namespace syd {
     virtual void SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac);
     virtual double GetValue(const double & time) const;
 
+    virtual void Scale(double s);
+
   protected:
     std::vector<ResidualType*> residuals_;
 
