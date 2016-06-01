@@ -19,6 +19,7 @@
 // syd
 #include "sydRecord.h"
 #include "sydDatabase.h"
+#include "sydPrintTable2.h"
 
 // Define static member
 std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
@@ -84,6 +85,15 @@ void syd::Record::InitTable(syd::PrintTable & table) const
 void syd::Record::DumpInTable(syd::PrintTable & table) const
 {
   table.Set("fields", ToString());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Record::DumpInTable(syd::PrintTable2 & table) const
+{
+  DD("DumpInTable2");
+  DD(ToString());
 }
 // --------------------------------------------------------------------
 

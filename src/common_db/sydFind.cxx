@@ -22,6 +22,7 @@
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydRecordHelpers.h"
+#include "sydPrintTable2.h"
 
 // Init syd
 SYD_STATIC_INIT
@@ -103,10 +104,10 @@ int main(int argc, char* argv[])
       LOG(1) << "No records match";
       return EXIT_SUCCESS;
     }
-    syd::PrintTable table;
-    table.SetFormat(format);
-    table.SetHeaderFlag(!args_info.noheader_flag);
-    results[0]->InitTable(table);
+    syd::PrintTable2 table;
+    //table.SetFormat(format); //FIXME
+    //table.SetHeaderFlag(!args_info.noheader_flag); //FIXME
+    //results[0]->InitTable(table); //FIXME
     for(auto i=0; i<args_info.col_given; i++) {
       std::string s = args_info.col_arg[i];
       std::vector<std::string> w;
@@ -119,11 +120,12 @@ int main(int argc, char* argv[])
         LOG(FATAL) << "Format not known. Must be 'p'.";
       }
       int v = atoi(w[2].c_str());
-      table.SetColumnPrecision(col, v);
+      //table.SetColumnPrecision(col, v); //FIXME
     }
 
     try {
-      table.Dump<syd::Record>(results, os);
+      //      table.Dump<syd::Record>(results, os);  //FIXME
+      table.Dump(results.begin(), results.end());
     } catch (std::exception & e) {
       if (args_info.vv_flag or args_info.vvs_flag) {
         LOG(FATAL) << "Error, results *must* be images with filenames to be able to be open with vv"

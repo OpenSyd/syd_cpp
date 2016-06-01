@@ -251,6 +251,15 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
 
 
 // --------------------------------------------------
+void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
+{
+  DD("dump image");
+  DD(ToString());
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 void syd::Image::DumpInTable(syd::PrintTable & ta) const
 {
   syd::RecordWithHistory::DumpInTable(ta);

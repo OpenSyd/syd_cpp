@@ -130,6 +130,7 @@ namespace syd {
 
     /// Add a line in the given PrintTable
     virtual void DumpInTable(syd::PrintTable & table) const;
+    virtual void DumpInTable(syd::PrintTable2 & table) const;
 
     /// Check if the associated files exist on disk
     virtual syd::CheckResult Check() const;
