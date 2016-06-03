@@ -84,11 +84,6 @@ void syd::KmeansInputDataBuilder::BuildInputData()
   for(auto & im:input_vector_images)
     iter_vector_images.push_back(im->GetBufferPointer());
 
-  // Declare output image and iterator
-  output = syd::CreateImageLike<Image4DType>(input_vector_images[0]);
-  output->Allocate();
-  auto iter_output = output->GetBufferPointer();
-
   // Move iterators to begin
   iter_mask.GoToBegin();
   for(auto & a:iter_images) a.GoToBegin();
@@ -96,18 +91,22 @@ void syd::KmeansInputDataBuilder::BuildInputData()
   // Get nb of pixels
   int nb_pixels = mask->GetLargestPossibleRegion().GetNumberOfPixels();
   DD(nb_pixels);
+  int output_offset = nb_pixels;
 
   // Get nb of dimensions
-  int nb_dimensions = input_images.size();
+  nb_dimensions = input_images.size();
   DD(nb_dimensions);
   for(auto n:input_vector_images_offsets) nb_dimensions += n.size();
   DD(nb_dimensions);
+
+  // Declare output image and iterator
+  AllocateOutputImage(nb_dimensions);
+  auto iter_output = output->GetBufferPointer();
 
   // Main loop
   for(auto i=0; i<nb_pixels; i++) {
 
     if (iter_mask.Get() != 0) {
-      // DD(i);
 
       // Get the data
       double * v = new double[nb_dimensions];
@@ -124,19 +123,19 @@ void syd::KmeansInputDataBuilder::BuildInputData()
       points.push_back(v);
 
       // Set the images
+      auto it = iter_output;
       for(auto x=0; x<nb_dimensions; x++) {
-        *iter_output = v[x];
-        iter_output++;
+        *it = v[x];
+        it += output_offset;
       }
-    }
-    else {
-      iter_output += nb_dimensions;
     }
     // iterates
     ++iter_mask;
+    ++iter_output;
     for(auto & a:iter_images) ++a;
     for(auto & a:iter_vector_images) ++a;
   }
+  DD("end loop");
 }
 // --------------------------------------------------------------------
 
@@ -156,5 +155,33 @@ void syd::KmeansInputDataBuilder::SetValuesFromVectorImage(const std::vector<Pix
       x++; // increment current vector
     }
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::KmeansInputDataBuilder::AllocateOutputImage(int nb_dimensions)
+{
+  auto input = input_images[0];
+  output = Image4DType::New();
+  auto spacing = output->GetSpacing();
+  for(auto i=0; i<3; i++) spacing[i] = input->GetSpacing()[i];
+  spacing[3] = 1.0;
+  output->SetSpacing(spacing);
+  auto origin = output->GetOrigin();
+  for(auto i=0; i<3; i++) origin[i] = input->GetOrigin()[i];
+  origin[3] = 0.0;
+  output->SetOrigin(origin);
+  auto region = output->GetLargestPossibleRegion();
+  auto index = region.GetIndex();
+  auto size = region.GetSize();
+  for(auto i=0; i<3; i++) index[i] = input->GetLargestPossibleRegion().GetIndex()[i];
+  for(auto i=0; i<3; i++) size[i] = input->GetLargestPossibleRegion().GetSize()[i];
+  index[3] = 0;
+  size[3] = nb_dimensions;
+  region.SetSize(size);
+  region.SetIndex(index);
+  output->SetRegions(region);
+  output->Allocate();
 }
 // --------------------------------------------------------------------

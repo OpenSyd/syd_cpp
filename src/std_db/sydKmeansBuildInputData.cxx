@@ -73,8 +73,8 @@ int main(int argc, char* argv[])
   builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(tia)));
   builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(model)));
   // consider the index for the params images
-  std::vector<int> indices;// = {0,1,2};
-  builder.AddInput(syd::ReadImage<Image4DType>(db->GetAbsolutePath(model)), indices);
+  std::vector<int> indices = {0,1,2};
+  builder.AddInput(syd::ReadImage<Image4DType>(db->GetAbsolutePath(params)), indices);
   // FIXME gauss
   // FIXME normalize
 
@@ -85,8 +85,9 @@ int main(int argc, char* argv[])
 
   // Get output
   InputKmeanType & v = builder.GetInputKmeansData();
-  DD(v.size());
-  //  DDS(v);
+  int nb_dimensions = builder.GetNumberOfDimensions();
+  DD(nb_dimensions);
+
   Image4DType::Pointer input_vector_image = builder.GetInputVectorImage();
 
   syd::WriteImage<Image4DType>(input_vector_image, "a.mhd");

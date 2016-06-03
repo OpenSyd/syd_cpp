@@ -47,6 +47,7 @@ namespace syd {
     void BuildInputData();
 
     InputKmeanType & GetInputKmeansData() { return points; }
+    int GetNumberOfDimensions() const { return nb_dimensions; }
     Image4DType::Pointer GetInputVectorImage() { return output; }
 
   protected:
@@ -56,9 +57,11 @@ namespace syd {
     std::vector<std::vector<int>> input_vector_images_offsets;
     InputKmeanType points;
     Image4DType::Pointer output;
+    int nb_dimensions;
 
     void SetValuesFromVectorImage(const std::vector<PixelType*> & iter_vector,
                                   double * v, int & x);
+    void AllocateOutputImage(int nb_dimensions);
 
   }; // class KmeansInputDataBuilder
 
