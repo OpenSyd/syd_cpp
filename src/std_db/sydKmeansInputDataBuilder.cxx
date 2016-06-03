@@ -98,6 +98,7 @@ void syd::KmeansInputDataBuilder::BuildInputData()
   DD(nb_dimensions);
   for(auto n:input_vector_images_offsets) nb_dimensions += n.size();
   DD(nb_dimensions);
+  points.SetPointDimension(nb_dimensions);
 
   // Declare output image and iterator
   AllocateOutputImage(nb_dimensions);

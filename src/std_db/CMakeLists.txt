@@ -265,7 +265,7 @@ add_executable(sydKmeansBuildInputData sydKmeansInputDataBuilder.cxx
   sydKmeansBuildInputData.cxx ${sydKmeansBuildInputData_GGO_C})
 target_link_libraries(sydKmeansBuildInputData sydStandardDatabase)
 
-# wrap_ggo(sydKmeans_GGO_C
-#   sydKmeans.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-# add_executable(sydKmeans sydKmeans.cxx ${sydKmeans_GGO_C})
-# target_link_libraries(sydKmeans sydStandardDatabase)
+wrap_ggo(sydKmeans_GGO_C
+  sydKmeans.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+add_executable(sydKmeans sydKmeans.cxx ${sydKmeans_GGO_C})
+target_link_libraries(sydKmeans sydStandardDatabase)

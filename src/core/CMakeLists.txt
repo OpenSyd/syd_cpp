@@ -15,6 +15,7 @@ add_library(sydCore
   sydDicomCommon.cxx
   sydPrintTable.cxx
   sydHistogram.cxx
+  sydNDimPoints.cxx
 )
 
 target_link_libraries(sydCore

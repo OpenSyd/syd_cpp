@@ -69,7 +69,6 @@ int main(int argc, char* argv[])
   syd::KmeansInputDataBuilder builder; //no db ?)
   typedef syd::KmeansInputDataBuilder::ImageType ImageType;
   typedef syd::KmeansInputDataBuilder::Image4DType Image4DType;
-  typedef syd::KmeansInputDataBuilder::InputKmeanType InputKmeanType;
   builder.SetMask(syd::ReadImage<ImageType>(db->GetAbsolutePath(mask)));
   builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(tia)));
   builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(model)));
@@ -85,21 +84,26 @@ int main(int argc, char* argv[])
   DD("end");
 
   // Get output
-  InputKmeanType & v = builder.GetInputKmeansData();
-  int nb_dimensions = builder.GetNumberOfDimensions();
+  auto & points = builder.GetInputKmeansData();
+  int nb_dimensions = points.GetNumberOfDimensions();
   DD(nb_dimensions);
+  DD(points.size());
+
+  // save output
+  points.Save("points.txt");
+
 
   double min = std::numeric_limits<double>::max();
   double max = std::numeric_limits<double>::lowest();
   int col=2;
-  for(auto x:v) {
+  for(auto x:points) {
     if (x[col]>max) max = x[col];
     if (x[col]<min) min = x[col];
   }
 
   syd::Histogram h;
   h.SetMinMaxBins(min, max, 20);
-  for(auto x:v) h.Fill(x[col]);
+  for(auto x:points) h.Fill(x[col]);
   DD(h);
 
   Image4DType::Pointer input_vector_image = builder.GetInputVectorImage();

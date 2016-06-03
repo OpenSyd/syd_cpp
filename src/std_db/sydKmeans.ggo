@@ -1,0 +1,15 @@
+#File sydKmeans.ggo
+
+package "syd"
+version "0.2"
+usage "sydKmeans <input_points> <input_image> <K>"
+description "Perform kmeans clustering on the points. Apply final clustering on the input 4D image
+- <input_points>
+- <input_image>
+- <K> nb of classes
+"
+
+
+# option normalisation
+# option gauss
+# option outputsyd.

@@ -21,6 +21,7 @@
 
 // syd
 #include "sydImageUtils.h"
+#include "sydNDimPoints.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -38,7 +39,6 @@ namespace syd {
     typedef itk::Image<PixelType, 4> Image4DType;
     typedef itk::ImageRegionIterator<ImageType> IteratorType;
     typedef itk::ImageRegionIterator<Image4DType> Iterator4DType;
-    typedef std::vector<double *> InputKmeanType;
 
     void SetMask(ImageType::Pointer m);
     void AddInput(ImageType::Pointer image);
@@ -46,7 +46,7 @@ namespace syd {
 
     void BuildInputData();
 
-    InputKmeanType & GetInputKmeansData() { return points; }
+    syd::NDimPoints & GetInputKmeansData() { return points; }
     int GetNumberOfDimensions() const { return nb_dimensions; }
     Image4DType::Pointer GetInputVectorImage() { return output; }
 
@@ -55,7 +55,7 @@ namespace syd {
     std::vector<ImageType::Pointer> input_images;
     std::vector<Image4DType::Pointer> input_vector_images;
     std::vector<std::vector<int>> input_vector_images_offsets;
-    InputKmeanType points;
+    syd::NDimPoints points;
     Image4DType::Pointer output;
     int nb_dimensions;
 
