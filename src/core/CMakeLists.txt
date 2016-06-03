@@ -14,6 +14,7 @@ add_library(sydCore
   sydException.cxx
   sydDicomCommon.cxx
   sydPrintTable.cxx
+  sydHistogram.cxx
 )
 
 target_link_libraries(sydCore

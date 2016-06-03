@@ -103,7 +103,7 @@ void syd::KmeansInputDataBuilder::BuildInputData()
   AllocateOutputImage(nb_dimensions);
   auto iter_output = output->GetBufferPointer();
 
-  // Main loop
+  // Main lomonop
   for(auto i=0; i<nb_pixels; i++) {
 
     if (iter_mask.Get() != 0) {

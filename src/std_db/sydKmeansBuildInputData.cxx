@@ -23,6 +23,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
 #include "sydKmeansInputDataBuilder.h"
+#include "sydHistogram.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -88,10 +89,21 @@ int main(int argc, char* argv[])
   int nb_dimensions = builder.GetNumberOfDimensions();
   DD(nb_dimensions);
 
-  Image4DType::Pointer input_vector_image = builder.GetInputVectorImage();
+  double min = std::numeric_limits<double>::max();
+  double max = std::numeric_limits<double>::lowest();
+  int col=2;
+  for(auto x:v) {
+    if (x[col]>max) max = x[col];
+    if (x[col]<min) min = x[col];
+  }
 
+  syd::Histogram h;
+  h.SetMinMaxBins(min, max, 20);
+  for(auto x:v) h.Fill(x[col]);
+  DD(h);
+
+  Image4DType::Pointer input_vector_image = builder.GetInputVectorImage();
   syd::WriteImage<Image4DType>(input_vector_image, "a.mhd");
-  //FIXME write v;
 
   DD("done");
 
