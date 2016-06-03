@@ -1,0 +1,16 @@
+#File sydKmeansBuildInputData.ggo
+
+package "syd"
+version "0.2"
+usage "sydKmeansBuildInputData <mask> <tia> <model> <params>"
+description "Build a vector of nD points for input a kmeans clustering
+- <mask>
+- <tia>
+- <model>
+- <params>
+"
+
+
+# option normalisation
+# option gauss
+# option outputsyd.

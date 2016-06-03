@@ -248,3 +248,24 @@ target_link_libraries(syd_transformix sydStandardDatabase )
 wrap_ggo(sydInsertGateOutput sydInsertGateOutput.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 add_executable(sydInsertGateOutput sydInsertGateOutput.cxx sydInsertGateOutput_ggo.c)
 target_link_libraries(sydInsertGateOutput sydStandardDatabase)
+
+#----------------------------------------------------------
+# Compute RootMeanSquareError in a mask
+wrap_ggo(sydInsertRootMeanSquareImage_GGO_C
+  sydInsertRootMeanSquareImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+add_executable(sydInsertRootMeanSquareImage sydInsertRootMeanSquareImage.cxx ${sydInsertRootMeanSquareImage_GGO_C})
+target_link_libraries(sydInsertRootMeanSquareImage sydStandardDatabase)
+
+
+#----------------------------------------------------------
+# Kmeans
+wrap_ggo(sydKmeansBuildInputData_GGO_C
+  sydKmeansBuildInputData.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+add_executable(sydKmeansBuildInputData sydKmeansInputDataBuilder.cxx
+  sydKmeansBuildInputData.cxx ${sydKmeansBuildInputData_GGO_C})
+target_link_libraries(sydKmeansBuildInputData sydStandardDatabase)
+
+# wrap_ggo(sydKmeans_GGO_C
+#   sydKmeans.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+# add_executable(sydKmeans sydKmeans.cxx ${sydKmeans_GGO_C})
+# target_link_libraries(sydKmeans sydStandardDatabase)
