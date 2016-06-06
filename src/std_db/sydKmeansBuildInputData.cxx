@@ -71,9 +71,9 @@ int main(int argc, char* argv[])
   typedef syd::KmeansInputDataBuilder::Image4DType Image4DType;
   builder.SetMask(syd::ReadImage<ImageType>(db->GetAbsolutePath(mask)));
   builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(tia)));
-  builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(model)));
+  //builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(model)));
   // consider the index for the params images
-  std::vector<int> indices = {0,1,2};
+  std::vector<int> indices;// = {0,1,2};
   builder.AddInput(syd::ReadImage<Image4DType>(db->GetAbsolutePath(params)), indices);
   // FIXME gauss
   // FIXME normalize
@@ -92,7 +92,7 @@ int main(int argc, char* argv[])
   // save output
   points.Save("points.txt");
 
-
+  /*
   double min = std::numeric_limits<double>::max();
   double max = std::numeric_limits<double>::lowest();
   int col=2;
@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
   h.SetMinMaxBins(min, max, 20);
   for(auto x:points) h.Fill(x[col]);
   DD(h);
-
+  */
   Image4DType::Pointer input_vector_image = builder.GetInputVectorImage();
   syd::WriteImage<Image4DType>(input_vector_image, "a.mhd");
 

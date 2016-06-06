@@ -28,6 +28,14 @@ syd::NDimPoints::NDimPoints()
 
 
 // --------------------------------------------------------------------
+syd::NDimPoints::pointer syd::NDimPoints::New()
+{
+  return pointer(new syd::NDimPoints);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::NDimPoints::SetPointDimension(int d)
 {
   nb_dimensions = d;

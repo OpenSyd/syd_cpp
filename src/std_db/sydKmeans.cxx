@@ -23,8 +23,8 @@
 #include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
 #include "sydKmeansInputDataBuilder.h"
+#include "sydKmeansFilter.h"
 #include "sydHistogram.h"
-#include "sydNDimPoints.h"
 
 // syd init
 SYD_STATIC_INIT
@@ -33,7 +33,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydKmeans, 4);
+  SYD_INIT_GGO(sydKmeans, 3);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -43,10 +43,33 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Input points
-  syd::NDimPoints points;
-  points.Load("points.txt");
-  DD(points.GetNumberOfDimensions());
-  DD(points.size());
+  std::string points_filename = args_info.inputs[0];
+  DD(points_filename);
+  auto points = syd::NDimPoints::New();
+  points->Load(points_filename);
+  DD(points->GetNumberOfDimensions());
+  DD(points->size());
+
+  // Input image
+  std::string image_filename = args_info.inputs[1];
+  DD(image_filename);
+
+  // Trial kmeans
+  int K = atoi(args_info.inputs[2]);
+  DD(K);
+  syd::KmeansFilter filter;
+  filter.SetInput(points);
+  filter.SetNumberOfClusters(K);
+  filter.Run();
+
+  // Compute image
+  typedef syd::KmeansFilter::ImageType ImageType;
+  typedef syd::KmeansFilter::Image4DType Image4DType;
+  auto input_image = syd::ReadImage<Image4DType>(image_filename);
+  auto centers = filter.GetCenters();
+  auto output_image = filter.ComputeLabeledImage(centers, input_image);
+
+  syd::WriteImage<ImageType>(output_image, "output.mhd");
 
   DD("done");
 

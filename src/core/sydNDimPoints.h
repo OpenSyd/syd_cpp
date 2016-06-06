@@ -36,6 +36,11 @@ namespace syd {
     /// Constructor.
     NDimPoints();
 
+    /// types
+    typedef std::shared_ptr<NDimPoints> pointer;
+    typedef std::vector<pointer> vector;
+    static pointer New();
+
     void SetPointDimension(int d);
     int GetNumberOfDimensions() const { return nb_dimensions; }
 
@@ -43,6 +48,8 @@ namespace syd {
     typedef std::vector<double*> T;
     T::iterator begin() { return values.begin(); }
     T::iterator end() { return values.end(); }
+    T::const_iterator begin() const { return values.begin(); }
+    T::const_iterator end() const { return values.end(); }
     size_t size() const { return values.size(); }
 
     void Save(std::string filename);

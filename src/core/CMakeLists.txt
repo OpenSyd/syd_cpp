@@ -34,6 +34,7 @@ target_link_libraries(sydCore
 # ITK tools library
 add_library(sydItkUtils
   sydImageUtils.cxx
+  sydKmeansFilter.cxx
 )
 
 target_link_libraries(sydItkUtils ${ITK_LIBRARIES})
