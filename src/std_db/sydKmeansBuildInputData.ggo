@@ -16,6 +16,8 @@ Features:
 "
 
 option "features" f "Id of the features to consider" int multiple no
+option "output"   o "Output base filenames wo extension (.pts/.mhd)" string yes
+
 
 # option normalisation
 # option gauss

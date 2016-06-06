@@ -45,7 +45,6 @@ void syd::KmeansFilter::SetNumberOfClusters(int k)
 // --------------------------------------------------------------------
 void syd::KmeansFilter::Run()
 {
-  DD("run");
   int n = points->GetNumberOfDimensions();
   if (n == 1) RunWithDim<1>();
   if (n == 2) RunWithDim<2>();
@@ -97,7 +96,6 @@ syd::KmeansFilter::ComputeLabeledImage(syd::NDimPoints::pointer centers,
 {
   // Check dim
   int N = points->GetNumberOfDimensions();
-  DD(N);
   if (input->GetLargestPossibleRegion().GetSize()[3] != N) {
     LOG(FATAL) << "Error image dim 4 must be equal to " << N;
   }
@@ -115,7 +113,6 @@ syd::KmeansFilter::ComputeLabeledImage(syd::NDimPoints::pointer centers,
   int offset = input->GetLargestPossibleRegion().GetSize()[0]*
     input->GetLargestPossibleRegion().GetSize()[1]*
     input->GetLargestPossibleRegion().GetSize()[2];
-  DD(offset);
   while (!oiter.IsAtEnd()) {
 
     // Check if in the mask
@@ -127,7 +124,6 @@ syd::KmeansFilter::ComputeLabeledImage(syd::NDimPoints::pointer centers,
         p[i] = *titer;
         titer += offset;
       }
-      // DDV(p, N);
 
       // Compute distance and labels
       double minValue = std::numeric_limits<double>::max();

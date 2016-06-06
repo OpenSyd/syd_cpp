@@ -33,7 +33,7 @@ SYD_STATIC_INIT
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydKmeans, 3);
+  SYD_INIT_GGO(sydKmeans, 4);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -44,11 +44,8 @@ int main(int argc, char* argv[])
 
   // Input points
   std::string points_filename = args_info.inputs[0];
-  DD(points_filename);
   auto points = syd::NDimPoints::New();
   points->Load(points_filename);
-  DD(points->GetNumberOfDimensions());
-  DD(points->size());
 
   // typedef
   typedef syd::KmeansFilter::ImageType ImageType;
@@ -56,17 +53,14 @@ int main(int argc, char* argv[])
 
   // Input mask
   std::string mask_filename = args_info.inputs[1];
-  DD(mask_filename);
   auto mask = syd::ReadImage<ImageType>(mask_filename);
 
   // Input image
   std::string image_filename = args_info.inputs[2];
-  DD(image_filename);
   auto input_image = syd::ReadImage<Image4DType>(image_filename);
 
   // Trial kmeans
   int K = atoi(args_info.inputs[3]);
-  DD(K);
   syd::KmeansFilter filter;
   filter.SetInput(points);
   filter.SetNumberOfClusters(K);
@@ -75,9 +69,7 @@ int main(int argc, char* argv[])
   // Compute image
   auto centers = filter.GetCenters();
   auto output_image = filter.ComputeLabeledImage(centers, mask, input_image);
-  syd::WriteImage<ImageType>(output_image, "output.mhd");
-
-  DD("done");
+  syd::WriteImage<ImageType>(output_image, args_info.output_arg);
 
   // This is the end, my friend.
 }

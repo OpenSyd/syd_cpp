@@ -55,10 +55,7 @@ void syd::KmeansInputDataBuilder::AddInput(Image4DType::Pointer image,
   int offset = image->GetLargestPossibleRegion().GetSize()[0]*
     image->GetLargestPossibleRegion().GetSize()[1]*
     image->GetLargestPossibleRegion().GetSize()[2];
-  DD(offset);
-  DDS(indices);
   for(auto & i:indices) i = i*offset;
-  DDS(indices);
   input_vector_images_offsets.push_back(indices);
 }
 // --------------------------------------------------------------------
@@ -100,14 +97,11 @@ void syd::KmeansInputDataBuilder::BuildInputData()
 
   // Get nb of pixels
   int nb_pixels = mask->GetLargestPossibleRegion().GetNumberOfPixels();
-  DD(nb_pixels);
   int output_offset = nb_pixels;
 
   // Get nb of dimensions
   nb_dimensions = input_images.size();
-  DD(nb_dimensions);
   for(auto n:input_vector_images_offsets) nb_dimensions += n.size();
-  DD(nb_dimensions);
   points.SetPointDimension(nb_dimensions);
 
   // Declare output image and iterator
@@ -126,9 +120,7 @@ void syd::KmeansInputDataBuilder::BuildInputData()
         v[x] = a.Get();
         x++;
       }
-      // DDV(v,x);
       SetValuesFromVectorImage(iter_vector_images, v, x);
-      // DDV(v,x);
 
       // Set the points
       points.push_back(v);
@@ -146,7 +138,6 @@ void syd::KmeansInputDataBuilder::BuildInputData()
     for(auto & a:iter_images) ++a;
     for(auto & a:iter_vector_images) ++a;
   }
-  DD("end loop");
 }
 // --------------------------------------------------------------------
 

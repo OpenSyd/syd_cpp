@@ -23,9 +23,6 @@
 template<int N>
 void syd::KmeansFilter::RunWithDim()
 {
-  DD(N);
-  DD(points->size());
-
   // Create the initial list of samples
   typedef itk::Vector<double, N> VectorPixelType;
   typedef itk::Statistics::ListSample<VectorPixelType> SampleType;
@@ -36,37 +33,28 @@ void syd::KmeansFilter::RunWithDim()
     for(auto i=0; i<N; i++) v[i] = p[i];
     sample->PushBack(v);
   }
-  DD(sample->Size());
 
   // kmeans kdtree
   typedef itk::Statistics::WeightedCentroidKdTreeGenerator< SampleType > TreeGeneratorType;
   typename TreeGeneratorType::Pointer treeGenerator = TreeGeneratorType::New();
   treeGenerator->SetSample(sample);
   treeGenerator->SetBucketSize(5);
-  std::cout << "Tree measurement vector size: " << treeGenerator->GetMeasurementVectorSize() << std::endl;
   int n = treeGenerator->GetMeasurementVectorSize();
-  DD(n);
   treeGenerator->Update();
-  DD("update done");
 
   typedef typename TreeGeneratorType::KdTreeType TreeType;
   typedef itk::Statistics::KdTreeBasedKmeansEstimator<TreeType> EstimatorType;
   typename EstimatorType::Pointer estimator = EstimatorType::New();
   typename EstimatorType::ParametersType initialMeans(K*n);
-  initialMeans.Fill(0.0f);
-  DD(n);
-  //    for(auto i=0; i<nbClasses; i++) initialMeans[i] = i;
-  DDS(initialMeans);
+  initialMeans.Fill(0.0f); // FIXME starting points ?
   estimator->SetParameters( initialMeans );
   estimator->SetKdTree( treeGenerator->GetOutput() );
   estimator->SetMaximumIteration( 500 );
   estimator->SetCentroidPositionChangesThreshold(0);
-  DD("before start");
   estimator->StartOptimization();
 
+  // Copy estimated centers
   typename EstimatorType::ParametersType estimatedMeans = estimator->GetParameters();
-  std::cout << "estimatedMeans: " << estimatedMeans << std::endl;
-
   centers = NDimPoints::New();
   centers->SetPointDimension(N);
   for(auto i=0 ; i<K ; i++) {

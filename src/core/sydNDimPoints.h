@@ -59,32 +59,18 @@ namespace syd {
     std::vector<double*> values;
     int nb_dimensions;
 
+
+    // For serialization
     friend class boost::serialization::access;
     template<class Archive>
-    void save(Archive & ar, const unsigned int version) {
-      ar & nb_dimensions;
-      int n = values.size();
-      ar & n;
-      for(auto v:values)
-        for(auto i=0; i<nb_dimensions; i++)
-          ar & v[i];
-    }
-
+    void save(Archive & ar, const unsigned int version);
     template<class Archive>
-    void load(Archive & ar, const unsigned int version) {
-      ar & nb_dimensions;
-      int n;
-      ar & n;
-      DD(n);
-      values.resize(n);
-      for(auto & v:values) {
-        double * x = new double[nb_dimensions];
-        for(auto i=0; i<nb_dimensions; i++) ar & x[i];
-        v = x;
-      }
-    }
+    void load(Archive & ar, const unsigned int version);
+
     BOOST_SERIALIZATION_SPLIT_MEMBER()
   }; // class NDimPoints
+
+#include "sydNDimPoints.txx"
 
 } // namespace syd
 // --------------------------------------------------------------------

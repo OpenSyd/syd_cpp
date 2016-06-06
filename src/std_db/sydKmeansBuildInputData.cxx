@@ -45,31 +45,26 @@ int main(int argc, char* argv[])
   syd::IdType id = atoi(args_info.inputs[0]);
   syd::Image::pointer mask;
   db->QueryOne(mask, id);
-  DD(mask);
 
   // Input tia image
   id = atoi(args_info.inputs[1]);
   syd::Image::pointer tia;
   db->QueryOne(tia, id);
-  DD(tia);
 
   // Input model
   id = atoi(args_info.inputs[2]);
   syd::Image::pointer model;
   db->QueryOne(model, id);
-  DD(model);
 
   // Input params (4D image)
   id = atoi(args_info.inputs[3]);
   syd::Image::pointer params;
   db->QueryOne(params, id);
-  DD(params);
 
   // list of features
   std::vector<int> features;
   for(auto i=0; i<args_info.features_given; i++)
     features.push_back(args_info.features_arg[i]);
-  DDS(features);
   if (features.size() == 0) {
     LOG(FATAL) << "Provide at least one feature index";
   }
@@ -95,18 +90,23 @@ int main(int argc, char* argv[])
   // FIXME normalize
 
   // Go
-  DD("go");
   builder.BuildInputData();
-  DD("end");
 
   // Get output
   auto & points = builder.GetInputKmeansData();
   int nb_dimensions = points.GetNumberOfDimensions();
-  DD(nb_dimensions);
-  DD(points.size());
 
-  // save output
-  points.Save("points.txt");
+  // save output points
+  std::string points_filename = args_info.output_arg;
+  points_filename.append(".pts");
+  points.Save(points_filename);
+
+  // save output image
+  std::string img_filename = args_info.output_arg;
+  img_filename.append(".mhd");
+  Image4DType::Pointer input_vector_image = builder.GetInputVectorImage();
+  syd::WriteImage<Image4DType>(input_vector_image, img_filename);
+
 
   double min = std::numeric_limits<double>::max();
   double max = std::numeric_limits<double>::lowest();
@@ -120,11 +120,6 @@ int main(int argc, char* argv[])
   h.SetMinMaxBins(min, max, 20);
   for(auto x:points) h.Fill(x[col]);
   DD(h);
-
-  Image4DType::Pointer input_vector_image = builder.GetInputVectorImage();
-  syd::WriteImage<Image4DType>(input_vector_image, "a.mhd");
-
-  DD("done");
 
   // This is the end, my friend.
 }

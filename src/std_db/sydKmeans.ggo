@@ -10,6 +10,9 @@ description "Perform kmeans clustering on the points. Apply final clustering on 
 - <K> nb of classes
 "
 
+option "output"   o "Output filename (.mhd)" string yes
+
+
 # option normalisation
 # option gauss
 # option outputsyd.
