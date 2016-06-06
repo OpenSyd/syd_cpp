@@ -20,7 +20,8 @@
 #include "sydKmeansInputDataBuilder.h"
 
 // itk
-#include "itkRescaleIntensityImageFilter.h"
+#include <itkRescaleIntensityImageFilter.h>
+#include <itkNormalizeImageFilter.h>
 
 // --------------------------------------------------------------------
 syd::KmeansInputDataBuilder::KmeansInputDataBuilder()
@@ -64,15 +65,7 @@ void syd::KmeansInputDataBuilder::AddInput(Image4DType::Pointer image,
 // --------------------------------------------------------------------
 void syd::KmeansInputDataBuilder::BuildInputData()
 {
-  // FIXME preprocessing (gauss normalize)
-  for(auto & im:input_images) {
-    auto fr = itk::RescaleIntensityImageFilter<ImageType>::New();
-    fr->SetOutputMinimum(0);
-    fr->SetOutputMaximum(1);
-    fr->SetInput(im);
-    fr->Update();
-    im = fr->GetOutput();
-  }
+  PreProcessing();
 
   // FIXME mask exist ?
 
@@ -170,4 +163,29 @@ void syd::KmeansInputDataBuilder::AllocateOutputImage(int nb_dimensions)
   }
   auto input = input_vector_images[0];
   AllocateOutputImageFromT<Image4DType>(nb_dimensions, input);}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::KmeansInputDataBuilder::PreProcessing()
+{
+  // Set values between [0-1]
+  for(auto & im:input_images) {
+    auto fr = itk::RescaleIntensityImageFilter<ImageType>::New();
+    fr->SetOutputMinimum(0);
+    fr->SetOutputMaximum(1);
+    fr->SetInput(im);
+    fr->Update();
+    im = fr->GetOutput();
+  }
+
+  // Normalise such as zero mean and unit variance
+  for(auto & im:input_images) {
+    auto fr = itk::NormalizeImageFilter<ImageType, ImageType>::New();
+    fr->SetInput(im);
+    fr->Update();
+    im = fr->GetOutput();
+  }
+
+}
 // --------------------------------------------------------------------
