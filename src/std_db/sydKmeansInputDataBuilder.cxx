@@ -19,6 +19,8 @@
 // syd
 #include "sydKmeansInputDataBuilder.h"
 
+// itk
+#include "itkRescaleIntensityImageFilter.h"
 
 // --------------------------------------------------------------------
 syd::KmeansInputDataBuilder::KmeansInputDataBuilder()
@@ -66,6 +68,14 @@ void syd::KmeansInputDataBuilder::AddInput(Image4DType::Pointer image,
 void syd::KmeansInputDataBuilder::BuildInputData()
 {
   // FIXME preprocessing (gauss normalize)
+  for(auto & im:input_images) {
+    auto fr = itk::RescaleIntensityImageFilter<ImageType>::New();
+    fr->SetOutputMinimum(0);
+    fr->SetOutputMaximum(1);
+    fr->SetInput(im);
+    fr->Update();
+    im = fr->GetOutput();
+  }
 
   // FIXME mask exist ?
 

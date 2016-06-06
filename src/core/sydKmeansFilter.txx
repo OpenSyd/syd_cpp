@@ -31,9 +31,9 @@ void syd::KmeansFilter::RunWithDim()
   typedef itk::Statistics::ListSample<VectorPixelType> SampleType;
   typename SampleType::Pointer sample = SampleType::New();
   sample->SetMeasurementVectorSize(N);
-  for(auto p=points->begin(); p<points->end(); ++p) {
+  for(auto p:*points) {
     VectorPixelType v;
-    for(auto i=0; i<N; i++) v[i] = (*p)[i];
+    for(auto i=0; i<N; i++) v[i] = p[i];
     sample->PushBack(v);
   }
   DD(sample->Size());

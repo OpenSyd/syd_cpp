@@ -116,9 +116,9 @@ syd::KmeansFilter::ComputeLabeledImage(syd::NDimPoints::pointer centers,
     double minValue = std::numeric_limits<double>::max();
     int minLabel = 0;
     int l=1;
-    for(auto c=centers->begin(); c<centers->end(); c++) {
+    for(auto c:*centers) {
       double dist = 0.0;
-      for(auto j=0; j<N; j++) dist += pow(p[j]-(*c)[j],2);
+      for(auto j=0; j<N; j++) dist += pow(p[j]-c[j],2);
       if (dist < minValue) {
         minValue = dist;
         minLabel = l;
