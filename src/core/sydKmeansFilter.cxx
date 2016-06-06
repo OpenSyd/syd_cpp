@@ -62,17 +62,8 @@ void syd::KmeansFilter::Run()
 
 // --------------------------------------------------------------------
 syd::KmeansFilter::ImageType::Pointer
-syd::KmeansFilter::ComputeLabeledImage(syd::NDimPoints::pointer centers,
-                                       Image4DType::Pointer input)
+syd::KmeansFilter::AllocateOutputImage(Image4DType::Pointer input)
 {
-  // Check dim
-  int N = points->GetNumberOfDimensions();
-  DD(N);
-  if (input->GetLargestPossibleRegion().GetSize()[3] != N) {
-    LOG(FATAL) << "Error image dim 4 must be equal to " << N;
-  }
-
-  // Create and allocate output image
   auto output = ImageType::New();
 
   auto spacing = output->GetSpacing();
@@ -93,43 +84,72 @@ syd::KmeansFilter::ComputeLabeledImage(syd::NDimPoints::pointer centers,
   output->SetRegions(region);
   output->Allocate();
 
+  return output;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::KmeansFilter::ImageType::Pointer
+syd::KmeansFilter::ComputeLabeledImage(syd::NDimPoints::pointer centers,
+                                       ImageType::Pointer mask,
+                                       Image4DType::Pointer input)
+{
+  // Check dim
+  int N = points->GetNumberOfDimensions();
+  DD(N);
+  if (input->GetLargestPossibleRegion().GetSize()[3] != N) {
+    LOG(FATAL) << "Error image dim 4 must be equal to " << N;
+  }
+
+  // Create and allocate output image
+  auto output = AllocateOutputImage(input);
+
   // Fill labels
   itk::ImageRegionIterator<ImageType> oiter(output, output->GetLargestPossibleRegion());
-  //itk::ImageRegionConstIterator<Image4DType> iter(input, input->GetLargestPossibleRegion());
+  itk::ImageRegionIterator<ImageType> miter(mask, mask->GetLargestPossibleRegion());
   auto iter = input->GetBufferPointer();
   oiter.GoToBegin();
+  miter.GoToBegin();
   double * p = new double[N];
   int offset = input->GetLargestPossibleRegion().GetSize()[0]*
     input->GetLargestPossibleRegion().GetSize()[1]*
     input->GetLargestPossibleRegion().GetSize()[2];
   DD(offset);
   while (!oiter.IsAtEnd()) {
-    // Get the points
-    auto titer = iter;
-    for(auto i=0; i<N; i++) {
-      p[i] = *titer;
-      titer += offset;
-    }
-    // DDV(p, N);
 
-    // Compute distance and labels
-    double minValue = std::numeric_limits<double>::max();
-    int minLabel = 0;
-    int l=1;
-    for(auto c:*centers) {
-      double dist = 0.0;
-      for(auto j=0; j<N; j++) dist += pow(p[j]-c[j],2);
-      if (dist < minValue) {
-        minValue = dist;
-        minLabel = l;
+    // Check if in the mask
+    if (miter.Get() != 0) { // 0 is background
+
+      // Get the points
+      auto titer = iter;
+      for(auto i=0; i<N; i++) {
+        p[i] = *titer;
+        titer += offset;
       }
-      ++l;
+      // DDV(p, N);
+
+      // Compute distance and labels
+      double minValue = std::numeric_limits<double>::max();
+      int minLabel = 0;
+      int l=1;
+      for(auto c:*centers) {
+        double dist = 0.0;
+        for(auto j=0; j<N; j++) dist += pow(p[j]-c[j],2);
+        if (dist < minValue) {
+          minValue = dist;
+          minLabel = l;
+        }
+        ++l;
+      }
+      oiter.Set(minLabel);
     }
-    oiter.Set(minLabel);
+    else oiter.Set(0);
 
     // iterator
     ++iter;
     ++oiter;
+    ++miter;
   }
 
   return output;

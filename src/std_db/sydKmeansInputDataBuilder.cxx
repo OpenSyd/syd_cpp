@@ -173,26 +173,10 @@ void syd::KmeansInputDataBuilder::SetValuesFromVectorImage(const std::vector<Pix
 // --------------------------------------------------------------------
 void syd::KmeansInputDataBuilder::AllocateOutputImage(int nb_dimensions)
 {
-  auto input = input_images[0];
-  output = Image4DType::New();
-  auto spacing = output->GetSpacing();
-  for(auto i=0; i<3; i++) spacing[i] = input->GetSpacing()[i];
-  spacing[3] = 1.0;
-  output->SetSpacing(spacing);
-  auto origin = output->GetOrigin();
-  for(auto i=0; i<3; i++) origin[i] = input->GetOrigin()[i];
-  origin[3] = 0.0;
-  output->SetOrigin(origin);
-  auto region = output->GetLargestPossibleRegion();
-  auto index = region.GetIndex();
-  auto size = region.GetSize();
-  for(auto i=0; i<3; i++) index[i] = input->GetLargestPossibleRegion().GetIndex()[i];
-  for(auto i=0; i<3; i++) size[i] = input->GetLargestPossibleRegion().GetSize()[i];
-  index[3] = 0;
-  size[3] = nb_dimensions;
-  region.SetSize(size);
-  region.SetIndex(index);
-  output->SetRegions(region);
-  output->Allocate();
-}
+  if (input_images.size() > 0) {
+    auto input = input_images[0];
+    return AllocateOutputImageFromT<ImageType>(nb_dimensions, input);
+  }
+  auto input = input_vector_images[0];
+  AllocateOutputImageFromT<Image4DType>(nb_dimensions, input);}
 // --------------------------------------------------------------------

@@ -50,12 +50,22 @@ int main(int argc, char* argv[])
   DD(points->GetNumberOfDimensions());
   DD(points->size());
 
+  // typedef
+  typedef syd::KmeansFilter::ImageType ImageType;
+  typedef syd::KmeansFilter::Image4DType Image4DType;
+
+  // Input mask
+  std::string mask_filename = args_info.inputs[1];
+  DD(mask_filename);
+  auto mask = syd::ReadImage<ImageType>(mask_filename);
+
   // Input image
-  std::string image_filename = args_info.inputs[1];
+  std::string image_filename = args_info.inputs[2];
   DD(image_filename);
+  auto input_image = syd::ReadImage<Image4DType>(image_filename);
 
   // Trial kmeans
-  int K = atoi(args_info.inputs[2]);
+  int K = atoi(args_info.inputs[3]);
   DD(K);
   syd::KmeansFilter filter;
   filter.SetInput(points);
@@ -63,12 +73,8 @@ int main(int argc, char* argv[])
   filter.Run();
 
   // Compute image
-  typedef syd::KmeansFilter::ImageType ImageType;
-  typedef syd::KmeansFilter::Image4DType Image4DType;
-  auto input_image = syd::ReadImage<Image4DType>(image_filename);
   auto centers = filter.GetCenters();
-  auto output_image = filter.ComputeLabeledImage(centers, input_image);
-
+  auto output_image = filter.ComputeLabeledImage(centers, mask, input_image);
   syd::WriteImage<ImageType>(output_image, "output.mhd");
 
   DD("done");

@@ -50,14 +50,17 @@ namespace syd {
     void SetNumberOfClusters(int k);
     void Run();
     syd::NDimPoints::pointer GetCenters() const { return centers; }
-
     ImageType::Pointer ComputeLabeledImage(syd::NDimPoints::pointer centers,
+                                           ImageType::Pointer mask,
                                            Image4DType::Pointer input);
 
   protected:
     syd::NDimPoints::pointer points;
     int K;
     syd::NDimPoints::pointer centers;
+
+    syd::KmeansFilter::ImageType::Pointer
+    AllocateOutputImage(syd::KmeansFilter::Image4DType::Pointer input);
 
     template<int N>
     void RunWithDim();

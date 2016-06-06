@@ -8,8 +8,14 @@ description "Build a vector of nD points for input a kmeans clustering
 - <tia>
 - <model>
 - <params>
+
+Features:
+ 0 = tia
+ 1 = model
+ 2,3,4,5 = params
 "
 
+option "features" f "Id of the features to consider" int multiple no
 
 # option normalisation
 # option gauss

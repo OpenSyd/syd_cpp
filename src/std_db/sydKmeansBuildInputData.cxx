@@ -65,16 +65,32 @@ int main(int argc, char* argv[])
   db->QueryOne(params, id);
   DD(params);
 
+  // list of features
+  std::vector<int> features;
+  for(auto i=0; i<args_info.features_given; i++)
+    features.push_back(args_info.features_arg[i]);
+  DDS(features);
+  if (features.size() == 0) {
+    LOG(FATAL) << "Provide at least one feature index";
+  }
+
   // Main builder
-  syd::KmeansInputDataBuilder builder; //no db ?)
+  syd::KmeansInputDataBuilder builder;
   typedef syd::KmeansInputDataBuilder::ImageType ImageType;
   typedef syd::KmeansInputDataBuilder::Image4DType Image4DType;
   builder.SetMask(syd::ReadImage<ImageType>(db->GetAbsolutePath(mask)));
-  builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(tia)));
-  builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(model)));
-  // consider the index for the params images
-  std::vector<int> indices = {0,1,2}; //,1,2};
+  std::vector<int> indices;
+  for(auto f:features) {
+    if (f==0) builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(tia)));
+    if (f==1) builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(model)));
+    // consider the index for the params images
+    if (f==2) indices.push_back(0);
+    if (f==3) indices.push_back(1);
+    if (f==4) indices.push_back(2);
+    if (f==5) indices.push_back(3);
+  }
   builder.AddInput(syd::ReadImage<Image4DType>(db->GetAbsolutePath(params)), indices);
+
   // FIXME gauss
   // FIXME normalize
 
@@ -94,7 +110,7 @@ int main(int argc, char* argv[])
 
   double min = std::numeric_limits<double>::max();
   double max = std::numeric_limits<double>::lowest();
-  int col=1;
+  int col=0;
   for(auto x:points) {
     if (x[col]>max) max = x[col];
     if (x[col]<min) min = x[col];

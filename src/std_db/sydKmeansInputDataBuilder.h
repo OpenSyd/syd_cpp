@@ -62,8 +62,12 @@ namespace syd {
     void SetValuesFromVectorImage(const std::vector<PixelType*> & iter_vector,
                                   double * v, int & x);
     void AllocateOutputImage(int nb_dimensions);
+    template<class T>
+    void AllocateOutputImageFromT(int nb_dimensions, typename T::Pointer input);
 
   }; // class KmeansInputDataBuilder
+
+#include "sydKmeansInputDataBuilder.txx"
 
 } // namespace syd
 // --------------------------------------------------------------------
