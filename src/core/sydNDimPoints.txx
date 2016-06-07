@@ -18,7 +18,7 @@
 
 // --------------------------------------------------------------------
 template<class Archive>
-void NDimPoints::save(Archive & ar, const unsigned int version) {
+void syd::NDimPoints::save(Archive & ar, const unsigned int version) const {
   ar & nb_dimensions;
   int n = values.size();
   ar & n;

@@ -59,11 +59,10 @@ namespace syd {
     std::vector<double*> values;
     int nb_dimensions;
 
-
     // For serialization
     friend class boost::serialization::access;
     template<class Archive>
-    void save(Archive & ar, const unsigned int version);
+    void save(Archive & ar, const unsigned int version) const;
     template<class Archive>
     void load(Archive & ar, const unsigned int version);
 
