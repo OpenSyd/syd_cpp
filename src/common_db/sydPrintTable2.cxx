@@ -27,7 +27,7 @@
 //------------------------------------------------------------------
 syd::PrintTable2::PrintTable2()
 {
-  //current_format_name_ = "default";
+  format_ = "default";
   //header_flag_ = true;
 }
 //------------------------------------------------------------------
@@ -127,7 +127,16 @@ syd::PrintTable2::GetColumnInfo(std::string column_name)
 //------------------------------------------------------------------
 std::string syd::PrintTable2::GetFormat() const
 {
-  return "todo";
+  return format_;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable2::SetFormat(std::string f)
+{
+  if (f == "") format_ = "default";
+  else format_ = f;
 }
 //------------------------------------------------------------------
 

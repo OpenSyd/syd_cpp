@@ -255,25 +255,71 @@ void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
 {
   auto format = ta.GetFormat();
   /* List of formats:
-     - default: id
-     - simple
-     - filename
-     - path
-     - history
-   */
-  //  if (format == "default") {
+     - only id list
+     - default: id date tag size spacing dicoms pixel_value
+     - simple : id date tag
+     - ref_frame : id date tag
+     - filename: id date tag filename
+     - path:
+     - history:
+  */
+
+  if (format == "short") DumpInTable_short(ta);
+  else if (format == "ref_frame") DumpInTable_ref_frame(ta);
+  else if (format == "history") DumpInTable_history(ta);
+  else DumpInTable_default(ta);
+
+  // FIXME id only
+  // FIXME id filename
+  // FIXME id path
+
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_short(syd::PrintTable2 & ta) const
+{
   ta.Set("id", id);
-  ta.Set("inj", injection->radionuclide->name);
   if (dicoms.size() > 0)
     ta.Set("acqui_date", dicoms[0]->acquisition_date);
+  else ta.Set("acqui_date", "no_date");
   ta.Set("tags", GetLabels(tags));
+  if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_default(syd::PrintTable2 & ta) const
+{
+  DumpInTable_short(ta);
+  ta.Set("inj", injection->radionuclide->name);
   ta.Set("size", syd::ArrayToString<int, 3>(size));
-  ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
+  ta.Set("spacing", syd::ArrayToString<double, 3>(spacing,1));
   std::string dicom;
   for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
   if (dicom.size() != 0) dicom.pop_back(); // remove last space
+  else dicom = "no_dicom";
   ta.Set("dicom", dicom);
-    //  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_ref_frame(syd::PrintTable2 & ta) const
+{
+  DumpInTable_short(ta);
+  ta.Set("ref_frame", frame_of_reference_uid);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_history(syd::PrintTable2 & ta) const
+{
+  DumpInTable_short(ta);
+  syd::RecordWithHistory::DumpInTable(ta);
 }
 // --------------------------------------------------
 
@@ -349,7 +395,7 @@ double syd::Image::GetHoursFromInjection() const
   std::string inj_date = injection->date;
   if (dicoms.size() == 0) {
     LOG(FATAL) << "No dicom attached to this image, cannot compute the time from injection date "
-                 << ToString() << std::endl;
+               << ToString() << std::endl;
   }
   double time = syd::DateDifferenceInHours(dicoms[0]->acquisition_date, inj_date);
   return time;

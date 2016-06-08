@@ -27,6 +27,7 @@ syd::PrintTableColumnInfo::PrintTableColumnInfo(int i)
   max_width_ = 50;
   precision_ = 0;
   use_user_precision_ = false;
+  color_ = resetColor;
 }
 //--------------------------------------------------------------------
 
@@ -36,6 +37,15 @@ int syd::PrintTableColumnInfo::SetPrecision(int i)
 {
   precision_ = i;
   use_user_precision_ = true;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+void syd::PrintTableColumnInfo::SetName(std::string n)
+{
+  name_ = n;
+  if (name_ =="id") color_ = indexColor;
 }
 //--------------------------------------------------------------------
 
@@ -52,7 +62,7 @@ syd::PrintTableColumnInfo::New(int i)
 //--------------------------------------------------------------------
 void syd::PrintTableColumnInfo::InstallStreamParameters(std::ostringstream & os) const
 {
-  os << std::setw(width_);
+  os << color_ << std::setw(width_);
 }
 //--------------------------------------------------------------------
 
@@ -70,8 +80,10 @@ std::string syd::PrintTableColumnInfo::TruncateStringIfNeeded(const std::string 
 //--------------------------------------------------------------------
 void syd::PrintTableColumnInfo::UpdateWidth(const std::string & v)
 {
-  if (v.size() > width_)
-    width_ = std::min((int)v.size(), max_width_);
+  // Consider a width 1 char larger than the value size
+  // With a max at max_width_
+  if (v.size() >= width_)
+    width_ = std::min((int)v.size()+1, max_width_);
 }
 //--------------------------------------------------------------------
 

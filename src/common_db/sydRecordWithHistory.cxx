@@ -19,6 +19,7 @@
 // syd
 #include "sydRecordWithHistory.h"
 #include "sydDatabase.h"
+#include "sydPrintTable2.h"
 
 // --------------------------------------------------------------------
 syd::RecordWithHistory::RecordWithHistory()
@@ -81,5 +82,19 @@ void syd::RecordWithHistory::DumpInTable(syd::PrintTable & ta) const
     ta.Set("inserted", history->insertion_date);
     ta.Set("updated", history->update_date);
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::RecordWithHistory::DumpInTable(syd::PrintTable2 & ta) const
+{
+  if (history == NULL) {
+    LOG(WARNING) << "Error no history ?";
+    ta.Set("inserted", "NULL");
+    ta.Set("updated", "NULL");
+  }
+  ta.Set("inserted", history->insertion_date);
+  ta.Set("updated", history->update_date);
 }
 // --------------------------------------------------------------------

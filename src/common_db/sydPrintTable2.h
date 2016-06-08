@@ -39,6 +39,7 @@ namespace syd {
     void Dump(syd::Record::vector::const_iterator start,
               syd::Record::vector::const_iterator end);
 
+    void SetFormat(std::string f);
     void Set(std::string column_name, std::string value);
     void Set(std::string column_name, double value, int precision=-1);
     void Set(syd::PrintTableColumnInfo::pointer column,
@@ -53,6 +54,7 @@ namespace syd {
     std::vector<syd::PrintTableColumnInfo::pointer> columns;
     syd::PrintTableRow::vector rows_;
     syd::PrintTableRow::pointer current_row_;
+    std::string format_;
 
     std::vector<int> GetColumnsIndices();
 

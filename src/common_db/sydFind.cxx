@@ -105,7 +105,7 @@ int main(int argc, char* argv[])
       return EXIT_SUCCESS;
     }
     syd::PrintTable2 table;
-    //table.SetFormat(format); //FIXME
+    table.SetFormat(format);
     //table.SetHeaderFlag(!args_info.noheader_flag); //FIXME
     //results[0]->InitTable(table); //FIXME
     for(auto i=0; i<args_info.col_given; i++) {

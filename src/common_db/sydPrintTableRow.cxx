@@ -25,6 +25,7 @@ syd::PrintTableRow::PrintTableRow(syd::PrintTable2 * t)
 {
   table = t;
   values.resize(10); // by default 10 col;
+  std::fill(values.begin(), values.end(), "-");
 }
 //--------------------------------------------------------------------
 
@@ -50,7 +51,8 @@ void syd::PrintTableRow::Set(int col, std::string value)
 //--------------------------------------------------------------------
 std::string syd::PrintTableRow::GetValue(int col) const
 {
-  return values[col];
+  if (col < values.size()) return values[col];
+  else return "-";
 }
 //--------------------------------------------------------------------
 

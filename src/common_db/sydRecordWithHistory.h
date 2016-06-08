@@ -40,6 +40,7 @@ namespace syd {
 
     virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
+    virtual void DumpInTable(syd::PrintTable2 & table) const;
 
     virtual void Callback(odb::callback_event,
                           odb::database & odb,

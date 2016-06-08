@@ -25,6 +25,11 @@
 //--------------------------------------------------------------------
 namespace syd {
 
+  static const char * resetColor = "\x1b[0m";
+  static const char * redColor = "\x1b[31m";
+  static const char * indexColor = "\x1b[32m"; // Green
+
+
   /// Manage a row of a print table
   class PrintTableColumnInfo {
   public:
@@ -37,7 +42,7 @@ namespace syd {
     static pointer New(int index);
 
     // Set the column name
-    void SetName(std::string n) { name_ = n; }
+    void SetName(std::string n);
 
     // Set the column max width
     void SetMaxWidth(int w) { max_width_ = w; }
@@ -73,6 +78,7 @@ namespace syd {
     int max_width_;
     int precision_;
     int use_user_precision_;
+    const char * color_;
 
   };
 
