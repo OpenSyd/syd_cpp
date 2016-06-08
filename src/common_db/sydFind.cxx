@@ -106,7 +106,7 @@ int main(int argc, char* argv[])
     }
     syd::PrintTable2 table;
     table.SetFormat(format);
-    //table.SetHeaderFlag(!args_info.noheader_flag); //FIXME
+    table.SetHeaderFlag(!args_info.noheader_flag);
     //results[0]->InitTable(table); //FIXME
     for(auto i=0; i<args_info.col_given; i++) {
       std::string s = args_info.col_arg[i];

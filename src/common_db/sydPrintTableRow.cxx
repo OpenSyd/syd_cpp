@@ -78,6 +78,6 @@ void syd::PrintTableRow::Dump(const std::vector<int> & indices,
     auto s = column->TruncateStringIfNeeded(values[col]);
     os << s;
   }
-  os << std::endl;
+  if (!table->GetSingleRowFlag()) os << std::endl;
 }
 //--------------------------------------------------------------------

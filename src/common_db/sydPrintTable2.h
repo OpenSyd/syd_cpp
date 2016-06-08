@@ -26,9 +26,12 @@
 
 // std
 #include <map>
+#include <set>
 
 //--------------------------------------------------------------------
 namespace syd {
+
+  struct FormatType;
 
   /// Helpers class to dump a table (line/column) of values,
   /// controling the precision and the column size
@@ -40,14 +43,19 @@ namespace syd {
               syd::Record::vector::const_iterator end);
 
     void SetFormat(std::string f);
-    void Set(std::string column_name, std::string value);
+    void Set(std::string column_name, std::string value, int width_max=50);
     void Set(std::string column_name, double value, int precision=-1);
     void Set(syd::PrintTableColumnInfo::pointer column,
              std::string value);
+    void SetSingleRowFlag(bool b);
+    void SetHeaderFlag(bool b) { use_header_flag_ = b; }
+
+    void AddFormat(std::string f, std::string description="");
 
     std::string GetFormat() const;
     syd::PrintTableColumnInfo::pointer GetColumnInfo(std::string column_name);
     syd::PrintTableColumnInfo::pointer GetColumnInfo(int col);
+    bool GetSingleRowFlag() const { return use_single_row_flag_; }
 
   protected:
     std::map<std::string, int> columns_name_to_indices;
@@ -55,10 +63,22 @@ namespace syd {
     syd::PrintTableRow::vector rows_;
     syd::PrintTableRow::pointer current_row_;
     std::string format_;
+    std::set<FormatType> formats_;
+    bool use_single_row_flag_;
+    bool use_header_flag_;
 
     std::vector<int> GetColumnsIndices();
-
   };
+
+  struct FormatType {
+    std::string name;
+    std::string description;
+  };
+
+  inline bool operator<(const FormatType& lhs, const FormatType& rhs){
+    return lhs.name < rhs.name;
+  }
+
 
 #include "sydPrintTable2.txx"
 

@@ -28,6 +28,8 @@ syd::PrintTableColumnInfo::PrintTableColumnInfo(int i)
   precision_ = 0;
   use_user_precision_ = false;
   color_ = resetColor;
+  indexColor = greenColor;
+  headerColor = magentaColor;
 }
 //--------------------------------------------------------------------
 
@@ -95,5 +97,17 @@ std::string syd::PrintTableColumnInfo::GetStringValue(double value, int precisio
   if (precision != -1 and !use_user_precision_) precision_ = precision_;
   os << std::fixed << std::setprecision(precision_) << value;
   return os.str();
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+void syd::PrintTableColumnInfo::DumpHeader(std::ostringstream & os)
+{
+  std::ostringstream temp;
+  temp << index_+1 << " " << name_ << "  "; // two spaces because start with #
+  auto s = temp.str();
+  UpdateWidth(s);
+  os << std::setw(width_) << s;
 }
 //--------------------------------------------------------------------

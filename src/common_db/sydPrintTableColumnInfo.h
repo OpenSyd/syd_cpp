@@ -27,8 +27,8 @@ namespace syd {
 
   static const char * resetColor = "\x1b[0m";
   static const char * redColor = "\x1b[31m";
-  static const char * indexColor = "\x1b[32m"; // Green
-
+  static const char * greenColor = "\x1b[32m"; // Green
+  static const char * magentaColor = "\x1b[35m"; // Magenta
 
   /// Manage a row of a print table
   class PrintTableColumnInfo {
@@ -56,6 +56,9 @@ namespace syd {
     // Get the precision for floating point values
     int GetPrecision() const { return precision_; }
 
+    // Return the current width of the column
+    int GetWidth() const { return width_; }
+
     // Set the precision for floating point values
     int SetPrecision(int i);
 
@@ -71,6 +74,12 @@ namespace syd {
     // Change the column width according to the value
     void UpdateWidth(const std::string & value);
 
+    // Print the column header
+    void DumpHeader(std::ostringstream & os);
+
+    // Get the color for header
+    const char * GetHeaderColor() const { return headerColor; }
+
   protected:
     std::string name_;
     int index_;
@@ -79,9 +88,11 @@ namespace syd {
     int precision_;
     int use_user_precision_;
     const char * color_;
+    const char * indexColor;
+    const char * headerColor;
 
   };
 
 } // end namespace
 
-#endif /* end #define SYDPRINTTABLE2_H_H */
+#endif /* end #define SYDPRINTTABLE2_H */

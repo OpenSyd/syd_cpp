@@ -263,12 +263,20 @@ void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
      - path:
      - history:
   */
-
-  if (format == "short") DumpInTable_short(ta);
+  if (format == "default") DumpInTable_default(ta);
+  else if (format == "short") DumpInTable_short(ta);
   else if (format == "ref_frame") DumpInTable_ref_frame(ta);
   else if (format == "history") DumpInTable_history(ta);
-  else DumpInTable_default(ta);
-
+  else if (format == "file") DumpInTable_file(ta);
+  else if (format == "filelist") DumpInTable_filelist(ta);
+  else {
+    ta.AddFormat("default");
+    ta.AddFormat("short");
+    ta.AddFormat("ref_frame");
+    ta.AddFormat("history");
+    ta.AddFormat("file");
+    ta.AddFormat("filelist");
+  }
   // FIXME id only
   // FIXME id filename
   // FIXME id path
@@ -320,6 +328,24 @@ void syd::Image::DumpInTable_history(syd::PrintTable2 & ta) const
 {
   DumpInTable_short(ta);
   syd::RecordWithHistory::DumpInTable(ta);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_file(syd::PrintTable2 & ta) const
+{
+  DumpInTable_short(ta);
+  ta.Set("file", files[0]->GetAbsolutePath(db_), 100);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_filelist(syd::PrintTable2 & ta) const
+{
+  ta.SetSingleRowFlag(true);
+  ta.Set("file", files[0]->GetAbsolutePath(db_), 100);
 }
 // --------------------------------------------------
 

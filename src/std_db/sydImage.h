@@ -136,6 +136,8 @@ namespace syd {
     virtual void DumpInTable_short(syd::PrintTable2 & table) const;
     virtual void DumpInTable_ref_frame(syd::PrintTable2 & table) const;
     virtual void DumpInTable_history(syd::PrintTable2 & table) const;
+    virtual void DumpInTable_file(syd::PrintTable2 & table) const;
+    virtual void DumpInTable_filelist(syd::PrintTable2 & table) const;
 
     /// Check if the associated files exist on disk
     virtual syd::CheckResult Check() const;

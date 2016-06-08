@@ -28,7 +28,8 @@
 syd::PrintTable2::PrintTable2()
 {
   format_ = "default";
-  //header_flag_ = true;
+  use_single_row_flag_ = false;
+  use_header_flag_ = true;
 }
 //------------------------------------------------------------------
 
@@ -44,25 +45,45 @@ void syd::PrintTable2::Dump(syd::Record::vector::const_iterator start,
   for(auto i=start; i != end; i++) {
     auto row = syd::PrintTableRow::New(this);
     current_row_ = row;
-    (*i)->DumpInTable(*this); // FIXME format
+    (*i)->DumpInTable(*this);
     rows_.push_back(row);
   }
   auto indices = GetColumnsIndices();
-  DDS(indices);
 
-  // Add empty columns, values
+  // If no columns --> help
+  std::ostringstream os;
+  if (indices.size() == 0) {
+    os << "Available formats are:" << std::endl;
+    for(auto f:formats_) {
+      os << "\t" << f.name << " -> " << f.description << std::endl;
+    }
+    std::cout << os.str();
+    return;
+  }
 
   // Set user precision
+  // FIXME
 
   // Compute optimal column width
-  for(auto i:indices)
-    for(auto & r:rows_) {
-      columns[i]->UpdateWidth(r->GetValue(i));
-    }
+  if (!use_single_row_flag_) {
+    for(auto i:indices)
+      for(auto & r:rows_) {
+        columns[i]->UpdateWidth(r->GetValue(i));
+      }
+  }
 
-  DD("end");
+  // Print header
+  if (use_header_flag_) {
+    os << columns[0]->GetHeaderColor()
+       << "# Find " << nb_of_rows
+       << " elements in table: " << (*start)->GetTableName() << std::endl
+       << "# ";
+    for(auto i:indices)
+      columns[i]->DumpHeader(os);
+    os << std::endl;
+  }
+
   // Print the created table
-  std::ostringstream os;
   for(auto & r:rows_)
     r->Dump(indices, os);
   std::cout << os.str();
@@ -71,9 +92,21 @@ void syd::PrintTable2::Dump(syd::Record::vector::const_iterator start,
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::Set(std::string column_name, std::string value)
+void syd::PrintTable2::AddFormat(std::string name, std::string description)
+{
+  FormatType f;
+  f.name = name;
+  f.description = description;
+  formats_.insert(f);
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable2::Set(std::string column_name, std::string value, int width_max)
 {
   auto col = GetColumnInfo(column_name);
+  col->SetMaxWidth(width_max);
   Set(col, value);
 }
 //------------------------------------------------------------------
@@ -137,6 +170,14 @@ void syd::PrintTable2::SetFormat(std::string f)
 {
   if (f == "") format_ = "default";
   else format_ = f;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable2::SetSingleRowFlag(bool b)
+{
+  use_single_row_flag_ = b;
 }
 //------------------------------------------------------------------
 
