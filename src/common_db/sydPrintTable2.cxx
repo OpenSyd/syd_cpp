@@ -16,16 +16,19 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+// syd
 #include "sydPrintTable2.h"
 #include "sydRecord.h"
+
+// std
 #include <algorithm>
+#include <sstream>
 
 //------------------------------------------------------------------
 syd::PrintTable2::PrintTable2()
 {
-  Init();
-  current_format_name_ = "default";
-  header_flag_ = true;
+  //current_format_name_ = "default";
+  //header_flag_ = true;
 }
 //------------------------------------------------------------------
 
@@ -34,231 +37,106 @@ syd::PrintTable2::PrintTable2()
 void syd::PrintTable2::Dump(syd::Record::vector::const_iterator start,
                             syd::Record::vector::const_iterator end)
 {
-  DD("dump");
   if (start == end) return;
 
-
+  // Create the table
+  int nb_of_rows = end-start;
   for(auto i=start; i != end; i++) {
+    auto row = syd::PrintTableRow::New(this);
+    current_row_ = row;
     (*i)->DumpInTable(*this); // FIXME format
-    //*i->ToString();
+    rows_.push_back(row);
   }
+  auto indices = GetColumnsIndices();
+  DDS(indices);
 
-}
-//------------------------------------------------------------------
+  // Add empty columns, values
 
+  // Set user precision
 
-
-
-
-//------------------------------------------------------------------
-/*d::PrintColumn & syd::PrintTable2::AddColumn(std::string name, int precision)
-{
-  if (GetColumn(name) != -1) {
-    LOG(FATAL) << "Error redefined column " << name;
-  }
-
-  // Create new column
-  PrintColumn c;
-  columns_.push_back(c);
-  auto & col = columns_.back();
-  col.title = name;
-  col.index = columns_.size()-1; // last
-  col.precision = precision;
-  col.width = name.size(); // default, will be changed later
-
-  // Default index
-  map_column[name]=col.index; // index
-
-  // Update already existing rows
-  for(auto row:rows_) {
-    if (row.values.size() != columns_.size()) row.values.resize(columns_.size());
-  }
-  // return ref
-  return columns_.back();
-  }*/
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-void syd::PrintTable2::Init()
-{
-  current_line = -1;
-  current_column = 0;
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-void syd::PrintTable2::Set(int col, const std::string & value)
-{
-  /*auto & row = rows_.back(); // last one is current one
-  if (row.values.size() != columns_.size()) row.values.resize(columns_.size());
-  row.values[col] = value;
-  */
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-void syd::PrintTable2::Set(const std::string & col_name, const std::string & value)
-{
-  if (GetColumn(col_name) == -1) {
-    EXCEPTION("Error cannot set column named '" << col_name << "'.");
-  }
-  Set(map_column[col_name], value);
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-void syd::PrintTable2::Set(const std::string & col_name, const double & value)
-{
-  if (GetColumn(col_name) == -1) {
-    EXCEPTION("Error cannot set column named '" << col_name << "'.");
-  }
-  Set(map_column[col_name], value);
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-void syd::PrintTable2::Set(int col, const double & value)
-{
-  //d::stringstream ss;
-  //ss << std::fixed << std::setprecision(columns_[col].precision) << value;
-  //et(col, ss.str());
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-void syd::PrintTable2::SetColumnPrecision(int col, int precision)
-{
-  /*if (columns_.size() <= col) {
-    LOG(FATAL) << "No column " << col << " only " << columns_.size() << " columns in table.";
-  }
-  columns_[col].precision = precision;
-  */
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-void syd::PrintTable2::Print(std::ostream & out)
-{
-  /*
   // Compute optimal column width
-  for(auto & col:columns_) {
-    unsigned long m = col.title.size();
-    if (col.width != 0) {
-      for(auto row:rows_) {
-        if (col.index < row.values.size())
-          m = std::max(m, row.values[col.index].size());
-        //    if (m > max width change ....
-      }
-      col.width = m+1; // spacing between col
-      col.width = std::min(col.width, col.max_width);
+  for(auto i:indices)
+    for(auto & r:rows_) {
+      columns[i]->UpdateWidth(r->GetValue(i));
     }
-  }
 
-  // Trunc if needed
-  for(auto & row:rows_) {
-    for(int c=0; c<row.values.size(); c++) {
-      auto & col = columns_[c];
-      std::string v = row.values[c];
-      if (v.size() > col.max_width) {
-        if (col.trunc_by_end_flag) v = v.substr(0,col.max_width-4)+"...";
-        else v = "..."+v.substr(v.size()-col.max_width+4,v.size());
-      }
-      row.values[c] = v;
-    }
-  }
-
-  // Dump headers
-  if (header_flag_) {
-    out << "#Table: " << current_table_ << ". Number of rows: " << rows_.size() << std::endl;
-    bool first = true;
-    for(auto col:columns_) { // FIXME order
-      if (col.width != 0) {
-        if (first) { // special case for first column, start with #
-          out << "#" << std::setw(col.width-1) << col.title;
-          first = false;
-        }
-        else out << std::setw(col.width) << col.title;
-      }
-    }
-    out << std::endl;
-  }
-
-  // Dump values
-  for(auto & row:rows_) {
-    DumpRow(row, out);
-    if (columns_.size() != 0) out << std::endl; // prevent empty line when no row
-  }
-  if (columns_.size() == 0) out << std::endl;
-  out << std::flush;
-  */
+  DD("end");
+  // Print the created table
+  std::ostringstream os;
+  for(auto & r:rows_)
+    r->Dump(indices, os);
+  std::cout << os.str();
 }
 //------------------------------------------------------------------
 
 
 //------------------------------------------------------------------
-/*void syd::PrintTable2::DumpRow(const syd::PrintRow & row, std::ostream & out)
+void syd::PrintTable2::Set(std::string column_name, std::string value)
 {
-  for(auto col:columns_) {
-    std::string s="-"; // default output if column not known
-    if (col.index < row.values.size()) s=row.values[col.index];
-    out << std::setw(col.width) << s;
+  auto col = GetColumnInfo(column_name);
+  Set(col, value);
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable2::Set(syd::PrintTableColumnInfo::pointer column,
+                           std::string value)
+{
+  current_row_->Set(column->GetIndex(), value);
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable2::Set(std::string column_name, double value, int precision)
+{
+  auto column = GetColumnInfo(column_name);
+  Set(column, column->GetStringValue(value, precision));
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+syd::PrintTableColumnInfo::pointer
+syd::PrintTable2::GetColumnInfo(int col)
+{
+  return columns[col];
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+syd::PrintTableColumnInfo::pointer
+syd::PrintTable2::GetColumnInfo(std::string column_name)
+{
+  auto i = columns_name_to_indices.find(column_name);
+  if (i == columns_name_to_indices.end()) {
+    // not exist -> create a new column
+    auto column = syd::PrintTableColumnInfo::New(columns.size());
+    column->SetName(column_name);
+    columns_name_to_indices[column_name] = column->GetIndex();
+    columns.push_back(column);
+    return column;
   }
-  }*/
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-void syd::PrintTable2::AddFormat(std::string name, std::string help)
-{
-  /*
-  syd::PrintFormat f;
-  f.name = name;
-  f.help = help;
-  formats_.push_back(f);
-  */
+  else return columns[i->second];
 }
 //------------------------------------------------------------------
 
 
 //------------------------------------------------------------------
-int syd::PrintTable2::GetColumn(std::string col)
+std::string syd::PrintTable2::GetFormat() const
 {
-  /*
-  auto iter = std::find_if(columns_.begin(), columns_.end(),
-                           [&col](const syd::PrintColumn & c) { return c.title == col; });
-  if (iter == columns_.end()) return -1;
-  return iter-columns_.begin();
-  */
+  return "todo";
 }
 //------------------------------------------------------------------
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::SetFormat(std::string name)
+std::vector<int> syd::PrintTable2::GetColumnsIndices()
 {
-  current_format_name_ = name;
-  if (name == "") current_format_name_ = "default";
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
-void syd::PrintTable2::AddRow()
-{
-  /*
-  syd::PrintRow ro;
-  rows_.push_back(ro);
-  auto & row = rows_.back();
-  row.values.resize(columns_.size());
-  // initialize
-  for(auto & v:row.values) v="-"; // Set to empty values
-  */
+  std::vector<int> c;
+  for(auto col:columns) c.push_back(col->GetIndex());
+  return c;
 }
 //------------------------------------------------------------------

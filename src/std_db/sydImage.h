@@ -31,6 +31,7 @@
 #include "sydPixelValueUnit.h"
 #include "sydRecordWithHistory.h"
 #include "sydRecordWithTags.h"
+#include "sydPrintTable2.h"
 
 // --------------------------------------------------------------------
 namespace syd {

@@ -20,8 +20,9 @@
 #define SYDPRINTTABLE2_H
 
 // syd
-#include "sydCommon.h"
 #include "sydRecord.h"
+#include "sydPrintTableRow.h"
+#include "sydPrintTableColumnInfo.h"
 
 // std
 #include <map>
@@ -29,89 +30,31 @@
 //--------------------------------------------------------------------
 namespace syd {
 
-  /*
-  struct PrintColumn { // FIXME change name TableColumn
-    int width;
-    std::string title;
-    int index;
-    int precision=0;
-    int max_width=99;
-    bool trunc_by_end_flag=false;
-  };
-
-  struct PrintRow {
-    std::vector<std::string> values;
-  };
-
-  struct PrintFormat {
-    std::string name;
-    std::string help;
-  };
-  */
-
   /// Helpers class to dump a table (line/column) of values,
   /// controling the precision and the column size
   class PrintTable2 {
   public:
     PrintTable2();
 
-    // template<class R> // R = RecordType
-    // void Dump(typename R::iterator start, typename R::iterator end);
-
-
     void Dump(syd::Record::vector::const_iterator start,
               syd::Record::vector::const_iterator end);
 
+    void Set(std::string column_name, std::string value);
+    void Set(std::string column_name, double value, int precision=-1);
+    void Set(syd::PrintTableColumnInfo::pointer column,
+             std::string value);
 
-    // void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
-    //           std::ostream & os=std::cout);
-
-    void Init();
-
-    //syd::PrintColumn & AddColumn(std::string name, int precision=0);
-    void AddRow();
-
-    void Set(int col, const std::string & value);
-    void Set(int col, const double & value);
-    void Set(const std::string & col, const std::string & value);
-    void Set(const std::string & col, const double & value);
-
-    void Print(std::ostream & out);
-
-    //    int GetNumberOfColumns() const { return columns_.size(); }
-    int GetColumn(std::string col);
-    void SetColumnPrecision(int col, int precision);
-
-    const std::string & GetFormat() const { return current_format_name_; }
-    void AddFormat(std::string name, std::string help);
-    void SetFormat(std::string name);
-    //    std::vector<syd::PrintFormat> & GetFormats() { return formats_; }
-
-    // template<class RecordType>
-    // void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
-    //           std::ostream & os=std::cout);
-
-    void SetHeaderFlag(bool b) { header_flag_= b; }
-    bool GetHeaderFlag() const { return header_flag_; }
-
-    std::ostream & GetCurrentOutput() { return *mCurrentOutput; }
+    std::string GetFormat() const;
+    syd::PrintTableColumnInfo::pointer GetColumnInfo(std::string column_name);
+    syd::PrintTableColumnInfo::pointer GetColumnInfo(int col);
 
   protected:
-    std::vector<std::vector<std::string>> values;
-    int current_line;
-    int current_column;
+    std::map<std::string, int> columns_name_to_indices;
+    std::vector<syd::PrintTableColumnInfo::pointer> columns;
+    syd::PrintTableRow::vector rows_;
+    syd::PrintTableRow::pointer current_row_;
 
-    std::string current_table_;
-    //    std::vector<syd::PrintColumn> columns_;
-    //    std::vector<syd::PrintRow> rows_;
-    //    void DumpRow(const syd::PrintRow & row, std::ostream & out);
-    std::map<std::string, int> map_column;
-
-    std::string current_format_name_;
-    //std::vector<syd::PrintFormat> formats_;
-
-    bool header_flag_;
-    std::ostream * mCurrentOutput;
+    std::vector<int> GetColumnsIndices();
 
   };
 

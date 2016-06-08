@@ -19,6 +19,8 @@ wrap_odb(sydCore sydRecordWithMD5Signature.h)
 set(sydCommonDatabase_src
   sydVersion.h
   sydPrintTable2.cxx
+  sydPrintTableRow.cxx
+  sydPrintTableColumnInfo.cxx
   sydDatabaseDescription.cxx
   sydTableDescription.cxx
   sydFieldDescription.cxx

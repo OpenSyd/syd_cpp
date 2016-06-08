@@ -253,8 +253,27 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
 {
-  DD("dump image");
-  DD(ToString());
+  auto format = ta.GetFormat();
+  /* List of formats:
+     - default: id
+     - simple
+     - filename
+     - path
+     - history
+   */
+  //  if (format == "default") {
+  ta.Set("id", id);
+  ta.Set("inj", injection->radionuclide->name);
+  if (dicoms.size() > 0)
+    ta.Set("acqui_date", dicoms[0]->acquisition_date);
+  ta.Set("tags", GetLabels(tags));
+  ta.Set("size", syd::ArrayToString<int, 3>(size));
+  ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
+  std::string dicom;
+  for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
+  if (dicom.size() != 0) dicom.pop_back(); // remove last space
+  ta.Set("dicom", dicom);
+    //  }
 }
 // --------------------------------------------------
 
