@@ -35,8 +35,8 @@ syd::PrintTable2::PrintTable2()
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::Dump(syd::Record::vector::const_iterator start,
-                            syd::Record::vector::const_iterator end)
+void syd::PrintTable2::Build(syd::Record::vector::const_iterator start,
+                             syd::Record::vector::const_iterator end)
 {
   if (start == end) return;
 
@@ -47,19 +47,9 @@ void syd::PrintTable2::Dump(syd::Record::vector::const_iterator start,
     current_row_ = row;
     (*i)->DumpInTable(*this);
     rows_.push_back(row);
+    table_names_.insert((*i)->GetTableName());
   }
   auto indices = GetColumnsIndices();
-
-  // If no columns --> help
-  std::ostringstream os;
-  if (indices.size() == 0) {
-    os << "Available formats are:" << std::endl;
-    for(auto f:formats_) {
-      os << "\t" << f.name << " -> " << f.description << std::endl;
-    }
-    std::cout << os.str();
-    return;
-  }
 
   // Set user precision
   // FIXME
@@ -68,25 +58,43 @@ void syd::PrintTable2::Dump(syd::Record::vector::const_iterator start,
   if (!use_single_row_flag_) {
     for(auto i:indices)
       for(auto & r:rows_) {
-        columns[i]->UpdateWidth(r->GetValue(i));
+        columns_[i]->UpdateWidth(r->GetValue(i));
       }
+  }
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable2::Print(std::ostream & os)
+{
+  auto indices = GetColumnsIndices();
+  int nb_of_rows = rows_.size();
+
+  // If no columns --> help
+  if (indices.size() == 0) {
+    os << "Available formats are:" << std::endl;
+    for(auto f:formats_) {
+      os << "\t" << f.name_ << " -> " << f.description_ << std::endl;
+    }
+    return;
   }
 
   // Print header
   if (use_header_flag_) {
-    os << columns[0]->GetHeaderColor()
+    os << "\e[1m" << columns_[0]->GetHeaderColor() // bold
        << "# Find " << nb_of_rows
-       << " elements in table: " << (*start)->GetTableName() << std::endl
-       << "# ";
+       << " elements in table: ";
+    for(auto t:table_names_) os << t << " ";
+    os << std::endl  << "# ";
     for(auto i:indices)
-      columns[i]->DumpHeader(os);
-    os << std::endl;
+      columns_[i]->DumpHeader(os);
+    os << resetColor << std::endl;
   }
 
   // Print the created table
   for(auto & r:rows_)
     r->Dump(indices, os);
-  std::cout << os.str();
 }
 //------------------------------------------------------------------
 
@@ -95,8 +103,8 @@ void syd::PrintTable2::Dump(syd::Record::vector::const_iterator start,
 void syd::PrintTable2::AddFormat(std::string name, std::string description)
 {
   FormatType f;
-  f.name = name;
-  f.description = description;
+  f.name_ = name;
+  f.description_ = description;
   formats_.insert(f);
 }
 //------------------------------------------------------------------
@@ -131,10 +139,18 @@ void syd::PrintTable2::Set(std::string column_name, double value, int precision)
 
 
 //------------------------------------------------------------------
+void syd::PrintTable2::SetColumnPrecision(int col, int precision)
+{
+  columns_[col]->SetPrecision(precision);
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
 syd::PrintTableColumnInfo::pointer
 syd::PrintTable2::GetColumnInfo(int col)
 {
-  return columns[col];
+  return columns_[col];
 }
 //------------------------------------------------------------------
 
@@ -143,16 +159,16 @@ syd::PrintTable2::GetColumnInfo(int col)
 syd::PrintTableColumnInfo::pointer
 syd::PrintTable2::GetColumnInfo(std::string column_name)
 {
-  auto i = columns_name_to_indices.find(column_name);
-  if (i == columns_name_to_indices.end()) {
+  auto i = columns_name_to_indices_.find(column_name);
+  if (i == columns_name_to_indices_.end()) {
     // not exist -> create a new column
-    auto column = syd::PrintTableColumnInfo::New(columns.size());
+    auto column = syd::PrintTableColumnInfo::New(columns_.size());
     column->SetName(column_name);
-    columns_name_to_indices[column_name] = column->GetIndex();
-    columns.push_back(column);
+    columns_name_to_indices_[column_name] = column->GetIndex();
+    columns_.push_back(column);
     return column;
   }
-  else return columns[i->second];
+  else return columns_[i->second];
 }
 //------------------------------------------------------------------
 
@@ -183,10 +199,10 @@ void syd::PrintTable2::SetSingleRowFlag(bool b)
 
 
 //------------------------------------------------------------------
-std::vector<int> syd::PrintTable2::GetColumnsIndices()
+std::vector<int> syd::PrintTable2::GetColumnsIndices() const
 {
   std::vector<int> c;
-  for(auto col:columns) c.push_back(col->GetIndex());
+  for(auto col:columns_) c.push_back(col->GetIndex());
   return c;
 }
 //------------------------------------------------------------------

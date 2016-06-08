@@ -22,7 +22,6 @@
 // syd
 #include "sydRecord.h"
 #include "sydPrintTableRow.h"
-#include "sydPrintTableColumnInfo.h"
 
 // std
 #include <map>
@@ -37,10 +36,14 @@ namespace syd {
   /// controling the precision and the column size
   class PrintTable2 {
   public:
+
+    // Constructor
     PrintTable2();
 
-    void Dump(syd::Record::vector::const_iterator start,
+    // Main dump function
+    void Build(syd::Record::vector::const_iterator start,
               syd::Record::vector::const_iterator end);
+    void Print(std::ostream & os);
 
     void SetFormat(std::string f);
     void Set(std::string column_name, std::string value, int width_max=50);
@@ -49,6 +52,7 @@ namespace syd {
              std::string value);
     void SetSingleRowFlag(bool b);
     void SetHeaderFlag(bool b) { use_header_flag_ = b; }
+    void SetColumnPrecision(int col, int precision);
 
     void AddFormat(std::string f, std::string description="");
 
@@ -58,25 +62,28 @@ namespace syd {
     bool GetSingleRowFlag() const { return use_single_row_flag_; }
 
   protected:
-    std::map<std::string, int> columns_name_to_indices;
-    std::vector<syd::PrintTableColumnInfo::pointer> columns;
+    std::map<std::string, int> columns_name_to_indices_;
+    std::vector<syd::PrintTableColumnInfo::pointer> columns_;
     syd::PrintTableRow::vector rows_;
     syd::PrintTableRow::pointer current_row_;
     std::string format_;
     std::set<FormatType> formats_;
+    std::set<std::string> table_names_;
     bool use_single_row_flag_;
     bool use_header_flag_;
 
-    std::vector<int> GetColumnsIndices();
+    std::vector<int> GetColumnsIndices() const;
   };
 
+
+  // simple structure to manage format + description
   struct FormatType {
-    std::string name;
-    std::string description;
+    std::string name_;
+    std::string description_;
   };
 
   inline bool operator<(const FormatType& lhs, const FormatType& rhs){
-    return lhs.name < rhs.name;
+    return lhs.name_ < rhs.name_;
   }
 
 

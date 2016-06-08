@@ -47,6 +47,9 @@ namespace syd {
     // Set the column max width
     void SetMaxWidth(int w) { max_width_ = w; }
 
+    // Set the precision for floating point values
+    int SetPrecision(int i);
+
     // Get the column name
     std::string GetName() const { return name_; }
 
@@ -59,14 +62,11 @@ namespace syd {
     // Return the current width of the column
     int GetWidth() const { return width_; }
 
-    // Set the precision for floating point values
-    int SetPrecision(int i);
-
     // Get the precision for floating point values
     std::string GetStringValue(double value, int precision=-1);
 
     // Put column parameters to the stream
-    void InstallStreamParameters(std::ostringstream & ss) const;
+    void InstallStreamParameters(std::ostream & os) const;
 
     // Truncate the string if larger than column width
     std::string TruncateStringIfNeeded(const std::string & s) const;
@@ -75,10 +75,10 @@ namespace syd {
     void UpdateWidth(const std::string & value);
 
     // Print the column header
-    void DumpHeader(std::ostringstream & os);
+    void DumpHeader(std::ostream & os);
 
     // Get the color for header
-    const char * GetHeaderColor() const { return headerColor; }
+    const char * GetHeaderColor() const { return headerColor_; }
 
   protected:
     std::string name_;
@@ -88,8 +88,8 @@ namespace syd {
     int precision_;
     int use_user_precision_;
     const char * color_;
-    const char * indexColor;
-    const char * headerColor;
+    const char * indexColor_;
+    const char * headerColor_;
 
   };
 

@@ -46,20 +46,11 @@ namespace syd {
     std::string GetValue(int col) const;
 
     // Dump values in the stream
-    void Dump(const std::vector<int> & indices, std::ostringstream & ss) const;
-
-    // Simple string output for debug
-    std::string ToString() const;
-
-    /// Default function to print an element (must be inline here).
-    friend std::ostream& operator<<(std::ostream& os, const PrintTableRow & p) {
-      os << p.ToString();
-      return os;
-    }
+    void Dump(const std::vector<int> & indices, std::ostream & ss) const;
 
   protected:
-    syd::PrintTable2 * table;
-    std::vector<std::string> values;
+    syd::PrintTable2 * table_;
+    std::vector<std::string> values_;
 
   };
 

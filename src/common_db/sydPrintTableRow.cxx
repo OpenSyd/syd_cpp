@@ -23,9 +23,9 @@
 //--------------------------------------------------------------------
 syd::PrintTableRow::PrintTableRow(syd::PrintTable2 * t)
 {
-  table = t;
-  values.resize(10); // by default 10 col;
-  std::fill(values.begin(), values.end(), "-");
+  table_ = t;
+  values_.resize(10); // by default 10 col;
+  std::fill(values_.begin(), values_.end(), "-");
 }
 //--------------------------------------------------------------------
 
@@ -42,8 +42,8 @@ syd::PrintTableRow::New(syd::PrintTable2 * table)
 //--------------------------------------------------------------------
 void syd::PrintTableRow::Set(int col, std::string value)
 {
-  if (col >= values.size()) values.resize(values.size()+10);
-  values[col] = value;
+  if (col >= values_.size()) values_.resize(values_.size()+10);
+  values_[col] = value;
 }
 //--------------------------------------------------------------------
 
@@ -51,33 +51,23 @@ void syd::PrintTableRow::Set(int col, std::string value)
 //--------------------------------------------------------------------
 std::string syd::PrintTableRow::GetValue(int col) const
 {
-  if (col < values.size()) return values[col];
+  if (col < values_.size()) return values_[col];
   else return "-";
 }
 //--------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------
-std::string syd::PrintTableRow::ToString() const
-{
-  std::stringstream os;
-  for(auto v:values) os << v << " ";
-  return os.str();
-}
-//--------------------------------------------------------------------
-
-
-//--------------------------------------------------------------------
 void syd::PrintTableRow::Dump(const std::vector<int> & indices,
-                              std::ostringstream & os) const
+                              std::ostream & os) const
 {
 
   for(auto col:indices) {
-    auto column = table->GetColumnInfo(col);
+    auto column = table_->GetColumnInfo(col);
     column->InstallStreamParameters(os);
-    auto s = column->TruncateStringIfNeeded(values[col]);
+    auto s = column->TruncateStringIfNeeded(values_[col]);
     os << s;
   }
-  if (!table->GetSingleRowFlag()) os << std::endl;
+  if (!table_->GetSingleRowFlag()) os << std::endl;
 }
 //--------------------------------------------------------------------

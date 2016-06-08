@@ -28,8 +28,8 @@ syd::PrintTableColumnInfo::PrintTableColumnInfo(int i)
   precision_ = 0;
   use_user_precision_ = false;
   color_ = resetColor;
-  indexColor = greenColor;
-  headerColor = magentaColor;
+  indexColor_ = greenColor;
+  headerColor_ = magentaColor;
 }
 //--------------------------------------------------------------------
 
@@ -47,7 +47,7 @@ int syd::PrintTableColumnInfo::SetPrecision(int i)
 void syd::PrintTableColumnInfo::SetName(std::string n)
 {
   name_ = n;
-  if (name_ =="id") color_ = indexColor;
+  if (name_ =="id") color_ = indexColor_;
 }
 //--------------------------------------------------------------------
 
@@ -62,7 +62,7 @@ syd::PrintTableColumnInfo::New(int i)
 
 
 //--------------------------------------------------------------------
-void syd::PrintTableColumnInfo::InstallStreamParameters(std::ostringstream & os) const
+void syd::PrintTableColumnInfo::InstallStreamParameters(std::ostream & os) const
 {
   os << color_ << std::setw(width_);
 }
@@ -102,7 +102,7 @@ std::string syd::PrintTableColumnInfo::GetStringValue(double value, int precisio
 
 
 //--------------------------------------------------------------------
-void syd::PrintTableColumnInfo::DumpHeader(std::ostringstream & os)
+void syd::PrintTableColumnInfo::DumpHeader(std::ostream & os)
 {
   std::ostringstream temp;
   temp << index_+1 << " " << name_ << "  "; // two spaces because start with #

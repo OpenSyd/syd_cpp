@@ -254,15 +254,6 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
 void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
 {
   auto format = ta.GetFormat();
-  /* List of formats:
-     - only id list
-     - default: id date tag size spacing dicoms pixel_value
-     - simple : id date tag
-     - ref_frame : id date tag
-     - filename: id date tag filename
-     - path:
-     - history:
-  */
   if (format == "default") DumpInTable_default(ta);
   else if (format == "short") DumpInTable_short(ta);
   else if (format == "ref_frame") DumpInTable_ref_frame(ta);
@@ -270,17 +261,13 @@ void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
   else if (format == "file") DumpInTable_file(ta);
   else if (format == "filelist") DumpInTable_filelist(ta);
   else {
-    ta.AddFormat("default");
-    ta.AddFormat("short");
-    ta.AddFormat("ref_frame");
-    ta.AddFormat("history");
-    ta.AddFormat("file");
-    ta.AddFormat("filelist");
+    ta.AddFormat("default", "id, date, tags, size etc");
+    ta.AddFormat("short", "no size");
+    ta.AddFormat("ref_frame", "with dicom_reference_frame");
+    ta.AddFormat("history", "with date inserted/updated");
+    ta.AddFormat("file", "with complete filename");
+    ta.AddFormat("filelist", "not a table a list of filenames");
   }
-  // FIXME id only
-  // FIXME id filename
-  // FIXME id path
-
 }
 // --------------------------------------------------
 
@@ -292,7 +279,7 @@ void syd::Image::DumpInTable_short(syd::PrintTable2 & ta) const
   if (dicoms.size() > 0)
     ta.Set("acqui_date", dicoms[0]->acquisition_date);
   else ta.Set("acqui_date", "no_date");
-  ta.Set("tags", GetLabels(tags));
+  ta.Set("tags", GetLabels(tags), 100);
   if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
 }
 // --------------------------------------------------
