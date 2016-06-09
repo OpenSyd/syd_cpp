@@ -18,7 +18,7 @@
 
 // syd
 #include "sydRecordHistory.h"
-//#include "sydStandardDatabase.h"
+#include "sydPrintTable2.h"
 
 // --------------------------------------------------------------------
 syd::RecordHistory::RecordHistory():syd::Record()
@@ -55,19 +55,8 @@ void syd::RecordHistory::Set(const syd::Database * db, const std::vector<std::st
 // --------------------------------------------------
 
 
-
 // --------------------------------------------------------------------
-void syd::RecordHistory::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddColumn("id"); // FIXME to change for filelist ?
-  ta.AddColumn("insertion_date");
-  ta.AddColumn("update_date");
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::RecordHistory::DumpInTable(syd::PrintTable & ta) const
+void syd::RecordHistory::DumpInTable(syd::PrintTable2 & ta) const
 {
   ta.Set("id", id);
   ta.Set("insertion_date", insertion_date);
