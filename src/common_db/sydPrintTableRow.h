@@ -16,40 +16,44 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDRECORDWITHHISTORY_H
-#define SYDRECORDWITHHISTORY_H
+#ifndef SYDPRINTTABLEROW_H
+#define SYDPRINTTABLEROW_H
 
 // syd
-#include "sydRecordHistory.h"
+#include "sydPrintTableColumnInfo.h"
 
-// --------------------------------------------------------------------
+//--------------------------------------------------------------------
 namespace syd {
 
-#pragma db object abstract pointer(std::shared_ptr)
-  class RecordWithHistory {
+  class PrintTable2;
+
+  /// Manage a row of a print table
+  class PrintTableRow {
   public:
 
-    /// Define pointer type
-    typedef std::shared_ptr<RecordWithHistory> pointer;
+    // Constructor
+    PrintTableRow(syd::PrintTable2 * table);
 
-    /// Define vectortype
+    /// Typedef, pointer creation
+    typedef std::shared_ptr<PrintTableRow> pointer;
     typedef std::vector<pointer> vector;
+    static pointer New(syd::PrintTable2 * table);
 
-    /// Store the history. It is 'mutable' because is changed in the const Callback.
-    mutable syd::RecordHistory::pointer history;
+    // Set the value for column col
+    void Set(int col, std::string value);
 
-    virtual void DumpInTable(syd::PrintTable2 & table) const;
+    // Get the value at column col
+    std::string GetValue(int col) const;
 
-    virtual void Callback(odb::callback_event,
-                          odb::database & odb,
-                          syd::Database * db) const;
+    // Dump values in the stream
+    void Dump(const std::vector<int> & indices, std::ostream & ss) const;
 
   protected:
-    RecordWithHistory();
+    syd::PrintTable2 * table_;
+    std::vector<std::string> values_;
 
   };
 
 } // end namespace
-// --------------------------------------------------------------------
 
-#endif
+#endif /* end #define SYDPRINTTABLE2_H_H */

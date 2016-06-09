@@ -18,6 +18,7 @@
 
 // syd
 #include "sydTag.h"
+#include "sydPrintTable2.h"
 
 // std
 #include <set>
@@ -56,19 +57,7 @@ void syd::Tag::Set(const std::vector<std::string> & arg)
 
 
 // --------------------------------------------------------------------
-void syd::Tag::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddColumn("id");
-  ta.AddColumn("label");
-  auto & col = ta.AddColumn("description");
-  col.max_width = 80;
-  col.trunc_by_end_flag = true;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Tag::DumpInTable(syd::PrintTable & ta) const
+void syd::Tag::DumpInTable(syd::PrintTable2 & ta) const
 {
   ta.Set("id", id);
   ta.Set("label", label);

@@ -106,82 +106,103 @@ void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------
-void syd::DicomSerie::InitTable(syd::PrintTable & ta) const
-{
+/*void syd::DicomSerie::InitTable(syd::PrintTable & ta) const
+  {
   ta.AddFormat("details", "Print image details");
   ta.AddFormat("file", "Print first dicom filename (slow!)");
 
   auto & f = ta.GetFormat();
 
   if (f == "file") {
-    ta.AddColumn("id");
-    ta.AddColumn("path", 120);
+  ta.AddColumn("id");
+  ta.AddColumn("path", 120);
   }
   if (f == "default") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    ta.AddColumn("inj");
-    ta.AddColumn("mod");
-    ta.AddColumn("acqui_date");
-    ta.AddColumn("recon_date");
-    auto & c = ta.AddColumn("description", 100);
-    c.trunc_by_end_flag = true;
+  ta.AddColumn("id");
+  ta.AddColumn("p");
+  ta.AddColumn("inj");
+  ta.AddColumn("mod");
+  ta.AddColumn("acqui_date");
+  ta.AddColumn("recon_date");
+  auto & c = ta.AddColumn("description", 100);
+  c.trunc_by_end_flag = true;
   }
   if (f == "details") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    ta.AddColumn("inj");
-    ta.AddColumn("mod");
-    ta.AddColumn("acqui_date");
-    ta.AddColumn("recon_date");
-    ta.AddColumn("size");
-    ta.AddColumn("spacing");
-    ta.AddColumn("duration(s)",1);
-    ta.AddColumn("scale",3);
+  ta.AddColumn("id");
+  ta.AddColumn("p");
+  ta.AddColumn("inj");
+  ta.AddColumn("mod");
+  ta.AddColumn("acqui_date");
+  ta.AddColumn("recon_date");
+  ta.AddColumn("size");
+  ta.AddColumn("spacing");
+  ta.AddColumn("duration(s)",1);
+  ta.AddColumn("scale",3);
+  }
+  }*/
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomSerie::DumpInTable(syd::PrintTable2 & ta) const
+{
+  auto format = ta.GetFormat();
+  if (format == "default") DumpInTable_default(ta);
+  else if (format == "file") DumpInTable_file(ta);
+  else if (format == "details") DumpInTable_details(ta);
+  {
+    ta.AddFormat("default", "id, date, tags, size etc");
+    ta.AddFormat("file", "with complete filename");
+    ta.AddFormat("details", "other informations");
   }
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::DicomSerie::DumpInTable(syd::PrintTable & ta) const
+void syd::DicomSerie::DumpInTable_default(syd::PrintTable2 & ta) const
 {
-  auto & f = ta.GetFormat();
+  ta.Set("id", id);
+  ta.Set("p", patient->name);
+  if (injection == NULL) ta.Set("inj", "no_inj");
+  else ta.Set("inj", injection->radionuclide->name);
+  ta.Set("mod", dicom_modality);
+  ta.Set("acqui_date", acquisition_date);
+  ta.Set("recon_date", reconstruction_date);
+  ta.Set("description", std::string(dicom_description+" "+dicom_manufacturer), 100);
+}
+// --------------------------------------------------
 
-  if (f == "file") {
-    ta.Set("id", id);
-    //Look for associated file (this is slow !)
-    syd::DicomFile::vector dfiles;
-    typedef odb::query<syd::DicomFile> QDF;
-    QDF q = QDF::dicom_serie == id;
-    db_->Query<syd::DicomFile>(dfiles, q);
-    if (dfiles.size() >= 1) ta.Set("path", dfiles[0]->file->GetAbsolutePath(db_));
-    else ta.Set("path", db_->ConvertToAbsolutePath(dfiles[0]->file->path));
-  }
 
-  if (f == "default") {
-    ta.Set("id", id);
-    ta.Set("p", patient->name);
-    if (injection == NULL) ta.Set("inj", "no_inj");
-    else ta.Set("inj", injection->radionuclide->name);
-    ta.Set("mod", dicom_modality);
-    ta.Set("acqui_date", acquisition_date);
-    ta.Set("recon_date", reconstruction_date);
-    ta.Set("description", std::string(dicom_description+" "+dicom_manufacturer));
-  }
-  if (f == "details") {
-    ta.Set("id", id);
-    ta.Set("p", patient->name);
-    if (injection == NULL) ta.Set("inj", "no_inj");
-    else ta.Set("inj", injection->radionuclide->name);
-    ta.Set("mod", dicom_modality);
-    ta.Set("acqui_date", acquisition_date);
-    ta.Set("recon_date", reconstruction_date);
-    ta.Set("size", syd::ArrayToString<int, 3>(size));
-    ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
-    ta.Set("duration(s)", duration_sec);
-    ta.Set("scale", pixel_scale);
-  }
+// --------------------------------------------------
+void syd::DicomSerie::DumpInTable_file(syd::PrintTable2 & ta) const
+{
+  ta.Set("id", id);
+  ta.Set("p", patient->name);
+  if (injection == NULL) ta.Set("inj", "no_inj");
+  else ta.Set("inj", injection->radionuclide->name);
+  ta.Set("mod", dicom_modality);
+  ta.Set("acqui_date", acquisition_date);
+
+  //Look for associated file (this is slow !)
+  syd::DicomFile::vector dfiles;
+  typedef odb::query<syd::DicomFile> QDF;
+  QDF q = QDF::dicom_serie == id;
+  db_->Query<syd::DicomFile>(dfiles, q);
+  if (dfiles.size() >= 1) ta.Set("path", dfiles[0]->file->GetAbsolutePath(db_), 150);
+  else ta.Set("path", db_->ConvertToAbsolutePath(dfiles[0]->file->path), 150);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomSerie::DumpInTable_details(syd::PrintTable2 & ta) const
+{
+  DumpInTable_default(ta);
+  ta.Set("size", syd::ArrayToString<int, 3>(size));
+  ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
+  ta.Set("duration(s)", duration_sec, 2);
+  ta.Set("scale", pixel_scale, 2);
 }
 // --------------------------------------------------
 

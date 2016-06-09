@@ -200,106 +200,142 @@ void syd::Image::CopyDicomSeries(syd::Image::pointer image)
 
 
 // --------------------------------------------------
-void syd::Image::InitTable(syd::PrintTable & ta) const
+void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
 {
-  // Define the formats
-  auto & f = ta.GetFormat();
-  ta.AddFormat("file", "Display the filename");
-  ta.AddFormat("filelist", "List of files without line break");
-  ta.AddFormat("timing", "Display time in hours from injection");
-
-  // Set the columns
-  if (f == "default") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    ta.AddColumn("inj");
-    ta.AddColumn("acqui_date");
-    ta.AddColumn("tags");
-    ta.AddColumn("size");
-    ta.AddColumn("spacing");
-    ta.AddColumn("dicom");
-    ta.AddColumn("unit");
-    auto & c = ta.AddColumn("ref_frame");
-    c.max_width = 20;
-    c.trunc_by_end_flag = false;
-  }
-  if (f == "timing") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    ta.AddColumn("t", 2);
-    ta.AddColumn("tags");
-  }
-  if (f == "history") {
-    syd::RecordWithHistory::InitTable(ta);
-    ta.AddColumn("p");
-    ta.AddColumn("acqui_date");
-    ta.AddColumn("tags");
-    ta.AddColumn("unit");
-    auto & c = ta.AddColumn("ref_frame");
-    c.max_width = 20;
-    c.trunc_by_end_flag = false;
-  }
-  if (f == "file") {
-    ta.AddColumn("id");
-    ta.AddColumn("file");
-  }
-  if (f == "filelist") {
-    ta.SetHeaderFlag(false);
+  auto format = ta.GetFormat();
+  if (format == "default") DumpInTable_default(ta);
+  else if (format == "short") DumpInTable_short(ta);
+  else if (format == "ref_frame") DumpInTable_ref_frame(ta);
+  else if (format == "history") DumpInTable_history(ta);
+  else if (format == "file") DumpInTable_file(ta);
+  else if (format == "filelist") DumpInTable_filelist(ta);
+  else {
+    ta.AddFormat("default", "id, date, tags, size etc");
+    ta.AddFormat("short", "no size");
+    ta.AddFormat("ref_frame", "with dicom_reference_frame");
+    ta.AddFormat("history", "with date inserted/updated");
+    ta.AddFormat("file", "with complete filename");
+    ta.AddFormat("filelist", "not a table a list of filenames");
   }
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Image::DumpInTable(syd::PrintTable & ta) const
+void syd::Image::DumpInTable_short(syd::PrintTable2 & ta) const
 {
+  ta.Set("id", id);
+  if (dicoms.size() > 0)
+    ta.Set("acqui_date", dicoms[0]->acquisition_date);
+  else ta.Set("acqui_date", "no_date");
+  ta.Set("tags", GetLabels(tags), 100);
+  if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_default(syd::PrintTable2 & ta) const
+{
+  DumpInTable_short(ta);
+  ta.Set("inj", injection->radionuclide->name);
+  ta.Set("size", syd::ArrayToString<int, 3>(size));
+  ta.Set("spacing", syd::ArrayToString<double, 3>(spacing,1));
+  std::string dicom;
+  for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
+  if (dicom.size() != 0) dicom.pop_back(); // remove last space
+  else dicom = "no_dicom";
+  ta.Set("dicom", dicom);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_ref_frame(syd::PrintTable2 & ta) const
+{
+  DumpInTable_short(ta);
+  ta.Set("ref_frame", frame_of_reference_uid);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_history(syd::PrintTable2 & ta) const
+{
+  DumpInTable_short(ta);
   syd::RecordWithHistory::DumpInTable(ta);
-  auto f = ta.GetFormat();
-
-  if (f == "default") {
-    ta.Set("id", id);
-    ta.Set("p", patient->name);
-    ta.Set("inj", injection->radionuclide->name);
-    if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
-    else ta.Set("acqui_date", dicoms[0]->acquisition_date);
-    ta.Set("tags", GetLabels(tags));
-    ta.Set("size", syd::ArrayToString<int, 3>(size));
-    ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
-    std::string dicom;
-    for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
-    if (dicom.size() != 0) dicom.pop_back(); // remove last space
-    ta.Set("dicom", dicom);
-    if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
-    ta.Set("ref_frame", frame_of_reference_uid);
-  }
-
-  if (f == "timing") {
-    ta.Set("id", id);
-    ta.Set("p", patient->name);
-    ta.Set("tags", GetLabels(tags));
-    double t = GetHoursFromInjection();
-    ta.Set("t", t);
-  }
-
-  if (f == "history") {
-    ta.Set("id", id);
-    ta.Set("p", patient->name);
-    if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
-    else ta.Set("acqui_date", dicoms[0]->acquisition_date);
-    ta.Set("tags", GetLabels(tags));
-    if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
-    ta.Set("ref_frame", frame_of_reference_uid);
-  }
-
-  if (f == "file") {
-    ta.Set("id", id);
-    if (files.size() != 0) ta.Set("file", files[0]->GetAbsolutePath(db_));
-  }
-
-  if (f == "filelist") {
-    if (files.size() != 0) ta.GetCurrentOutput() << files[0]->GetAbsolutePath(db_) << " ";
-  }
 }
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_file(syd::PrintTable2 & ta) const
+{
+  DumpInTable_short(ta);
+  ta.Set("file", files[0]->GetAbsolutePath(db_), 100);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_filelist(syd::PrintTable2 & ta) const
+{
+  ta.SetSingleRowFlag(true);
+  ta.Set("file", files[0]->GetAbsolutePath(db_), 100);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+// void syd::Image::DumpInTable(syd::PrintTable & ta) const
+// {
+//   syd::RecordWithHistory::DumpInTable(ta);
+//   auto f = ta.GetFormat();
+
+//   if (f == "default") {
+//     ta.Set("id", id);
+//     ta.Set("p", patient->name);
+//     ta.Set("inj", injection->radionuclide->name);
+//     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
+//     else ta.Set("acqui_date", dicoms[0]->acquisition_date);
+//     ta.Set("tags", GetLabels(tags));
+//     ta.Set("size", syd::ArrayToString<int, 3>(size));
+//     ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
+//     std::string dicom;
+//     for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
+//     if (dicom.size() != 0) dicom.pop_back(); // remove last space
+//     ta.Set("dicom", dicom);
+//     if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
+//     ta.Set("ref_frame", frame_of_reference_uid);
+//   }
+
+//   if (f == "timing") {
+//     ta.Set("id", id);
+//     ta.Set("p", patient->name);
+//     ta.Set("tags", GetLabels(tags));
+//     double t = GetHoursFromInjection();
+//     ta.Set("t", t);
+//   }
+
+//   if (f == "history") {
+//     ta.Set("id", id);
+//     ta.Set("p", patient->name);
+//     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
+//     else ta.Set("acqui_date", dicoms[0]->acquisition_date);
+//     ta.Set("tags", GetLabels(tags));
+//     if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
+//     ta.Set("ref_frame", frame_of_reference_uid);
+//   }
+
+//   if (f == "file") {
+//     ta.Set("id", id);
+//     if (files.size() != 0) ta.Set("file", files[0]->GetAbsolutePath(db_));
+//   }
+
+//   if (f == "filelist") {
+//     if (files.size() != 0) ta.GetCurrentOutput() << files[0]->GetAbsolutePath(db_) << " ";
+//   }
+// }
 // --------------------------------------------------
 
 
@@ -321,7 +357,7 @@ double syd::Image::GetHoursFromInjection() const
   std::string inj_date = injection->date;
   if (dicoms.size() == 0) {
     LOG(FATAL) << "No dicom attached to this image, cannot compute the time from injection date "
-                 << ToString() << std::endl;
+               << ToString() << std::endl;
   }
   double time = syd::DateDifferenceInHours(dicoms[0]->acquisition_date, inj_date);
   return time;

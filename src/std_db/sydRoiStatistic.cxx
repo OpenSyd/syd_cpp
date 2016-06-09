@@ -53,29 +53,8 @@ std::string syd::RoiStatistic::ToString() const
 
 
 // --------------------------------------------------
-void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
+void syd::RoiStatistic::DumpInTable(syd::PrintTable2 & ta) const
 {
-  syd::RecordWithHistory::InitTable(ta);
-  if (ta.GetColumn("id") == -1) ta.AddColumn("id");
-  ta.AddColumn("p");
-  ta.AddColumn("image");
-  ta.AddColumn("mask");
-  ta.AddColumn("unit");
-  ta.AddColumn("tags");
-  ta.AddColumn("mean",5);
-  ta.AddColumn("sd",3);
-  ta.AddColumn("n");
-  ta.AddColumn("min",3);
-  ta.AddColumn("max",3);
-  ta.AddColumn("sum",1);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
-{
-  syd::RecordWithHistory::DumpInTable(ta);
   ta.Set("id", id);
   ta.Set("p", image->patient->name);
   ta.Set("image", image->id);
@@ -88,5 +67,6 @@ void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
   ta.Set("min", min);
   ta.Set("max", max);
   ta.Set("sum", sum);
+  syd::RecordWithHistory::DumpInTable(ta);
 }
 // --------------------------------------------------

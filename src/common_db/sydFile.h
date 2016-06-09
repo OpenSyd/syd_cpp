@@ -39,7 +39,7 @@ namespace syd {
     /// Associated md5 (not always computed)
     std::string md5;
 
-     // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
     TABLE_DEFINE(File, syd::File);
     // ------------------------------------------------------------------------
 
@@ -49,8 +49,10 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
-    virtual void InitTable(syd::PrintTable & table) const;
-    virtual void DumpInTable(syd::PrintTable & table) const;
+    virtual void DumpInTable(syd::PrintTable2 & table) const;
+    virtual void DumpInTable_default(syd::PrintTable2 & table) const;
+    virtual void DumpInTable_file(syd::PrintTable2 & table) const;
+    virtual void DumpInTable_md5(syd::PrintTable2 & table) const;
 
     std::string GetAbsolutePath(const syd::Database * db) const;
 

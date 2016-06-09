@@ -76,111 +76,71 @@ void syd::FitResult::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------------------------
-void syd::FitResult::InitTable(syd::PrintTable & ta) const
+void syd::FitResult::DumpInTable(syd::PrintTable2 & ta) const
 {
-  auto f = ta.GetFormat();
-
-    // Set the columns
-  if (f == "default") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    ta.AddColumn("m");
-    ta.AddColumn("inj");
-    ta.AddColumn("tp");
-    ta.AddColumn("nb");
-    ta.AddColumn("tags");
-    ta.AddColumn("model");
-    ta.AddColumn("auc",5);
-    ta.AddColumn("r2",5);
-    ta.AddColumn("index");
-    ta.AddColumn("iter");
-    for(auto i=0; i<params.size(); i++)
-      ta.AddColumn("p"+syd::ToString(i), 4);
+  auto format = ta.GetFormat();
+  if (format == "default") DumpInTable_default(ta);
+  else if (format == "history") DumpInTable_history(ta);
+  else if (format == "md5") DumpInTable_md5(ta);
+  else {
+    ta.AddFormat("default", "id, date, tags, size etc");
+    ta.AddFormat("history", "with date inserted/updated");
+    ta.AddFormat("md5", "with md5");
   }
-
-  if (f == "history") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    ta.AddColumn("inj");
-    syd::RecordWithHistory::InitTable(ta);
-    ta.AddColumn("tp");
-    ta.AddColumn("tags");
-    ta.AddColumn("model");
-    ta.AddColumn("auc",5);
-    ta.AddColumn("r2",5);
-    ta.AddColumn("i");
-  }
-
-  if (f == "md5") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    ta.AddColumn("inj");
-    ta.AddColumn("tp");
-    ta.AddColumn("nb");
-    ta.AddColumn("tags");
-    syd::RecordWithMD5Signature::InitTable(ta);
-  }
-
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::FitResult::DumpInTable(syd::PrintTable & ta) const
+void syd::FitResult::DumpInTable_default(syd::PrintTable2 & ta) const
 {
+  ta.Set("id", id);
+  ta.Set("p", timepoints->patient->name);
+  ta.Set("m", (timepoints->mask == NULL ? "no_mask":timepoints->mask->roitype->name));
+  ta.Set("inj", timepoints->injection->radionuclide->name);
+  ta.Set("tp", timepoints->id);
+  ta.Set("nb", timepoints->times.size());
+  ta.Set("tags", GetLabels(tags));
+  ta.Set("model", model_name);
+  ta.Set("auc", auc, 7);
+  ta.Set("r2", r2, 2);
+  ta.Set("index", first_index);
+  ta.Set("iter", iterations);
+  for(auto i=0; i<params.size(); i++)
+    ta.Set("p"+syd::ToString(i), params[i], 7);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitResult::DumpInTable_history(syd::PrintTable2 & ta) const
+{
+  ta.Set("id", id);
+  ta.Set("p", timepoints->patient->name);
+  ta.Set("inj", timepoints->injection->radionuclide->name);
   syd::RecordWithHistory::DumpInTable(ta);
-  auto f = ta.GetFormat();
+  ta.Set("tp", timepoints->id);
+  ta.Set("nb", timepoints->times.size());
+  ta.Set("tags", GetLabels(tags));
+  ta.Set("model", model_name);
+  ta.Set("auc", auc);
+  ta.Set("r2", r2);
+  ta.Set("i", first_index);
+}
+// --------------------------------------------------------------------
 
-  if (f == "default") {
-    ta.Set("id", id);
-    ta.Set("p", timepoints->patient->name);
-    ta.Set("m", (timepoints->mask == NULL ? "no_mask":timepoints->mask->roitype->name));
-    ta.Set("inj", timepoints->injection->radionuclide->name);
-    ta.Set("tp", timepoints->id);
-    ta.Set("nb", timepoints->times.size());
-    ta.Set("tags", GetLabels(tags));
-    ta.Set("model", model_name);
-    ta.Set("auc", auc);
-    ta.Set("r2", r2);
-    ta.Set("index", first_index);
-    ta.Set("iter", iterations);
 
-    // Add additional column if the nb of values for this record is larger than the previous
-    int nb_col = 12;
-    int previous_nb = (ta.GetNumberOfColumns()-nb_col);
-    for(auto i=previous_nb; i<params.size(); i++) {
-      ta.AddColumn("p"+syd::ToString(i), 1);
-    }
+// --------------------------------------------------------------------
+void syd::FitResult::DumpInTable_md5(syd::PrintTable2 & ta) const
+{
 
-    for(auto i=0; i<params.size(); i++)
-      ta.Set("p"+syd::ToString(i), params[i]);
-  }
-
-  if (f == "history") {
-    ta.Set("id", id);
-    ta.Set("p", timepoints->patient->name);
-    ta.Set("inj", timepoints->injection->radionuclide->name);
-    syd::RecordWithHistory::DumpInTable(ta);
-    ta.AddColumn("id");
-    syd::RecordWithHistory::InitTable(ta);
-    ta.Set("tp", timepoints->id);
-    ta.Set("nb", timepoints->times.size());
-    ta.Set("tags", GetLabels(tags));
-    ta.Set("model", model_name);
-    ta.Set("auc", auc);
-    ta.Set("r2", r2);
-    ta.Set("i", first_index);
-  }
-
-  if (f == "md5") {
-    ta.Set("id", id);
-    ta.Set("p", timepoints->patient->name);
-    ta.Set("inj", timepoints->injection->radionuclide->name);
-    ta.Set("tags", GetLabels(tags));
-    ta.Set("tp", timepoints->id);
-    ta.Set("nb", timepoints->times.size());
-    syd::RecordWithMD5Signature::DumpInTable(ta);
-  }
+  ta.Set("id", id);
+  ta.Set("p", timepoints->patient->name);
+  ta.Set("inj", timepoints->injection->radionuclide->name);
+  ta.Set("tags", GetLabels(tags));
+  ta.Set("tp", timepoints->id);
+  ta.Set("nb", timepoints->times.size());
+  syd::RecordWithMD5Signature::DumpInTable(ta);
 }
 // --------------------------------------------------------------------
 

@@ -77,25 +77,8 @@ void syd::Patient::Set(const std::string & pname,
 
 
 // --------------------------------------------------
-void syd::Patient::InitTable(syd::PrintTable & ta) const
+void syd::Patient::DumpInTable(syd::PrintTable2 & ta) const
 {
-  ta.AddFormat("injection", "Display nb of associated injections");
-
-  ta.AddColumn("id");
-  ta.AddColumn("p");
-  ta.AddColumn("sid");
-  ta.AddColumn("w(kg)");
-  ta.AddColumn("dicom");
-  ta.AddColumn("injection");
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Patient::DumpInTable(syd::PrintTable & ta) const
-{
-  auto f = ta.GetFormat();
-
   ta.Set("id",id);
   ta.Set("p", name);
   ta.Set("sid", study_id);

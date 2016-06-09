@@ -79,11 +79,11 @@ namespace syd {
     /// Callback
     void Callback(odb::callback_event, odb::database&);
 
-    /// Initialise a PrintTable
-    virtual void InitTable(syd::PrintTable & table) const;
-
     /// Add a line in the given PrintTable
-    virtual void DumpInTable(syd::PrintTable & table) const;
+    virtual void DumpInTable(syd::PrintTable2 & table) const;
+    virtual void DumpInTable_default(syd::PrintTable2 & table) const;
+    virtual void DumpInTable_md5(syd::PrintTable2 & table) const;
+    virtual void DumpInTable_history(syd::PrintTable2 & table) const;
 
     /// Check if the history are ok
     virtual syd::CheckResult Check() const; //FIXME

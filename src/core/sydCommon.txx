@@ -34,10 +34,11 @@ std::string ToString(const T & t)
 template<class T, int N>
 std::string ArrayToString(const std::array<T, N> & t, int precision)
 {
-  std::ostringstream myStream;
-  for(auto i=0; i<N-1; i++) myStream << std::fixed << std::setprecision(precision) << t[i] << "x";
-  myStream << std::setprecision(precision) << t[N-1] << std::flush;
-  return(myStream.str());
+  std::ostringstream os;
+  os << std::fixed << std::setprecision(precision);
+  for(auto i=0; i<N-1; i++) os << t[i] << "x";
+  os << t[N-1];// << std::flush;
+  return(os.str());
 }
 //--------------------------------------------------------------------
 

@@ -21,7 +21,8 @@
 
 // syd
 #include "sydCommon.h"
-#include "sydPrintTable.h"
+#include "sydPrintTable.h" // FIXME to remove
+//#include "sydPrintTable2.h"
 #include "sydCheckResult.h"
 #include "sydVersion.h"
 
@@ -33,6 +34,7 @@
 namespace syd {
 
   class Database;
+  class PrintTable2;
 
   /// Base class for all record (or element, or row) in a table
 #pragma db object abstract pointer(std::shared_ptr) callback(Callback)
@@ -70,6 +72,7 @@ namespace syd {
 
     /// Add a line in the given PrintTable
     virtual void DumpInTable(syd::PrintTable & table) const;
+    virtual void DumpInTable(syd::PrintTable2 & table) const;
 
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const = 0;
