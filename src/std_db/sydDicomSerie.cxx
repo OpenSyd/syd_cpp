@@ -106,44 +106,6 @@ void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------
-/*void syd::DicomSerie::InitTable(syd::PrintTable & ta) const
-  {
-  ta.AddFormat("details", "Print image details");
-  ta.AddFormat("file", "Print first dicom filename (slow!)");
-
-  auto & f = ta.GetFormat();
-
-  if (f == "file") {
-  ta.AddColumn("id");
-  ta.AddColumn("path", 120);
-  }
-  if (f == "default") {
-  ta.AddColumn("id");
-  ta.AddColumn("p");
-  ta.AddColumn("inj");
-  ta.AddColumn("mod");
-  ta.AddColumn("acqui_date");
-  ta.AddColumn("recon_date");
-  auto & c = ta.AddColumn("description", 100);
-  c.trunc_by_end_flag = true;
-  }
-  if (f == "details") {
-  ta.AddColumn("id");
-  ta.AddColumn("p");
-  ta.AddColumn("inj");
-  ta.AddColumn("mod");
-  ta.AddColumn("acqui_date");
-  ta.AddColumn("recon_date");
-  ta.AddColumn("size");
-  ta.AddColumn("spacing");
-  ta.AddColumn("duration(s)",1);
-  ta.AddColumn("scale",3);
-  }
-  }*/
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::DicomSerie::DumpInTable(syd::PrintTable2 & ta) const
 {
   auto format = ta.GetFormat();
