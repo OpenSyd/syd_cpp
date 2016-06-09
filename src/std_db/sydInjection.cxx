@@ -86,20 +86,7 @@ void syd::Injection::Set(const std::vector<std::string> & args)
 
 
 // --------------------------------------------------
-void syd::Injection::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddColumn("id");
-  ta.AddColumn("p");
-  ta.AddColumn("rad");
-  ta.AddColumn("date");
-  auto & col = ta.AddColumn("A(MBq)");
-  col.precision = 2;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Injection::DumpInTable(syd::PrintTable & ta) const
+void syd::Injection::DumpInTable(syd::PrintTable2 & ta) const
 {
   std::string pname = "unset";
   if (patient != NULL) pname = patient->name;
@@ -109,7 +96,7 @@ void syd::Injection::DumpInTable(syd::PrintTable & ta) const
   ta.Set("p", pname);
   ta.Set("rad", rad);
   ta.Set("date", date);
-  ta.Set("A(MBq)", activity_in_MBq);
+  ta.Set("A(MBq)", activity_in_MBq, 2);
 }
 // --------------------------------------------------
 

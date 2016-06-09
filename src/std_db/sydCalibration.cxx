@@ -53,22 +53,7 @@ std::string syd::Calibration::ToString() const
 
 
 // --------------------------------------------------
-void syd::Calibration::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddColumn("id");
-  ta.AddColumn("p");
-  ta.AddColumn("image");
-  ta.AddColumn("tags");
-  auto & c = ta.AddColumn("factor");
-  c.precision = 8;
-  auto & cc = ta.AddColumn("fov_ratio");
-  cc.precision = 3;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Calibration::DumpInTable(syd::PrintTable & ta) const
+void syd::Calibration::DumpInTable(syd::PrintTable2 & ta) const
 {
   std::string iname;
   std::string pname;
@@ -82,7 +67,7 @@ void syd::Calibration::DumpInTable(syd::PrintTable & ta) const
   ta.Set("p", pname);
   ta.Set("image", iname);
   ta.Set("tags", GetLabels(tags));
-  ta.Set("factor", factor);
-  ta.Set("fov_ratio", fov_ratio);
+  ta.Set("factor", factor, 8);
+  ta.Set("fov_ratio", fov_ratio, 3);
 }
 // --------------------------------------------------

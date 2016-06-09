@@ -57,36 +57,6 @@ void syd::RecordWithHistory::Callback(odb::callback_event event,
 
 
 // --------------------------------------------------------------------
-void syd::RecordWithHistory::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddFormat("history", "Display the history of the records");
-  auto & f = ta.GetFormat();
-  if (f == "history") {
-    ta.AddColumn("inserted");
-    ta.AddColumn("updated");
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::RecordWithHistory::DumpInTable(syd::PrintTable & ta) const
-{
-  auto & f = ta.GetFormat();
-  if (f == "history") {
-    if (history == NULL) {
-      LOG(WARNING) << "Error no history ?";
-      ta.Set("inserted", "NULL");
-      ta.Set("updated", "NULL");
-    }
-    ta.Set("inserted", history->insertion_date);
-    ta.Set("updated", history->update_date);
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::RecordWithHistory::DumpInTable(syd::PrintTable2 & ta) const
 {
   if (history == NULL) {

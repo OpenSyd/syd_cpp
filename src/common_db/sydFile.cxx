@@ -18,8 +18,8 @@
 
 // syd
 #include "sydFile.h"
-//#include "sydStandardDatabase.h"
 #include "sydDatabase.h"
+#include "sydPrintTable2.h"
 
 // --------------------------------------------------------------------
 syd::File::File():syd::Record()
@@ -85,38 +85,49 @@ std::string syd::File::GetAbsolutePath(const syd::Database * db) const
 
 
 // --------------------------------------------------------------------
-void syd::File::InitTable(syd::PrintTable & ta) const
+void syd::File::DumpInTable(syd::PrintTable2 & ta) const
 {
-  ta.AddFormat("md5", "Display the md5 value");
-  ta.AddFormat("file", "Display the complete image path");
+  auto format = ta.GetFormat();
 
-  auto & f = ta.GetFormat();
-  ta.AddColumn("id");
-
-  if (f == "default" or f == "md5") {
-    ta.AddColumn("filename");
-    ta.AddColumn("folder");
-    if (f == "md5") ta.AddColumn("md5");
-    else ta.AddColumn("md5?");
+  // format: default, md5, path
+  if (format == "default") DumpInTable_default(ta);
+  else if (format == "file") DumpInTable_file(ta);
+  else if (format == "md5") DumpInTable_md5(ta);
+    else {
+    ta.AddFormat("default", "id, date, tags, size etc");
+    ta.AddFormat("file", "with complete filename");
+    ta.AddFormat("md5", "with md5 value");
   }
-  if (f == "file") ta.AddColumn("file");
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::File::DumpInTable(syd::PrintTable & ta) const
+void syd::File::DumpInTable_default(syd::PrintTable2 & ta) const
 {
-  auto & f = ta.GetFormat();
   ta.Set("id", id);
-  if (f == "default" or f == "md5") {
-    ta.Set("filename", filename);
-    ta.Set("folder", path);
-    if (f == "md5") ta.Set("md5", md5);
-    else ta.Set("md5?", (md5=="unset" ? "no_md5":"md5"));
-  }
-  if (f == "file")
-    ta.Set("file", std::string(path+PATH_SEPARATOR+filename));
+  ta.Set("md5?", (md5=="unset" ? "no_md5":"md5"));
+  ta.Set("filename", filename, 100);
+  ta.Set("folder", path);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::File::DumpInTable_md5(syd::PrintTable2 & ta) const
+{
+  ta.Set("id", id);
+  ta.Set("md5", md5);
+  ta.Set("filename", filename, 100);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::File::DumpInTable_file(syd::PrintTable2 & ta) const
+{
+  ta.Set("id", id);
+  ta.Set("path", std::string(path+PATH_SEPARATOR+filename), 100);
 }
 // --------------------------------------------------------------------
 

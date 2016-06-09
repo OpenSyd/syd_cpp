@@ -86,7 +86,7 @@ void syd::PrintTable2::Print(std::ostream & os)
        << "# Find " << nb_of_rows
        << " elements in table: ";
     for(auto t:table_names_) os << t << " ";
-    os << std::endl  << "# ";
+    os << std::endl;
     for(auto i:indices)
       columns_[i]->DumpHeader(os);
     os << resetColor << std::endl;

@@ -18,6 +18,7 @@
 
 // syd
 #include "sydRadionuclide.h"
+#include "sydPrintTable2.h"
 
 // --------------------------------------------------------------------
 syd::Radionuclide::Radionuclide():syd::Record()
@@ -46,32 +47,16 @@ std::string syd::Radionuclide::ToString() const
 
 
 // --------------------------------------------------
-void syd::Radionuclide::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddColumn("id");
-  ta.AddColumn("name");
-  ta.AddColumn("HL(h)",2);
-  ta.AddColumn("element");
-  ta.AddColumn("Z");
-  ta.AddColumn("A");
-  ta.AddColumn("metastable");
-  auto & col = ta.AddColumn("Q-(keV)");
-  col.precision = 2;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Radionuclide::DumpInTable(syd::PrintTable & ta) const
+void syd::Radionuclide::DumpInTable(syd::PrintTable2 & ta) const
 {
   ta.Set("id", id);
   ta.Set("name", name);
-  ta.Set("HL(h)", half_life_in_hours);
+  ta.Set("HL(h)", half_life_in_hours, 2);
   ta.Set("element", element);
-  ta.Set("Z", atomic_number);
-  ta.Set("A", mass_number);
+  ta.Set("Z", atomic_number, 0);
+  ta.Set("A", mass_number, 0);
   ta.Set("metastable", (metastable? "Y":"N"));
-  ta.Set("Q-(keV)", max_beta_minus_energy_in_kev);
+  ta.Set("Q-(keV)", max_beta_minus_energy_in_kev, 2);
 }
 // --------------------------------------------------
 

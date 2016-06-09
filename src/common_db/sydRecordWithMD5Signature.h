@@ -45,11 +45,8 @@ namespace syd {
     /// Need to be overloaded: compute a string for the MD5 signature
     virtual std::string ToStringForMD5() const = 0;
 
-    /// Add the format "md5"
-    virtual void InitTable(syd::PrintTable & table) const;
-
     /// Complete the print format "md5"
-    virtual void DumpInTable(syd::PrintTable & table) const;
+    virtual void DumpInTable(syd::PrintTable2 & table) const;
 
     /// Add and update the MD5 signature
     virtual void Callback(odb::callback_event,

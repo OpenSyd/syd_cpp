@@ -53,6 +53,7 @@ namespace syd {
 
 #pragma db not_null
     /// Foreign key, it must exist in the Injection table (could be a 'fake' injection)
+    // FIXME --> no null to remove !
     syd::Injection::pointer injection;
 
     /// List of associated files (will be deleted when the image is deleted)
@@ -127,10 +128,10 @@ namespace syd {
     void FatalIfNoDicom() const;
 
     /// Initialise a PrintTable
-    virtual void InitTable(syd::PrintTable & table) const;
+    //virtual void InitTable(syd::PrintTable & table) const;
 
     /// Add a line in the given PrintTable
-    virtual void DumpInTable(syd::PrintTable & table) const;
+    ///    virtual void DumpInTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable2 & table) const;
     virtual void DumpInTable_default(syd::PrintTable2 & table) const;
     virtual void DumpInTable_short(syd::PrintTable2 & table) const;

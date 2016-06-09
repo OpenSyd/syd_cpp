@@ -92,21 +92,7 @@ std::string syd::ImageTransform::ComputeRelativeFolder() const
 
 
 // --------------------------------------------------
-void syd::ImageTransform::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddColumn("id");
-  ta.AddColumn("p");
-  ta.AddColumn("fixed");
-  ta.AddColumn("moving");
-  ta.AddColumn("config");
-  ta.AddColumn("date");
-  ta.AddColumn("ref_frame");
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::ImageTransform::DumpInTable(syd::PrintTable & ta) const
+void syd::ImageTransform::DumpInTable(syd::PrintTable2 & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", fixed_image->patient->name);

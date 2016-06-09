@@ -48,7 +48,7 @@ namespace syd {
     void SetMaxWidth(int w) { max_width_ = w; }
 
     // Set the precision for floating point values
-    int SetPrecision(int i);
+    void SetPrecision(int i);
 
     // Get the column name
     std::string GetName() const { return name_; }

@@ -59,8 +59,7 @@ namespace syd {
     virtual void Callback(odb::callback_event, odb::database&) const;
     virtual void Callback(odb::callback_event, odb::database&);
 
-    virtual void InitTable(syd::PrintTable & table) const;
-    virtual void DumpInTable(syd::PrintTable & table) const;
+    virtual void DumpInTable(syd::PrintTable2 & table) const;
 
     double GetLambdaInHours() const;
 

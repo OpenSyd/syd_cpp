@@ -35,7 +35,7 @@ syd::PrintTableColumnInfo::PrintTableColumnInfo(int i)
 
 
 //--------------------------------------------------------------------
-int syd::PrintTableColumnInfo::SetPrecision(int i)
+void syd::PrintTableColumnInfo::SetPrecision(int i)
 {
   precision_ = i;
   use_user_precision_ = true;
@@ -94,7 +94,7 @@ void syd::PrintTableColumnInfo::UpdateWidth(const std::string & v)
 std::string syd::PrintTableColumnInfo::GetStringValue(double value, int precision)
 {
   std::ostringstream os;
-  if (precision != -1 and !use_user_precision_) precision_ = precision_;
+  if (precision != -1 and !use_user_precision_) precision_ = precision;
   os << std::fixed << std::setprecision(precision_) << value;
   return os.str();
 }
@@ -105,7 +105,7 @@ std::string syd::PrintTableColumnInfo::GetStringValue(double value, int precisio
 void syd::PrintTableColumnInfo::DumpHeader(std::ostream & os)
 {
   std::ostringstream temp;
-  temp << index_+1 << " " << name_ << "  "; // two spaces because start with #
+  temp << "#" << index_+1 << " " << name_;// << "  "; // two spaces because start with #
   auto s = temp.str();
   UpdateWidth(s);
   os << std::setw(width_) << s;

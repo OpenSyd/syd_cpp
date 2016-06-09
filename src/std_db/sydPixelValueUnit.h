@@ -45,8 +45,8 @@ namespace syd {
     virtual std::string ToString() const;
 
     void Set(const std::vector<std::string> & arg);
-    virtual void InitTable(syd::PrintTable & table) const;
-    virtual void DumpInTable(syd::PrintTable & table) const;
+
+    virtual void DumpInTable(syd::PrintTable2 & table) const;
 
   protected:
     PixelValueUnit();
