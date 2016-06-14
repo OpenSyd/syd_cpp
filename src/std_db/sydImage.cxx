@@ -281,61 +281,9 @@ void syd::Image::DumpInTable_file(syd::PrintTable2 & ta) const
 void syd::Image::DumpInTable_filelist(syd::PrintTable2 & ta) const
 {
   ta.SetSingleRowFlag(true);
-  ta.Set("file", files[0]->GetAbsolutePath(db_), 100);
+  ta.SetHeaderFlag(false);
+  ta.Set("file", files[0]->GetAbsolutePath(db_), 500);
 }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-// void syd::Image::DumpInTable(syd::PrintTable & ta) const
-// {
-//   syd::RecordWithHistory::DumpInTable(ta);
-//   auto f = ta.GetFormat();
-
-//   if (f == "default") {
-//     ta.Set("id", id);
-//     ta.Set("p", patient->name);
-//     ta.Set("inj", injection->radionuclide->name);
-//     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
-//     else ta.Set("acqui_date", dicoms[0]->acquisition_date);
-//     ta.Set("tags", GetLabels(tags));
-//     ta.Set("size", syd::ArrayToString<int, 3>(size));
-//     ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
-//     std::string dicom;
-//     for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
-//     if (dicom.size() != 0) dicom.pop_back(); // remove last space
-//     ta.Set("dicom", dicom);
-//     if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
-//     ta.Set("ref_frame", frame_of_reference_uid);
-//   }
-
-//   if (f == "timing") {
-//     ta.Set("id", id);
-//     ta.Set("p", patient->name);
-//     ta.Set("tags", GetLabels(tags));
-//     double t = GetHoursFromInjection();
-//     ta.Set("t", t);
-//   }
-
-//   if (f == "history") {
-//     ta.Set("id", id);
-//     ta.Set("p", patient->name);
-//     if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
-//     else ta.Set("acqui_date", dicoms[0]->acquisition_date);
-//     ta.Set("tags", GetLabels(tags));
-//     if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
-//     ta.Set("ref_frame", frame_of_reference_uid);
-//   }
-
-//   if (f == "file") {
-//     ta.Set("id", id);
-//     if (files.size() != 0) ta.Set("file", files[0]->GetAbsolutePath(db_));
-//   }
-
-//   if (f == "filelist") {
-//     if (files.size() != 0) ta.GetCurrentOutput() << files[0]->GetAbsolutePath(db_) << " ";
-//   }
-// }
 // --------------------------------------------------
 
 

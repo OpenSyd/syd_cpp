@@ -42,7 +42,7 @@ namespace syd {
 
     // Main dump function
     void Build(syd::Record::vector::const_iterator start,
-              syd::Record::vector::const_iterator end);
+               syd::Record::vector::const_iterator end);
     void Print(std::ostream & os);
 
     void SetFormat(std::string f);
@@ -60,6 +60,7 @@ namespace syd {
     syd::PrintTableColumnInfo::pointer GetColumnInfo(std::string column_name);
     syd::PrintTableColumnInfo::pointer GetColumnInfo(int col);
     bool GetSingleRowFlag() const { return use_single_row_flag_; }
+    bool GetHeaderFlag() const { return use_header_flag_; }
 
   protected:
     std::map<std::string, int> columns_name_to_indices_;

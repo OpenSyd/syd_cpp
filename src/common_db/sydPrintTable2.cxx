@@ -55,12 +55,10 @@ void syd::PrintTable2::Build(syd::Record::vector::const_iterator start,
   // FIXME
 
   // Compute optimal column width
-  if (!use_single_row_flag_) {
-    for(auto i:indices)
-      for(auto & r:rows_) {
-        columns_[i]->UpdateWidth(r->GetValue(i));
-      }
-  }
+  for(auto i:indices)
+    for(auto & r:rows_) {
+      columns_[i]->UpdateWidth(r->GetValue(i));
+    }
 }
 //------------------------------------------------------------------
 
