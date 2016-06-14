@@ -12,28 +12,70 @@ endmacro(DD)
 
 
 #----------------------------------------------------------
-# Find ITK (required)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED on)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# Find ITK
 find_package(ITK REQUIRED)
 include(${ITK_USE_FILE})
 message(STATUS "ITK is found")
+#----------------------------------------------------------
+
 
 #----------------------------------------------------------
-# Find Boost (required)
+# Find Boost
 find_package(Boost REQUIRED date_time system filesystem serialization)
 include_directories( ${Boost_INCLUDE_DIR} )
 message(STATUS "Boost is found")
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# Find ceres
+find_package(Ceres REQUIRED)
+include_directories(${CERES_INCLUDE_DIRS})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# Find dcmtk
+find_package(DCMTK REQUIRED)
+include_directories(${DCMTK_INCLUDE_DIRS})
+# Later, in odb, we need the base include path, so we compute it here
+list(GET DCMTK_INCLUDE_DIRS 0 DCMTK_INCLUDE_DIR_BASE)
+set(DCMTK_INCLUDE_DIR_BASE ${DCMTK_INCLUDE_DIR_BASE}/../..)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# Find Odb
+find_package(ODB REQUIRED OPTIONAL_COMPONENTS sqlite)
+include(${ODB_USE_FILE})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# Find Gengetopt
+find_package(Gengetopt)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# optional plot python
+OPTION(SYD_PLOT_MODULE "Plot module (require Python)." OFF)
+IF(SYD_PLOT_MODULE)
+  find_package(PythonLibs 3 REQUIRED)
+  include_directories(${PYTHON_INCLUDE_DIR})
+ENDIF(SYD_PLOT_MODULE)
+#----------------------------------------------------------
 
 
 #----------------------------------------------------------
 # Add include directories needed to use SYD.
 include_directories(BEFORE ${SYD_INCLUDE_DIRS})
-
-## get list of include for itk (not used yet)
-set(I_ITK_INCLUDE "")
-foreach(A ${ITK_INCLUDE_DIRS})
-  set(I_ITK_INCLUDE ${I_ITK_INCLUDE} "-I" ${A})
-endforeach()
-
 
 #----------------------------------------------------------
 # Add link directories needed to use SYD.
@@ -68,12 +110,6 @@ macro(WRAP_ODB ODB_SRCS)
   endforeach(ODB_FILES)
   set_source_files_properties(${${ODB_SRCS}} PROPERTIES GENERATED TRUE)
 endmacro(WRAP_ODB)
-#----------------------------------------------------------
-
-
-#----------------------------------------------------------
-# activate c++0x or c++11
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpermissive")
 #----------------------------------------------------------
 
 
