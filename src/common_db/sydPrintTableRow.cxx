@@ -64,10 +64,12 @@ void syd::PrintTableRow::Dump(const std::vector<int> & indices,
 
   for(auto col:indices) {
     auto column = table_->GetColumnInfo(col);
-    column->InstallStreamParameters(os);
+    if (!table_->GetSingleRowFlag())
+      column->InstallStreamParameters(os);
     auto s = column->TruncateStringIfNeeded(values_[col]);
     os << s;
   }
   if (!table_->GetSingleRowFlag()) os << std::endl;
+  else os << " ";
 }
 //--------------------------------------------------------------------

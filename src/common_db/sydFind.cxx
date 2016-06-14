@@ -123,7 +123,7 @@ int main(int argc, char* argv[])
         int v = atoi(w[2].c_str());
         table.SetColumnPrecision(col, v);
       }
-      table.Print(std::cout);
+      table.Print(os);
     } catch (std::exception & e) {
       if (args_info.vv_flag or args_info.vvs_flag) {
         LOG(FATAL) << "Error, results *must* be images with filenames to be able to be open with vv"
