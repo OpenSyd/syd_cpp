@@ -84,7 +84,7 @@ void syd::Patient::DumpInTable(syd::PrintTable2 & ta) const
   ta.Set("sid", study_id);
   ta.Set("w(kg)", weight_in_kg);
   ta.Set("dicom", dicom_patientid);
-  syd::StandardDatabase* db = (syd::StandardDatabase*)(db_);
+  syd::StandardDatabase* db = dynamic_cast<syd::StandardDatabase*>(db_);
   syd::Injection::vector injections;
   odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
   db->Query(injections, q);

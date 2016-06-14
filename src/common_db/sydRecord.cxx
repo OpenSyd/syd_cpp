@@ -92,8 +92,8 @@ void syd::Record::DumpInTable(syd::PrintTable & table) const
 // --------------------------------------------------------------------
 void syd::Record::DumpInTable(syd::PrintTable2 & table) const
 {
-  DD("DumpInTable2");
-  DD(ToString());
+  LOG(WARNING) << "DumpInTable not implemented";
+  LOG(0) << ToString() << std::endl;
 }
 // --------------------------------------------------------------------
 
