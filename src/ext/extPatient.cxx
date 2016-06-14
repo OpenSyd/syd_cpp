@@ -72,16 +72,7 @@ void ext::Patient::Set(const std::string & pname,
 
 
 // --------------------------------------------------
-void ext::Patient::InitTable(syd::PrintTable & ta) const
-{
-  syd::Patient::InitTable(ta);
-  ta.AddColumn("birth");
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void ext::Patient::DumpInTable(syd::PrintTable & ta) const
+void ext::Patient::DumpInTable(syd::PrintTable2 & ta) const
 {
   syd::Patient::DumpInTable(ta);
   ta.Set("birth", birth_date);
