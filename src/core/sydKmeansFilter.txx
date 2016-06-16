@@ -38,7 +38,7 @@ void syd::KmeansFilter::RunWithDim()
   typedef itk::Statistics::WeightedCentroidKdTreeGenerator< SampleType > TreeGeneratorType;
   typename TreeGeneratorType::Pointer treeGenerator = TreeGeneratorType::New();
   treeGenerator->SetSample(sample);
-  treeGenerator->SetBucketSize(5);
+  treeGenerator->SetBucketSize(50);
   int n = treeGenerator->GetMeasurementVectorSize();
   treeGenerator->Update();
 

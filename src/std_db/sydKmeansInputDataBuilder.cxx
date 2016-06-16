@@ -70,6 +70,8 @@ void syd::KmeansInputDataBuilder::BuildInputData()
 
   PreProcessing();
 
+  syd::WriteImage<ImageType>(input_images[0], "vector-norm.mhd");
+
   // FIXME mask exist ?
 
   // FIXME check images sizes must be the same
@@ -119,6 +121,7 @@ void syd::KmeansInputDataBuilder::BuildInputData()
       //      SetValuesFromVectorImage(iter_vector_images, v, x);
 
       // Set the points
+      //if (v[0] > 0.865089 and v[0] < 0.872584)  // FIXME
       points.push_back(v);
 
       // Set the images
@@ -172,7 +175,6 @@ void syd::KmeansInputDataBuilder::AllocateOutputImage(int nb_dimensions)
 // --------------------------------------------------------------------
 void syd::KmeansInputDataBuilder::PreProcessing()
 {
-  /*
     typedef itk::MinimumMaximumImageCalculator <ImageType> ImageCalculatorFilterType;
     ImageCalculatorFilterType::Pointer imageCalculatorFilter
     = ImageCalculatorFilterType::New ();
@@ -180,7 +182,6 @@ void syd::KmeansInputDataBuilder::PreProcessing()
     imageCalculatorFilter->Compute();
     DD(imageCalculatorFilter->GetMaximum());
     DD(imageCalculatorFilter->GetMinimum());
-  */
 
   // Normalise such as zero mean and unit variance
   for(auto & im:input_images) {
@@ -190,12 +191,10 @@ void syd::KmeansInputDataBuilder::PreProcessing()
     im = fr->GetOutput();
   }
 
-  /*
     imageCalculatorFilter->SetImage(input_images[0]);
     imageCalculatorFilter->Compute();
     DD(imageCalculatorFilter->GetMaximum());
     DD(imageCalculatorFilter->GetMinimum());
-  */
 
   // Set values between [0-1]
   for(auto & im:input_images) {
@@ -207,12 +206,10 @@ void syd::KmeansInputDataBuilder::PreProcessing()
     im = fr->GetOutput();
   }
 
-  /*
     imageCalculatorFilter->SetImage(input_images[0]);
     imageCalculatorFilter->Compute();
     DD(imageCalculatorFilter->GetMaximum());
     DD(imageCalculatorFilter->GetMinimum());
-  */
 
 
 }
