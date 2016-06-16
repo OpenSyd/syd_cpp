@@ -19,6 +19,9 @@
 // syd
 #include "sydStandardDatabase.h"
 #include "sydUpdateRadionuclideFilter.h"
+#include "sydDatabaseManager.h"
+
+SYD_REGISTER_DATABASE(syd::StandardDatabase, StandardDatabase);
 
 // --------------------------------------------------------------------
 template<>

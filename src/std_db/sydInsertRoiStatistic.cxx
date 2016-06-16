@@ -24,9 +24,6 @@
 #include "sydRoiStatisticBuilder.h"
 #include "sydCommonGengetopt.h"
 
-// syd init
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {

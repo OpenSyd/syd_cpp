@@ -23,9 +23,6 @@
 #include "sydCommonGengetopt.h"
 #include "sydUpdateRadionuclideFilter.h"
 
-// syd init
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {

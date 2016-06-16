@@ -1,12 +1,4 @@
 
-
-## Needed to find sydRecord-odb.hxx
-#include_directories(${SYD_BINARY_DIR}/src/core)
-#include_directories(${SYD_BINARY_DIR}/src/common_db)
-
-# include_directories(../common_db)
-# DD(SYD_SOURCE_DIR)
-
 #----------------------------------------------------------
 # Standard database : StandardDatabase
 set(SCHEMA_NAME StandardDatabase)

@@ -25,10 +25,20 @@
 // --------------------------------------------------------------------
 syd::PluginManager * syd::PluginManager::GetInstance()
 {
-  if (singleton_ == NULL) {
-    singleton_ = new PluginManager;
-  }
+  // http://stackoverflow.com/questions/2505385/classes-and-static-variables-in-shared-libraries
+  syd::PluginManager * singleton_ = new PluginManager;
   return singleton_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::map<odb::database *, syd::Database *> &
+syd::PluginManager::GetListOfLoadedDatabases()
+{
+  // http://stackoverflow.com/questions/2505385/classes-and-static-variables-in-shared-libraries
+  static std::map<odb::database *, syd::Database *> list;
+  return list;
 }
 // --------------------------------------------------------------------
 
@@ -75,8 +85,9 @@ void syd::PluginManager::LoadInFolder(const std::string & folder)
   for(auto f=inputFiles.begin(); f != inputFiles.end(); f++) {
     std::string s(f->c_str());
     std::string fn=GetFilenameFromPath(s);
-    if (fn != "libsydCommonSchema.so" and
-        fn != "libsydCore.a") Load(s);
+    if (fn != "libsydCommonDatabase.so"
+        and fn != "libsydCommonDatabase.dylib"
+        and fn != "libsydPlot.dylib") Load(s);
   }
 }
 // --------------------------------------------------------------------
@@ -91,6 +102,8 @@ void syd::PluginManager::Load(const std::string & filename)
     return;
   }
   void * plugin;
+  LOG(10) << "(syd plugin) Opening the file "
+          << filename << " to register db schema";
   plugin = dlopen(filename.c_str(), RTLD_NOW);
   if (!plugin) {
     LOG(10) << "(syd plugin) The file '" << filename << "' is not a plugin.";

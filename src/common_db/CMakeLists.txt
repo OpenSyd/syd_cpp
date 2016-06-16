@@ -42,17 +42,8 @@ set(sydCommonDatabase_src
   sydRecordHelpers.cxx
   )
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  # with clang on osx (apple), needed for static member def
-  message(STATUS "Clang compiler found (special case for static external in shared library)")
-  add_library(sydCommonDatabase SHARED ${sydCommonDatabase_src} sydStatic.cxx )
-else()
-  # shared is needed here
-  add_library(sydCommonDatabase SHARED ${sydCommonDatabase_src})
-endif()
-
-target_link_libraries(sydCommonDatabase
-  sydCore odb-sqlite odb sqlite3 z)
+add_library(sydCommonDatabase SHARED ${sydCommonDatabase_src})
+target_link_libraries(sydCommonDatabase sydCore odb-sqlite odb sqlite3 z)
 
 #----------------------------------------------------------
 wrap_ggo(sydCreateDatabase_GGO_C sydCreateDatabase.ggo sydCommandLineDefaultWithoutDB.ggo)

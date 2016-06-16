@@ -24,6 +24,7 @@ extern "C"
 {
   void RegisterDatabaseSchema(syd::DatabaseManager * m) {
     m->RegisterDatabaseSchema<syd::StandardDatabase>("StandardDatabase");
+    // not need to check return here
   }
 }
 // --------------------------------------------------------------------

@@ -19,6 +19,7 @@
 // syd
 #include "sydDatabase.h"
 #include "sydFileUtils.h"
+#include "sydPluginManager.h"
 
 // --------------------------------------------------------------------
 // http://stackoverflow.com/questions/1607368/sql-query-logging-for-sqlite
@@ -45,7 +46,7 @@ syd::Database::~Database()
 
 
 // --------------------------------------------------------------------
-void syd::Database::Open(std::string filename)
+void syd::Database::OpenFromFile(std::string filename)
 {
   filename_ = filename;
   // Open the DB
@@ -126,7 +127,7 @@ void syd::Database::Open(std::string filename)
   CreateTables();
 
   // Register to the loaded database
-  ListOfLoadedDatabases[odb_db_] = this;
+  syd::PluginManager::GetListOfLoadedDatabases()[odb_db_] = this;
 }
 // --------------------------------------------------------------------
 

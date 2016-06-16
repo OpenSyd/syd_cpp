@@ -25,9 +25,6 @@
 #include "sydTimepointsBuilder.h"
 #include "sydRecordHelpers.h"
 
-// Init syd
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -42,8 +39,8 @@ int main(int argc, char* argv[])
   // ------------------------------------------------------------------
   // test
   if (1) {
-    auto images = db->FindImages("t");
-    DDS(images);
+    auto images = db->FindImages("8");
+    DD(images[0]);
   }
 
   // ------------------------------------------------------------------

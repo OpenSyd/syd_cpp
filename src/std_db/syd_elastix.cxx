@@ -27,9 +27,6 @@
 #include "boost/date_time/posix_time/posix_time.hpp"
 namespace pt = boost::posix_time;
 
-// syd init
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 syd::RoiMaskImage::pointer
 FindRoiMaskImage(const syd::StandardDatabase * db,

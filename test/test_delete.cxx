@@ -24,9 +24,6 @@
 #include "test_insert_injections.h"
 #include "test_insert_dicoms.h"
 
-// Init syd
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {

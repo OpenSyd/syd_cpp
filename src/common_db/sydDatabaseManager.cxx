@@ -21,9 +21,13 @@
 #include "sydDatabaseSchemaName-odb.hxx"
 #include "sydException.h"
 
+//syd::DatabaseManager * syd::DatabaseManager::singleton_;
+
 // --------------------------------------------------------------------
 syd::DatabaseManager * syd::DatabaseManager::GetInstance()
 {
+  // http://stackoverflow.com/questions/2505385/classes-and-static-variables-in-shared-libraries
+  static syd::DatabaseManager * singleton_ = NULL;
   if (singleton_ == NULL) {
     singleton_ = new DatabaseManager;
     std::set_terminate(syd::terminateHandler);

@@ -29,9 +29,6 @@
 using namespace boost::gregorian;
 namespace pt = boost::posix_time;
 
-// syd init
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {

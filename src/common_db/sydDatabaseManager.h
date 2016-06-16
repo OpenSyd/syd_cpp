@@ -27,13 +27,6 @@
 namespace syd {
 
   //--------------------------------------------------------------------
-  // Static declaration To be include in main
-#define SYD_STATIC_INIT                                                 \
-  syd::DatabaseManager * syd::DatabaseManager::singleton_;              \
-  syd::PluginManager * syd::PluginManager::singleton_;                  \
-  std::map<odb::database *, syd::Database *> syd::Database::ListOfLoadedDatabases;
-
-  //--------------------------------------------------------------------
   /// Manage a set of database schema. Allow to read and create.
   class DatabaseManager {
   public:
@@ -62,11 +55,7 @@ namespace syd {
   protected:
     /// Purposely protected, only a single instance possible
     DatabaseManager() {}
-
-    /// Unique instance (singleton). Because it is static, main must
-    /// declare it only once, with : "syd::DatabaseManager *
-    /// syd::DatabaseManager::singleton_;"
-    static DatabaseManager * singleton_;
+    ~DatabaseManager() { }
 
     /// List of map between db types and db creators
     std::map<std::string, DatabaseCreatorBase*> db_map_;
@@ -75,6 +64,14 @@ namespace syd {
     std::vector<std::string> db_schema_names_;
 
   };
+
+  // This macro must be used in the .cxx file of a new type of
+  // database to register it to the list of known db type. When used
+  // as a plugin a mecanism is used to prevent registering two times
+  // the class.
+#define SYD_REGISTER_DATABASE(classname, name)                          \
+  static syd::DatabaseCreator<classname> * name ## _static_registration \
+  = syd::DatabaseManager::GetInstance()->RegisterDatabaseSchema<classname>(#name);
 
 #include "sydDatabaseManager.txx"
 

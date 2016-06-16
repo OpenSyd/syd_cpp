@@ -22,7 +22,7 @@ template<class DatabaseType>
 Database * syd::DatabaseCreator<DatabaseType>::Open(std::string filename)
 {
   syd::Database * db = new DatabaseType();
-  db->Open(filename);
+  db->OpenFromFile(filename);
   return db;
 }
 // --------------------------------------------------------------------

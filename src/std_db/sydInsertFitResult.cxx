@@ -35,9 +35,6 @@
 // std
 #include <algorithm>
 
-// syd init
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {

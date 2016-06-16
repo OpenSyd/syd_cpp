@@ -24,9 +24,6 @@
 #include "sydCommonGengetopt.h"
 #include "sydTimeIntegratedActivityImageBuilder.h"
 
-// syd init
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {

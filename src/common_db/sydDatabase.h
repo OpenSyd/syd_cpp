@@ -284,16 +284,13 @@ namespace syd {
     /// Return the map that contains the association between names and tables
     const MapOfTablesType & GetMapOfTables() const { return map_; }
 
-    /// Store a list of all loaded database (to be able to retrive the db from a record)
-    static std::map<odb::database *, syd::Database *> ListOfLoadedDatabases;
-
     // ----------------------------------------------------------------------------------
     protected:
     // Create an empty database
     Database();
 
     /// Main function to open a database
-    void Open(std::string filename);
+    void OpenFromFile(std::string filename);
 
     /// Must be overwritten by concrete classes.
     virtual void CreateTables() = 0;
