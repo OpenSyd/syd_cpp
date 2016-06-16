@@ -102,7 +102,7 @@ void syd::Record::DumpInTable(syd::PrintTable2 & table) const
 // --------------------------------------------------------------------
 void syd::Record::SetDatabasePointer(odb::callback_event event, odb::database & d) const
 {
-  auto list = syd::PluginManager::GetListOfLoadedDatabases();
+  auto list = syd::DatabaseManager::GetListOfLoadedDatabases();
   auto search = list.find(&d);
   if (search == list.end()) {
     LOG(FATAL) << "Error during callback in an object " << GetTableName()

@@ -33,17 +33,6 @@ syd::PluginManager * syd::PluginManager::GetInstance()
 
 
 // --------------------------------------------------------------------
-std::map<odb::database *, syd::Database *> &
-syd::PluginManager::GetListOfLoadedDatabases()
-{
-  // http://stackoverflow.com/questions/2505385/classes-and-static-variables-in-shared-libraries
-  static std::map<odb::database *, syd::Database *> list;
-  return list;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::PluginManager::Load()
 {
   char * env = getenv ("SYD_PLUGIN");

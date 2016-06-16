@@ -38,6 +38,17 @@ syd::DatabaseManager * syd::DatabaseManager::GetInstance()
 
 
 // --------------------------------------------------------------------
+std::map<odb::database *, syd::Database *> &
+syd::DatabaseManager::GetListOfLoadedDatabases()
+{
+  // http://stackoverflow.com/questions/2505385/classes-and-static-variables-in-shared-libraries
+  static std::map<odb::database *, syd::Database *> list;
+  return list;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::Database * syd::DatabaseManager::Open(std::string filename)
 {
   // Get the real filename from the environment variable is filename is 'default'

@@ -52,6 +52,9 @@ namespace syd {
     template<class DatabaseSchema>
     DatabaseCreator<DatabaseSchema> * RegisterDatabaseSchema(const std::string & type);
 
+    /// Store a list of all loaded database (to be able to retrive the db from a record)
+    static std::map<odb::database *, syd::Database *> & GetListOfLoadedDatabases();
+
   protected:
     /// Purposely protected, only a single instance possible
     DatabaseManager() {}

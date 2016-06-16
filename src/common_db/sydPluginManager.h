@@ -31,9 +31,6 @@ namespace syd {
     /// Retrieve the unique instance (singleton)
     static PluginManager * GetInstance();
 
-    /// Store a list of all loaded database (to be able to retrive the db from a record)
-    static std::map<odb::database *, syd::Database *> & GetListOfLoadedDatabases();
-
     void LoadInFolder(const std::string & folder);
     void Load(const std::string & filename);
     void Load();

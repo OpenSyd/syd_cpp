@@ -127,7 +127,7 @@ void syd::Database::OpenFromFile(std::string filename)
   CreateTables();
 
   // Register to the loaded database
-  syd::PluginManager::GetListOfLoadedDatabases()[odb_db_] = this;
+  syd::DatabaseManager::GetListOfLoadedDatabases()[odb_db_] = this;
 }
 // --------------------------------------------------------------------
 
