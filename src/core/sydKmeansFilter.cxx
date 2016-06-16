@@ -51,8 +51,10 @@ void syd::KmeansFilter::Run()
   if (n == 3) RunWithDim<3>();
   if (n == 4) RunWithDim<4>();
   if (n == 5) RunWithDim<5>();
-  if (n > 5) {
-    LOG(FATAL) << "error dim" << n;
+  if (n == 6) RunWithDim<6>();
+  if (n == 7) RunWithDim<7>();
+  if (n > 7) {
+    LOG(FATAL) << "error dim " << n << " not enough template in sydKmeansFilter";
     exit(0);
   }
 }

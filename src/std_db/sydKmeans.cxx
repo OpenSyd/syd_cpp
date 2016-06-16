@@ -34,15 +34,16 @@ int main(int argc, char* argv[])
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
-  syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
+  syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Input points
   std::string points_filename = args_info.inputs[0];
   auto points = syd::NDimPoints::New();
   points->Load(points_filename);
+  DD(points_filename);
 
   // typedef
   typedef syd::KmeansFilter::ImageType ImageType;

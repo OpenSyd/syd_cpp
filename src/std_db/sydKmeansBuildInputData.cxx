@@ -58,6 +58,15 @@ int main(int argc, char* argv[])
   syd::Image::pointer params;
   db->QueryOne(params, id);
 
+  syd::Image::vector images;
+  for(auto i=4; i<args_info.inputs_num; i++) {
+    DD(i);
+    id = atoi(args_info.inputs[3]);
+    syd::Image::pointer im;
+    db->QueryOne(im, id);
+    images.push_back(im);
+  }
+
   // list of features
   std::vector<int> features;
   for(auto i=0; i<args_info.features_given; i++)
@@ -80,6 +89,10 @@ int main(int argc, char* argv[])
     if (f==3) indices.push_back(1);
     if (f==4) indices.push_back(2);
     if (f==5) indices.push_back(3);
+    if (f>5) {
+      DD(f-6);
+      builder.AddInput(syd::ReadImage<ImageType>(db->GetAbsolutePath(images[f-6])));
+    }
   }
   builder.AddInput(syd::ReadImage<Image4DType>(db->GetAbsolutePath(params)), indices);
 

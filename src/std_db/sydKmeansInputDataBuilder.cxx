@@ -22,6 +22,7 @@
 // itk
 #include <itkRescaleIntensityImageFilter.h>
 #include <itkNormalizeImageFilter.h>
+#include <itkMinimumMaximumImageCalculator.h>
 
 // --------------------------------------------------------------------
 syd::KmeansInputDataBuilder::KmeansInputDataBuilder()
@@ -65,6 +66,8 @@ void syd::KmeansInputDataBuilder::AddInput(Image4DType::Pointer image,
 // --------------------------------------------------------------------
 void syd::KmeansInputDataBuilder::BuildInputData()
 {
+  InsertVectorImagesAsImages();
+
   PreProcessing();
 
   // FIXME mask exist ?
@@ -94,8 +97,8 @@ void syd::KmeansInputDataBuilder::BuildInputData()
 
   // Get nb of dimensions
   nb_dimensions = input_images.size();
-  for(auto n:input_vector_images_offsets) nb_dimensions += n.size();
-  points.SetPointDimension(nb_dimensions);
+  //  for(auto n:input_vector_images_offsets) nb_dimensions += n.size();
+  //points.SetPointDimension(nb_dimensions);
 
   // Declare output image and iterator
   AllocateOutputImage(nb_dimensions);
@@ -113,7 +116,7 @@ void syd::KmeansInputDataBuilder::BuildInputData()
         v[x] = a.Get();
         x++;
       }
-      SetValuesFromVectorImage(iter_vector_images, v, x);
+      //      SetValuesFromVectorImage(iter_vector_images, v, x);
 
       // Set the points
       points.push_back(v);
@@ -146,7 +149,7 @@ void syd::KmeansInputDataBuilder::SetValuesFromVectorImage(const std::vector<Pix
     // DDS(offsets);
     for(auto n:offsets) { // loop on the nb of dimension to get
       auto p = iter+n; // jump with offset
-      v[x] = *p; // get the value
+      v[x] = *p;
       x++; // increment current vector
     }
   }
@@ -169,6 +172,31 @@ void syd::KmeansInputDataBuilder::AllocateOutputImage(int nb_dimensions)
 // --------------------------------------------------------------------
 void syd::KmeansInputDataBuilder::PreProcessing()
 {
+  /*
+    typedef itk::MinimumMaximumImageCalculator <ImageType> ImageCalculatorFilterType;
+    ImageCalculatorFilterType::Pointer imageCalculatorFilter
+    = ImageCalculatorFilterType::New ();
+    imageCalculatorFilter->SetImage(input_images[0]);
+    imageCalculatorFilter->Compute();
+    DD(imageCalculatorFilter->GetMaximum());
+    DD(imageCalculatorFilter->GetMinimum());
+  */
+
+  // Normalise such as zero mean and unit variance
+  for(auto & im:input_images) {
+    auto fr = itk::NormalizeImageFilter<ImageType, ImageType>::New();
+    fr->SetInput(im);
+    fr->Update();
+    im = fr->GetOutput();
+  }
+
+  /*
+    imageCalculatorFilter->SetImage(input_images[0]);
+    imageCalculatorFilter->Compute();
+    DD(imageCalculatorFilter->GetMaximum());
+    DD(imageCalculatorFilter->GetMinimum());
+  */
+
   // Set values between [0-1]
   for(auto & im:input_images) {
     auto fr = itk::RescaleIntensityImageFilter<ImageType>::New();
@@ -179,12 +207,61 @@ void syd::KmeansInputDataBuilder::PreProcessing()
     im = fr->GetOutput();
   }
 
-  // Normalise such as zero mean and unit variance
-  for(auto & im:input_images) {
-    auto fr = itk::NormalizeImageFilter<ImageType, ImageType>::New();
-    fr->SetInput(im);
-    fr->Update();
-    im = fr->GetOutput();
+  /*
+    imageCalculatorFilter->SetImage(input_images[0]);
+    imageCalculatorFilter->Compute();
+    DD(imageCalculatorFilter->GetMaximum());
+    DD(imageCalculatorFilter->GetMinimum());
+  */
+
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::KmeansInputDataBuilder::InsertVectorImagesAsImages()
+{
+  DDF();
+
+  for(auto i=0; i<input_vector_images.size(); i++) {
+    auto & vimg = input_vector_images[i];
+    auto offsets = input_vector_images_offsets[i];
+    for(auto offset:offsets) {
+
+      DD(offset);
+
+      // Create a 3D image
+      ImageType::Pointer image = ImageType::New();
+      auto spacing = image->GetSpacing();
+      for(auto i=0; i<3; i++) spacing[i] = vimg->GetSpacing()[i];
+      image->SetSpacing(spacing);
+      auto origin = image->GetOrigin();
+      for(auto i=0; i<3; i++) origin[i] = vimg->GetOrigin()[i];
+      image->SetOrigin(origin);
+      auto region = image->GetLargestPossibleRegion();
+      auto index = region.GetIndex();
+      auto size = region.GetSize();
+      for(auto i=0; i<3; i++) index[i] = vimg->GetLargestPossibleRegion().GetIndex()[i];
+      for(auto i=0; i<3; i++) size[i] = vimg->GetLargestPossibleRegion().GetSize()[i];
+      region.SetSize(size);
+      region.SetIndex(index);
+      image->SetRegions(region);
+      image->Allocate();
+
+      // Copy pixel
+      PixelType *iter_vector_image = vimg->GetBufferPointer() + offset;
+      IteratorType iter_output(image, image->GetLargestPossibleRegion());
+      iter_output.GoToBegin();
+      while (!iter_output.IsAtEnd()) {
+        iter_output.Set(*iter_vector_image);
+        ++iter_output;
+        ++iter_vector_image;
+      }
+      syd::WriteImage<ImageType>(image, "vector.mhd");
+      DD("add input");
+      AddInput(image);
+    }
   }
 
 }
