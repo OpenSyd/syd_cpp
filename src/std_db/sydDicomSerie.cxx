@@ -111,10 +111,12 @@ void syd::DicomSerie::DumpInTable(syd::PrintTable2 & ta) const
   auto format = ta.GetFormat();
   if (format == "default") DumpInTable_default(ta);
   else if (format == "file") DumpInTable_file(ta);
+  else if (format == "filelist") DumpInTable_filelist(ta);
   else if (format == "details") DumpInTable_details(ta);
   {
     ta.AddFormat("default", "id, date, tags, size etc");
     ta.AddFormat("file", "with complete filename");
+    ta.AddFormat("filelist", "not a table a list of filenames");
     ta.AddFormat("details", "other informations");
   }
 }
@@ -153,6 +155,22 @@ void syd::DicomSerie::DumpInTable_file(syd::PrintTable2 & ta) const
   db_->Query<syd::DicomFile>(dfiles, q);
   if (dfiles.size() >= 1) ta.Set("path", dfiles[0]->file->GetAbsolutePath(db_), 150);
   else ta.Set("path", db_->ConvertToAbsolutePath(dfiles[0]->file->path), 150);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::DicomSerie::DumpInTable_filelist(syd::PrintTable2 & ta) const
+{
+  ta.SetSingleRowFlag(true);
+  ta.SetHeaderFlag(false);
+  //Look for associated file (this is slow !)
+  syd::DicomFile::vector dfiles;
+  typedef odb::query<syd::DicomFile> QDF;
+  QDF q = QDF::dicom_serie == id;
+  db_->Query<syd::DicomFile>(dfiles, q);
+  if (dfiles.size() >= 1) // FIXME -> build a string with all filenames (?)
+    ta.Set("file", dfiles[0]->file->GetAbsolutePath(db_), 500);
 }
 // --------------------------------------------------
 
