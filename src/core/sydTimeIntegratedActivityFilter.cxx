@@ -35,15 +35,19 @@ syd::TimeIntegratedActivityFilter::TimeIntegratedActivityFilter()
   SetRestrictedTACFlag(false);
   mask_ = 0;
   additional_point_flag_ = false;
+  auto f1  = new syd::FitModel_f1;
   auto f2  = new syd::FitModel_f2;
   auto f3  = new syd::FitModel_f3;
   auto f4a = new syd::FitModel_f4a;
   auto f4b = new syd::FitModel_f4b;
+  auto f4c = new syd::FitModel_f4c;
   auto f4  = new syd::FitModel_f4;
+  all_models_.push_back(f1);
   all_models_.push_back(f2);
   all_models_.push_back(f3);
   all_models_.push_back(f4a);
   all_models_.push_back(f4b);
+  all_models_.push_back(f4c);
   all_models_.push_back(f4);
 }
 // --------------------------------------------------------------------
