@@ -127,11 +127,7 @@ void syd::Database::OpenFromFile(std::string filename)
   CreateTables();
 
   // Register to the loaded database
-  DD("GetListOfLoadedDatabases");
-  DD(syd::DatabaseManager::GetListOfLoadedDatabases().size());
   syd::DatabaseManager::GetListOfLoadedDatabases()[odb_db_] = this;
-  DD("end GetListOfLoadedDatabases");
-  DD(syd::DatabaseManager::GetListOfLoadedDatabases().size());
 }
 // --------------------------------------------------------------------
 

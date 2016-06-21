@@ -35,7 +35,6 @@ syd::PixelValueUnit::PixelValueUnit():syd::Record()
 // --------------------------------------------------
 syd::PixelValueUnit::~PixelValueUnit()
 {
-  DD("destructor PixelValueUnit");
 }
 // --------------------------------------------------
 

@@ -109,21 +109,6 @@ void syd::StandardDatabase::UpdateTagsFromCommandLine(syd::Tag::vector & tags,
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::StandardDatabase::SortAndPrint(typename RecordType::vector & records)
-{
-  if (records.size() == 0) return;
-  Sort(records);
-  syd::PrintTable table;
-  table.SetFormat("default");
-  table.SetHeaderFlag(false);
-  records[0]->InitTable(table);
-  table.Dump(records, std::cout);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
 bool syd::StandardDatabase::FindSameMD5(const typename RecordType::pointer input,
                                         typename RecordType::pointer & output)
 {

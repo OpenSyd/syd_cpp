@@ -32,7 +32,6 @@ namespace syd {
   // --------------------------------------------------------------------
   DicomSerieBuilder::~DicomSerieBuilder()
   {
-    DD("destructor DicomSerieBuilder");
   }
   // --------------------------------------------------------------------
 

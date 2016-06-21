@@ -33,7 +33,7 @@ namespace syd {
   class DicomFile: public syd::Record {
   public:
 
-    virtual ~DicomFile() { DD("destructor DicomFile"); }
+    virtual ~DicomFile() {}
 
     /// Foreign key, it must exist in the File table.
 #pragma db not_null on_delete(cascade)

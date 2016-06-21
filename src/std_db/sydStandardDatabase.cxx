@@ -145,8 +145,6 @@ void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & v,
 // --------------------------------------------------
 syd::StandardDatabase::~StandardDatabase()
 {
-  DDF();
-  DD("destructor StandardDatabase");
 }
 // --------------------------------------------------
 
@@ -196,11 +194,9 @@ syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & nam
 // --------------------------------------------------------------------
 syd::Image::vector syd::StandardDatabase::FindImages(const syd::Patient::pointer patient) const
 {
-  DD(patient);
   odb::query<syd::Image> q = odb::query<syd::Image>::patient == patient->id;
   syd::Image::vector images;
   Query(images, q);
-  DD(images.size());
   return images;
 }
 // --------------------------------------------------------------------
@@ -209,7 +205,6 @@ syd::Image::vector syd::StandardDatabase::FindImages(const syd::Patient::pointer
 // --------------------------------------------------------------------
 syd::Image::vector syd::StandardDatabase::FindImages(const std::string & patient_name) const
 {
-  DD(patient_name);
   return FindImages(FindPatient(patient_name));
 }
 // --------------------------------------------------------------------

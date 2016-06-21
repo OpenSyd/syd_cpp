@@ -90,9 +90,6 @@ namespace syd {
     template<class ArgsInfo>
     void UpdateTagsFromCommandLine(syd::Tag::vector & tags, ArgsInfo & args_info);
 
-    template<class RecordType>
-    void SortAndPrint(typename RecordType::vector & records);
-
     /// Insert a new tag
     Tag::pointer NewTag(const std::string & name, const std::string & description);
     PixelValueUnit::pointer NewPixelValueUnit(const std::string & name, const std::string & description);
