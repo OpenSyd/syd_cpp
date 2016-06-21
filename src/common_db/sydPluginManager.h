@@ -34,11 +34,13 @@ namespace syd {
     void LoadInFolder(const std::string & folder);
     void Load(const std::string & filename);
     void Load();
+    void UnLoad();
 
   protected:
     /// Purposely protected, only a single instance possible
     PluginManager() { }
-    ~PluginManager() { }
+    virtual ~PluginManager();
+    std::vector<void*> plugins;
 
   };
 } // end namespace

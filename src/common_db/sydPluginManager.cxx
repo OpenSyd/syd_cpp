@@ -23,10 +23,22 @@
 #include <dlfcn.h>
 
 // --------------------------------------------------------------------
+syd::PluginManager::~PluginManager()
+{
+  DD("Dstructor PluginManager");
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::PluginManager * syd::PluginManager::GetInstance()
 {
   // http://stackoverflow.com/questions/2505385/classes-and-static-variables-in-shared-libraries
-  syd::PluginManager * singleton_ = new PluginManager;
+  static syd::PluginManager * singleton_ = NULL;
+  if (singleton_ == NULL) {
+    DD("Create PluginManager");
+    singleton_ = new PluginManager;
+  }
   return singleton_;
 }
 // --------------------------------------------------------------------
@@ -76,7 +88,8 @@ void syd::PluginManager::LoadInFolder(const std::string & folder)
     std::string fn=GetFilenameFromPath(s);
     if (fn != "libsydCommonDatabase.so"
         and fn != "libsydCommonDatabase.dylib"
-        and fn != "libsydPlot.dylib") Load(s);
+        and fn != "libsydPlot.dylib"
+        and fn != "libsydPlot.so") Load(s);
   }
 }
 // --------------------------------------------------------------------
@@ -85,19 +98,44 @@ void syd::PluginManager::LoadInFolder(const std::string & folder)
 // --------------------------------------------------------------------
 void syd::PluginManager::Load(const std::string & filename)
 {
+  DDF();
+  // Check file name -> do not load ?  FIXME
+  DD(filename);
+
+  std::string schema = filename;
+  fs::path p(schema);
+  schema = p.filename().string();
+  DD(schema);
+  syd::Replace(schema, "lib", "");
+  DD(schema);
+  syd::Replace(schema, "Plugin.so", "");
+  DD(schema);
+  auto map = syd::DatabaseManager::GetInstance()->GetRegisteredDatabaseType();
+  auto it = map.find(schema);
+  if (it != map.end()) {
+    LOG(10) << sydlog::warningColor <<
+      "The database schema '" << schema << "' already exist, ignoring."
+            << sydlog::resetColor;
+    return ;
+  }
+
+
+
   std::string ext = GetExtension(filename);
-  if (ext != "so" and ext != "dylib" and ext != "DLL" and ext != "dll") {
+  // FIXME only consider Plugin.so files
+  if (ext != "so") {// and ext != "dylib" and ext != "DLL" and ext != "dll") {
     LOG(20) << "(syd plugin) ignoring the file '" << filename << "'.";
     return;
   }
   void * plugin;
   LOG(10) << "(syd plugin) Opening the file "
           << filename << " to register db schema";
-  plugin = dlopen(filename.c_str(), RTLD_NOW);
+  plugin = dlopen(filename.c_str(), RTLD_LAZY);//RTLD_PRIVATE); //LOCAL);//RTLD_LAZY);
   if (!plugin) {
     LOG(10) << "(syd plugin) The file '" << filename << "' is not a plugin.";
     return;
   }
+
   RegisterDatabaseSchemaFunction db_creator;
   db_creator = (RegisterDatabaseSchemaFunction) dlsym(plugin, "RegisterDatabaseSchema");
   char * result = dlerror();
@@ -106,6 +144,23 @@ void syd::PluginManager::Load(const std::string & filename)
     return;
   }
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
-  db_creator(m);
+  DD("before call db_creator");
+  db_creator(m); // FIXME
+  DD("end Load");
+  // end
+  //dlclose(plugin); // <--- no ?
+  plugins.push_back(plugin);
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::PluginManager::UnLoad()
+{
+  DDF();
+  DD(plugins.size());
+  for(auto p:plugins) dlclose(p);
+  DD("end unload");
 }
 // --------------------------------------------------------------------

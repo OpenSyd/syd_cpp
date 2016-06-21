@@ -41,8 +41,8 @@ syd::Image::Image():syd::RecordWithHistory()
 // --------------------------------------------------------------------
 syd::Image::~Image()
 {
-  // DD("delete image");
-  // DDS(files);
+  DD("destructor image");
+  DDS(files);
   /// FIXME --> remove temporary file if needed
 }
 // --------------------------------------------------------------------

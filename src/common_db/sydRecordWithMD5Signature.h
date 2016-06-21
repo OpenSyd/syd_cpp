@@ -29,6 +29,8 @@ namespace syd {
   class RecordWithMD5Signature {
   public:
 
+    virtual ~RecordWithMD5Signature() { }
+
     /// Define pointer type
     typedef std::shared_ptr<RecordWithMD5Signature> pointer;
 

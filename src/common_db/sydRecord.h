@@ -67,11 +67,7 @@ namespace syd {
     /// Set the values of the fields from some string.
     virtual void Set(const std::vector<std::string> & args);
 
-    /// Initialise a PrintTable
-    virtual void InitTable(syd::PrintTable & table) const;
-
     /// Add a line in the given PrintTable
-    virtual void DumpInTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable2 & table) const;
 
     /// Use to write the element as a string (must be overloaded)
@@ -102,7 +98,7 @@ namespace syd {
     void CheckIfPersistant() const;
 
     // FIXME
-    static std::map<std::string, std::vector<std::string> > inherit_sql_tables_map_;
+    //   static std::map<std::string, std::vector<std::string> > inherit_sql_tables_map_;
 
     /// Return the db where this record is stored
     syd::Database * GetDatabase() const;
@@ -143,7 +139,7 @@ namespace syd {
 
   // --------------------------------------------------------------------
   /// odb::access is needed for polymorphism
-#define TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, INHERIT_TABLE_NAME)    \
+#define TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, INHERIT_TABLE_NAME)  \
   typedef std::shared_ptr<TABLE_NAME> pointer;                          \
   typedef std::vector<pointer> vector;                                  \
   friend class odb::access;                                             \
@@ -152,12 +148,15 @@ namespace syd {
   static std::string GetStaticTableName() { return #TABLE_NAME; }       \
   static std::string GetStaticSQLTableName() { return #SQL_TABLE_NAME; } \
   static void InitInheritance() {                                       \
-    INHERIT_TABLE_NAME::InitInheritance();                              \
-    inherit_sql_tables_map_[#TABLE_NAME].push_back(INHERIT_TABLE_NAME::GetStaticSQLTableName()); } \
-  static pointer New() { return pointer(new TABLE_NAME); }
+    DD("InitInheritance to do");                                        \
+    INHERIT_TABLE_NAME::InitInheritance(); }                            \
+    static pointer New() { return pointer(new TABLE_NAME); }
+
+  // inherit_sql_tables_map_[#TABLE_NAME].push_back(INHERIT_TABLE_NAME::GetStaticSQLTableName()); }
 
 
-#define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)        \
+
+#define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)                \
   TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, syd::Record)
 
 

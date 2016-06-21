@@ -24,6 +24,9 @@
 #include "sydRecordHelpers.h"
 #include "sydPrintTable2.h"
 
+//syd::DatabaseManager * syd::DatabaseManager::singleton_;
+//syd::DatabaseManager * syd::DatabaseManager::singleton_ = new syd::DatabaseManager;
+
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -72,7 +75,7 @@ int main(int argc, char* argv[])
   db->Grep(results, records, patterns, exclude);
 
   // Sort
-  db->Sort(results, table_name);
+  //  db->Sort(results, table_name);
 
   // Consider vv flag
   std::string format = args_info.format_arg;

@@ -36,6 +36,8 @@ namespace syd {
   class DicomSerie : public syd::Record {
   public:
 
+    virtual ~DicomSerie() { DD("destructor DicomSerie"); }
+
 #pragma db not_null
     /// Foreign key, it must exist in the Patient table. Useful if no associated injection
     syd::Patient::pointer patient;

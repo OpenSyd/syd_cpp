@@ -23,7 +23,7 @@
 #include "sydPluginManager.h"
 
 // Define static member
-std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
+//std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
 
 // --------------------------------------------------------------------
 syd::Record::Record()
@@ -74,23 +74,6 @@ void syd::Record::Set(const std::vector<std::string> & args)
 
 
 // --------------------------------------------------------------------
-void syd::Record::InitTable(syd::PrintTable & table) const
-{
-  table.AddColumn("id");
-  table.AddColumn("fields");
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Record::DumpInTable(syd::PrintTable & table) const
-{
-  table.Set("fields", ToString());
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Record::DumpInTable(syd::PrintTable2 & table) const
 {
   LOG(WARNING) << "DumpInTable not implemented";
@@ -102,13 +85,16 @@ void syd::Record::DumpInTable(syd::PrintTable2 & table) const
 // --------------------------------------------------------------------
 void syd::Record::SetDatabasePointer(odb::callback_event event, odb::database & d) const
 {
+  DDF();
   auto list = syd::DatabaseManager::GetListOfLoadedDatabases();
+  DD(list.size());
   auto search = list.find(&d);
   if (search == list.end()) {
     LOG(FATAL) << "Error during callback in an object " << GetTableName()
                << " cannot find the db pointer. Event is " << event;
   }
   db_ = search->second;
+  DD(db_);
 }
 // --------------------------------------------------------------------
 

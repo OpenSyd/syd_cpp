@@ -29,6 +29,8 @@ namespace syd {
   class RecordWithTags  {
   public:
 
+    virtual ~RecordWithTags() {}
+
     /// Define pointer type
     typedef std::shared_ptr<RecordWithTags> pointer;
 

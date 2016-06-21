@@ -29,6 +29,8 @@ int main(int argc, char* argv[])
   // Init
   SYD_INIT_GGO(sydInsertDicom, 3);
 
+  //syd::DatabaseManager::GetInstance()->RegisterDatabaseSchema<syd::StandardDatabase>("StandardDatabase");
+
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
@@ -39,6 +41,7 @@ int main(int argc, char* argv[])
   // Get the patient
   std::string name = args_info.inputs[0];
   auto patient = db->FindPatient(name);
+
 
   // Get the injection
   std::string inj = args_info.inputs[1];
@@ -100,6 +103,7 @@ int main(int argc, char* argv[])
   LOG(1) << "Copying files to db ...";
   b.InsertDicomSeries();
 
+  DD("done");
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

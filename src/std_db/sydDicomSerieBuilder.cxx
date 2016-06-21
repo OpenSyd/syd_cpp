@@ -30,6 +30,14 @@ namespace syd {
 
 
   // --------------------------------------------------------------------
+  DicomSerieBuilder::~DicomSerieBuilder()
+  {
+    DD("destructor DicomSerieBuilder");
+  }
+  // --------------------------------------------------------------------
+
+
+  // --------------------------------------------------------------------
   DicomSerieBuilder::DicomSerieBuilder()
   {
     // Insert some tags that not always known in the dicom dictionary
@@ -281,7 +289,7 @@ namespace syd {
                    << " with dicom_id = " << patient_->dicom_patientid
                    << " while in dicom, it is '" << patientID
                    << " with name: " << patientName << std::endl
-                     << "Filename is " << filename << std::endl
+                   << "Filename is " << filename << std::endl
                    << "Use 'forcePatient' if you want to bypass this check";
       }
     }

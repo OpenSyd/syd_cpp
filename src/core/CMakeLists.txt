@@ -6,7 +6,7 @@ include_directories(${SYD_SOURCE_DIR}/src/core/pstreams)
 
 #----------------------------------------------------------
 # Common library
-add_library(sydCore
+add_library(sydCore SHARED
   md5.cpp
   sydCommon.cxx
   sydFileUtils.cxx
@@ -18,9 +18,10 @@ add_library(sydCore
   sydNDimPoints.cxx
 )
 
+## I do not manage to make it SHARED on osx
 target_link_libraries(sydCore
-  ${DCMTK_LIBRARIES}
   ${Boost_LIBRARIES} ## needed on osx
+  ${DCMTK_LIBRARIES}
   )
 
 # wrap_ggo(sydOdbXmlParser_GGO_C sydOdbXmlParser.ggo )

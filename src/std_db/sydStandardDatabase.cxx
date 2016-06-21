@@ -21,7 +21,7 @@
 #include "sydUpdateRadionuclideFilter.h"
 #include "sydDatabaseManager.h"
 
-SYD_REGISTER_DATABASE(syd::StandardDatabase, StandardDatabase);
+//SYD_REGISTER_DATABASE(syd::StandardDatabase, StandardDatabase);
 
 // --------------------------------------------------------------------
 template<>
@@ -142,7 +142,13 @@ void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & v,
 // --------------------------------------------------
 
 
-
+// --------------------------------------------------
+syd::StandardDatabase::~StandardDatabase()
+{
+  DDF();
+  DD("destructor StandardDatabase");
+}
+// --------------------------------------------------
 
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
@@ -190,9 +196,11 @@ syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & nam
 // --------------------------------------------------------------------
 syd::Image::vector syd::StandardDatabase::FindImages(const syd::Patient::pointer patient) const
 {
+  DD(patient);
   odb::query<syd::Image> q = odb::query<syd::Image>::patient == patient->id;
   syd::Image::vector images;
   Query(images, q);
+  DD(images.size());
   return images;
 }
 // --------------------------------------------------------------------
@@ -201,6 +209,7 @@ syd::Image::vector syd::StandardDatabase::FindImages(const syd::Patient::pointer
 // --------------------------------------------------------------------
 syd::Image::vector syd::StandardDatabase::FindImages(const std::string & patient_name) const
 {
+  DD(patient_name);
   return FindImages(FindPatient(patient_name));
 }
 // --------------------------------------------------------------------
@@ -229,8 +238,8 @@ syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient:
   syd::Injection::pointer injection;
   odb::query<syd::Injection> q =
     odb::query<syd::Injection>::patient == patient->id and (
-    odb::query<syd::Injection>::radionuclide->name == name_or_study_id.c_str() or
-    odb::query<syd::Injection>::id == atoi(name_or_study_id.c_str()));
+                                                            odb::query<syd::Injection>::radionuclide->name == name_or_study_id.c_str() or
+                                                            odb::query<syd::Injection>::id == atoi(name_or_study_id.c_str()));
 
   try {
     QueryOne(injection, q);

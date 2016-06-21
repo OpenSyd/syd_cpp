@@ -34,6 +34,8 @@ namespace syd {
   class Patient: public syd::Record {
   public:
 
+    virtual ~Patient();
+
 #pragma db options("UNIQUE")
     /// Patient name (unique)
     std::string name;

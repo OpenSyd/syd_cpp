@@ -20,6 +20,8 @@
 template<class DatabaseSchema>
 DatabaseCreator<DatabaseSchema> * syd::DatabaseManager::RegisterDatabaseSchema(const std::string & schema)
 {
+  DDF();
+  DD(schema);
   auto it = db_map_.find(schema);
   if (it != db_map_.end()) {
     LOG(10) << sydlog::warningColor <<
@@ -41,6 +43,8 @@ DatabaseCreator<DatabaseSchema> * syd::DatabaseManager::RegisterDatabaseSchema(c
 template<class DatabaseSchema>
 DatabaseSchema * syd::DatabaseManager::Open(const std::string & filename)
 {
+  DDF();
+  DD(filename);
   syd::Database * db = Open(filename);
   // Check it the db inherit (or is) a DatabaseSchema;
   if (dynamic_cast<DatabaseSchema*>(db) == 0) {
@@ -51,6 +55,6 @@ DatabaseSchema * syd::DatabaseManager::Open(const std::string & filename)
               //  << " while the required schema is " << temp->GetDatabaseSchema()
               << "'.");
   }
-  return static_cast<DatabaseSchema*>(db);
+  return dynamic_cast<DatabaseSchema*>(db);
 }
 // --------------------------------------------------------------------

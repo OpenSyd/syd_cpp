@@ -32,82 +32,27 @@ int main(int argc, char* argv[])
   SYD_INIT_GGO(sydTest, 1);
 
   // Load plugin
-  syd::PluginManager::GetInstance()->Load();
+
+
+  //  syd::DatabaseManager::GetInstance()->RegisterDatabaseSchema<syd::StandardDatabase>("StandardDatabase");
+
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
+  syd::PluginManager::GetInstance()->Load();
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // ------------------------------------------------------------------
   // test
   if (1) {
-    auto images = db->FindImages("8");
-    DD(images[0]);
-  }
-
-  // ------------------------------------------------------------------
-  // Correct tp
-  if (0) {
-    syd::Timepoints::vector tps;
-    db->Query(tps); // all
-    DD(tps.size());
-    for(auto tp:tps) {
-      tp->patient = tp->images[0]->patient;
-      tp->injection = tp->images[0]->injection;
-    }
-    DD("done");
-    db->Update(tps);
+    // auto images = db->FindImages("2");
+    // if (images.size() > 0) {  DD(images[0]); }
+    syd::Patient::vector patients;
+    db->Query(patients);
+    DDS(patients);
   }
 
 
   // ------------------------------------------------------------------
-  // Correct images
-  if (0) {
-    syd::Image::vector images;
-    db->Query(images); // all
-    DD(images.size());
-    for(auto image:images) {
-      image->injection = image->dicoms[0]->injection;
-    }
-    DD("done");
-    db->Update(images);
-  }
-
-
-  // ------------------------------------------------------------------
-  if (0) {
-    db->CheckDatabaseSchema();
-  }
-
-  // ------------------------------------------------------------------
-  if (0) {
-    // get count
-    DD(db->GetNumberOfElements("File"));
-    DD(db->GetNumberOfElements<syd::File>());
-    DD(db->GetNumberOfElements<syd::Image>());
-    DD(db->GetNumberOfElements<syd::DicomFile>());
-  }
-
-  // ------------------------------------------------------------------
-  if (0) {
-
-    // Load plugin
-    syd::PluginManager::GetInstance()->Load();
-    syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
-    syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
-
-    db->Dump("Image");
-
-    syd::Image::vector images;
-    db->Query(images);
-
-    for(auto image:images) {
-      DD(image);
-      image->frame_of_reference_uid = image->dicoms[0]->dicom_frame_of_reference_uid;
-      DD(image);
-    }
-    db->Update(images);
-  }
-
-  // ------------------------------------------------------------------
+  syd::PluginManager::GetInstance()->UnLoad();
   DD("end");
   // This is the end, my friend.
 }

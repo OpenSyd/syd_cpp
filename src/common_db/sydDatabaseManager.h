@@ -55,13 +55,17 @@ namespace syd {
     /// Store a list of all loaded database (to be able to retrive the db from a record)
     static std::map<odb::database *, syd::Database *> & GetListOfLoadedDatabases();
 
+    std::map<std::string, syd::DatabaseCreatorBase*> & GetRegisteredDatabaseType() { return db_map_; }
+
   protected:
     /// Purposely protected, only a single instance possible
     DatabaseManager() {}
-    ~DatabaseManager() { }
+    virtual ~DatabaseManager();
+
+    //static syd::DatabaseManager * singleton_;
 
     /// List of map between db types and db creators
-    std::map<std::string, DatabaseCreatorBase*> db_map_;
+    std::map<std::string, syd::DatabaseCreatorBase*> db_map_;
 
     /// List of registered db types
     std::vector<std::string> db_schema_names_;

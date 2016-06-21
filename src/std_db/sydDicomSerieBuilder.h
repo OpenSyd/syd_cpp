@@ -38,7 +38,7 @@ namespace syd {
     DicomSerieBuilder(StandardDatabase * db);
 
     /// Destructor (empty)
-    ~DicomSerieBuilder() {}
+    virtual ~DicomSerieBuilder();
 
     /// Set the pointer to the database
     void SetDatabase(StandardDatabase * db) { db_ = db; }

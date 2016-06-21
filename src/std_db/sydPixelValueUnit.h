@@ -30,6 +30,8 @@ namespace syd {
   class PixelValueUnit : public syd::Record {
   public:
 
+    virtual ~PixelValueUnit();
+
 #pragma db options("UNIQUE")
     /// Label of the tag (name)
     std::string name;

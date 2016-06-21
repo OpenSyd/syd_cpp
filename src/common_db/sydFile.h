@@ -30,6 +30,8 @@ namespace syd {
   class File: public syd::Record {
   public:
 
+    virtual ~File() { }
+
     /// File name
     std::string filename;
 

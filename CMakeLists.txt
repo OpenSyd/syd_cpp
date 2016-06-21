@@ -105,7 +105,6 @@ endif(MSVC)
 #----------------------------------------------------------
 # define the set of libraries
 set(SYD_CORE_LIBRARIES
-  sydCommonDatabase
   sydCore
   sydFit
   sydItkUtils
@@ -143,13 +142,13 @@ CONFIGURE_FILE (cmake/SYDConfig.cmake.in SYDConfig.cmake @ONLY)
 
 #----------------------------------------------------------
 # tests
-include(CTest)
-if(BUILD_TESTING)
-  enable_testing()
-endif(BUILD_TESTING)
-if(BUILD_TESTING)
-  add_subdirectory(test)
-endif(BUILD_TESTING)
+# include(CTest)
+# if(BUILD_TESTING)
+#   enable_testing()
+# endif(BUILD_TESTING)
+# if(BUILD_TESTING)
+#   add_subdirectory(test)
+# endif(BUILD_TESTING)
 #----------------------------------------------------------
 
 

@@ -40,10 +40,16 @@ set(sydCommonDatabase_src
   sydPluginManager.cxx
   sydDatabaseInformation.cxx
   sydRecordHelpers.cxx
+  a.cxx
   )
 
-add_library(sydCommonDatabase SHARED ${sydCommonDatabase_src})
+add_library(sydCommonDatabaseObjects OBJECT ${sydCommonDatabase_src})
+
+add_library(sydCommonDatabase SHARED $<TARGET_OBJECTS:sydCommonDatabaseObjects>)
 target_link_libraries(sydCommonDatabase sydCore odb-sqlite odb sqlite3 z)
+
+add_library(sydCommonDatabaseStatic $<TARGET_OBJECTS:sydCommonDatabaseObjects>)
+target_link_libraries(sydCommonDatabaseStatic sydCore odb-sqlite odb sqlite3 z)
 
 #----------------------------------------------------------
 wrap_ggo(sydCreateDatabase_GGO_C sydCreateDatabase.ggo sydCommandLineDefaultWithoutDB.ggo)

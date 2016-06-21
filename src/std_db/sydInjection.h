@@ -33,6 +33,8 @@ namespace syd {
   class Injection : public syd::Record {
   public:
 
+    virtual ~Injection() { DD("destructor injection"); }
+
 #pragma db not_null
     /// Foreign key, linked to Patient table.
     syd::Patient::pointer patient;

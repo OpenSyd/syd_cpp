@@ -24,7 +24,7 @@ template<class RecordType>
 Table<RecordType> * syd::Database::GetTable() const
 {
   auto t = GetTable(RecordType::GetStaticTableName());
-  return dynamic_cast<Table<RecordType>*>(t);
+  return static_cast<Table<RecordType>*>(t);
 }
 // ------------------------------------------------------------------------
 

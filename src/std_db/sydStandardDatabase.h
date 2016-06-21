@@ -54,7 +54,7 @@ namespace syd {
   class StandardDatabase: public Database {
   public:
 
-    virtual ~StandardDatabase() { }
+    virtual ~StandardDatabase();
 
     syd::Patient::pointer FindPatient(const std::string & name_or_study_id) const;
     syd::Radionuclide::pointer FindRadionuclide(const std::string & name) const;
