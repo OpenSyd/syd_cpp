@@ -87,9 +87,6 @@ namespace syd {
     return lhs.name_ < rhs.name_;
   }
 
-
-#include "sydPrintTable2.txx"
-
 } // end namespace
 
 #endif /* end #define SYDPRINTTABLE2_H_H */
