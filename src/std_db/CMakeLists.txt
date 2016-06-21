@@ -21,35 +21,21 @@ wrap_odb(sydStandardDatabase sydFitResult.h)
 
 set(SYD_STANDARD_DATABASE_SRC
   sydStandardDatabase.cxx
-  sydPatient-odb.cxx
-  sydPatient-schema.cxx  sydPatient.cxx
-  sydRadionuclide-odb.cxx
-  sydRadionuclide-schema.cxx  sydRadionuclide.cxx
-  sydInjection-odb.cxx
-  sydInjection-schema.cxx  sydInjection.cxx
-  sydDicomSerie-odb.cxx
-  sydDicomSerie-schema.cxx  sydDicomSerie.cxx
-  sydDicomFile-odb.cxx
-  sydDicomFile-schema.cxx  sydDicomFile.cxx
+  sydPatient-odb.cxx sydPatient-schema.cxx  sydPatient.cxx
+  sydRadionuclide-odb.cxx sydRadionuclide-schema.cxx  sydRadionuclide.cxx
+  sydInjection-odb.cxx sydInjection-schema.cxx  sydInjection.cxx
+  sydDicomSerie-odb.cxx sydDicomSerie-schema.cxx  sydDicomSerie.cxx
+  sydDicomFile-odb.cxx sydDicomFile-schema.cxx  sydDicomFile.cxx
+  sydImage-odb.cxx sydImage-schema.cxx  sydImage.cxx
+  sydRoiType-odb.cxx sydRoiType-schema.cxx  sydRoiType.cxx
+  sydRoiMaskImage-odb.cxx sydRoiMaskImage-schema.cxx  sydRoiMaskImage.cxx
+  sydImageTransform-odb.cxx sydImageTransform-schema.cxx  sydImageTransform.cxx
+  sydCalibration-odb.cxx sydCalibration-schema.cxx  sydCalibration.cxx
+  sydPixelValueUnit-odb.cxx sydPixelValueUnit-schema.cxx  sydPixelValueUnit.cxx
+  sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
+  sydTimepoints-odb.cxx sydTimepoints-schema.cxx  sydTimepoints.cxx
+  sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
   sydDicomSerieBuilder.cxx
-  sydImage-odb.cxx
-  sydImage-schema.cxx  sydImage.cxx
-  sydRoiType-odb.cxx
-  sydRoiType-schema.cxx  sydRoiType.cxx
-  sydRoiMaskImage-odb.cxx
-  sydRoiMaskImage-schema.cxx  sydRoiMaskImage.cxx
-  sydImageTransform-odb.cxx
-  sydImageTransform-schema.cxx  sydImageTransform.cxx
-  sydCalibration-odb.cxx
-  sydCalibration-schema.cxx  sydCalibration.cxx
-  sydPixelValueUnit-odb.cxx
-  sydPixelValueUnit-schema.cxx  sydPixelValueUnit.cxx
-  sydRoiStatistic-odb.cxx
-  sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
-  sydTimepoints-odb.cxx
-  sydTimepoints-schema.cxx  sydTimepoints.cxx
-  sydFitResult-odb.cxx
-  sydFitResult-schema.cxx  sydFitResult.cxx
   sydImageBuilder.cxx
   sydFileBuilder.cxx
   sydImageFromDicomBuilder.cxx
@@ -65,43 +51,24 @@ set(SYD_STANDARD_DATABASE_SRC
   sydTimepointsBuilder.cxx
   )
 
+# Group all objects
 add_library(sydStandardDatabaseObjects OBJECT ${SYD_STANDARD_DATABASE_SRC})
 
+# Conventional shared lib for command lien executable
 add_library(StandardDatabase SHARED
+  sydStandardDatabaseStatic.cxx
   $<TARGET_OBJECTS:sydStandardDatabaseObjects>
-  a.cxx
   )
-#add_library(StandardDatabaseStatic $<TARGET_OBJECTS:sydStandardDatabaseObjects>)
+target_link_libraries(StandardDatabase sydCommonDatabase ${SYD_CORE_LIBRARIES})
 
-##${SYD_STANDARD_DATABASE_SRC})
+# Plugin library : MUST be called lib<DatabaseType>Plugin.so
 add_library(StandardDatabasePlugin MODULE
   sydStandardDatabasePlugin.cxx
   $<TARGET_OBJECTS:sydStandardDatabaseObjects>
   )
-
-# add_library(sydAAABidonPlugin MODULE
-#   sydAAABidonPlugin.cxx
-#   sydStandardDatabase.cxx
-#   #sydPatient-odb.cxx
-#   sydPatient-schema.cxx
-#   sydPatient.cxx
-#   # sydRadionuclide-odb.cxx sydRadionuclide-schema.cxx  sydRadionuclide.cxx
-#   # sydInjection-odb.cxx sydInjection-schema.cxx  sydInjection.cxx
-#   # sydDicomSerie-odb.cxx sydDicomSerie-schema.cxx  sydDicomSerie.cxx
-#   # sydDicomFile-odb.cxx sydDicomFile-schema.cxx  sydDicomFile.cxx
-#  # sydDicomSerieBuilder.cxx
-
-#   )
-
-## to declare dependencies
-target_link_libraries(StandardDatabase sydCommonDatabase ${SYD_CORE_LIBRARIES})
-##target_link_libraries(sydStandardDatabaseStatic sydCommonDatabaseStatic ${SYD_CORE_LIBRARIES})
 target_link_libraries(StandardDatabasePlugin sydCommonDatabase ${SYD_CORE_LIBRARIES})
 set_target_properties(StandardDatabasePlugin PROPERTIES MACOSX_BUNDLE TRUE)
 set_target_properties(StandardDatabasePlugin PROPERTIES BUNDLE_EXTENSION ".so")
-
-
-#target_link_libraries(sydAAABidonPlugin sydCommonDatabase ${SYD_CORE_LIBRARIES})
 
 ##############################
 # Not really a tool, for debug only

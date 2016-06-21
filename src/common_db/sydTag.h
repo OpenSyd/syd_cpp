@@ -30,7 +30,7 @@ namespace syd {
   class Tag : public syd::Record {
   public:
 
-    virtual ~Tag() { DD("Destructor tag"); }
+    virtual ~Tag() { }
 
 #pragma db options("UNIQUE")
     /// Label of the tag (name)

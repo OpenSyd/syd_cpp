@@ -42,7 +42,6 @@ int main(int argc, char* argv[])
   std::string name = args_info.inputs[0];
   auto patient = db->FindPatient(name);
 
-
   // Get the injection
   std::string inj = args_info.inputs[1];
   syd::Injection::pointer injection;
@@ -102,8 +101,6 @@ int main(int argc, char* argv[])
   }
   LOG(1) << "Copying files to db ...";
   b.InsertDicomSeries();
-
-  DD("done");
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

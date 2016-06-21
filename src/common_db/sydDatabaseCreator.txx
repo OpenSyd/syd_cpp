@@ -21,7 +21,6 @@
 template<class DatabaseType>
 Database * syd::DatabaseCreator<DatabaseType>::Open(std::string filename)
 {
-  DDF();
   DatabaseType * db = new DatabaseType;
   db->OpenFromFile(filename);
   return db;

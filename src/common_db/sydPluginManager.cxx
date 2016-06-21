@@ -25,7 +25,6 @@
 // --------------------------------------------------------------------
 syd::PluginManager::~PluginManager()
 {
-  DD("Dstructor PluginManager");
 }
 // --------------------------------------------------------------------
 
@@ -36,7 +35,6 @@ syd::PluginManager * syd::PluginManager::GetInstance()
   // http://stackoverflow.com/questions/2505385/classes-and-static-variables-in-shared-libraries
   static syd::PluginManager * singleton_ = NULL;
   if (singleton_ == NULL) {
-    DD("Create PluginManager");
     singleton_ = new PluginManager;
   }
   return singleton_;
@@ -96,41 +94,45 @@ void syd::PluginManager::LoadInFolder(const std::string & folder)
 
 
 // --------------------------------------------------------------------
-void syd::PluginManager::Load(const std::string & filename)
+std::string syd::PluginManager::ComputeDatabaseSchemaNameFromFilename(const std::string & filename) const
 {
-  DDF();
-  // Check file name -> do not load ?  FIXME
-  DD(filename);
-
   std::string schema = filename;
   fs::path p(schema);
-  schema = p.filename().string();
-  DD(schema);
-  syd::Replace(schema, "lib", "");
-  DD(schema);
-  syd::Replace(schema, "Plugin.so", "");
-  DD(schema);
-  auto map = syd::DatabaseManager::GetInstance()->GetRegisteredDatabaseType();
-  auto it = map.find(schema);
-  if (it != map.end()) {
-    LOG(10) << sydlog::warningColor <<
-      "The database schema '" << schema << "' already exist, ignoring."
-            << sydlog::resetColor;
+  schema = p.filename().string(); // get the filename, remove the path
+  bool b = syd::Replace(schema, "lib", ""); // remove leading lib
+  if (!b) return "";
+  b = syd::Replace(schema, "Plugin.so", ""); // remove final
+  if (!b) return "";
+  return schema;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::PluginManager::Load(const std::string & filename)
+{
+  std::string schema = ComputeDatabaseSchemaNameFromFilename(filename);
+  if (schema == "") {
+    LOG(10) << "(syd plugin) The file '" << filename
+            << "' is not in the form lib<DatabaseType>Plugin.so, ignoring.";
     return ;
   }
 
-
-
-  std::string ext = GetExtension(filename);
-  // FIXME only consider Plugin.so files
-  if (ext != "so") {// and ext != "dylib" and ext != "DLL" and ext != "dll") {
-    LOG(20) << "(syd plugin) ignoring the file '" << filename << "'.";
-    return;
+  // Check if this Database schema is not already registered. In this
+  // case, do not load the plugin (if so, seg fault).
+  auto map = syd::DatabaseManager::GetInstance()->GetRegisteredDatabaseType();
+  auto it = map.find(schema);
+  if (it != map.end()) {
+    LOG(10) << "(syd plugin) In the file " << filename;
+    LOG(10) << "(syd plugin) The database schema '"
+            << schema << "' already exist, ignoring.";
+    return ;
   }
+
+  // Load the plugin
   void * plugin;
-  LOG(10) << "(syd plugin) Opening the file "
-          << filename << " to register db schema";
-  plugin = dlopen(filename.c_str(), RTLD_LAZY);//RTLD_PRIVATE); //LOCAL);//RTLD_LAZY);
+  LOG(10) << "(syd plugin) Opening the file " << filename << " to register db schema";
+  plugin = dlopen(filename.c_str(), RTLD_LAZY);
   if (!plugin) {
     LOG(10) << "(syd plugin) The file '" << filename << "' is not a plugin.";
     return;
@@ -140,17 +142,17 @@ void syd::PluginManager::Load(const std::string & filename)
   db_creator = (RegisterDatabaseSchemaFunction) dlsym(plugin, "RegisterDatabaseSchema");
   char * result = dlerror();
   if (result) {
-    LOG(10) << "(plugin) The lib " << filename << " does not contain a valid plugin for syd.";
+    LOG(10) << "(syd plugin) The lib " << filename << " does not contain a valid plugin for syd.";
     return;
   }
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
-  DD("before call db_creator");
-  db_creator(m); // FIXME
-  DD("end Load");
+  std::string s = db_creator(m);
+  if (s != schema) {
+    LOG(FATAL) << "(syd plugin) The lib " << filename << " does not contain the schema '"
+               << schema << "', I found '" << s << "' instead. Abort.";
+  }
   // end
-  //dlclose(plugin); // <--- no ?
   plugins.push_back(plugin);
-
 }
 // --------------------------------------------------------------------
 
@@ -158,9 +160,6 @@ void syd::PluginManager::Load(const std::string & filename)
 // --------------------------------------------------------------------
 void syd::PluginManager::UnLoad()
 {
-  DDF();
-  DD(plugins.size());
   for(auto p:plugins) dlclose(p);
-  DD("end unload");
 }
 // --------------------------------------------------------------------

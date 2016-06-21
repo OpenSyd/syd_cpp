@@ -30,7 +30,7 @@ namespace syd {
   class RecordHistory: public syd::Record {
   public:
 
-    virtual ~RecordHistory() { DD("destructor RecordHistory"); }
+    virtual ~RecordHistory() { }
 
     std::string insertion_date;
     std::string update_date;

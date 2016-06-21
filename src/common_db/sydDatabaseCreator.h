@@ -31,7 +31,7 @@ namespace syd {
   class DatabaseCreatorBase {
 
   public:
-    virtual ~DatabaseCreatorBase() { DD("destructor DatabaseCreatorBase"); }
+    virtual ~DatabaseCreatorBase() { }
     virtual Database * Open(std::string filename) = 0;
     virtual void Create(std::string dbtype, std::string filename, std::string folder, bool force) = 0;
     void AddSchemaName(std::string n) { schemas.push_back(n); }
@@ -44,7 +44,7 @@ namespace syd {
   template<class DatabaseSchema>
   class DatabaseCreator:public DatabaseCreatorBase {
   public:
-    virtual ~DatabaseCreator() { DD("destructor DatabaseCreator<T>"); }
+    virtual ~DatabaseCreator() { }
 
     /// Main function to open a db ; read the file and build the tables
     virtual Database * Open(std::string filename);

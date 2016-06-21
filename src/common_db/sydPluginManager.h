@@ -31,6 +31,7 @@ namespace syd {
     /// Retrieve the unique instance (singleton)
     static PluginManager * GetInstance();
 
+    std::string ComputeDatabaseSchemaNameFromFilename(const std::string & filename) const;
     void LoadInFolder(const std::string & folder);
     void Load(const std::string & filename);
     void Load();
@@ -49,8 +50,8 @@ namespace syd {
 
 // --------------------------------------------------------------------
 /// Those functions must be included in the plugin.
-typedef void (*RegisterDatabaseSchemaFunction) (syd::DatabaseManager * m);
-extern void RegisterDatabaseSchema(syd::DatabaseManager * m);
+typedef std::string (*RegisterDatabaseSchemaFunction) (syd::DatabaseManager * m);
+extern std::string  RegisterDatabaseSchema(syd::DatabaseManager * m);
 // --------------------------------------------------------------------
 
 #endif

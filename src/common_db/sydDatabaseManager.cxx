@@ -30,7 +30,6 @@ syd::DatabaseManager * syd::DatabaseManager::GetInstance()
   // http://stackoverflow.com/questions/2505385/classes-and-static-variables-in-shared-libraries
   static syd::DatabaseManager * singleton_ = NULL;
   if (singleton_ == NULL) {
-    DD("Create DatabaseManager singleton");
     singleton_ = new DatabaseManager;
     std::set_terminate(syd::terminateHandler);
   }
@@ -41,7 +40,6 @@ syd::DatabaseManager * syd::DatabaseManager::GetInstance()
 // --------------------------------------------------------------------
 syd::DatabaseManager::~DatabaseManager()
 {
-  DD("desctructor DatabaseManager");
 }
 // --------------------------------------------------------------------
 

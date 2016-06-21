@@ -85,16 +85,13 @@ void syd::Record::DumpInTable(syd::PrintTable2 & table) const
 // --------------------------------------------------------------------
 void syd::Record::SetDatabasePointer(odb::callback_event event, odb::database & d) const
 {
-  DDF();
   auto list = syd::DatabaseManager::GetListOfLoadedDatabases();
-  DD(list.size());
   auto search = list.find(&d);
   if (search == list.end()) {
     LOG(FATAL) << "Error during callback in an object " << GetTableName()
                << " cannot find the db pointer. Event is " << event;
   }
   db_ = search->second;
-  DD(db_);
 }
 // --------------------------------------------------------------------
 

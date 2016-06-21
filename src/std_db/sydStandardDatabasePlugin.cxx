@@ -22,11 +22,9 @@
 // --------------------------------------------------------------------
 extern "C"
 {
-  void RegisterDatabaseSchema(syd::DatabaseManager * m) {
-    DDF();
-    DD(m);
+  std::string RegisterDatabaseSchema(syd::DatabaseManager * m) {
     m->RegisterDatabaseSchema<syd::StandardDatabase>("StandardDatabase");
-    DD("i am here plugin end");
+    return "StandardDatabase";
     // not need to check return here
   }
 }

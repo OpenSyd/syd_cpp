@@ -36,8 +36,6 @@ syd::Patient::Patient():syd::Record()
 // --------------------------------------------------
 syd::Patient::~Patient()
 {
-  DD(name);
-  DD("destructor patient");
 }
 // --------------------------------------------------
 
@@ -94,10 +92,8 @@ void syd::Patient::DumpInTable(syd::PrintTable2 & ta) const
   ta.Set("sid", study_id);
   ta.Set("w(kg)", weight_in_kg);
   ta.Set("dicom", dicom_patientid);
-  DD(db_);
   syd::StandardDatabase* db = static_cast<syd::StandardDatabase*>(db_);
   syd::Injection::vector injections;
-  DD(injections.size());
   odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
   db->Query(injections, q);
   ta.Set("injection", injections.size());

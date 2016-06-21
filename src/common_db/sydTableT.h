@@ -22,24 +22,13 @@
 // syd
 #include "sydCommon.h"
 
-// // odb
-// #include <odb/database.hxx>
-// #include <odb/transaction.hxx>
-// #include <odb/sqlite/database.hxx>
-// #include <odb/sqlite/tracer.hxx>
-// #include <odb/sqlite/statement.hxx>
-// #include <odb/schema-catalog.hxx>
-
 // --------------------------------------------------------------------
 namespace syd {
-
-  //  class Database;
 
   template< typename T >
   struct table_name{
     static char* name;
   };
-
 
   /// Base class for the functions that are common to all tables
   template<class T>
@@ -55,19 +44,8 @@ namespace syd {
     virtual void Dump(PrintTable & table) = 0;
 
     virtual bool Delete(T & t) {
-      DD("Delete in TableT");
       return true;
     }
-
-
-    // virtual bool Delete(IdType id)=0;
-    // virtual void DumpTable(std::ostream & os)=0;
-
-  // private:
-  //   std::string table_name;
-  //   static TableT * singleton_
-    ;
-    //    odb::sqlite::database * db_;
   };
 
 } // end namespace
