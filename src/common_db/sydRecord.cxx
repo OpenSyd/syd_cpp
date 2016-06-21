@@ -23,7 +23,7 @@
 #include "sydPluginManager.h"
 
 // Define static member
-//std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
+std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
 
 // --------------------------------------------------------------------
 syd::Record::Record()

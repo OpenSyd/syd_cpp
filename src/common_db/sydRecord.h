@@ -21,7 +21,7 @@
 
 // syd
 #include "sydCommon.h"
-#include "sydPrintTable.h" // FIXME to remove
+//#include "sydPrintTable.h" // FIXME to remove
 //#include "sydPrintTable2.h"
 #include "sydCheckResult.h"
 #include "sydVersion.h"
@@ -82,7 +82,6 @@ namespace syd {
     /// Default function to print a pointer to an element (must be inline here).
     template<class R>
     friend std::ostream& operator<<(std::ostream& os, const std::shared_ptr<R> p) {
-      // FIXME      if (p.get() == 0) os << "[NULL]";
       os << p->ToString();
       return os;
     }
@@ -98,7 +97,7 @@ namespace syd {
     void CheckIfPersistant() const;
 
     // FIXME
-    //   static std::map<std::string, std::vector<std::string> > inherit_sql_tables_map_;
+    static std::map<std::string, std::vector<std::string> > inherit_sql_tables_map_;
 
     /// Return the db where this record is stored
     syd::Database * GetDatabase() const;
@@ -148,13 +147,9 @@ namespace syd {
   static std::string GetStaticTableName() { return #TABLE_NAME; }       \
   static std::string GetStaticSQLTableName() { return #SQL_TABLE_NAME; } \
   static void InitInheritance() {                                       \
-    DD("InitInheritance to do");                                        \
-    INHERIT_TABLE_NAME::InitInheritance(); }                            \
-    static pointer New() { return pointer(new TABLE_NAME); }
-
-  // inherit_sql_tables_map_[#TABLE_NAME].push_back(INHERIT_TABLE_NAME::GetStaticSQLTableName()); }
-
-
+    INHERIT_TABLE_NAME::InitInheritance();                              \
+    inherit_sql_tables_map_[#TABLE_NAME].push_back(INHERIT_TABLE_NAME::GetStaticSQLTableName());} \
+  static pointer New() { return pointer(new TABLE_NAME); }
 
 #define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)                \
   TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, syd::Record)
