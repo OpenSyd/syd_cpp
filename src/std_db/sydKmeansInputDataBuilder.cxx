@@ -23,6 +23,7 @@
 #include <itkRescaleIntensityImageFilter.h>
 #include <itkNormalizeImageFilter.h>
 #include <itkMinimumMaximumImageCalculator.h>
+#include <itkAdaptiveHistogramEqualizationImageFilter.h>
 
 // --------------------------------------------------------------------
 syd::KmeansInputDataBuilder::KmeansInputDataBuilder()
@@ -44,6 +45,7 @@ void syd::KmeansInputDataBuilder::SetMask(ImageType::Pointer m)
 void syd::KmeansInputDataBuilder::AddInput(ImageType::Pointer image)
 {
   input_images.push_back(image);
+  DD(input_images.size());
 }
 // --------------------------------------------------------------------
 
@@ -99,8 +101,9 @@ void syd::KmeansInputDataBuilder::BuildInputData()
 
   // Get nb of dimensions
   nb_dimensions = input_images.size();
+  DD(nb_dimensions);
   //  for(auto n:input_vector_images_offsets) nb_dimensions += n.size();
-  //points.SetPointDimension(nb_dimensions);
+  points.SetPointDimension(nb_dimensions);
 
   // Declare output image and iterator
   AllocateOutputImage(nb_dimensions);
@@ -175,13 +178,26 @@ void syd::KmeansInputDataBuilder::AllocateOutputImage(int nb_dimensions)
 // --------------------------------------------------------------------
 void syd::KmeansInputDataBuilder::PreProcessing()
 {
-    typedef itk::MinimumMaximumImageCalculator <ImageType> ImageCalculatorFilterType;
-    ImageCalculatorFilterType::Pointer imageCalculatorFilter
+  typedef itk::MinimumMaximumImageCalculator <ImageType> ImageCalculatorFilterType;
+  ImageCalculatorFilterType::Pointer imageCalculatorFilter
     = ImageCalculatorFilterType::New ();
-    imageCalculatorFilter->SetImage(input_images[0]);
-    imageCalculatorFilter->Compute();
-    DD(imageCalculatorFilter->GetMaximum());
-    DD(imageCalculatorFilter->GetMinimum());
+  imageCalculatorFilter->SetImage(input_images[0]);
+  imageCalculatorFilter->Compute();
+  DD(imageCalculatorFilter->GetMaximum());
+  DD(imageCalculatorFilter->GetMinimum());
+
+  /*
+  for(auto & im:input_images) {
+    typedef  itk::AdaptiveHistogramEqualizationImageFilter< ImageType > AdaptiveHistogramEqualizationImageFilterType;
+    AdaptiveHistogramEqualizationImageFilterType::Pointer adaptiveHistogramEqualizationImageFilter = AdaptiveHistogramEqualizationImageFilterType::New();
+    adaptiveHistogramEqualizationImageFilter->SetInput(im);
+    adaptiveHistogramEqualizationImageFilter->SetRadius(1);
+    adaptiveHistogramEqualizationImageFilter->SetAlpha(1);
+    adaptiveHistogramEqualizationImageFilter->SetBeta(0.5);
+    adaptiveHistogramEqualizationImageFilter->Update();
+    im = adaptiveHistogramEqualizationImageFilter->GetOutput();
+  }
+  */
 
   // Normalise such as zero mean and unit variance
   for(auto & im:input_images) {
@@ -191,10 +207,10 @@ void syd::KmeansInputDataBuilder::PreProcessing()
     im = fr->GetOutput();
   }
 
-    imageCalculatorFilter->SetImage(input_images[0]);
-    imageCalculatorFilter->Compute();
-    DD(imageCalculatorFilter->GetMaximum());
-    DD(imageCalculatorFilter->GetMinimum());
+  imageCalculatorFilter->SetImage(input_images[0]);
+  imageCalculatorFilter->Compute();
+  DD(imageCalculatorFilter->GetMaximum());
+  DD(imageCalculatorFilter->GetMinimum());
 
   // Set values between [0-1]
   for(auto & im:input_images) {
@@ -206,10 +222,10 @@ void syd::KmeansInputDataBuilder::PreProcessing()
     im = fr->GetOutput();
   }
 
-    imageCalculatorFilter->SetImage(input_images[0]);
-    imageCalculatorFilter->Compute();
-    DD(imageCalculatorFilter->GetMaximum());
-    DD(imageCalculatorFilter->GetMinimum());
+  imageCalculatorFilter->SetImage(input_images[0]);
+  imageCalculatorFilter->Compute();
+  DD(imageCalculatorFilter->GetMaximum());
+  DD(imageCalculatorFilter->GetMinimum());
 
 
 }

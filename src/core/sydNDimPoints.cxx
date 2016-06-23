@@ -56,9 +56,15 @@ void syd::NDimPoints::push_back(double *v)
 // --------------------------------------------------------------------
 void syd::NDimPoints::Save(std::string filename)
 {
-  std::ofstream ofs(filename);
-  boost::archive::binary_oarchive oa(ofs);
-  oa << *this;
+  std::ofstream ofs(filename);//, std::ofstream::binary);
+  //boost::archive::binary_oarchive oa(ofs);
+  //oa << *this;
+  ofs << nb_dimensions << " "
+      << values.size() << std::endl;
+  for(auto & v:values)
+    for(auto i=0; i<nb_dimensions; i++)
+      ofs << v[i] << std::endl;
+  ofs.close();
 }
 // --------------------------------------------------------------------
 
@@ -66,8 +72,19 @@ void syd::NDimPoints::Save(std::string filename)
 // --------------------------------------------------------------------
 void syd::NDimPoints::Load(std::string filename)
 {
-  std::ifstream ifs(filename);
-  boost::archive::binary_iarchive ia(ifs);
-  ia >> *this;
+  std::ifstream ifs(filename);//, std::ifstream::binary);
+  //boost::archive::binary_iarchive ia(ifs);
+  //ia >> *this;
+  ifs >> nb_dimensions;
+  int n;
+  ifs >> n;
+  DD(n);
+  values.resize(n);
+  for(auto & v:values) {
+    double * x = new double[nb_dimensions];
+    for(auto i=0; i<nb_dimensions; i++) ifs >> x[i];
+    v = x;
+  }
+  ifs.close();
 }
 // --------------------------------------------------------------------

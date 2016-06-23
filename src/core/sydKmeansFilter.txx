@@ -41,12 +41,19 @@ void syd::KmeansFilter::RunWithDim()
   treeGenerator->SetBucketSize(50);
   int n = treeGenerator->GetMeasurementVectorSize();
   treeGenerator->Update();
+  //  treeGenerator->GetOutput()->PlotTree(std::cout);
 
   typedef typename TreeGeneratorType::KdTreeType TreeType;
   typedef itk::Statistics::KdTreeBasedKmeansEstimator<TreeType> EstimatorType;
   typename EstimatorType::Pointer estimator = EstimatorType::New();
   typename EstimatorType::ParametersType initialMeans(K*n);
   initialMeans.Fill(0.0f); // FIXME starting points ?
+  for(auto i=0; i<K; i++) {
+    for(auto j=0;j<n; j++)
+      initialMeans[n*i+j] = 1.0/(double)K * (double)i;
+  }
+  DDS(initialMeans);
+
   estimator->SetParameters( initialMeans );
   estimator->SetKdTree( treeGenerator->GetOutput() );
   estimator->SetMaximumIteration( 500 );

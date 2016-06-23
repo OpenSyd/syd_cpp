@@ -105,6 +105,7 @@ int main(int argc, char* argv[])
   // Get output
   auto & points = builder.GetInputKmeansData();
   int nb_dimensions = points.GetNumberOfDimensions();
+  DD(nb_dimensions);
 
   // save output points
   std::string points_filename = args_info.output_arg;

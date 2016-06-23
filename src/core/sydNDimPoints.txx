@@ -19,8 +19,13 @@
 // --------------------------------------------------------------------
 template<class Archive>
 void syd::NDimPoints::save(Archive & ar, const unsigned int version) const {
-  ar & nb_dimensions;
-  int n = values.size();
+  // To simplify reading, everything is in double
+  // First value = nb_dimensions
+  // Second value = nb of points
+  // then, all points
+  double n = (double) nb_dimensions;
+  ar & n;
+  n = values.size();
   ar & n;
   for(auto v:values)
     for(auto i=0; i<nb_dimensions; i++)
@@ -32,10 +37,11 @@ void syd::NDimPoints::save(Archive & ar, const unsigned int version) const {
 // --------------------------------------------------------------------
 template<class Archive>
 void NDimPoints::load(Archive & ar, const unsigned int version) {
-  ar & nb_dimensions;
-  int n;
+  double n;
   ar & n;
-  values.resize(n);
+  nb_dimensions = lrint(n);
+  ar & n;
+  values.resize(lrint(n));
   for(auto & v:values) {
     double * x = new double[nb_dimensions];
     for(auto i=0; i<nb_dimensions; i++) ar & x[i];

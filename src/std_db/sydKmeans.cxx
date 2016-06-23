@@ -25,6 +25,7 @@
 #include "sydKmeansInputDataBuilder.h"
 #include "sydKmeansFilter.h"
 #include "sydHistogram.h"
+#include "kmeans/KMeans.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -57,17 +58,53 @@ int main(int argc, char* argv[])
   std::string image_filename = args_info.inputs[2];
   auto input_image = syd::ReadImage<Image4DType>(image_filename);
 
-  // Trial kmeans
+  int N = points->size();
+  int D = points->GetNumberOfDimensions();
   int K = atoi(args_info.inputs[3]);
-  syd::KmeansFilter filter;
-  filter.SetInput(points);
-  filter.SetNumberOfClusters(K);
-  filter.Run();
+  DD(N);
+  DD(D);
+  DD(K);
+
+  if (1) {
+    // Trial kmeans
+    syd::KmeansFilter filter;
+    filter.SetInput(points);
+    filter.SetNumberOfClusters(K);
+    filter.Run();
+
+    // Compute image
+    auto centers = filter.GetCenters();
+    auto output_image = filter.ComputeLabeledImage(centers, mask, input_image);
+    syd::WriteImage<ImageType>(output_image, args_info.output_arg);
+  }
+
+  // Alternative implementation
+  Scalar * pts = new Scalar[N*D];//points->begin()[0];
+  for(auto i=0; i<N; i++) {
+    for(auto j=0; j<D; j++) {
+      pts[D*i+j] = *(points->begin()+i)[j];
+    }
+  }
+  for(auto i=0; i<10; i++) {
+    std::cout << pts[i] << " ";
+  }
+  std::cout << std::endl;
+  int attempts = 5;
+  Scalar * centers = new Scalar[D*K];
+  int * assignments = 0; // no assignments
+  Scalar result = RunKMeansPlusPlus(N, K, D, pts, attempts, centers, assignments);
+  DD(result);
+  for(auto i=0; i<K; i++) {
+    for(auto j=0; j<D; j++) {
+      std::cout << centers[D*i+j] << " ";
+    }
+    std::cout << std::endl;
+  }
 
   // Compute image
-  auto centers = filter.GetCenters();
-  auto output_image = filter.ComputeLabeledImage(centers, mask, input_image);
-  syd::WriteImage<ImageType>(output_image, args_info.output_arg);
+  // auto output_image = filter.ComputeLabeledImage(centers, mask, input_image);
+  // syd::WriteImage<ImageType>(output_image, args_info.output_arg+"_2.mhd");
+
 
   // This is the end, my friend.
 }

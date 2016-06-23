@@ -16,6 +16,9 @@ add_library(sydCore SHARED
   sydPrintTable.cxx
   sydHistogram.cxx
   sydNDimPoints.cxx
+  kmeans/KMeans.cpp
+  kmeans/KmTree.cpp
+  kmeans/KmUtils.cpp
 )
 
 ## I do not manage to make it SHARED on osx
