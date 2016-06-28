@@ -24,7 +24,9 @@
 #include "sydTag.h"
 
 // --------------------------------------------------------------------
-syd::Image::Image():syd::RecordWithHistory()
+syd::Image::Image():
+  syd::Record(),
+  syd::RecordWithHistory()
 {
   type = "unset";
   pixel_type = "unset";
@@ -279,7 +281,7 @@ void syd::Image::DumpInTable_filelist(syd::PrintTable2 & ta) const
 {
   ta.SetSingleRowFlag(true);
   ta.SetHeaderFlag(false);
-  ta.Set("file", files[0]->GetAbsolutePath(db_), 500);
+  ta.Set("file", "\""+files[0]->GetAbsolutePath(db_)+"\"", 500);
 }
 // --------------------------------------------------
 

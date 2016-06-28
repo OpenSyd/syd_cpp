@@ -57,6 +57,10 @@ namespace syd {
 
     virtual void DumpInTable(syd::PrintTable2 & table) const;
 
+    /// Callback : delete the associated files when the image is deleted.
+    void Callback(odb::callback_event, odb::database&) const;
+    void Callback(odb::callback_event, odb::database&);
+
   protected:
     RoiStatistic();
 
