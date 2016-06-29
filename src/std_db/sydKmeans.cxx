@@ -58,52 +58,67 @@ int main(int argc, char* argv[])
   std::string image_filename = args_info.inputs[2];
   auto input_image = syd::ReadImage<Image4DType>(image_filename);
 
-  int N = points->size();
+  int N = points->GetNumberOfPoints();
   int D = points->GetNumberOfDimensions();
   int K = atoi(args_info.inputs[3]);
   DD(N);
   DD(D);
   DD(K);
 
-  if (1) {
-    // Trial kmeans
-    syd::KmeansFilter filter;
-    filter.SetInput(points);
-    filter.SetNumberOfClusters(K);
-    filter.Run();
+  // Trial kmeans
+  syd::KmeansFilter filter;
+  // filter.SetInput(points);
+  //   filter.SetNumberOfClusters(K);
+  //   filter.Run();
 
-    // Compute image
-    auto centers = filter.GetCenters();
-    auto output_image = filter.ComputeLabeledImage(centers, mask, input_image);
-    syd::WriteImage<ImageType>(output_image, args_info.output_arg);
-  }
+  //   // Compute image
+  //   auto centers = filter.GetCenters();
+  //   auto output_image = filter.ComputeLabeledImage(centers, mask, input_image);
+  //   syd::WriteImage<ImageType>(output_image, args_info.output_arg);
+  // }
 
   // Alternative implementation
-  Scalar * pts = new Scalar[N*D];//points->begin()[0];
-  for(auto i=0; i<N; i++) {
-    for(auto j=0; j<D; j++) {
-      pts[D*i+j] = *(points->begin()+i)[j];
-    }
-  }
+  // Scalar * pts = new Scalar[N*D];//points->begin()[0];
+  // for(auto i=0; i<N; i++) {
+  //   for(auto j=0; j<D; j++) {
+  //     pts[D*i+j] = points->GetValue(i,j);//*(points->begin()+i)[j];
+  //   }
+  // }
+  Scalar * pts = points->GetPointer();
   for(auto i=0; i<10; i++) {
     std::cout << pts[i] << " ";
   }
   std::cout << std::endl;
-  int attempts = 5;
+  int attempts = 50;
   Scalar * centers = new Scalar[D*K];
   int * assignments = 0; // no assignments
+  DD(attempts);
+  //  AddKMeansLogging(&std::cout, true);
   Scalar result = RunKMeansPlusPlus(N, K, D, pts, attempts, centers, assignments);
   DD(result);
+  std::vector<std::vector<double>> v;
+  v.resize(D);
   for(auto i=0; i<K; i++) {
     for(auto j=0; j<D; j++) {
       std::cout << centers[D*i+j] << " ";
+      v[j].push_back(centers[D*i+j]);
     }
     std::cout << std::endl;
   }
+  auto p = syd::sort_permutation(v[0],
+                                 [](double const& a, double const& b){ return (a<b); });
+  for(auto j=0; j<D; j++) {
+    v[j] = syd::apply_permutation(v[j], p);
+    DDS(v[j]);
+  }
+  for(auto i=0; i<K; i++)
+    for(auto j=0; j<D; j++)
+      centers[D*i+j] = v[j][i];
+  DDV(centers, K*D);
 
   // Compute image
-  // auto output_image = filter.ComputeLabeledImage(centers, mask, input_image);
-  // syd::WriteImage<ImageType>(output_image, args_info.output_arg+"_2.mhd");
+  auto output_image = filter.ComputeLabeledImage(K, D, centers, mask, input_image);
+  syd::WriteImage<ImageType>(output_image, args_info.output_arg);
 
 
   // This is the end, my friend.

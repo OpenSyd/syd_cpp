@@ -61,7 +61,8 @@ int main(int argc, char* argv[])
   syd::Image::vector images;
   for(auto i=4; i<args_info.inputs_num; i++) {
     DD(i);
-    id = atoi(args_info.inputs[3]);
+    id = atoi(args_info.inputs[i]);
+    DD(id);
     syd::Image::pointer im;
     db->QueryOne(im, id);
     images.push_back(im);
@@ -119,18 +120,20 @@ int main(int argc, char* argv[])
   syd::WriteImage<Image4DType>(input_vector_image, img_filename);
 
 
-  double min = std::numeric_limits<double>::max();
-  double max = std::numeric_limits<double>::lowest();
-  int col=0;
-  for(auto x:points) {
+  /*
+    double min = std::numeric_limits<double>::max();
+    double max = std::numeric_limits<double>::lowest();
+    int col=0;
+    for(auto x:points) {
     if (x[col]>max) max = x[col];
     if (x[col]<min) min = x[col];
-  }
+    }
 
-  syd::Histogram h;
-  h.SetMinMaxBins(min, max, 20);
-  for(auto x:points) h.Fill(x[col]);
-  DD(h);
+    syd::Histogram h;
+    h.SetMinMaxBins(min, max, 20);
+    for(auto x:points) h.Fill(x[col]);
+    DD(h);
+  */
 
   // This is the end, my friend.
 }

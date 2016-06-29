@@ -65,6 +65,7 @@ namespace syd {
     template<class T>
     void AllocateOutputImageFromT(int nb_dimensions, typename T::Pointer input);
     void PreProcessing();
+    void PostProcessing();
     void InsertVectorImagesAsImages();
 
   }; // class KmeansInputDataBuilder

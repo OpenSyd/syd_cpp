@@ -20,7 +20,7 @@
 // #include "itkImageKmeansModelEstimator.h"
 
 // --------------------------------------------------------------------
-template<int N>
+/*template<int N>
 void syd::KmeansFilter::RunWithDim()
 {
   // Create the initial list of samples
@@ -28,7 +28,7 @@ void syd::KmeansFilter::RunWithDim()
   typedef itk::Statistics::ListSample<VectorPixelType> SampleType;
   typename SampleType::Pointer sample = SampleType::New();
   sample->SetMeasurementVectorSize(N);
-  for(auto p:*points) {
+  for(auto p:points) {
     VectorPixelType v;
     for(auto i=0; i<N; i++) v[i] = p[i];
     sample->PushBack(v);
@@ -71,4 +71,5 @@ void syd::KmeansFilter::RunWithDim()
     DDV(p,N);
   }
 }
+*/
 // --------------------------------------------------------------------
