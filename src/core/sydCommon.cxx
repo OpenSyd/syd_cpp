@@ -384,3 +384,17 @@ std::string syd::ToLowerCase(const std::string & s)
   return t;
 }
 // --------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+void syd::BoxCoxTransform(double & x, const double lambda)
+{
+  if (lambda == 0) {
+    if (x != 0) x = log(x);
+  }
+  else {
+    // if (x != 0)
+    x = (pow(x, lambda)-1.0)/lambda;
+  }
+}
+//--------------------------------------------------------------------
