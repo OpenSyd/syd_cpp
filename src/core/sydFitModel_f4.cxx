@@ -96,8 +96,8 @@ void syd::FitModel_f4::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
 
   problem->SetParameterLowerBound(&params_[1], 0, 0);//-0.9*GetLambdaPhysicHours());
   problem->SetParameterLowerBound(&params_[3], 0, 0);//-0.9*GetLambdaPhysicHours());
-  problem->SetParameterUpperBound(&params_[1], 0, 10*GetLambdaPhysicHours());
-  problem->SetParameterUpperBound(&params_[3], 0, 10*GetLambdaPhysicHours());
+  problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaPhysicHours());
+  problem->SetParameterUpperBound(&params_[3], 0, 100*GetLambdaPhysicHours());
 
 
   //problem->SetParameterUpperBound(&params_[1], 0, 0.0);//GetLambdaPhysicHours()*2.0); // positive
