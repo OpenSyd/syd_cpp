@@ -187,50 +187,31 @@ void syd::KmeansInputDataBuilder::PostProcessing()
   DD(N);
   DD(D);
 
-  // Find min and max
-  std::vector<double> mins1;
-  std::vector<double> maxs1;
-  points.GetMinMax(mins1, maxs1);
-  DDS(mins1);
-  DDS(maxs1);
-
-  double lambda = 0.5;
-  for(auto j=0; j<D; j++) {
-    for(auto i=0; i<N; i++) {
-      double v = points.GetValue(i,j);
-      //v = (v-mins1[j])/(maxs1[j]-mins1[j]);
-      syd::BoxCoxTransform(v, lambda);
-      points.SetValue(v, i, j);
-    }
-  }
-  std::vector<double> mins;
-  std::vector<double> maxs;
-  points.GetMinMax(mins, maxs);
-  DDS(mins);
-  DDS(maxs);
-  for(auto j=0; j<D; j++) {
-    for(auto i=0; i<N; i++) {
-      double v = points.GetValue(i,j);
-      v = (v-mins[j])/(maxs[j]-mins[j]);
-      points.SetValue(v, i, j);
-    }
-  }
-
-  DD("here image");
   IteratorType iter_mask(mask, mask->GetLargestPossibleRegion());
   auto iter_output = output->GetBufferPointer();
   int nb_pixels = mask->GetLargestPossibleRegion().GetNumberOfPixels();
   DD(nb_pixels);
   int output_offset = nb_pixels;
   DD(output_offset);
+
+  // Find min and max
+  std::vector<double> mins;
+  std::vector<double> maxs;
+  points.GetMinMax(mins, maxs);
+  DDS(mins);
+  DDS(maxs);
+
+  // Clamp to min/max
+  DD("Loop image 1");
+  double max = 1.0;
+  double min = 0.0;
+  points.Rescale(mins, maxs, min, max);
   for(auto i=0; i<nb_pixels; i++) {
     if (iter_mask.Get() != 0) {
+      auto it = iter_output;
       for(auto j=0; j<D; j++) {
-        auto it = iter_output;
         double v = *it;
-        v = (v-mins1[j])/(maxs1[j]-mins1[j]);
-        syd::BoxCoxTransform(v, lambda);
-        v = (v-mins[j])/(maxs[j]-mins[j]);
+        v = Rescale(v, mins[j], maxs[j], min, max);
         *it = v;
         it += output_offset;
       }
@@ -238,6 +219,89 @@ void syd::KmeansInputDataBuilder::PostProcessing()
     ++iter_mask;
     ++iter_output;
   }
+  points.GetMinMax(mins, maxs);
+  DDS(mins);
+  DDS(maxs);
+  syd::WriteImage<Image4DType>(output, "step1.mhd");
+
+  // Compute some stats: median, mean, med-deviation
+  std::vector<double> medians;
+  std::vector<double> means;
+  std::vector<double> mads;
+  points.ComputeMedians(medians);
+  points.ComputeMeans(means);
+  points.ComputeMedianAbsDeviations(medians, mads);
+  DDS(medians);
+  DDS(means);
+  DDS(mads);
+
+  // initialize to compute min/max
+  for(auto j=0; j<D; j++) {
+    mins[j] = std::numeric_limits<double>::max();
+    maxs[j] = std::numeric_limits<double>::lowest();
+  }
+
+  DD("Loop image 2");
+  double lambda = 0.5;
+  double outliers = 0;
+  iter_mask.GoToBegin();
+  iter_output = output->GetBufferPointer();
+  for(auto i=0; i<nb_pixels; i++) {
+    if (iter_mask.Get() != 0) {
+      auto it = iter_output;
+      for(auto j=0; j<D; j++) {
+        double v = *it;
+        double z_score = 0.6745 * (v - means[j]) / mads[j];
+        if (z_score > 3.5) {
+          iter_mask.Set(0.0); // remove points
+          ++outliers;
+        }
+        else {
+          BoxCoxTransform(v, lambda);
+          if (isnan(v)) {
+            iter_mask.Set(0);
+            ++outliers;
+          }
+          else {
+            *it = v;
+            if (v < mins[j]) mins[j] = v;
+            if (v > maxs[j]) maxs[j] = v;
+          }
+        }
+        it += output_offset;
+      }
+    }
+    ++iter_mask;
+    ++iter_output;
+  }
+  syd::WriteImage<Image4DType>(output, "step2.mhd");
+  DD(outliers);
+  DDS(mins);
+  DDS(maxs);
+
+  DD("loop image 3");
+  iter_mask.GoToBegin();
+  iter_output = output->GetBufferPointer();
+  points.clear();
+  for(auto i=0; i<nb_pixels; i++) {
+    if (iter_mask.Get() != 0) {
+      double * point = points.push_back();
+      auto it = iter_output;
+      for(auto j=0; j<D; j++) {
+        double v = *it;
+        v = syd::Rescale(v, mins[j], maxs[j], 0.0, 1.0);
+        point[j] = v;
+        *it = v;
+        it += output_offset;
+      }
+    }
+    ++iter_mask;
+    ++iter_output;
+  }
+  points.GetMinMax(mins, maxs);
+  DDS(mins);
+  DDS(maxs);
+
 }
 // --------------------------------------------------------------------
 
@@ -295,10 +359,12 @@ void syd::KmeansInputDataBuilder::PreProcessing()
     }
   */
 
-  imageCalculatorFilter->SetImage(input_images[0]);
-  imageCalculatorFilter->Compute();
-  DD(imageCalculatorFilter->GetMaximum());
-  DD(imageCalculatorFilter->GetMinimum());
+  /*
+    imageCalculatorFilter->SetImage(input_images[0]);
+    imageCalculatorFilter->Compute();
+    DD(imageCalculatorFilter->GetMaximum());
+    DD(imageCalculatorFilter->GetMinimum());
+  */
 
   // Set values between [0-1]
   /*
@@ -312,11 +378,12 @@ void syd::KmeansInputDataBuilder::PreProcessing()
     }
   */
 
-  imageCalculatorFilter->SetImage(input_images[0]);
-  imageCalculatorFilter->Compute();
-  DD(imageCalculatorFilter->GetMaximum());
-  DD(imageCalculatorFilter->GetMinimum());
-
+  /*
+    imageCalculatorFilter->SetImage(input_images[0]);
+    imageCalculatorFilter->Compute();
+    DD(imageCalculatorFilter->GetMaximum());
+    DD(imageCalculatorFilter->GetMinimum());
+  */
 
 }
 // --------------------------------------------------------------------
