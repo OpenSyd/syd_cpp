@@ -393,8 +393,32 @@ void syd::BoxCoxTransform(double & x, const double lambda)
     if (x != 0) x = log(x);
   }
   else {
-    // if (x != 0)
-    x = (pow(x, lambda)-1.0)/lambda;
+    double y = pow(x, lambda);
+    x = (y-1.0)/lambda;
   }
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+double syd::Rescale(const double v,
+                    const double inputMin,
+                    const double inputMax,
+                    const double outputMin,
+                    const double outputMax)
+{
+  return (v-inputMin)*(outputMax-outputMin)/(inputMax-inputMin) + outputMin;
+}
+//--------------------------------------------------------------------
+
+//--------------------------------------------------------------------
+double syd::ComputeMedian(std::vector<double> values)
+{
+  auto N = values.size();
+  double median;
+  sort(values.begin(), values.end());
+  if (N % 2 == 0) median = (values[N / 2 - 1] + values[N / 2]) / 2;
+  else median = values[N/2];
+  return median;
 }
 //--------------------------------------------------------------------

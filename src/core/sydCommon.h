@@ -108,6 +108,12 @@ namespace syd {
 
   //--------------------------------------------------------------------
   void BoxCoxTransform(double & v, const double lambda);
+  double Rescale(const double v,
+                 const double inputMin,
+                 const double inputMax,
+                 const double outputMin,
+                 const double outputMax);
+  double ComputeMedian(std::vector<double> x);
   //--------------------------------------------------------------------
 
 

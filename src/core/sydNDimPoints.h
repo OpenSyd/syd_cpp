@@ -44,6 +44,8 @@ namespace syd {
     void SetPointDimension(int d);
     int GetNumberOfDimensions() const { return nb_dimensions; }
     size_t GetNumberOfPoints() const { return values.size()/nb_dimensions; }
+    void SetNumberOfPoints(int n);
+    void clear() { values.clear(); }
 
     // Add an empty ND points
     double * push_back();
@@ -59,6 +61,15 @@ namespace syd {
 
     // Compute min max value by dim
     void GetMinMax(std::vector<double> & mins, std::vector<double> & maxs);
+
+    void ComputeMedians(std::vector<double> & medians) const;
+    void ComputeMeans(std::vector<double> & means) const;
+    void ComputeMedianAbsDeviations(const std::vector<double> & medians,
+                                    std::vector<double> & mads) const;
+    void Rescale(const std::vector<double> & inputMin,
+                 const std::vector<double> & inputMax,
+                 const double outputMin,
+                 const double outputMax);
 
     void Save(std::string filename);
     void Load(std::string filename);
