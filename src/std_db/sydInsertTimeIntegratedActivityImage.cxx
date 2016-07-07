@@ -27,9 +27,6 @@
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  // Init ceres log
-  SYD_CERES_STATIC_INIT;
-
   // Init
   SYD_INIT_GGO(sydInsertTimeIntegratedActivityImage, 2);
 
