@@ -34,6 +34,13 @@ message(STATUS "Boost is found")
 
 
 #----------------------------------------------------------
+# Eigen3
+find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN3_INCLUDE_DIR})
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 # Find ceres
 find_package(Ceres REQUIRED)
 include_directories(${CERES_INCLUDE_DIRS})
