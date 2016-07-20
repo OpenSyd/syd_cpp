@@ -355,6 +355,7 @@ syd::RoiType::pointer syd::StandardDatabase::FindRoiType(const std::string & roi
 
 
 // --------------------------------------------------------------------
+//FIXME to remove
 std::string syd::StandardDatabase::GetAbsolutePath(const syd::Image::pointer image) const
 {
   if (image->files.size() == 0) return "unset_file";
@@ -364,6 +365,7 @@ std::string syd::StandardDatabase::GetAbsolutePath(const syd::Image::pointer ima
 
 
 // --------------------------------------------------------------------
+//FIXME to remove
 std::string syd::StandardDatabase::GetAbsolutePath(const syd::DicomFile::pointer dicom) const
 {
   return GetAbsolutePath(dicom->file);
@@ -372,6 +374,7 @@ std::string syd::StandardDatabase::GetAbsolutePath(const syd::DicomFile::pointer
 
 
 // --------------------------------------------------------------------
+//FIXME to remove
 std::string syd::StandardDatabase::GetAbsolutePath(const syd::File::pointer file) const
 {
   std::string f = file->path+PATH_SEPARATOR+file->filename;

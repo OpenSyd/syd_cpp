@@ -30,7 +30,7 @@ namespace syd {
   class File: public syd::Record {
   public:
 
-    virtual ~File() { }
+    virtual ~File();
 
     /// File name
     std::string filename;
@@ -56,7 +56,8 @@ namespace syd {
     virtual void DumpInTable_file(syd::PrintTable2 & table) const;
     virtual void DumpInTable_md5(syd::PrintTable2 & table) const;
 
-    std::string GetAbsolutePath(const syd::Database * db) const;
+    /// Return the full absolute path of the file inside the db (must be persistent)
+    std::string GetAbsolutePath() const;
 
     virtual syd::CheckResult Check() const;
 

@@ -33,7 +33,7 @@ syd::Image::pointer syd::ImageFromDicomBuilder::NewImageFromDicom(const syd::Dic
       ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom, true);
       LOG(4) << "Update information";
       syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("HU", "Hounsfield Units");
-      image->pixel_value_unit = unit;
+      image->pixel_unit = unit;
       if (dicom->pixel_scale != 1.0) {
         LOG(2) << "Pixel Scale = " << dicom->pixel_scale << ", so I scale the image.";
         syd::ScaleImage<ImageType>(itk_image, dicom->pixel_scale);
@@ -47,7 +47,7 @@ syd::Image::pointer syd::ImageFromDicomBuilder::NewImageFromDicom(const syd::Dic
       ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom, true);
       LOG(4) << "Update information";
       syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("counts", "Number of counts");
-      image->pixel_value_unit = unit;
+      image->pixel_unit = unit;
       // Scale if needed
       if (dicom->pixel_scale != 1.0) {
         LOG(2) << "Pixel Scale = " << dicom->pixel_scale << ", so I scale the image.";

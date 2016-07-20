@@ -80,10 +80,10 @@ namespace syd {
     std::string dicom_description;
 
     /// Image size (in pixels). It is an array because the size is fixed.
-    std::array<int, 3> size;
+    std::vector<int> size;
 
     /// Image spacing aka size of the pixel (in mm)
-    std::array<double, 3> spacing;
+    std::vector<double> spacing;
 
     /// Acquisition duration (in sec)
     double duration_sec;

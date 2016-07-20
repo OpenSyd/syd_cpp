@@ -20,8 +20,9 @@
 #include "sydInsertImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydImageFromDicomBuilder.h"
+//#include "sydImageFromDicomBuilder.h"
 #include "sydCommonGengetopt.h"
+#include "sydImageHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -39,9 +40,53 @@ int main(int argc, char* argv[])
   // Get the mhd filename
   std::string filename = args_info.inputs[0];
 
+  // Get the patient
+  syd::Image::pointer like;
+  syd::Patient::pointer patient;
+  if (args_info.like_given) {
+    syd::IdType id = args_info.like_arg;
+    db->QueryOne(like, id);
+    patient = like->patient;
+  }
+  else {
+    patient = db->FindPatient(args_info.patient_arg);
+  }
+  DD(patient);
+
+  // create a new image
+  //  syd::ImageBuilder builder(db);
+  syd::Image::pointer output;
+  db->New(output); // empty image
+  output->patient = patient;
+  syd::ImageHelper::CopyAndSetMhdImage(output, filename);
+
+  // set properties
+  if (args_info.like_given) {
+    syd::ImageHelper::CopyInformation(output, like);
+  }
+  else {
+    syd::ImageHelper::SetPixelUnit(output, args_info.pixel_unit_arg);
+    //    output = builder.NewMHDImage(patient, filename);
+    //    if (args_info.pixel_unit_given)
+    //  builder.SetPixelType(args_info.pixel_unit_arg);
+    // Try options, if error remove temporary files
+  }
+
+  //  builder.UpdateFromCommandLine(output, args_info); FIXME
+  db->UpdateTagsFromCommandLine(output->tags, args_info);
+  // syd::TagHelper::UpdateTagsFromCommandLine(output, args_info); ?
+
+  // insert in the db (make it persistent)
+  //builder.Insert(output); // auto rename files ?
+  db->Insert(output); // auto rename files ?
+  //  builder.InsertAndRename(output); // TO REMOVE --> in pre_persist
+
+
+  /*
+
   // Get the image to copy info from
   if (!args_info.like_given) {
-    LOG(FATAL) << "Error flag 'like' is mandatory (yet).";
+  LOG(FATAL) << "Error flag 'like' is mandatory (yet).";
   }
   syd::IdType id = args_info.like_arg;
   syd::Image::pointer input;
@@ -57,14 +102,15 @@ int main(int argc, char* argv[])
 
   // Set optional unity
   if (args_info.pixelunit_given) {
-    syd::PixelValueUnit::pointer unit;
-    unit = db->FindPixelValueUnit(args_info.pixelunit_arg);
-    output->pixel_value_unit = unit;
+  syd::PixelValueUnit::pointer unit;
+  unit = db->FindPixelValueUnit(args_info.pixelunit_arg);
+  output->pixel_value_unit = unit;
   }
 
   // Insert in the db
   builder.InsertAndRename(output);
   LOG(1) << "Inserting Image " << output;
   // This is the end, my friend.
+  */
 }
 // --------------------------------------------------------------------

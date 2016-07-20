@@ -1,4 +1,20 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="276">
+    <alter-table name="syd::Image">
+      <add-column name="pixel_unit" type="INTEGER" null="true"/>
+      <add-column name="acquisition_date" type="TEXT" null="true"/>
+      <add-column name="modality" type="TEXT" null="true"/>
+      <add-foreign-key name="pixel_unit_fk" deferrable="DEFERRED">
+        <column name="pixel_unit"/>
+        <references table="syd::PixelValueUnit">
+          <column name="id"/>
+        </references>
+      </add-foreign-key>
+      <drop-foreign-key name="pixel_value_unit_fk"/>
+      <drop-column name="pixel_value_unit"/>
+    </alter-table>
+  </changeset>
+
   <changeset version="275"/>
 
   <changeset version="274">

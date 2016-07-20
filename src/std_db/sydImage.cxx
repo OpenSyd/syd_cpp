@@ -28,12 +28,10 @@ syd::Image::Image():syd::RecordWithHistory()
 {
   type = "unset";
   pixel_type = "unset";
-  dimension = 3;
+  dimension = 0;
   frame_of_reference_uid = "unset";
-  files.clear();
-  dicoms.clear();
-  for(auto &s:size) s = 0;
-  for(auto &s:spacing) s = 1.0;
+  acquisition_date = "unset";
+  modality = "unset";
 }
 // --------------------------------------------------------------------
 
@@ -46,26 +44,47 @@ syd::Image::~Image()
 
 
 // --------------------------------------------------------------------
-std::string syd::Image::ToString() const
+std::string syd::Image::GetPatientName() const
 {
   std::string name;
   if (patient == NULL) name = "unset";
   else name = patient->name;
+  return name;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Image::GetInjectionName() const
+{
+  std::string inj_name;
+  if (injection == NULL) inj_name = "unset";
+  else inj_name = injection->radionuclide->name;
+  return inj_name;
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+std::string syd::Image::ToString() const
+{
   std::stringstream ss ;
   ss << id << " "
-     << name << " "
-     << injection->radionuclide->name << " ";
+     << GetPatientName() << " "
+     << GetInjectionName() << " ";
   if (files.size() == 0) ss << "(no files) ";
-  //for(auto f:files) ss << f->filename << " "; // only first is usually useful
-  else ss << files[0]->filename << " ";
-  ss << GetLabels(tags) << " " << type << " " << pixel_type << " "
-     << size[0] << "x" << size[1] << "x" << size[2] << " "
-     << spacing[0] << "x" << spacing[1] << "x" << spacing[2];
+  else ss << files[0]->filename << " "; // only first is usually useful
+  ss << GetLabels(tags) << " "
+     << type << " "
+     << pixel_type << " "
+     << SizeAsString() << " "
+     << SpacingAsString();
   if (dicoms.size() > 0) ss << " " << dicoms[0]->dicom_modality << " ";
   for(auto d:dicoms) ss << d->id << " ";
   ss << frame_of_reference_uid << " ";
-  if (pixel_value_unit != NULL) ss << pixel_value_unit->name;
-  else ss << "pixel_value_unit_unset";
+  if (pixel_unit != NULL) ss << pixel_unit->name;
+  else ss << "pixel_unit_unset";
   if (history) {
     ss << " " << history->insertion_date << " "
        << history->update_date;
@@ -78,8 +97,7 @@ std::string syd::Image::ToString() const
 // --------------------------------------------------
 std::string syd::Image::GetAcquisitionDate() const
 {
-  if (dicoms.size() == 0) return "unknown_date";
-  else return dicoms[0]->acquisition_date;
+  return acquisition_date;
 }
 // --------------------------------------------------
 
@@ -87,14 +105,13 @@ std::string syd::Image::GetAcquisitionDate() const
 // --------------------------------------------------
 std::string syd::Image::GetModality() const
 {
-  if (dicoms.size() == 0) return "unknown_modality";
-  else return dicoms[0]->dicom_modality;
+  return modality;
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Image::AddDicomSerie(syd::DicomSerie::pointer dicom)
+void syd::Image::AddDicomSerie(const syd::DicomSerie::pointer dicom)
 {
   bool found = false;
   int i=0;
@@ -108,7 +125,7 @@ void syd::Image::AddDicomSerie(syd::DicomSerie::pointer dicom)
 
 
 // --------------------------------------------------
-void syd::Image::RemoveDicomSerie(syd::DicomSerie::pointer dicom)
+void syd::Image::RemoveDicomSerie(const syd::DicomSerie::pointer dicom)
 {
   bool found = false;
   int i=0;
@@ -126,6 +143,9 @@ void syd::Image::RemoveDicomSerie(syd::DicomSerie::pointer dicom)
 // --------------------------------------------------
 std::string syd::Image::ComputeRelativeFolder() const
 {
+  if (patient == NULL) {
+    LOG(FATAL) << "Cannot get Image::ComputeRelativeFolder while no patient is set (the record is no persistent in the db).";
+  }
   return patient->name;
 }
 // --------------------------------------------------
@@ -189,8 +209,9 @@ void syd::Image::FatalIfNoDicom() const
 
 
 // --------------------------------------------------
-void syd::Image::CopyDicomSeries(syd::Image::pointer image)
+void syd::Image::CopyDicomSeries(const syd::Image::pointer image)
 {
+  dicoms.clear();
   for(auto d:image->dicoms) AddDicomSerie(d);
 }
 // --------------------------------------------------
@@ -222,11 +243,10 @@ void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
 void syd::Image::DumpInTable_short(syd::PrintTable2 & ta) const
 {
   ta.Set("id", id);
-  if (dicoms.size() > 0)
-    ta.Set("acqui_date", dicoms[0]->acquisition_date);
-  else ta.Set("acqui_date", "no_date");
+  ta.Set("p", GetPatientName());
+  ta.Set("acqui_date", GetAcquisitionDate());
   ta.Set("tags", GetLabels(tags), 100);
-  if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
+  if (pixel_unit != NULL) ta.Set("unit", pixel_unit->name);
 }
 // --------------------------------------------------
 
@@ -235,9 +255,10 @@ void syd::Image::DumpInTable_short(syd::PrintTable2 & ta) const
 void syd::Image::DumpInTable_default(syd::PrintTable2 & ta) const
 {
   DumpInTable_short(ta);
-  ta.Set("inj", injection->radionuclide->name);
-  ta.Set("size", syd::ArrayToString<int, 3>(size));
-  ta.Set("spacing", syd::ArrayToString<double, 3>(spacing,1));
+  ta.Set("inj", GetInjectionName());
+  ta.Set("mod", GetModality());
+  ta.Set("size", syd::ArrayToString(size));
+  ta.Set("spacing", syd::ArrayToString(spacing,1));
   std::string dicom;
   for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
   if (dicom.size() != 0) dicom.pop_back(); // remove last space
@@ -269,7 +290,7 @@ void syd::Image::DumpInTable_history(syd::PrintTable2 & ta) const
 void syd::Image::DumpInTable_file(syd::PrintTable2 & ta) const
 {
   DumpInTable_short(ta);
-  ta.Set("file", files[0]->GetAbsolutePath(db_), 100);
+  ta.Set("file", files[0]->GetAbsolutePath(), 100);
 }
 // --------------------------------------------------
 
@@ -279,7 +300,7 @@ void syd::Image::DumpInTable_filelist(syd::PrintTable2 & ta) const
 {
   ta.SetSingleRowFlag(true);
   ta.SetHeaderFlag(false);
-  ta.Set("file", files[0]->GetAbsolutePath(db_), 500);
+  ta.Set("file", files[0]->GetAbsolutePath(), 500);
 }
 // --------------------------------------------------
 
@@ -299,12 +320,10 @@ syd::CheckResult syd::Image::Check() const
 // --------------------------------------------------------------------
 double syd::Image::GetHoursFromInjection() const
 {
+  if (injection == NULL) return 0.0;
+  if (acquisition_date == "unset") return 0.0;
   std::string inj_date = injection->date;
-  if (dicoms.size() == 0) {
-    LOG(FATAL) << "No dicom attached to this image, cannot compute the time from injection date "
-               << ToString() << std::endl;
-  }
-  double time = syd::DateDifferenceInHours(dicoms[0]->acquisition_date, inj_date);
+  double time = syd::DateDifferenceInHours(acquisition_date, inj_date);
   return time;
 }
 // --------------------------------------------------------------------
@@ -319,11 +338,23 @@ std::vector<double> & syd::GetTimesFromInjection(syd::StandardDatabase * db,
   syd::Image::vector sorted_images = images;
   db->Sort<syd::Image>(sorted_images);
   syd::Injection::pointer injection = sorted_images[0]->injection;
+  if (injection == NULL) {
+    LOG(FATAL) << "Cannot Image::GetTimesFromInjection because injection of first image is null";
+  }
   std::string starting_date = injection->date;
   for(auto image:sorted_images) {
-    double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
+    double t = syd::DateDifferenceInHours(image->acquisition_date, starting_date);
     times->push_back(t);
   }
   return *times;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Image::GetAbsolutePath() const
+{
+  if (files.size() == 0) return "unset_file";
+  return files[0]->GetAbsolutePath();
 }
 // --------------------------------------------------------------------

@@ -55,7 +55,7 @@ syd::StitchDicomImageBuilder::NewStitchedImage(const syd::DicomSerie::pointer a,
   syd::Image::pointer image = NewMHDImage(a);
   image->dicoms.push_back(b);
   syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("counts", "Number of counts");
-  image->pixel_value_unit = unit;
+  image->pixel_unit = unit;
 
   // Read the dicom images
   typedef float PixelType;

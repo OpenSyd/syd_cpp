@@ -33,6 +33,23 @@ syd::File::File():syd::Record()
 
 
 // --------------------------------------------------------------------
+syd::File::~File()
+{
+  DD("File destructor");
+  if (!IsPersistent()) {
+    DD("File is not persistent, I try to remove temporary file");
+    DD(GetAbsolutePath());
+    fs::path f(GetAbsolutePath());
+    if (fs::exists(f)) {
+      DD("delete file");
+      fs::remove(f);
+    }
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 std::string syd::File::ToString() const
 {
   std::stringstream ss ;
@@ -76,9 +93,9 @@ void syd::File::SetFilenamesToErase() const
 
 
 // --------------------------------------------------------------------
-std::string syd::File::GetAbsolutePath(const syd::Database * db) const
+std::string syd::File::GetAbsolutePath() const
 {
-  std::string apath = db->ConvertToAbsolutePath(path+PATH_SEPARATOR+filename);
+  std::string apath = db_->ConvertToAbsolutePath(path+PATH_SEPARATOR+filename);
   return apath;
 }
 // --------------------------------------------------------------------
@@ -136,7 +153,7 @@ void syd::File::DumpInTable_file(syd::PrintTable2 & ta) const
 syd::CheckResult syd::File::Check() const
 {
   // Test if file exist
-  std::string s = GetAbsolutePath(db_);
+  std::string s = GetAbsolutePath();
   syd::CheckResult r;
   if (!fs::exists(s)) {
     r.success = false;

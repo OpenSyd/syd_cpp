@@ -41,8 +41,8 @@ std::string syd::DicomSerie::ToString() const
      << dicom_modality << " "
      << acquisition_date << " "
      << reconstruction_date << " "
-     << ArrayToString<int, 3>(size) << " "
-     << ArrayToString<double, 3>(spacing) << " "
+     << ArrayToString(size) << " "
+     << ArrayToString(spacing) << " "
      << dicom_manufacturer << " "
      << dicom_description
      << (pixel_scale == 1.0 ? "":syd::ToString(pixel_scale));
@@ -153,7 +153,7 @@ void syd::DicomSerie::DumpInTable_file(syd::PrintTable2 & ta) const
   typedef odb::query<syd::DicomFile> QDF;
   QDF q = QDF::dicom_serie == id;
   db_->Query<syd::DicomFile>(dfiles, q);
-  if (dfiles.size() >= 1) ta.Set("path", dfiles[0]->file->GetAbsolutePath(db_), 150);
+  if (dfiles.size() >= 1) ta.Set("path", dfiles[0]->file->GetAbsolutePath(), 150);
   else ta.Set("path", db_->ConvertToAbsolutePath(dfiles[0]->file->path), 150);
 }
 // --------------------------------------------------
@@ -170,7 +170,7 @@ void syd::DicomSerie::DumpInTable_filelist(syd::PrintTable2 & ta) const
   QDF q = QDF::dicom_serie == id;
   db_->Query<syd::DicomFile>(dfiles, q);
   if (dfiles.size() >= 1) // FIXME -> build a string with all filenames (?)
-    ta.Set("file", dfiles[0]->file->GetAbsolutePath(db_), 500);
+    ta.Set("file", dfiles[0]->file->GetAbsolutePath(), 500);
 }
 // --------------------------------------------------
 
@@ -179,8 +179,8 @@ void syd::DicomSerie::DumpInTable_filelist(syd::PrintTable2 & ta) const
 void syd::DicomSerie::DumpInTable_details(syd::PrintTable2 & ta) const
 {
   DumpInTable_default(ta);
-  ta.Set("size", syd::ArrayToString<int, 3>(size));
-  ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
+  ta.Set("size", syd::ArrayToString(size));
+  ta.Set("spacing", syd::ArrayToString(spacing));
   ta.Set("duration(s)", duration_sec, 2);
   ta.Set("scale", pixel_scale, 2);
 }

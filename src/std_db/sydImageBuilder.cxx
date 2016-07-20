@@ -45,7 +45,7 @@ syd::Image::pointer syd::ImageBuilder::NewMHDImageLike(syd::Image::pointer input
     image->frame_of_reference_uid = input->frame_of_reference_uid;
   }
   AddTag(image->tags, input->tags);
-  image->pixel_value_unit = input->pixel_value_unit;
+  image->pixel_unit = input->pixel_unit;
   // InitializeMHDFiles(image);
   // DD(db_->GetAbsolutePath(input));
   // DD(db_->GetAbsolutePath(image));
@@ -101,7 +101,7 @@ syd::RoiMaskImage::pointer syd::ImageBuilder::NewMHDRoiMaskImage(syd::Patient::p
   mask->patient = patient;
   mask->roitype = roitype;
   mask->injection = inj;
-  mask->pixel_value_unit = db_->FindPixelValueUnit("no_unit");
+  mask->pixel_unit = db_->FindPixelValueUnit("no_unit");
   InitializeMHDFiles(mask);
   return mask;
 }
@@ -242,7 +242,7 @@ void syd::ImageBuilder::SetImagePixelValueUnit(syd::Image::pointer image, std::s
   odb::query<syd::PixelValueUnit> q = odb::query<syd::PixelValueUnit>::name == pixel_unit;
   try {
     db_->QueryOne(unit, q);
-    image->pixel_value_unit = unit;
+    image->pixel_unit = unit;
   } catch(std::exception & e) {
     EXCEPTION("Cannot find the unit '" << pixel_unit << "'.");
   }

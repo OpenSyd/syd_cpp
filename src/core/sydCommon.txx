@@ -31,13 +31,13 @@ std::string ToString(const T & t)
 
 //--------------------------------------------------------------------
 // Convert array to string with 'x'
-template<class T, int N>
-std::string ArrayToString(const std::array<T, N> & t, int precision)
+template<class T>
+std::string ArrayToString(const std::vector<T> & t, int precision)
 {
   std::ostringstream os;
   os << std::fixed << std::setprecision(precision);
-  for(auto i=0; i<N-1; i++) os << t[i] << "x";
-  os << t[N-1];// << std::flush;
+  for(auto i=0; i<t.size()-1; i++) os << t[i] << "x";
+  os << t[t.size()-1];// << std::flush;
   return(os.str());
 }
 //--------------------------------------------------------------------

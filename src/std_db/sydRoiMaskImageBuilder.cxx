@@ -37,7 +37,7 @@ syd::RoiMaskImageBuilder::NewRoiMaskImage(const syd::DicomSerie::pointer & dicom
   mask->dicoms.push_back(dicom);
   mask->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
   syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("label", "Mask image");
-  mask->pixel_value_unit = unit;
+  mask->pixel_unit = unit;
   CopyImageFromFile(mask, filename);
   return mask;
 }

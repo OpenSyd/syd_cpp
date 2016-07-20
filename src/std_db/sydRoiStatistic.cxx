@@ -42,7 +42,7 @@ std::string syd::RoiStatistic::ToString() const
   ss << id << " "
      << image->patient->name << " "
      << image->id << " "
-     << image->pixel_value_unit->name << " "
+     << image->pixel_unit->name << " "
      << GetLabels(tags) << " "
      << (mask!= NULL? syd::ToString(mask->roitype->name):"no_mask") << " "
      << mean << " " << std_dev << " "  << n << " "
@@ -59,7 +59,7 @@ void syd::RoiStatistic::DumpInTable(syd::PrintTable2 & ta) const
   ta.Set("p", image->patient->name);
   ta.Set("image", image->id);
   ta.Set("mask", (mask != NULL ? mask->roitype->name:"no_mask"));
-  ta.Set("unit", image->pixel_value_unit->name);
+  ta.Set("unit", image->pixel_unit->name);
   ta.Set("tags", GetLabels(tags));
   ta.Set("mean", mean);
   ta.Set("sd", std_dev);

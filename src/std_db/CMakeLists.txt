@@ -37,6 +37,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
   sydDicomSerieBuilder.cxx
   sydImageBuilder.cxx
+  sydImageHelper.cxx
   sydFileBuilder.cxx
   sydImageFromDicomBuilder.cxx
   sydStitchDicomImageBuilder.cxx
