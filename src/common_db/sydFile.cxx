@@ -108,7 +108,7 @@ void syd::File::DumpInTable(syd::PrintTable2 & ta) const
   if (format == "default") DumpInTable_default(ta);
   else if (format == "file") DumpInTable_file(ta);
   else if (format == "md5") DumpInTable_md5(ta);
-    else {
+  else {
     ta.AddFormat("default", "id, date, tags, size etc");
     ta.AddFormat("file", "with complete filename");
     ta.AddFormat("md5", "with md5 value");
@@ -158,5 +158,38 @@ syd::CheckResult syd::File::Check() const
     r.description = "the file "+s+" is not found";
   }
   return r;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::File::RenameFile(std::string relative_path,
+                           std::string vfilename,
+                           bool renameFileOnDiskFlag)
+{
+  // Check directory or create it
+  db_->CheckOrCreateRelativePath(relative_path);
+
+  // Compute paths
+  std::string new_absolute_path = db_->ConvertToAbsolutePath(relative_path+PATH_SEPARATOR+vfilename);
+  std::string old_absolute_path = GetAbsolutePath();
+
+  // If file already exist, mv it. Do nothing if does no exist.
+  fs::path old(old_absolute_path);
+  if (fs::exists(old) and renameFileOnDiskFlag) {
+    // Destination exist ?
+    fs::path dir(new_absolute_path);
+    if (fs::exists(dir)) {
+      EXCEPTION("Could not update file '"
+                << old_absolute_path
+                << "', destination already exists: '"
+                << new_absolute_path << "'.");
+    }
+    fs::rename(old_absolute_path, new_absolute_path);
+  }
+
+  // Update in the db
+  path = relative_path;
+  filename = vfilename;
 }
 // --------------------------------------------------------------------

@@ -61,6 +61,12 @@ namespace syd {
 
     virtual syd::CheckResult Check() const;
 
+    /// Rename the associated file
+    void RenameFile(std::string relative_path,
+                    std::string filename,
+                    bool renameFileOnDiskFlag = true);
+
+
   protected:
     File();
 
