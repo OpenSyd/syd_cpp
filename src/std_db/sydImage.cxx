@@ -81,11 +81,11 @@ std::string syd::Image::ToString() const
      << type << " "
      << pixel_type << " "
      << SizeAsString() << " "
-     << SpacingAsString() << " ";
-  if (dicoms.size() > 0) ss << dicoms[0]->dicom_modality << " ";
+     << SpacingAsString();
+  if (dicoms.size() > 0) ss << " " << dicoms[0]->dicom_modality << " ";
   for(auto d:dicoms) ss << d->id << " ";
   ss << frame_of_reference_uid << " ";
-  if (pixel_unit != NULL) ss << pixel_unit->name << " ";
+  if (pixel_unit != NULL) ss << pixel_unit->name;
   else ss << "pixel_unit_unset ";
   if (history) {
     ss << " " << history->insertion_date << " "
@@ -165,6 +165,9 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
     for(auto f:files) db.erase(f);
   }
   if (event == odb::callback_event::pre_persist) {
+    DD("TODO rename file");
+
+
     // insert the file with odb::database not the syd::database
     for(auto f:files) db.persist(f);
   }

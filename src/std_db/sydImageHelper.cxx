@@ -31,7 +31,6 @@ CopyAndSetMhdImage(syd::Image::pointer image, std::string filename)
   InitializeEmptyMHDFiles(image);
   CopyMHDImage(filename, image->GetAbsolutePath());
   UpdateImageProperties(image);
-  DD("TODO : set the image param from header");
 }
 // --------------------------------------------------------------------
 
@@ -43,8 +42,8 @@ CopyInformation(syd::Image::pointer image, const syd::Image::pointer like)
   image->patient = like->patient;
   image->injection = like->injection;
   image->CopyDicomSeries(like);
-  image->type = like->type;
-  image->pixel_type = like->pixel_type;
+  // image->type = like->type; // not copied (depends on the file)
+  // image->pixel_type = like->pixel_type; // not copied (depends on the file)
   image->pixel_unit = like->pixel_unit;
   image->frame_of_reference_uid = like->frame_of_reference_uid;
   image->acquisition_date = like->acquisition_date;
@@ -99,12 +98,8 @@ UpdateImageProperties(syd::Image::pointer image)
 void syd::ImageHelper::
 UpdateImageProperties(syd::Image::pointer image, itk::ImageIOBase::Pointer header)
 {
-  // Check PixelType = scalar ?
+  // Check PixelType = scalar
   image->pixel_type = itk::ImageIOBase::GetComponentTypeAsString(header->GetComponentType());
-  auto d = image->dimension = header->GetNumberOfDimensions();
-  for(auto i=0; i<d; i++) {
-    image->size.push_back(header->GetDimensions(i));
-    image->spacing.push_back(header->GetSpacing(i));
-  }
+  DD(image);
 }
 // --------------------------------------------------------------------
