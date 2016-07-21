@@ -28,9 +28,13 @@ CopyAndSetMhdImage(syd::Image::pointer image, std::string filename)
     EXCEPTION("This image already contains files"
               << ". Remove them before using CopyAndSetMhdImage. Image is : "
               << image);
+  fs::path p(filename);
+  if (p.extension() != ".mhd") {
+    EXCEPTION("Extension must be .mhd, cannot CopyAndSetMhdImage.");
+  }
   InitializeEmptyMHDFiles(image);
   CopyMHDImage(filename, image->GetAbsolutePath());
-  UpdateImageProperties(image);
+  UpdateMhdImageProperties(image);
 }
 // --------------------------------------------------------------------
 
@@ -79,27 +83,52 @@ void syd::ImageHelper::
 SetPixelUnit(syd::Image::pointer image, std::string pixel_unit)
 {
   auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto u = db->FindPixelUnit(pixel_unit);
+  image->pixel_unit = u;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 void syd::ImageHelper::
-UpdateImageProperties(syd::Image::pointer image)
+UpdateMhdImageProperties(syd::Image::pointer image)
 {
   auto filename = image->GetAbsolutePath();
   auto header = syd::ReadImageHeader(filename);
-  UpdateImageProperties(image, header);
+  UpdateMhdImageProperties(image, header);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 void syd::ImageHelper::
-UpdateImageProperties(syd::Image::pointer image, itk::ImageIOBase::Pointer header)
+UpdateMhdImageProperties(syd::Image::pointer image, itk::ImageIOBase::Pointer header)
 {
   // Check PixelType = scalar
   image->pixel_type = itk::ImageIOBase::GetComponentTypeAsString(header->GetComponentType());
   DD(image);
+  auto d = image->dimension = header->GetNumberOfDimensions();
+  image->size.clear();
+  image->spacing.clear();
+  for(auto i=0; i<d; i++) {
+    image->size.push_back(header->GetDimensions(i));
+    image->spacing.push_back(header->GetSpacing(i));
+  }
 }
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+// void syd::ImageHelper::
+// InsertAndAutoRenameMhdFiles(syd::Image::pointer image)
+// {
+//   if (image->type != "mhd") {
+//     EXCEPTION("Image type must be 'mhd', abort in InsertAndAutoRenameMhdFiles");
+//   }
+//   auto db = image->GetDatabase();
+//   db->Insert(image);
+//   image->RenameToDefaultMHDFilename();
+//   db->Update(image);
+// }
 // --------------------------------------------------------------------

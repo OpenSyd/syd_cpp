@@ -33,10 +33,10 @@ namespace syd {
   public:
 
     /// Rename two files from a mhd image
-    static void RenameMHDFile(syd::File::pointer mhd_file,
-                              syd::File::pointer raw_file,
-                              std::string relative_path,
-                              std::string filename);
+    // static void RenameAndUpdateMHDFile(syd::File::pointer mhd_file,
+    //                                    syd::File::pointer raw_file,
+    //                                    std::string relative_path,
+    //                                    std::string filename);
 
 
 

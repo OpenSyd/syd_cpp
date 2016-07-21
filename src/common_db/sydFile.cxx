@@ -165,7 +165,8 @@ syd::CheckResult syd::File::Check() const
 // --------------------------------------------------------------------
 void syd::File::RenameFile(std::string relative_path,
                            std::string vfilename,
-                           bool renameFileOnDiskFlag)
+                           bool renameFileOnDiskFlag,
+                           bool updateDBFlag)
 {
   // Check directory or create it
   db_->CheckOrCreateRelativePath(relative_path);
@@ -191,5 +192,7 @@ void syd::File::RenameFile(std::string relative_path,
   // Update in the db
   path = relative_path;
   filename = vfilename;
+
+  if (updateDBFlag) db_->Update(shared_from_this());
 }
 // --------------------------------------------------------------------

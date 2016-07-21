@@ -61,7 +61,6 @@ int main(int argc, char* argv[])
   }
 
   // create a new image
-  //  syd::ImageBuilder builder(db);
   syd::Image::pointer output;
   db->New(output); // empty image
   output->patient = patient;
@@ -85,44 +84,8 @@ int main(int argc, char* argv[])
   db->UpdateTagsFromCommandLine(output->tags, args_info);
   // syd::TagHelper::UpdateTagsFromCommandLine(output, args_info); ?
 
-  // insert in the db (make it persistent)
-  //builder.Insert(output); // auto rename files ?
-
-  db->Insert(output); // auto rename files ? FIXME check without insert to test temp file
-
-  //  builder.InsertAndRename(output); // TO REMOVE --> in pre_persist
-
-
-  LOG(1) << "Inserting Image " << output;
+  db->Insert(output);
+  LOG(1) << "Inserting Image: " << output;
   // This is the end, my friend.
-
-  /*
-
-  // Get the image to copy info from
-  if (!args_info.like_given) {
-  LOG(FATAL) << "Error flag 'like' is mandatory (yet).";
-  }
-  syd::IdType id = args_info.like_arg;
-  syd::Image::pointer input;
-  db->QueryOne(input, id);
-
-  // Create the new image
-  syd::ImageBuilder builder(db);
-  syd::Image::pointer output = builder.NewMHDImageLike(input);
-  builder.CopyImageFromFile(output, filename);
-
-  // Add optional tag
-  db->UpdateTagsFromCommandLine(output->tags, args_info);
-
-  // Set optional unity
-  if (args_info.pixelunit_given) {
-  syd::PixelValueUnit::pointer unit;
-  unit = db->FindPixelValueUnit(args_info.pixelunit_arg);
-  output->pixel_value_unit = unit;
-  }
-
-  // Insert in the db
-  builder.InsertAndRename(output);
-  */
 }
 // --------------------------------------------------------------------

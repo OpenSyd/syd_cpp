@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
     // Final update and log
     db->Update(image);
     LOG(1) << "Image cropped: " << image
-           << " (initial size was " << syd::ArrayToString<int,3>(size) << ")";
+           << " (initial size was " << syd::ArrayToString(size) << ")";
   }
 
   // This is the end, my friend.

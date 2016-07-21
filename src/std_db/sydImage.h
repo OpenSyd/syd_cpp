@@ -156,6 +156,10 @@ namespace syd {
     /// Check if the associated files exist on disk
     virtual syd::CheckResult Check() const;
 
+    /// Change the filename to <patient_name>/<modality>_id.mhd
+    /// Only update the db if the flag is true.
+    void RenameToDefaultMHDFilename(bool updateDBFlag);
+
   protected:
     Image();
 

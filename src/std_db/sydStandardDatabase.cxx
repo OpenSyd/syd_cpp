@@ -310,7 +310,7 @@ syd::StandardDatabase::FindRoiMaskImage(const syd::Image::pointer image,
 
 
 // --------------------------------------------------------------------
-syd::PixelValueUnit::pointer syd::StandardDatabase::FindPixelValueUnit(const std::string & name)
+syd::PixelValueUnit::pointer syd::StandardDatabase::FindPixelUnit(const std::string & name)
 {
   syd::PixelValueUnit::pointer unit;
   try {
@@ -329,7 +329,7 @@ syd::PixelValueUnit::pointer syd::StandardDatabase::FindOrInsertUnit(const std::
                                                                      const std::string & description)
 {
   try {
-    syd::PixelValueUnit::pointer unit = FindPixelValueUnit(name);
+    syd::PixelValueUnit::pointer unit = FindPixelUnit(name);
     return unit;
   } catch (std::exception & e) {
     syd::PixelValueUnit::pointer unit;

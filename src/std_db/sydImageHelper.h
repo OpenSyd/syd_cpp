@@ -43,8 +43,10 @@ namespace syd {
 
     static void SetPixelUnit(syd::Image::pointer image, std::string pixel_unit);
 
-    static void UpdateImageProperties(syd::Image::pointer image);
-    static void UpdateImageProperties(syd::Image::pointer image, itk::ImageIOBase::Pointer header);
+    static void UpdateMhdImageProperties(syd::Image::pointer image);
+    static void UpdateMhdImageProperties(syd::Image::pointer image, itk::ImageIOBase::Pointer header);
+
+    //    static void InsertAndAutoRenameMhdFiles(syd::Image::pointer image);
 
     template<class ImageType>
     static void SetItkImage(syd::Image::pointer image,

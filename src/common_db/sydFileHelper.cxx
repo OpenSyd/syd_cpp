@@ -20,28 +20,24 @@
 #include "sydFileHelper.h"
 #include "sydImageUtils.h"
 
-// --------------------------------------------------------------------
-void syd::FileHelper::RenameMHDFile(syd::File::pointer mhd_file,
-                                    syd::File::pointer raw_file,
-                                    std::string relative_path,
-                                    std::string filename)
-{
-  DD(mhd_file);
-  DD(raw_file);
+// // --------------------------------------------------------------------
+// void syd::FileHelper::RenameAndUpdateMHDFile(syd::File::pointer mhd_file,
+//                                              syd::File::pointer raw_file,
+//                                              std::string relative_path,
+//                                              std::string filename)
+// {
+//   // To rename mhd need to change the content of the linked .raw file.
+//   // Rename mhd file
+//   std::string old_path = mhd_file->GetAbsolutePath();
+//   mhd_file->RenameFile(relative_path, filename, false, true); // do not move on disk
+//   std::string new_path = mhd_file->GetAbsolutePath();
 
-  // Rename mhd file
-  std::string old_path = mhd_file->GetAbsolutePath();
-  mhd_file->RenameFile(relative_path, filename, false); // do not move on disk
-  std::string new_path = mhd_file->GetAbsolutePath();
+//   // Move file on disk
+//   syd::RenameMHDImage(old_path, new_path);
 
-  // Move file on disk
-  syd::RenameMHDImage(old_path, new_path);
-
-  // Rename raw file
-  std::string f = filename;
-  syd::Replace(f, ".mhd", ".raw");
-  raw_file->RenameFile(relative_path, f, false); // do not move on disk
-  DD(mhd_file);
-  DD(raw_file);
-}
-// --------------------------------------------------------------------
+//   // Rename raw file
+//   std::string f = filename;
+//   syd::Replace(f, ".mhd", ".raw");
+//   raw_file->RenameFile(relative_path, f, false, true); // do not move on disk
+// }
+// // --------------------------------------------------------------------

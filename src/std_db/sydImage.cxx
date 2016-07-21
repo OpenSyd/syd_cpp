@@ -22,6 +22,7 @@
 #include "sydDicomSerie.h"
 #include "sydImageBuilder.h"
 #include "sydTag.h"
+#include "sydFileHelper.h"
 
 // --------------------------------------------------------------------
 syd::Image::Image():syd::RecordWithHistory()
@@ -30,6 +31,7 @@ syd::Image::Image():syd::RecordWithHistory()
   injection = NULL;
   type = "type_unset";
   pixel_type = "pixel_type_unset";
+  pixel_unit = NULL;
   dimension = 0;
   frame_of_reference_uid = "frame_of_reference_uid_unset";
   acquisition_date = "acquisition_date_unset";
@@ -150,7 +152,9 @@ std::string syd::Image::ComputeRelativeFolder() const
     LOG(FATAL) << "Cannot get Image::ComputeRelativeFolder while no patient"
                << " is set (the record is no persistent in the db).";
   }
-  return patient->name;
+  auto s = patient->name;
+  syd::Replace(s, " ", "_"); // replace space with underscore
+  return s;
 }
 // --------------------------------------------------
 
@@ -165,14 +169,24 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
     for(auto f:files) db.erase(f);
   }
   if (event == odb::callback_event::pre_persist) {
-    DD("TODO rename file");
-
-
     // insert the file with odb::database not the syd::database
     for(auto f:files) db.persist(f);
   }
+  if (event == odb::callback_event::post_persist) {
+    if (type == "mhd") { // auto rename file if mhd
+      auto image = const_cast<syd::Image*>(this); // remove the const
+      image->RenameToDefaultMHDFilename(false);
+      // update the files
+      for(auto f:files) db.update(f);
+    }
+  }
   if (event == odb::callback_event::pre_update) {
     // update the file with odb::database not the syd::database
+    /* if (type == "mhd") { // auto rename file if mhd
+       auto image = const_cast<syd::Image*>(this); // remove the const
+       image->RenameToDefaultMHDFilename();
+       }*/
+    // update the files
     for(auto f:files) db.update(f);
   }
 }
@@ -254,6 +268,7 @@ void syd::Image::DumpInTable_short(syd::PrintTable2 & ta) const
   ta.Set("acqui_date", GetAcquisitionDate());
   ta.Set("tags", GetLabels(tags), 100);
   if (pixel_unit != NULL) ta.Set("unit", pixel_unit->name);
+  else ta.Set("unit", "pixel_unit_unset");
 }
 // --------------------------------------------------
 
@@ -363,5 +378,47 @@ std::string syd::Image::GetAbsolutePath() const
 {
   if (files.size() == 0) return "no_files";
   return files[0]->GetAbsolutePath();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Image::RenameToDefaultMHDFilename(bool updateDBFlag)
+{
+  if (patient == NULL) {
+    EXCEPTION("No patient in this image, cannot RenameToDefaultMHDFilename().");
+  }
+  if (type != "mhd") {
+    EXCEPTION("Image type is not 'mhd', cannot RenameToDefaultMHDFilename().");
+  }
+
+  // Compute the default filename
+  std::ostringstream oss;
+  if (modality == "modality_unset") oss << "image";
+  else oss << modality;
+  oss << "_" << id << ".mhd";
+  std::string mhd_filename = oss.str();
+  std::string raw_filename = mhd_filename;
+  syd::Replace(raw_filename, ".mhd", ".raw");
+  std::string mhd_relative_path = ComputeRelativeFolder()+PATH_SEPARATOR;
+  std::string mhd_path = db_->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
+  DD(mhd_path);
+
+  // To rename mhd need to change the content of the linked .raw file.
+  // Rename mhd file
+  auto mhd_file = files[0];
+  auto raw_file = files[1];
+  std::string old_path = mhd_file->GetAbsolutePath();
+  // do not move on disk (yet), but update the db only if updateDBFlag
+  mhd_file->RenameFile(mhd_relative_path, mhd_filename, false, updateDBFlag);
+
+  // Move file on disk
+  syd::RenameMHDImage(old_path, mhd_path);
+
+  // Rename raw file
+  std::string f = mhd_filename;
+  syd::Replace(f, ".mhd", ".raw");
+  // do not move on disk, update the db
+  raw_file->RenameFile(mhd_relative_path, f, false, updateDBFlag);
 }
 // --------------------------------------------------------------------

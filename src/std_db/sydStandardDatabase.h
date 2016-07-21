@@ -66,7 +66,7 @@ namespace syd {
                  const std::string & name) const;
     syd::PixelValueUnit::pointer FindOrInsertUnit(const std::string & name,
                                                   const std::string & description);
-    syd::PixelValueUnit::pointer FindPixelValueUnit(const std::string & name);
+    syd::PixelValueUnit::pointer FindPixelUnit(const std::string & name);
     syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
     syd::Calibration::pointer FindCalibration(const syd::Image::pointer Image,
                                               const std::string & calib_tag);

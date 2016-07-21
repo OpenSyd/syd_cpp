@@ -27,7 +27,8 @@ namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::File") callback(Callback)
   /// Store information about a file linked to a database.
-  class File: public syd::Record {
+  class File: public syd::Record,
+              public std::enable_shared_from_this<File> {
   public:
 
     virtual ~File();
@@ -61,12 +62,14 @@ namespace syd {
 
     virtual syd::CheckResult Check() const;
 
-    /// Rename the associated file
+    /// Rename the associated file. Warning, could leave the db in a
+    /// wrong state if the file on disk and the object is not updated
+    /// accordingly in the db. In doubt use renameFileOnDiskFlag=true,
+    /// updateDBFlag=true
     void RenameFile(std::string relative_path,
                     std::string filename,
-                    bool renameFileOnDiskFlag = true);
-
-
+                    bool renameFileOnDiskFlag,
+                    bool updateDBFlag);
   protected:
     File();
 
