@@ -64,6 +64,7 @@ target_link_libraries(StandardDatabase sydCommonDatabase ${SYD_CORE_LIBRARIES})
 
 # Plugin library : MUST be called lib<DatabaseType>Plugin.so
 IF(APPLE)
+  DD("here")
   add_library(StandardDatabasePlugin MODULE
     sydStandardDatabasePlugin.cxx
     $<TARGET_OBJECTS:sydStandardDatabaseObjects>
@@ -72,7 +73,7 @@ IF(APPLE)
 ELSE(NOT APPLE)
   add_library(StandardDatabasePlugin MODULE
     sydStandardDatabasePlugin.cxx
-    $<TARGET_OBJECTS:sydCommonDatabaseObjects>
+    # $<TARGET_OBJECTS:sydCommonDatabaseObjects>
     $<TARGET_OBJECTS:sydStandardDatabaseObjects>
     )
   target_link_libraries(StandardDatabasePlugin ${SYD_CORE_LIBRARIES})
