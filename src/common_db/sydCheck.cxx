@@ -67,8 +67,8 @@ int main(int argc, char* argv[])
   }
   std::sort(files.begin(), files.end(),
             [db](const syd::File::pointer & a, const syd::File::pointer & b) {
-              std::string aa = a->GetAbsolutePath(db);
-              std::string bb = a->GetAbsolutePath(db);
+              std::string aa = a->GetAbsolutePath();
+              std::string bb = a->GetAbsolutePath();
               return aa > bb;
             });
 
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
   for(auto f:complete_filenames) {
     auto r = std::find_if(files.begin(), files.end(),
                           [f, db](syd::File::pointer & file) {
-                            return (f == file->GetAbsolutePath(db)); });
+                            return (f == file->GetAbsolutePath()); });
     if (r == files.end()) {
       missing_files.push_back(f);
     }

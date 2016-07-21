@@ -65,8 +65,10 @@ target_link_libraries(StandardDatabase sydCommonDatabase ${SYD_CORE_LIBRARIES})
 # Plugin library : MUST be called lib<DatabaseType>Plugin.so
 add_library(StandardDatabasePlugin MODULE
   sydStandardDatabasePlugin.cxx
-  $<TARGET_OBJECTS:sydStandardDatabaseObjects>)
-target_link_libraries(StandardDatabasePlugin sydCommonDatabase ${SYD_CORE_LIBRARIES})
+  $<TARGET_OBJECTS:sydCommonDatabaseObjects>
+  $<TARGET_OBJECTS:sydStandardDatabaseObjects>
+  )
+target_link_libraries(StandardDatabasePlugin ${SYD_CORE_LIBRARIES})
 set_target_properties(StandardDatabasePlugin PROPERTIES MACOSX_BUNDLE TRUE)
 set_target_properties(StandardDatabasePlugin PROPERTIES BUNDLE_EXTENSION ".so")
 

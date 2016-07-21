@@ -34,6 +34,7 @@ std::string ToString(const T & t)
 template<class T>
 std::string ArrayToString(const std::vector<T> & t, int precision)
 {
+  if (t.size() == 0) return "";
   std::ostringstream os;
   os << std::fixed << std::setprecision(precision);
   for(auto i=0; i<t.size()-1; i++) os << t[i] << "x";

@@ -40,6 +40,14 @@ int main(int argc, char* argv[])
   // Get the mhd filename
   std::string filename = args_info.inputs[0];
 
+  // Check options
+  if (args_info.like_given && args_info.patient_given) {
+    LOG(FATAL) << "Please, only set either --like or --patient, not both.";
+  }
+  if (!args_info.like_given && !args_info.patient_given) {
+    LOG(FATAL) << "Please, set --like or --patient (but not both).";
+  }
+
   // Get the patient
   syd::Image::pointer like;
   syd::Patient::pointer patient;
@@ -49,9 +57,8 @@ int main(int argc, char* argv[])
     patient = like->patient;
   }
   else {
-    patient = db->FindPatient(args_info.patient_arg);
+    patient = db->FindPatient(std::string(args_info.patient_arg));
   }
-  DD(patient);
 
   // create a new image
   //  syd::ImageBuilder builder(db);
@@ -65,12 +72,14 @@ int main(int argc, char* argv[])
     syd::ImageHelper::CopyInformation(output, like);
   }
   else {
-    syd::ImageHelper::SetPixelUnit(output, args_info.pixel_unit_arg);
+    if (args_info.pixel_unit_given)
+      syd::ImageHelper::SetPixelUnit(output, args_info.pixel_unit_arg);
     //    output = builder.NewMHDImage(patient, filename);
     //    if (args_info.pixel_unit_given)
     //  builder.SetPixelType(args_info.pixel_unit_arg);
     // Try options, if error remove temporary files
   }
+  DD(output);
 
   //  builder.UpdateFromCommandLine(output, args_info); FIXME
   db->UpdateTagsFromCommandLine(output->tags, args_info);
@@ -78,9 +87,14 @@ int main(int argc, char* argv[])
 
   // insert in the db (make it persistent)
   //builder.Insert(output); // auto rename files ?
-  db->Insert(output); // auto rename files ?
+
+  db->Insert(output); // auto rename files ? FIXME check without insert to test temp file
+
   //  builder.InsertAndRename(output); // TO REMOVE --> in pre_persist
 
+
+  LOG(1) << "Inserting Image " << output;
+  // This is the end, my friend.
 
   /*
 
@@ -109,8 +123,6 @@ int main(int argc, char* argv[])
 
   // Insert in the db
   builder.InsertAndRename(output);
-  LOG(1) << "Inserting Image " << output;
-  // This is the end, my friend.
   */
 }
 // --------------------------------------------------------------------

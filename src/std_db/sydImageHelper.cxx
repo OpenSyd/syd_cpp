@@ -29,8 +29,8 @@ CopyAndSetMhdImage(syd::Image::pointer image, std::string filename)
               << ". Remove them before using CopyAndSetMhdImage. Image is : "
               << image);
   InitializeEmptyMHDFiles(image);
-  DD(image->GetAbsolutePath());
   CopyMHDImage(filename, image->GetAbsolutePath());
+  UpdateImageProperties(image);
   DD("TODO : set the image param from header");
 }
 // --------------------------------------------------------------------
@@ -80,5 +80,31 @@ void syd::ImageHelper::
 SetPixelUnit(syd::Image::pointer image, std::string pixel_unit)
 {
   auto db = image->GetDatabase<syd::StandardDatabase>();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ImageHelper::
+UpdateImageProperties(syd::Image::pointer image)
+{
+  auto filename = image->GetAbsolutePath();
+  auto header = syd::ReadImageHeader(filename);
+  UpdateImageProperties(image, header);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ImageHelper::
+UpdateImageProperties(syd::Image::pointer image, itk::ImageIOBase::Pointer header)
+{
+  // Check PixelType = scalar ?
+  image->pixel_type = itk::ImageIOBase::GetComponentTypeAsString(header->GetComponentType());
+  auto d = image->dimension = header->GetNumberOfDimensions();
+  for(auto i=0; i<d; i++) {
+    image->size.push_back(header->GetDimensions(i));
+    image->spacing.push_back(header->GetSpacing(i));
+  }
 }
 // --------------------------------------------------------------------

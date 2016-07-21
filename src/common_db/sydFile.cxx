@@ -35,13 +35,11 @@ syd::File::File():syd::Record()
 // --------------------------------------------------------------------
 syd::File::~File()
 {
-  DD("File destructor");
   if (!IsPersistent()) {
-    DD("File is not persistent, I try to remove temporary file");
-    DD(GetAbsolutePath());
     fs::path f(GetAbsolutePath());
     if (fs::exists(f)) {
-      DD("delete file");
+      LOG(WARNING) << "The file '" << GetAbsolutePath()
+                   << "' is not persistent, I delete the (temporary) file.";
       fs::remove(f);
     }
   }
