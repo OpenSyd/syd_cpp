@@ -65,6 +65,9 @@ int main(int argc, char* argv[])
       db->Query(files, q);
     }
   }
+  else {
+    db->Query(files);
+  }
   std::sort(files.begin(), files.end(),
             [db](const syd::File::pointer & a, const syd::File::pointer & b) {
               std::string aa = a->GetAbsolutePath();
