@@ -91,6 +91,27 @@ SetPixelUnit(syd::Image::pointer image, std::string pixel_unit)
 
 // --------------------------------------------------------------------
 void syd::ImageHelper::
+SetInjection(syd::Image::pointer image, std::string injection)
+{
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto i = db->FindInjection(image->patient, injection);
+  image->injection = i;
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+void syd::ImageHelper::
+AddDicomSerie(syd::Image::pointer image, syd::IdType id)
+{
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  syd::DicomSerie::pointer d;
+  db->QueryOne(d, id);
+  image->AddDicomSerie(d);
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+void syd::ImageHelper::
 UpdateMhdImageProperties(syd::Image::pointer image)
 {
   auto filename = image->GetAbsolutePath();
@@ -106,7 +127,6 @@ UpdateMhdImageProperties(syd::Image::pointer image, itk::ImageIOBase::Pointer he
 {
   // Check PixelType = scalar
   image->pixel_type = itk::ImageIOBase::GetComponentTypeAsString(header->GetComponentType());
-  DD(image);
   auto d = image->dimension = header->GetNumberOfDimensions();
   image->size.clear();
   image->spacing.clear();
@@ -115,20 +135,4 @@ UpdateMhdImageProperties(syd::Image::pointer image, itk::ImageIOBase::Pointer he
     image->spacing.push_back(header->GetSpacing(i));
   }
 }
-// --------------------------------------------------------------------
-
-
-
-// --------------------------------------------------------------------
-// void syd::ImageHelper::
-// InsertAndAutoRenameMhdFiles(syd::Image::pointer image)
-// {
-//   if (image->type != "mhd") {
-//     EXCEPTION("Image type must be 'mhd', abort in InsertAndAutoRenameMhdFiles");
-//   }
-//   auto db = image->GetDatabase();
-//   db->Insert(image);
-//   image->RenameToDefaultMHDFilename();
-//   db->Update(image);
-// }
 // --------------------------------------------------------------------

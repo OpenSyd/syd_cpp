@@ -73,12 +73,23 @@ int main(int argc, char* argv[])
   else {
     if (args_info.pixel_unit_given)
       syd::ImageHelper::SetPixelUnit(output, args_info.pixel_unit_arg);
-    //    output = builder.NewMHDImage(patient, filename);
-    //    if (args_info.pixel_unit_given)
-    //  builder.SetPixelType(args_info.pixel_unit_arg);
-    // Try options, if error remove temporary files
+    if (args_info.modality_given) output->modality = args_info.modality_arg;
+    if (args_info.frame_of_reference_uid_given)
+      output->frame_of_reference_uid = args_info.frame_of_reference_uid_arg;
+    if (args_info.acquisition_date_given) {
+      auto d = args_info.acquisition_date_arg;
+      if (!syd::IsDateValid(d)) {
+        LOG(FATAL) << "Acquisition date is not valid.";
+      }
+      output->acquisition_date = d;
+    }
+    if (args_info.injection_given)
+      syd::ImageHelper::SetInjection(output, args_info.injection_arg);
+    if (args_info.dicom_given) {
+      for(auto i=0; i<args_info.dicom_given; i++)
+        syd::ImageHelper::AddDicomSerie(output, args_info.dicom_arg[i]);
+    }
   }
-  DD(output);
 
   //  builder.UpdateFromCommandLine(output, args_info); FIXME
   db->UpdateTagsFromCommandLine(output->tags, args_info);

@@ -176,16 +176,11 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
     if (type == "mhd") { // auto rename file if mhd
       auto image = const_cast<syd::Image*>(this); // remove the const
       image->RenameToDefaultMHDFilename(false);
-      // update the files
-      for(auto f:files) db.update(f);
     }
+    // update the files
+    for(auto f:files) db.update(f);
   }
   if (event == odb::callback_event::pre_update) {
-    // update the file with odb::database not the syd::database
-    /* if (type == "mhd") { // auto rename file if mhd
-       auto image = const_cast<syd::Image*>(this); // remove the const
-       image->RenameToDefaultMHDFilename();
-       }*/
     // update the files
     for(auto f:files) db.update(f);
   }
@@ -402,7 +397,6 @@ void syd::Image::RenameToDefaultMHDFilename(bool updateDBFlag)
   syd::Replace(raw_filename, ".mhd", ".raw");
   std::string mhd_relative_path = ComputeRelativeFolder()+PATH_SEPARATOR;
   std::string mhd_path = db_->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
-  DD(mhd_path);
 
   // To rename mhd need to change the content of the linked .raw file.
   // Rename mhd file
