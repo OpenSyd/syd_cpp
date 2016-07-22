@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
   typedef odb::query<syd::DicomFile> QDF;
   QDF q = QDF::dicom_serie == id;
   db->Query(dfiles, q);
-  std::string file = dfiles[0]->file->GetAbsolutePath(db); // only first file
+  std::string file = dfiles[0]->file->GetAbsolutePath(); // only first file
 
   // Output
   std::cout << dicomserie << std::endl

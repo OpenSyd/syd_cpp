@@ -40,9 +40,9 @@ int main(int argc, char* argv[])
   // Check pixelvalueunit
   syd::PixelValueUnit::pointer punit;
   if (args_info.pixelunit_given)
-    punit = db->FindPixelValueUnit(args_info.pixelunit_arg);
+    punit = db->FindPixelUnit(args_info.pixelunit_arg);
   else
-    punit = db->FindPixelValueUnit("no_unit");
+    punit = db->FindPixelUnit("no_unit");
 
   // Get the list of images to integrate
   std::vector<syd::IdType> ids;
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
   // Insert in db
   syd::Image::pointer tia = builder.GetTimeIntegratedActivityImage();
   db->UpdateTagsFromCommandLine(tia->tags, args_info);
-  tia->pixel_value_unit = punit;
+  tia->pixel_unit = punit;
   builder.InsertAndRename(tia);
   LOG(1) << "Inserting Image " << tia;
 

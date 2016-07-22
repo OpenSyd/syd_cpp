@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
     auto image = images[index];
     // check file exist
     for(auto file:image->files) {
-      std::string s = file->GetAbsolutePath(db);
+      std::string s = file->GetAbsolutePath();
       if (!fs::exists(s)) {
         LOG(WARNING) << "Image: " << image << std::endl
                      << "--> the file '" << s << "' does not exist." << std::endl;
