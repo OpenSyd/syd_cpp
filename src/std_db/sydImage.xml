@@ -1,56 +1,17 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
   <changeset version="276">
-    <alter-table name="syd::Image">
-      <add-column name="pixel_unit" type="INTEGER" null="true"/>
-      <add-column name="acquisition_date" type="TEXT" null="true"/>
-      <add-column name="modality" type="TEXT" null="true"/>
-      <add-foreign-key name="pixel_unit_fk" deferrable="DEFERRED">
-        <column name="pixel_unit"/>
-        <references table="syd::PixelValueUnit">
-          <column name="id"/>
-        </references>
-      </add-foreign-key>
-      <drop-foreign-key name="pixel_value_unit_fk"/>
-      <drop-column name="pixel_value_unit"/>
-    </alter-table>
-  </changeset>
-
-  <changeset version="275"/>
-
-  <changeset version="274">
-    <alter-table name="syd::Image">
-      <add-column name="injection" type="INTEGER" null="true"/>
-      <add-foreign-key name="injection_fk" deferrable="DEFERRED">
-        <column name="injection"/>
-        <references table="syd::Injection">
-          <column name="id"/>
-        </references>
-      </add-foreign-key>
-    </alter-table>
-  </changeset>
-
-  <changeset version="273"/>
-
-  <changeset version="272"/>
-
-  <changeset version="265"/>
-
-  <changeset version="262"/>
-
-  <changeset version="261"/>
-
-  <changeset version="260"/>
-
-  <changeset version="259">
     <add-table name="syd::Image" kind="polymorphic root object">
       <column name="id" type="INTEGER" null="true"/>
       <column name="history" type="INTEGER" null="true"/>
       <column name="typeid" type="TEXT" null="true"/>
       <column name="patient" type="INTEGER" null="true"/>
+      <column name="injection" type="INTEGER" null="true"/>
       <column name="type" type="TEXT" null="true"/>
       <column name="pixel_type" type="TEXT" null="true"/>
-      <column name="pixel_value_unit" type="INTEGER" null="true"/>
+      <column name="pixel_unit" type="INTEGER" null="true"/>
       <column name="frame_of_reference_uid" type="TEXT" null="true"/>
+      <column name="acquisition_date" type="TEXT" null="true"/>
+      <column name="modality" type="TEXT" null="true"/>
       <column name="dimension" type="INTEGER" null="true"/>
       <primary-key auto="true">
         <column name="id"/>
@@ -67,8 +28,14 @@
           <column name="id"/>
         </references>
       </foreign-key>
-      <foreign-key name="pixel_value_unit_fk" deferrable="DEFERRED">
-        <column name="pixel_value_unit"/>
+      <foreign-key name="injection_fk" deferrable="DEFERRED">
+        <column name="injection"/>
+        <references table="syd::Injection">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <foreign-key name="pixel_unit_fk" deferrable="DEFERRED">
+        <column name="pixel_unit"/>
         <references table="syd::PixelValueUnit">
           <column name="id"/>
         </references>

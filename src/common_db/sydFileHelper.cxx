@@ -20,24 +20,16 @@
 #include "sydFileHelper.h"
 #include "sydImageUtils.h"
 
-// // --------------------------------------------------------------------
-// void syd::FileHelper::RenameAndUpdateMHDFile(syd::File::pointer mhd_file,
-//                                              syd::File::pointer raw_file,
-//                                              std::string relative_path,
-//                                              std::string filename)
-// {
-//   // To rename mhd need to change the content of the linked .raw file.
-//   // Rename mhd file
-//   std::string old_path = mhd_file->GetAbsolutePath();
-//   mhd_file->RenameFile(relative_path, filename, false, true); // do not move on disk
-//   std::string new_path = mhd_file->GetAbsolutePath();
-
-//   // Move file on disk
-//   syd::RenameMHDImage(old_path, new_path);
-
-//   // Rename raw file
-//   std::string f = filename;
-//   syd::Replace(f, ".mhd", ".raw");
-//   raw_file->RenameFile(relative_path, f, false, true); // do not move on disk
-// }
-// // --------------------------------------------------------------------
+// --------------------------------------------------------------------
+syd::File::pointer
+syd::FileHelper::New(syd::Database * db,
+                     std::string path,
+                     std::string filename)
+{
+  syd::File::pointer f;
+  db->New(f);
+  f->path = path;
+  f->filename = filename;
+  return f;
+}
+// --------------------------------------------------------------------

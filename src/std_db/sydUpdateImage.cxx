@@ -20,9 +20,9 @@
 #include "sydUpdateImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydRoiStatisticBuilder.h"
 #include "sydCommonGengetopt.h"
 #include "sydScaleImageBuilder.h"
+#include "sydImageHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -77,8 +77,7 @@ int main(int argc, char* argv[])
     // Need to import a new mhd ?
     if (args_info.file_given) {
       std::string mhd = args_info.file_arg[i];
-      syd::ImageBuilder builder(db);
-      builder.CopyImageFromFile(image, mhd);
+      syd::ImageHelper::InsertMhdFiles(image, mhd);
     }
 
     // Need to scale ?
@@ -90,8 +89,8 @@ int main(int argc, char* argv[])
     }
 
     // update db
+    syd::ImageHelper::UpdateImagePropertiesFromCommandLine(image, args_info);
     db->UpdateTagsFromCommandLine(image->tags, args_info);
-    if (args_info.pixelunit_given) builder.SetImagePixelValueUnit(image, args_info.pixelunit_arg);
     db->Update(image);
     if (s != 1) LOG(1) << "Image was scaled by " << s << ": " << image;
     else LOG(1) << "Image was updated: " << image;
