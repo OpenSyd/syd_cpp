@@ -243,6 +243,7 @@ void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
   else if (format == "history") DumpInTable_history(ta);
   else if (format == "file") DumpInTable_file(ta);
   else if (format == "filelist") DumpInTable_filelist(ta);
+  else if (format == "details") DumpInTable_details(ta);
   else {
     ta.AddFormat("default", "id, date, tags, size etc");
     ta.AddFormat("short", "no size");
@@ -250,6 +251,7 @@ void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
     ta.AddFormat("history", "with date inserted/updated");
     ta.AddFormat("file", "with complete filename");
     ta.AddFormat("filelist", "not a table a list of filenames");
+    ta.AddFormat("details", "all details");
   }
 }
 // --------------------------------------------------
@@ -318,6 +320,22 @@ void syd::Image::DumpInTable_filelist(syd::PrintTable2 & ta) const
   ta.SetSingleRowFlag(true);
   ta.SetHeaderFlag(false);
   ta.Set("file", GetAbsolutePath(), 500);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_details(syd::PrintTable2 & ta) const
+{
+  DumpInTable_default(ta);
+  ta.Set("t", type);
+  ta.Set("pixel", pixel_type);
+  ta.Set("dim", dimension);
+  ta.Set("ref_frame", frame_of_reference_uid);
+  std::string f;
+  for(auto a:files) f += syd::ToString(a->id);
+  ta.Set("file_id", f);
+  syd::RecordWithHistory::DumpInTable(ta);
 }
 // --------------------------------------------------
 
