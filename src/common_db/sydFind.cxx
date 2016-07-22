@@ -60,7 +60,13 @@ int main(int argc, char* argv[])
 
   // Find all records
   syd::Record::vector records;
-  db->Query(records, table_name); // query all
+  if (!args_info.id_given)
+    db->Query(records, table_name); // query all
+  else {
+    std::vector<syd::IdType> ids;
+    for(auto i=0; i<args_info.id_given; i++) ids.push_back(args_info.id_arg[i]);
+    db->Query(records, table_name, ids);
+  }
 
   // Only keep the ones with the given tags (we do not check that the tags exist)
   if (args_info.tag_given and records.size() >0) {

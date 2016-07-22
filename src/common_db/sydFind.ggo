@@ -8,26 +8,19 @@ description "Find the ids of elements in the table that match the pattern. Param
 - <pattern>   list of words to match, all words must match (logical 'AND').
 
 If without any arg: print nb of elements by tables.
-
 Case sensitive.
-
-
-
 Use --exclude option to exclude words.
-Use --dump to output details of the found records instead of only the ids.
 "
 
-option "exclude"    e   "Exclude pattern (multiple)"	           string  no multiple
-option "list"       l   "Dump list of ids"                         flag    off
-option "format"     f   "Format when dump results"                 string  default="" no
-option "col"        -   "Change column precision or size, e.g. '7 p 5' (col nb, p or s, value)" string no multiple
-option "check"      c   "Check files associated to found records"  flag    off
-option "noheader"   -   "Do not display table header"              flag    off
-option "delete"     d   "Delete all find element"                  flag    off
-
-option "tag"        t   "List of tag to match (all)"               string  no multiple
-
-option "vv"         -   "Open images with vv (result must be image)" flag    off
-option "vvs"        -   "Open images with vv --sequence (result must be images)" flag    off
-
-option "force" - "Dont ask confirmation if --delete. DANGEROUS. You have been warned." flag off
+option "exclude"  e   "Exclude pattern (multiple)"	         string  no multiple
+option "list"     l   "Dump list of ids only"                    flag    off
+option "format"   f   "Format when dump results"                 string  default="" no
+option "col"      -   "Change column precision or size, e.g. '7 p 5' (col nb, p or s, value)" string no multiple
+option "check"    c   "Check files associated to found records"  flag    off
+option "noheader" -   "Do not display table header"              flag    off
+option "delete"   d   "Delete all found elements"                  flag    off
+option "force"    - "Dont ask confirmation if --delete. DANGEROUS. You have been warned." flag off
+option "tag"      t   "List of tag to match (all)"               string  no multiple
+option "id"       i "Display the record with this id (maybe multiple)"         int multiple no
+option "vv"       -   "Open images with vv (result must be image)"             flag    off
+option "vvs"      -   "Open images with vv --sequence (result must be images)" flag    off
