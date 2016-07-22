@@ -100,9 +100,6 @@ namespace syd {
     /// Standard folder
     virtual std::string ComputeRelativeFolder() const;
 
-    /// Compute the default filename for this image as a mhd
-    virtual std::string ComputeDefaultMhdFilename() const;
-
     /// Return the file path
     std::string GetAbsolutePath() const;
 

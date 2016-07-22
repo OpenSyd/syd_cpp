@@ -1,5 +1,45 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
-  <changeset version="276">
+  <changeset version="276"/>
+
+  <changeset version="275">
+    <add-table name="syd::RoiStatistic_tags" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::RoiStatistic">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::RoiStatistic_tags_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::RoiStatistic_tags_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::Tag">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
+  <changeset version="274"/>
+
+  <changeset version="273"/>
+
+  <changeset version="272"/>
+
+  <changeset version="265"/>
+
+  <changeset version="262"/>
+
+  <changeset version="261"/>
+
+  <changeset version="259">
     <add-table name="syd::RoiStatistic" kind="polymorphic root object">
       <column name="id" type="INTEGER" null="true"/>
       <column name="history" type="INTEGER" null="true"/>
@@ -30,29 +70,6 @@
       <foreign-key name="mask_fk" deferrable="DEFERRED" on-delete="CASCADE">
         <column name="mask"/>
         <references table="syd::RoiMaskImage">
-          <column name="id"/>
-        </references>
-      </foreign-key>
-    </add-table>
-    <add-table name="syd::RoiStatistic_tags" kind="container">
-      <column name="object_id" type="INTEGER" null="true"/>
-      <column name="index" type="INTEGER" null="true"/>
-      <column name="value" type="INTEGER" null="true"/>
-      <foreign-key name="object_id_fk" on-delete="CASCADE">
-        <column name="object_id"/>
-        <references table="syd::RoiStatistic">
-          <column name="id"/>
-        </references>
-      </foreign-key>
-      <index name="syd::RoiStatistic_tags_object_id_i">
-        <column name="object_id"/>
-      </index>
-      <index name="syd::RoiStatistic_tags_index_i">
-        <column name="index"/>
-      </index>
-      <foreign-key name="value_fk" deferrable="DEFERRED">
-        <column name="value"/>
-        <references table="syd::Tag">
           <column name="id"/>
         </references>
       </foreign-key>

@@ -99,7 +99,7 @@ target_link_libraries(sydInsertImageFromDicom StandardDatabase)
 
 # Create images
 wrap_ggo(sydInsertImage_GGO_C
-  sydInsertImage.ggo sydCommandLineWithTags.ggo sydCommandLineWithImageProperties.ggo sydCommandLineDefault.ggo)
+  sydInsertImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 add_executable(sydInsertImage sydInsertImage.cxx ${sydInsertImage_GGO_C})
 target_link_libraries(sydInsertImage StandardDatabase)
 
@@ -111,7 +111,7 @@ target_link_libraries(sydCopyImage StandardDatabase)
 
 # Update image
 wrap_ggo(sydUpdateImage_GGO_C
-  sydUpdateImage.ggo sydCommandLineWithTags.ggo sydCommandLineWithImageProperties.ggo sydCommandLineDefault.ggo)
+  sydUpdateImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 add_executable(sydUpdateImage sydUpdateImage.cxx ${sydUpdateImage_GGO_C})
 target_link_libraries(sydUpdateImage StandardDatabase)
 

@@ -35,31 +35,21 @@ namespace syd {
   {
   public:
 
-    /// If File are already associated with the image, remove them frist.
-    /// Then create new File and copy an mhd image in the db,
-    /// Image must be persistent.
-    static void InsertMhdFiles(syd::Image::pointer image, std::string filename);
+    static void CopyAndSetMhdImage(syd::Image::pointer image, std::string filename);
 
-    /// Copy image properties from the 'like' image (modality,
-    /// injection patient etc). Everything except the properties
-    /// related to the image content itself (pixel_type, size etc).
     static void CopyInformation(syd::Image::pointer image, const syd::Image::pointer like);
 
-    /// Retrieve the syd::PixelUnit and set to the image
+    static void InitializeEmptyMHDFiles(syd::Image::pointer image);
+
     static void SetPixelUnit(syd::Image::pointer image, std::string pixel_unit);
 
-    /// Retrieve the syd::Injection and set to the image
     static void SetInjection(syd::Image::pointer image, std::string injection);
 
-    /// Retrieve the syd::DicomSerie and add it to the image
     static void AddDicomSerie(syd::Image::pointer image, syd::IdType id);
 
     static void UpdateMhdImageProperties(syd::Image::pointer image);
 
     static void UpdateMhdImageProperties(syd::Image::pointer image, itk::ImageIOBase::Pointer header);
-
-    template<class ArgsInfo>
-    static void UpdateImagePropertiesFromCommandLine(syd::Image::pointer image, ArgsInfo & args_info);
 
     template<class ImageType>
     static void SetItkImage(syd::Image::pointer image,

@@ -18,38 +18,23 @@
 
 // syd
 #include "sydImageHelper.h"
-#include "sydFileHelper.h"
+#include "sydFileBuilder.h"
 
 // --------------------------------------------------------------------
 void syd::ImageHelper::
-InsertMhdFiles(syd::Image::pointer image, std::string filename)
+CopyAndSetMhdImage(syd::Image::pointer image, std::string filename)
 {
-  if (!image->IsPersistent()) {
-    EXCEPTION("Image not in the db. Can only InsertMhdFiles for persistent image. Usedb->Insert(image) first.");
-  }
-  auto db = image->GetDatabase();
-  // Need to clear the associated files and delete them (after update)
-  syd::File::vector previous_files = image->files;
-  image->files.clear();
+  if (image->files.size() != 0)
+    EXCEPTION("This image already contains files"
+              << ". Remove them before using CopyAndSetMhdImage. Image is : "
+              << image);
   fs::path p(filename);
   if (p.extension() != ".mhd") {
-    EXCEPTION("Extension must be .mhd, cannot InsertMhdFiles.");
+    EXCEPTION("Extension must be .mhd, cannot CopyAndSetMhdImage.");
   }
-  image->type = "mhd";
-  auto path = image->ComputeRelativeFolder();
-  auto mhd_filename = image->ComputeDefaultMhdFilename();
-  syd::File::pointer file_mhd = syd::FileHelper::New(db, path, mhd_filename);
-  std::string raw = mhd_filename;
-  syd::Replace(raw, ".mhd", ".raw");
-  syd::File::pointer file_raw = syd::FileHelper::New(db, path, raw);
-  image->files.push_back(file_mhd);
-  image->files.push_back(file_raw);
-  db->Insert(file_mhd);
-  db->Insert(file_raw);
-  CopyMHDImage(filename, image->GetAbsolutePath()); // copy files in the db
+  InitializeEmptyMHDFiles(image);
+  CopyMHDImage(filename, image->GetAbsolutePath());
   UpdateMhdImageProperties(image);
-  db->Update(image);
-  db->Delete(previous_files);
 }
 // --------------------------------------------------------------------
 
@@ -70,6 +55,25 @@ CopyInformation(syd::Image::pointer image, const syd::Image::pointer like)
   image->tags.clear();
   for(auto t:like->tags) image->tags.push_back(t);
   // (The history is not copied)
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+void syd::ImageHelper::
+InitializeEmptyMHDFiles(syd::Image::pointer image)
+{
+  image->type = "mhd";
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  syd::FileBuilder fb(db); // FIXME will be changed
+  syd::File::pointer file_mhd = fb.NewFile(".mhd");
+  syd::File::pointer file_raw = fb.NewFile();
+  std::string f = file_mhd->filename;
+  syd::Replace(f, ".mhd", ".raw");
+  fb.RenameFile(file_raw, file_raw->path, f);
+  image->files.push_back(file_mhd);
+  image->files.push_back(file_raw);
 }
 // --------------------------------------------------------------------
 
