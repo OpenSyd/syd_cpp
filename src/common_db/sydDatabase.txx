@@ -358,6 +358,7 @@ void syd::Database::Delete(std::shared_ptr<RecordType> record)
 template<class RecordType>
 void syd::Database::Delete(std::vector<std::shared_ptr<RecordType>> & records)
 {
+  if (records.size() == 0) return;
   try {
     odb::transaction t (odb_db_->begin());
     for(auto r:records) odb_db_->erase(r);

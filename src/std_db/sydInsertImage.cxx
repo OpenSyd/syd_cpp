@@ -64,38 +64,20 @@ int main(int argc, char* argv[])
   syd::Image::pointer output;
   db->New(output); // empty image
   output->patient = patient;
-  syd::ImageHelper::CopyAndSetMhdImage(output, filename);
 
   // set properties
   if (args_info.like_given) {
     syd::ImageHelper::CopyInformation(output, like);
   }
   else {
-    if (args_info.pixel_unit_given)
-      syd::ImageHelper::SetPixelUnit(output, args_info.pixel_unit_arg);
-    if (args_info.modality_given) output->modality = args_info.modality_arg;
-    if (args_info.frame_of_reference_uid_given)
-      output->frame_of_reference_uid = args_info.frame_of_reference_uid_arg;
-    if (args_info.acquisition_date_given) {
-      auto d = args_info.acquisition_date_arg;
-      if (!syd::IsDateValid(d)) {
-        LOG(FATAL) << "Acquisition date is not valid.";
-      }
-      output->acquisition_date = d;
-    }
-    if (args_info.injection_given)
-      syd::ImageHelper::SetInjection(output, args_info.injection_arg);
-    if (args_info.dicom_given) {
-      for(auto i=0; i<args_info.dicom_given; i++)
-        syd::ImageHelper::AddDicomSerie(output, args_info.dicom_arg[i]);
-    }
+    syd::ImageHelper::UpdateImagePropertiesFromCommandLine(output, args_info);
   }
 
-  //  builder.UpdateFromCommandLine(output, args_info); FIXME
+  // Update the tags
   db->UpdateTagsFromCommandLine(output->tags, args_info);
-  // syd::TagHelper::UpdateTagsFromCommandLine(output, args_info); ?
-
   db->Insert(output);
+  syd::ImageHelper::InsertMhdFiles(output, filename);
+
   LOG(1) << "Inserting Image: " << output;
   // This is the end, my friend.
 }

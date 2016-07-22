@@ -1,19 +1,5 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
-  <changeset version="276"/>
-
-  <changeset version="275"/>
-
-  <changeset version="274"/>
-
-  <changeset version="272"/>
-
-  <changeset version="265"/>
-
-  <changeset version="262"/>
-
-  <changeset version="261"/>
-
-  <changeset version="259">
+  <changeset version="276">
     <add-table name="syd::RoiMaskImage" kind="polymorphic derived object">
       <column name="id" type="INTEGER" null="true"/>
       <column name="roitype" type="INTEGER" null="true"/>

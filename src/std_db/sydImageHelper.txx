@@ -25,3 +25,31 @@ SetItkImage(syd::Image::pointer image,
 
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class ArgsInfo>
+void syd::ImageHelper::
+UpdateImagePropertiesFromCommandLine(syd::Image::pointer image,
+                                     ArgsInfo & args_info)
+{
+  if (args_info.pixel_unit_given)
+    syd::ImageHelper::SetPixelUnit(image, args_info.pixel_unit_arg);
+  if (args_info.modality_given) image->modality = args_info.modality_arg;
+  if (args_info.frame_of_reference_uid_given)
+    image->frame_of_reference_uid = args_info.frame_of_reference_uid_arg;
+  if (args_info.acquisition_date_given) {
+    auto d = args_info.acquisition_date_arg;
+    if (!syd::IsDateValid(d)) {
+      LOG(FATAL) << "Acquisition date is not valid.";
+    }
+    image->acquisition_date = d;
+  }
+  if (args_info.injection_given)
+    syd::ImageHelper::SetInjection(image, args_info.injection_arg);
+  if (args_info.dicom_given) {
+    for(auto i=0; i<args_info.dicom_given; i++)
+      syd::ImageHelper::AddDicomSerie(image, args_info.dicom_arg[i]);
+  }
+}
+// --------------------------------------------------------------------

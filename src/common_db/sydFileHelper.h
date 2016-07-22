@@ -21,6 +21,7 @@
 
 // syd
 #include "sydFile.h"
+#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -32,14 +33,10 @@ namespace syd {
 
   public:
 
-    /// Rename two files from a mhd image
-    // static void RenameAndUpdateMHDFile(syd::File::pointer mhd_file,
-    //                                    syd::File::pointer raw_file,
-    //                                    std::string relative_path,
-    //                                    std::string filename);
-
-
-
+    /// Simple file creation (not inserted)
+    static syd::File::pointer New(syd::Database * db,
+                                  std::string path,
+                                  std::string filename);
   }; // class FileHelper
 
 } // namespace syd

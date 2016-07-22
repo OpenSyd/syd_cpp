@@ -145,6 +145,7 @@ void syd::Image::RemoveDicomSerie(const syd::DicomSerie::pointer dicom)
 // --------------------------------------------------
 
 
+
 // --------------------------------------------------
 std::string syd::Image::ComputeRelativeFolder() const
 {
@@ -155,6 +156,22 @@ std::string syd::Image::ComputeRelativeFolder() const
   auto s = patient->name;
   syd::Replace(s, " ", "_"); // replace space with underscore
   return s;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+std::string syd::Image::ComputeDefaultMhdFilename() const
+{
+  if (!IsPersistent()) {
+    EXCEPTION("Image must be persistent (in the db) to use ComputeDefaultMhdFilename.");
+  }
+  std::string s = modality+"_"+syd::ToString(id)+".mhd";
+  std::ostringstream oss;
+  if (modality == "modality_unset") oss << "image";
+  else oss << modality;
+  oss << "_" << id << ".mhd";
+  return oss.str();
 }
 // --------------------------------------------------
 
@@ -333,8 +350,9 @@ void syd::Image::DumpInTable_details(syd::PrintTable2 & ta) const
   ta.Set("dim", dimension);
   ta.Set("ref_frame", frame_of_reference_uid);
   std::string f;
-  for(auto a:files) f += syd::ToString(a->id);
-  ta.Set("file_id", f);
+  for(auto a:files) f += syd::ToString(a->id)+" ";
+  if (files.size() != 0) f.pop_back(); // remove last space
+  ta.Set("files", f);
   syd::RecordWithHistory::DumpInTable(ta);
 }
 // --------------------------------------------------

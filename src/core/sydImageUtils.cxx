@@ -74,6 +74,14 @@ void syd::RenameOrCopyMHDImage(std::string old_path,
     LOG(verbose_level) << "Copy header " << old_path << " to " << new_path;
   }
 
+  // Create dir if needed
+  fs::path p(new_path);
+  try {
+    fs::create_directories(p.remove_filename());
+  } catch(std::exception & e) {
+    EXCEPTION("Cannot create directory for " << new_path << ".");
+  }
+
   // header part : change ElementDataFile in the header
   std::ifstream in(old_path);
   //  std::ofstream out(new_path);
