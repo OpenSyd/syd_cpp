@@ -29,13 +29,10 @@ syd::Image::Image():syd::RecordWithHistory()
 {
   patient = NULL;
   injection = NULL;
-  type = "type_unset";
-  pixel_type = "pixel_type_unset";
   pixel_unit = NULL;
+  modality = "image"; // default (not empty_value)
+  type = pixel_type = acquisition_date = frame_of_reference_uid = empty_value;
   dimension = 0;
-  frame_of_reference_uid = "frame_of_reference_uid_unset";
-  acquisition_date = "acquisition_date_unset";
-  modality = "modality_unset";
 }
 // --------------------------------------------------------------------
 
@@ -50,9 +47,8 @@ syd::Image::~Image()
 // --------------------------------------------------------------------
 std::string syd::Image::GetPatientName() const
 {
-  std::string name;
-  if (patient == NULL) name = "patient_unset";
-  else name = patient->name;
+  std::string name = empty_value;
+  if (patient != NULL) name = patient->name;
   return name;
 }
 // --------------------------------------------------------------------
@@ -61,13 +57,11 @@ std::string syd::Image::GetPatientName() const
 // --------------------------------------------------------------------
 std::string syd::Image::GetInjectionName() const
 {
-  std::string inj_name;
-  if (injection == NULL) inj_name = "injection_unset";
-  else inj_name = injection->radionuclide->name;
+  std::string inj_name = empty_value;
+  if (injection != NULL) inj_name = injection->radionuclide->name;
   return inj_name;
 }
 // --------------------------------------------------------------------
-
 
 
 // --------------------------------------------------------------------
@@ -77,23 +71,24 @@ std::string syd::Image::ToString() const
   ss << id << " "
      << GetPatientName() << " "
      << GetInjectionName() << " ";
-  if (files.size() == 0) ss << "no_files ";
-  else ss << files[0]->filename << " "; // only first is usually useful
+  if (files.size() != 0) ss << files[0]->filename << " "; // only first is usually useful
+  else ss << empty_value << " ";
   ss << GetLabels(tags) << " "
      << type << " "
      << pixel_type << " "
      << SizeAsString() << " "
-     << SpacingAsString();
-  if (dicoms.size() > 0) ss << " " << dicoms[0]->dicom_modality << " ";
+     << SpacingAsString() << " "
+     << modality << " ";
   for(auto d:dicoms) ss << d->id << " ";
+  if (dicoms.size() == 0) ss << empty_value;
   ss << frame_of_reference_uid << " ";
   if (pixel_unit != NULL) ss << pixel_unit->name;
-  else ss << "pixel_unit_unset ";
+  else ss << empty_value << " ";
   if (history) {
     ss << " " << history->insertion_date << " "
        << history->update_date;
   }
-  else ss << "no_history";
+  else ss << empty_value;
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -103,14 +98,6 @@ std::string syd::Image::ToString() const
 std::string syd::Image::GetAcquisitionDate() const
 {
   return acquisition_date;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-std::string syd::Image::GetModality() const
-{
-  return modality;
 }
 // --------------------------------------------------
 
@@ -168,8 +155,7 @@ std::string syd::Image::ComputeDefaultMhdFilename() const
   }
   std::string s = modality+"_"+syd::ToString(id)+".mhd";
   std::ostringstream oss;
-  if (modality == "modality_unset") oss << "image";
-  else oss << modality;
+  oss << modality;
   oss << "_" << id << ".mhd";
   return oss.str();
 }
@@ -282,7 +268,6 @@ void syd::Image::DumpInTable_short(syd::PrintTable2 & ta) const
   ta.Set("acqui_date", GetAcquisitionDate());
   ta.Set("tags", GetLabels(tags), 100);
   if (pixel_unit != NULL) ta.Set("unit", pixel_unit->name);
-  else ta.Set("unit", "pixel_unit_unset");
 }
 // --------------------------------------------------
 
@@ -292,14 +277,15 @@ void syd::Image::DumpInTable_default(syd::PrintTable2 & ta) const
 {
   DumpInTable_short(ta);
   ta.Set("inj", GetInjectionName());
-  ta.Set("mod", GetModality());
+  ta.Set("mod", modality);
   ta.Set("size", syd::ArrayToString(size));
   ta.Set("spacing", syd::ArrayToString(spacing,1));
   std::string dicom;
   for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
-  if (dicom.size() != 0) dicom.pop_back(); // remove last space
-  else dicom = "no_dicom";
-  ta.Set("dicom", dicom);
+  if (dicom.size() != 0) {
+    dicom.pop_back(); // remove last space
+    ta.Set("dicom", dicom);
+  }
 }
 // --------------------------------------------------
 
@@ -351,8 +337,10 @@ void syd::Image::DumpInTable_details(syd::PrintTable2 & ta) const
   ta.Set("ref_frame", frame_of_reference_uid);
   std::string f;
   for(auto a:files) f += syd::ToString(a->id)+" ";
-  if (files.size() != 0) f.pop_back(); // remove last space
-  ta.Set("files", f);
+  if (files.size() != 0) {
+    f.pop_back(); // remove last space
+    ta.Set("files", f);
+  }
   syd::RecordWithHistory::DumpInTable(ta);
 }
 // --------------------------------------------------
@@ -374,7 +362,7 @@ syd::CheckResult syd::Image::Check() const
 double syd::Image::GetHoursFromInjection() const
 {
   if (injection == NULL) return 0.0;
-  if (acquisition_date == "unset") return 0.0;
+  if (acquisition_date == empty_value) return 0.0;
   std::string inj_date = injection->date;
   double time = syd::DateDifferenceInHours(acquisition_date, inj_date);
   return time;
@@ -407,7 +395,7 @@ std::vector<double> & syd::GetTimesFromInjection(syd::StandardDatabase * db,
 // --------------------------------------------------------------------
 std::string syd::Image::GetAbsolutePath() const
 {
-  if (files.size() == 0) return "no_files";
+  if (files.size() == 0) return empty_value;
   return files[0]->GetAbsolutePath();
 }
 // --------------------------------------------------------------------
@@ -425,8 +413,7 @@ void syd::Image::RenameToDefaultMHDFilename(bool updateDBFlag)
 
   // Compute the default filename
   std::ostringstream oss;
-  if (modality == "modality_unset") oss << "image";
-  else oss << modality;
+  oss << modality;
   oss << "_" << id << ".mhd";
   std::string mhd_filename = oss.str();
   std::string raw_filename = mhd_filename;

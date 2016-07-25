@@ -181,7 +181,7 @@ void syd::PrintTable::Print(std::ostream & out)
 void syd::PrintTable::DumpRow(const syd::PrintRow & row, std::ostream & out)
 {
   for(auto col:columns_) {
-    std::string s="-"; // default output if column not known
+    std::string s= empty_value; // default output if column not known
     if (col.index < row.values.size()) s=row.values[col.index];
     out << std::setw(col.width) << s;
   }
@@ -228,6 +228,6 @@ void syd::PrintTable::AddRow()
   auto & row = rows_.back();
   row.values.resize(columns_.size());
   // initialize
-  for(auto & v:row.values) v="-"; // Set to empty values
+  for(auto & v:row.values) v=empty_value; // Set to empty values
 }
 //------------------------------------------------------------------

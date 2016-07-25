@@ -61,6 +61,12 @@ namespace syd {
 
 
   //--------------------------------------------------------------------
+  /// Default empty value for string field.
+  static const std::string empty_value = "-";
+  //--------------------------------------------------------------------
+
+
+  //--------------------------------------------------------------------
   std::string ConvertDateTime(std::string date, std::string time);
   void ConvertStringToDate(std::string s, tm & d);
   double DateDifferenceInHours(std::string end, std::string start);

@@ -358,7 +358,7 @@ syd::RoiType::pointer syd::StandardDatabase::FindRoiType(const std::string & roi
 //FIXME to remove
 std::string syd::StandardDatabase::GetAbsolutePath(const syd::Image::pointer image) const
 {
-  if (image->files.size() == 0) return "unset_file";
+  if (image->files.size() == 0) return empty_value;
   else return GetAbsolutePath(image->files[0]);
 }
 // --------------------------------------------------------------------

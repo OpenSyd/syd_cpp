@@ -23,7 +23,7 @@
 // --------------------------------------------------------------------
 syd::Radionuclide::Radionuclide():syd::Record()
 {
-  name = "unset";
+  name = empty_value;
   metastable = false;
 }
 // --------------------------------------------------------------------
@@ -39,7 +39,7 @@ std::string syd::Radionuclide::ToString() const
      << element << " "
      << atomic_number << " "
      << mass_number << " "
-     << (metastable? "metastable ":"")
+     << (metastable? "metastable ":empty_value)
      << max_beta_minus_energy_in_kev;
   return ss.str();
 }

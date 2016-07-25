@@ -25,10 +25,10 @@
 syd::Patient::Patient():syd::Record()
 {
   // default value
-  name = "unset"; // must be unique
+  name = empty_value; // must be unique
   study_id = 0; // must be unique
   weight_in_kg = 0;
-  dicom_patientid = "unset";
+  dicom_patientid = empty_value;
 }
 // --------------------------------------------------
 

@@ -26,8 +26,8 @@
 // --------------------------------------------------------------------
 syd::Tag::Tag():syd::Record()
 {
-  label = "unset";
-  description = "unset";
+  label = empty_value;
+  description = empty_value;
 }
 // --------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ void syd::Tag::DumpInTable(syd::PrintTable2 & ta) const
 std::string syd::GetLabels(const syd::Tag::vector & tags)
 {
   std::ostringstream os;
-  if (tags.size() == 0) return "no_tag";
+  if (tags.size() == 0) return empty_value;
   os << tags[0]->label;
   for(auto i=1; i<tags.size(); i++) os << "," << tags[i]->label;
   return os.str();

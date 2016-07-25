@@ -23,7 +23,7 @@
 // --------------------------------------------------------------------
 syd::Injection::Injection():syd::Record()
 {
-  date = "unset";
+  date = empty_value;
   activity_in_MBq = 0.0;
 }
 // --------------------------------------------------------------------
@@ -33,10 +33,10 @@ syd::Injection::Injection():syd::Record()
 std::string syd::Injection::ToString() const
 {
   std::string name;
-  if (patient == NULL) name = "patient_not_set";
+  if (patient == NULL) name = empty_value;
   else name = patient->name;
   std::string r;
-  if (radionuclide == NULL) r = "radionuclide_not_set";
+  if (radionuclide == NULL) r = empty_value;
   else r = radionuclide->name;
   std::stringstream ss ;
   ss << id << " "
@@ -88,9 +88,9 @@ void syd::Injection::Set(const std::vector<std::string> & args)
 // --------------------------------------------------
 void syd::Injection::DumpInTable(syd::PrintTable2 & ta) const
 {
-  std::string pname = "unset";
+  std::string pname = empty_value;
   if (patient != NULL) pname = patient->name;
-  std::string rad = "unset";
+  std::string rad = empty_value;
   if (radionuclide != NULL) rad = radionuclide->name;
   ta.Set("id", id);
   ta.Set("p", pname);

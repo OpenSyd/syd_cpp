@@ -61,7 +61,7 @@ namespace syd {
     virtual void Set(const std::vector<std::string> & args);
     virtual void Set(const std::string & pname,
                      const IdType & pstudy_id, const double pweight_in_kg=-1,
-                     const std::string pdicom_patientid="unset");
+                     const std::string pdicom_patientid=empty_value);
 
     virtual bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
     virtual std::string ComputeRelativeFolder() const;

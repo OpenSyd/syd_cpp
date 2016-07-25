@@ -23,8 +23,8 @@
 // --------------------------------------------------------------------
 syd::RoiType::RoiType():Record()
 {
-  name = "unset";
-  description = "unset";
+  name = empty_value;
+  description = empty_value;
 }
 // --------------------------------------------------------------------
 

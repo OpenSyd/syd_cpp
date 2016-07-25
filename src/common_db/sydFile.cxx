@@ -25,9 +25,9 @@
 syd::File::File():syd::Record()
 {
   // default value
-  filename = "unset";
-  path = "";
-  md5 = "unset";
+  filename = empty_value;
+  path = empty_value;
+  md5 = empty_value;
 }
 // --------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ std::string syd::File::ToString() const
   ss << id << " "
      << filename << " "
      << path << " "
-     << (md5 == "unset"? "no_md5":"md5");
+     << md5;
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -121,7 +121,7 @@ void syd::File::DumpInTable(syd::PrintTable2 & ta) const
 void syd::File::DumpInTable_default(syd::PrintTable2 & ta) const
 {
   ta.Set("id", id);
-  ta.Set("md5?", (md5=="unset" ? "no_md5":"md5"));
+  ta.Set("md5?", (md5==empty_value ? "N":"Y"));
   ta.Set("filename", filename, 100);
   ta.Set("folder", path);
 }

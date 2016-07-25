@@ -26,8 +26,8 @@
 // --------------------------------------------------
 syd::PixelValueUnit::PixelValueUnit():syd::Record()
 {
-  name = "unset";
-  description = "unset";
+  name = empty_value;
+  description = empty_value;
 }
 // --------------------------------------------------
 

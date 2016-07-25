@@ -37,7 +37,6 @@
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Image") callback(Callback)
-
   /// Store information about an image stored in a db (file, size etc)
   class Image : public syd::Record,
                 public syd::RecordWithHistory,
@@ -108,9 +107,6 @@ namespace syd {
 
     /// Return the acquisition date of the first dicom linked to this image
     std::string GetAcquisitionDate() const;
-
-    /// Return the modality of the dicom linked to this image
-    std::string GetModality() const;
 
     /// Compute the nb of hours between the injection and the
     /// acquisition date.

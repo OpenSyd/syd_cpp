@@ -37,14 +37,14 @@ std::string syd::Calibration::ToString() const
 {
   std::stringstream ss ;
   std::string name;
-  if (image == NULL) name = "image_unset";
+  if (image == NULL) name = empty_value;
   else {
-    if (image->patient == NULL) name = "patient_unset";
+    if (image->patient == NULL) name = empty_value;
     name = image->patient->name;
   }
   ss << id << " "
      << name << " "
-     << (image==NULL? "image_unset":syd::ToString(image->id)) << " ";
+     << (image==NULL? empty_value:syd::ToString(image->id)) << " ";
   for(auto t:tags) ss << t->label << " ";
   ss << factor << " " << fov_ratio;
   return ss.str();
@@ -57,10 +57,10 @@ void syd::Calibration::DumpInTable(syd::PrintTable2 & ta) const
 {
   std::string iname;
   std::string pname;
-  if (image == NULL) { iname = "image_unset"; pname = "patient_unset"; }
+  if (image == NULL) { iname = empty_value; pname = empty_value; }
   else {
     iname = syd::ToString(image->id);
-    if (image->patient == NULL) pname = "patient_unset";
+    if (image->patient == NULL) pname = empty_value;
     pname = image->patient->name;
   }
   ta.Set("id", id);

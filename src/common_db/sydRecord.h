@@ -21,8 +21,6 @@
 
 // syd
 #include "sydCommon.h"
-//#include "sydPrintTable.h" // FIXME to remove
-//#include "sydPrintTable2.h"
 #include "sydCheckResult.h"
 #include "sydVersion.h"
 

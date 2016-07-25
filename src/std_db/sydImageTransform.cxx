@@ -25,7 +25,7 @@
 syd::ImageTransform::ImageTransform()
   :Record(), RecordWithTags()
 {
-  date = "unset";
+  date = empty_value;
   fixed_image = NULL;
   moving_image = NULL;
   fixed_mask = NULL;
@@ -41,14 +41,14 @@ std::string syd::ImageTransform::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
-     << (fixed_image == NULL ? "no_patient":fixed_image->patient->name) << " "
-     << (fixed_image == NULL ? "no_fixed_image":syd::ToString(fixed_image->id)) << " "
-     << (moving_image == NULL ? "no_moving_image":syd::ToString(moving_image->id)) << " "
+     << (fixed_image == NULL ? empty_value:fixed_image->patient->name) << " "
+     << (fixed_image == NULL ? empty_value:syd::ToString(fixed_image->id)) << " "
+     << (moving_image == NULL ? empty_value:syd::ToString(moving_image->id)) << " "
      << GetLabels(tags) << " "
-     << (fixed_mask == NULL ? "no_fixed_mask":syd::ToString(fixed_mask->id)) << " "
-     << (moving_mask == NULL ? "no_moving_mask":syd::ToString(moving_mask->id)) << " "
-     << (config_file == NULL ? "no_config":config_file->filename) << " "
-     << (transform_file == NULL ? "no_transform":transform_file->filename) << " "
+     << (fixed_mask == NULL ? empty_value:syd::ToString(fixed_mask->id)) << " "
+     << (moving_mask == NULL ? empty_value:syd::ToString(moving_mask->id)) << " "
+     << (config_file == NULL ? empty_value:config_file->filename) << " "
+     << (transform_file == NULL ? empty_value:transform_file->filename) << " "
      << date;
   return ss.str();
 }
@@ -98,7 +98,7 @@ void syd::ImageTransform::DumpInTable(syd::PrintTable2 & ta) const
   ta.Set("p", fixed_image->patient->name);
   ta.Set("fixed", fixed_image->id);
   ta.Set("moving", moving_image->id);
-  ta.Set("config", (config_file == NULL ? "unset":config_file->filename));
+  ta.Set("config", (config_file == NULL ? empty_value:config_file->filename));
   ta.Set("date", date);
   ta.Set("ref_frame", fixed_image->frame_of_reference_uid);
 }

@@ -61,8 +61,9 @@ void syd::RecordWithHistory::DumpInTable(syd::PrintTable2 & ta) const
 {
   if (history == NULL) {
     LOG(WARNING) << "Error no history ?";
-    ta.Set("inserted", "NULL");
-    ta.Set("updated", "NULL");
+    //ta.Set("inserted", "NULL");
+    //ta.Set("updated", "NULL");
+    return;
   }
   ta.Set("inserted", history->insertion_date);
   ta.Set("updated", history->update_date);
