@@ -7,6 +7,7 @@
       <column name="study_id" type="INTEGER" null="true" options="UNIQUE"/>
       <column name="weight_in_kg" type="REAL" null="true"/>
       <column name="dicom_patientid" type="TEXT" null="true"/>
+      <column name="sex" type="TEXT" null="true"/>
       <primary-key auto="true">
         <column name="id"/>
       </primary-key>

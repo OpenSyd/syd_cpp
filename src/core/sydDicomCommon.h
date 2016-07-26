@@ -34,6 +34,7 @@ namespace syd {
   /// Open a dicom file, return a DcmFileFormat that contains dicom
   /// tag. Return false if could not open the file
   bool OpenDicomFile(std::string filename, DcmFileFormat & dfile);
+  //itk::GDCMImageIO::Pointer OpenDicomFile(std::string filename);
 
   /// Return the key of a tag knowing his name
   DcmTagKey GetTagKey(std::string tagName);

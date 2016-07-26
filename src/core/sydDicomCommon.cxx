@@ -20,6 +20,39 @@
 #include "sydDicomCommon.h"
 
 //--------------------------------------------------------------------
+bool syd::OpenDicomFile(std::string filename, DcmFileFormat & dfile)
+{
+  // remove debug output of dcmtk
+  OFLog::configure(OFLogger::OFF_LOG_LEVEL);
+  const E_TransferSyntax xfer = EXS_Unknown; // auto detection
+  const E_GrpLenEncoding groupLength = EGL_noChange;
+  const E_FileReadMode readMode = ERM_autoDetect;
+  const Uint32 maxReadLength = DCM_MaxReadLength;
+  OFCondition cond =
+    dfile.loadFile(filename.c_str(), xfer, groupLength, maxReadLength, readMode);
+  return cond.good();
+  // error message in cond.text()
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+// bool syd::OpenDicomFile(std::string filename, DcmFileFormat & dfile)
+// {
+//   // remove debug output of dcmtk
+//   OFLog::configure(OFLogger::OFF_LOG_LEVEL);  const E_TransferSyntax xfer = EXS_Unknown; // auto detection
+//   const E_GrpLenEncoding groupLength = EGL_noChange;
+//   const E_FileReadMode readMode = ERM_autoDetect;
+//   const Uint32 maxReadLength = DCM_MaxReadLength;
+//   OFCondition cond =
+//     dfile.loadFile(filename.c_str(), xfer, groupLength, maxReadLength, readMode);
+//   return cond.good();
+//   // error message in cond.text()
+// }
+// //--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
 DcmTagKey syd::GetTagKey(std::string tagName)
 {
   // Search for tag key from tag name
@@ -107,21 +140,6 @@ DcmElement * syd::GetTagValue(DcmObject * dset, DcmTagKey & key)
 //--------------------------------------------------------------------
 
 
-//--------------------------------------------------------------------
-bool syd::OpenDicomFile(std::string filename, DcmFileFormat & dfile)
-{
-  // remove debug output of dcmtk
-  OFLog::configure(OFLogger::OFF_LOG_LEVEL);
-  const E_TransferSyntax xfer = EXS_Unknown; // auto detection
-  const E_GrpLenEncoding groupLength = EGL_noChange;
-  const E_FileReadMode readMode = ERM_autoDetect;
-  const Uint32 maxReadLength = DCM_MaxReadLength;
-  OFCondition cond =
-    dfile.loadFile(filename.c_str(), xfer, groupLength, maxReadLength, readMode);
-  return cond.good();
-  // error message in cond.text()
-}
-//--------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------

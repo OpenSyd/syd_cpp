@@ -266,11 +266,10 @@ int syd::GetPageContent(char const *argv[], std::ostream & os) {
 
 
 //------------------------------------------------------------------
-void syd::SearchForFilesInFolder(std::vector<std::string> & files,
-                                 std::string folder,
-                                 bool recurse)
+void syd::SearchAndAddFilesInFolder(std::vector<std::string> & files,
+                                    std::string folder,
+                                    bool recurse)
 {
-  files.clear();
   if (recurse) {
     for (fs::recursive_directory_iterator end, dir(folder); dir != end; ++dir) {
       std::string s = dir->path().string();

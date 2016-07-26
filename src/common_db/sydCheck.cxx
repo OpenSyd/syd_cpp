@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
 
   // List of files folder
   std::vector<std::string> complete_filenames;
-  syd::SearchForFilesInFolder(complete_filenames, folder, args_info.recurse_flag);
+  syd::SearchAndAddFilesInFolder(complete_filenames, folder, args_info.recurse_flag);
   std::sort(complete_filenames.begin(), complete_filenames.end());
 
   // Extract the filename (without path)

@@ -24,7 +24,6 @@
 
 // syd
 #include "sydPatient.h"
-#include "sydInjection.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -39,19 +38,16 @@ namespace syd {
     virtual ~DicomSerie() { }
 
 #pragma db not_null
-    /// Foreign key, it must exist in the Patient table. Useful if no associated injection
+    /// Foreign key, it must exist in the Patient table.
     syd::Patient::pointer patient;
-
-    /// Foreign key. May be null. Dont delete Serie if injection does not exist.
-    syd::Injection::pointer injection;
 
     /// Date when the image has been acquired. Dicom tag =
     /// AcquisitionTime & AcquisitionDate
-    std::string acquisition_date;
+    std::string dicom_acquisition_date;
 
     /// Date when the image has been reconstructed. Dicom tag =
     /// ContentDate/Time or InstanceCreationDate/Tiem
-    std::string reconstruction_date;
+    std::string dicom_reconstruction_date;
 
     /// Dicom StudyInstanceUID
     std::string dicom_study_uid;
@@ -72,27 +68,18 @@ namespace syd {
     /// Modality as indicated in the dicom tag Modality
     std::string dicom_modality;
 
-    /// Dicom tags Manufacturer and ManufacturerModelName
-    std::string dicom_manufacturer;
+    // /// Image size (in pixels). It is an array because the size is fixed.
+    // std::vector<int> size;
+
+    // /// Image spacing aka size of the pixel (in mm)
+    // std::vector<double> spacing;
+
+    /// Pixel scale
+    double dicom_pixel_scale;
 
     /// Concatenation of several descriptions tag (SeriesDescription
     /// StudyDescription, ImageID, DatasetName)
     std::string dicom_description;
-
-    /// Image size (in pixels). It is an array because the size is fixed.
-    std::vector<int> size;
-
-    /// Image spacing aka size of the pixel (in mm)
-    std::vector<double> spacing;
-
-    /// Acquisition duration (in sec)
-    double duration_sec;
-
-    /// Pixel scale
-    double pixel_scale;
-
-    /// Pixel Offset
-    double pixel_offset;
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(DicomSerie, syd::DicomSerie);

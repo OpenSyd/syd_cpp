@@ -24,9 +24,9 @@
 syd::DicomSerie::DicomSerie():syd::Record()
 {
   patient = NULL;
-  injection = NULL;
-  size[0] = size[1] = size[2] = 0;
-  spacing[0] = spacing[1] = spacing[2] = 0.0;
+  dicom_modality = dicom_acquisition_date
+    = dicom_reconstruction_date = dicom_description = empty_value;
+  dicom_pixel_scale = 1.0;
 }
 // --------------------------------------------------------------------
 
@@ -36,16 +36,14 @@ std::string syd::DicomSerie::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
-     << patient->name << " "
-     << (injection==NULL ? "no_inj":injection->radionuclide->name) << " "
+     << (patient != NULL? patient->name:empty_value) << " "
      << dicom_modality << " "
-     << acquisition_date << " "
-     << reconstruction_date << " "
-     << ArrayToString(size) << " "
-     << ArrayToString(spacing) << " "
-     << dicom_manufacturer << " "
-     << dicom_description
-     << (pixel_scale == 1.0 ? "":syd::ToString(pixel_scale));
+     << dicom_acquisition_date << " "
+     << dicom_reconstruction_date << " "
+    // << ArrayToString(size) << " "
+    // << ArrayToString(spacing) << " "
+     << dicom_pixel_scale << " "
+     << dicom_description;
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -61,7 +59,7 @@ std::string syd::DicomSerie::ComputeRelativeFolder() const
   std::string f = patient->ComputeRelativeFolder()+PATH_SEPARATOR;
 
   // Part 2: date
-  std::string d = acquisition_date;
+  std::string d = dicom_acquisition_date;
   //  syd::Replace(d, " ", "_");
   // remove the hour and keep y m d
   d = d.substr(0, 10);
@@ -128,12 +126,11 @@ void syd::DicomSerie::DumpInTable_default(syd::PrintTable2 & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);
-  if (injection == NULL) ta.Set("inj", "no_inj");
-  else ta.Set("inj", injection->radionuclide->name);
   ta.Set("mod", dicom_modality);
-  ta.Set("acqui_date", acquisition_date);
-  ta.Set("recon_date", reconstruction_date);
-  ta.Set("description", std::string(dicom_description+" "+dicom_manufacturer), 100);
+  ta.Set("acqui_date", dicom_acquisition_date);
+  ta.Set("recon_date", dicom_reconstruction_date);
+  ta.Set("scale", dicom_pixel_scale, 2);
+  ta.Set("description", dicom_description, 100);
 }
 // --------------------------------------------------
 
@@ -143,10 +140,8 @@ void syd::DicomSerie::DumpInTable_file(syd::PrintTable2 & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);
-  if (injection == NULL) ta.Set("inj", "no_inj");
-  else ta.Set("inj", injection->radionuclide->name);
   ta.Set("mod", dicom_modality);
-  ta.Set("acqui_date", acquisition_date);
+  ta.Set("acqui_date", dicom_acquisition_date);
 
   //Look for associated file (this is slow !)
   syd::DicomFile::vector dfiles;
@@ -178,11 +173,9 @@ void syd::DicomSerie::DumpInTable_filelist(syd::PrintTable2 & ta) const
 // --------------------------------------------------
 void syd::DicomSerie::DumpInTable_details(syd::PrintTable2 & ta) const
 {
-  DumpInTable_default(ta);
-  ta.Set("size", syd::ArrayToString(size));
-  ta.Set("spacing", syd::ArrayToString(spacing));
-  ta.Set("duration(s)", duration_sec, 2);
-  ta.Set("scale", pixel_scale, 2);
+  ta.Set("id", id);
+  ta.Set("p", patient->name);
+  ta.Set("description", dicom_description, 200);
 }
 // --------------------------------------------------
 

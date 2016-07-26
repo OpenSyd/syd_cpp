@@ -41,7 +41,7 @@ namespace syd {
     syd::Image::pointer NewMHDImageLike(syd::Image::pointer image);
 
     /// Create an image, using the dicom (patient). Not inserted in the db.
-    syd::Image::pointer NewMHDImage(syd::DicomSerie::pointer dicom);
+    //syd::Image::pointer NewMHDImage(syd::DicomSerie::pointer dicom);
 
     /// Create and insert a new RoiMaskImage. Not inserted in the db.
     syd::RoiMaskImage::pointer NewMHDRoiMaskImage(syd::Patient::pointer patient,

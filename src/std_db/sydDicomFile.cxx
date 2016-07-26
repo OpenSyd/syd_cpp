@@ -35,10 +35,13 @@ syd::DicomFile::DicomFile():syd::Record()
 std::string syd::DicomFile::ToString() const
 {
   std::stringstream ss ;
-  ss << id << " "
-     << dicom_serie->injection->patient->name << " "
-     << dicom_serie->id << " "
-     << dicom_instance_number << " "
+  ss << id << " ";
+  if (dicom_serie == NULL) ss << empty_value << " ";
+  else {
+    ss << dicom_serie->id << " "
+       << (dicom_serie->patient != NULL ? dicom_serie->patient->name:empty_value) << " ";
+  }
+  ss << dicom_instance_number << " "
      << file->filename;
   return ss.str();
 }

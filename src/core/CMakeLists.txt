@@ -61,7 +61,7 @@ add_library(sydFit
   sydTimeIntegratedActivityFilter.cxx
 )
 
-target_link_libraries(sydFit ${CERES_LIBRARIES})
+target_link_libraries(sydFit ${CERES_LIBRARIES} glog)
 #----------------------------------------------------------
 
 

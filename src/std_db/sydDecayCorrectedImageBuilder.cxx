@@ -30,7 +30,7 @@ syd::DecayCorrectedImageBuilder::NewDecayCorrectedImage(syd::Image::pointer inpu
   syd::Injection::pointer injection = input->injection;
 
   double injected_activity = injection->activity_in_MBq;
-  double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection->date);
+  double time = syd::DateDifferenceInHours(input->acquisition_date, injection->date);
   double lambda = injection->GetLambdaInHours();
 
   // Scale the image

@@ -21,8 +21,6 @@
 #include "sydUpdateRadionuclideFilter.h"
 #include "sydDatabaseManager.h"
 
-//SYD_REGISTER_DATABASE(syd::StandardDatabase, StandardDatabase);
-
 // --------------------------------------------------------------------
 template<>
 void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & type) const
@@ -31,7 +29,7 @@ void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & ty
             [v](pointer a, pointer b) {
               if (a->dicoms.size() == 0) return true;
               if (b->dicoms.size() == 0) return false;
-              return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
+              return a->acquisition_date < b->acquisition_date;
             });
 }
 // --------------------------------------------------------------------
@@ -59,7 +57,7 @@ void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v,
             [v](pointer a, pointer b) {
               if (a->dicoms.size() == 0) return true;
               if (b->dicoms.size() == 0) return false;
-              return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
+              return a->acquisition_date < b->acquisition_date;
             });
 }
 // --------------------------------------------------
@@ -72,7 +70,7 @@ void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & v,
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
-              return syd::IsDateBefore(a->acquisition_date, b->acquisition_date); });
+              return syd::IsDateBefore(a->dicom_acquisition_date, b->dicom_acquisition_date); });
 }
 // --------------------------------------------------
 
@@ -108,7 +106,7 @@ void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & v,
             [v](pointer a, pointer b) {
               if (a->image->dicoms.size() == 0) return true;
               if (b->image->dicoms.size() == 0) return false;
-              return a->image->dicoms[0]->acquisition_date < b->image->dicoms[0]->acquisition_date;
+              return a->image->acquisition_date < b->image->acquisition_date;
             });
 }
 // --------------------------------------------------
@@ -136,7 +134,7 @@ void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & v,
             [v](pointer a, pointer b) {
               if (a->image->dicoms.size() == 0) return true;
               if (b->image->dicoms.size() == 0) return false;
-              return a->image->dicoms[0]->acquisition_date < b->image->dicoms[0]->acquisition_date;
+              return a->image->acquisition_date < b->image->acquisition_date;
             });
 }
 // --------------------------------------------------

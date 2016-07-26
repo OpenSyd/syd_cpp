@@ -37,6 +37,16 @@ set(SYD_BIN_FILES " ")
 
 
 #----------------------------------------------------------
+# https://github.com/sakra/cotire
+# Cotire (compile time reducer) is a CMake module that speeds up the
+# build process of CMake based build systems by fully automating
+# techniques as precompiled header usage and single compilation unit
+# builds for C and C++.
+include(cmake/cotire.cmake)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 # cmake include
 set(CMAKE_MODULE_PATH "${SYD_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 

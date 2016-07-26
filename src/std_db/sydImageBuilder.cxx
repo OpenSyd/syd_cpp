@@ -81,13 +81,13 @@ syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::Injection::pointer injec
 
 
 // --------------------------------------------------------------------
-syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::DicomSerie::pointer dicom)
-{
-  syd::Image::pointer image = NewMHDImage(dicom->injection);
-  image->dicoms.push_back(dicom);
-  image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
-  return image;
-}
+// syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::DicomSerie::pointer dicom)
+// {
+//   syd::Image::pointer image = NewMHDImage(dicom->patient);
+//   image->dicoms.push_back(dicom);
+//   image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
+//   return image;
+// }
 // --------------------------------------------------------------------
 
 

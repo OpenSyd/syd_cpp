@@ -131,7 +131,7 @@ void syd::TimeIntegratedActivityImageBuilder::CreateTimeIntegratedActivityImage(
   if (use_time_from_image_flag_) {
     std::string starting_date = injection->date;
     for(auto image:inputs_) {
-      double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
+      double t = syd::DateDifferenceInHours(image->acquisition_date, starting_date);
       temp_times.push_back(t);
     }
   }

@@ -50,6 +50,9 @@ namespace syd {
     /// Patient dicom ID. Not unique because could be unknown.
     std::string dicom_patientid;
 
+    /// Patient sex
+    std::string sex;
+
     // ------------------------------------------------------------------------
     TABLE_DEFINE(Patient, syd::Patient);
     // ------------------------------------------------------------------------
@@ -60,8 +63,10 @@ namespace syd {
     /// Additional Set function to shorter patient inclusion
     virtual void Set(const std::vector<std::string> & args);
     virtual void Set(const std::string & pname,
-                     const IdType & pstudy_id, const double pweight_in_kg=-1,
-                     const std::string pdicom_patientid=empty_value);
+                     const IdType & pstudy_id,
+                     const double pweight_in_kg=-1,
+                     const std::string pdicom_patientid=empty_value,
+                     const std::string sex=empty_value);
 
     virtual bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
     virtual std::string ComputeRelativeFolder() const;
