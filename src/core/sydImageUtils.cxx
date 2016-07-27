@@ -92,13 +92,17 @@ void syd::RenameOrCopyMHDImage(std::string old_path,
   //  std::ofstream out(new_path);
   std::vector<std::string> outlines;
   // std::ofstream out;
-  OFString r;
-  OFStandard::getFilenameFromPath(r, old_path_raw.c_str());
-  std::string wordToReplace(r.c_str());
-  OFStandard::getFilenameFromPath(r, new_path_raw.c_str());
+
+  std::string r;
+  fs::path op(old_path_raw);
+  r = op.filename().string();
+  std::string wordToReplace = r; //(r.c_str());
+  fs::path np(new_path_raw);
+  r = np.filename().string();
   std::string wordToReplaceWith(r.c_str());
   size_t len = wordToReplace.length();
   std::string line;
+
   // Delete old path (before writing new)
   if (erase) std::remove(old_path.c_str());
   while (std::getline(in, line)) {
@@ -161,10 +165,10 @@ void syd::RenameOrCopyMHDImage(std::string old_path,
 // --------------------------------------------------------------------
 void syd::DeleteMHDImage(std::string path)
 {
-  OFStandard::deleteFile(path.c_str());
+  fs::remove(path);
   size_t n = path.find_last_of(".");
   std::string path_raw = path.substr(0,n)+".raw";
-  OFStandard::deleteFile(path_raw.c_str());
+  fs::remove(path_raw);
 }
 // --------------------------------------------------------------------
 

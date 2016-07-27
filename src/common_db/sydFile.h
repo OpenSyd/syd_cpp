@@ -21,6 +21,7 @@
 
 // syd
 #include "sydRecord.h"
+#include "sydFileUtils.h"
 
 // --------------------------------------------------------------------
 namespace syd {

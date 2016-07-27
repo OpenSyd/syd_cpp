@@ -67,27 +67,19 @@ void syd::PluginManager::LoadInFolder(const std::string & folder)
 {
   std::string absolute_folder = folder;
   ConvertToAbsolutePath(absolute_folder);
-  OFString scanPattern = "*"; // or *dcm ?
-  OFString dirPrefix = "";
-  OFBool recurse = OFFalse;
-  size_t found=0;
-  OFList<OFString> inputFiles;
-  if (fs::exists(absolute_folder)) {
-    found = OFStandard::searchDirectoryRecursively(absolute_folder.c_str(),
-                                                   inputFiles, scanPattern,
-                                                   dirPrefix, recurse);
+  if (!fs::exists(folder)) {
+    LOG(WARNING) << "(syd plugin) The directory "
+                 << absolute_folder << " in SYD_PLUGIN does not exist.";
+    return;
   }
-  else {
-    LOG(WARNING) << "(syd plugin) The directory " << absolute_folder << " in SYD_PLUGIN does not exist.";
-  }
-
-  for(auto f=inputFiles.begin(); f != inputFiles.end(); f++) {
-    std::string s(f->c_str());
-    std::string fn=GetFilenameFromPath(s);
+  std::vector<std::string> files;
+  SearchAndAddFilesInFolder(files, absolute_folder, false);
+  for(auto f:files) {
+    std::string fn=GetFilenameFromPath(f);
     if (fn != "libsydCommonDatabase.so"
         and fn != "libsydCommonDatabase.dylib"
         and fn != "libsydPlot.dylib"
-        and fn != "libsydPlot.so") Load(s);
+        and fn != "libsydPlot.so") Load(f);
   }
 }
 // --------------------------------------------------------------------

@@ -19,7 +19,7 @@
 #ifndef SYDPYPLOTBUILDER_H
 #define SYDPYPLOTBUILDER_H
 
-// Python (must be before dcmtk includes to avoid warning)
+// Python
 #include <Python.h>
 
 // syd

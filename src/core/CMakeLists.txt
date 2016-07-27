@@ -22,7 +22,6 @@ add_library(sydCore SHARED
 )
 target_link_libraries(sydCore
   ${Boost_LIBRARIES} ## needed on osx
-  ${DCMTK_LIBRARIES}
   )
 
 #----------------------------------------------------------

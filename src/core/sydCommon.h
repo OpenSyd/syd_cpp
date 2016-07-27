@@ -25,6 +25,7 @@
 #include <vector>
 #include <cmath>
 #include <sstream>
+#include <fstream>
 #include <algorithm>
 #include <numeric>
 
@@ -42,7 +43,6 @@
 #include "sydDD.h"
 #include "sydLog.h"
 #include "sydException.h"
-#include "sydDicomCommon.h" // needed for helpers functions (FileExists)
 #include "md5.h"
 
 // boost

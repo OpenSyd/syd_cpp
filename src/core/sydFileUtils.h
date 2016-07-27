@@ -39,10 +39,6 @@
 
 using namespace sydlog;
 
-// FIXME --> to remove
-#include "sydDicomCommon.h" // needed for helpers functions (FileExists)
-
-
 // boost
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
@@ -50,13 +46,20 @@ using namespace sydlog;
 namespace fs = boost::filesystem;
 using boost::asio::ip::tcp;
 
+// std
+#include <fstream>
+
 //--------------------------------------------------------------------
 namespace syd {
 
-  // fs::path p(filename);
-  // fs::create_directories(path);
-  // fs::exists(path);
-  // fs::copy_file
+  /* Use boost functions:
+     fs::path p(filename);
+     fs::create_directories(path);
+     fs::exists(path);
+     fs::copy_file
+     ...
+  */
+#define PATH_SEPARATOR fs::path::preferred_separator
 
   std::string GetExtension(const std::string filename);
   std::string GetFilenameFromPath(const std::string path);

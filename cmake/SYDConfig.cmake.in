@@ -25,5 +25,4 @@ SET(SYD_USE_FILE "@SYD_USE_FILE@")
 
 #----------------------------------------------------------
 # (needed in odb compiler)
-SET(DCMTK_INCLUDE_DIR_BASE "@DCMTK_INCLUDE_DIR_BASE@")
 SET(ITK_USE_FILE "@ITK_USE_FILE@")

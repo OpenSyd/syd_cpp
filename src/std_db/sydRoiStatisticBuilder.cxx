@@ -76,7 +76,7 @@ void syd::RoiStatisticBuilder::ComputeStatistic(syd::RoiStatistic::pointer stat)
 {
   // Get the itk images
   typedef float PixelType; // whatever the image
-  typedef uchar MaskPixelType;
+  typedef unsigned char MaskPixelType;
   typedef itk::Image<PixelType,3> ImageType;
   typedef itk::Image<MaskPixelType,3> MaskImageType;
   ImageType::Pointer itk_input = syd::ReadImage<ImageType>(db_->GetAbsolutePath(stat->image));
