@@ -1,0 +1,10 @@
+
+section "Image properties option"
+
+option "patient"    p "Id or name of the patient" string no
+option "pixel_unit" - "Name of pixel value unit to attach to the image" string no
+option "modality"   - "Modality type" string no
+option "dicom"      - "Dicom id to link" int multiple no
+option "injection"  - "Injection id or name to link" string no
+option "acquisition_date"       - "Acquisition date, ie '2011-11-03 12:34'" string no
+option "frame_of_reference_uid" - "Frame of ref (for image coordinate system)" string no
