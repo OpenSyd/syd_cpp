@@ -41,17 +41,10 @@ int main(int argc, char* argv[])
   // Get the list of folders to look for
   std::vector<std::string> files_folders;
   for(auto i=1; i<args_info.inputs_num; i++) files_folders.push_back(args_info.inputs[i]);
-  DDS(files_folders);
-
-  // Dicom insertion
-  syd::DicomSerieBuilder builder(db);
-  builder.SetPatient(patient);
-  builder.SetForcePatientFlag(args_info.forcePatient_flag);
 
   // Get the whole list of files
   std::vector<std::string> files;
   for(auto f:files_folders) {
-    DD(f);
     fs::path path(f);
     if (fs::is_directory(path)) {
       LOG(2) << "Search for dicom in " << f;
@@ -61,7 +54,10 @@ int main(int argc, char* argv[])
   }
   LOG(1) << "Searching for dicom in " << files.size() << " files ...";
 
-  // Add the dicom series
+  // Dicom insertion
+  syd::DicomSerieBuilder builder(db);
+  builder.SetPatient(patient);
+  builder.SetForcePatientFlag(args_info.forcePatient_flag);
   int i=0;
   for(auto f:files) {
     syd::loadbar(i, files.size());

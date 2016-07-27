@@ -19,12 +19,17 @@
 // syd
 #include "sydImageUtils.h"
 
+// itk (gdcm)
+#include "gdcmGlobal.h"
+#include "gdcmDictEntry.h"
+#include "gdcmDicts.h"
+
 // --------------------------------------------------------------------
 /*
   Rename a mhd image, composed of 2 files XXX.mhd and XXX.raw. This
   function moves the two files and change the header to be linked with
   the renamed .raw file.
- */
+*/
 void syd::RenameOrCopyMHDImage(std::string old_path,
                                std::string new_path,
                                int verbose_level,

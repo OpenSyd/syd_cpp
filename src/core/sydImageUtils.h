@@ -126,7 +126,6 @@ namespace syd {
   std::string PointToString(const itk::Point<double,3> & t);
   //--------------------------------------------------------------------
 
-
 #include "sydImageUtils.txx"
 
 } // end namespace

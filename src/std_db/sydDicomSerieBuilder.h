@@ -23,6 +23,7 @@
 #include "sydStandardDatabase.h"
 #include "sydDicomFile.h"
 #include "sydDicomSerie.h"
+#include "sydDicomUtils.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -89,13 +90,6 @@ namespace syd {
     bool DicomFileAlreadyExist(const std::string & sop_uid);
 
     typedef itk::MetaDataDictionary DictionaryType;
-
-    std::string GetStringValueFromTag(itk::GDCMImageIO::Pointer dicomIO,
-                                      const std::string & key);
-    double GetDoubleValueFromTag(itk::GDCMImageIO::Pointer dicomIO,
-                                 const std::string & key);
-    unsigned short GetUShortValueFromTag(itk::GDCMImageIO::Pointer dicomIO,
-                                         const std::string & key);
 
   }; // class DicomSerieBuilder
 } // namespace syd

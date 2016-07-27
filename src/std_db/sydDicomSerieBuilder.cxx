@@ -19,70 +19,11 @@
 // syd
 #include "sydDicomSerieBuilder.h"
 
-// itk (gdcm)
-#include "gdcmGlobal.h"
-#include "gdcmDictEntry.h"
-#include "gdcmDicts.h"
-
 namespace syd {
 
-
   // --------------------------------------------------------------------
-  std::string DicomSerieBuilder::GetStringValueFromTag(itk::GDCMImageIO::Pointer dicomIO,
-                                                       const std::string & key)
-  {
-    std::string s = empty_value;
-    dicomIO->GetValueFromTag(key, s);
-    return s;
-  }
-  // --------------------------------------------------------------------
-
-
-  // --------------------------------------------------------------------
-  double DicomSerieBuilder::GetDoubleValueFromTag(itk::GDCMImageIO::Pointer dicomIO,
-                                                  const std::string & key)
-  {
-    double v = 0.0;
-    const  DictionaryType & dictionary = dicomIO->GetMetaDataDictionary();
-    typedef itk::MetaDataObject< double > MetaDataDoubleType;
-    DictionaryType::ConstIterator tagItr = dictionary.Find(key);
-    DictionaryType::ConstIterator end = dictionary.End();
-    if (tagItr != end) {
-      MetaDataDoubleType::ConstPointer entryvalue =
-        dynamic_cast<const MetaDataDoubleType *>(tagItr->second.GetPointer());
-      if (entryvalue) {
-        v = entryvalue->GetMetaDataObjectValue();
-      }
-    }
-    return v;
-  }
-  // --------------------------------------------------------------------
-
-
-  // --------------------------------------------------------------------
-  // FIXME template ?
-  unsigned short DicomSerieBuilder::GetUShortValueFromTag(itk::GDCMImageIO::Pointer dicomIO,
-                                                          const std::string & key)
-  {
-    double v = 0.0;
-    const  DictionaryType & dictionary = dicomIO->GetMetaDataDictionary();
-    typedef itk::MetaDataObject< unsigned short > MetaDataUShortType;
-    DictionaryType::ConstIterator tagItr = dictionary.Find(key);
-    DictionaryType::ConstIterator end = dictionary.End();
-    if (tagItr != end) {
-      MetaDataUShortType::ConstPointer entryvalue =
-        dynamic_cast<const MetaDataUShortType *>(tagItr->second.GetPointer());
-      if (entryvalue) {
-        v = entryvalue->GetMetaDataObjectValue();
-      }
-    }
-    return v;
-  }
-  // --------------------------------------------------------------------
-
-
-  // --------------------------------------------------------------------
-  DicomSerieBuilder::DicomSerieBuilder(StandardDatabase * db):DicomSerieBuilder()
+  DicomSerieBuilder::
+  DicomSerieBuilder(StandardDatabase * db):DicomSerieBuilder()
   {
     SetDatabase(db);
   }
@@ -147,39 +88,26 @@ namespace syd {
   // --------------------------------------------------------------------
   void DicomSerieBuilder::SearchDicomInFile(std::string filename)
   {
-    // Open the file
-    DcmFileFormat dfile;
-    bool b = OpenDicomFile(filename, dfile);
-    if (!b) {  // this is not a dicom file
-      LOG(WARNING) << "Error the file '" << filename << "' is not a dicom file.";
-      return;
+    if (patient_ == NULL) {
+      EXCEPTION("Patient must be set before using SearchDicomInFile");
     }
-    DcmObject * dset = dfile.getAndRemoveDataset();
 
-    // Open the Dicomfile
-    // FIXME put as a functino
-    typedef itk::GDCMImageIO ImageIOType;
-    ImageIOType::Pointer dicomIO = ImageIOType::New();
-    dicomIO->SetFileName(filename);
-    dicomIO->SetLoadPrivateTags(true);
-    dicomIO->SetLoadSequences(true);
+    itk::GDCMImageIO::Pointer dicomIO;
     try {
-      dicomIO->ReadImageInformation();
+      dicomIO = syd::ReadDicomHeader(filename);
     } catch (std::exception & e) {
-      LOG(WARNING) << "Error cannot read '" << filename << "' (it is not a dicom file ?).";
+      LOG(3) << sydlog::warningColor << "Warning cannot read '"
+             << filename << "' (it is not a dicom file ?).";
       return;
     }
-    DD("Dicom is open");
 
     // Test if this dicom file already exist in the db
-    //std::string sop_uid = GetTagValueString(dset, "SOPInstanceUID");
     std::string sop_uid;
-    b = dicomIO->GetValueFromTag("0008|0018", sop_uid); // SOPInstanceUID
+    bool b = dicomIO->GetValueFromTag("0008|0018", sop_uid); // SOPInstanceUID
     if (!b) {
       LOG(WARNING) << "Cannot find tag 0008|0018 SOPInstanceUID. Ignored";
       return;
     }
-    DD(sop_uid);
     if (DicomFileAlreadyExist(sop_uid)) {
       LOG(2) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
       nb_of_skip_files++;
@@ -227,8 +155,6 @@ namespace syd {
                                                      //DcmObject * dset,
                                                      DicomSerie::pointer & serie)
   {
-    DD("GuessDicomSerieForThisFile");
-
     // Check in the future series
     std::string series_uid;
     bool b = dicomIO->GetValueFromTag("0020|000e", series_uid); // SeriesInstanceUID
@@ -319,14 +245,9 @@ namespace syd {
 
     // Open the first file
     auto filename = db_->GetAbsolutePath(files[0]);
-    // Open the Dicomfile
-    typedef itk::GDCMImageIO ImageIOType;
-    ImageIOType::Pointer dicomIO = ImageIOType::New();
-    dicomIO->SetFileName(filename);
-    dicomIO->SetLoadPrivateTags(true);
-    dicomIO->SetLoadSequences(true);
+    itk::GDCMImageIO::Pointer dicomIO;
     try {
-      dicomIO->ReadImageInformation();
+      dicomIO = syd::ReadDicomHeader(filename);
     } catch (std::exception & e) {
       LOG(WARNING) << "Error cannot read '" << filename << "' (it is not a dicom file ?).";
       return;
@@ -343,14 +264,22 @@ namespace syd {
                                            itk::GDCMImageIO::Pointer dicomIO)
   {
     // get date
-    std::string AcquisitionTime = GetStringValueFromTag(dicomIO, "0008|0032"); // Acquisition Time
-    std::string AcquisitionDate = GetStringValueFromTag(dicomIO, "0008|0022"); // Acquisition Date
-    std::string ContentDate = GetStringValueFromTag(dicomIO, "0008|0023"); // Content Date
-    std::string ContentTime = GetStringValueFromTag(dicomIO, "0008|0033");// Content Time
-    std::string InstanceCreationDate = GetStringValueFromTag(dicomIO, "0008|0012"); // Instance Creation Date
-    std::string InstanceCreationTime = GetStringValueFromTag(dicomIO, "0008|0013"); //Instance Creation Time
-    std::string acquisition_date = ConvertDicomDateToStringDate(AcquisitionDate, AcquisitionTime);
-    std::string reconstruction_date = ConvertDicomDateToStringDate(ContentDate, ContentTime);
+    std::string AcquisitionTime =
+      GetTagValueFromTagKey(dicomIO, "0008|0032", empty_value); // Acquisition Time
+    std::string AcquisitionDate =
+      GetTagValueFromTagKey(dicomIO, "0008|0022", empty_value); // Acquisition Date
+    std::string ContentDate =
+      GetTagValueFromTagKey(dicomIO, "0008|0023", empty_value); // Content Date
+    std::string ContentTime =
+      GetTagValueFromTagKey(dicomIO, "0008|0033", empty_value);// Content Time
+    std::string InstanceCreationDate =
+      GetTagValueFromTagKey(dicomIO, "0008|0012", empty_value); // Instance Creation Date
+    std::string InstanceCreationTime =
+      GetTagValueFromTagKey(dicomIO, "0008|0013", empty_value); //Instance Creation Time
+    std::string acquisition_date =
+      ConvertDicomDateToStringDate(AcquisitionDate, AcquisitionTime);
+    std::string reconstruction_date =
+      ConvertDicomDateToStringDate(ContentDate, ContentTime);
 
     if (reconstruction_date.empty())
       reconstruction_date = ConvertDicomDateToStringDate(InstanceCreationDate, InstanceCreationTime);
@@ -358,8 +287,10 @@ namespace syd {
       acquisition_date = ConvertDicomDateToStringDate(InstanceCreationDate, InstanceCreationTime);
 
     // Patient, injection (do not check here that injection is really associated with the patient)
-    std::string patientID = GetStringValueFromTag(dicomIO, "0010|0020");   // Patient ID
-    std::string patientName = GetStringValueFromTag(dicomIO, "0010|1001"); //Patient Name
+    std::string patientID =
+      GetTagValueFromTagKey(dicomIO, "0010|0020", empty_value);   // Patient ID
+    std::string patientName =
+      GetTagValueFromTagKey(dicomIO, "0010|1001", empty_value); //Patient Name
     char * sex = new char[100];
     dicomIO->GetPatientSex(sex);
 
@@ -386,12 +317,16 @@ namespace syd {
     serie->patient = patient_;
 
     // Modality
-    serie->dicom_modality = GetStringValueFromTag(dicomIO, "0008|0060"); //Modality
+    serie->dicom_modality =
+      GetTagValueFromTagKey(dicomIO, "0008|0060", empty_value); //Modality
 
     // UID
-    serie->dicom_study_uid = GetStringValueFromTag(dicomIO, "0020|000d"); //StudyInstanceUID
-    serie->dicom_series_uid = GetStringValueFromTag(dicomIO, "0020|000e"); //SeriesInstanceUID
-    serie->dicom_frame_of_reference_uid = GetStringValueFromTag(dicomIO, "0020|0052");//FrameOfReferenceUID
+    serie->dicom_study_uid =
+      GetTagValueFromTagKey(dicomIO, "0020|000d", empty_value); //StudyInstanceUID
+    serie->dicom_series_uid =
+      GetTagValueFromTagKey(dicomIO, "0020|000e", empty_value); //SeriesInstanceUID
+    serie->dicom_frame_of_reference_uid =
+      GetTagValueFromTagKey(dicomIO, "0020|0052", empty_value);//FrameOfReferenceUID
     //  what about "DatasetUID ?
 
     // Date
@@ -399,18 +334,23 @@ namespace syd {
     serie->dicom_reconstruction_date = reconstruction_date;
 
     // Description. We merge the tag because it is never consistant
-    std::string SeriesDescription = GetStringValueFromTag(dicomIO, "0008|103e"); // SeriesDescription
-    std::string StudyDescription = GetStringValueFromTag(dicomIO, "0008|1030"); // StudyDescription
-    std::string ImageID = GetStringValueFromTag(dicomIO, "0054|0400"); // Image ID
-    std::string DatasetName = GetStringValueFromTag(dicomIO, "0011|1012"); // DatasetName
-    std::string description = SeriesDescription+" "+StudyDescription
+    std::string SeriesDescription =
+      GetTagValueFromTagKey(dicomIO, "0008|103e", empty_value); // SeriesDescription
+    std::string StudyDescription =
+      GetTagValueFromTagKey(dicomIO, "0008|1030", empty_value); // StudyDescription
+    std::string ImageID =
+      GetTagValueFromTagKey(dicomIO, "0054|0400", empty_value); // Image ID
+    std::string DatasetName =
+      GetTagValueFromTagKey(dicomIO, "0011|1012", empty_value); // DatasetName
+    std::string description =
+      SeriesDescription+" "+StudyDescription
       +" "+ImageID+" "+DatasetName;
 
     // Device
-    std::string Manufacturer = GetStringValueFromTag(dicomIO, "0008|0070"); // Manufacturer
-    std::string ManufacturerModelName = GetStringValueFromTag(dicomIO, "0008|1090"); //ManufacturerModelName
-    DD(ManufacturerModelName);
-    DD(Manufacturer);
+    std::string Manufacturer =
+      GetTagValueFromTagKey(dicomIO, "0008|0070", empty_value); // Manufacturer
+    std::string ManufacturerModelName =
+      GetTagValueFromTagKey(dicomIO, "0008|1090", empty_value); //ManufacturerModelName
     description = description + " " + Manufacturer + " " + ManufacturerModelName;
 
     // Store description
@@ -436,7 +376,7 @@ namespace syd {
       sz = GetTagValueDouble(dset, "SliceThickness");
       if (sz == 0) sz = 1.0; // not found, default
       }
-      std::string spacing = GetStringValueFromTag(dicomIO, "PixelSpacing");
+      std::string spacing = GetTagValueFromTagKey(dicomIO, "PixelSpacing");
       int n = spacing.find("\\");
       std::string sx = spacing.substr(0,n);
       spacing = spacing.substr(n+1,spacing.size());
@@ -452,25 +392,14 @@ namespace syd {
     DD("TODO spacing");
 
     // other (needed ?)
-    // std::string TableTraverse = GetStringValueFromTag(dicomIO, "TableTraverse");
-    // std::string InstanceNumber = GetStringValueFromTag(dicomIO, "InstanceNumber");
+    // std::string TableTraverse = GetTagValueFromTagKey(dicomIO, "TableTraverse");
+    // std::string InstanceNumber = GetTagValueFromTagKey(dicomIO, "InstanceNumber");
 
     // Pixel scale
     double ps = 1.0;
-    ps = GetDoubleValueFromTag(dicomIO, "0011|103b"); // PixelScale
+    ps = GetTagValueFromTagKey(dicomIO, "0011|103b", 1.0); // PixelScale
     if (ps == 0.0) ps = 1.0;
     serie->dicom_pixel_scale = ps;
-    DD(ps);
-
-    // // Duration in sec
-    // double d = atof(GetStringValueFromTag(dicomIO, "0018|1242").c_str()); // ActualFrameDuration in msec
-    // double f = GetUShortValueFromTag(dicomIO, "0054|0053"); // NumberofFramesinRotation
-    // double r = GetUShortValueFromTag(dicomIO, "0054|0051"); // NumberofRotations
-    // DD(d);
-    // DD(f);
-    // DD(r);
-    // serie->dicom_duration_sec = d/1000.0*f*r;
-    // DD(serie);
   }
   // --------------------------------------------------------------------
 
@@ -500,13 +429,15 @@ namespace syd {
     db_->New(dicomfile);
     dicomfile->file = file;
     dicomfile->dicom_serie = serie;
-    std::string sop_uid = GetStringValueFromTag(dicomIO, "0008|0018"); //SOPInstanceUID
+    std::string sop_uid =
+      GetTagValueFromTagKey(dicomIO, "0008|0018", empty_value); //SOPInstanceUID
     dicomfile->dicom_sop_uid = sop_uid;
-    int instance_number = atoi(GetStringValueFromTag(dicomIO, "0020|0013").c_str()); //InstanceNumber
+    int instance_number =
+      atoi(GetTagValueFromTagKey(dicomIO, "0020|0013", empty_value).c_str()); //InstanceNumber
     dicomfile->dicom_instance_number = instance_number;
 
     // Update the nb of slices
-    // int slice = atoi(GetStringValueFromTag(dicomIO, "NumberOfFrames").c_str());
+    // int slice = atoi(GetTagValueFromTagKey(dicomIO, "NumberOfFrames").c_str());
     // if (slice != 0) serie->size[2] = slice;
     // else serie->size[2]++;
     DD("update size");

@@ -12,7 +12,7 @@ add_library(sydCore SHARED
   sydFileUtils.cxx
   sydLog.cxx
   sydException.cxx
-  sydDicomCommon.cxx
+  #sydDicomCommon.cxx
   sydPrintTable.cxx
   sydHistogram.cxx
   sydNDimPoints.cxx
@@ -20,24 +20,16 @@ add_library(sydCore SHARED
   kmeans/KmTree.cpp
   kmeans/KmUtils.cpp
 )
-
-## I do not manage to make it SHARED on osx
 target_link_libraries(sydCore
   ${Boost_LIBRARIES} ## needed on osx
   ${DCMTK_LIBRARIES}
   )
 
-# wrap_ggo(sydOdbXmlParser_GGO_C sydOdbXmlParser.ggo )
-# add_executable(sydOdbXmlParser sydOdbXmlParser.cxx ${sydOdbXmlParser_GGO_C})
-# target_link_libraries(sydOdbXmlParser sydCore)
-
-#----------------------------------------------------------
-
-
 #----------------------------------------------------------
 # ITK tools library
 add_library(sydItkUtils
   sydImageUtils.cxx
+  sydDicomUtils.cxx
   sydKmeansFilter.cxx
 )
 
@@ -102,4 +94,3 @@ set(SYD_INCLUDE_FILES ${SYD_INCLUDE_FILES}
   sydFitModel_f4b.h
   PARENT_SCOPE
   )
-#DD(SYD_INCLUDE_FILES)
