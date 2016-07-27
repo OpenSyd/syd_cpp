@@ -40,7 +40,7 @@ namespace syd {
     /// Store the history. It is 'mutable' because is changed in the const Callback.
     mutable syd::RecordHistory::pointer history;
 
-    virtual void DumpInTable(syd::PrintTable2 & table) const;
+    virtual void DumpInTable(syd::PrintTable & table) const;
 
     virtual void Callback(odb::callback_event,
                           odb::database & odb,

@@ -32,7 +32,7 @@
 namespace syd {
 
   class Database;
-  class PrintTable2;
+  class PrintTable;
 
   /// Base class for all record (or element, or row) in a table
 #pragma db object abstract pointer(std::shared_ptr) callback(Callback)
@@ -66,7 +66,7 @@ namespace syd {
     virtual void Set(const std::vector<std::string> & args);
 
     /// Add a line in the given PrintTable
-    virtual void DumpInTable(syd::PrintTable2 & table) const;
+    virtual void DumpInTable(syd::PrintTable & table) const;
 
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const = 0;

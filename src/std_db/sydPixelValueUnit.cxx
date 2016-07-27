@@ -18,7 +18,7 @@
 
 // syd
 #include "sydPixelValueUnit.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 // std
 #include <set>
@@ -64,7 +64,7 @@ void syd::PixelValueUnit::Set(const std::vector<std::string> & arg)
 
 
 // --------------------------------------------------
-void syd::PixelValueUnit::DumpInTable(syd::PrintTable2 & ta) const
+void syd::PixelValueUnit::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("name", name);

@@ -22,10 +22,7 @@
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydRecordHelpers.h"
-#include "sydPrintTable2.h"
-
-//syd::DatabaseManager * syd::DatabaseManager::singleton_;
-//syd::DatabaseManager * syd::DatabaseManager::singleton_ = new syd::DatabaseManager;
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -109,7 +106,7 @@ int main(int argc, char* argv[])
       LOG(1) << "No records match";
       return EXIT_SUCCESS;
     }
-    syd::PrintTable2 table;
+    syd::PrintTable table;
     table.SetFormat(format);
     table.SetHeaderFlag(!args_info.noheader_flag);
     try {

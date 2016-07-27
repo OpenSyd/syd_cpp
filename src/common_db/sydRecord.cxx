@@ -19,7 +19,7 @@
 // syd
 #include "sydRecord.h"
 #include "sydDatabase.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 #include "sydPluginManager.h"
 
 // Define static member
@@ -74,10 +74,9 @@ void syd::Record::Set(const std::vector<std::string> & args)
 
 
 // --------------------------------------------------------------------
-void syd::Record::DumpInTable(syd::PrintTable2 & table) const
+void syd::Record::DumpInTable(syd::PrintTable & table) const
 {
-  LOG(WARNING) << "DumpInTable not implemented";
-  LOG(0) << ToString() << std::endl;
+  std::cout << ToString() << std::endl;
 }
 // --------------------------------------------------------------------
 

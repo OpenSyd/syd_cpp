@@ -18,7 +18,7 @@
 
 // syd
 #include "sydRadionuclide.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::Radionuclide::Radionuclide():syd::Record()
@@ -47,7 +47,7 @@ std::string syd::Radionuclide::ToString() const
 
 
 // --------------------------------------------------
-void syd::Radionuclide::DumpInTable(syd::PrintTable2 & ta) const
+void syd::Radionuclide::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("name", name);

@@ -84,7 +84,7 @@ std::string syd::RoiMaskImage::ComputeDefaultAbsolutePath(syd::Database * db) co
 
 
 // --------------------------------------------------
-void syd::RoiMaskImage::DumpInTable(syd::PrintTable2 & ta) const
+void syd::RoiMaskImage::DumpInTable(syd::PrintTable & ta) const
 {
   syd::Image::DumpInTable(ta);
   auto f = ta.GetFormat();

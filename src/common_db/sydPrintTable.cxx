@@ -17,7 +17,7 @@
   ===========================================================================**/
 
 // syd
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 #include "sydRecord.h"
 
 // std
@@ -25,27 +25,36 @@
 #include <sstream>
 
 //------------------------------------------------------------------
-syd::PrintTable2::PrintTable2()
+syd::PrintTable::PrintTable()
 {
   format_ = "default";
   use_single_row_flag_ = false;
   use_header_flag_ = true;
+  AddFormat("raw", "Print every fields as a simple line");
 }
 //------------------------------------------------------------------
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::Build(syd::Record::vector::const_iterator start,
+void syd::PrintTable::Build(syd::Record::vector::const_iterator start,
                              syd::Record::vector::const_iterator end)
 {
   if (start == end) return;
+
+  // Special case for format 'raw'
+  if (GetFormat() == "raw") {
+    SetHeaderFlag(false);
+  }
 
   // Create the table
   int nb_of_rows = end-start;
   for(auto i=start; i != end; i++) {
     auto row = syd::PrintTableRow::New(this);
     current_row_ = row;
-    (*i)->DumpInTable(*this);
+    if (GetFormat() == "raw")
+      (*i)->syd::Record::DumpInTable(*this);
+    else
+      (*i)->DumpInTable(*this);
     rows_.push_back(row);
     table_names_.insert((*i)->GetTableName());
   }
@@ -64,8 +73,10 @@ void syd::PrintTable2::Build(syd::Record::vector::const_iterator start,
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::Print(std::ostream & os)
+void syd::PrintTable::Print(std::ostream & os)
 {
+  if (GetFormat() == "raw") return;
+
   auto indices = GetColumnsIndices();
   int nb_of_rows = rows_.size();
 
@@ -98,7 +109,7 @@ void syd::PrintTable2::Print(std::ostream & os)
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::AddFormat(std::string name, std::string description)
+void syd::PrintTable::AddFormat(std::string name, std::string description)
 {
   FormatType f;
   f.name_ = name;
@@ -109,7 +120,7 @@ void syd::PrintTable2::AddFormat(std::string name, std::string description)
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::Set(std::string column_name, std::string value, int width_max)
+void syd::PrintTable::Set(std::string column_name, std::string value, int width_max)
 {
   auto col = GetColumnInfo(column_name);
   col->SetMaxWidth(width_max);
@@ -119,7 +130,7 @@ void syd::PrintTable2::Set(std::string column_name, std::string value, int width
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::Set(syd::PrintTableColumnInfo::pointer column,
+void syd::PrintTable::Set(syd::PrintTableColumnInfo::pointer column,
                            std::string value)
 {
   current_row_->Set(column->GetIndex(), value);
@@ -128,7 +139,7 @@ void syd::PrintTable2::Set(syd::PrintTableColumnInfo::pointer column,
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::Set(std::string column_name, double value, int precision)
+void syd::PrintTable::Set(std::string column_name, double value, int precision)
 {
   auto column = GetColumnInfo(column_name);
   Set(column, column->GetStringValue(value, precision));
@@ -137,7 +148,7 @@ void syd::PrintTable2::Set(std::string column_name, double value, int precision)
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::SetColumnPrecision(int col, int precision)
+void syd::PrintTable::SetColumnPrecision(int col, int precision)
 {
   columns_[col]->SetPrecision(precision);
 }
@@ -146,7 +157,7 @@ void syd::PrintTable2::SetColumnPrecision(int col, int precision)
 
 //------------------------------------------------------------------
 syd::PrintTableColumnInfo::pointer
-syd::PrintTable2::GetColumnInfo(int col)
+syd::PrintTable::GetColumnInfo(int col)
 {
   return columns_[col];
 }
@@ -155,7 +166,7 @@ syd::PrintTable2::GetColumnInfo(int col)
 
 //------------------------------------------------------------------
 syd::PrintTableColumnInfo::pointer
-syd::PrintTable2::GetColumnInfo(std::string column_name)
+syd::PrintTable::GetColumnInfo(std::string column_name)
 {
   auto i = columns_name_to_indices_.find(column_name);
   if (i == columns_name_to_indices_.end()) {
@@ -172,7 +183,7 @@ syd::PrintTable2::GetColumnInfo(std::string column_name)
 
 
 //------------------------------------------------------------------
-std::string syd::PrintTable2::GetFormat() const
+std::string syd::PrintTable::GetFormat() const
 {
   return format_;
 }
@@ -180,7 +191,7 @@ std::string syd::PrintTable2::GetFormat() const
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::SetFormat(std::string f)
+void syd::PrintTable::SetFormat(std::string f)
 {
   if (f == "") format_ = "default";
   else format_ = f;
@@ -189,7 +200,7 @@ void syd::PrintTable2::SetFormat(std::string f)
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::SetSingleRowFlag(bool b)
+void syd::PrintTable::SetSingleRowFlag(bool b)
 {
   use_single_row_flag_ = b;
 }
@@ -197,7 +208,7 @@ void syd::PrintTable2::SetSingleRowFlag(bool b)
 
 
 //------------------------------------------------------------------
-std::vector<int> syd::PrintTable2::GetColumnsIndices() const
+std::vector<int> syd::PrintTable::GetColumnsIndices() const
 {
   std::vector<int> c;
   for(auto col:columns_) c.push_back(col->GetIndex());

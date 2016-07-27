@@ -237,7 +237,7 @@ void syd::Image::CopyDicomSeries(const syd::Image::pointer image)
 
 
 // --------------------------------------------------
-void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
+void syd::Image::DumpInTable(syd::PrintTable & ta) const
 {
   auto format = ta.GetFormat();
   if (format == "default") DumpInTable_default(ta);
@@ -261,7 +261,7 @@ void syd::Image::DumpInTable(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::Image::DumpInTable_short(syd::PrintTable2 & ta) const
+void syd::Image::DumpInTable_short(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", GetPatientName());
@@ -273,7 +273,7 @@ void syd::Image::DumpInTable_short(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::Image::DumpInTable_default(syd::PrintTable2 & ta) const
+void syd::Image::DumpInTable_default(syd::PrintTable & ta) const
 {
   DumpInTable_short(ta);
   ta.Set("inj", GetInjectionName());
@@ -291,7 +291,7 @@ void syd::Image::DumpInTable_default(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::Image::DumpInTable_ref_frame(syd::PrintTable2 & ta) const
+void syd::Image::DumpInTable_ref_frame(syd::PrintTable & ta) const
 {
   DumpInTable_short(ta);
   ta.Set("ref_frame", frame_of_reference_uid);
@@ -300,7 +300,7 @@ void syd::Image::DumpInTable_ref_frame(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::Image::DumpInTable_history(syd::PrintTable2 & ta) const
+void syd::Image::DumpInTable_history(syd::PrintTable & ta) const
 {
   DumpInTable_short(ta);
   syd::RecordWithHistory::DumpInTable(ta);
@@ -309,7 +309,7 @@ void syd::Image::DumpInTable_history(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::Image::DumpInTable_file(syd::PrintTable2 & ta) const
+void syd::Image::DumpInTable_file(syd::PrintTable & ta) const
 {
   DumpInTable_short(ta);
   ta.Set("file", GetAbsolutePath(), 100);
@@ -318,7 +318,7 @@ void syd::Image::DumpInTable_file(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::Image::DumpInTable_filelist(syd::PrintTable2 & ta) const
+void syd::Image::DumpInTable_filelist(syd::PrintTable & ta) const
 {
   ta.SetSingleRowFlag(true);
   ta.SetHeaderFlag(false);
@@ -328,7 +328,7 @@ void syd::Image::DumpInTable_filelist(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::Image::DumpInTable_details(syd::PrintTable2 & ta) const
+void syd::Image::DumpInTable_details(syd::PrintTable & ta) const
 {
   DumpInTable_default(ta);
   ta.Set("t", type);

@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDPRINTTABLE2_H
-#define SYDPRINTTABLE2_H
+#ifndef SYDPRINTTABLE_H
+#define SYDPRINTTABLE_H
 
 // syd
 #include "sydRecord.h"
@@ -34,11 +34,11 @@ namespace syd {
 
   /// Helpers class to dump a table (line/column) of values,
   /// controling the precision and the column size
-  class PrintTable2 {
+  class PrintTable {
   public:
 
     // Constructor
-    PrintTable2();
+    PrintTable();
 
     // Main dump function
     void Build(syd::Record::vector::const_iterator start,
@@ -89,4 +89,4 @@ namespace syd {
 
 } // end namespace
 
-#endif /* end #define SYDPRINTTABLE2_H_H */
+#endif /* end #define SYDPRINTTABLE_H_H */

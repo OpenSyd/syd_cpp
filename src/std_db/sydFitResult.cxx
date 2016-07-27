@@ -76,7 +76,7 @@ void syd::FitResult::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------------------------
-void syd::FitResult::DumpInTable(syd::PrintTable2 & ta) const
+void syd::FitResult::DumpInTable(syd::PrintTable & ta) const
 {
   auto format = ta.GetFormat();
   if (format == "default") DumpInTable_default(ta);
@@ -92,7 +92,7 @@ void syd::FitResult::DumpInTable(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::FitResult::DumpInTable_default(syd::PrintTable2 & ta) const
+void syd::FitResult::DumpInTable_default(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", timepoints->patient->name);
@@ -113,7 +113,7 @@ void syd::FitResult::DumpInTable_default(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::FitResult::DumpInTable_history(syd::PrintTable2 & ta) const
+void syd::FitResult::DumpInTable_history(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", timepoints->patient->name);
@@ -131,7 +131,7 @@ void syd::FitResult::DumpInTable_history(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::FitResult::DumpInTable_md5(syd::PrintTable2 & ta) const
+void syd::FitResult::DumpInTable_md5(syd::PrintTable & ta) const
 {
 
   ta.Set("id", id);

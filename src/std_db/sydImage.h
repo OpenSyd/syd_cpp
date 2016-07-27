@@ -31,7 +31,7 @@
 #include "sydPixelValueUnit.h"
 #include "sydRecordWithHistory.h"
 #include "sydRecordWithTags.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -144,14 +144,14 @@ namespace syd {
     void FatalIfNoDicom() const;
 
     /// Add a line in the given PrintTable
-    virtual void DumpInTable(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_default(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_short(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_ref_frame(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_history(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_file(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_filelist(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_details(syd::PrintTable2 & table) const;
+    virtual void DumpInTable(syd::PrintTable & table) const;
+    virtual void DumpInTable_default(syd::PrintTable & table) const;
+    virtual void DumpInTable_short(syd::PrintTable & table) const;
+    virtual void DumpInTable_ref_frame(syd::PrintTable & table) const;
+    virtual void DumpInTable_history(syd::PrintTable & table) const;
+    virtual void DumpInTable_file(syd::PrintTable & table) const;
+    virtual void DumpInTable_filelist(syd::PrintTable & table) const;
+    virtual void DumpInTable_details(syd::PrintTable & table) const;
 
     /// Check if the associated files exist on disk
     virtual syd::CheckResult Check() const;

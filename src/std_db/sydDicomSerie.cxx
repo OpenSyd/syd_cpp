@@ -104,7 +104,7 @@ void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------
-void syd::DicomSerie::DumpInTable(syd::PrintTable2 & ta) const
+void syd::DicomSerie::DumpInTable(syd::PrintTable & ta) const
 {
   auto format = ta.GetFormat();
   if (format == "default") DumpInTable_default(ta);
@@ -122,7 +122,7 @@ void syd::DicomSerie::DumpInTable(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::DicomSerie::DumpInTable_default(syd::PrintTable2 & ta) const
+void syd::DicomSerie::DumpInTable_default(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);
@@ -136,7 +136,7 @@ void syd::DicomSerie::DumpInTable_default(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::DicomSerie::DumpInTable_file(syd::PrintTable2 & ta) const
+void syd::DicomSerie::DumpInTable_file(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);
@@ -155,7 +155,7 @@ void syd::DicomSerie::DumpInTable_file(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::DicomSerie::DumpInTable_filelist(syd::PrintTable2 & ta) const
+void syd::DicomSerie::DumpInTable_filelist(syd::PrintTable & ta) const
 {
   ta.SetSingleRowFlag(true);
   ta.SetHeaderFlag(false);
@@ -171,7 +171,7 @@ void syd::DicomSerie::DumpInTable_filelist(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::DicomSerie::DumpInTable_details(syd::PrintTable2 & ta) const
+void syd::DicomSerie::DumpInTable_details(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);

@@ -71,7 +71,7 @@ void syd::DicomFile::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------
-void syd::DicomFile::DumpInTable(syd::PrintTable2 & ta) const
+void syd::DicomFile::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("serie", dicom_serie->id);

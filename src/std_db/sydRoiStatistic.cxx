@@ -53,7 +53,7 @@ std::string syd::RoiStatistic::ToString() const
 
 
 // --------------------------------------------------
-void syd::RoiStatistic::DumpInTable(syd::PrintTable2 & ta) const
+void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", image->patient->name);

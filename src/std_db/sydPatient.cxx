@@ -90,7 +90,7 @@ void syd::Patient::Set(const std::string & pname,
 
 
 // --------------------------------------------------
-void syd::Patient::DumpInTable(syd::PrintTable2 & ta) const
+void syd::Patient::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id",id);
   ta.Set("p", name);

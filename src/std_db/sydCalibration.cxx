@@ -53,7 +53,7 @@ std::string syd::Calibration::ToString() const
 
 
 // --------------------------------------------------
-void syd::Calibration::DumpInTable(syd::PrintTable2 & ta) const
+void syd::Calibration::DumpInTable(syd::PrintTable & ta) const
 {
   std::string iname;
   std::string pname;

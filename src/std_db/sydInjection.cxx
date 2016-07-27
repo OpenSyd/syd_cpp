@@ -86,7 +86,7 @@ void syd::Injection::Set(const std::vector<std::string> & args)
 
 
 // --------------------------------------------------
-void syd::Injection::DumpInTable(syd::PrintTable2 & ta) const
+void syd::Injection::DumpInTable(syd::PrintTable & ta) const
 {
   std::string pname = empty_value;
   if (patient != NULL) pname = patient->name;

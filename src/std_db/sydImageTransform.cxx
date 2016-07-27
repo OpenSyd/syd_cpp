@@ -92,7 +92,7 @@ std::string syd::ImageTransform::ComputeRelativeFolder() const
 
 
 // --------------------------------------------------
-void syd::ImageTransform::DumpInTable(syd::PrintTable2 & ta) const
+void syd::ImageTransform::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", fixed_image->patient->name);

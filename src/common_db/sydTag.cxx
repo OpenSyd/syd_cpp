@@ -18,7 +18,7 @@
 
 // syd
 #include "sydTag.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 // std
 #include <set>
@@ -57,7 +57,7 @@ void syd::Tag::Set(const std::vector<std::string> & arg)
 
 
 // --------------------------------------------------------------------
-void syd::Tag::DumpInTable(syd::PrintTable2 & ta) const
+void syd::Tag::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("label", label);

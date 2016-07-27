@@ -18,13 +18,13 @@
 
 // syd
 #include "sydRecordHistory.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::RecordHistory::RecordHistory():syd::Record()
 {
-  insertion_date = "unknown";
-  update_date = "unknown";
+  insertion_date = empty_value;
+  update_date = empty_value;
 }
 // --------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ void syd::RecordHistory::Set(const syd::Database * db, const std::vector<std::st
 
 
 // --------------------------------------------------------------------
-void syd::RecordHistory::DumpInTable(syd::PrintTable2 & ta) const
+void syd::RecordHistory::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("insertion_date", insertion_date);

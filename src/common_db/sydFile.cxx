@@ -19,7 +19,7 @@
 // syd
 #include "sydFile.h"
 #include "sydDatabase.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::File::File():syd::Record()
@@ -100,7 +100,7 @@ std::string syd::File::GetAbsolutePath() const
 
 
 // --------------------------------------------------------------------
-void syd::File::DumpInTable(syd::PrintTable2 & ta) const
+void syd::File::DumpInTable(syd::PrintTable & ta) const
 {
   auto format = ta.GetFormat();
 
@@ -118,7 +118,7 @@ void syd::File::DumpInTable(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::File::DumpInTable_default(syd::PrintTable2 & ta) const
+void syd::File::DumpInTable_default(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("md5?", (md5==empty_value ? "N":"Y"));
@@ -129,7 +129,7 @@ void syd::File::DumpInTable_default(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::File::DumpInTable_md5(syd::PrintTable2 & ta) const
+void syd::File::DumpInTable_md5(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("md5", md5);
@@ -139,7 +139,7 @@ void syd::File::DumpInTable_md5(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::File::DumpInTable_file(syd::PrintTable2 & ta) const
+void syd::File::DumpInTable_file(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("path", std::string(path+PATH_SEPARATOR+filename), 100);
