@@ -29,7 +29,6 @@ message(STATUS "ITK is found")
 # Find Boost
 find_package(Boost REQUIRED date_time system filesystem serialization)
 include_directories( ${Boost_INCLUDE_DIR} )
-message(STATUS "Boost is found")
 #----------------------------------------------------------
 
 

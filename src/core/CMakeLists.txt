@@ -12,8 +12,6 @@ add_library(sydCore SHARED
   sydFileUtils.cxx
   sydLog.cxx
   sydException.cxx
-  #sydDicomCommon.cxx
-  sydPrintTable.cxx
   sydHistogram.cxx
   sydNDimPoints.cxx
   kmeans/KMeans.cpp
