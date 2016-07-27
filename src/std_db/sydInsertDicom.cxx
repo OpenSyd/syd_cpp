@@ -64,7 +64,6 @@ int main(int argc, char* argv[])
     builder.SearchDicomInFile(f);
   }
 
-  LOG(1) << "Copying files to db ...";
   builder.InsertDicomSeries();
   // This is the end, my friend.
 }

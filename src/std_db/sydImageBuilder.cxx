@@ -56,24 +56,11 @@ syd::Image::pointer syd::ImageBuilder::NewMHDImageLike(syd::Image::pointer input
 
 
 // --------------------------------------------------------------------
-// syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::Patient::pointer patient)
-// {
-//   syd::Image::pointer image;
-//   db_->New(image);
-//   image->patient = patient;
-//   InitializeMHDFiles(image);
-//   return image;
-// }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::Injection::pointer injection)
+syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::Patient::pointer patient)
 {
   syd::Image::pointer image;
   db_->New(image);
-  image->injection = injection;
-  image->patient = injection->patient;
+  image->patient = patient;
   InitializeMHDFiles(image);
   return image;
 }
@@ -81,26 +68,34 @@ syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::Injection::pointer injec
 
 
 // --------------------------------------------------------------------
-// syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::DicomSerie::pointer dicom)
-// {
-//   syd::Image::pointer image = NewMHDImage(dicom->patient);
-//   image->dicoms.push_back(dicom);
-//   image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
-//   return image;
-// }
+syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::Injection::pointer injection)
+{
+  syd::Image::pointer image = NewMHDImage(injection->patient);
+  image->injection = injection;
+  return image;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer syd::ImageBuilder::NewMHDImage(syd::DicomSerie::pointer dicom)
+{
+  syd::Image::pointer image = NewMHDImage(dicom->patient);
+  image->dicoms.push_back(dicom);
+  image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
+  return image;
+}
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 syd::RoiMaskImage::pointer syd::ImageBuilder::NewMHDRoiMaskImage(syd::Patient::pointer patient,
-                                                                 syd::RoiType::pointer roitype,
-                                                                 syd::Injection::pointer inj)
+                                                                 syd::RoiType::pointer roitype)
 {
   syd::RoiMaskImage::pointer mask;
   db_->New(mask);
   mask->patient = patient;
   mask->roitype = roitype;
-  mask->injection = inj;
   mask->pixel_unit = db_->FindPixelUnit("no_unit");
   InitializeMHDFiles(mask);
   return mask;

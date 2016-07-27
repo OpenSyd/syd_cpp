@@ -34,24 +34,26 @@ namespace syd {
     ImageBuilder(syd::StandardDatabase * db):DatabaseFilter(db) { }
 
     /// Create an empty image (also create associated file). Not inserted in the db.
-    //    syd::Image::pointer NewMHDImage(syd::Patient::pointer patient);
+    syd::Image::pointer NewMHDImage(syd::Patient::pointer patient);
     syd::Image::pointer NewMHDImage(syd::Injection::pointer injection);
 
     /// Create a new image and copy fields. Not inserted in the db.
     syd::Image::pointer NewMHDImageLike(syd::Image::pointer image);
 
     /// Create an image, using the dicom (patient). Not inserted in the db.
-    //syd::Image::pointer NewMHDImage(syd::DicomSerie::pointer dicom);
+    syd::Image::pointer NewMHDImage(syd::DicomSerie::pointer dicom);
 
     /// Create and insert a new RoiMaskImage. Not inserted in the db.
     syd::RoiMaskImage::pointer NewMHDRoiMaskImage(syd::Patient::pointer patient,
-                                                  syd::RoiType::pointer roitype,
-                                                  syd::Injection::pointer inj);
+                                                  syd::RoiType::pointer roitype);
 
-    /// Copy the file image to an Image, updating all information  (pixel type, size, md5 etc). DB not updated
+    /// Copy the file image to an Image, updating all information
+    /// (pixel type, size, md5 etc). DB not updated
     void CopyImageFromFile(syd::Image::pointer image, std::string filename);
 
-    /// Set the image content from an itk image, and write it to the image file in the db (type, size, spacing, md5). DB not updated
+    /// Set the image content from an itk image, and write it to the
+    /// image file in the db (type, size, spacing, md5). DB not
+    /// updated
     template<class PixelType>
     void SetImage(syd::Image::pointer image,
                   typename itk::Image<PixelType,3>::Pointer & itk_image);

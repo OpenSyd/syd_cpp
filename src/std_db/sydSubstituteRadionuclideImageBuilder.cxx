@@ -31,7 +31,7 @@ syd::SubstituteRadionuclideImageBuilder::NewRadionuclideSubstitutedImage(syd::Im
   syd::DicomSerie::pointer dicom = input->dicoms[0];
   syd::Injection::pointer injection = input->injection;
 
-  double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection->date);
+  double time = syd::DateDifferenceInHours(dicom->dicom_acquisition_date, injection->date);
   double lambda = rad->GetLambdaInHours();
 
   // Create output image

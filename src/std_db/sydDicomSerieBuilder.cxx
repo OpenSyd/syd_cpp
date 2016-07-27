@@ -41,7 +41,7 @@ namespace syd {
   DicomSerieBuilder::DicomSerieBuilder()
   {
     // Insert some tags that not always known in the dicom dictionary
-
+    /*
     // DatasetName
     DcmDictEntry * e = new DcmDictEntry(0x0011, 0x1012, EVR_LO, "DatasetName", 0,
                                         DcmVariableVM, NULL, true, NULL);
@@ -67,7 +67,7 @@ namespace syd {
     e = new DcmDictEntry(0x0011, 0x103B, EVR_FD, "PixelScale", 0,
                          DcmVariableVM, NULL, true, NULL);
     globalDataDict.addEntry(e);
-
+    */
     // init
     patient_ = NULL;
     db_ = NULL;
@@ -356,19 +356,6 @@ namespace syd {
     // Store description
     serie->dicom_description = description;
 
-    // Image size
-    /*
-
-      int rows = GetTagValueUShort(dset, "Rows");
-      int columns = GetTagValueUShort(dset, "Columns");
-      // serie->size[0] = columns;
-      // serie->size[1] = rows;
-      // serie->size[2] = 0; // creation, no file yet
-      DD(rows);
-      DD(columns);
-    */
-    DD("TODO size");
-
     // Image spacing
     /*
       double sz = GetTagValueDouble(dset, "SpacingBetweenSlices");
@@ -389,7 +376,7 @@ namespace syd {
       // if (serie->spacing[1] == 0) serie->spacing[1] = 1.0;
       //  if (sz != 0) serie->spacing[2] = sz; // only update if found
       */
-    DD("TODO spacing");
+    //    DD("TODO spacing");
 
     // other (needed ?)
     // std::string TableTraverse = GetTagValueFromTagKey(dicomIO, "TableTraverse");
@@ -437,10 +424,14 @@ namespace syd {
     dicomfile->dicom_instance_number = instance_number;
 
     // Update the nb of slices
+    // Image size
+    // unsigned int rows = GetTagValueFromTagKey(dicomIO, "0028|0010", 0); // Rows
+    // unsigned int columns = GetTagValueFromTagKey(dicomIO, "0028|0011", 0); // Columns
+    // description = ToString(rows) + "x" +
     // int slice = atoi(GetTagValueFromTagKey(dicomIO, "NumberOfFrames").c_str());
     // if (slice != 0) serie->size[2] = slice;
     // else serie->size[2]++;
-    DD("update size");
+    //    DD("update size");
 
     return dicomfile;
   }

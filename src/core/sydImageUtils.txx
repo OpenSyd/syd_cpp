@@ -576,26 +576,31 @@ ReadDicomSerieFromListOfFiles(std::string folder, const std::vector<std::string>
 
 //--------------------------------------------------------------------
 template<class PixelType>
-void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, const std::string & filename)
+void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image,
+                            const std::string & filename)
 {
   // Open the dicom to read some tags
   typedef itk::Image<PixelType,3> ImageType;
-  DcmFileFormat dfile;
-  bool b = syd::OpenDicomFile(filename.c_str(), dfile);
-  if (!b) {
-    EXCEPTION("Could not open the dicom file '" << filename
-              << "' maybe this is not a dicom ?");
-  }
-  DcmObject *dset = dfile.getDataset();
+  auto dicomIO = syd::ReadDicomHeader(filename);
+
+  // DcmFileFormat dfile;
+  // bool b = syd::OpenDicomFile(filename.c_str(), dfile);
+  // if (!b) {
+  //   EXCEPTION("Could not open the dicom file '" << filename
+  //             << "' maybe this is not a dicom ?");
+  // }
+  // DcmObject *dset = dfile.getDataset();
 
   // Remove meta information (if not : garbage in the mhd)
   itk::MetaDataDictionary d;
   image->SetMetaDataDictionary(d);
 
   // Offset
-  std::string ImagePositionPatient = GetTagValueString(dset, "ImagePositionPatient");
-  if (ImagePositionPatient == "") {
-    EXCEPTION("Error while reading tag ImagePositionPatient in the dicom ");
+  //std::string ImagePositionPatient = GetTagValueString(dset, "ImagePositionPatient");
+  std::string ImagePositionPatient =
+    GetTagValueFromTagKey(dicomIO, "0020|0032", empty_value); //ImagePositionPatient
+  if (ImagePositionPatient == empty_value) {
+    EXCEPTION("Error while reading tag ImagePositionPatient in the dicom.");
   }
 
   int n = ImagePositionPatient.find("\\");
@@ -617,8 +622,8 @@ void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, con
   }
 
   // Correct for negative SpacingBetweenSlices
-  double s = GetTagValueDouble(dset, "SpacingBetweenSlices");
-  if (s == 0) s = GetTagValueDouble(dset, "SliceThickness");
+  double s = GetTagValueFromTagKey(dicomIO, "0018|0088", 0.0);// SpacingBetweenSlices
+  if (s == 0) s = GetTagValueFromTagKey(dicomIO, "0018|0050", 1.0); //SliceThickness
 
   // change spacing z
   typename ImageType::SpacingType spacing = image->GetSpacing();
