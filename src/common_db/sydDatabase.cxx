@@ -365,6 +365,16 @@ void syd::Database::Delete(generic_record_vector & records,
 
 
 // --------------------------------------------------------------------
+void syd::Database::Delete(generic_record_pointer record)
+{
+  generic_record_vector r;
+  r.push_back(record);
+  Delete(r, record->GetTableName());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Database::DeleteFiles()
 {
   for(auto f:files_to_delete_) {

@@ -19,7 +19,6 @@
 // syd
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
-#include "extExtendedDatabase.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -112,7 +111,7 @@ int main(int argc, char* argv[])
   //----------------------------------------------------------------
   {
     std::cout << "Open ext as ExtendedDatabase" << std::endl;
-    ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
+    syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(ext_dbname);
     ext::Patient::pointer patient;
     db->New(patient);
     args[0] = "tutu";
@@ -128,7 +127,7 @@ int main(int argc, char* argv[])
 
   //----------------------------------------------------------------
   {
-    ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
+    syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(ext_dbname);
     ext::Patient::vector patients;
     ext::Patient::pointer p;
     db->New(p);

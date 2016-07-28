@@ -225,6 +225,7 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     void Delete(generic_record_vector & records, const std::string & table_name);
+    void Delete(generic_record_pointer record);
     template<class RecordType>
     void Delete(std::shared_ptr<RecordType> record);
     template<class RecordType>

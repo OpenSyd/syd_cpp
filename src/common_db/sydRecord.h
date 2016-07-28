@@ -128,7 +128,16 @@ namespace syd {
 
 
   // --------------------------------------------------------------------
+  /// Default function to check equality (with tostring)
   bool IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2);
+  template<class R>
+  inline bool operator==(const std::shared_ptr<R> & left,
+                         const std::shared_ptr<R> & right)
+  { return (syd::IsEqual(left, right)); }
+  template<class R>
+  inline bool operator!=(const std::shared_ptr<R> & left,
+                         const std::shared_ptr<R> & right)
+  { return !(left == right); }
 
 #include "sydRecord.txx"
   // --------------------------------------------------------------------

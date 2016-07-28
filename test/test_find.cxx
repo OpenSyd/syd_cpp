@@ -19,7 +19,6 @@
 // syd
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
-#include "extExtendedDatabase.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -34,8 +33,8 @@ int main(int argc, char* argv[])
   // Create the database
   std::string ext_dbname = "test_find.ext.db";
   std::string folder = "test";
-  m->Create("ExtendedDatabase", ext_dbname, folder, true);
-  ext::ExtendedDatabase * db = m->Open<ext::ExtendedDatabase>(ext_dbname);
+  m->Create("StandardDatabase", ext_dbname, folder, true);
+  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(ext_dbname);
 
   // Insert some records
   ext::Patient::pointer p1;

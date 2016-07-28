@@ -19,7 +19,7 @@
 // syd
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
-#include "extExtendedDatabase.h"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])

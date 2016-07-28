@@ -19,7 +19,6 @@
 // syd
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
-#include "extExtendedDatabase.h"
 #include "test_insert_patients.h"
 #include "test_insert_injections.h"
 #include "test_insert_dicoms.h"
