@@ -41,9 +41,6 @@ namespace syd {
     /// Destructor (empty)
     virtual ~DicomSerieBuilder();
 
-    /// Set the pointer to the database
-    void SetDatabase(StandardDatabase * db) { db_ = db; }
-
     /// Set the patient (required)
     void SetPatient(Patient::pointer p);
 
@@ -83,10 +80,11 @@ namespace syd {
     DicomFile::pointer CreateDicomFile(const std::string & filename,
                                        itk::GDCMImageIO::Pointer dicomIO,
                                        DicomSerie::pointer serie);
+
     bool GuessDicomSerieForThisFile(const std::string & filename,
                                     itk::GDCMImageIO::Pointer dicomIO,
-                                    //DcmObject * dset,
                                     DicomSerie::pointer & serie);
+
     bool DicomFileAlreadyExist(const std::string & sop_uid);
 
     typedef itk::MetaDataDictionary DictionaryType;

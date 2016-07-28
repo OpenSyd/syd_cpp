@@ -22,10 +22,12 @@
 namespace syd {
 
   // --------------------------------------------------------------------
-  DicomSerieBuilder::
-  DicomSerieBuilder(StandardDatabase * db):DicomSerieBuilder()
+  DicomSerieBuilder::DicomSerieBuilder(StandardDatabase * db)
   {
-    SetDatabase(db);
+    patient_ = NULL;
+    db_ = db;
+    forcePatientFlag_ = false;
+    nb_of_skip_files = 0;
   }
   // --------------------------------------------------------------------
 
@@ -33,46 +35,6 @@ namespace syd {
   // --------------------------------------------------------------------
   DicomSerieBuilder::~DicomSerieBuilder()
   {
-  }
-  // --------------------------------------------------------------------
-
-
-  // --------------------------------------------------------------------
-  DicomSerieBuilder::DicomSerieBuilder()
-  {
-    // Insert some tags that not always known in the dicom dictionary
-    /*
-    // DatasetName
-    DcmDictEntry * e = new DcmDictEntry(0x0011, 0x1012, EVR_LO, "DatasetName", 0,
-                                        DcmVariableVM, NULL, true, NULL);
-    DcmDataDictionary &globalDataDict = dcmDataDict.wrlock();
-    globalDataDict.addEntry(e);
-
-    // InstanceNumber
-    e = new DcmDictEntry(0x0020, 0x0013, EVR_IS, "InstanceNumber", 0,
-                         DcmVariableVM, NULL, true, NULL);
-    globalDataDict.addEntry(e);
-
-    // NumberofFramesinRotation
-    e = new DcmDictEntry(0x0054, 0x0053, EVR_US, "NumberofFramesinRotation", 0,
-                         DcmVariableVM, NULL, true, NULL);
-    globalDataDict.addEntry(e);
-
-    // NumberofRotations
-    e = new DcmDictEntry(0x0054, 0x0051, EVR_US, "NumberofRotations", 0,
-                         DcmVariableVM, NULL, true, NULL);
-    globalDataDict.addEntry(e);
-
-    // PixelScale
-    e = new DcmDictEntry(0x0011, 0x103B, EVR_FD, "PixelScale", 0,
-                         DcmVariableVM, NULL, true, NULL);
-    globalDataDict.addEntry(e);
-    */
-    // init
-    patient_ = NULL;
-    db_ = NULL;
-    forcePatientFlag_ = false;
-    nb_of_skip_files = 0;
   }
   // --------------------------------------------------------------------
 

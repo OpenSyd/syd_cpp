@@ -29,9 +29,7 @@
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::DicomSerie") callback(Callback)
-  /// Store information about a dicom image (serie). Element of table
-  /// 'DicomSerie' stored in a db. Contains information about a dicom
-  /// image.
+  /// Store basic information about a dicom image (serie).
   class DicomSerie : public syd::Record {
   public:
 
@@ -68,17 +66,11 @@ namespace syd {
     /// Modality as indicated in the dicom tag Modality
     std::string dicom_modality;
 
-    // /// Image size (in pixels). It is an array because the size is fixed.
-    // std::vector<int> size;
-
-    // /// Image spacing aka size of the pixel (in mm)
-    // std::vector<double> spacing;
-
     /// Pixel scale
     double dicom_pixel_scale;
 
     /// Concatenation of several descriptions tag (SeriesDescription
-    /// StudyDescription, ImageID, DatasetName)
+    /// StudyDescription, ImageID, DatasetName, Manufacturer)
     std::string dicom_description;
 
     // ------------------------------------------------------------------------
