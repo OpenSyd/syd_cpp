@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
   // Build files list
   std::vector<std::string> files;
   syd::SearchAndAddFilesInFolder(files, "dicom", true);
-  st::sort(files.begin(), files.end());
+  std::sort(files.begin(), files.end());
   // need to sort because orer of files may vary from system to system
 
   // insert dicom from folder

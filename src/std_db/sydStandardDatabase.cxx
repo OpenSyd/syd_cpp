@@ -68,9 +68,19 @@ template<>
 void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & v,
                                        const std::string & order) const
 {
+  // Sort by acquisition_date and if equal, by reconstruction_date or
+  // id is equal
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
-              return syd::IsDateBefore(a->dicom_acquisition_date, b->dicom_acquisition_date); });
+              if (a->dicom_acquisition_date == b->dicom_acquisition_date) {
+                if (a->dicom_reconstruction_date == b->dicom_reconstruction_date)
+                  return (a->id < b->id);
+                else return syd::IsDateBefore(a->dicom_reconstruction_date,
+                                              b->dicom_reconstruction_date);
+              }
+              else return syd::IsDateBefore(a->dicom_acquisition_date,
+                                            b->dicom_acquisition_date);
+            });
 }
 // --------------------------------------------------
 
