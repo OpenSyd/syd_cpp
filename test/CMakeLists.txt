@@ -12,11 +12,18 @@ add_executable(syd_test1 syd_test1.cxx)
 target_link_libraries(syd_test1 sydCommonDatabase)
 add_test(NAME syd_test1
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/syd_test1
-  WORKING_DIRECTORY ${SYD_BINARY_DIR}/test)
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
 
 # Test2 with StandardDatabase
 add_executable(syd_test2 syd_test2.cxx)
 target_link_libraries(syd_test2 StandardDatabase)
 add_test(NAME syd_test2
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/syd_test2
-  WORKING_DIRECTORY ${SYD_BINARY_DIR}/test)
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
+
+# Test3 dicom
+add_executable(syd_test3 syd_test3.cxx)
+target_link_libraries(syd_test3 StandardDatabase)
+add_test(NAME syd_test3
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/syd_test3)

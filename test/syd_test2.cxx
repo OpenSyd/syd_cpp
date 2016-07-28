@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
   db->InsertDefaultRecords("all");
   db->Dump(std::cout);
 
-  // Insert (plugin style)
+  // Insert
   std::cout << std::endl << "Insert" << std::endl;
   syd::Patient::pointer patient;
   db->New(patient);
@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
   if (n != 0) LOG(FATAL) << "Error delete injection";
   std::cout << n << std::endl;
 
-
+  std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;
   // This is the end, my friend.
 }

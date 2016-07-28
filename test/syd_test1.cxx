@@ -93,6 +93,7 @@ int main(int argc, char* argv[])
   if (n != 0) LOG(FATAL) << "Error delete injection";
   std::cout << n << std::endl;
 
+  std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;
   // This is the end, my friend.
 }
