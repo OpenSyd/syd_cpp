@@ -126,8 +126,8 @@ void syd::DicomSerie::DumpInTable_default(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);
-  ta.Set("acqui_date", dicom_acquisition_date);
   ta.Set("mod", dicom_modality);
+  ta.Set("acqui_date", dicom_acquisition_date);
   ta.Set("recon_date", dicom_reconstruction_date);
   ta.Set("scale", dicom_pixel_scale, 2);
   ta.Set("description", dicom_description, 100);
