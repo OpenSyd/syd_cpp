@@ -61,6 +61,8 @@ namespace syd {
 
     virtual void DumpInTable(syd::PrintTable & table) const;
 
+    void Set(const std::vector<std::string> & arg);
+
     double GetLambdaInHours() const;
 
   protected:

@@ -47,6 +47,25 @@ std::string syd::Radionuclide::ToString() const
 
 
 // --------------------------------------------------
+void syd::Radionuclide::Set(const std::vector<std::string> & arg)
+{
+  if (arg.size() < 7) {
+    DDS(arg);
+    LOG(FATAL) << "To insert radionuclide, please set <name> <half_life_in_hours> "
+               << "<element> <atomic_number> <mass_number> <metasable> <max_beta_minus_energy_in_kev>]";
+  }
+  name = arg[0];
+  half_life_in_hours = atof(arg[1].c_str());
+  element = arg[2];
+  atomic_number = atoi(arg[3].c_str());
+  mass_number = atoi(arg[4].c_str());
+  metastable = (std::string(arg[5]) == "Y"? true:false);
+  max_beta_minus_energy_in_kev = atof(arg[6].c_str());
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 void syd::Radionuclide::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);

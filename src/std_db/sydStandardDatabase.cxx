@@ -419,25 +419,70 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
 
   // Add some radionuclide
   LOG(1) << "Adding some default radionuclides ...";
-  std::vector<std::string> rads = {"C-11", "O-15", "F-18", "P-32", "P-33",
-                                   "Cu-64", "Cu-67", "Ga-68", "Sr-89",
-                                   "Y-90", "Zr-89", "Tc-99m", "Rh-103m",
-                                   "In-111", "Sn-117m", "I-123", "I-124",
-                                   "I-125", "I-131", "Sm-153", "Ho-166",
-                                   "Er-169", "Lu-177", "Re-186", "Re-188",
-                                   "Tl-201", "Pb-212", "Bi-212", "Bi-213",
-                                   "At-211", "Ra-223", "Ac-225", "Th-227"};
-  // "Rb-82" ?
-  // create  rad
-  syd::Radionuclide::vector radionuclides;
-  syd::UpdateRadionuclideFilter f(this);
-  for(auto rad_name:rads) {
+  /*
+    std::vector<std::string> rads = {"C-11", "O-15", "F-18", "P-32", "P-33",
+    "Cu-64", "Cu-67", "Ga-68", "Sr-89",
+    "Y-90", "Zr-89", "Tc-99m", "Rh-103m",
+    "In-111", "Sn-117m", "I-123", "I-124",
+    "I-125", "I-131", "Sm-153", "Ho-166",
+    "Er-169", "Lu-177", "Re-186", "Re-188",
+    "Tl-201", "Pb-212", "Bi-212", "Bi-213",
+    "At-211", "Ra-223", "Ac-225", "Th-227"};
+    // "Rb-82" ?
+    // create  rad
+    syd::Radionuclide::vector radionuclides;
+    syd::UpdateRadionuclideFilter f(this);
+    for(auto rad_name:rads) {
     syd::Radionuclide::pointer r;
     New(r);
     r->name = rad_name;
     f.GetDataFromWeb(r);
     radionuclides.push_back(r);
+    }
+  */
+  syd::Radionuclide::vector radionuclides;
+  std::vector<std::vector<std::string>> args;
+  args.push_back({"C-11", "0.34", "Carbon", "6", "11", "N", "0.00"});
+  args.push_back({"O-15", "0.03", "Oxygen", "8", "15", "N", "0.00"});
+  args.push_back({"F-18", "1.83", "Fluorine", "9", "18", "N", "0.00"});
+  args.push_back({"P-32", "342.81", "Phosphorus", "15", "32", "N", "1710.66"});
+  args.push_back({"P-33", "609.19", "Phosphorus", "15", "33", "N", "248.50"});
+  args.push_back({"Cu-64", "12.70", "Copper", "29", "64", "N", "579.40"});
+  args.push_back({"Cu-67", "63.84", "Copper", "29", "67 ", "N", "0.00"});
+  args.push_back({"Ga-68", "1.13", "Gallium", "31", "68", "N", "0.00"});
+  args.push_back({"Sr-89", "1213.67", "Strontium", "38", "89", "N", "1495.10"});
+  args.push_back({"Y-90", "64.04", "Yttrium", "39", "90", "N", "2278.70"});
+  args.push_back({"Zr-89", "78.42", "Zirconium", "40", "89", "N", "0.00"});
+  args.push_back({"Tc-99m", "6.01", "Technetium", "43", "99", "Y", "436.20"});
+  args.push_back({"Rh-103m", "0.94", "Rhodium", "45", "103", "Y", "0.00"});
+  args.push_back({"In-111", "67.32", "Indium", "49", "111", "N", "0.00"});
+  args.push_back({"Sn-117m", "326.39", "Tin", "50", "117", "Y", "0.00"});
+  args.push_back({"I-123", "13.22", "Iodine", "53", "123", "N", "0.00"});
+  args.push_back({"I-124", "100.22", "Iodine", "53", "124", "N", "0.00"});
+  args.push_back({"I-125", "1425.31", "Iodine", "53", "125", "N", "0.00"});
+  args.push_back({"I-131", "192.56", "Iodine", "53", "131", "N", "970.80"});
+  args.push_back({"Sm-153", "46.29", "Samarium", "62", "153", "N", "807.60"});
+  args.push_back({"Ho-166", "26.79", "Holmium", "67", "166", "N", "1854.50"});
+  args.push_back({"Er-169", "225.11", "Erbium", "6", "8 169", "N", "353.00"});
+  args.push_back({"Lu-177", "159.53", "Lutetium", "71", "177", "N", "498.30"});
+  args.push_back({"Re-186", "89.25", "Rhenium", "75", "186", "N", "1069.50"});
+  args.push_back({"Re-188", "17.00", "Rhenium", "75", "188", "N", "2120.40"});
+  args.push_back({"Tl-201", "73.01", "Thallium", "81", "201", "N", "0.00"});
+  args.push_back({"Pb-212", "10.64", "Lead", "82", "212", "N", "569.90"});
+  args.push_back({"Bi-212", "1.01", "Bismuth", "83", "212", "N", "2252.10"});
+  args.push_back({"Bi-213", "0.76", "Bismuth", "83", "213", "N", "1423.00"});
+  args.push_back({"At-211", "7.22", "Astatine", "85", "211", "N", "0.00"});
+  args.push_back({"Ra-223", "274.33", "Radium", "88", "223", "N", "0.00"});
+  args.push_back({"Ac-225", "240.00", "Actinium", "89", "225", "N", "0.00"});
+  args.push_back({"Th-227", "449.23", "Thorium ", "90", "227", "N ", "0.00"});
+
+  for (auto a:args) {
+    syd::Radionuclide::pointer r;
+    New(r);
+    r->Set(a);
+    radionuclides.push_back(r);
   }
+
   Insert(radionuclides);
   LOG(1) << radionuclides.size() << " radionuclides have been added.";
 
