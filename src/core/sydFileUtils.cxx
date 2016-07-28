@@ -177,7 +177,7 @@ std::string syd::CreateTemporaryDirectory(const std::string & folder)
 //------------------------------------------------------------------
 int syd::GetPageContent(char const *argv[], std::ostream & os) {
   //   http://stackoverflow.com/questions/27491288/read-http-file-content-to-string-with-boost-c
-  LOG(2) << "Try to connect to " << argv[0] << argv[1];
+  LOG(4) << "Try to connect to " << argv[0] << argv[1];
   try {
     boost::asio::io_service io_service;
     // Get a list of endpoints corresponding to the server name.
@@ -232,9 +232,9 @@ int syd::GetPageContent(char const *argv[], std::ostream & os) {
     std::string header;
 
     while (std::getline(response_stream, header) && header != "\r")
-      LOG(2) << header;
+      LOG(4) << header;
 
-    LOG(2) << "Writing content data";
+    LOG(4) << "Writing content data";
     // Write whatever content we already have to output.
     if (response.size() > 0) {
       os << &response;
