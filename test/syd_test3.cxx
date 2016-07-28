@@ -55,6 +55,8 @@ int main(int argc, char* argv[])
   // Build files list
   std::vector<std::string> files;
   syd::SearchAndAddFilesInFolder(files, "dicom", true);
+  st::sort(files.begin(), files.end());
+  // need to sort because orer of files may vary from system to system
 
   // insert dicom from folder
   syd::DicomSerieBuilder builder(db);
@@ -66,6 +68,7 @@ int main(int argc, char* argv[])
   // Create output
   syd::DicomSerie::vector dicoms;
   db->Query(dicoms);
+  db->Sort(dicoms);
   std::stringstream b;
   for(auto d:dicoms) b << d << std::endl;
 
@@ -76,8 +79,11 @@ int main(int argc, char* argv[])
   ref << is.rdbuf();
 
   // Check
-  if (ref.str() != b.str())
+  if (ref.str() != b.str()) {
+    DD(ref.str());
+    DD(b.str());
     LOG(FATAL) << "Error inserting dicom.";
+  }
 
   std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;

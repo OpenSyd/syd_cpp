@@ -7,3 +7,7 @@ Test1
 
 Test2
 - idem test1 but linked with StandardDatabase
+
+
+Test3
+- add dicom files in the db

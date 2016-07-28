@@ -50,7 +50,6 @@ std::string syd::Radionuclide::ToString() const
 void syd::Radionuclide::Set(const std::vector<std::string> & arg)
 {
   if (arg.size() < 7) {
-    DDS(arg);
     LOG(FATAL) << "To insert radionuclide, please set <name> <half_life_in_hours> "
                << "<element> <atomic_number> <mass_number> <metasable> <max_beta_minus_energy_in_kev>]";
   }
