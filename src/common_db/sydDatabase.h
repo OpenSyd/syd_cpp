@@ -145,7 +145,7 @@ namespace syd {
     void Update(std::vector<std::shared_ptr<RecordType>> records);
 
     /// Update only one field of a element. The type of the element is unknown
-    void Update(generic_record_pointer record, std::string field_name, std::string value_name);
+    void Update(generic_record_pointer & record, std::string field_name, std::string value_name);
     // ------------------------------------------------------------------------
 
 

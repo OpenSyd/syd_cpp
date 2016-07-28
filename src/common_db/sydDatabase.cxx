@@ -386,7 +386,7 @@ void syd::Database::AddFilenameToDelete(const std::string & f)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Update(generic_record_pointer record,
+void syd::Database::Update(generic_record_pointer & record,
                            std::string field_name,
                            std::string value)
 {
@@ -417,7 +417,7 @@ void syd::Database::Update(generic_record_pointer record,
               << sql.str() << std::endl
               << "Error is:" << e.what());
   }
-
+  QueryOne(record, table_name, record->id);
 }
 // --------------------------------------------------------------------
 
