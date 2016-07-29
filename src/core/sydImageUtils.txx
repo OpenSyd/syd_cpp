@@ -504,7 +504,7 @@ ReadDicomFromSingleFile(std::string filename)
   typename ImageType::Pointer output = ReadImage<ImageType>(filename);
 
   // Update the iamge
-  UpdateImageInformation<PixelType>(output, filename);
+  UpdateDicomImageInformation<PixelType>(output, filename);
   return output;
 }
 //--------------------------------------------------------------------
@@ -538,7 +538,7 @@ ReadDicomSerieFromFolder(std::string folder, std::string serie_uid)
   }
 
   // Update the image
-  UpdateImageInformation<PixelType>(output, file);
+  UpdateDicomImageInformation<PixelType>(output, file);
   return output;
 }
 //--------------------------------------------------------------------
@@ -568,7 +568,7 @@ ReadDicomSerieFromListOfFiles(std::string folder, const std::vector<std::string>
   }
 
   // Update the image
-  UpdateImageInformation<PixelType>(output, file);
+  UpdateDicomImageInformation<PixelType>(output, file);
   return output;
 }
 //--------------------------------------------------------------------
@@ -576,20 +576,18 @@ ReadDicomSerieFromListOfFiles(std::string folder, const std::vector<std::string>
 
 //--------------------------------------------------------------------
 template<class PixelType>
-void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image,
-                            const std::string & filename)
+void UpdateDicomImageInformation(typename itk::Image<PixelType,3>::Pointer image,
+                                 const std::string & filename)
 {
+  DD("UpdateImageInformation");
+
+  DD(image->GetOrigin());
+  DD(image->GetSpacing());
+  DD(image->GetLargestPossibleRegion().GetSize());
+
   // Open the dicom to read some tags
   typedef itk::Image<PixelType,3> ImageType;
   auto dicomIO = syd::ReadDicomHeader(filename);
-
-  // DcmFileFormat dfile;
-  // bool b = syd::OpenDicomFile(filename.c_str(), dfile);
-  // if (!b) {
-  //   EXCEPTION("Could not open the dicom file '" << filename
-  //             << "' maybe this is not a dicom ?");
-  // }
-  // DcmObject *dset = dfile.getDataset();
 
   // Remove meta information (if not : garbage in the mhd)
   itk::MetaDataDictionary d;
@@ -599,35 +597,38 @@ void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image,
   //std::string ImagePositionPatient = GetTagValueString(dset, "ImagePositionPatient");
   std::string ImagePositionPatient =
     GetTagValueFromTagKey(dicomIO, "0020|0032", empty_value); //ImagePositionPatient
-  if (ImagePositionPatient == empty_value) {
-    EXCEPTION("Error while reading tag ImagePositionPatient in the dicom.");
-  }
-
-  int n = ImagePositionPatient.find("\\");
-  std::string sx = ImagePositionPatient.substr(0,n);
-  ImagePositionPatient = ImagePositionPatient.substr(n+1,ImagePositionPatient.size());
-  n = ImagePositionPatient.find("\\");
-  std::string sy = ImagePositionPatient.substr(0,n);
-  std::string sz = ImagePositionPatient.substr(n+1,ImagePositionPatient.size());
-  typename ImageType::PointType origin;
-  origin[0] = ToDouble(sx);
-  origin[1] = ToDouble(sy);
-  origin[2] = ToDouble(sz);
-  // Heuristic : sometimes the origin is not correctly set, so we
-  // correct. Warning : the third dimension could be wrong (a single
-  // dicom file is open)
-  if (image->GetOrigin()[0] != origin[0]) {
-    LOG(2) << "Change image origin from " << image->GetOrigin() << " to " << origin;
-    image->SetOrigin(origin);
+  if (ImagePositionPatient != empty_value) {
+    int n = ImagePositionPatient.find("\\");
+    std::string sx = ImagePositionPatient.substr(0,n);
+    ImagePositionPatient = ImagePositionPatient.substr(n+1,ImagePositionPatient.size());
+    n = ImagePositionPatient.find("\\");
+    std::string sy = ImagePositionPatient.substr(0,n);
+    std::string sz = ImagePositionPatient.substr(n+1,ImagePositionPatient.size());
+    typename ImageType::PointType origin;
+    origin[0] = ToDouble(sx);
+    origin[1] = ToDouble(sy);
+    origin[2] = ToDouble(sz);
+    // Heuristic : sometimes the origin is not correctly set, so we
+    // correct. Warning : the third dimension could be wrong (a single
+    // dicom file is open)
+    if (image->GetOrigin()[0] != origin[0]) {
+      LOG(2) << "Correct image origin from " << image->GetOrigin() << " to " << origin;
+      image->SetOrigin(origin);
+    }
   }
 
   // Correct for negative SpacingBetweenSlices
-  double s = GetTagValueFromTagKey(dicomIO, "0018|0088", 0.0);// SpacingBetweenSlices
-  if (s == 0) s = GetTagValueFromTagKey(dicomIO, "0018|0050", 1.0); //SliceThickness
+  // SpacingBetweenSlices
+  // Need to read as string and convert, not possible to read as double (?)
+  double s = atof(GetTagValueFromTagKey<std::string>(dicomIO, "0018|0088", "0.0").c_str());
+  if (s == 0) //SliceThickness
+    s = atof(GetTagValueFromTagKey<std::string>(dicomIO, "0018|0050", "1.0").c_str());
 
   // change spacing z
   typename ImageType::SpacingType spacing = image->GetSpacing();
-  if (s<0) spacing[2] = -s;
+  if (s<0) {
+    spacing[2] = -s;
+  }
   else {
     if (s != 0) spacing[2] = s;
   }
@@ -635,7 +636,7 @@ void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image,
 
   // Direction
   if (s<0) {
-    LOG(2) << "Negative spacing, I flip the image.";
+    LOG(2) << "Negative spacing, image is reoriented.";
     typename ImageType::DirectionType direction = image->GetDirection();
     direction.Fill(0.0);
     direction(0,0) = 1; direction(1,1) = 1; direction(2,2) = -1;
@@ -651,41 +652,23 @@ void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image,
     image = orienter->GetOutput();
   }
 
-  // Correct for pixel scale --> dont know why it does not work.
-  // DcmDictEntry * e = new DcmDictEntry(0x0011, 0x103b, EVR_UN, "PixelScale", 0, DcmVariableVM, NULL, true, NULL);
-  // DcmDataDictionary &globalDataDict = dcmDataDict.wrlock();
-  // globalDataDict.addEntry(e);
-  // DcmElement * ee = GetTagValue(dset, "PixelScale");
-  // double f;
-  // ee->getFloat64(f);
-  // DD(f);
-  /*
-    double scale = GetTagValueDouble(dset, "PixelScale");
-    DD(scale);
-    if (scale != 1.0 and scale != 0.0) {
-    typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> FilterType;
-    typename FilterType::Pointer filter = FilterType::New();
-    filter->SetInput(image);
-    filter->SetConstant(scale);
-    filter->Update();
-    image = filter->GetOutput();
+  // Flip needed sometimes
+  for(auto i=0; i<3; i++) {
+    if (image->GetDirection()[i][i] < 0) {
+      LOG(2) << "Negative direction, image is flipped.";
+      image = syd::FlipImage<ImageType>(image, i);
     }
-  */
+  }
+
+  // Pixel scale
+  double ps = 1.0;
+  ps = GetTagValueFromTagKey(dicomIO, "0011|103b", 1.0); // PixelScale
+  if (ps == 0.0) ps = 1.0;
+  if (ps != 1.0) {
+    LOG(2) << "Pixel Scale = " << ps << ", image values are scaled.";
+    syd::ScaleImage<ImageType>(image, ps);
+  }
 }
-//--------------------------------------------------------------------
-
-
-//--------------------------------------------------------------------
-// template<class ImageType>
-// bool CheckImageSameSizeAndSpacing(const typename ImageType::Pointer a, const typename ImageType::Pointer b)
-// {
-//   const auto dim = ImageType::ImageDimension;
-//   bool r = true;
-//   for(auto i=0; i<dim; i++)
-//     r = r and (a->GetLargestPossibleRegion().GetSize()[i] == b->GetLargestPossibleRegion().GetSize()[i]) and
-//       (a->GetSpacing()[i] == b->GetSpacing()[i]);
-//   return r;
-// }
 //--------------------------------------------------------------------
 
 
@@ -697,7 +680,8 @@ bool CheckImageSameSizeAndSpacing(const itk::ImageBase<Dimension> * a,
   const auto dim = Dimension;
   bool r = true;
   for(auto i=0; i<dim; i++)
-    r = r and (a->GetLargestPossibleRegion().GetSize()[i] == b->GetLargestPossibleRegion().GetSize()[i]) and
+    r = r and (a->GetLargestPossibleRegion().GetSize()[i] ==
+               b->GetLargestPossibleRegion().GetSize()[i]) and
       (a->GetSpacing()[i] == b->GetSpacing()[i]);
   return r;
 }

@@ -24,6 +24,7 @@
 #include "sydFileUtils.h"
 #include "sydImageCrop.h" // need for stitch. FIXME to change
 #include "sydDicomUtils.h"
+#include "sydImageFlip.h"
 
 // itk
 #include <itkImageFileReader.h>
@@ -56,7 +57,8 @@ namespace syd {
   ReadDicomSerieFromListOfFiles(std::string folder, const std::vector<std::string> & files);
 
   template<class PixelType>
-  void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, const std::string & filename);
+  void UpdateDicomImageInformation(typename itk::Image<PixelType,3>::Pointer image,
+                                   const std::string & filename);
   //--------------------------------------------------------------------
 
 

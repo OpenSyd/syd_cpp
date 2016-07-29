@@ -17,17 +17,6 @@
   ===========================================================================**/
 
 // --------------------------------------------------------------------
-template<class ImageType>
-void syd::ImageHelper::
-SetItkImage(syd::Image::pointer image,
-            typename ImageType::Pointer & itk_image)
-{
-
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 template<class ArgsInfo>
 void syd::ImageHelper::
 UpdateImagePropertiesFromCommandLine(syd::Image::pointer image,

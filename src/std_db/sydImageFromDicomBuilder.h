@@ -21,23 +21,43 @@
 
 // syd
 #include "sydImageBuilder.h"
+#include "sydImageHelper.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// This class is used to create a Image. A Image is defined
-  /// with an injection, a patient, some tag, some associated dicom
-  /// series and images.
-  class ImageFromDicomBuilder: public syd::ImageBuilder {
+  /// This class is used to create a Image from a dicom.
+  class ImageFromDicomBuilder {
 
   public:
     /// Constructor.
-    ImageFromDicomBuilder(syd::StandardDatabase * db):ImageBuilder(db) {}
+    ImageFromDicomBuilder();
 
-    /// Main function: convert a dicom to a mhd image
-    syd::Image::pointer NewImageFromDicom(const syd::DicomSerie::pointer dicom);
+    /// Set the dicomserie to convert
+    void SetInputDicomSerie(syd::DicomSerie::pointer dicom) { dicom_ = dicom; }
+
+    /// If the direction is negative, flip the image
+    void SetFlipAxeIfNegativeDirectionFlag(bool b) { flipAxeIfNegativeFlag_ = b; }
+
+    /// Convert the dicom image into an image and insert in the db
+    void Update();
+
+    /// Retrieve the inserted image
+    syd::Image::pointer GetOutput() { return image_; }
+
+  protected:
+    syd::DicomSerie::pointer dicom_;
+    syd::Image::pointer image_;
+    itk::ImageIOBase::Pointer header_;
+    syd::DicomFile::vector dicom_files_; // FIXME TO REMOVE --> will be in DicomSerie
+    bool flipAxeIfNegativeFlag_;
+
+    template<class PixelType>
+    void UpdateWithPixelType();
 
   }; // class ImageFromDicomBuilder
+
+#include "sydImageFromDicomBuilder.txx"
 
 } // namespace syd
 // --------------------------------------------------------------------

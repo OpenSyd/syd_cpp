@@ -20,7 +20,6 @@
 #include "sydInsertImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-//#include "sydImageFromDicomBuilder.h"
 #include "sydCommonGengetopt.h"
 #include "sydImageHelper.h"
 
@@ -66,12 +65,10 @@ int main(int argc, char* argv[])
   output->patient = patient;
 
   // set properties
-  if (args_info.like_given) {
+  if (args_info.like_given)
     syd::ImageHelper::CopyInformation(output, like);
-  }
-  else {
+  else
     syd::ImageHelper::UpdateImagePropertiesFromCommandLine(output, args_info);
-  }
 
   // Update the tags
   db->UpdateTagsFromCommandLine(output->tags, args_info);

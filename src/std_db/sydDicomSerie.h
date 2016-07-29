@@ -66,9 +66,6 @@ namespace syd {
     /// Modality as indicated in the dicom tag Modality
     std::string dicom_modality;
 
-    /// Pixel scale
-    double dicom_pixel_scale;
-
     /// Concatenation of several descriptions tag (SeriesDescription
     /// StudyDescription, ImageID, DatasetName, Manufacturer)
     std::string dicom_description;

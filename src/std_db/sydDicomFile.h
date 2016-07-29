@@ -62,6 +62,9 @@ namespace syd {
 
     virtual void DumpInTable(syd::PrintTable & table) const;
 
+    /// Return the file path
+    std::string GetAbsolutePath() const;
+
     /// Check if the associated files exist on disk
     virtual syd::CheckResult Check() const;
 

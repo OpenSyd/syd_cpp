@@ -21,6 +21,7 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydImageFromDicomBuilder.h"
+#include "sydTagHelper.h"
 #include "sydCommonGengetopt.h"
 
 // --------------------------------------------------------------------
@@ -45,14 +46,15 @@ int main(int argc, char* argv[])
   syd::DicomSerie::vector dicom_series;
   db->Query(dicom_series, ids);
 
-  // Create main builder
-  syd::ImageFromDicomBuilder builder(db);
-
+  // Create images
+  syd::ImageFromDicomBuilder builder;
   for(auto d:dicom_series) {
-    syd::Image::pointer image = builder.NewImageFromDicom(d);
-    // Set the optional tags
-    db->UpdateTagsFromCommandLine(image->tags, args_info);
-    builder.InsertAndRename(image);
+    builder.SetInputDicomSerie(d);
+    builder.Update();
+    syd::Image::pointer image = builder.GetOutput();
+    syd::TagHelper::UpdateTagsFromCommandLine(image->tags, db, args_info);
+    syd::ImageHelper::UpdateImagePropertiesFromCommandLine(image, args_info);
+    db->Update(image);
     LOG(1) << "Inserting Image " << image;
   }
 

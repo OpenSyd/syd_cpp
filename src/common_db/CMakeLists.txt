@@ -34,6 +34,7 @@ set(sydCommonDatabase_src
   sydTag-odb.cxx sydTag-schema.cxx  sydTag.cxx
   sydRecordWithTags-odb.cxx sydRecordWithTags-schema.cxx
   sydRecordWithTags.cxx
+  sydTagHelper.cxx
   sydDatabase.cxx
   sydDatabaseManager.cxx
   sydDatabaseInformation.cxx

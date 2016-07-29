@@ -39,7 +39,8 @@ std::string syd::DicomFile::ToString() const
   if (dicom_serie == NULL) ss << empty_value << " ";
   else {
     ss << dicom_serie->id << " "
-       << (dicom_serie->patient != NULL ? dicom_serie->patient->name:empty_value) << " ";
+       << (dicom_serie->patient != NULL ?
+           dicom_serie->patient->name:empty_value) << " ";
   }
   ss << dicom_instance_number << " "
      << file->filename;
@@ -48,29 +49,31 @@ std::string syd::DicomFile::ToString() const
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------
-void syd::DicomFile::Callback(odb::callback_event event, odb::database & db) const
+// --------------------------------------------------------------------
+void syd::DicomFile::Callback(odb::callback_event event,
+                              odb::database & db) const
 {
   syd::Record::Callback(event, db);
   if (event == odb::callback_event::pre_erase) {
     db.erase(file);
   }
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
-void syd::DicomFile::Callback(odb::callback_event event, odb::database & db)
+// --------------------------------------------------------------------
+void syd::DicomFile::Callback(odb::callback_event event,
+                              odb::database & db)
 {
   syd::Record::Callback(event, db);
   if (event == odb::callback_event::pre_erase) {
     db.erase(file);
   }
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::DicomFile::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
@@ -79,12 +82,20 @@ void syd::DicomFile::DumpInTable(syd::PrintTable & ta) const
   ta.Set("file", file->filename, 100);
   ta.Set("sop_uid", dicom_sop_uid);
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 syd::CheckResult syd::DicomFile::Check() const
 {
   return file->Check();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::DicomFile::GetAbsolutePath() const
+{
+  return file->GetAbsolutePath();
 }
 // --------------------------------------------------------------------

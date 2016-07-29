@@ -26,7 +26,6 @@ syd::DicomSerie::DicomSerie():syd::Record()
   patient = NULL;
   dicom_modality = dicom_acquisition_date
     = dicom_reconstruction_date = dicom_description = empty_value;
-  dicom_pixel_scale = 1.0;
 }
 // --------------------------------------------------------------------
 
@@ -40,9 +39,6 @@ std::string syd::DicomSerie::ToString() const
      << dicom_modality << " "
      << dicom_acquisition_date << " "
      << dicom_reconstruction_date << " "
-    // << ArrayToString(size) << " "
-    // << ArrayToString(spacing) << " "
-     << dicom_pixel_scale << " "
      << dicom_description;
   return ss.str();
 }
@@ -129,7 +125,6 @@ void syd::DicomSerie::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("acqui_date", dicom_acquisition_date);
   ta.Set("mod", dicom_modality);
   ta.Set("recon_date", dicom_reconstruction_date);
-  ta.Set("scale", dicom_pixel_scale, 2);
   ta.Set("description", dicom_description, 100);
 }
 // --------------------------------------------------

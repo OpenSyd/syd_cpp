@@ -30,7 +30,7 @@ namespace syd {
   /// in a class for clarity.
   ///
   /// Example of use
-  ///  syd::ImageHelper::CopyAndSetMhdImage(image, filename);
+  ///  syd::ImageHelper::InsertMhdFiles(image, filename);
   class ImageHelper
   {
   public:
@@ -68,9 +68,6 @@ namespace syd {
     static void UpdateImagePropertiesFromCommandLine(syd::Image::pointer image,
                                                      ArgsInfo & args_info);
 
-    template<class ImageType>
-    static void SetItkImage(syd::Image::pointer image,
-                            typename ImageType::Pointer & itk_image);
   }; // end class
 } // namespace syd
 

@@ -345,10 +345,10 @@ namespace syd {
     // std::string InstanceNumber = GetTagValueFromTagKey(dicomIO, "InstanceNumber");
 
     // Pixel scale
-    double ps = 1.0;
-    ps = GetTagValueFromTagKey(dicomIO, "0011|103b", 1.0); // PixelScale
-    if (ps == 0.0) ps = 1.0;
-    serie->dicom_pixel_scale = ps;
+    // double ps = 1.0;
+    // ps = GetTagValueFromTagKey(dicomIO, "0011|103b", 1.0); // PixelScale
+    // if (ps == 0.0) ps = 1.0;
+    // serie->dicom_pixel_scale = ps;
   }
   // --------------------------------------------------------------------
 
@@ -410,14 +410,24 @@ namespace syd {
     }
     db_->Insert(files);
 
+    // Update the database first to get the File id
+    db_->Insert(series_to_insert);
+    db_->Insert(dicomfiles_to_insert);
+    assert(dicomfiles_to_insert.size() == files_to_copy.size());
+
     // Copy files
     int nb_of_skip_copy=0;
     int n = files_to_copy.size();
     for(auto i=0; i<files_to_copy.size(); i++) {
       std::string f = GetFilenameFromPath(files_to_copy[i]);
-      std::string destination = destination_folders[i]+PATH_SEPARATOR+f;
+
+      // Add the id at the beginning of the file to insure unicity
+      std::stringstream dss;
+      dss << destination_folders[i] << PATH_SEPARATOR
+          << "dcm_" << dicomfiles_to_insert[i]->id << "_" << f;
+      std::string destination =dss.str();
       if (fs::exists(destination)) {
-        LOG(4) << "Destination file already exist, ignoring";
+        LOG(3) << "Destination file already exist, ignoring";
         nb_of_skip_copy++;
         continue;
       }
@@ -425,10 +435,6 @@ namespace syd {
       fs::copy_file(files_to_copy[i].c_str(), destination);
       loadbar(i,n);
     }
-
-    // Update the database
-    db_->Insert(series_to_insert);
-    db_->Insert(dicomfiles_to_insert);
 
     // Log
     LOG(1) << files.size() << " Files have been added in the db";

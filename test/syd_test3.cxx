@@ -25,9 +25,6 @@
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  sydlog::Log::SQLFlag() = false;
-  sydlog::Log::LogLevel() = 3;
-
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
@@ -41,7 +38,7 @@ int main(int argc, char* argv[])
   std::cout << "Create StandardDatabase " << dbname << std::endl;
   m->Create("StandardDatabase", dbname, folder, true);
 
-  std::cout << std::endl << "Open as StandardDatabase" << std::endl;
+  std::cout << "Open as StandardDatabase" << std::endl;
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(dbname);
   db->InsertDefaultRecords("all");
 
@@ -82,10 +79,14 @@ int main(int argc, char* argv[])
   if (ref.str() != b.str()) {
     DD(ref.str());
     DD(b.str());
+    std::cout << "To redo the ref:" << std::endl
+              << "sydFind --db test3.db dicomserie -f raw > test3_ref.tx"
+              << std::endl;
     LOG(FATAL) << "Error inserting dicom.";
   }
 
-  std::cout << "Success." << std::endl;
+  // Print
+  std::cout << b.str() << "Success." << std::endl;
   return EXIT_SUCCESS;
   // This is the end, my friend.
 }
