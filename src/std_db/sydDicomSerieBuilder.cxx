@@ -381,8 +381,11 @@ namespace syd {
     std::string sop_uid =
       GetTagValueFromTagKey(dicomIO, "0008|0018", empty_value); //SOPInstanceUID
     dicomfile->dicom_sop_uid = sop_uid;
-    int instance_number =
-      atoi(GetTagValueFromTagKey(dicomIO, "0020|0013", empty_value).c_str()); //InstanceNumber
+
+    std::string in = GetTagValueFromTagKey(dicomIO, "0020|0013", empty_value);//InstanceNumber
+    int instance_number;
+    if (in == empty_value) instance_number = 1;
+    else instance_number = atoi(in.c_str());
     dicomfile->dicom_instance_number = instance_number;
 
     // Update the nb of slices
@@ -425,6 +428,9 @@ namespace syd {
       std::stringstream dss;
       dss << destination_folders[i] << PATH_SEPARATOR
           << "dcm_" << dicomfiles_to_insert[i]->id << "_" << f;
+      dicomfiles_to_insert[i]->file->filename =
+        "dcm_" + ToString(dicomfiles_to_insert[i]->id) +
+        "_" +dicomfiles_to_insert[i]->file->filename;
       std::string destination =dss.str();
       if (fs::exists(destination)) {
         LOG(3) << "Destination file already exist, ignoring";
@@ -435,6 +441,9 @@ namespace syd {
       fs::copy_file(files_to_copy[i].c_str(), destination);
       loadbar(i,n);
     }
+
+    // Update because the filename changed
+    db_->Update(dicomfiles_to_insert);
 
     // Log
     LOG(1) << files.size() << " Files have been added in the db";

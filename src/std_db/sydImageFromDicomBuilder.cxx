@@ -19,15 +19,27 @@
 // syd
 #include "sydImageFromDicomBuilder.h"
 #include "sydImageUtils.h"
+#include "sydPixelUnitHelper.h"
 
 // --------------------------------------------------------------------
 syd::ImageFromDicomBuilder::ImageFromDicomBuilder()
 {
   dicom_ = NULL;
   image_ = NULL;
-  flipAxeIfNegativeFlag_ = true;
+  user_pixel_type_ = "auto";
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ImageFromDicomBuilder::SetInputDicomSerie(syd::DicomSerie::pointer dicom,
+                                                    std::string pixel_type)
+{
+  dicom_ = dicom;
+  user_pixel_type_ = pixel_type;
+}
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 void syd::ImageFromDicomBuilder::Update()
@@ -35,18 +47,15 @@ void syd::ImageFromDicomBuilder::Update()
   if (dicom_ == NULL) {
     EXCEPTION("Use SetInputDicomSerie first.");
   }
-
-  DD("ImageFromDicomBuilder::Update");
-  DD(dicom_);
-
-  auto db = dicom_->GetDatabase();
+  auto db = dicom_->GetDatabase<syd::StandardDatabase>();
   db->New(image_);
   image_->patient = dicom_->patient;
-  image_->modality = dicom_->dicom_modality;
-  DD(image_);
+  image_->modality = dicom_->dicom_modality; // needed to set the filename
+  image_->acquisition_date = dicom_->dicom_acquisition_date;
+  image_->frame_of_reference_uid = dicom_->dicom_frame_of_reference_uid;
+  image_->dicoms.push_back(dicom_);
 
   // Get dicom associated files or folder
-  //  syd::DicomFile::vector dicom_files_;
   odb::query<syd::DicomFile> q =
     odb::query<syd::DicomFile>::dicom_serie->id == dicom_->id;
   db->Query(dicom_files_, q);
@@ -56,74 +65,52 @@ void syd::ImageFromDicomBuilder::Update()
   std::vector<std::string> dicom_filenames;
   for(auto f:dicom_files_)
     dicom_filenames.push_back(f->GetAbsolutePath());
-  DD(dicom_files_.size());
 
   // read dicom header with itk header (first file only)
   header_ = syd::ReadImageHeader(dicom_files_[0]->GetAbsolutePath());
   std::string pixel_type =
     itk::ImageIOBase::GetComponentTypeAsString(header_->GetComponentType());
-  DD(pixel_type);
 
-  // POLICY to switch short float ?
-  // 1) user option
-  // 2) try to guess ? CT = short, other = float ?
-  if (image_->modality != "CT") {
-    pixel_type = "float"; // force to float (even if short ?)
+  // Switch pixel type if user ask
+  if (user_pixel_type_ != "auto") {
+    pixel_type = user_pixel_type_;
   }
-  DD(pixel_type);
+
+  // Generate a temporary filename
+  std::string t = db->GetDatabaseAbsoluteFolder()+
+    PATH_SEPARATOR+"syd_temp_%%%%_%%%%_%%%%_%%%%.mhd";
+  fs::path p = fs::unique_path(t);
+  std::string temp_filename = p.string();
 
   // switch according to pixel type short, float other
-  if (pixel_type == "short") UpdateWithPixelType<short>();
+  if (pixel_type == "short") WriteMhd<short>(temp_filename);
   else {
-    if (pixel_type == "double") UpdateWithPixelType<double>();
-    else UpdateWithPixelType<float>();
+    if (pixel_type == "double") WriteMhd<double>(temp_filename);
+    else {
+      if (pixel_type == "float") WriteMhd<float>(temp_filename);
+      else {
+        LOG(FATAL) << "Pixel type '" << pixel_type << "' not implemented.";
+      }
+    }
   }
 
-  // =========> no need template
+  // Insert image in the db
+  db->Insert(image_);
+  // true = move instead of copy
+  syd::ImageHelper::InsertMhdFiles(image_, temp_filename, true);
+
   // try to guess pixel_unit ?
-  DD("try to guess pixel_unit ?");
-
-  /*
-    return image;
-    syd::Image::pointer image = NewMHDImage(dicom);
-
+  syd::PixelValueUnit::pointer unit = NULL;
+  if (dicom_->dicom_modality == "CT") {
     try {
-    if (dicom->dicom_modality == "CT") {
-    typedef short PixelType;
-    typedef itk::Image<PixelType,3> ImageType;
-    LOG(4) << "Read dicom (short)";
-    ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom, true);
-    LOG(4) << "Update information";
-    syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("HU", "Hounsfield Units");
-    image->pixel_unit = unit;
-    if (dicom->dicom_pixel_scale != 1.0) {
-    LOG(2) << "Pixel Scale = " << dicom->dicom_pixel_scale << ", so I scale the image.";
-    syd::ScaleImage<ImageType>(itk_image, dicom->dicom_pixel_scale);
-    }
-    SetImage<PixelType>(image, itk_image);
-    }
-    else {
-    typedef float PixelType;
-    typedef itk::Image<PixelType,3> ImageType;
-    LOG(4) << "Read dicom (float)";
-    ImageType::Pointer itk_image = db_->ReadImage<PixelType>(dicom, true);
-    LOG(4) << "Update information";
-    syd::PixelValueUnit::pointer unit = db_->FindOrInsertUnit("counts", "Number of counts");
-    image->pixel_unit = unit;
-    // Scale if needed
-    if (dicom->dicom_pixel_scale != 1.0) {
-    LOG(2) << "Pixel Scale = " << dicom->dicom_pixel_scale << ", so I scale the image.";
-    syd::ScaleImage<ImageType>(itk_image, dicom->dicom_pixel_scale);
-    }
-    SetImage<PixelType>(image, itk_image);
-    }
-
-    } catch (syd::Exception & e) {
-    EXCEPTION("Error during InsertImage: " << e.what());
-    }
-
-    // return the image
-    return image;
-  */
+      unit = syd::PixelUnitHelper::FindPixelUnit(db, "HU");
+    } catch(...) {} // ignore if not found
+  }
+  else {
+    try {
+      unit = syd::PixelUnitHelper::FindPixelUnit(db, "counts");
+    } catch(...) {} // ignore if not found
+  }
+  image_->pixel_unit = unit;
 }
 // --------------------------------------------------------------------

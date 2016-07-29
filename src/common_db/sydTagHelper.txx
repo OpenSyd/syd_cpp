@@ -32,7 +32,7 @@ UpdateTagsFromCommandLine(syd::Tag::vector & tags,
       std::string tagname = args_info.remove_tag_arg[i];
       syd::Tag::vector tags_temp;
       try {
-        syd::TagHelper::FindTags(tags_temp, db, tagname);
+        tags_temp = syd::TagHelper::FindTags(db, tagname);
       } catch(std::exception & e) { } // ignore unknown tag
      syd::TagHelper:: RemoveTag(tags, tags_temp);
     }
@@ -44,7 +44,7 @@ UpdateTagsFromCommandLine(syd::Tag::vector & tags,
       std::string tagname = args_info.tag_arg[i];
       syd::Tag::vector tags_temp;
       try {
-        syd::TagHelper::FindTags(tags_temp, db, tagname);
+        tags_temp = syd::TagHelper::FindTags(db, tagname);
       } catch(std::exception & e) {
         LOG(WARNING) << "Some tags are ignored. " << e.what();
       }

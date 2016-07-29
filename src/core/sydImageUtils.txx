@@ -579,12 +579,6 @@ template<class PixelType>
 void UpdateDicomImageInformation(typename itk::Image<PixelType,3>::Pointer image,
                                  const std::string & filename)
 {
-  DD("UpdateImageInformation");
-
-  DD(image->GetOrigin());
-  DD(image->GetSpacing());
-  DD(image->GetLargestPossibleRegion().GetSize());
-
   // Open the dicom to read some tags
   typedef itk::Image<PixelType,3> ImageType;
   auto dicomIO = syd::ReadDicomHeader(filename);

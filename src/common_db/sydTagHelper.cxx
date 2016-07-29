@@ -20,39 +20,36 @@
 #include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
-void syd::TagHelper::FindTags(syd::Tag::vector & tags,
-                              const syd::Database * db,
-                              const std::string & names)
+syd::Tag::vector syd::TagHelper::FindTags(const syd::Database * db,
+                                          const std::string & names)
 {
+  syd::Tag::vector tags;
   std::vector<std::string> words;
   syd::GetWords(words, names);
-  syd::TagHelper::FindTags(tags, db, words);
+  return syd::TagHelper::FindTags(db, words);
 }
 // --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
-void syd::TagHelper::FindTag(syd::Tag::pointer & tag,
-                             const syd::Database * db,
-                             const std::string & name)
+syd::Tag::pointer syd::TagHelper::FindTag(const syd::Database * db,
+                                          const std::string & name)
 {
-  syd::Tag::vector tags;
-  syd::TagHelper::FindTags(tags, db, name);
+  syd::Tag::vector tags = syd::TagHelper::FindTags(db, name);
   if (tags.size() != 1) {
     EXCEPTION("Error in FindTag '" << name << "', I find "
               << tags.size() << " tags";
               );
   }
-  tag = tags[0];
+  return tags[0];
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::TagHelper::FindTags(syd::Tag::vector & tags,
-                              const syd::Database * db,
-                              const std::vector<std::string> & names)
+syd::Tag::vector syd::TagHelper::FindTags(const syd::Database * db,
+                                          const std::vector<std::string> & names)
 {
-  DD("FindTags");
+  syd::Tag::vector tags;
   odb::query<Tag> q = odb::query<Tag>::label.in_range(names.begin(), names.end());
   db->Query<Tag>(tags, q);
   if (tags.size() != names.size()) {
@@ -63,6 +60,7 @@ void syd::TagHelper::FindTags(syd::Tag::vector & tags,
     EXCEPTION("Cannot find all tags in FindTags. Look for: '" << w
               << "' but find: '" << s << "'");
   }
+  return tags;
 }
 // --------------------------------------------------------------------
 

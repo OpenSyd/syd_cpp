@@ -37,6 +37,8 @@ set(SYD_STANDARD_DATABASE_SRC
   sydTimepoints-odb.cxx sydTimepoints-schema.cxx  sydTimepoints.cxx
   sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
 
+  sydPixelUnitHelper.cxx
+
   sydDicomSerieBuilder.cxx
   sydImageBuilder.cxx
   sydImageHelper.cxx

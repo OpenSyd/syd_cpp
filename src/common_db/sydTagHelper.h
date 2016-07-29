@@ -42,15 +42,12 @@ namespace syd {
     static std::string GetLabels(const syd::Tag::vector & tags);
 
     /// Find a tag by name
-    static void FindTags(syd::Tag::vector & tags,
-                         const syd::Database * db,
-                         const std::string & names);
-    static void FindTags(syd::Tag::vector & tags,
-                         const syd::Database * db,
-                         const std::vector<std::string> & names);
-    static void FindTag(syd::Tag::pointer & tag,
-                        const syd::Database * db,
-                        const std::string & name);
+    static syd::Tag::vector FindTags(const syd::Database * db,
+                                     const std::string & names);
+    static syd::Tag::vector FindTags(const syd::Database * db,
+                                     const std::vector<std::string> & names);
+    static syd::Tag::pointer FindTag(const syd::Database * db,
+                                     const std::string & name);
 
     /// Check if all tags are in the first list
     static bool IsAllTagsIn(syd::Tag::vector & input_tags,

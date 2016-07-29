@@ -3,6 +3,12 @@
 package "syd"
 version "0.4"
 usage "sydInsertImageFromDicom <list of dicom_ids>"
-description "Create a new (mhd) image for each given dicom
+description "Create a new (mhd) image for all given dicoms
 - <dicom_ids>     list of dicom id to insert
+
+If the pixel_type is not 'auto', attempt will be made to convert the
+dicom image into an image with this pixel_type.
+
 "
+
+option "pixel_type" t "Force the pixel type (i.e. float, short etc)"  string default = "auto" no

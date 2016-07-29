@@ -79,10 +79,10 @@ int main(int argc, char* argv[])
   if (ref.str() != b.str()) {
     DD(ref.str());
     DD(b.str());
-    std::cout << "To redo the ref:" << std::endl
-              << "sydFind --db test3.db dicomserie -f raw > test3_ref.tx"
-              << std::endl;
-    LOG(FATAL) << "Error inserting dicom.";
+
+    LOG(FATAL) << "Error inserting dicom." << std::endl
+               << "To redo the ref:" << std::endl
+               << "sydFind --db test3.db dicomserie -f raw > test3_ref.txt";
   }
 
   // Print

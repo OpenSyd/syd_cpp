@@ -25,7 +25,8 @@ syd::DicomSerie::DicomSerie():syd::Record()
 {
   patient = NULL;
   dicom_modality = dicom_acquisition_date
-    = dicom_reconstruction_date = dicom_description = empty_value;
+    = dicom_reconstruction_date = dicom_description
+    = dicom_frame_of_reference_uid = empty_value;
 }
 // --------------------------------------------------------------------
 
@@ -39,7 +40,10 @@ std::string syd::DicomSerie::ToString() const
      << dicom_modality << " "
      << dicom_acquisition_date << " "
      << dicom_reconstruction_date << " "
-     << dicom_description;
+     << dicom_description << " "
+     << dicom_frame_of_reference_uid << " "
+     << dicom_study_uid << " "
+     << dicom_series_uid;
   return ss.str();
 }
 // --------------------------------------------------------------------

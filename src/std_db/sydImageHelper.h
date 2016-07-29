@@ -39,7 +39,8 @@ namespace syd {
     /// frist.  Then create new File and copy an mhd image in the db,
     /// Image must be persistent.
     static void InsertMhdFiles(syd::Image::pointer image,
-                               std::string filename);
+                               std::string filename,
+                               bool moveFlag = false); // true=copy ; false=move
 
     /// Copy image properties from the 'like' image (modality,
     /// injection patient etc). Everything except the properties

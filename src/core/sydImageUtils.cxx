@@ -204,6 +204,9 @@ std::string syd::PointToString(const itk::Point<double,3> & t)
 itk::ImageIOBase::Pointer syd::ReadImageHeader(const std::string & filename)
 {
   itk::ImageIOBase::Pointer reader;
+  if (!fs::exists(filename)) {
+    EXCEPTION("File '" << filename << "' does not exist.");
+  }
   try {
     reader = itk::ImageIOFactory::CreateImageIO(filename.c_str(), itk::ImageIOFactory::ReadMode);
     reader->SetFileName(filename);
@@ -219,6 +222,7 @@ itk::ImageIOBase::Pointer syd::ReadImageHeader(const std::string & filename)
 //--------------------------------------------------------------------
 void syd::WriteImage(typename itk::ImageBase<3>::Pointer image, std::string filename)
 {
+  LOG(FATAL) << "NOT IMPLEMENTED WriteImage";
   typedef itk::ImageBase<3> ImageBaseType;
   //  DD(image->GetComponentTypeAsString(image->GetComponentType()));
 }

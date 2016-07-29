@@ -80,7 +80,7 @@ std::string syd::Image::ToString() const
      << SpacingAsString() << " "
      << modality << " ";
   for(auto d:dicoms) ss << d->id << " ";
-  if (dicoms.size() == 0) ss << empty_value;
+  if (dicoms.size() == 0) ss << empty_value << " ";
   ss << frame_of_reference_uid << " ";
   if (pixel_unit != NULL) ss << pixel_unit->name;
   else ss << empty_value << " ";

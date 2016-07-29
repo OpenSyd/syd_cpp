@@ -57,6 +57,10 @@ void syd::DicomFile::Callback(odb::callback_event event,
   if (event == odb::callback_event::pre_erase) {
     db.erase(file);
   }
+  if (event == odb::callback_event::pre_update) {
+    // update the files
+    db.update(file);
+  }
 }
 // --------------------------------------------------------------------
 

@@ -22,7 +22,7 @@
 
 // --------------------------------------------------------------------
 void syd::ImageHelper::
-InsertMhdFiles(syd::Image::pointer image, std::string filename)
+InsertMhdFiles(syd::Image::pointer image, std::string filename, bool moveFlag)
 {
   if (!image->IsPersistent()) {
     EXCEPTION("Image not in the db. Can only InsertMhdFiles for persistent image. Usedb->Insert(image) first.");
@@ -46,7 +46,10 @@ InsertMhdFiles(syd::Image::pointer image, std::string filename)
   image->files.push_back(file_raw);
   db->Insert(file_mhd);
   db->Insert(file_raw);
-  CopyMHDImage(filename, image->GetAbsolutePath()); // copy files in the db
+  if (!moveFlag)
+    CopyMHDImage(filename, image->GetAbsolutePath()); // copy files in the db
+  else
+    RenameMHDImage(filename, image->GetAbsolutePath());
   syd::ImageHelper::UpdateMhdImageProperties(image);
   db->Update(image);
   db->Delete(previous_files);

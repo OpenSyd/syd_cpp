@@ -34,10 +34,8 @@ namespace syd {
     ImageFromDicomBuilder();
 
     /// Set the dicomserie to convert
-    void SetInputDicomSerie(syd::DicomSerie::pointer dicom) { dicom_ = dicom; }
-
-    /// If the direction is negative, flip the image
-    void SetFlipAxeIfNegativeDirectionFlag(bool b) { flipAxeIfNegativeFlag_ = b; }
+    void SetInputDicomSerie(syd::DicomSerie::pointer dicom,
+                            std::string pixel_type="auto");
 
     /// Convert the dicom image into an image and insert in the db
     void Update();
@@ -50,10 +48,10 @@ namespace syd {
     syd::Image::pointer image_;
     itk::ImageIOBase::Pointer header_;
     syd::DicomFile::vector dicom_files_; // FIXME TO REMOVE --> will be in DicomSerie
-    bool flipAxeIfNegativeFlag_;
+    std::string user_pixel_type_;
 
     template<class PixelType>
-    void UpdateWithPixelType();
+    void WriteMhd(std::string temp_filename);
 
   }; // class ImageFromDicomBuilder
 
