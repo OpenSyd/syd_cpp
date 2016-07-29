@@ -52,8 +52,9 @@ int main(int argc, char* argv[])
   patient->Set(args);
   db->Insert(patient);
   std::cout << "Patient  : " << patient << std::endl;
-  if (patient->ToString() != "1 1 toto 50 XXXXX M")
+  if (patient->ToString() != "1 1 toto 50 XXXXX M") {
     LOG(FATAL) << "Error insert patient";
+  }
 
   syd::Injection::pointer injection;
   db->New(injection);
@@ -61,8 +62,9 @@ int main(int argc, char* argv[])
   injection->Set(args);
   db->Insert(injection);
   std::cout << "Injection: " << injection << std::endl;
-  if (injection->ToString() != "1 toto Lu-177 2013-02-03 10:33 188.3")
+  if (injection->ToString() != "1 toto Lu-177 2013-02-03 10:33 188.3") {
     LOG(FATAL) << "Error insert injection";
+  }
 
   // Update
   std::cout << std::endl << "Update" << std::endl;
@@ -72,19 +74,21 @@ int main(int argc, char* argv[])
   std::cout << "Injection: " << injection << std::endl;
   db->Update(patient);
   db->Update(injection);
-  if (patient->ToString() != "1 1 toto 100 XXXXX M")
+  if (patient->ToString() != "1 1 toto 100 XXXXX M") {
     LOG(FATAL) << "Error update patient";
-  if (injection->ToString() != "1 toto Lu-177 2013-02-03 10:33 666")
+  }
+  if (injection->ToString() != "1 toto Lu-177 2013-02-03 10:33 666") {
     LOG(FATAL) << "Error update injection";
+  }
 
   // Query
   std::cout << std::endl << "Query" << std::endl;
   syd::Patient::pointer p2;
   db->QueryOne(p2, 1);
-  if (p2 != patient) LOG(FATAL) << "Error query patient";
+  if (p2 != patient) { LOG(FATAL) << "Error query patient"; }
   syd::Injection::pointer i2;
   db->QueryOne(i2, 1);
-  if (i2 != injection) LOG(FATAL) << "Error query injection";
+  if (i2 != injection) { LOG(FATAL) << "Error query injection"; }
   std::cout << "Patient  : " << p2 << std::endl;
   std::cout << "Injection: " << i2 << std::endl;
 
@@ -93,9 +97,9 @@ int main(int argc, char* argv[])
   db->Delete(injection); // first because foreign_keys for patient
   db->Delete(patient);
   int n = db->GetNumberOfElements("Patient");
-  if (n != 0) LOG(FATAL) << "Error delete patient";
+  if (n != 0) { LOG(FATAL) << "Error delete patient"; }
   n = db->GetNumberOfElements("Injection");
-  if (n != 0) LOG(FATAL) << "Error delete injection";
+  if (n != 0) { LOG(FATAL) << "Error delete injection"; }
   std::cout << n << std::endl;
 
   std::cout << "Success." << std::endl;

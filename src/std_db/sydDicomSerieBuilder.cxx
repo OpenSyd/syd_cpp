@@ -57,7 +57,7 @@ namespace syd {
     itk::GDCMImageIO::Pointer dicomIO;
     try {
       dicomIO = syd::ReadDicomHeader(filename);
-    } catch (std::exception & e) {
+    } catch (...) {
       LOG(3) << sydlog::warningColor << "Warning cannot read '"
              << filename << "' (it is not a dicom file ?).";
       return;
@@ -114,7 +114,6 @@ namespace syd {
   // --------------------------------------------------------------------
   bool DicomSerieBuilder::GuessDicomSerieForThisFile(const std::string & filename,
                                                      itk::GDCMImageIO::Pointer dicomIO,
-                                                     //DcmObject * dset,
                                                      DicomSerie::pointer & serie)
   {
     // Check in the future series
@@ -397,7 +396,6 @@ namespace syd {
     // if (slice != 0) serie->size[2] = slice;
     // else serie->size[2]++;
     //    DD("update size");
-
     return dicomfile;
   }
   // --------------------------------------------------------------------

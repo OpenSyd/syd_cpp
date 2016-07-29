@@ -87,9 +87,14 @@ void syd::ImageFromDicomBuilder::Update()
   else {
     if (pixel_type == "double") WriteMhd<double>(temp_filename);
     else {
-      if (pixel_type == "float") WriteMhd<float>(temp_filename);
+      if (pixel_type == "unsigned_char") WriteMhd<unsigned char>(temp_filename);
       else {
-        LOG(FATAL) << "Pixel type '" << pixel_type << "' not implemented.";
+        if (pixel_type == "float") WriteMhd<float>(temp_filename);
+        else {
+          LOG(FATAL) << "Pixel type '" << pixel_type
+                     << "' (purposely) not implemented."
+                     << "Try with option --pixel_type.";
+        }
       }
     }
   }

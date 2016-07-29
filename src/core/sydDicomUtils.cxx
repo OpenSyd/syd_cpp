@@ -24,8 +24,10 @@ std::string syd::ConvertDicomDateToStringDate(std::string date, std::string time
 {
   std::string result;
   if (date.empty()) return "";
+  if (date == empty_value) return "";
   result= date.substr(0,4)+"-"+date.substr(4,2)+"-"+date.substr(6,2);
   if (time.empty()) return result;
+  if (time == empty_value) return "";
   result= result+" "+ time.substr(0,2)+":"+time.substr(2,2);
   return result;
 }

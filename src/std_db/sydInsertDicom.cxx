@@ -62,6 +62,7 @@ int main(int argc, char* argv[])
   for(auto f:files) {
     syd::loadbar(i, files.size());
     builder.SearchDicomInFile(f);
+    ++i;
   }
 
   builder.InsertDicomSeries();
