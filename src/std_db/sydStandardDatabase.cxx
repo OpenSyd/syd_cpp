@@ -376,7 +376,7 @@ std::string syd::StandardDatabase::GetAbsolutePath(const syd::Image::pointer ima
 //FIXME to remove
 std::string syd::StandardDatabase::GetAbsolutePath(const syd::DicomFile::pointer dicom) const
 {
-  return GetAbsolutePath(dicom->file);
+  return dicom->GetAbsolutePath();//dicom->file);
 }
 // --------------------------------------------------------------------
 

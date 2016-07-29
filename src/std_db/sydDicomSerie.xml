@@ -21,6 +21,29 @@
         </references>
       </foreign-key>
     </add-table>
+    <add-table name="syd::DicomSerie_dicom_files" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::DicomSerie">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::DicomSerie_dicom_files_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::DicomSerie_dicom_files_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::DicomFile">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
   </changeset>
 
   <model version="257"/>

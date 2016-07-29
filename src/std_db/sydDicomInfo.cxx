@@ -50,13 +50,16 @@ int main(int argc, char* argv[])
     syd::DicomSerie::pointer dicomserie;
     try {
       db->QueryOne(dicomserie, id);
-      // Retrieve the filename
-      syd::DicomFile::vector dfiles;
-      typedef odb::query<syd::DicomFile> QDF;
-      QDF q = QDF::dicom_serie == id;
-      db->Query(dfiles, q);
+      // // Retrieve the filename
+      // syd::DicomFile::vector dfiles;
+      // typedef odb::query<syd::DicomFile> QDF;
+      // QDF q = QDF::dicom_serie == id;
+      // db->Query(dfiles, q);
       // Only the first file is considered
-      file = dfiles[0]->file->GetAbsolutePath();
+      if (dicomserie->dicom_files.size() == 0) {
+        LOG(FATAL) << "No DicomFile with this DicomSerie ?";
+      }
+      file = dicomserie->dicom_files[0]->GetAbsolutePath();
       std::cout << dicomserie << std::endl;
     } catch(...) {
       // Try to load as a filename if exists

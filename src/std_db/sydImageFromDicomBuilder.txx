@@ -33,7 +33,7 @@ void syd::ImageFromDicomBuilder::WriteMhd(std::string temp_filename)
       itk_image = syd::ReadDicomFromSingleFile<PixelType>(df->GetAbsolutePath());
     }
     else {
-      std::string folder = df->file->path;
+      std::string folder = df->path;
       folder = dicom_->GetDatabase()->ConvertToAbsolutePath(folder);
       // Cannot use ReadDicomSerieFromListOfFiles because the files
       // are not sorted according to dicom

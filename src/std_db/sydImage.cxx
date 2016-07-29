@@ -163,7 +163,8 @@ std::string syd::Image::ComputeDefaultMhdFilename() const
 
 
 // --------------------------------------------------
-void syd::Image::Callback(odb::callback_event event, odb::database & db) const
+void syd::Image::Callback(odb::callback_event event,
+                          odb::database & db) const
 {
   syd::Record::Callback(event,db);
   syd::RecordWithHistory::Callback(event,db, db_);
@@ -192,7 +193,8 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 
 
 // --------------------------------------------------
-void syd::Image::Callback(odb::callback_event event, odb::database & db)
+void syd::Image::Callback(odb::callback_event event,
+                          odb::database & db)
 {
   syd::Record::Callback(event,db);
   syd::RecordWithHistory::Callback(event,db, db_);

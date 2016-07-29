@@ -122,7 +122,7 @@ void syd::File::DumpInTable_default(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("md5?", (md5==empty_value ? "N":"Y"));
-  ta.Set("filename", filename, 100);
+  ta.Set("file", filename, 100);
   ta.Set("folder", path);
 }
 // --------------------------------------------------------------------
@@ -133,7 +133,7 @@ void syd::File::DumpInTable_md5(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("md5", md5);
-  ta.Set("filename", filename, 100);
+  ta.Set("file", filename, 100);
 }
 // --------------------------------------------------------------------
 

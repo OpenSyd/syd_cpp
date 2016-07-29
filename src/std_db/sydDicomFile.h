@@ -21,27 +21,26 @@
 
 // syd
 #include "sydFile.h"
-#include "sydDicomSerie.h"
 
 // --------------------------------------------------------------------
 namespace syd {
+
+  // class DicomSerie;
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::DicomFile") callback(Callback)
   /// Store information about a dicom file (unique dicom identifier
   /// dicom_sop_uid). Also contains a link to the DicomSerie it
   /// belongs to.
-  class DicomFile: public syd::Record {
+  class DicomFile: public syd::File {
   public:
 
     virtual ~DicomFile() {}
 
-    /// Foreign key, it must exist in the File table.
-#pragma db not_null on_delete(cascade)
-    syd::File::pointer file;
-
     /// Foreign key, it must exist in the DicomSerie table.
-#pragma db not_null on_delete(cascade)
-    syd::DicomSerie::pointer dicom_serie;
+    //#pragma db not_null on_delete(cascade) type ("POINTER")
+// #pragma db not_null
+//     std::weak_ptr<DicomSerie> dicom_serie;
+    //    syd::DicomSerie::pointer dicom_serie;
 
 #pragma db options("UNIQUE")
     /// Dicom SOPInstanceUID. Unique dicom file identifier. Unique in db.
@@ -57,16 +56,16 @@ namespace syd {
     /// Write the element as a string
     virtual std::string ToString() const;
 
-    void Callback(odb::callback_event, odb::database&) const;
-    void Callback(odb::callback_event, odb::database&);
+    //void Callback(odb::callback_event, odb::database&) const;
+    //void Callback(odb::callback_event, odb::database&);
 
     virtual void DumpInTable(syd::PrintTable & table) const;
 
-    /// Return the file path
-    std::string GetAbsolutePath() const;
+    // /// Return the file path
+    // std::string GetAbsolutePath() const;
 
-    /// Check if the associated files exist on disk
-    virtual syd::CheckResult Check() const;
+    // /// Check if the associated files exist on disk
+    // virtual syd::CheckResult Check() const;
 
   protected:
     DicomFile();

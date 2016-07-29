@@ -24,6 +24,7 @@
 
 // syd
 #include "sydPatient.h"
+#include "sydDicomFile.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -38,6 +39,9 @@ namespace syd {
 #pragma db not_null
     /// Foreign key, it must exist in the Patient table.
     syd::Patient::pointer patient;
+
+    /// List of DicomFile
+    syd::DicomFile::vector dicom_files;
 
     /// Date when the image has been acquired. Dicom tag =
     /// AcquisitionTime & AcquisitionDate

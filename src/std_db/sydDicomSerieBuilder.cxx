@@ -192,6 +192,7 @@ namespace syd {
   /// Update the field
   void DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie)
   {
+    /*
     // Find associated DicomFile
     syd::DicomFile::vector files;
     typedef odb::query<syd::DicomFile> Q;
@@ -200,12 +201,17 @@ namespace syd {
     if (files.size() ==0) {
       EXCEPTION("No DicomFile for this DicomSerie");
     }
+    */
+
+    if (serie->dicom_files.size() == 0) {
+      EXCEPTION("No DicomFile for this DicomSerie");
+    }
 
     // Set the current patient
     patient_ = serie->patient;
 
     // Open the first file
-    auto filename = db_->GetAbsolutePath(files[0]);
+    auto filename = db_->GetAbsolutePath(serie->dicom_files[0]);
     itk::GDCMImageIO::Pointer dicomIO;
     try {
       dicomIO = syd::ReadDicomHeader(filename);
@@ -359,24 +365,21 @@ namespace syd {
                                                         DicomSerie::pointer serie)
   {
     // First create the file
-    syd::File::pointer file;
-    db_->New(file);
+    syd::DicomFile::pointer dicomfile;
+    db_->New(dicomfile);
     std::string f = GetFilenameFromPath(filename);
-    file->filename = f;
+    dicomfile->filename = f;
 
     std::string relative_folder = serie->ComputeRelativeFolder(); // FIXME
     std::string absolute_folder = db_->ConvertToAbsolutePath(relative_folder);
     if (!fs::exists(absolute_folder)) fs::create_directories(absolute_folder);
 
-    file->path = relative_folder;
+    dicomfile->path = relative_folder;
     files_to_copy.push_back(filename);
     destination_folders.push_back(absolute_folder);
 
     // Then create the dicomfile
-    syd::DicomFile::pointer dicomfile;
-    db_->New(dicomfile);
-    dicomfile->file = file;
-    dicomfile->dicom_serie = serie;
+    //    dicomfile->dicom_serie = serie;
     std::string sop_uid =
       GetTagValueFromTagKey(dicomIO, "0008|0018", empty_value); //SOPInstanceUID
     dicomfile->dicom_sop_uid = sop_uid;
@@ -396,6 +399,7 @@ namespace syd {
     // if (slice != 0) serie->size[2] = slice;
     // else serie->size[2]++;
     //    DD("update size");
+    serie->dicom_files.push_back(dicomfile);
     return dicomfile;
   }
   // --------------------------------------------------------------------
@@ -405,15 +409,15 @@ namespace syd {
   void DicomSerieBuilder::InsertDicomSeries()
   {
     // Gather the Files to update
-    File::vector files;
-    for(auto d:dicomfiles_to_insert) {
-      files.push_back(d->file);
-    }
-    db_->Insert(files);
+    // File::vector files;
+    // for(auto d:dicomfiles_to_insert) {
+    //   files.push_back(d->file);
+    // }
+    // db_->Insert(files);
 
     // Update the database first to get the File id
+    db_->Insert(dicomfiles_to_insert); // must be before serie
     db_->Insert(series_to_insert);
-    db_->Insert(dicomfiles_to_insert);
     assert(dicomfiles_to_insert.size() == files_to_copy.size());
 
     // Copy files
@@ -426,9 +430,9 @@ namespace syd {
       std::stringstream dss;
       dss << destination_folders[i] << PATH_SEPARATOR
           << "dcm_" << dicomfiles_to_insert[i]->id << "_" << f;
-      dicomfiles_to_insert[i]->file->filename =
+      dicomfiles_to_insert[i]->filename =
         "dcm_" + ToString(dicomfiles_to_insert[i]->id) +
-        "_" +dicomfiles_to_insert[i]->file->filename;
+        "_" +dicomfiles_to_insert[i]->filename;
       std::string destination =dss.str();
       if (fs::exists(destination)) {
         LOG(3) << "Destination file already exist, ignoring";
@@ -444,7 +448,7 @@ namespace syd {
     db_->Update(dicomfiles_to_insert);
 
     // Log
-    LOG(1) << files.size() << " Files have been added in the db";
+    //    LOG(1) << files.size() << " Files have been added in the db";
     LOG(1) << dicomfiles_to_insert.size() << " DicomFiles have been added in the db";
     LOG(1) << series_to_insert.size() << " DicomSeries has been added in the db";
     if (nb_of_skip_files != 0) {
@@ -458,7 +462,7 @@ namespace syd {
     // Once done, clear vectors
     series_to_insert.clear();
     dicomfiles_to_insert.clear();
-    files.clear();
+    //files.clear();
     files_to_copy.clear();
     destination_folders.clear();
     nb_of_skip_files = 0;

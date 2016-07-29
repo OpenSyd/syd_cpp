@@ -56,9 +56,10 @@ void syd::ImageFromDicomBuilder::Update()
   image_->dicoms.push_back(dicom_);
 
   // Get dicom associated files or folder
-  odb::query<syd::DicomFile> q =
-    odb::query<syd::DicomFile>::dicom_serie->id == dicom_->id;
-  db->Query(dicom_files_, q);
+  dicom_files_ = dicom_->dicom_files;
+  // odb::query<syd::DicomFile> q =
+  //   odb::query<syd::DicomFile>::dicom_serie->id == dicom_->id;
+  // db->Query(dicom_files_, q);
   if (dicom_files_.size() == 0) {
     EXCEPTION("Error not DicomFile associated with this DicomSerie: " << dicom_);
   }

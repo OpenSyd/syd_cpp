@@ -23,6 +23,8 @@ typename itk::Image<PixelType,3>::Pointer
 syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom,
                                  bool flipAxeIfNegativeFlag) const
 {
+  DD("TO REMOVE");
+  /*
   typedef itk::Image<PixelType,3> ImageType;
 
   // Get the files
@@ -64,8 +66,9 @@ syd::StandardDatabase::ReadImage(const syd::DicomSerie::pointer dicom,
     if (itk_image->GetDirection()[1][1] < 0) itk_image = syd::FlipImage<ImageType>(itk_image, 1);
     if (itk_image->GetDirection()[2][2] < 0) itk_image = syd::FlipImage<ImageType>(itk_image, 2);
   }
-
-  return itk_image;
+  */
+  //  return itk_image;
+  return NULL;//itk_image;
 }
 // --------------------------------------------------------------------
 
