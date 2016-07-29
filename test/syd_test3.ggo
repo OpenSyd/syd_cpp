@@ -1,0 +1,8 @@
+#File syd_test3.ggo
+
+package "syd"
+version "0.1"
+usage "syd_test3"
+description "Test InsertDicom"
+
+option "create_ref" c "Create reference db"  flag off

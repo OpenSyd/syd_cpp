@@ -77,6 +77,10 @@ namespace syd {
   void SearchAndAddFilesInFolder(std::vector<std::string> & files,
                                  std::string folder,
                                  bool recurse);
+
+  bool copyDir(fs::path const & source,
+               fs::path const & destination);
+
 } // end namespace syd
 //--------------------------------------------------------------------
 

@@ -285,6 +285,13 @@ namespace syd {
     /// Return the map that contains the association between names and tables
     const MapOfTablesType & GetMapOfTables() const { return map_; }
 
+    /// Copy only the db file (warning not the folder)
+    void Copy(std::string dbname);
+
+    /// Copy everything the db file + all files in folder (could be
+    /// long!)
+    void Copy(std::string dbname, std::string folder);
+
     // ----------------------------------------------------------------------------------
     protected:
     // Create an empty database

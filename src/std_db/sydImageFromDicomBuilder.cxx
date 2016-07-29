@@ -103,11 +103,6 @@ void syd::ImageFromDicomBuilder::Update()
     }
   }
 
-  // Insert image in the db
-  db->Insert(image_);
-  // true = move instead of copy
-  syd::ImageHelper::InsertMhdFiles(image_, temp_filename, true);
-
   // try to guess pixel_unit ?
   syd::PixelValueUnit::pointer unit = NULL;
   if (dicom_->dicom_modality == "CT") {
@@ -121,5 +116,10 @@ void syd::ImageFromDicomBuilder::Update()
     } catch(...) {} // ignore if not found
   }
   image_->pixel_unit = unit;
+
+  // Insert image in the db
+  db->Insert(image_);
+  // true = move instead of copy
+  syd::ImageHelper::InsertMhdFiles(image_, temp_filename, true);
 }
 // --------------------------------------------------------------------

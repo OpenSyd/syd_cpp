@@ -35,47 +35,11 @@ void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & record
                          const std::string & format,
                          std::ostream & os)
 {
-  /*
-  if (records.size() == 0) return;
-  std::string f = format;
-
-  // Get column width in the format
-  std::map<int,int> col_width;
-  std::vector<std::string> words;
-  syd::GetWords(words, format);
-  for(auto w:words) {
-    std::size_t found = w.find(":");
-    if (found!=std::string::npos) {
-      // Get column
-      std::string nb = w.substr(0, found);
-      int col = atoi(nb.c_str());
-      // Get width
-      nb = w.substr(found+1, w.size()-found-1);
-      int n = atoi(nb.c_str());
-      col_width[col] = n;
-      // Remove this command from the format
-      syd::Replace(f, w, "");
-    }
-  }
-  f = trim(f); // remove spaces
-
-  syd::PrintTable ta;
-  records[0]->InitPrintTable(this, ta, f);
-
-  // print
-  if (f != "help") {
-    // Change col width
-    for(auto c:col_width) ta.SetColumnWidth(c.first, c.second);
-    // Print rows
-    int n=0;
-    for(auto r:records) {
-      r->DumpInTable(this, ta, f);
-      n++;
-      if (n != records.size()) ta.Endl(); // no endl at the end
-    }
-    ta.Print(os);
-  }
-  */
+  syd::PrintTable table;
+  table.SetFormat(format);
+  //table.SetHeaderFlag(!args_info.noheader_flag);
+  table.Build(records.begin(), records.end());
+  table.Print(os);
 }
 // --------------------------------------------------------------------
 

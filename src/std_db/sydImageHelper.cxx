@@ -138,3 +138,44 @@ UpdateMhdImageProperties(syd::Image::pointer image, itk::ImageIOBase::Pointer he
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::ImageHelper::IsSameImage(syd::Image::pointer a,
+                                   syd::Image::pointer b,
+                                   bool checkHistoryFlag)
+{
+  if (checkHistoryFlag) {
+    a->SetPrintHistoryFlag(true);
+    b->SetPrintHistoryFlag(true);
+  }
+  else {
+    a->SetPrintHistoryFlag(false);
+    b->SetPrintHistoryFlag(false);
+  }
+  return (a == b);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ImageHelper::CheckSameImageAndFiles(syd::Image::pointer a,
+                                              syd::Image::pointer b)
+{
+  if  (!syd::ImageHelper::IsSameImage(a,b)) {
+    EXCEPTION("Error images are different: " << std::endl
+              << a << std::endl << b);
+  }
+
+  for(auto i=0; i<a->files.size(); i++) {
+    std::string fa = a->files[i]->GetAbsolutePath();
+    std::string fb = b->files[i]->GetAbsolutePath();
+    if (!syd::EqualFiles(fa, fb)) {
+      EXCEPTION("Error images files are different: "
+                << fa << " " << fb << std::endl
+                << "For images: " << std::endl
+                << a << std::endl << b);
+    }
+  }
+}
+// --------------------------------------------------------------------

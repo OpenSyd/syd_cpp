@@ -563,3 +563,49 @@ void syd::Database::MigrateSchema()
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Copy(std::string new_dbname)
+{
+  // db file
+  std::string dbname = GetFilename();
+  fs::copy_file(dbname, new_dbname,fs::copy_option::overwrite_if_exists);
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+void syd::Database::Copy(std::string new_dbname, std::string new_folder)
+{
+  std::shared_ptr<syd::DatabaseInformation> info;
+  try {
+    odb::transaction transaction (odb_db_->begin());
+    info = std::shared_ptr<syd::DatabaseInformation>(odb_db_->query_one<syd::DatabaseInformation>());
+    if (info.get() == 0) {
+      LOG(FATAL) << "Error cannot get DatabaseInformation";
+    }
+    info->folder = new_folder;
+    odb_db_->update(*info);
+    transaction.commit();
+    DD(info->folder);
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Exception while set temporary folder in DatabaseInformation");
+  }
+
+  // copy
+  Copy(new_dbname);
+  std::string dbfolder = GetDatabaseAbsoluteFolder();
+  syd::copyDir(dbfolder, new_folder);
+
+  try {
+    odb::transaction transaction (odb_db_->begin());
+    info->folder = relative_folder_;
+    odb_db_->update(*info);
+    transaction.commit();
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Exception while updating DatabaseInformation");
+  }
+}
+// --------------------------------------------------------------------

@@ -16,48 +16,24 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDRECORDWITHHISTORY_H
-#define SYDRECORDWITHHISTORY_H
+#ifndef SYDTESTHELPER_H
+#define SYDTESTHELPER_H
 
 // syd
-#include "sydRecordHistory.h"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object abstract pointer(std::shared_ptr)
-  class RecordWithHistory {
+  /// This file contains helpers function that are hopefully helpful
+  /// to perform tests
+  class TestHelper
+  {
   public:
 
-    virtual ~RecordWithHistory() {}
 
-    /// Define pointer type
-    typedef std::shared_ptr<RecordWithHistory> pointer;
-
-    /// Define vectortype
-    typedef std::vector<pointer> vector;
-
-    /// Store the history. It is 'mutable' because is changed in the const Callback.
-    mutable syd::RecordHistory::pointer history;
-
-    void SetPrintHistoryFlag(bool b) { print_history_flag_ = b; }
-
-    virtual void DumpInTable(syd::PrintTable & table) const;
-
-    virtual void Callback(odb::callback_event,
-                          odb::database & odb,
-                          syd::Database * db) const;
-
-  protected:
-    RecordWithHistory();
-
-    /// Not stored in the db
- #pragma db transient
-   bool print_history_flag_;
-
-  };
-
-} // end namespace
+  }; // end class
+} // namespace syd
 // --------------------------------------------------------------------
 
 #endif

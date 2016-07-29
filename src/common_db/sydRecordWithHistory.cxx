@@ -25,6 +25,7 @@
 syd::RecordWithHistory::RecordWithHistory()
 {
   history = NULL;
+  print_history_flag_ = true;
 }
 // --------------------------------------------------------------------
 

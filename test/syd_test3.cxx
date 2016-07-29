@@ -17,21 +17,27 @@
   ===========================================================================**/
 
 // syd
+#include "syd_test3_ggo.h"
+#include "sydCommonGengetopt.h"
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
-#include "sydStandardDatabase.h"
 #include "sydDicomSerieBuilder.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
+  // Init
+  SYD_INIT_GGO(syd_test3, 0);
+
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
-  // Get the database
+  // database names
   std::string dbname = "test3.db";
   std::string folder = "data3";
+  std::string ref_dbname = "test3_ref.db";
+  std::string ref_folder = "data3_ref";
 
   // Create StandardDatabase
   std::cout << "Current path is " << fs::current_path() << std::endl;
@@ -53,7 +59,7 @@ int main(int argc, char* argv[])
   std::vector<std::string> files;
   syd::SearchAndAddFilesInFolder(files, "dicom", true);
   std::sort(files.begin(), files.end());
-  // need to sort because orer of files may vary from system to system
+  // need to sort because order of files may vary from system to system
 
   // insert dicom from folder
   syd::DicomSerieBuilder builder(db);
@@ -62,31 +68,31 @@ int main(int argc, char* argv[])
   for(auto f:files) builder.SearchDicomInFile(f);
   builder.InsertDicomSeries();
 
-  // Create output
-  syd::DicomSerie::vector dicoms;
-  db->Query(dicoms);
-  db->Sort(dicoms);
-  std::stringstream b;
-  for(auto d:dicoms) b << d << std::endl;
-
-  // Read ref output
-  // generated with sydFind --db test3.db dicomserie -f raw > test3_ref.txt
-  std::ifstream is("test3_ref.txt");
-  std::stringstream ref;
-  ref << is.rdbuf();
-
-  // Check
-  if (ref.str() != b.str()) {
-    DD(ref.str());
-    DD(b.str());
-
-    LOG(FATAL) << "Error inserting dicom." << std::endl
-               << "To redo the ref:" << std::endl
-               << "sydFind --db test3.db dicomserie -f raw > test3_ref.txt";
+  // If needed create reference db
+  if (args_info.create_ref_flag) {
+    LOG(0) << "Create reference db (not the associated folder)";
+    db->Copy(ref_dbname);
   }
 
-  // Print
-  std::cout << b.str() << "Success." << std::endl;
+  // Check
+  auto ref_db = m->Open<syd::StandardDatabase>(ref_dbname);
+  syd::DicomSerie::vector dicom_series;
+  syd::DicomSerie::vector ref_dicom_series;
+  db->Query(dicom_series);
+  ref_db->Query(ref_dicom_series);
+  syd::Record::vector v;
+  for(auto d:dicom_series) v.push_back(d);
+  db->Dump(v, "default", std::cout);
+
+  for(auto i=0; i< dicom_series.size(); i++) {
+    if (dicom_series[i] != ref_dicom_series[i]) {
+      LOG(FATAL) << "Error DicomSerie different " << std::endl
+                 << dicom_series[i] << std::endl
+                 << ref_dicom_series[i] << std::endl;
+    }
+    // Do not check files here
+  }
+
   return EXIT_SUCCESS;
   // This is the end, my friend.
 }

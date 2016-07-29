@@ -69,6 +69,13 @@ namespace syd {
     static void UpdateImagePropertiesFromCommandLine(syd::Image::pointer image,
                                                      ArgsInfo & args_info);
 
+    static bool IsSameImage(syd::Image::pointer a,
+                            syd::Image::pointer b,
+                            bool checkHistoryFlag=false);
+
+    static void CheckSameImageAndFiles(syd::Image::pointer a,
+                                       syd::Image::pointer b);
+
   }; // end class
 } // namespace syd
 

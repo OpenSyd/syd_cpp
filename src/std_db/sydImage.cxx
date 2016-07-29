@@ -84,7 +84,7 @@ std::string syd::Image::ToString() const
   ss << frame_of_reference_uid << " ";
   if (pixel_unit != NULL) ss << pixel_unit->name;
   else ss << empty_value << " ";
-  if (history) {
+  if (history and print_history_flag_) {
     ss << " " << history->insertion_date << " "
        << history->update_date;
   }
