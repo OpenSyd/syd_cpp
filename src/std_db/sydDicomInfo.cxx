@@ -28,7 +28,7 @@
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydDicomInfo, 1);
+  SYD_INIT_GGO(sydDicomInfo, 0);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -38,22 +38,40 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db =
     m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the dicom serie
-  syd::IdType id = atoi(args_info.inputs[0]);
-  syd::DicomSerie::pointer dicomserie;
-  db->QueryOne(dicomserie, id);
+  // Declare the file
+  std::string file;
+  if (args_info.inputs_num == 0 and !args_info.file_given) {
+    LOG(FATAL) << "Give a dicom id or the --file option.";
+  }
 
-  // Retrieve the filename
-  syd::DicomFile::vector dfiles;
-  typedef odb::query<syd::DicomFile> QDF;
-  QDF q = QDF::dicom_serie == id;
-  db->Query(dfiles, q);
-  std::string file = dfiles[0]->file->GetAbsolutePath();
-  // Only the first file is read
+  if (!args_info.file_given) {
+    // Get the dicom serie
+    syd::IdType id = atoi(args_info.inputs[0]);
+    syd::DicomSerie::pointer dicomserie;
+    try {
+      db->QueryOne(dicomserie, id);
+      // Retrieve the filename
+      syd::DicomFile::vector dfiles;
+      typedef odb::query<syd::DicomFile> QDF;
+      QDF q = QDF::dicom_serie == id;
+      db->Query(dfiles, q);
+      // Only the first file is considered
+      file = dfiles[0]->file->GetAbsolutePath();
+      std::cout << dicomserie << std::endl;
+    } catch(...) {
+      // Try to load as a filename if exists
+      if (!fs::exists(args_info.inputs[0])) {
+        LOG(FATAL) << "No DicomSerie or file " << args_info.inputs[0];
+      }
+      file = args_info.inputs[0];
+    }
+  }
+  else {
+    file = args_info.file_arg;
+  }
 
   // Output
-  std::cout << dicomserie << std::endl
-            << file << std::endl;
+  std::cout << file << std::endl;
 
   // Read dicom header
   auto dicomIO = syd::ReadDicomHeader(file);

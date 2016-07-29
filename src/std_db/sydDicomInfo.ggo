@@ -3,7 +3,10 @@
 package "syd"
 version "0.3"
 usage "sydDicomInfo <dicom_id>"
-description "Dump content of the dicom for the given dicom serie. If the serie contains several files, only the first is displayed.
+description "Dump content of the dicom for the given dicom serie. If the serie
+contains several files, only the first is displayed.
 
-TODO Later : option to select the given file.
+Alternatively, you can specify a simple file instead of dicom_id or
+with the option --file, (the dicom_id is ignored),
 "
+option "file" f "Read this file instead of a dicom_id" string no
