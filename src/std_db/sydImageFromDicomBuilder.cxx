@@ -32,11 +32,17 @@ syd::ImageFromDicomBuilder::ImageFromDicomBuilder()
 
 
 // --------------------------------------------------------------------
-void syd::ImageFromDicomBuilder::SetInputDicomSerie(syd::DicomSerie::pointer dicom,
-                                                    std::string pixel_type)
+void syd::ImageFromDicomBuilder::SetImagePixelType(std::string pixel_type)
+{
+  user_pixel_type_ = pixel_type;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ImageFromDicomBuilder::SetInputDicomSerie(syd::DicomSerie::pointer dicom)
 {
   dicom_ = dicom;
-  user_pixel_type_ = pixel_type;
 }
 // --------------------------------------------------------------------
 
@@ -56,10 +62,7 @@ void syd::ImageFromDicomBuilder::Update()
   image_->dicoms.push_back(dicom_);
 
   // Get dicom associated files or folder
-  dicom_files_ = dicom_->dicom_files;
-  // odb::query<syd::DicomFile> q =
-  //   odb::query<syd::DicomFile>::dicom_serie->id == dicom_->id;
-  // db->Query(dicom_files_, q);
+  auto dicom_files_ = dicom_->dicom_files;
   if (dicom_files_.size() == 0) {
     EXCEPTION("Error not DicomFile associated with this DicomSerie: " << dicom_);
   }

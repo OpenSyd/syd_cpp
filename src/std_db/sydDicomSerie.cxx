@@ -18,8 +18,7 @@
 
 // syd
 #include "sydDicomSerie.h"
-#include "sydDicomFile.h"
-#include "sydStandardDatabase.h"
+#include "sydStandardDatabase.h" // needed for type odb db
 
 // --------------------------------------------------------------------
 syd::DicomSerie::DicomSerie():syd::Record()
@@ -150,17 +149,6 @@ void syd::DicomSerie::DumpInTable_file(syd::PrintTable & ta) const
   ta.Set("p", patient->name);
   ta.Set("mod", dicom_modality);
   ta.Set("acqui_date", dicom_acquisition_date);
-
-  /*
-  //Look for associated file (this is slow !)
-  syd::DicomFile::vector dfiles;
-  typedef odb::query<syd::DicomFile> QDF;
-  QDF q = QDF::dicom_serie == id;
-  db_->Query<syd::DicomFile>(dfiles, q);
-  if (dfiles.size() >= 1) ta.Set("path", dfiles[0]->GetAbsolutePath(), 150);
-  else ta.Set("path", db_->ConvertToAbsolutePath(dfiles[0]->path), 150);
-  */
-
   if (dicom_files.size() > 0) ta.Set("path", dicom_files[0]->GetAbsolutePath(), 150);
   else ta.Set("path", empty_value);
 }
@@ -172,15 +160,6 @@ void syd::DicomSerie::DumpInTable_filelist(syd::PrintTable & ta) const
 {
   ta.SetSingleRowFlag(true);
   ta.SetHeaderFlag(false);
-  /*
-  //Look for associated file (this is slow !)
-  syd::DicomFile::vector dfiles;
-  typedef odb::query<syd::DicomFile> QDF;
-  QDF q = QDF::dicom_serie == id;
-  db_->Query<syd::DicomFile>(dfiles, q);
-  if (dfiles.size() >= 1) // FIXME -> build a string with all filenames (?)
-  ta.Set("file", dfiles[0]->GetAbsolutePath(), 500);
-  */
   std::stringstream ss;
   for(auto f:dicom_files) ss << f->GetAbsolutePath() << " ";
   ta.Set("file", ss.str(), ss.str().size());
@@ -202,17 +181,7 @@ void syd::DicomSerie::DumpInTable_details(syd::PrintTable & ta) const
 syd::CheckResult syd::DicomSerie::Check() const
 {
   syd::CheckResult r;
-
-  /*
-  //Look for associated file (this is slow !)
-  syd::DicomFile::vector dfiles;
-  typedef odb::query<syd::DicomFile> QDF;
-  QDF q = QDF::dicom_serie == id;
-  db_->Query<syd::DicomFile>(dfiles, q);
-  for(auto d:dfiles) r.merge(d->Check());
-  */
   for(auto d:dicom_files) r.merge(d->Check());
-
   return r;
 }
 // --------------------------------------------------------------------

@@ -18,13 +18,11 @@
 
 // syd
 #include "sydDicomFile.h"
-//#include "sydDicomSerie.h"
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 syd::DicomFile::DicomFile():syd::File()
 {
-  // dicom_serie = NULL;
   dicom_sop_uid = "";
   dicom_instance_number = 0;
 }
@@ -36,12 +34,6 @@ std::string syd::DicomFile::ToString() const
 {
   std::stringstream ss ;
   ss << syd::File::ToString() << " ";
-  /*if (dicom_serie == NULL) ss << empty_value << " ";
-  else {
-    ss << dicom_serie->id << " "
-       << (dicom_serie->patient != NULL ?
-           dicom_serie->patient->name:empty_value) << " ";
-           }*/
   ss << dicom_instance_number << " "
      << dicom_sop_uid << " ";
   return ss.str();
@@ -50,49 +42,12 @@ std::string syd::DicomFile::ToString() const
 
 
 // --------------------------------------------------------------------
-// void syd::DicomFile::Callback(odb::callback_event event,
-//                               odb::database & db) const
-// {
-//   syd::File::Callback(event, db);
-// }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-// void syd::DicomFile::Callback(odb::callback_event event,
-//                               odb::database & db)
-// {
-//   syd::File::Callback(event, db);
-//   if (event == odb::callback_event::pre_erase) {
-//     db.erase(file);
-//   }
-// }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::DicomFile::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
-  // ta.Set("serie", dicom_serie->id);
   ta.Set("nb", dicom_instance_number);
   ta.Set("file", filename, 100);
+  ta.Set("folder", path);
   ta.Set("sop_uid", dicom_sop_uid);
 }
 // --------------------------------------------------------------------
-
-
-// // --------------------------------------------------------------------
-// syd::CheckResult syd::DicomFile::Check() const
-// {
-//   return file->Check();
-// }
-// // --------------------------------------------------------------------
-
-
-// // --------------------------------------------------------------------
-// std::string syd::DicomFile::GetAbsolutePath() const
-// {
-//   return file->GetAbsolutePath();
-// }
-// // --------------------------------------------------------------------

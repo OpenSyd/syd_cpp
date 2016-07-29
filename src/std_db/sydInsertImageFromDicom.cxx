@@ -53,7 +53,8 @@ int main(int argc, char* argv[])
   // Create images
   syd::ImageFromDicomBuilder builder;
   for(auto d:dicom_series) {
-    builder.SetInputDicomSerie(d, args_info.pixel_type_arg);
+    builder.SetImagePixelType(args_info.pixel_type_arg);
+    builder.SetInputDicomSerie(d);
     builder.Update();
     syd::Image::pointer image = builder.GetOutput();
     syd::TagHelper::UpdateTagsFromCommandLine(image->tags, db, args_info);

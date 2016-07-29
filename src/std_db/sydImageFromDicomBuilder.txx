@@ -20,16 +20,17 @@
 template<class PixelType>
 void syd::ImageFromDicomBuilder::WriteMhd(std::string temp_filename)
 {
-  if (dicom_files_.size() == 0) {
+  auto dicom_files = dicom_->dicom_files;
+  if (dicom_files.size() == 0) {
     EXCEPTION("No associated DicomFiles in UpdateWithPixelType. Use Update() before.");
   }
   typedef itk::Image<PixelType, 3> ImageType;
   typename ImageType::Pointer itk_image;
 
   // Try to read the dicom image
-  auto df = dicom_files_[0];
+  auto df = dicom_files[0];
   try {
-    if (dicom_files_.size() == 1) {
+    if (dicom_files.size() == 1) {
       itk_image = syd::ReadDicomFromSingleFile<PixelType>(df->GetAbsolutePath());
     }
     else {

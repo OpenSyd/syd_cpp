@@ -33,9 +33,11 @@ namespace syd {
     /// Constructor.
     ImageFromDicomBuilder();
 
+    /// Set the mhd pixel_type to read and write
+    void SetImagePixelType(std::string pixel_type);
+
     /// Set the dicomserie to convert
-    void SetInputDicomSerie(syd::DicomSerie::pointer dicom,
-                            std::string pixel_type="auto");
+    void SetInputDicomSerie(syd::DicomSerie::pointer dicom);
 
     /// Convert the dicom image into an image and insert in the db
     void Update();
@@ -47,7 +49,6 @@ namespace syd {
     syd::DicomSerie::pointer dicom_;
     syd::Image::pointer image_;
     itk::ImageIOBase::Pointer header_;
-    syd::DicomFile::vector dicom_files_; // FIXME TO REMOVE --> will be in DicomSerie
     std::string user_pixel_type_;
 
     template<class PixelType>
