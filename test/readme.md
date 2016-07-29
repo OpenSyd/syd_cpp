@@ -10,4 +10,8 @@ Test2
 
 
 Test3
-- add dicom files in the db
+- test insertion of dicom files in the db
+
+
+Test4
+- test insertion of image from dicom file in the db
