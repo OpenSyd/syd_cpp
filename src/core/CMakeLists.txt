@@ -17,8 +17,9 @@ add_library(sydCore
 )
 
 target_link_libraries(sydCore
+  PUBLIC Boost::date_time Boost::system Boost::filesystem
   ${DCMTK_LIBRARIES}
-  ${Boost_LIBRARIES} ## needed on osx
+  #${Boost_LIBRARIES} ## needed on osx
   )
 
 # wrap_ggo(sydOdbXmlParser_GGO_C sydOdbXmlParser.ggo )
