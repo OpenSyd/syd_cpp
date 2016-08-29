@@ -33,9 +33,13 @@ include_directories( ${Boost_INCLUDE_DIR} )
 
 
 #----------------------------------------------------------
-# Eigen3
+# Eigen3 (needed by ceres)
 find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN_INCLUDE_DIR})
 include_directories(${EIGEN3_INCLUDE_DIR})
+if (NOT EIGEN_INCLUDE_DIR)
+  set(EIGEN_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR})
+endif()
 #----------------------------------------------------------
 
 
@@ -48,8 +52,8 @@ include_directories(${CERES_INCLUDE_DIRS})
 
 #----------------------------------------------------------
 # Find Odb
-find_package(ODB REQUIRED OPTIONAL_COMPONENTS sqlite)
-include(${ODB_USE_FILE})
+find_package(odb REQUIRED COMPONENTS compiler sqlite)
+#include(${ODB_USE_FILE})
 #----------------------------------------------------------
 
 

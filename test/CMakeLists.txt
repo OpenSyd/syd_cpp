@@ -9,6 +9,7 @@ include_directories(${SYD_BINARY_DIR}/src/core)
 
 # common functions
 add_library(sydTestLib sydTestHelper.cxx)
+target_link_libraries(sydTestLib sydCommonDatabase StandardDatabase)
 
 # Test1 with plugin
 add_executable(syd_test1 syd_test1.cxx)
