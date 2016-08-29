@@ -87,28 +87,6 @@ set(odb_sqlite_libraries ${install_prefix}/lib64)
 #=========================================================
 
 
-
-#=========================================================
-# dcmtk
-ExternalProject_Add(dcmtk
-  SOURCE_DIR ${source_prefix}/dcmtk
-  #URL ftp://dicom.offis.de/pub/dicom/offis/software/dcmtk/dcmtk360/dcmtk-3.6.0.tar.gz
-  #URL ftp://dicom.offis.de/pub/dicom/offis/software/dcmtk/dcmtk360/bin/dcmtk-3.6.0-linux-i686-static.tar.bz2
-  GIT_REPOSITORY http://git.dcmtk.org/dcmtk.git
-  GIT_TAG DCMTK-3.6.1_20150924
-  CMAKE_ARGS
-  -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}
-  -DCMAKE_BUILD_TYPE:STRING=${build_type}
-  -DBUILD_SHARED_LIBS:BOOL=OFF
-  -DBUILD_APPS:BOOL=OFF
-  -DDCMTK_WITH_DOXYGEN:BOOL=OFF
-  -DCMAKE_CXX_COMPILER:FILE=${CMAKE_CXX_COMPILER}
-  -DCMAKE_C_COMPILER:FILE=${CMAKE_C_COMPILER}
-  )
-
-set(DCMTK_DIR ${install_prefix})
-
-
 #=========================================================
 # Boost
 ExternalProject_Add(boost
@@ -191,14 +169,13 @@ ExternalProject_Add(ceres
 # SYD
 
 ExternalProject_Add(syd
-  #DEPENDS ceres odb_compiler odb_lib odb_sqlite dcmtk boost itk
+  #DEPENDS ceres odb_compiler odb_lib odb_sqlite boost itk
   SOURCE_DIR ${source_prefix}/syd
   GIT_REPOSITORY https://github.com/OpenSyd/syd.git
   CMAKE_ARGS
   -DCMAKE_INSTALL_PREFIX:PATH=${install_prefix}
   -DCMAKE_BUILD_TYPE:STRING=${build_type}
   -DBUILD_SHARED_LIBS:BOOL=OFF
-  -DDCMTK_DIR:PATH=${DCMTK_DIR}
   -DEIGEN_INCLUDE_DIR:PATH=${eigen_include_dir}
   -DCeres_DIR:PATH=${ceres_dir}
   -DITK_DIR:PATH=${itk_dir}

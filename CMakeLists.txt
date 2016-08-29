@@ -119,7 +119,6 @@ set(SYD_CORE_LIBRARIES
   sydFit
   sydItkUtils
   odb-sqlite odb sqlite3 z
-  ${DCMTK_LIBRARIES}
   ${Boost_LIBRARIES}
   ${ITK_LIBRARIES})
 

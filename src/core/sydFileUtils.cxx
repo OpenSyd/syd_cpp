@@ -89,7 +89,6 @@ void syd::ConvertToAbsolutePath(std::string & folder)
       EXCEPTION("Error while trying to get current working dir.");
     }
     folder = std::string(cCurrentPath)+"/"+folder;
-    //dirPrefix = OFString(cCurrentPath);
   }
 
   RemoveBackPathSeparator(folder);
