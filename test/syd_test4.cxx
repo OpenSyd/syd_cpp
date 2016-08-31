@@ -55,18 +55,22 @@ int main(int argc, char* argv[])
 
   // Create an image
   std::string img_filename = "input/ct_slice.mhd";
-  DD(img_filename);
-  auto img = syd::InsertMhdImage(patient, img_filename, true);
-  DD(img);
+  auto image1 = syd::InsertMhdImage(img_filename, patient);
+  DD(image1);
 
-
-  DD(" STEP 2 OLD");
-  /*
-
-  // Get a dicom serie
+  // Get a dicom SPECT and insert
   syd::DicomSerie::pointer dicom_serie;
   db->QueryOne(dicom_serie, 14);
+  auto image2 = syd::InsertImageFromDicom(dicom_serie, "float");
+  DD(image2);
 
+  // Get a dicom CT and insert
+  syd::DicomSerie::pointer dicom_serie2;
+  db->QueryOne(dicom_serie2, 7);
+  auto image3 = syd::InsertImageFromDicom(dicom_serie2, "short");
+  DD(image3);
+
+  /*
   // Insert image from dicom spect
   syd::ImageFromDicomBuilder builder;
   builder.SetImagePixelType("float");
@@ -81,6 +85,7 @@ int main(int argc, char* argv[])
   builder.Update();
   syd::Image::pointer image2 = builder.GetOutput();
   DD(image2);
+  */
 
   // If needed create reference db
   if (args_info.create_ref_flag) {
@@ -91,12 +96,15 @@ int main(int argc, char* argv[])
   // Check
   auto ref_db = m->Open<syd::StandardDatabase>(ref_dbname);
   syd::Image::pointer ref_image;
-  ref_db->QueryOne(ref_image, image->id);
-  syd::ImageHelper::CheckSameImageAndFiles(ref_image, image);
+
+  ref_db->QueryOne(ref_image, image1->id);
+  syd::ImageHelper::CheckSameImageAndFiles(ref_image, image1);
+
   ref_db->QueryOne(ref_image, image2->id);
   syd::ImageHelper::CheckSameImageAndFiles(ref_image, image2);
 
-  */
+  ref_db->QueryOne(ref_image, image3->id);
+  syd::ImageHelper::CheckSameImageAndFiles(ref_image, image3);
 
   std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;

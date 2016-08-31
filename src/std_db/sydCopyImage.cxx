@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
     db->UpdateTagsFromCommandLine(output->tags, args_info);
     // Copy the file
     std::string filename = syd::CreateTemporaryFile(db->GetDatabaseAbsoluteFolder(), ".mhd");
-    syd::CopyMHDImage(db->GetAbsolutePath(image), filename);
+    syd::CopyMHDImage(db->GetAbsolutePath(image), filename, true); // true = overwrite_if_exists
     builder.CopyImageFromFile(output, filename);
     builder.InsertAndRename(output);
     fs::remove(filename);

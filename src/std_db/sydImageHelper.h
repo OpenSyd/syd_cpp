@@ -20,15 +20,32 @@
 #define SYDIMAGEHELPER_H
 
 // syd
-#include "sydStandardDatabase.h"
+#include "sydDicomSerieHelper.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
   /// Create a new image, copy the filename to the db
-  syd::Image::pointer InsertMhdImage(syd::Patient::pointer patient,
-                                     std::string filename,
-                                     bool overwrite_if_exists);
+  syd::Image::pointer InsertMhdImage(std::string filename,
+                                     syd::Patient::pointer patient,
+                                     std::string modality="image");
+
+  /// Create 2 new Files for mhd/raw
+  syd::File::vector InsertMhdFiles(syd::Database * db,
+                                   std::string from_filename,
+                                   std::string to_relative_path,
+                                   std::string to_filename);
+
+  /// Create a new image from a DicomSerie. Pixel type could be float,
+  /// short, auto etc
+  syd::Image::pointer InsertImageFromDicom(syd::DicomSerie::pointer dicom,
+                                           std::string pixel_type);
+
+
+
+  /// Read the attached file and set image spacing, size dimension,
+  /// and pixel_type. The image is not updated
+  void SetImageInfoFromFile(syd::Image::pointer image);
 
   /// Compute the default image path (based on the patient's name)
   std::string GetDefaultImageRelativePath(syd::Image::pointer image);
@@ -36,12 +53,7 @@ namespace syd {
   /// Compute the default image mhd filename (based on id + modality)
   std::string GetDefaultMhdImageFilename(syd::Image::pointer image);
 
-  /// Create 2 new Files for mhd/raw
-  syd::File::vector InsertMhdFiles(syd::Database * db,
-                                   std::string from_filename,
-                                   std::string to_relative_path,
-                                   std::string to_filename,
-                                   bool overwrite_if_exists);
+
 
 
   ///// OLD BELOW

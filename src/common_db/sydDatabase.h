@@ -292,6 +292,10 @@ namespace syd {
     /// long!)
     void Copy(std::string dbname, std::string folder);
 
+
+    void SetOverwriteFileFlag(bool b) { overwrite_file_if_exists_flag_ = b; }
+    bool GetOverwriteFileFlag() const { return overwrite_file_if_exists_flag_; }
+
     // ----------------------------------------------------------------------------------
     protected:
     // Create an empty database
@@ -340,6 +344,8 @@ namespace syd {
     /// Store the OO db schema description
     syd::DatabaseDescription * description_;
 
+    /// Global flag (will be used when write a file in the db)
+    bool overwrite_file_if_exists_flag_;
   };
 
 

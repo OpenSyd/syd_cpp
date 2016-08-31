@@ -40,7 +40,8 @@ set(SYD_STANDARD_DATABASE_SRC
   sydPixelUnitHelper.cxx
   sydDicomSerieBuilder.cxx
 #  sydImageBuilder.cxx
-  sydImageHelper.cxx
+sydDicomSerieHelper.cxx
+sydImageHelper.cxx
   sydFileBuilder.cxx
 #  sydImageFromDicomBuilder.cxx
 #  sydStitchDicomImageBuilder.cxx

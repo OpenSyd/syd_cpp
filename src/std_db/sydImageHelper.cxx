@@ -22,39 +22,37 @@
 
 // --------------------------------------------------------------------
 syd::Image::pointer
-syd::InsertMhdImage(syd::Patient::pointer patient,
-                    std::string filename,
-                    bool overwrite_if_exists)
+syd::InsertMhdImage(std::string filename,
+                    syd::Patient::pointer patient,
+                    std::string modality)
 {
   auto db = patient->GetDatabase<syd::StandardDatabase>();
 
   // New image
   syd::Image::pointer image;
   db->New(image);
-  DD(image);
 
   // default information
   image->patient = patient;
+  image->modality = modality;
   image->type = "mhd";
-  DD(image);
 
   // insert (without mhd yet) to get an id
   db->Insert(image);
-  DD("here");
-  DD(image);
 
   // copy mhd to db according to default filename and create the two
   // associated syd::File
-  DD(GetDefaultImageRelativePath(image));
-  DD(GetDefaultMhdImageFilename(image));
   image->files = syd::InsertMhdFiles(db, filename,
                                      GetDefaultImageRelativePath(image),
-                                     GetDefaultMhdImageFilename(image),
-                                     overwrite_if_exists);
-  DDS(image->files);
-
+                                     GetDefaultMhdImageFilename(image));
   // Update size and spacing
   DD("todo udpate size and spacing");
+  syd::SetImageInfoFromFile(image);
+
+  // Check for negative spacing and orientation
+  DD("syd::FlipImageIfNegativeDirection(image);");
+
+  DD("Set Image md5 ???");
 
   db->Update(image);
   DD(image);
@@ -101,12 +99,8 @@ std::string syd::GetDefaultMhdImageFilename(syd::Image::pointer image)
 syd::File::vector syd::InsertMhdFiles(syd::Database * db,
                                       std::string from_filename,
                                       std::string to_relative_path,
-                                      std::string to_filename,
-                                      bool overwrite_if_exists)
+                                      std::string to_filename)
 {
-  DD(from_filename);
-  DD(to_relative_path);
-
   // Get the 'raw' filename
   std::string raw_filename = to_filename;
   syd::Replace(raw_filename, ".mhd", ".raw");
@@ -126,7 +120,7 @@ syd::File::vector syd::InsertMhdFiles(syd::Database * db,
   DD(mhd_file->GetAbsolutePath());
   syd::CopyMHDImage(from_filename,
                     mhd_file->GetAbsolutePath(),
-                    overwrite_if_exists);
+                    db->GetOverwriteFileFlag());
 
   // Insert into the db
   syd::File::vector files;
@@ -140,6 +134,91 @@ syd::File::vector syd::InsertMhdFiles(syd::Database * db,
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+void syd::SetImageInfoFromFile(syd::Image::pointer image)
+{
+  DD("UpdateImageInfoFromFile");
+  auto header = syd::ReadImageHeader(image->GetAbsolutePath());
+  auto pixel_type = itk::ImageIOBase::GetComponentTypeAsString(header->GetComponentType());
+  DD(pixel_type);
+  image->pixel_type = pixel_type;
+  image->dimension = header->GetNumberOfDimensions();
+  image->spacing.clear();
+  image->size.clear();
+  for(int i=0; i<image->dimension; i++) {
+    image->spacing.push_back(header->GetSpacing(i));
+    image->size.push_back(header->GetDimensions(i));
+  }
+  DD(image);
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer syd::InsertImageFromDicom(syd::DicomSerie::pointer dicom,
+                                              std::string user_pixel_type)
+{
+  DD(dicom);
+
+  // Get dicom associated files or folder
+  auto dicom_files = dicom->dicom_files;
+  if (dicom_files.size() == 0) {
+    EXCEPTION("Error no DicomFile associated with this DicomSerie: " << dicom);
+  }
+  std::vector<std::string> dicom_filenames;
+  for(auto f:dicom_files)
+    dicom_filenames.push_back(f->GetAbsolutePath());
+
+  // Consider pixel type (from user or from the file)
+  std::string pixel_type = user_pixel_type;
+  if (pixel_type == "auto") {
+    // read dicom header with itk header (first file only)
+    auto header = syd::ReadImageHeader(dicom_files[0]->GetAbsolutePath());
+    pixel_type =
+      itk::ImageIOBase::GetComponentTypeAsString(header->GetComponentType());
+  }
+  DD(pixel_type);
+
+  // Create a temporary filename
+  auto db = dicom->GetDatabase<syd::StandardDatabase>();
+  std::string t = db->GetDatabaseAbsoluteFolder()+PATH_SEPARATOR+"syd_temp_%%%%_%%%%_%%%%_%%%%.mhd";
+  fs::path p = fs::unique_path(t);
+  std::string temp_filename = p.string();
+  DD(temp_filename);
+
+  //
+  if (pixel_type == "float") syd::WriteDicomToMhd<float>(dicom, temp_filename);
+  if (pixel_type == "short") syd::WriteDicomToMhd<short>(dicom, temp_filename);
+  DD("TO change WriteDicomToMhd without template");
+
+  // Attach the mhd to the Image
+  auto image = syd::InsertMhdImage(temp_filename,
+                                   dicom->patient,
+                                   dicom->dicom_modality);
+  syd::DeleteMHDImage(temp_filename);
+
+  // Set the image properties
+  image->modality = dicom->dicom_modality; // needed to set the filename
+  image->acquisition_date = dicom->dicom_acquisition_date;
+  image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
+  image->dicoms.push_back(dicom);
+  // pixel unit
+  DD("pixe unit todo");
+  DD(image);
+
+  // Last update
+  db->Update(image);
+  return image;
+}
+// --------------------------------------------------------------------
+
+
+
+
+
+
+
 
 
 // OLD BELOW
@@ -148,10 +227,10 @@ syd::File::vector syd::InsertMhdFiles(syd::Database * db,
 
 // --------------------------------------------------------------------
 /*void syd::ImageHelper::
-InsertMhdFiles(syd::Image::pointer image, std::string filename, bool moveFlag)
-{
+  InsertMhdFiles(syd::Image::pointer image, std::string filename, bool moveFlag)
+  {
   if (!image->IsPersistent()) {
-    EXCEPTION("Image not in the db. Can only InsertMhdFiles for persistent image. Usedb->Insert(image) first.");
+  EXCEPTION("Image not in the db. Can only InsertMhdFiles for persistent image. Usedb->Insert(image) first.");
   }
   auto db = image->GetDatabase();
   // Need to clear the associated files and delete them (after update)
@@ -159,7 +238,7 @@ InsertMhdFiles(syd::Image::pointer image, std::string filename, bool moveFlag)
   image->files.clear();
   fs::path p(filename);
   if (p.extension() != ".mhd") {
-    EXCEPTION("Extension must be .mhd, cannot InsertMhdFiles.");
+  EXCEPTION("Extension must be .mhd, cannot InsertMhdFiles.");
   }
   image->type = "mhd";
   auto path = image->ComputeRelativeFolder();
@@ -173,9 +252,9 @@ InsertMhdFiles(syd::Image::pointer image, std::string filename, bool moveFlag)
   db->Insert(file_mhd);
   db->Insert(file_raw);
   if (!moveFlag)
-    CopyMHDImage(filename, image->GetAbsolutePath()); // copy files in the db
+  CopyMHDImage(filename, image->GetAbsolutePath()); // copy files in the db
   else
-    RenameMHDImage(filename, image->GetAbsolutePath());
+  RenameMHDImage(filename, image->GetAbsolutePath());
   syd::ImageHelper::UpdateMhdImageProperties(image);
   db->Update(image);
   db->Delete(previous_files);

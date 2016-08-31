@@ -34,6 +34,7 @@ void trace_callback( void* udp, const char* sql ) {
 syd::Database::Database()
 {
   description_ = NULL;
+  overwrite_file_if_exists_flag_ = true;
 }
 // --------------------------------------------------------------------
 
