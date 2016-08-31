@@ -75,6 +75,7 @@ std::string syd::Image::ToString() const
   if (files.size() != 0) ss << files[0]->filename << " ";
   else ss << empty_value << " ";
   ss << GetLabels(tags) << " "
+     << acquisition_date << " "
      << type << " "
      << pixel_type << " "
      << dimension << " "
