@@ -179,15 +179,6 @@ void syd::Image::Callback(odb::callback_event event,
     // insert the file with odb::database not the syd::database
     for(auto f:files) db.persist(f);
   }
-  if (event == odb::callback_event::post_persist) {
-    /*if (type == "mhd") { // auto rename file if mhd
-      auto image = const_cast<syd::Image*>(this); // remove the const
-      image->RenameToDefaultMHDFilename(false);
-    }
-    // update the files
-    for(auto f:files) db.update(f);
-    */
-  }
   if (event == odb::callback_event::pre_update) {
     // update the files
     for(auto f:files) db.update(f);
@@ -404,47 +395,4 @@ std::string syd::Image::GetAbsolutePath() const
   if (files.size() == 0) return empty_value;
   return files[0]->GetAbsolutePath();
 }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-
-/*void syd::Image::RenameToDefaultMHDFilename(bool updateDBFlag)
-{
-  DD("RenameToDefaultMHDFilename");
-  if (patient == NULL) {
-    EXCEPTION("No patient in this image, cannot RenameToDefaultMHDFilename().");
-  }
-  if (type != "mhd") {
-    EXCEPTION("Image type is not 'mhd', cannot RenameToDefaultMHDFilename().");
-  }
-  if (files.size() != 2) return;
-
-  // Compute the default filename
-  std::ostringstream oss;
-  oss << modality;
-  oss << "_" << id << ".mhd";
-  std::string mhd_filename = oss.str();
-  std::string raw_filename = mhd_filename;
-  syd::Replace(raw_filename, ".mhd", ".raw");
-  std::string mhd_relative_path = ComputeRelativeFolder()+PATH_SEPARATOR;
-  std::string mhd_path = db_->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
-
-  // To rename mhd need to change the content of the linked .raw file.
-  // Rename mhd file
-  auto mhd_file = files[0];
-  auto raw_file = files[1];
-  std::string old_path = mhd_file->GetAbsolutePath();
-  // do not move on disk (yet), but update the db only if updateDBFlag
-  mhd_file->RenameFile(mhd_relative_path, mhd_filename, false, updateDBFlag);
-
-  // Move file on disk
-  syd::RenameMHDImage(old_path, mhd_path);
-
-  // Rename raw file
-  std::string f = mhd_filename;
-  syd::Replace(f, ".mhd", ".raw");
-  // do not move on disk, update the db
-  raw_file->RenameFile(mhd_relative_path, f, false, updateDBFlag);
-  }*/
 // --------------------------------------------------------------------

@@ -96,12 +96,6 @@ namespace syd {
     /// Write the element as a string
     virtual std::string ToString() const;
 
-    /// Standard folder
-    //    virtual std::string ComputeRelativeFolder() const;
-
-    /// Compute the default filename for this image as a mhd
-    // virtual std::string ComputeDefaultMhdFilename() const;
-
     /// Return the file path
     std::string GetAbsolutePath() const;
 
@@ -118,10 +112,12 @@ namespace syd {
     /// Convenient fct (check if injection is set)
     std::string GetInjectionName() const;
 
-    /// Add a DicomSerie to the list (check is already exist) ; do not update in the db.
+    /// Add a DicomSerie to the list (check is already exist) ; do not
+    /// update in the db.
     void AddDicomSerie(const syd::DicomSerie::pointer dicom);
 
-    /// Remove a DicomSerie from the list ; do not update in the db. Do nothing it not found
+    /// Remove a DicomSerie from the list ; do not update in the
+    /// db. Do nothing it not found
     void RemoveDicomSerie(const syd::DicomSerie::pointer dicom);
 
     /// Copy DicomSeries from another image
@@ -131,7 +127,8 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
-    /// Test if the image is the same size and spacing than the param FIXME --> not in class !!
+    /// Test if the image is the same size and spacing than the param
+    /// FIXME --> not in class !!
     bool IsSameSizeAndSpacingThan(const syd::Image::pointer image) const;
 
     /// Return size as string such like 128x128x64
@@ -155,10 +152,6 @@ namespace syd {
 
     /// Check if the associated files exist on disk
     virtual syd::CheckResult Check() const;
-
-    /// Change the filename to <patient_name>/<modality>_id.mhd
-    /// Only update the db if the flag is true.
-    // void RenameToDefaultMHDFilename(bool updateDBFlag);
 
   protected:
     Image();
