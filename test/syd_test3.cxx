@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 
   // Build files list
   std::vector<std::string> files;
-  syd::SearchAndAddFilesInFolder(files, "dicom", true);
+  syd::SearchAndAddFilesInFolder(files, "input", true);
   std::sort(files.begin(), files.end());
   // need to sort because order of files may vary from system to system
 

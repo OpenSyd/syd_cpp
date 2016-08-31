@@ -25,6 +25,28 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  /// Create a new image, copy the filename to the db
+  syd::Image::pointer InsertMhdImage(syd::Patient::pointer patient,
+                                     std::string filename,
+                                     bool overwrite_if_exists);
+
+  /// Compute the default image path (based on the patient's name)
+  std::string GetDefaultImageRelativePath(syd::Image::pointer image);
+
+  /// Compute the default image mhd filename (based on id + modality)
+  std::string GetDefaultMhdImageFilename(syd::Image::pointer image);
+
+  /// Create 2 new Files for mhd/raw
+  syd::File::vector InsertMhdFiles(syd::Database * db,
+                                   std::string from_filename,
+                                   std::string to_relative_path,
+                                   std::string to_filename,
+                                   bool overwrite_if_exists);
+
+
+  ///// OLD BELOW
+
+
   /// This file contains helpers function that are hopefully helpful
   /// to create and update syd::Image table. All functions are static
   /// in a class for clarity.
@@ -38,9 +60,9 @@ namespace syd {
     /// If File are already associated with the image, remove them
     /// frist.  Then create new File and copy an mhd image in the db,
     /// Image must be persistent.
-    static void InsertMhdFiles(syd::Image::pointer image,
-                               std::string filename,
-                               bool moveFlag = false); // true=copy ; false=move
+    // static void InsertMhdFiles(syd::Image::pointer image,
+    //                            std::string filename,
+    //                            bool moveFlag = false); // true=copy ; false=move
 
     /// Copy image properties from the 'like' image (modality,
     /// injection patient etc). Everything except the properties

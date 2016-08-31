@@ -134,7 +134,7 @@ void syd::Image::RemoveDicomSerie(const syd::DicomSerie::pointer dicom)
 
 
 // --------------------------------------------------
-std::string syd::Image::ComputeRelativeFolder() const
+/*std::string syd::Image::ComputeRelativeFolder() const
 {
   if (patient == NULL) {
     LOG(FATAL) << "Cannot get Image::ComputeRelativeFolder while no patient"
@@ -144,11 +144,12 @@ std::string syd::Image::ComputeRelativeFolder() const
   syd::Replace(s, " ", "_"); // replace space with underscore
   return s;
 }
+*/
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-std::string syd::Image::ComputeDefaultMhdFilename() const
+ /*std::string syd::Image::ComputeDefaultMhdFilename() const
 {
   if (!IsPersistent()) {
     EXCEPTION("Image must be persistent (in the db) to use ComputeDefaultMhdFilename.");
@@ -158,7 +159,7 @@ std::string syd::Image::ComputeDefaultMhdFilename() const
   oss << modality;
   oss << "_" << id << ".mhd";
   return oss.str();
-}
+  }*/
 // --------------------------------------------------
 
 
@@ -177,12 +178,13 @@ void syd::Image::Callback(odb::callback_event event,
     for(auto f:files) db.persist(f);
   }
   if (event == odb::callback_event::post_persist) {
-    if (type == "mhd") { // auto rename file if mhd
+    /*if (type == "mhd") { // auto rename file if mhd
       auto image = const_cast<syd::Image*>(this); // remove the const
       image->RenameToDefaultMHDFilename(false);
     }
     // update the files
     for(auto f:files) db.update(f);
+    */
   }
   if (event == odb::callback_event::pre_update) {
     // update the files
@@ -404,14 +406,17 @@ std::string syd::Image::GetAbsolutePath() const
 
 
 // --------------------------------------------------------------------
-void syd::Image::RenameToDefaultMHDFilename(bool updateDBFlag)
+
+/*void syd::Image::RenameToDefaultMHDFilename(bool updateDBFlag)
 {
+  DD("RenameToDefaultMHDFilename");
   if (patient == NULL) {
     EXCEPTION("No patient in this image, cannot RenameToDefaultMHDFilename().");
   }
   if (type != "mhd") {
     EXCEPTION("Image type is not 'mhd', cannot RenameToDefaultMHDFilename().");
   }
+  if (files.size() != 2) return;
 
   // Compute the default filename
   std::ostringstream oss;
@@ -439,5 +444,5 @@ void syd::Image::RenameToDefaultMHDFilename(bool updateDBFlag)
   syd::Replace(f, ".mhd", ".raw");
   // do not move on disk, update the db
   raw_file->RenameFile(mhd_relative_path, f, false, updateDBFlag);
-}
+  }*/
 // --------------------------------------------------------------------

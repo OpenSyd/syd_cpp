@@ -89,7 +89,7 @@ void syd::FileBuilder::RenameMHDFile(syd::File::pointer mhd_file,
   std::string new_path = db_->GetAbsolutePath(mhd_file);
 
   // Move file on disk
-  syd::RenameMHDImage(old_path, new_path);
+  syd::RenameMHDImage(old_path, new_path, false);
 
   // Rename raw file
   std::string f = filename;

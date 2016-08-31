@@ -38,22 +38,21 @@ set(SYD_STANDARD_DATABASE_SRC
   sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
 
   sydPixelUnitHelper.cxx
-
   sydDicomSerieBuilder.cxx
-  sydImageBuilder.cxx
+#  sydImageBuilder.cxx
   sydImageHelper.cxx
   sydFileBuilder.cxx
-  sydImageFromDicomBuilder.cxx
-  sydStitchDicomImageBuilder.cxx
-  sydRoiMaskImageBuilder.cxx
-  sydCropImageBuilder.cxx
-  sydDecayCorrectedImageBuilder.cxx
-  sydSubstituteRadionuclideImageBuilder.cxx
-  sydTimeIntegratedActivityImageBuilder.cxx
-  sydRoiStatisticBuilder.cxx
-  sydScaleImageBuilder.cxx
-  sydUpdateRadionuclideFilter.cxx
-  sydTimepointsBuilder.cxx
+#  sydImageFromDicomBuilder.cxx
+#  sydStitchDicomImageBuilder.cxx
+#  sydRoiMaskImageBuilder.cxx
+#  sydCropImageBuilder.cxx
+#  sydDecayCorrectedImageBuilder.cxx
+#  sydSubstituteRadionuclideImageBuilder.cxx
+#  sydTimeIntegratedActivityImageBuilder.cxx
+#  sydRoiStatisticBuilder.cxx
+#  sydScaleImageBuilder.cxx
+#  sydUpdateRadionuclideFilter.cxx
+#  sydTimepointsBuilder.cxx
   )
 
 # Group all objects

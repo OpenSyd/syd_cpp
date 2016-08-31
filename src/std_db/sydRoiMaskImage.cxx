@@ -43,10 +43,11 @@ std::string syd::RoiMaskImage::ToString() const
 
 
 // --------------------------------------------------------------------
-std::string syd::RoiMaskImage::ComputeRelativeFolder() const
+/*std::string syd::RoiMaskImage::ComputeRelativeFolder() const
 {
   return syd::Image::ComputeRelativeFolder()+PATH_SEPARATOR+"roi";
 }
+*/
 // --------------------------------------------------
 
 
@@ -67,7 +68,7 @@ void syd::RoiMaskImage::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------
-std::string syd::RoiMaskImage::ComputeDefaultAbsolutePath(syd::Database * db) const
+/*std::string syd::RoiMaskImage::ComputeDefaultAbsolutePath(syd::Database * db) const
 {
   // fast initial check (useful but not sufficient)
   if (id == -1) {
@@ -79,7 +80,7 @@ std::string syd::RoiMaskImage::ComputeDefaultAbsolutePath(syd::Database * db) co
   std::string mhd_relative_path = ComputeRelativeFolder()+PATH_SEPARATOR;
   std::string mhd_path = db->ConvertToAbsolutePath(mhd_relative_path+mhd_filename);
   return mhd_path;
-}
+  }*/
 // --------------------------------------------------
 
 

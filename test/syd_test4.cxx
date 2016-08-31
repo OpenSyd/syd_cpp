@@ -22,8 +22,9 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydStandardDatabase.h"
-#include "sydImageFromDicomBuilder.h"
+//#include "sydImageFromDicomBuilder.h"
 #include "sydTestHelper.h"
+#include "sydImageHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -46,6 +47,21 @@ int main(int argc, char* argv[])
   db3->Copy(dbname);
   std::cout << "Open " << dbname << " as StandardDatabase" << std::endl;
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(dbname);
+
+  // Get a patient (with id = 1)
+  syd::Patient::pointer patient;
+  db->QueryOne<syd::Patient>(patient, 1); // or db->QueryOne(patient, "Patient", 1);
+  DD(patient);
+
+  // Create an image
+  std::string img_filename = "input/ct_slice.mhd";
+  DD(img_filename);
+  auto img = syd::InsertMhdImage(patient, img_filename, true);
+  DD(img);
+
+
+  DD(" STEP 2 OLD");
+  /*
 
   // Get a dicom serie
   syd::DicomSerie::pointer dicom_serie;
@@ -79,6 +95,8 @@ int main(int argc, char* argv[])
   syd::ImageHelper::CheckSameImageAndFiles(ref_image, image);
   ref_db->QueryOne(ref_image, image2->id);
   syd::ImageHelper::CheckSameImageAndFiles(ref_image, image2);
+
+  */
 
   std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;

@@ -36,18 +36,18 @@ namespace syd {
     /// Foreign Key. Associated RoiType id
     syd::RoiType::pointer roitype;
 
-    // ------------------------------------------------------------------------
+    // ----------------------------------------------------------------
     TABLE_DEFINE_I(RoiMaskImage, syd::RoiMaskImage, syd::Image);
-    // ------------------------------------------------------------------------
+    // ----------------------------------------------------------------
 
     /// Write the element as a string
     virtual std::string ToString() const;
 
     /// Standard folder
-    virtual std::string ComputeRelativeFolder() const;
+    //    virtual std::string ComputeRelativeFolder() const;
 
     /// When create a new image, compute a default name. Image *must* be persistant (with correct id)
-    std::string ComputeDefaultAbsolutePath(syd::Database * db) const;
+    //std::string ComputeDefaultAbsolutePath(syd::Database * db) const;
 
     /// Callback : delete the associated image when the roimaskimage is deleted.
     void Callback(odb::callback_event, odb::database&) const;

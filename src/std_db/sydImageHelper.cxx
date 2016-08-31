@@ -21,7 +21,133 @@
 #include "sydFileHelper.h"
 
 // --------------------------------------------------------------------
-void syd::ImageHelper::
+syd::Image::pointer
+syd::InsertMhdImage(syd::Patient::pointer patient,
+                    std::string filename,
+                    bool overwrite_if_exists)
+{
+  auto db = patient->GetDatabase<syd::StandardDatabase>();
+
+  // New image
+  syd::Image::pointer image;
+  db->New(image);
+  DD(image);
+
+  // default information
+  image->patient = patient;
+  image->type = "mhd";
+  DD(image);
+
+  // insert (without mhd yet) to get an id
+  db->Insert(image);
+  DD("here");
+  DD(image);
+
+  // copy mhd to db according to default filename and create the two
+  // associated syd::File
+  DD(GetDefaultImageRelativePath(image));
+  DD(GetDefaultMhdImageFilename(image));
+  image->files = syd::InsertMhdFiles(db, filename,
+                                     GetDefaultImageRelativePath(image),
+                                     GetDefaultMhdImageFilename(image),
+                                     overwrite_if_exists);
+  DDS(image->files);
+
+  // Update size and spacing
+  DD("todo udpate size and spacing");
+
+  db->Update(image);
+  DD(image);
+  return image;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetDefaultImageRelativePath(syd::Image::pointer image)
+{
+  if (image->patient == NULL) {
+    EXCEPTION("Cannot compute the default image relative path"
+              << ", no patient ar yet associated with the image: "
+              << image);
+  }
+  auto s = image->patient->name;
+  syd::Replace(s, " ", "_"); // replace space with underscore
+  if (!fs::portable_name(s)) {
+    EXCEPTION("The folder name '" << s << "' does not seems a "
+              << " valid and portable dir name. (you man change "
+              << "the patient name. Abort.");
+  }
+  return s;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetDefaultMhdImageFilename(syd::Image::pointer image)
+{
+  if (!image->IsPersistent()) {
+    EXCEPTION("Image must be persistent (in the db) to "
+              << "use GetDefaultMhdImageFilename.");
+  }
+  std::ostringstream oss;
+  oss << image->modality << "_" << image->id << ".mhd";
+  return oss.str();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::File::vector syd::InsertMhdFiles(syd::Database * db,
+                                      std::string from_filename,
+                                      std::string to_relative_path,
+                                      std::string to_filename,
+                                      bool overwrite_if_exists)
+{
+  DD(from_filename);
+  DD(to_relative_path);
+
+  // Get the 'raw' filename
+  std::string raw_filename = to_filename;
+  syd::Replace(raw_filename, ".mhd", ".raw");
+
+  // Create files
+  syd::File::pointer mhd_file, raw_file;
+  db->New(mhd_file);
+  db->New(raw_file);
+  mhd_file->path = to_relative_path;
+  raw_file->path = to_relative_path;
+  mhd_file->filename = to_filename;
+  raw_file->filename = raw_filename;
+  DD(mhd_file);
+  DD(raw_file);
+
+  // Copy to the db
+  DD(mhd_file->GetAbsolutePath());
+  syd::CopyMHDImage(from_filename,
+                    mhd_file->GetAbsolutePath(),
+                    overwrite_if_exists);
+
+  // Insert into the db
+  syd::File::vector files;
+  files.push_back(mhd_file);
+  files.push_back(raw_file);
+  db->Insert(files);
+
+  DD("done");
+  return files;
+}
+// --------------------------------------------------------------------
+
+
+
+
+// OLD BELOW
+
+
+
+// --------------------------------------------------------------------
+/*void syd::ImageHelper::
 InsertMhdFiles(syd::Image::pointer image, std::string filename, bool moveFlag)
 {
   if (!image->IsPersistent()) {
@@ -53,7 +179,7 @@ InsertMhdFiles(syd::Image::pointer image, std::string filename, bool moveFlag)
   syd::ImageHelper::UpdateMhdImageProperties(image);
   db->Update(image);
   db->Delete(previous_files);
-}
+  }*/
 // --------------------------------------------------------------------
 
 

@@ -97,10 +97,10 @@ namespace syd {
     virtual std::string ToString() const;
 
     /// Standard folder
-    virtual std::string ComputeRelativeFolder() const;
+    //    virtual std::string ComputeRelativeFolder() const;
 
     /// Compute the default filename for this image as a mhd
-    virtual std::string ComputeDefaultMhdFilename() const;
+    // virtual std::string ComputeDefaultMhdFilename() const;
 
     /// Return the file path
     std::string GetAbsolutePath() const;
@@ -158,7 +158,7 @@ namespace syd {
 
     /// Change the filename to <patient_name>/<modality>_id.mhd
     /// Only update the db if the flag is true.
-    void RenameToDefaultMHDFilename(bool updateDBFlag);
+    // void RenameToDefaultMHDFilename(bool updateDBFlag);
 
   protected:
     Image();
