@@ -45,9 +45,7 @@ void syd::WriteDicomToMhd(syd::DicomSerie::pointer dicom,
   std::map<std::string, FctType> fct_map = {
     { "float",  syd::WriteDicomToMhd<float> },
     { "short",  syd::WriteDicomToMhd<short> },
-    { "unsigned_short",  syd::WriteDicomToMhd<unsigned short> },
-    { "double", syd::WriteDicomToMhd<double> },
-    { "char",   syd::WriteDicomToMhd<char> }};
+    { "double", syd::WriteDicomToMhd<double> }};
 
   // Looks for the correct pixe_type and the corresponding function
   auto it = fct_map.find(pixel_type);

@@ -21,7 +21,6 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
-#include "sydScaleImageBuilder.h"
 #include "sydImageHelper.h"
 
 // --------------------------------------------------------------------
@@ -61,7 +60,6 @@ int main(int argc, char* argv[])
 
   // Check & updates the images
   int i=0;
-  syd::ScaleImageBuilder builder(db);
   for(auto index=0; index<images.size(); index++) {
     auto image = images[index];
     // check file exist
@@ -76,8 +74,26 @@ int main(int argc, char* argv[])
 
     // Need to import a new mhd ?
     if (args_info.file_given) {
+      if (image->type != "mhd") {
+        LOG(WARNING) << "Image: " << image
+                     << " not of type mhd. Skip." << std::endl;
+        continue;
+      }
+      if (image->files.size() != 2) {
+        LOG(WARNING) << "Image: " << image
+                     << " does not have 2 associated files. Skip."
+                     << std::endl;
+        continue;
+      }
       std::string mhd = args_info.file_arg[i];
-      syd::ImageHelper::InsertMhdFiles(image, mhd);
+      // delete current files
+      std::string to_relative_path = image->files[0]->path;
+      std::string to_filename = image->files[0]->filename;
+      db->Delete(image->files);
+      // Insert new files
+      image->files = syd::InsertMhdFiles(db, mhd, to_relative_path, to_filename);
+      // update image info
+      syd::SetImageInfoFromFile(image);
     }
 
     // Need to scale ?
@@ -85,12 +101,12 @@ int main(int argc, char* argv[])
     if (args_info.scale_given) {
       s = args_info.scale_arg;
       if (args_info.squared_scale_flag) s = s*s;
-      builder.Scale(image, s);
+      if (s != 1.0) syd::ScaleImage(image, s);
     }
 
     // update db
-    syd::ImageHelper::UpdateImagePropertiesFromCommandLine(image, args_info);
-    db->UpdateTagsFromCommandLine(image->tags, args_info);
+    syd::SetImagePropertiesFromCommandLine(image, args_info);
+    db->UpdateTagsFromCommandLine(image->tags, args_info); // FIXME TODO
     db->Update(image);
     if (s != 1) LOG(1) << "Image was scaled by " << s << ": " << image;
     else LOG(1) << "Image was updated: " << image;

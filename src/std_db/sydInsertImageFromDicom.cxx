@@ -61,7 +61,7 @@ int main(int argc, char* argv[])
     */
     auto image = syd::InsertImageFromDicom(d, args_info.pixel_type_arg);
     syd::TagHelper::UpdateTagsFromCommandLine(image->tags, db, args_info);
-    syd::ImageHelper::UpdateImagePropertiesFromCommandLine(image, args_info);
+    syd::SetImagePropertiesFromCommandLine(image, args_info);
     db->Update(image);
     LOG(1) << "Inserting Image " << image;
   }

@@ -53,8 +53,22 @@ namespace syd {
   /// Compute the default image mhd filename (based on id + modality)
   std::string GetDefaultMhdImageFilename(syd::Image::pointer image);
 
+  /// Fill som image properties from option given in args_info
+  template<class ArgsInfo>
+  void SetImagePropertiesFromCommandLine(syd::Image::pointer image,
+                                         ArgsInfo & args_info);
 
+  /// Retrieve the syd::PixelUnit and set to the image
+  void SetPixelUnit(syd::Image::pointer image, std::string pixel_unit);
 
+  /// Retrieve the syd::Injection and set to the image
+  void SetInjection(syd::Image::pointer image, std::string injection);
+
+  /// Retrieve the syd::DicomSerie from its id and add it to the image
+  void AddDicomSerie(syd::Image::pointer image, syd::IdType dicom_id);
+
+  // Scale image's pixels. Will force the pixel type to be float
+  void ScaleImage(syd::Image::pointer image, double s);
 
   ///// OLD BELOW
 
@@ -82,26 +96,11 @@ namespace syd {
     static void CopyInformation(syd::Image::pointer image,
                                 const syd::Image::pointer like);
 
-    /// Retrieve the syd::PixelUnit and set to the image
-    static void SetPixelUnit(syd::Image::pointer image, std::
-                             string pixel_unit);
-
-    /// Retrieve the syd::Injection and set to the image
-    static void SetInjection(syd::Image::pointer image,
-                             std::string injection);
-
-    /// Retrieve the syd::DicomSerie and add it to the image
-    static void AddDicomSerie(syd::Image::pointer image,
-                              syd::IdType id);
 
     static void UpdateMhdImageProperties(syd::Image::pointer image);
 
     static void UpdateMhdImageProperties(syd::Image::pointer image,
                                          itk::ImageIOBase::Pointer header);
-
-    template<class ArgsInfo>
-    static void UpdateImagePropertiesFromCommandLine(syd::Image::pointer image,
-                                                     ArgsInfo & args_info);
 
     static bool IsSameImage(syd::Image::pointer a,
                             syd::Image::pointer b,

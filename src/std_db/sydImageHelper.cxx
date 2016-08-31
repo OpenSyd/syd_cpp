@@ -201,8 +201,50 @@ syd::Image::pointer syd::InsertImageFromDicom(syd::DicomSerie::pointer dicom,
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+void syd::SetPixelUnit(syd::Image::pointer image, std::string pixel_unit)
+{
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto u = db->FindPixelUnit(pixel_unit);
+  image->pixel_unit = u;
+}
+// --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+void syd::SetInjection(syd::Image::pointer image, std::string injection)
+{
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto i = db->FindInjection(image->patient, injection);
+  image->injection = i;
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+void syd::AddDicomSerie(syd::Image::pointer image, syd::IdType id)
+{
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  syd::DicomSerie::pointer d;
+  db->QueryOne(d, id);
+  image->AddDicomSerie(d);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ScaleImage(syd::Image::pointer image, double s)
+{
+  // force float image
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+  syd::ScaleImage<ImageType>(itk_image, s);
+  syd::WriteImage<ImageType>(itk_image, image->GetAbsolutePath());
+  image->pixel_type = "float";
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  db->Update(image); // to change the history
+}
+// --------------------------------------------------------------------
 
 
 
@@ -268,38 +310,6 @@ CopyInformation(syd::Image::pointer image, const syd::Image::pointer like)
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-void syd::ImageHelper::
-SetPixelUnit(syd::Image::pointer image, std::string pixel_unit)
-{
-  auto db = image->GetDatabase<syd::StandardDatabase>();
-  auto u = db->FindPixelUnit(pixel_unit);
-  image->pixel_unit = u;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::ImageHelper::
-SetInjection(syd::Image::pointer image, std::string injection)
-{
-  auto db = image->GetDatabase<syd::StandardDatabase>();
-  auto i = db->FindInjection(image->patient, injection);
-  image->injection = i;
-}
-// --------------------------------------------------------------------
-
-// --------------------------------------------------------------------
-void syd::ImageHelper::
-AddDicomSerie(syd::Image::pointer image, syd::IdType id)
-{
-  auto db = image->GetDatabase<syd::StandardDatabase>();
-  syd::DicomSerie::pointer d;
-  db->QueryOne(d, id);
-  image->AddDicomSerie(d);
-}
-// --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
 void syd::ImageHelper::

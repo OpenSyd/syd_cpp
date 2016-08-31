@@ -70,6 +70,21 @@ int main(int argc, char* argv[])
   auto image3 = syd::InsertImageFromDicom(dicom_serie2, "short");
   DD(image3);
 
+  // Update
+  syd::SetPixelUnit(image1, "counts");
+  syd::Injection::pointer injection;
+  db->New(injection);
+  std::vector<std::string> args = {"toto", "Lu-177", "2013-02-03 10:33", "188.3"};
+  injection->Set(args);
+  db->Insert(injection);
+  syd::SetInjection(image1, "Lu-177");
+  syd::AddDicomSerie(image1, dicom_serie2->id);
+  db->Update(image1);
+  DD(image1);
+
+  // Scale image
+  syd::ScaleImage(image1, 3);
+
   // If needed create reference db
   if (args_info.create_ref_flag) {
     LOG(0) << "Create reference db";
