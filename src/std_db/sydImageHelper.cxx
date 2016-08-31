@@ -19,6 +19,7 @@
 // syd
 #include "sydImageHelper.h"
 #include "sydFileHelper.h"
+#include "sydPixelUnitHelper.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -46,7 +47,6 @@ syd::InsertMhdImage(std::string filename,
                                      GetDefaultImageRelativePath(image),
                                      GetDefaultMhdImageFilename(image));
   // Update size and spacing
-  DD("todo udpate size and spacing");
   syd::SetImageInfoFromFile(image);
 
   // Check for negative spacing and orientation
@@ -55,7 +55,6 @@ syd::InsertMhdImage(std::string filename,
   DD("Set Image md5 ???");
 
   db->Update(image);
-  DD(image);
   return image;
 }
 // --------------------------------------------------------------------
@@ -113,11 +112,8 @@ syd::File::vector syd::InsertMhdFiles(syd::Database * db,
   raw_file->path = to_relative_path;
   mhd_file->filename = to_filename;
   raw_file->filename = raw_filename;
-  DD(mhd_file);
-  DD(raw_file);
 
   // Copy to the db
-  DD(mhd_file->GetAbsolutePath());
   syd::CopyMHDImage(from_filename,
                     mhd_file->GetAbsolutePath(),
                     db->GetOverwriteFileFlag());
@@ -128,7 +124,6 @@ syd::File::vector syd::InsertMhdFiles(syd::Database * db,
   files.push_back(raw_file);
   db->Insert(files);
 
-  DD("done");
   return files;
 }
 // --------------------------------------------------------------------
@@ -137,10 +132,8 @@ syd::File::vector syd::InsertMhdFiles(syd::Database * db,
 // --------------------------------------------------------------------
 void syd::SetImageInfoFromFile(syd::Image::pointer image)
 {
-  DD("UpdateImageInfoFromFile");
   auto header = syd::ReadImageHeader(image->GetAbsolutePath());
   auto pixel_type = itk::ImageIOBase::GetComponentTypeAsString(header->GetComponentType());
-  DD(pixel_type);
   image->pixel_type = pixel_type;
   image->dimension = header->GetNumberOfDimensions();
   image->spacing.clear();
@@ -149,7 +142,6 @@ void syd::SetImageInfoFromFile(syd::Image::pointer image)
     image->spacing.push_back(header->GetSpacing(i));
     image->size.push_back(header->GetDimensions(i));
   }
-  DD(image);
 }
 // --------------------------------------------------------------------
 
@@ -157,10 +149,8 @@ void syd::SetImageInfoFromFile(syd::Image::pointer image)
 
 // --------------------------------------------------------------------
 syd::Image::pointer syd::InsertImageFromDicom(syd::DicomSerie::pointer dicom,
-                                              std::string user_pixel_type)
+                                              std::string pixel_type)
 {
-  DD(dicom);
-
   // Get dicom associated files or folder
   auto dicom_files = dicom->dicom_files;
   if (dicom_files.size() == 0) {
@@ -170,27 +160,14 @@ syd::Image::pointer syd::InsertImageFromDicom(syd::DicomSerie::pointer dicom,
   for(auto f:dicom_files)
     dicom_filenames.push_back(f->GetAbsolutePath());
 
-  // Consider pixel type (from user or from the file)
-  std::string pixel_type = user_pixel_type;
-  if (pixel_type == "auto") {
-    // read dicom header with itk header (first file only)
-    auto header = syd::ReadImageHeader(dicom_files[0]->GetAbsolutePath());
-    pixel_type =
-      itk::ImageIOBase::GetComponentTypeAsString(header->GetComponentType());
-  }
-  DD(pixel_type);
-
   // Create a temporary filename
   auto db = dicom->GetDatabase<syd::StandardDatabase>();
   std::string t = db->GetDatabaseAbsoluteFolder()+PATH_SEPARATOR+"syd_temp_%%%%_%%%%_%%%%_%%%%.mhd";
   fs::path p = fs::unique_path(t);
   std::string temp_filename = p.string();
-  DD(temp_filename);
 
-  //
-  if (pixel_type == "float") syd::WriteDicomToMhd<float>(dicom, temp_filename);
-  if (pixel_type == "short") syd::WriteDicomToMhd<short>(dicom, temp_filename);
-  DD("TO change WriteDicomToMhd without template");
+  // Convert the dicom to a mhd
+  syd::WriteDicomToMhd(dicom, pixel_type, temp_filename);
 
   // Attach the mhd to the Image
   auto image = syd::InsertMhdImage(temp_filename,
@@ -203,9 +180,19 @@ syd::Image::pointer syd::InsertImageFromDicom(syd::DicomSerie::pointer dicom,
   image->acquisition_date = dicom->dicom_acquisition_date;
   image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
   image->dicoms.push_back(dicom);
-  // pixel unit
-  DD("pixe unit todo");
-  DD(image);
+  // try to guess pixel_unit ?
+  syd::PixelValueUnit::pointer unit = NULL;
+  if (dicom->dicom_modality == "CT") {
+    try {
+      unit = syd::PixelUnitHelper::FindPixelUnit(db, "HU");
+    } catch(...) {} // ignore if not found
+  }
+  else {
+    try {
+      unit = syd::PixelUnitHelper::FindPixelUnit(db, "counts");
+    } catch(...) {} // ignore if not found
+  }
+  image->pixel_unit = unit;
 
   // Last update
   db->Update(image);

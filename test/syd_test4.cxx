@@ -70,23 +70,6 @@ int main(int argc, char* argv[])
   auto image3 = syd::InsertImageFromDicom(dicom_serie2, "short");
   DD(image3);
 
-  /*
-  // Insert image from dicom spect
-  syd::ImageFromDicomBuilder builder;
-  builder.SetImagePixelType("float");
-  builder.SetInputDicomSerie(dicom_serie);
-  builder.Update();
-  syd::Image::pointer image = builder.GetOutput();
-  DD(image);
-
-  db->QueryOne(dicom_serie, 7);
-  builder.SetImagePixelType("short");
-  builder.SetInputDicomSerie(dicom_serie);
-  builder.Update();
-  syd::Image::pointer image2 = builder.GetOutput();
-  DD(image2);
-  */
-
   // If needed create reference db
   if (args_info.create_ref_flag) {
     LOG(0) << "Create reference db";

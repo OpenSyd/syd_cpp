@@ -71,11 +71,13 @@ std::string syd::Image::ToString() const
   ss << id << " "
      << GetPatientName() << " "
      << GetInjectionName() << " ";
-  if (files.size() != 0) ss << files[0]->filename << " "; // only first is usually useful
+  // (only first file is usually useful to display)
+  if (files.size() != 0) ss << files[0]->filename << " ";
   else ss << empty_value << " ";
   ss << GetLabels(tags) << " "
      << type << " "
      << pixel_type << " "
+     << dimension << " "
      << SizeAsString() << " "
      << SpacingAsString() << " "
      << modality << " ";
