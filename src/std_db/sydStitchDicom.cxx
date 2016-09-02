@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
     auto image = syd::InsertStitchDicomImage(p.first, p.second,
                                              args_info.t_cumul_arg,
                                              args_info.skip_slices_arg);
-    syd::SetImagePropertiesFromCommandLine(image, args_info);
+    syd::SetImageInfoFromCommandLine(image, args_info);
     db->UpdateTagsFromCommandLine(image->tags, args_info); // FIXME TODO
     db->Update(image);
     LOG(1) << "Inserting Image " << image;

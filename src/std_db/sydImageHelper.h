@@ -55,17 +55,16 @@ namespace syd {
   void SetImageInfoFromDicomSerie(syd::Image::pointer image,
                                   const syd::DicomSerie::pointer dicom);
 
-  /// Compute the default image path (based on the patient's name)
+  /// Fill som image properties from option given in args_info
+  template<class ArgsInfo>
+  void SetImageInfoFromCommandLine(syd::Image::pointer image,
+                                   ArgsInfo & args_info);
+
   /// Compute the default image path (based on the patient's name)
   std::string GetDefaultImageRelativePath(syd::Image::pointer image);
 
   /// Compute the default image mhd filename (based on id + modality)
   std::string GetDefaultMhdImageFilename(syd::Image::pointer image);
-
-  /// Fill som image properties from option given in args_info
-  template<class ArgsInfo>
-  void SetImagePropertiesFromCommandLine(syd::Image::pointer image,
-                                         ArgsInfo & args_info);
 
   /// Retrieve the syd::PixelUnit and set to the image
   void SetPixelUnit(syd::Image::pointer image, std::string pixel_unit);

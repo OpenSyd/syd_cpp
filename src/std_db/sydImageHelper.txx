@@ -18,7 +18,7 @@
 
 // --------------------------------------------------------------------
 template<class ArgsInfo>
-void syd::SetImagePropertiesFromCommandLine(syd::Image::pointer image,
+void syd::SetImageInfoFromCommandLine(syd::Image::pointer image,
                                             ArgsInfo & args_info)
 {
   if (args_info.pixel_unit_given)

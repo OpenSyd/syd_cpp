@@ -101,34 +101,38 @@ target_link_libraries(sydTest StandardDatabase)
 wrap_ggo(sydInsertImageFromDicom_GGO_C
   sydInsertImageFromDicom.ggo
   sydCommandLineWithTags.ggo
-  sydCommandLineWithImageProperties.ggo
+  sydCommandLineWithImageInfo.ggo
   sydCommandLineDefault.ggo )
-add_executable(sydInsertImageFromDicom sydInsertImageFromDicom.cxx ${sydInsertImageFromDicom_GGO_C})
+add_executable(sydInsertImageFromDicom
+  sydInsertImageFromDicom.cxx ${sydInsertImageFromDicom_GGO_C})
 target_link_libraries(sydInsertImageFromDicom StandardDatabase)
 
 # Create images
 wrap_ggo(sydInsertImage_GGO_C
-  sydInsertImage.ggo sydCommandLineWithTags.ggo sydCommandLineWithImageProperties.ggo sydCommandLineDefault.ggo)
+  sydInsertImage.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo)
 add_executable(sydInsertImage sydInsertImage.cxx ${sydInsertImage_GGO_C})
 target_link_libraries(sydInsertImage StandardDatabase)
 
-# Copy an image
-wrap_ggo(sydCopyImage_GGO_C
-  sydCopyImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-add_executable(sydCopyImage sydCopyImage.cxx ${sydCopyImage_GGO_C})
-target_link_libraries(sydCopyImage StandardDatabase)
-
 # Update image
 wrap_ggo(sydUpdateImage_GGO_C
-  sydUpdateImage.ggo sydCommandLineWithTags.ggo sydCommandLineWithImageProperties.ggo sydCommandLineDefault.ggo)
+  sydUpdateImage.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo)
 add_executable(sydUpdateImage sydUpdateImage.cxx ${sydUpdateImage_GGO_C})
 target_link_libraries(sydUpdateImage StandardDatabase)
 
-# Multiply image
-wrap_ggo(sydInsertMultiplyImage_GGO_C
-  sydInsertMultiplyImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-add_executable(sydInsertMultiplyImage sydInsertMultiplyImage.cxx ${sydInsertMultiplyImage_GGO_C})
-target_link_libraries(sydInsertMultiplyImage StandardDatabase)
+# Create images by stitching 2 dicom
+wrap_ggo(sydStitchDicom_GGO_C
+  sydStitchDicom.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydStitchDicom sydStitchDicom.cxx ${sydStitchDicom_GGO_C})
+target_link_libraries(sydStitchDicom StandardDatabase)
 
 # Insert a new image with a calibration
 wrap_ggo(sydInsertCalibratedImage_GGO_C
@@ -141,13 +145,6 @@ wrap_ggo(sydUpdateDoseImage_GGO_C
   sydUpdateDoseImage.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 add_executable(sydUpdateDoseImage sydUpdateDoseImage.cxx ${sydUpdateDoseImage_GGO_C})
 target_link_libraries(sydUpdateDoseImage StandardDatabase)
-
-# Create images by stitching 2 dicom
-wrap_ggo(sydStitchDicom_GGO_C
-  sydStitchDicom.ggo sydCommandLineWithTags.ggo
-  sydCommandLineWithImageProperties.ggo sydCommandLineDefault.ggo)
-add_executable(sydStitchDicom sydStitchDicom.cxx ${sydStitchDicom_GGO_C})
-target_link_libraries(sydStitchDicom StandardDatabase)
 
 # Reduce the size of an image by cropping it (with a mask or with a threshold)
 wrap_ggo(sydCropImage_GGO_C sydCropImage.ggo
@@ -187,6 +184,10 @@ wrap_ggo(sydInsertTimeIntegratedActivityImage_GGO_C
 add_executable(sydInsertTimeIntegratedActivityImage
   sydInsertTimeIntegratedActivityImage.cxx ${sydInsertTimeIntegratedActivityImage_GGO_C})
 target_link_libraries(sydInsertTimeIntegratedActivityImage StandardDatabase)
+
+
+
+
 
 # compute integrated activity in a ROI
 wrap_ggo(sydInsertFitResult_GGO_C
