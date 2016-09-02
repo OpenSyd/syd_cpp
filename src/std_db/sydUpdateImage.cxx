@@ -100,8 +100,13 @@ int main(int argc, char* argv[])
     double s = 1.0;
     if (args_info.scale_given) {
       s = args_info.scale_arg;
-      if (args_info.squared_scale_flag) s = s*s;
       if (s != 1.0) syd::ScaleImage(image, s);
+    }
+
+    // Need to convert to another pixel_type ?
+    if (args_info.pixel_type_given) {
+      LOG(FATAL) << "Sorry, not yet implemented.";
+      //syd::CastImage(image, args_info.pixel_type_arg);
     }
 
     // update db

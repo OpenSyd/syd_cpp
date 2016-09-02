@@ -80,10 +80,13 @@ namespace syd {
     std::string GetDatabaseRelativeFolder() const { return relative_folder_; }
 
     /// Return the folder that contains the associated images (absolute)
-   std::string GetDatabaseAbsoluteFolder() const { return absolute_folder_; }
+    std::string GetDatabaseAbsoluteFolder() const { return absolute_folder_; }
 
     /// Return absolute path from a relative one
     std::string ConvertToAbsolutePath(std::string relative_path) const;
+
+    /// Return a unique absolute path of a temporary filename inside the db
+    std::string GetUniqueTempFilename() const;
     // ------------------------------------------------------------------------
 
     /// Consider a relative path check if exist, create if not.
@@ -297,7 +300,7 @@ namespace syd {
     bool GetOverwriteFileFlag() const { return overwrite_file_if_exists_flag_; }
 
     // ----------------------------------------------------------------------------------
-    protected:
+  protected:
     // Create an empty database
     Database();
 

@@ -186,6 +186,17 @@ std::string syd::Database::ConvertToAbsolutePath(std::string relative_path) cons
 
 
 // --------------------------------------------------------------------
+std::string syd::Database::GetUniqueTempFilename() const
+{
+  std::string t = GetDatabaseAbsoluteFolder()+PATH_SEPARATOR
+    +"syd_temp_%%%%_%%%%_%%%%_%%%%.mhd";
+  fs::path p = fs::unique_path(t);
+  return p.string();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Database::CheckOrCreateRelativePath(std::string relative_path)
 {
   // Check directory or create it

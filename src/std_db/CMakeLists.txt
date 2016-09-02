@@ -39,21 +39,23 @@ set(SYD_STANDARD_DATABASE_SRC
 
   sydPixelUnitHelper.cxx
   sydDicomSerieBuilder.cxx
-#  sydImageBuilder.cxx
-sydDicomSerieHelper.cxx
-sydImageHelper.cxx
+  sydDicomSerieHelper.cxx
+  sydImageHelper.cxx
   sydFileBuilder.cxx
-#  sydImageFromDicomBuilder.cxx
-#  sydStitchDicomImageBuilder.cxx
-#  sydRoiMaskImageBuilder.cxx
-#  sydCropImageBuilder.cxx
-#  sydDecayCorrectedImageBuilder.cxx
-#  sydSubstituteRadionuclideImageBuilder.cxx
-#  sydTimeIntegratedActivityImageBuilder.cxx
-#  sydRoiStatisticBuilder.cxx
-#  sydScaleImageBuilder.cxx
-#  sydUpdateRadionuclideFilter.cxx
-#  sydTimepointsBuilder.cxx
+
+  #  sydImageBuilder.cxx
+  #  sydImageFromDicomBuilder.cxx
+  #  sydStitchDicomImageBuilder.cxx
+
+  #  sydRoiMaskImageBuilder.cxx
+  #  sydCropImageBuilder.cxx
+  #  sydDecayCorrectedImageBuilder.cxx
+  #  sydSubstituteRadionuclideImageBuilder.cxx
+  #  sydTimeIntegratedActivityImageBuilder.cxx
+  #  sydRoiStatisticBuilder.cxx
+  #  sydScaleImageBuilder.cxx
+  #  sydUpdateRadionuclideFilter.cxx
+  #  sydTimepointsBuilder.cxx
   )
 
 # Group all objects
@@ -142,7 +144,8 @@ target_link_libraries(sydUpdateDoseImage StandardDatabase)
 
 # Create images by stitching 2 dicom
 wrap_ggo(sydStitchDicom_GGO_C
-  sydStitchDicom.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+  sydStitchDicom.ggo sydCommandLineWithTags.ggo
+  sydCommandLineWithImageProperties.ggo sydCommandLineDefault.ggo)
 add_executable(sydStitchDicom sydStitchDicom.cxx ${sydStitchDicom_GGO_C})
 target_link_libraries(sydStitchDicom StandardDatabase)
 

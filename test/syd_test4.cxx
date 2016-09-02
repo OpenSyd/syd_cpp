@@ -22,7 +22,6 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydStandardDatabase.h"
-//#include "sydImageFromDicomBuilder.h"
 #include "sydTestHelper.h"
 #include "sydImageHelper.h"
 
@@ -61,13 +60,13 @@ int main(int argc, char* argv[])
   // Get a dicom SPECT and insert
   syd::DicomSerie::pointer dicom_serie;
   db->QueryOne(dicom_serie, 14);
-  auto image2 = syd::InsertImageFromDicom(dicom_serie, "float");
+  auto image2 = syd::InsertImageFromDicomSerie(dicom_serie, "float");
   DD(image2);
 
   // Get a dicom CT and insert
   syd::DicomSerie::pointer dicom_serie2;
   db->QueryOne(dicom_serie2, 7);
-  auto image3 = syd::InsertImageFromDicom(dicom_serie2, "short");
+  auto image3 = syd::InsertImageFromDicomSerie(dicom_serie2, "short");
   DD(image3);
 
   // Update
@@ -83,7 +82,16 @@ int main(int argc, char* argv[])
   DD(image1);
 
   // Scale image
-  syd::ScaleImage(image1, 3);
+  DD("Scale image");
+  syd::ScaleImage(image1, 100);
+
+  // Stitch dicom
+  DD("Stitch dicom");
+  syd::DicomSerie::pointer spect1, spect2;
+  db->QueryOne(spect1, 14);
+  db->QueryOne(spect2, 15);
+  auto spect = syd::InsertStitchDicomImage(spect1, spect2, 150000, 4);
+  DD(spect);
 
   // If needed create reference db
   if (args_info.create_ref_flag) {
@@ -96,13 +104,16 @@ int main(int argc, char* argv[])
   syd::Image::pointer ref_image;
 
   ref_db->QueryOne(ref_image, image1->id);
-  syd::ImageHelper::CheckSameImageAndFiles(ref_image, image1);
+  syd::CheckSameImageAndFiles(ref_image, image1);
 
   ref_db->QueryOne(ref_image, image2->id);
-  syd::ImageHelper::CheckSameImageAndFiles(ref_image, image2);
+  syd::CheckSameImageAndFiles(ref_image, image2);
 
   ref_db->QueryOne(ref_image, image3->id);
-  syd::ImageHelper::CheckSameImageAndFiles(ref_image, image3);
+  syd::CheckSameImageAndFiles(ref_image, image3);
+
+  ref_db->QueryOne(ref_image, spect->id);
+  syd::CheckSameImageAndFiles(ref_image, spect);
 
   std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;

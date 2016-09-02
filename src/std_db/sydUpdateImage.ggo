@@ -10,4 +10,4 @@ description "Update information associated with an image, and/or scale.
 
 option "file"          -  "Content of the file will replace the image in the db"  string multiple no
 option "scale"         s  "Multiply the pixel by this value"                      double no
-option "squared_scale" -  "Square the scaling factor (for dose_squared)"          flag   off
+option "pixel_type"    -  "Convert the current image to the given pixel_type"     string no

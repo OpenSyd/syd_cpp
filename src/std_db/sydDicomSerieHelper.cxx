@@ -40,22 +40,14 @@ void syd::WriteDicomToMhd(syd::DicomSerie::pointer dicom,
       itk::ImageIOBase::GetComponentTypeAsString(header->GetComponentType());
   }
 
-  // Create a list of pixe_type <-> function
+  // Create a list of pixel_type <-> function
   typedef std::function<void (syd::DicomSerie::pointer, std::string)> FctType;
-  std::map<std::string, FctType> fct_map = {
-    { "float",  syd::WriteDicomToMhd<float> },
-    { "short",  syd::WriteDicomToMhd<short> },
-    { "double", syd::WriteDicomToMhd<double> }};
+  std::map<std::string, FctType> map = {
+    { "float",  syd::WriteDicomToMhd<itk::Image<float, 3>> },
+    { "short",  syd::WriteDicomToMhd<itk::Image<short, 3>> }
+  };
 
-  // Looks for the correct pixe_type and the corresponding function
-  auto it = fct_map.find(pixel_type);
-  if (it == fct_map.end()) {
-    std::ostringstream ss;
-    for(auto a:fct_map) ss << a.first << " ";
-    EXCEPTION("dont know pixel type = " << pixel_type
-              << ". Known types are: " << ss.str());
-  }
-  // Call the syd::WriteDicomToMhd with the correct pixel_type
-  it->second(dicom, mhd_filename);
+  // Looks for the correct pixe_type and use the the corresponding function
+  GetFctByPixelType<FctType>(map, pixel_type)(dicom, mhd_filename);
 }
 // --------------------------------------------------------------------

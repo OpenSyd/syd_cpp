@@ -44,6 +44,5 @@ void syd::SetImagePropertiesFromCommandLine(syd::Image::pointer image,
     for(auto i=0; i<args_info.dicom_given; i++)
       syd::AddDicomSerie(image, args_info.dicom_arg[i]);
   }
-
 }
 // --------------------------------------------------------------------

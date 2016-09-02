@@ -220,31 +220,6 @@ typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType *
   // Swap if not correct order
   if (pstart3[2] == pstart1[2]) std::swap(rs1, rs2);
 
-  if (0) {
-    //typedef itk::ImageSliceConstIteratorWithIndex<ImageType> ConstIteratorType;
-    //typedef itk::ImageSliceIteratorWithIndex<ImageType> IteratorType;
-
-    typedef itk::ImageRegionConstIterator<ImageType> ConstIteratorType;
-    typedef itk::ImageRegionIterator<ImageType> IteratorType;
-
-    ConstIteratorType iter1(rs1,rs1->GetLargestPossibleRegion());
-    ConstIteratorType iter2(rs2,rs2->GetLargestPossibleRegion());
-    IteratorType itero(output,output->GetLargestPossibleRegion());
-    iter1.GoToBegin();
-    iter2.GoToBegin();
-    itero.GoToBegin();
-
-
-    double t = 500;
-    while (!iter1.IsAtEnd()) {
-      typename ImageType::PixelType v1 = iter1.Get();
-      typename ImageType::PixelType v2 = iter2.Get();
-      itero.Set(std::max(v1,v2));
-      ++iter1; ++iter2; ++itero;
-    }
-  }
-
-
   {
     typedef itk::ImageSliceConstIteratorWithIndex<ImageType> ConstIteratorType;
     typedef itk::ImageSliceIteratorWithIndex<ImageType> IteratorType;

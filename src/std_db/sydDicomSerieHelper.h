@@ -27,7 +27,7 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  // Write the dicom into a mhd file, according to the give
+  // Write the dicom into a mhd file, according to the given
   // pixel_type. If pixel_type is 'auto', the header of the dicom is
   // read to guess the pixel_type.
   void WriteDicomToMhd(syd::DicomSerie::pointer dicom,
@@ -35,9 +35,20 @@ namespace syd {
                        std::string mhd_filename);
 
   // Write the dicom in the DicomSerie to a mhd file
-  template<class PixelType>
+  template<class ImageType>
   void WriteDicomToMhd(syd::DicomSerie::pointer dicom,
                        std::string mhd_filename);
+
+  // Read a dicom into an itk_image
+  template<class ImageType>
+  typename ImageType::Pointer
+  ReadDicomSerieImage(syd::DicomSerie::pointer dicom);
+
+  /// Helper function (will change)
+  template<typename F>
+  F GetFctByPixelType(std::map<std::string, F> & map,
+                           std::string pixel_type);
+
 }
 #include "sydDicomSerieHelper.txx"
 // --------------------------------------------------------------------

@@ -30,23 +30,32 @@ namespace syd {
                                      syd::Patient::pointer patient,
                                      std::string modality="image");
 
+  /// Create a new image from a DicomSerie. Pixel type could be float,
+  /// short, auto etc
+  syd::Image::pointer InsertImageFromDicomSerie(syd::DicomSerie::pointer dicom,
+                                                std::string pixel_type);
+
+  /// Create a new image by stitching 2 dicoms
+  syd::Image::pointer InsertStitchDicomImage(syd::DicomSerie::pointer dicom1,
+                                             syd::DicomSerie::pointer dicom2,
+                                             double threshold_cumul,
+                                             double skip_slices);
+
   /// Create 2 new Files for mhd/raw
   syd::File::vector InsertMhdFiles(syd::Database * db,
                                    std::string from_filename,
                                    std::string to_relative_path,
                                    std::string to_filename);
 
-  /// Create a new image from a DicomSerie. Pixel type could be float,
-  /// short, auto etc
-  syd::Image::pointer InsertImageFromDicom(syd::DicomSerie::pointer dicom,
-                                           std::string pixel_type);
-
-
-
   /// Read the attached file and set image spacing, size dimension,
   /// and pixel_type. The image is not updated
   void SetImageInfoFromFile(syd::Image::pointer image);
 
+  /// Set some information from the dicom (acquisition_date, modality etc)
+  void SetImageInfoFromDicomSerie(syd::Image::pointer image,
+                                  const syd::DicomSerie::pointer dicom);
+
+  /// Compute the default image path (based on the patient's name)
   /// Compute the default image path (based on the patient's name)
   std::string GetDefaultImageRelativePath(syd::Image::pointer image);
 
@@ -70,46 +79,52 @@ namespace syd {
   // Scale image's pixels. Will force the pixel type to be float
   void ScaleImage(syd::Image::pointer image, double s);
 
+  // Check if the images and the associated files are similar
+  bool CheckSameImageAndFiles(syd::Image::pointer a,
+                              syd::Image::pointer b);
+
+  // Check if the image content are the same
+  bool IsSameImage(syd::Image::pointer a,
+                   syd::Image::pointer b,
+                   bool checkHistoryFlag=false);
+
+
+
   ///// OLD BELOW
 
+  /*
+ /// This file contains helpers function that are hopefully helpful
+ /// to create and update syd::Image table. All functions are static
+ /// in a class for clarity.
+ ///
+ /// Example of use
+ ///  syd::ImageHelper::InsertMhdFiles(image, filename);
+ class ImageHelper
+ {
+ public:
 
-  /// This file contains helpers function that are hopefully helpful
-  /// to create and update syd::Image table. All functions are static
-  /// in a class for clarity.
-  ///
-  /// Example of use
-  ///  syd::ImageHelper::InsertMhdFiles(image, filename);
-  class ImageHelper
-  {
-  public:
+ /// If File are already associated with the image, remove them
+ /// frist.  Then create new File and copy an mhd image in the db,
+ /// Image must be persistent.
+ // static void InsertMhdFiles(syd::Image::pointer image,
+ //                            std::string filename,
+ //                            bool moveFlag = false); // true=copy ; false=move
 
-    /// If File are already associated with the image, remove them
-    /// frist.  Then create new File and copy an mhd image in the db,
-    /// Image must be persistent.
-    // static void InsertMhdFiles(syd::Image::pointer image,
-    //                            std::string filename,
-    //                            bool moveFlag = false); // true=copy ; false=move
-
-    /// Copy image properties from the 'like' image (modality,
-    /// injection patient etc). Everything except the properties
-    /// related to the image content itself (pixel_type, size etc).
-    static void CopyInformation(syd::Image::pointer image,
-                                const syd::Image::pointer like);
+ /// Copy image properties from the 'like' image (modality,
+ /// injection patient etc). Everything except the properties
+ /// related to the image content itself (pixel_type, size etc).
+ static void CopyInformation(syd::Image::pointer image,
+ const syd::Image::pointer like);
 
 
-    static void UpdateMhdImageProperties(syd::Image::pointer image);
+ static void UpdateMhdImageProperties(syd::Image::pointer image);
 
-    static void UpdateMhdImageProperties(syd::Image::pointer image,
-                                         itk::ImageIOBase::Pointer header);
+ static void UpdateMhdImageProperties(syd::Image::pointer image,
+ itk::ImageIOBase::Pointer header);
 
-    static bool IsSameImage(syd::Image::pointer a,
-                            syd::Image::pointer b,
-                            bool checkHistoryFlag=false);
+ }; // end class
+  */
 
-    static void CheckSameImageAndFiles(syd::Image::pointer a,
-                                       syd::Image::pointer b);
-
-  }; // end class
 } // namespace syd
 
 #include "sydImageHelper.txx"
