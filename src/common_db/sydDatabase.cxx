@@ -599,7 +599,6 @@ void syd::Database::Copy(std::string new_dbname, std::string new_folder)
     info->folder = new_folder;
     odb_db_->update(*info);
     transaction.commit();
-    DD(info->folder);
   }
   catch (const odb::exception& e) {
     EXCEPTION("Exception while set temporary folder in DatabaseInformation");
