@@ -21,6 +21,7 @@
 #include "sydFileHelper.h"
 #include "sydPixelUnitHelper.h"
 
+
 // --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertImageFromFile(std::string filename,
@@ -345,6 +346,37 @@ void syd::SetImageInfoFromImage(syd::Image::pointer image,
   // (The history is not copied)
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertImageGeometricalMean(const syd::Image::pointer input,
+                                double k)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
+
+  // Check only 4 slices
+  int n = itk_input->GetLargestPossibleRegion().GetSize()[2];
+  if (n != 4) {
+    EXCEPTION("Error I expect 4 slices only: ANT_EM POST_EM ANT_SC POST_SC.");
+  }
+
+  std::vector<ImageType::Pointer> itk_images;
+  syd::ExtractSlices<ImageType>(itk_input, 2, itk_images); // Direction = Z (2)
+  auto ant_em = itk_images[0];
+  auto post_em = itk_images[1];
+  auto ant_sc = itk_images[2];
+  auto post_sc = itk_images[3];
+  auto gmean = syd::GeometricalMean<ImageType>(ant_em, post_em, ant_sc, post_sc, k);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType>(gmean, input->patient, input->modality);
+}
+// --------------------------------------------------------------------
+
 
 
 

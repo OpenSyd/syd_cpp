@@ -84,6 +84,10 @@ int main(int argc, char* argv[])
   for(auto d:dicom_series) v.push_back(d);
   db->Dump(v, "default", std::cout);
 
+  std::cout << "Checking ..." << std::endl;
+  if (ref_dicom_series.size() != dicom_series.size()) {
+    LOG(FATAL) << "Not the same nb of dicom";
+  }
   for(auto i=0; i< dicom_series.size(); i++) {
     if (dicom_series[i] != ref_dicom_series[i]) {
       LOG(FATAL) << "Error DicomSerie different " << std::endl

@@ -21,6 +21,8 @@
 
 // syd
 #include "sydDicomSerieHelper.h"
+#include "sydImageExtractSlices.h"
+#include "sydImageGeometricalMean.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -97,6 +99,11 @@ namespace syd {
                    syd::Image::pointer b,
                    bool checkHistoryFlag=false);
 
+
+  // Compute the geometrical mean of a planar image. Consider composed
+  // of 4 slices
+  syd::Image::pointer InsertImageGeometricalMean(const syd::Image::pointer input,
+                                                 double k=0.5);
 
 
   ///// OLD BELOW

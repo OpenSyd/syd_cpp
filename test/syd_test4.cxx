@@ -51,26 +51,27 @@ int main(int argc, char* argv[])
   // Get a patient (with id = 1)
   syd::Patient::pointer patient;
   db->QueryOne<syd::Patient>(patient, 1); // or db->QueryOne(patient, "Patient", 1);
-  DD(patient);
+  std::cout << "Patient: " << patient << std::endl;
 
   // Create an image
+  std::cout << "InsertImageFromFile " << std::endl;
   std::string img_filename = "input/ct_slice.mhd";
   auto image1 = syd::InsertImageFromFile(img_filename, patient);
-  DD(image1);
 
   // Get a dicom SPECT and insert
+  std::cout << "InsertImageFromDicomSerie float" << std::endl;
   syd::DicomSerie::pointer dicom_serie;
   db->QueryOne(dicom_serie, 14);
   auto image2 = syd::InsertImageFromDicomSerie(dicom_serie, "float");
-  DD(image2);
 
   // Get a dicom CT and insert
+  std::cout << "InsertImageFromDicomSerie short " << std::endl;
   syd::DicomSerie::pointer dicom_serie2;
   db->QueryOne(dicom_serie2, 7);
   auto image3 = syd::InsertImageFromDicomSerie(dicom_serie2, "short");
-  DD(image3);
 
   // Update
+  std::cout << "Image update " << std::endl;
   syd::SetPixelUnit(image1, "counts");
   syd::Injection::pointer injection;
   db->New(injection);
@@ -80,19 +81,25 @@ int main(int argc, char* argv[])
   syd::SetInjection(image1, "Lu-177");
   syd::AddDicomSerie(image1, dicom_serie2->id);
   db->Update(image1);
-  DD(image1);
 
   // Scale image
-  DD("Scale image");
+  std::cout << "Image scale " << std::endl;
   syd::ScaleImage(image1, 100);
 
   // Stitch dicom
-  DD("Stitch dicom");
+  std::cout << "Image stitch dicom " << std::endl;
   syd::DicomSerie::pointer spect1, spect2;
   db->QueryOne(spect1, 14);
   db->QueryOne(spect2, 15);
   auto spect = syd::InsertStitchDicomImage(spect1, spect2, 150000, 4);
-  DD(spect);
+
+  // Geom mean
+  std::cout << "Image geometrical mean " << std::endl;
+  db->QueryOne(dicom_serie, 16); // Get NM "CORPS ENTIER" etc
+  auto planar = syd::InsertImageFromDicomSerie(dicom_serie, "float");
+  DD(planar);
+  auto geommean = syd::InsertImageGeometricalMean(planar, 0.5);
+  DD(geommean);
 
   // If needed create reference db
   if (args_info.create_ref_flag) {

@@ -43,27 +43,10 @@ int main(int argc, char* argv[])
   syd::Image::pointer input;
   db->QueryOne(input, id); // will fail if not found
   LOG(2) << "Read image :" << input;
-  auto filename = db->GetAbsolutePath(input);
-  typedef float PixelType;
-  typedef itk::Image<PixelType, 3> ImageType;
-  auto itk_input = syd::ReadImage<ImageType>(filename);
+
+  // Main computation
   double k = args_info.k_arg;
-
-  // Check only 4 slices
-  int n = itk_input->GetLargestPossibleRegion().GetSize()[2];
-  if (n != 4) {
-    LOG(FATAL) << "Error I expect 4 slices only :  ANT_EM POST_EM ANT_SC POST_SC";
-  }
-
-  // Get the 4 images ANT_EM POST_EM ANT_SC POST_SC
-  std::vector<ImageType::Pointer> itk_images;
-  syd::ExtractSlices<ImageType>(itk_input, 2, itk_images); // Direction = Z (2)
-  auto ant_em = itk_images[0];
-  auto post_em = itk_images[1];
-  auto ant_sc = itk_images[2];
-  auto post_sc = itk_images[3];
-  auto gmean = syd::GeometricalMean<ImageType>(ant_em, post_em, ant_sc, post_sc, k);
-  auto image = syd::InsertImage<ImageType>(gmean, input->patient, input->modality);
+  auto image = syd::InsertImageGeometricalMean(input, k);
 
   // Update image info
   db->UpdateTagsFromCommandLine(image->tags, args_info);
