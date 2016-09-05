@@ -22,9 +22,8 @@
 // --------------------------------------------------------------------
 extern "C"
 {
-  std::string RegisterDatabaseSchema(syd::DatabaseManager * m) {
+  void RegisterDatabaseSchema(syd::DatabaseManager * m) {
     m->RegisterDatabaseSchema<syd::StandardDatabase>("StandardDatabase");
-    return "StandardDatabase";
     // not need to check return here
   }
 }
