@@ -19,7 +19,7 @@
 // --------------------------------------------------------------------
 template<class ArgsInfo>
 void syd::SetImageInfoFromCommandLine(syd::Image::pointer image,
-                                            ArgsInfo & args_info)
+                                      ArgsInfo & args_info)
 {
   if (args_info.pixel_unit_given)
     syd::SetPixelUnit(image, args_info.pixel_unit_arg);
@@ -37,6 +37,12 @@ void syd::SetImageInfoFromCommandLine(syd::Image::pointer image,
     image->acquisition_date = d;
   }
 
+  if (args_info.patient_given) {
+    auto db = image->GetDatabase<syd::StandardDatabase>();
+    auto patient = db->FindPatient(args_info.patient_arg);
+    image->patient = patient;
+  }
+
   if (args_info.injection_given)
     syd::SetInjection(image, args_info.injection_arg);
 
@@ -44,5 +50,38 @@ void syd::SetImageInfoFromCommandLine(syd::Image::pointer image,
     for(auto i=0; i<args_info.dicom_given; i++)
       syd::AddDicomSerie(image, args_info.dicom_arg[i]);
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<typename ImageType>
+syd::Image::pointer syd::InsertImage(typename ImageType::Pointer itk_image,
+                                     syd::Patient::pointer patient,
+                                     std::string modality)
+{
+  // New image
+  auto db = patient->GetDatabase<syd::StandardDatabase>();
+  syd::Image::pointer image;
+  db->New(image);
+  image->patient = patient;
+  image->modality = modality;
+  image->type = "mhd";
+  db->Insert(image);
+
+  // save the image
+  std::string filename = GetDefaultImageRelativePath(image)
+    +PATH_SEPARATOR+GetDefaultMhdImageFilename(image);
+  DD(filename);
+  syd::WriteImage<ImageType>(itk_image, filename);
+
+  // insert the files
+  image->files = syd::InsertFilesFromMhd(db, filename,
+                                         GetDefaultImageRelativePath(image),
+                                         GetDefaultMhdImageFilename(image));
+  // Update size and spacing
+  syd::SetImageInfoFromFile(image);
+  db->Update(image);
+  return image;
 }
 // --------------------------------------------------------------------

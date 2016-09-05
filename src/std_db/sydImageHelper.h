@@ -26,9 +26,15 @@
 namespace syd {
 
   /// Create a new image, copy the filename to the db
-  syd::Image::pointer InsertMhdImage(std::string filename,
-                                     syd::Patient::pointer patient,
-                                     std::string modality="image");
+  syd::Image::pointer InsertImageFromFile(std::string filename,
+                                          syd::Patient::pointer patient,
+                                          std::string modality="image");
+
+  /// Create a new image and save the itk as a mhd in the db
+  template<typename ImageType>
+  syd::Image::pointer InsertImage(typename ImageType::Pointer itk_image,
+                                  syd::Patient::pointer patient,
+                                  std::string modality="image");
 
   /// Create a new image from a DicomSerie. Pixel type could be float,
   /// short, auto etc
@@ -42,14 +48,18 @@ namespace syd {
                                              double skip_slices);
 
   /// Create 2 new Files for mhd/raw
-  syd::File::vector InsertMhdFiles(syd::Database * db,
-                                   std::string from_filename,
-                                   std::string to_relative_path,
-                                   std::string to_filename);
+  syd::File::vector InsertFilesFromMhd(syd::Database * db,
+                                       std::string from_filename,
+                                       std::string to_relative_path,
+                                       std::string to_filename);
 
   /// Read the attached file and set image spacing, size dimension,
   /// and pixel_type. The image is not updated
   void SetImageInfoFromFile(syd::Image::pointer image);
+
+  /// Coopy image info from the like file
+  void SetImageInfoFromImage(syd::Image::pointer image,
+                             const syd::Image::pointer like);
 
   /// Set some information from the dicom (acquisition_date, modality etc)
   void SetImageInfoFromDicomSerie(syd::Image::pointer image,
@@ -97,7 +107,7 @@ namespace syd {
  /// in a class for clarity.
  ///
  /// Example of use
- ///  syd::ImageHelper::InsertMhdFiles(image, filename);
+ ///  syd::ImageHelper::InsertFilesFromMhD(image, filename);
  class ImageHelper
  {
  public:
@@ -105,7 +115,7 @@ namespace syd {
  /// If File are already associated with the image, remove them
  /// frist.  Then create new File and copy an mhd image in the db,
  /// Image must be persistent.
- // static void InsertMhdFiles(syd::Image::pointer image,
+ // static void InsertFilesFromMhD(syd::Image::pointer image,
  //                            std::string filename,
  //                            bool moveFlag = false); // true=copy ; false=move
 

@@ -60,22 +60,18 @@ int main(int argc, char* argv[])
   }
 
   // create a new image
-  syd::Image::pointer output;
-  db->New(output); // empty image
-  output->patient = patient;
+  auto image = InsertImageFromFile(filename, patient);
 
   // set properties
   if (args_info.like_given)
-    syd::ImageHelper::CopyInformation(output, like);
+    syd::SetImageInfoFromImage(image, like);
   else
-    syd::ImageHelper::UpdateImagePropertiesFromCommandLine(output, args_info);
+    syd::SetImageInfoFromCommandLine(image, args_info);
 
   // Update the tags
-  db->UpdateTagsFromCommandLine(output->tags, args_info);
-  db->Insert(output);
-  syd::ImageHelper::InsertMhdFiles(output, filename);
-
-  LOG(1) << "Inserting Image: " << output;
+  db->UpdateTagsFromCommandLine(image->tags, args_info);
+  db->Update(image);
+  LOG(1) << "Inserting Image: " << image;
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

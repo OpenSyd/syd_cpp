@@ -108,17 +108,17 @@ void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & v,
 
 
 // --------------------------------------------------
-template<>
-void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & v,
-                                        const std::string & order) const
-{
+/*template<>
+  void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & v,
+  const std::string & order) const
+  {
   std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              if (a->image->dicoms.size() == 0) return true;
-              if (b->image->dicoms.size() == 0) return false;
-              return a->image->acquisition_date < b->image->acquisition_date;
-            });
-}
+  [v](pointer a, pointer b) {
+  if (a->image->dicoms.size() == 0) return true;
+  if (b->image->dicoms.size() == 0) return false;
+  return a->image->acquisition_date < b->image->acquisition_date;
+  });
+  }*/
 // --------------------------------------------------
 
 
@@ -161,22 +161,27 @@ void syd::StandardDatabase::CreateTables()
 {
   //  syd::Database::CreateTables();
   AddTable<syd::RecordHistory>();
+  AddTable<syd::Tag>();
+  AddTable<syd::File>();
+
   AddTable<syd::Patient>();
   AddTable<syd::Injection>();
   AddTable<syd::Radionuclide>();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
+
   AddTable<syd::DicomFile>();
   AddTable<syd::DicomSerie>();
+
+  AddTable<syd::PixelValueUnit>();
   AddTable<syd::Image>();
+
   AddTable<syd::RoiType>();
   AddTable<syd::RoiMaskImage>();
-  AddTable<syd::ImageTransform>();
-  AddTable<syd::Calibration>();
-  AddTable<syd::PixelValueUnit>();
   AddTable<syd::RoiStatistic>();
-  AddTable<syd::Timepoints>();
-  AddTable<syd::FitResult>();
+
+  // AddTable<syd::ImageTransform>();
+  // AddTable<syd::Calibration>();
+  // AddTable<syd::Timepoints>();
+  // AddTable<syd::FitResult>();
 }
 // --------------------------------------------------------------------
 
@@ -392,9 +397,9 @@ std::string syd::StandardDatabase::GetAbsolutePath(const syd::File::pointer file
 
 
 // --------------------------------------------------------------------
-syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Image::pointer image,
-                                                                 const std::string & calib_tag)
-{
+/*syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Image::pointer image,
+  const std::string & calib_tag)
+  {
   syd::Tag::vector tags;
   FindTags(tags,calib_tag);
   syd::Calibration::vector calibrations;
@@ -404,21 +409,22 @@ syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Imag
   Query(calibrations, q);
   int n=0;
   for(auto c:calibrations) {
-    if (syd::IsAllTagsIn(c->tags, tags)) {
-      if (n>0) {
-        EXCEPTION("Several calibrations are associated with this image. "
-                  << "I dont know which one to choose. "
-                  << "Use tags to discriminate");
-      }
-      ++n;
-      calibration = c;
-    }
+  if (syd::IsAllTagsIn(c->tags, tags)) {
+  if (n>0) {
+  EXCEPTION("Several calibrations are associated with this image. "
+  << "I dont know which one to choose. "
+  << "Use tags to discriminate");
+  }
+  ++n;
+  calibration = c;
+  }
   }
   if (calibrations.size() < 1) {
-    EXCEPTION("Cannot find calibration for this image: " << image);
+  EXCEPTION("Cannot find calibration for this image: " << image);
   }
   return calibration;
-}
+  }
+*/
 // --------------------------------------------------------------------
 
 

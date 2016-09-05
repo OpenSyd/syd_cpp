@@ -20,7 +20,7 @@
 #include "sydInsertPlanarGeometricalMean_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydImageBuilder.h"
+#include "sydImageHelper.h"
 #include "sydCommonGengetopt.h"
 #include "sydImageExtractSlices.h"
 #include "sydImageGeometricalMean.h"
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
   auto filename = db->GetAbsolutePath(input);
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
-  ImageType::Pointer itk_input = syd::ReadImage<ImageType>(filename);
+  auto itk_input = syd::ReadImage<ImageType>(filename);
   double k = args_info.k_arg;
 
   // Check only 4 slices
@@ -58,21 +58,17 @@ int main(int argc, char* argv[])
   // Get the 4 images ANT_EM POST_EM ANT_SC POST_SC
   std::vector<ImageType::Pointer> itk_images;
   syd::ExtractSlices<ImageType>(itk_input, 2, itk_images); // Direction = Z (2)
-  ImageType::Pointer ant_em = itk_images[0];
-  ImageType::Pointer post_em = itk_images[1];
-  ImageType::Pointer ant_sc = itk_images[2];
-  ImageType::Pointer post_sc = itk_images[3];
+  auto ant_em = itk_images[0];
+  auto post_em = itk_images[1];
+  auto ant_sc = itk_images[2];
+  auto post_sc = itk_images[3];
+  auto gmean = syd::GeometricalMean<ImageType>(ant_em, post_em, ant_sc, post_sc, k);
+  auto image = syd::InsertImage<ImageType>(gmean, input->patient, input->modality);
 
-  ImageType::Pointer gmean = syd::GeometricalMean<ImageType>(ant_em, post_em, ant_sc, post_sc, k);
-  syd::WriteImage<ImageType>(gmean, "gmean.mhd");
-
-  // Create main builder to insert an image
-  syd::ImageBuilder builder(db);
-  syd::Image::pointer image = builder.NewMHDImageLike(input);
-  // Set the optional tags
+  // Update image info
   db->UpdateTagsFromCommandLine(image->tags, args_info);
-  builder.SetImage<PixelType>(image, gmean);
-  builder.InsertAndRename(image);
+  syd::SetImageInfoFromCommandLine(image, args_info);
+  db->Update(image);
   LOG(1) << "Inserting Image " << image;
 
   // This is the end, my friend.

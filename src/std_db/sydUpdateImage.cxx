@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
       std::string to_filename = image->files[0]->filename;
       db->Delete(image->files);
       // Insert new files
-      image->files = syd::InsertMhdFiles(db, mhd, to_relative_path, to_filename);
+      image->files = syd::InsertFilesFromMhd(db, mhd, to_relative_path, to_filename);
       // update image info
       syd::SetImageInfoFromFile(image);
     }
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
     }
 
     // update db
-    syd::SetImagePropertiesFromCommandLine(image, args_info);
+    syd::SetImageInfoFromCommandLine(image, args_info);
     db->UpdateTagsFromCommandLine(image->tags, args_info); // FIXME TODO
     db->Update(image);
     if (s != 1) LOG(1) << "Image was scaled by " << s << ": " << image;

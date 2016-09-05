@@ -51,17 +51,10 @@ int main(int argc, char* argv[])
   }
 
   // Create images
-  //syd::ImageFromDicomBuilder builder;
   for(auto d:dicom_series) {
-    /*
-    builder.SetImagePixelType(args_info.pixel_type_arg);
-    builder.SetInputDicomSerie(d);
-    builder.Update();
-    syd::Image::pointer image = builder.GetOutput();
-    */
-    auto image = syd::InsertImageFromDicom(d, args_info.pixel_type_arg);
+    auto image = syd::InsertImageFromDicomSerie(d, args_info.pixel_type_arg);
     syd::TagHelper::UpdateTagsFromCommandLine(image->tags, db, args_info);
-    syd::SetImagePropertiesFromCommandLine(image, args_info);
+    syd::SetImageInfoFromCommandLine(image, args_info);
     db->Update(image);
     LOG(1) << "Inserting Image " << image;
   }

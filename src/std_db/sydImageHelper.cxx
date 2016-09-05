@@ -23,9 +23,9 @@
 
 // --------------------------------------------------------------------
 syd::Image::pointer
-syd::InsertMhdImage(std::string filename,
-                    syd::Patient::pointer patient,
-                    std::string modality)
+syd::InsertImageFromFile(std::string filename,
+                         syd::Patient::pointer patient,
+                         std::string modality)
 {
   auto db = patient->GetDatabase<syd::StandardDatabase>();
 
@@ -43,17 +43,11 @@ syd::InsertMhdImage(std::string filename,
 
   // copy mhd to db according to default filename and create the two
   // associated syd::File
-  image->files = syd::InsertMhdFiles(db, filename,
-                                     GetDefaultImageRelativePath(image),
-                                     GetDefaultMhdImageFilename(image));
+  image->files = syd::InsertFilesFromMhd(db, filename,
+                                         GetDefaultImageRelativePath(image),
+                                         GetDefaultMhdImageFilename(image));
   // Update size and spacing
   syd::SetImageInfoFromFile(image);
-
-  // Check for negative spacing and orientation
-  DD("syd::FlipImageIfNegativeDirection(image);");
-
-  DD("Set Image md5 ???");
-
   db->Update(image);
   return image;
 }
@@ -95,10 +89,10 @@ std::string syd::GetDefaultMhdImageFilename(syd::Image::pointer image)
 
 
 // --------------------------------------------------------------------
-syd::File::vector syd::InsertMhdFiles(syd::Database * db,
-                                      std::string from_filename,
-                                      std::string to_relative_path,
-                                      std::string to_filename)
+syd::File::vector syd::InsertFilesFromMhd(syd::Database * db,
+                                          std::string from_filename,
+                                          std::string to_relative_path,
+                                          std::string to_filename)
 {
   // Get the 'raw' filename
   std::string raw_filename = to_filename;
@@ -168,9 +162,9 @@ syd::Image::pointer syd::InsertImageFromDicomSerie(syd::DicomSerie::pointer dico
   syd::WriteDicomToMhd(dicom, pixel_type, temp_filename);
 
   // Attach the mhd to the Image
-  auto image = syd::InsertMhdImage(temp_filename,
-                                   dicom->patient,
-                                   dicom->dicom_modality);
+  auto image = syd::InsertImageFromFile(temp_filename,
+                                        dicom->patient,
+                                        dicom->dicom_modality);
   syd::DeleteMHDImage(temp_filename);
 
   // Set some image properties
@@ -303,7 +297,7 @@ syd::Image::pointer syd::InsertStitchDicomImage(syd::DicomSerie::pointer a,
   syd::WriteImage<ImageType>(output, temp_filename);
 
   // Create image
-  auto image = syd::InsertMhdImage(temp_filename, a->patient, a->dicom_modality);
+  auto image = syd::InsertImageFromFile(temp_filename, a->patient, a->dicom_modality);
   DeleteMHDImage(temp_filename);
 
   // Complete information
@@ -333,67 +327,31 @@ bool syd::IsSameImage(syd::Image::pointer a,
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+void syd::SetImageInfoFromImage(syd::Image::pointer image,
+                                const syd::Image::pointer like)
+{
+  image->patient = like->patient;
+  image->injection = like->injection;
+  image->CopyDicomSeries(like);
+  image->type = like->type;
+  image->pixel_type = like->pixel_type;
+  image->pixel_unit = like->pixel_unit;
+  image->frame_of_reference_uid = like->frame_of_reference_uid;
+  image->acquisition_date = like->acquisition_date;
+  image->modality = like->modality;
+  image->tags.clear();
+  for(auto t:like->tags) image->tags.push_back(t);
+  // (The history is not copied)
+}
+// --------------------------------------------------------------------
+
 
 
 // OLD BELOW
 
 
-
-// --------------------------------------------------------------------
-/*void syd::ImageHelper::
-  InsertMhdFiles(syd::Image::pointer image, std::string filename, bool moveFlag)
-  {
-  if (!image->IsPersistent()) {
-  EXCEPTION("Image not in the db. Can only InsertMhdFiles for persistent image. Usedb->Insert(image) first.");
-  }
-  auto db = image->GetDatabase();
-  // Need to clear the associated files and delete them (after update)
-  syd::File::vector previous_files = image->files;
-  image->files.clear();
-  fs::path p(filename);
-  if (p.extension() != ".mhd") {
-  EXCEPTION("Extension must be .mhd, cannot InsertMhdFiles.");
-  }
-  image->type = "mhd";
-  auto path = image->ComputeRelativeFolder();
-  auto mhd_filename = image->ComputeDefaultMhdFilename();
-  syd::File::pointer file_mhd = syd::FileHelper::New(db, path, mhd_filename);
-  std::string raw = mhd_filename;
-  syd::Replace(raw, ".mhd", ".raw");
-  syd::File::pointer file_raw = syd::FileHelper::New(db, path, raw);
-  image->files.push_back(file_mhd);
-  image->files.push_back(file_raw);
-  db->Insert(file_mhd);
-  db->Insert(file_raw);
-  if (!moveFlag)
-  CopyMHDImage(filename, image->GetAbsolutePath()); // copy files in the db
-  else
-  RenameMHDImage(filename, image->GetAbsolutePath());
-  syd::ImageHelper::UpdateMhdImageProperties(image);
-  db->Update(image);
-  db->Delete(previous_files);
-  }*/
-// --------------------------------------------------------------------
-
 /*
-// --------------------------------------------------------------------
-void syd::ImageHelper::
-CopyInformation(syd::Image::pointer image, const syd::Image::pointer like)
-{
-image->patient = like->patient;
-image->injection = like->injection;
-image->CopyDicomSeries(like);
-// image->type = like->type; // not copied (depends on the file)
-// image->pixel_type = like->pixel_type; // not copied (depends on the file)
-image->pixel_unit = like->pixel_unit;
-image->frame_of_reference_uid = like->frame_of_reference_uid;
-image->acquisition_date = like->acquisition_date;
-image->modality = like->modality;
-image->tags.clear();
-for(auto t:like->tags) image->tags.push_back(t);
-// (The history is not copied)
-}
-// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------

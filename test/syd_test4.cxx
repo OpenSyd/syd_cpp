@@ -38,12 +38,13 @@ int main(int argc, char* argv[])
 
   // database names
   std::string dbname = "test4.db";
+  std::string folder = "data4";
   std::string ref_dbname = "test4_ref.db";
   std::string ref_folder = "data4_ref";
 
   // Get the database (copy the db3)
   auto db3 = m->Open<syd::StandardDatabase>("test3.db");
-  db3->Copy(dbname);
+  db3->Copy(dbname, folder);
   std::cout << "Open " << dbname << " as StandardDatabase" << std::endl;
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(dbname);
 
@@ -54,7 +55,7 @@ int main(int argc, char* argv[])
 
   // Create an image
   std::string img_filename = "input/ct_slice.mhd";
-  auto image1 = syd::InsertMhdImage(img_filename, patient);
+  auto image1 = syd::InsertImageFromFile(img_filename, patient);
   DD(image1);
 
   // Get a dicom SPECT and insert

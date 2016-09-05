@@ -34,15 +34,15 @@
 #include "sydFile-odb.hxx"
 #include "sydDicomSerie-odb.hxx"
 #include "sydDicomFile-odb.hxx"
+#include "sydPixelValueUnit-odb.hxx"
 #include "sydImage-odb.hxx"
 #include "sydRoiType-odb.hxx"
 #include "sydRoiMaskImage-odb.hxx"
-#include "sydImageTransform-odb.hxx"
-#include "sydCalibration-odb.hxx"
-#include "sydPixelValueUnit-odb.hxx"
 #include "sydRoiStatistic-odb.hxx"
-#include "sydTimepoints-odb.hxx"
-#include "sydFitResult-odb.hxx"
+// #include "sydImageTransform-odb.hxx"
+// #include "sydCalibration-odb.hxx"
+// #include "sydTimepoints-odb.hxx"
+// #include "sydFitResult-odb.hxx"
 
 // itk
 #include <itkImage.h>
@@ -56,6 +56,7 @@ namespace syd {
 
     virtual ~StandardDatabase();
 
+    // to put in StandardDatabase helper FindPatient(db, string);
     syd::Patient::pointer FindPatient(const std::string & name_or_study_id) const;
     syd::Radionuclide::pointer FindRadionuclide(const std::string & name) const;
     syd::Injection::pointer FindInjection(const syd::Patient::pointer patient,
@@ -68,8 +69,8 @@ namespace syd {
                                                   const std::string & description);
     syd::PixelValueUnit::pointer FindPixelUnit(const std::string & name);
     syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
-    syd::Calibration::pointer FindCalibration(const syd::Image::pointer Image,
-                                              const std::string & calib_tag);
+    //    syd::Calibration::pointer FindCalibration(const syd::Image::pointer Image,
+    //const std::string & calib_tag);
     syd::RoiMaskImage::pointer FindRoiMaskImage(const syd::Image::pointer image,
                                                 const std::string & roi_name);
     syd::Image::vector FindImages(const std::string & patient_name) const;
@@ -122,8 +123,8 @@ namespace syd {
                                                  const std::string & type) const;
   template<> void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & records,
                                                       const std::string & type) const;
-  template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records,
-                                                     const std::string & type) const;
+  // template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records,
+  //                                                    const std::string & type) const;
   template<> void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & records,
                                                         const std::string & type) const;
   template<> void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & records,
