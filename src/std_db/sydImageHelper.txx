@@ -70,15 +70,15 @@ syd::Image::pointer syd::InsertImage(typename ImageType::Pointer itk_image,
   db->Insert(image);
 
   // save the image
-  std::string filename = GetDefaultImageRelativePath(image)
-    +PATH_SEPARATOR+GetDefaultMhdImageFilename(image);
-  filename = db->ConvertToAbsolutePath(filename);
+  std::string filename = db->GetUniqueTempFilename();
   syd::WriteImage<ImageType>(itk_image, filename);
 
   // insert the files
   image->files = syd::InsertFilesFromMhd(db, filename,
                                          GetDefaultImageRelativePath(image),
                                          GetDefaultMhdImageFilename(image));
+  syd::DeleteMHDImage(filename);
+
   // Update size and spacing
   syd::SetImageInfoFromFile(image);
   db->Update(image);
