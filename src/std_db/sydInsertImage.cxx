@@ -68,6 +68,9 @@ int main(int argc, char* argv[])
   else
     syd::SetImageInfoFromCommandLine(image, args_info);
 
+  // Update size, pixel type, etc from file
+  syd::SetImageInfoFromFile(image);
+
   // Update the tags
   db->UpdateTagsFromCommandLine(image->tags, args_info);
   db->Update(image);
