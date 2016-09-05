@@ -73,7 +73,6 @@ syd::Image::pointer syd::InsertImage(typename ImageType::Pointer itk_image,
   std::string filename = GetDefaultImageRelativePath(image)
     +PATH_SEPARATOR+GetDefaultMhdImageFilename(image);
   filename = db->ConvertToAbsolutePath(filename);
-  DD(filename);
   syd::WriteImage<ImageType>(itk_image, filename);
 
   // insert the files

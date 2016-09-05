@@ -97,9 +97,7 @@ int main(int argc, char* argv[])
   std::cout << "Image geometrical mean " << std::endl;
   db->QueryOne(dicom_serie, 16); // Get NM "CORPS ENTIER" etc
   auto planar = syd::InsertImageFromDicomSerie(dicom_serie, "float");
-  DD(planar);
   auto geommean = syd::InsertImageGeometricalMean(planar, 0.5);
-  DD(geommean);
 
   // If needed create reference db
   if (args_info.create_ref_flag) {
@@ -122,6 +120,9 @@ int main(int argc, char* argv[])
 
   ref_db->QueryOne(ref_image, spect->id);
   syd::CheckSameImageAndFiles(ref_image, spect);
+
+  ref_db->QueryOne(ref_image, geommean->id);
+  syd::CheckSameImageAndFiles(ref_image, geommean);
 
   std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;
