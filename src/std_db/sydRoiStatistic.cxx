@@ -37,12 +37,15 @@ syd::RoiStatistic::RoiStatistic():
 std::string syd::RoiStatistic::ToString() const
 {
   std::stringstream ss ;
-  ss << id << " "
-     << image->patient->name << " "
-     << image->id << " "
-     << image->pixel_unit->name << " "
-     << syd::GetLabels(tags) << " "
-     << (mask!= NULL? mask->roitype->name:"no_mask") << " "
+  ss << id << " ";
+  if (image != NULL) {
+    ss << image->patient->name << " "
+       << image->id << " "
+       << image->pixel_unit->name << " ";
+  }
+  else ss << empty_value;
+  ss << syd::GetLabels(tags) << " "
+     << (mask != NULL? mask->roitype->name:"no_mask") << " "
      << mean << " " << std_dev << " "  << n << " "
      << min << " " << max << " " << sum;
   return ss.str();

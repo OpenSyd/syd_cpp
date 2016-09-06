@@ -19,6 +19,8 @@
 // syd
 #include "sydRoiMaskImageHelper.h"
 
+// itk
+#include <itkLabelStatisticsImageFilter.h>
 
 // --------------------------------------------------------------------
 syd::RoiType::pointer syd::FindRoiType(const std::string & roiname,
@@ -71,5 +73,115 @@ syd::InsertRoiMaskImageFromFile(std::string filename,
   syd::SetImageInfoFromFile(mask);
   db->Update(mask);
   return mask;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiStatistic::pointer syd::FindOneRoiStatistic(syd::Image::pointer image,
+                                                    syd::RoiMaskImage::pointer mask)
+{
+  typedef odb::query<syd::RoiStatistic> Q;
+  Q q = Q::image == image->id;
+  if (mask != NULL) q = q and Q::mask == mask->roitype->id;
+  syd::RoiStatistic::vector stats;
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  db->Query(stats, q);
+  if (stats.size() == 0) return NULL;
+  if (stats.size() == 1 and mask == NULL) {
+    if (stats[0]->mask != NULL) return NULL;
+  }
+  if (stats.size() > 1) {
+    int found = 0;
+    if (mask == NULL) { // if no mask search for all RoiStatistic
+      for(auto s:stats) {
+        if (s->mask == NULL) {
+          stats[0] = s;
+          ++found; // count the number of RoiStatistic with no mask
+        }
+      }
+    }
+    if (found != 1) {
+      EXCEPTION("Several RoiStatistic with image " << image->id
+                << " and mask " << (mask != NULL ? mask->id:0) << " ("
+                << (mask != NULL ? mask->roitype->name:"no_mask") << ")"
+                << " exist. ");
+    }
+  }
+  return stats[0];
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiStatistic::pointer syd::InsertRoiStatistic(syd::Image::pointer image,
+                                                   syd::RoiMaskImage::pointer mask)
+{
+  // new
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  syd::RoiStatistic::pointer stat;
+  db->New(stat);
+  stat->image = image;
+  stat->mask = mask;
+
+  // update
+  syd::ComputeRoiStatistic(stat);
+
+  // insert
+  db->Insert(stat);
+  return stat;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ComputeRoiStatistic(syd::RoiStatistic::pointer stat)
+{
+  // Get the itk images
+  typedef float PixelType; // whatever the image
+  typedef unsigned char MaskPixelType;
+  typedef itk::Image<PixelType,3> ImageType;
+  typedef itk::Image<MaskPixelType,3> MaskImageType;
+
+  // read image (float)
+  auto itk_input = syd::ReadImage<ImageType>(stat->image->GetAbsolutePath());
+
+  // read mask (or create
+  MaskImageType::Pointer itk_mask;
+  if (stat->mask == NULL) {
+    LOG(2) << "No mask (create temporary image).";
+    itk_mask = syd::CreateImageLike<MaskImageType>(itk_input);
+    itk_mask->FillBuffer(1);
+  }
+  else {
+    itk_mask = syd::ReadImage<MaskImageType>(stat->mask->GetAbsolutePath());
+    LOG(2) << "Input mask: " << stat->mask->GetAbsolutePath();
+  }
+
+  // Resampling. Should resample mask or image ???
+  // I decide here to resample the mask
+  if (!syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(itk_mask, itk_input))
+    itk_mask = syd::ResampleAndCropImageLike<MaskImageType>(itk_mask, itk_input, 0, 0);
+
+  // Statistics
+  typedef itk::LabelStatisticsImageFilter<ImageType, MaskImageType> FilterType;
+  auto filter = FilterType::New();
+  filter->SetInput(itk_input);
+  filter->SetLabelInput(itk_mask);
+  filter->Update();
+  double mean = filter->GetMean(1);
+  double std = filter->GetSigma(1);
+  double n = filter->GetCount(1);
+  double min = filter->GetMinimum(1);
+  double max = filter->GetMaximum(1);
+  double sum = filter->GetSum(1);
+
+  // Set the statistic values
+  stat->mean = mean;
+  stat->std_dev = std;
+  stat->n = n;
+  stat->min = min;
+  stat->max = max;
+  stat->sum = sum;
 }
 // --------------------------------------------------------------------

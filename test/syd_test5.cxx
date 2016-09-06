@@ -64,6 +64,26 @@ int main(int argc, char* argv[])
   db->Update(mask);
   std::cout << "Mask: " << mask << std::endl;
 
+  // Compute roi statistic
+  auto stat1 = syd::FindOneRoiStatistic(image, mask);
+  if (!stat1) stat1 = syd::InsertRoiStatistic(image, mask);
+  else {
+    std::cout << "Update stat: " << stat1 << std::endl;
+    syd::ComputeRoiStatistic(stat1);
+    db->Update(stat1);
+  }
+  std::cout << "RoiStatistic (with mask): " << stat1 << std::endl;
+
+  // Compute roi statistic with no mask
+  auto stat2 = syd::FindOneRoiStatistic(image, NULL);
+  if (!stat2) stat2 = syd::InsertRoiStatistic(image, NULL);
+  else {
+    std::cout << "Update stat: " << stat2 << std::endl;
+    syd::ComputeRoiStatistic(stat2);
+    db->Update(stat2);
+  }
+  std::cout << "RoiStatistic (without mask): " << stat2 << std::endl;
+
   // ------------------------------------------------------------------
   // If needed create reference db
   if (args_info.create_ref_flag) {

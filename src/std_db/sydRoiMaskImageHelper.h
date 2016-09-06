@@ -52,6 +52,17 @@ namespace syd {
                                                         syd::Image::pointer image,
                                                         syd::RoiType::pointer roitype);
 
+  /// Search for a single RoiStatistic with the given image+mask
+  syd::RoiStatistic::pointer FindOneRoiStatistic(syd::Image::pointer image,
+                                                 syd::RoiMaskImage::pointer mask);
+
+  // Mask could be null (compute stat on the whole image)
+  syd::RoiStatistic::pointer InsertRoiStatistic(syd::Image::pointer image,
+                                                syd::RoiMaskImage::pointer mask);
+
+  // Compute the statistic according to the stat's image and mask
+  void ComputeRoiStatistic(syd::RoiStatistic::pointer stat);
+
 
 } // namespace syd
 // --------------------------------------------------------------------

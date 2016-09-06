@@ -26,9 +26,8 @@ syd::InsertImageFromFile(std::string filename,
                          syd::Patient::pointer patient,
                          std::string modality)
 {
-  auto db = patient->GetDatabase<syd::StandardDatabase>();
-
   // New image
+  auto db = patient->GetDatabase<syd::StandardDatabase>();
   syd::Image::pointer image;
   db->New(image);
 

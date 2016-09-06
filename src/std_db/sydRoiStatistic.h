@@ -37,7 +37,8 @@ namespace syd {
     syd::Image::pointer image;
 
 #pragma db on_delete(cascade)
-    /// Linked mask. May be null (no mask). The RoiStatistic is deleted if the mask is.
+    /// Linked mask. May be null (no mask). If the mask is deleted,
+    /// the RoiStatistic also.
     syd::RoiMaskImage::pointer mask;
 
     /// Stat values
@@ -55,6 +56,7 @@ namespace syd {
     /// Write the element as a string
     virtual std::string ToString() const;
 
+    /// Add a line in the given PrintTable
     virtual void DumpInTable(syd::PrintTable & table) const;
 
     /// Callback : delete the associated files when the image is deleted.

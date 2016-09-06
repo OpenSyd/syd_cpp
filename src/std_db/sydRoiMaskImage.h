@@ -27,7 +27,8 @@
 namespace syd {
 
 #pragma db object  polymorphic pointer(std::shared_ptr) table("syd::RoiMaskImage") callback(Callback)
-  /// Store information about a contour transformed as a binary image.
+  /// Store information about a contour transformed as a binary
+  /// image. Consider the background is 0 and the foreground is 1
   class RoiMaskImage: public syd::Image {
   public:
 
