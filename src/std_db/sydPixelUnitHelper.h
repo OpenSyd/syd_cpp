@@ -28,13 +28,10 @@ namespace syd {
 
   /// This file contains helpers function that are hopefully helpful
   /// for syd::PixelValueUnit table
-  class PixelUnitHelper {
-  public:
 
-    static syd::PixelValueUnit::pointer FindPixelUnit(syd::StandardDatabase * db,
-                                                      std::string unit);
-
-  }; // end of class
+  // Find a pixel unit by name
+  syd::PixelValueUnit::pointer FindPixelUnit(syd::StandardDatabase * db,
+                                             std::string unit);
 
 }
 // --------------------------------------------------------------------

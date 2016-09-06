@@ -18,9 +18,7 @@
 
 // syd
 #include "sydRoiStatistic.h"
-
-// std
-#include <set>
+#include "sydTagHelper.h"
 
 // --------------------------------------------------
 syd::RoiStatistic::RoiStatistic():
@@ -43,7 +41,7 @@ std::string syd::RoiStatistic::ToString() const
      << image->patient->name << " "
      << image->id << " "
      << image->pixel_unit->name << " "
-     << GetLabels(tags) << " "
+     << syd::GetLabels(tags) << " "
      << (mask!= NULL? syd::ToString(mask->roitype->name):"no_mask") << " "
      << mean << " " << std_dev << " "  << n << " "
      << min << " " << max << " " << sum;

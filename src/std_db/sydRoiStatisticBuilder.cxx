@@ -79,7 +79,8 @@ void syd::RoiStatisticBuilder::ComputeStatistic(syd::RoiStatistic::pointer stat)
   typedef unsigned char MaskPixelType;
   typedef itk::Image<PixelType,3> ImageType;
   typedef itk::Image<MaskPixelType,3> MaskImageType;
-  ImageType::Pointer itk_input = syd::ReadImage<ImageType>(db_->GetAbsolutePath(stat->image));
+  ImageType::Pointer itk_input =
+    syd::ReadImage<ImageType>(stat->image->GetAbsolutePath());
   MaskImageType::Pointer itk_mask;
 
   if (stat->mask == NULL) {
@@ -88,8 +89,8 @@ void syd::RoiStatisticBuilder::ComputeStatistic(syd::RoiStatistic::pointer stat)
     itk_mask->FillBuffer(1);
   }
   else {
-    itk_mask = syd::ReadImage<MaskImageType>(db_->GetAbsolutePath(stat->mask));
-    LOG(2) << "Input mask: " << db_->GetAbsolutePath(stat->mask);
+    itk_mask = syd::ReadImage<MaskImageType>(stat->mask->GetAbsolutePath());
+    LOG(2) << "Input mask: " << stat->mask->GetAbsolutePath();
   }
 
 

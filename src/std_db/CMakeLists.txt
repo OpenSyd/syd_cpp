@@ -37,11 +37,12 @@ set(SYD_STANDARD_DATABASE_SRC
   # sydTimepoints-odb.cxx sydTimepoints-schema.cxx  sydTimepoints.cxx
   # sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
 
+  sydFileBuilder.cxx # <--- in common !
   sydPixelUnitHelper.cxx
   sydDicomSerieBuilder.cxx
   sydDicomSerieHelper.cxx
   sydImageHelper.cxx
-  sydFileBuilder.cxx
+
   sydUpdateRadionuclideFilter.cxx
   sydRoiStatisticBuilder.cxx
 

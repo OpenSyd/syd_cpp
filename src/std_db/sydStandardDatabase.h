@@ -39,6 +39,7 @@
 #include "sydRoiType-odb.hxx"
 #include "sydRoiMaskImage-odb.hxx"
 #include "sydRoiStatistic-odb.hxx"
+#include "sydTagHelper.h" /// Temporary TO REMOVE FIXME
 // #include "sydImageTransform-odb.hxx"
 // #include "sydCalibration-odb.hxx"
 // #include "sydTimepoints-odb.hxx"
@@ -56,40 +57,38 @@ namespace syd {
 
     virtual ~StandardDatabase();
 
-    // to put in StandardDatabase helper FindPatient(db, string);
+    // Search for a patient by name (or id)
     syd::Patient::pointer FindPatient(const std::string & name_or_study_id) const;
+
+    // Search for radionuclide by name
     syd::Radionuclide::pointer FindRadionuclide(const std::string & name) const;
+
+    // Search for injection by patient+name (or id)
     syd::Injection::pointer FindInjection(const syd::Patient::pointer patient,
                                           const std::string & name_or_study_id) const;
-    void FindTags(syd::Tag::vector & tags, const std::string & names) const;
-    void FindTags(syd::Tag::vector & tags, const std::vector<std::string> & names) const;
-    void FindTag(syd::Tag::pointer & tag,
-                 const std::string & name) const;
-    syd::PixelValueUnit::pointer FindOrInsertUnit(const std::string & name,
-                                                  const std::string & description);
-    syd::PixelValueUnit::pointer FindPixelUnit(const std::string & name);
+
+    // Search a roi type by name
     syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
-    //    syd::Calibration::pointer FindCalibration(const syd::Image::pointer Image,
-    //const std::string & calib_tag);
+
+    // Search a roi mask image by a roi name and the image
     syd::RoiMaskImage::pointer FindRoiMaskImage(const syd::Image::pointer image,
                                                 const std::string & roi_name);
+
+    // Search images for this patient name
     syd::Image::vector FindImages(const std::string & patient_name) const;
+
+    // Search images for this patient
     syd::Image::vector FindImages(const syd::Patient::pointer patient) const;
+
+    //    syd::Calibration::pointer FindCalibration(const syd::Image::pointer Image,
+    //const std::string & calib_tag);
 
     /// Automatically insert some default records
     void InsertDefaultRecords(const std::string & def);
 
-    std::string GetAbsolutePath(const syd::Image::pointer image) const;
-    std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
-    std::string GetAbsolutePath(const syd::File::pointer file) const;
-
-    template<class PixelType>
-    typename itk::Image<PixelType,3>::Pointer
-    ReadImage(const syd::DicomSerie::pointer dicom,
-              bool flipAxeIfNegativeFlag) const;
-
-    template<class ArgsInfo>
-    void UpdateTagsFromCommandLine(syd::Tag::vector & tags, ArgsInfo & args_info);
+    // std::string GetAbsolutePath(const syd::Image::pointer image) const;
+    // std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
+    // std::string GetAbsolutePath(const syd::File::pointer file) const;
 
     /// Insert a new tag
     Tag::pointer NewTag(const std::string & name, const std::string & description);

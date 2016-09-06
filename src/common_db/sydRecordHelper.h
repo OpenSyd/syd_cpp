@@ -46,7 +46,7 @@ namespace syd {
 
 }
 
-#include "sydRecordHelpers.txx"
+#include "sydRecordHelper.txx"
 // --------------------------------------------------------------------
 
 #endif

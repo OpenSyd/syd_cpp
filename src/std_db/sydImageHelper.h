@@ -23,6 +23,7 @@
 #include "sydDicomSerieHelper.h"
 #include "sydImageExtractSlices.h"
 #include "sydImageGeometricalMean.h"
+#include "sydPixelUnitHelper.h"
 
 // --------------------------------------------------------------------
 namespace syd {

@@ -200,7 +200,7 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie)
   patient_ = serie->patient;
 
   // Open the first file
-  auto filename = db_->GetAbsolutePath(serie->dicom_files[0]);
+  auto filename = serie->dicom_files[0]->GetAbsolutePath();
   itk::GDCMImageIO::Pointer dicomIO;
   try {
     dicomIO = syd::ReadDicomHeader(filename);

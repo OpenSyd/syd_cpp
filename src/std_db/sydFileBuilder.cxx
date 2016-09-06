@@ -42,7 +42,7 @@ void syd::FileBuilder::RenameFile(syd::File::pointer file,
 
    // Compute paths
   std::string new_absolute_path = db_->ConvertToAbsolutePath(relative_path+PATH_SEPARATOR+filename);
-  std::string old_absolute_path = db_->GetAbsolutePath(file);
+  std::string old_absolute_path = file->GetAbsolutePath();
 
   // If file already exist, mv it. Do nothing if does no exist.
   fs::path old(old_absolute_path);
@@ -68,7 +68,7 @@ void syd::FileBuilder::RenameFile(syd::File::pointer file,
 // --------------------------------------------------------------------
 void syd::FileBuilder::CopyFile(syd::File::pointer file, std::string absolute_path, bool overwriteIfExist)
 {
-  std::string path = db_->GetAbsolutePath(file);
+  std::string path = file->GetAbsolutePath();
   if (overwriteIfExist)
     fs::copy_file(absolute_path, path, fs::copy_option::overwrite_if_exists);
   else
@@ -84,9 +84,9 @@ void syd::FileBuilder::RenameMHDFile(syd::File::pointer mhd_file,
                                      std::string filename)
 {
   // Rename mhd file
-  std::string old_path = db_->GetAbsolutePath(mhd_file);
+  std::string old_path = mhd_file->GetAbsolutePath();
   RenameFile(mhd_file, relative_path, filename, false); // do not move on disk
-  std::string new_path = db_->GetAbsolutePath(mhd_file);
+  std::string new_path = mhd_file->GetAbsolutePath();
 
   // Move file on disk
   syd::RenameMHDImage(old_path, new_path, false);

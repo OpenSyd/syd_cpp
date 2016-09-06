@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
                                              args_info.t_cumul_arg,
                                              args_info.skip_slices_arg);
     syd::SetImageInfoFromCommandLine(image, args_info);
-    db->UpdateTagsFromCommandLine(image->tags, args_info); // FIXME TODO
+    syd::UpdateTagsFromCommandLine(image->tags, db, args_info);
     db->Update(image);
     LOG(1) << "Inserting Image " << image;
   }

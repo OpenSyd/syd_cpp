@@ -262,51 +262,6 @@ syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient:
 
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::FindTags(syd::Tag::vector & tags,
-                                     const std::string & names) const
-{
-  std::vector<std::string> words;
-  syd::GetWords(words, names);
-  FindTags(tags, words);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::StandardDatabase::FindTag(syd::Tag::pointer & tag,
-                                    const std::string & name) const
-{
-  syd::Tag::vector tags;
-  FindTags(tags, name);
-  if (tags.size() != 1) {
-    EXCEPTION("Error in FindTag '" << name << "', I find "
-              << tags.size() << " tags";
-              );
-  }
-  tag = tags[0];
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::StandardDatabase::FindTags(syd::Tag::vector & tags,
-                                     const std::vector<std::string> & names) const
-{
-  odb::query<Tag> q = odb::query<Tag>::label.in_range(names.begin(), names.end());
-  Query<Tag>(tags, q);
-  if (tags.size() != names.size()) {
-    std::string s;
-    for(auto t:tags) s += t->label+" ";
-    std::string w;
-    syd::SetWords(w, names);
-    EXCEPTION("Cannot find all tags in FindTags. Look for: '" << w
-              << "' but find: '" << s << "'");
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 syd::RoiMaskImage::pointer
 syd::StandardDatabase::FindRoiMaskImage(const syd::Image::pointer image,
                                         const std::string & roi_name)
@@ -315,43 +270,10 @@ syd::StandardDatabase::FindRoiMaskImage(const syd::Image::pointer image,
   syd::RoiMaskImage::pointer roi;
   odb::query<syd::RoiMaskImage> q =
     odb::query<syd::RoiMaskImage>::roitype == roitype->id and
-    odb::query<syd::RoiMaskImage>::frame_of_reference_uid == image->frame_of_reference_uid;
+    odb::query<syd::RoiMaskImage>::frame_of_reference_uid ==
+    image->frame_of_reference_uid;
   QueryOne(roi, q);
   return roi;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::PixelValueUnit::pointer syd::StandardDatabase::FindPixelUnit(const std::string & name)
-{
-  syd::PixelValueUnit::pointer unit;
-  try {
-    odb::query<syd::PixelValueUnit> q = odb::query<syd::PixelValueUnit>::name == name;
-    QueryOne(unit, q);
-  } catch (std::exception & e) {
-    EXCEPTION("Cannot find the pixelvalueunit " << name);
-  }
-  return unit;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::PixelValueUnit::pointer syd::StandardDatabase::FindOrInsertUnit(const std::string & name,
-                                                                     const std::string & description)
-{
-  try {
-    syd::PixelValueUnit::pointer unit = FindPixelUnit(name);
-    return unit;
-  } catch (std::exception & e) {
-    syd::PixelValueUnit::pointer unit;
-    New(unit);
-    unit->name=name;
-    unit->description=description;
-    Insert(unit);
-    return unit;
-  }
 }
 // --------------------------------------------------------------------
 
@@ -367,6 +289,7 @@ syd::RoiType::pointer syd::StandardDatabase::FindRoiType(const std::string & roi
 // --------------------------------------------------------------------
 
 
+/*
 // --------------------------------------------------------------------
 //FIXME to remove
 std::string syd::StandardDatabase::GetAbsolutePath(const syd::Image::pointer image) const
@@ -394,7 +317,7 @@ std::string syd::StandardDatabase::GetAbsolutePath(const syd::File::pointer file
   return ConvertToAbsolutePath(f);
 }
 // --------------------------------------------------------------------
-
+*/
 
 // --------------------------------------------------------------------
 /*syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Image::pointer image,

@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
   syd::SetImageInfoFromFile(image);
 
   // Update the tags
-  db->UpdateTagsFromCommandLine(image->tags, args_info);
+  syd::UpdateTagsFromCommandLine(image->tags, db, args_info);
   db->Update(image);
   LOG(1) << "Inserting Image: " << image;
   // This is the end, my friend.

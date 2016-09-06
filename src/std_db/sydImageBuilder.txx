@@ -76,7 +76,7 @@ void ImageBuilder::SetImage(syd::Image::pointer image,
   image->spacing[2] = itk_image->GetSpacing()[2];
 
   // Write Image (no need to update the File, only the content)
-  syd::WriteImage<ImageType>(itk_image, db_->GetAbsolutePath(image));
+  syd::WriteImage<ImageType>(itk_image, image->GetAbsolutePath());
 
   // MD5
   std::string md5 = syd::ComputeImageMD5<ImageType>(itk_image);

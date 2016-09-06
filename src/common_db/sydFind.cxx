@@ -21,7 +21,7 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
-#include "sydRecordHelpers.h"
+#include "sydRecordHelper.h"
 #include "sydPrintTable.h"
 
 // --------------------------------------------------------------------

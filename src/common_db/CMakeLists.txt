@@ -21,26 +21,46 @@ set(sydCommonDatabase_src
   sydPrintTable.cxx
   sydPrintTableRow.cxx
   sydPrintTableColumnInfo.cxx
+
   sydDatabaseDescription.cxx
   sydTableDescription.cxx
   sydFieldDescription.cxx
-  sydDatabaseSchemaName-odb.cxx sydDatabaseSchemaName-schema.cxx
-  sydDatabaseInformation-odb.cxx sydDatabaseInformation-schema.cxx
-  sydRecord-odb.cxx sydRecord-schema.cxx  sydRecord.cxx
-  sydRecordHistory-odb.cxx sydRecordHistory-schema.cxx  sydRecordHistory.cxx
-  sydRecordWithHistory-odb.cxx sydRecordWithHistory-schema.cxx  sydRecordWithHistory.cxx
-  sydRecordWithMD5Signature-odb.cxx sydRecordWithMD5Signature-schema.cxx  sydRecordWithMD5Signature.cxx
-  sydFile-odb.cxx sydFile-schema.cxx sydFile.cxx
-  sydTag-odb.cxx sydTag-schema.cxx  sydTag.cxx
-  sydRecordWithTags-odb.cxx sydRecordWithTags-schema.cxx
+
+  sydDatabaseSchemaName-odb.cxx
+  sydDatabaseSchemaName-schema.cxx
+  sydDatabaseInformation-odb.cxx
+  sydDatabaseInformation-schema.cxx
+
+  sydRecord-odb.cxx
+  sydRecord-schema.cxx
+  sydRecord.cxx
+  sydRecordHistory-odb.cxx
+  sydRecordHistory-schema.cxx
+  sydRecordHistory.cxx
+  sydRecordWithHistory-odb.cxx
+  sydRecordWithHistory-schema.cxx
+  sydRecordWithHistory.cxx
+  sydRecordWithMD5Signature-odb.cxx
+  sydRecordWithMD5Signature-schema.cxx
+  sydRecordWithMD5Signature.cxx
+  sydFile-odb.cxx
+  sydFile-schema.cxx
+  sydFile.cxx
+  sydTag-odb.cxx
+  sydTag-schema.cxx
+  sydTag.cxx
+  sydRecordWithTags-odb.cxx
+  sydRecordWithTags-schema.cxx
   sydRecordWithTags.cxx
-  sydTagHelper.cxx
+
   sydDatabase.cxx
   sydDatabaseManager.cxx
   sydDatabaseInformation.cxx
   sydPluginManager.cxx
   sydDatabaseInformation.cxx
-  sydRecordHelpers.cxx
+
+  sydRecordHelper.cxx
+  sydTagHelper.cxx
   sydFileHelper.cxx
   )
 

@@ -21,7 +21,7 @@
 #include "sydStandardDatabase.h"
 #include "sydDicomSerie.h"
 #include "sydImageBuilder.h"
-#include "sydTag.h"
+#include "sydTagHelper.h"
 #include "sydFileHelper.h"
 
 // --------------------------------------------------------------------
@@ -74,7 +74,7 @@ std::string syd::Image::ToString() const
   // (only first file is usually useful to display)
   if (files.size() != 0) ss << files[0]->filename << " ";
   else ss << empty_value << " ";
-  ss << GetLabels(tags) << " "
+  ss << syd::GetLabels(tags) << " "
      << acquisition_date << " "
      << type << " "
      << pixel_type << " "

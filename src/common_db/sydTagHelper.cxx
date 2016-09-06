@@ -20,21 +20,21 @@
 #include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
-syd::Tag::vector syd::TagHelper::FindTags(const syd::Database * db,
-                                          const std::string & names)
+syd::Tag::vector syd::FindTags(const syd::Database * db,
+                               const std::string & names)
 {
   syd::Tag::vector tags;
   std::vector<std::string> words;
   syd::GetWords(words, names);
-  return syd::TagHelper::FindTags(db, words);
+  return syd::FindTags(db, words);
 }
 // --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
-syd::Tag::pointer syd::TagHelper::FindTag(const syd::Database * db,
-                                          const std::string & name)
+syd::Tag::pointer syd::FindTag(const syd::Database * db,
+                               const std::string & name)
 {
-  syd::Tag::vector tags = syd::TagHelper::FindTags(db, name);
+  syd::Tag::vector tags = syd::FindTags(db, name);
   if (tags.size() != 1) {
     EXCEPTION("Error in FindTag '" << name << "', I find "
               << tags.size() << " tags";
@@ -46,8 +46,8 @@ syd::Tag::pointer syd::TagHelper::FindTag(const syd::Database * db,
 
 
 // --------------------------------------------------------------------
-syd::Tag::vector syd::TagHelper::FindTags(const syd::Database * db,
-                                          const std::vector<std::string> & names)
+syd::Tag::vector syd::FindTags(const syd::Database * db,
+                               const std::vector<std::string> & names)
 {
   syd::Tag::vector tags;
   odb::query<Tag> q = odb::query<Tag>::label.in_range(names.begin(), names.end());
@@ -66,8 +66,8 @@ syd::Tag::vector syd::TagHelper::FindTags(const syd::Database * db,
 
 
 // --------------------------------------------------------------------
-bool syd::TagHelper::IsAllTagsIn(syd::Tag::vector & input_tags,
-                                 syd::Tag::vector & to_search_tags)
+bool syd::IsAllTagsIn(syd::Tag::vector & input_tags,
+                      syd::Tag::vector & to_search_tags)
 {
   // http://stackoverflow.com/questions/5225820/compare-two-vectors-c
   std::set<syd::Tag::pointer> s1(input_tags.begin(), input_tags.end());
@@ -84,8 +84,8 @@ bool syd::TagHelper::IsAllTagsIn(syd::Tag::vector & input_tags,
 
 
 // --------------------------------------------------------------------
-int syd::TagHelper::AddTag(syd::Tag::vector & tags,
-                           const syd::Tag::vector & tags_to_add)
+int syd::AddTag(syd::Tag::vector & tags,
+                const syd::Tag::vector & tags_to_add)
 {
   int n = 0;
   for(auto t:tags_to_add) n += AddTag(tags, t);
@@ -95,8 +95,8 @@ int syd::TagHelper::AddTag(syd::Tag::vector & tags,
 
 
 // --------------------------------------------------------------------
-int syd::TagHelper::AddTag(syd::Tag::vector & tags,
-                           const syd::Tag::pointer & tag_to_add)
+int syd::AddTag(syd::Tag::vector & tags,
+                const syd::Tag::pointer & tag_to_add)
 {
   // (rather use a set instead of a tag to keep it ordered ?)
   bool found = false;
@@ -115,8 +115,8 @@ int syd::TagHelper::AddTag(syd::Tag::vector & tags,
 
 
 // --------------------------------------------------------------------
-int syd::TagHelper::RemoveTag(syd::Tag::vector & tags,
-                              const syd::Tag::vector & tags_to_remove)
+int syd::RemoveTag(syd::Tag::vector & tags,
+                   const syd::Tag::vector & tags_to_remove)
 {
   int n = 0;
   for(auto t:tags_to_remove) n += RemoveTag(tags, t);
@@ -126,8 +126,8 @@ int syd::TagHelper::RemoveTag(syd::Tag::vector & tags,
 
 
 // --------------------------------------------------------------------
-int syd::TagHelper::RemoveTag(syd::Tag::vector & tags,
-                              const syd::Tag::pointer & tag_to_remove)
+int syd::RemoveTag(syd::Tag::vector & tags,
+                   const syd::Tag::pointer & tag_to_remove)
 {
   // (rather use a set instead of a tag to keep it ordered ?)
   int i=0;
@@ -139,5 +139,17 @@ int syd::TagHelper::RemoveTag(syd::Tag::vector & tags,
     ++i;
   }
   return 0;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetLabels(const syd::Tag::vector & tags)
+{
+  std::ostringstream os;
+  if (tags.size() == 0) return empty_value;
+  os << tags[0]->label;
+  for(auto i=1; i<tags.size(); i++) os << "," << tags[i]->label;
+  return os.str();
 }
 // --------------------------------------------------------------------

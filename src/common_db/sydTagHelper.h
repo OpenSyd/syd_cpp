@@ -28,42 +28,48 @@ namespace syd {
 
   /// This file contains helpers function that are hopefully helpful
   /// for syd::Tag table
-  class TagHelper
-  {
-  public:
 
-    /// Update tag list
-    template<class ArgsInfo>
-    static void UpdateTagsFromCommandLine(syd::Tag::vector & tags,
-                                          const syd::Database * db,
-                                          ArgsInfo & args_info);
+  /// Update tag list
+  template<class ArgsInfo>
+  static void UpdateTagsFromCommandLine(syd::Tag::vector & tags,
+                                        const syd::Database * db,
+                                        ArgsInfo & args_info);
 
-    /// Print the list of tag labels
-    static std::string GetLabels(const syd::Tag::vector & tags);
+  /// Print the list of tag labels
+  std::string GetLabels(const syd::Tag::vector & tags);
 
-    /// Find a tag by name
-    static syd::Tag::vector FindTags(const syd::Database * db,
-                                     const std::string & names);
-    static syd::Tag::vector FindTags(const syd::Database * db,
-                                     const std::vector<std::string> & names);
-    static syd::Tag::pointer FindTag(const syd::Database * db,
-                                     const std::string & name);
+  /// Find tags by names (separated with space)
+  syd::Tag::vector FindTags(const syd::Database * db,
+                            const std::string & names);
 
-    /// Check if all tags are in the first list
-    static bool IsAllTagsIn(syd::Tag::vector & input_tags,
-                            syd::Tag::vector & to_search_tags);
+  /// Find tags by list of names
+  syd::Tag::vector FindTags(const syd::Database * db,
+                            const std::vector<std::string> & names);
 
-    /// manage tag
-    static int AddTag(syd::Tag::vector & tags,
-                      const syd::Tag::vector & tags_to_add);
-    static int AddTag(syd::Tag::vector & tags,
-                      const syd::Tag::pointer & tag_to_add);
-    static int RemoveTag(syd::Tag::vector & tags,
-                         const syd::Tag::vector & tags_to_remove);
-    static int RemoveTag(syd::Tag::vector & tags,
-                         const syd::Tag::pointer & tag_to_remove);
+  /// Find a tag by name
+  syd::Tag::pointer FindTag(const syd::Database * db,
+                            const std::string & name);
 
-  }; // end class
+  /// Check if all tags are in the first list
+  bool IsAllTagsIn(syd::Tag::vector & input_tags,
+                   syd::Tag::vector & to_search_tags);
+
+  /// Add a tag to the list (check not already exist)
+  int AddTag(syd::Tag::vector & tags,
+             const syd::Tag::vector & tags_to_add);
+
+  /// Add tags to the list (check not already exist)
+  int AddTag(syd::Tag::vector & tags,
+             const syd::Tag::pointer & tag_to_add);
+
+  /// Remove tags from the list
+  int RemoveTag(syd::Tag::vector & tags,
+                const syd::Tag::vector & tags_to_remove);
+
+  /// Remove a tag from the list
+  int RemoveTag(syd::Tag::vector & tags,
+                const syd::Tag::pointer & tag_to_remove);
+
 } // namespace syd
 
 #include "sydTagHelper.txx"

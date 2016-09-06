@@ -18,8 +18,7 @@
 
 // --------------------------------------------------------------------
 template<class ArgsInfo>
-void syd::TagHelper::
-UpdateTagsFromCommandLine(syd::Tag::vector & tags,
+void syd::UpdateTagsFromCommandLine(syd::Tag::vector & tags,
                           const syd::Database * db,
                           ArgsInfo & args_info)
 {
@@ -32,9 +31,9 @@ UpdateTagsFromCommandLine(syd::Tag::vector & tags,
       std::string tagname = args_info.remove_tag_arg[i];
       syd::Tag::vector tags_temp;
       try {
-        tags_temp = syd::TagHelper::FindTags(db, tagname);
+        tags_temp = syd::FindTags(db, tagname);
       } catch(std::exception & e) { } // ignore unknown tag
-     syd::TagHelper:: RemoveTag(tags, tags_temp);
+      syd:: RemoveTag(tags, tags_temp);
     }
   }
 
@@ -44,11 +43,11 @@ UpdateTagsFromCommandLine(syd::Tag::vector & tags,
       std::string tagname = args_info.tag_arg[i];
       syd::Tag::vector tags_temp;
       try {
-        tags_temp = syd::TagHelper::FindTags(db, tagname);
+        tags_temp = syd::FindTags(db, tagname);
       } catch(std::exception & e) {
         LOG(WARNING) << "Some tags are ignored. " << e.what();
       }
-      syd::TagHelper::AddTag(tags, tags_temp);
+      syd::AddTag(tags, tags_temp);
     }
   }
 }

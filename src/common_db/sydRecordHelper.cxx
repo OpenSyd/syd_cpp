@@ -17,7 +17,7 @@
   ===========================================================================**/
 
 
-#include "sydRecordHelpers.h"
+#include "sydRecordHelper.h"
 
 // --------------------------------------------------------------------
 bool syd::ContainsAllTags(const syd::RecordWithTags::pointer & record,

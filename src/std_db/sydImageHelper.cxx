@@ -19,8 +19,6 @@
 // syd
 #include "sydImageHelper.h"
 #include "sydFileHelper.h"
-#include "sydPixelUnitHelper.h"
-
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -192,12 +190,12 @@ void syd::SetImageInfoFromDicomSerie(syd::Image::pointer image,
   syd::PixelValueUnit::pointer unit = NULL;
   if (dicom->dicom_modality == "CT") {
     try {
-      unit = syd::PixelUnitHelper::FindPixelUnit(db, "HU");
+      unit = syd::FindPixelUnit(db, "HU");
     } catch(...) {} // ignore if not found
   }
   else {
     try {
-      unit = syd::PixelUnitHelper::FindPixelUnit(db, "counts");
+      unit = syd::FindPixelUnit(db, "counts");
     } catch(...) {} // ignore if not found
   }
 
@@ -210,7 +208,7 @@ void syd::SetImageInfoFromDicomSerie(syd::Image::pointer image,
 void syd::SetPixelUnit(syd::Image::pointer image, std::string pixel_unit)
 {
   auto db = image->GetDatabase<syd::StandardDatabase>();
-  auto u = db->FindPixelUnit(pixel_unit);
+  auto u = syd::FindPixelUnit(db, pixel_unit);
   image->pixel_unit = u;
 }
 // --------------------------------------------------------------------
