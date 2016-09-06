@@ -153,7 +153,7 @@ void syd::SetImageInfoFromDicomSerie(syd::Image::pointer image,
 
   // try to guess pixel_unit ?
   auto db = image->GetDatabase<syd::StandardDatabase>();
-  syd::PixelValueUnit::pointer unit = NULL;
+  syd::PixelUnit::pointer unit = NULL;
   if (dicom->dicom_modality == "CT") {
     try {
       unit = syd::FindPixelUnit(db, "HU");

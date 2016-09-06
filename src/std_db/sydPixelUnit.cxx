@@ -17,14 +17,14 @@
   ===========================================================================**/
 
 // syd
-#include "sydPixelValueUnit.h"
+#include "sydPixelUnit.h"
 #include "sydPrintTable.h"
 
 // std
 #include <set>
 
 // --------------------------------------------------
-syd::PixelValueUnit::PixelValueUnit():syd::Record()
+syd::PixelUnit::PixelUnit():syd::Record()
 {
   name = empty_value;
   description = empty_value;
@@ -33,14 +33,14 @@ syd::PixelValueUnit::PixelValueUnit():syd::Record()
 
 
 // --------------------------------------------------
-syd::PixelValueUnit::~PixelValueUnit()
+syd::PixelUnit::~PixelUnit()
 {
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-std::string syd::PixelValueUnit::ToString() const
+std::string syd::PixelUnit::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
@@ -52,10 +52,10 @@ std::string syd::PixelValueUnit::ToString() const
 
 
 // --------------------------------------------------
-void syd::PixelValueUnit::Set(const std::vector<std::string> & arg)
+void syd::PixelUnit::Set(const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
-    LOG(FATAL) << "To insert a PixelValueUnit, please set <name> <description>";
+    LOG(FATAL) << "To insert a PixelUnit, please set <name> <description>";
   }
   name = arg[0];
   description = arg[1];
@@ -64,7 +64,7 @@ void syd::PixelValueUnit::Set(const std::vector<std::string> & arg)
 
 
 // --------------------------------------------------
-void syd::PixelValueUnit::DumpInTable(syd::PrintTable & ta) const
+void syd::PixelUnit::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("name", name);

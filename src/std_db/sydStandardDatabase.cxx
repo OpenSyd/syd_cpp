@@ -124,8 +124,8 @@ void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & v,
 
 // --------------------------------------------------
 template<>
-void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & v,
-                                           const std::string & order) const
+void syd::Table<syd::PixelUnit>::Sort(syd::PixelUnit::vector & v,
+                                      const std::string & order) const
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
@@ -171,7 +171,7 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::DicomFile>();
   AddTable<syd::DicomSerie>();
 
-  AddTable<syd::PixelValueUnit>();
+  AddTable<syd::PixelUnit>();
   AddTable<syd::Image>();
 
   AddTable<syd::RoiType>();
@@ -401,32 +401,32 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   Insert(tags);
   LOG(1) << tags.size() << " tags have been added.";
 
-  // Add some default PixelValueUnit
-  syd::PixelValueUnit::vector units;
-  units.push_back(NewPixelValueUnit("no_unit", "Default fake unit when unset."));
-  units.push_back(NewPixelValueUnit("%", "Percentage (such as relative uncertainty)"));
-  units.push_back(NewPixelValueUnit("HU", "Hounsfield Units"));
-  units.push_back(NewPixelValueUnit("counts", "Number of counts (by pixel)"));
-  units.push_back(NewPixelValueUnit("label", "Mask image label"));
-  units.push_back(NewPixelValueUnit("Gy", "Absorbed dose in Gy"));
-  units.push_back(NewPixelValueUnit("cGy", "Absorbed dose in cGy")); // FIXME
-  units.push_back(NewPixelValueUnit("MeV", "Deposited energy in MeV"));
+  // Add some default PixelUnit
+  syd::PixelUnit::vector units;
+  units.push_back(NewPixelUnit("no_unit", "Default fake unit when unset."));
+  units.push_back(NewPixelUnit("%", "Percentage (such as relative uncertainty)"));
+  units.push_back(NewPixelUnit("HU", "Hounsfield Units"));
+  units.push_back(NewPixelUnit("counts", "Number of counts (by pixel)"));
+  units.push_back(NewPixelUnit("label", "Mask image label"));
+  units.push_back(NewPixelUnit("Gy", "Absorbed dose in Gy"));
+  units.push_back(NewPixelUnit("cGy", "Absorbed dose in cGy")); // FIXME
+  units.push_back(NewPixelUnit("MeV", "Deposited energy in MeV"));
 
-  units.push_back(NewPixelValueUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq"));
-  units.push_back(NewPixelValueUnit("Bq_by_IA", "Activity in Bq by injected activity in MBq"));
-  units.push_back(NewPixelValueUnit("MBq.h/IA[MBq]", "time integrated activity MBq.h by injected activity"));
-  units.push_back(NewPixelValueUnit("MBq/IA[MBq]", "Activity in MBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq"));
+  units.push_back(NewPixelUnit("Bq_by_IA", "Activity in Bq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("MBq.h/IA[MBq]", "time integrated activity MBq.h by injected activity"));
+  units.push_back(NewPixelUnit("MBq/IA[MBq]", "Activity in MBq by injected activity in MBq"));
 
-  units.push_back(NewPixelValueUnit("cGy/IA[MBq]", "Dose in cGy by injected activity"));
-  units.push_back(NewPixelValueUnit("cGy/h/IA[MBq]", "Dose rate in cGy by hour by injected activity"));
-  units.push_back(NewPixelValueUnit("cGy/kBq.h/IA[MBq]", "Dose in cGy by tia kBq.h by injected activity (for S matrix)"));
-  units.push_back(NewPixelValueUnit("kBq.h/IA[MBq]", "time integrated activity kBq.h by injected activity"));
-  units.push_back(NewPixelValueUnit("kBq/IA[MBq]", "Activity in kBq by injected activity in MBq"));
-  units.push_back(NewPixelValueUnit("kBq_by_IA", "Activity in kBq by injected activity in MBq"));
-  units.push_back(NewPixelValueUnit("mGy/Bq.sec", "Dose by cumulated activity"));
+  units.push_back(NewPixelUnit("cGy/IA[MBq]", "Dose in cGy by injected activity"));
+  units.push_back(NewPixelUnit("cGy/h/IA[MBq]", "Dose rate in cGy by hour by injected activity"));
+  units.push_back(NewPixelUnit("cGy/kBq.h/IA[MBq]", "Dose in cGy by tia kBq.h by injected activity (for S matrix)"));
+  units.push_back(NewPixelUnit("kBq.h/IA[MBq]", "time integrated activity kBq.h by injected activity"));
+  units.push_back(NewPixelUnit("kBq/IA[MBq]", "Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("kBq_by_IA", "Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("mGy/Bq.sec", "Dose by cumulated activity"));
 
   Insert(units);
-  LOG(1) << units.size() << " PixelValueUnit have been added.";
+  LOG(1) << units.size() << " PixelUnit have been added.";
 
   // Add some RoiType
   syd::RoiType::vector rois;
@@ -469,11 +469,11 @@ syd::StandardDatabase::NewTag(const std::string & name,
 
 
 // --------------------------------------------------------------------
-syd::PixelValueUnit::pointer
-syd::StandardDatabase::NewPixelValueUnit(const std::string & name,
-                                         const std::string & description)
+syd::PixelUnit::pointer
+syd::StandardDatabase::NewPixelUnit(const std::string & name,
+                                    const std::string & description)
 {
-  syd::PixelValueUnit::pointer v;
+  syd::PixelUnit::pointer v;
   New(v);
   v->name = name;
   v->description = description;

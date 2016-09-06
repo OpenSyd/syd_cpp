@@ -20,13 +20,13 @@
 #include "sydPixelUnitHelper.h"
 
 // --------------------------------------------------------------------
-syd::PixelValueUnit::pointer syd::FindPixelUnit(syd::StandardDatabase * db,
-                                                std::string unit_name)
+syd::PixelUnit::pointer syd::FindPixelUnit(syd::StandardDatabase * db,
+                                           std::string unit_name)
 {
-  syd::PixelValueUnit::pointer unit;
+  syd::PixelUnit::pointer unit;
   try {
-    odb::query<syd::PixelValueUnit> q =
-      odb::query<syd::PixelValueUnit>::name == unit_name;
+    odb::query<syd::PixelUnit> q =
+      odb::query<syd::PixelUnit>::name == unit_name;
     db->QueryOne(unit, q);
   } catch (std::exception & e) {
     EXCEPTION("Cannot find the PixelUnit named '" << unit_name << "'");

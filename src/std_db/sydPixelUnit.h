@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDPIXELVALUEUNIT_H
-#define SYDPIXELVALUEUNIT_H
+#ifndef SYDPIXELUNIT_H
+#define SYDPIXELUNIT_H
 
 // syd
 #include "sydRecord.h"
@@ -26,12 +26,12 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::PixelValueUnit")
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::PixelUnit")
   /// Simple table to store a label and a description
-  class PixelValueUnit : public syd::Record {
+  class PixelUnit : public syd::Record {
   public:
 
-    virtual ~PixelValueUnit();
+    virtual ~PixelUnit();
 
 #pragma db options("UNIQUE")
     /// Label of the tag (name)
@@ -41,7 +41,7 @@ namespace syd {
     std::string description;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(PixelValueUnit, syd::PixelValueUnit);
+    TABLE_DEFINE(PixelUnit, syd::PixelUnit);
     // ------------------------------------------------------------------------
 
     /// Write the element as a string
@@ -52,7 +52,7 @@ namespace syd {
     virtual void DumpInTable(syd::PrintTable & table) const;
 
   protected:
-    PixelValueUnit();
+    PixelUnit();
 
   }; // end of class
 

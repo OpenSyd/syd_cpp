@@ -28,7 +28,7 @@
 #include "sydFile.h"
 #include "sydTag.h"
 #include "sydDicomSerie.h"
-#include "sydPixelValueUnit.h"
+#include "sydPixelUnit.h"
 #include "sydRecordWithHistory.h"
 #include "sydRecordWithTags.h"
 #include "sydPrintTable.h"
@@ -68,7 +68,7 @@ namespace syd {
     std::string pixel_type;
 
     /// The unit of the pixel value (counts, suv, etc)
-    syd::PixelValueUnit::pointer pixel_unit;
+    syd::PixelUnit::pointer pixel_unit;
 
     /// Frame of reference : images with same frame_of_reference_uid
     /// are in the same coordinate system. Imported from dicom

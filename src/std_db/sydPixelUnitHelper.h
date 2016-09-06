@@ -20,18 +20,18 @@
 #define SYDPIXELUNITHELPER_H
 
 // syd
-#include "sydPixelValueUnit.h"
+#include "sydPixelUnit.h"
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
   /// This file contains helpers function that are hopefully helpful
-  /// for syd::PixelValueUnit table
+  /// for syd::PixelUnit table
 
   // Find a pixel unit by name
-  syd::PixelValueUnit::pointer FindPixelUnit(syd::StandardDatabase * db,
-                                             std::string unit);
+  syd::PixelUnit::pointer FindPixelUnit(syd::StandardDatabase * db,
+                                        std::string unit);
 
 }
 // --------------------------------------------------------------------

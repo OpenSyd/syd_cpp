@@ -8,7 +8,7 @@ wrap_odb(sydStandardDatabase sydRadionuclide.h)
 wrap_odb(sydStandardDatabase sydInjection.h)
 wrap_odb(sydStandardDatabase sydDicomSerie.h)
 wrap_odb(sydStandardDatabase sydDicomFile.h)
-wrap_odb(sydStandardDatabase sydPixelValueUnit.h)
+wrap_odb(sydStandardDatabase sydPixelUnit.h)
 wrap_odb(sydStandardDatabase sydImage.h)
 wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
@@ -26,7 +26,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydInjection-odb.cxx sydInjection-schema.cxx  sydInjection.cxx
   sydDicomSerie-odb.cxx sydDicomSerie-schema.cxx  sydDicomSerie.cxx
   sydDicomFile-odb.cxx sydDicomFile-schema.cxx  sydDicomFile.cxx
-  sydPixelValueUnit-odb.cxx sydPixelValueUnit-schema.cxx  sydPixelValueUnit.cxx
+  sydPixelUnit-odb.cxx sydPixelUnit-schema.cxx  sydPixelUnit.cxx
   sydImage-odb.cxx sydImage-schema.cxx  sydImage.cxx
   sydRoiType-odb.cxx sydRoiType-schema.cxx  sydRoiType.cxx
   sydRoiMaskImage-odb.cxx sydRoiMaskImage-schema.cxx  sydRoiMaskImage.cxx

@@ -34,7 +34,7 @@
 #include "sydFile-odb.hxx"
 #include "sydDicomSerie-odb.hxx"
 #include "sydDicomFile-odb.hxx"
-#include "sydPixelValueUnit-odb.hxx"
+#include "sydPixelUnit-odb.hxx"
 #include "sydImage-odb.hxx"
 #include "sydRoiType-odb.hxx"
 #include "sydRoiMaskImage-odb.hxx"
@@ -81,7 +81,7 @@ namespace syd {
 
     /// Insert a new tag
     Tag::pointer NewTag(const std::string & name, const std::string & description);
-    PixelValueUnit::pointer NewPixelValueUnit(const std::string & name, const std::string & description);
+    PixelUnit::pointer NewPixelUnit(const std::string & name, const std::string & description);
     RoiType::pointer NewRoiType(const std::string & name, const std::string & description);
 
     /// Find a record with the same MD5 than the input
@@ -112,8 +112,8 @@ namespace syd {
                                                       const std::string & type) const;
   // template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records,
   //                                                    const std::string & type) const;
-  template<> void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & records,
-                                                        const std::string & type) const;
+  template<> void syd::Table<syd::PixelUnit>::Sort(syd::PixelUnit::vector & records,
+                                                   const std::string & type) const;
   template<> void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & records,
                                                       const std::string & type) const;
 
