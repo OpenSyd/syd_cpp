@@ -22,6 +22,7 @@
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydImageHelper.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])

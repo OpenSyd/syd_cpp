@@ -21,6 +21,7 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydImageHelper.h"
+#include "sydTagHelper.h"
 #include "sydCommonGengetopt.h"
 #include "sydImageExtractSlices.h"
 #include "sydImageGeometricalMean.h"
