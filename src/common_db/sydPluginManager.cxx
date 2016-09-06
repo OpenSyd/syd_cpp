@@ -139,12 +139,7 @@ void syd::PluginManager::Load(const std::string & filename)
   }
   syd::DatabaseManager * m = syd::DatabaseManager::GetInstance();
   db_creator(m);
-  /*  std::string s = db_creator(m);
-  if (s != schema) {
-    LOG(FATAL) << "(syd plugin) The lib " << filename << " does not contain the schema '"
-               << schema << "', I found '" << s << "' instead. Abort.";
-  }
-  */
+
   // end
   plugins.push_back(plugin);
 }

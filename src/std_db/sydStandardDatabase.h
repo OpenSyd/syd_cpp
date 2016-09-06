@@ -39,7 +39,7 @@
 #include "sydRoiType-odb.hxx"
 #include "sydRoiMaskImage-odb.hxx"
 #include "sydRoiStatistic-odb.hxx"
-#include "sydTagHelper.h" /// Temporary TO REMOVE FIXME
+
 // #include "sydImageTransform-odb.hxx"
 // #include "sydCalibration-odb.hxx"
 // #include "sydTimepoints-odb.hxx"

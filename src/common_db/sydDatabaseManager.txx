@@ -18,7 +18,8 @@
 
 // --------------------------------------------------------------------
 template<class DatabaseSchema>
-DatabaseCreator<DatabaseSchema> * syd::DatabaseManager::RegisterDatabaseSchema(const std::string & schema)
+DatabaseCreator<DatabaseSchema> *
+syd::DatabaseManager::RegisterDatabaseSchema(const std::string & schema)
 {
   auto it = db_map_.find(schema);
   if (it != db_map_.end()) {
