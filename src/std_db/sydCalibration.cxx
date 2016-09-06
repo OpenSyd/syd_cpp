@@ -44,7 +44,7 @@ std::string syd::Calibration::ToString() const
   }
   ss << id << " "
      << name << " "
-     << (image==NULL? empty_value:syd::ToString(image->id)) << " ";
+     << (image==NULL? empty_value:std::to_string(image->id)) << " ";
   for(auto t:tags) ss << t->label << " ";
   ss << factor << " " << fov_ratio;
   return ss.str();
@@ -59,7 +59,7 @@ void syd::Calibration::DumpInTable(syd::PrintTable & ta) const
   std::string pname;
   if (image == NULL) { iname = empty_value; pname = empty_value; }
   else {
-    iname = syd::ToString(image->id);
+    iname = std::to_string(image->id);
     if (image->patient == NULL) pname = empty_value;
     pname = image->patient->name;
   }

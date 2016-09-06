@@ -42,7 +42,7 @@ std::string syd::RoiStatistic::ToString() const
      << image->id << " "
      << image->pixel_unit->name << " "
      << syd::GetLabels(tags) << " "
-     << (mask!= NULL? syd::ToString(mask->roitype->name):"no_mask") << " "
+     << (mask!= NULL? mask->roitype->name:"no_mask") << " "
      << mean << " " << std_dev << " "  << n << " "
      << min << " " << max << " " << sum;
   return ss.str();

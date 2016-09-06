@@ -503,7 +503,7 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
     std::ostringstream oss;
     if (i < 10) oss << "lesion0" << i;
     else oss << "lesion" << i;
-    rois.push_back(NewRoiType(oss.str(), "Lesion "+ToString(i)));
+    rois.push_back(NewRoiType(oss.str(), "Lesion "+std::to_string(i)));
   }
   Insert(rois);
   LOG(1) << rois.size() << " RoiType have been added.";

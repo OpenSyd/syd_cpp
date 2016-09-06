@@ -42,11 +42,11 @@ std::string syd::ImageTransform::ToString() const
   std::stringstream ss ;
   ss << id << " "
      << (fixed_image == NULL ? empty_value:fixed_image->patient->name) << " "
-     << (fixed_image == NULL ? empty_value:syd::ToString(fixed_image->id)) << " "
-     << (moving_image == NULL ? empty_value:syd::ToString(moving_image->id)) << " "
+     << (fixed_image == NULL ? empty_value:std::to_string(fixed_image->id)) << " "
+     << (moving_image == NULL ? empty_value:std::to_string(moving_image->id)) << " "
      << GetLabels(tags) << " "
-     << (fixed_mask == NULL ? empty_value:syd::ToString(fixed_mask->id)) << " "
-     << (moving_mask == NULL ? empty_value:syd::ToString(moving_mask->id)) << " "
+     << (fixed_mask == NULL ? empty_value:std::to_string(fixed_mask->id)) << " "
+     << (moving_mask == NULL ? empty_value:std::to_string(moving_mask->id)) << " "
      << (config_file == NULL ? empty_value:config_file->filename) << " "
      << (transform_file == NULL ? empty_value:transform_file->filename) << " "
      << date;
@@ -85,7 +85,7 @@ void syd::ImageTransform::Callback(odb::callback_event event, odb::database & db
 std::string syd::ImageTransform::ComputeRelativeFolder() const
 {
   syd::Patient::pointer patient = fixed_image->patient;
-  std::string p = patient->ComputeRelativeFolder()+PATH_SEPARATOR+"transform"+PATH_SEPARATOR+syd::ToString(id);
+  std::string p = patient->ComputeRelativeFolder()+PATH_SEPARATOR+"transform"+PATH_SEPARATOR+std::to_string(id);
   return p;
 }
 // --------------------------------------------------

@@ -84,8 +84,6 @@ namespace syd {
   unsigned long ToULong(std::string);
   double ToDouble(std::string);
   template<class T>
-  std::string ToString(const T & t);
-  template<class T>
   std::string ArrayToString(const std::vector<T> & t, int precision=1);
   void SkipComment(std::istream & is);
   bool Replace(std::string& str, const std::string& from, const std::string& to);

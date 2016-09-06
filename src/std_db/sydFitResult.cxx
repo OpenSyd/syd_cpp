@@ -107,7 +107,7 @@ void syd::FitResult::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("index", first_index);
   ta.Set("iter", iterations);
   for(auto i=0; i<params.size(); i++)
-    ta.Set("p"+syd::ToString(i), params[i], 7);
+    ta.Set("p"+std::to_string(i), params[i], 7);
 }
 // --------------------------------------------------------------------
 

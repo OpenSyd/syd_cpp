@@ -415,7 +415,7 @@ void syd::DicomSerieBuilder::InsertDicomSeries()
     dss << destination_folders[i] << PATH_SEPARATOR
         << "dcm_" << dicomfiles_to_insert[i]->id << "_" << f;
     dicomfiles_to_insert[i]->filename =
-      "dcm_" + ToString(dicomfiles_to_insert[i]->id) +
+      "dcm_" + std::to_string(dicomfiles_to_insert[i]->id) +
       "_" +dicomfiles_to_insert[i]->filename;
     std::string destination =dss.str();
     if (fs::exists(destination)) {

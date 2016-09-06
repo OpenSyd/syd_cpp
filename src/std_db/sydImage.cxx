@@ -277,7 +277,7 @@ void syd::Image::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("size", syd::ArrayToString(size));
   ta.Set("spacing", syd::ArrayToString(spacing,1));
   std::string dicom;
-  for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
+  for(auto d:dicoms) dicom += std::to_string(d->id)+" ";
   if (dicom.size() != 0) {
     dicom.pop_back(); // remove last space
     ta.Set("dicom", dicom);
@@ -332,7 +332,7 @@ void syd::Image::DumpInTable_details(syd::PrintTable & ta) const
   ta.Set("dim", dimension);
   ta.Set("ref_frame", frame_of_reference_uid);
   std::string f;
-  for(auto a:files) f += syd::ToString(a->id)+" ";
+  for(auto a:files) f += std::to_string(a->id)+" ";
   if (files.size() != 0) {
     f.pop_back(); // remove last space
     ta.Set("files", f);

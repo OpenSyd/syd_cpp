@@ -18,18 +18,6 @@
 
 
 //--------------------------------------------------------------------
-// Convert float, double ... to string
-template<class T>
-std::string ToString(const T & t)
-{
-  std::ostringstream myStream;
-  myStream << t << std::flush;
-  return(myStream.str());
-}
-//--------------------------------------------------------------------
-
-
-//--------------------------------------------------------------------
 // Convert array to string with 'x'
 template<class T>
 std::string ArrayToString(const std::vector<T> & t, int precision)
