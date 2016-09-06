@@ -37,7 +37,6 @@ set(SYD_STANDARD_DATABASE_SRC
   # sydTimepoints-odb.cxx sydTimepoints-schema.cxx  sydTimepoints.cxx
   # sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
 
-  sydFileBuilder.cxx # <--- in common !
   sydPixelUnitHelper.cxx
   sydDicomSerieBuilder.cxx
   sydDicomSerieHelper.cxx
@@ -46,9 +45,6 @@ set(SYD_STANDARD_DATABASE_SRC
   sydUpdateRadionuclideFilter.cxx
   sydRoiStatisticBuilder.cxx
 
-  #  sydImageBuilder.cxx
-  #  sydImageFromDicomBuilder.cxx
-  #  sydStitchDicomImageBuilder.cxx
   #  sydRoiMaskImageBuilder.cxx
   #  sydCropImageBuilder.cxx
   #  sydDecayCorrectedImageBuilder.cxx

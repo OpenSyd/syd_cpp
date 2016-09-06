@@ -20,9 +20,7 @@
 #include "sydImage.h"
 #include "sydStandardDatabase.h"
 #include "sydDicomSerie.h"
-#include "sydImageBuilder.h"
 #include "sydTagHelper.h"
-#include "sydFileHelper.h"
 
 // --------------------------------------------------------------------
 syd::Image::Image():syd::RecordWithHistory()
