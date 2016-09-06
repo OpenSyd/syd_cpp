@@ -43,46 +43,12 @@ syd::InsertImageFromFile(std::string filename,
   // copy mhd to db according to default filename and create the two
   // associated syd::File
   image->files = syd::InsertFilesFromMhd(db, filename,
-                                         GetDefaultImageRelativePath(image),
-                                         GetDefaultMhdImageFilename(image));
+                                         image->ComputeDefaultRelativePath(),
+                                         image->ComputeDefaultMHDFilename());
   // Update size and spacing
   syd::SetImageInfoFromFile(image);
   db->Update(image);
   return image;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::string syd::GetDefaultImageRelativePath(syd::Image::pointer image)
-{
-  if (image->patient == NULL) {
-    EXCEPTION("Cannot compute the default image relative path"
-              << ", no patient ar yet associated with the image: "
-              << image);
-  }
-  auto s = image->patient->name;
-  syd::Replace(s, " ", "_"); // replace space with underscore
-  if (!fs::portable_name(s)) {
-    EXCEPTION("The folder name '" << s << "' does not seems a "
-              << " valid and portable dir name. (you man change "
-              << "the patient name. Abort.");
-  }
-  return s;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::string syd::GetDefaultMhdImageFilename(syd::Image::pointer image)
-{
-  if (!image->IsPersistent()) {
-    EXCEPTION("Image must be persistent (in the db) to "
-              << "use GetDefaultMhdImageFilename.");
-  }
-  std::ostringstream oss;
-  oss << image->modality << "_" << image->id << ".mhd";
-  return oss.str();
 }
 // --------------------------------------------------------------------
 
@@ -374,45 +340,3 @@ syd::InsertImageGeometricalMean(const syd::Image::pointer input,
   return syd::InsertImage<ImageType>(gmean, input->patient, input->modality);
 }
 // --------------------------------------------------------------------
-
-
-
-
-// OLD BELOW
-
-
-/*
-
-
-// --------------------------------------------------------------------
-void syd::ImageHelper::
-UpdateMhdImageProperties(syd::Image::pointer image)
-{
-auto filename = image->GetAbsolutePath();
-auto header = syd::ReadImageHeader(filename);
-if (!header) {
-EXCEPTION("Internal error cannot read the file " << filename);
-}
-UpdateMhdImageProperties(image, header);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::ImageHelper::
-UpdateMhdImageProperties(syd::Image::pointer image, itk::ImageIOBase::Pointer header)
-{
-// Check PixelType = scalar
-image->pixel_type = itk::ImageIOBase::GetComponentTypeAsString(header->GetComponentType());
-auto d = image->dimension = header->GetNumberOfDimensions();
-image->size.clear();
-image->spacing.clear();
-for(auto i=0; i<d; i++) {
-image->size.push_back(header->GetDimensions(i));
-image->spacing.push_back(header->GetSpacing(i));
-}
-}
-// --------------------------------------------------------------------
-
-
-*/

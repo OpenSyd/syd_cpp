@@ -37,7 +37,7 @@ syd::PrintTable::PrintTable()
 
 //------------------------------------------------------------------
 void syd::PrintTable::Build(syd::Record::vector::const_iterator start,
-                             syd::Record::vector::const_iterator end)
+                            syd::Record::vector::const_iterator end)
 {
   if (start == end) return;
 
@@ -131,7 +131,7 @@ void syd::PrintTable::Set(std::string column_name, std::string value, int width_
 
 //------------------------------------------------------------------
 void syd::PrintTable::Set(syd::PrintTableColumnInfo::pointer column,
-                           std::string value)
+                          std::string value)
 {
   current_row_->Set(column->GetIndex(), value);
 }

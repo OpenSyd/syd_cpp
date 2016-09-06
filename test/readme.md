@@ -1,6 +1,6 @@
 
 Test1
-- only generic with StandardDatabasePlugin
+- test generic approach with StandardDatabase as plugin
 - create insert update query delete
 - patient injection only (for the moment)
 
@@ -14,4 +14,10 @@ Test3
 
 
 Test4
-- test insertion of image from dicom file in the db
+- test insertion of images
+- test image scale
+- test image stitch
+
+
+Test5
+- test roi

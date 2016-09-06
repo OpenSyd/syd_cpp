@@ -1,8 +1,8 @@
-#File syd_test3.ggo
+#File syd_test5.ggo
 
 package "syd"
 version "0.1"
-usage "syd_test3"
-description "Test Dicom"
+usage "syd_test5"
+description "Test ROI"
 
 option "create_ref" c "Create reference db"  flag off

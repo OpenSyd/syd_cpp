@@ -261,32 +261,6 @@ syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient:
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-syd::RoiMaskImage::pointer
-syd::StandardDatabase::FindRoiMaskImage(const syd::Image::pointer image,
-                                        const std::string & roi_name)
-{
-  syd::RoiType::pointer roitype = FindRoiType(roi_name);
-  syd::RoiMaskImage::pointer roi;
-  odb::query<syd::RoiMaskImage> q =
-    odb::query<syd::RoiMaskImage>::roitype == roitype->id and
-    odb::query<syd::RoiMaskImage>::frame_of_reference_uid ==
-    image->frame_of_reference_uid;
-  QueryOne(roi, q);
-  return roi;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::RoiType::pointer syd::StandardDatabase::FindRoiType(const std::string & roiname) const
-{
-  syd::RoiType::pointer r;
-  odb::query<syd::RoiType> q = odb::query<RoiType>::name == roiname;
-  QueryOne(r, q);
-  return r;
-}
-// --------------------------------------------------------------------
 
 
 /*

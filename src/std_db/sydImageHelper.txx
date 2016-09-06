@@ -75,8 +75,8 @@ syd::Image::pointer syd::InsertImage(typename ImageType::Pointer itk_image,
 
   // insert the files
   image->files = syd::InsertFilesFromMhd(db, filename,
-                                         GetDefaultImageRelativePath(image),
-                                         GetDefaultMhdImageFilename(image));
+                                         image->ComputeDefaultRelativePath(),
+                                         image->ComputeDefaultMHDFilename());
   syd::DeleteMHDImage(filename);
 
   // Update size and spacing

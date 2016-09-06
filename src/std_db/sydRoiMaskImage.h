@@ -22,7 +22,6 @@
 // syd
 #include "sydImage.h"
 #include "sydRoiType.h"
-#include "sydTableBase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -43,17 +42,17 @@ namespace syd {
     /// Write the element as a string
     virtual std::string ToString() const;
 
-    /// Standard folder
-    //    virtual std::string ComputeRelativeFolder() const;
-
-    /// When create a new image, compute a default name. Image *must* be persistant (with correct id)
-    //std::string ComputeDefaultAbsolutePath(syd::Database * db) const;
-
     /// Callback : delete the associated image when the roimaskimage is deleted.
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
     virtual void DumpInTable(syd::PrintTable & table) const;
+
+    /// Compute the default image path (based on the patient's name)
+    virtual std::string ComputeDefaultRelativePath();
+
+    /// Compute the default image mhd filename (based on id + modality)
+    virtual std::string ComputeDefaultMHDFilename();
 
   protected:
     RoiMaskImage();

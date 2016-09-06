@@ -73,12 +73,6 @@ namespace syd {
   void SetImageInfoFromCommandLine(syd::Image::pointer image,
                                    ArgsInfo & args_info);
 
-  /// Compute the default image path (based on the patient's name)
-  std::string GetDefaultImageRelativePath(syd::Image::pointer image);
-
-  /// Compute the default image mhd filename (based on id + modality)
-  std::string GetDefaultMhdImageFilename(syd::Image::pointer image);
-
   /// Retrieve the syd::PixelUnit and set to the image
   void SetPixelUnit(syd::Image::pointer image, std::string pixel_unit);
 
@@ -105,42 +99,6 @@ namespace syd {
   // of 4 slices
   syd::Image::pointer InsertImageGeometricalMean(const syd::Image::pointer input,
                                                  double k=0.5);
-
-
-  ///// OLD BELOW
-
-  /*
- /// This file contains helpers function that are hopefully helpful
- /// to create and update syd::Image table. All functions are static
- /// in a class for clarity.
- ///
- /// Example of use
- ///  syd::ImageHelper::InsertFilesFromMhD(image, filename);
- class ImageHelper
- {
- public:
-
- /// If File are already associated with the image, remove them
- /// frist.  Then create new File and copy an mhd image in the db,
- /// Image must be persistent.
- // static void InsertFilesFromMhD(syd::Image::pointer image,
- //                            std::string filename,
- //                            bool moveFlag = false); // true=copy ; false=move
-
- /// Copy image properties from the 'like' image (modality,
- /// injection patient etc). Everything except the properties
- /// related to the image content itself (pixel_type, size etc).
- static void CopyInformation(syd::Image::pointer image,
- const syd::Image::pointer like);
-
-
- static void UpdateMhdImageProperties(syd::Image::pointer image);
-
- static void UpdateMhdImageProperties(syd::Image::pointer image,
- itk::ImageIOBase::Pointer header);
-
- }; // end class
-  */
 
 } // namespace syd
 

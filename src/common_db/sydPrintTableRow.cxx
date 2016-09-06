@@ -61,12 +61,14 @@ std::string syd::PrintTableRow::GetValue(int col) const
 void syd::PrintTableRow::Dump(const std::vector<int> & indices,
                               std::ostream & os) const
 {
-
   for(auto col:indices) {
     auto column = table_->GetColumnInfo(col);
     if (!table_->GetSingleRowFlag())
       column->InstallStreamParameters(os);
-    auto s = column->TruncateStringIfNeeded(values_[col]);
+    std::string s;
+    // When the col does not exist, we used empty_value.
+    if (col >= values_.size()) s = empty_value;
+    else s = column->TruncateStringIfNeeded(values_[col]);
     os << s;
   }
   if (!table_->GetSingleRowFlag()) os << std::endl;

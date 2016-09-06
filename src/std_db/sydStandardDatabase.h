@@ -67,13 +67,6 @@ namespace syd {
     syd::Injection::pointer FindInjection(const syd::Patient::pointer patient,
                                           const std::string & name_or_study_id) const;
 
-    // Search a roi type by name
-    syd::RoiType::pointer FindRoiType(const std::string & roiname) const;
-
-    // Search a roi mask image by a roi name and the image
-    syd::RoiMaskImage::pointer FindRoiMaskImage(const syd::Image::pointer image,
-                                                const std::string & roi_name);
-
     // Search images for this patient name
     syd::Image::vector FindImages(const std::string & patient_name) const;
 

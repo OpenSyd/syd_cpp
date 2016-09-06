@@ -3,6 +3,6 @@
 package "syd"
 version "0.1"
 usage "syd_test4"
-description "Test InsertDicom"
+description "Test Image"
 
 option "create_ref" c "Create reference db"  flag off

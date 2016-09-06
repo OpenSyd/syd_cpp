@@ -136,24 +136,24 @@ void syd::Image::RemoveDicomSerie(const syd::DicomSerie::pointer dicom)
 
 // --------------------------------------------------
 /*std::string syd::Image::ComputeRelativeFolder() const
-{
+  {
   if (patient == NULL) {
-    LOG(FATAL) << "Cannot get Image::ComputeRelativeFolder while no patient"
-               << " is set (the record is no persistent in the db).";
+  LOG(FATAL) << "Cannot get Image::ComputeRelativeFolder while no patient"
+  << " is set (the record is no persistent in the db).";
   }
   auto s = patient->name;
   syd::Replace(s, " ", "_"); // replace space with underscore
   return s;
-}
+  }
 */
 // --------------------------------------------------
 
 
 // --------------------------------------------------
- /*std::string syd::Image::ComputeDefaultMhdFilename() const
-{
+/*std::string syd::Image::ComputeDefaultMhdFilename() const
+  {
   if (!IsPersistent()) {
-    EXCEPTION("Image must be persistent (in the db) to use ComputeDefaultMhdFilename.");
+  EXCEPTION("Image must be persistent (in the db) to use ComputeDefaultMhdFilename.");
   }
   std::string s = modality+"_"+syd::ToString(id)+".mhd";
   std::ostringstream oss;
@@ -393,5 +393,39 @@ std::string syd::Image::GetAbsolutePath() const
 {
   if (files.size() == 0) return empty_value;
   return files[0]->GetAbsolutePath();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Image::ComputeDefaultRelativePath()
+{
+  if (patient == NULL) {
+    EXCEPTION("Cannot compute the default image relative path"
+              << ", no patient ar yet associated with the image: "
+              << ToString());
+  }
+  auto s = patient->name;
+  syd::Replace(s, " ", "_"); // replace space with underscore
+  if (!fs::portable_name(s)) {
+    EXCEPTION("The folder name '" << s << "' does not seems a "
+              << " valid and portable dir name. (you man change "
+              << "the patient name. Abort.");
+  }
+  return s;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Image::ComputeDefaultMHDFilename()
+{
+  if (!IsPersistent()) {
+    EXCEPTION("Image must be persistent (in the db) to "
+              << "use ComputeDefaultMHDFilename.");
+  }
+  std::ostringstream oss;
+  oss << modality << "_" << id << ".mhd";
+  return oss.str();
 }
 // --------------------------------------------------------------------

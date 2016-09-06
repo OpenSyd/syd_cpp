@@ -1,0 +1,75 @@
+/*=========================================================================
+  Program:   syd
+
+  Authors belong to:
+  - University of LYON              http://www.universite-lyon.fr/
+  - Léon Bérard cancer center       http://www.centreleonberard.fr
+  - CREATIS CNRS laboratory         http://www.creatis.insa-lyon.fr
+
+  This software is distributed WITHOUT ANY WARRANTY; without even
+  the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+  PURPOSE.  See the copyright notices for more information.
+
+  It is distributed under dual licence
+
+  - BSD        See included LICENSE.txt file
+  - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
+  ===========================================================================**/
+
+// syd
+#include "sydRoiMaskImageHelper.h"
+
+
+// --------------------------------------------------------------------
+syd::RoiType::pointer syd::FindRoiType(const std::string & roiname,
+                                       syd::StandardDatabase * db)
+{
+  syd::RoiType::pointer r;
+  odb::query<syd::RoiType> q = odb::query<RoiType>::name == roiname;
+  db->QueryOne(r, q);
+  return r;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiMaskImage::pointer
+syd::FindRoiMaskImage(const syd::Image::pointer image,
+                      syd::StandardDatabase * db,
+                      const std::string & roi_name)
+{
+  syd::RoiType::pointer roitype = syd::FindRoiType(roi_name, db);
+  syd::RoiMaskImage::pointer roi;
+  odb::query<syd::RoiMaskImage> q =
+    odb::query<syd::RoiMaskImage>::roitype == roitype->id and
+    odb::query<syd::RoiMaskImage>::frame_of_reference_uid ==
+    image->frame_of_reference_uid;
+  db->QueryOne(roi, q);
+  return roi;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiMaskImage::pointer
+syd::InsertRoiMaskImageFromFile(std::string filename,
+                                syd::Patient::pointer patient,
+                                syd::RoiType::pointer roitype)
+{
+  auto db = patient->GetDatabase<syd::StandardDatabase>();
+  syd::RoiMaskImage::pointer mask;
+  db->New(mask);
+  mask->patient = patient;
+  mask->type = "mhd";
+  mask->roitype = roitype;
+  mask->modality = "mask"; // force to mask
+  mask->pixel_unit = syd::FindPixelUnit(db, "label");
+  db->Insert(mask);
+  mask->files = syd::InsertFilesFromMhd(db, filename,
+                                        mask->ComputeDefaultRelativePath(),
+                                        mask->ComputeDefaultMHDFilename());
+  syd::SetImageInfoFromFile(mask);
+  db->Update(mask);
+  return mask;
+}
+// --------------------------------------------------------------------

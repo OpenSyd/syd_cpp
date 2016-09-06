@@ -41,16 +41,15 @@ set(SYD_STANDARD_DATABASE_SRC
   sydDicomSerieBuilder.cxx
   sydDicomSerieHelper.cxx
   sydImageHelper.cxx
-
+  sydRoiMaskImageHelper.cxx
   sydUpdateRadionuclideFilter.cxx
-  sydRoiStatisticBuilder.cxx
 
-  #  sydRoiMaskImageBuilder.cxx
+  #sydRoiStatisticBuilder.cxx
+
   #  sydCropImageBuilder.cxx
   #  sydDecayCorrectedImageBuilder.cxx
   #  sydSubstituteRadionuclideImageBuilder.cxx
   #  sydTimeIntegratedActivityImageBuilder.cxx
-  #  sydScaleImageBuilder.cxx
   #  sydTimepointsBuilder.cxx
   )
 

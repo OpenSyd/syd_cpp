@@ -36,7 +36,7 @@ syd::RoiMaskImage::pointer
 syd::RoiStatisticBuilder::FindMask(const syd::Image::pointer input,
                                    const std::string roiname)
 {
-  syd::RoiType::pointer roitype = db_->FindRoiType(roiname);
+  syd::RoiType::pointer roitype = syd::FindRoiType(roiname, db);
   typedef odb::query<syd::RoiMaskImage> Q;
   Q q = Q::roitype == roitype->id and Q::frame_of_reference_uid == input->frame_of_reference_uid;
   syd::RoiMaskImage::vector roimasks;

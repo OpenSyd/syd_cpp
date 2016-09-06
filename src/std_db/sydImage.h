@@ -153,6 +153,12 @@ namespace syd {
     /// Check if the associated files exist on disk
     virtual syd::CheckResult Check() const;
 
+    /// Compute the default image path (based on the patient's name)
+    virtual std::string ComputeDefaultRelativePath();
+
+    /// Compute the default image mhd filename (based on id + modality)
+    virtual std::string ComputeDefaultMHDFilename();
+
   protected:
     Image();
 
