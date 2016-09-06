@@ -29,15 +29,11 @@ namespace syd {
   /// This file contains helpers function that are hopefully helpful
   /// to create and update syd::File table. All functions are static
   /// in a class for clarity.
-  class FileHelper {
 
-  public:
-
-    /// Simple file creation (not inserted)
-    static syd::File::pointer New(syd::Database * db,
-                                  std::string path,
-                                  std::string filename);
-  }; // class FileHelper
+  /// Simple file creation (not inserted)
+  syd::File::pointer New(syd::Database * db,
+                         std::string path,
+                         std::string filename);
 
 } // namespace syd
 // --------------------------------------------------------------------
