@@ -261,38 +261,6 @@ syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient:
 // --------------------------------------------------------------------
 
 
-
-
-/*
-// --------------------------------------------------------------------
-//FIXME to remove
-std::string syd::StandardDatabase::GetAbsolutePath(const syd::Image::pointer image) const
-{
-  if (image->files.size() == 0) return empty_value;
-  else return GetAbsolutePath(image->files[0]);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-//FIXME to remove
-std::string syd::StandardDatabase::GetAbsolutePath(const syd::DicomFile::pointer dicom) const
-{
-  return dicom->GetAbsolutePath();//dicom->file);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-//FIXME to remove
-std::string syd::StandardDatabase::GetAbsolutePath(const syd::File::pointer file) const
-{
-  std::string f = file->path+PATH_SEPARATOR+file->filename;
-  return ConvertToAbsolutePath(f);
-}
-// --------------------------------------------------------------------
-*/
-
 // --------------------------------------------------------------------
 /*syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Image::pointer image,
   const std::string & calib_tag)

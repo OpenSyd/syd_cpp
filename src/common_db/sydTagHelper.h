@@ -31,9 +31,9 @@ namespace syd {
 
   /// Update tag list
   template<class ArgsInfo>
-  static void UpdateTagsFromCommandLine(syd::Tag::vector & tags,
-                                        const syd::Database * db,
-                                        ArgsInfo & args_info);
+  static void SetTagsFromCommandLine(syd::Tag::vector & tags,
+                                     const syd::Database * db,
+                                     ArgsInfo & args_info);
 
   /// Print the list of tag labels
   std::string GetLabels(const syd::Tag::vector & tags);

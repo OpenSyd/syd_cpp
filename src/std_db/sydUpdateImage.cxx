@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 
     // update db
     syd::SetImageInfoFromCommandLine(image, args_info);
-    syd::UpdateTagsFromCommandLine(image->tags, db, args_info);
+    syd::SetTagsFromCommandLine(image->tags, db, args_info);
     db->Update(image);
     if (s != 1) LOG(1) << "Image was scaled by " << s << ": " << image;
     else LOG(1) << "Image was updated: " << image;

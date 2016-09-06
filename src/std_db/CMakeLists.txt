@@ -176,14 +176,15 @@ add_executable(sydInsertPlanarGeometricalMean
 target_link_libraries(sydInsertPlanarGeometricalMean sydStandardDatabase)
 
 # Insert a new RoiMaskImage
-# wrap_ggo(sydInsertRoiMaskImage_GGO_C
-#   sydInsertRoiMaskImage.ggo
-#   sydCommandLineWithTags.ggo
-#   sydCommandLineDefault.ggo)
-# add_executable(sydInsertRoiMaskImage
-#   sydInsertRoiMaskImage.cxx
-#   ${sydInsertRoiMaskImage_GGO_C})
-# target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
+wrap_ggo(sydInsertRoiMaskImage_GGO_C
+  sydInsertRoiMaskImage.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertRoiMaskImage
+  sydInsertRoiMaskImage.cxx
+  ${sydInsertRoiMaskImage_GGO_C})
+target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 
 # Insert a new RoiStatistic
 # wrap_ggo(sydInsertRoiStatistic_GGO_C

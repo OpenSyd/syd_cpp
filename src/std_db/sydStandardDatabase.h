@@ -79,15 +79,10 @@ namespace syd {
     /// Automatically insert some default records
     void InsertDefaultRecords(const std::string & def);
 
-    // std::string GetAbsolutePath(const syd::Image::pointer image) const;
-    // std::string GetAbsolutePath(const syd::DicomFile::pointer df) const;
-    // std::string GetAbsolutePath(const syd::File::pointer file) const;
-
     /// Insert a new tag
     Tag::pointer NewTag(const std::string & name, const std::string & description);
     PixelValueUnit::pointer NewPixelValueUnit(const std::string & name, const std::string & description);
     RoiType::pointer NewRoiType(const std::string & name, const std::string & description);
-
 
     /// Find a record with the same MD5 than the input
     template<class RecordType>

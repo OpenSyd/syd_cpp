@@ -63,17 +63,16 @@ int main(int argc, char* argv[])
   // create a new image
   auto image = InsertImageFromFile(filename, patient);
 
-  // set properties
+  // set properties from the image
   if (args_info.like_given)
     syd::SetImageInfoFromImage(image, like);
-  else
-    syd::SetImageInfoFromCommandLine(image, args_info);
 
   // Update size, pixel type, etc from file
   syd::SetImageInfoFromFile(image);
 
-  // Update the tags
-  syd::UpdateTagsFromCommandLine(image->tags, db, args_info);
+  // Update the tags and info from the cmd line
+  syd::SetImageInfoFromCommandLine(image, args_info);
+  syd::SetTagsFromCommandLine(image->tags, db, args_info);
   db->Update(image);
   LOG(1) << "Inserting Image: " << image;
   // This is the end, my friend.

@@ -18,9 +18,9 @@
 
 // --------------------------------------------------------------------
 template<class ArgsInfo>
-void syd::UpdateTagsFromCommandLine(syd::Tag::vector & tags,
-                          const syd::Database * db,
-                          ArgsInfo & args_info)
+void syd::SetTagsFromCommandLine(syd::Tag::vector & tags,
+                                 const syd::Database * db,
+                                 ArgsInfo & args_info)
 {
   // Remove all tags
   if (args_info.remove_all_tag_flag) tags.clear();
