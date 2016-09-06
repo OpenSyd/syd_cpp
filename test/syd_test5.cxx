@@ -22,7 +22,6 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydStandardDatabase.h"
-#include "sydTestHelper.h"
 #include "sydRoiMaskImageHelper.h"
 #include "sydTagHelper.h"
 

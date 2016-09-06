@@ -8,8 +8,8 @@ include_directories(${SYD_INCLUDE_DIRS})
 include_directories(${SYD_BINARY_DIR}/src/core)
 
 # common functions
-add_library(sydTestLib sydTestHelper.cxx)
-target_link_libraries(sydTestLib sydCommonDatabase sydStandardDatabase)
+# add_library(sydTestLib sydTestHelper.cxx)
+# target_link_libraries(sydTestLib sydCommonDatabase sydStandardDatabase)
 
 # Test1 with plugin
 add_executable(syd_test1 syd_test1.cxx)
@@ -36,7 +36,7 @@ add_test(NAME syd_test3
 # Test4 image
 wrap_ggo(syd_test4_GGO_C syd_test4.ggo ../src/common_db/sydCommandLineDefault.ggo)
 add_executable(syd_test4 syd_test4.cxx ${syd_test4_GGO_C})
-target_link_libraries(syd_test4 sydCommonDatabase sydStandardDatabase sydTestLib)
+target_link_libraries(syd_test4 sydCommonDatabase sydStandardDatabase)
 add_test(NAME syd_test4
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/syd_test4)
@@ -44,7 +44,7 @@ add_test(NAME syd_test4
 # Test5 roi
 wrap_ggo(syd_test5_GGO_C syd_test5.ggo ../src/common_db/sydCommandLineDefault.ggo)
 add_executable(syd_test5 syd_test5.cxx ${syd_test5_GGO_C})
-target_link_libraries(syd_test5 sydCommonDatabase sydStandardDatabase sydTestLib)
+target_link_libraries(syd_test5 sydCommonDatabase sydStandardDatabase)
 add_test(NAME syd_test5
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/syd_test5)
