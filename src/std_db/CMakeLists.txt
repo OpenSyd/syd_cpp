@@ -187,14 +187,14 @@ add_executable(sydInsertRoiMaskImage
 target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 
 # Insert a new RoiStatistic
-# wrap_ggo(sydInsertRoiStatistic_GGO_C
-#   sydInsertRoiStatistic.ggo
-#   sydCommandLineWithTags.ggo
-#   sydCommandLineDefault.ggo)
-# add_executable(sydInsertRoiStatistic
-#   sydInsertRoiStatistic.cxx
-#   ${sydInsertRoiStatistic_GGO_C})
-# target_link_libraries(sydInsertRoiStatistic sydStandardDatabase)
+wrap_ggo(sydInsertRoiStatistic_GGO_C
+  sydInsertRoiStatistic.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertRoiStatistic
+  sydInsertRoiStatistic.cxx
+  ${sydInsertRoiStatistic_GGO_C})
+target_link_libraries(sydInsertRoiStatistic sydStandardDatabase)
 
 
 # -----------------------------------------------------
@@ -203,13 +203,13 @@ target_link_libraries(sydInsertRoiMaskImage sydStandardDatabase)
 
 
 # Update DicomSerie
-wrap_ggo(sydUpdateDicomSerie_GGO_C
-  sydUpdateDicomSerie.ggo
-  sydCommandLineDefault.ggo)
-add_executable(sydUpdateDicomSerie
-  sydUpdateDicomSerie.cxx
-  ${sydUpdateDicomSerie_GGO_C})
-target_link_libraries(sydUpdateDicomSerie sydStandardDatabase)
+# wrap_ggo(sydUpdateDicomSerie_GGO_C
+#   sydUpdateDicomSerie.ggo
+#   sydCommandLineDefault.ggo)
+# add_executable(sydUpdateDicomSerie
+#   sydUpdateDicomSerie.cxx
+#   ${sydUpdateDicomSerie_GGO_C})
+# target_link_libraries(sydUpdateDicomSerie sydStandardDatabase)
 
 # Insert a new image with a calibration
 # wrap_ggo(sydInsertCalibratedImage_GGO_C

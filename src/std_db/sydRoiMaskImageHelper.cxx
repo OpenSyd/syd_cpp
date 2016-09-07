@@ -18,6 +18,7 @@
 
 // syd
 #include "sydRoiMaskImageHelper.h"
+#include "sydTagHelper.h"
 
 // itk
 #include <itkLabelStatisticsImageFilter.h>
@@ -26,10 +27,14 @@
 syd::RoiType::pointer syd::FindRoiType(const std::string & roiname,
                                        syd::StandardDatabase * db)
 {
-  syd::RoiType::pointer r;
-  odb::query<syd::RoiType> q = odb::query<RoiType>::name == roiname;
-  db->QueryOne(r, q);
-  return r;
+  try {
+    syd::RoiType::pointer r;
+    odb::query<syd::RoiType> q = odb::query<RoiType>::name == roiname;
+    db->QueryOne(r, q);
+    return r;
+  } catch (const std::exception& e) {
+    EXCEPTION("Cannot find a RoiType named '" << roiname << "'.");
+  }
 }
 // --------------------------------------------------------------------
 
@@ -41,13 +46,18 @@ syd::FindRoiMaskImage(const syd::Image::pointer image,
                       const std::string & roi_name)
 {
   syd::RoiType::pointer roitype = syd::FindRoiType(roi_name, db);
-  syd::RoiMaskImage::pointer roi;
-  odb::query<syd::RoiMaskImage> q =
-    odb::query<syd::RoiMaskImage>::roitype == roitype->id and
-    odb::query<syd::RoiMaskImage>::frame_of_reference_uid ==
-    image->frame_of_reference_uid;
-  db->QueryOne(roi, q);
-  return roi;
+  try {
+    syd::RoiMaskImage::pointer roi;
+    odb::query<syd::RoiMaskImage> q =
+      odb::query<syd::RoiMaskImage>::roitype == roitype->id and
+      odb::query<syd::RoiMaskImage>::frame_of_reference_uid ==
+      image->frame_of_reference_uid;
+    db->QueryOne(roi, q);
+    return roi;
+  } catch (const std::exception& e) {
+    EXCEPTION("Cannot find a RoiMaskImage for image " << image->id
+              << " named '" << roi_name << "'.");
+  }
 }
 // --------------------------------------------------------------------
 
@@ -83,7 +93,7 @@ syd::RoiStatistic::pointer syd::FindOneRoiStatistic(syd::Image::pointer image,
 {
   typedef odb::query<syd::RoiStatistic> Q;
   Q q = Q::image == image->id;
-  if (mask != NULL) q = q and Q::mask == mask->roitype->id;
+  if (mask != NULL) q = q and (Q::mask == mask->id);
   syd::RoiStatistic::vector stats;
   auto db = image->GetDatabase<syd::StandardDatabase>();
   db->Query(stats, q);
@@ -123,6 +133,9 @@ syd::RoiStatistic::pointer syd::InsertRoiStatistic(syd::Image::pointer image,
   db->New(stat);
   stat->image = image;
   stat->mask = mask;
+
+  // copy the image tags
+  syd::AddTag(stat->tags, image->tags);
 
   // update
   syd::ComputeRoiStatistic(stat);
