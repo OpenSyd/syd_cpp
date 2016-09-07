@@ -6,13 +6,13 @@ add_library(sydPlot SHARED
   )
 
 ## to declare dependencies
-target_link_libraries(sydPlot sydCore ${PYTHON_LIBRARY})
+target_link_libraries(sydPlot sydCore sydStandardDatabase ${PYTHON_LIBRARY})
 
 #----------------------------------------------------------
 # Not really a tool, for debug only
 wrap_ggo(sydPlotTest_GGO_C sydPlotTest.ggo ../std_db/sydCommandLineDefault.ggo)
 add_executable(sydPlotTest sydPlotTest.cxx ${sydPlotTest_GGO_C})
-target_link_libraries(sydPlotTest StandardDatabase ${PYTHON_LIBRARY})
+target_link_libraries(sydPlotTest sydPlot StandardDatabase ${PYTHON_LIBRARY})
 
 
 # Plot Timepoints
