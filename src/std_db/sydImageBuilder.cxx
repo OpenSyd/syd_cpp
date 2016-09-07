@@ -46,6 +46,10 @@ syd::Image::pointer syd::ImageBuilder::NewMHDImageLike(syd::Image::pointer input
   }
   AddTag(image->tags, input->tags);
   image->pixel_value_unit = input->pixel_value_unit;
+  // InitializeMHDFiles(image);
+  // DD(db_->GetAbsolutePath(input));
+  // DD(db_->GetAbsolutePath(image));
+  // CopyMHDImage(db_->GetAbsolutePath(input), db_->GetAbsolutePath(image));
   return image;
 }
 // --------------------------------------------------------------------

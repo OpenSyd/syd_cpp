@@ -23,6 +23,9 @@
 #include <itkRescaleIntensityImageFilter.h>
 #include <itkNormalizeImageFilter.h>
 #include <itkMinimumMaximumImageCalculator.h>
+#include <itkAdaptiveHistogramEqualizationImageFilter.h>
+#include <itkLogImageFilter.h>
+#include <itkImageRegionIterator.h>
 
 // --------------------------------------------------------------------
 syd::KmeansInputDataBuilder::KmeansInputDataBuilder()
@@ -44,6 +47,7 @@ void syd::KmeansInputDataBuilder::SetMask(ImageType::Pointer m)
 void syd::KmeansInputDataBuilder::AddInput(ImageType::Pointer image)
 {
   input_images.push_back(image);
+  DD(input_images.size());
 }
 // --------------------------------------------------------------------
 
@@ -67,10 +71,9 @@ void syd::KmeansInputDataBuilder::AddInput(Image4DType::Pointer image,
 void syd::KmeansInputDataBuilder::BuildInputData()
 {
   InsertVectorImagesAsImages();
-
   PreProcessing();
 
-  syd::WriteImage<ImageType>(input_images[0], "vector-norm.mhd");
+  //syd::WriteImage<ImageType>(input_images[0], "vector-norm.mhd");
 
   // FIXME mask exist ?
 
@@ -85,9 +88,9 @@ void syd::KmeansInputDataBuilder::BuildInputData()
     iter_images.push_back(IteratorType(im, im->GetLargestPossibleRegion()));
 
   // Declare vector iterator
-  std::vector<PixelType*> iter_vector_images;
-  for(auto & im:input_vector_images)
-    iter_vector_images.push_back(im->GetBufferPointer());
+  // std::vector<PixelType*> iter_vector_images;
+  // for(auto & im:input_vector_images)
+  //   iter_vector_images.push_back(im->GetBufferPointer());
 
   // Move iterators to begin
   iter_mask.GoToBegin();
@@ -99,31 +102,23 @@ void syd::KmeansInputDataBuilder::BuildInputData()
 
   // Get nb of dimensions
   nb_dimensions = input_images.size();
+  DD(nb_dimensions);
   //  for(auto n:input_vector_images_offsets) nb_dimensions += n.size();
-  //points.SetPointDimension(nb_dimensions);
+  points.SetPointDimension(nb_dimensions);
 
   // Declare output image and iterator
   AllocateOutputImage(nb_dimensions);
   auto iter_output = output->GetBufferPointer();
 
-  // Main lomonop
+  // Main loop: build 1) a set of nD points, and 2) a output 4D image
   for(auto i=0; i<nb_pixels; i++) {
-
     if (iter_mask.Get() != 0) {
-
-      // Get the data
-      double * v = new double[nb_dimensions];
+      double * v = points.push_back(); // add a new point
       int x=0;
       for(auto & a:iter_images) {
         v[x] = a.Get();
         x++;
       }
-      //      SetValuesFromVectorImage(iter_vector_images, v, x);
-
-      // Set the points
-      //if (v[0] > 0.865089 and v[0] < 0.872584)  // FIXME
-      points.push_back(v);
-
       // Set the images
       auto it = iter_output;
       for(auto x=0; x<nb_dimensions; x++) {
@@ -131,12 +126,23 @@ void syd::KmeansInputDataBuilder::BuildInputData()
         it += output_offset;
       }
     }
+    else {
+      // default value for the image
+      auto it = iter_output;
+      for(auto x=0; x<nb_dimensions; x++) {
+        *it = 0.0;
+        it += output_offset;
+      }
+    }
     // iterates
     ++iter_mask;
     ++iter_output;
     for(auto & a:iter_images) ++a;
-    for(auto & a:iter_vector_images) ++a;
   }
+
+
+  PostProcessing();
+
 }
 // --------------------------------------------------------------------
 
@@ -173,44 +179,211 @@ void syd::KmeansInputDataBuilder::AllocateOutputImage(int nb_dimensions)
 
 
 // --------------------------------------------------------------------
+void syd::KmeansInputDataBuilder::PostProcessing()
+{
+  DDF();
+  int N = points.GetNumberOfPoints();
+  int D = points.GetNumberOfDimensions();
+  DD(N);
+  DD(D);
+
+  IteratorType iter_mask(mask, mask->GetLargestPossibleRegion());
+  auto iter_output = output->GetBufferPointer();
+  int nb_pixels = mask->GetLargestPossibleRegion().GetNumberOfPixels();
+  DD(nb_pixels);
+  int output_offset = nb_pixels;
+  DD(output_offset);
+
+  // Find min and max
+  std::vector<double> mins;
+  std::vector<double> maxs;
+  points.GetMinMax(mins, maxs);
+  DDS(mins);
+  DDS(maxs);
+
+  // Clamp to min/max
+  DD("Loop image 1");
+  double max = 1.0;
+  double min = 0.0;
+  points.Rescale(mins, maxs, min, max);
+  for(auto i=0; i<nb_pixels; i++) {
+    if (iter_mask.Get() != 0) {
+      auto it = iter_output;
+      for(auto j=0; j<D; j++) {
+        double v = *it;
+        v = Rescale(v, mins[j], maxs[j], min, max);
+        *it = v;
+        it += output_offset;
+      }
+    }
+    ++iter_mask;
+    ++iter_output;
+  }
+  points.GetMinMax(mins, maxs);
+  DDS(mins);
+  DDS(maxs);
+  syd::WriteImage<Image4DType>(output, "step1.mhd");
+
+  // Compute some stats: median, mean, med-deviation
+  std::vector<double> medians;
+  std::vector<double> means;
+  std::vector<double> mads;
+  points.ComputeMedians(medians);
+  points.ComputeMeans(means);
+  points.ComputeMedianAbsDeviations(medians, mads);
+  DDS(medians);
+  DDS(means);
+  DDS(mads);
+
+  // initialize to compute min/max
+  for(auto j=0; j<D; j++) {
+    mins[j] = std::numeric_limits<double>::max();
+    maxs[j] = std::numeric_limits<double>::lowest();
+  }
+
+  DD("Loop image 2");
+  double lambda = 0.5;
+  double outliers = 0;
+  iter_mask.GoToBegin();
+  iter_output = output->GetBufferPointer();
+  for(auto i=0; i<nb_pixels; i++) {
+    if (iter_mask.Get() != 0) {
+      auto it = iter_output;
+      for(auto j=0; j<D; j++) {
+        double v = *it;
+        double z_score = 0.6745 * (v - means[j]) / mads[j];
+        if (z_score > 3.5) {
+          iter_mask.Set(0.0); // remove points
+          ++outliers;
+        }
+        else {
+          BoxCoxTransform(v, lambda);
+          if (isnan(v)) {
+            iter_mask.Set(0);
+            ++outliers;
+          }
+          else {
+            *it = v;
+            if (v < mins[j]) mins[j] = v;
+            if (v > maxs[j]) maxs[j] = v;
+          }
+        }
+        it += output_offset;
+      }
+    }
+    ++iter_mask;
+    ++iter_output;
+  }
+  syd::WriteImage<Image4DType>(output, "step2.mhd");
+  DD(outliers);
+  DDS(mins);
+  DDS(maxs);
+
+  DD("loop image 3");
+  iter_mask.GoToBegin();
+  iter_output = output->GetBufferPointer();
+  points.clear();
+  for(auto i=0; i<nb_pixels; i++) {
+    if (iter_mask.Get() != 0) {
+      double * point = points.push_back();
+      auto it = iter_output;
+      for(auto j=0; j<D; j++) {
+        double v = *it;
+        v = syd::Rescale(v, mins[j], maxs[j], 0.0, 1.0);
+        point[j] = v;
+        *it = v;
+        it += output_offset;
+      }
+    }
+    ++iter_mask;
+    ++iter_output;
+  }
+  points.GetMinMax(mins, maxs);
+  DDS(mins);
+  DDS(maxs);
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::KmeansInputDataBuilder::PreProcessing()
 {
-    typedef itk::MinimumMaximumImageCalculator <ImageType> ImageCalculatorFilterType;
-    ImageCalculatorFilterType::Pointer imageCalculatorFilter
+  typedef itk::MinimumMaximumImageCalculator <ImageType> ImageCalculatorFilterType;
+  ImageCalculatorFilterType::Pointer imageCalculatorFilter
     = ImageCalculatorFilterType::New ();
-    imageCalculatorFilter->SetImage(input_images[0]);
-    imageCalculatorFilter->Compute();
-    DD(imageCalculatorFilter->GetMaximum());
-    DD(imageCalculatorFilter->GetMinimum());
+  imageCalculatorFilter->SetImage(input_images[0]);
+  imageCalculatorFilter->Compute();
+  DD(imageCalculatorFilter->GetMaximum());
+  DD(imageCalculatorFilter->GetMinimum());
+
+  /*
+    for(auto & im:input_images) {
+    typedef  itk::AdaptiveHistogramEqualizationImageFilter< ImageType > AdaptiveHistogramEqualizationImageFilterType;
+    AdaptiveHistogramEqualizationImageFilterType::Pointer adaptiveHistogramEqualizationImageFilter = AdaptiveHistogramEqualizationImageFilterType::New();
+    adaptiveHistogramEqualizationImageFilter->SetInput(im);
+    adaptiveHistogramEqualizationImageFilter->SetRadius(1);
+    adaptiveHistogramEqualizationImageFilter->SetAlpha(0.4);
+    adaptiveHistogramEqualizationImageFilter->SetBeta(0.4);
+    adaptiveHistogramEqualizationImageFilter->Update();
+    im = adaptiveHistogramEqualizationImageFilter->GetOutput();
+    }
+  */
 
   // Normalise such as zero mean and unit variance
-  for(auto & im:input_images) {
+  /*
+    for(auto & im:input_images) {
     auto fr = itk::NormalizeImageFilter<ImageType, ImageType>::New();
     fr->SetInput(im);
     fr->Update();
     im = fr->GetOutput();
-  }
+    }
+  */
+  /*
+    double lambda = 0.1;
+    for(auto & im:input_images) {
+    itk::ImageRegionIterator<ImageType> iter(im, im->GetLargestPossibleRegion());
+    iter.GoToBegin();
+    while (!iter.IsAtEnd()) {
+    double v = iter.Get();
+    if (v<=0) v = 0; // FIXME warning for HU !
+    else v = (pow(v,lambda)-1.0)/lambda;
+    //      else v = log(v);
+    iter.Set(v);
+    ++iter;
+    }
+    //    auto fr = itk::LogImageFilter<ImageType, ImageType>::New();
+    //fr->SetInput(im);
+    //fr->Update();
+    //im = fr->GetOutput();
+    }
+  */
 
+  /*
     imageCalculatorFilter->SetImage(input_images[0]);
     imageCalculatorFilter->Compute();
     DD(imageCalculatorFilter->GetMaximum());
     DD(imageCalculatorFilter->GetMinimum());
+  */
 
   // Set values between [0-1]
-  for(auto & im:input_images) {
+  /*
+    for(auto & im:input_images) {
     auto fr = itk::RescaleIntensityImageFilter<ImageType>::New();
     fr->SetOutputMinimum(0);
     fr->SetOutputMaximum(1);
     fr->SetInput(im);
     fr->Update();
     im = fr->GetOutput();
-  }
+    }
+  */
 
+  /*
     imageCalculatorFilter->SetImage(input_images[0]);
     imageCalculatorFilter->Compute();
     DD(imageCalculatorFilter->GetMaximum());
     DD(imageCalculatorFilter->GetMinimum());
-
+  */
 
 }
 // --------------------------------------------------------------------
@@ -251,7 +424,8 @@ void syd::KmeansInputDataBuilder::InsertVectorImagesAsImages()
       IteratorType iter_output(image, image->GetLargestPossibleRegion());
       iter_output.GoToBegin();
       while (!iter_output.IsAtEnd()) {
-        iter_output.Set(*iter_vector_image);
+        auto v = *iter_vector_image;
+        iter_output.Set(v);
         ++iter_output;
         ++iter_vector_image;
       }

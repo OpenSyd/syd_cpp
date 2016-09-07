@@ -74,6 +74,7 @@ namespace syd {
     void SetMask(ImageType::Pointer m) { mask_ = m; }
     void SetLambdaPhysicHours(double l) { image_lambda_phys_in_hour_ = l; }
     void SetAdditionalPoint(bool b, double time, double value);
+    void SetInitialZeroPoint(bool b) { additional_point_zero_value_ = b; }
 
     // Helpers
     int GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
@@ -140,6 +141,7 @@ namespace syd {
     bool additional_point_flag_;
     double additional_point_time_;
     double additional_point_value_;
+    bool additional_point_zero_value_;
 
   }; // class TimeIntegratedActivityFilter
 

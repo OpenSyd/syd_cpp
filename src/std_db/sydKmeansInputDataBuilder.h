@@ -49,6 +49,7 @@ namespace syd {
     syd::NDimPoints & GetInputKmeansData() { return points; }
     int GetNumberOfDimensions() const { return nb_dimensions; }
     Image4DType::Pointer GetInputVectorImage() { return output; }
+    ImageType::Pointer GetMaskImage() { return mask; }
 
   protected:
     ImageType::Pointer mask;
@@ -65,9 +66,9 @@ namespace syd {
     template<class T>
     void AllocateOutputImageFromT(int nb_dimensions, typename T::Pointer input);
     void PreProcessing();
-    void InsertVectorImagesAsImages();
-
-  }; // class KmeansInputDataBuilder
+    void PostProcessing();
+    void InsertVectorImagesAsImages();}
+    ; // class KmeansInputDataBuilder
 
 #include "sydKmeansInputDataBuilder.txx"
 

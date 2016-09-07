@@ -23,8 +23,8 @@
 #include "sydCommon.h"
 
 
-#include <boost/archive/binary_oarchive.hpp>
-#include <boost/archive/binary_iarchive.hpp>
+// #include <boost/archive/binary_oarchive.hpp>
+// #include <boost/archive/binary_iarchive.hpp>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -43,33 +43,42 @@ namespace syd {
 
     void SetPointDimension(int d);
     int GetNumberOfDimensions() const { return nb_dimensions; }
+    size_t GetNumberOfPoints() const { return values.size()/nb_dimensions; }
+    void SetNumberOfPoints(int n);
+    void clear() { values.clear(); }
 
-    void push_back(double *v);
-    typedef std::vector<double*> T;
-    T::iterator begin() { return values.begin(); }
-    T::iterator end() { return values.end(); }
-    T::const_iterator begin() const { return values.begin(); }
-    T::const_iterator end() const { return values.end(); }
-    size_t size() const { return values.size(); }
+    // Add an empty ND points
+    double * push_back();
+
+    // Return point p, dimension d
+    double GetValue(int p, int d) const;
+
+    // Return raw pointer
+    double * GetPointer();
+
+    // Set the value point p dim d
+    void SetValue(double v, int p, int d);
+
+    // Compute min max value by dim
+    void GetMinMax(std::vector<double> & mins, std::vector<double> & maxs);
+
+    void ComputeMedians(std::vector<double> & medians) const;
+    void ComputeMeans(std::vector<double> & means) const;
+    void ComputeMedianAbsDeviations(const std::vector<double> & medians,
+                                    std::vector<double> & mads) const;
+    void Rescale(const std::vector<double> & inputMin,
+                 const std::vector<double> & inputMax,
+                 const double outputMin,
+                 const double outputMax);
 
     void Save(std::string filename);
     void Load(std::string filename);
 
   protected:
-    std::vector<double*> values;
+    std::vector<double> values;
     int nb_dimensions;
 
-    // For serialization
-    friend class boost::serialization::access;
-    template<class Archive>
-    void save(Archive & ar, const unsigned int version) const;
-    template<class Archive>
-    void load(Archive & ar, const unsigned int version);
-
-    BOOST_SERIALIZATION_SPLIT_MEMBER()
   }; // class NDimPoints
-
-#include "sydNDimPoints.txx"
 
 } // namespace syd
 // --------------------------------------------------------------------

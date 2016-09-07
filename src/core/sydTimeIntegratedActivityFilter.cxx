@@ -35,6 +35,7 @@ syd::TimeIntegratedActivityFilter::TimeIntegratedActivityFilter()
   SetRestrictedTACFlag(false);
   mask_ = 0;
   additional_point_flag_ = false;
+  additional_point_zero_value_ = false;
   auto f1  = new syd::FitModel_f1;
   auto f2  = new syd::FitModel_f2;
   auto f3  = new syd::FitModel_f3;
@@ -108,6 +109,16 @@ syd::FitModelBase * syd::TimeIntegratedActivityFilter::CreateIntegratedActivity(
   // Init solver
   InitSolver();
 
+  if (additional_point_zero_value_)
+    initial_tac->AddValue(0.0, 0.0); // initial time ? to avoid too large initial value
+  if (additional_point_flag_) {
+    double value = additional_point_value_;
+    double time = additional_point_time_;
+    initial_tac->AddValue(time, value);
+  }
+  initial_tac->SortByTime();
+  DD(initial_tac);
+
   // restricted tac ?
   syd::TimeActivityCurve::pointer working_tac;
   int index = 0;
@@ -153,8 +164,14 @@ void syd::TimeIntegratedActivityFilter::CreateIntegratedActivityImage()
 
   // create initial tac with the times
   syd::TimeActivityCurve::pointer initial_tac = syd::TimeActivityCurve::New();
+  if (additional_point_zero_value_)
+    initial_tac->AddValue(0.0, 0.0); // initial time ? to avoid too large initial value
   for(auto t:times_) initial_tac->AddValue(t, 0.0);
-
+  if (additional_point_flag_) {
+    double value = additional_point_value_;
+    double time = additional_point_time_;
+    initial_tac->AddValue(time, value);
+  }
 
   // restricted tac ?
   syd::TimeActivityCurve::pointer working_tac;
@@ -195,8 +212,8 @@ void syd::TimeIntegratedActivityFilter::CreateIntegratedActivityImage()
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
 
     // Check if pixel is in the mask
-    if (mask_flag and it_mask.Get() == 0) { // skip it
-      for(auto i=0; i<images_.size(); i++) ++it;
+    if (mask_flag and it_mask.Get() == 0) {
+      for(auto i=0; i<images_.size(); i++) ++it; // skip it
     }
     else {
       ++number_of_pixels_in_mask;
@@ -206,21 +223,6 @@ void syd::TimeIntegratedActivityFilter::CreateIntegratedActivityImage()
         ++it; // next value
       }
 
-      /*
-      if (additional_point_flag_) {
-        int n = images_.size();
-        double last_value = tac.GetValue(n-1);
-        double value = last_value * additional_point_value_;
-        double time = tac.GetTime(n-1) + additional_point_time_;
-        if (tac.size() == n) {
-          tac.AddValue(time, value);
-        }
-        else {
-          tac.SetTime(n, time);
-          tac.SetValue(n, value);
-        }
-      }
-      */
       int index = 0;
       if (restricted_tac_flag_) {
         index = GetRestrictedTac(initial_tac, working_tac);
@@ -283,8 +285,8 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
     auto & m = models_[i];
     double R2 = m->ComputeR2(tac);
     if (verbose) std::cout << m->GetName()
-              << " SS = " << m->ComputeRSS(tac)
-              << " R2 = " << R2;
+                           << " SS = " << m->ComputeRSS(tac)
+                           << " R2 = " << R2;
     if (R2 > R2_threshold) { // and R2 > best_R2) {
       double AICc;
       bool b = m->IsAICcValid(tac->size()); //FIXME
@@ -293,7 +295,8 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
       AICc = m->ComputeAIC(tac);
       //AICc = m->ComputeAICc(tac);
       if (verbose) std::cout << " " << b
-        << " AICc = " << m->ComputeAICc(tac) << "  AIC = " << m->ComputeAIC(tac);
+                             << " AICc = " << m->ComputeAICc(tac)
+                             << "  AIC = " << m->ComputeAIC(tac);
       if (AICc < min_AICc) {
         best = i;
         min_AICc = AICc;
@@ -313,25 +316,30 @@ int syd::TimeIntegratedActivityFilter::FitModels(syd::TimeActivityCurve::pointer
     }
 
     /*
-    if (m->IsAcceptable()) {
+      if (m->IsAcceptable()) {
       double R2 = m->ComputeR2(tac);
       if (R2 > R2_threshold and R2 > best_R2) {
-        double AICc;
-        bool b = m->IsAICcValid(tac->size());
-        if (b) AICc = m->ComputeAICc(tac);
-        else AIC = m->ComputeAIC(tac); // FIXME
-        if (AICc < min_AICc) {
-          best = i;
-          best_AICc = AICc;
-          best_R2 = R2;
-        }
+      double AICc;
+      bool b = m->IsAICcValid(tac->size());
+      if (b) AICc = m->ComputeAICc(tac);
+      else AIC = m->ComputeAIC(tac); // FIXME
+      if (AICc < min_AICc) {
+      best = i;
+      best_AICc = AICc;
+      best_R2 = R2;
       }
-    }
+      }
+      }
     */
 
   }
-  if (verbose and best != -1) DD(models_[best]->GetName());
-
+  if (verbose and best != -1) {
+    DD(models_[best]->GetName());
+    std::cout << "Params = ";
+    for(auto p:models_[best]->GetParameters())
+      std::cout << p << " ";
+    std::cout << std::endl;
+  }
   return best;
 }
 // --------------------------------------------------------------------
@@ -425,11 +433,11 @@ void syd::TimeIntegratedActivityFilter::InitSolver()
   ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
 
   /*
-  DD(ceres_options_->min_line_search_step_size);
-  DD(ceres_options_->max_line_search_step_contraction);
-  DD(ceres_options_->function_tolerance);
-  DD(ceres_options_->parameter_tolerance);
-  DD(ceres_options_->num_threads);
+    DD(ceres_options_->min_line_search_step_size);
+    DD(ceres_options_->max_line_search_step_contraction);
+    DD(ceres_options_->function_tolerance);
+    DD(ceres_options_->parameter_tolerance);
+    DD(ceres_options_->num_threads);
   */
 
   //ceres_options_->function_tolerance = 1e-8;

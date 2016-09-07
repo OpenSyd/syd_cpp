@@ -27,9 +27,6 @@
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  // Init ceres log
-  SYD_CERES_STATIC_INIT;
-
   // Init
   SYD_INIT_GGO(sydInsertTimeIntegratedActivityImage, 2);
 
@@ -93,8 +90,10 @@ int main(int argc, char* argv[])
   builder.SetDebugImagesFlag(debug);
   builder.SetPostProcessingMedianFilter(args_info.median_filter_flag);
   builder.SetPostProcessingFillHoles(args_info.fill_holes_arg);
+  builder.SetInitialZeroPoint(args_info.add_initial_zero_flag);
+  if (args_info.add_time_given and args_info.add_value_given)
+    builder.SetAdditionalPoint(true, args_info.add_time_arg, args_info.add_value_arg);
   LOG(1) << builder.PrintOptions();
-
   // Go
   builder.CreateTimeIntegratedActivityImage();
   builder.RunPostProcessing();

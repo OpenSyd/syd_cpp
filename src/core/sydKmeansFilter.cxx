@@ -22,42 +22,42 @@
 // --------------------------------------------------------------------
 syd::KmeansFilter::KmeansFilter()
 {
-  SetNumberOfClusters(3);
+  // SetNumberOfClusters(3);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::KmeansFilter::SetInput(syd::NDimPoints::pointer p)
-{
-  points = p;
-}
+// void syd::KmeansFilter::SetInput(syd::NDimPoints::pointer p)
+// {
+//   points = p;
+// }
 // --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
-void syd::KmeansFilter::SetNumberOfClusters(int k)
-{
-  K = k;
-}
+// void syd::KmeansFilter::SetNumberOfClusters(int k)
+// {
+//   K = k;
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::KmeansFilter::Run()
-{
-  int n = points->GetNumberOfDimensions();
-  if (n == 1) RunWithDim<1>();
-  if (n == 2) RunWithDim<2>();
-  if (n == 3) RunWithDim<3>();
-  if (n == 4) RunWithDim<4>();
-  if (n == 5) RunWithDim<5>();
-  if (n == 6) RunWithDim<6>();
-  if (n == 7) RunWithDim<7>();
-  if (n > 7) {
-    LOG(FATAL) << "error dim " << n << " not enough template in sydKmeansFilter";
-    exit(0);
-  }
-}
+// void syd::KmeansFilter::Run()
+// {
+//   int n = points->GetNumberOfDimensions();
+//   if (n == 1) RunWithDim<1>();
+//   if (n == 2) RunWithDim<2>();
+//   if (n == 3) RunWithDim<3>();
+//   if (n == 4) RunWithDim<4>();
+//   if (n == 5) RunWithDim<5>();
+//   if (n == 6) RunWithDim<6>();
+//   if (n == 7) RunWithDim<7>();
+//   if (n > 7) {
+//     LOG(FATAL) << "error dim " << n << " not enough template in sydKmeansFilter";
+//     exit(0);
+//   }
+// }
 // --------------------------------------------------------------------
 
 
@@ -92,14 +92,15 @@ syd::KmeansFilter::AllocateOutputImage(Image4DType::Pointer input)
 
 // --------------------------------------------------------------------
 syd::KmeansFilter::ImageType::Pointer
-syd::KmeansFilter::ComputeLabeledImage(syd::NDimPoints::pointer centers,
+syd::KmeansFilter::ComputeLabeledImage(int K, // number of clusters
+                                       int D, // number of dimensions
+                                       double * centers,
                                        ImageType::Pointer mask,
                                        Image4DType::Pointer input)
 {
   // Check dim
-  int N = points->GetNumberOfDimensions();
-  if (input->GetLargestPossibleRegion().GetSize()[3] != N) {
-    LOG(FATAL) << "Error image dim 4 must be equal to " << N;
+  if (input->GetLargestPossibleRegion().GetSize()[3] != D) {
+    LOG(FATAL) << "Error image 4th dimension must be equal to " << D;
   }
 
   // Create and allocate output image
@@ -111,7 +112,7 @@ syd::KmeansFilter::ComputeLabeledImage(syd::NDimPoints::pointer centers,
   auto iter = input->GetBufferPointer();
   oiter.GoToBegin();
   miter.GoToBegin();
-  double * p = new double[N];
+  double * p = new double[D];
   int offset = input->GetLargestPossibleRegion().GetSize()[0]*
     input->GetLargestPossibleRegion().GetSize()[1]*
     input->GetLargestPossibleRegion().GetSize()[2];
@@ -122,7 +123,7 @@ syd::KmeansFilter::ComputeLabeledImage(syd::NDimPoints::pointer centers,
 
       // Get the points
       auto titer = iter;
-      for(auto i=0; i<N; i++) {
+      for(auto i=0; i<D; i++) {
         p[i] = *titer;
         titer += offset;
       }
@@ -131,9 +132,9 @@ syd::KmeansFilter::ComputeLabeledImage(syd::NDimPoints::pointer centers,
       double minValue = std::numeric_limits<double>::max();
       int minLabel = 0;
       int l=1;
-      for(auto c:*centers) {
+      for(auto i=0; i<K; i++) { //c:*centers) {
         double dist = 0.0;
-        for(auto j=0; j<N; j++) dist += pow(p[j]-c[j],2);
+        for(auto j=0; j<D; j++) dist += pow(p[j]-centers[i*D+j],2);
         if (dist < minValue) {
           minValue = dist;
           minLabel = l;

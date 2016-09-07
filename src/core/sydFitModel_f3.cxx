@@ -75,7 +75,7 @@ void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
 
   //problem->SetParameterLowerBound(&params_[0], 0, 0.0);
   problem->SetParameterLowerBound(&params_[1], 0, 0);
-  problem->SetParameterUpperBound(&params_[1], 0, 10*GetLambdaPhysicHours());
+  problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaPhysicHours());
 
   /*
   problem->SetParameterLowerBound(&params_[0], 0, 0.0);

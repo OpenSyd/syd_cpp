@@ -88,3 +88,23 @@ void syd::RoiStatistic::DumpInTable(syd::PrintTable2 & ta) const
   syd::RecordWithHistory::DumpInTable(ta);
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::RoiStatistic::Callback(odb::callback_event event,
+                                 odb::database & db) const
+{
+  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db, db_);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::RoiStatistic::Callback(odb::callback_event event,
+                                 odb::database & db)
+{
+  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db, db_);
+}
+// --------------------------------------------------

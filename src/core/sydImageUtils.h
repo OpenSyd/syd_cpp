@@ -74,7 +74,7 @@ namespace syd {
   typename itk::ImageBase<Dimension>::Pointer GetImageBase(const itk::ImageIOBase::Pointer & reader);
 
   template<class ImageType>
-  typename ImageType::Pointer CreateImageLike(typename itk::ImageBase<ImageType::ImageDimension> * like);
+  typename ImageType::Pointer CreateImageLike(const typename itk::ImageBase<ImageType::ImageDimension> * like);
 
   template<class ImageType>
   std::string ComputeImageMD5(typename ImageType::Pointer image);

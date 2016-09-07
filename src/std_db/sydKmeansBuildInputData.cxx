@@ -61,7 +61,8 @@ int main(int argc, char* argv[])
   syd::Image::vector images;
   for(auto i=4; i<args_info.inputs_num; i++) {
     DD(i);
-    id = atoi(args_info.inputs[3]);
+    id = atoi(args_info.inputs[i]);
+    DD(id);
     syd::Image::pointer im;
     db->QueryOne(im, id);
     images.push_back(im);
@@ -105,6 +106,7 @@ int main(int argc, char* argv[])
   // Get output
   auto & points = builder.GetInputKmeansData();
   int nb_dimensions = points.GetNumberOfDimensions();
+  DD(nb_dimensions);
 
   // save output points
   std::string points_filename = args_info.output_arg;
@@ -117,19 +119,10 @@ int main(int argc, char* argv[])
   Image4DType::Pointer input_vector_image = builder.GetInputVectorImage();
   syd::WriteImage<Image4DType>(input_vector_image, img_filename);
 
-
-  double min = std::numeric_limits<double>::max();
-  double max = std::numeric_limits<double>::lowest();
-  int col=0;
-  for(auto x:points) {
-    if (x[col]>max) max = x[col];
-    if (x[col]<min) min = x[col];
-  }
-
-  syd::Histogram h;
-  h.SetMinMaxBins(min, max, 20);
-  for(auto x:points) h.Fill(x[col]);
-  DD(h);
+  ImageType::Pointer mask_img = builder.GetMaskImage();
+  std::string mask_filename = args_info.output_arg;
+  mask_filename.append("_mask.mhd");
+  syd::WriteImage<ImageType>(mask_img, mask_filename);
 
   // This is the end, my friend.
 }

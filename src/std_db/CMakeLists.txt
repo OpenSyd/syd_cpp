@@ -189,6 +189,15 @@ add_executable(sydInsertPixelTimepoints sydInsertPixelTimepoints.cxx ${sydInsert
 target_link_libraries(sydInsertPixelTimepoints StandardDatabase)
 
 
+# Create images
+wrap_ggo(sydInsertPlanarGeometricalMean_GGO_C
+  sydInsertPlanarGeometricalMean.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo )
+add_executable(sydInsertPlanarGeometricalMean
+  sydInsertPlanarGeometricalMean.cxx ${sydInsertPlanarGeometricalMean_GGO_C})
+target_link_libraries(sydInsertPlanarGeometricalMean StandardDatabase)
+
+
+
 ##############################
 # Other tools
 ##############################

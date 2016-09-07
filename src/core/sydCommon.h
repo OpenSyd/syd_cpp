@@ -31,12 +31,12 @@
 // To get current working directory
 // http://stackoverflow.com/questions/143174/how-do-i-get-the-directory-that-a-program-is-running-from
 #ifdef WINDOWS
-    #include <direct.h>
-    #define GetCurrentDir _getcwd
+#include <direct.h>
+#define GetCurrentDir _getcwd
 #else
-    #include <unistd.h>
-    #define GetCurrentDir getcwd
- #endif
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
 
 // syd
 #include "sydDD.h"
@@ -103,6 +103,17 @@ namespace syd {
 
   //--------------------------------------------------------------------
   void ReadIdsFromInputPipe(std::vector<syd::IdType> & ids);
+  //--------------------------------------------------------------------
+
+
+  //--------------------------------------------------------------------
+  void BoxCoxTransform(double & v, const double lambda);
+  double Rescale(const double v,
+                 const double inputMin,
+                 const double inputMax,
+                 const double outputMin,
+                 const double outputMax);
+  double ComputeMedian(std::vector<double> x);
   //--------------------------------------------------------------------
 
 

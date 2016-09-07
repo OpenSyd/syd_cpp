@@ -1,0 +1,11 @@
+#File sydInsertPlanarGeometricalMean.ggo
+
+package "syd"
+version "0.4"
+usage "sydInsertPlanarGeometricalMean <images>"
+description "Create a new (mhd) image with the geometrical mean of planar images
+- <images>  could be either a single image with 4 slice (ANT_EM, POST_EM, ANT_SC, POST_SC)
+            or 4 mhd images
+"
+
+option "k"   k "Weight parameters to remove scatter : EM-k*Sc" double default="0.5" no
