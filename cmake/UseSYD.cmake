@@ -27,7 +27,7 @@ message(STATUS "ITK is found")
 
 #----------------------------------------------------------
 # Find Boost
-find_package(Boost REQUIRED date_time system filesystem)
+find_package(Boost CONFIG REQUIRED date_time system filesystem)
 include_directories( ${Boost_INCLUDE_DIR} )
 #----------------------------------------------------------
 

@@ -1,111 +1,111 @@
-# ----------------------------------------------------------------------
-# Findodb.cmake - odb CMake module
 #
-# Copyright (C) 2015 Alexandre Pretyman. All rights reserved.
+# This module defines the following variables:
 #
-# ----------------------------------------------------------------------
+#   ODB_USE_FILE - Path to the UseODB.cmake file. Use it to include the ODB use file.
+#                  The use file defines the needed functionality to compile and use
+#                  odb generated headers.
+#
+#   ODB_FOUND - All required components and the core library were found
+#   ODB_INCLUDR_DIRS - Combined list of all components include dirs
+#   ODB_LIBRARIES - Combined list of all componenets libraries
+#
+#   ODB_LIBODB_FOUND - Libodb core library was found
+#   ODB_LIBODB_INCLUDE_DIRS - Include dirs for libodb core library
+#   ODB_LIBODB_LIBRARIES - Libraries for libodb core library
+#
+# For each requested component the following variables are defined:
+#
+#   ODB_<component>_FOUND - The component was found
+#   ODB_<component>_INCLUDE_DIRS - The components include dirs
+#   ODB_<component>_LIBRARIES - The components libraries
+#
+# <component> is the original or uppercase name of the component
+#
+# The component names relate directly to the odb module names.
+# So for the libodb-mysql.so library, the component is named mysql,
+# for the libodb-qt.so module it's qt, and so on.
+#
 
-if(NOT HUNTER_ENABLED)
-  macro(hunter_status_debug)
-    message(${ARGV})
-  endmacro()
+set(ODB_USE_FILE "${CMAKE_CURRENT_LIST_DIR}/UseODB.cmake")
+
+find_package(PkgConfig QUIET)
+
+function(find_odb_api component)
+	string(TOUPPER "${component}" component_u)
+	set(ODB_${component_u}_FOUND FALSE PARENT_SCOPE)
+
+	pkg_check_modules(PC_ODB_${component} QUIET "libodb-${component}")
+
+	find_path(ODB_${component}_INCLUDE_DIR
+		NAMES odb/${component}/version.hxx
+		HINTS
+			${ODB_LIBODB_INCLUDE_DIRS}
+			${PC_ODB_${component}_INCLUDE_DIRS})
+
+	find_library(ODB_${component}_LIBRARY
+		NAMES odb-${component} libodb-${component}
+		HINTS
+			${ODB_LIBRARY_PATH}
+			${PC_ODB_${component}_LIBRARY_DIRS})
+
+	set(ODB_${component_u}_INCLUDE_DIRS ${ODB_${component}_INCLUDE_DIR} CACHE STRING "ODB ${component} include dirs")
+	set(ODB_${component_u}_LIBRARIES ${ODB_${component}_LIBRARY} CACHE STRING "ODB ${component} libraries")
+
+	mark_as_advanced(ODB_${component}_INCLUDE_DIR ODB_${component}_LIBRARY)
+
+	if(ODB_${component_u}_INCLUDE_DIRS AND ODB_${component_u}_LIBRARIES)
+		set(ODB_${component_u}_FOUND TRUE PARENT_SCOPE)
+		set(ODB_${component}_FOUND TRUE PARENT_SCOPE)
+
+		list(APPEND ODB_INCLUDE_DIRS ${ODB_${component_u}_INCLUDE_DIRS})
+		list(REMOVE_DUPLICATES ODB_INCLUDE_DIRS)
+		set(ODB_INCLUDE_DIRS ${ODB_INCLUDE_DIRS} PARENT_SCOPE)
+
+		list(APPEND ODB_LIBRARIES ${ODB_${component_u}_LIBRARIES})
+		list(REMOVE_DUPLICATES ODB_LIBRARIES)
+		set(ODB_LIBRARIES ${ODB_LIBRARIES} PARENT_SCOPE)
+	endif()
+endfunction()
+
+pkg_check_modules(PC_LIBODB QUIET "libodb")
+
+set(ODB_LIBRARY_PATH "" CACHE STRING "Common library search hint for all ODB libs")
+
+find_path(libodb_INCLUDE_DIR
+	NAMES odb/version.hxx
+	HINTS
+		${PC_LIBODB_INCLUDE_DIRS})
+
+find_library(libodb_LIBRARY
+	NAMES odb libodb
+	HINTS
+		${ODB_LIBRARY_PATH}
+		${PC_LIBODB_LIBRARY_DIRS})
+
+find_program(odb_BIN
+	NAMES odb
+	HINTS
+		${libodb_INCLUDE_DIR}/../bin)
+
+set(ODB_LIBODB_INCLUDE_DIRS ${libodb_INCLUDE_DIR} CACHE STRING "ODB libodb include dirs")
+set(ODB_LIBODB_LIBRARIES ${libodb_LIBRARY} CACHE STRING "ODB libodb library")
+set(ODB_EXECUTABLE ${odb_BIN} CACHE STRING "ODB executable")
+
+mark_as_advanced(libodb_INCLUDE_DIR libodb_LIBRARY odb_BIN)
+
+if(ODB_LIBODB_INCLUDE_DIRS AND ODB_LIBODB_LIBRARIES)
+	set(ODB_LIBODB_FOUND TRUE)
 endif()
 
-hunter_status_debug("ODB_ROOT: ${ODB_ROOT}")
+set(ODB_INCLUDE_DIRS ${ODB_LIBODB_INCLUDE_DIRS})
+set(ODB_LIBRARIES ${ODB_LIBODB_LIBRARIES})
 
-find_path(
-    ODB_INCLUDE_DIR
-      odb/core.hxx
-    PATHS
-      "${ODB_ROOT}/include"
-    NO_DEFAULT_PATH
-)
-
-hunter_status_debug("ODB_INCLUDE_DIR: ${ODB_INCLUDE_DIR}")
-
-set(ODB_INCLUDE_DIRS "${ODB_INCLUDE_DIR}")
-find_library(
-    ODB_CORE_LIBRARY
-      odb
-    PATHS
-      "${ODB_ROOT}/lib"
-    NO_DEFAULT_PATH
-)
-
-hunter_status_debug("ODB_CORE_LIBRARY: ${ODB_CORE_LIBRARY}")
-
-if(NOT TARGET "odb")
-  if(NOT ODB_CORE_LIBRARY)
-    message(FATAL_ERROR "ODB_CORE_LIBRARY not found!")
-  endif()
-  add_library("odb" UNKNOWN IMPORTED)
-  set_target_properties(
-      "odb"
-      PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${ODB_INCLUDE_DIR}"
-        IMPORTED_LOCATION "${ODB_CORE_LIBRARY}"
-  )
-  get_filename_component(ODB_LIB_DIR "${ODB_CORE_LIBRARY}" DIRECTORY CACHE)
-  hunter_status_debug("ODB_LIB_DIR: ${ODB_LIB_DIR}")
-  set(ODB_FOUND TRUE)
-endif()
-
-#AWP: if the compiler is listed at the components, treat it differently
-list(FIND odb_FIND_COMPONENTS "compiler" _compiler_index)
-if(_compiler_index GREATER -1)
-  set(odb-compiler_FIND_REQUIRED "${odb_FIND_REQUIRED}")
-  include(Findodb-compiler)
-  list(REMOVE_AT odb_FIND_COMPONENTS ${_compiler_index})
-endif()
-
-foreach(_odb_component ${odb_FIND_COMPONENTS})
-  set(_odb_lib "odb::${_odb_component}")
-  if(NOT TARGET ${_odb_lib})
-    string(TOUPPER "${_odb_lib}" _lib_upper)
-    find_library(ODB_${_lib_upper}_LIBRARY odb-${_odb_component})
-    if(NOT ODB_${_lib_upper}_LIBRARY AND odb_FIND_REQUIRED)
-      #AWP: would be nicer to register all that was not found, then notify the error
-      message(FATAL_ERROR "odb component not found: ${_odb_component}")
-    endif()
-    add_library("${_odb_lib}" UNKNOWN IMPORTED)
-    set_target_properties(
-        "${_odb_lib}"
-        PROPERTIES
-          IMPORTED_LOCATION "${ODB_${_lib_upper}_LIBRARY}"
-    )
-    unset(_component_link_libraries)
-    list(APPEND _component_link_libraries "odb")
-    string(COMPARE EQUAL "${_odb_component}" "sqlite" is_sqlite)
-    string(COMPARE EQUAL "${_odb_component}" "pgsql" is_pgsql)
-    string(COMPARE EQUAL "${_odb_component}" "mysql" is_mysql)
-    string(COMPARE EQUAL "${_odb_component}" "boost" is_boost)
-    if(is_sqlite)
-      find_package(SQLite3 REQUIRED)
-      list(APPEND _component_link_libraries "SQLite3")
-    elseif(is_pgsql)
-      find_package(PostgreSQL REQUIRED)
-      list(APPEND _component_link_libraries "PostgreSQL::libpq")
-    elseif(is_mysql)
-      find_package(MySQL-client REQUIRED)
-      list(APPEND _component_link_libraries "MySQL::client")
-    elseif(is_boost)
-      find_package(Boost CONFIG REQUIRED COMPONENTS date_time)
-      list(APPEND _component_link_libraries "Boost::date_time")
-    else()
-      message(FATAL_ERROR "unknown odb component: ${_odb_component}")
-    endif()
-
-    set_target_properties(
-        "${_odb_lib}"
-        PROPERTIES
-          INTERFACE_LINK_LIBRARIES "${_component_link_libraries}"
-          INTERFACE_INCLUDE_DIRECTORIES "${ODB_INCLUDE_DIR}"
-    )
-
-    if(HUNTER_STATUS_DEBUG)
-      get_target_property(_ilp "${_odb_lib}" INTERFACE_LINK_LIBRARIES)
-      hunter_status_debug("${_odb_lib} INTERFACE_LINK_LIBRARIES - ${_ilp}")
-      hunter_status_debug("${_odb_lib} at ${ODB_${_lib_upper}_LIBRARY}")
-    endif()
-  endif()
+foreach(component ${ODB_FIND_COMPONENTS})
+	find_odb_api(${component})
 endforeach()
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(ODB
+	FOUND_VAR ODB_FOUND
+	REQUIRED_VARS ODB_EXECUTABLE ODB_LIBODB_FOUND
+	HANDLE_COMPONENTS)
