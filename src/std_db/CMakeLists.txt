@@ -20,7 +20,6 @@ wrap_odb(sydStandardDatabase sydRoiStatistic.h)
 
 set(SYD_STANDARD_DATABASE_SRC
   sydStandardDatabase.cxx
-
   sydPatient-odb.cxx sydPatient-schema.cxx  sydPatient.cxx
   sydRadionuclide-odb.cxx sydRadionuclide-schema.cxx  sydRadionuclide.cxx
   sydInjection-odb.cxx sydInjection-schema.cxx  sydInjection.cxx
@@ -43,8 +42,6 @@ set(SYD_STANDARD_DATABASE_SRC
   sydImageHelper.cxx
   sydRoiMaskImageHelper.cxx
   sydUpdateRadionuclideFilter.cxx
-
-  #sydRoiStatisticBuilder.cxx
 
   #  sydCropImageBuilder.cxx
   #  sydDecayCorrectedImageBuilder.cxx
@@ -76,10 +73,8 @@ if(APPLE)
 else(NOT APPLE)
   add_library(StandardDatabasePlugin MODULE
     sydStandardDatabasePlugin.cxx
-    # $<TARGET_OBJECTS:sydCommonDatabaseObjects>
     $<TARGET_OBJECTS:sydStandardDatabaseObjects>
     )
-  #target_link_libraries(StandardDatabasePlugin ${SYD_CORE_LIBRARIES})
 endif(APPLE)
 
 set_target_properties(StandardDatabasePlugin PROPERTIES MACOSX_BUNDLE TRUE)
