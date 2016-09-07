@@ -74,7 +74,6 @@ namespace syd {
 
   protected:
     std::string inherit_table_name_;
-    ///    syd::TableDescription table_description_;
   };
 
 } // end namespace

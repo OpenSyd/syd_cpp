@@ -29,6 +29,8 @@ namespace syd {
   class RecordWithHistory {
   public:
 
+    virtual ~RecordWithHistory() {}
+
     /// Define pointer type
     typedef std::shared_ptr<RecordWithHistory> pointer;
 
@@ -38,7 +40,8 @@ namespace syd {
     /// Store the history. It is 'mutable' because is changed in the const Callback.
     mutable syd::RecordHistory::pointer history;
 
-    virtual void InitTable(syd::PrintTable & table) const;
+    void SetPrintHistoryFlag(bool b) { print_history_flag_ = b; }
+
     virtual void DumpInTable(syd::PrintTable & table) const;
 
     virtual void Callback(odb::callback_event,
@@ -47,6 +50,10 @@ namespace syd {
 
   protected:
     RecordWithHistory();
+
+    /// Not stored in the db
+ #pragma db transient
+   bool print_history_flag_;
 
   };
 

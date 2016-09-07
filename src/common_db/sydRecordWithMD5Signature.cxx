@@ -19,13 +19,13 @@
 // syd
 #include "sydRecordWithMD5Signature.h"
 #include "sydDatabase.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::RecordWithMD5Signature::RecordWithMD5Signature()
 {
 }
 // --------------------------------------------------------------------
-
 
 
 // --------------------------------------------------------------------
@@ -47,24 +47,9 @@ void syd::RecordWithMD5Signature::Callback(odb::callback_event event,
 
 
 // --------------------------------------------------------------------
-void syd::RecordWithMD5Signature::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddFormat("md5", "Display the MD5 signature of the records");
-  auto & f = ta.GetFormat();
-  if (f == "md5") {
-    ta.AddColumn("md5");
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::RecordWithMD5Signature::DumpInTable(syd::PrintTable & ta) const
 {
-  auto & f = ta.GetFormat();
-  if (f == "md5") {
-    ta.Set("md5", md5);
-  }
+  ta.Set("md5", md5);
 }
 // --------------------------------------------------------------------
 

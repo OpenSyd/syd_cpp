@@ -23,6 +23,8 @@
 #include "sydCommon.h"
 #include "sydFileUtils.h"
 #include "sydImageCrop.h" // need for stitch. FIXME to change
+#include "sydDicomUtils.h"
+#include "sydImageFlip.h"
 
 // itk
 #include <itkImageFileReader.h>
@@ -55,7 +57,8 @@ namespace syd {
   ReadDicomSerieFromListOfFiles(std::string folder, const std::vector<std::string> & files);
 
   template<class PixelType>
-  void UpdateImageInformation(typename itk::Image<PixelType,3>::Pointer image, const std::string & filename);
+  void UpdateDicomImageInformation(typename itk::Image<PixelType,3>::Pointer image,
+                                   const std::string & filename);
   //--------------------------------------------------------------------
 
 
@@ -74,7 +77,7 @@ namespace syd {
   typename itk::ImageBase<Dimension>::Pointer GetImageBase(const itk::ImageIOBase::Pointer & reader);
 
   template<class ImageType>
-  typename ImageType::Pointer CreateImageLike(typename itk::ImageBase<ImageType::ImageDimension> * like);
+  typename ImageType::Pointer CreateImageLike(const typename itk::ImageBase<ImageType::ImageDimension> * like);
 
   template<class ImageType>
   std::string ComputeImageMD5(typename ImageType::Pointer image);
@@ -119,13 +122,12 @@ namespace syd {
 
 
   //--------------------------------------------------------------------
-  void CopyMHDImage(std::string from, std::string to, int verbose_level=3);
-  void RenameMHDImage(std::string from, std::string to, int verbose_level=3);
-  void RenameOrCopyMHDImage(std::string from, std::string to, int verbose_level, bool erase);
+  void CopyMHDImage(std::string from, std::string to, bool overwrite_if_exists);
+  void RenameMHDImage(std::string from, std::string to, bool overwrite_if_exists);
+  void RenameOrCopyMHDImage(std::string from, std::string to, bool erase, bool overwrite_if_exists);
   void DeleteMHDImage(std::string filename);
   std::string PointToString(const itk::Point<double,3> & t);
   //--------------------------------------------------------------------
-
 
 #include "sydImageUtils.txx"
 

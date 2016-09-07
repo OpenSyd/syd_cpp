@@ -18,11 +18,15 @@
 
 // --------------------------------------------------------------------
 template<class DatabaseSchema>
-DatabaseCreator<DatabaseSchema> * syd::DatabaseManager::RegisterDatabaseSchema(const std::string & schema)
+DatabaseCreator<DatabaseSchema> *
+syd::DatabaseManager::RegisterDatabaseSchema(const std::string & schema)
 {
   auto it = db_map_.find(schema);
   if (it != db_map_.end()) {
-    LOG(FATAL) << "The database schema '" << schema << "' already exist.";
+    LOG(10) << sydlog::warningColor <<
+      "The database schema '" << schema << "' already exist, ignoring."
+            << sydlog::resetColor;
+    return NULL;
   }
   DatabaseCreator<DatabaseSchema> * c = new DatabaseCreator<DatabaseSchema>;
   db_map_[schema] = c;
@@ -41,10 +45,13 @@ DatabaseSchema * syd::DatabaseManager::Open(const std::string & filename)
   syd::Database * db = Open(filename);
   // Check it the db inherit (or is) a DatabaseSchema;
   if (dynamic_cast<DatabaseSchema*>(db) == 0) {
+    //    DatabaseSchema * temp = new DatabaseSchema;
     EXCEPTION("Error the db '" << filename
-               << "' does not contains the required schema. The schema in the file is '"
-               << db->GetDatabaseSchema()  << "'.");
+              << "' does not contains the required schema. The schema in the file is '"
+              << db->GetDatabaseSchema()
+              //  << " while the required schema is " << temp->GetDatabaseSchema()
+              << "'.");
   }
-  return static_cast<DatabaseSchema*>(db);
+  return dynamic_cast<DatabaseSchema*>(db);
 }
 // --------------------------------------------------------------------

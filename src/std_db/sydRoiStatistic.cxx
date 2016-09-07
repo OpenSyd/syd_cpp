@@ -18,9 +18,7 @@
 
 // syd
 #include "sydRoiStatistic.h"
-
-// std
-#include <set>
+#include "sydTagHelper.h"
 
 // --------------------------------------------------
 syd::RoiStatistic::RoiStatistic():
@@ -39,12 +37,15 @@ syd::RoiStatistic::RoiStatistic():
 std::string syd::RoiStatistic::ToString() const
 {
   std::stringstream ss ;
-  ss << id << " "
-     << image->patient->name << " "
-     << image->id << " "
-     << image->pixel_value_unit->name << " "
-     << GetLabels(tags) << " "
-     << (mask!= NULL? syd::ToString(mask->roitype->name):"no_mask") << " "
+  ss << id << " ";
+  if (image != NULL) {
+    ss << image->patient->name << " "
+       << image->id << " "
+       << image->pixel_unit->name << " ";
+  }
+  else ss << empty_value;
+  ss << syd::GetLabels(tags) << " "
+     << (mask != NULL? mask->roitype->name:"no_mask") << " "
      << mean << " " << std_dev << " "  << n << " "
      << min << " " << max << " " << sum;
   return ss.str();
@@ -53,34 +54,13 @@ std::string syd::RoiStatistic::ToString() const
 
 
 // --------------------------------------------------
-void syd::RoiStatistic::InitTable(syd::PrintTable & ta) const
-{
-  syd::RecordWithHistory::InitTable(ta);
-  if (ta.GetColumn("id") == -1) ta.AddColumn("id");
-  ta.AddColumn("p");
-  ta.AddColumn("image");
-  ta.AddColumn("mask");
-  ta.AddColumn("unit");
-  ta.AddColumn("tags");
-  ta.AddColumn("mean",5);
-  ta.AddColumn("sd",3);
-  ta.AddColumn("n");
-  ta.AddColumn("min",3);
-  ta.AddColumn("max",3);
-  ta.AddColumn("sum",1);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
 {
-  syd::RecordWithHistory::DumpInTable(ta);
   ta.Set("id", id);
   ta.Set("p", image->patient->name);
   ta.Set("image", image->id);
   ta.Set("mask", (mask != NULL ? mask->roitype->name:"no_mask"));
-  ta.Set("unit", image->pixel_value_unit->name);
+  ta.Set("unit", image->pixel_unit->name);
   ta.Set("tags", GetLabels(tags));
   ta.Set("mean", mean);
   ta.Set("sd", std_dev);
@@ -88,5 +68,26 @@ void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
   ta.Set("min", min);
   ta.Set("max", max);
   ta.Set("sum", sum);
+  syd::RecordWithHistory::DumpInTable(ta);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::RoiStatistic::Callback(odb::callback_event event,
+                                 odb::database & db) const
+{
+  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db, db_);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::RoiStatistic::Callback(odb::callback_event event,
+                                 odb::database & db)
+{
+  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db, db_);
 }
 // --------------------------------------------------

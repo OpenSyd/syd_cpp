@@ -21,11 +21,8 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
-#include "sydRecordHelpers.h"
-
-// Init syd
-SYD_STATIC_INIT
-
+#include "sydRecordHelper.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -60,14 +57,20 @@ int main(int argc, char* argv[])
 
   // Find all records
   syd::Record::vector records;
-  db->Query(records, table_name); // query all
+  if (!args_info.id_given)
+    db->Query(records, table_name); // query all
+  else {
+    std::vector<syd::IdType> ids;
+    for(auto i=0; i<args_info.id_given; i++) ids.push_back(args_info.id_arg[i]);
+    db->Query(records, table_name, ids);
+  }
 
   // Only keep the ones with the given tags (we do not check that the tags exist)
   if (args_info.tag_given and records.size() >0) {
-      std::vector<std::string> tag_names;
-      for(auto i=0; i<args_info.tag_given; i++)
-        syd::GetWords(tag_names, args_info.tag_arg[i]);
-      records = syd::KeepRecordIfContainsAllTags<syd::Record>(records, tag_names);
+    std::vector<std::string> tag_names;
+    for(auto i=0; i<args_info.tag_given; i++)
+      syd::GetWords(tag_names, args_info.tag_arg[i]);
+    records = syd::KeepRecordIfContainsAllTags<syd::Record>(records, tag_names);
   }
 
   // Grep
@@ -106,24 +109,23 @@ int main(int argc, char* argv[])
     syd::PrintTable table;
     table.SetFormat(format);
     table.SetHeaderFlag(!args_info.noheader_flag);
-    results[0]->InitTable(table);
-    for(auto i=0; i<args_info.col_given; i++) {
-      std::string s = args_info.col_arg[i];
-      std::vector<std::string> w;
-      syd::GetWords(w, s);
-      if (w.size() != 3) {
-        LOG(FATAL) << "Format must be 3 strings: 'num_col' 'p' 'value'";
-      }
-      int col = atoi(w[0].c_str());
-      if (w[1] != "p") {
-        LOG(FATAL) << "Format not known. Must be 'p'.";
-      }
-      int v = atoi(w[2].c_str());
-      table.SetColumnPrecision(col, v);
-    }
-
     try {
-      table.Dump<syd::Record>(results, os);
+      table.Build(results.begin(), results.end());
+      for(auto i=0; i<args_info.col_given; i++) {
+        std::string s = args_info.col_arg[i];
+        std::vector<std::string> w;
+        syd::GetWords(w, s);
+        if (w.size() != 3) {
+          LOG(FATAL) << "Format must be 3 strings: 'num_col' 'p' 'value'";
+        }
+        int col = atoi(w[0].c_str());
+        if (w[1] != "p") {
+          LOG(FATAL) << "Format not known. Must be 'p'.";
+        }
+        int v = atoi(w[2].c_str());
+        table.SetColumnPrecision(col, v);
+      }
+      table.Print(os);
     } catch (std::exception & e) {
       if (args_info.vv_flag or args_info.vvs_flag) {
         LOG(FATAL) << "Error, results *must* be images with filenames to be able to be open with vv"

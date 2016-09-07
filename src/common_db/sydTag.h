@@ -30,6 +30,8 @@ namespace syd {
   class Tag : public syd::Record {
   public:
 
+    virtual ~Tag() { }
+
 #pragma db options("UNIQUE")
     /// Label of the tag (name)
     std::string label;
@@ -46,26 +48,12 @@ namespace syd {
 
     void Set(const std::vector<std::string> & arg);
 
-    virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
 
   protected:
     Tag();
 
   }; // end of class
-
-  // Helper functions
-
-  // Print the list of tag labels
-  std::string GetLabels(const syd::Tag::vector & tags);
-
-  // Check if all tags are in the first list
-  bool IsAllTagsIn(syd::Tag::vector & input_tags, syd::Tag::vector & to_search_tags);
-
-  int AddTag(syd::Tag::vector & tags, const syd::Tag::vector & tags_to_add);
-  int AddTag(syd::Tag::vector & tags, const syd::Tag::pointer & tag_to_add);
-  int RemoveTag(syd::Tag::vector & tags, const syd::Tag::vector & tags_to_remove);
-  int RemoveTag(syd::Tag::vector & tags, const syd::Tag::pointer & tag_to_remove);
 
 }
 // --------------------------------------------------------------------

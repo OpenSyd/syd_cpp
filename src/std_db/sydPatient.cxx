@@ -25,12 +25,21 @@
 syd::Patient::Patient():syd::Record()
 {
   // default value
-  name = "unset"; // must be unique
+  name = empty_value; // must be unique
   study_id = 0; // must be unique
   weight_in_kg = 0;
-  dicom_patientid = "unset";
+  dicom_patientid = empty_value;
+  sex = empty_value;
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+syd::Patient::~Patient()
+{
+}
+// --------------------------------------------------
+
 
 
 // --------------------------------------------------
@@ -41,7 +50,8 @@ std::string syd::Patient::ToString() const
      << study_id << " "
      << name << " "
      << weight_in_kg << " "
-     << dicom_patientid;
+     << dicom_patientid << " "
+     << sex;
   return ss.str();
 }
 // --------------------------------------------------
@@ -52,12 +62,13 @@ void syd::Patient::Set(const std::vector<std::string> & arg)
 {
   if (arg.size() < 2) {
     LOG(FATAL) << "To insert patient, please set <name> <study_id> "
-               << "[<weight_in_kg> <dicom_patientid>]";
+               << "[<weight_in_kg> <dicom_patientid> <sex>]";
   }
   name = arg[0];
   study_id = atoi(arg[1].c_str());
   if (arg.size() > 2) weight_in_kg = atof(arg[2].c_str());
   if (arg.size() > 3) dicom_patientid = arg[3];
+  if (arg.size() > 4) sex = arg[4];
 }
 // --------------------------------------------------
 
@@ -66,27 +77,14 @@ void syd::Patient::Set(const std::vector<std::string> & arg)
 void syd::Patient::Set(const std::string & pname,
                        const IdType & pstudy_id,
                        const double pweight_in_kg,
-                       const std::string pdicom_patientid)
+                       const std::string pdicom_patientid,
+                       const std::string s)
 {
   name = pname;
   study_id = pstudy_id;
   weight_in_kg = pweight_in_kg;
   dicom_patientid = pdicom_patientid;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Patient::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddFormat("injection", "Display nb of associated injections");
-
-  ta.AddColumn("id");
-  ta.AddColumn("p");
-  ta.AddColumn("sid");
-  ta.AddColumn("w(kg)");
-  ta.AddColumn("dicom");
-  ta.AddColumn("injection");
+  sex = s;
 }
 // --------------------------------------------------
 
@@ -94,18 +92,17 @@ void syd::Patient::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::Patient::DumpInTable(syd::PrintTable & ta) const
 {
-  auto f = ta.GetFormat();
-
   ta.Set("id",id);
   ta.Set("p", name);
   ta.Set("sid", study_id);
   ta.Set("w(kg)", weight_in_kg);
   ta.Set("dicom", dicom_patientid);
-  syd::StandardDatabase* db = (syd::StandardDatabase*)(db_);
+  syd::StandardDatabase* db = static_cast<syd::StandardDatabase*>(db_);
   syd::Injection::vector injections;
   odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
   db->Query(injections, q);
   ta.Set("injection", injections.size());
+  ta.Set("sex", sex);
 }
 // --------------------------------------------------
 

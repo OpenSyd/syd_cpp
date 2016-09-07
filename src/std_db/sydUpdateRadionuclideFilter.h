@@ -20,7 +20,7 @@
 #define SYDUPDATERADIONUCLIDEFILTER_H
 
 // syd
-#include "sydImageBuilder.h"
+#include "sydDatabaseFilter.h"
 
 // --------------------------------------------------------------------
 namespace syd {

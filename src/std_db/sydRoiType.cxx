@@ -18,12 +18,13 @@
 
 // syd
 #include "sydRoiType.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::RoiType::RoiType():Record()
 {
-  name = "unset";
-  description = "unset";
+  name = empty_value;
+  description = empty_value;
 }
 // --------------------------------------------------------------------
 
@@ -48,16 +49,6 @@ void syd::RoiType::Set(const std::vector<std::string> & arg)
   }
   name = arg[0];
   description = arg[1];
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::RoiType::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddColumn("id");
-  ta.AddColumn("name");
-  ta.AddColumn("description");
 }
 // --------------------------------------------------
 

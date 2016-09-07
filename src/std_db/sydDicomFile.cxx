@@ -21,10 +21,8 @@
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
-syd::DicomFile::DicomFile():syd::Record()
+syd::DicomFile::DicomFile():syd::File()
 {
-  file = NULL;
-  dicom_serie = NULL;
   dicom_sop_uid = "";
   dicom_instance_number = 0;
 }
@@ -35,65 +33,21 @@ syd::DicomFile::DicomFile():syd::Record()
 std::string syd::DicomFile::ToString() const
 {
   std::stringstream ss ;
-  ss << id << " "
-     << dicom_serie->injection->patient->name << " "
-     << dicom_serie->id << " "
-     << dicom_instance_number << " "
-     << file->filename;
+  ss << syd::File::ToString() << " ";
+  ss << dicom_instance_number << " "
+     << dicom_sop_uid << " ";
   return ss.str();
 }
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------
-void syd::DicomFile::Callback(odb::callback_event event, odb::database & db) const
-{
-  syd::Record::Callback(event, db);
-  if (event == odb::callback_event::pre_erase) {
-    db.erase(file);
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::DicomFile::Callback(odb::callback_event event, odb::database & db)
-{
-  syd::Record::Callback(event, db);
-  if (event == odb::callback_event::pre_erase) {
-    db.erase(file);
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::DicomFile::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddColumn("id");
-  ta.AddColumn("serie");
-  ta.AddColumn("nb");
-  ta.AddColumn("file");
-  ta.AddColumn("sop_uid");
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::DicomFile::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
-  ta.Set("serie", dicom_serie->id);
   ta.Set("nb", dicom_instance_number);
-  ta.Set("file", file->filename);
+  ta.Set("file", filename, 100);
+  ta.Set("folder", path);
   ta.Set("sop_uid", dicom_sop_uid);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::CheckResult syd::DicomFile::Check() const
-{
-  return file->Check();
 }
 // --------------------------------------------------------------------

@@ -6,33 +6,34 @@ include_directories(${SYD_SOURCE_DIR}/src/core/pstreams)
 
 #----------------------------------------------------------
 # Common library
-add_library(sydCore
+add_library(sydCore SHARED
   md5.cpp
   sydCommon.cxx
   sydFileUtils.cxx
   sydLog.cxx
   sydException.cxx
-  sydDicomCommon.cxx
-  sydPrintTable.cxx
+  sydHistogram.cxx
+  sydNDimPoints.cxx
+  kmeans/KMeans.cpp
+  kmeans/KmTree.cpp
+  kmeans/KmUtils.cpp
 )
-
 target_link_libraries(sydCore
+<<<<<<< HEAD
   PUBLIC Boost::date_time Boost::system Boost::filesystem
   ${DCMTK_LIBRARIES}
   #${Boost_LIBRARIES} ## needed on osx
+=======
+  ${Boost_LIBRARIES} ## needed on osx
+>>>>>>> master
   )
-
-# wrap_ggo(sydOdbXmlParser_GGO_C sydOdbXmlParser.ggo )
-# add_executable(sydOdbXmlParser sydOdbXmlParser.cxx ${sydOdbXmlParser_GGO_C})
-# target_link_libraries(sydOdbXmlParser sydCore)
-
-#----------------------------------------------------------
-
 
 #----------------------------------------------------------
 # ITK tools library
 add_library(sydItkUtils
   sydImageUtils.cxx
+  sydDicomUtils.cxx
+  sydKmeansFilter.cxx
 )
 
 target_link_libraries(sydItkUtils ${ITK_LIBRARIES})
@@ -55,7 +56,7 @@ add_library(sydFit
   sydTimeIntegratedActivityFilter.cxx
 )
 
-target_link_libraries(sydFit ${CERES_LIBRARIES})
+target_link_libraries(sydFit ${CERES_LIBRARIES} glog)
 #----------------------------------------------------------
 
 
@@ -96,4 +97,3 @@ set(SYD_INCLUDE_FILES ${SYD_INCLUDE_FILES}
   sydFitModel_f4b.h
   PARENT_SCOPE
   )
-#DD(SYD_INCLUDE_FILES)

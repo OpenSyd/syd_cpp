@@ -27,9 +27,6 @@
 
 #include <boost/tokenizer.hpp>
 
-// Init syd
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -126,12 +123,12 @@ int main(int argc, char* argv[])
         // uncer ? %
         // squared ? idem edep/dose
         syd::PixelValueUnit::pointer u;
-        if (type == "dose") u = db->FindPixelValueUnit("Gy");
-        if (type == "edep") u = db->FindPixelValueUnit("MeV");
-        if (type == "dose_uncertainty" or type == "edep_uncertainty") u = db->FindPixelValueUnit("%");
-        if (type == "dose_squared") u = db->FindPixelValueUnit("Gy");
-        if (type == "edep_squared") u = db->FindPixelValueUnit("MeV");
-        output->pixel_value_unit = u;
+        if (type == "dose") u = db->FindPixelUnit("Gy");
+        if (type == "edep") u = db->FindPixelUnit("MeV");
+        if (type == "dose_uncertainty" or type == "edep_uncertainty") u = db->FindPixelUnit("%");
+        if (type == "dose_squared") u = db->FindPixelUnit("Gy");
+        if (type == "edep_squared") u = db->FindPixelUnit("MeV");
+        output->pixel_unit = u;
 
         // Insert in the db
         if (!args_info.dry_run_flag) builder.InsertAndRename(output);
@@ -181,7 +178,7 @@ int main(int argc, char* argv[])
         syd::ScaleImageBuilder builder(db);
         builder.Scale(image, s);
         // unit
-        image->pixel_value_unit = db->FindPixelValueUnit("cGy/IA[MBq]");
+        image->pixel_unit = db->FindPixelUnit("cGy/IA[MBq]");
         // Update
         LOG(1) << "Scaling: " << image;
         if (!args_info.dry_run_flag) db->Update(image);

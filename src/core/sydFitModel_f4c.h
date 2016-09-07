@@ -30,7 +30,7 @@ namespace syd {
   public:
 
     FitModel_f4c();
-    ~FitModel_f4c();
+    ~FitModel_f4c() {}
 
     class ResidualType: public FitModelBase::ResidualBaseType {
     public:

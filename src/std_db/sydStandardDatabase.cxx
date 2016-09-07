@@ -19,6 +19,7 @@
 // syd
 #include "sydStandardDatabase.h"
 #include "sydUpdateRadionuclideFilter.h"
+#include "sydDatabaseManager.h"
 
 // --------------------------------------------------------------------
 template<>
@@ -28,7 +29,7 @@ void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & ty
             [v](pointer a, pointer b) {
               if (a->dicoms.size() == 0) return true;
               if (b->dicoms.size() == 0) return false;
-              return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
+              return a->acquisition_date < b->acquisition_date;
             });
 }
 // --------------------------------------------------------------------
@@ -56,7 +57,7 @@ void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v,
             [v](pointer a, pointer b) {
               if (a->dicoms.size() == 0) return true;
               if (b->dicoms.size() == 0) return false;
-              return a->dicoms[0]->acquisition_date < b->dicoms[0]->acquisition_date;
+              return a->acquisition_date < b->acquisition_date;
             });
 }
 // --------------------------------------------------
@@ -67,9 +68,19 @@ template<>
 void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & v,
                                        const std::string & order) const
 {
+  // Sort by acquisition_date and if equal, by reconstruction_date or
+  // id is equal
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
-              return syd::IsDateBefore(a->acquisition_date, b->acquisition_date); });
+              if (a->dicom_acquisition_date == b->dicom_acquisition_date) {
+                if (a->dicom_reconstruction_date == b->dicom_reconstruction_date)
+                  return (a->id < b->id);
+                else return syd::IsDateBefore(a->dicom_reconstruction_date,
+                                              b->dicom_reconstruction_date);
+              }
+              else return syd::IsDateBefore(a->dicom_acquisition_date,
+                                            b->dicom_acquisition_date);
+            });
 }
 // --------------------------------------------------
 
@@ -97,24 +108,24 @@ void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & v,
 
 
 // --------------------------------------------------
-template<>
-void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & v,
-                                        const std::string & order) const
-{
+/*template<>
+  void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & v,
+  const std::string & order) const
+  {
   std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              if (a->image->dicoms.size() == 0) return true;
-              if (b->image->dicoms.size() == 0) return false;
-              return a->image->dicoms[0]->acquisition_date < b->image->dicoms[0]->acquisition_date;
-            });
-}
+  [v](pointer a, pointer b) {
+  if (a->image->dicoms.size() == 0) return true;
+  if (b->image->dicoms.size() == 0) return false;
+  return a->image->acquisition_date < b->image->acquisition_date;
+  });
+  }*/
 // --------------------------------------------------
 
 
 // --------------------------------------------------
 template<>
-void syd::Table<syd::PixelValueUnit>::Sort(syd::PixelValueUnit::vector & v,
-                                           const std::string & order) const
+void syd::Table<syd::PixelUnit>::Sort(syd::PixelUnit::vector & v,
+                                      const std::string & order) const
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
@@ -133,35 +144,44 @@ void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & v,
             [v](pointer a, pointer b) {
               if (a->image->dicoms.size() == 0) return true;
               if (b->image->dicoms.size() == 0) return false;
-              return a->image->dicoms[0]->acquisition_date < b->image->dicoms[0]->acquisition_date;
+              return a->image->acquisition_date < b->image->acquisition_date;
             });
 }
 // --------------------------------------------------
 
 
-
+// --------------------------------------------------
+syd::StandardDatabase::~StandardDatabase()
+{
+}
+// --------------------------------------------------
 
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {
   //  syd::Database::CreateTables();
   AddTable<syd::RecordHistory>();
+  AddTable<syd::Tag>();
+  AddTable<syd::File>();
+
   AddTable<syd::Patient>();
   AddTable<syd::Injection>();
   AddTable<syd::Radionuclide>();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
+
   AddTable<syd::DicomFile>();
   AddTable<syd::DicomSerie>();
+
+  AddTable<syd::PixelUnit>();
   AddTable<syd::Image>();
+
   AddTable<syd::RoiType>();
   AddTable<syd::RoiMaskImage>();
-  AddTable<syd::ImageTransform>();
-  AddTable<syd::Calibration>();
-  AddTable<syd::PixelValueUnit>();
   AddTable<syd::RoiStatistic>();
-  AddTable<syd::Timepoints>();
-  AddTable<syd::FitResult>();
+
+  // AddTable<syd::ImageTransform>();
+  // AddTable<syd::Calibration>();
+  // AddTable<syd::Timepoints>();
+  // AddTable<syd::FitResult>();
 }
 // --------------------------------------------------------------------
 
@@ -226,8 +246,8 @@ syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient:
   syd::Injection::pointer injection;
   odb::query<syd::Injection> q =
     odb::query<syd::Injection>::patient == patient->id and (
-    odb::query<syd::Injection>::radionuclide->name == name_or_study_id.c_str() or
-    odb::query<syd::Injection>::id == atoi(name_or_study_id.c_str()));
+                                                            odb::query<syd::Injection>::radionuclide->name == name_or_study_id.c_str() or
+                                                            odb::query<syd::Injection>::id == atoi(name_or_study_id.c_str()));
 
   try {
     QueryOne(injection, q);
@@ -242,141 +262,9 @@ syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient:
 
 
 // --------------------------------------------------------------------
-void syd::StandardDatabase::FindTags(syd::Tag::vector & tags,
-                                     const std::string & names) const
-{
-  std::vector<std::string> words;
-  syd::GetWords(words, names);
-  FindTags(tags, words);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::StandardDatabase::FindTag(syd::Tag::pointer & tag,
-                                    const std::string & name) const
-{
-  syd::Tag::vector tags;
-  FindTags(tags, name);
-  if (tags.size() != 1) {
-    EXCEPTION("Error in FindTag '" << name << "', I find "
-              << tags.size() << " tags";
-              );
-  }
-  tag = tags[0];
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::StandardDatabase::FindTags(syd::Tag::vector & tags,
-                                     const std::vector<std::string> & names) const
-{
-  odb::query<Tag> q = odb::query<Tag>::label.in_range(names.begin(), names.end());
-  Query<Tag>(tags, q);
-  if (tags.size() != names.size()) {
-    std::string s;
-    for(auto t:tags) s += t->label+" ";
-    std::string w;
-    syd::SetWords(w, names);
-    EXCEPTION("Cannot find all tags in FindTags. Look for: '" << w
-              << "' but find: '" << s << "'");
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::RoiMaskImage::pointer
-syd::StandardDatabase::FindRoiMaskImage(const syd::Image::pointer image,
-                                        const std::string & roi_name)
-{
-  syd::RoiType::pointer roitype = FindRoiType(roi_name);
-  syd::RoiMaskImage::pointer roi;
-  odb::query<syd::RoiMaskImage> q =
-    odb::query<syd::RoiMaskImage>::roitype == roitype->id and
-    odb::query<syd::RoiMaskImage>::frame_of_reference_uid == image->frame_of_reference_uid;
-  QueryOne(roi, q);
-  return roi;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::PixelValueUnit::pointer syd::StandardDatabase::FindPixelValueUnit(const std::string & name)
-{
-  syd::PixelValueUnit::pointer unit;
-  try {
-    odb::query<syd::PixelValueUnit> q = odb::query<syd::PixelValueUnit>::name == name;
-    QueryOne(unit, q);
-  } catch (std::exception & e) {
-    EXCEPTION("Cannot find the pixelvalueunit " << name);
-  }
-  return unit;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::PixelValueUnit::pointer syd::StandardDatabase::FindOrInsertUnit(const std::string & name,
-                                                                     const std::string & description)
-{
-  try {
-    syd::PixelValueUnit::pointer unit = FindPixelValueUnit(name);
-    return unit;
-  } catch (std::exception & e) {
-    syd::PixelValueUnit::pointer unit;
-    New(unit);
-    unit->name=name;
-    unit->description=description;
-    Insert(unit);
-    return unit;
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::RoiType::pointer syd::StandardDatabase::FindRoiType(const std::string & roiname) const
-{
-  syd::RoiType::pointer r;
-  odb::query<syd::RoiType> q = odb::query<RoiType>::name == roiname;
-  QueryOne(r, q);
-  return r;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::string syd::StandardDatabase::GetAbsolutePath(const syd::Image::pointer image) const
-{
-  if (image->files.size() == 0) return "unset_file";
-  else return GetAbsolutePath(image->files[0]);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::string syd::StandardDatabase::GetAbsolutePath(const syd::DicomFile::pointer dicom) const
-{
-  return GetAbsolutePath(dicom->file);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::string syd::StandardDatabase::GetAbsolutePath(const syd::File::pointer file) const
-{
-  std::string f = file->path+PATH_SEPARATOR+file->filename;
-  return ConvertToAbsolutePath(f);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Image::pointer image,
-                                                                 const std::string & calib_tag)
-{
+/*syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Image::pointer image,
+  const std::string & calib_tag)
+  {
   syd::Tag::vector tags;
   FindTags(tags,calib_tag);
   syd::Calibration::vector calibrations;
@@ -386,21 +274,22 @@ syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Imag
   Query(calibrations, q);
   int n=0;
   for(auto c:calibrations) {
-    if (syd::IsAllTagsIn(c->tags, tags)) {
-      if (n>0) {
-        EXCEPTION("Several calibrations are associated with this image. "
-                  << "I dont know which one to choose. "
-                  << "Use tags to discriminate");
-      }
-      ++n;
-      calibration = c;
-    }
+  if (syd::IsAllTagsIn(c->tags, tags)) {
+  if (n>0) {
+  EXCEPTION("Several calibrations are associated with this image. "
+  << "I dont know which one to choose. "
+  << "Use tags to discriminate");
+  }
+  ++n;
+  calibration = c;
+  }
   }
   if (calibrations.size() < 1) {
-    EXCEPTION("Cannot find calibration for this image: " << image);
+  EXCEPTION("Cannot find calibration for this image: " << image);
   }
   return calibration;
-}
+  }
+*/
 // --------------------------------------------------------------------
 
 
@@ -411,25 +300,70 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
 
   // Add some radionuclide
   LOG(1) << "Adding some default radionuclides ...";
-  std::vector<std::string> rads = {"C-11", "O-15", "F-18", "P-32", "P-33",
-                                   "Cu-64", "Cu-67", "Ga-68", "Sr-89",
-                                   "Y-90", "Zr-89", "Tc-99m", "Rh-103m",
-                                   "In-111", "Sn-117m", "I-123", "I-124",
-                                   "I-125", "I-131", "Sm-153", "Ho-166",
-                                   "Er-169", "Lu-177", "Re-186", "Re-188",
-                                   "Tl-201", "Pb-212", "Bi-212", "Bi-213",
-                                   "At-211", "Ra-223", "Ac-225", "Th-227"};
-  // "Rb-82" ?
-  // create  rad
-  syd::Radionuclide::vector radionuclides;
-  syd::UpdateRadionuclideFilter f(this);
-  for(auto rad_name:rads) {
+  /*
+    std::vector<std::string> rads = {"C-11", "O-15", "F-18", "P-32", "P-33",
+    "Cu-64", "Cu-67", "Ga-68", "Sr-89",
+    "Y-90", "Zr-89", "Tc-99m", "Rh-103m",
+    "In-111", "Sn-117m", "I-123", "I-124",
+    "I-125", "I-131", "Sm-153", "Ho-166",
+    "Er-169", "Lu-177", "Re-186", "Re-188",
+    "Tl-201", "Pb-212", "Bi-212", "Bi-213",
+    "At-211", "Ra-223", "Ac-225", "Th-227"};
+    // "Rb-82" ?
+    // create  rad
+    syd::Radionuclide::vector radionuclides;
+    syd::UpdateRadionuclideFilter f(this);
+    for(auto rad_name:rads) {
     syd::Radionuclide::pointer r;
     New(r);
     r->name = rad_name;
     f.GetDataFromWeb(r);
     radionuclides.push_back(r);
+    }
+  */
+  syd::Radionuclide::vector radionuclides;
+  std::vector<std::vector<std::string>> args;
+  args.push_back({"C-11", "0.34", "Carbon", "6", "11", "N", "0.00"});
+  args.push_back({"O-15", "0.03", "Oxygen", "8", "15", "N", "0.00"});
+  args.push_back({"F-18", "1.83", "Fluorine", "9", "18", "N", "0.00"});
+  args.push_back({"P-32", "342.81", "Phosphorus", "15", "32", "N", "1710.66"});
+  args.push_back({"P-33", "609.19", "Phosphorus", "15", "33", "N", "248.50"});
+  args.push_back({"Cu-64", "12.70", "Copper", "29", "64", "N", "579.40"});
+  args.push_back({"Cu-67", "63.84", "Copper", "29", "67 ", "N", "0.00"});
+  args.push_back({"Ga-68", "1.13", "Gallium", "31", "68", "N", "0.00"});
+  args.push_back({"Sr-89", "1213.67", "Strontium", "38", "89", "N", "1495.10"});
+  args.push_back({"Y-90", "64.04", "Yttrium", "39", "90", "N", "2278.70"});
+  args.push_back({"Zr-89", "78.42", "Zirconium", "40", "89", "N", "0.00"});
+  args.push_back({"Tc-99m", "6.01", "Technetium", "43", "99", "Y", "436.20"});
+  args.push_back({"Rh-103m", "0.94", "Rhodium", "45", "103", "Y", "0.00"});
+  args.push_back({"In-111", "67.32", "Indium", "49", "111", "N", "0.00"});
+  args.push_back({"Sn-117m", "326.39", "Tin", "50", "117", "Y", "0.00"});
+  args.push_back({"I-123", "13.22", "Iodine", "53", "123", "N", "0.00"});
+  args.push_back({"I-124", "100.22", "Iodine", "53", "124", "N", "0.00"});
+  args.push_back({"I-125", "1425.31", "Iodine", "53", "125", "N", "0.00"});
+  args.push_back({"I-131", "192.56", "Iodine", "53", "131", "N", "970.80"});
+  args.push_back({"Sm-153", "46.29", "Samarium", "62", "153", "N", "807.60"});
+  args.push_back({"Ho-166", "26.79", "Holmium", "67", "166", "N", "1854.50"});
+  args.push_back({"Er-169", "225.11", "Erbium", "6", "8 169", "N", "353.00"});
+  args.push_back({"Lu-177", "159.53", "Lutetium", "71", "177", "N", "498.30"});
+  args.push_back({"Re-186", "89.25", "Rhenium", "75", "186", "N", "1069.50"});
+  args.push_back({"Re-188", "17.00", "Rhenium", "75", "188", "N", "2120.40"});
+  args.push_back({"Tl-201", "73.01", "Thallium", "81", "201", "N", "0.00"});
+  args.push_back({"Pb-212", "10.64", "Lead", "82", "212", "N", "569.90"});
+  args.push_back({"Bi-212", "1.01", "Bismuth", "83", "212", "N", "2252.10"});
+  args.push_back({"Bi-213", "0.76", "Bismuth", "83", "213", "N", "1423.00"});
+  args.push_back({"At-211", "7.22", "Astatine", "85", "211", "N", "0.00"});
+  args.push_back({"Ra-223", "274.33", "Radium", "88", "223", "N", "0.00"});
+  args.push_back({"Ac-225", "240.00", "Actinium", "89", "225", "N", "0.00"});
+  args.push_back({"Th-227", "449.23", "Thorium ", "90", "227", "N ", "0.00"});
+
+  for (auto a:args) {
+    syd::Radionuclide::pointer r;
+    New(r);
+    r->Set(a);
+    radionuclides.push_back(r);
   }
+
   Insert(radionuclides);
   LOG(1) << radionuclides.size() << " radionuclides have been added.";
 
@@ -467,32 +401,32 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   Insert(tags);
   LOG(1) << tags.size() << " tags have been added.";
 
-  // Add some default PixelValueUnit
-  syd::PixelValueUnit::vector units;
-  units.push_back(NewPixelValueUnit("no_unit", "Default fake unit when unset."));
-  units.push_back(NewPixelValueUnit("%", "Percentage (such as relative uncertainty)"));
-  units.push_back(NewPixelValueUnit("HU", "Hounsfield Units"));
-  units.push_back(NewPixelValueUnit("counts", "Number of counts (by pixel)"));
-  units.push_back(NewPixelValueUnit("label", "Mask image label"));
-  units.push_back(NewPixelValueUnit("Gy", "Absorbed dose in Gy"));
-  units.push_back(NewPixelValueUnit("cGy", "Absorbed dose in cGy")); // FIXME
-  units.push_back(NewPixelValueUnit("MeV", "Deposited energy in MeV"));
+  // Add some default PixelUnit
+  syd::PixelUnit::vector units;
+  units.push_back(NewPixelUnit("no_unit", "Default fake unit when unset."));
+  units.push_back(NewPixelUnit("%", "Percentage (such as relative uncertainty)"));
+  units.push_back(NewPixelUnit("HU", "Hounsfield Units"));
+  units.push_back(NewPixelUnit("counts", "Number of counts (by pixel)"));
+  units.push_back(NewPixelUnit("label", "Mask image label"));
+  units.push_back(NewPixelUnit("Gy", "Absorbed dose in Gy"));
+  units.push_back(NewPixelUnit("cGy", "Absorbed dose in cGy")); // FIXME
+  units.push_back(NewPixelUnit("MeV", "Deposited energy in MeV"));
 
-  units.push_back(NewPixelValueUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq"));
-  units.push_back(NewPixelValueUnit("Bq_by_IA", "Activity in Bq by injected activity in MBq"));
-  units.push_back(NewPixelValueUnit("MBq.h/IA[MBq]", "time integrated activity MBq.h by injected activity"));
-  units.push_back(NewPixelValueUnit("MBq/IA[MBq]", "Activity in MBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq"));
+  units.push_back(NewPixelUnit("Bq_by_IA", "Activity in Bq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("MBq.h/IA[MBq]", "time integrated activity MBq.h by injected activity"));
+  units.push_back(NewPixelUnit("MBq/IA[MBq]", "Activity in MBq by injected activity in MBq"));
 
-  units.push_back(NewPixelValueUnit("cGy/IA[MBq]", "Dose in cGy by injected activity"));
-  units.push_back(NewPixelValueUnit("cGy/h/IA[MBq]", "Dose rate in cGy by hour by injected activity"));
-  units.push_back(NewPixelValueUnit("cGy/kBq.h/IA[MBq]", "Dose in cGy by tia kBq.h by injected activity (for S matrix)"));
-  units.push_back(NewPixelValueUnit("kBq.h/IA[MBq]", "time integrated activity kBq.h by injected activity"));
-  units.push_back(NewPixelValueUnit("kBq/IA[MBq]", "Activity in kBq by injected activity in MBq"));
-  units.push_back(NewPixelValueUnit("kBq_by_IA", "Activity in kBq by injected activity in MBq"));
-  units.push_back(NewPixelValueUnit("mGy/Bq.sec", "Dose by cumulated activity"));
+  units.push_back(NewPixelUnit("cGy/IA[MBq]", "Dose in cGy by injected activity"));
+  units.push_back(NewPixelUnit("cGy/h/IA[MBq]", "Dose rate in cGy by hour by injected activity"));
+  units.push_back(NewPixelUnit("cGy/kBq.h/IA[MBq]", "Dose in cGy by tia kBq.h by injected activity (for S matrix)"));
+  units.push_back(NewPixelUnit("kBq.h/IA[MBq]", "time integrated activity kBq.h by injected activity"));
+  units.push_back(NewPixelUnit("kBq/IA[MBq]", "Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("kBq_by_IA", "Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("mGy/Bq.sec", "Dose by cumulated activity"));
 
   Insert(units);
-  LOG(1) << units.size() << " PixelValueUnit have been added.";
+  LOG(1) << units.size() << " PixelUnit have been added.";
 
   // Add some RoiType
   syd::RoiType::vector rois;
@@ -511,7 +445,7 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
     std::ostringstream oss;
     if (i < 10) oss << "lesion0" << i;
     else oss << "lesion" << i;
-    rois.push_back(NewRoiType(oss.str(), "Lesion "+ToString(i)));
+    rois.push_back(NewRoiType(oss.str(), "Lesion "+std::to_string(i)));
   }
   Insert(rois);
   LOG(1) << rois.size() << " RoiType have been added.";
@@ -535,11 +469,11 @@ syd::StandardDatabase::NewTag(const std::string & name,
 
 
 // --------------------------------------------------------------------
-syd::PixelValueUnit::pointer
-syd::StandardDatabase::NewPixelValueUnit(const std::string & name,
-                                         const std::string & description)
+syd::PixelUnit::pointer
+syd::StandardDatabase::NewPixelUnit(const std::string & name,
+                                    const std::string & description)
 {
-  syd::PixelValueUnit::pointer v;
+  syd::PixelUnit::pointer v;
   New(v);
   v->name = name;
   v->description = description;

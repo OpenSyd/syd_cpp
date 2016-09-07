@@ -21,7 +21,6 @@
 
 // syd
 #include "sydCommon.h"
-#include "sydPrintTable.h"
 #include "sydCheckResult.h"
 #include "sydVersion.h"
 
@@ -33,6 +32,7 @@
 namespace syd {
 
   class Database;
+  class PrintTable;
 
   /// Base class for all record (or element, or row) in a table
 #pragma db object abstract pointer(std::shared_ptr) callback(Callback)
@@ -65,9 +65,6 @@ namespace syd {
     /// Set the values of the fields from some string.
     virtual void Set(const std::vector<std::string> & args);
 
-    /// Initialise a PrintTable
-    virtual void InitTable(syd::PrintTable & table) const;
-
     /// Add a line in the given PrintTable
     virtual void DumpInTable(syd::PrintTable & table) const;
 
@@ -83,7 +80,6 @@ namespace syd {
     /// Default function to print a pointer to an element (must be inline here).
     template<class R>
     friend std::ostream& operator<<(std::ostream& os, const std::shared_ptr<R> p) {
-      // FIXME      if (p.get() == 0) os << "[NULL]";
       os << p->ToString();
       return os;
     }
@@ -132,7 +128,16 @@ namespace syd {
 
 
   // --------------------------------------------------------------------
+  /// Default function to check equality (with tostring)
   bool IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2);
+  template<class R>
+  inline bool operator==(const std::shared_ptr<R> & left,
+                         const std::shared_ptr<R> & right)
+  { return (syd::IsEqual(left, right)); }
+  template<class R>
+  inline bool operator!=(const std::shared_ptr<R> & left,
+                         const std::shared_ptr<R> & right)
+  { return !(left == right); }
 
 #include "sydRecord.txx"
   // --------------------------------------------------------------------
@@ -140,7 +145,7 @@ namespace syd {
 
   // --------------------------------------------------------------------
   /// odb::access is needed for polymorphism
-#define TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, INHERIT_TABLE_NAME)    \
+#define TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, INHERIT_TABLE_NAME)  \
   typedef std::shared_ptr<TABLE_NAME> pointer;                          \
   typedef std::vector<pointer> vector;                                  \
   friend class odb::access;                                             \
@@ -150,11 +155,10 @@ namespace syd {
   static std::string GetStaticSQLTableName() { return #SQL_TABLE_NAME; } \
   static void InitInheritance() {                                       \
     INHERIT_TABLE_NAME::InitInheritance();                              \
-    inherit_sql_tables_map_[#TABLE_NAME].push_back(INHERIT_TABLE_NAME::GetStaticSQLTableName()); } \
+    inherit_sql_tables_map_[#TABLE_NAME].push_back(INHERIT_TABLE_NAME::GetStaticSQLTableName());} \
   static pointer New() { return pointer(new TABLE_NAME); }
 
-
-#define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)        \
+#define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)                \
   TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, syd::Record)
 
 

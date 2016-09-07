@@ -24,9 +24,6 @@
 #include "sydDatabaseManager.h"
 #include "sydStandardDatabase.h"
 
-// Init syd
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {

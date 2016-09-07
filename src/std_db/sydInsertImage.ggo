@@ -1,11 +1,11 @@
 #File sydInsertImage.ggo
 
 package "syd"
-version "0.2"
+version "0.3"
 usage "sydInsertImage <filename>"
-description "Insert a mhd image ; must use the --like flag (will change)
+description "Insert a mhd image in the db
 - <filename>      image file to insert
+if --like is not used, --patient is required
 "
 
-option "like"       -  "Id of the image to copy information (patient, dicoms)" int yes
-option "pixelunit"  -  "Name of pixel value unit to attach to the image" string no
+option "like" l "Id of the image to copy information (patient, dicoms, ...)" int no

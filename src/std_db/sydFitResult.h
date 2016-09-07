@@ -71,11 +71,11 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
-    /// Print table init
-    virtual void InitTable(syd::PrintTable & table) const;
-
     /// Print table dump
     virtual void DumpInTable(syd::PrintTable & table) const;
+    virtual void DumpInTable_default(syd::PrintTable & table) const;
+    virtual void DumpInTable_history(syd::PrintTable & table) const;
+    virtual void DumpInTable_md5(syd::PrintTable & table) const;
 
     // Copy
     void CopyFrom(const syd::FitResult::pointer & from);

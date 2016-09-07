@@ -41,9 +41,8 @@ hunter_add_package(odb-sqlite)
 
 #----------------------------------------------------------
 # Use c++11
-#SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-c++11-compat -Winconsistent-missing-override")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wno-c++11-compat")
-
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED on)
 #----------------------------------------------------------
 
 
@@ -59,11 +58,18 @@ set(SYD_BIN_FILES " ")
 
 
 #----------------------------------------------------------
+# https://github.com/sakra/cotire
+# Cotire (compile time reducer) is a CMake module that speeds up the
+# build process of CMake based build systems by fully automating
+# techniques as precompiled header usage and single compilation unit
+# builds for C and C++.
+include(cmake/cotire.cmake)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 # cmake include
 set(CMAKE_MODULE_PATH "${SYD_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
-
-# the following are dependencies for syd, but not for lib using syd
-include(cmake/dependencies.cmake)
 
 # the following are dependencies needed to compile against syd
 include(cmake/UseSYD.cmake)
@@ -78,28 +84,32 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to 'Release' as none was specified.")
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
   # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
 # Output directories.
-IF(NOT LIBRARY_OUTPUT_PATH)
-  SET (LIBRARY_OUTPUT_PATH ${SYD_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all libraries.")
-ENDIF(NOT LIBRARY_OUTPUT_PATH)
-IF(NOT EXECUTABLE_OUTPUT_PATH)
-  SET (EXECUTABLE_OUTPUT_PATH ${SYD_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
-ENDIF(NOT EXECUTABLE_OUTPUT_PATH)
-MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
-SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
+if(NOT LIBRARY_OUTPUT_PATH)
+  set (LIBRARY_OUTPUT_PATH ${SYD_BINARY_DIR}/lib CACHE INTERNAL
+    "Single output directory for building all libraries.")
+endif(NOT LIBRARY_OUTPUT_PATH)
+if(NOT EXECUTABLE_OUTPUT_PATH)
+  set (EXECUTABLE_OUTPUT_PATH ${SYD_BINARY_DIR}/bin CACHE INTERNAL
+    "Single output directory for building all executables.")
+endif(NOT EXECUTABLE_OUTPUT_PATH)
+mark_as_advanced(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+set(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
-SET(SYD_VERSION_MAJOR "0")
-SET(SYD_VERSION_MINOR "2")
-SET(SYD_VERSION_PATCH "0")
+# not used yet
+set(SYD_VERSION_MAJOR "0")
+set(SYD_VERSION_MINOR "2")
+set(SYD_VERSION_PATCH "0")
 #----------------------------------------------------------
 
 
@@ -129,12 +139,10 @@ endif(MSVC)
 #----------------------------------------------------------
 # define the set of libraries
 set(SYD_CORE_LIBRARIES
-  sydCommonDatabase
   sydCore
   sydFit
   sydItkUtils
   odb-sqlite odb sqlite3 z
-  #${DCMTK_LIBRARIES}
   ${Boost_LIBRARIES}
   ${ITK_LIBRARIES})
 
@@ -178,11 +186,11 @@ endif(BUILD_TESTING)
 
 
 #----------------------------------------------------------
+# no install policy yet
 # DD(SYD_INCLUDE_FILES)
 # set(SYD_CMAKE_FILES  ${PROJECT_SOURCE_DIR}/cmake/UseSYD.cmake)
 # INSTALL(FILES ${SYD_INCLUDE_FILES} DESTINATION include)
 # INSTALL(FILES ${SYD_CMAKE_FILES} DESTINATION cmake)
 # INSTALL(FILES ${SYD_LIB_FILES} DESTINATION lib)
 # INSTALL(FILES ${SYD_BIN_FILES} DESTINATION bin)
-
 #----------------------------------------------------------

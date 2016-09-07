@@ -25,24 +25,24 @@
 #include <vector>
 #include <cmath>
 #include <sstream>
+#include <fstream>
 #include <algorithm>
 #include <numeric>
 
 // To get current working directory
 // http://stackoverflow.com/questions/143174/how-do-i-get-the-directory-that-a-program-is-running-from
 #ifdef WINDOWS
-    #include <direct.h>
-    #define GetCurrentDir _getcwd
+#include <direct.h>
+#define GetCurrentDir _getcwd
 #else
-    #include <unistd.h>
-    #define GetCurrentDir getcwd
- #endif
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
 
 // syd
 #include "sydDD.h"
 #include "sydLog.h"
 #include "sydException.h"
-#include "sydDicomCommon.h" // needed for helpers functions (FileExists)
 #include "md5.h"
 
 // boost
@@ -57,6 +57,12 @@ namespace syd {
   //--------------------------------------------------------------------
   /// Type for id in the db
   typedef long unsigned int IdType;
+  //--------------------------------------------------------------------
+
+
+  //--------------------------------------------------------------------
+  /// Default empty value for string field.
+  static const std::string empty_value = "-";
   //--------------------------------------------------------------------
 
 
@@ -78,9 +84,7 @@ namespace syd {
   unsigned long ToULong(std::string);
   double ToDouble(std::string);
   template<class T>
-  std::string ToString(const T & t);
-  template<class T, int N>
-  std::string ArrayToString(const std::array<T, N> & t, int precision=1);
+  std::string ArrayToString(const std::vector<T> & t, int precision=1);
   void SkipComment(std::istream & is);
   bool Replace(std::string& str, const std::string& from, const std::string& to);
   void GetWords(std::vector<std::string> & words, const std::string & phrase);
@@ -103,6 +107,17 @@ namespace syd {
 
   //--------------------------------------------------------------------
   void ReadIdsFromInputPipe(std::vector<syd::IdType> & ids);
+  //--------------------------------------------------------------------
+
+
+  //--------------------------------------------------------------------
+  void BoxCoxTransform(double & v, const double lambda);
+  double Rescale(const double v,
+                 const double inputMin,
+                 const double inputMax,
+                 const double outputMin,
+                 const double outputMax);
+  double ComputeMedian(std::vector<double> x);
   //--------------------------------------------------------------------
 
 

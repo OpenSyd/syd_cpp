@@ -320,7 +320,9 @@ void syd::FitModelBase::LogLinearFit(Eigen::Vector2d & x,
   for(auto i=start; i<end; i++) {
     A(i-start,0) = 1.0;
     A(i-start,1) = tac->GetTime(i);
-    b(i-start) = log(tac->GetValue(i));
+    auto v = tac->GetValue(i);
+    if (v != 0) b(i-start) = log(v);
+    else b(i-start) = 0.0;
   }
   x = A.householderQr().solve(b);
   x(0) = exp(x(0));

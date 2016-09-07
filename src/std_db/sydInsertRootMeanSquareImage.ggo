@@ -1,0 +1,9 @@
+#File sydInsertRootMeanSquareImage.ggo
+
+package "syd"
+version "0.2"
+usage "sydInsertRootMeanSquareImage <mask> <image_ids>"
+description "Insert a rmse image.
+- <mask>
+- <image_ids>
+"

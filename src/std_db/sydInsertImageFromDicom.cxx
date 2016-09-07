@@ -20,11 +20,9 @@
 #include "sydInsertImageFromDicom_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydImageFromDicomBuilder.h"
+#include "sydImageHelper.h"
+#include "sydTagHelper.h"
 #include "sydCommonGengetopt.h"
-
-// syd init
-SYD_STATIC_INIT
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -48,14 +46,16 @@ int main(int argc, char* argv[])
   syd::DicomSerie::vector dicom_series;
   db->Query(dicom_series, ids);
 
-  // Create main builder
-  syd::ImageFromDicomBuilder builder(db);
+  if (dicom_series.size() == 0) {
+    LOG(WARNING) << "No DicomSerie found";
+  }
 
+  // Create images
   for(auto d:dicom_series) {
-    syd::Image::pointer image = builder.NewImageFromDicom(d);
-    // Set the optional tags
-    db->UpdateTagsFromCommandLine(image->tags, args_info);
-    builder.InsertAndRename(image);
+    auto image = syd::InsertImageFromDicomSerie(d, args_info.pixel_type_arg);
+    syd::SetTagsFromCommandLine(image->tags, db, args_info);
+    syd::SetImageInfoFromCommandLine(image, args_info);
+    db->Update(image);
     LOG(1) << "Inserting Image " << image;
   }
 

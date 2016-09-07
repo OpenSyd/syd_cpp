@@ -31,18 +31,17 @@ namespace syd {
     /// Retrieve the unique instance (singleton)
     static PluginManager * GetInstance();
 
+    std::string ComputeDatabaseSchemaNameFromFilename(const std::string & filename) const;
     void LoadInFolder(const std::string & folder);
     void Load(const std::string & filename);
     void Load();
+    void UnLoad();
 
   protected:
     /// Purposely protected, only a single instance possible
     PluginManager() { }
-
-    /// Unique instance (singleton). Because it is static, main must
-    /// declare it only once, with : "syd::PluginManager *
-    /// syd::PluginManager::singleton_;"
-    static PluginManager * singleton_;
+    virtual ~PluginManager();
+    std::vector<void*> plugins;
 
   };
 } // end namespace
@@ -50,7 +49,7 @@ namespace syd {
 
 
 // --------------------------------------------------------------------
-/// Those functions must be included in the plugin.
+/// This function must be included in the plugin.
 typedef void (*RegisterDatabaseSchemaFunction) (syd::DatabaseManager * m);
 extern void RegisterDatabaseSchema(syd::DatabaseManager * m);
 // --------------------------------------------------------------------

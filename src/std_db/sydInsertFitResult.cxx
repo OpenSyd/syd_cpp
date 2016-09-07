@@ -35,15 +35,9 @@
 // std
 #include <algorithm>
 
-// syd init
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
-  // Init ceres log
-  SYD_CERES_STATIC_INIT;
-
   // Init
   SYD_INIT_GGO(sydInsertFitResult, 1);
 

@@ -20,20 +20,19 @@
 #include "sydImage.h"
 #include "sydStandardDatabase.h"
 #include "sydDicomSerie.h"
-#include "sydImageBuilder.h"
-#include "sydTag.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
-syd::Image::Image():syd::RecordWithHistory()
+syd::Image::Image():
+  syd::Record(),
+  syd::RecordWithHistory()
 {
-  type = "unset";
-  pixel_type = "unset";
-  dimension = 3;
-  frame_of_reference_uid = "unset";
-  files.clear();
-  dicoms.clear();
-  for(auto &s:size) s = 0;
-  for(auto &s:spacing) s = 1.0;
+  patient = NULL;
+  injection = NULL;
+  pixel_unit = NULL;
+  modality = "image"; // default (not empty_value)
+  type = pixel_type = acquisition_date = frame_of_reference_uid = empty_value;
+  dimension = 0;
 }
 // --------------------------------------------------------------------
 
@@ -41,9 +40,26 @@ syd::Image::Image():syd::RecordWithHistory()
 // --------------------------------------------------------------------
 syd::Image::~Image()
 {
-  // DD("delete image");
-  // DDS(files);
-  /// FIXME --> remove temporary file if needed
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Image::GetPatientName() const
+{
+  std::string name = empty_value;
+  if (patient != NULL) name = patient->name;
+  return name;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Image::GetInjectionName() const
+{
+  std::string inj_name = empty_value;
+  if (injection != NULL) inj_name = injection->radionuclide->name;
+  return inj_name;
 }
 // --------------------------------------------------------------------
 
@@ -51,28 +67,31 @@ syd::Image::~Image()
 // --------------------------------------------------------------------
 std::string syd::Image::ToString() const
 {
-  std::string name;
-  if (patient == NULL) name = "unset";
-  else name = patient->name;
   std::stringstream ss ;
   ss << id << " "
-     << name << " "
-     << injection->radionuclide->name << " ";
-  if (files.size() == 0) ss << "(no files) ";
-  //for(auto f:files) ss << f->filename << " "; // only first is usually useful
-  else ss << files[0]->filename << " ";
-  ss << GetLabels(tags) << " " << type << " " << pixel_type << " "
-     << size[0] << "x" << size[1] << "x" << size[2] << " "
-     << spacing[0] << "x" << spacing[1] << "x" << spacing[2];
-  if (dicoms.size() > 0) ss << " " << dicoms[0]->dicom_modality << " ";
+     << GetPatientName() << " "
+     << GetInjectionName() << " ";
+  // (only first file is usually useful to display)
+  if (files.size() != 0) ss << files[0]->filename << " ";
+  else ss << empty_value << " ";
+  ss << syd::GetLabels(tags) << " "
+     << acquisition_date << " "
+     << type << " "
+     << pixel_type << " "
+     << dimension << " "
+     << SizeAsString() << " "
+     << SpacingAsString() << " "
+     << modality << " ";
   for(auto d:dicoms) ss << d->id << " ";
+  if (dicoms.size() == 0) ss << empty_value << " ";
   ss << frame_of_reference_uid << " ";
-  if (pixel_value_unit != NULL) ss << pixel_value_unit->name;
-  else ss << "pixel_value_unit_unset";
-  if (history) {
+  if (pixel_unit != NULL) ss << pixel_unit->name;
+  else ss << empty_value << " ";
+  if (history and print_history_flag_) {
     ss << " " << history->insertion_date << " "
        << history->update_date;
   }
+  else ss << empty_value;
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -81,23 +100,13 @@ std::string syd::Image::ToString() const
 // --------------------------------------------------
 std::string syd::Image::GetAcquisitionDate() const
 {
-  if (dicoms.size() == 0) return "unknown_date";
-  else return dicoms[0]->acquisition_date;
+  return acquisition_date;
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-std::string syd::Image::GetModality() const
-{
-  if (dicoms.size() == 0) return "unknown_modality";
-  else return dicoms[0]->dicom_modality;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::AddDicomSerie(syd::DicomSerie::pointer dicom)
+void syd::Image::AddDicomSerie(const syd::DicomSerie::pointer dicom)
 {
   bool found = false;
   int i=0;
@@ -111,7 +120,7 @@ void syd::Image::AddDicomSerie(syd::DicomSerie::pointer dicom)
 
 
 // --------------------------------------------------
-void syd::Image::RemoveDicomSerie(syd::DicomSerie::pointer dicom)
+void syd::Image::RemoveDicomSerie(const syd::DicomSerie::pointer dicom)
 {
   bool found = false;
   int i=0;
@@ -126,16 +135,40 @@ void syd::Image::RemoveDicomSerie(syd::DicomSerie::pointer dicom)
 // --------------------------------------------------
 
 
+
 // --------------------------------------------------
-std::string syd::Image::ComputeRelativeFolder() const
-{
-  return patient->name;
-}
+/*std::string syd::Image::ComputeRelativeFolder() const
+  {
+  if (patient == NULL) {
+  LOG(FATAL) << "Cannot get Image::ComputeRelativeFolder while no patient"
+  << " is set (the record is no persistent in the db).";
+  }
+  auto s = patient->name;
+  syd::Replace(s, " ", "_"); // replace space with underscore
+  return s;
+  }
+*/
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Image::Callback(odb::callback_event event, odb::database & db) const
+/*std::string syd::Image::ComputeDefaultMhdFilename() const
+  {
+  if (!IsPersistent()) {
+  EXCEPTION("Image must be persistent (in the db) to use ComputeDefaultMhdFilename.");
+  }
+  std::string s = modality+"_"+syd::ToString(id)+".mhd";
+  std::ostringstream oss;
+  oss << modality;
+  oss << "_" << id << ".mhd";
+  return oss.str();
+  }*/
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::Callback(odb::callback_event event,
+                          odb::database & db) const
 {
   syd::Record::Callback(event,db);
   syd::RecordWithHistory::Callback(event,db, db_);
@@ -148,7 +181,7 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
     for(auto f:files) db.persist(f);
   }
   if (event == odb::callback_event::pre_update) {
-    // update the file with odb::database not the syd::database
+    // update the files
     for(auto f:files) db.update(f);
   }
 }
@@ -156,7 +189,8 @@ void syd::Image::Callback(odb::callback_event event, odb::database & db) const
 
 
 // --------------------------------------------------
-void syd::Image::Callback(odb::callback_event event, odb::database & db)
+void syd::Image::Callback(odb::callback_event event,
+                          odb::database & db)
 {
   syd::Record::Callback(event,db);
   syd::RecordWithHistory::Callback(event,db, db_);
@@ -192,60 +226,10 @@ void syd::Image::FatalIfNoDicom() const
 
 
 // --------------------------------------------------
-void syd::Image::CopyDicomSeries(syd::Image::pointer image)
+void syd::Image::CopyDicomSeries(const syd::Image::pointer image)
 {
+  dicoms.clear();
   for(auto d:image->dicoms) AddDicomSerie(d);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::InitTable(syd::PrintTable & ta) const
-{
-  // Define the formats
-  auto & f = ta.GetFormat();
-  ta.AddFormat("file", "Display the filename");
-  ta.AddFormat("filelist", "List of files without line break");
-  ta.AddFormat("timing", "Display time in hours from injection");
-
-  // Set the columns
-  if (f == "default") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    ta.AddColumn("inj");
-    ta.AddColumn("acqui_date");
-    ta.AddColumn("tags");
-    ta.AddColumn("size");
-    ta.AddColumn("spacing");
-    ta.AddColumn("dicom");
-    ta.AddColumn("unit");
-    auto & c = ta.AddColumn("ref_frame");
-    c.max_width = 20;
-    c.trunc_by_end_flag = false;
-  }
-  if (f == "timing") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    ta.AddColumn("t", 2);
-    ta.AddColumn("tags");
-  }
-  if (f == "history") {
-    syd::RecordWithHistory::InitTable(ta);
-    ta.AddColumn("p");
-    ta.AddColumn("acqui_date");
-    ta.AddColumn("tags");
-    ta.AddColumn("unit");
-    auto & c = ta.AddColumn("ref_frame");
-    c.max_width = 20;
-    c.trunc_by_end_flag = false;
-  }
-  if (f == "file") {
-    ta.AddColumn("id");
-    ta.AddColumn("file");
-  }
-  if (f == "filelist") {
-    ta.SetHeaderFlag(false);
-  }
 }
 // --------------------------------------------------
 
@@ -253,52 +237,109 @@ void syd::Image::InitTable(syd::PrintTable & ta) const
 // --------------------------------------------------
 void syd::Image::DumpInTable(syd::PrintTable & ta) const
 {
-  syd::RecordWithHistory::DumpInTable(ta);
-  auto f = ta.GetFormat();
+  auto format = ta.GetFormat();
+  if (format == "default") DumpInTable_default(ta);
+  else if (format == "short") DumpInTable_short(ta);
+  else if (format == "ref_frame") DumpInTable_ref_frame(ta);
+  else if (format == "history") DumpInTable_history(ta);
+  else if (format == "file") DumpInTable_file(ta);
+  else if (format == "filelist") DumpInTable_filelist(ta);
+  else if (format == "details") DumpInTable_details(ta);
+  else {
+    ta.AddFormat("default", "id, date, tags, size etc");
+    ta.AddFormat("short", "no size");
+    ta.AddFormat("ref_frame", "with dicom_reference_frame");
+    ta.AddFormat("history", "with date inserted/updated");
+    ta.AddFormat("file", "with complete filename");
+    ta.AddFormat("filelist", "not a table a list of filenames");
+    ta.AddFormat("details", "all details");
+  }
+}
+// --------------------------------------------------
 
-  if (f == "default") {
-    ta.Set("id", id);
-    ta.Set("p", patient->name);
-    ta.Set("inj", injection->radionuclide->name);
-    if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
-    else ta.Set("acqui_date", dicoms[0]->acquisition_date);
-    ta.Set("tags", GetLabels(tags));
-    ta.Set("size", syd::ArrayToString<int, 3>(size));
-    ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
-    std::string dicom;
-    for(auto d:dicoms) dicom += syd::ToString(d->id)+" ";
-    if (dicom.size() != 0) dicom.pop_back(); // remove last space
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_short(syd::PrintTable & ta) const
+{
+  ta.Set("id", id);
+  ta.Set("p", GetPatientName());
+  ta.Set("acqui_date", GetAcquisitionDate());
+  ta.Set("tags", GetLabels(tags), 100);
+  if (pixel_unit != NULL) ta.Set("unit", pixel_unit->name);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_default(syd::PrintTable & ta) const
+{
+  DumpInTable_short(ta);
+  ta.Set("inj", GetInjectionName());
+  ta.Set("mod", modality);
+  ta.Set("size", syd::ArrayToString(size));
+  ta.Set("spacing", syd::ArrayToString(spacing,1));
+  std::string dicom;
+  for(auto d:dicoms) dicom += std::to_string(d->id)+" ";
+  if (dicom.size() != 0) {
+    dicom.pop_back(); // remove last space
     ta.Set("dicom", dicom);
-    if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
-    ta.Set("ref_frame", frame_of_reference_uid);
   }
+}
+// --------------------------------------------------
 
-  if (f == "timing") {
-    ta.Set("id", id);
-    ta.Set("p", patient->name);
-    ta.Set("tags", GetLabels(tags));
-    double t = GetHoursFromInjection();
-    ta.Set("t", t);
-  }
 
-  if (f == "history") {
-    ta.Set("id", id);
-    ta.Set("p", patient->name);
-    if (dicoms.size() == 0) ta.Set("acqui_date", "no_dicom");
-    else ta.Set("acqui_date", dicoms[0]->acquisition_date);
-    ta.Set("tags", GetLabels(tags));
-    if (pixel_value_unit != NULL) ta.Set("unit", pixel_value_unit->name);
-    ta.Set("ref_frame", frame_of_reference_uid);
-  }
+// --------------------------------------------------
+void syd::Image::DumpInTable_ref_frame(syd::PrintTable & ta) const
+{
+  DumpInTable_short(ta);
+  ta.Set("ref_frame", frame_of_reference_uid);
+}
+// --------------------------------------------------
 
-  if (f == "file") {
-    ta.Set("id", id);
-    if (files.size() != 0) ta.Set("file", files[0]->GetAbsolutePath(db_));
-  }
 
-  if (f == "filelist") {
-    if (files.size() != 0) ta.GetCurrentOutput() << files[0]->GetAbsolutePath(db_) << " ";
+// --------------------------------------------------
+void syd::Image::DumpInTable_history(syd::PrintTable & ta) const
+{
+  DumpInTable_short(ta);
+  syd::RecordWithHistory::DumpInTable(ta);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_file(syd::PrintTable & ta) const
+{
+  DumpInTable_short(ta);
+  ta.Set("file", GetAbsolutePath(), 100);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_filelist(syd::PrintTable & ta) const
+{
+  ta.SetSingleRowFlag(true);
+  ta.SetHeaderFlag(false);
+  ta.Set("file", GetAbsolutePath(), 500);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::Image::DumpInTable_details(syd::PrintTable & ta) const
+{
+  DumpInTable_default(ta);
+  ta.Set("t", type);
+  ta.Set("pixel", pixel_type);
+  ta.Set("dim", dimension);
+  ta.Set("ref_frame", frame_of_reference_uid);
+  std::string f;
+  for(auto a:files) f += std::to_string(a->id)+" ";
+  if (files.size() != 0) {
+    f.pop_back(); // remove last space
+    ta.Set("files", f);
   }
+  syd::RecordWithHistory::DumpInTable(ta);
 }
 // --------------------------------------------------
 
@@ -318,12 +359,10 @@ syd::CheckResult syd::Image::Check() const
 // --------------------------------------------------------------------
 double syd::Image::GetHoursFromInjection() const
 {
+  if (injection == NULL) return 0.0;
+  if (acquisition_date == empty_value) return 0.0;
   std::string inj_date = injection->date;
-  if (dicoms.size() == 0) {
-    LOG(FATAL) << "No dicom attached to this image, cannot compute the time from injection date "
-                 << ToString() << std::endl;
-  }
-  double time = syd::DateDifferenceInHours(dicoms[0]->acquisition_date, inj_date);
+  double time = syd::DateDifferenceInHours(acquisition_date, inj_date);
   return time;
 }
 // --------------------------------------------------------------------
@@ -338,11 +377,57 @@ std::vector<double> & syd::GetTimesFromInjection(syd::StandardDatabase * db,
   syd::Image::vector sorted_images = images;
   db->Sort<syd::Image>(sorted_images);
   syd::Injection::pointer injection = sorted_images[0]->injection;
+  if (injection == NULL) {
+    LOG(FATAL) << "Cannot Image::GetTimesFromInjection because injection of first image is null";
+  }
   std::string starting_date = injection->date;
   for(auto image:sorted_images) {
-    double t = syd::DateDifferenceInHours(image->dicoms[0]->acquisition_date, starting_date);
+    double t = syd::DateDifferenceInHours(image->acquisition_date, starting_date);
     times->push_back(t);
   }
   return *times;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Image::GetAbsolutePath() const
+{
+  if (files.size() == 0) return empty_value;
+  return files[0]->GetAbsolutePath();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Image::ComputeDefaultRelativePath()
+{
+  if (patient == NULL) {
+    EXCEPTION("Cannot compute the default image relative path"
+              << ", no patient ar yet associated with the image: "
+              << ToString());
+  }
+  auto s = patient->name;
+  syd::Replace(s, " ", "_"); // replace space with underscore
+  if (!fs::portable_name(s)) {
+    EXCEPTION("The folder name '" << s << "' does not seems a "
+              << " valid and portable dir name. (you man change "
+              << "the patient name. Abort.");
+  }
+  return s;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Image::ComputeDefaultMHDFilename()
+{
+  if (!IsPersistent()) {
+    EXCEPTION("Image must be persistent (in the db) to "
+              << "use ComputeDefaultMHDFilename.");
+  }
+  std::ostringstream oss;
+  oss << modality << "_" << id << ".mhd";
+  return oss.str();
 }
 // --------------------------------------------------------------------

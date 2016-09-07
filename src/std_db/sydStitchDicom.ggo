@@ -6,3 +6,6 @@ usage "sydStitchDicom <dicom_ids>"
 description "Create a new (mhd) Image for each given dicom
 - <dicom_ids>     the dicoms id to stitch together (will be paired by dicom_series_uid)
 "
+
+option "t_cumul"      t  "Threshold for cumul, to find the common slice"  double default = "150000" no
+option "skip_slices"  s  "Skip some slices at the end"  int default = "4" no

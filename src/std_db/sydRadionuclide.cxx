@@ -18,11 +18,12 @@
 
 // syd
 #include "sydRadionuclide.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::Radionuclide::Radionuclide():syd::Record()
 {
-  name = "unset";
+  name = empty_value;
   metastable = false;
 }
 // --------------------------------------------------------------------
@@ -38,7 +39,7 @@ std::string syd::Radionuclide::ToString() const
      << element << " "
      << atomic_number << " "
      << mass_number << " "
-     << (metastable? "metastable ":"")
+     << (metastable? "metastable ":empty_value)
      << max_beta_minus_energy_in_kev;
   return ss.str();
 }
@@ -46,17 +47,19 @@ std::string syd::Radionuclide::ToString() const
 
 
 // --------------------------------------------------
-void syd::Radionuclide::InitTable(syd::PrintTable & ta) const
+void syd::Radionuclide::Set(const std::vector<std::string> & arg)
 {
-  ta.AddColumn("id");
-  ta.AddColumn("name");
-  ta.AddColumn("HL(h)",2);
-  ta.AddColumn("element");
-  ta.AddColumn("Z");
-  ta.AddColumn("A");
-  ta.AddColumn("metastable");
-  auto & col = ta.AddColumn("Q-(keV)");
-  col.precision = 2;
+  if (arg.size() < 7) {
+    LOG(FATAL) << "To insert radionuclide, please set <name> <half_life_in_hours> "
+               << "<element> <atomic_number> <mass_number> <metasable> <max_beta_minus_energy_in_kev>]";
+  }
+  name = arg[0];
+  half_life_in_hours = atof(arg[1].c_str());
+  element = arg[2];
+  atomic_number = atoi(arg[3].c_str());
+  mass_number = atoi(arg[4].c_str());
+  metastable = (std::string(arg[5]) == "Y"? true:false);
+  max_beta_minus_energy_in_kev = atof(arg[6].c_str());
 }
 // --------------------------------------------------
 
@@ -66,12 +69,12 @@ void syd::Radionuclide::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("name", name);
-  ta.Set("HL(h)", half_life_in_hours);
+  ta.Set("HL(h)", half_life_in_hours, 2);
   ta.Set("element", element);
-  ta.Set("Z", atomic_number);
-  ta.Set("A", mass_number);
+  ta.Set("Z", atomic_number, 0);
+  ta.Set("A", mass_number, 0);
   ta.Set("metastable", (metastable? "Y":"N"));
-  ta.Set("Q-(keV)", max_beta_minus_energy_in_kev);
+  ta.Set("Q-(keV)", max_beta_minus_energy_in_kev, 2);
 }
 // --------------------------------------------------
 

@@ -20,7 +20,6 @@
 #define SYDDATABASESCHEMANAME_H
 
 #include "sydCommon.h"
-#include "sydPrintTable.h"
 #include "sydTableElementBase.h"
 
 namespace syd {

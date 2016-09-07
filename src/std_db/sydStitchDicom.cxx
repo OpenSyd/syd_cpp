@@ -20,11 +20,9 @@
 #include "sydStitchDicom_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydStitchDicomImageBuilder.h"
+#include "sydImageHelper.h"
+#include "sydTagHelper.h"
 #include "sydCommonGengetopt.h"
-
-// syd init
-SYD_STATIC_INIT
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -71,14 +69,16 @@ int main(int argc, char* argv[])
   }
 
   // Build stitched images
-  syd::StitchDicomImageBuilder builder(db);
   for(auto p:pairs) {
     LOG(2) << "Stitching dicoms:" << std::endl
            << p.first << std::endl
            << p.second << std::endl;
-    syd::Image::pointer image = builder.NewStitchedImage(p.first, p.second);
-    db->UpdateTagsFromCommandLine(image->tags, args_info);
-    builder.InsertAndRename(image);
+    auto image = syd::InsertStitchDicomImage(p.first, p.second,
+                                             args_info.t_cumul_arg,
+                                             args_info.skip_slices_arg);
+    syd::SetImageInfoFromCommandLine(image, args_info);
+    syd::SetTagsFromCommandLine(image->tags, db, args_info);
+    db->Update(image);
     LOG(1) << "Inserting Image " << image;
   }
   //  db->Insert(images);

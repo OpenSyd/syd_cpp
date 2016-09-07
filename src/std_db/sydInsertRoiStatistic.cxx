@@ -21,11 +21,9 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
-#include "sydRoiStatisticBuilder.h"
 #include "sydCommonGengetopt.h"
-
-// syd init
-SYD_STATIC_INIT
+#include "sydRoiMaskImageHelper.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -54,8 +52,7 @@ int main(int argc, char* argv[])
 
   // Loop on images
   for(auto image:images) {
-    // Main builder
-    syd::RoiStatisticBuilder builder(db);
+
     // Consider the masks
     syd::RoiMaskImage::vector masks;
     if (args_info.inputs[0] == std::string("all")) {
@@ -64,38 +61,34 @@ int main(int argc, char* argv[])
       db->Query(masks, q);
     }
     else {
-      auto m = builder.FindMask(image, args_info.inputs[0]);
-      masks.push_back(m);
+      if (args_info.inputs[0] == std::string("null")) {
+        masks.push_back(NULL);
+      }
+      else {
+        auto m = syd::FindRoiMaskImage(image, db, args_info.inputs[0]);
+        masks.push_back(m);
+      }
     }
+
     // Loop over masks
     for(auto mask:masks) {
-      // Init the RoiStatistic object
+      auto stat = syd::FindOneRoiStatistic(image, mask);
       bool newStat = false;
-      syd::RoiStatistic::pointer stat;
-      if (!builder.Exists(&stat, image, mask)) {
-        db->New(stat);
-        stat->image = image;
-        stat->mask = mask;
-        stat->tags = image->tags; // copy tags
+      if (!stat) {
+        stat = syd::InsertRoiStatistic(image, mask);
         newStat = true;
       }
-      // Update the value
-      if (args_info.empty_value_given) {
-        builder.SetEmptyPixelValue(args_info.empty_value_arg);
-        builder.SetEmptyPixelValueFlag(true);
-      }
-      builder.ComputeStatistic(stat);
+      else syd::ComputeRoiStatistic(stat);
 
       // Tags
-      db->UpdateTagsFromCommandLine(stat->tags, args_info);
+      syd::SetTagsFromCommandLine(stat->tags, db, args_info);
+      db->Update(stat);
 
       // Update
       if (newStat) {
-        db->Insert(stat);
         LOG(1) << "Insert RoiStatistic: " << stat;
       }
       else {
-        db->Update(stat);
         LOG(1) << "Update RoiStatistic: " << stat;
       }
     }

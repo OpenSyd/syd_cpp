@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDFITMODEL_H
-#define SYDFITMODEL_H
+#ifndef SYDFITMODEL_F1_H
+#define SYDFITMODEL_F1_H
 
 // syd
 #include "sydFitModelBase.h"
@@ -30,7 +30,7 @@ namespace syd {
   public:
 
     FitModel_f1();
-    ~FitModel_f1();
+    ~FitModel_f1() {}
 
     class ResidualType: public FitModelBase::ResidualBaseType {
     public:

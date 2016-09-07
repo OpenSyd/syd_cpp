@@ -21,6 +21,7 @@
 
 // syd
 #include "sydRecord.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -29,6 +30,8 @@ namespace syd {
   /// Store information about the history for a RecordHistory
   class RecordHistory: public syd::Record {
   public:
+
+    virtual ~RecordHistory() { }
 
     std::string insertion_date;
     std::string update_date;
@@ -42,7 +45,6 @@ namespace syd {
 
     void Set(const syd::Database * db, const std::vector<std::string> & arg);
 
-    virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
 
   protected:

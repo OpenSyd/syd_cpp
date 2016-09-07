@@ -18,7 +18,6 @@ add_subdirectory(${SYD_SOURCE_DIR}/src/common_db)
 include_directories(${SYD_SOURCE_DIR}/src/common_db)
 include_directories(${SYD_SOURCE_DIR}/src/std_db)
 add_subdirectory(${SYD_SOURCE_DIR}/src/std_db)
-add_subdirectory(${SYD_SOURCE_DIR}/src/ext)
 
 IF(SYD_PLOT_MODULE)
   add_subdirectory(${SYD_SOURCE_DIR}/src/plot)

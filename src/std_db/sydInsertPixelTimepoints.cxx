@@ -23,14 +23,11 @@
 #include "sydCommonGengetopt.h"
 #include "sydTimepointsBuilder.h"
 
-// syd init
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertPixelTimepoints, 4);
+  SYD_INIT_GGO(sydInsertPixelTimepoints, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();

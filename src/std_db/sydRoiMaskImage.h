@@ -27,7 +27,8 @@
 namespace syd {
 
 #pragma db object  polymorphic pointer(std::shared_ptr) table("syd::RoiMaskImage") callback(Callback)
-  /// Store information about a contour transformed as a binary image.
+  /// Store information about a contour transformed as a binary
+  /// image. Consider the background is 0 and the foreground is 1
   class RoiMaskImage: public syd::Image {
   public:
 
@@ -35,26 +36,24 @@ namespace syd {
     /// Foreign Key. Associated RoiType id
     syd::RoiType::pointer roitype;
 
-    // ------------------------------------------------------------------------
+    // ----------------------------------------------------------------
     TABLE_DEFINE_I(RoiMaskImage, syd::RoiMaskImage, syd::Image);
-    // ------------------------------------------------------------------------
+    // ----------------------------------------------------------------
 
     /// Write the element as a string
     virtual std::string ToString() const;
-
-    /// Standard folder
-    virtual std::string ComputeRelativeFolder() const;
-
-    /// When create a new image, compute a default name. Image *must* be persistant (with correct id)
-    std::string ComputeDefaultAbsolutePath(syd::Database * db) const;
 
     /// Callback : delete the associated image when the roimaskimage is deleted.
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
-    // FIXME
-    virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
+
+    /// Compute the default image path (based on the patient's name)
+    virtual std::string ComputeDefaultRelativePath();
+
+    /// Compute the default image mhd filename (based on id + modality)
+    virtual std::string ComputeDefaultMHDFilename();
 
   protected:
     RoiMaskImage();

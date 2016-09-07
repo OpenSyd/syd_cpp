@@ -24,9 +24,6 @@
 #include "sydCommonGengetopt.h"
 #include "sydScaleImageBuilder.h"
 
-// syd init
-SYD_STATIC_INIT
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {  // Init
@@ -69,7 +66,7 @@ int main(int argc, char* argv[])
     // Create an (empty) copy
     auto output = builder.NewMHDImageLike(image);
     db->UpdateTagsFromCommandLine(output->tags, args_info);
-    output->pixel_value_unit = unit;
+    output->pixel_unit = unit;
     // Load the itk image
     ImageType::Pointer itk_image = syd::ReadImage<ImageType>(db->GetAbsolutePath(image));
     // Scale the itk image

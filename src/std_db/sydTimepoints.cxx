@@ -68,100 +68,68 @@ void syd::Timepoints::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------------------------
-void syd::Timepoints::InitTable(syd::PrintTable & ta) const
+void syd::Timepoints::DumpInTable(syd::PrintTable & ta) const
 {
-  auto f = ta.GetFormat();
+  //  syd::RecordWithHistory::DumpInTable(ta);
+  auto format = ta.GetFormat();
 
-  // Set the columns
-  if (f == "default") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    ta.AddColumn("inj");
-    ta.AddColumn("nb");
-    ta.AddColumn("mask");
-    ta.AddColumn("img");
-    ta.AddColumn("tags");
-    for(auto i=0; i<times.size(); i++) {
-      ta.AddColumn("t"+syd::ToString(i), 1);
-      ta.AddColumn("v"+syd::ToString(i), 10);
-      // ta.AddColumn("u"+syd::ToString(i), 4);
-    }
+  if (format == "default") DumpInTable_default(ta);
+  else if (format == "history") DumpInTable_history(ta);
+  else if (format == "md5") DumpInTable_md5(ta);
+  else {
+    ta.AddFormat("default", "id, date, tags, size etc");
+    ta.AddFormat("history", "with date inserted/updated");
+    ta.AddFormat("md5", "with md5");
   }
-
-  if (f == "history") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    syd::RecordWithHistory::InitTable(ta);
-    ta.AddColumn("nb");
-    ta.AddColumn("tags");
-  }
-
-  if (f == "md5") {
-    ta.AddColumn("id");
-    ta.AddColumn("p");
-    ta.AddColumn("nb");
-    ta.AddColumn("tags");
-    syd::RecordWithMD5Signature::InitTable(ta);
-  }
-
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::Timepoints::DumpInTable(syd::PrintTable & ta) const
+void syd::Timepoints::DumpInTable_default(syd::PrintTable & ta) const
 {
+  ta.Set("id", id);
+  ta.Set("p", patient->name);
+  ta.Set("inj", injection->radionuclide->name);
+  ta.Set("tags", GetLabels(tags));
+  if (mask != NULL) ta.Set("mask", mask->roitype->name);
+  else ta.Set("mask", "no_mask");
+  if (images.size() > 0) {
+    std::string s;
+    for(auto i:images) s += std::to_string(i->id)+",";
+    s.pop_back();
+    ta.Set("img", s);
+  }
+  else ta.Set("img", "no_img");
+  ta.Set("nb", times.size());
+  for(auto i=0; i<times.size(); i++)
+    ta.Set("t"+std::to_string(i), times[i], 2);
+  for(auto i=0; i<times.size(); i++)
+    ta.Set("v"+std::to_string(i), values[i], 6);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Timepoints::DumpInTable_history(syd::PrintTable & ta) const
+{
+  ta.Set("id", id);
+  ta.Set("p", patient->name);
   syd::RecordWithHistory::DumpInTable(ta);
-  auto f = ta.GetFormat();
+  ta.Set("tags", GetLabels(tags));
+  ta.Set("nb", times.size());
+}
+// --------------------------------------------------------------------
 
-  if (f == "default") {
-    ta.Set("id", id);
-    ta.Set("p", patient->name);
-    ta.Set("inj", injection->radionuclide->name);
-    ta.Set("tags", GetLabels(tags));
-    if (mask != NULL) ta.Set("mask", mask->roitype->name);
-    else ta.Set("mask", "no_mask");
-    if (images.size() > 0) {
-      std::string s;
-      for(auto i:images) s += syd::ToString(i->id)+",";
-      s.pop_back();
-      ta.Set("img", s);
-    }
-    else ta.Set("img", "no_img");
-    ta.Set("nb", times.size());
 
-    // Add additional column if the nb of values is larger
-    int nb_col = 7;
-    int previous_nb = (ta.GetNumberOfColumns()-nb_col)/2.0;
-    for(auto i=previous_nb; i<times.size(); i++) {
-      ta.AddColumn("t"+syd::ToString(i), 1);
-      ta.AddColumn("v"+syd::ToString(i), 10);
-      // ta.AddColumn("u"+syd::ToString(i), 4);
-    }
-
-    for(auto i=0; i<times.size(); i++)
-      ta.Set("t"+syd::ToString(i), times[i]);
-    for(auto i=0; i<times.size(); i++)
-      ta.Set("v"+syd::ToString(i), values[i]);
-    // for(auto i=0; i<times.size(); i++)
-    //   ta.Set("u"+syd::ToString(i), std_deviations[i]);
-  }
-
-  if (f == "history") {
-    ta.Set("id", id);
-    ta.Set("p", patient->name);
-    syd::RecordWithHistory::DumpInTable(ta);
-    ta.Set("tags", GetLabels(tags));
-    ta.Set("nb", times.size());
-  }
-
-  if (f == "md5") {
-    ta.Set("id", id);
-    ta.Set("p", patient->name);
-    ta.Set("tags", GetLabels(tags));
-    ta.Set("nb", times.size());
-    syd::RecordWithMD5Signature::DumpInTable(ta);
-  }
+// --------------------------------------------------------------------
+void syd::Timepoints::DumpInTable_md5(syd::PrintTable & ta) const
+{
+  ta.Set("id", id);
+  ta.Set("p", patient->name);
+  ta.Set("tags", GetLabels(tags));
+  ta.Set("nb", times.size());
+  syd::RecordWithMD5Signature::DumpInTable(ta);
 }
 // --------------------------------------------------------------------
 

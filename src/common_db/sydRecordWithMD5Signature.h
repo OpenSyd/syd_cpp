@@ -29,6 +29,8 @@ namespace syd {
   class RecordWithMD5Signature {
   public:
 
+    virtual ~RecordWithMD5Signature() { }
+
     /// Define pointer type
     typedef std::shared_ptr<RecordWithMD5Signature> pointer;
 
@@ -44,9 +46,6 @@ namespace syd {
 
     /// Need to be overloaded: compute a string for the MD5 signature
     virtual std::string ToStringForMD5() const = 0;
-
-    /// Add the format "md5"
-    virtual void InitTable(syd::PrintTable & table) const;
 
     /// Complete the print format "md5"
     virtual void DumpInTable(syd::PrintTable & table) const;

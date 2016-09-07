@@ -33,6 +33,8 @@ namespace syd {
   class Injection : public syd::Record {
   public:
 
+    virtual ~Injection() { }
+
 #pragma db not_null
     /// Foreign key, linked to Patient table.
     syd::Patient::pointer patient;
@@ -59,7 +61,6 @@ namespace syd {
     virtual void Callback(odb::callback_event, odb::database&) const;
     virtual void Callback(odb::callback_event, odb::database&);
 
-    virtual void InitTable(syd::PrintTable & table) const;
     virtual void DumpInTable(syd::PrintTable & table) const;
 
     double GetLambdaInHours() const;

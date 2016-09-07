@@ -25,12 +25,12 @@
 // To get current working directory
 // http://stackoverflow.com/questions/143174/how-do-i-get-the-directory-that-a-program-is-running-from
 #ifdef WINDOWS
-    #include <direct.h>
-    #define GetCurrentDir _getcwd
+#include <direct.h>
+#define GetCurrentDir _getcwd
 #else
-    #include <unistd.h>
-    #define GetCurrentDir getcwd
- #endif
+#include <unistd.h>
+#define GetCurrentDir getcwd
+#endif
 
 // syd
 #include "sydDD.h"
@@ -39,10 +39,6 @@
 
 using namespace sydlog;
 
-// FIXME --> to remove
-#include "sydDicomCommon.h" // needed for helpers functions (FileExists)
-
-
 // boost
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
@@ -50,12 +46,20 @@ using namespace sydlog;
 namespace fs = boost::filesystem;
 using boost::asio::ip::tcp;
 
+// std
+#include <fstream>
+
 //--------------------------------------------------------------------
 namespace syd {
 
-  // fs::create_directories(path);
-  // fs::exists(path);
-  // fs::copy_file
+  /* Use boost functions:
+     fs::path p(filename);
+     fs::create_directories(path);
+     fs::exists(path);
+     fs::copy_file
+     ...
+  */
+#define PATH_SEPARATOR fs::path::preferred_separator
 
   std::string GetExtension(const std::string filename);
   std::string GetFilenameFromPath(const std::string path);
@@ -70,9 +74,13 @@ namespace syd {
   std::string CreateTemporaryDirectory(const std::string & folder);
   int GetPageContent(char const *argv[], std::ostream & os);
 
-  void SearchForFilesInFolder(std::vector<std::string> & files,
-                              std::string folder,
-                              bool recurse);
+  void SearchAndAddFilesInFolder(std::vector<std::string> & files,
+                                 std::string folder,
+                                 bool recurse);
+
+  bool copyDir(fs::path const & source,
+               fs::path const & destination);
+
 } // end namespace syd
 //--------------------------------------------------------------------
 

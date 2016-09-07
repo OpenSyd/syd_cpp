@@ -27,13 +27,6 @@
 namespace syd {
 
   //--------------------------------------------------------------------
-  // Static declaration To be include in main
-#define SYD_STATIC_INIT                                                 \
-  syd::DatabaseManager * syd::DatabaseManager::singleton_;              \
-  syd::PluginManager * syd::PluginManager::singleton_;                  \
-  std::map<odb::database *, syd::Database *> syd::Database::ListOfLoadedDatabases;
-
-  //--------------------------------------------------------------------
   /// Manage a set of database schema. Allow to read and create.
   class DatabaseManager {
   public:
@@ -59,17 +52,20 @@ namespace syd {
     template<class DatabaseSchema>
     DatabaseCreator<DatabaseSchema> * RegisterDatabaseSchema(const std::string & type);
 
+    /// Store a list of all loaded database (to be able to retrive the db from a record)
+    static std::map<odb::database *, syd::Database *> & GetListOfLoadedDatabases();
+
+    std::map<std::string, syd::DatabaseCreatorBase*> & GetRegisteredDatabaseType() { return db_map_; }
+
   protected:
     /// Purposely protected, only a single instance possible
     DatabaseManager() {}
+    virtual ~DatabaseManager();
 
-    /// Unique instance (singleton). Because it is static, main must
-    /// declare it only once, with : "syd::DatabaseManager *
-    /// syd::DatabaseManager::singleton_;"
-    static DatabaseManager * singleton_;
+    //static syd::DatabaseManager * singleton_;
 
     /// List of map between db types and db creators
-    std::map<std::string, DatabaseCreatorBase*> db_map_;
+    std::map<std::string, syd::DatabaseCreatorBase*> db_map_;
 
     /// List of registered db types
     std::vector<std::string> db_schema_names_;

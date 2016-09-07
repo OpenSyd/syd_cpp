@@ -18,13 +18,13 @@
 
 // syd
 #include "sydRecordHistory.h"
-//#include "sydStandardDatabase.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::RecordHistory::RecordHistory():syd::Record()
 {
-  insertion_date = "unknown";
-  update_date = "unknown";
+  insertion_date = empty_value;
+  update_date = empty_value;
 }
 // --------------------------------------------------------------------
 
@@ -53,17 +53,6 @@ void syd::RecordHistory::Set(const syd::Database * db, const std::vector<std::st
   update_date = arg[1];
 }
 // --------------------------------------------------
-
-
-
-// --------------------------------------------------------------------
-void syd::RecordHistory::InitTable(syd::PrintTable & ta) const
-{
-  ta.AddColumn("id"); // FIXME to change for filelist ?
-  ta.AddColumn("insertion_date");
-  ta.AddColumn("update_date");
-}
-// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------

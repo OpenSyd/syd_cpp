@@ -20,11 +20,9 @@
 #include "sydInsertImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydImageFromDicomBuilder.h"
 #include "sydCommonGengetopt.h"
-
-// syd init
-SYD_STATIC_INIT
+#include "sydImageHelper.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -42,32 +40,41 @@ int main(int argc, char* argv[])
   // Get the mhd filename
   std::string filename = args_info.inputs[0];
 
-  // Get the image to copy info from
-  if (!args_info.like_given) {
-    LOG(FATAL) << "Error flag 'like' is mandatory (yet).";
+  // Check options
+  if (args_info.like_given && args_info.patient_given) {
+    LOG(FATAL) << "Please, only set either --like or --patient, not both.";
   }
-  syd::IdType id = args_info.like_arg;
-  syd::Image::pointer input;
-  db->QueryOne(input, id);
-
-  // Create the new image
-  syd::ImageBuilder builder(db);
-  syd::Image::pointer output = builder.NewMHDImageLike(input);
-  builder.CopyImageFromFile(output, filename);
-
-  // Add optional tag
-  db->UpdateTagsFromCommandLine(output->tags, args_info);
-
-  // Set optional unity
-  if (args_info.pixelunit_given) {
-    syd::PixelValueUnit::pointer unit;
-    unit = db->FindPixelValueUnit(args_info.pixelunit_arg);
-    output->pixel_value_unit = unit;
+  if (!args_info.like_given && !args_info.patient_given) {
+    LOG(FATAL) << "Please, set --like or --patient (but not both).";
   }
 
-  // Insert in the db
-  builder.InsertAndRename(output);
-  LOG(1) << "Inserting Image " << output;
+  // Get the patient
+  syd::Image::pointer like;
+  syd::Patient::pointer patient;
+  if (args_info.like_given) {
+    syd::IdType id = args_info.like_arg;
+    db->QueryOne(like, id);
+    patient = like->patient;
+  }
+  else {
+    patient = db->FindPatient(std::string(args_info.patient_arg));
+  }
+
+  // create a new image
+  auto image = InsertImageFromFile(filename, patient);
+
+  // set properties from the image
+  if (args_info.like_given)
+    syd::SetImageInfoFromImage(image, like);
+
+  // Update size, pixel type, etc from file
+  syd::SetImageInfoFromFile(image);
+
+  // Update the tags and info from the cmd line
+  syd::SetImageInfoFromCommandLine(image, args_info);
+  syd::SetTagsFromCommandLine(image->tags, db, args_info);
+  db->Update(image);
+  LOG(1) << "Inserting Image: " << image;
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

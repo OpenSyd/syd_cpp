@@ -20,11 +20,9 @@
 #include "sydInsertRoiMaskImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydRoiMaskImageBuilder.h"
+#include "sydRoiMaskImageHelper.h"
+#include "sydTagHelper.h"
 #include "sydCommonGengetopt.h"
-
-// syd init
-SYD_STATIC_INIT
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -37,39 +35,32 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
+  syd::StandardDatabase * db =
+    m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the roitype
-  syd::RoiType::pointer roitype = db->FindRoiType(args_info.inputs[0]);
+  syd::RoiType::pointer roitype =
+    syd::FindRoiType(args_info.inputs[0], db);
 
-  // Get the dicom
+  // Get the image
   syd::IdType id = atoi(args_info.inputs[1]);
-  syd::DicomSerie::pointer dicom;
-  db->QueryOne(dicom, id);
+  syd::Image::pointer image;
+  db->QueryOne(image, id);
 
   // Get mask filename
   std::string filename = args_info.inputs[2];
 
-  // Check if already exist ?
-  syd::RoiMaskImage::vector masks;
-  typedef odb::query<syd::RoiMaskImage> Q;
-  Q q = Q::roitype == roitype->id;
-  db->Query(masks, q);
-  for(auto m:masks) {
-    for(auto d:m->dicoms) {
-      if (d->id == dicom->id) {
-        LOG(FATAL) << "A RoiMaskImage already exist with the same roitype and dicom_id. "
-                   << "Remove it first if you want to replace it. " << std::endl
-                   << "Existing mask is: " << m;
-      }
-    }
-  }
-
   // Create a new RoiMaskImage
-  syd::RoiMaskImageBuilder builder(db);
-  syd::RoiMaskImage::pointer mask = builder.NewRoiMaskImage(dicom, roitype, filename);
-  db->UpdateTagsFromCommandLine(mask->tags, args_info);
-  builder.InsertAndRename(mask);
+  auto mask = syd::InsertRoiMaskImageFromFile(filename, image->patient, roitype);
+
+  // Copy information from the iamge
+  mask->frame_of_reference_uid = image->frame_of_reference_uid;
+  mask->CopyDicomSeries(image);
+  mask->acquisition_date = image->acquisition_date;
+  syd::AddTag(mask->tags, image->tags);
+  syd::SetImageInfoFromCommandLine(mask, args_info);
+  syd::SetTagsFromCommandLine(mask->tags, db, args_info);
+  db->Update(mask);
   LOG(1) << "Inserting RoiMaskImage " << mask;
 
   // This is the end, my friend.

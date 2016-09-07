@@ -19,6 +19,8 @@
 // syd
 #include "sydRecord.h"
 #include "sydDatabase.h"
+#include "sydPrintTable.h"
+#include "sydPluginManager.h"
 
 // Define static member
 std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
@@ -72,18 +74,9 @@ void syd::Record::Set(const std::vector<std::string> & args)
 
 
 // --------------------------------------------------------------------
-void syd::Record::InitTable(syd::PrintTable & table) const
-{
-  table.AddColumn("id");
-  table.AddColumn("fields");
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Record::DumpInTable(syd::PrintTable & table) const
 {
-  table.Set("fields", ToString());
+  std::cout << ToString() << std::endl;
 }
 // --------------------------------------------------------------------
 
@@ -91,8 +84,9 @@ void syd::Record::DumpInTable(syd::PrintTable & table) const
 // --------------------------------------------------------------------
 void syd::Record::SetDatabasePointer(odb::callback_event event, odb::database & d) const
 {
-  auto search = syd::Database::ListOfLoadedDatabases.find(&d);
-  if (search == syd::Database::ListOfLoadedDatabases.end()) {
+  auto list = syd::DatabaseManager::GetListOfLoadedDatabases();
+  auto search = list.find(&d);
+  if (search == list.end()) {
     LOG(FATAL) << "Error during callback in an object " << GetTableName()
                << " cannot find the db pointer. Event is " << event;
   }
