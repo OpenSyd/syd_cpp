@@ -8,7 +8,7 @@
 #include <stdlib.h>
 using namespace std;
 
-#include "sydDD.h"
+#include "../sydDD.h"
 
 KmTree::KmTree(int n, int d, Scalar *points): n_(n), d_(d), points_(points) {
   // Initialize memory

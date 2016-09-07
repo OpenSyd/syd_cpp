@@ -21,16 +21,18 @@
 
 // syd
 #include "sydRecord.h"
+#include "sydFileUtils.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::File") callback(Callback)
   /// Store information about a file linked to a database.
-  class File: public syd::Record {
+  class File: public syd::Record,
+              public std::enable_shared_from_this<File> {
   public:
 
-    virtual ~File() { }
+    virtual ~File();
 
     /// File name
     std::string filename;
@@ -51,15 +53,24 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
-    virtual void DumpInTable(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_default(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_file(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_md5(syd::PrintTable2 & table) const;
+    virtual void DumpInTable(syd::PrintTable & table) const;
+    virtual void DumpInTable_default(syd::PrintTable & table) const;
+    virtual void DumpInTable_file(syd::PrintTable & table) const;
+    virtual void DumpInTable_md5(syd::PrintTable & table) const;
 
-    std::string GetAbsolutePath(const syd::Database * db) const;
+    /// Return the full absolute path of the file inside the db (must be persistent)
+    std::string GetAbsolutePath() const;
 
     virtual syd::CheckResult Check() const;
 
+    /// Rename the associated file. Warning, could leave the db in a
+    /// wrong state if the file on disk and the object is not updated
+    /// accordingly in the db. In doubt use renameFileOnDiskFlag=true,
+    /// updateDBFlag=true
+    void RenameFile(std::string relative_path,
+                    std::string filename,
+                    bool renameFileOnDiskFlag,
+                    bool updateDBFlag);
   protected:
     File();
 

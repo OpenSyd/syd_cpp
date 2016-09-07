@@ -19,39 +19,34 @@
 #ifndef SYDDICOMSERIE_H
 #define SYDDICOMSERIE_H
 
-// std
-#include <array> // needed on osx
-
 // syd
 #include "sydPatient.h"
-#include "sydInjection.h"
+#include "sydDicomFile.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::DicomSerie") callback(Callback)
-  /// Store information about a dicom image (serie). Element of table
-  /// 'DicomSerie' stored in a db. Contains information about a dicom
-  /// image.
+  /// Store basic information about a dicom image (serie).
   class DicomSerie : public syd::Record {
   public:
 
     virtual ~DicomSerie() { }
 
 #pragma db not_null
-    /// Foreign key, it must exist in the Patient table. Useful if no associated injection
+    /// Foreign key, it must exist in the Patient table.
     syd::Patient::pointer patient;
 
-    /// Foreign key. May be null. Dont delete Serie if injection does not exist.
-    syd::Injection::pointer injection;
+    /// List of DicomFile
+    syd::DicomFile::vector dicom_files;
 
     /// Date when the image has been acquired. Dicom tag =
     /// AcquisitionTime & AcquisitionDate
-    std::string acquisition_date;
+    std::string dicom_acquisition_date;
 
     /// Date when the image has been reconstructed. Dicom tag =
     /// ContentDate/Time or InstanceCreationDate/Tiem
-    std::string reconstruction_date;
+    std::string dicom_reconstruction_date;
 
     /// Dicom StudyInstanceUID
     std::string dicom_study_uid;
@@ -72,27 +67,9 @@ namespace syd {
     /// Modality as indicated in the dicom tag Modality
     std::string dicom_modality;
 
-    /// Dicom tags Manufacturer and ManufacturerModelName
-    std::string dicom_manufacturer;
-
     /// Concatenation of several descriptions tag (SeriesDescription
-    /// StudyDescription, ImageID, DatasetName)
+    /// StudyDescription, ImageID, DatasetName, Manufacturer)
     std::string dicom_description;
-
-    /// Image size (in pixels). It is an array because the size is fixed.
-    std::array<int, 3> size;
-
-    /// Image spacing aka size of the pixel (in mm)
-    std::array<double, 3> spacing;
-
-    /// Acquisition duration (in sec)
-    double duration_sec;
-
-    /// Pixel scale
-    double pixel_scale;
-
-    /// Pixel Offset
-    double pixel_offset;
 
     // ------------------------------------------------------------------------
     TABLE_DEFINE(DicomSerie, syd::DicomSerie);
@@ -106,11 +83,11 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
-    virtual void DumpInTable(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_default(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_file(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_filelist(syd::PrintTable2 & table) const;
-    virtual void DumpInTable_details(syd::PrintTable2 & table) const;
+    virtual void DumpInTable(syd::PrintTable & table) const;
+    virtual void DumpInTable_default(syd::PrintTable & table) const;
+    virtual void DumpInTable_file(syd::PrintTable & table) const;
+    virtual void DumpInTable_filelist(syd::PrintTable & table) const;
+    virtual void DumpInTable_details(syd::PrintTable & table) const;
 
     /// Check if the associated files exist on disk
     virtual syd::CheckResult Check() const;

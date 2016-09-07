@@ -68,7 +68,7 @@ void syd::Timepoints::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------------------------
-void syd::Timepoints::DumpInTable(syd::PrintTable2 & ta) const
+void syd::Timepoints::DumpInTable(syd::PrintTable & ta) const
 {
   //  syd::RecordWithHistory::DumpInTable(ta);
   auto format = ta.GetFormat();
@@ -86,7 +86,7 @@ void syd::Timepoints::DumpInTable(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::Timepoints::DumpInTable_default(syd::PrintTable2 & ta) const
+void syd::Timepoints::DumpInTable_default(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);
@@ -96,22 +96,22 @@ void syd::Timepoints::DumpInTable_default(syd::PrintTable2 & ta) const
   else ta.Set("mask", "no_mask");
   if (images.size() > 0) {
     std::string s;
-    for(auto i:images) s += syd::ToString(i->id)+",";
+    for(auto i:images) s += std::to_string(i->id)+",";
     s.pop_back();
     ta.Set("img", s);
   }
   else ta.Set("img", "no_img");
   ta.Set("nb", times.size());
   for(auto i=0; i<times.size(); i++)
-    ta.Set("t"+syd::ToString(i), times[i], 2);
+    ta.Set("t"+std::to_string(i), times[i], 2);
   for(auto i=0; i<times.size(); i++)
-    ta.Set("v"+syd::ToString(i), values[i], 6);
+    ta.Set("v"+std::to_string(i), values[i], 6);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::Timepoints::DumpInTable_history(syd::PrintTable2 & ta) const
+void syd::Timepoints::DumpInTable_history(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);
@@ -123,7 +123,7 @@ void syd::Timepoints::DumpInTable_history(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::Timepoints::DumpInTable_md5(syd::PrintTable2 & ta) const
+void syd::Timepoints::DumpInTable_md5(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);

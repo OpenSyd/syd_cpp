@@ -21,11 +21,8 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
-#include "sydRecordHelpers.h"
-#include "sydPrintTable2.h"
-
-//syd::DatabaseManager * syd::DatabaseManager::singleton_;
-//syd::DatabaseManager * syd::DatabaseManager::singleton_ = new syd::DatabaseManager;
+#include "sydRecordHelper.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -60,7 +57,13 @@ int main(int argc, char* argv[])
 
   // Find all records
   syd::Record::vector records;
-  db->Query(records, table_name); // query all
+  if (!args_info.id_given)
+    db->Query(records, table_name); // query all
+  else {
+    std::vector<syd::IdType> ids;
+    for(auto i=0; i<args_info.id_given; i++) ids.push_back(args_info.id_arg[i]);
+    db->Query(records, table_name, ids);
+  }
 
   // Only keep the ones with the given tags (we do not check that the tags exist)
   if (args_info.tag_given and records.size() >0) {
@@ -75,7 +78,7 @@ int main(int argc, char* argv[])
   db->Grep(results, records, patterns, exclude);
 
   // Sort
-  //  db->Sort(results, table_name);
+  db->Sort(results, table_name);
 
   // Consider vv flag
   std::string format = args_info.format_arg;
@@ -103,7 +106,7 @@ int main(int argc, char* argv[])
       LOG(1) << "No records match";
       return EXIT_SUCCESS;
     }
-    syd::PrintTable2 table;
+    syd::PrintTable table;
     table.SetFormat(format);
     table.SetHeaderFlag(!args_info.noheader_flag);
     try {

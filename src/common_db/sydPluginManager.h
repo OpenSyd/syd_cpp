@@ -49,9 +49,9 @@ namespace syd {
 
 
 // --------------------------------------------------------------------
-/// Those functions must be included in the plugin.
-typedef std::string (*RegisterDatabaseSchemaFunction) (syd::DatabaseManager * m);
-extern std::string  RegisterDatabaseSchema(syd::DatabaseManager * m);
+/// This function must be included in the plugin.
+typedef void (*RegisterDatabaseSchemaFunction) (syd::DatabaseManager * m);
+extern void RegisterDatabaseSchema(syd::DatabaseManager * m);
 // --------------------------------------------------------------------
 
 #endif

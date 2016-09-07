@@ -16,7 +16,7 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-// Python (must be before dcmtk includes to avoid warning)
+// Python
 #include <Python.h>
 
 // syd

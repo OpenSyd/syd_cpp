@@ -27,16 +27,19 @@ message(STATUS "ITK is found")
 
 #----------------------------------------------------------
 # Find Boost
-find_package(Boost REQUIRED date_time system filesystem serialization)
+find_package(Boost REQUIRED date_time system filesystem)
 include_directories( ${Boost_INCLUDE_DIR} )
-message(STATUS "Boost is found")
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
-# Eigen3
+# Eigen3 (needed by ceres)
 find_package(Eigen3 REQUIRED)
+include_directories(${EIGEN_INCLUDE_DIR})
 include_directories(${EIGEN3_INCLUDE_DIR})
+if (NOT EIGEN_INCLUDE_DIR)
+  set(EIGEN_INCLUDE_DIR ${EIGEN3_INCLUDE_DIR})
+endif()
 #----------------------------------------------------------
 
 
@@ -48,19 +51,9 @@ include_directories(${CERES_INCLUDE_DIRS})
 
 
 #----------------------------------------------------------
-# Find dcmtk
-find_package(DCMTK REQUIRED)
-include_directories(${DCMTK_INCLUDE_DIRS})
-# Later, in odb, we need the base include path, so we compute it here
-list(GET DCMTK_INCLUDE_DIRS 0 DCMTK_INCLUDE_DIR_BASE)
-set(DCMTK_INCLUDE_DIR_BASE ${DCMTK_INCLUDE_DIR_BASE}/../..)
-#----------------------------------------------------------
-
-
-#----------------------------------------------------------
 # Find Odb
-find_package(ODB REQUIRED OPTIONAL_COMPONENTS sqlite)
-include(${ODB_USE_FILE})
+find_package(odb REQUIRED COMPONENTS compiler sqlite)
+#include(${ODB_USE_FILE})
 #----------------------------------------------------------
 
 
@@ -106,7 +99,7 @@ macro(WRAP_ODB ODB_SRCS)
     if(EXISTS ${ODB_FILES_ABS})
       add_custom_command(OUTPUT ${ODB_OUTPUT}
         COMMAND ${ODB_EXECUTABLE}
-        ARGS --std c++11 --database sqlite -I${DCMTK_INCLUDE_DIR_BASE} -I${EIGEN_INCLUDE_DIR} -I${SYD_SOURCE_DIR}/src/std_db -I${SYD_SOURCE_DIR}/src/core  -I${SYD_SOURCE_DIR}/src/common_db  -I${SYD_SOURCE_DIR}/src/ext  --generate-schema --schema-format separate  --generate-query --sqlite-override-null --schema-name ${SCHEMA_NAME} ${ODB_FILES_ABS}
+        ARGS --std c++11 --database sqlite -I${EIGEN_INCLUDE_DIR} -I${SYD_SOURCE_DIR}/src/std_db -I${SYD_SOURCE_DIR}/src/core  -I${SYD_SOURCE_DIR}/src/common_db  -I${SYD_SOURCE_DIR}/src/ext  --generate-schema --schema-format separate  --generate-query --sqlite-override-null --schema-name ${SCHEMA_NAME} ${ODB_FILES_ABS}
         DEPENDS ${ODB_FILES_ABS})
     else()
       message(FATAL_ERROR "Error odb cannot file the following file: " ${ODB_FILES_ABS})

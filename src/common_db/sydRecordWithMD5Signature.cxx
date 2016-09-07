@@ -19,7 +19,7 @@
 // syd
 #include "sydRecordWithMD5Signature.h"
 #include "sydDatabase.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::RecordWithMD5Signature::RecordWithMD5Signature()
@@ -47,7 +47,7 @@ void syd::RecordWithMD5Signature::Callback(odb::callback_event event,
 
 
 // --------------------------------------------------------------------
-void syd::RecordWithMD5Signature::DumpInTable(syd::PrintTable2 & ta) const
+void syd::RecordWithMD5Signature::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("md5", md5);
 }

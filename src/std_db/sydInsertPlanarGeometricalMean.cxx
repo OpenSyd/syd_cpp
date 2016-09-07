@@ -20,7 +20,8 @@
 #include "sydInsertPlanarGeometricalMean_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydImageBuilder.h"
+#include "sydImageHelper.h"
+#include "sydTagHelper.h"
 #include "sydCommonGengetopt.h"
 #include "sydImageExtractSlices.h"
 #include "sydImageGeometricalMean.h"
@@ -43,36 +44,15 @@ int main(int argc, char* argv[])
   syd::Image::pointer input;
   db->QueryOne(input, id); // will fail if not found
   LOG(2) << "Read image :" << input;
-  auto filename = db->GetAbsolutePath(input);
-  typedef float PixelType;
-  typedef itk::Image<PixelType, 3> ImageType;
-  ImageType::Pointer itk_input = syd::ReadImage<ImageType>(filename);
+
+  // Main computation
   double k = args_info.k_arg;
+  auto image = syd::InsertImageGeometricalMean(input, k);
 
-  // Check only 4 slices
-  int n = itk_input->GetLargestPossibleRegion().GetSize()[2];
-  if (n != 4) {
-    LOG(FATAL) << "Error I expect 4 slices only :  ANT_EM POST_EM ANT_SC POST_SC";
-  }
-
-  // Get the 4 images ANT_EM POST_EM ANT_SC POST_SC
-  std::vector<ImageType::Pointer> itk_images;
-  syd::ExtractSlices<ImageType>(itk_input, 2, itk_images); // Direction = Z (2)
-  ImageType::Pointer ant_em = itk_images[0];
-  ImageType::Pointer post_em = itk_images[1];
-  ImageType::Pointer ant_sc = itk_images[2];
-  ImageType::Pointer post_sc = itk_images[3];
-
-  ImageType::Pointer gmean = syd::GeometricalMean<ImageType>(ant_em, post_em, ant_sc, post_sc, k);
-  syd::WriteImage<ImageType>(gmean, "gmean.mhd");
-
-  // Create main builder to insert an image
-  syd::ImageBuilder builder(db);
-  syd::Image::pointer image = builder.NewMHDImageLike(input);
-  // Set the optional tags
-  db->UpdateTagsFromCommandLine(image->tags, args_info);
-  builder.SetImage<PixelType>(image, gmean);
-  builder.InsertAndRename(image);
+  // Update image info
+  syd::SetTagsFromCommandLine(image->tags, db, args_info);
+  syd::SetImageInfoFromCommandLine(image, args_info);
+  db->Update(image);
   LOG(1) << "Inserting Image " << image;
 
   // This is the end, my friend.

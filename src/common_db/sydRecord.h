@@ -21,8 +21,6 @@
 
 // syd
 #include "sydCommon.h"
-//#include "sydPrintTable.h" // FIXME to remove
-//#include "sydPrintTable2.h"
 #include "sydCheckResult.h"
 #include "sydVersion.h"
 
@@ -34,7 +32,7 @@
 namespace syd {
 
   class Database;
-  class PrintTable2;
+  class PrintTable;
 
   /// Base class for all record (or element, or row) in a table
 #pragma db object abstract pointer(std::shared_ptr) callback(Callback)
@@ -68,7 +66,7 @@ namespace syd {
     virtual void Set(const std::vector<std::string> & args);
 
     /// Add a line in the given PrintTable
-    virtual void DumpInTable(syd::PrintTable2 & table) const;
+    virtual void DumpInTable(syd::PrintTable & table) const;
 
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const = 0;
@@ -130,7 +128,16 @@ namespace syd {
 
 
   // --------------------------------------------------------------------
+  /// Default function to check equality (with tostring)
   bool IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2);
+  template<class R>
+  inline bool operator==(const std::shared_ptr<R> & left,
+                         const std::shared_ptr<R> & right)
+  { return (syd::IsEqual(left, right)); }
+  template<class R>
+  inline bool operator!=(const std::shared_ptr<R> & left,
+                         const std::shared_ptr<R> & right)
+  { return !(left == right); }
 
 #include "sydRecord.txx"
   // --------------------------------------------------------------------

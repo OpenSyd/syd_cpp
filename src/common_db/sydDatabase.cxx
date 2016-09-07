@@ -34,6 +34,7 @@ void trace_callback( void* udp, const char* sql ) {
 syd::Database::Database()
 {
   description_ = NULL;
+  overwrite_file_if_exists_flag_ = true;
 }
 // --------------------------------------------------------------------
 
@@ -180,6 +181,17 @@ std::string syd::Database::ConvertToAbsolutePath(std::string relative_path) cons
 
   } while (found != std::string::npos);
   return s;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Database::GetUniqueTempFilename() const
+{
+  std::string t = GetDatabaseAbsoluteFolder()+PATH_SEPARATOR
+    +"syd_temp_%%%%_%%%%_%%%%_%%%%.mhd";
+  fs::path p = fs::unique_path(t);
+  return p.string();
 }
 // --------------------------------------------------------------------
 
@@ -365,6 +377,16 @@ void syd::Database::Delete(generic_record_vector & records,
 
 
 // --------------------------------------------------------------------
+void syd::Database::Delete(generic_record_pointer record)
+{
+  generic_record_vector r;
+  r.push_back(record);
+  Delete(r, record->GetTableName());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Database::DeleteFiles()
 {
   for(auto f:files_to_delete_) {
@@ -386,7 +408,7 @@ void syd::Database::AddFilenameToDelete(const std::string & f)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Update(generic_record_pointer record,
+void syd::Database::Update(generic_record_pointer & record,
                            std::string field_name,
                            std::string value)
 {
@@ -417,7 +439,7 @@ void syd::Database::Update(generic_record_pointer record,
               << sql.str() << std::endl
               << "Error is:" << e.what());
   }
-
+  QueryOne(record, table_name, record->id);
 }
 // --------------------------------------------------------------------
 
@@ -550,6 +572,51 @@ void syd::Database::MigrateSchema()
                << std::endl
                << "Try to alter the db schema manually with sqlite3 ..."
                << "(good luck !)";
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::Copy(std::string new_dbname)
+{
+  // db file
+  std::string dbname = GetFilename();
+  fs::copy_file(dbname, new_dbname,fs::copy_option::overwrite_if_exists);
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+void syd::Database::Copy(std::string new_dbname, std::string new_folder)
+{
+  std::shared_ptr<syd::DatabaseInformation> info;
+  try {
+    odb::transaction transaction (odb_db_->begin());
+    info = std::shared_ptr<syd::DatabaseInformation>(odb_db_->query_one<syd::DatabaseInformation>());
+    if (info.get() == 0) {
+      LOG(FATAL) << "Error cannot get DatabaseInformation";
+    }
+    info->folder = new_folder;
+    odb_db_->update(*info);
+    transaction.commit();
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Exception while set temporary folder in DatabaseInformation");
+  }
+
+  // copy
+  Copy(new_dbname);
+  std::string dbfolder = GetDatabaseAbsoluteFolder();
+  syd::copyDir(dbfolder, new_folder);
+
+  try {
+    odb::transaction transaction (odb_db_->begin());
+    info->folder = relative_folder_;
+    odb_db_->update(*info);
+    transaction.commit();
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Exception while updating DatabaseInformation");
   }
 }
 // --------------------------------------------------------------------

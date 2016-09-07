@@ -18,13 +18,13 @@
 
 // syd
 #include "sydRoiType.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::RoiType::RoiType():Record()
 {
-  name = "unset";
-  description = "unset";
+  name = empty_value;
+  description = empty_value;
 }
 // --------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ void syd::RoiType::Set(const std::vector<std::string> & arg)
 
 
 // --------------------------------------------------
-void syd::RoiType::DumpInTable(syd::PrintTable2 & ta) const
+void syd::RoiType::DumpInTable(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("name", name);

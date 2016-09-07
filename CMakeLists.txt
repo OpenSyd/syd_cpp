@@ -37,6 +37,16 @@ set(SYD_BIN_FILES " ")
 
 
 #----------------------------------------------------------
+# https://github.com/sakra/cotire
+# Cotire (compile time reducer) is a CMake module that speeds up the
+# build process of CMake based build systems by fully automating
+# techniques as precompiled header usage and single compilation unit
+# builds for C and C++.
+include(cmake/cotire.cmake)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
 # cmake include
 set(CMAKE_MODULE_PATH "${SYD_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
@@ -53,29 +63,32 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "Setting build type to 'Release' as none was specified.")
   set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
   # Set the possible values of build type for cmake-gui
-  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
+    "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
 # Output directories.
-IF(NOT LIBRARY_OUTPUT_PATH)
-  SET (LIBRARY_OUTPUT_PATH ${SYD_BINARY_DIR}/lib CACHE INTERNAL "Single output directory for building all libraries.")
-ENDIF(NOT LIBRARY_OUTPUT_PATH)
-IF(NOT EXECUTABLE_OUTPUT_PATH)
-  SET (EXECUTABLE_OUTPUT_PATH ${SYD_BINARY_DIR}/bin CACHE INTERNAL "Single output directory for building all executables.")
-ENDIF(NOT EXECUTABLE_OUTPUT_PATH)
-MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
-SET(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
+if(NOT LIBRARY_OUTPUT_PATH)
+  set (LIBRARY_OUTPUT_PATH ${SYD_BINARY_DIR}/lib CACHE INTERNAL
+    "Single output directory for building all libraries.")
+endif(NOT LIBRARY_OUTPUT_PATH)
+if(NOT EXECUTABLE_OUTPUT_PATH)
+  set (EXECUTABLE_OUTPUT_PATH ${SYD_BINARY_DIR}/bin CACHE INTERNAL
+    "Single output directory for building all executables.")
+endif(NOT EXECUTABLE_OUTPUT_PATH)
+mark_as_advanced(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+set(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 #----------------------------------------------------------
 
 
 #----------------------------------------------------------
 # not used yet
-SET(SYD_VERSION_MAJOR "0")
-SET(SYD_VERSION_MINOR "2")
-SET(SYD_VERSION_PATCH "0")
+set(SYD_VERSION_MAJOR "0")
+set(SYD_VERSION_MINOR "2")
+set(SYD_VERSION_PATCH "0")
 #----------------------------------------------------------
 
 
@@ -109,7 +122,6 @@ set(SYD_CORE_LIBRARIES
   sydFit
   sydItkUtils
   odb-sqlite odb sqlite3 z
-  ${DCMTK_LIBRARIES}
   ${Boost_LIBRARIES}
   ${ITK_LIBRARIES})
 
@@ -142,13 +154,13 @@ CONFIGURE_FILE (cmake/SYDConfig.cmake.in SYDConfig.cmake @ONLY)
 
 #----------------------------------------------------------
 # tests
-# include(CTest)
-# if(BUILD_TESTING)
-#   enable_testing()
-# endif(BUILD_TESTING)
-# if(BUILD_TESTING)
-#   add_subdirectory(test)
-# endif(BUILD_TESTING)
+include(CTest)
+if(BUILD_TESTING)
+  enable_testing()
+endif(BUILD_TESTING)
+if(BUILD_TESTING)
+  add_subdirectory(test)
+endif(BUILD_TESTING)
 #----------------------------------------------------------
 
 

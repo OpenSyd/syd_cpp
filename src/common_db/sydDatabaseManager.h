@@ -72,14 +72,6 @@ namespace syd {
 
   };
 
-  // This macro must be used in the .cxx file of a new type of
-  // database to register it to the list of known db type. When used
-  // as a plugin a mecanism is used to prevent registering two times
-  // the class.
-#define SYD_REGISTER_DATABASE(classname, name)                          \
-  static syd::DatabaseCreator<classname> * name ## _static_registration \
-  = syd::DatabaseManager::GetInstance()->RegisterDatabaseSchema<classname>(#name);
-
 #include "sydDatabaseManager.txx"
 
 } // end namespace

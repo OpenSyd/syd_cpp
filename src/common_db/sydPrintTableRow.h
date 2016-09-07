@@ -25,19 +25,19 @@
 //--------------------------------------------------------------------
 namespace syd {
 
-  class PrintTable2;
+  class PrintTable;
 
   /// Manage a row of a print table
   class PrintTableRow {
   public:
 
     // Constructor
-    PrintTableRow(syd::PrintTable2 * table);
+    PrintTableRow(syd::PrintTable * table);
 
     /// Typedef, pointer creation
     typedef std::shared_ptr<PrintTableRow> pointer;
     typedef std::vector<pointer> vector;
-    static pointer New(syd::PrintTable2 * table);
+    static pointer New(syd::PrintTable * table);
 
     // Set the value for column col
     void Set(int col, std::string value);
@@ -49,11 +49,11 @@ namespace syd {
     void Dump(const std::vector<int> & indices, std::ostream & ss) const;
 
   protected:
-    syd::PrintTable2 * table_;
+    syd::PrintTable * table_;
     std::vector<std::string> values_;
 
   };
 
 } // end namespace
 
-#endif /* end #define SYDPRINTTABLE2_H_H */
+#endif /* end #define SYDPRINTTABLE_H_H */

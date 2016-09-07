@@ -21,6 +21,7 @@
 
 // syd
 #include "sydRecord.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -46,7 +47,7 @@ namespace syd {
 
     void Set(const std::vector<std::string> & arg);
 
-    virtual void DumpInTable(syd::PrintTable2 & table) const;
+    virtual void DumpInTable(syd::PrintTable & table) const;
 
   protected:
     RoiType();

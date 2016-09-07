@@ -19,16 +19,21 @@
 // syd
 #include "sydImageUtils.h"
 
+// itk (gdcm)
+#include "gdcmGlobal.h"
+#include "gdcmDictEntry.h"
+#include "gdcmDicts.h"
+
 // --------------------------------------------------------------------
 /*
   Rename a mhd image, composed of 2 files XXX.mhd and XXX.raw. This
   function moves the two files and change the header to be linked with
   the renamed .raw file.
- */
+*/
 void syd::RenameOrCopyMHDImage(std::string old_path,
                                std::string new_path,
-                               int verbose_level,
-                               bool erase)
+                               bool erase,
+                               bool overwrite_if_exists)
 {
   // Check if not the same
   if (old_path == new_path) {
@@ -54,40 +59,43 @@ void syd::RenameOrCopyMHDImage(std::string old_path,
 
   // Check files
   if (!fs::exists(old_path)) {
-    LOG(FATAL) << "Rename MHD : Error path (mhd) not exist : " << old_path;
+    LOG(FATAL) << "Rename MHD : Error path (mhd) not exist: " << old_path;
   }
   if (!fs::exists(old_path_raw)) {
-    LOG(FATAL) << "Rename MHD : Error path (raw) not exist : " << old_path_raw;
+    LOG(FATAL) << "Rename MHD : Error path (raw) not exist: " << old_path_raw;
   }
-  // if (fs::exists(new_path)) {
-  //   LOG(WARNING) << "Rename MHD : path (mhd) to rename already exist : " << new_path;
-  // }
-  // if (fs::exists(new_path_raw)) {
-  //   LOG(WARNING) << "Rename MHD : path (raw) to rename already exist : " << new_path_raw;
-  // }
 
-  // verbose
-  if (erase) {
-    LOG(verbose_level) << "Rename header " << old_path << " to " << new_path;
+  // is files already exist ?
+  if (!overwrite_if_exists) {
+    if (fs::exists(new_path)) {
+      EXCEPTION("Rename MHD : path (mhd) already exist: " << new_path);
+    }
+    if (fs::exists(new_path_raw)) {
+      EXCEPTION("Rename MHD : path (raw)  already exist: " << new_path_raw);
+    }
   }
-  else {
-    LOG(verbose_level) << "Copy header " << old_path << " to " << new_path;
+
+  // Create dir if needed
+  fs::path p(new_path);
+  try {
+    fs::create_directories(p.remove_filename());
+  } catch(std::exception & e) {
+    EXCEPTION("Cannot create directory for " << new_path << ".");
   }
 
   // header part : change ElementDataFile in the header
   std::ifstream in(old_path);
-  //  std::ofstream out(new_path);
   std::vector<std::string> outlines;
-  // std::ofstream out;
-  OFString r;
-  OFStandard::getFilenameFromPath(r, old_path_raw.c_str());
-  std::string wordToReplace(r.c_str());
-  OFStandard::getFilenameFromPath(r, new_path_raw.c_str());
+
+  std::string r;
+  fs::path op(old_path_raw);
+  r = op.filename().string();
+  std::string wordToReplace = r; //(r.c_str());
+  fs::path np(new_path_raw);
+  r = np.filename().string();
   std::string wordToReplaceWith(r.c_str());
   size_t len = wordToReplace.length();
   std::string line;
-  // Delete old path (before writing new)
-  if (erase) std::remove(old_path.c_str());
   while (std::getline(in, line)) {
     while (line != "") {
       size_t pos = line.find(wordToReplace);
@@ -107,39 +115,18 @@ void syd::RenameOrCopyMHDImage(std::string old_path,
   for(auto i:outlines) out << i;
   out.close();
 
+  // Delete old path (after writing new)
+  if (erase) std::remove(old_path.c_str());
+
   // Rename or copy .raw part
   if (erase) {
-    LOG(verbose_level) << "Rename raw " << old_path_raw << " to " << new_path_raw;
-    int result = std::rename(old_path_raw.c_str(), new_path_raw.c_str());
-    if (result != 0) {
-      LOG(FATAL) << "Error while renaming " << old_path_raw << " to " << new_path_raw;
-    }
+    fs::rename(old_path_raw, new_path_raw);
   }
   else {
-    LOG(verbose_level) << "Copy raw " << old_path_raw << " to " << new_path_raw;
-    // std::ifstream  src(old_path_raw.c_str(), std::ios::binary);
-    // std::ofstream  dst(new_path_raw.c_str(), std::ios::binary);
-    // dst << src.rdbuf();
-
-    // I need to do that way to avoid overwriting if old/new are the same files.
-    std::ifstream source(old_path_raw, std::ios::binary);
-
-    // file size
-    source.seekg(0, std::ios::end);
-    std::ifstream::pos_type size = source.tellg();
-    source.seekg(0);
-    // allocate memory for buffer
-    char* buffer = new char[size];
-
-    // copy file
-    source.read(buffer, size);
-    source.close();
-    std::ofstream dest(new_path_raw, std::ios::binary);
-    dest.write(buffer, size);
-
-    // clean up
-    delete[] buffer;
-    dest.close();
+    if (overwrite_if_exists)
+      fs::copy_file(old_path_raw, new_path_raw, fs::copy_option::overwrite_if_exists);
+    else
+      fs::copy_file(old_path_raw, new_path_raw, fs::copy_option::none);
   }
 }
 // --------------------------------------------------------------------
@@ -148,26 +135,26 @@ void syd::RenameOrCopyMHDImage(std::string old_path,
 // --------------------------------------------------------------------
 void syd::DeleteMHDImage(std::string path)
 {
-  OFStandard::deleteFile(path.c_str());
+  fs::remove(path);
   size_t n = path.find_last_of(".");
   std::string path_raw = path.substr(0,n)+".raw";
-  OFStandard::deleteFile(path_raw.c_str());
+  fs::remove(path_raw);
 }
 // --------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------
-void syd::CopyMHDImage(std::string from , std::string to, int verbose_level)
+void syd::CopyMHDImage(std::string from, std::string to, bool overwrite_if_exists)
 {
-  RenameOrCopyMHDImage(from, to, verbose_level, false);
+  RenameOrCopyMHDImage(from, to, false, overwrite_if_exists);
 }
 //--------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------
-void syd::RenameMHDImage(std::string from , std::string to, int verbose_level)
+void syd::RenameMHDImage(std::string from, std::string to, bool overwrite_if_exists)
 {
-  RenameOrCopyMHDImage(from, to, verbose_level, true);
+  RenameOrCopyMHDImage(from, to, true, overwrite_if_exists);
 }
 //--------------------------------------------------------------------
 
@@ -187,6 +174,9 @@ std::string syd::PointToString(const itk::Point<double,3> & t)
 itk::ImageIOBase::Pointer syd::ReadImageHeader(const std::string & filename)
 {
   itk::ImageIOBase::Pointer reader;
+  if (!fs::exists(filename)) {
+    EXCEPTION("File '" << filename << "' does not exist.");
+  }
   try {
     reader = itk::ImageIOFactory::CreateImageIO(filename.c_str(), itk::ImageIOFactory::ReadMode);
     reader->SetFileName(filename);
@@ -202,6 +192,7 @@ itk::ImageIOBase::Pointer syd::ReadImageHeader(const std::string & filename)
 //--------------------------------------------------------------------
 void syd::WriteImage(typename itk::ImageBase<3>::Pointer image, std::string filename)
 {
+  LOG(FATAL) << "NOT IMPLEMENTED WriteImage";
   typedef itk::ImageBase<3> ImageBaseType;
   //  DD(image->GetComponentTypeAsString(image->GetComponentType()));
 }

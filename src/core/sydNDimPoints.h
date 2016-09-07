@@ -22,10 +22,6 @@
 // syd
 #include "sydCommon.h"
 
-
-// #include <boost/archive/binary_oarchive.hpp>
-// #include <boost/archive/binary_iarchive.hpp>
-
 // --------------------------------------------------------------------
 namespace syd {
 

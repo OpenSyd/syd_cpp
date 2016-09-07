@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
     calibration->fov_ratio = f;
 
     double injected_activity = injection->activity_in_MBq;
-    double time = syd::DateDifferenceInHours(dicom->acquisition_date, injection->date);
+    double time = syd::DateDifferenceInHours(dicom->dicom_acquisition_date, injection->date);
     double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
     double activity_at_acquisition = injected_activity * exp(-lambda * time);
 

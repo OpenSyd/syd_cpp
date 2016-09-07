@@ -95,4 +95,4 @@ namespace syd {
 
 } // end namespace
 
-#endif /* end #define SYDPRINTTABLE2_H */
+#endif /* end #define SYDPRINTTABLE_H */

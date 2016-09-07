@@ -18,26 +18,15 @@
 
 
 //--------------------------------------------------------------------
-// Convert float, double ... to string
-template<class T>
-std::string ToString(const T & t)
-{
-  std::ostringstream myStream;
-  myStream << t << std::flush;
-  return(myStream.str());
-}
-//--------------------------------------------------------------------
-
-
-//--------------------------------------------------------------------
 // Convert array to string with 'x'
-template<class T, int N>
-std::string ArrayToString(const std::array<T, N> & t, int precision)
+template<class T>
+std::string ArrayToString(const std::vector<T> & t, int precision)
 {
+  if (t.size() == 0) return "";
   std::ostringstream os;
   os << std::fixed << std::setprecision(precision);
-  for(auto i=0; i<N-1; i++) os << t[i] << "x";
-  os << t[N-1];// << std::flush;
+  for(auto i=0; i<t.size()-1; i++) os << t[i] << "x";
+  os << t[t.size()-1];// << std::flush;
   return(os.str());
 }
 //--------------------------------------------------------------------

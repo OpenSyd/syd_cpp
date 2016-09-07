@@ -105,7 +105,7 @@ std::string syd::PrintTableColumnInfo::GetStringValue(double value, int precisio
 void syd::PrintTableColumnInfo::DumpHeader(std::ostream & os)
 {
   std::ostringstream temp;
-  temp << "#" << index_+1 << " " << name_;// << "  "; // two spaces because start with #
+  temp << index_+1 << "_" << name_; // print col number
   auto s = temp.str();
   UpdateWidth(s);
   os << std::setw(width_) << s;

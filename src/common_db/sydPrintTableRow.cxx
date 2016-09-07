@@ -18,10 +18,10 @@
 
 // syd
 #include "sydPrintTableRow.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 //--------------------------------------------------------------------
-syd::PrintTableRow::PrintTableRow(syd::PrintTable2 * t)
+syd::PrintTableRow::PrintTableRow(syd::PrintTable * t)
 {
   table_ = t;
   values_.resize(10); // by default 10 col;
@@ -32,7 +32,7 @@ syd::PrintTableRow::PrintTableRow(syd::PrintTable2 * t)
 
 //--------------------------------------------------------------------
 syd::PrintTableRow::pointer
-syd::PrintTableRow::New(syd::PrintTable2 * table)
+syd::PrintTableRow::New(syd::PrintTable * table)
 {
   return std::make_shared<syd::PrintTableRow>(table);
 }
@@ -61,12 +61,14 @@ std::string syd::PrintTableRow::GetValue(int col) const
 void syd::PrintTableRow::Dump(const std::vector<int> & indices,
                               std::ostream & os) const
 {
-
   for(auto col:indices) {
     auto column = table_->GetColumnInfo(col);
     if (!table_->GetSingleRowFlag())
       column->InstallStreamParameters(os);
-    auto s = column->TruncateStringIfNeeded(values_[col]);
+    std::string s;
+    // When the col does not exist, we used empty_value.
+    if (col >= values_.size()) s = empty_value;
+    else s = column->TruncateStringIfNeeded(values_[col]);
     os << s;
   }
   if (!table_->GetSingleRowFlag()) os << std::endl;

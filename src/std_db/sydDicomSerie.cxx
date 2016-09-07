@@ -18,15 +18,15 @@
 
 // syd
 #include "sydDicomSerie.h"
-#include "sydStandardDatabase.h"
+#include "sydStandardDatabase.h" // needed for type odb db
 
 // --------------------------------------------------------------------
 syd::DicomSerie::DicomSerie():syd::Record()
 {
   patient = NULL;
-  injection = NULL;
-  size[0] = size[1] = size[2] = 0;
-  spacing[0] = spacing[1] = spacing[2] = 0.0;
+  dicom_modality = dicom_acquisition_date
+    = dicom_reconstruction_date = dicom_description
+    = dicom_frame_of_reference_uid = empty_value;
 }
 // --------------------------------------------------------------------
 
@@ -36,16 +36,15 @@ std::string syd::DicomSerie::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
-     << patient->name << " "
-     << (injection==NULL ? "no_inj":injection->radionuclide->name) << " "
+     << (patient != NULL? patient->name:empty_value) << " "
+     << dicom_files.size() << " "
      << dicom_modality << " "
-     << acquisition_date << " "
-     << reconstruction_date << " "
-     << ArrayToString<int, 3>(size) << " "
-     << ArrayToString<double, 3>(spacing) << " "
-     << dicom_manufacturer << " "
-     << dicom_description
-     << (pixel_scale == 1.0 ? "":syd::ToString(pixel_scale));
+     << dicom_acquisition_date << " "
+     << dicom_reconstruction_date << " "
+     << dicom_description << " "
+     << dicom_frame_of_reference_uid << " "
+     << dicom_study_uid << " "
+     << dicom_series_uid;
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -61,7 +60,7 @@ std::string syd::DicomSerie::ComputeRelativeFolder() const
   std::string f = patient->ComputeRelativeFolder()+PATH_SEPARATOR;
 
   // Part 2: date
-  std::string d = acquisition_date;
+  std::string d = dicom_acquisition_date;
   //  syd::Replace(d, " ", "_");
   // remove the hour and keep y m d
   d = d.substr(0, 10);
@@ -75,23 +74,29 @@ std::string syd::DicomSerie::ComputeRelativeFolder() const
 
 
 // --------------------------------------------------
-void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db) const
+void syd::DicomSerie::Callback(odb::callback_event event,
+                               odb::database & db) const
 {
   syd::Record::Callback(event,db);
-  // Special case: when a serie is deleted, the linked DicomFile will
-  // be deleted by the oncascade, but the callback is not called to
-  // erase the file, so we do it here.
-  if (event == odb::callback_event::pre_erase) {
-    syd::DicomFile::vector dfiles;
-    typedef odb::result<syd::DicomFile> result;
-    odb::query<syd::DicomFile> q = odb::query<syd::DicomFile>::dicom_serie == id;
-    result r(db.query<DicomFile>(q));
-    for(auto i = r.begin(); i != r.end(); i++) {
-      syd::DicomFile::pointer s = syd::DicomFile::New();
-      i.load(*s);
-      dfiles.push_back(s);
+
+  /* // not auto
+    if (event == odb::callback_event::pre_persist) {
+    // insert the file with odb::database not the syd::database
+    DD("persist files also");
+    for(auto f:dicom_files) db.persist(f);
     }
-    for(auto d:dfiles) d->Callback(event, db);
+  */
+
+  // not needed, but safer (be sure to store file modif)
+  if (event == odb::callback_event::pre_update) {
+    // update the files
+    for(auto f:dicom_files) db.update(f);
+  }
+
+  // When a serie is deleted, we need to delete the
+  // associated DicomFiles
+  if (event == odb::callback_event::pre_erase) {
+    for(auto d:dicom_files) db.erase(d); //
   }
 }
 // --------------------------------------------------
@@ -106,7 +111,7 @@ void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------
-void syd::DicomSerie::DumpInTable(syd::PrintTable2 & ta) const
+void syd::DicomSerie::DumpInTable(syd::PrintTable & ta) const
 {
   auto format = ta.GetFormat();
   if (format == "default") DumpInTable_default(ta);
@@ -124,65 +129,50 @@ void syd::DicomSerie::DumpInTable(syd::PrintTable2 & ta) const
 
 
 // --------------------------------------------------
-void syd::DicomSerie::DumpInTable_default(syd::PrintTable2 & ta) const
+void syd::DicomSerie::DumpInTable_default(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);
-  if (injection == NULL) ta.Set("inj", "no_inj");
-  else ta.Set("inj", injection->radionuclide->name);
+  ta.Set("files", dicom_files.size());
+  ta.Set("acqui_date", dicom_acquisition_date);
   ta.Set("mod", dicom_modality);
-  ta.Set("acqui_date", acquisition_date);
-  ta.Set("recon_date", reconstruction_date);
-  ta.Set("description", std::string(dicom_description+" "+dicom_manufacturer), 100);
+  ta.Set("recon_date", dicom_reconstruction_date);
+  ta.Set("description", dicom_description, 100);
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::DicomSerie::DumpInTable_file(syd::PrintTable2 & ta) const
+void syd::DicomSerie::DumpInTable_file(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);
-  if (injection == NULL) ta.Set("inj", "no_inj");
-  else ta.Set("inj", injection->radionuclide->name);
   ta.Set("mod", dicom_modality);
-  ta.Set("acqui_date", acquisition_date);
-
-  //Look for associated file (this is slow !)
-  syd::DicomFile::vector dfiles;
-  typedef odb::query<syd::DicomFile> QDF;
-  QDF q = QDF::dicom_serie == id;
-  db_->Query<syd::DicomFile>(dfiles, q);
-  if (dfiles.size() >= 1) ta.Set("path", dfiles[0]->file->GetAbsolutePath(db_), 150);
-  else ta.Set("path", db_->ConvertToAbsolutePath(dfiles[0]->file->path), 150);
+  ta.Set("acqui_date", dicom_acquisition_date);
+  if (dicom_files.size() > 0) ta.Set("path", dicom_files[0]->GetAbsolutePath(), 150);
+  else ta.Set("path", empty_value);
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::DicomSerie::DumpInTable_filelist(syd::PrintTable2 & ta) const
+void syd::DicomSerie::DumpInTable_filelist(syd::PrintTable & ta) const
 {
   ta.SetSingleRowFlag(true);
   ta.SetHeaderFlag(false);
-  //Look for associated file (this is slow !)
-  syd::DicomFile::vector dfiles;
-  typedef odb::query<syd::DicomFile> QDF;
-  QDF q = QDF::dicom_serie == id;
-  db_->Query<syd::DicomFile>(dfiles, q);
-  if (dfiles.size() >= 1) // FIXME -> build a string with all filenames (?)
-    ta.Set("file", dfiles[0]->file->GetAbsolutePath(db_), 500);
+  std::stringstream ss;
+  for(auto f:dicom_files) ss << f->GetAbsolutePath() << " ";
+  ta.Set("file", ss.str(), ss.str().size());
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::DicomSerie::DumpInTable_details(syd::PrintTable2 & ta) const
+void syd::DicomSerie::DumpInTable_details(syd::PrintTable & ta) const
 {
-  DumpInTable_default(ta);
-  ta.Set("size", syd::ArrayToString<int, 3>(size));
-  ta.Set("spacing", syd::ArrayToString<double, 3>(spacing));
-  ta.Set("duration(s)", duration_sec, 2);
-  ta.Set("scale", pixel_scale, 2);
+  ta.Set("id", id);
+  ta.Set("p", patient->name);
+  ta.Set("description", dicom_description, 200);
 }
 // --------------------------------------------------
 
@@ -191,14 +181,7 @@ void syd::DicomSerie::DumpInTable_details(syd::PrintTable2 & ta) const
 syd::CheckResult syd::DicomSerie::Check() const
 {
   syd::CheckResult r;
-
-  //Look for associated file (this is slow !)
-  syd::DicomFile::vector dfiles;
-  typedef odb::query<syd::DicomFile> QDF;
-  QDF q = QDF::dicom_serie == id;
-  db_->Query<syd::DicomFile>(dfiles, q);
-  for(auto d:dfiles) r.merge(d->Check());
-
+  for(auto d:dicom_files) r.merge(d->Check());
   return r;
 }
 // --------------------------------------------------------------------

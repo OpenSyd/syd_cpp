@@ -80,10 +80,13 @@ namespace syd {
     std::string GetDatabaseRelativeFolder() const { return relative_folder_; }
 
     /// Return the folder that contains the associated images (absolute)
-   std::string GetDatabaseAbsoluteFolder() const { return absolute_folder_; }
+    std::string GetDatabaseAbsoluteFolder() const { return absolute_folder_; }
 
     /// Return absolute path from a relative one
     std::string ConvertToAbsolutePath(std::string relative_path) const;
+
+    /// Return a unique absolute path of a temporary filename inside the db
+    std::string GetUniqueTempFilename() const;
     // ------------------------------------------------------------------------
 
     /// Consider a relative path check if exist, create if not.
@@ -145,7 +148,7 @@ namespace syd {
     void Update(std::vector<std::shared_ptr<RecordType>> records);
 
     /// Update only one field of a element. The type of the element is unknown
-    void Update(generic_record_pointer record, std::string field_name, std::string value_name);
+    void Update(generic_record_pointer & record, std::string field_name, std::string value_name);
     // ------------------------------------------------------------------------
 
 
@@ -225,6 +228,7 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     void Delete(generic_record_vector & records, const std::string & table_name);
+    void Delete(generic_record_pointer record);
     template<class RecordType>
     void Delete(std::shared_ptr<RecordType> record);
     template<class RecordType>
@@ -284,8 +288,19 @@ namespace syd {
     /// Return the map that contains the association between names and tables
     const MapOfTablesType & GetMapOfTables() const { return map_; }
 
+    /// Copy only the db file (warning not the folder)
+    void Copy(std::string dbname);
+
+    /// Copy everything the db file + all files in folder (could be
+    /// long!)
+    void Copy(std::string dbname, std::string folder);
+
+
+    void SetOverwriteFileFlag(bool b) { overwrite_file_if_exists_flag_ = b; }
+    bool GetOverwriteFileFlag() const { return overwrite_file_if_exists_flag_; }
+
     // ----------------------------------------------------------------------------------
-    protected:
+  protected:
     // Create an empty database
     Database();
 
@@ -332,6 +347,8 @@ namespace syd {
     /// Store the OO db schema description
     syd::DatabaseDescription * description_;
 
+    /// Global flag (will be used when write a file in the db)
+    bool overwrite_file_if_exists_flag_;
   };
 
 

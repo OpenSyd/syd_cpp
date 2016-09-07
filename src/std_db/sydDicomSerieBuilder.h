@@ -23,6 +23,7 @@
 #include "sydStandardDatabase.h"
 #include "sydDicomFile.h"
 #include "sydDicomSerie.h"
+#include "sydDicomUtils.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -40,22 +41,16 @@ namespace syd {
     /// Destructor (empty)
     virtual ~DicomSerieBuilder();
 
-    /// Set the pointer to the database
-    void SetDatabase(StandardDatabase * db) { db_ = db; }
-
-    /// Set the injection (required)
-    void SetInjection(Injection::pointer injection);
+    /// Set the patient (required)
+    void SetPatient(Patient::pointer p);
 
     /// Don't stop even if the patient in the dicom seems different
-    /// from the patient in the injection
+    /// from the patient
     void SetForcePatientFlag(bool b) { forcePatientFlag_ = b; }
-
-    /// If the file already exist in the db, we delete it and insert a new one
-    void SetForceUpdateFlag(bool b) { forceUpdateFlag_ = b; }
 
     /// Create a DicomSerie/DicomFile (still not inserted into the db,
     /// use UpdateDicomSerie for that)
-    void CreateDicomSerieFromFile(std::string filename);
+    void SearchDicomInFile(std::string filename);
 
     /// Insert the created DicomSerie/DicomFile into the db
     void InsertDicomSeries();
@@ -69,10 +64,7 @@ namespace syd {
 
     StandardDatabase * db_;
     Patient::pointer patient_;
-    Injection::pointer injection_;
     bool forcePatientFlag_;
-    bool useInjectionFlag_;
-    bool forceUpdateFlag_;
 
     DicomSerie::vector series_to_insert;
     DicomSerie::vector series_to_update;
@@ -83,14 +75,19 @@ namespace syd {
 
     void UpdateDicomSerie(DicomSerie::pointer serie,
                           const std::string & filename,
-                          DcmObject * dset);
+                          itk::GDCMImageIO::Pointer dicomIO);
+
     DicomFile::pointer CreateDicomFile(const std::string & filename,
-                                       DcmObject * dset,
+                                       itk::GDCMImageIO::Pointer dicomIO,
                                        DicomSerie::pointer serie);
+
     bool GuessDicomSerieForThisFile(const std::string & filename,
-                                    DcmObject * dset,
+                                    itk::GDCMImageIO::Pointer dicomIO,
                                     DicomSerie::pointer & serie);
+
     bool DicomFileAlreadyExist(const std::string & sop_uid);
+
+    typedef itk::MetaDataDictionary DictionaryType;
 
   }; // class DicomSerieBuilder
 } // namespace syd

@@ -80,11 +80,11 @@ syd::TimepointsBuilder::ComputeTimepoints()
   }
 
   // Check same pixel units (warning)
-  syd::PixelValueUnit::pointer unit = images[0]->pixel_value_unit;
+  syd::PixelValueUnit::pointer unit = images[0]->pixel_unit;
   for(auto image:images) {
-    if (image->pixel_value_unit->id != unit->id) {
+    if (image->pixel_unit->id != unit->id) {
       LOG(WARNING) << "I expected pixel value unit to be the same for all images, while it is "
-                   << image->pixel_value_unit->name << "for the image:"
+                   << image->pixel_unit->name << "for the image:"
                    << std::endl << image
                    << std::endl << " and " << unit->name << " for the image"
                    << std::endl << images[0];

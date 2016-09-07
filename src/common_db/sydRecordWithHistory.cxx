@@ -19,14 +19,15 @@
 // syd
 #include "sydRecordWithHistory.h"
 #include "sydDatabase.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::RecordWithHistory::RecordWithHistory()
 {
+  history = NULL;
+  print_history_flag_ = true;
 }
 // --------------------------------------------------------------------
-
 
 
 // --------------------------------------------------------------------
@@ -57,12 +58,10 @@ void syd::RecordWithHistory::Callback(odb::callback_event event,
 
 
 // --------------------------------------------------------------------
-void syd::RecordWithHistory::DumpInTable(syd::PrintTable2 & ta) const
+void syd::RecordWithHistory::DumpInTable(syd::PrintTable & ta) const
 {
   if (history == NULL) {
     LOG(WARNING) << "Error no history ?";
-    ta.Set("inserted", "NULL");
-    ta.Set("updated", "NULL");
     return;
   }
   ta.Set("inserted", history->insertion_date);

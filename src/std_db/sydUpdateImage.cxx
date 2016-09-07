@@ -20,9 +20,9 @@
 #include "sydUpdateImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydRoiStatisticBuilder.h"
 #include "sydCommonGengetopt.h"
-#include "sydScaleImageBuilder.h"
+#include "sydImageHelper.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -61,12 +61,11 @@ int main(int argc, char* argv[])
 
   // Check & updates the images
   int i=0;
-  syd::ScaleImageBuilder builder(db);
   for(auto index=0; index<images.size(); index++) {
     auto image = images[index];
     // check file exist
     for(auto file:image->files) {
-      std::string s = file->GetAbsolutePath(db);
+      std::string s = file->GetAbsolutePath();
       if (!fs::exists(s)) {
         LOG(WARNING) << "Image: " << image << std::endl
                      << "--> the file '" << s << "' does not exist." << std::endl;
@@ -76,22 +75,44 @@ int main(int argc, char* argv[])
 
     // Need to import a new mhd ?
     if (args_info.file_given) {
+      if (image->type != "mhd") {
+        LOG(WARNING) << "Image: " << image
+                     << " not of type mhd. Skip." << std::endl;
+        continue;
+      }
+      if (image->files.size() != 2) {
+        LOG(WARNING) << "Image: " << image
+                     << " does not have 2 associated files. Skip."
+                     << std::endl;
+        continue;
+      }
       std::string mhd = args_info.file_arg[i];
-      syd::ImageBuilder builder(db);
-      builder.CopyImageFromFile(image, mhd);
+      // delete current files
+      std::string to_relative_path = image->files[0]->path;
+      std::string to_filename = image->files[0]->filename;
+      db->Delete(image->files);
+      // Insert new files
+      image->files = syd::InsertFilesFromMhd(db, mhd, to_relative_path, to_filename);
+      // update image info
+      syd::SetImageInfoFromFile(image);
     }
 
     // Need to scale ?
     double s = 1.0;
     if (args_info.scale_given) {
       s = args_info.scale_arg;
-      if (args_info.squared_scale_flag) s = s*s;
-      builder.Scale(image, s);
+      if (s != 1.0) syd::ScaleImage(image, s);
+    }
+
+    // Need to convert to another pixel_type ?
+    if (args_info.pixel_type_given) {
+      LOG(FATAL) << "Sorry, not yet implemented.";
+      //syd::CastImage(image, args_info.pixel_type_arg);
     }
 
     // update db
-    db->UpdateTagsFromCommandLine(image->tags, args_info);
-    if (args_info.pixelunit_given) builder.SetImagePixelValueUnit(image, args_info.pixelunit_arg);
+    syd::SetImageInfoFromCommandLine(image, args_info);
+    syd::SetTagsFromCommandLine(image->tags, db, args_info);
     db->Update(image);
     if (s != 1) LOG(1) << "Image was scaled by " << s << ": " << image;
     else LOG(1) << "Image was updated: " << image;
