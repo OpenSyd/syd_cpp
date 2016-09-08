@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
 
   // Print the results, and delete if needed
   if (missing_files.size() == 0) {
-    LOG(1) << "All the " << complete_filenames.size() << " files are in the db.";
+    LOG(0) << "All the " << complete_filenames.size() << " files are in the db.";
   }
   else {
     LOG(0) << "There are " << missing_files.size() << " files that are *not* in the db. ";
