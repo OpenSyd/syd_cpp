@@ -133,6 +133,7 @@ void syd::DatabaseManager::Create(const std::string & db_schema_name,
   auto & list = GetDatabaseSchemas();
   if (it == db_map_.end()) {
     std::stringstream os;
+    os << " ";
     for(auto i=list.begin(); i != list.end(); i++) {
       os << *i << " ";
     }
