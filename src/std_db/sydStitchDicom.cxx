@@ -28,7 +28,7 @@
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydStitchDicom, 2);
+  SYD_INIT_GGO(sydStitchDicom, 0);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
