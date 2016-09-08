@@ -135,37 +135,6 @@ void syd::Image::RemoveDicomSerie(const syd::DicomSerie::pointer dicom)
 // --------------------------------------------------
 
 
-
-// --------------------------------------------------
-/*std::string syd::Image::ComputeRelativeFolder() const
-  {
-  if (patient == NULL) {
-  LOG(FATAL) << "Cannot get Image::ComputeRelativeFolder while no patient"
-  << " is set (the record is no persistent in the db).";
-  }
-  auto s = patient->name;
-  syd::Replace(s, " ", "_"); // replace space with underscore
-  return s;
-  }
-*/
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-/*std::string syd::Image::ComputeDefaultMhdFilename() const
-  {
-  if (!IsPersistent()) {
-  EXCEPTION("Image must be persistent (in the db) to use ComputeDefaultMhdFilename.");
-  }
-  std::string s = modality+"_"+syd::ToString(id)+".mhd";
-  std::ostringstream oss;
-  oss << modality;
-  oss << "_" << id << ".mhd";
-  return oss.str();
-  }*/
-// --------------------------------------------------
-
-
 // --------------------------------------------------
 void syd::Image::Callback(odb::callback_event event,
                           odb::database & db) const
