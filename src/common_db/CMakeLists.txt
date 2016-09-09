@@ -67,7 +67,9 @@ set(sydCommonDatabase_src
 add_library(sydCommonDatabaseObjects OBJECT ${sydCommonDatabase_src})
 
 add_library(sydCommonDatabase SHARED $<TARGET_OBJECTS:sydCommonDatabaseObjects>)
-target_link_libraries(sydCommonDatabase sydCore sydItkUtils odb-sqlite odb sqlite3 z)
+if (APPLE)
+  target_link_libraries(sydCommonDatabase sydCore sydItkUtils odb-sqlite odb sqlite3 z)
+endif(APPLE)
 
 #----------------------------------------------------------
 wrap_ggo(sydCreateDatabase_GGO_C sydCreateDatabase.ggo sydCommandLineDefaultWithoutDB.ggo)
