@@ -53,6 +53,11 @@ int main(int argc, char* argv[])
   // Loop on ids
   syd::Image::vector images;
   db->Query(images, ids);
+  if (images.size() == 0) {
+    LOG(WARNING) << "No input image found.";
+    exit(0);
+  }
+
   for(auto image:images) {
     // Create a temporary file for the image
     std::string mhd_filename = db->GetUniqueTempFilename();
