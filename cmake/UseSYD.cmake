@@ -27,7 +27,11 @@ message(STATUS "ITK is found")
 
 #----------------------------------------------------------
 # Find Boost
-find_package(Boost REQUIRED date_time system filesystem)
+set(Boost_USE_STATIC_LIBS       ON) # only find static libs
+set(Boost_USE_MULTITHREADED     ON)
+set(Boost_USE_STATIC_RUNTIME    OFF)
+#set(Boost_NO_BOOST_CMAKE ON)
+find_package(Boost REQUIRED COMPONENTS date_time system filesystem)
 include_directories( ${Boost_INCLUDE_DIR} )
 #----------------------------------------------------------
 
@@ -99,7 +103,7 @@ macro(WRAP_ODB ODB_SRCS)
     if(EXISTS ${ODB_FILES_ABS})
       add_custom_command(OUTPUT ${ODB_OUTPUT}
         COMMAND ${ODB_EXECUTABLE}
-        ARGS --std c++11 --database sqlite -I${EIGEN_INCLUDE_DIR} -I${SYD_SOURCE_DIR}/src/std_db -I${SYD_SOURCE_DIR}/src/core  -I${SYD_SOURCE_DIR}/src/common_db  -I${SYD_SOURCE_DIR}/src/ext  --generate-schema --schema-format separate  --generate-query --sqlite-override-null --schema-name ${SCHEMA_NAME} ${ODB_FILES_ABS}
+        ARGS --std c++11 --database sqlite -I${Boost_INCLUDE_DIR} -I${EIGEN_INCLUDE_DIR} -I${SYD_SOURCE_DIR}/src/std_db -I${SYD_SOURCE_DIR}/src/core  -I${SYD_SOURCE_DIR}/src/common_db  -I${SYD_SOURCE_DIR}/src/ext  --generate-schema --schema-format separate  --generate-query --sqlite-override-null --schema-name ${SCHEMA_NAME} ${ODB_FILES_ABS}
         DEPENDS ${ODB_FILES_ABS})
     else()
       message(FATAL_ERROR "Error odb cannot file the following file: " ${ODB_FILES_ABS})
