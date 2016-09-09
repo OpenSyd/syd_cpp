@@ -1,0 +1,12 @@
+#File sydInsertAnonymizedDicom.ggo
+
+package "syd"
+version "0.1"
+usage "sydInsertAnonymizedDicom <dicom_ids>"
+description "Insert copy of dicom with some fields anonymized.
+
+*WARNING* this is not a complete anonymization (only patient's name and birthdate)
+
+*WARNING* some dicom tags could be lost."
+
+option "delete" d "Also delete the initial dicom (use with caution)" flag off

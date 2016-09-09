@@ -87,6 +87,8 @@ syd::InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom)
   // Get the db
   auto db = dicom->GetDatabase<syd::StandardDatabase>();
 
+  // FIXME --> put itk/gdcm related code into sydDicomUtils, not here
+
   // Largely inspired from
   // https://itk.org/Doxygen/html/WikiExamples_2DICOM_2ResampleDICOM_8cxx-example.html
 

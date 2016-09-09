@@ -113,6 +113,16 @@ add_executable(sydDicomInfo
   ${sydDicomInfo_GGO_C})
 target_link_libraries(sydDicomInfo ${SYD_STD_DB_LIBRARY})
 
+# Create anonymized dicom
+wrap_ggo(sydInsertAnonymizedDicom_GGO_C
+  sydInsertAnonymizedDicom.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertAnonymizedDicom
+  sydInsertAnonymizedDicom.cxx
+  ${sydInsertAnonymizedDicom_GGO_C})
+target_link_libraries(sydInsertAnonymizedDicom ${SYD_STD_DB_LIBRARY})
+
+
 # Update Radionuclide table
 wrap_ggo(sydUpdateRadionuclide_GGO_C
   sydUpdateRadionuclide.ggo
