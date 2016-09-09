@@ -56,8 +56,8 @@ include_directories(${CERES_INCLUDE_DIRS})
 
 #----------------------------------------------------------
 # Find Odb
-find_package(odb REQUIRED COMPONENTS compiler sqlite)
-#include(${ODB_USE_FILE})
+find_package(ODB REQUIRED COMPONENTS sqlite)
+include(${ODB_USE_FILE})
 #----------------------------------------------------------
 
 
