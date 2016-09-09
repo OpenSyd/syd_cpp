@@ -36,6 +36,13 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
 #----------------------------------------------------------
 
+#----------------------------------------------------------
+# Disable some warnings.
+add_definitions (
+   # for auto_ptr in odb
+   -Wno-deprecated-declarations
+)
+#----------------------------------------------------------
 
 #----------------------------------------------------------
 # hunter dependencies
