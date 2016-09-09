@@ -20,7 +20,8 @@
 #include "syd_clitkExtractPatient_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydRoiMaskImageBuilder.h"
+#include "sydRoiMaskImageHelper.h"
+#include "sydTagHelper.h"
 #include "sydCommonGengetopt.h"
 
 // --------------------------------------------------------------------
@@ -43,7 +44,7 @@ int main(int argc, char* argv[])
 
   syd::RoiType::pointer roitype;
   try {
-    roitype = db->FindRoiType("body");
+    roitype = syd::FindRoiType("body", db);
   } catch(std::exception & e) {
     LOG(FATAL) << "Error, the RoiType body cannot be found. Please insert it before using this tool."
                << std::endl << "Error is: " << e.what();
@@ -53,20 +54,13 @@ int main(int argc, char* argv[])
   syd::Image::vector images;
   db->Query(images, ids);
   for(auto image:images) {
-    if (image->dicoms.size() == 0) {
-      LOG(FATAL) << "Error, not dicom associated with this image: " << image;
-    }
-
-    // Check if already exist // find mask roitype=body, image same dicom
-
-
     // Create a temporary file for the image
-    std::string mhd_filename = syd::CreateTemporaryFile(db->GetDatabaseAbsoluteFolder(), ".mhd");
+    std::string mhd_filename = db->GetUniqueTempFilename();
 
     // Create command line
     std::ostringstream cmd;
     cmd << "clitkExtractPatient "
-        << " -i " << db->GetAbsolutePath(image)
+        << " -i " << image->GetAbsolutePath()
         << " -o " << mhd_filename
         << " " << args_info.options_arg;
     LOG(1) << "Executing: " << std::endl << cmd.str();
@@ -93,23 +87,18 @@ int main(int argc, char* argv[])
 
     // Stop if error in cmd
     if (r == -1) {
+      syd::DeleteMHDImage(mhd_filename);
       LOG(FATAL) << "Error while executing the following command: " << std::endl << cmd.str();
     }
 
     // Create the mask image
-    syd::DicomSerie::pointer dicom = image->dicoms[0];
-    syd::RoiMaskImageBuilder b(db);
-    try {
-      syd::RoiMaskImage::pointer mask = b.NewRoiMaskImage(dicom, roitype, mhd_filename);
-      db->UpdateTagsFromCommandLine(mask->tags, args_info);
-      syd::ImageBuilder builder(db);
-      builder.InsertAndRename(mask);
-      LOG(1) << "Inserting RoiMaskImage " << mask;
-    }
-    catch(std::exception & e) {
-      LOG(WARNING) << "Cannot create mask image, skip it." << std::endl << e.what();
-    }
-
+    auto mask = syd::InsertRoiMaskImageFromFile(mhd_filename, image->patient, roitype);
+    mask->frame_of_reference_uid = image->frame_of_reference_uid;
+    syd::SetTagsFromCommandLine(mask->tags, db, args_info);
+    mask->CopyDicomSeries(image);
+    mask->acquisition_date = image->acquisition_date;
+    db->Update(mask);
+    LOG(1) << "Inserting RoiMaskImage " << mask;
     syd::DeleteMHDImage(mhd_filename);
   }
   // This is the end, my friend.

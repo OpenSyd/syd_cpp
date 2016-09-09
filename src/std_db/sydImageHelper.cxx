@@ -149,6 +149,7 @@ void syd::SetImageInfoFromDicomSerie(syd::Image::pointer image,
   image->modality = dicom->dicom_modality;
   image->acquisition_date = dicom->dicom_acquisition_date;
   image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
+  image->AddDicomSerie(dicom);
 
   // try to guess pixel_unit ?
   auto db = image->GetDatabase<syd::StandardDatabase>();
@@ -266,8 +267,8 @@ syd::Image::pointer syd::InsertStitchDicomImage(syd::DicomSerie::pointer a,
 
   // Complete information
   syd::SetImageInfoFromDicomSerie(image, a);
-  image->dicoms.push_back(a);
-  image->dicoms.push_back(b);
+  image->AddDicomSerie(a);
+  image->AddDicomSerie(b);
   db->Update(image);
   return image;
 }

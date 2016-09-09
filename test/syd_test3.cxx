@@ -22,6 +22,7 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydDicomSerieBuilder.h"
+#include "sydDicomSerieHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -67,6 +68,13 @@ int main(int argc, char* argv[])
   builder.SetForcePatientFlag(true);
   for(auto f:files) builder.SearchDicomInFile(f);
   builder.InsertDicomSeries();
+
+  // Anonymize
+  syd::DicomSerie::pointer dicom;
+  db->QueryOne(dicom, 1);
+  DD(dicom);
+  syd::AnonymizeDicomSerie(dicom); // (write file ; update db);
+  DD(dicom);
 
   // If needed create reference db
   if (args_info.create_ref_flag) {

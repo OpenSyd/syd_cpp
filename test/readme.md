@@ -6,7 +6,7 @@ Test1
 
 
 Test2
-- idem test1 but linked with StandardDatabase
+- idem test1 but linked with StandardDatabase (no plugin)
 
 
 Test3

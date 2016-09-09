@@ -79,14 +79,6 @@ void syd::DicomSerie::Callback(odb::callback_event event,
 {
   syd::Record::Callback(event,db);
 
-  /* // not auto
-    if (event == odb::callback_event::pre_persist) {
-    // insert the file with odb::database not the syd::database
-    DD("persist files also");
-    for(auto f:dicom_files) db.persist(f);
-    }
-  */
-
   // not needed, but safer (be sure to store file modif)
   if (event == odb::callback_event::pre_update) {
     // update the files
@@ -137,7 +129,7 @@ void syd::DicomSerie::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("acqui_date", dicom_acquisition_date);
   ta.Set("mod", dicom_modality);
   ta.Set("recon_date", dicom_reconstruction_date);
-  ta.Set("description", dicom_description, 100);
+  ta.Set("description", dicom_description, 400);
 }
 // --------------------------------------------------
 

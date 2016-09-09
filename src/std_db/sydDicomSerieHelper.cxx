@@ -51,3 +51,13 @@ void syd::WriteDicomToMhd(syd::DicomSerie::pointer dicom,
   GetFctByPixelType<FctType>(map, pixel_type)(dicom, mhd_filename);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::AnonymizeDicomSerie(syd::DicomSerie::pointer dicom)
+{
+  DD("AnonymizeDicomSerie");
+  DD(dicom);
+
+}
+// --------------------------------------------------------------------

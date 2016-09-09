@@ -49,6 +49,9 @@ namespace syd {
   F GetFctByPixelType(std::map<std::string, F> & map,
                            std::string pixel_type);
 
+  /// Anonymize dicom serie
+  void AnonymizeDicomSerie(syd::DicomSerie::pointer dicom);
+
 }
 #include "sydDicomSerieHelper.txx"
 // --------------------------------------------------------------------
