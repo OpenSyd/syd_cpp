@@ -496,7 +496,7 @@ ReadDicomSerieFromFolder(std::string folder, std::string serie_uid)
   // Read itk image
   try {
     typedef itk::ImageSeriesReader<ImageType> ReaderType;
-    typedef itk::GDCMImageIO ImageIOType;
+    //typedef itk::GDCMImageIO ImageIOType;
     typedef itk::GDCMSeriesFileNames InputNamesGeneratorType;
     InputNamesGeneratorType::Pointer nameGenerator = InputNamesGeneratorType::New();
     nameGenerator->SetInputDirectory(folder);

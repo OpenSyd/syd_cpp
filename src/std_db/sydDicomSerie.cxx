@@ -164,7 +164,7 @@ void syd::DicomSerie::DumpInTable_details(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);
-  ta.Set("description", dicom_description, 200);
+  ta.Set("frame", dicom_frame_of_reference_uid);
 }
 // --------------------------------------------------
 

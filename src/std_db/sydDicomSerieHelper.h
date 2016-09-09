@@ -50,7 +50,8 @@ namespace syd {
                            std::string pixel_type);
 
   /// Anonymize dicom serie
-  void AnonymizeDicomSerie(syd::DicomSerie::pointer dicom);
+  void CopyDictionary (itk::MetaDataDictionary &fromDict, itk::MetaDataDictionary &toDict);
+  syd::DicomSerie::pointer InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom);
 
 }
 #include "sydDicomSerieHelper.txx"
