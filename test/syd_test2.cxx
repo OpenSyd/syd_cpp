@@ -25,7 +25,7 @@
 int main(int argc, char* argv[])
 {
   sydlog::Log::SQLFlag() = false;
-  sydlog::Log::LogLevel() = 10;
+  sydlog::Log::LogLevel() = 3;
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();

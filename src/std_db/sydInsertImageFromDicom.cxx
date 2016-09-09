@@ -28,7 +28,7 @@
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertImageFromDicom, 0);
+  SYD_INIT_GGO(sydInsertImageFromDicom, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
