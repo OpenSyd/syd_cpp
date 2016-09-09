@@ -27,7 +27,7 @@ message(STATUS "ITK is found")
 
 #----------------------------------------------------------
 # Find Boost
-find_package(Boost CONFIG REQUIRED date_time system filesystem)
+find_package(Boost REQUIRED date_time system filesystem)
 include_directories( ${Boost_INCLUDE_DIR} )
 #----------------------------------------------------------
 
@@ -80,14 +80,6 @@ include_directories(BEFORE ${SYD_INCLUDE_DIRS})
 #----------------------------------------------------------
 # Add link directories needed to use SYD.
 link_directories(${SYD_LIBRARY_DIRS})
-
-
-#----------------------------------------------------------
-# Find Odb
-find_package(odb COMPONENTS compiler sqlite)
-#include(${ODB_USE_FILE})
-#----------------------------------------------------------
-
 
 #----------------------------------------------------------
 # To compile odb files // FIXME use include (?)

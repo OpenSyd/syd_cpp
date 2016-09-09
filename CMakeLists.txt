@@ -1,24 +1,12 @@
 # ---------------------------------------------------------
-# Hunter
-cmake_minimum_required(VERSION 3.0)
-option(HUNTER_ENABLED "Enable Hunter package manager" ON)
-include("cmake/HunterGate.cmake")
-#list(APPEND HUNTER_CACHE_SERVERS "https://github.com/ingenue/hunter-cache")
-HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.15.25.tar.gz"
-    SHA1 "74993ddf2cf8a6a4c3e0b9d58027a624bf3060e7"
-)
-# ---------------------------------------------------------
-
-
-# ---------------------------------------------------------
 project(syd)
 # ---------------------------------------------------------
 
 
 #----------------------------------------------------------
 # cmake policies
-cmake_policy(VERSION 3.0)
+cmake_minimum_required(VERSION 2.8)
+cmake_policy(VERSION 2.8)
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
@@ -27,16 +15,6 @@ endif(COMMAND cmake_policy)
 if (APPLE)
   cmake_policy(SET CMP0042 NEW) # CMake 3.0
 endif (APPLE)
-#----------------------------------------------------------
-
-
-#----------------------------------------------------------
-# hunter dependencies
-hunter_add_package(Boost COMPONENTS date_time system filesystem)
-hunter_add_package(odb-compiler)
-hunter_add_package(odb-sqlite)
-hunter_add_package(Eigen)
-#find_package(odb REQUIRED)
 #----------------------------------------------------------
 
 
@@ -109,7 +87,7 @@ set(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 #----------------------------------------------------------
 # not used yet
 set(SYD_VERSION_MAJOR "0")
-set(SYD_VERSION_MINOR "3")
+set(SYD_VERSION_MINOR "2")
 set(SYD_VERSION_PATCH "0")
 #----------------------------------------------------------
 
@@ -144,13 +122,10 @@ set(SYD_CORE_LIBRARIES
   sydFit
   sydItkUtils
   odb-sqlite odb sqlite3 z
-  Boost::system
-  Boost::date_time
-  Boost::filesystem
+  ${Boost_LIBRARIES}
   ${ITK_LIBRARIES})
 
-set(SYD_COMMON_DB_LIBRARY sydCommonDatabase ${SYD_CORE_LIBRARIES})
-set(SYD_STD_DB_LIBRARY sydStandardDatabase ${SYD_COMMON_DB_LIBRARY})
+set(SYD_LIBRARIES sydStandardDatabase ${SYD_CORE_LIBRARIES})
 # ----------------------------------------------------------
 
 
