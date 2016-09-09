@@ -88,13 +88,13 @@ int main(int argc, char* argv[])
   // Stitch dicom
   std::cout << "Image stitch dicom " << std::endl;
   syd::DicomSerie::pointer spect1, spect2;
-  db->QueryOne(spect1, 14);
-  db->QueryOne(spect2, 15);
+  db->QueryOne(spect1, 15);
+  db->QueryOne(spect2, 16);
   auto spect = syd::InsertStitchDicomImage(spect1, spect2, 150000, 4);
 
   // Geom mean
   std::cout << "Image geometrical mean " << std::endl;
-  db->QueryOne(dicom_serie, 16); // Get NM "CORPS ENTIER" etc
+  db->QueryOne(dicom_serie, 17); // Get NM "CORPS ENTIER" etc
   auto planar = syd::InsertImageFromDicomSerie(dicom_serie, "float");
   auto geommean = syd::InsertImageGeometricalMean(planar, 0.5);
 
