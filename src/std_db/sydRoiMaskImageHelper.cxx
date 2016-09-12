@@ -42,9 +42,9 @@ syd::RoiType::pointer syd::FindRoiType(const std::string & roiname,
 // --------------------------------------------------------------------
 syd::RoiMaskImage::pointer
 syd::FindRoiMaskImage(const syd::Image::pointer image,
-                      syd::StandardDatabase * db,
                       const std::string & roi_name)
 {
+  auto db = image->GetDatabase<syd::StandardDatabase>();
   syd::RoiType::pointer roitype = syd::FindRoiType(roi_name, db);
   try {
     syd::RoiMaskImage::pointer roi;
@@ -56,7 +56,7 @@ syd::FindRoiMaskImage(const syd::Image::pointer image,
     return roi;
   } catch (const std::exception& e) {
     EXCEPTION("Cannot find a RoiMaskImage for image " << image->id
-              << " named '" << roi_name << "'.");
+              << " named '" << roi_name << "' (with same frame_of_reference_uid).");
   }
 }
 // --------------------------------------------------------------------

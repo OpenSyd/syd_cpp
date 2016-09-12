@@ -22,9 +22,9 @@
 
 // --------------------------------------------------------------------
 syd::File::pointer
-syd::New(syd::Database * db,
-         std::string path,
-         std::string filename)
+syd::NewFile(syd::Database * db,
+             std::string path,
+             std::string filename)
 {
   syd::File::pointer f;
   db->New(f);

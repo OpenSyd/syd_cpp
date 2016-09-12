@@ -33,7 +33,6 @@ namespace syd {
 
   // Search a roi mask image by a roi name and the image
   syd::RoiMaskImage::pointer FindRoiMaskImage(const syd::Image::pointer image,
-                                              syd::StandardDatabase * db,
                                               const std::string & roi_name);
 
   /// Compute the default image path (based on the patient's name)

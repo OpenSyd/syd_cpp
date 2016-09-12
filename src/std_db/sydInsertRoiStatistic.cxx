@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
         masks.push_back(NULL);
       }
       else {
-        auto m = syd::FindRoiMaskImage(image, db, args_info.inputs[0]);
+        auto m = syd::FindRoiMaskImage(image, args_info.inputs[0]);
         masks.push_back(m);
       }
     }

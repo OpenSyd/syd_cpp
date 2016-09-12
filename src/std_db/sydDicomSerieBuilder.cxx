@@ -260,10 +260,10 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
                  << "Filename is " << filename << std::endl
                  << "Use 'forcePatient' if you want to bypass this check";
     }
-    if (patient_->sex != std::string(sex)) {
+    /*if (patient_->sex != std::string(sex)) {
       LOG(FATAL) << "Patient's sex is different in the db and in the dicom: "
-                 << patient_->sex << " vs " << sex;
-    }
+      << patient_->sex << " vs " << sex;
+      }*/
   }
   if (patient_->dicom_patientid != patientID) {
     // update the dicom id if it is different (force flag)

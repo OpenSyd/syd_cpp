@@ -13,7 +13,7 @@ wrap_odb(sydStandardDatabase sydImage.h)
 wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
 wrap_odb(sydStandardDatabase sydRoiStatistic.h)
-# wrap_odb(sydStandardDatabase sydImageTransform.h)
+wrap_odb(sydStandardDatabase sydElastix.h)
 # wrap_odb(sydStandardDatabase sydCalibration.h)
 # wrap_odb(sydStandardDatabase sydTimepoints.h)
 # wrap_odb(sydStandardDatabase sydFitResult.h)
@@ -32,7 +32,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiMaskImage-odb.cxx sydRoiMaskImage-schema.cxx  sydRoiMaskImage.cxx
   sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
 
-  # sydImageTransform-odb.cxx sydImageTransform-schema.cxx  sydImageTransform.cxx
+  sydElastix-odb.cxx sydElastix-schema.cxx  sydElastix.cxx
   # sydCalibration-odb.cxx sydCalibration-schema.cxx  sydCalibration.cxx
   # sydTimepoints-odb.cxx sydTimepoints-schema.cxx  sydTimepoints.cxx
   # sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
@@ -208,6 +208,15 @@ wrap_ggo(syd_clitkExtractPatient_GGO_C
 add_executable(syd_clitkExtractPatient
   syd_clitkExtractPatient.cxx ${syd_clitkExtractPatient_GGO_C})
 target_link_libraries(syd_clitkExtractPatient ${SYD_STD_DB_LIBRARY})
+
+wrap_ggo(sydInsertElastixRegistration_GGO_C
+  sydInsertElastixRegistration.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertElastixRegistration
+  sydInsertElastixRegistration.cxx
+  ${sydInsertElastixRegistration_GGO_C})
+target_link_libraries(sydInsertElastixRegistration ${SYD_STD_DB_LIBRARY})
 
 # -----------------------------------------------------
 # -----------------------------------------------------

@@ -31,9 +31,9 @@ namespace syd {
   /// in a class for clarity.
 
   /// Simple file creation (not inserted)
-  syd::File::pointer New(syd::Database * db,
-                         std::string path,
-                         std::string filename);
+  syd::File::pointer NewFile(syd::Database * db,
+                             std::string path,
+                             std::string filename);
 
 } // namespace syd
 // --------------------------------------------------------------------

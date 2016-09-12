@@ -40,7 +40,7 @@
 #include "sydRoiMaskImage-odb.hxx"
 #include "sydRoiStatistic-odb.hxx"
 
-// #include "sydImageTransform-odb.hxx"
+#include "sydElastix-odb.hxx"
 // #include "sydCalibration-odb.hxx"
 // #include "sydTimepoints-odb.hxx"
 // #include "sydFitResult-odb.hxx"

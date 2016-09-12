@@ -119,9 +119,9 @@ void syd::Database::OpenFromFile(std::string filename)
   if (file_version > current_version) {
     LOG(FATAL) << "The database version in the file is newer ("
                << GetVersionAsString(file_version)
-               << ") than the syd database version ("
+               << ") than the current syd version ("
                << GetVersionAsString(current_version)
-               << "), upgrade syd.";
+               << "), please upgrade syd.";
   }
 
   // Define the tables
