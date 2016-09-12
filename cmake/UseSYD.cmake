@@ -55,6 +55,12 @@ include_directories(${CERES_INCLUDE_DIRS})
 
 
 #----------------------------------------------------------
+# Find SQlite3 (for odb)
+cmake_policy(SET CMP0054 NEW)
+find_package(SQLite3)
+#----------------------------------------------------------
+
+#----------------------------------------------------------
 # Find Odb
 find_package(ODB REQUIRED COMPONENTS sqlite)
 include(${ODB_USE_FILE})

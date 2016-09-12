@@ -24,7 +24,7 @@
 int main(int argc, char* argv[])
 {
   sydlog::Log::SQLFlag() = false;
-  sydlog::Log::LogLevel() = 3;
+  sydlog::Log::LogLevel() = 10;
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -87,16 +87,21 @@ int main(int argc, char* argv[])
   std::cout << "Patient  : " << p2 << std::endl;
   std::cout << "Injection: " << i2 << std::endl;
 
+
+  syd::Record::pointer i3;
+  db->QueryOne(i3, "Tag", 1);
+  DD(i3);
+
   // Delete
   std::cout << std::endl << "Delete" << std::endl;
   db->Delete(injection); // first because foreign_keys for patient
   db->Delete(patient);
   int n = db->GetNumberOfElements("Patient");
-  if (n != 0) { LOG(FATAL) << "Error delete patient"; }
-  n = db->GetNumberOfElements("Injection");
-  if (n != 0) { LOG(FATAL) << "Error delete injection"; }
-  std::cout << n << std::endl;
-
+  /*  if (n != 0) { LOG(FATAL) << "Error delete patient"; }
+    n = db->GetNumberOfElements("Injection");
+    if (n != 0) { LOG(FATAL) << "Error delete injection"; }
+    std::cout << n << std::endl;
+  */
   std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;
   // This is the end, my friend.
