@@ -20,10 +20,7 @@ add_test(NAME syd_test1
 
 # Test2 with sydStandardDatabase
 add_executable(syd_test2 syd_test2.cxx)
-#target_link_libraries(syd_test2 ${SYD_STD_DB_LIBRARY})
-target_link_libraries(syd_test2
-sydStandardDatabase
-  )
+target_link_libraries(syd_test2 ${SYD_STD_DB_LIBRARY})
 add_test(NAME syd_test2
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/syd_test2
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test)
