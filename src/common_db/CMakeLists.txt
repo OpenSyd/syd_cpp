@@ -65,10 +65,9 @@ set(sydCommonDatabase_src
   )
 
 add_library(sydCommonDatabaseObjects OBJECT ${sydCommonDatabase_src})
-
 add_library(sydCommonDatabase SHARED $<TARGET_OBJECTS:sydCommonDatabaseObjects>)
 if (APPLE)
-  target_link_libraries(sydCommonDatabase sydCore sydItkUtils odb-sqlite odb sqlite3 z)
+  target_link_libraries(sydCommonDatabase ${SYD_CORE_LIBRARIES})
 endif(APPLE)
 
 #----------------------------------------------------------

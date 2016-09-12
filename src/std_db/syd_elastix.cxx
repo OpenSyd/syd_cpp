@@ -22,17 +22,6 @@
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
-#include "sydFileBuilder.h"
-
-#include "boost/date_time/posix_time/posix_time.hpp"
-namespace pt = boost::posix_time;
-
-// --------------------------------------------------------------------
-syd::RoiMaskImage::pointer
-FindRoiMaskImage(const syd::StandardDatabase * db,
-                 const syd::Patient::pointer patient,
-                 const std::string & roi_name_or_id,
-                 const std::string & frame_of_reference_uid);
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])

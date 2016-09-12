@@ -98,6 +98,20 @@ int main(int argc, char* argv[])
   auto planar = syd::InsertImageFromDicomSerie(dicom_serie, "float");
   auto geommean = syd::InsertImageGeometricalMean(planar, 0.5);
 
+  // Crop image like
+  /*
+  std::cout << "Crop image like" << std::endl;
+  syd::Image::pointer img_to_crop;
+  db->QueryOne(img_to_crop, 4);
+  syd::Image::pointer like;
+  db->QueryOne(like, 2);
+  DD(img_to_crop);
+  DD(like);
+  syd::CropImageLike(img_to_crop, like);
+  DD(img_to_crop);
+  */
+
+
   // If needed create reference db
   if (args_info.create_ref_flag) {
     LOG(0) << "Create reference db";

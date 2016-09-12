@@ -340,3 +340,45 @@ syd::InsertImageGeometricalMean(const syd::Image::pointer input,
   return syd::InsertImage<ImageType>(gmean, input->patient, input->modality);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::CropImageLike(syd::Image::pointer image,
+                        const syd::Image::pointer like)
+{
+  DD("CropImageLike");
+  /*
+  DD(image);
+  DD(like);
+
+  // Read both images
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+  auto itk_like = syd::ReadImage<ImageType>(like->GetAbsolutePath());
+
+  // resample like image like image (ouarf!)
+  typedef itk::ResampleImageFilter<ImageType, ImageType> FilterType;
+  auto t = itk::AffineTransform<double, ImageType::ImageDimension>::New();
+  typename FilterType::Pointer filter = FilterType::New();
+  filter->SetTransform(t);
+  filter->SetSize(like->GetLargestPossibleRegion().GetSize());
+  filter->SetOutputSpacing(image->GetSpacing());
+  filter->SetOutputOrigin(like->GetOrigin());
+  //filter->SetDefaultPixelValue(defaultValue);
+  filter->SetOutputDirection(like->GetDirection());
+  typename itk::InterpolateImageFunction<ImageType>::Pointer interpolator;
+  interpolator = itk::NearestNeighborInterpolateImageFunction<ImageType, double>::New();
+
+  filter->SetInput(input);
+  filter->SetInterpolator(interpolator);
+  filter->Update();
+  auto itk_output = filter->GetOutput();
+
+  // crop
+
+  // save
+  */
+}
+
+// --------------------------------------------------------------------

@@ -59,27 +59,17 @@ add_library(sydStandardDatabaseObjects OBJECT ${SYD_STANDARD_DATABASE_SRC})
 # Conventional shared lib for command line executables
 add_library(sydStandardDatabase SHARED
   sydStandardDatabaseStatic.cxx
-  $<TARGET_OBJECTS:sydStandardDatabaseObjects>
-  )
-if (APPLE)
-  target_link_libraries(sydStandardDatabase sydCommonDatabase ${SYD_CORE_LIBRARIES})
-endif(APPLE)
+  $<TARGET_OBJECTS:sydStandardDatabaseObjects>)
 
 # Plugin library : MUST be called lib<DatabaseType>Plugin.so
-IF(APPLE)
-  add_library(StandardDatabasePlugin MODULE
-    sydStandardDatabasePlugin.cxx
-    $<TARGET_OBJECTS:sydStandardDatabaseObjects>
-    )
-  target_link_libraries(StandardDatabasePlugin ${SYD_CORE_LIBRARIES} sydCommonDatabase)
-ELSE(NOT APPLE)
-  add_library(StandardDatabasePlugin MODULE
-    sydStandardDatabasePlugin.cxx
-    # $<TARGET_OBJECTS:sydCommonDatabaseObjects>
-    $<TARGET_OBJECTS:sydStandardDatabaseObjects>
-    )
-  #target_link_libraries(StandardDatabasePlugin ${SYD_CORE_LIBRARIES})
-ENDIF(APPLE)
+add_library(StandardDatabasePlugin MODULE
+  sydStandardDatabasePlugin.cxx
+  $<TARGET_OBJECTS:sydStandardDatabaseObjects>)
+
+if (APPLE)
+  target_link_libraries(sydStandardDatabase ${SYD_COMMON_DB_LIBRARY})
+  target_link_libraries(StandardDatabasePlugin ${SYD_COMMON_DB_LIBRARY})
+endif(APPLE)
 
 set_target_properties(StandardDatabasePlugin PROPERTIES MACOSX_BUNDLE TRUE)
 set_target_properties(StandardDatabasePlugin PROPERTIES BUNDLE_EXTENSION ".so")

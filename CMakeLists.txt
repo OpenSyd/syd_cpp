@@ -48,10 +48,6 @@ add_definitions (
 # hunter dependencies
 set(HUNTER_STATUS_DEBUG OFF)
 hunter_add_package(Boost COMPONENTS date_time system filesystem)
-# message(" here " ${HUNTER_odb_VERSION})
-# message(" here " ${HUNTER_odb-sqlite_VERSION})
-#hunter_config(odb VERSION ${HUNTER_odb_VERSION} CMAKE_ARGS BUILD_SHARED_LIBS=ON)
-#hunter_config(odb-sqlite VERSION ${HUNTER_odb-sqlite_VERSION} CMAKE_ARGS BUILD_SHARED_LIBS=ON)
 hunter_add_package(odb)
 hunter_add_package(odb-compiler)
 hunter_add_package(odb-sqlite)
@@ -155,9 +151,9 @@ set(SYD_CORE_LIBRARIES
   sydCore
   sydFit
   sydItkUtils
+  ${SQLITE3_LIBRARY}
   ${ODB_SQLITE_LIBRARIES}
   ${ODB_LIBODB_LIBRARIES}
-  sqlite3
   z
   ${Boost_LIBRARIES}
   ${ITK_LIBRARIES})

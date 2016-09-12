@@ -100,6 +100,11 @@ namespace syd {
   syd::Image::pointer InsertImageGeometricalMean(const syd::Image::pointer input,
                                                  double k=0.5);
 
+
+  /// Crop an image like another one
+  void CropImageLike(syd::Image::pointer image, const syd::Image::pointer like);
+
+
 } // namespace syd
 
 #include "sydImageHelper.txx"
