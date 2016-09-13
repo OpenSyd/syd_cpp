@@ -87,7 +87,6 @@ int main(int argc, char* argv[])
     auto temp = db->GetUniqueTempFilename();
     std::string folder = patient->name+PATH_SEPARATOR+"elastix";
     syd::File::pointer config = syd::NewFile(db, folder, temp);
-    fs::create_directories(folder);
     db->Insert(config);
     config->filename = "config_"+std::to_string(elastix->id)+"_"
       +fs::path(config_filename).filename().string();

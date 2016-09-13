@@ -43,6 +43,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydImageHelper.cxx
   sydRoiMaskImageHelper.cxx
   sydUpdateRadionuclideFilter.cxx
+  sydElastixHelper.cxx
 
   #sydRoiStatisticBuilder.cxx
 
@@ -218,6 +219,14 @@ add_executable(sydInsertElastixRegistration
   ${sydInsertElastixRegistration_GGO_C})
 target_link_libraries(sydInsertElastixRegistration ${SYD_STD_DB_LIBRARY})
 
+wrap_ggo(syd_elastix_GGO_C
+  syd_elastix.ggo
+  sydCommandLineDefault.ggo)
+add_executable(syd_elastix
+  syd_elastix.cxx
+  ${syd_elastix_GGO_C})
+target_link_libraries(syd_elastix ${SYD_STD_DB_LIBRARY})
+
 # -----------------------------------------------------
 # -----------------------------------------------------
 # -----------------------------------------------------
@@ -319,12 +328,6 @@ target_link_libraries(sydInsertElastixRegistration ${SYD_STD_DB_LIBRARY})
 #   syd_clitkExtractPatient.cxx ${syd_clitkExtractPatient_GGO_C})
 # target_link_libraries(syd_clitkExtractPatient ${SYD_STD_DB_LIBRARY})
 
-
-#----------------------------------------------------------
-# External tool: elastix
-# wrap_ggo(syd_elastix_GGO_C syd_elastix.ggo sydCommandLineDefault.ggo)
-# add_executable(syd_elastix syd_elastix.cxx ${syd_elastix_GGO_C})
-# target_link_libraries(syd_elastix StandardDatabase )
 
 #----------------------------------------------------------
 # External tool: transformix

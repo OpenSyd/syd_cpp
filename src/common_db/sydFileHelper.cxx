@@ -29,6 +29,9 @@ syd::NewFile(syd::Database * db,
   syd::File::pointer f;
   db->New(f);
   f->path = path;
+  // Create the folder in the db
+  auto absolute_folder = db->ConvertToAbsolutePath(path);
+  fs::create_directories(absolute_folder);
   f->filename = filename;
   return f;
 }

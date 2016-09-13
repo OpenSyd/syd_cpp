@@ -5,9 +5,9 @@ option(HUNTER_ENABLED "Enable Hunter package manager" ON)
 include("cmake/HunterGate.cmake")
 #list(APPEND HUNTER_CACHE_SERVERS "https://github.com/ingenue/hunter-cache")
 HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.15.25.tar.gz"
-    SHA1 "74993ddf2cf8a6a4c3e0b9d58027a624bf3060e7"
-)
+  URL "https://github.com/ruslo/hunter/archive/v0.15.25.tar.gz"
+  SHA1 "74993ddf2cf8a6a4c3e0b9d58027a624bf3060e7"
+  )
 # ---------------------------------------------------------
 
 
@@ -20,7 +20,7 @@ project(syd)
 # cmake policies
 cmake_policy(VERSION 3.0)
 if(COMMAND cmake_policy)
-    cmake_policy(SET CMP0003 NEW)
+  cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
 # Policy for shared library on OSX

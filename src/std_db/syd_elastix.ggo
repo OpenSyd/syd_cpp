@@ -1,14 +1,8 @@
 #File syd_elastix.ggo
 
 package "syd"
-version "0.'"
-usage "syd_elastix <config> <fixed_image_id> <moving_images_ids*> "
+version "0.2"
+usage "syd_elastix <elastix_ids> "
 description "Parameters are:
-- <config>              : elastix config file
-- <fixed_image_id>      : id of the fixed image
-- <moving_images_ids*>  : ids of the moving image (multiple -> one registration by id)
+- <elastix_ids>  : ids of Elastix records in the db
 "
-
-option "options"        p       "Option for elastix (in \" \")"                 string  default="" no
-option "fMask"          -       "Mask id or name for fixed image (table RoiMaskImage)"  string no
-option "mMask"   	-       "Mask id or name for moving image (table RoiMaskImage)" string no
