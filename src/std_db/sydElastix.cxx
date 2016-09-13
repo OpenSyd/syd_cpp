@@ -102,6 +102,8 @@ void syd::Elastix::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("tags", GetLabels(tags), 100);
   ta.Set("fixed", fixed_image->id);
   ta.Set("moving", moving_image->id);
+  ta.Set("fmask", (fixed_mask == NULL ? empty_value:fixed_mask->roitype->name));
+  ta.Set("mmask", (moving_mask == NULL ? empty_value:moving_mask->roitype->name));
   ta.Set("config", (config_file == NULL ? empty_value:config_file->filename));
   ta.Set("fixed_ref_frame", fixed_image->frame_of_reference_uid);
   ta.Set("moving_ref_frame", moving_image->frame_of_reference_uid);
