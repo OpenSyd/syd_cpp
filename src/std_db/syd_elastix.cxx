@@ -59,46 +59,7 @@ int main(int argc, char* argv[])
                    << e->transform_file->GetAbsolutePath()
                    << "). It will be overwritten";
     }
-
-    auto output_dir = db->GetUniqueTempFilename("");
-    fs::create_directories(output_dir);
-
-    // Create command line
-    std::ostringstream cmd;
-    cmd << "elastix -f " << e->fixed_image->GetAbsolutePath()
-        << " -m " << e->moving_image->GetAbsolutePath()
-        << " -out " << output_dir
-        << " -p " << e->config_file->GetAbsolutePath();
-
-    // Execute the cmd line
-    LOG(1) << cmd.str();
-    int r = syd::ExecuteCommandLine(cmd.str(), args_info.verbose_arg);
-
-    // test return
-    std::string filename = e->ComputeDefaultFilename();//"TransformParameters.0.txt";
-    if (r!=0) { // fail
-      LOG(WARNING) << "Command elastix fail";
-      fs::remove(output_dir);
-    }
-    else  {
-      std::string result_file = output_dir+PATH_SEPARATOR+filename;
-      if (!fs::exists(result_file)) {
-        LOG(WARNING) << "Error could not find the output file: " << result_file;
-        fs::remove(output_dir);
-      }
-      else { // only create the files if ok
-        if (!e->transform_file) {
-          auto folder = e->ComputeDefaultFolder();
-          e->transform_file = syd::NewFile(db, folder, filename);
-          db->Insert(e->transform_file);
-        }
-        fs::copy_file(result_file,
-                      e->transform_file->GetAbsolutePath(),
-                      fs::copy_option::overwrite_if_exists);
-        db->Update(e);
-        LOG(1) << "Registration computed. Result: " << e;
-      }
-    }
+    syd::ExecuteElastix(e, args_info.options_arg, args_info.verbose_arg);
   }
 
   // This is the end, my friend.

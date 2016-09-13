@@ -6,3 +6,5 @@ usage "syd_elastix <elastix_ids> "
 description "Parameters are:
 - <elastix_ids>  : ids of Elastix records in the db
 "
+
+option "options" o  "Option for elastix (in \" \")"  string  default="" no

@@ -227,6 +227,16 @@ add_executable(syd_elastix
   ${syd_elastix_GGO_C})
 target_link_libraries(syd_elastix ${SYD_STD_DB_LIBRARY})
 
+wrap_ggo(syd_transformix_GGO_C
+  syd_transformix.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo)
+add_executable(syd_transformix
+  syd_transformix.cxx
+  ${syd_transformix_GGO_C})
+target_link_libraries(syd_transformix ${SYD_STD_DB_LIBRARY})
+
 # -----------------------------------------------------
 # -----------------------------------------------------
 # -----------------------------------------------------
@@ -317,24 +327,6 @@ target_link_libraries(syd_elastix ${SYD_STD_DB_LIBRARY})
 # wrap_ggo(sydInsertCalibration_GGO_C sydInsertCalibration.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 # add_executable(sydInsertCalibration sydInsertCalibration.cxx ${sydInsertCalibration_GGO_C})
 # target_link_libraries(sydInsertCalibration ${SYD_STD_DB_LIBRARY})
-
-
-#----------------------------------------------------------
-#----------------------------------------------------------
-# External tool: clitkExtractPatient
-# wrap_ggo(syd_clitkExtractPatient_GGO_C
-#   syd_clitkExtractPatient.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-# add_executable(syd_clitkExtractPatient
-#   syd_clitkExtractPatient.cxx ${syd_clitkExtractPatient_GGO_C})
-# target_link_libraries(syd_clitkExtractPatient ${SYD_STD_DB_LIBRARY})
-
-
-#----------------------------------------------------------
-# External tool: transformix
-# wrap_ggo(syd_transformix_GGO_C
-#   syd_transformix.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-# add_executable(syd_transformix syd_transformix.cxx ${syd_transformix_GGO_C})
-# target_link_libraries(syd_transformix StandardDatabase )
 
 
 #----------------------------------------------------------

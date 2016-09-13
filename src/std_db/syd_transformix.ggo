@@ -2,9 +2,15 @@
 
 package "syd"
 version "0.4"
-usage "syd_transformix <image_ids> "
+usage "syd_transformix <image_ids>"
 description "Parameters are:
-- <image_ids>         : ids of the image to transform
+- <image_ids>            : id of the images to transform
+
+An Elastix id must be given for every image_id.
+
 "
 
-option "transform"   	        -       "List of transform ids (between \"\")"        string    yes
+option "elastix"        e "Elastix ids withint \" \"" string yes
+option "default_pixel"  p "Default pixel value" double default="0" no
+option "options"        o "Option for transformix (in \" \")"  string  default="" no
+#option "do_not_check_frame_of_reference_uid" f "If flag on, do not check frame_of_reference_uid" flag off

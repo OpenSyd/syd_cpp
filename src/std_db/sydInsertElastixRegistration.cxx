@@ -71,9 +71,6 @@ int main(int argc, char* argv[])
       moving_mask = syd::FindRoiMaskImage(moving_image, args_info.mMask_arg);
     }
 
-    // Get elastix param
-    std::string options = args_info.options_arg;
-
     // Create the object
     syd::Elastix::pointer elastix;
     db->New(elastix);
@@ -81,7 +78,6 @@ int main(int argc, char* argv[])
     elastix->fixed_mask = fixed_mask;
     elastix->moving_image = moving_image;
     elastix->moving_mask = moving_mask;
-    elastix->options = options;
     db->Insert(elastix);
 
     auto temp = db->GetUniqueTempFilename();
