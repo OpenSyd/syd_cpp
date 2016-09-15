@@ -23,7 +23,6 @@
 #include "sydDatabase.h"
 #include "sydTable.h"
 #include "sydImageUtils.h"
-#include "sydImageFlip.h"
 
 // syd tables
 #include "sydRecordHistory-odb.hxx"
