@@ -154,14 +154,16 @@ typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filen
 
 //--------------------------------------------------------------------
 template<class ImageType>
-typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType * s2,
-                                         double threshold_cumul, double skip_slices)
+typename ImageType::Pointer StitchImages(const ImageType * s1,
+                                         const ImageType * s2,
+                                         double threshold_cumul,
+                                         double skip_slices)
 {
   // compute bounding box
   typename ImageType::IndexType index1 = s1->GetLargestPossibleRegion().GetIndex();
   typename ImageType::IndexType index2 = s2->GetLargestPossibleRegion().GetIndex();
-  typename ImageType::IndexType last1 = s1->GetLargestPossibleRegion().GetIndex()+s1->GetLargestPossibleRegion().GetSize();
-  typename ImageType::IndexType last2 = s2->GetLargestPossibleRegion().GetIndex()+s2->GetLargestPossibleRegion().GetSize();
+  typename ImageType::IndexType last1 = index1+s1->GetLargestPossibleRegion().GetSize();
+  typename ImageType::IndexType last2 = index2+s2->GetLargestPossibleRegion().GetSize();
 
   typename ImageType::PointType pstart1, pstart2, pend1, pend2;
   s1->TransformIndexToPhysicalPoint(index1, pstart1);
@@ -213,12 +215,15 @@ typename ImageType::Pointer StitchImages(const ImageType * s1, const ImageType *
   output->SetOrigin(origin);
   output->Allocate();
 
-  // Resize 2 images like output
-  typename ImageType::Pointer rs1 = syd::ResampleAndCropImageLike<ImageType>(s1, output, 0,0);
-  typename ImageType::Pointer rs2 = syd::ResampleAndCropImageLike<ImageType>(s2, output, 0,0);
+  // Resize 2 images like output. interpolation is *needed* because
+  // often, s1 (or s2) does not correspond to the whole grid
+  typename ImageType::Pointer rs1 = syd::ResampleAndCropImageLike<ImageType>(s1, output, 1, 0);
+  typename ImageType::Pointer rs2 = syd::ResampleAndCropImageLike<ImageType>(s2, output, 1, 0);
 
   // Swap if not correct order
-  if (pstart3[2] == pstart1[2]) std::swap(rs1, rs2);
+  if (pstart3[2] == pstart1[2]) {
+    std::swap(rs1, rs2);
+  }
 
   {
     typedef itk::ImageSliceConstIteratorWithIndex<ImageType> ConstIteratorType;
@@ -595,16 +600,16 @@ void UpdateDicomImageInformation(typename itk::Image<PixelType,3>::Pointer image
 
   // change spacing z
   typename ImageType::SpacingType spacing = image->GetSpacing();
-  if (s<0) {
+  /*if (s<0) {
     spacing[2] = -s;
   }
   else {
     if (s != 0) spacing[2] = s;
-  }
+    }*/
   image->SetSpacing(spacing);
 
   // Direction
-  if (s<0) {
+  /*if (s<0) {
     LOG(2) << "Negative spacing, image is reoriented.";
     typename ImageType::DirectionType direction = image->GetDirection();
     direction.Fill(0.0);
@@ -619,15 +624,15 @@ void UpdateDicomImageInformation(typename itk::Image<PixelType,3>::Pointer image
     orienter->SetInput(image);
     orienter->Update();
     image = orienter->GetOutput();
-  }
+    }*/
 
   // Flip needed sometimes
-  for(auto i=0; i<3; i++) {
+  /*  for(auto i=0; i<3; i++) {
     if (image->GetDirection()[i][i] < 0) {
       LOG(2) << "Negative direction, image is flipped.";
       image = syd::FlipImage<ImageType>(image, i);
     }
-  }
+    }*/
 
   // Pixel scale
   double ps = 1.0;
