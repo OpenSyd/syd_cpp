@@ -19,6 +19,7 @@
 // syd
 #include "sydImageHelper.h"
 #include "sydFileHelper.h"
+#include "sydRoiMaskImageHelper.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -381,4 +382,39 @@ void syd::CropImageLike(syd::Image::pointer image,
   */
 }
 
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
+{
+  DD(image);
+  if (image->injection == NULL) {
+    EXCEPTION("Cannot ComputeActivityInMBqByDetectedCounts, need an injection for this image");
+  }
+
+  auto injection = image->injection;
+  double injected_activity = injection->activity_in_MBq;
+  double time = syd::DateDifferenceInHours(image->acquisition_date, injection->date);
+  double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
+  double activity_at_acquisition = injected_activity * exp(-lambda * time);
+  DD(injected_activity);
+  DD(time);
+  DD(lambda);
+  DD(activity_at_acquisition);
+
+  // Compute stat (without mask)
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  syd::RoiStatistic::pointer stat;
+  db->New(stat);
+  stat->image = image;
+  syd::ComputeRoiStatistic(stat);
+  DD(stat);
+  DD(stat->sum);
+
+  //  double s = stat->sum / activity_at_acquisition;
+  double s = activity_at_acquisition / stat->sum;
+  DD(s);
+  return s;
+}
 // --------------------------------------------------------------------

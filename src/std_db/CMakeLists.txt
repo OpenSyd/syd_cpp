@@ -200,6 +200,17 @@ add_executable(sydInsertRoiStatistic
 target_link_libraries(sydInsertRoiStatistic ${SYD_STD_DB_LIBRARY})
 
 
+# ComputeActivityInMBqByDetectedCounts
+wrap_ggo(sydComputeActivityInMBqByDetectedCounts_GGO_C
+  sydComputeActivityInMBqByDetectedCounts.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydComputeActivityInMBqByDetectedCounts
+  sydComputeActivityInMBqByDetectedCounts.cxx
+  ${sydComputeActivityInMBqByDetectedCounts_GGO_C})
+target_link_libraries(sydComputeActivityInMBqByDetectedCounts ${SYD_STD_DB_LIBRARY})
+
+
+
 #----------------------------------------------------------
 # External tool: clitkExtractPatient
 wrap_ggo(syd_clitkExtractPatient_GGO_C
@@ -321,12 +332,6 @@ target_link_libraries(syd_transformix ${SYD_STD_DB_LIBRARY})
 # wrap_ggo(sydInsertPixelTimepoints_GGO_C sydInsertPixelTimepoints.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 # add_executable(sydInsertPixelTimepoints sydInsertPixelTimepoints.cxx ${sydInsertPixelTimepoints_GGO_C})
 # target_link_libraries(sydInsertPixelTimepoints ${SYD_STD_DB_LIBRARY})
-
-
-# Insert / Update calibration for an image
-# wrap_ggo(sydInsertCalibration_GGO_C sydInsertCalibration.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-# add_executable(sydInsertCalibration sydInsertCalibration.cxx ${sydInsertCalibration_GGO_C})
-# target_link_libraries(sydInsertCalibration ${SYD_STD_DB_LIBRARY})
 
 
 #----------------------------------------------------------
