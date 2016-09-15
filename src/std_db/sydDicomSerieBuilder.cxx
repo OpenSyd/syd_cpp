@@ -255,7 +255,7 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
     if (patient_->dicom_patientid != patientID) {
       LOG(FATAL) << "Patient does not seems to be the same. You ask for " << patient_->name
                  << " with dicom_id = " << patient_->dicom_patientid
-                 << " while in dicom, it is '" << patientID
+                 << " while in dicom, it is " << patientID
                  << " with name: " << patientName << std::endl
                  << "Filename is " << filename << std::endl
                  << "Use 'forcePatient' if you want to bypass this check";
