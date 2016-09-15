@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Hunter
 cmake_minimum_required(VERSION 3.0)
+cmake_policy(SET CMP0054 NEW)
 option(HUNTER_ENABLED "Enable Hunter package manager" ON)
 include("cmake/HunterGate.cmake")
 #list(APPEND HUNTER_CACHE_SERVERS "https://github.com/ingenue/hunter-cache")
