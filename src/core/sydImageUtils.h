@@ -24,7 +24,6 @@
 #include "sydFileUtils.h"
 #include "sydImageCrop.h" // need for stitch. FIXME to change
 #include "sydDicomUtils.h"
-#include "sydImageFlip.h"
 
 // itk
 #include <itkImageFileReader.h>
