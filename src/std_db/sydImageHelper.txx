@@ -50,6 +50,12 @@ void syd::SetImageInfoFromCommandLine(syd::Image::pointer image,
     for(auto i=0; i<args_info.dicom_given; i++)
       syd::AddDicomSerie(image, args_info.dicom_arg[i]);
   }
+
+  if (args_info.flip_if_negative_spacing_flag and
+      syd::FlipImageIfNegativeSpacing(image)) {
+    LOG(1) << "Negative spacing detected, image was flipped";
+  }
+
 }
 // --------------------------------------------------------------------
 

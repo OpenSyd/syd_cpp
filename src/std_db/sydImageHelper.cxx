@@ -349,37 +349,37 @@ void syd::CropImageLike(syd::Image::pointer image,
 {
   DD("CropImageLike");
   /*
-  DD(image);
-  DD(like);
+    DD(image);
+    DD(like);
 
-  // Read both images
-  typedef float PixelType;
-  typedef itk::Image<PixelType, 3> ImageType;
-  auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
-  auto itk_like = syd::ReadImage<ImageType>(like->GetAbsolutePath());
+    // Read both images
+    typedef float PixelType;
+    typedef itk::Image<PixelType, 3> ImageType;
+    auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+    auto itk_like = syd::ReadImage<ImageType>(like->GetAbsolutePath());
 
-  // resample like image like image (ouarf!)
-  typedef itk::ResampleImageFilter<ImageType, ImageType> FilterType;
-  auto t = itk::AffineTransform<double, ImageType::ImageDimension>::New();
-  typename FilterType::Pointer filter = FilterType::New();
-  filter->SetTransform(t);
-  filter->SetSize(like->GetLargestPossibleRegion().GetSize());
-  filter->SetOutputSpacing(image->GetSpacing());
-  filter->SetOutputOrigin(like->GetOrigin());
-  //filter->SetDefaultPixelValue(defaultValue);
-  filter->SetOutputDirection(like->GetDirection());
-  typename itk::InterpolateImageFunction<ImageType>::Pointer interpolator;
-  interpolator = itk::NearestNeighborInterpolateImageFunction<ImageType, double>::New();
+    // resample like image like image (ouarf!)
+    typedef itk::ResampleImageFilter<ImageType, ImageType> FilterType;
+    auto t = itk::AffineTransform<double, ImageType::ImageDimension>::New();
+    typename FilterType::Pointer filter = FilterType::New();
+    filter->SetTransform(t);
+    filter->SetSize(like->GetLargestPossibleRegion().GetSize());
+    filter->SetOutputSpacing(image->GetSpacing());
+    filter->SetOutputOrigin(like->GetOrigin());
+    //filter->SetDefaultPixelValue(defaultValue);
+    filter->SetOutputDirection(like->GetDirection());
+    typename itk::InterpolateImageFunction<ImageType>::Pointer interpolator;
+    interpolator = itk::NearestNeighborInterpolateImageFunction<ImageType, double>::New();
 
-  filter->SetInput(input);
-  filter->SetInterpolator(interpolator);
-  filter->Update();
-  auto itk_output = filter->GetOutput();
+    filter->SetInput(input);
+    filter->SetInterpolator(interpolator);
+    filter->Update();
+    auto itk_output = filter->GetOutput();
 
-  // crop
+    // crop
 
-  // save
-  */
+    // save
+    */
 }
 
 // --------------------------------------------------------------------
@@ -416,5 +416,30 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
   double s = activity_at_acquisition / stat->sum;
   DD(s);
   return s;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::FlipImageIfNegativeSpacing(syd::Image::pointer image)
+{
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+  bool flip = syd::FlipImageIfNegativeSpacing<ImageType>(itk_image);
+  if (flip) {
+    auto pixel_type = image->pixel_type;
+    syd::WriteImage<ImageType>(itk_image, image->GetAbsolutePath());
+    if (pixel_type != "float") {
+      // Later --> conversion
+      //syd::ConvertImagePixelType(image, args_info.pixel_type_arg);
+      LOG(WARNING) << "Pixel type was changed from " << pixel_type
+                   << " to float";
+    }
+    syd::SetImageInfoFromFile(image);
+    auto db = image->GetDatabase<syd::StandardDatabase>();
+    db->Update(image); // for changed spacing , history
+  }
+  return flip;
 }
 // --------------------------------------------------------------------

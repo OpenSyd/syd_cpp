@@ -41,12 +41,15 @@ typename ImageType::Pointer syd::FlipImage(const ImageType * input, int axe)
 
 //--------------------------------------------------------------------
 template<class ImageType>
-void syd::FlipImageIfNegativeSpacing(typename ImageType::Pointer & image)
+bool syd::FlipImageIfNegativeSpacing(typename ImageType::Pointer & image)
 {
+  bool flip = false;
+
   // Flip direction if the spacing is negative
   for(auto i=0; i<image->GetImageDimension(); i++) {
     if (image->GetSpacing()[i] < 0) {
       image = syd::FlipImage<ImageType>(image, i);
+      flip = true;
     }
   }
 
@@ -61,5 +64,6 @@ void syd::FlipImageIfNegativeSpacing(typename ImageType::Pointer & image)
   }
   image->SetDirection(direction);
   image->SetSpacing(spacing);
+  return flip;
 }
 //--------------------------------------------------------------------

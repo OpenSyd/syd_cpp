@@ -33,7 +33,7 @@ namespace syd {
   typename ImageType::Pointer FlipImage(const ImageType * input, int axe);
 
   template<class ImageType>
-  void FlipImageIfNegativeSpacing(typename ImageType::Pointer & image);
+  bool FlipImageIfNegativeSpacing(typename ImageType::Pointer & image);
 
 } // end namespace
 

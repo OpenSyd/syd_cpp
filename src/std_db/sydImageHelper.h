@@ -108,6 +108,9 @@ namespace syd {
   /// Compute the activity in MBq by detected counts
   double ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image);
 
+  /// Flip image if negative spacing is detected
+  bool FlipImageIfNegativeSpacing(syd::Image::pointer image);
+
 } // namespace syd
 
 #include "sydImageHelper.txx"

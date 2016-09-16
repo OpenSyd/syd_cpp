@@ -8,3 +8,6 @@ option "dicom"      - "Dicom id to link" int multiple no
 option "injection"  - "Injection id or name to link" string no
 option "acquisition_date"       - "Acquisition date, ie '2011-11-03 12:34'" string no
 option "frame_of_reference_uid" - "Frame of ref (for image coordinate system)" string no
+option "flip_if_negative_spacing" - "Flip the image if negative spacing" flag off
+
+# add pixel_type with conversion
