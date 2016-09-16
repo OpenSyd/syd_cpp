@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 
   // Compute roi statistic
   auto stat1 = syd::FindOneRoiStatistic(image, mask);
-  if (!stat1) stat1 = syd::InsertRoiStatistic(image, mask);
+  if (!stat1) stat1 = syd::InsertRoiStatistic(image, mask, "resampled_mask.mhd");
   else {
     std::cout << "Update stat: " << stat1 << std::endl;
     syd::ComputeRoiStatistic(stat1);

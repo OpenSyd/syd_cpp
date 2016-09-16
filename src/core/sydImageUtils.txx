@@ -598,42 +598,6 @@ void UpdateDicomImageInformation(typename itk::Image<PixelType,3>::Pointer image
   if (s == 0) //SliceThickness
     s = atof(GetTagValueFromTagKey<std::string>(dicomIO, "0018|0050", "1.0").c_str());
 
-  // change spacing z
-  typename ImageType::SpacingType spacing = image->GetSpacing();
-  /*if (s<0) {
-    spacing[2] = -s;
-  }
-  else {
-    if (s != 0) spacing[2] = s;
-    }*/
-  image->SetSpacing(spacing);
-
-  // Direction
-  /*if (s<0) {
-    LOG(2) << "Negative spacing, image is reoriented.";
-    typename ImageType::DirectionType direction = image->GetDirection();
-    direction.Fill(0.0);
-    direction(0,0) = 1; direction(1,1) = 1; direction(2,2) = -1;
-    image->SetDirection(direction);
-
-    // Change orientation
-    typename itk::OrientImageFilter<ImageType,ImageType>::Pointer orienter =
-      itk::OrientImageFilter<ImageType,ImageType>::New();
-    orienter->UseImageDirectionOn();
-    orienter->SetDesiredCoordinateOrientation(itk::SpatialOrientation::ITK_COORDINATE_ORIENTATION_RAI);
-    orienter->SetInput(image);
-    orienter->Update();
-    image = orienter->GetOutput();
-    }*/
-
-  // Flip needed sometimes
-  /*  for(auto i=0; i<3; i++) {
-    if (image->GetDirection()[i][i] < 0) {
-      LOG(2) << "Negative direction, image is flipped.";
-      image = syd::FlipImage<ImageType>(image, i);
-    }
-    }*/
-
   // Pixel scale
   double ps = 1.0;
   ps = GetTagValueFromTagKey(dicomIO, "0011|103b", 1.0); // PixelScale

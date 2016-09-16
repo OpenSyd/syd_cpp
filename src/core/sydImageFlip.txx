@@ -18,7 +18,7 @@
 
 //--------------------------------------------------------------------
 template<class ImageType>
-typename ImageType::Pointer FlipImage(const ImageType * input, int axe)
+typename ImageType::Pointer syd::FlipImage(const ImageType * input, int axe)
 {
   // Filter
   typedef itk::FlipImageFilter<ImageType> FlipImageFilterType;
@@ -35,5 +35,31 @@ typename ImageType::Pointer FlipImage(const ImageType * input, int axe)
   flipFilter->SetFlipAboutOrigin(false);
   flipFilter->Update();
   return flipFilter->GetOutput();
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+void syd::FlipImageIfNegativeSpacing(typename ImageType::Pointer & image)
+{
+  // Flip direction if the spacing is negative
+  for(auto i=0; i<image->GetImageDimension(); i++) {
+    if (image->GetSpacing()[i] < 0) {
+      image = syd::FlipImage<ImageType>(image, i);
+    }
+  }
+
+  // then remove negative spacing and negative direction (due to flip)
+  auto direction = image->GetDirection();
+  auto spacing = image->GetSpacing();
+  for(auto i=0; i<image->GetImageDimension(); i++) {
+    if (image->GetSpacing()[i] < 0.0) {
+      direction(i,i) = -direction(i,i);
+      spacing[i] = -spacing[i];
+    }
+  }
+  image->SetDirection(direction);
+  image->SetSpacing(spacing);
 }
 //--------------------------------------------------------------------
