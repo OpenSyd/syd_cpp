@@ -51,15 +51,11 @@ int main(int argc, char* argv[])
 
   // Loop on images
   for(auto image:images) {
-    DD(image);
     double s = syd::ComputeActivityInMBqByDetectedCounts(image);
-    DD(s);
-    DD(s*1000000);
     s = s * args_info.scale_arg;
     // print result:
-    // Verbose = 0  -> as a single line
+    // Verbose == 0  -> as a single line
     // Verbose >= 1 -> several lines
-    DD(sydlog::Log::LogLevel());
     auto l = sydlog::Log::LogLevel();
     if (l == 0) {
       std::cout << s << " ";

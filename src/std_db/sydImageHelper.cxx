@@ -388,7 +388,6 @@ void syd::CropImageLike(syd::Image::pointer image,
 // --------------------------------------------------------------------
 double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
 {
-  DD(image);
   if (image->injection == NULL) {
     EXCEPTION("Cannot ComputeActivityInMBqByDetectedCounts, need an injection for this image");
   }
@@ -398,10 +397,6 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
   double time = syd::DateDifferenceInHours(image->acquisition_date, injection->date);
   double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
   double activity_at_acquisition = injected_activity * exp(-lambda * time);
-  DD(injected_activity);
-  DD(time);
-  DD(lambda);
-  DD(activity_at_acquisition);
 
   // Compute stat (without mask)
   auto db = image->GetDatabase<syd::StandardDatabase>();
@@ -409,12 +404,9 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
   db->New(stat);
   stat->image = image;
   syd::ComputeRoiStatistic(stat);
-  DD(stat);
-  DD(stat->sum);
 
-  //  double s = stat->sum / activity_at_acquisition;
+  // activity by nb of counts
   double s = activity_at_acquisition / stat->sum;
-  DD(s);
   return s;
 }
 // --------------------------------------------------------------------
