@@ -125,7 +125,8 @@ syd::RoiStatistic::pointer syd::FindOneRoiStatistic(syd::Image::pointer image,
 
 // --------------------------------------------------------------------
 syd::RoiStatistic::pointer syd::InsertRoiStatistic(syd::Image::pointer image,
-                                                   syd::RoiMaskImage::pointer mask)
+                                                   syd::RoiMaskImage::pointer mask,
+                                                   std::string mask_output_filename)
 {
   // new
   auto db = image->GetDatabase<syd::StandardDatabase>();
@@ -138,17 +139,24 @@ syd::RoiStatistic::pointer syd::InsertRoiStatistic(syd::Image::pointer image,
   syd::AddTag(stat->tags, image->tags);
 
   // update
-  syd::ComputeRoiStatistic(stat);
+  auto itk_mask = syd::ComputeRoiStatistic(stat);
 
   // insert
   db->Insert(stat);
+
+  // Write mask if needed
+  if (mask_output_filename != "") {
+    syd::WriteImage<itk::Image<unsigned char,3>>(itk_mask, mask_output_filename);
+  }
+
   return stat;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::ComputeRoiStatistic(syd::RoiStatistic::pointer stat)
+itk::Image<unsigned char, 3>::Pointer
+syd::ComputeRoiStatistic(syd::RoiStatistic::pointer stat)
 {
   // Get the itk images
   typedef float PixelType; // whatever the image
@@ -196,5 +204,8 @@ void syd::ComputeRoiStatistic(syd::RoiStatistic::pointer stat)
   stat->min = min;
   stat->max = max;
   stat->sum = sum;
+
+  // return the used mask
+  return itk_mask;
 }
 // --------------------------------------------------------------------
