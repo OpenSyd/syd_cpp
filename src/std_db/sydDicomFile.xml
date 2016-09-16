@@ -1,0 +1,22 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="278"/>
+
+  <changeset version="276">
+    <add-table name="syd::DicomFile" kind="polymorphic derived object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="dicom_sop_uid" type="TEXT" null="true" options="UNIQUE"/>
+      <column name="dicom_instance_number" type="INTEGER" null="true"/>
+      <primary-key>
+        <column name="id"/>
+      </primary-key>
+      <foreign-key name="id_fk" on-delete="CASCADE">
+        <column name="id"/>
+        <references table="syd::File">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
+  <model version="257"/>
+</changelog>

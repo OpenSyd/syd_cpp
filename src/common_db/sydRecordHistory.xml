@@ -1,0 +1,17 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="sydCommonDatabase" version="1">
+  <changeset version="278"/>
+
+  <changeset version="276">
+    <add-table name="syd::RecordHistory" kind="polymorphic root object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="typeid" type="TEXT" null="true"/>
+      <column name="insertion_date" type="TEXT" null="true"/>
+      <column name="update_date" type="TEXT" null="true"/>
+      <primary-key auto="true">
+        <column name="id"/>
+      </primary-key>
+    </add-table>
+  </changeset>
+
+  <model version="257"/>
+</changelog>
