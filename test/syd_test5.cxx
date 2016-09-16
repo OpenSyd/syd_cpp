@@ -53,6 +53,9 @@ int main(int argc, char* argv[])
   db->QueryOne<syd::Image>(image, 4);
   std::cout << "Image: " << image << std::endl;
 
+  // Flip if needed
+  syd::FlipImageIfNegativeSpacing(image);
+
   // Insert a roi from a mhd file
   std::string filename = "input/liver_18.mhd";
   auto roitype = syd::FindRoiType("liver", db);
@@ -66,12 +69,16 @@ int main(int argc, char* argv[])
 
   // Compute roi statistic
   auto stat1 = syd::FindOneRoiStatistic(image, mask);
-  if (!stat1) stat1 = syd::InsertRoiStatistic(image, mask);
+  auto temp = db->GetUniqueTempFilename(".mhd");
+  if (!stat1) stat1 = syd::InsertRoiStatistic(image, mask, temp);
   else {
     std::cout << "Update stat: " << stat1 << std::endl;
     syd::ComputeRoiStatistic(stat1);
     db->Update(stat1);
   }
+  auto resampled_mask = syd::InsertImageFromFile(temp, image->patient);
+  syd::DeleteMHDImage(temp);
+  std::cout << "Resampled mask: " << resampled_mask << std::endl;
   std::cout << "RoiStatistic (with mask): " << stat1 << std::endl;
 
   // Compute roi statistic with no mask
@@ -97,6 +104,19 @@ int main(int argc, char* argv[])
 
   ref_db->QueryOne(ref_image, mask->id);
   syd::CheckSameImageAndFiles(ref_image, mask);
+
+  ref_db->QueryOne(ref_image, resampled_mask->id);
+  syd::CheckSameImageAndFiles(ref_image, resampled_mask);
+
+  syd::RoiStatistic::pointer s;
+  ref_db->QueryOne(s, stat1->id);
+  if (s !=  stat1) {
+    LOG(FATAL) << "Error stat: " << s << " " << stat1;
+  }
+  ref_db->QueryOne(s, stat2->id);
+  if (s !=  stat2) {
+    LOG(FATAL) << "Error stat: " << s << " " << stat2;
+  }
 
   std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;

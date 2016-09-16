@@ -22,12 +22,9 @@
 #include "sydPluginManager.h"
 #include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
-#include "sydImageBuilder.h"
-
-#include "boost/date_time/gregorian/gregorian.hpp" //include all types plus i/o
-#include "boost/date_time/posix_time/posix_time.hpp"
-using namespace boost::gregorian;
-namespace pt = boost::posix_time;
+#include "sydElastixHelper.h"
+#include "sydImageHelper.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -42,14 +39,6 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Read the ImageTransform
-  std::vector<syd::IdType> tids;
-  std::vector<std::string> stids;
-  syd::GetWords(stids, args_info.transform_arg);
-  for(auto s:stids) tids.push_back(atoi(s.c_str()));
-  syd::ImageTransform::vector initial_transforms;
-  db->Query(initial_transforms, tids);
-
   // Read ids from the command line and the pipe
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
@@ -61,9 +50,17 @@ int main(int argc, char* argv[])
   syd::Image::vector initial_images;
   db->Query(initial_images, ids);
 
+  // Read the Elastix
+  std::vector<syd::IdType> tids;
+  std::vector<std::string> stids;
+  syd::GetWords(stids, args_info.elastix_arg);
+  for(auto s:stids) tids.push_back(atoi(s.c_str()));
+  syd::Elastix::vector initial_transforms;
+  db->Query(initial_transforms, tids);
+
   // Match
   syd::Image::vector images;
-  syd::ImageTransform::vector transforms;
+  syd::Elastix::vector transforms;
   for(auto i=0; i<initial_images.size(); i++) {
     syd::Image::pointer image = initial_images[i];
     // Find the corresponding transforms
@@ -79,7 +76,7 @@ int main(int argc, char* argv[])
       }
     }
     if (found == -1) {
-      LOG(WARNING) << "Could not find adequate ImageTransform for image (ignore):" << image;
+      LOG(WARNING) << "Could not find adequate Elastix for image (ignore):" << image;
     }
     else {
       images.push_back(image);
@@ -87,92 +84,39 @@ int main(int argc, char* argv[])
     }
   }
 
-  // Loop
+  // Display
   for(auto i=0; i<images.size(); i++) {
-
-    // Get the input and the transform
-    syd::Image::pointer input_image = images[i];
-    syd::ImageTransform::pointer transform = transforms[i];
-
-    std::string transform_path = db->GetAbsolutePath(transform->transform_file);
-    std::string input_image_path = db->GetAbsolutePath(input_image);
-
-    // Modify the transform file according to the input image spacing
-    std::ifstream in(transform_path);
-    transform_path = transform_path+"_temp.txt";
-    std::ofstream out(transform_path);
-    std::string line;
-    while (std::getline(in, line)) {
-      syd::Replace(line, "(Size ", "//(Size ");
-      syd::Replace(line, "(Spacing ", "//(Spacing ");
-      syd::Replace(line, "(FixedInternalImagePixelType ", "//(FixedInternalImagePixelType ");
-      syd::Replace(line, "(MovingInternalImagePixelType ", "//(MovingInternalImagePixelType ");
-      syd::Replace(line, "(DefaultPixelValue ", "//(DefaultPixelValue ");
-      syd::Replace(line, "(ResultImagePixelType ", "//(ResultImagePixelType ");
-      out << line << std::endl;
-    }
-    out << "(Size "
-        << input_image->size[0] << " "
-        << input_image->size[1] << " "
-        << input_image->size[2] << ")" << std::endl;
-    out << "(Spacing "
-        << input_image->spacing[0] << " "
-        << input_image->spacing[1] << " "
-        << input_image->spacing[2] << ")" << std::endl;
-    // out << "(FixedInternalImagePixelType " << input_image->pixel_type << ")" << std::endl;
-    // out << "(MovingInternalImagePixelType " << input_image->pixel_type << ")" << std::endl;
-    if (input_image->pixel_type == "short") out << "(DefaultPixelValue -1000)" << std::endl; // FIXME
-    else out << "(DefaultPixelValue 0)" << std::endl;
-    out << "(ResultImagePixelType " << input_image->pixel_type << ")" << std::endl;
-    out.close();
-
-    // Check frame_of_reference_uid
-    if (input_image->frame_of_reference_uid != transform->moving_image->frame_of_reference_uid) {
-      LOG(WARNING) << "Error the frame_of_reference_uid of the input image is different from the one of the moving_image of the transform" << std::endl
-                   << "input : " << input_image << std::endl
-                   << "moving_image : " << transform->moving_image  << std::endl;
-      continue;
-    }
-
-    // Create output image
-    syd::ImageBuilder builder(db);
-    syd::Image::pointer output_image = builder.NewMHDImageLike(input_image);
-    db->UpdateTagsFromCommandLine(output_image->tags, args_info);
-
-    // Change the frame_of_reference_uid, will be the one of fiwed
-    // image in the ImageTransform
-    output_image->frame_of_reference_uid = transform->fixed_image->frame_of_reference_uid;
-
-    // FIXME tmp folder ? (when parallel computation)
-    DD("TODO: create a temp folder ?");
-    //DD(db->ConvertToAbsolutePath(output_image->ComputeRelativeFolder()));
-
-    // Create command line
-    std::ostringstream cmd;
-    cmd << "transformix -in " << input_image_path
-        << " -tp " << transform_path
-        << " -out " << db->ConvertToAbsolutePath(output_image->ComputeRelativeFolder());
-    //  cmd << options; // additional options to transformix
-
-    // Execute transformix
-    LOG(1) << cmd.str();
-    int r = syd::ExecuteCommandLine(cmd.str(), args_info.verbose_arg);
-
-    // Get result path
-    std::string f = db->ConvertToAbsolutePath(output_image->ComputeRelativeFolder()+PATH_SEPARATOR+"result.mhd");
-
-    if (r!=0 || !fs::exists(f)) { // fail
-      LOG(1) << "Command fail, removing temporary image";
-      //db->Delete(output_image);
-    }
-    else  {
-      syd::ImageBuilder builder(db);
-      builder.CopyImageFromFile(output_image, f);
-      builder.InsertAndRename(output_image);
-      LOG(1) << "Image computed. Result: " << output_image;
-    }
+    syd::Image::pointer image = images[i];
+    syd::Elastix::pointer elastix = transforms[i];
+    LOG(1) << "Warp image " << image
+           << " with " << elastix;
   }
 
+  // Loop
+  for(auto i=0; i<images.size(); i++) {
+    syd::Image::pointer image = images[i];
+    syd::Elastix::pointer elastix = transforms[i];
+
+    // Check frame_of_reference_uid
+    // if (!args_info.do_not_check_frame_of_reference_uid_flag) {
+    if (elastix->moving_image->frame_of_reference_uid != image->frame_of_reference_uid) {
+      LOG(WARNING) << "Frame_of_reference_uid does not correspond. Skip.";
+      continue;
+    }
+    // }
+
+    auto output = syd::InsertTransformixImage(elastix, image,
+                                              args_info.default_pixel_arg,
+                                              args_info.options_arg,
+                                              args_info.verbose_arg);
+    if (output) {
+      // Allow the user to modify the information
+      syd::SetImageInfoFromCommandLine(output, args_info);
+      syd::SetTagsFromCommandLine(output->tags, db, args_info);
+      db->Update(output);
+      LOG(1) << "Image computed. Result: " << output;
+    }
+  }
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

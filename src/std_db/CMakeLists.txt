@@ -13,7 +13,7 @@ wrap_odb(sydStandardDatabase sydImage.h)
 wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
 wrap_odb(sydStandardDatabase sydRoiStatistic.h)
-# wrap_odb(sydStandardDatabase sydImageTransform.h)
+wrap_odb(sydStandardDatabase sydElastix.h)
 # wrap_odb(sydStandardDatabase sydCalibration.h)
 # wrap_odb(sydStandardDatabase sydTimepoints.h)
 # wrap_odb(sydStandardDatabase sydFitResult.h)
@@ -32,7 +32,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiMaskImage-odb.cxx sydRoiMaskImage-schema.cxx  sydRoiMaskImage.cxx
   sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
 
-  # sydImageTransform-odb.cxx sydImageTransform-schema.cxx  sydImageTransform.cxx
+  sydElastix-odb.cxx sydElastix-schema.cxx  sydElastix.cxx
   # sydCalibration-odb.cxx sydCalibration-schema.cxx  sydCalibration.cxx
   # sydTimepoints-odb.cxx sydTimepoints-schema.cxx  sydTimepoints.cxx
   # sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
@@ -43,6 +43,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydImageHelper.cxx
   sydRoiMaskImageHelper.cxx
   sydUpdateRadionuclideFilter.cxx
+  sydElastixHelper.cxx
 
   #sydRoiStatisticBuilder.cxx
 
@@ -199,6 +200,17 @@ add_executable(sydInsertRoiStatistic
 target_link_libraries(sydInsertRoiStatistic ${SYD_STD_DB_LIBRARY})
 
 
+# ComputeActivityInMBqByDetectedCounts
+wrap_ggo(sydComputeActivityInMBqByDetectedCounts_GGO_C
+  sydComputeActivityInMBqByDetectedCounts.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydComputeActivityInMBqByDetectedCounts
+  sydComputeActivityInMBqByDetectedCounts.cxx
+  ${sydComputeActivityInMBqByDetectedCounts_GGO_C})
+target_link_libraries(sydComputeActivityInMBqByDetectedCounts ${SYD_STD_DB_LIBRARY})
+
+
+
 #----------------------------------------------------------
 # External tool: clitkExtractPatient
 wrap_ggo(syd_clitkExtractPatient_GGO_C
@@ -208,6 +220,33 @@ wrap_ggo(syd_clitkExtractPatient_GGO_C
 add_executable(syd_clitkExtractPatient
   syd_clitkExtractPatient.cxx ${syd_clitkExtractPatient_GGO_C})
 target_link_libraries(syd_clitkExtractPatient ${SYD_STD_DB_LIBRARY})
+
+wrap_ggo(sydInsertElastixRegistration_GGO_C
+  sydInsertElastixRegistration.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertElastixRegistration
+  sydInsertElastixRegistration.cxx
+  ${sydInsertElastixRegistration_GGO_C})
+target_link_libraries(sydInsertElastixRegistration ${SYD_STD_DB_LIBRARY})
+
+wrap_ggo(syd_elastix_GGO_C
+  syd_elastix.ggo
+  sydCommandLineDefault.ggo)
+add_executable(syd_elastix
+  syd_elastix.cxx
+  ${syd_elastix_GGO_C})
+target_link_libraries(syd_elastix ${SYD_STD_DB_LIBRARY})
+
+wrap_ggo(syd_transformix_GGO_C
+  syd_transformix.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo)
+add_executable(syd_transformix
+  syd_transformix.cxx
+  ${syd_transformix_GGO_C})
+target_link_libraries(syd_transformix ${SYD_STD_DB_LIBRARY})
 
 # -----------------------------------------------------
 # -----------------------------------------------------
@@ -293,36 +332,6 @@ target_link_libraries(syd_clitkExtractPatient ${SYD_STD_DB_LIBRARY})
 # wrap_ggo(sydInsertPixelTimepoints_GGO_C sydInsertPixelTimepoints.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 # add_executable(sydInsertPixelTimepoints sydInsertPixelTimepoints.cxx ${sydInsertPixelTimepoints_GGO_C})
 # target_link_libraries(sydInsertPixelTimepoints ${SYD_STD_DB_LIBRARY})
-
-
-# Insert / Update calibration for an image
-# wrap_ggo(sydInsertCalibration_GGO_C sydInsertCalibration.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-# add_executable(sydInsertCalibration sydInsertCalibration.cxx ${sydInsertCalibration_GGO_C})
-# target_link_libraries(sydInsertCalibration ${SYD_STD_DB_LIBRARY})
-
-
-#----------------------------------------------------------
-#----------------------------------------------------------
-# External tool: clitkExtractPatient
-# wrap_ggo(syd_clitkExtractPatient_GGO_C
-#   syd_clitkExtractPatient.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-# add_executable(syd_clitkExtractPatient
-#   syd_clitkExtractPatient.cxx ${syd_clitkExtractPatient_GGO_C})
-# target_link_libraries(syd_clitkExtractPatient ${SYD_STD_DB_LIBRARY})
-
-
-#----------------------------------------------------------
-# External tool: elastix
-# wrap_ggo(syd_elastix_GGO_C syd_elastix.ggo sydCommandLineDefault.ggo)
-# add_executable(syd_elastix syd_elastix.cxx ${syd_elastix_GGO_C})
-# target_link_libraries(syd_elastix StandardDatabase )
-
-#----------------------------------------------------------
-# External tool: transformix
-# wrap_ggo(syd_transformix_GGO_C
-#   syd_transformix.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-# add_executable(syd_transformix syd_transformix.cxx ${syd_transformix_GGO_C})
-# target_link_libraries(syd_transformix StandardDatabase )
 
 
 #----------------------------------------------------------

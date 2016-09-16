@@ -102,8 +102,14 @@ namespace syd {
 
 
   /// Crop an image like another one
-  void CropImageLike(syd::Image::pointer image, const syd::Image::pointer like);
+  void CropImageLike(syd::Image::pointer image,
+                     const syd::Image::pointer like);
 
+  /// Compute the activity in MBq by detected counts
+  double ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image);
+
+  /// Flip image if negative spacing is detected
+  bool FlipImageIfNegativeSpacing(syd::Image::pointer image);
 
 } // namespace syd
 

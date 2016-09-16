@@ -1,0 +1,13 @@
+#File sydComputeActivityInMBqByDetectedCounts.ggo
+package "syd"
+version "0.4"
+usage "sydComputeActivityInMBqByDetectedCounts <image_ids> "
+description "Compute the activity by detected counts, assuming whole injected activity is inside the image.
+
+value =  total_counts_in_image / activity_at_acquisition
+with the activity_at_acquisition = injected_activity * exp(-lambda * time);
+with lambda = log(2.0)/half_life
+with time = time between injection and acquisition
+"
+
+option "scale" s  "Multiply the final result by this value" double default="1.0" no

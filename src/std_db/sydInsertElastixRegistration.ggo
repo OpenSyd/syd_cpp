@@ -1,0 +1,13 @@
+#File sydInsertElastixRegistration.ggo
+
+package "syd"
+version "0.'"
+usage "sydInsertElastixRegistration <config> <fixed_image_id> <moving_images_ids*> "
+description "Parameters are:
+- <config>              : elastix config file
+- <fixed_image_id>      : id of the fixed image
+- <moving_images_ids*>  : ids of the moving image (multiple -> one registration by id)
+"
+
+option "fMask"   -  "Mask id or name for fixed image (table RoiMaskImage)"  string no
+option "mMask"   -  "Mask id or name for moving image (table RoiMaskImage)" string no

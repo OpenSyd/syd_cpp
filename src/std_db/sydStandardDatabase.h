@@ -23,7 +23,6 @@
 #include "sydDatabase.h"
 #include "sydTable.h"
 #include "sydImageUtils.h"
-#include "sydImageFlip.h"
 
 // syd tables
 #include "sydRecordHistory-odb.hxx"
@@ -40,7 +39,7 @@
 #include "sydRoiMaskImage-odb.hxx"
 #include "sydRoiStatistic-odb.hxx"
 
-// #include "sydImageTransform-odb.hxx"
+#include "sydElastix-odb.hxx"
 // #include "sydCalibration-odb.hxx"
 // #include "sydTimepoints-odb.hxx"
 // #include "sydFitResult-odb.hxx"

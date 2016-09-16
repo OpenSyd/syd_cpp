@@ -27,6 +27,8 @@
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
+  sydlog::Log::LogLevel() = 10;
+
   // Init
   SYD_INIT_GGO(syd_test4, 0);
   LOG(WARNING) << "Need the test3 result";
@@ -60,7 +62,7 @@ int main(int argc, char* argv[])
   // Get a dicom SPECT and insert
   std::cout << "InsertImageFromDicomSerie float" << std::endl;
   syd::DicomSerie::pointer dicom_serie;
-  db->QueryOne(dicom_serie, 14);
+  db->QueryOne(dicom_serie, 15); // use dicom 15 because negative spacing
   auto image2 = syd::InsertImageFromDicomSerie(dicom_serie, "float");
 
   // Get a dicom CT and insert
@@ -92,25 +94,39 @@ int main(int argc, char* argv[])
   db->QueryOne(spect2, 16);
   auto spect = syd::InsertStitchDicomImage(spect1, spect2, 150000, 4);
 
+  // Stitch dicom with flip
+  std::cout << "Flip stitch dicom with neg spacing" << std::endl;
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_image = syd::ReadImage<ImageType>(spect->GetAbsolutePath());
+  syd::FlipImageIfNegativeSpacing<ImageType>(itk_image);
+  auto spect_flip = syd::InsertImage<ImageType>(itk_image, spect->patient);
+
+  // Check one pixel
+  itk_image = syd::ReadImage<ImageType>(spect->GetAbsolutePath());
+  auto itk_image_flip = syd::ReadImage<ImageType>(spect_flip->GetAbsolutePath());
+  ImageType::PointType point;
+  point[0] = -58;
+  point[1] = -1;
+  point[2] = 96;
+  ImageType::IndexType index1;
+  itk_image->TransformPhysicalPointToIndex(point, index1);
+  ImageType::IndexType index2;
+  itk_image_flip->TransformPhysicalPointToIndex(point, index2);
+  auto p1 = itk_image->GetPixel(index1);
+  auto p2 = itk_image_flip->GetPixel(index2);
+  if (fabs(p1 - p2) > 0.01) {
+    LOG(FATAL) << "Error flip: "
+               << itk_image->GetOrigin() << " "
+               << itk_image_flip->GetOrigin() << " "
+               << p1 << " " << p2;
+  }
+
   // Geom mean
   std::cout << "Image geometrical mean " << std::endl;
   db->QueryOne(dicom_serie, 17); // Get NM "CORPS ENTIER" etc
   auto planar = syd::InsertImageFromDicomSerie(dicom_serie, "float");
   auto geommean = syd::InsertImageGeometricalMean(planar, 0.5);
-
-  // Crop image like
-  /*
-  std::cout << "Crop image like" << std::endl;
-  syd::Image::pointer img_to_crop;
-  db->QueryOne(img_to_crop, 4);
-  syd::Image::pointer like;
-  db->QueryOne(like, 2);
-  DD(img_to_crop);
-  DD(like);
-  syd::CropImageLike(img_to_crop, like);
-  DD(img_to_crop);
-  */
-
 
   // If needed create reference db
   if (args_info.create_ref_flag) {
@@ -133,6 +149,9 @@ int main(int argc, char* argv[])
 
   ref_db->QueryOne(ref_image, spect->id);
   syd::CheckSameImageAndFiles(ref_image, spect);
+
+  ref_db->QueryOne(ref_image, spect_flip->id);
+  syd::CheckSameImageAndFiles(ref_image, spect_flip);
 
   ref_db->QueryOne(ref_image, geommean->id);
   syd::CheckSameImageAndFiles(ref_image, geommean);

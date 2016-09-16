@@ -255,15 +255,15 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
     if (patient_->dicom_patientid != patientID) {
       LOG(FATAL) << "Patient does not seems to be the same. You ask for " << patient_->name
                  << " with dicom_id = " << patient_->dicom_patientid
-                 << " while in dicom, it is '" << patientID
+                 << " while in dicom, it is " << patientID
                  << " with name: " << patientName << std::endl
                  << "Filename is " << filename << std::endl
                  << "Use 'forcePatient' if you want to bypass this check";
     }
-    if (patient_->sex != std::string(sex)) {
+    /*if (patient_->sex != std::string(sex)) {
       LOG(FATAL) << "Patient's sex is different in the db and in the dicom: "
-                 << patient_->sex << " vs " << sex;
-    }
+      << patient_->sex << " vs " << sex;
+      }*/
   }
   if (patient_->dicom_patientid != patientID) {
     // update the dicom id if it is different (force flag)

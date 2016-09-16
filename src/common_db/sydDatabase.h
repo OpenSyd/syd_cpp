@@ -86,7 +86,8 @@ namespace syd {
     std::string ConvertToAbsolutePath(std::string relative_path) const;
 
     /// Return a unique absolute path of a temporary filename inside the db
-    std::string GetUniqueTempFilename() const;
+    std::string GetUniqueTempFilename(std::string extension=".mhd") const;
+
     // ------------------------------------------------------------------------
 
     /// Consider a relative path check if exist, create if not.

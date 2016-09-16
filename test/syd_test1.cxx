@@ -87,10 +87,8 @@ int main(int argc, char* argv[])
   std::cout << "Patient  : " << p2 << std::endl;
   std::cout << "Injection: " << i2 << std::endl;
 
-
   syd::Record::pointer i3;
   db->QueryOne(i3, "Tag", 1);
-  DD(i3);
 
   // Delete
   std::cout << std::endl << "Delete" << std::endl;

@@ -1,3 +1,17 @@
 *xml
 generated-odb
 *~
+*backup
+*.save.*
+*.SAVE.*
+/test/a.txt
+/test/b.txt
+/test/data
+/test/data3
+/test/data4
+/test/data5
+cmake/cotire
+cmake/old
+temp/
+test/test?.db
+test/save

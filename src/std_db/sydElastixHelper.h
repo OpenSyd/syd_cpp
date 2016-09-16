@@ -16,26 +16,29 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDFILEHELPER_H
-#define SYDFILEHELPER_H
+#ifndef SYDELASTIXHELPER_H
+#define SYDELASTIXHELPER_H
 
 // syd
-#include "sydFile.h"
-#include "sydDatabase.h"
+#include "sydElastix.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// This file contains helpers function that are hopefully helpful
-  /// to create and update syd::File table. All functions are static
-  /// in a class for clarity.
 
-  /// Simple file creation (not inserted)
-  syd::File::pointer NewFile(syd::Database * db,
-                             std::string path,
-                             std::string filename);
+  // Execute "elastix" via a command line and update the Elastix object
+  // with the result
+  int ExecuteElastix(syd::Elastix::pointer elastix,
+                     std::string options,
+                     int verbose);
+
+  // Execute "transformix" via a command line and insert an warped image
+  syd::Image::pointer InsertTransformixImage(const syd::Elastix::pointer elastix,
+                                             const syd::Image::pointer image,
+                                             double default_pixel_value,
+                                             std::string options,
+                                             int verbose);
 
 } // namespace syd
 // --------------------------------------------------------------------
-
 #endif

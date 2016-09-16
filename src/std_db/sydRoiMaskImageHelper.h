@@ -33,7 +33,6 @@ namespace syd {
 
   // Search a roi mask image by a roi name and the image
   syd::RoiMaskImage::pointer FindRoiMaskImage(const syd::Image::pointer image,
-                                              syd::StandardDatabase * db,
                                               const std::string & roi_name);
 
   /// Compute the default image path (based on the patient's name)
@@ -58,10 +57,12 @@ namespace syd {
 
   // Mask could be null (compute stat on the whole image)
   syd::RoiStatistic::pointer InsertRoiStatistic(syd::Image::pointer image,
-                                                syd::RoiMaskImage::pointer mask);
+                                                syd::RoiMaskImage::pointer mask,
+                                                std::string mask_output_filename="");
 
-  // Compute the statistic according to the stat's image and mask
-  void ComputeRoiStatistic(syd::RoiStatistic::pointer stat);
+  // Compute the statistic according to the stat's image and
+  // mask. return the used mask image (that have been resampled)
+  itk::Image<unsigned char, 3>::Pointer ComputeRoiStatistic(syd::RoiStatistic::pointer stat);
 
 
 } // namespace syd

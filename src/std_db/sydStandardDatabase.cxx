@@ -178,7 +178,7 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::RoiMaskImage>();
   AddTable<syd::RoiStatistic>();
 
-  // AddTable<syd::ImageTransform>();
+  AddTable<syd::Elastix>();
   // AddTable<syd::Calibration>();
   // AddTable<syd::Timepoints>();
   // AddTable<syd::FitResult>();

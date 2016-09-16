@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
       LOG(2) << *r << " is in the db.   ";
       files.erase(r);
     }
-    if (!args_info.no_loadbar_flag)  syd::loadbar(i,n);
+    if (!args_info.no_loadbar_flag) syd::loadbar(i,n);
     ++i;
   }
 

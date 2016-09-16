@@ -19,6 +19,7 @@
 // syd
 #include "sydImageHelper.h"
 #include "sydFileHelper.h"
+#include "sydRoiMaskImageHelper.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -348,37 +349,97 @@ void syd::CropImageLike(syd::Image::pointer image,
 {
   DD("CropImageLike");
   /*
-  DD(image);
-  DD(like);
+    DD(image);
+    DD(like);
 
-  // Read both images
+    // Read both images
+    typedef float PixelType;
+    typedef itk::Image<PixelType, 3> ImageType;
+    auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+    auto itk_like = syd::ReadImage<ImageType>(like->GetAbsolutePath());
+
+    // resample like image like image (ouarf!)
+    typedef itk::ResampleImageFilter<ImageType, ImageType> FilterType;
+    auto t = itk::AffineTransform<double, ImageType::ImageDimension>::New();
+    typename FilterType::Pointer filter = FilterType::New();
+    filter->SetTransform(t);
+    filter->SetSize(like->GetLargestPossibleRegion().GetSize());
+    filter->SetOutputSpacing(image->GetSpacing());
+    filter->SetOutputOrigin(like->GetOrigin());
+    //filter->SetDefaultPixelValue(defaultValue);
+    filter->SetOutputDirection(like->GetDirection());
+    typename itk::InterpolateImageFunction<ImageType>::Pointer interpolator;
+    interpolator = itk::NearestNeighborInterpolateImageFunction<ImageType, double>::New();
+
+    filter->SetInput(input);
+    filter->SetInterpolator(interpolator);
+    filter->Update();
+    auto itk_output = filter->GetOutput();
+
+    // crop
+
+    // save
+    */
+}
+
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
+{
+  DD(image);
+  if (image->injection == NULL) {
+    EXCEPTION("Cannot ComputeActivityInMBqByDetectedCounts, need an injection for this image");
+  }
+
+  auto injection = image->injection;
+  double injected_activity = injection->activity_in_MBq;
+  double time = syd::DateDifferenceInHours(image->acquisition_date, injection->date);
+  double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
+  double activity_at_acquisition = injected_activity * exp(-lambda * time);
+  DD(injected_activity);
+  DD(time);
+  DD(lambda);
+  DD(activity_at_acquisition);
+
+  // Compute stat (without mask)
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  syd::RoiStatistic::pointer stat;
+  db->New(stat);
+  stat->image = image;
+  syd::ComputeRoiStatistic(stat);
+  DD(stat);
+  DD(stat->sum);
+
+  //  double s = stat->sum / activity_at_acquisition;
+  double s = activity_at_acquisition / stat->sum;
+  DD(s);
+  return s;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::FlipImageIfNegativeSpacing(syd::Image::pointer image)
+{
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
   auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
-  auto itk_like = syd::ReadImage<ImageType>(like->GetAbsolutePath());
-
-  // resample like image like image (ouarf!)
-  typedef itk::ResampleImageFilter<ImageType, ImageType> FilterType;
-  auto t = itk::AffineTransform<double, ImageType::ImageDimension>::New();
-  typename FilterType::Pointer filter = FilterType::New();
-  filter->SetTransform(t);
-  filter->SetSize(like->GetLargestPossibleRegion().GetSize());
-  filter->SetOutputSpacing(image->GetSpacing());
-  filter->SetOutputOrigin(like->GetOrigin());
-  //filter->SetDefaultPixelValue(defaultValue);
-  filter->SetOutputDirection(like->GetDirection());
-  typename itk::InterpolateImageFunction<ImageType>::Pointer interpolator;
-  interpolator = itk::NearestNeighborInterpolateImageFunction<ImageType, double>::New();
-
-  filter->SetInput(input);
-  filter->SetInterpolator(interpolator);
-  filter->Update();
-  auto itk_output = filter->GetOutput();
-
-  // crop
-
-  // save
-  */
+  bool flip = syd::FlipImageIfNegativeSpacing<ImageType>(itk_image);
+  if (flip) {
+    auto pixel_type = image->pixel_type;
+    syd::WriteImage<ImageType>(itk_image, image->GetAbsolutePath());
+    if (pixel_type != "float") {
+      // Later --> conversion
+      //syd::ConvertImagePixelType(image, args_info.pixel_type_arg);
+      LOG(WARNING) << "Pixel type was changed from " << pixel_type
+                   << " to float";
+    }
+    syd::SetImageInfoFromFile(image);
+    auto db = image->GetDatabase<syd::StandardDatabase>();
+    db->Update(image); // for changed spacing , history
+  }
+  return flip;
 }
-
 // --------------------------------------------------------------------
