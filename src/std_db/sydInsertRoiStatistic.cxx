@@ -72,13 +72,18 @@ int main(int argc, char* argv[])
 
     // Loop over masks
     for(auto mask:masks) {
+      std::string mask_filename = args_info.resampled_mask_arg;
       auto stat = syd::FindOneRoiStatistic(image, mask);
       bool newStat = false;
       if (!stat) {
-        stat = syd::InsertRoiStatistic(image, mask);
+        stat = syd::InsertRoiStatistic(image, mask, mask_filename);
         newStat = true;
       }
-      else syd::ComputeRoiStatistic(stat);
+      else {
+        auto mask = syd::ComputeRoiStatistic(stat);
+        if (mask_filename != "")
+          syd::WriteImage<itk::Image<unsigned char,3>>(mask, mask_filename);
+      }
 
       // Tags
       syd::SetTagsFromCommandLine(stat->tags, db, args_info);

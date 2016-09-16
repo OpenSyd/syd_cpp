@@ -11,3 +11,5 @@ If several images id are given, the corresponding roi is searched for each image
 If <roi> is set to 'all', all RoiMaskImage with the same frame_of_reference_uid are considered.
 If <roi> is set to 'null', statistics are computed on the whole image.
 "
+
+option "resampled_mask"  - "Mhd filename to output the resampled mask" string default="" no
