@@ -412,18 +412,18 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   units.push_back(NewPixelUnit("cGy", "Absorbed dose in cGy")); // FIXME
   units.push_back(NewPixelUnit("MeV", "Deposited energy in MeV"));
 
-  units.push_back(NewPixelUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq"));
-  units.push_back(NewPixelUnit("Bq_by_IA", "Activity in Bq by injected activity in MBq"));
-  units.push_back(NewPixelUnit("MBq.h/IA[MBq]", "time integrated activity MBq.h by injected activity"));
-  units.push_back(NewPixelUnit("MBq/IA[MBq]", "Activity in MBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("Bq_by_IA[MBq]°", "Activity in Bq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("kBq_by_IA[MBq]°", "Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("MBq_by_IA[MBq]°", "Activity in MBq by injected activity in MBq"));
 
-  units.push_back(NewPixelUnit("cGy/IA[MBq]", "Dose in cGy by injected activity"));
-  units.push_back(NewPixelUnit("cGy/h/IA[MBq]", "Dose rate in cGy by hour by injected activity"));
-  units.push_back(NewPixelUnit("cGy/kBq.h/IA[MBq]", "Dose in cGy by tia kBq.h by injected activity (for S matrix)"));
-  units.push_back(NewPixelUnit("kBq.h/IA[MBq]", "time integrated activity kBq.h by injected activity"));
-  units.push_back(NewPixelUnit("kBq/IA[MBq]", "Activity in kBq by injected activity in MBq"));
-  units.push_back(NewPixelUnit("kBq_by_IA", "Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("Bq.h_by_IA[MBq]°", "Time Integrated Activity in Bq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("kBq.h_by_IA[MBq]°", "Time Integrated Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("MBq.h_by_IA[MBq]°", "Time Integrated Activity in MBq by injected activity in MBq"));
+
   units.push_back(NewPixelUnit("mGy/Bq.sec", "Dose by cumulated activity"));
+  units.push_back(NewPixelUnit("cGy/h/IA[MBq]", "Dose rate in cGy by hour by injected activity"));
+  units.push_back(NewPixelUnit("cGy/IA[MBq]", "Dose in cGy by injected activity"));
+  units.push_back(NewPixelUnit("cGy/kBq.h/IA[MBq]", "Dose in cGy by tia kBq.h by injected activity (for S matrix)"));
 
   Insert(units);
   LOG(1) << units.size() << " PixelUnit have been added.";
