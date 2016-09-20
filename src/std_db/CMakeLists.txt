@@ -211,15 +211,15 @@ target_link_libraries(sydComputeActivityInMBqByDetectedCounts ${SYD_STD_DB_LIBRA
 
 
 # Calibrate image
-# wrap_ggo(sydCalibrateImage_GGO_C
-#   sydCalibrateImage.ggo
-#   sydCommandLineWithTags.ggo
-#   sydCommandLineWithImageInfo.ggo
-#   sydCommandLineDefault.ggo)
-# add_executable(sydCalibrateImage
-#   sydCalibrateImage.cxx
-#   ${sydCalibrateImage_GGO_C})
-# target_link_libraries(sydCalibrateImage ${SYD_STD_DB_LIBRARY})
+wrap_ggo(sydCalibrateImage_GGO_C
+  sydCalibrateImage.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydCalibrateImage
+  sydCalibrateImage.cxx
+  ${sydCalibrateImage_GGO_C})
+target_link_libraries(sydCalibrateImage ${SYD_STD_DB_LIBRARY})
 
 
 #----------------------------------------------------------
