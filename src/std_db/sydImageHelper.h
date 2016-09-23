@@ -116,8 +116,8 @@ namespace syd {
 
   /// Substitute a radionuclide with another one. Create a new
   /// artificial injection
-  syd::Injection::pointer SubstituteRadionuclide(syd::Image::pointer image,
-                                                 syd::Radionuclide::pointer rad);
+  void SubstituteRadionuclide(syd::Image::pointer image,
+                              syd::Radionuclide::pointer rad);
 
 
 } // namespace syd

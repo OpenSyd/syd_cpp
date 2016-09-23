@@ -54,19 +54,24 @@ int main(int argc, char* argv[])
   syd::Image::vector images;
   db->Query(images, ids);
 
+  // Loop over the images
   for(auto image:images) {
+    // Make a copy
     auto output = syd::CopyImage(image);
     DD(output);
 
-    auto inj = syd::SubstituteRadionuclide(output, rad);
+    // Change the radionuclide
+    syd::SubstituteRadionuclide(output, rad);
     DD(output);
+    auto inj = output->injection;
     DD(inj);
 
+    // Apply user information
     syd::SetImageInfoFromCommandLine(output, args_info);
     syd::SetTagsFromCommandLine(output->tags, db, args_info);
     db->Update(output);
     LOG(1) << "Image with new radionuclide is " << output << ": "
-           << output << std::endl << "Injection : " << inj;
+           << std::endl << "Injection : " << inj;
   }
 
   // This is the end, my friend.

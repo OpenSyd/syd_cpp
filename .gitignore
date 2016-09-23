@@ -25,3 +25,4 @@ test/save
 /src/std_db/GRTAGS
 /src/std_db/GTAGS
 save/
+superbuild.save/

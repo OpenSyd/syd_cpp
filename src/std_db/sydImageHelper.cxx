@@ -453,18 +453,30 @@ syd::Image::pointer syd::CopyImage(syd::Image::pointer image)
 
 
 // --------------------------------------------------------------------
-syd::Injection::pointer syd::SubstituteRadionuclide(syd::Image::pointer image,
-                                                    syd::Radionuclide::pointer rad)
+void syd::SubstituteRadionuclide(syd::Image::pointer image,
+                                 syd::Radionuclide::pointer rad)
 {
-  DD(image);
-  DD(rad);
-  DD(image->injection); // to test
-
   if (image->injection == NULL) {
     EXCEPTION("Cannot SubstituteRadionuclide because the image is not associated with an injection: "
               << image);
   }
 
-  return image->injection;
+  // Create new injection
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto new_injection = syd::CopyInjection(image->injection);
+  new_injection->radionuclide = rad;
+  db->Insert(new_injection);
+
+  // Get the time and the half_life (lambda)
+  double time = syd::DateDifferenceInHours(image->acquisition_date, image->injection->date);
+  double lambda_old = image->injection->radionuclide->GetLambdaInHours();
+  double lambda_new = rad->GetLambdaInHours();
+  double f1 = exp(lambda_old * time); // decay correction: multiply by exp(lambda x time)
+  double f2 = exp(-lambda_new * time); // new radionuclide decay
+
+  // substitute the radionuclide taking into account the half life
+  syd::ScaleImage(image, f1*f2);
+  image->injection = new_injection;
+  db->Update(image);
 }
 // --------------------------------------------------------------------
