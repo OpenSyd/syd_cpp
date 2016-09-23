@@ -20,6 +20,7 @@
 #include "sydImageHelper.h"
 #include "sydFileHelper.h"
 #include "sydRoiMaskImageHelper.h"
+#include "sydInjectionHelper.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -185,7 +186,7 @@ void syd::SetPixelUnit(syd::Image::pointer image, std::string pixel_unit)
 void syd::SetInjection(syd::Image::pointer image, std::string injection)
 {
   auto db = image->GetDatabase<syd::StandardDatabase>();
-  auto i = db->FindInjection(image->patient, injection);
+  auto i = syd::FindInjection(image->patient, injection);
   image->injection = i;
 }
 // --------------------------------------------------------------------
@@ -447,5 +448,23 @@ syd::Image::pointer syd::CopyImage(syd::Image::pointer image)
   auto db = image->GetDatabase<syd::StandardDatabase>();
   db->Update(output);
   return output;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Injection::pointer syd::SubstituteRadionuclide(syd::Image::pointer image,
+                                                    syd::Radionuclide::pointer rad)
+{
+  DD(image);
+  DD(rad);
+  DD(image->injection); // to test
+
+  if (image->injection == NULL) {
+    EXCEPTION("Cannot SubstituteRadionuclide because the image is not associated with an injection: "
+              << image);
+  }
+
+  return image->injection;
 }
 // --------------------------------------------------------------------

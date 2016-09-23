@@ -41,9 +41,11 @@ set(SYD_STANDARD_DATABASE_SRC
   sydDicomSerieBuilder.cxx
   sydDicomSerieHelper.cxx
   sydImageHelper.cxx
+  sydInjectionHelper.cxx
   sydRoiMaskImageHelper.cxx
   sydUpdateRadionuclideFilter.cxx
   sydElastixHelper.cxx
+  sydRadionuclideHelper.cxx
 
   #sydRoiStatisticBuilder.cxx
 
@@ -220,6 +222,18 @@ add_executable(sydCalibrateImage
   sydCalibrateImage.cxx
   ${sydCalibrateImage_GGO_C})
 target_link_libraries(sydCalibrateImage ${SYD_STD_DB_LIBRARY})
+
+
+# Substitute a radionuclide
+wrap_ggo(sydSubstituteRadionuclide_GGO_C
+  sydSubstituteRadionuclide.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydSubstituteRadionuclide
+  sydSubstituteRadionuclide.cxx
+  ${sydSubstituteRadionuclide_GGO_C})
+target_link_libraries(sydSubstituteRadionuclide ${SYD_STD_DB_LIBRARY})
 
 
 #----------------------------------------------------------

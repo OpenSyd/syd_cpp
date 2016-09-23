@@ -1,0 +1,10 @@
+#File sydSubstituteRadionuclide.ggo
+
+package "syd"
+version "0.2"
+usage "sydSubstituteRadionuclide <rad> <image_ids>"
+description "Insert copies of the given images where the radionuclide from the associated injection is replaced by the given radionuclide. A new injection is also created with 1 MBq.
+- <rad>          name of the radionuclide
+- <image_ids>    ids of the images
+
+"

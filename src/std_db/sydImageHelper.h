@@ -114,6 +114,12 @@ namespace syd {
   /// Flip image if negative spacing is detected
   bool FlipImageIfNegativeSpacing(syd::Image::pointer image);
 
+  /// Substitute a radionuclide with another one. Create a new
+  /// artificial injection
+  syd::Injection::pointer SubstituteRadionuclide(syd::Image::pointer image,
+                                                 syd::Radionuclide::pointer rad);
+
+
 } // namespace syd
 
 #include "sydImageHelper.txx"

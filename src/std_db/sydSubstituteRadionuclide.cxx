@@ -17,20 +17,20 @@
   ===========================================================================**/
 
 // syd
-#include "sydCalibrateImage_ggo.h"
+#include "sydSubstituteRadionuclide_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
 #include "sydPixelUnitHelper.h"
-#include "sydInjectionHelper.h"
+#include "sydRadionuclideHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydCalibrateImage, 0);
+  SYD_INIT_GGO(sydSubstituteRadionuclide, 0);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -42,56 +42,31 @@ int main(int argc, char* argv[])
   // Get the ids
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
-  for(auto i=0; i<args_info.inputs_num; i++)
+  DDS(ids);
+  for(auto i=1; i<args_info.inputs_num; i++)
     ids.push_back(atoi(args_info.inputs[i]));
+
+  // Get the radionuclide
+  auto rad = syd::FindRadionuclide(db, args_info.inputs[0]);
+  DD(rad);
 
   // Get the images to udpate
   syd::Image::vector images;
   db->Query(images, ids);
 
-  // Sort according to date
-  db->Sort(images);
-  auto ref = images[0];
-
-  // Check same injection
-  if (ref->injection == NULL) {
-    LOG(FATAL) << "No injection for the first image";
-  }
-  auto injection = ref->injection;
-  for(auto image:images) {
-    if (image->injection != injection) {
-      LOG(FATAL) << "Images have different injections "
-                 << std::endl << ref
-                 << std::endl << image;
-    }
-  }
-
-  // Compute the calibration factor
-  double s = syd::ComputeActivityInMBqByDetectedCounts(ref);
-  s = s * args_info.scale_arg;
-  // scale activity to be by injected activiy
-  auto new_injection = injection;
-  if (args_info.by_IA_flag) {
-    s = s / injection->activity_in_MBq;
-    new_injection = syd::CopyInjection(injection);
-    new_injection->activity_in_MBq = 1.0;
-    db->Insert(new_injection);
-    LOG(1) << "Create new injection " << new_injection;
-  }
-  // scale from MBq to Bq
-  s = s*1000000;
-
   for(auto image:images) {
     auto output = syd::CopyImage(image);
-    syd::ScaleImage(output, s);
-    if (args_info.by_IA_flag) {
-      output->injection = new_injection;
-    }
-    output->pixel_unit = syd::FindPixelUnit(db, "Bq");
+    DD(output);
+
+    auto inj = syd::SubstituteRadionuclide(output, rad);
+    DD(output);
+    DD(inj);
+
     syd::SetImageInfoFromCommandLine(output, args_info);
     syd::SetTagsFromCommandLine(output->tags, db, args_info);
     db->Update(output);
-    LOG(1) << "Image was scaled by " << s << ": " << output;
+    LOG(1) << "Image with new radionuclide is " << output << ": "
+           << output << std::endl << "Injection : " << inj;
   }
 
   // This is the end, my friend.

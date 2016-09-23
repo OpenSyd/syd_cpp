@@ -59,21 +59,11 @@ namespace syd {
     // Search for a patient by name (or id)
     syd::Patient::pointer FindPatient(const std::string & name_or_study_id) const;
 
-    // Search for radionuclide by name
-    syd::Radionuclide::pointer FindRadionuclide(const std::string & name) const;
-
-    // Search for injection by patient+name (or id)
-    syd::Injection::pointer FindInjection(const syd::Patient::pointer patient,
-                                          const std::string & name_or_study_id) const;
-
     // Search images for this patient name
     syd::Image::vector FindImages(const std::string & patient_name) const;
 
     // Search images for this patient
     syd::Image::vector FindImages(const syd::Patient::pointer patient) const;
-
-    //    syd::Calibration::pointer FindCalibration(const syd::Image::pointer Image,
-    //const std::string & calib_tag);
 
     /// Automatically insert some default records
     void InsertDefaultRecords(const std::string & def);
