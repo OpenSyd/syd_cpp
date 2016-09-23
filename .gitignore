@@ -14,3 +14,14 @@ cmake/old
 temp/
 test/test?.db
 test/save
+/src/GPATH
+/src/GRTAGS
+/src/GTAGS
+/src/common_db/GPATH
+/src/common_db/GRTAGS
+/src/common_db/GTAGS
+/src/std_db/.dir-locals.el
+/src/std_db/GPATH
+/src/std_db/GRTAGS
+/src/std_db/GTAGS
+save/

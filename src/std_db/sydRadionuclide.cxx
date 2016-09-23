@@ -39,7 +39,7 @@ std::string syd::Radionuclide::ToString() const
      << element << " "
      << atomic_number << " "
      << mass_number << " "
-     << (metastable? "metastable ":empty_value)
+     << (metastable? "metastable ":empty_value) << " "
      << max_beta_minus_energy_in_kev;
   return ss.str();
 }
