@@ -58,7 +58,8 @@ std::string syd::Image::GetPatientName() const
 std::string syd::Image::GetInjectionName() const
 {
   std::string inj_name = empty_value;
-  if (injection != NULL) inj_name = injection->radionuclide->name;
+  if (injection != NULL) inj_name = injection->radionuclide->name
+                           +"("+std::to_string(injection->id)+")";
   return inj_name;
 }
 // --------------------------------------------------------------------
