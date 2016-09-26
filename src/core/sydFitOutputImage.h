@@ -19,8 +19,9 @@
 #ifndef SYDFITOUTPUTIMAGE_H
 #define SYDFITOUTPUTIMAGE_H
 
-#include "sydTimeIntegratedActivityFilter.h"
 #include "sydImageUtils.h"
+#include "sydTimeActivityCurve.h"
+#include "sydFitModelBase.h"
 
 namespace syd {
 
@@ -30,14 +31,14 @@ namespace syd {
   class FitOutputImage {
   public:
 
-    // Image is always, float
+    // Image is always float
     typedef float PixelType;
     typedef itk::Image<PixelType,3> ImageType;
     typedef ImageType::Pointer Pointer;
     typedef itk::ImageRegionIterator<ImageType> Iterator;
 
     FitOutputImage();
-    virtual void InitImage(Pointer input);
+    virtual void InitImageLike(Pointer input);
     void SetValue(double v);
     virtual void Update() = 0;
     virtual void Iterate();

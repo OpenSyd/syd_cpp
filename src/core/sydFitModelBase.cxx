@@ -42,7 +42,7 @@ void syd::FitModelBase::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
 void syd::FitModelBase::CopyFrom(const syd::FitModelBase * model)
 {
   name_ = model->GetName();
-  lambda_phys_hours_ = model->GetLambdaPhysicHours();
+  lambda_in_hours_ = model->GetLambdaDecayConstantInHours();
   params_  = model->GetParameters();
   start_from_max_flag = model->start_from_max_flag;
   ceres_summary_ = model->ceres_summary_;
@@ -103,7 +103,7 @@ double syd::FitModelBase::Integrate(double a, double b) const
   double x=0.0;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
-    double l = GetLambda(k) + GetLambdaPhysicHours();
+    double l = GetLambdaDecayConstantInHours(k) + GetLambdaDecayConstantInHours();
     x += A/l * (exp(-l*a) - exp(-l*b)) ;
   }
   return x;
@@ -117,7 +117,7 @@ double syd::FitModelBase::Integrate() const
   double x = 0.0;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
-    double l = GetLambda(k) + GetLambdaPhysicHours();
+    double l = GetLambdaDecayConstantInHours(k) + GetLambdaDecayConstantInHours();
     x += A/l;
   }
   return x;
@@ -288,7 +288,7 @@ bool syd::FitModelBase::IsAcceptable() const
   bool is_ok = true;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
-    double l = GetLambda(k) + GetLambdaPhysicHours();
+    double l = GetLambdaDecayConstantInHours(k) + GetLambdaDecayConstantInHours();
     // if (A<=0.0) is_ok = false; // Warning, to change for some model (f4a)
     // if (l<0.2*GetLambdaPhysicHours()) is_ok = false; // too slow decay
   }
@@ -300,7 +300,7 @@ bool syd::FitModelBase::IsAcceptable() const
 // --------------------------------------------------------------------
 double syd::FitModelBase::GetEffHalfLife() const
 {
-  double h = GetLambda(0) + GetLambdaPhysicHours();
+  double h = GetLambdaDecayConstantInHours(0) + GetLambdaDecayConstantInHours();
   return log(2.0)/h;
 }
 // --------------------------------------------------------------------

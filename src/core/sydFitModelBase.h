@@ -42,6 +42,9 @@ namespace syd {
   // This is needed only once in the main to ensure that solver is SILENT
 #define SYD_CERES_STATIC_INIT google::InitGoogleLogging("");
 
+
+  //FIXME to clean
+
   // Base class for a fit model (multi exponential)
   class FitModelBase {
   public:
@@ -70,9 +73,10 @@ namespace syd {
     int GetK()  const { return params_.size(); }
     virtual int GetNumberOfExpo() const = 0;
 
-    void SetLambdaPhysicHours(double l) { lambda_phys_hours_ = l; }
+    void SetLambdaDecayConstantInHours(double l) { lambda_in_hours_ = l; }
+    double GetLambdaDecayConstantInHours() const { return lambda_in_hours_; }
+    virtual double GetLambdaDecayConstantInHours(const int i) const { LOG(FATAL) << "GetLambdaDecayConstantInHours to implement " << GetName(); return 0.0; }
 
-    double GetLambdaPhysicHours() const { return lambda_phys_hours_; }
     std::vector<double> & GetParameters() { return params_; }
     const std::vector<double> & GetParameters() const { return params_; }
     void SetParameters(std::vector<double> & p);
@@ -105,7 +109,6 @@ namespace syd {
     virtual bool IsAcceptable() const;
 
     virtual double GetA(const int i) const { LOG(FATAL) << "GetA to implement " << GetName(); return 0.0; }
-    virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); return 0.0; }
     virtual double GetEffHalfLife() const;
 
     void LogLinearFit(Eigen::Vector2d & x,
@@ -116,7 +119,7 @@ namespace syd {
 
     // protected:
     std::string name_;
-    double lambda_phys_hours_;
+    double lambda_in_hours_;
     std::vector<double> params_;
     syd::TimeActivityCurve * current_tac;
     double current_starting_time;

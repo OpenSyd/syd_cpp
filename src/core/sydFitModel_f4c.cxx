@@ -35,14 +35,14 @@ void syd::FitModel_f4c::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
   syd::FitModelBase::SetProblemResidual(problem, tac);
 
   // Initialisation
-  params_[0] = GetLambdaPhysicHours(); // l_r
+  params_[0] = GetLambdaDecayConstantInHours(); // l_r
   params_[1] = 0.0; // l_t
   params_[2] = 0.0; // l_h
 
   // need to be created each time
   residuals_.clear();
   for(auto i=0; i<tac.size(); i++) {
-    auto r = new ResidualType(tac.GetTime(i), tac.GetValue(i), GetLambdaPhysicHours());
+    auto r = new ResidualType(tac.GetTime(i), tac.GetValue(i), GetLambdaDecayConstantInHours());
     residuals_.push_back(r);
   }
   // FIXME --> could be templated by CostFctType and param_nb ?
@@ -88,7 +88,7 @@ double syd::FitModel_f4c::GetValue(const double & t) const
   const double lr = params_[0];
   const double lt = params_[1];
   const double lh = params_[2];
-  const double l = lambda_phys_hours_;
+  const double l = lambda_in_hours_;
   return 100 * lt/(lr+lt-lh) *
     (exp(-(lh+l)*t) - exp(-(lr+lt+l)*t));
 }

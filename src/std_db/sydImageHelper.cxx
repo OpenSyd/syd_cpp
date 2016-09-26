@@ -469,8 +469,8 @@ void syd::SubstituteRadionuclide(syd::Image::pointer image,
 
   // Get the time and the half_life (lambda)
   double time = syd::DateDifferenceInHours(image->acquisition_date, image->injection->date);
-  double lambda_old = image->injection->radionuclide->GetLambdaInHours();
-  double lambda_new = rad->GetLambdaInHours();
+  double lambda_old = image->injection->radionuclide->GetLambdaDecayConstantInHours();
+  double lambda_new = rad->GetLambdaDecayConstantInHours();
   double f1 = exp(lambda_old * time); // decay correction: multiply by exp(lambda x time)
   double f2 = exp(-lambda_new * time); // new radionuclide decay
 

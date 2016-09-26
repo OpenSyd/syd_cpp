@@ -63,7 +63,7 @@ namespace syd {
 
     virtual void DumpInTable(syd::PrintTable & table) const;
 
-    double GetLambdaInHours() const;
+    double GetLambdaDecayConstantInHours() const;
 
   protected:
     Injection();

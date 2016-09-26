@@ -30,7 +30,7 @@ syd::FitOutputImage::FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage::InitImage(Pointer input)
+void syd::FitOutputImage::InitImageLike(Pointer input)
 {
   image = syd::CreateImageLike<ImageType>(input);
   iterator = Iterator(image, image->GetLargestPossibleRegion());
@@ -205,7 +205,7 @@ syd::FitOutputImage_Lambda::FitOutputImage_Lambda():FitOutputImage()
 // --------------------------------------------------------------------
 void syd::FitOutputImage_Lambda::Update()
 {
-  double h = model_->GetLambda(0);
+  double h = model_->GetLambdaDecayConstantInHours(0);
   SetValue(h);
 }
 // --------------------------------------------------------------------

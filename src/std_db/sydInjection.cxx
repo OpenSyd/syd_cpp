@@ -118,8 +118,8 @@ void syd::Injection::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------
-double syd::Injection::GetLambdaInHours() const
+double syd::Injection::GetLambdaDecayConstantInHours() const
 {
-  return radionuclide->GetLambdaInHours();
+  return radionuclide->GetLambdaDecayConstantInHours();
 }
 // --------------------------------------------------
