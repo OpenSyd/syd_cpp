@@ -29,14 +29,14 @@
 namespace syd {
 
   // FIXME --> needed ?
-  class ModelResult {
-  public:
-    syd::FitModelBase * model;
-    syd::TimeActivityCurve * tac;
-    syd::TimeActivityCurve * restricted_tac;
-    double R2;
-    double AICc;
-  };
+  /*  class ModelResult {
+      public:
+      syd::FitModelBase * model;
+      syd::TimeActivityCurve * tac;
+      syd::TimeActivityCurve * restricted_tac;
+      double R2;
+      double AICc;
+      };*/
 
   /// This class is used to create a pixel-based integrated activity.
   class TimeIntegratedActivityImageFilter {
@@ -58,19 +58,19 @@ namespace syd {
     typedef itk::Image<MaskPixelType,3> MaskImageType;
     typedef itk::ImageRegionIterator<MaskImageType> IteratorMask;
 
-    // Input
+    /// Input
     void AddInput(ImageType::Pointer image, double time);
     void SetMask(MaskImageType::Pointer m) { mask_ = m; }
     void SetLambdaDecayConstantInHours(double l) { lambda_in_hours_ = l; }
     void AddTimePointValue(double time, double value);
     void SetOptions(syd::TimeIntegratedActivityFitOptions & options) { options_ = options; }
-    void AddOutputImage(syd::FitOutputImage * o);
+    void AddOutputImage(syd::FitOutputImage::pointer o);
 
-    // Main function
+    /// Main function
     void Run();
 
   protected:
-    // Input
+    /// Input
     std::vector<ImageType::Pointer> images_;
     std::vector<double> times_;
     MaskImageType::Pointer mask_;
@@ -78,39 +78,51 @@ namespace syd {
     double lambda_in_hours_;
     std::vector<double> additional_point_times;
     std::vector<double> additional_point_values;
-    std::vector<syd::FitModelBase*> models_;
+    syd::FitModelBase::vector models_;
 
-    // Computed 4D images that merge all 3D images
+    /// Computed 4D images that merge all 3D images
     Image4DType::Pointer tac_image_;
 
-    // Output
-    std::vector<syd::FitOutputImage*> outputs_;
+    /// Output
+    syd::FitOutputImage::vector outputs_;
 
-    // Options for the solver
+    /// Options for the solver
     ceres::Solver::Options * ceres_options_;
     ceres::Solver::Summary ceres_summary_;
     ceres::Solver::Summary current_ceres_summary_;
 
-    // Do the computation for the current pixel
-    void FitOnePixel(Iterator4D & it);
+    /// for computation
+    syd::TimeActivityCurve::pointer initial_tac_;
+    syd::TimeActivityCurve::pointer working_tac_;
 
-    // Initialize the solver
+    /// Initialize the solver
     void InitSolver();
 
-    // Initialize the models
+    /// Initialize the models
     void InitModels();
 
-    // Initialize the outpus
+    /// Initialize the outpus
     void InitOutputs();
 
-    // Initialize the 4D input
+    /// Initialize the 4D input
     void Init4DInput();
 
-    // Initialize the mask
+    /// Initialize the mask
     void InitMask();
 
-    // Check the inputs (size etc)
+    /// Check the inputs (size etc)
     void CheckInputs();
+
+    /// Do the computation for the current pixel
+    void FitOnePixel(Iterator4D it);
+
+    /// Try to fit a TAC with the given model
+    void FitTACWithModel(syd::FitModelBase::pointer model,
+                         syd::TimeActivityCurve::pointer tac);
+
+    /// Choose the best lmode according to Akaike criterion
+    int SelectBestModel(syd::FitModelBase::vector models,
+                        syd::TimeActivityCurve::pointer tac);
 
   }; // class TimeIntegratedActivityImageFilter
 

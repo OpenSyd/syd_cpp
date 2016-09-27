@@ -25,13 +25,13 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   SetR2MinThreshold(0.9);
   SetRestrictedFlag(false);
   SetMaxNumIterations(100);
-  auto f1  = new syd::FitModel_f1;
-  auto f2  = new syd::FitModel_f2;
-  auto f3  = new syd::FitModel_f3;
-  auto f4a = new syd::FitModel_f4a;
-  auto f4b = new syd::FitModel_f4b;
-  auto f4c = new syd::FitModel_f4c;
-  auto f4  = new syd::FitModel_f4;
+  auto f1  = std::make_shared<syd::FitModel_f1>();
+  auto f2  = std::make_shared<syd::FitModel_f2>();
+  auto f3  = std::make_shared<syd::FitModel_f3>();
+  auto f4a = std::make_shared<syd::FitModel_f4a>();
+  auto f4b = std::make_shared<syd::FitModel_f4b>();
+  auto f4c = std::make_shared<syd::FitModel_f4c>();
+  auto f4  = std::make_shared<syd::FitModel_f4>();
   all_models_.push_back(f1);
   all_models_.push_back(f2);
   all_models_.push_back(f3);
@@ -47,7 +47,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
 syd::TimeIntegratedActivityFitOptions::~TimeIntegratedActivityFitOptions()
 {
   DDF();
-  for(auto m:all_models_) delete(m);
+  //  for(auto m:all_models_) delete(m);
 }
 // --------------------------------------------------------------------
 
@@ -79,11 +79,11 @@ void syd::TimeIntegratedActivityFitOptions::AddTimeValue(double time, double val
 
 
 // --------------------------------------------------------------------
-std::vector<syd::FitModelBase*> syd::TimeIntegratedActivityFitOptions::GetModels() const
+syd::FitModelBase::vector syd::TimeIntegratedActivityFitOptions::GetModels() const
 
 {
   DDF();
-  std::vector<syd::FitModelBase*> models;
+  syd::FitModelBase::vector models;
   for(auto m:all_models_) {
     for(auto n:model_names_) {
       if (n == m->GetName()) {

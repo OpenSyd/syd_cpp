@@ -103,7 +103,7 @@ double syd::FitModelBase::Integrate(double a, double b) const
   double x=0.0;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
-    double l = GetLambdaDecayConstantInHours(k) + GetLambdaDecayConstantInHours();
+    double l = GetLambda(k) + GetLambdaDecayConstantInHours();
     x += A/l * (exp(-l*a) - exp(-l*b)) ;
   }
   return x;
@@ -117,7 +117,7 @@ double syd::FitModelBase::Integrate() const
   double x = 0.0;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
-    double l = GetLambdaDecayConstantInHours(k) + GetLambdaDecayConstantInHours();
+    double l = GetLambda(k) + GetLambdaDecayConstantInHours();
     x += A/l;
   }
   return x;
@@ -288,7 +288,7 @@ bool syd::FitModelBase::IsAcceptable() const
   bool is_ok = true;
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
-    double l = GetLambdaDecayConstantInHours(k) + GetLambdaDecayConstantInHours();
+    double l = GetLambda(k) + GetLambdaDecayConstantInHours();
     // if (A<=0.0) is_ok = false; // Warning, to change for some model (f4a)
     // if (l<0.2*GetLambdaPhysicHours()) is_ok = false; // too slow decay
   }
@@ -300,7 +300,7 @@ bool syd::FitModelBase::IsAcceptable() const
 // --------------------------------------------------------------------
 double syd::FitModelBase::GetEffHalfLife() const
 {
-  double h = GetLambdaDecayConstantInHours(0) + GetLambdaDecayConstantInHours();
+  double h = GetLambda(0) + GetLambdaDecayConstantInHours();
   return log(2.0)/h;
 }
 // --------------------------------------------------------------------

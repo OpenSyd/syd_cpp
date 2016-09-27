@@ -41,6 +41,23 @@ void syd::FitOutputImage::InitImageLike(Pointer input)
 
 
 // --------------------------------------------------------------------
+void syd::FitOutputImage::SetInitialTimeActivityCurve(syd::TimeActivityCurve::pointer tac)
+{
+  initial_tac_ = tac;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitOutputImage::SetWorkingTimeActivityCurve(syd::TimeActivityCurve::pointer tac)
+{
+  working_tac_ = tac;
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
 void syd::FitOutputImage::Iterate()
 {
   ++iterator;
@@ -76,9 +93,9 @@ syd::FitOutputImage_AUC::FitOutputImage_AUC():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_AUC::Update()
+void syd::FitOutputImage_AUC::Update(syd::FitModelBase::pointer model)
 {
-  double r = model_->ComputeAUC(initial_tac_, index_);
+  double r = model->ComputeAUC(initial_tac_, index_);
   SetValue(r);
 }
 // --------------------------------------------------------------------
@@ -94,9 +111,9 @@ syd::FitOutputImage_Integrate::FitOutputImage_Integrate():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Integrate::Update()
+void syd::FitOutputImage_Integrate::Update(syd::FitModelBase::pointer model)
 {
-  double r = model_->Integrate();
+  double r = model->Integrate();
   SetValue(r);
 }
 // --------------------------------------------------------------------
@@ -112,9 +129,9 @@ syd::FitOutputImage_R2::FitOutputImage_R2():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_R2::Update()
+void syd::FitOutputImage_R2::Update(syd::FitModelBase::pointer model)
 {
-  double R2 = model_->ComputeR2(working_tac_);
+  double R2 = model->ComputeR2(working_tac_);
   SetValue(R2);
 }
 // --------------------------------------------------------------------
@@ -131,9 +148,9 @@ syd::FitOutputImage_Model::FitOutputImage_Model():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Model::Update()
+void syd::FitOutputImage_Model::Update(syd::FitModelBase::pointer model)
 {
-  int id = model_->id_;
+  int id = model->id_;
   SetValue(id);
 }
 // --------------------------------------------------------------------
@@ -149,10 +166,10 @@ syd::FitOutputImage_Iteration::FitOutputImage_Iteration():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Iteration::Update()
+void syd::FitOutputImage_Iteration::Update(syd::FitModelBase::pointer model)
 {
-  int it = model_->ceres_summary_.num_unsuccessful_steps +
-    model_->ceres_summary_.num_successful_steps;
+  int it = model->ceres_summary_.num_unsuccessful_steps +
+    model->ceres_summary_.num_successful_steps;
   SetValue(it);
 }
 // --------------------------------------------------------------------
@@ -168,7 +185,7 @@ syd::FitOutputImage_Success::FitOutputImage_Success():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Success::Update()
+void syd::FitOutputImage_Success::Update(syd::FitModelBase::pointer model)
 {
   SetValue(1);
 }
@@ -185,9 +202,9 @@ syd::FitOutputImage_EffHalfLife::FitOutputImage_EffHalfLife():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_EffHalfLife::Update()
+void syd::FitOutputImage_EffHalfLife::Update(syd::FitModelBase::pointer model)
 {
-  double h = model_->GetEffHalfLife();
+  double h = model->GetEffHalfLife();
   SetValue(h);
 }
 // --------------------------------------------------------------------
@@ -203,9 +220,9 @@ syd::FitOutputImage_Lambda::FitOutputImage_Lambda():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Lambda::Update()
+void syd::FitOutputImage_Lambda::Update(syd::FitModelBase::pointer model)
 {
-  double h = model_->GetLambdaDecayConstantInHours(0);
+  double h = model->GetLambda(0);
   SetValue(h);
 }
 // --------------------------------------------------------------------
@@ -221,7 +238,7 @@ syd::FitOutputImage_NbOfPointsForFit::FitOutputImage_NbOfPointsForFit():FitOutpu
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_NbOfPointsForFit::Update()
+void syd::FitOutputImage_NbOfPointsForFit::Update(syd::FitModelBase::pointer model)
 {
   SetValue(working_tac_->size());
 }
@@ -279,10 +296,10 @@ void syd::FitOutputImage_ModelParams::Iterate()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_ModelParams::Update()
+void syd::FitOutputImage_ModelParams::Update(syd::FitModelBase::pointer model)
 {
   if (UseImageFlag) {
-    auto p = model_->GetParameters();
+    auto p = model->GetParameters();
     auto iter = raw_pointer;
     for(auto i=0; i<p.size(); i++) {
       *iter = p[i];
@@ -294,7 +311,7 @@ void syd::FitOutputImage_ModelParams::Update()
     }
   }
   else {
-    value = model_->GetParameters()[0];
+    value = model->GetParameters()[0];
   }
 }
 // --------------------------------------------------------------------

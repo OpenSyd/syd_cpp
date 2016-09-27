@@ -46,7 +46,9 @@ namespace syd {
     void SetMaxNumIterations(int i) { max_num_iterations_ = i; }
 
     // Get model object
-    std::vector<syd::FitModelBase*> GetModels() const;
+    syd::FitModelBase::vector GetModels() const;
+    double GetR2MinThreshold() const { return R2_min_threshold_; }
+    bool GetRestrictedFlag() const { return restricted_flag_; }
     int GetMaxNumIterations() const { return max_num_iterations_; }
 
   protected:
@@ -54,7 +56,7 @@ namespace syd {
     bool restricted_flag_;
     double R2_min_threshold_;
     std::set<std::string> model_names_;
-    std::vector<syd::FitModelBase*> all_models_;
+    syd::FitModelBase::vector all_models_;
     int max_num_iterations_;
 
   }; // class TimeIntegratedActivityFitOptions

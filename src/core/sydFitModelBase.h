@@ -75,7 +75,7 @@ namespace syd {
 
     void SetLambdaDecayConstantInHours(double l) { lambda_in_hours_ = l; }
     double GetLambdaDecayConstantInHours() const { return lambda_in_hours_; }
-    virtual double GetLambdaDecayConstantInHours(const int i) const { LOG(FATAL) << "GetLambdaDecayConstantInHours to implement " << GetName(); return 0.0; }
+    virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); return 0.0; }
 
     std::vector<double> & GetParameters() { return params_; }
     const std::vector<double> & GetParameters() const { return params_; }
