@@ -35,7 +35,7 @@ syd::TimeIntegratedActivityImageFilter::TimeIntegratedActivityImageFilter()
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageFilter::~TimeIntegratedActivityImageFilter()
 {
-  DD("~TimeIntegratedActivityImageFilter");
+  delete ceres_options_;
 }
 // --------------------------------------------------------------------
 
@@ -77,12 +77,20 @@ void syd::TimeIntegratedActivityImageFilter::Run()
 
   // Main loop
   int x = 0;
-  int n = images_[0]->GetLargestPossibleRegion().GetNumberOfPixels();
+  //  int n = images_[0]->GetLargestPossibleRegion().GetNumberOfPixels();
+  int n = mask_->GetLargestPossibleRegion().GetNumberOfPixels();
   DD(n);
+  int nb_fit = 0;
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
 
     if (it_mask.Get() != 0) { // inside the mask
-      FitOnePixel(it);
+      ++nb_fit;
+      auto best_model_index = FitOnePixel(it);
+      if (best_model_index != -1) { // success
+        auto best_model = models_[best_model_index];
+        for(auto & o:outputs_)
+          o->Update(best_model);
+      }
     }
     else {
       // FIXME update output ?
@@ -92,27 +100,28 @@ void syd::TimeIntegratedActivityImageFilter::Run()
     ++x;
     if (sydlog::Log::LogLevel() > 0) loadbar(x,n);
 
-    // Next pixel
+    // Next pixel for output
     for(auto o:outputs_) o->Iterate();
+    // Next pixel for mask
     ++it_mask;
-    // move iterator for all images
+    // Next pixel for tac image (skip n values)
     for(auto i=0; i<images_.size(); i++) ++it;
     //    ++it;
   }
+  DD(nb_fit);
   DD("DONE");
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::TimeIntegratedActivityImageFilter::FitOnePixel(Iterator4D it)
+int syd::TimeIntegratedActivityImageFilter:: FitOnePixel(Iterator4D it)
 {
   // Create initial tac
   for(auto i=0; i<images_.size(); i++) {
     initial_tac_->SetValue(i, it.Get());
     ++it; // next value
   }
-  DD(initial_tac_);
 
   // Create working tac (restricted, + add value)
   if (options_.GetRestrictedFlag()) {
@@ -120,7 +129,6 @@ void syd::TimeIntegratedActivityImageFilter::FitOnePixel(Iterator4D it)
   }
   else working_tac_ = initial_tac_;
   // FIXME: todo add value
-  DD(working_tac_);
 
   // Loop on models
   for(auto model:models_) {
@@ -128,18 +136,7 @@ void syd::TimeIntegratedActivityImageFilter::FitOnePixel(Iterator4D it)
   }
 
   // Select best one
-  auto best_model_num = SelectBestModel(models_, working_tac_);
-  bool success = (best_model_num != -1);
-  DD(success);
-
-  // Update the output
-  if (success) {
-    auto best_model = models_[best_model_num];
-    DD(best_model->GetName());
-    for(auto & o:outputs_)
-      o->Update(best_model);
-  }
-
+  return SelectBestModel(models_, working_tac_);
 }
 // --------------------------------------------------------------------
 
@@ -147,7 +144,6 @@ void syd::TimeIntegratedActivityImageFilter::FitOnePixel(Iterator4D it)
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageFilter::InitSolver()
 {
-  DDF();
   // Solve
   ceres_options_ = new ceres::Solver::Options;
   ceres_options_->max_num_iterations = options_.GetMaxNumIterations();
@@ -176,11 +172,9 @@ void syd::TimeIntegratedActivityImageFilter::InitSolver()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageFilter::InitModels()
 {
-  DDF();
   models_.clear();
   models_ = options_.GetModels();
   for(auto m:models_) {
-    DD(m->GetName());
     m->SetLambdaDecayConstantInHours(lambda_in_hours_);
   }
 }
@@ -190,7 +184,6 @@ void syd::TimeIntegratedActivityImageFilter::InitModels()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageFilter::InitOutputs()
 {
-  DDF();
   for(auto & o:outputs_) {
     o->InitImageLike(images_[0]); // allocate images
     o->SetInitialTimeActivityCurve(initial_tac_);
@@ -203,8 +196,6 @@ void syd::TimeIntegratedActivityImageFilter::InitOutputs()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageFilter::Init4DInput()
 {
-  DDF();
-
   // Create
   tac_image_ = Image4DType::New();
 
@@ -212,22 +203,17 @@ void syd::TimeIntegratedActivityImageFilter::Init4DInput()
   typename Image4DType::SizeType size;
   for(auto i=1; i<4; i++) size[i] = images_[0]->GetLargestPossibleRegion().GetSize()[i-1];
   size[0] = images_.size();
-  DD(size);
   typename Image4DType::RegionType region;
   region.SetSize(size);
-  DD(region);
   tac_image_->SetRegions(region);
-  DD(region);
   typename Image4DType::SpacingType spacing;
   for(auto i=1; i<4; i++) spacing[i] = images_[0]->GetSpacing()[i-1];
   spacing[0] = 1.0;
   tac_image_->SetSpacing(spacing);
-  DD(spacing);
   typename Image4DType::PointType origin;
   for(auto i=1; i<4; i++) origin[i] = images_[0]->GetOrigin()[i-1];
   origin[0] = 0.0;
   tac_image_->SetOrigin(origin);
-  DD(origin);
   tac_image_->Allocate();
 
   // Copy data to the 4D image
@@ -292,7 +278,6 @@ void syd::TimeIntegratedActivityImageFilter::CheckInputs()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageFilter::AddInput(ImageType::Pointer image, double time)
 {
-  DDF();
   images_.push_back(image);
   times_.push_back(time);
 }
@@ -303,7 +288,6 @@ void syd::TimeIntegratedActivityImageFilter::AddInput(ImageType::Pointer image, 
 void syd::TimeIntegratedActivityImageFilter::
 AddOutputImage(syd::FitOutputImage::pointer o)
 {
-  DDF();
   outputs_.push_back(o);
 }
 // --------------------------------------------------------------------
@@ -314,7 +298,6 @@ void syd::TimeIntegratedActivityImageFilter::
 FitTACWithModel(syd::FitModelBase::pointer model,
                 syd::TimeActivityCurve::pointer tac)
 {
-  DDF();
   ceres::Problem problem;// New problem each time. (I did not manage to change that)
   model->ComputeStartingParametersValues(tac);
   model->SetProblemResidual(&problem, *tac);
@@ -329,7 +312,6 @@ int syd::TimeIntegratedActivityImageFilter::
 SelectBestModel(syd::FitModelBase::vector models,
                 syd::TimeActivityCurve::pointer tac)
 {
-  DDF();
   bool verbose=true;
   int best = -1;
   double R2_threshold = options_.GetR2MinThreshold();
@@ -350,7 +332,7 @@ SelectBestModel(syd::FitModelBase::vector models,
       //AICc = m->ComputeAICc(tac);
       if (verbose) std::cout << " " << b
                              << " AICc = " << m->ComputeAICc(tac)
-                             << " AIC = " << m->ComputeAIC(tac);
+                             << " AIC = " << m->ComputeAIC(tac) << std::endl;
       if (AICc < min_AICc) {
         best = i;
         min_AICc = AICc;
@@ -359,5 +341,24 @@ SelectBestModel(syd::FitModelBase::vector models,
     }
   }
   return best;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::TimeIntegratedActivityImageFilter::Iterator4D
+syd::TimeIntegratedActivityImageFilter::
+GetIteratorAtPoint(double x, double y, double z)
+{
+  Image4DType::PointType point;
+  point[0] = 0;
+  point[1] = x;
+  point[2] = y;
+  point[3] = z;
+  Image4DType::IndexType index;
+  tac_image_->TransformPhysicalPointToIndex(point, index);
+  Iterator4D it(tac_image_, tac_image_->GetLargestPossibleRegion());
+  it.SetIndex(index);
+  return it;
 }
 // --------------------------------------------------------------------

@@ -69,6 +69,15 @@ namespace syd {
     /// Main function
     void Run();
 
+    /// Helpers function
+    Iterator4D GetIteratorAtPoint(double x, double y, double z);
+    syd::TimeActivityCurve::pointer GetCurrentTAC() const { return initial_tac_; }
+    syd::TimeActivityCurve::pointer GetWorkingTAC() const { return working_tac_; }
+    syd::FitModelBase::vector GetModels() const { return models_; }
+
+    /// Do the computation for the current pixel
+    int FitOnePixel(Iterator4D it);
+
   protected:
     /// Input
     std::vector<ImageType::Pointer> images_;
@@ -112,9 +121,6 @@ namespace syd {
 
     /// Check the inputs (size etc)
     void CheckInputs();
-
-    /// Do the computation for the current pixel
-    void FitOnePixel(Iterator4D it);
 
     /// Try to fit a TAC with the given model
     void FitTACWithModel(syd::FitModelBase::pointer model,
