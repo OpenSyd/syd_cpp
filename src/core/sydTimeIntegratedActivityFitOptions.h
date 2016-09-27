@@ -41,7 +41,7 @@ namespace syd {
     void AddModel(const std::string & model_name);
     // void AddModels(const std::vector<std::string> & model_names);
     // void AddModels(const std::string & model_names);
-    void SetAkaikeCriterion(const std::string & criterion_name);
+    void SetAkaikeCriterion(const std::string & n);
     void AddTimeValue(double time, double value);
     void SetMaxNumIterations(int i) { max_num_iterations_ = i; }
 
@@ -50,6 +50,7 @@ namespace syd {
     double GetR2MinThreshold() const { return R2_min_threshold_; }
     bool GetRestrictedFlag() const { return restricted_flag_; }
     int GetMaxNumIterations() const { return max_num_iterations_; }
+    std::string GetAkaikeCriterion() const { return akaike_criterion_; }
 
   protected:
 
@@ -58,6 +59,7 @@ namespace syd {
     std::set<std::string> model_names_;
     syd::FitModelBase::vector all_models_;
     int max_num_iterations_;
+    std::string akaike_criterion_;
 
   }; // class TimeIntegratedActivityFitOptions
 

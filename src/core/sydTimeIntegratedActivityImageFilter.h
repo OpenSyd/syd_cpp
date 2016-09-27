@@ -28,16 +28,6 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  // FIXME --> needed ?
-  /*  class ModelResult {
-      public:
-      syd::FitModelBase * model;
-      syd::TimeActivityCurve * tac;
-      syd::TimeActivityCurve * restricted_tac;
-      double R2;
-      double AICc;
-      };*/
-
   /// This class is used to create a pixel-based integrated activity.
   class TimeIntegratedActivityImageFilter {
 
@@ -73,6 +63,7 @@ namespace syd {
     Iterator4D GetIteratorAtPoint(double x, double y, double z);
     syd::TimeActivityCurve::pointer GetCurrentTAC() const { return initial_tac_; }
     syd::TimeActivityCurve::pointer GetWorkingTAC() const { return working_tac_; }
+    int GetCurrentIndexRestrictedTAC() const { return current_index_restricted_tac_; }
     syd::FitModelBase::vector GetModels() const { return models_; }
 
     /// Do the computation for the current pixel
@@ -103,6 +94,7 @@ namespace syd {
     /// for computation
     syd::TimeActivityCurve::pointer initial_tac_;
     syd::TimeActivityCurve::pointer working_tac_;
+    int current_index_restricted_tac_;
 
     /// Initialize the solver
     void InitSolver();
@@ -129,6 +121,11 @@ namespace syd {
     /// Choose the best lmode according to Akaike criterion
     int SelectBestModel(syd::FitModelBase::vector models,
                         syd::TimeActivityCurve::pointer tac);
+
+    /// Compute the restricted tac from the max (3 points at min)
+    int GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
+                         syd::TimeActivityCurve::pointer restricted_tac);
+
 
   }; // class TimeIntegratedActivityImageFilter
 

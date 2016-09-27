@@ -25,6 +25,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   SetR2MinThreshold(0.9);
   SetRestrictedFlag(false);
   SetMaxNumIterations(100);
+  SetAkaikeCriterion("AICc");
   auto f1  = std::make_shared<syd::FitModel_f1>();
   auto f2  = std::make_shared<syd::FitModel_f2>();
   auto f3  = std::make_shared<syd::FitModel_f3>();
@@ -63,8 +64,7 @@ void syd::TimeIntegratedActivityFitOptions::AddModel(const std::string & model_n
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityFitOptions::SetAkaikeCriterion(const std::string & criterion_name)
 {
-  DDF();
-  DD("TODO");
+  akaike_criterion_ = criterion_name;
 }
 // --------------------------------------------------------------------
 

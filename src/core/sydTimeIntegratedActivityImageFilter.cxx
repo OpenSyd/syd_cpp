@@ -27,7 +27,7 @@
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageFilter::TimeIntegratedActivityImageFilter()
 {
-  DD("TimeIntegratedActivityImageFilter");
+  current_index_restricted_tac_ = 0;
 }
 // --------------------------------------------------------------------
 
@@ -43,8 +43,6 @@ syd::TimeIntegratedActivityImageFilter::~TimeIntegratedActivityImageFilter()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageFilter::Run()
 {
-  DD("TimeIntegratedActivityImageFilter::Run");
-
   // Check inputs: size, times, negative values ?
   CheckInputs();
 
@@ -79,7 +77,6 @@ void syd::TimeIntegratedActivityImageFilter::Run()
   int x = 0;
   //  int n = images_[0]->GetLargestPossibleRegion().GetNumberOfPixels();
   int n = mask_->GetLargestPossibleRegion().GetNumberOfPixels();
-  DD(n);
   int nb_fit = 0;
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
 
@@ -108,14 +105,12 @@ void syd::TimeIntegratedActivityImageFilter::Run()
     for(auto i=0; i<images_.size(); i++) ++it;
     //    ++it;
   }
-  DD(nb_fit);
-  DD("DONE");
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-int syd::TimeIntegratedActivityImageFilter:: FitOnePixel(Iterator4D it)
+int syd::TimeIntegratedActivityImageFilter::FitOnePixel(Iterator4D it)
 {
   // Create initial tac
   for(auto i=0; i<images_.size(); i++) {
@@ -123,12 +118,16 @@ int syd::TimeIntegratedActivityImageFilter:: FitOnePixel(Iterator4D it)
     ++it; // next value
   }
 
+  // FIXME: todo add value
+
   // Create working tac (restricted, + add value)
   if (options_.GetRestrictedFlag()) {
-    DD("TODO");
+    // Special case, ensure both tac are different
+    if (initial_tac_ == working_tac_) working_tac_ = syd::TimeActivityCurve::New();
+    // Create the working_tac_
+    current_index_restricted_tac_ = GetRestrictedTac(initial_tac_, working_tac_);
   }
   else working_tac_ = initial_tac_;
-  // FIXME: todo add value
 
   // Loop on models
   for(auto model:models_) {
@@ -139,6 +138,25 @@ int syd::TimeIntegratedActivityImageFilter:: FitOnePixel(Iterator4D it)
   return SelectBestModel(models_, working_tac_);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+int syd::TimeIntegratedActivityImageFilter::
+GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
+                 syd::TimeActivityCurve::pointer restricted_tac)
+{
+  restricted_tac->clear();
+  // Select only the end of the curve from the largest value find from
+  // the end
+  int i = initial_tac->FindIndexOfMaxValueFromTheEnd(3);
+  for(int j=i; j<initial_tac->size(); j++)
+    restricted_tac->AddValue(initial_tac->GetTime(j), initial_tac->GetValue(j));
+  return i;
+}
+// --------------------------------------------------------------------
+
+
+
 
 
 // --------------------------------------------------------------------
@@ -255,8 +273,6 @@ void syd::TimeIntegratedActivityImageFilter::InitMask()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageFilter::CheckInputs()
 {
-  DDF();
-
   if (images_.size() < 2) {
     EXCEPTION("Provide at least 2 images before");
   }
@@ -312,11 +328,16 @@ int syd::TimeIntegratedActivityImageFilter::
 SelectBestModel(syd::FitModelBase::vector models,
                 syd::TimeActivityCurve::pointer tac)
 {
-  bool verbose=true;
+  bool verbose=false; // Debug
   int best = -1;
   double R2_threshold = options_.GetR2MinThreshold();
-  double min_AICc = 666.0;
+  double min_Akaike_criterion = 666.0;
   double best_R2 = 0.0;
+  if (verbose) {
+    std::cout << initial_tac_ << std::endl;
+    std::cout << working_tac_ << " " << current_index_restricted_tac_ << std::endl;
+  }
+
   for(auto i=0; i<models.size(); i++) {
     auto & m = models[i];
     double R2 = m->ComputeR2(tac);
@@ -324,22 +345,32 @@ SelectBestModel(syd::FitModelBase::vector models,
                            << " SS = " << m->ComputeRSS(tac)
                            << " R2 = " << R2;
     if (R2 > R2_threshold) {
-      double AICc;
-      bool b = m->IsAICcValid(tac->size()); //FIXME
-      //if (b) AICc = m->ComputeAICc(tac);
-      // else
-      AICc = m->ComputeAIC(tac);
-      //AICc = m->ComputeAICc(tac);
-      if (verbose) std::cout << " " << b
+
+      double criterion;
+      if (options_.GetAkaikeCriterion() == "AIC") {
+        criterion = m->ComputeAIC(tac);
+      } else {
+        if (options_.GetAkaikeCriterion() == "AICc") {
+          criterion = m->ComputeAICc(tac);
+        } else {
+          LOG(FATAL) << "Akaike criterion '"
+                     << options_.GetAkaikeCriterion() << "' not known"
+                     << ". Use AIC or AIcc";
+        }
+      }
+
+      if (verbose) std::cout << " valid=" <<  m->IsAICcValid(tac->size())
                              << " AICc = " << m->ComputeAICc(tac)
                              << " AIC = " << m->ComputeAIC(tac) << std::endl;
-      if (AICc < min_AICc) {
+      if (criterion < min_Akaike_criterion) {
         best = i;
-        min_AICc = AICc;
+        min_Akaike_criterion = criterion;
         best_R2 = R2;
       }
     }
+    else if (verbose) std::cout << std::endl;
   }
+  if (verbose) std::cout << best << std::endl;
   return best;
 }
 // --------------------------------------------------------------------
