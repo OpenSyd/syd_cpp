@@ -1,0 +1,16 @@
+#File sydCalibrateImage.ggo
+
+package "syd"
+version "0.2"
+usage "sydCalibrateImage <image_ids>"
+description "Perform image calibration : consider the first image of the list (according to acquisition time), compute activity by detected counts (assuming whole activity in the image fov). Convert all images with the calibration factor. The pixel unit is changed to Bq.
+- <image_ids>      ids of the images to update
+
+It can be adapted to use need by using --scale and --pixel_unit option.
+
+The default pixel unit is in Bq. If the option --by_IA is used, new injection with 1 MBq injected activity is created and linked to the images.
+
+"
+
+option "scale"  s  "Multiply the pixel's values by this value"     double default = "1.0" no
+option "by_IA"  n  "Normalisation by injected activity (in MBq)"   flag off

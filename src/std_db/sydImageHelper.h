@@ -56,6 +56,9 @@ namespace syd {
                                        std::string to_relative_path,
                                        std::string to_filename);
 
+  /// Copy an image
+  syd::Image::pointer CopyImage(syd::Image::pointer image);
+
   /// Read the attached file and set image spacing, size dimension,
   /// and pixel_type. The image is not updated
   void SetImageInfoFromFile(syd::Image::pointer image);
@@ -110,6 +113,12 @@ namespace syd {
 
   /// Flip image if negative spacing is detected
   bool FlipImageIfNegativeSpacing(syd::Image::pointer image);
+
+  /// Substitute a radionuclide with another one. Create a new
+  /// artificial injection
+  void SubstituteRadionuclide(syd::Image::pointer image,
+                              syd::Radionuclide::pointer rad);
+
 
 } // namespace syd
 

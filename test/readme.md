@@ -17,7 +17,10 @@ Test4
 - test insertion of images
 - test image scale
 - test image stitch
+- test negative spacing
+- test planar geometrical mean
 
 
 Test5
 - test roi
+- ComputeActivityInMBqByDetectedCounts (because need roi stat)

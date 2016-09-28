@@ -14,7 +14,6 @@ wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
 wrap_odb(sydStandardDatabase sydRoiStatistic.h)
 wrap_odb(sydStandardDatabase sydElastix.h)
-# wrap_odb(sydStandardDatabase sydCalibration.h)
 # wrap_odb(sydStandardDatabase sydTimepoints.h)
 # wrap_odb(sydStandardDatabase sydFitResult.h)
 
@@ -33,7 +32,6 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
 
   sydElastix-odb.cxx sydElastix-schema.cxx  sydElastix.cxx
-  # sydCalibration-odb.cxx sydCalibration-schema.cxx  sydCalibration.cxx
   # sydTimepoints-odb.cxx sydTimepoints-schema.cxx  sydTimepoints.cxx
   # sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
 
@@ -41,9 +39,11 @@ set(SYD_STANDARD_DATABASE_SRC
   sydDicomSerieBuilder.cxx
   sydDicomSerieHelper.cxx
   sydImageHelper.cxx
+  sydInjectionHelper.cxx
   sydRoiMaskImageHelper.cxx
   sydUpdateRadionuclideFilter.cxx
   sydElastixHelper.cxx
+  sydRadionuclideHelper.cxx
 
   #sydRoiStatisticBuilder.cxx
 
@@ -210,6 +210,29 @@ add_executable(sydComputeActivityInMBqByDetectedCounts
 target_link_libraries(sydComputeActivityInMBqByDetectedCounts ${SYD_STD_DB_LIBRARY})
 
 
+# Calibrate image
+wrap_ggo(sydCalibrateImage_GGO_C
+  sydCalibrateImage.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydCalibrateImage
+  sydCalibrateImage.cxx
+  ${sydCalibrateImage_GGO_C})
+target_link_libraries(sydCalibrateImage ${SYD_STD_DB_LIBRARY})
+
+
+# Substitute a radionuclide
+wrap_ggo(sydSubstituteRadionuclide_GGO_C
+  sydSubstituteRadionuclide.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydSubstituteRadionuclide
+  sydSubstituteRadionuclide.cxx
+  ${sydSubstituteRadionuclide_GGO_C})
+target_link_libraries(sydSubstituteRadionuclide ${SYD_STD_DB_LIBRARY})
+
 
 #----------------------------------------------------------
 # External tool: clitkExtractPatient
@@ -261,15 +284,6 @@ target_link_libraries(syd_transformix ${SYD_STD_DB_LIBRARY})
 #   sydUpdateDicomSerie.cxx
 #   ${sydUpdateDicomSerie_GGO_C})
 # target_link_libraries(sydUpdateDicomSerie ${SYD_STD_DB_LIBRARY})
-
-# Insert a new image with a calibration
-# wrap_ggo(sydInsertCalibratedImage_GGO_C
-#   sydInsertCalibratedImage.ggo
-#   sydCommandLineWithTags.ggo
-#   sydCommandLineDefault.ggo)
-# add_executable(sydInsertCalibratedImage
-#   sydInsertCalibratedImage.cxx ${sydInsertCalibratedImage_GGO_C})
-# target_link_libraries(sydInsertCalibratedImage ${SYD_STD_DB_LIBRARY})
 
 # Update a dose image
 # wrap_ggo(sydUpdateDoseImage_GGO_C

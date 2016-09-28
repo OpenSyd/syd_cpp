@@ -24,6 +24,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydRoiMaskImageHelper.h"
 #include "sydFileHelper.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -59,8 +60,8 @@ int main(int argc, char* argv[])
     fixed_mask = syd::FindRoiMaskImage(fixed_image, args_info.fMask_arg);
   }
 
-  // Loop over all images
-  for(auto i=1; i<ids.size(); i++) {
+  // Loop over all images (also with first image ids[0] !)
+  for(auto i=0; i<ids.size(); i++) {
 
     syd::Image::pointer moving_image;
     db->QueryOne(moving_image, ids[i]);
@@ -88,6 +89,10 @@ int main(int argc, char* argv[])
       +fs::path(config_filename).filename().string();
     fs::copy(config_filename, config->GetAbsolutePath());
     elastix->config_file = config;
+
+    // Tag
+    syd::SetTagsFromCommandLine(elastix->tags, db, args_info);
+
     db->Update(elastix);
     LOG(1) << "Insert elastix: " << elastix;
   }

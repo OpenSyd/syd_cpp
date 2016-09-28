@@ -91,6 +91,20 @@ int main(int argc, char* argv[])
   }
   std::cout << "RoiStatistic (without mask): " << stat2 << std::endl;
 
+  // ComputeActivityInMBqByDetectedCounts
+  syd::Injection::pointer injection;
+  db->New(injection);
+  std::vector<std::string> args = {"toto", "In-111", "2013-02-13 08:58", "200.0"};
+  injection->Set(args);
+  db->Insert(injection);
+  image->injection = injection;
+  double f = syd::ComputeActivityInMBqByDetectedCounts(image)*1000000;
+  std::cout << "Compute Activity in Bq by Detected Counts : " << f << std::endl;
+  if (fabs(f-1.30902) > 0.001) {
+    LOG(FATAL) << "Error in ComputeActivityInMBqByDetectedCounts " <<
+      f << " instead of 1.30902.";
+  }
+
   // ------------------------------------------------------------------
   // If needed create reference db
   if (args_info.create_ref_flag) {

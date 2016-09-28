@@ -224,76 +224,6 @@ syd::Image::vector syd::StandardDatabase::FindImages(const std::string & patient
 
 
 // --------------------------------------------------------------------
-syd::Radionuclide::pointer syd::StandardDatabase::FindRadionuclide(const std::string & name) const
-{
-  syd::Radionuclide::pointer rad;
-  odb::query<syd::Radionuclide> q = odb::query<syd::Radionuclide>::name == name;
-  try {
-    QueryOne(rad, q);
-  } catch(std::exception & e) {
-    EXCEPTION("Cannot find Radionuclide " << name << std::endl
-              << "Error message is: " << e.what());
-  }
-  return rad;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Injection::pointer syd::StandardDatabase::FindInjection(const syd::Patient::pointer patient,
-                                                             const std::string & name_or_study_id) const
-{
-  syd::Injection::pointer injection;
-  odb::query<syd::Injection> q =
-    odb::query<syd::Injection>::patient == patient->id and (
-                                                            odb::query<syd::Injection>::radionuclide->name == name_or_study_id.c_str() or
-                                                            odb::query<syd::Injection>::id == atoi(name_or_study_id.c_str()));
-
-  try {
-    QueryOne(injection, q);
-  } catch(std::exception & e) {
-    EXCEPTION("Error in FindInjection for patient " << patient->name
-              << ", with param: " << name_or_study_id << std::endl
-              << "Error message is: " << e.what());
-  }
-  return injection;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-/*syd::Calibration::pointer syd::StandardDatabase::FindCalibration(const syd::Image::pointer image,
-  const std::string & calib_tag)
-  {
-  syd::Tag::vector tags;
-  FindTags(tags,calib_tag);
-  syd::Calibration::vector calibrations;
-  syd::Calibration::pointer calibration;
-  typedef odb::query<syd::Calibration> QT;
-  QT q = QT::image == image->id;
-  Query(calibrations, q);
-  int n=0;
-  for(auto c:calibrations) {
-  if (syd::IsAllTagsIn(c->tags, tags)) {
-  if (n>0) {
-  EXCEPTION("Several calibrations are associated with this image. "
-  << "I dont know which one to choose. "
-  << "Use tags to discriminate");
-  }
-  ++n;
-  calibration = c;
-  }
-  }
-  if (calibrations.size() < 1) {
-  EXCEPTION("Cannot find calibration for this image: " << image);
-  }
-  return calibration;
-  }
-*/
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
 {
   if (def == "none") return;
@@ -412,18 +342,19 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   units.push_back(NewPixelUnit("cGy", "Absorbed dose in cGy")); // FIXME
   units.push_back(NewPixelUnit("MeV", "Deposited energy in MeV"));
 
-  units.push_back(NewPixelUnit("Bq.h_by_IA", "Time integrated Bq (Bq.h) by injected activity in MBq"));
-  units.push_back(NewPixelUnit("Bq_by_IA", "Activity in Bq by injected activity in MBq"));
-  units.push_back(NewPixelUnit("MBq.h/IA[MBq]", "time integrated activity MBq.h by injected activity"));
-  units.push_back(NewPixelUnit("MBq/IA[MBq]", "Activity in MBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("Bq", "Activity in Bq"));
+  units.push_back(NewPixelUnit("Bq_by_IA[MBq]", "Activity in Bq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("kBq_by_IA[MBq]°", "Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("MBq_by_IA[MBq]°", "Activity in MBq by injected activity in MBq"));
 
-  units.push_back(NewPixelUnit("cGy/IA[MBq]", "Dose in cGy by injected activity"));
-  units.push_back(NewPixelUnit("cGy/h/IA[MBq]", "Dose rate in cGy by hour by injected activity"));
-  units.push_back(NewPixelUnit("cGy/kBq.h/IA[MBq]", "Dose in cGy by tia kBq.h by injected activity (for S matrix)"));
-  units.push_back(NewPixelUnit("kBq.h/IA[MBq]", "time integrated activity kBq.h by injected activity"));
-  units.push_back(NewPixelUnit("kBq/IA[MBq]", "Activity in kBq by injected activity in MBq"));
-  units.push_back(NewPixelUnit("kBq_by_IA", "Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("Bq.h_by_IA[MBq]°", "Time Integrated Activity in Bq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("kBq.h_by_IA[MBq]°", "Time Integrated Activity in kBq by injected activity in MBq"));
+  units.push_back(NewPixelUnit("MBq.h_by_IA[MBq]°", "Time Integrated Activity in MBq by injected activity in MBq"));
+
   units.push_back(NewPixelUnit("mGy/Bq.sec", "Dose by cumulated activity"));
+  units.push_back(NewPixelUnit("cGy/h/IA[MBq]", "Dose rate in cGy by hour by injected activity"));
+  units.push_back(NewPixelUnit("cGy/IA[MBq]", "Dose in cGy by injected activity"));
+  units.push_back(NewPixelUnit("cGy/kBq.h/IA[MBq]", "Dose in cGy by tia kBq.h by injected activity (for S matrix)"));
 
   Insert(units);
   LOG(1) << units.size() << " PixelUnit have been added.";

@@ -17,18 +17,20 @@
   ===========================================================================**/
 
 // syd
-#include "sydComputeActivityInMBqByDetectedCounts_ggo.h"
+#include "sydSubstituteRadionuclide_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
 #include "sydImageHelper.h"
+#include "sydTagHelper.h"
+#include "sydPixelUnitHelper.h"
+#include "sydRadionuclideHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydComputeActivityInMBqByDetectedCounts, 0);
+  SYD_INIT_GGO(sydSubstituteRadionuclide, 0);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -37,34 +39,40 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the images
+  // Get the ids
   std::vector<syd::IdType> ids;
-  syd::ReadIdsFromInputPipe(ids);
-  for(auto i=0; i<args_info.inputs_num; i++) {
+  syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
+  DDS(ids);
+  for(auto i=1; i<args_info.inputs_num; i++)
     ids.push_back(atoi(args_info.inputs[i]));
-  }
+
+  // Get the radionuclide
+  auto rad = syd::FindRadionuclide(db, args_info.inputs[0]);
+  DD(rad);
+
+  // Get the images to udpate
   syd::Image::vector images;
   db->Query(images, ids);
-  if (images.size() == 0) {
-    LOG(FATAL) << "No image found. I do nothing.";
-  }
 
-  // Loop on images
+  // Loop over the images
   for(auto image:images) {
-    double s = syd::ComputeActivityInMBqByDetectedCounts(image);
-    s = s * args_info.scale_arg;
-    // print result:
-    // Verbose == 0  -> as a single line
-    // Verbose >= 1 -> several lines
-    auto l = sydlog::Log::LogLevel();
-    if (l == 0) {
-      std::cout << s << " ";
-    }
-    else {
-      LOG(1) << image->id << " "  << s;
-    }
+    // Make a copy
+    auto output = syd::CopyImage(image);
+    DD(output);
+
+    // Change the radionuclide
+    syd::SubstituteRadionuclide(output, rad);
+    DD(output);
+    auto inj = output->injection;
+    DD(inj);
+
+    // Apply user information
+    syd::SetImageInfoFromCommandLine(output, args_info);
+    syd::SetTagsFromCommandLine(output->tags, db, args_info);
+    db->Update(output);
+    LOG(1) << "Image with new radionuclide is " << output << ": "
+           << std::endl << "Injection : " << inj;
   }
-  if (sydlog::Log::LogLevel() == 0) std::cout << std::endl;
 
   // This is the end, my friend.
 }

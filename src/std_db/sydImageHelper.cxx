@@ -20,6 +20,7 @@
 #include "sydImageHelper.h"
 #include "sydFileHelper.h"
 #include "sydRoiMaskImageHelper.h"
+#include "sydInjectionHelper.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -185,7 +186,7 @@ void syd::SetPixelUnit(syd::Image::pointer image, std::string pixel_unit)
 void syd::SetInjection(syd::Image::pointer image, std::string injection)
 {
   auto db = image->GetDatabase<syd::StandardDatabase>();
-  auto i = db->FindInjection(image->patient, injection);
+  auto i = syd::FindInjection(image->patient, injection);
   image->injection = i;
 }
 // --------------------------------------------------------------------
@@ -388,7 +389,6 @@ void syd::CropImageLike(syd::Image::pointer image,
 // --------------------------------------------------------------------
 double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
 {
-  DD(image);
   if (image->injection == NULL) {
     EXCEPTION("Cannot ComputeActivityInMBqByDetectedCounts, need an injection for this image");
   }
@@ -398,10 +398,6 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
   double time = syd::DateDifferenceInHours(image->acquisition_date, injection->date);
   double lambda = log(2.0)/(injection->radionuclide->half_life_in_hours);
   double activity_at_acquisition = injected_activity * exp(-lambda * time);
-  DD(injected_activity);
-  DD(time);
-  DD(lambda);
-  DD(activity_at_acquisition);
 
   // Compute stat (without mask)
   auto db = image->GetDatabase<syd::StandardDatabase>();
@@ -409,12 +405,9 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
   db->New(stat);
   stat->image = image;
   syd::ComputeRoiStatistic(stat);
-  DD(stat);
-  DD(stat->sum);
 
-  //  double s = stat->sum / activity_at_acquisition;
+  // activity by nb of counts
   double s = activity_at_acquisition / stat->sum;
-  DD(s);
   return s;
 }
 // --------------------------------------------------------------------
@@ -441,5 +434,49 @@ bool syd::FlipImageIfNegativeSpacing(syd::Image::pointer image)
     db->Update(image); // for changed spacing , history
   }
   return flip;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer syd::CopyImage(syd::Image::pointer image)
+{
+  auto output = syd::InsertImageFromFile(image->GetAbsolutePath(),
+                                         image->patient,
+                                         image->modality);
+  syd::SetImageInfoFromImage(output, image);
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  db->Update(output);
+  return output;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::SubstituteRadionuclide(syd::Image::pointer image,
+                                 syd::Radionuclide::pointer rad)
+{
+  if (image->injection == NULL) {
+    EXCEPTION("Cannot SubstituteRadionuclide because the image is not associated with an injection: "
+              << image);
+  }
+
+  // Create new injection
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto new_injection = syd::CopyInjection(image->injection);
+  new_injection->radionuclide = rad;
+  db->Insert(new_injection);
+
+  // Get the time and the half_life (lambda)
+  double time = syd::DateDifferenceInHours(image->acquisition_date, image->injection->date);
+  double lambda_old = image->injection->radionuclide->GetLambdaInHours();
+  double lambda_new = rad->GetLambdaInHours();
+  double f1 = exp(lambda_old * time); // decay correction: multiply by exp(lambda x time)
+  double f2 = exp(-lambda_new * time); // new radionuclide decay
+
+  // substitute the radionuclide taking into account the half life
+  syd::ScaleImage(image, f1*f2);
+  image->injection = new_injection;
+  db->Update(image);
 }
 // --------------------------------------------------------------------

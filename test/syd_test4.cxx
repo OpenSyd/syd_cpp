@@ -23,6 +23,7 @@
 #include "sydDatabaseManager.h"
 #include "sydStandardDatabase.h"
 #include "sydImageHelper.h"
+#include "sydRadionuclideHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -37,7 +38,7 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
-  // database names
+  // Database names
   std::string dbname = "test4.db";
   std::string folder = "data4";
   std::string ref_dbname = "test4_ref.db";
@@ -76,10 +77,10 @@ int main(int argc, char* argv[])
   syd::SetPixelUnit(image1, "counts");
   syd::Injection::pointer injection;
   db->New(injection);
-  std::vector<std::string> args = {"toto", "Lu-177", "2013-02-03 10:33", "188.3"};
+  std::vector<std::string> args = {"toto", "In-111", "2013-02-03 10:33", "188.3"};
   injection->Set(args);
   db->Insert(injection);
-  syd::SetInjection(image1, "Lu-177");
+  syd::SetInjection(image1, "In-111");
   syd::AddDicomSerie(image1, dicom_serie2->id);
   db->Update(image1);
 
@@ -93,6 +94,8 @@ int main(int argc, char* argv[])
   db->QueryOne(spect1, 15);
   db->QueryOne(spect2, 16);
   auto spect = syd::InsertStitchDicomImage(spect1, spect2, 150000, 4);
+  syd::SetInjection(spect, "In-111");
+  db->Update(spect);
 
   // Stitch dicom with flip
   std::cout << "Flip stitch dicom with neg spacing" << std::endl;
@@ -128,6 +131,14 @@ int main(int argc, char* argv[])
   auto planar = syd::InsertImageFromDicomSerie(dicom_serie, "float");
   auto geommean = syd::InsertImageGeometricalMean(planar, 0.5);
 
+  // Test substitute
+  std::cout << "Image substitute radionuclide In-111 -> Y-90" << std::endl;
+  auto rad_Y90 = syd::FindRadionuclide(db, "Y-90");
+  auto spect_copy = syd::CopyImage(spect);
+  syd::SubstituteRadionuclide(spect_copy, rad_Y90);
+  db->Update(spect_copy);
+
+  // -----------------------------------------------------------------
   // If needed create reference db
   if (args_info.create_ref_flag) {
     LOG(0) << "Create reference db";
@@ -155,6 +166,9 @@ int main(int argc, char* argv[])
 
   ref_db->QueryOne(ref_image, geommean->id);
   syd::CheckSameImageAndFiles(ref_image, geommean);
+
+  ref_db->QueryOne(ref_image, spect_copy->id);
+  syd::CheckSameImageAndFiles(ref_image, spect_copy);
 
   std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;
