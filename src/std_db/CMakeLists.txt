@@ -223,6 +223,18 @@ add_executable(sydCalibrateImage
 target_link_libraries(sydCalibrateImage ${SYD_STD_DB_LIBRARY})
 
 
+# Average image
+wrap_ggo(sydInsertAveragedImages_GGO_C
+  sydInsertAveragedImages.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertAveragedImages
+  sydInsertAveragedImages.cxx
+  ${sydInsertAveragedImages_GGO_C})
+target_link_libraries(sydInsertAveragedImages ${SYD_STD_DB_LIBRARY})
+
+
 # Substitute a radionuclide
 wrap_ggo(sydSubstituteRadionuclide_GGO_C
   sydSubstituteRadionuclide.ggo
