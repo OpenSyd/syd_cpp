@@ -46,10 +46,11 @@ namespace syd {
     typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
     typedef unsigned char MaskPixelType;
     typedef itk::Image<MaskPixelType,3> MaskImageType;
-    typedef itk::ImageRegionIterator<MaskImageType> IteratorMask;
+    typedef itk::ImageRegionIterator<MaskImageType> MaskIterator;
 
     /// Input
     void AddInput(ImageType::Pointer image, double time);
+    void ClearInput() { images_.clear(); }
     void SetMask(MaskImageType::Pointer m) { mask_ = m; }
     void SetLambdaDecayConstantInHours(double l) { lambda_in_hours_ = l; }
     void AddTimePointValue(double time, double value);
@@ -65,6 +66,7 @@ namespace syd {
     syd::TimeActivityCurve::pointer GetWorkingTAC() const { return working_tac_; }
     int GetCurrentIndexRestrictedTAC() const { return current_index_restricted_tac_; }
     syd::FitModelBase::vector GetModels() const { return models_; }
+    syd::FitOutputImage::vector GetOutputs() const { return outputs_; }
 
     /// Do the computation for the current pixel
     int FitOnePixel(Iterator4D it);

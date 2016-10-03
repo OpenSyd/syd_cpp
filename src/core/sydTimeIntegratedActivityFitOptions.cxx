@@ -47,7 +47,6 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityFitOptions::~TimeIntegratedActivityFitOptions()
 {
-  DDF();
   //  for(auto m:all_models_) delete(m);
 }
 // --------------------------------------------------------------------
@@ -82,12 +81,10 @@ void syd::TimeIntegratedActivityFitOptions::AddTimeValue(double time, double val
 syd::FitModelBase::vector syd::TimeIntegratedActivityFitOptions::GetModels() const
 
 {
-  DDF();
   syd::FitModelBase::vector models;
   for(auto m:all_models_) {
     for(auto n:model_names_) {
       if (n == m->GetName()) {
-        DD(n);
         models.push_back(m);
       }
     }

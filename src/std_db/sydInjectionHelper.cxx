@@ -56,3 +56,25 @@ syd::Injection::pointer syd::FindInjection(const syd::Patient::pointer patient,
   return injection;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Injection::vector syd::GetSimilarInjection(syd::StandardDatabase * db,
+                                                 const syd::Injection::pointer injection)
+{
+  syd::Injection::vector injections;
+  odb::query<syd::Injection> q =
+    odb::query<syd::Injection>::patient == injection->patient->id and
+    odb::query<syd::Injection>::radionuclide == injection->radionuclide->id and
+    odb::query<syd::Injection>::date == injection->date and
+    odb::query<syd::Injection>::activity_in_MBq == injection->activity_in_MBq and
+    odb::query<syd::Injection>::id != injection->id;
+  try {
+    db->Query(injections, q);
+  } catch(std::exception & e) {
+    EXCEPTION("Error in GetSimilarInjection for injection " << injection
+              << "Error message is: " << e.what());
+  }
+  return injections;
+}
+// --------------------------------------------------------------------

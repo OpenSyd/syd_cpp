@@ -150,7 +150,7 @@ syd::FitOutputImage_Model::FitOutputImage_Model():FitOutputImage()
 // --------------------------------------------------------------------
 void syd::FitOutputImage_Model::Update(syd::FitModelBase::pointer model)
 {
-  int id = model->id_;
+  int id = model->GetId();
   SetValue(id);
 }
 // --------------------------------------------------------------------
@@ -168,8 +168,9 @@ syd::FitOutputImage_Iteration::FitOutputImage_Iteration():FitOutputImage()
 // --------------------------------------------------------------------
 void syd::FitOutputImage_Iteration::Update(syd::FitModelBase::pointer model)
 {
-  int it = model->ceres_summary_.num_unsuccessful_steps +
-    model->ceres_summary_.num_successful_steps;
+  auto summary = model->GetSummary();
+  int it = summary.num_unsuccessful_steps +
+    summary.num_successful_steps;
   SetValue(it);
 }
 // --------------------------------------------------------------------

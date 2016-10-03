@@ -31,7 +31,8 @@ syd::FitModelBase::FitModelBase()
 
 
 // --------------------------------------------------------------------
-void syd::FitModelBase::SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac)
+void syd::FitModelBase::SetProblemResidual(ceres::Problem * problem,
+                                           syd::TimeActivityCurve & tac)
 {
   current_tac = &tac;
 }

@@ -45,12 +45,13 @@ set(SYD_STANDARD_DATABASE_SRC
   sydElastixHelper.cxx
   sydRadionuclideHelper.cxx
 
+  #sydTimeIntegratedActivityImageBuilder.cxx
+
   #sydRoiStatisticBuilder.cxx
 
   #  sydCropImageBuilder.cxx
   #  sydDecayCorrectedImageBuilder.cxx
   #  sydSubstituteRadionuclideImageBuilder.cxx
-  #  sydTimeIntegratedActivityImageBuilder.cxx
   #  sydTimepointsBuilder.cxx
   )
 
@@ -234,6 +235,18 @@ add_executable(sydSubstituteRadionuclide
 target_link_libraries(sydSubstituteRadionuclide ${SYD_STD_DB_LIBRARY})
 
 
+# Create image of integrated activity
+wrap_ggo(sydInsertTimeIntegratedActivityImage_GGO_C
+  sydInsertTimeIntegratedActivityImage.ggo
+  sydCommandLineWithFitOptions.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertTimeIntegratedActivityImage
+  sydInsertTimeIntegratedActivityImage.cxx
+  sydTimeIntegratedActivityImageBuilder.cxx
+  ${sydInsertTimeIntegratedActivityImage_GGO_C})
+target_link_libraries(sydInsertTimeIntegratedActivityImage ${SYD_STD_DB_LIBRARY})
+
 #----------------------------------------------------------
 # External tool: clitkExtractPatient
 wrap_ggo(syd_clitkExtractPatient_GGO_C
@@ -314,15 +327,6 @@ target_link_libraries(syd_transformix ${SYD_STD_DB_LIBRARY})
 #   sydInsertSubstituteRadionuclideImage.cxx ${sydInsertSubstituteRadionuclideImage_GGO_C})
 # target_link_libraries(sydInsertSubstituteRadionuclideImage ${SYD_STD_DB_LIBRARY})
 
-# Create image of integrated activity
-# wrap_ggo(sydInsertTimeIntegratedActivityImage_GGO_C
-#   sydInsertTimeIntegratedActivityImage.ggo
-#   sydCommandLineWithFitOptions.ggo
-#   sydCommandLineWithTags.ggo
-#   sydCommandLineDefault.ggo)
-# add_executable(sydInsertTimeIntegratedActivityImage
-#   sydInsertTimeIntegratedActivityImage.cxx ${sydInsertTimeIntegratedActivityImage_GGO_C})
-# target_link_libraries(sydInsertTimeIntegratedActivityImage ${SYD_STD_DB_LIBRARY})
 
 
 # compute integrated activity in a ROI

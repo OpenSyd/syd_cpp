@@ -28,6 +28,7 @@
 syd::TimeIntegratedActivityImageFilter::TimeIntegratedActivityImageFilter()
 {
   current_index_restricted_tac_ = 0;
+  mask_ = nullptr;
 }
 // --------------------------------------------------------------------
 
@@ -69,7 +70,7 @@ void syd::TimeIntegratedActivityImageFilter::Run()
 
   // Initialisation: iterators (both input and output)
   Iterator4D it(tac_image_, tac_image_->GetLargestPossibleRegion());
-  IteratorMask it_mask(mask_, mask_->GetLargestPossibleRegion());
+  MaskIterator it_mask(mask_, mask_->GetLargestPossibleRegion());
   it_mask.GoToBegin();
   for(auto & o:outputs_) o->iterator.GoToBegin();
 
@@ -264,8 +265,11 @@ void syd::TimeIntegratedActivityImageFilter::Init4DInput()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageFilter::InitMask()
 {
-  DDF();
-  DD("TODO");
+  if (mask_ == nullptr) { // create mask same size
+    mask_ = syd::CreateImageLike<MaskImageType>(images_[0]);
+    mask_->Allocate();
+    mask_->FillBuffer(1.0); // every pixels
+  }
 }
 // --------------------------------------------------------------------
 
@@ -280,9 +284,11 @@ void syd::TimeIntegratedActivityImageFilter::CheckInputs()
   // Check image size
   bool b = true;
   for(auto image:images_)
-    b = b and syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(images_[0], image);
+    b = b and syd::CheckImageSameSizeAndSpacing<3>(images_[0], image);
+  if (mask_ != nullptr)
+    b = b and syd::CheckImageSameSizeAndSpacing<3>(images_[0], mask_);
   if (!b) {
-    EXCEPTION("The images must have the same size/spacing, abort.");
+    EXCEPTION("The images + mask must have the same size/spacing, abort.");
   }
 
   DD("TODO : check order times ");
@@ -317,8 +323,8 @@ FitTACWithModel(syd::FitModelBase::pointer model,
   ceres::Problem problem;// New problem each time. (I did not manage to change that)
   model->ComputeStartingParametersValues(tac);
   model->SetProblemResidual(&problem, *tac);
-  ceres::Solve(*ceres_options_, &problem, &model->ceres_summary_); // Go !
-  //    DD(model->ceres_summary_.FullReport());
+  ceres::Solve(*ceres_options_, &problem, &model->GetSummary()); // Go !
+  //    DD(model->GetSummary().FullReport());
 }
 // --------------------------------------------------------------------
 

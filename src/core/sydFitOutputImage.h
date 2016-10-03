@@ -38,11 +38,12 @@ namespace syd {
     typedef itk::ImageRegionIterator<ImageType> Iterator;
 
     // Types
-    typedef std::shared_ptr<FitOutputImage> pointer;
+    typedef std::shared_ptr<syd::FitOutputImage> pointer;
     typedef std::vector<pointer> vector;
 
     /// Constructor
     FitOutputImage();
+    ~FitOutputImage() {}
 
     /// Create and allocate output image
     virtual void InitImageLike(Pointer input);

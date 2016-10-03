@@ -17,20 +17,18 @@
   ===========================================================================**/
 
 // syd
-#include "sydSubstituteRadionuclide_ggo.h"
+#include "sydStandardDatabaseStatus_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
-#include "sydPixelUnitHelper.h"
-#include "sydRadionuclideHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydSubstituteRadionuclide, 0);
+  SYD_INIT_GGO(sydStandardDatabaseStatus, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -39,38 +37,24 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the ids
-  std::vector<syd::IdType> ids;
-  syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
-  DDS(ids);
-  for(auto i=1; i<args_info.inputs_num; i++)
-    ids.push_back(atoi(args_info.inputs[i]));
+  /*
+    Patient 6 jm 8: 50 DicomSeries 33 images 3 masks 34 RoiStatistics
+                    DicomSerie: 23 CT 23 NM 23 OT
+                    Images:
+    Patient 7 br 8: 50 DicomSeries 33 images 3 masks 34 RoiStatistics
+   */
 
-  // Get the radionuclide
-  auto rad = syd::FindRadionuclide(db, args_info.inputs[0]);
-  DD(rad);
-
-  // Get the images to udpate
-  syd::Image::vector images;
-  syd::Injection::pointer inj;
-  db->Query(images, ids);
-
-  // Loop over the images
-  for(auto image:images) {
-    // Make a copy
-    auto output = syd::CopyImage(image);
-    DD(output);
-
-    // Change the radionuclide
-    syd::SubstituteRadionuclide(output, rad);
-    DD(output);
-
-    // Apply user information
-    syd::SetImageInfoFromCommandLine(output, args_info);
-    syd::SetTagsFromCommandLine(output->tags, db, args_info);
-    db->Update(output);
-    LOG(1) << "Image with new radionuclide is " << output << ": "
-           << std::endl << "Injection : " << inj;
+  syd::Patient::vector patients;
+  db->Query(patients);
+  DDS(patients);
+  for(auto patient:patients) {
+    std::cout << patient->id << " "
+              << patient->name << " "
+              << patient->study_id << ": "
+              << syd::QueryByPatient<syd::DicomSerie>(patient).size << " dicoms"
+              << syd::QueryByPatient<syd::Image>(patient).size << " images"
+              << syd::QueryByPatient<syd::RoiMaskImage>(patient).size << " rois"
+              << syd::QueryByPatient<syd::RoiStatistic>(patient).size << " stats"
   }
 
   // This is the end, my friend.
