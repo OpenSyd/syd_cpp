@@ -42,13 +42,11 @@ int main(int argc, char* argv[])
   // Get the ids
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids); // Read the standard input if pipe
-  DDS(ids);
   for(auto i=1; i<args_info.inputs_num; i++)
     ids.push_back(atoi(args_info.inputs[i]));
 
   // Get the radionuclide
   auto rad = syd::FindRadionuclide(db, args_info.inputs[0]);
-  DD(rad);
 
   // Get the images to udpate
   syd::Image::vector images;
@@ -59,11 +57,10 @@ int main(int argc, char* argv[])
   for(auto image:images) {
     // Make a copy
     auto output = syd::CopyImage(image);
-    DD(output);
 
     // Change the radionuclide
     syd::SubstituteRadionuclide(output, rad);
-    DD(output);
+    inj = output->injection;
 
     // Apply user information
     syd::SetImageInfoFromCommandLine(output, args_info);

@@ -467,7 +467,7 @@ void syd::SubstituteRadionuclide(syd::Image::pointer image,
   new_injection->radionuclide = rad;
   auto inj = syd::GetSimilarInjection(db, new_injection);
   if (inj.size() != 0) {
-    LOG(0) << "Similar injection exist, do not add " << std::endl
+    LOG(2) << "Similar injection exist, do not add " << std::endl
            << new_injection << std::endl
            << inj[0];
     new_injection = inj[0];
