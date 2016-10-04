@@ -87,7 +87,6 @@ syd::FitOutputImage_AUC::FitOutputImage_AUC():FitOutputImage()
 {
   filename = "auc.mhd";
   tag = "fit_auc";
-  index_ = 0;
 }
 // --------------------------------------------------------------------
 
@@ -95,7 +94,8 @@ syd::FitOutputImage_AUC::FitOutputImage_AUC():FitOutputImage()
 // --------------------------------------------------------------------
 void syd::FitOutputImage_AUC::Update(syd::FitModelBase::pointer model)
 {
-  double r = model->ComputeAUC(initial_tac_, index_);
+  auto index = initial_tac_->size() - working_tac_->size();
+  double r = model->ComputeAUC(initial_tac_, index);
   SetValue(r);
 }
 // --------------------------------------------------------------------

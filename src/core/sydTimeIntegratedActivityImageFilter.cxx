@@ -27,7 +27,6 @@
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageFilter::TimeIntegratedActivityImageFilter()
 {
-  current_index_restricted_tac_ = 0;
   mask_ = nullptr;
 }
 // --------------------------------------------------------------------
@@ -123,10 +122,7 @@ int syd::TimeIntegratedActivityImageFilter::FitOnePixel(Iterator4D it)
 
   // Create working tac (restricted, + add value)
   if (options_.GetRestrictedFlag()) {
-    // Special case, ensure both tac are different
-    if (initial_tac_ == working_tac_) working_tac_ = syd::TimeActivityCurve::New();
-    // Create the working_tac_
-    current_index_restricted_tac_ = GetRestrictedTac(initial_tac_, working_tac_);
+    GetRestrictedTac(initial_tac_, working_tac_);
   }
   else working_tac_ = initial_tac_;
 
@@ -341,7 +337,7 @@ SelectBestModel(syd::FitModelBase::vector models,
   double best_R2 = 0.0;
   if (verbose) {
     std::cout << initial_tac_ << std::endl;
-    std::cout << working_tac_ << " " << current_index_restricted_tac_ << std::endl;
+    std::cout << working_tac_ << std::endl;
   }
 
   for(auto i=0; i<models.size(); i++) {

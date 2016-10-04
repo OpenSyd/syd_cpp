@@ -63,6 +63,9 @@ namespace syd {
     /// Write the final output
     virtual void WriteImage();
 
+    /// Get the pointer to the itk image
+    Pointer GetImage() const { return image; }
+
     /// FIXME public temporarly
     Iterator iterator;
 
@@ -85,7 +88,6 @@ namespace syd {
   /// Compute and store the AUC (Area Under the Curve)
   class FitOutputImage_AUC: public FitOutputImage {
   public:
-    int index_;
     FitOutputImage_AUC();
     virtual void Update(syd::FitModelBase::pointer model);
   };

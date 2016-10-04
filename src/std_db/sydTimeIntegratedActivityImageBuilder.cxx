@@ -18,6 +18,7 @@
 
 // syd
 #include "sydTimeIntegratedActivityImageBuilder.h"
+#include "sydImageHelper.h"
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageBuilder::
@@ -90,14 +91,29 @@ WriteOutput()
 
 
 // --------------------------------------------------------------------
-void syd::TimeIntegratedActivityImageBuilder::
+syd::Image::vector syd::TimeIntegratedActivityImageBuilder::
 InsertOutputImagesInDB()
 {
-  DDF();
-  DD("TODO");
+  // Get the first output: integrate or auc if restricted
+  syd::FitOutputImage::pointer o = auc;
+  if (options_.GetRestrictedFlag()) o = auc;
+  else o = integrate;
+  auto img = inputs_[0];
+  // Create output image
+  typedef syd::FitOutputImage::ImageType ImageType;
+  auto output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
+  syd::SetImageInfoFromImage(output, img);
+  auto unit = output->pixel_unit->name+".h";// get pixel unit times hours
+  auto db = img->GetDatabase<syd::StandardDatabase>();
+  auto desc = unit+" times hours";
+  output->pixel_unit = syd::FindOrCreatePixelUnit(db, unit, desc);
+  db->Update(output);
+
+  syd::Image::vector outputs;
+  outputs.push_back(output);
+  return outputs;
 }
 // --------------------------------------------------------------------
-
 
 
 // --------------------------------------------------------------------
@@ -120,12 +136,10 @@ Run()
     itk_images.push_back(syd::ReadImage<ImageType>(input->GetAbsolutePath()));
     times.push_back(input->GetHoursFromInjection());
   }
-  DDS(times);
 
   // Build mask
   auto mask = CreateMaskFromThreshold(itk_images, min_activity_);
   int nb_pixels = syd::ComputeSumOfPixelValues<MaskImageType>(mask);
-  DD(nb_pixels);
 
   // set filter info
   filter_.ClearInput();
@@ -164,7 +178,6 @@ Run()
 void syd::TimeIntegratedActivityImageBuilder::
 CheckInputs()
 {
-  DDF();
   if (inputs_.size() < 2) {
     EXCEPTION("Error at least 2 images needed");
   }
@@ -187,8 +200,6 @@ syd::TimeIntegratedActivityImageBuilder::
 CreateMaskFromThreshold(std::vector<ImageType::Pointer> images,
                         double min_activity)
 {
-  DDF();
-
   // Create image with MIN value along the sequence
   ImageType::Pointer first_image = images[0];
   MaskImageType::Pointer mask = syd::CreateImageLike<MaskImageType>(first_image);
@@ -200,15 +211,13 @@ CreateMaskFromThreshold(std::vector<ImageType::Pointer> images,
   }
   MaskIterator it_mask(mask, mask->GetLargestPossibleRegion());
   while (!it_mask.IsAtEnd()) {
-    auto mini = it[0].Get();
-    for(auto & itt:it) mini = std::min(mini, itt.Get());
-    if (mini < min_activity_) it_mask.Set(0);
+    auto maxi = it[0].Get();
+    for(auto & itt:it) maxi = std::max(maxi, itt.Get());
+    if (maxi < min_activity_) it_mask.Set(0);
     else it_mask.Set(1);
     ++it_mask;
     for(auto & itt:it) ++itt;
   }
-
-  syd::WriteImage<MaskImageType>(mask, "mask.mhd");
   return mask;
 }
 // --------------------------------------------------------------------

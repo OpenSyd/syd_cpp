@@ -23,6 +23,8 @@
 #include "sydStandardDatabase.h"
 #include "sydCommonGengetopt.h"
 #include "sydTimeIntegratedActivityImageBuilder.h"
+#include "sydImageHelper.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -79,14 +81,17 @@ int main(int argc, char* argv[])
   builder.SetDebugOutputFlag(args_info.debug_images_flag);
 
   // Go !
-  DD("go");
   builder.Run();
 
   // Results
-  builder.WriteOutput();
+  auto outputs = builder.InsertOutputImagesInDB();
 
-
-  LOG(1) << "TODO PRINT ";
+  // Update image with option
+  auto output = outputs[0];
+  syd::SetImageInfoFromCommandLine(output, args_info);
+  syd::SetTagsFromCommandLine(output->tags, db, args_info);
+  db->Update(output);
+  LOG(1) << "Time Integrated Image (tia) is: " << output;
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

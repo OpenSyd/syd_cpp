@@ -65,7 +65,6 @@ namespace syd {
     Iterator4D GetIteratorAtPoint(double x, double y, double z);
     syd::TimeActivityCurve::pointer GetCurrentTAC() const { return initial_tac_; }
     syd::TimeActivityCurve::pointer GetWorkingTAC() const { return working_tac_; }
-    int GetCurrentIndexRestrictedTAC() const { return current_index_restricted_tac_; }
     syd::FitModelBase::vector GetModels() const { return models_; }
     syd::FitOutputImage::vector GetOutputs() const { return outputs_; }
 
@@ -97,7 +96,6 @@ namespace syd {
     /// for computation
     syd::TimeActivityCurve::pointer initial_tac_;
     syd::TimeActivityCurve::pointer working_tac_;
-    int current_index_restricted_tac_;
 
     /// Initialize the solver
     void InitSolver();

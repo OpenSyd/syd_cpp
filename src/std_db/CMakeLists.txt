@@ -252,6 +252,7 @@ wrap_ggo(sydInsertTimeIntegratedActivityImage_GGO_C
   sydInsertTimeIntegratedActivityImage.ggo
   sydCommandLineWithFitOptions.ggo
   sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertTimeIntegratedActivityImage
   sydInsertTimeIntegratedActivityImage.cxx

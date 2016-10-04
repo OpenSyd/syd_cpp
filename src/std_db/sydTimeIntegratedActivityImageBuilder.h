@@ -52,7 +52,7 @@ namespace syd {
 
     // Output
     void WriteOutput();
-    void InsertOutputImagesInDB();
+    syd::Image::vector InsertOutputImagesInDB();
 
   protected:
     syd::Image::vector inputs_;
