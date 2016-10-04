@@ -49,7 +49,7 @@ syd::RemoveScatter(const ImageType * em, const ImageType * sc, double k)
   iter_sc.GoToBegin();
   iter_output.GoToBegin();
   while (!iter_em.IsAtEnd()) {
-    iter_output.Set(iter_em.Get()*k*iter_sc.Get());
+    iter_output.Set(iter_em.Get()-k*iter_sc.Get());
     ++iter_em;
     ++iter_sc;
     ++iter_output;
