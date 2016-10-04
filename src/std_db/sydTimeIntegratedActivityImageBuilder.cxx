@@ -27,12 +27,12 @@ TimeIntegratedActivityImageBuilder()
   debug_images_flag_ = false;
 
   // Create FitOutputImage
-  auto auc = std::make_shared<syd::FitOutputImage_AUC>();
-  auto integrate = std::make_shared<syd::FitOutputImage_Integrate>();
-  auto r2 = std::make_shared<syd::FitOutputImage_R2>();
-  auto best_model = std::make_shared<syd::FitOutputImage_Model>();
-  auto iter = std::make_shared<syd::FitOutputImage_Iteration>();
-  auto success = std::make_shared<syd::FitOutputImage_Success>();
+  auc = std::make_shared<syd::FitOutputImage_AUC>();
+  integrate = std::make_shared<syd::FitOutputImage_Integrate>();
+  r2 = std::make_shared<syd::FitOutputImage_R2>();
+  best_model = std::make_shared<syd::FitOutputImage_Model>();
+  iter = std::make_shared<syd::FitOutputImage_Iteration>();
+  success = std::make_shared<syd::FitOutputImage_Success>();
   all_outputs_.push_back(auc);
   all_outputs_.push_back(integrate);
   all_outputs_.push_back(r2);
@@ -54,7 +54,7 @@ SetInput(const syd::Image::vector images)
 
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageBuilder::
-SetImageThreshold(const double min_activity)
+SetImageActivityThreshold(const double min_activity)
 {
   min_activity_ = min_activity;
 }
@@ -127,14 +127,6 @@ Run()
   int nb_pixels = syd::ComputeSumOfPixelValues<MaskImageType>(mask);
   DD(nb_pixels);
 
-  // Outputs pointers
-  auto auc = all_outputs_[0];
-  auto integrate = all_outputs_[1];
-  auto r2 = all_outputs_[2];
-  auto best_model = all_outputs_[3];
-  auto iter = all_outputs_[4];
-  auto success = all_outputs_[5];
-
   // set filter info
   filter_.ClearInput();
   for(auto i=0; i<times.size(); i++)
@@ -153,6 +145,7 @@ Run()
 
   // Print
   std::string sm;
+  filter_.InitModels(); // require to get the model names
   auto models = filter_.GetModels();
   for(auto m:models) sm += m->GetName()+" ("+std::to_string(m->GetId())+") ";
   LOG(2) << "Starting fit: models= " << sm << "; "

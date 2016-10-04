@@ -79,15 +79,15 @@ void syd::TimeIntegratedActivityFitOptions::AddTimeValue(double time, double val
 
 // --------------------------------------------------------------------
 syd::FitModelBase::vector syd::TimeIntegratedActivityFitOptions::GetModels() const
-
 {
   syd::FitModelBase::vector models;
-  for(auto m:all_models_) {
-    for(auto n:model_names_) {
-      if (n == m->GetName()) {
-        models.push_back(m);
-      }
-    }
+  for(auto n:model_names_) {
+    auto it = std::find_if(all_models_.begin(), all_models_.end(),
+                           [n](const syd::FitModelBase::pointer & m)
+                           { return m->GetName() == n; });
+    if (it == all_models_.end())
+      LOG(WARNING) << "Model " << n << " is not known (ignoring).";
+    else models.push_back(*it);
   }
   return models;
 }

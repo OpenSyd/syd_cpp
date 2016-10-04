@@ -39,7 +39,7 @@ namespace syd {
     void SetInput(const syd::Image::vector images);
 
     /// Set image threshold for initial mask
-    void SetImageThreshold(const double min_activity);
+    void SetImageActivityThreshold(const double min_activity);
 
     /// Debug intermediate images
     void SetDebugOutputFlag(bool debug);
@@ -58,6 +58,16 @@ namespace syd {
     syd::Image::vector inputs_;
     double min_activity_;
     bool debug_images_flag_;
+
+    // list of outputs
+    syd::FitOutputImage_AUC::pointer auc;
+    syd::FitOutputImage_Integrate::pointer integrate;
+    syd::FitOutputImage_R2::pointer r2;
+    syd::FitOutputImage_Model::pointer best_model;
+    syd::FitOutputImage_Iteration::pointer iter;
+    syd::FitOutputImage_Success::pointer success;
+
+  protected:
 
     /// Image types
     typedef syd::TimeIntegratedActivityImageFilter::ImageType ImageType;

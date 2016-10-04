@@ -28,7 +28,7 @@
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertTimeIntegratedActivityImage, 2);
+  SYD_INIT_GGO(sydInsertTimeIntegratedActivityImage, 0);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -60,12 +60,11 @@ int main(int argc, char* argv[])
     model_names.push_back(args_info.model_arg[i]);
   if (model_names.size() == 0)
     model_names.push_back("f4"); // default model
-  DDS(model_names);
 
   // Fit options
   syd::TimeIntegratedActivityFitOptions options;
   options.SetRestrictedFlag(args_info.restricted_tac_flag);
-  options.SetR2MinThreshold(args_info.min_activity_arg);
+  options.SetR2MinThreshold(args_info.r2_min_arg);
   options.SetMaxNumIterations(args_info.iterations_arg);
   options.SetAkaikeCriterion(args_info.akaike_arg);
   for(auto m:model_names) options.AddModel(m);
@@ -75,7 +74,7 @@ int main(int argc, char* argv[])
   // main builder
   syd::TimeIntegratedActivityImageBuilder builder;
   builder.SetInput(images);
-  builder.SetImageThreshold(args_info.min_activity_arg);
+  builder.SetImageActivityThreshold(args_info.min_activity_arg);
   builder.SetOptions(options);
   builder.SetDebugOutputFlag(args_info.debug_images_flag);
 

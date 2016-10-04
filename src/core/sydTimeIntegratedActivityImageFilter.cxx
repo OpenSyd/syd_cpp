@@ -351,7 +351,6 @@ SelectBestModel(syd::FitModelBase::vector models,
                            << " SS = " << m->ComputeRSS(tac)
                            << " R2 = " << R2;
     if (R2 > R2_threshold) {
-
       double criterion;
       if (options_.GetAkaikeCriterion() == "AIC") {
         criterion = m->ComputeAIC(tac);

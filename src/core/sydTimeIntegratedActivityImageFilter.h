@@ -56,6 +56,7 @@ namespace syd {
     void AddTimePointValue(double time, double value);
     void SetOptions(syd::TimeIntegratedActivityFitOptions & options) { options_ = options; }
     void AddOutputImage(syd::FitOutputImage::pointer o);
+    void InitModels();
 
     /// Main function
     void Run();
@@ -100,9 +101,6 @@ namespace syd {
 
     /// Initialize the solver
     void InitSolver();
-
-    /// Initialize the models
-    void InitModels();
 
     /// Initialize the outpus
     void InitOutputs();
