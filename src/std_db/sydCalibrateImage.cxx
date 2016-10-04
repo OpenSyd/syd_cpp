@@ -48,6 +48,9 @@ int main(int argc, char* argv[])
   // Get the images to udpate
   syd::Image::vector images;
   db->Query(images, ids);
+  if (images.size() < 1) {
+    LOG(FATAL) << "Error provide at least one image id.";
+  }
 
   // Sort according to date
   db->Sort(images);
