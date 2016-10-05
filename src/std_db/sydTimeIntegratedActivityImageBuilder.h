@@ -50,9 +50,14 @@ namespace syd {
     /// Main functions
     void Run();
 
-    // Output
-    void WriteOutput();
-    syd::Image::vector InsertOutputImagesInDB();
+    /// Output: get the main output and insert in the db
+    syd::Image::pointer InsertOutputImage();
+
+    /// Output: write mhd debug
+    void WriteDebugOutput();
+
+    /// Output: insert the debug images in the db
+    syd::Image::vector InsertDebugOutputImages();
 
   protected:
     syd::Image::vector inputs_;
@@ -79,7 +84,7 @@ namespace syd {
     syd::TimeIntegratedActivityFitOptions options_;
     syd::FitOutputImage::vector all_outputs_;
 
-    void CheckInputs();
+    std::vector<double> CheckInputs();
     typename MaskImageType::Pointer
     CreateMaskFromThreshold(std::vector<ImageType::Pointer> itk_images,
                             double min_activity);

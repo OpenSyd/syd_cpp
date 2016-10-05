@@ -113,6 +113,7 @@ namespace syd {
   class FitOutputImage_Model: public FitOutputImage {
   public:
     FitOutputImage_Model();
+    virtual void InitImageLike(Pointer input);
     virtual void Update(syd::FitModelBase::pointer model);
   };
 

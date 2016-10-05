@@ -78,15 +78,19 @@ void syd::TimeIntegratedActivityImageFilter::Run()
   //  int n = images_[0]->GetLargestPossibleRegion().GetNumberOfPixels();
   int n = mask_->GetLargestPossibleRegion().GetNumberOfPixels();
   int nb_fit = 0;
+  int nb_successful_fit = 0;
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
-
     if (it_mask.Get() != 0) { // inside the mask
       ++nb_fit;
       auto best_model_index = FitOnePixel(it);
       if (best_model_index != -1) { // success
         auto best_model = models_[best_model_index];
-        for(auto & o:outputs_)
+        ++nb_successful_fit;
+        for(auto & o:outputs_) {
+          o->SetInitialTimeActivityCurve(initial_tac_);
+          o->SetWorkingTimeActivityCurve(working_tac_);
           o->Update(best_model);
+        }
       }
     }
     else {
@@ -105,6 +109,8 @@ void syd::TimeIntegratedActivityImageFilter::Run()
     for(auto i=0; i<images_.size(); i++) ++it;
     //    ++it;
   }
+  DD(nb_fit);
+  DD(nb_successful_fit);
 }
 // --------------------------------------------------------------------
 

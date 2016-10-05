@@ -147,6 +147,16 @@ syd::FitOutputImage_Model::FitOutputImage_Model():FitOutputImage()
 
 
 // --------------------------------------------------------------------
+void syd::FitOutputImage_Model::InitImageLike(Pointer input)
+{
+  syd::FitOutputImage::InitImageLike(input);
+  image->FillBuffer(-1.0);
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
 void syd::FitOutputImage_Model::Update(syd::FitModelBase::pointer model)
 {
   int id = model->GetId();

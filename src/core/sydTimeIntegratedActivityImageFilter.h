@@ -67,6 +67,7 @@ namespace syd {
     syd::TimeActivityCurve::pointer GetWorkingTAC() const { return working_tac_; }
     syd::FitModelBase::vector GetModels() const { return models_; }
     syd::FitOutputImage::vector GetOutputs() const { return outputs_; }
+    std::vector<double> GetTimes() const { return times_; }
 
     /// Do the computation for the current pixel
     int FitOnePixel(Iterator4D it);

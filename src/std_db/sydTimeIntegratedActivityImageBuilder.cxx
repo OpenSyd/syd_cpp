@@ -19,6 +19,7 @@
 // syd
 #include "sydTimeIntegratedActivityImageBuilder.h"
 #include "sydImageHelper.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageBuilder::
@@ -82,7 +83,7 @@ SetOptions(syd::TimeIntegratedActivityFitOptions options)
 
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageBuilder::
-WriteOutput()
+WriteDebugOutput()
 {
   auto outputs = filter_.GetOutputs();
   for(auto output:outputs) output->WriteImage();
@@ -91,30 +92,54 @@ WriteOutput()
 
 
 // --------------------------------------------------------------------
-syd::Image::vector syd::TimeIntegratedActivityImageBuilder::
-InsertOutputImagesInDB()
+syd::Image::pointer syd::TimeIntegratedActivityImageBuilder::
+InsertOutputImage()
 {
   // Get the first output: integrate or auc if restricted
-  syd::FitOutputImage::pointer o = auc;
-  if (options_.GetRestrictedFlag()) o = auc;
-  else o = integrate;
+  syd::FitOutputImage::pointer main_output = auc;
+  if (options_.GetRestrictedFlag()) main_output = auc;
+  else main_output = integrate;
   auto img = inputs_[0];
   // Create output image
   typedef syd::FitOutputImage::ImageType ImageType;
-  auto output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
+  auto output = syd::InsertImage<ImageType>(main_output->GetImage(), img->patient);
   syd::SetImageInfoFromImage(output, img);
   auto unit = output->pixel_unit->name+".h";// get pixel unit times hours
   auto db = img->GetDatabase<syd::StandardDatabase>();
   auto desc = unit+" times hours";
   output->pixel_unit = syd::FindOrCreatePixelUnit(db, unit, desc);
   db->Update(output);
-
-  syd::Image::vector outputs;
-  outputs.push_back(output);
-  return outputs;
+  return output;
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::TimeIntegratedActivityImageBuilder::
+InsertDebugOutputImages()
+{
+  syd::Image::vector outputs;
+  syd::FitOutputImage::pointer main_output = auc;
+  if (options_.GetRestrictedFlag()) main_output = auc;
+  else main_output = integrate;
+  auto img = inputs_[0];
+  auto db = img->GetDatabase<syd::StandardDatabase>();
+
+  for(auto o:all_outputs_) {
+    if (o->GetTagName() != main_output->GetTagName()) {
+      DD(o->GetTagName());
+      auto output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
+      syd::SetImageInfoFromImage(output, img);
+      auto t = syd::FindOrCreateTag(db, o->GetTagName());
+      syd::AddTag(output->tags, t);
+      output->pixel_unit = syd::FindPixelUnit(db, "no_unit");
+      db->Update(output);
+      outputs.push_back(output);
+    }
+  }
+  return outputs;
+}
+// --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageBuilder::
@@ -122,20 +147,13 @@ Run()
 {
   DDF();
 
-  // Check input data
-  CheckInputs();
-
-  // Sort images
-  auto db = inputs_[0]->GetDatabase<syd::StandardDatabase>();
-  db->Sort<syd::Image>(inputs_);
+  // Check input data and get times
+  auto times = CheckInputs();
 
   // Get itk image
   std::vector<ImageType::Pointer> itk_images;
-  std::vector<double> times;
-  for(auto input:inputs_) {
+  for(auto input:inputs_)
     itk_images.push_back(syd::ReadImage<ImageType>(input->GetAbsolutePath()));
-    times.push_back(input->GetHoursFromInjection());
-  }
 
   // Build mask
   auto mask = CreateMaskFromThreshold(itk_images, min_activity_);
@@ -150,10 +168,14 @@ Run()
   if (options_.GetRestrictedFlag()) filter_.AddOutputImage(auc);
   else filter_.AddOutputImage(integrate);
   if (debug_images_flag_) {
+    DD(debug_images_flag_);
+    if (options_.GetRestrictedFlag()) filter_.AddOutputImage(integrate);
+    else filter_.AddOutputImage(auc);
     filter_.AddOutputImage(r2);
     filter_.AddOutputImage(success);
     filter_.AddOutputImage(best_model);
     filter_.AddOutputImage(iter);
+    DD(filter_.GetOutputs().size());
   }
   filter_.SetOptions(options_);
 
@@ -161,12 +183,15 @@ Run()
   std::string sm;
   filter_.InitModels(); // require to get the model names
   auto models = filter_.GetModels();
-  for(auto m:models) sm += m->GetName()+" ("+std::to_string(m->GetId())+") ";
-  LOG(2) << "Starting fit: models= " << sm << "; "
+  for(auto m:models) sm += m->GetName()+"("+std::to_string(m->GetId())+") ";
+
+  LOG(2) << "Starting fit: "
+         << " times: " << syd::ArrayToString(filter_.GetTimes(), 2)
+         << " models= " << sm << "; "
          << (min_activity_>0.0 ? "with mask":"no_mask")
-         << " pixels=" << nb_pixels
-         << " R2_min= " << options_.GetR2MinThreshold()
-         << (options_.GetRestrictedFlag() ? " restricted":" non restricted");
+         << " pixels= " << nb_pixels
+         << " R2_min= " << options_.GetR2MinThreshold() << " ; "
+         << (options_.GetRestrictedFlag() ? "restricted":"non restricted");
 
   // Go !
   filter_.Run();
@@ -175,7 +200,7 @@ Run()
 
 
 // --------------------------------------------------------------------
-void syd::TimeIntegratedActivityImageBuilder::
+std::vector<double> syd::TimeIntegratedActivityImageBuilder::
 CheckInputs()
 {
   if (inputs_.size() < 2) {
@@ -191,6 +216,19 @@ CheckInputs()
   if (!b) {
     EXCEPTION("The image do not have the same injection.");
   }
+
+  // Sort images
+  auto db = inputs_[0]->GetDatabase<syd::StandardDatabase>();
+  db->Sort<syd::Image>(inputs_);
+
+  // Get times
+  std::vector<double> times;
+  for(auto input:inputs_) times.push_back(input->GetHoursFromInjection());
+  auto tiny = 0.0001;
+  for(auto i=1; i<times.size(); i++)
+    if (fabs(times[i] - times[i-1]) < tiny)
+      EXCEPTION("Error with initial input image times: too close ?");
+  return times;
 }
 // --------------------------------------------------------------------
 

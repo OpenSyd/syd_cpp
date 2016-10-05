@@ -73,25 +73,38 @@ int main(int argc, char* argv[])
   //  options.AddTimeValue(0,0);
   // options.AddTimeValue(0,0);
 
-  // main builder
+  // Main builder
   syd::TimeIntegratedActivityImageBuilder builder;
   builder.SetInput(images);
   builder.SetImageActivityThreshold(args_info.min_activity_arg);
   builder.SetOptions(options);
+  if (args_info.debug_images_in_db_flag) args_info.debug_images_flag = true;
   builder.SetDebugOutputFlag(args_info.debug_images_flag);
 
   // Go !
   builder.Run();
 
   // Results
-  auto outputs = builder.InsertOutputImagesInDB();
-
-  // Update image with option
-  auto output = outputs[0];
+  auto output = builder.InsertOutputImage();
   syd::SetImageInfoFromCommandLine(output, args_info);
   syd::SetTagsFromCommandLine(output->tags, db, args_info);
   db->Update(output);
   LOG(1) << "Time Integrated Image (tia) is: " << output;
+
+  // Debug output
+  if (args_info.debug_images_flag) {
+    if (!args_info.debug_images_in_db_flag)
+      builder.WriteDebugOutput(); // write files
+    else { // insert image in the db
+      auto outputs = builder.InsertDebugOutputImages();
+      // Output other images if needed
+      for(auto o:outputs) {
+        if (o->id != output->id) {
+          LOG(2) << "\tDebug images: " << o;
+        }
+      }
+    }
+  }
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------
