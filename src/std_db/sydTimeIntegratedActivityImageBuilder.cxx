@@ -186,12 +186,13 @@ Run()
   for(auto m:models) sm += m->GetName()+"("+std::to_string(m->GetId())+") ";
 
   LOG(2) << "Starting fit: "
-         << " times: " << syd::ArrayToString(filter_.GetTimes(), 2)
+         << "times= " << syd::ArrayToString(filter_.GetTimes(), 2)
          << " models= " << sm << "; "
          << (min_activity_>0.0 ? "with mask":"no_mask")
-         << " pixels= " << nb_pixels
-         << " R2_min= " << options_.GetR2MinThreshold() << " ; "
-         << (options_.GetRestrictedFlag() ? "restricted":"non restricted");
+         << " ; pixels= " << nb_pixels
+         << " ; R2_min= " << options_.GetR2MinThreshold() << " ; "
+         << (options_.GetRestrictedFlag() ? "restricted":"non restricted")
+         << " ; Akaike= " << options_.GetAkaikeCriterion();
 
   // Go !
   filter_.Run();

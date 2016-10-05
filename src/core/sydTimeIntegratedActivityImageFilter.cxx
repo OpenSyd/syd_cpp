@@ -362,7 +362,7 @@ SelectBestModel(syd::FitModelBase::vector models,
         } else {
           LOG(FATAL) << "Akaike criterion '"
                      << options_.GetAkaikeCriterion() << "' not known"
-                     << ". Use AIC or AIcc";
+                     << ". Use AIC or AICc";
         }
       }
 
