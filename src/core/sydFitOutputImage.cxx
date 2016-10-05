@@ -17,7 +17,6 @@
   ===========================================================================**/
 
 #include "sydFitOutputImage.h"
-#include "sydTimeIntegratedActivityFilter.h"
 #include "sydImageUtils.h"
 
 // --------------------------------------------------------------------

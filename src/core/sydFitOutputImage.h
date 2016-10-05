@@ -66,6 +66,9 @@ namespace syd {
     /// Get the pointer to the itk image
     Pointer GetImage() const { return image; }
 
+    /// Retrieve the default tag
+    std::string GetTagName() const { return tag; }
+
     /// FIXME public temporarly
     Iterator iterator;
 
