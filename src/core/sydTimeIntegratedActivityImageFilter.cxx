@@ -56,7 +56,7 @@ void syd::TimeIntegratedActivityImageFilter::Run()
   initial_tac_ = syd::TimeActivityCurve::New();
   for(auto t:times_) initial_tac_->AddValue(t, 0);
   working_tac_ = syd::TimeActivityCurve::New();
-  DD("ADD value here");//FIXME
+  //  DD("ADD value here");//FIXME
 
   // Initialisation: FitOutputImage
   InitOutputs();
@@ -77,15 +77,15 @@ void syd::TimeIntegratedActivityImageFilter::Run()
   int x = 0;
   //  int n = images_[0]->GetLargestPossibleRegion().GetNumberOfPixels();
   int n = mask_->GetLargestPossibleRegion().GetNumberOfPixels();
-  int nb_fit = 0;
-  int nb_successful_fit = 0;
+  nb_pixels_ = 0;
+  nb_successful_fit_ = 0;
   for (it.GoToBegin(); !it.IsAtEnd(); ) {
     if (it_mask.Get() != 0) { // inside the mask
-      ++nb_fit;
+      ++nb_pixels_;
       auto best_model_index = FitOnePixel(it);
       if (best_model_index != -1) { // success
         auto best_model = models_[best_model_index];
-        ++nb_successful_fit;
+        ++nb_successful_fit_;
         for(auto & o:outputs_) {
           o->SetInitialTimeActivityCurve(initial_tac_);
           o->SetWorkingTimeActivityCurve(working_tac_);
@@ -109,8 +109,6 @@ void syd::TimeIntegratedActivityImageFilter::Run()
     for(auto i=0; i<images_.size(); i++) ++it;
     //    ++it;
   }
-  DD(nb_fit);
-  DD(nb_successful_fit);
 }
 // --------------------------------------------------------------------
 
@@ -292,9 +290,6 @@ void syd::TimeIntegratedActivityImageFilter::CheckInputs()
   if (!b) {
     EXCEPTION("The images + mask must have the same size/spacing, abort.");
   }
-
-  DD("TODO : check order times ");
-
 }
 // --------------------------------------------------------------------
 

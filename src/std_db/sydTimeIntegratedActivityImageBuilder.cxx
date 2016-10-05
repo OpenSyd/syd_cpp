@@ -127,7 +127,6 @@ InsertDebugOutputImages()
 
   for(auto o:all_outputs_) {
     if (o->GetTagName() != main_output->GetTagName()) {
-      DD(o->GetTagName());
       auto output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
       syd::SetImageInfoFromImage(output, img);
       auto t = syd::FindOrCreateTag(db, o->GetTagName());
@@ -145,8 +144,6 @@ InsertDebugOutputImages()
 void syd::TimeIntegratedActivityImageBuilder::
 Run()
 {
-  DDF();
-
   // Check input data and get times
   auto times = CheckInputs();
 
@@ -168,14 +165,12 @@ Run()
   if (options_.GetRestrictedFlag()) filter_.AddOutputImage(auc);
   else filter_.AddOutputImage(integrate);
   if (debug_images_flag_) {
-    DD(debug_images_flag_);
     if (options_.GetRestrictedFlag()) filter_.AddOutputImage(integrate);
     else filter_.AddOutputImage(auc);
     filter_.AddOutputImage(r2);
     filter_.AddOutputImage(success);
     filter_.AddOutputImage(best_model);
     filter_.AddOutputImage(iter);
-    DD(filter_.GetOutputs().size());
   }
   filter_.SetOptions(options_);
 
@@ -185,14 +180,14 @@ Run()
   auto models = filter_.GetModels();
   for(auto m:models) sm += m->GetName()+"("+std::to_string(m->GetId())+") ";
 
-  LOG(2) << "Starting fit: "
-         << "times= " << syd::ArrayToString(filter_.GetTimes(), 2)
-         << " models= " << sm << "; "
+  LOG(1) << "Starting fit: "
+         << "t= " << syd::ArrayToString(filter_.GetTimes(), 2)
+         << " ; m= " << sm << "; "
          << (min_activity_>0.0 ? "with mask":"no_mask")
          << " ; pixels= " << nb_pixels
          << " ; R2_min= " << options_.GetR2MinThreshold() << " ; "
          << (options_.GetRestrictedFlag() ? "restricted":"non restricted")
-         << " ; Akaike= " << options_.GetAkaikeCriterion();
+         << " ; " << options_.GetAkaikeCriterion();
 
   // Go !
   filter_.Run();

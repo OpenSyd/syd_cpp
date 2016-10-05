@@ -68,6 +68,8 @@ namespace syd {
     syd::FitModelBase::vector GetModels() const { return models_; }
     syd::FitOutputImage::vector GetOutputs() const { return outputs_; }
     std::vector<double> GetTimes() const { return times_; }
+    int GetNumberOfPixels() const { return nb_pixels_; }
+    int GetNumberOfSuccessfullyFitPixels() const { return nb_successful_fit_; }
 
     /// Do the computation for the current pixel
     int FitOnePixel(Iterator4D it);
@@ -82,6 +84,8 @@ namespace syd {
     std::vector<double> additional_point_times;
     std::vector<double> additional_point_values;
     syd::FitModelBase::vector models_;
+    int nb_pixels_;
+    int nb_successful_fit_;
 
     /// Computed 4D images that merge all 3D images
     Image4DType::Pointer tac_image_;

@@ -5,8 +5,4 @@ option "iterations" i "Max nb of iterations" int default="50" no
 option "restricted_tac"  r "Fit only end of the curve (max to end)" flag off
 option "model" m "Set the model list use to fit f2 f3 f4a etc" string multiple no
 option "akaike" a "Set the Akaike criterion AIC or AICc" string default="AIC" no
-# option "add_initial_zero" - "Add a first point t=0 v=0 to the tac" flag off
-# option "add_time" - "Add a time point to the tac " double no
-# option "add_value" - "Add a point value to the tac " double no
-
-#option "robust_scaling"    - "Ceres scaling Loss robust"           float default="0.1" no
+#option "add" - "Add a time/value point to the tac (--add 4.0 --add 20 to add time 5 and value 20)" double multiple no

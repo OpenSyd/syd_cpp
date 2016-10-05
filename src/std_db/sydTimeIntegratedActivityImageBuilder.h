@@ -59,6 +59,9 @@ namespace syd {
     /// Output: insert the debug images in the db
     syd::Image::vector InsertDebugOutputImages();
 
+    /// Return the main filter
+    syd::TimeIntegratedActivityImageFilter & GetFilter() { return filter_; }
+
   protected:
     syd::Image::vector inputs_;
     double min_activity_;
@@ -71,8 +74,6 @@ namespace syd {
     syd::FitOutputImage_Model::pointer best_model;
     syd::FitOutputImage_Iteration::pointer iter;
     syd::FitOutputImage_Success::pointer success;
-
-  protected:
 
     /// Image types
     typedef syd::TimeIntegratedActivityImageFilter::ImageType ImageType;

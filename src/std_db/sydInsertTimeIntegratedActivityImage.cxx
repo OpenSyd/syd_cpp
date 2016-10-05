@@ -90,6 +90,10 @@ int main(int argc, char* argv[])
   syd::SetTagsFromCommandLine(output->tags, db, args_info);
   db->Update(output);
   LOG(1) << "Time Integrated Image (tia) is: " << output;
+  double n = builder.GetFilter().GetNumberOfPixels();
+  double s = builder.GetFilter().GetNumberOfSuccessfullyFitPixels();
+  LOG(1) << "Successfully fit pixels: "
+         << s << "/" << n << " (" << (s/n*100.0) << "%)";
 
   // Debug output
   if (args_info.debug_images_flag) {
