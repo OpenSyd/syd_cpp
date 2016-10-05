@@ -126,6 +126,11 @@ int syd::TimeIntegratedActivityImageFilter::FitOnePixel(Iterator4D it)
 
   // Create working tac (restricted, + add value)
   if (options_.GetRestrictedFlag()) {
+    if (initial_tac_ == working_tac_)  {
+      // special case when call FitOnePixel ouside the loop
+      // (syd_test6)
+      working_tac_ = syd::TimeActivityCurve::New();
+    }
     GetRestrictedTac(initial_tac_, working_tac_);
   }
   else working_tac_ = initial_tac_;

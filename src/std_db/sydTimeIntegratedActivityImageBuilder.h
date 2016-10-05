@@ -35,6 +35,9 @@ namespace syd {
     /// Constructor.
     TimeIntegratedActivityImageBuilder();
 
+    /// Destructor
+    virtual ~TimeIntegratedActivityImageBuilder() {}
+
     /// Set input images
     void SetInput(const syd::Image::vector images);
 
