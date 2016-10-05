@@ -46,6 +46,25 @@ syd::Tag::pointer syd::FindTag(const syd::Database * db,
 
 
 // --------------------------------------------------------------------
+syd::Tag::pointer syd::FindOrCreateTag(syd::Database * db,
+                                       const std::string & name,
+                                       const std::string & desc)
+{
+  syd::Tag::pointer tag;
+  try {
+    tag = syd::FindTag(db, name);
+  } catch (std::exception & e) {
+    db->New<syd::Tag>(tag);
+    tag->label = name;
+    tag->description = desc;
+    db->Insert(tag);
+  }
+  return tag;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::Tag::vector syd::FindTags(const syd::Database * db,
                                const std::vector<std::string> & names)
 {
