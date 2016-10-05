@@ -343,6 +343,23 @@ syd::InsertImageGeometricalMean(const syd::Image::pointer input,
 }
 // --------------------------------------------------------------------
 
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertProjectionImage(const syd::Image::pointer input,
+                           double dimension, bool mean, bool flip)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  typedef itk::Image<PixelType, 2> OutputImageType;
+  auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
+  auto projection = syd::Projection<ImageType, OutputImageType>(itk_input, dimension, mean, flip);
+
+  // Create the syd image
+  return syd::InsertImage<OutputImageType>(projection, input->patient, input->modality);
+}
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 void syd::CropImageLike(syd::Image::pointer image,

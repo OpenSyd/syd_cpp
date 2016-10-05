@@ -23,6 +23,7 @@
 #include "sydDicomSerieHelper.h"
 #include "sydImageExtractSlices.h"
 #include "sydImageGeometricalMean.h"
+#include "sydProjectionImage.h"
 #include "sydPixelUnitHelper.h"
 
 // --------------------------------------------------------------------
@@ -102,6 +103,11 @@ namespace syd {
   // of 4 slices
   syd::Image::pointer InsertImageGeometricalMean(const syd::Image::pointer input,
                                                  double k=0.5);
+
+
+  // Compute the projection of an image.
+  syd::Image::pointer InsertProjectionImage(const syd::Image::pointer input,
+                                            double dimension=0, bool mean=false, bool flip=false);
 
 
   /// Crop an image like another one

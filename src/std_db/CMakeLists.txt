@@ -178,6 +178,17 @@ add_executable(sydInsertPlanarGeometricalMean
   ${sydInsertPlanarGeometricalMean_GGO_C})
 target_link_libraries(sydInsertPlanarGeometricalMean ${SYD_STD_DB_LIBRARY})
 
+# Create the projection of an image along a dimension
+wrap_ggo(sydInsertProjectionImage_GGO_C
+  sydInsertProjectionImage.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertProjectionImage
+  sydInsertProjectionImage.cxx
+  ${sydInsertProjectionImage_GGO_C})
+target_link_libraries(sydInsertProjectionImage ${SYD_STD_DB_LIBRARY})
+
 # Insert a new RoiMaskImage
 wrap_ggo(sydInsertRoiMaskImage_GGO_C
   sydInsertRoiMaskImage.ggo
