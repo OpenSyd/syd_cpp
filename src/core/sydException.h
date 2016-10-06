@@ -62,14 +62,14 @@ namespace syd {
   /// Main macro for exception (store function, line and file)
 #define EXCEPTION(message)                      \
   {                                             \
-  std::ostringstream os;                        \
-  os << message;                                \
-  syd::Exception se(os.str());                  \
-  se.file_ = __FILE__;                          \
-  se.line_ = __LINE__;                          \
-  se.function_ = __FUNCTION__;                  \
-  throw se;                                     \
-}
+    std::ostringstream os;                      \
+    os << message;                              \
+    syd::Exception se(os.str());                \
+    se.file_ = __FILE__;                        \
+    se.line_ = __LINE__;                        \
+    se.function_ = __FUNCTION__;                \
+    throw se;                                   \
+  }
   // --------------------------------------------------------------------
 
 
