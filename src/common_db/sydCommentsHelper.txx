@@ -22,6 +22,7 @@ void syd::SetCommentsFromCommandLine(std::vector<std::string> & comments,
                                      const syd::Database * db,
                                      ArgsInfo & args_info)
 {
+  DDF();
   if (args_info.add_comment_given) {
     for(auto i=0; i<args_info.add_comment_given; i++) {
       auto c = args_info.add_comment_arg[i];

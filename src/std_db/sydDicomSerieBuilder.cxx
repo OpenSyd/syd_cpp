@@ -397,7 +397,7 @@ CreateDicomFile(const std::string & filename,
 
 
 // --------------------------------------------------------------------
-void syd::DicomSerieBuilder::InsertDicomSeries()
+syd::DicomSerie::vector syd::DicomSerieBuilder::InsertDicomSeries()
 {
   // Update the database first to get the File id
   db_->Insert(dicomfiles_to_insert); // must be before serie
@@ -443,11 +443,11 @@ void syd::DicomSerieBuilder::InsertDicomSeries()
   LOG(1) << files_to_copy.size()-nb_of_skip_copy << " files have been copied.";
 
   // Once done, clear vectors
-  series_to_insert.clear();
   dicomfiles_to_insert.clear();
-  //files.clear();
   files_to_copy.clear();
   destination_folders.clear();
   nb_of_skip_files = 0;
+
+  return series_to_insert;
 }
 // --------------------------------------------------------------------

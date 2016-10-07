@@ -393,6 +393,10 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
     EXCEPTION("Cannot ComputeActivityInMBqByDetectedCounts, need an injection for this image");
   }
 
+  //   FIXME check pixel type = counts (warn or forcae
+  // inverse ComputeDetectedCountsByAcitvityInMBq
+
+
   auto injection = image->injection;
   double injected_activity = injection->activity_in_MBq;
   double time = syd::DateDifferenceInHours(image->acquisition_date, injection->date);

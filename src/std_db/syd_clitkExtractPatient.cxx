@@ -22,6 +22,8 @@
 #include "sydPluginManager.h"
 #include "sydRoiMaskImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydImageHelper.h"
+#include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"
 
 // --------------------------------------------------------------------
@@ -99,7 +101,9 @@ int main(int argc, char* argv[])
     // Create the mask image
     auto mask = syd::InsertRoiMaskImageFromFile(mhd_filename, image->patient, roitype);
     mask->frame_of_reference_uid = image->frame_of_reference_uid;
+    syd::SetImageInfoFromCommandLine(mask, args_info);
     syd::SetTagsFromCommandLine(mask->tags, db, args_info);
+    syd::SetCommentsFromCommandLine(mask->comments, db, args_info);
     mask->CopyDicomSeries(image);
     mask->acquisition_date = image->acquisition_date;
     db->Update(mask);

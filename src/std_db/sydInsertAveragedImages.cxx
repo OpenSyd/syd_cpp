@@ -25,6 +25,7 @@
 #include "sydTagHelper.h"
 #include "sydPixelUnitHelper.h"
 #include "sydInjectionHelper.h"
+#include "sydCommentsHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -64,6 +65,7 @@ int main(int argc, char* argv[])
   syd::SetImageInfoFromImage(output, images[0]);
   syd::SetImageInfoFromCommandLine(output, args_info);
   syd::SetTagsFromCommandLine(output->tags, db, args_info);
+  syd::SetCommentsFromCommandLine(output->comments, db, args_info);
   db->Update(output);
   LOG(1) << "Image was created: " << output;
 

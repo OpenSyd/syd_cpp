@@ -25,6 +25,7 @@
 #include "sydTimeIntegratedActivityImageBuilder.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydCommentsHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -88,6 +89,7 @@ int main(int argc, char* argv[])
   auto output = builder.InsertOutputImage();
   syd::SetImageInfoFromCommandLine(output, args_info);
   syd::SetTagsFromCommandLine(output->tags, db, args_info);
+  syd::SetCommentsFromCommandLine(output->comments, db, args_info);
   db->Update(output);
   LOG(1) << "Time Integrated Image (tia) is: " << output;
   double n = builder.GetFilter().GetNumberOfPixels();

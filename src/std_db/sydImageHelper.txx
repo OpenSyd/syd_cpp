@@ -21,6 +21,8 @@ template<class ArgsInfo>
 void syd::SetImageInfoFromCommandLine(syd::Image::pointer image,
                                       ArgsInfo & args_info)
 {
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+
   if (args_info.pixel_unit_given)
     syd::SetPixelUnit(image, args_info.pixel_unit_arg);
 
@@ -38,7 +40,6 @@ void syd::SetImageInfoFromCommandLine(syd::Image::pointer image,
   }
 
   if (args_info.patient_given) {
-    auto db = image->GetDatabase<syd::StandardDatabase>();
     auto patient = db->FindPatient(args_info.patient_arg);
     image->patient = patient;
   }
@@ -55,7 +56,6 @@ void syd::SetImageInfoFromCommandLine(syd::Image::pointer image,
       syd::FlipImageIfNegativeSpacing(image)) {
     LOG(1) << "Negative spacing detected, image was flipped";
   }
-
 }
 // --------------------------------------------------------------------
 

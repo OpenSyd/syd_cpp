@@ -22,6 +22,7 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
+#include "sydCommentsHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -65,7 +66,10 @@ int main(int argc, char* argv[])
     ++i;
   }
 
-  builder.InsertDicomSeries();
+  // Insert dicom and update comments if needed
+  auto dicoms = builder.InsertDicomSeries();
+  for(auto d:dicoms) syd::SetCommentsFromCommandLine(d->comments, db, args_info);
+  db->Update(dicoms);
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------
