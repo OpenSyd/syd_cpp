@@ -97,6 +97,7 @@ namespace syd {
 
     /// Write the element as a string
     virtual std::string ToString() const;
+    virtual std::string ToShortString() const;
 
     /// Return the file path
     std::string GetAbsolutePath() const;

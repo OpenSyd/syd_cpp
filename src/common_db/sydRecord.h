@@ -71,16 +71,19 @@ namespace syd {
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const = 0;
 
+    /// Use to write the element as a string but more shortly than previous
+    virtual std::string ToShortString() const { return ToString(); }
+
     /// Default function to print an element (must be inline here).
     friend std::ostream& operator<<(std::ostream& os, const Record & p) {
-      os << p.ToString();
+      os << p.ToShortString();
       return os;
     }
 
     /// Default function to print a pointer to an element (must be inline here).
     template<class R>
     friend std::ostream& operator<<(std::ostream& os, const std::shared_ptr<R> p) {
-      os << p->ToString();
+      os << p->ToShortString();
       return os;
     }
 

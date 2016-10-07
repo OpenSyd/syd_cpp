@@ -132,9 +132,9 @@ void syd::DicomSerie::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("files", dicom_files.size());
   ta.Set("acqui_date", dicom_acquisition_date);
   ta.Set("mod", dicom_modality);
-  ta.Set("com", GetAllComments());
   ta.Set("recon_date", dicom_reconstruction_date);
   ta.Set("description", dicom_description, 400);
+  ta.Set("com", GetAllComments());
 }
 // --------------------------------------------------
 
