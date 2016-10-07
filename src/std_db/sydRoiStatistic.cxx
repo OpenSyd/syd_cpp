@@ -24,7 +24,8 @@
 syd::RoiStatistic::RoiStatistic():
   syd::Record(),
   syd::RecordWithHistory(),
-  syd::RecordWithTags()
+  syd::RecordWithTags(),
+  syd::RecordWithComments()
 {
   image = NULL;
   mask = NULL;
@@ -47,8 +48,10 @@ std::string syd::RoiStatistic::ToString() const
   ss << syd::GetLabels(tags) << " "
      << (mask != NULL? mask->roitype->name:"no_mask") << " "
      << mean << " " << std_dev << " "  << n << " "
-     << min << " " << max << " " << sum;
-  return ss.str();
+     << min << " " << max << " " << sum
+     << " " << GetAllComments();
+  return ss.str();  auto s = ss.str();
+  return trim(s);
 }
 // --------------------------------------------------
 
@@ -68,6 +71,7 @@ void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
   ta.Set("min", min, 7);
   ta.Set("max", max, 7);
   ta.Set("sum", sum, 2);
+  ta.Set("com", GetAllComments());
   syd::RecordWithHistory::DumpInTable(ta);
 }
 // --------------------------------------------------

@@ -96,7 +96,8 @@ std::string syd::Image::ToString() const
   }
   else ss << empty_value;
   ss << GetAllComments() << std::endl;
-  return ss.str();
+  auto s = ss.str();
+  return trim(s);
 }
 // --------------------------------------------------------------------
 

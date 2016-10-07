@@ -23,7 +23,6 @@
 // --------------------------------------------------------------------
 syd::RecordWithComments::RecordWithComments()
 {
-  DDF();
 }
 // --------------------------------------------------------------------
 
@@ -38,6 +37,7 @@ std::string syd::RecordWithComments::GetAllComments() const
     else ss << "(" << i << ") " << c << " ";
     ++i;
   }
-  return ss.str();
+  auto s = ss.str();
+  return rtrim(s); // remove space at the end (or at start)
 }
 // --------------------------------------------------------------------

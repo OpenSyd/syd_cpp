@@ -31,7 +31,8 @@ namespace syd {
   class Elastix :
     public syd::Record,
     public syd::RecordWithHistory,
-    public syd::RecordWithTags
+    public syd::RecordWithTags,
+    public syd::RecordWithComments
   {
   public:
 

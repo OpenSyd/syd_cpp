@@ -28,7 +28,9 @@ namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::DicomSerie") callback(Callback)
   /// Store basic information about a dicom image (serie).
-  class DicomSerie : public syd::Record {
+  class DicomSerie :
+    public syd::Record,
+    public syd::RecordWithComments {
   public:
 
     virtual ~DicomSerie() { }

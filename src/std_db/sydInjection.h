@@ -30,7 +30,9 @@ namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Injection") callback(Callback)
   /// Store information about a radionuclide injection (date, etc).
-  class Injection : public syd::Record {
+  class Injection :
+    public syd::Record,
+    public syd::RecordWithComments {
   public:
 
     virtual ~Injection() { }
