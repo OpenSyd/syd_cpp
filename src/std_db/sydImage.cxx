@@ -25,7 +25,8 @@
 // --------------------------------------------------------------------
 syd::Image::Image():
   syd::Record(),
-  syd::RecordWithHistory()
+  syd::RecordWithHistory(),
+  syd::RecordWithTags()
 {
   patient = NULL;
   injection = NULL;
