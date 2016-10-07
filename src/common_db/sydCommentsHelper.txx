@@ -22,12 +22,21 @@ void syd::SetCommentsFromCommandLine(std::vector<std::string> & comments,
                                      const syd::Database * db,
                                      ArgsInfo & args_info)
 {
-  DDF();
   if (args_info.add_comment_given) {
     for(auto i=0; i<args_info.add_comment_given; i++) {
       auto c = args_info.add_comment_arg[i];
-      DD(c);
       comments.push_back(c);
+    }
+  }
+  if (args_info.rm_comment_given) {
+    for(auto i=0; i<args_info.rm_comment_given; i++) {
+      auto index = args_info.rm_comment_arg[i];
+      if ((index < 0) or (index >= comments.size())) {
+        LOG(WARNING) << "Cannot erase comments " << index
+                     << " because there are " << comments.size()
+                     << " comments.";
+      }
+      else comments.erase(comments.begin() + index);
     }
   }
 }
