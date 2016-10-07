@@ -151,6 +151,7 @@ wrap_ggo(sydUpdateImage_GGO_C
   sydUpdateImage.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydUpdateImage
   sydUpdateImage.cxx

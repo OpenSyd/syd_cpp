@@ -31,6 +31,7 @@
 #include "sydPixelUnit.h"
 #include "sydRecordWithHistory.h"
 #include "sydRecordWithTags.h"
+#include "sydRecordWithComments.h"
 #include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
@@ -40,7 +41,8 @@ namespace syd {
   /// Store information about an image stored in a db (file, size etc)
   class Image : public syd::Record,
                 public syd::RecordWithHistory,
-                public syd::RecordWithTags
+                public syd::RecordWithTags,
+                public syd::RecordWithComments
   {
   public:
 

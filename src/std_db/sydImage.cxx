@@ -26,7 +26,8 @@
 syd::Image::Image():
   syd::Record(),
   syd::RecordWithHistory(),
-  syd::RecordWithTags()
+  syd::RecordWithTags(),
+  syd::RecordWithComments()
 {
   patient = NULL;
   injection = NULL;
@@ -94,6 +95,7 @@ std::string syd::Image::ToString() const
        << history->update_date;
   }
   else ss << empty_value;
+  ss << GetAllComments() << std::endl;
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -255,6 +257,7 @@ void syd::Image::DumpInTable_default(syd::PrintTable & ta) const
     dicom.pop_back(); // remove last space
     ta.Set("dicom", dicom);
   }
+  ta.Set("com", GetAllComments());
 }
 // --------------------------------------------------
 

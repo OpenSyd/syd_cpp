@@ -1,0 +1,3 @@
+
+section "Comments option"
+option "add_comment"      -  "Add a comment" string multiple no

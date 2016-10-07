@@ -14,6 +14,7 @@ wrap_odb(sydCore sydRecordWithHistory.h)
 wrap_odb(sydCore sydFile.h)
 wrap_odb(sydCore sydTag.h)
 wrap_odb(sydCore sydRecordWithTags.h)
+wrap_odb(sydCore sydRecordWithComments.h)
 wrap_odb(sydCore sydRecordWithMD5Signature.h)
 
 set(sydCommonDatabase_src
@@ -52,6 +53,9 @@ set(sydCommonDatabase_src
   sydRecordWithTags-odb.cxx
   sydRecordWithTags-schema.cxx
   sydRecordWithTags.cxx
+  sydRecordWithComments-odb.cxx
+  sydRecordWithComments-schema.cxx
+  sydRecordWithComments.cxx
 
   sydDatabase.cxx
   sydDatabaseManager.cxx
