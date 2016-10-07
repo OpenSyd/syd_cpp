@@ -58,7 +58,7 @@
 #define BUILD_VERSION(x,y)  PASTER(x,y)
 
 #ifdef ODB_COMPILER
-#pragma db model version(BUILD_VERSION(,SYD_BASE_VERSION), BUILD_VERSION(,SYD_VERSION), open)
+#pragma db model version(BUILD_VERSION(,SYD_BASE_VERSION), BUILD_VERSION(,SYD_VERSION), close)
 #endif
 
 #endif
