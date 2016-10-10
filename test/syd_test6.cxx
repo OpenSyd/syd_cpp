@@ -121,6 +121,7 @@ int main(int argc, char* argv[])
   builder.SetOptions(options);
   builder.SetDebugOutputFlag(true);
   auto tia = builder.Run();
+  std::cout << "tia : " << tia << std::endl;
   auto outputs = tia->outputs;
   auto & filter = builder.GetFilter();
 
