@@ -115,10 +115,11 @@ void syd::TIA::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("Ak", akaike_criterion);
   ta.Set("itm", max_iteration);
   ta.Set("models", GetModelsName());
-  ta.Set("out", GetOutputNames(), 100);
+  ta.Set("out", GetOutputNames(), 150);
   std::stringstream ss;
   ss << nb_success_pixels << "/" << nb_pixels
-     << "(" << nb_success_pixels/nb_pixels*100.0 << "%)";
+     << "(" << (double)nb_success_pixels/(double)nb_pixels*100.0 << "%)";
+  DD(ss.str());
   ta.Set("res", ss.str());
 }
 // --------------------------------------------------
