@@ -95,6 +95,7 @@ WriteDebugOutput()
 syd::Image::pointer syd::TimeIntegratedActivityImageBuilder::
 InsertOutputImage()
 {
+  CheckInputs();
   // Get the first output: integrate or auc if restricted
   syd::FitOutputImage::pointer main_output = auc;
   if (options_.GetRestrictedFlag()) main_output = auc;
@@ -104,8 +105,10 @@ InsertOutputImage()
   typedef syd::FitOutputImage::ImageType ImageType;
   auto output = syd::InsertImage<ImageType>(main_output->GetImage(), img->patient);
   syd::SetImageInfoFromImage(output, img);
-  auto unit = output->pixel_unit->name+".h";// get pixel unit times hours
   auto db = img->GetDatabase<syd::StandardDatabase>();
+  if (output->pixel_unit == nullptr)
+    output->pixel_unit = syd::FindOrCreatePixelUnit(db, "counts");
+  auto unit = output->pixel_unit->name+".h";// get pixel unit times hours
   auto desc = unit+" times hours";
   output->pixel_unit = syd::FindOrCreatePixelUnit(db, unit, desc);
   db->Update(output);
@@ -116,8 +119,9 @@ InsertOutputImage()
 
 // --------------------------------------------------------------------
 syd::Image::vector syd::TimeIntegratedActivityImageBuilder::
-InsertDebugOutputImages()
+InsertDebugOutputImages(std::vector<std::string> & names)
 {
+  //outputs_.clear();
   syd::Image::vector outputs;
   syd::FitOutputImage::pointer main_output = auc;
   if (options_.GetRestrictedFlag()) main_output = auc;
@@ -134,6 +138,7 @@ InsertDebugOutputImages()
       output->pixel_unit = syd::FindPixelUnit(db, "no_unit");
       db->Update(output);
       outputs.push_back(output);
+      names.push_back(o->GetTagName());
     }
   }
   return outputs;
@@ -141,7 +146,7 @@ InsertDebugOutputImages()
 // --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
-void syd::TimeIntegratedActivityImageBuilder::
+syd::TIA::pointer syd::TimeIntegratedActivityImageBuilder::
 Run()
 {
   // Check input data and get times
@@ -191,6 +196,37 @@ Run()
 
   // Go !
   filter_.Run();
+
+  // Create output
+  auto db = inputs_[0]->GetDatabase<syd::StandardDatabase>();
+  syd::TIA::pointer tia;
+  db->New(tia);
+
+  for(auto in:inputs_) tia->images.push_back(in);
+  tia->min_activity = min_activity_;
+  tia->r2_min = options_.GetR2MinThreshold();
+  tia->max_iteration = options_.GetMaxNumIterations();
+  tia->restricted_tac = options_.GetRestrictedFlag();
+  tia->models_name.clear();
+  for(auto m:options_.GetModels())
+    tia->models_name.push_back(m->GetName());
+  tia->nb_pixels = GetFilter().GetNumberOfPixels();
+  tia->nb_success_pixels = GetFilter().GetNumberOfSuccessfullyFitPixels();
+
+  // Outputs
+  auto output = InsertOutputImage();
+  tia->AddOutput(output, "auc");
+  syd::FitOutputImage::pointer main_output = auc;
+  if (options_.GetRestrictedFlag()) main_output = auc;
+  else main_output = integrate;
+  if (debug_images_flag_) {
+    std::vector<std::string> names;
+    auto outputs = InsertDebugOutputImages(names);
+    for(auto i=0; i<outputs.size(); i++) {
+      tia->AddOutput(outputs[i], names[i]);
+    }
+  }
+  return tia;
 }
 // --------------------------------------------------------------------
 
@@ -207,6 +243,9 @@ CheckInputs()
   syd::Injection::pointer injection = inputs_[0]->injection;
   bool b = true;
   for(auto image:inputs_) {
+    if (image->injection == nullptr) {
+      EXCEPTION("Images need to be associated with injection.");
+    }
     b = b and (injection->id == image->injection->id);
   }
   if (!b) {
@@ -255,3 +294,4 @@ CreateMaskFromThreshold(std::vector<ImageType::Pointer> images,
   return mask;
 }
 // --------------------------------------------------------------------
+

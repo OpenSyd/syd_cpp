@@ -120,8 +120,8 @@ int main(int argc, char* argv[])
   builder.SetImageActivityThreshold(15.0);
   builder.SetOptions(options);
   builder.SetDebugOutputFlag(true);
-  builder.Run();
-  auto outputs = builder.InsertDebugOutputImages();
+  auto tia = builder.Run();
+  auto outputs = tia->outputs;
   auto & filter = builder.GetFilter();
 
   // Test some pixels (f3)

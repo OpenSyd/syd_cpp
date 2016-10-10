@@ -14,6 +14,7 @@ wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
 wrap_odb(sydStandardDatabase sydRoiStatistic.h)
 wrap_odb(sydStandardDatabase sydElastix.h)
+wrap_odb(sydStandardDatabase sydTIA.h)
 # wrap_odb(sydStandardDatabase sydTimepoints.h)
 # wrap_odb(sydStandardDatabase sydFitResult.h)
 
@@ -27,11 +28,12 @@ set(SYD_STANDARD_DATABASE_SRC
   sydDicomFile-odb.cxx sydDicomFile-schema.cxx  sydDicomFile.cxx
   sydPixelUnit-odb.cxx sydPixelUnit-schema.cxx  sydPixelUnit.cxx
   sydImage-odb.cxx sydImage-schema.cxx  sydImage.cxx
-  sydRoiType-odb.cxx sydRoiType-schema.cxx  sydRoiType.cxx
+  sydRoiType-odb.cxx sydRoiType-schema.cxx sydRoiType.cxx
   sydRoiMaskImage-odb.cxx sydRoiMaskImage-schema.cxx  sydRoiMaskImage.cxx
   sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
 
-  sydElastix-odb.cxx sydElastix-schema.cxx  sydElastix.cxx
+  sydElastix-odb.cxx sydElastix-schema.cxx sydElastix.cxx
+  sydTIA-odb.cxx sydTIA-schema.cxx sydTIA.cxx
   # sydTimepoints-odb.cxx sydTimepoints-schema.cxx  sydTimepoints.cxx
   # sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
 

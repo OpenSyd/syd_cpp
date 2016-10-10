@@ -177,6 +177,7 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::RoiStatistic>();
 
   AddTable<syd::Elastix>();
+  AddTable<syd::TIA>();
   // AddTable<syd::Calibration>();
   // AddTable<syd::Timepoints>();
   // AddTable<syd::FitResult>();
