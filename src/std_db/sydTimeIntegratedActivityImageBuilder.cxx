@@ -133,6 +133,7 @@ InsertDebugOutputImages(std::vector<std::string> & names)
     if (o->GetTagName() != main_output->GetTagName()) {
       auto output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
       syd::SetImageInfoFromImage(output, img);
+      output->tags.clear(); // remove all tags for the debug images
       auto t = syd::FindOrCreateTag(db, o->GetTagName());
       syd::AddTag(output->tags, t);
       output->pixel_unit = syd::FindPixelUnit(db, "no_unit");
