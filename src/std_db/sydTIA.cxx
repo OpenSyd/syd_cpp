@@ -119,8 +119,8 @@ void syd::TIA::DumpInTable_default(syd::PrintTable & ta) const
   std::stringstream ss;
   ss << nb_success_pixels << "/" << nb_pixels
      << "(" << (double)nb_success_pixels/(double)nb_pixels*100.0 << "%)";
-  DD(ss.str());
   ta.Set("res", ss.str());
+  ta.Set("com", GetAllComments());
 }
 // --------------------------------------------------
 
@@ -132,3 +132,18 @@ void syd::TIA::AddOutput(syd::Image::pointer output, std::string name)
   output_names.push_back(name);
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+syd::Image::pointer syd::TIA::GetOutput(std::string name)
+{
+  int i=0;
+  for(auto & n:output_names) {
+    if (n == name) return outputs[i];
+    ++i;
+  }
+  return nullptr;
+}
+// --------------------------------------------------
+
+

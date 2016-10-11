@@ -94,6 +94,9 @@ namespace syd {
     /// Add an output (image + name)
     void AddOutput(syd::Image::pointer output, std::string name);
 
+    /// Get the output by name (nullptr if not found)
+    syd::Image::pointer GetOutput(std::string name);
+
   protected:
     TIA();
 
