@@ -21,6 +21,7 @@
 #include "sydFileHelper.h"
 #include "sydRoiMaskImageHelper.h"
 #include "sydInjectionHelper.h"
+#include "sydImageStitch.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
