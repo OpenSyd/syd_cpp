@@ -22,7 +22,7 @@ typename ImageType::Pointer syd::AndImage(const ImageType * a,
                                           const ImageType * b)
 {
   // Check size
-  if (!syd::ImageHaveSameSupport(a,b)) {
+  if (!syd::ImagesHaveSameSupport(a,b)) {
     EXCEPTION("Cannot do AndImage, images do not have the same size/spacing.");
   }
 

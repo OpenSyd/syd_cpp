@@ -289,9 +289,9 @@ void syd::TimeIntegratedActivityImageFilter::CheckInputs()
   // Check image size
   bool b = true;
   for(auto image:images_)
-    b = b and syd::CheckImageSameSizeAndSpacing<3>(images_[0], image);
+    b = b and syd::ImagesHaveSameSupport<ImageType, ImageType>(images_[0], image);
   if (mask_ != nullptr)
-    b = b and syd::CheckImageSameSizeAndSpacing<3>(images_[0], mask_);
+    b = b and syd::ImagesHaveSameSupport<ImageType, MaskImageType>(images_[0], mask_);
   if (!b) {
     EXCEPTION("The images + mask must have the same size/spacing, abort.");
   }

@@ -26,7 +26,7 @@
 // --------------------------------------------------------------------
 syd::RoiMaskImage::RoiMaskImage():Image()
 {
-  roitype = NULL;
+  roitype = nullptr;
 }
 // --------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ std::string syd::RoiMaskImage::ToString() const
 {
   std::stringstream ss ;
   ss << syd::Image::ToString() << " "
-     << (roitype == NULL ? empty_value:roitype->name)
+     << (roitype == nullptr ? empty_value:roitype->name)
      << " ";
   return ss.str();
 }

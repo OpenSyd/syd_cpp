@@ -19,6 +19,7 @@
 // syd
 #include "sydRoiMaskImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydImageCrop.h"
 
 // itk
 #include <itkLabelStatisticsImageFilter.h>
@@ -180,9 +181,11 @@ syd::ComputeRoiStatistic(syd::RoiStatistic::pointer stat)
   }
 
   // Resampling. Should resample mask or image ???
-  // I decide here to resample the mask
-  if (!syd::CheckImageSameSizeAndSpacing<ImageType::ImageDimension>(itk_mask, itk_input))
+  // I decide here to resample the mask.
+  // Resample do nothing if the image sizes are equal
+  if (!syd::ImagesHaveSameSupport<MaskImageType,ImageType>(itk_mask, itk_input)) {
     itk_mask = syd::ResampleAndCropImageLike<MaskImageType>(itk_mask, itk_input, 0, 0);
+  }
 
   // Statistics
   typedef itk::LabelStatisticsImageFilter<ImageType, MaskImageType> FilterType;
