@@ -227,6 +227,7 @@ Run()
       tia->AddOutput(outputs[i], names[i]);
     }
   }
+  // tia->comments.push_back("tia builder "+Now());
   return tia;
 }
 // --------------------------------------------------------------------
