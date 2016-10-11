@@ -20,6 +20,7 @@
 #include "sydRoiMaskImageHelper.h"
 #include "sydTagHelper.h"
 #include "sydImageCrop.h"
+#include "sydImageAnd.h"
 
 // itk
 #include <itkLabelStatisticsImageFilter.h>
@@ -157,7 +158,8 @@ syd::RoiStatistic::pointer syd::InsertRoiStatistic(syd::Image::pointer image,
 
 // --------------------------------------------------------------------
 itk::Image<unsigned char, 3>::Pointer
-syd::ComputeRoiStatistic(syd::RoiStatistic::pointer stat)
+syd::ComputeRoiStatistic(syd::RoiStatistic::pointer stat,
+                         const itk::Image<unsigned char, 3>::Pointer itk_mask2)
 {
   // Get the itk images
   typedef float PixelType; // whatever the image
@@ -185,6 +187,14 @@ syd::ComputeRoiStatistic(syd::RoiStatistic::pointer stat)
   // Resample do nothing if the image sizes are equal
   if (!syd::ImagesHaveSameSupport<MaskImageType,ImageType>(itk_mask, itk_input)) {
     itk_mask = syd::ResampleAndCropImageLike<MaskImageType>(itk_mask, itk_input, 0, 0);
+  }
+
+  // Mask to combine
+  if (itk_mask2 != nullptr) {
+    auto itk_mask2_resampled = itk_mask2;
+    if (!syd::ImagesHaveSameSupport<MaskImageType,MaskImageType>(itk_mask, itk_mask2))
+      itk_mask2_resampled = syd::ResampleAndCropImageLike<MaskImageType>(itk_mask2, itk_mask, 0, 0);
+    itk_mask = syd::AndImage<MaskImageType>(itk_mask, itk_mask2_resampled);
   }
 
   // Statistics

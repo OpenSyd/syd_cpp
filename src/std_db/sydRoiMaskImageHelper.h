@@ -61,8 +61,10 @@ namespace syd {
                                                 std::string mask_output_filename="");
 
   // Compute the statistic according to the stat's image and
-  // mask. return the used mask image (that have been resampled)
-  itk::Image<unsigned char, 3>::Pointer ComputeRoiStatistic(syd::RoiStatistic::pointer stat);
+  // mask. return the used mask image (that have been resampled).
+  // if itk_mask2 is given, a 'AND' is performed between the stat mask and the itk_mask2.
+  itk::Image<unsigned char, 3>::Pointer ComputeRoiStatistic(syd::RoiStatistic::pointer stat,
+                                                            const itk::Image<unsigned char, 3>::Pointer itk_mask2=nullptr);
 
 
 } // namespace syd
