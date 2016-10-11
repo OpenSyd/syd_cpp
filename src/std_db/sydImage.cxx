@@ -29,9 +29,9 @@ syd::Image::Image():
   syd::RecordWithTags(),
   syd::RecordWithComments()
 {
-  patient = NULL;
-  injection = NULL;
-  pixel_unit = NULL;
+  patient = nullptr;
+  injection = nullptr;
+  pixel_unit = nullptr;
   modality = "image"; // default (not empty_value)
   type = pixel_type = acquisition_date = frame_of_reference_uid = empty_value;
   dimension = 0;
@@ -50,7 +50,7 @@ syd::Image::~Image()
 std::string syd::Image::GetPatientName() const
 {
   std::string name = empty_value;
-  if (patient != NULL) name = patient->name;
+  if (patient != nullptr) name = patient->name;
   return name;
 }
 // --------------------------------------------------------------------
@@ -60,7 +60,7 @@ std::string syd::Image::GetPatientName() const
 std::string syd::Image::GetInjectionName() const
 {
   std::string inj_name = empty_value;
-  if (injection != NULL) inj_name = injection->radionuclide->name
+  if (injection != nullptr) inj_name = injection->radionuclide->name
                            +"("+std::to_string(injection->id)+")";
   return inj_name;
 }
@@ -88,7 +88,7 @@ std::string syd::Image::ToString() const
   for(auto d:dicoms) ss << d->id << " ";
   if (dicoms.size() == 0) ss << empty_value << " ";
   ss << frame_of_reference_uid << " ";
-  if (pixel_unit != NULL) ss << pixel_unit->name;
+  if (pixel_unit != nullptr) ss << pixel_unit->name;
   else ss << empty_value << " ";
   if (history and print_history_flag_) {
     ss << " " << history->insertion_date << " "
@@ -119,7 +119,7 @@ std::string syd::Image::ToShortString() const
      << modality << " ";
   for(auto d:dicoms) ss << d->id << " ";
   if (dicoms.size() == 0) ss << empty_value << " ";
-  if (pixel_unit != NULL) ss << pixel_unit->name;
+  if (pixel_unit != nullptr) ss << pixel_unit->name;
   else ss << empty_value << " ";
   if (history and print_history_flag_) {
     ss << " " << history->insertion_date << " "
@@ -270,7 +270,7 @@ void syd::Image::DumpInTable_short(syd::PrintTable & ta) const
   ta.Set("p", GetPatientName());
   ta.Set("acqui_date", GetAcquisitionDate());
   ta.Set("tags", GetLabels(tags), 100);
-  if (pixel_unit != NULL) ta.Set("unit", pixel_unit->name);
+  if (pixel_unit != nullptr) ta.Set("unit", pixel_unit->name);
 }
 // --------------------------------------------------
 
@@ -365,7 +365,7 @@ syd::CheckResult syd::Image::Check() const
 // --------------------------------------------------------------------
 double syd::Image::GetHoursFromInjection() const
 {
-  if (injection == NULL) return 0.0;
+  if (injection == nullptr) return 0.0;
   if (acquisition_date == empty_value) return 0.0;
   std::string inj_date = injection->date;
   double time = syd::DateDifferenceInHours(acquisition_date, inj_date);
@@ -383,7 +383,7 @@ std::vector<double> & syd::GetTimesFromInjection(syd::StandardDatabase * db,
   syd::Image::vector sorted_images = images;
   db->Sort<syd::Image>(sorted_images);
   syd::Injection::pointer injection = sorted_images[0]->injection;
-  if (injection == NULL) {
+  if (injection == nullptr) {
     LOG(FATAL) << "Cannot Image::GetTimesFromInjection because injection of first image is null";
   }
   std::string starting_date = injection->date;
@@ -408,7 +408,7 @@ std::string syd::Image::GetAbsolutePath() const
 // --------------------------------------------------------------------
 std::string syd::Image::ComputeDefaultRelativePath()
 {
-  if (patient == NULL) {
+  if (patient == nullptr) {
     EXCEPTION("Cannot compute the default image relative path"
               << ", no patient ar yet associated with the image: "
               << ToString());
