@@ -71,7 +71,7 @@ void syd::RoiMaskImage::DumpInTable(syd::PrintTable & ta) const
       f == "ref_frame" or
       f == "history" or
       f == "file")
-    ta.Set("roi", roitype->name);
+    ta.Set("roi", (roitype != nullptr? roitype->name:empty_value));
 }
 // --------------------------------------------------
 
