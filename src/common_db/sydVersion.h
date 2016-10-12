@@ -26,10 +26,11 @@
 // the change is legitimate: 1) open and 2) increment the
 // version. 3) Once checked, close again.
 // It  means that we can migrate from base version to current version)
-#define SYD_VERSION      0118 // version 1.17 (current version)
+#define SYD_VERSION      0119 // version 1.17 (current version)
 #define SYD_BASE_VERSION 0101 // version 1.1 (base version)
 
 // Log:
+// 1.19 : rename TIA TiaImage
 // 1.18 : add table TIA
 // 1.17 : add comments
 // 1.16 :
@@ -59,7 +60,7 @@
 #define BUILD_VERSION(x,y)  PASTER(x,y)
 
 #ifdef ODB_COMPILER
-#pragma db model version(BUILD_VERSION(,SYD_BASE_VERSION), BUILD_VERSION(,SYD_VERSION), closed)
+#pragma db model version(BUILD_VERSION(,SYD_BASE_VERSION), BUILD_VERSION(,SYD_VERSION), open)
 #endif
 
 #endif
