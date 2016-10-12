@@ -51,7 +51,7 @@ namespace syd {
     void SetOptions(syd::TimeIntegratedActivityFitOptions options);
 
     /// Main functions
-    syd::TIA::pointer Run();
+    syd::TiaImage::pointer Run();
 
     /// Output: write mhd debug
     void WriteDebugOutput();
@@ -91,7 +91,10 @@ namespace syd {
     syd::Image::vector InsertDebugOutputImages(std::vector<std::string> & names);
 
     /// Output: get the main output and insert in the db
-    syd::Image::pointer InsertOutputImage();
+    syd::Image::pointer InsertOutputAUCImage();
+
+    /// Output: get the success fit map and insert in the db
+    syd::Image::pointer InsertOutputSuccessFitImage();
 
   }; // class TimeIntegratedActivityImageBuilder
 

@@ -93,7 +93,7 @@ WriteDebugOutput()
 
 // --------------------------------------------------------------------
 syd::Image::pointer syd::TimeIntegratedActivityImageBuilder::
-InsertOutputImage()
+InsertOutputAUCImage()
 {
   CheckInputs();
   // Get the first output: integrate or auc if restricted
@@ -118,6 +118,24 @@ InsertOutputImage()
 
 
 // --------------------------------------------------------------------
+syd::Image::pointer syd::TimeIntegratedActivityImageBuilder::
+InsertOutputSuccessFitImage()
+{
+  CheckInputs();
+  auto img = inputs_[0];
+  // Create output image
+  typedef syd::FitOutputImage::ImageType ImageType;
+  auto output = syd::InsertImage<ImageType>(success->GetImage(), img->patient);
+  syd::SetImageInfoFromImage(output, img);
+  auto db = img->GetDatabase<syd::StandardDatabase>();
+  output->pixel_unit = syd::FindOrCreatePixelUnit(db, "bool", "Boolean 0|1");
+  db->Update(output);
+  return output;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::Image::vector syd::TimeIntegratedActivityImageBuilder::
 InsertDebugOutputImages(std::vector<std::string> & names)
 {
@@ -130,7 +148,8 @@ InsertDebugOutputImages(std::vector<std::string> & names)
   auto db = img->GetDatabase<syd::StandardDatabase>();
 
   for(auto o:all_outputs_) {
-    if (o->GetTagName() != main_output->GetTagName()) {
+    if (o->GetTagName() != main_output->GetTagName() and
+        o->GetTagName() != success->GetTagName()) {
       auto output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
       syd::SetImageInfoFromImage(output, img);
       output->tags.clear(); // remove all tags for the debug images
@@ -147,7 +166,7 @@ InsertDebugOutputImages(std::vector<std::string> & names)
 // --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
-syd::TIA::pointer syd::TimeIntegratedActivityImageBuilder::
+syd::TiaImage::pointer syd::TimeIntegratedActivityImageBuilder::
 Run()
 {
   // Check input data and get times
@@ -170,11 +189,11 @@ Run()
   filter_.SetMask(mask);
   if (options_.GetRestrictedFlag()) filter_.AddOutputImage(auc);
   else filter_.AddOutputImage(integrate);
+  filter_.AddOutputImage(success);
   if (debug_images_flag_) {
     if (options_.GetRestrictedFlag()) filter_.AddOutputImage(integrate);
     else filter_.AddOutputImage(auc);
     filter_.AddOutputImage(r2);
-    filter_.AddOutputImage(success);
     filter_.AddOutputImage(best_model);
     filter_.AddOutputImage(iter);
   }
@@ -200,8 +219,9 @@ Run()
 
   // Create output
   auto db = inputs_[0]->GetDatabase<syd::StandardDatabase>();
-  syd::TIA::pointer tia;
+  syd::TiaImage::pointer tia;
   db->New(tia);
+  DD(tia);
 
   for(auto in:inputs_) tia->images.push_back(in);
   tia->min_activity = min_activity_;
@@ -215,8 +235,10 @@ Run()
   tia->nb_success_pixels = GetFilter().GetNumberOfSuccessfullyFitPixels();
 
   // Outputs
-  auto output = InsertOutputImage();
-  tia->AddOutput(output, "auc");
+  auto output = InsertOutputAUCImage();
+  auto s = InsertOutputSuccessFitImage();
+  tia->AddOutput(output, "fit_auc");
+  tia->AddOutput(s, success->GetTagName());
   syd::FitOutputImage::pointer main_output = auc;
   if (options_.GetRestrictedFlag()) main_output = auc;
   else main_output = integrate;

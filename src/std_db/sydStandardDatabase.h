@@ -40,7 +40,7 @@
 #include "sydRoiStatistic-odb.hxx"
 
 #include "sydElastix-odb.hxx"
-#include "sydTIA-odb.hxx"
+#include "sydTiaImage-odb.hxx"
 // #include "sydCalibration-odb.hxx"
 // #include "sydTimepoints-odb.hxx"
 // #include "sydFitResult-odb.hxx"

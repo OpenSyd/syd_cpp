@@ -1,4 +1,134 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="281">
+    <add-table name="syd::TiaImage" kind="polymorphic root object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="history" type="INTEGER" null="true"/>
+      <column name="typeid" type="TEXT" null="true"/>
+      <column name="min_activity" type="REAL" null="true"/>
+      <column name="nb_pixels" type="INTEGER" null="true"/>
+      <column name="nb_success_pixels" type="INTEGER" null="true"/>
+      <primary-key auto="true">
+        <column name="id"/>
+      </primary-key>
+      <foreign-key name="history_fk" deferrable="DEFERRED">
+        <column name="history"/>
+        <references table="syd::RecordHistory">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::TiaImage_tags" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::TiaImage">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::TiaImage_tags_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::TiaImage_tags_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::Tag">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::TiaImage_comments" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="TEXT" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::TiaImage">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::TiaImage_comments_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::TiaImage_comments_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+    <add-table name="syd::TiaImage_images" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::TiaImage">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::TiaImage_images_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::TiaImage_images_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED" on-delete="CASCADE">
+        <column name="value"/>
+        <references table="syd::Image">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::TiaImage_outputs" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::TiaImage">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::TiaImage_outputs_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::TiaImage_outputs_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED" on-delete="CASCADE">
+        <column name="value"/>
+        <references table="syd::Image">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::TiaImage_output_names" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="TEXT" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::TiaImage">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::TiaImage_output_names_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::TiaImage_output_names_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+    <drop-table name="syd::TIA"/>
+    <drop-table name="syd::TIA_tags"/>
+    <drop-table name="syd::TIA_comments"/>
+    <drop-table name="syd::TIA_images"/>
+    <drop-table name="syd::TIA_models_name"/>
+    <drop-table name="syd::TIA_outputs"/>
+    <drop-table name="syd::TIA_output_names"/>
+  </changeset>
+
   <changeset version="280">
     <add-table name="syd::TIA" kind="polymorphic root object">
       <column name="id" type="INTEGER" null="true"/>

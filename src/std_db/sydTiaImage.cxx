@@ -17,10 +17,11 @@
   ===========================================================================**/
 
 // syd
-#include "sydTIA.h"
+#include "sydTiaImage.h"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
-syd::TIA::TIA():
+syd::TiaImage::TiaImage():
   syd::Record(),
   syd::RecordWithHistory(),
   syd::RecordWithTags()
@@ -39,14 +40,14 @@ syd::TIA::TIA():
 
 
 // --------------------------------------------------------------------
-syd::TIA::~TIA()
+syd::TiaImage::~TiaImage()
 {
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::string syd::TIA::ToString() const
+std::string syd::TiaImage::ToString() const
 {
   std::stringstream ss;
   ss << id << " ";
@@ -70,7 +71,7 @@ std::string syd::TIA::ToString() const
 
 
 // --------------------------------------------------------------------
-std::string syd::TIA::GetOutputNames() const
+std::string syd::TiaImage::GetOutputNames() const
 {
   std::stringstream ss;
   for(auto i=0; i<outputs.size(); i++) {
@@ -82,19 +83,8 @@ std::string syd::TIA::GetOutputNames() const
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-std::string syd::TIA::GetModelsName() const
-{
-  std::stringstream ss;
-  for(auto m:models_name) ss << m << " ";
-  auto s = ss.str();
-  return trim(s);
-}
-// --------------------------------------------------------------------
-
-
 // --------------------------------------------------
-void syd::TIA::DumpInTable(syd::PrintTable & ta) const
+void syd::TiaImage::DumpInTable(syd::PrintTable & ta) const
 {
   auto format = ta.GetFormat();
   if (format == "default") DumpInTable_default(ta);
@@ -103,7 +93,7 @@ void syd::TIA::DumpInTable(syd::PrintTable & ta) const
 
 
 // --------------------------------------------------
-void syd::TIA::DumpInTable_default(syd::PrintTable & ta) const
+void syd::TiaImage::DumpInTable_default(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", images[0]->GetPatientName());
@@ -126,7 +116,7 @@ void syd::TIA::DumpInTable_default(syd::PrintTable & ta) const
 
 
 // --------------------------------------------------
-void syd::TIA::AddOutput(syd::Image::pointer output, std::string name)
+void syd::TiaImage::AddOutput(syd::Image::pointer output, std::string name)
 {
   outputs.push_back(output);
   output_names.push_back(name);
@@ -135,7 +125,7 @@ void syd::TIA::AddOutput(syd::Image::pointer output, std::string name)
 
 
 // --------------------------------------------------
-syd::Image::pointer syd::TIA::GetOutput(std::string name)
+syd::Image::pointer syd::TiaImage::GetOutput(std::string name)
 {
   int i=0;
   for(auto & n:output_names) {
@@ -147,3 +137,28 @@ syd::Image::pointer syd::TIA::GetOutput(std::string name)
 // --------------------------------------------------
 
 
+// --------------------------------------------------
+void syd::TiaImage::Callback(odb::callback_event event,
+                             odb::database & db) const
+{
+  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db, db_);
+
+  if (event == odb::callback_event::post_erase) {
+    for(auto o:outputs) db.erase(o);
+  }
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+void syd::TiaImage::Callback(odb::callback_event event,
+                             odb::database & db)
+{
+  syd::Record::Callback(event,db);
+  syd::RecordWithHistory::Callback(event,db, db_);
+  if (event == odb::callback_event::post_erase) {
+    for(auto o:outputs) db.erase(o);
+  }
+}
+// --------------------------------------------------
