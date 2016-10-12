@@ -34,3 +34,22 @@ syd::PixelUnit::pointer syd::FindPixelUnit(syd::StandardDatabase * db,
   return unit;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::PixelUnit::pointer syd::FindOrCreatePixelUnit(syd::StandardDatabase * db,
+                                                   std::string unit_name,
+                                                   std::string unit_desc)
+{
+  syd::PixelUnit::pointer unit;
+  try {
+    unit = syd::FindPixelUnit(db, unit_name);
+  } catch (std::exception & e) {
+    db->New<syd::PixelUnit>(unit);
+    unit->name = unit_name;
+    unit->description = unit_name;
+    db->Insert(unit);
+  }
+  return unit;
+}
+// --------------------------------------------------------------------

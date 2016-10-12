@@ -50,6 +50,11 @@ namespace syd {
   syd::Tag::pointer FindTag(const syd::Database * db,
                             const std::string & name);
 
+  /// Find a tag by name or create it
+  syd::Tag::pointer FindOrCreateTag(syd::Database * db,
+                                    const std::string & name,
+                                    const std::string & desc="");
+
   /// Check if all tags are in the first list
   bool IsAllTagsIn(syd::Tag::vector & input_tags,
                    syd::Tag::vector & to_search_tags);

@@ -624,3 +624,19 @@ bool CheckImageSameSizeAndSpacing(const itk::ImageBase<Dimension> * a,
   return r;
 }
 //--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+double ComputeSumOfPixelValues(ImageType * input)
+{
+  double n = 0;
+  itk::ImageRegionConstIterator<ImageType>
+    iter(input, input->GetLargestPossibleRegion());
+  while (!iter.IsAtEnd()) {
+    n += iter.Get();
+    ++iter;
+  }
+  return n;
+}
+//--------------------------------------------------------------------

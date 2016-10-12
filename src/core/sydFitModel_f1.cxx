@@ -40,7 +40,7 @@ void syd::FitModel_f1::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   // need to be created each time
   residuals_.clear(); // FIXME --> allocation could be once for all
   for(auto i=0; i<tac.size(); i++) {
-    auto r = new ResidualType(tac.GetTime(i), tac.GetValue(i), GetLambdaPhysicHours());
+    auto r = new ResidualType(tac.GetTime(i), tac.GetValue(i), GetLambdaDecayConstantInHours());
     residuals_.push_back(r); // fixme no push back, set it
   }
   // FIXME --> could be templated by CostFctType and param_nb ?
@@ -77,7 +77,7 @@ syd::FitModel_f1::ResidualType::operator()(const T* const A, T* residual) const
 double syd::FitModel_f1::GetValue(const double & time) const
 {
   const double A1 = params_[0];
-  const double l = lambda_phys_hours_;
+  const double l = lambda_in_hours_;
   return A1 * exp(-l*time);
 }
 // --------------------------------------------------------------------

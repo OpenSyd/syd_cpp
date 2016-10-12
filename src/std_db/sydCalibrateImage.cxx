@@ -25,6 +25,7 @@
 #include "sydTagHelper.h"
 #include "sydPixelUnitHelper.h"
 #include "sydInjectionHelper.h"
+#include "sydCommentsHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -48,6 +49,9 @@ int main(int argc, char* argv[])
   // Get the images to udpate
   syd::Image::vector images;
   db->Query(images, ids);
+  if (images.size() < 1) {
+    LOG(FATAL) << "Error provide at least one image id.";
+  }
 
   // Sort according to date
   db->Sort(images);
@@ -90,6 +94,7 @@ int main(int argc, char* argv[])
     output->pixel_unit = syd::FindPixelUnit(db, "Bq");
     syd::SetImageInfoFromCommandLine(output, args_info);
     syd::SetTagsFromCommandLine(output->tags, db, args_info);
+    syd::SetCommentsFromCommandLine(output->comments, db, args_info);
     db->Update(output);
     LOG(1) << "Image was scaled by " << s << ": " << output;
   }

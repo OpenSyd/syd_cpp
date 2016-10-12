@@ -45,12 +45,13 @@ set(SYD_STANDARD_DATABASE_SRC
   sydElastixHelper.cxx
   sydRadionuclideHelper.cxx
 
+  #sydTimeIntegratedActivityImageBuilder.cxx
+
   #sydRoiStatisticBuilder.cxx
 
   #  sydCropImageBuilder.cxx
   #  sydDecayCorrectedImageBuilder.cxx
   #  sydSubstituteRadionuclideImageBuilder.cxx
-  #  sydTimeIntegratedActivityImageBuilder.cxx
   #  sydTimepointsBuilder.cxx
   )
 
@@ -89,6 +90,7 @@ set_target_properties(StandardDatabasePlugin PROPERTIES BUNDLE_EXTENSION ".so")
 # Create DicomSeries
 wrap_ggo(sydInsertDicom_GGO_C
   sydInsertDicom.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertDicom
   sydInsertDicom.cxx
@@ -107,6 +109,7 @@ target_link_libraries(sydDicomInfo ${SYD_STD_DB_LIBRARY})
 # Create anonymized dicom
 wrap_ggo(sydInsertAnonymizedDicom_GGO_C
   sydInsertAnonymizedDicom.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertAnonymizedDicom
   sydInsertAnonymizedDicom.cxx
@@ -128,6 +131,7 @@ wrap_ggo(sydInsertImage_GGO_C
   sydInsertImage.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertImage
   sydInsertImage.cxx
@@ -139,6 +143,7 @@ wrap_ggo(sydInsertImageFromDicom_GGO_C
   sydInsertImageFromDicom.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
 add_executable(sydInsertImageFromDicom
   sydInsertImageFromDicom.cxx
@@ -150,6 +155,7 @@ wrap_ggo(sydUpdateImage_GGO_C
   sydUpdateImage.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydUpdateImage
   sydUpdateImage.cxx
@@ -161,6 +167,7 @@ wrap_ggo(sydStitchDicom_GGO_C
   sydStitchDicom.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydStitchDicom
   sydStitchDicom.cxx
@@ -172,6 +179,7 @@ wrap_ggo(sydInsertPlanarGeometricalMean_GGO_C
   sydInsertPlanarGeometricalMean.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
 add_executable(sydInsertPlanarGeometricalMean
   sydInsertPlanarGeometricalMean.cxx
@@ -183,6 +191,7 @@ wrap_ggo(sydInsertRoiMaskImage_GGO_C
   sydInsertRoiMaskImage.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertRoiMaskImage
   sydInsertRoiMaskImage.cxx
@@ -193,6 +202,7 @@ target_link_libraries(sydInsertRoiMaskImage ${SYD_STD_DB_LIBRARY})
 wrap_ggo(sydInsertRoiStatistic_GGO_C
   sydInsertRoiStatistic.ggo
   sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertRoiStatistic
   sydInsertRoiStatistic.cxx
@@ -215,11 +225,25 @@ wrap_ggo(sydCalibrateImage_GGO_C
   sydCalibrateImage.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydCalibrateImage
   sydCalibrateImage.cxx
   ${sydCalibrateImage_GGO_C})
 target_link_libraries(sydCalibrateImage ${SYD_STD_DB_LIBRARY})
+
+
+# Average image
+wrap_ggo(sydInsertAveragedImages_GGO_C
+  sydInsertAveragedImages.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertAveragedImages
+  sydInsertAveragedImages.cxx
+  ${sydInsertAveragedImages_GGO_C})
+target_link_libraries(sydInsertAveragedImages ${SYD_STD_DB_LIBRARY})
 
 
 # Substitute a radionuclide
@@ -234,11 +258,27 @@ add_executable(sydSubstituteRadionuclide
 target_link_libraries(sydSubstituteRadionuclide ${SYD_STD_DB_LIBRARY})
 
 
+# Create image of integrated activity
+wrap_ggo(sydInsertTimeIntegratedActivityImage_GGO_C
+  sydInsertTimeIntegratedActivityImage.ggo
+  sydCommandLineWithFitOptions.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertTimeIntegratedActivityImage
+  sydInsertTimeIntegratedActivityImage.cxx
+  sydTimeIntegratedActivityImageBuilder.cxx
+  ${sydInsertTimeIntegratedActivityImage_GGO_C})
+target_link_libraries(sydInsertTimeIntegratedActivityImage ${SYD_STD_DB_LIBRARY})
+
 #----------------------------------------------------------
 # External tool: clitkExtractPatient
 wrap_ggo(syd_clitkExtractPatient_GGO_C
   syd_clitkExtractPatient.ggo
   sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineWithImageInfo.ggo
   sydCommandLineDefault.ggo)
 add_executable(syd_clitkExtractPatient
   syd_clitkExtractPatient.cxx ${syd_clitkExtractPatient_GGO_C})
@@ -247,6 +287,7 @@ target_link_libraries(syd_clitkExtractPatient ${SYD_STD_DB_LIBRARY})
 wrap_ggo(sydInsertElastixRegistration_GGO_C
   sydInsertElastixRegistration.ggo
   sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertElastixRegistration
   sydInsertElastixRegistration.cxx
@@ -265,6 +306,7 @@ wrap_ggo(syd_transformix_GGO_C
   syd_transformix.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(syd_transformix
   syd_transformix.cxx
@@ -314,15 +356,6 @@ target_link_libraries(syd_transformix ${SYD_STD_DB_LIBRARY})
 #   sydInsertSubstituteRadionuclideImage.cxx ${sydInsertSubstituteRadionuclideImage_GGO_C})
 # target_link_libraries(sydInsertSubstituteRadionuclideImage ${SYD_STD_DB_LIBRARY})
 
-# Create image of integrated activity
-# wrap_ggo(sydInsertTimeIntegratedActivityImage_GGO_C
-#   sydInsertTimeIntegratedActivityImage.ggo
-#   sydCommandLineWithFitOptions.ggo
-#   sydCommandLineWithTags.ggo
-#   sydCommandLineDefault.ggo)
-# add_executable(sydInsertTimeIntegratedActivityImage
-#   sydInsertTimeIntegratedActivityImage.cxx ${sydInsertTimeIntegratedActivityImage_GGO_C})
-# target_link_libraries(sydInsertTimeIntegratedActivityImage ${SYD_STD_DB_LIBRARY})
 
 
 # compute integrated activity in a ROI

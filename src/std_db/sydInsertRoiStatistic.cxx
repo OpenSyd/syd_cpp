@@ -24,6 +24,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydRoiMaskImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydCommentsHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -87,6 +88,7 @@ int main(int argc, char* argv[])
 
       // Tags
       syd::SetTagsFromCommandLine(stat->tags, db, args_info);
+      syd::SetCommentsFromCommandLine(stat->comments, db, args_info);
       db->Update(stat);
 
       // Update

@@ -63,7 +63,7 @@ namespace syd {
 
     void Set(const std::vector<std::string> & arg);
 
-    double GetLambdaInHours() const;
+    double GetLambdaDecayConstantInHours() const;
 
   protected:
     Radionuclide();

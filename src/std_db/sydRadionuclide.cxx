@@ -80,7 +80,7 @@ void syd::Radionuclide::DumpInTable(syd::PrintTable & ta) const
 
 
 // --------------------------------------------------
-double syd::Radionuclide::GetLambdaInHours() const
+double syd::Radionuclide::GetLambdaDecayConstantInHours() const
 {
   return log(2.0)/half_life_in_hours;
 }

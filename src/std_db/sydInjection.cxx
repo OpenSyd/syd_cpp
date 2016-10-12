@@ -21,7 +21,9 @@
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
-syd::Injection::Injection():syd::Record()
+syd::Injection::Injection():
+  syd::Record(),
+  syd::RecordWithComments()
 {
   date = empty_value;
   activity_in_MBq = 0.0;
@@ -43,8 +45,10 @@ std::string syd::Injection::ToString() const
      << name << " "
      << r  << " "
      << date << " "
-     << activity_in_MBq;
-  return ss.str();
+     << activity_in_MBq << " "
+     << GetAllComments();
+  auto s = ss.str();
+  return trim(s);
 }
 // --------------------------------------------------
 
@@ -97,6 +101,7 @@ void syd::Injection::DumpInTable(syd::PrintTable & ta) const
   ta.Set("rad", rad);
   ta.Set("date", date);
   ta.Set("A(MBq)", activity_in_MBq, 2);
+  ta.Set("com", GetAllComments());
 }
 // --------------------------------------------------
 
@@ -118,8 +123,8 @@ void syd::Injection::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------
-double syd::Injection::GetLambdaInHours() const
+double syd::Injection::GetLambdaDecayConstantInHours() const
 {
-  return radionuclide->GetLambdaInHours();
+  return radionuclide->GetLambdaDecayConstantInHours();
 }
 // --------------------------------------------------

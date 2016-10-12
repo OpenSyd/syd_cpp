@@ -48,3 +48,15 @@ target_link_libraries(syd_test5 ${SYD_STD_DB_LIBRARY})
 add_test(NAME syd_test5
   WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test
   COMMAND ${EXECUTABLE_OUTPUT_PATH}/syd_test5)
+
+
+# Test6 roi
+wrap_ggo(syd_test6_GGO_C syd_test6.ggo ../src/common_db/sydCommandLineDefault.ggo)
+add_executable(syd_test6
+  syd_test6.cxx
+  ../src/std_db/sydTimeIntegratedActivityImageBuilder.cxx
+  ${syd_test6_GGO_C})
+target_link_libraries(syd_test6 ${SYD_STD_DB_LIBRARY})
+add_test(NAME syd_test6
+  WORKING_DIRECTORY ${SYD_SOURCE_DIR}/test
+  COMMAND ${EXECUTABLE_OUTPUT_PATH}/syd_test6)

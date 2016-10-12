@@ -33,6 +33,11 @@ namespace syd {
   syd::PixelUnit::pointer FindPixelUnit(syd::StandardDatabase * db,
                                         std::string unit);
 
+  // Find a pixel unit by name, create if does not exist
+  syd::PixelUnit::pointer FindOrCreatePixelUnit(syd::StandardDatabase * db,
+                                                std::string unit,
+                                                std::string desc="");
+
 }
 // --------------------------------------------------------------------
 

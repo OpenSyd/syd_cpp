@@ -393,6 +393,10 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
     EXCEPTION("Cannot ComputeActivityInMBqByDetectedCounts, need an injection for this image");
   }
 
+  //   FIXME check pixel type = counts (warn or forcae
+  // inverse ComputeDetectedCountsByAcitvityInMBq
+
+
   auto injection = image->injection;
   double injected_activity = injection->activity_in_MBq;
   double time = syd::DateDifferenceInHours(image->acquisition_date, injection->date);
@@ -465,12 +469,19 @@ void syd::SubstituteRadionuclide(syd::Image::pointer image,
   auto db = image->GetDatabase<syd::StandardDatabase>();
   auto new_injection = syd::CopyInjection(image->injection);
   new_injection->radionuclide = rad;
-  db->Insert(new_injection);
+  auto inj = syd::GetSimilarInjection(db, new_injection);
+  if (inj.size() != 0) {
+    LOG(2) << "Similar injection exist, do not add " << std::endl
+           << new_injection << std::endl
+           << inj[0];
+    new_injection = inj[0];
+  }
+  else db->Insert(new_injection);
 
   // Get the time and the half_life (lambda)
   double time = syd::DateDifferenceInHours(image->acquisition_date, image->injection->date);
-  double lambda_old = image->injection->radionuclide->GetLambdaInHours();
-  double lambda_new = rad->GetLambdaInHours();
+  double lambda_old = image->injection->radionuclide->GetLambdaDecayConstantInHours();
+  double lambda_new = rad->GetLambdaDecayConstantInHours();
   double f1 = exp(lambda_old * time); // decay correction: multiply by exp(lambda x time)
   double f2 = exp(-lambda_new * time); // new radionuclide decay
 

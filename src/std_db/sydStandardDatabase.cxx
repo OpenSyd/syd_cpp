@@ -27,8 +27,6 @@ void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & ty
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
-              if (a->dicoms.size() == 0) return true;
-              if (b->dicoms.size() == 0) return false;
               return a->acquisition_date < b->acquisition_date;
             });
 }

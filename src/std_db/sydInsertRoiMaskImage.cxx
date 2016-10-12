@@ -22,6 +22,7 @@
 #include "sydPluginManager.h"
 #include "sydRoiMaskImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"
 
 // --------------------------------------------------------------------
@@ -60,6 +61,7 @@ int main(int argc, char* argv[])
   syd::AddTag(mask->tags, image->tags);
   syd::SetImageInfoFromCommandLine(mask, args_info);
   syd::SetTagsFromCommandLine(mask->tags, db, args_info);
+  syd::SetCommentsFromCommandLine(mask->comments, db, args_info);
   db->Update(mask);
   LOG(1) << "Inserting RoiMaskImage " << mask;
 
