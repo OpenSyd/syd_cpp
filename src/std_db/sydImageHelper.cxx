@@ -409,7 +409,7 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
   syd::RoiStatistic::pointer stat;
   db->New(stat);
   stat->image = image;
-  syd::ComputeRoiStatistic(stat);
+  syd::UpdateRoiStatistic(stat);
 
   // activity by nb of counts
   double s = activity_at_acquisition / stat->sum;
