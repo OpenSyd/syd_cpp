@@ -72,18 +72,22 @@ int main(int argc, char* argv[])
     }
 
     // Loop over masks
+    syd::RoiStatistic::pointer stat;
     for(auto mask:masks) {
-      std::string mask_filename = args_info.resampled_mask_arg;
-      auto stat = syd::FindOneRoiStatistic(image, mask);
+      std::string mask_filename = mask->roitype->name+"_"+args_info.resampled_mask_arg;
+      DD(mask_filename);
       bool newStat = false;
-      if (!stat) {
-        stat = syd::InsertRoiStatistic(image, mask, mask_filename);
+      try { stat = syd::FindOneRoiStatistic(image, mask); }
+      catch(std::exception&) { // cannot find the stat, we compute it
+        stat = syd::InsertRoiStatistic(image, mask, mask_filename); // mask is written
         newStat = true;
       }
-      else {
-        auto mask = syd::ComputeRoiStatistic(stat);
-        if (mask_filename != "")
-          syd::WriteImage<itk::Image<unsigned char,3>>(mask, mask_filename);
+      DD(stat);
+      std::string resampled_mask_name = args_info.resampled_mask_arg;
+      if ((resampled_mask_name != "") and (!newStat)) {
+        // Here the stat already exist, but we recompute to get the mask2
+        auto mask = syd::UpdateRoiStatistic(stat);
+        syd::WriteImage<itk::Image<unsigned char,3>>(mask, mask_filename);
       }
 
       // Tags

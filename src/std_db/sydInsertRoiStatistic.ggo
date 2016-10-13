@@ -10,6 +10,9 @@ description "Compute mean and other stat for image values in the roi mask image
 If several images id are given, the corresponding roi is searched for each image.
 If <roi> is set to 'all', all RoiMaskImage with the same frame_of_reference_uid are considered.
 If <roi> is set to 'null', statistics are computed on the whole image.
+
+If --resampled_mask is set, the mask of the roi resampled to the image size is dumped on the disk. 
+
 "
 
-option "resampled_mask"  - "Mhd filename to output the resampled mask" string default="" no
+option "resampled_mask"  - "Resampled mask filename" string default="" no

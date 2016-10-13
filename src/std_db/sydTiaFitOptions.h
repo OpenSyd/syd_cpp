@@ -20,6 +20,7 @@
 #define SYDTIAFITOPTIONS_H
 
 #include "sydImage.h"
+#include "sydTimeIntegratedActivityFitOptions.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -41,7 +42,7 @@ namespace syd {
     bool restricted_tac;
 
     /// List of fitting models
-    std::vector<std::string> models_name;
+    std::vector<std::string> model_names;
 
     /// Which Akaike criterion is used : AIC or AICc
     std::string akaike_criterion;
@@ -51,6 +52,12 @@ namespace syd {
 
     /// Return a string with all model names
     std::string GetModelsName() const;
+
+    /// Return an options objects with the values from the TiaImage
+    void SetToOptions(syd::TimeIntegratedActivityFitOptions & options);
+
+    /// Set values from the options object
+    void SetFromOptions(const syd::TimeIntegratedActivityFitOptions & options);
 
   }; // end class
   // --------------------------------------------------------------------

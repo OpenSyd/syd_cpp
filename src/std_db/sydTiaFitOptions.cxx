@@ -36,10 +36,36 @@ syd::TiaFitOptions::TiaFitOptions()
 std::string syd::TiaFitOptions::GetModelsName() const
 {
   std::stringstream ss;
-  for(auto m:models_name) ss << m << " ";
+  for(auto m:model_names) ss << m << " ";
   auto s = ss.str();
   return trim(s);
 }
 // --------------------------------------------------------------------
 
 
+
+// --------------------------------------------------------------------
+void syd::TiaFitOptions::SetToOptions(syd::TimeIntegratedActivityFitOptions & options)
+{
+  DDF();
+  options.SetR2MinThreshold(r2_min);
+  options.SetMaxNumIterations(max_iteration);
+  options.SetRestrictedFlag(restricted_tac);
+  options.ClearModels();
+  for(auto m:model_names)
+    options.AddModel(m);
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+void syd::TiaFitOptions::SetFromOptions(const syd::TimeIntegratedActivityFitOptions & options)
+{
+  DDF();
+  r2_min = options.GetR2MinThreshold();
+  max_iteration = options.GetMaxNumIterations();
+  restricted_tac = options.GetRestrictedFlag();
+  model_names.clear();
+  for(auto m:options.GetModels())
+    model_names.push_back(m->GetName());
+}
+// --------------------------------------------------------------------

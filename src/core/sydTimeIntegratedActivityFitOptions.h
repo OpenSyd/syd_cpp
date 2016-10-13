@@ -39,6 +39,7 @@ namespace syd {
     void SetR2MinThreshold(double r) { R2_min_threshold_ = r; }
     void SetRestrictedFlag(bool b) { restricted_flag_ = b; }
     void AddModel(const std::string & model_name);
+    void ClearModels() { model_names_.clear(); }
     // void AddModels(const std::vector<std::string> & model_names);
     // void AddModels(const std::string & model_names);
     void SetAkaikeCriterion(const std::string & n);

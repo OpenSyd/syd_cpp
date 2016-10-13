@@ -58,7 +58,7 @@ std::string syd::TiaImage::ToString() const
      << r2_min << " "
      << max_iteration << " "
      << (restricted_tac? "restricted":"non_restricted") << " "
-     << models_name.size() << " mod ("
+     << model_names.size() << " mod ("
      << GetModelsName() << ") "
      << akaike_criterion << " "
      << GetAllComments() << " "
@@ -83,16 +83,16 @@ std::string syd::TiaImage::GetOutputNames() const
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::TiaImage::DumpInTable(syd::PrintTable & ta) const
 {
   auto format = ta.GetFormat();
   if (format == "default") DumpInTable_default(ta);
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::TiaImage::DumpInTable_default(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
@@ -112,19 +112,19 @@ void syd::TiaImage::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("res", ss.str());
   ta.Set("com", GetAllComments());
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::TiaImage::AddOutput(syd::Image::pointer output, std::string name)
 {
   outputs.push_back(output);
   output_names.push_back(name);
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 syd::Image::pointer syd::TiaImage::GetOutput(std::string name)
 {
   int i=0;
@@ -134,10 +134,10 @@ syd::Image::pointer syd::TiaImage::GetOutput(std::string name)
   }
   return nullptr;
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::TiaImage::Callback(odb::callback_event event,
                              odb::database & db) const
 {
@@ -148,10 +148,10 @@ void syd::TiaImage::Callback(odb::callback_event event,
     for(auto o:outputs) db.erase(o);
   }
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::TiaImage::Callback(odb::callback_event event,
                              odb::database & db)
 {
@@ -161,4 +161,6 @@ void syd::TiaImage::Callback(odb::callback_event event,
     for(auto o:outputs) db.erase(o);
   }
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
+
+

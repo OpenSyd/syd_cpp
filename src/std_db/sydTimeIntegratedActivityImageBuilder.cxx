@@ -221,16 +221,9 @@ Run()
   auto db = inputs_[0]->GetDatabase<syd::StandardDatabase>();
   syd::TiaImage::pointer tia;
   db->New(tia);
-  DD(tia);
-
   for(auto in:inputs_) tia->images.push_back(in);
   tia->min_activity = min_activity_;
-  tia->r2_min = options_.GetR2MinThreshold();
-  tia->max_iteration = options_.GetMaxNumIterations();
-  tia->restricted_tac = options_.GetRestrictedFlag();
-  tia->models_name.clear();
-  for(auto m:options_.GetModels())
-    tia->models_name.push_back(m->GetName());
+  tia->SetFromOptions(options_);
   tia->nb_pixels = GetFilter().GetNumberOfPixels();
   tia->nb_success_pixels = GetFilter().GetNumberOfSuccessfullyFitPixels();
 
