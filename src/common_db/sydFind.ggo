@@ -22,5 +22,6 @@ option "delete"   d   "Delete all found elements"                  flag    off
 option "force"    - "Dont ask confirmation if --delete. DANGEROUS. You have been warned." flag off
 option "tag"      t   "List of tag to match (all)"               string  no multiple
 option "id"       i "Display the record with this id (maybe multiple)"         int multiple no
+option "oneOutput"  o "The output is one and only one image (An error occurs if there is zero or multiples images)" flag    off
 option "vv"       -   "Open images with vv (result must be image)"             flag    off
 option "vvs"      -   "Open images with vv --sequence (result must be images)" flag    off

@@ -25,6 +25,7 @@
 #include "sydRoiMaskImageHelper.h"
 #include "sydFileHelper.h"
 #include "sydTagHelper.h"
+#include "sydCommentsHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -90,9 +91,9 @@ int main(int argc, char* argv[])
     fs::copy(config_filename, config->GetAbsolutePath());
     elastix->config_file = config;
 
-    // Tag
+    // Tag & comments
     syd::SetTagsFromCommandLine(elastix->tags, db, args_info);
-
+    syd::SetCommentsFromCommandLine(elastix->comments, db, args_info);
     db->Update(elastix);
     LOG(1) << "Insert elastix: " << elastix;
   }

@@ -47,7 +47,7 @@ void syd::FitModel_f2::ComputeStartingParametersValues(const syd::TimeActivityCu
   double c = x(0);
   double d = x(1);
   params_[0] = c;  // x(0) = log c     --> A1 = exp(x(0))
-  params_[1] = -GetLambdaPhysicHours()-d;// x(1) = -(l1+lp)  --> l1 = -x(1)-lp
+  params_[1] = -GetLambdaDecayConstantInHours()-d;// x(1) = -(l1+lp)  --> l1 = -x(1)-lp
 }
 // --------------------------------------------------------------------
 
@@ -61,7 +61,7 @@ void syd::FitModel_f2::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   // need to be created each time
   residuals_.clear();
   for(auto i=0; i<tac.size(); i++) {
-    auto r = new ResidualType(tac.GetTime(i), tac.GetValue(i), GetLambdaPhysicHours());
+    auto r = new ResidualType(tac.GetTime(i), tac.GetValue(i), GetLambdaDecayConstantInHours());
     residuals_.push_back(r);
   }
   // FIXME --> could be templated by CostFctType and param_nb ?
@@ -71,7 +71,7 @@ void syd::FitModel_f2::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
 
   //problem->SetParameterLowerBound(&params_[0], 0, 0); // A positive
   problem->SetParameterLowerBound(&params_[1], 0, 0); // l positive
-  problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaPhysicHours()); // lambda
+  problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaDecayConstantInHours()); // lambda
 }
 // --------------------------------------------------------------------
 
@@ -104,7 +104,7 @@ double syd::FitModel_f2::GetValue(const double & time) const
 {
   const double A1 = params_[0];
   const double lambda_1 = params_[1];
-  const double l = lambda_phys_hours_;
+  const double l = lambda_in_hours_;
   return A1 * exp(-(l+lambda_1)*time);
 }
 // --------------------------------------------------------------------

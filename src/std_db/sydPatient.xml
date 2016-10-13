@@ -1,4 +1,24 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="279">
+    <add-table name="syd::Patient_comments" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="TEXT" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::Patient">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::Patient_comments_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::Patient_comments_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+  </changeset>
+
   <changeset version="278"/>
 
   <changeset version="276">

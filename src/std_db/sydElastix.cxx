@@ -23,8 +23,11 @@
 #include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
-syd::Elastix::Elastix()
-  :Record(), RecordWithTags()
+syd::Elastix::Elastix():
+  Record(),
+  RecordWithHistory(),
+  RecordWithTags(),
+  RecordWithComments()
 {
   fixed_image = NULL;
   moving_image = NULL;
@@ -48,8 +51,10 @@ std::string syd::Elastix::ToString() const
      << (fixed_mask == NULL ? empty_value:std::to_string(fixed_mask->id)) << " "
      << (moving_mask == NULL ? empty_value:std::to_string(moving_mask->id)) << " "
      << (config_file == NULL ? empty_value:config_file->filename) << " "
-     << (transform_file == NULL ? empty_value:transform_file->filename);
-  return ss.str();
+     << (transform_file == NULL ? empty_value:transform_file->filename) << " "
+     << GetAllComments();
+  auto s = ss.str();
+  return trim(s);
 }
 // --------------------------------------------------------------------
 
@@ -108,6 +113,7 @@ void syd::Elastix::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("fixed_ref_frame", fixed_image->frame_of_reference_uid);
   ta.Set("moving_ref_frame", moving_image->frame_of_reference_uid);
   ta.Set("transform", (transform_file == NULL ? empty_value:transform_file->path));
+  ta.Set("com", GetAllComments());
 }
 // --------------------------------------------------
 

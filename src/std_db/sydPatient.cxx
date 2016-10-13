@@ -22,7 +22,9 @@
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------
-syd::Patient::Patient():syd::Record()
+syd::Patient::Patient():
+  syd::Record(),
+  syd::RecordWithComments()
 {
   // default value
   name = empty_value; // must be unique
@@ -51,8 +53,10 @@ std::string syd::Patient::ToString() const
      << name << " "
      << weight_in_kg << " "
      << dicom_patientid << " "
-     << sex;
-  return ss.str();
+     << sex << " "
+     << GetAllComments();
+  auto s = ss.str();
+  return trim(s);
 }
 // --------------------------------------------------
 
@@ -103,6 +107,7 @@ void syd::Patient::DumpInTable(syd::PrintTable & ta) const
   db->Query(injections, q);
   ta.Set("injection", injections.size());
   ta.Set("sex", sex);
+  ta.Set("com", GetAllComments());
 }
 // --------------------------------------------------
 

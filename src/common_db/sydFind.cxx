@@ -102,6 +102,12 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
   }
   else {
+    if (args_info.oneOutput_flag && results.size() == 0) {
+          LOG(FATAL) << "Zero image found";
+    }
+    else if (args_info.oneOutput_flag && results.size() > 1) {
+          LOG(FATAL) << "Multiple images found";
+    }
     if (results.size() == 0) {
       LOG(1) << "No records match";
       return EXIT_SUCCESS;

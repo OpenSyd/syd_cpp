@@ -29,7 +29,8 @@ namespace syd {
   /// Simple table to store a label and a description
   class RoiStatistic : public syd::Record,
                        public syd::RecordWithHistory,
-                       public syd::RecordWithTags {
+                       public syd::RecordWithTags,
+                       public syd::RecordWithComments {
   public:
 
 #pragma db not_null on_delete(cascade)

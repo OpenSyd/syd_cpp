@@ -15,12 +15,18 @@ Test3
 
 Test4
 - test insertion of images
+- test image update
 - test image scale
 - test image stitch
-- test negative spacing
+- test negative spacing (flip)
 - test planar geometrical mean
+- test substitute radionuclide
 
 
 Test5
 - test roi
 - ComputeActivityInMBqByDetectedCounts (because need roi stat)
+
+
+Test6
+- time activity curve integration

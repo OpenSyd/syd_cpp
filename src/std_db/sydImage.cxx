@@ -25,7 +25,9 @@
 // --------------------------------------------------------------------
 syd::Image::Image():
   syd::Record(),
-  syd::RecordWithHistory()
+  syd::RecordWithHistory(),
+  syd::RecordWithTags(),
+  syd::RecordWithComments()
 {
   patient = NULL;
   injection = NULL;
@@ -93,7 +95,40 @@ std::string syd::Image::ToString() const
        << history->update_date;
   }
   else ss << empty_value;
-  return ss.str();
+  ss << GetAllComments() << std::endl;
+  auto s = ss.str();
+  return trim(s);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Image::ToShortString() const
+{
+  std::stringstream ss ;
+  ss << id << " "
+     << GetPatientName() << " "
+     << GetInjectionName() << " "
+     << syd::GetLabels(tags) << " "
+     << acquisition_date << " "
+     << type << " "
+     << pixel_type << " "
+     << dimension << " "
+     << SizeAsString() << " "
+     << SpacingAsString() << " "
+     << modality << " ";
+  for(auto d:dicoms) ss << d->id << " ";
+  if (dicoms.size() == 0) ss << empty_value << " ";
+  if (pixel_unit != NULL) ss << pixel_unit->name;
+  else ss << empty_value << " ";
+  if (history and print_history_flag_) {
+    ss << " " << history->insertion_date << " "
+       << history->update_date;
+  }
+  else ss << empty_value;
+  ss << GetAllComments() << std::endl;
+  auto s = ss.str();
+  return trim(s);
 }
 // --------------------------------------------------------------------
 
@@ -254,6 +289,7 @@ void syd::Image::DumpInTable_default(syd::PrintTable & ta) const
     dicom.pop_back(); // remove last space
     ta.Set("dicom", dicom);
   }
+  ta.Set("com", GetAllComments());
 }
 // --------------------------------------------------
 

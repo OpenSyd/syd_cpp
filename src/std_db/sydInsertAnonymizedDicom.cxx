@@ -22,6 +22,7 @@
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydDicomSerieHelper.h"
+#include "sydCommentsHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -48,12 +49,11 @@ int main(int argc, char* argv[])
   }
 
   // Loop on dicom
-  for(auto  dicom:dicom_series) {
-    DD(dicom);
-
+  for(auto dicom:dicom_series) {
     auto ano_dicom = syd::InsertAnonymizedDicomSerie(dicom);
-    LOG(1) << ano_dicom;
-
+    syd::SetCommentsFromCommandLine(ano_dicom->comments, db, args_info);
+    db->Update(ano_dicom);
+    LOG(1) << "Anonymized dicom : " << ano_dicom;
     if (args_info.delete_flag) db->Delete(dicom);
   }
   // This is the end, my friend.

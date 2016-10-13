@@ -38,7 +38,7 @@ void syd::FitModel_f4::ComputeStartingParametersValues(const syd::TimeActivityCu
 
   // Initialisation
   params_[0] = tac->GetValue(0);
-  params_[1] = GetLambdaPhysicHours();
+  params_[1] = GetLambdaDecayConstantInHours();
   params_[2] = 0.0;
   params_[3] = 0.0;
 
@@ -48,7 +48,7 @@ void syd::FitModel_f4::ComputeStartingParametersValues(const syd::TimeActivityCu
   double c = x(0);
   double d = x(1);
   params_[2] = c;  // x(0) = log c     --> A1 = exp(x(0))
-  params_[3] = -GetLambdaPhysicHours()-d;// x(1) = -(l1+lp)  --> l1 = -x(1)-lp
+  params_[3] = -GetLambdaDecayConstantInHours()-d;// x(1) = -(l1+lp)  --> l1 = -x(1)-lp
 
   // Create modified curve
   bool negative=false;
@@ -64,7 +64,7 @@ void syd::FitModel_f4::ComputeStartingParametersValues(const syd::TimeActivityCu
     if (!negative) {
       LogLinearFit(x, first_part_tac);
       params_[0] = x(0);
-      params_[1] = -GetLambdaPhysicHours()-x(1);
+      params_[1] = -GetLambdaDecayConstantInHours()-x(1);
 
     }
   }
@@ -82,7 +82,7 @@ void syd::FitModel_f4::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   // need to be created each time
   residuals_.clear();
   for(auto i=0; i<tac.size(); i++) {
-    auto r = new ResidualType(tac.GetTime(i), tac.GetValue(i), GetLambdaPhysicHours());
+    auto r = new ResidualType(tac.GetTime(i), tac.GetValue(i), GetLambdaDecayConstantInHours());
     residuals_.push_back(r);
   }
   // FIXME --> could be templated by CostFctType and param_nb ?
@@ -94,15 +94,15 @@ void syd::FitModel_f4::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   // problem->SetParameterLowerBound(&params_[0], 0, 0.0);   // A1 positive
   // problem->SetParameterLowerBound(&params_[2], 0, 0.0);   // A2 positive
 
-  problem->SetParameterLowerBound(&params_[1], 0, 0);//-0.9*GetLambdaPhysicHours());
-  problem->SetParameterLowerBound(&params_[3], 0, 0);//-0.9*GetLambdaPhysicHours());
-  problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaPhysicHours());
-  problem->SetParameterUpperBound(&params_[3], 0, 100*GetLambdaPhysicHours());
+  problem->SetParameterLowerBound(&params_[1], 0, 0);//-0.9*GetLambdaDecayConstantInHours());
+  problem->SetParameterLowerBound(&params_[3], 0, 0);//-0.9*GetLambdaDecayConstantInHours());
+  problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaDecayConstantInHours());
+  problem->SetParameterUpperBound(&params_[3], 0, 100*GetLambdaDecayConstantInHours());
 
 
-  //problem->SetParameterUpperBound(&params_[1], 0, 0.0);//GetLambdaPhysicHours()*2.0); // positive
-  // problem->SetParameterLowerBound(&params_[3], 0, 0.1*GetLambdaPhysicHours()); // positive
-  // problem->SetParameterUpperBound(&params_[3], 0, GetLambdaPhysicHours()); // positive
+  //problem->SetParameterUpperBound(&params_[1], 0, 0.0);//GetLambdaDecayConstantInHours()*2.0); // positive
+  // problem->SetParameterLowerBound(&params_[3], 0, 0.1*GetLambdaDecayConstantInHours()); // positive
+  // problem->SetParameterUpperBound(&params_[3], 0, GetLambdaDecayConstantInHours()); // positive
 }
 // --------------------------------------------------------------------
 
@@ -142,7 +142,7 @@ double syd::FitModel_f4::GetValue(const double & t) const
   const double l1 = params_[1];
   const double A2 = params_[2];
   const double l2 = params_[3];
-  const double l = lambda_phys_hours_;
+  const double l = lambda_in_hours_;
   return A1 * exp(-(l+l1)*t) + A2 * exp(-(l+l2)*t);
 }
 // --------------------------------------------------------------------

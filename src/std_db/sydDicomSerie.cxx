@@ -21,7 +21,9 @@
 #include "sydStandardDatabase.h" // needed for type odb db
 
 // --------------------------------------------------------------------
-syd::DicomSerie::DicomSerie():syd::Record()
+syd::DicomSerie::DicomSerie():
+  syd::Record(),
+  syd::RecordWithComments()
 {
   patient = NULL;
   dicom_modality = dicom_acquisition_date
@@ -44,8 +46,10 @@ std::string syd::DicomSerie::ToString() const
      << dicom_description << " "
      << dicom_frame_of_reference_uid << " "
      << dicom_study_uid << " "
-     << dicom_series_uid;
-  return ss.str();
+     << dicom_series_uid << " "
+     << GetAllComments();
+  auto s = ss.str();
+  return trim(s);
 }
 // --------------------------------------------------------------------
 
@@ -130,6 +134,7 @@ void syd::DicomSerie::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("mod", dicom_modality);
   ta.Set("recon_date", dicom_reconstruction_date);
   ta.Set("description", dicom_description, 400);
+  ta.Set("com", GetAllComments());
 }
 // --------------------------------------------------
 

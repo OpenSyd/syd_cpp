@@ -98,17 +98,14 @@ namespace syd {
                    syd::Image::pointer b,
                    bool checkHistoryFlag=false);
 
-
   // Compute the geometrical mean of a planar image. Consider composed
   // of 4 slices
   syd::Image::pointer InsertImageGeometricalMean(const syd::Image::pointer input,
                                                  double k=0.5);
 
-
   // Compute the projection of an image.
   syd::Image::pointer InsertProjectionImage(const syd::Image::pointer input,
                                             double dimension=0, bool mean=false, bool flip=false);
-
 
   /// Crop an image like another one
   void CropImageLike(syd::Image::pointer image,

@@ -22,7 +22,7 @@
 // syd
 #include "sydRecord.h"
 #include "sydPrintTable.h"
-
+#include "sydRecordWithComments.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -33,7 +33,9 @@ namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Patient") callback(Callback)
   /// Store information about a patient (id, study_id, name etc).
-  class Patient: public syd::Record {
+  class Patient:
+    public syd::Record,
+    public syd::RecordWithComments {
   public:
 
     virtual ~Patient();
