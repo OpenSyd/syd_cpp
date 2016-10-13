@@ -374,28 +374,6 @@ double syd::Image::GetHoursFromInjection() const
 // --------------------------------------------------------------------
 
 
-
-// --------------------------------------------------------------------
-std::vector<double> & syd::GetTimesFromInjection(syd::StandardDatabase * db,
-                                                 const syd::Image::vector images)
-{
-  std::vector<double> * times = new std::vector<double>;
-  syd::Image::vector sorted_images = images;
-  db->Sort<syd::Image>(sorted_images);
-  syd::Injection::pointer injection = sorted_images[0]->injection;
-  if (injection == nullptr) {
-    LOG(FATAL) << "Cannot Image::GetTimesFromInjection because injection of first image is null";
-  }
-  std::string starting_date = injection->date;
-  for(auto image:sorted_images) {
-    double t = syd::DateDifferenceInHours(image->acquisition_date, starting_date);
-    times->push_back(t);
-  }
-  return *times;
-}
-// --------------------------------------------------------------------
-
-
 // --------------------------------------------------------------------
 std::string syd::Image::GetAbsolutePath() const
 {

@@ -169,11 +169,6 @@ namespace syd {
     }; // end class
   // --------------------------------------------------------------------
 
-  // FIXME put in ImageHelper
-  std::vector<double> & GetTimesFromInjection(syd::StandardDatabase * db,
-                                              const syd::Image::vector images);
-
-
 } // end namespace
 // --------------------------------------------------------------------
 

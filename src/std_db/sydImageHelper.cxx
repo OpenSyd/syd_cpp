@@ -492,3 +492,20 @@ void syd::SubstituteRadionuclide(syd::Image::pointer image,
   db->Update(image);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::vector<double> syd::GetTimesFromInjection(const syd::Image::vector images)
+{
+  std::vector<double> times;
+  for(auto image:images) {
+    if (image->injection == nullptr) {
+      EXCEPTION("Error no injection for image : " << image);
+    }
+    auto starting_date = image->injection->date;
+    double t = syd::DateDifferenceInHours(image->acquisition_date, starting_date);
+    times.push_back(t);
+  }
+  return times;
+}
+// --------------------------------------------------------------------
