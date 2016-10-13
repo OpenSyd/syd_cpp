@@ -63,6 +63,8 @@ syd::Projection(const ImageType * input,
       typename FlipImageFilterType::Pointer flipFilter = FlipImageFilterType::New();
       flipFilter->SetInput(projection);
       flipFilter->SetFlipAxes(flipAxes);
+      if (projection->GetSpacing()[0] < 0)
+        flipFilter->SetCoordinateTolerance(-flipFilter->GetCoordinateTolerance());
       flipFilter->Update();
       projection = flipFilter->GetOutput();
       
@@ -74,12 +76,16 @@ syd::Projection(const ImageType * input,
       typename PermuteAxesImageFilterType::Pointer permuteAxesFilter = PermuteAxesImageFilterType::New();
       permuteAxesFilter->SetInput(projection);
       permuteAxesFilter->SetOrder(order);
+      if (projection->GetSpacing()[0] < 0)
+        permuteAxesFilter->SetCoordinateTolerance(-permuteAxesFilter->GetCoordinateTolerance());
       permuteAxesFilter->Update();
       projection = permuteAxesFilter->GetOutput();
       
       typename FlipImageFilterType::Pointer flipFilter2 = FlipImageFilterType::New();
       flipFilter2->SetInput(projection);
       flipFilter2->SetFlipAxes(flipAxes);
+      if (projection->GetSpacing()[0] < 0)
+        flipFilter2->SetCoordinateTolerance(-flipFilter2->GetCoordinateTolerance());
       flipFilter2->Update();
       projection = flipFilter2->GetOutput();
       
@@ -103,6 +109,8 @@ syd::Projection(const ImageType * input,
       flipFilter->DebugOn();
       flipFilter->SetInput(projection);
       flipFilter->SetFlipAxes(flipAxes);
+      if (projection->GetSpacing()[0] < 0)
+        flipFilter->SetCoordinateTolerance(-flipFilter->GetCoordinateTolerance());
       flipFilter->Update();
       projection = flipFilter->GetOutput();
     }
