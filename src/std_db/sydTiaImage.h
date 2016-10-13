@@ -87,9 +87,6 @@ namespace syd {
       /// Get the output by name (nullptr if not found)
       syd::Image::pointer GetOutput(std::string name);
 
-      /// Retrive the list of image times
-      std::vector<double> GetTimes() const;
-
     protected:
       TiaImage();
 
