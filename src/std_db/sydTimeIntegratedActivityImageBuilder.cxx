@@ -49,7 +49,7 @@ TimeIntegratedActivityImageBuilder()
 void syd::TimeIntegratedActivityImageBuilder::
 SetInput(const syd::Image::vector images)
 {
-  inputs_ = images;
+  images_ = images;
 }
 // --------------------------------------------------------------------
 
@@ -100,7 +100,7 @@ InsertOutputAUCImage()
   syd::FitOutputImage::pointer main_output = auc;
   if (options_.GetRestrictedFlag()) main_output = auc;
   else main_output = integrate;
-  auto img = inputs_[0];
+  auto img = images_[0];
   // Create output image
   typedef syd::FitOutputImage::ImageType ImageType;
   auto output = syd::InsertImage<ImageType>(main_output->GetImage(), img->patient);
@@ -122,7 +122,7 @@ syd::Image::pointer syd::TimeIntegratedActivityImageBuilder::
 InsertOutputSuccessFitImage()
 {
   CheckInputs();
-  auto img = inputs_[0];
+  auto img = images_[0];
   // Create output image
   typedef syd::FitOutputImage::ImageType ImageType;
   auto output = syd::InsertImage<ImageType>(success->GetImage(), img->patient);
@@ -144,7 +144,7 @@ InsertDebugOutputImages(std::vector<std::string> & names)
   syd::FitOutputImage::pointer main_output = auc;
   if (options_.GetRestrictedFlag()) main_output = auc;
   else main_output = integrate;
-  auto img = inputs_[0];
+  auto img = images_[0];
   auto db = img->GetDatabase<syd::StandardDatabase>();
 
   for(auto o:all_outputs_) {
@@ -174,7 +174,7 @@ Run()
 
   // Get itk image
   std::vector<ImageType::Pointer> itk_images;
-  for(auto input:inputs_)
+  for(auto input:images_)
     itk_images.push_back(syd::ReadImage<ImageType>(input->GetAbsolutePath()));
 
   // Build mask
@@ -185,7 +185,7 @@ Run()
   filter_.ClearInput();
   for(auto i=0; i<times.size(); i++)
     filter_.AddInput(itk_images[i], times[i]);
-  filter_.SetLambdaDecayConstantInHours(inputs_[0]->injection->GetLambdaDecayConstantInHours());
+  filter_.SetLambdaDecayConstantInHours(images_[0]->injection->GetLambdaDecayConstantInHours());
   filter_.SetMask(mask);
   if (options_.GetRestrictedFlag()) filter_.AddOutputImage(auc);
   else filter_.AddOutputImage(integrate);
@@ -218,10 +218,10 @@ Run()
   filter_.Run();
 
   // Create output
-  auto db = inputs_[0]->GetDatabase<syd::StandardDatabase>();
+  auto db = images_[0]->GetDatabase<syd::StandardDatabase>();
   syd::TiaImage::pointer tia;
   db->New(tia);
-  for(auto in:inputs_) tia->images.push_back(in);
+  for(auto in:images_) tia->images.push_back(in);
   tia->min_activity = min_activity_;
   tia->SetFromOptions(options_);
   tia->nb_pixels = GetFilter().GetNumberOfPixels();
@@ -252,14 +252,15 @@ Run()
 std::vector<double> syd::TimeIntegratedActivityImageBuilder::
 CheckInputs()
 {
-  if (inputs_.size() < 2) {
+  // Check nb of images
+  if (images_.size() < 2) {
     EXCEPTION("Error at least 2 images needed");
   }
 
   // Check injection
-  syd::Injection::pointer injection = inputs_[0]->injection;
+  syd::Injection::pointer injection = images_[0]->injection;
   bool b = true;
-  for(auto image:inputs_) {
+  for(auto image:images_) {
     if (image->injection == nullptr) {
       EXCEPTION("Images need to be associated with injection.");
     }
@@ -270,12 +271,13 @@ CheckInputs()
   }
 
   // Sort images
-  auto db = inputs_[0]->GetDatabase<syd::StandardDatabase>();
-  db->Sort<syd::Image>(inputs_);
+  auto db = images_[0]->GetDatabase<syd::StandardDatabase>();
+  db->Sort<syd::Image>(images_);
 
-  // Get times
-  std::vector<double> times;
-  for(auto input:inputs_) times.push_back(input->GetHoursFromInjection());
+  // Get times 
+  auto times = syd::GetTimesFromInjection(images_);
+
+  // Check times
   auto tiny = 0.0001;
   for(auto i=1; i<times.size(); i++)
     if (fabs(times[i] - times[i-1]) < tiny)

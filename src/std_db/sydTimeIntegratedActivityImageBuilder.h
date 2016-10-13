@@ -60,7 +60,7 @@ namespace syd {
     syd::TimeIntegratedActivityImageFilter & GetFilter() { return filter_; }
 
   protected:
-    syd::Image::vector inputs_;
+    syd::Image::vector images_;
     double min_activity_;
     bool debug_images_flag_;
 
