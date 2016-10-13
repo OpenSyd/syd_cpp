@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
   // Main computation
   double dimension = args_info.dimension_arg;
   bool mean = args_info.mean_flag;
-  bool flip = args_info.flip_flag;
+  bool flip = !(args_info.no_flip_flag);
   auto image = syd::InsertProjectionImage(input, dimension, mean, flip);
 
   // Update image info
