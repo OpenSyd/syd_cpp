@@ -66,9 +66,9 @@ namespace syd {
 
   /// Find the stat or create it if not exist. Return nullptr if no RoiMaskImage
   /// exist for the given roi_name
-  syd::RoiStatistic::pointer InsertOrUpdate(syd::Image::pointer image,
-                                            std::string roi_name,
-                                            bool force_update);
+  syd::RoiStatistic::pointer InsertOrUpdateRoiStatistic(syd::Image::pointer image,
+                                                        std::string roi_name,
+                                                        bool force_update);
 
   // Compute the statistic according to the stat's image and
   // mask. return the used mask image (that have been resampled).

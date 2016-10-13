@@ -231,9 +231,9 @@ syd::UpdateRoiStatistic(syd::RoiStatistic::pointer stat,
 
 // --------------------------------------------------------------------
 syd::RoiStatistic::pointer
-syd::InsertOrUpdate(syd::Image::pointer image,
-                    std::string roi_name,
-                    bool force_update)
+syd::InsertOrUpdateRoiStatistic(syd::Image::pointer image,
+                                std::string roi_name,
+                                bool force_update)
 {
   DDF();
   syd::RoiMaskImage::pointer mask;
