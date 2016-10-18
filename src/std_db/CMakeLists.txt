@@ -55,6 +55,12 @@ set(SYD_STANDARD_DATABASE_SRC
   #  sydTimepointsBuilder.cxx
   )
 
+add_library(sydFitBuilder
+  sydTimeIntegratedActivityImageBuilder.cxx
+  )
+
+target_link_libraries(sydFitBuilder ${CERES_LIBRARIES} glog)
+
 # Group all objects
 add_library(sydStandardDatabaseObjects OBJECT ${SYD_STANDARD_DATABASE_SRC})
 
