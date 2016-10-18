@@ -39,7 +39,7 @@
   cmdline_parser_##ggo_filename##_free(&args_info);                     \
   if (configFile != "")                                                 \
     {                                                                   \
-      if(0 != cmdline_parser_##ggo_filename##_config_file (configFile.c_str(), &args_info, &args_params) ) \
+      if(0 != cmdline_parser_##ggo_filename##_config_file (const_cast<char*>(configFile.c_str()), &args_info, &args_params) ) \
         {                                                               \
           std::cerr << "Error in cmdline_parser_" #ggo_filename "_config_file" << std::endl; \
           exit(1);                                                      \
