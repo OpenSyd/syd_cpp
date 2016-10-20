@@ -26,6 +26,7 @@
 #include "sydTagHelper.h"
 #include "sydTimeIntegratedActivityImageFilter.h"
 #include "sydTimeIntegratedActivityImageBuilder.h"
+#include "sydRoiStatisticHelper.h"
 
 void TestDouble(double a, double b);
 
@@ -196,6 +197,70 @@ int main(int argc, char* argv[])
     TestDouble(model->GetA(1), 6.012353489);
     TestDouble(model->GetLambda(0), 0.1914756474);
     TestDouble(model->GetLambda(1), 0.003648075848);
+  }
+
+  {
+    // Add a mask
+    // Insert a roi from a mhd file
+    std::string filename = "input/liver_18.mhd";
+    auto image = tia->images[0];
+    auto roitype = syd::FindRoiType("liver", db);
+    auto liver = syd::InsertRoiMaskImageFromFile(filename, image->patient, roitype);
+    mask->frame_of_reference_uid = image->frame_of_reference_uid;
+    mask->CopyDicomSeries(image);
+    mask->acquisition_date = image->acquisition_date;
+    syd::AddTag(liver->tags, image->tags);
+    db->Update(liver);
+    std::cout << "Mask: " << liver << std::endl;
+  }
+
+  {
+    // Helpers function to use TIA on roi mask
+    std::cout << "-------------------------------------" << std::endl
+              << "Pixel-based TIA estimation" << std::endl;
+    DD(tia);
+    db->Insert(tia); // insert in the db
+    auto mask = syd::FindOneRoiMaskImage(tia->images[0], "liver");
+    DD(mask);
+    std::cout << "TIA with mask and success mask";
+    auto s1 = syd::NewRoiStatistic(tia, mask);
+    DD(s1);
+    std::cout << "TIA with mask only (false ; to compare)";
+    auto s2 = syd::NewRoiStatistic(tia->GetOutput("auc"), mask);
+    DD(s2);
+    std::cout << "TIA without mask but using success mask";
+    auto s3 = syd::NewRoiStatistic(tia, nullptr);
+    DD(s3);
+
+    db->Insert(s1);
+    db->Insert(s2);
+    db->Insert(s3);
+
+    // Check already exist ? s1 and s2 will have the same image+mask, but
+    // different results.
+  }
+
+  {
+    // roi based estimation
+    std::cout << "-------------------------------------" << std::endl
+              << "Roi-based TIA estimation" << std::endl;
+    auto mask = syd::FindOneRoiMaskImage(tia->images[0], "liver");
+    DD(mask);
+    syd::RoiStatistic::vector stats;
+    for(auto image:tia->images) {
+      auto stat = syd::NewRoiStatistic(image, mask);
+      stats.push_back(stat);
+      DD(stats.back());
+    }
+    db->Insert(stats);
+    /* // IN PROGRESS
+    auto tac = syd::NewTac(stats);
+    DD(tac);
+    // syd::TimeIntegratedActivityFitOptions options;
+    // tia->SetToOptions(options);
+    auto fittac = syd::NewFitTac(tac, tia->GetOptions());
+    DD(fittac);
+    */
   }
 
   std::cout << "Success." << std::endl;
