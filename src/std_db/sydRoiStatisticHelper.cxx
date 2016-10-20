@@ -39,8 +39,8 @@ syd::FindRoiStatistic(syd::Image::pointer image,
   auto db = image->GetDatabase<syd::StandardDatabase>();
   db->Query(stats, q);
   if (mask==nullptr) {
-    DD("to test : FindRoiStatistic with mask == nullptr")
-      auto stats_copy = stats;
+    DD("to test : FindRoiStatistic with mask == nullptr");
+    auto stats_copy = stats;
     DDS(stats_copy);
     stats.clear();
     for(auto & s:stats_copy)
@@ -54,44 +54,36 @@ syd::FindRoiStatistic(syd::Image::pointer image,
 
 
 // --------------------------------------------------------------------
-/*syd::RoiStatistic::pointer syd::FindOneRoiStatistic(syd::Image::pointer image,
-  syd::RoiMaskImage::pointer mask)
-  {
-  typedef odb::query<syd::RoiStatistic> Q;
-  Q q = Q::image == image->id;
-  if (mask != nullptr) q = q and (Q::mask == mask->id);
-  syd::RoiStatistic::vector stats;
+syd::RoiStatistic::pointer
+syd::NewRoiStatistic(syd::Image::pointer image,
+                     syd::RoiMaskImage::pointer mask,
+                     syd::Image::pointer mask2,
+                     std::string mask_output_filename)
+{
+  // new
   auto db = image->GetDatabase<syd::StandardDatabase>();
-  db->Query(stats, q);
-  if (stats.size() == 0) {
-  EXCEPTION("Cannot find RoiStatistic for this image and this mask: " << image
-  << " " << (mask == nullptr ? "no_mask":mask->ToString()));
+  syd::RoiStatistic::pointer stat;
+  db->New(stat);
+  stat->image = image;
+  stat->mask = mask;
+
+  // copy the image tags
+  syd::AddTag(stat->tags, image->tags);
+
+  // update
+  // Get the itk images
+  typedef unsigned char MaskPixelType;
+  typedef itk::Image<MaskPixelType,3> MaskImageType;
+  auto mask2_itk = syd::ReadImage<MaskImageType>(mask2->GetAbsolutePath());
+  auto itk_mask = syd::UpdateRoiStatistic(stat, mask2_itk);
+
+  // Write mask if needed
+  if (mask_output_filename != "") {
+    syd::WriteImage<itk::Image<unsigned char,3>>(itk_mask, mask_output_filename);
   }
-  if (stats.size() == 1 and mask == nullptr) {
-  if (stats[0]->mask != nullptr) {
-  EXCEPTION("Cannot find RoiStatistic with this image and nomask " << image);
-  }
-  }
-  if (stats.size() > 1) {
-  int found = 0;
-  if (mask == nullptr) { // if no mask search for all RoiStatistic
-  for(auto s:stats) {
-  if (s->mask == nullptr) {
-  stats[0] = s;
-  ++found; // count the number of RoiStatistic with no mask
-  }
-  }
-  }
-  if (found != 1) {
-  EXCEPTION("Several RoiStatistic with image " << image->id
-  << " and mask " << (mask != nullptr ? mask->id:0) << " ("
-  << (mask != nullptr ? mask->roitype->name:"no_mask") << ")"
-  << " exist. ");
-  }
-  }
-  return stats[0];
-  }
-*/
+
+  return stat;
+}
 // --------------------------------------------------------------------
 
 
@@ -119,6 +111,20 @@ syd::NewRoiStatistic(syd::Image::pointer image,
     syd::WriteImage<itk::Image<unsigned char,3>>(itk_mask, mask_output_filename);
   }
 
+  return stat;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiStatistic::pointer
+syd::NewRoiStatistic(syd::TiaImage::pointer tia,
+                     syd::RoiMaskImage::pointer mask,
+                     std::string mask_output_filename)
+{
+  auto stat = NewRoiStatistic(tia->GetOutput("auc"), mask,
+                              tia->GetOutput("success"),
+                              mask_output_filename);
   return stat;
 }
 // --------------------------------------------------------------------
@@ -191,32 +197,4 @@ syd::UpdateRoiStatistic(syd::RoiStatistic::pointer stat,
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-/*syd::RoiStatistic::pointer
-  syd::InsertOrUpdateRoiStatistic(syd::Image::pointer image,
-  std::string roi_name,
-  bool force_update)
-  {
-  DDF();
-  syd::RoiMaskImage::pointer mask;
-  try {
-  mask = syd::FindRoiMaskImage(image, roi_name);
-  } catch(std::exception &) {
-  //LOG(WARNING) << "InsertOrUpdate:: cannot find the roi " << roi_name;
-  return nullptr;
-  }
-  DD(mask);
-  // compute all stats for each inputs
-  syd::RoiStatistic::pointer stat;
-  try {
-  stat = syd::FindOneRoiStatistic(image, mask);
-  if (force_update) syd::UpdateRoiStatistic(stat);
-  } catch(std::exception &) {
-  stat = syd::InsertRoiStatistic(image, mask);
-  }
-  DD(stat);
-  return stat;
-  }*/
-// --------------------------------------------------------------------
 

@@ -32,19 +32,6 @@ namespace syd {
   syd::RoiStatistic::vector FindRoiStatistic(syd::Image::pointer image,
                                              syd::RoiMaskImage::pointer mask);
 
-  /// Search all RoiStatistic with the given image+mask. mask maybe nullptr. Ta
-  /* syd::RoiStatistic::vector FindRoiStatistic(syd::TiaImage::pointer tia, */
-  /*                                            syd::RoiMaskImage::pointer mask); */
-
-  /// Search for a single RoiStatistic with the given image+mask
-  /*  syd::RoiStatistic::pointer FindOneRoiStatistic(syd::Image::pointer image,
-      syd::RoiMaskImage::pointer mask);
-
-      /// Search for a single RoiStatistic with the given tia + roiname
-      syd::RoiStatistic::pointer FindOneRoiStatistic(syd::TiaImage::pointer tia,
-      std::string roi_name);
-  */
-
   // Mask could be null (compute stat on the whole image)
   syd::RoiStatistic::pointer NewRoiStatistic(syd::Image::pointer image,
                                              syd::RoiMaskImage::pointer mask,
@@ -53,13 +40,13 @@ namespace syd {
   // Mask could be null (compute stat on the whole image)
   syd::RoiStatistic::pointer NewRoiStatistic(syd::Image::pointer image,
                                              syd::RoiMaskImage::pointer mask,
-                                             syd::Image::pointer mask2);
+                                             syd::Image::pointer mask2,
+                                             std::string mask_output_filename="");
 
-  /// Find the stat or create it if not exist. Return nullptr if no RoiMaskImage
-  /// exist for the given roi_name
-  //  syd::RoiStatistic::pointer InsertOrUpdateRoiStatistic(syd::Image::pointer image,
-  //                                                     std::string roi_name,
-  //                                                     bool force_update);
+  // Mask could be null (compute stat on the whole image)
+  syd::RoiStatistic::pointer NewRoiStatistic(syd::TiaImage::pointer tia,
+                                             syd::RoiMaskImage::pointer mask,
+                                             std::string mask_output_filename="");
 
   // Compute the statistic according to the stat's image and mask. return the
   // used mask image (that have been resampled). if itk_mask2 is given, a 'AND'
