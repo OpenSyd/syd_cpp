@@ -47,6 +47,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydUpdateRadionuclideFilter.cxx
   sydElastixHelper.cxx
   sydRadionuclideHelper.cxx
+  sydRoiStatisticHelper.cxx
 
   #sydTimeIntegratedActivityImageBuilder.cxx
 

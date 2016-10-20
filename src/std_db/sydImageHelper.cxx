@@ -22,6 +22,7 @@
 #include "sydRoiMaskImageHelper.h"
 #include "sydInjectionHelper.h"
 #include "sydImageStitch.h"
+#include "sydRoiStatisticHelper.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer

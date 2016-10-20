@@ -25,6 +25,7 @@
 #include "sydRoiMaskImageHelper.h"
 #include "sydTagHelper.h"
 #include "sydCommentsHelper.h"
+#include "sydRoiStatisticHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -66,42 +67,30 @@ int main(int argc, char* argv[])
         masks.push_back(NULL);
       }
       else {
-        auto m = syd::FindRoiMaskImage(image, args_info.inputs[0]);
-        masks.push_back(m);
+        // find all masks with the same roi_name and frame_of_reference_uid
+        masks = syd::FindRoiMaskImage(image, args_info.inputs[0]);
       }
     }
 
     // Loop over masks
     syd::RoiStatistic::pointer stat;
     for(auto mask:masks) {
-      std::string mask_filename = mask->roitype->name+"_"+args_info.resampled_mask_arg;
+      std::string mask_filename = "";
+      if (args_info.resampled_mask_given)
+        mask_filename = mask->roitype->name+"_"+std::to_string(image->id)
+          +"_"+args_info.resampled_mask_arg;
       DD(mask_filename);
-      bool newStat = false;
-      try { stat = syd::FindOneRoiStatistic(image, mask); }
-      catch(std::exception&) { // cannot find the stat, we compute it
-        stat = syd::InsertRoiStatistic(image, mask, mask_filename); // mask is written
-        newStat = true;
-      }
+      stat = syd::NewRoiStatistic(image, mask, mask_filename);
       DD(stat);
-      std::string resampled_mask_name = args_info.resampled_mask_arg;
-      if ((resampled_mask_name != "") and (!newStat)) {
-        // Here the stat already exist, but we recompute to get the mask2
-        auto mask = syd::UpdateRoiStatistic(stat);
-        syd::WriteImage<itk::Image<unsigned char,3>>(mask, mask_filename);
-      }
-
       // Tags
       syd::SetTagsFromCommandLine(stat->tags, db, args_info);
       syd::SetCommentsFromCommandLine(stat->comments, db, args_info);
-      db->Update(stat);
 
-      // Update
-      if (newStat) {
-        LOG(1) << "Insert RoiStatistic: " << stat;
-      }
-      else {
-        LOG(1) << "Update RoiStatistic: " << stat;
-      }
+
+
+
+      db->Insert(stat);
+      LOG(1) << "Insert RoiStatistic: " << stat;
     }
   }
 }

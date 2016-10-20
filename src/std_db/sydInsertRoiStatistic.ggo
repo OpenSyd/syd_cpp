@@ -1,18 +1,21 @@
 #File sydInsertRoiStatistic.ggo
 
 package "syd"
-version "0.4"
-usage "sydInsertRoiStatistic <roi> <list_of_image_ids>"
+version "0.5"
+usage "sydInsertRoiStatistic <roi_name> <list_of_image_ids>"
 description "Compute mean and other stat for image values in the roi mask image
-- <roi>                name of the roi (should have the same frame_of_reference_uid than the image)
-- <list_of_image_ids>  list of images id
+- <roi_name>            name of the roi (should have the same frame_of_reference_uid than the image)
+- <list_of_image_ids>   list of images id
 
-If several images id are given, the corresponding roi is searched for each image.
-If <roi> is set to 'all', all RoiMaskImage with the same frame_of_reference_uid are considered.
-If <roi> is set to 'null', statistics are computed on the whole image.
-
-If --resampled_mask is set, the mask of the roi resampled to the image size is dumped on the disk. 
-
+Options:
+- If several images id are given, all the corresponding rois is searched for each image (same frame_of_reference_uid)
+- If <roi> is set to 'all', all RoiMaskImage with the same frame_of_reference_uid are considered.
+- If <roi> is set to 'null', statistics are computed on the whole image.
+- If --resampled_mask is set, the mask of the roi resampled to the image size is dumped on the disk. 
 "
 
-option "resampled_mask"  - "Resampled mask filename" string default="" no
+option "resampled_mask"  m "Resampled mask output filename" string default="" no
+
+#option "force"           f "Force the computation even if a RoiStatistic already exist" flag off
+# - If a RoiStatistic already exist for the same image and roi_name, it is skipped, except if the --force option is given. 
+
