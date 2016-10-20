@@ -86,8 +86,7 @@ int main(int argc, char* argv[])
       syd::SetTagsFromCommandLine(stat->tags, db, args_info);
       syd::SetCommentsFromCommandLine(stat->comments, db, args_info);
 
-
-
+      // Check already exist something similar ?? FIXME 
 
       db->Insert(stat);
       LOG(1) << "Insert RoiStatistic: " << stat;
