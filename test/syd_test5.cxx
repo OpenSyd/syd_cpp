@@ -23,6 +23,7 @@
 #include "sydDatabaseManager.h"
 #include "sydStandardDatabase.h"
 #include "sydRoiMaskImageHelper.h"
+#include "sydRoiStatisticHelper.h"
 #include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
@@ -69,14 +70,9 @@ int main(int argc, char* argv[])
 
   // Compute roi statistic
   syd::RoiStatistic::pointer stat1;
-  std::string temp;
-  try { stat1 = syd::FindOneRoiStatistic(image, mask); }
-  catch (std::exception & e) {
-    temp = db->GetUniqueTempFilename(".mhd");
-    stat1 = syd::InsertRoiStatistic(image, mask, temp);
-  }
-  syd::UpdateRoiStatistic(stat1);
-  db->Update(stat1);
+  auto temp = db->GetUniqueTempFilename(".mhd");
+  stat1 = syd::NewRoiStatistic(image, mask, temp);
+  db->Insert(stat1);
 
   auto resampled_mask = syd::InsertImageFromFile(temp, image->patient);
   syd::DeleteMHDImage(temp);
@@ -85,12 +81,8 @@ int main(int argc, char* argv[])
 
   // Compute roi statistic with no mask
   syd::RoiStatistic::pointer stat2;
-  try { stat2 = syd::FindOneRoiStatistic(image, nullptr); }
-  catch (std::exception & e) {
-    stat2 = syd::InsertRoiStatistic(image, nullptr);
-  }
-  syd::UpdateRoiStatistic(stat2);
-  db->Update(stat2);
+  stat2 = syd::NewRoiStatistic(image, nullptr);
+  db->Insert(stat2);
   std::cout << "RoiStatistic (without mask): " << stat2 << std::endl;
 
   // ComputeActivityInMBqByDetectedCounts
