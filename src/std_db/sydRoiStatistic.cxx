@@ -64,7 +64,7 @@ void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
   ta.Set("p", image->patient->name);
   ta.Set("image", image->id);
   ta.Set("mask", (mask != nullptr ? mask->roitype->name:"no_mask"));
-  ta.Set("unit", image->pixel_unit->name);
+  ta.Set("unit", (image->pixel_unit != nullptr? image->pixel_unit->name:empty_value));
   ta.Set("tags", GetLabels(tags));
   ta.Set("mean", mean, 7);
   ta.Set("sd", std_dev);
