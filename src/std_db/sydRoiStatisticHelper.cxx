@@ -122,8 +122,8 @@ syd::NewRoiStatistic(syd::TiaImage::pointer tia,
                      syd::RoiMaskImage::pointer mask,
                      std::string mask_output_filename)
 {
-  auto stat = NewRoiStatistic(tia->GetOutput("auc"), mask,
-                              tia->GetOutput("success"),
+  auto stat = NewRoiStatistic(tia->GetOutput("fit_auc"), mask,
+                              tia->GetOutput("fit_success"),
                               mask_output_filename);
   return stat;
 }
@@ -144,7 +144,7 @@ syd::UpdateRoiStatistic(syd::RoiStatistic::pointer stat,
   // read image (float)
   auto itk_input = syd::ReadImage<ImageType>(stat->image->GetAbsolutePath());
 
-  // read mask (or create
+  // read mask (or create)
   MaskImageType::Pointer itk_mask;
   if (stat->mask == nullptr) {
     LOG(2) << "No mask (create temporary image).";
