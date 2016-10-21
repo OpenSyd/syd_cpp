@@ -140,9 +140,9 @@ void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & v,
 {
   std::sort(begin(v), end(v),
             [v](pointer a, pointer b) {
-              if (a->image->dicoms.size() == 0) return true;
-              if (b->image->dicoms.size() == 0) return false;
-              return a->image->acquisition_date < b->image->acquisition_date;
+              if (a->image->acquisition_date == b->image->acquisition_date)
+                return (a->id < b->id);
+              return (a->image->acquisition_date < b->image->acquisition_date);
             });
 }
 // --------------------------------------------------
