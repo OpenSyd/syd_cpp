@@ -85,8 +85,6 @@ int main(int argc, char* argv[])
   images[3]->acquisition_date = "2013-02-14 12:06";
   images[4]->acquisition_date = "2013-02-18 11:00";
   db->Update(images);
-  auto mask = syd::InsertImageFromFile("input/OT_248_mask.mhd", patient);
-  auto itk_mask = syd::ReadImage<MaskImageType>(mask->GetAbsolutePath());
 
   // Sort list of images by times
   db->Sort<syd::Image>(images);
@@ -199,69 +197,82 @@ int main(int argc, char* argv[])
     TestDouble(model->GetLambda(1), 0.003648075848);
   }
 
-  {
-    // Add a mask
-    // Insert a roi from a mhd file
-    std::string filename = "input/liver_18.mhd";
-    auto image = tia->images[0];
-    auto roitype = syd::FindRoiType("liver", db);
-    auto liver = syd::InsertRoiMaskImageFromFile(filename, image->patient, roitype);
-    mask->frame_of_reference_uid = image->frame_of_reference_uid;
-    mask->CopyDicomSeries(image);
-    mask->acquisition_date = image->acquisition_date;
-    syd::AddTag(liver->tags, image->tags);
-    db->Update(liver);
-    std::cout << "Mask: " << liver << std::endl;
+  // Add a mask
+  // auto mask = syd::InsertImageFromFile("input/OT_248_mask.mhd", patient);
+  // auto itk_mask = syd::ReadImage<MaskImageType>(mask->GetAbsolutePath());
+  // Insert a roi from a mhd file
+  std::string filename = "input/liver_18.mhd";
+  auto image = tia->images[0];
+  auto roitype = syd::FindRoiType("liver", db);
+  auto liver = syd::InsertRoiMaskImageFromFile(filename, image->patient, roitype);
+  liver->frame_of_reference_uid = image->frame_of_reference_uid;
+  liver->CopyDicomSeries(image);
+  liver->acquisition_date = image->acquisition_date;
+  syd::AddTag(liver->tags, image->tags);
+  db->Update(liver);
+  std::cout << "Mask liver: " << liver << std::endl;
+
+  // Check if Find is ok
+  auto temp = syd::FindOneRoiMaskImage(image, "liver");
+  if (temp != liver) { LOG(FATAL) << "Error find mask liver"; }
+
+  // Helpers function to use TIA on roi mask
+  std::cout << "-------------------------------------" << std::endl
+            << "Pixel-based TIA estimation" << std::endl;
+  db->Insert(tia); // insert in the db
+  auto s1 = syd::NewRoiStatistic(tia, liver, "m1.mhd");
+  auto s2 = syd::NewRoiStatistic(tia->GetOutput("fit_auc"), liver, "m2.mhd");
+  auto s3 = syd::NewRoiStatistic(tia, nullptr, "m3.mhd");
+
+  db->Insert(s1);
+  db->Insert(s2);
+  db->Insert(s3);
+
+  std::cout << "TIA with mask and success mask:           " << s1 << std::endl;
+  std::cout << "TIA with mask only (false ; to compare) : " << s2 << std::endl;
+  std::cout << "TIA without mask but using success mask : " << s3 << std::endl;
+
+  // FIXME: Check already exist ? s1 and s2 will have the same image+mask, but
+  // different results.
+
+
+  // roi based estimation
+  std::cout << "-------------------------------------" << std::endl
+            << "Roi-based TIA estimation" << std::endl;
+  syd::RoiStatistic::vector stats;
+  for(auto image:tia->images) {
+    auto stat = syd::NewRoiStatistic(image, liver);
+    stats.push_back(stat);
+    DD(stats.back());
+  }
+  db->Insert(stats);
+  /* // IN PROGRESS
+     auto tac = syd::NewTac(stats);
+     DD(tac);
+     // syd::TimeIntegratedActivityFitOptions options;
+     // tia->SetToOptions(options);
+     auto fittac = syd::NewFitTac(tac, tia->GetOptions());
+     DD(fittac);
+  */
+
+
+  // -----------------------------------------------------------------
+  // If needed create reference db
+  if (args_info.create_ref_flag) {
+    LOG(0) << "Create reference db";
+    db->Copy(ref_dbname, ref_folder);
   }
 
-  {
-    // Helpers function to use TIA on roi mask
-    std::cout << "-------------------------------------" << std::endl
-              << "Pixel-based TIA estimation" << std::endl;
-    DD(tia);
-    db->Insert(tia); // insert in the db
-    auto mask = syd::FindOneRoiMaskImage(tia->images[0], "liver");
-    DD(mask);
-    std::cout << "TIA with mask and success mask";
-    auto s1 = syd::NewRoiStatistic(tia, mask);
-    DD(s1);
-    std::cout << "TIA with mask only (false ; to compare)";
-    auto s2 = syd::NewRoiStatistic(tia->GetOutput("auc"), mask);
-    DD(s2);
-    std::cout << "TIA without mask but using success mask";
-    auto s3 = syd::NewRoiStatistic(tia, nullptr);
-    DD(s3);
+  // Open ref database
+  auto db_ref = m->Open<syd::StandardDatabase>(ref_dbname);
 
-    db->Insert(s1);
-    db->Insert(s2);
-    db->Insert(s3);
-
-    // Check already exist ? s1 and s2 will have the same image+mask, but
-    // different results.
-  }
-
-  {
-    // roi based estimation
-    std::cout << "-------------------------------------" << std::endl
-              << "Roi-based TIA estimation" << std::endl;
-    auto mask = syd::FindOneRoiMaskImage(tia->images[0], "liver");
-    DD(mask);
-    syd::RoiStatistic::vector stats;
-    for(auto image:tia->images) {
-      auto stat = syd::NewRoiStatistic(image, mask);
-      stats.push_back(stat);
-      DD(stats.back());
-    }
-    db->Insert(stats);
-    /* // IN PROGRESS
-    auto tac = syd::NewTac(stats);
-    DD(tac);
-    // syd::TimeIntegratedActivityFitOptions options;
-    // tia->SetToOptions(options);
-    auto fittac = syd::NewFitTac(tac, tia->GetOptions());
-    DD(fittac);
-    */
-  }
+  syd::RoiStatistic::pointer ref;
+  db_ref->QueryOne(ref, 1);
+  if (s1 != ref) { LOG(FATAL) << "Error s1 different"; }
+  db_ref->QueryOne(ref, 2);
+  if (s2 != ref) { LOG(FATAL) << "Error s2 different"; }
+  db_ref->QueryOne(ref, 3);
+  if (s3 != ref) { LOG(FATAL) << "Error s3 different"; }
 
   std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;
