@@ -48,6 +48,9 @@ namespace syd {
                                              syd::RoiMaskImage::pointer mask,
                                              std::string mask_output_filename="");
 
+  // Check if an exact same RoiStatistic already exist
+  syd::RoiStatistic::pointer FindSameRoiStatistic(syd::RoiStatistic::pointer stat);
+
   // Compute the statistic according to the stat's image and mask. return the
   // used mask image (that have been resampled). if itk_mask2 is given, a 'AND'
   // is performed between the stat mask and the itk_mask2.

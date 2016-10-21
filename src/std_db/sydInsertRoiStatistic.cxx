@@ -31,7 +31,7 @@
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertRoiStatistic, 2);
+  SYD_INIT_GGO(sydInsertRoiStatistic, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -43,16 +43,23 @@ int main(int argc, char* argv[])
   // Get the list of images
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
-  for(auto i=1; i<args_info.inputs_num; i++) {
+  for(auto i=1; i<args_info.inputs_num; i++) { // start at 1 (because 0 is roi name)
     ids.push_back(atoi(args_info.inputs[i]));
   }
   syd::Image::vector images;
-  db->Query(images, ids);
+  syd::TiaImage::vector tias;
+
+  if (!args_info.tia_flag) db->Query(images, ids);
+  else {
+    db->Query(tias, ids);
+    for(auto tia:tias) images.push_back(tia->GetOutput("fit_auc"));
+  }
   if (images.size() == 0) {
     LOG(FATAL) << "No image ids given. I do nothing.";
   }
 
   // Loop on images
+  int i = 0;
   for(auto image:images) {
 
     // Consider the masks
@@ -72,6 +79,10 @@ int main(int argc, char* argv[])
       }
     }
 
+    if (masks.size() == 0) {
+      LOG(WARNING) << "No masks found for this image, I do nothing: " << image;
+    }
+
     // Loop over masks
     syd::RoiStatistic::pointer stat;
     for(auto mask:masks) {
@@ -79,17 +90,27 @@ int main(int argc, char* argv[])
       if (args_info.resampled_mask_given)
         mask_filename = mask->roitype->name+"_"+std::to_string(image->id)
           +"_"+args_info.resampled_mask_arg;
-      DD(mask_filename);
-      stat = syd::NewRoiStatistic(image, mask, mask_filename);
-      DD(stat);
+
+      if (args_info.tia_flag)
+        stat = syd::NewRoiStatistic(tias[i], mask, mask_filename);
+      else 
+        stat = syd::NewRoiStatistic(image, mask, mask_filename);
       // Tags
       syd::SetTagsFromCommandLine(stat->tags, db, args_info);
       syd::SetCommentsFromCommandLine(stat->comments, db, args_info);
 
-      // Check already exist something similar ?? FIXME 
-
-      db->Insert(stat);
-      LOG(1) << "Insert RoiStatistic: " << stat;
+      // Check already exist something similar ?
+      if (!args_info.force_flag) {
+        auto s = syd::FindSameRoiStatistic(stat);
+        if (s != nullptr) {
+          LOG(WARNING) << "Same RoiStatistic already exists, I skip it: " << s;
+        }
+        else {
+          db->Insert(stat);
+          LOG(1) << "Insert RoiStatistic: " << stat;
+        }
+      }
+      ++i;
     }
   }
 }

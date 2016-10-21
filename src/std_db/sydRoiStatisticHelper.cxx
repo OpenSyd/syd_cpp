@@ -198,3 +198,24 @@ syd::UpdateRoiStatistic(syd::RoiStatistic::pointer stat,
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+syd::RoiStatistic::pointer
+syd::FindSameRoiStatistic(syd::RoiStatistic::pointer stat)
+{
+  std::string name;
+  auto stats = syd::FindRoiStatistic(stat->image, stat->mask);
+  if (stats.size() ==0) return nullptr;
+  auto s_ref = stat->ToString();
+  s_ref.erase(0, std::to_string(stat->id).size());
+  for(auto st:stats) {
+    // convert to string
+    auto s = st->ToString();
+    // remove first char (id)
+    s.erase(0, std::to_string(st->id).size());
+    if (s == s_ref) {
+      return st;
+    }
+  }
+  return nullptr;
+}
+// --------------------------------------------------------------------

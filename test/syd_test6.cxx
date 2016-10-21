@@ -234,7 +234,17 @@ int main(int argc, char* argv[])
 
   // FIXME: Check already exist ? s1 and s2 will have the same image+mask, but
   // different results.
-
+  auto s1_bis = syd::NewRoiStatistic(tia, liver);
+  auto s1_old = FindSameRoiStatistic(s1_bis);
+  if (s1_old != nullptr) {
+    std::cout << "Check already exist: ok" << std::endl;
+  }
+  else {
+    DD(s1_bis);
+    DD(s1);
+    DD(s1_old);
+    LOG(FATAL) << "Error s1 should already exist while not" << std::endl;
+  }
 
   // roi based estimation
   std::cout << "-------------------------------------" << std::endl
