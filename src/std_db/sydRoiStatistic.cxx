@@ -27,8 +27,8 @@ syd::RoiStatistic::RoiStatistic():
   syd::RecordWithTags(),
   syd::RecordWithComments()
 {
-  image = NULL;
-  mask = NULL;
+  image = nullptr;
+  mask = nullptr;
   mean = std_dev = n = min = max = sum = 0.0;
 }
 // --------------------------------------------------
@@ -39,14 +39,15 @@ std::string syd::RoiStatistic::ToString() const
 {
   std::stringstream ss ;
   ss << id << " ";
-  if (image != NULL) {
+  if (image != nullptr) {
     ss << image->patient->name << " "
        << image->id << " "
-       << image->pixel_unit->name << " ";
+       << (image->pixel_unit != nullptr? image->pixel_unit->name:empty_value)
+       << " ";
   }
   else ss << empty_value;
   ss << syd::GetLabels(tags) << " "
-     << (mask != NULL? mask->roitype->name:"no_mask") << " "
+     << (mask != nullptr? mask->roitype->name:"no_mask") << " "
      << mean << " " << std_dev << " "  << n << " "
      << min << " " << max << " " << sum
      << " " << GetAllComments();
@@ -62,7 +63,7 @@ void syd::RoiStatistic::DumpInTable(syd::PrintTable & ta) const
   ta.Set("id", id);
   ta.Set("p", image->patient->name);
   ta.Set("image", image->id);
-  ta.Set("mask", (mask != NULL ? mask->roitype->name:"no_mask"));
+  ta.Set("mask", (mask != nullptr ? mask->roitype->name:"no_mask"));
   ta.Set("unit", image->pixel_unit->name);
   ta.Set("tags", GetLabels(tags));
   ta.Set("mean", mean, 7);
