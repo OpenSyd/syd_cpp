@@ -105,12 +105,13 @@ void syd::TiaImage::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("Ak", akaike_criterion);
   ta.Set("itm", max_iteration);
   ta.Set("models", GetModelsName());
-  ta.Set("out", GetOutputNames(), 150);
   std::stringstream ss;
   ss << nb_success_pixels << "/" << nb_pixels
      << "(" << (double)nb_success_pixels/(double)nb_pixels*100.0 << "%)";
   ta.Set("res", ss.str());
-  ta.Set("com", GetAllComments());
+  ta.Set("out", GetOutputNames(), 150);
+  auto c = GetAllComments();
+  if (c.size() > 0) ta.Set("com", c);
 }
 // --------------------------------------------------------------------
 
