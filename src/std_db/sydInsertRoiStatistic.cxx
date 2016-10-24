@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     ids.push_back(atoi(args_info.inputs[i]));
   }
   syd::Image::vector images;
-  syd::TiaImage::vector tias;
+  syd::FitImages::vector tias;
 
   if (!args_info.tia_flag) db->Query(images, ids);
   else {
