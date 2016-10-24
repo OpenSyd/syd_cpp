@@ -24,9 +24,9 @@
 #include "sydStandardDatabase.h"
 #include "sydRoiMaskImageHelper.h"
 #include "sydTagHelper.h"
-#include "sydTimeIntegratedActivityImageFilter.h"
 #include "sydTimeIntegratedActivityImageBuilder.h"
 #include "sydRoiStatisticHelper.h"
+#include "sydTimepointsHelper.h"
 
 void TestDouble(double a, double b);
 
@@ -256,14 +256,23 @@ int main(int argc, char* argv[])
     DD(stats.back());
   }
   db->Insert(stats);
-  /* // IN PROGRESS
-     auto tac = syd::NewTac(stats);
-     DD(tac);
-     // syd::TimeIntegratedActivityFitOptions options;
-     // tia->SetToOptions(options);
-     auto fittac = syd::NewFitTac(tac, tia->GetOptions());
-     DD(fittac);
-  */
+  // IN PROGRESS
+  auto rtp = syd::NewTimepoints(stats); // RoiTimepoints
+  DD(rtp);
+  db->Insert(rtp);
+  options = tia->GetOptions();
+  auto res = syd::NewFitTimepoints(rtp, options);
+  DD(res);
+  db->Insert(res);
+
+  // check if recurse deletion
+  DDS(stats);
+  DD(rtp);
+  db->Delete(stats[0]);
+  syd::RoiTimepoints::vector rtps;
+  db->Query(rtps);
+  DDS(rtps);
+  DD("MUST be zero ?");
 
 
   // -----------------------------------------------------------------
