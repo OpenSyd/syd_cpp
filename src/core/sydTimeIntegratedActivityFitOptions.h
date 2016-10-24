@@ -52,9 +52,15 @@ namespace syd {
     int GetMaxNumIterations() const { return max_num_iterations_; }
     std::string GetAkaikeCriterion() const { return akaike_criterion_; }
     double GetLambdaDecayConstantInHours() const { return lambda_in_hours_; }
+    std::string ToString() const;
+
+    /// Default function to print an element (must be inline here).
+    friend std::ostream& operator<<(std::ostream& os, const TimeIntegratedActivityFitOptions & p) {
+      os << p.ToString();
+      return os;
+    }
 
   protected:
-
     bool restricted_flag_;
     double R2_min_threshold_;
     std::set<std::string> model_names_;

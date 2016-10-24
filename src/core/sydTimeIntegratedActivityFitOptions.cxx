@@ -54,6 +54,21 @@ syd::TimeIntegratedActivityFitOptions::~TimeIntegratedActivityFitOptions()
 
 
 // --------------------------------------------------------------------
+std::string syd::TimeIntegratedActivityFitOptions::ToString() const
+{
+  std::stringstream ss;
+  ss << GetR2MinThreshold() << " "
+     << (GetRestrictedFlag() ? "restricted":"non_restricted") << " "
+     << GetMaxNumIterations() << " "
+     << GetAkaikeCriterion() << " "
+     << GetLambdaDecayConstantInHours() << "h ";
+  for(auto & m:model_names_) ss << m << " ";
+  return ss.str();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::TimeIntegratedActivityFitOptions::AddModel(const std::string & model_name)
 {
   model_names_.insert(model_name);
