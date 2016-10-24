@@ -40,7 +40,6 @@ namespace syd {
     /// Input
     void SetTAC(syd::TimeActivityCurve::pointer tac);
     void SetOptions(syd::TimeIntegratedActivityFitOptions & options) { options_ = options; }
-    void InitModels();
     //void AddTimePointValue(double time, double value);
 
     /// Main function
