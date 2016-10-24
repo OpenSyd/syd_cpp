@@ -26,6 +26,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   SetRestrictedFlag(false);
   SetMaxNumIterations(100);
   SetAkaikeCriterion("AICc");
+  SetLambdaDecayConstantInHours(0.0);
   auto f1  = std::make_shared<syd::FitModel_f1>();
   auto f2  = std::make_shared<syd::FitModel_f2>();
   auto f3  = std::make_shared<syd::FitModel_f3>();
@@ -89,6 +90,12 @@ syd::FitModelBase::vector syd::TimeIntegratedActivityFitOptions::GetModels() con
       LOG(WARNING) << "Model " << n << " is not known (ignoring).";
     else models.push_back(*it);
   }
+  if (lambda_in_hours_ == 0.0) {
+    LOG(FATAL) << "The decay constant (lambda in hours) is not set";
+  }
+  for(auto m:models)
+    m->SetLambdaDecayConstantInHours(lambda_in_hours_);
+
   return models;
 }
 // --------------------------------------------------------------------
