@@ -132,7 +132,7 @@ void syd::TimeIntegratedActivityFilter::InitSolver()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityFilter::CheckInputs()
 {
-  if (initial_tac_.GetSize() < 2) {
+  if (initial_tac_->GetSize() < 2) {
     EXCEPTION("Provide at least 2 timepoints");
   }
   if (options_.GetLambdaDecayConstantInHours() == 0.0) {
