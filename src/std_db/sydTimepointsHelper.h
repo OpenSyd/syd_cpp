@@ -20,7 +20,7 @@
 #define SYDTIMEPOINTSHELPER_H
 
 // syd
-#include "sydTimepoints.h"
+#include "sydRoiTimepoints.h"
 #include "sydFitTimepoints.h"
 #include "sydTimeActivityCurve.h"
 

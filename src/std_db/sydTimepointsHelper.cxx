@@ -18,6 +18,8 @@
 
 // syd
 #include "sydTimepointsHelper.h"
+#include "sydStandardDatabase.h"
+#include "sydTimeIntegratedActivityFilter.h"
 
 // --------------------------------------------------------------------
 syd::RoiTimepoints::pointer syd::NewTimepoints(const syd::RoiStatistic::vector stats)
@@ -40,7 +42,7 @@ syd::RoiTimepoints::pointer syd::NewTimepoints(const syd::RoiStatistic::vector s
   // sort the roistat according to their times
   auto sorted_stats = stats;
   db->Sort<syd::RoiStatistic>(sorted_stats);
-  DD(sorted_stats);
+  DDS(sorted_stats);
   rtp->roi_statistics = sorted_stats;
 
   for(auto stat:sorted_stats) {
@@ -57,7 +59,7 @@ syd::RoiTimepoints::pointer syd::NewTimepoints(const syd::RoiStatistic::vector s
       EXCEPTION("The RoiStatistic do not have the same mask");
     }
     rtp->times.push_back(stat->image->GetHoursFromInjection());
-    ttp->values.push_back(stat->mean);
+    rtp->values.push_back(stat->mean);
   }
   DD(rtp);
 
@@ -109,16 +111,16 @@ syd::NewFitTimepoints(syd::Timepoints::pointer tp,
   db->New(ft);
   DD(ft);
   ft->timepoints = tp;
-  ft->SetOptions(options);
+  ft->SetFromOptions(options);
   DD(ft);
 
   // Perform fit
   syd::TimeIntegratedActivityFilter filter;
-  auto tac = ft->timepoints->GetTAC();
+  auto tac = syd::GetTAC(ft->timepoints);
   DD(tac);
   filter.SetTAC(tac);
-  if (options->GetLambdaDecayConstantInHours() == 0.0)
-    options->SetLambdaDecayConstantInHours(tp->injection->GetLambdaDecayConstantInHours());
+  if (options.GetLambdaDecayConstantInHours() == 0.0)
+    options.SetLambdaDecayConstantInHours(tp->injection->GetLambdaDecayConstantInHours());
   filter.SetOptions(options);
   DD("Run");
   filter.Run();
@@ -135,15 +137,22 @@ syd::NewFitTimepoints(syd::Timepoints::pointer tp,
   }
   else {
     DD("fit ok");
-    auto working_tac = filter.GetWorkingTAC(); // initial tac or restricted tac
-    DD(working_tac);
-    ft->auc = model->ComputeAUC(working_tac);
-    ft->r2  = model->ComputeR2(working_tac);
+    if (options.GetRestrictedFlag()) {
+      auto working_tac = filter.GetWorkingTAC(); // restricted tac
+      DD(working_tac);
+      ft->first_index = tac->GetSize()-working_tac->GetSize();
+      ft->auc = model->ComputeAUC(working_tac, ft->first_index);
+      ft->r2  = model->ComputeR2(working_tac);
+    }
+    else {
+      ft->first_index = 0;
+      ft->auc = model->Integrate();
+      ft->r2  = model->ComputeR2(tac);
+    }
     ft->model_name = model->GetName();
     ft->params = model->GetParameters();
   }
   DD(ft);
-  ft->first_index = tac->GetSize()-working_tac->GetSize();
   ft->iterations = filter.GetNbOfIterations();
   DD(ft);
 
