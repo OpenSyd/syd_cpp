@@ -203,7 +203,6 @@ Run()
 
   // Print
   std::string sm;
-  filter_.InitModels(); // require to get the model names
   auto models = filter_.GetModels();
   for(auto m:models) sm += m->GetName()+"("+std::to_string(m->GetId())+") ";
 
