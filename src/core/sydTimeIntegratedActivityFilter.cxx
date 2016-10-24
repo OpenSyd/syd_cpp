@@ -53,7 +53,7 @@ void syd::TimeIntegratedActivityFilter::Run()
   //  DD("ADD value here");//FIXME
 
   // Init models
-  models_ = options_->GetModels();
+  models_ = options_.GetModels();
 
   // Initialisation: Solver
   InitSolver();
@@ -72,7 +72,7 @@ void syd::TimeIntegratedActivityFilter::Run()
   // Select best one
   auto best_model = SelectBestModel(models_, working_tac_);
   DD(best_model);
-  if (best_model > 0) current_best_model_ = models[best_model];
+  if (best_model > 0) current_best_model_ = models_[best_model];
   else current_best_model_ = nullptr;
 
   if (current_best_model_ != nullptr) {
@@ -132,10 +132,10 @@ void syd::TimeIntegratedActivityFilter::InitSolver()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityFilter::CheckInputs()
 {
-  if (tac_.GetSize() < 2) {
+  if (initial_tac_.GetSize() < 2) {
     EXCEPTION("Provide at least 2 timepoints");
   }
-  if (options_->GetLambdaDecayConstantInHours() == 0.0) {
+  if (options_.GetLambdaDecayConstantInHours() == 0.0) {
     EXCEPTION("You must provide the decay constant (lambda in hours)");
   }
 }
