@@ -118,7 +118,7 @@ syd::NewRoiStatistic(syd::Image::pointer image,
 
 // --------------------------------------------------------------------
 syd::RoiStatistic::pointer
-syd::NewRoiStatistic(syd::TiaImage::pointer tia,
+syd::NewRoiStatistic(syd::FitImages::pointer tia,
                      syd::RoiMaskImage::pointer mask,
                      std::string mask_output_filename)
 {

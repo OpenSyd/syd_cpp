@@ -21,7 +21,7 @@
 
 // syd
 #include "sydRoiStatistic.h"
-#include "sydTiaImage.h"
+#include "sydFitImages.h"
 #include "sydImageUtils.h"
 
 // --------------------------------------------------------------------
@@ -44,7 +44,7 @@ namespace syd {
                                              std::string mask_output_filename="");
 
   // Mask could be null (compute stat on the whole image)
-  syd::RoiStatistic::pointer NewRoiStatistic(syd::TiaImage::pointer tia,
+  syd::RoiStatistic::pointer NewRoiStatistic(syd::FitImages::pointer tia,
                                              syd::RoiMaskImage::pointer mask,
                                              std::string mask_output_filename="");
 
