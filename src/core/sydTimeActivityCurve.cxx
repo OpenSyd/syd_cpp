@@ -145,19 +145,6 @@ void syd::TimeActivityCurve::clear()
 
 
 // --------------------------------------------------------------------
-void syd::TimeActivityCurve::CopyFrom(syd::TimeActivityCurve & tac)
-{
-  clear();
-  for(auto i=0; i<tac.size(); i++) {
-    times.push_back(tac.GetTime(i));
-    values.push_back(tac.GetValue(i));
-    variances.push_back(tac.GetVariance(i));
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 syd::TimeActivityCurve::pointer syd::TimeActivityCurve::GetPoissonNoiseTAC(std::default_random_engine & generator)
 {
   auto tac = New();
