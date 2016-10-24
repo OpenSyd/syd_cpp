@@ -1,0 +1,41 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="289">
+    <add-table name="syd::RoiTimepoints" kind="polymorphic derived object">
+      <column name="id" type="INTEGER" null="true"/>
+      <primary-key>
+        <column name="id"/>
+      </primary-key>
+      <foreign-key name="id_fk" on-delete="CASCADE">
+        <column name="id"/>
+        <references table="syd::Timepoints">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::RoiTimepoints_roi_statistics" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::RoiTimepoints">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::RoiTimepoints_roi_statistics_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::RoiTimepoints_roi_statistics_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED" on-delete="CASCADE">
+        <column name="value"/>
+        <references table="syd::RoiStatistic">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
+  <model version="257"/>
+</changelog>

@@ -16,51 +16,53 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTIMEPOINTS_H
-#define SYDTIMEPOINTS_H
+#ifndef SYDFITTIMEPOINTS_H
+#define SYDFITTIMEPOINTS_H
 
 // syd
-#include "sydRoiMaskImage.h"
-#include "sydRecordWithTags.h"
-#include "sydRecordWithHistory.h"
-#include "sydRecordWithMD5Signature.h"
-#include "sydRecordWithComments.h"
-#include "sydTimeActivityCurve.h"
+#include "sydFitModels.h"
+#include "sydTimepoints.h"
+#include "sydFitOptions.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::Timepoints") callback(Callback)
-  /// Store information about a time activity curve (Timepoints).
-  class Timepoints :
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::FitTimepoints") callback(Callback)
+  /// Table to store the result of a fit process on a TAC time curve activity
+  class FitTimepoints:
     public syd::Record,
     public syd::RecordWithHistory,
     public syd::RecordWithTags,
     public syd::RecordWithMD5Signature,
-    public syd::RecordWithComments{
+    public syd::FitOptions {
   public:
 
 #pragma db not_null on_delete(cascade)
-      /// Foreign key
-      syd::Patient::pointer patient;
+      /// Linked Timepoints. If the tp is deleted, the FitTimepoints also.
+      syd::Timepoints::pointer timepoints;
 
-#pragma db not_null on_delete(cascade)
-      /// Foreign key. Timepoints must be associated with an injection (to
-      /// consider the decay when fit)
-      syd::Injection::pointer injection;
+      /// Values of the parameters for the fit
+      std::vector<double> params;
 
-      /// List of times
-      std::vector<double> times;
+      /// Area under the curve (integral or restricted computation)
+      double auc;
 
-      /// List values
-      std::vector<double> values;
+      /// Residual (after the fit)
+      double r2;
 
-      /// Associated std dev (not required)
-      std::vector<double> std_deviations;
+      /// Resulting model name (f3, f4a etc)
+      std::string model_name;
 
-      // ----------------------------------------------------------------
-      TABLE_DEFINE(Timepoints, syd::Timepoints);
-      // ----------------------------------------------------------------
+      /// Index of the first value used for the fit (not 0 if
+      /// "restricted" option is used)
+      int first_index;
+
+      /// Number of iterations
+      int iterations;
+
+      // ------------------------------------------------------------------------
+      TABLE_DEFINE(FitTimepoints, syd::FitTimepoints);
+      // ------------------------------------------------------------------------
 
       /// Write the element as a string
       virtual std::string ToString() const;
@@ -68,23 +70,23 @@ namespace syd {
       /// Build a string to compute MD5
       virtual std::string ToStringForMD5() const;
 
-      /// Callback (const)
-      void Callback(odb::callback_event, odb::database&) const;
-
       /// Callback
+      void Callback(odb::callback_event, odb::database&) const;
       void Callback(odb::callback_event, odb::database&);
 
-      /// Add a line in the given PrintTable
+      /// Print table dump
       virtual void DumpInTable(syd::PrintTable & table) const;
       virtual void DumpInTable_default(syd::PrintTable & table) const;
-      virtual void DumpInTable_md5(syd::PrintTable & table) const;
       virtual void DumpInTable_history(syd::PrintTable & table) const;
+      virtual void DumpInTable_md5(syd::PrintTable & table) const;
+
+      /// Create a model from the current result
+      syd::FitModelBase::pointer NewModel() const;
 
   protected:
-      Timepoints();
+      FitTimepoints();
 
-    }; // end class
-  // ------------------------------------------------------------------
+    }; // end of class
 
 } // end namespace
 // --------------------------------------------------------------------
