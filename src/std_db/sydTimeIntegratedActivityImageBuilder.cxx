@@ -166,7 +166,7 @@ InsertDebugOutputImages(std::vector<std::string> & names)
 // --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
-syd::TiaImage::pointer syd::TimeIntegratedActivityImageBuilder::
+syd::FitImages::pointer syd::TimeIntegratedActivityImageBuilder::
 Run()
 {
   // Check input data and get times
@@ -185,7 +185,9 @@ Run()
   filter_.ClearInput();
   for(auto i=0; i<times.size(); i++)
     filter_.AddInput(itk_images[i], times[i]);
-  filter_.SetLambdaDecayConstantInHours(images_[0]->injection->GetLambdaDecayConstantInHours());
+  if (options_.GetLambdaDecayConstantInHours() == 0.0) {
+    options_.SetLambdaDecayConstantInHours(images_[0]->injection->GetLambdaDecayConstantInHours());
+  }
   filter_.SetMask(mask);
   if (options_.GetRestrictedFlag()) filter_.AddOutputImage(auc);
   else filter_.AddOutputImage(integrate);
@@ -219,7 +221,7 @@ Run()
 
   // Create output
   auto db = images_[0]->GetDatabase<syd::StandardDatabase>();
-  syd::TiaImage::pointer tia;
+  syd::FitImages::pointer tia;
   db->New(tia);
   for(auto in:images_) tia->images.push_back(in);
   tia->min_activity = min_activity_;

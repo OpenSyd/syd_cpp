@@ -51,7 +51,7 @@ namespace syd {
     void SetOptions(syd::TimeIntegratedActivityFitOptions options);
 
     /// Main functions
-    syd::TiaImage::pointer Run();
+    syd::FitImages::pointer Run();
 
     /// Output: write mhd debug
     void WriteDebugOutput();
