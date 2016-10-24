@@ -38,7 +38,7 @@ namespace syd {
     ~TimeIntegratedActivityFilter();
 
     /// Input
-    void SetTAC(syd::TimeActivityCurve::pointer tac);
+    void SetTAC(syd::TimeActivityCurve::pointer tac) { initial_tac_ = tac; }
     void SetOptions(syd::TimeIntegratedActivityFitOptions & options) { options_ = options; }
     //void AddTimePointValue(double time, double value);
 
