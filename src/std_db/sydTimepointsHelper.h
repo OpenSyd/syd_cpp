@@ -40,7 +40,7 @@ namespace syd {
 
   /// Fit timepoints
   syd::FitTimepoints::pointer
-    NewFitTimepoints(syd::Timepoints::vector tp,
+    NewFitTimepoints(syd::Timepoints::pointer tp,
                      syd::TimeIntegratedActivityFitOptions & options);
 } // end namespace
 // --------------------------------------------------------------------

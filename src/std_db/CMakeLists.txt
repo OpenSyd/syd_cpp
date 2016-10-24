@@ -51,15 +51,11 @@ set(SYD_STANDARD_DATABASE_SRC
   sydElastixHelper.cxx
   sydRadionuclideHelper.cxx
   sydRoiStatisticHelper.cxx
-
-  #sydTimeIntegratedActivityImageBuilder.cxx
-
-  #sydRoiStatisticBuilder.cxx
+  sydTimepointsHelper.cxx
 
   #  sydCropImageBuilder.cxx
   #  sydDecayCorrectedImageBuilder.cxx
   #  sydSubstituteRadionuclideImageBuilder.cxx
-  #  sydTimepointsBuilder.cxx
   )
 
 # Group all objects

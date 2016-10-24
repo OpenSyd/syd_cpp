@@ -99,7 +99,7 @@ void syd::CopyTimepoints(const syd::Timepoints::pointer from, syd::Timepoints::p
 
 // --------------------------------------------------------------------
 syd::FitTimepoints::pointer
-syd::NewFitTimepoints(syd::Timepoints::vector tp,
+syd::NewFitTimepoints(syd::Timepoints::pointer tp,
                       syd::TimeIntegratedActivityFitOptions & options)
 {
   DDF();
