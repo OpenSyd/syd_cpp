@@ -17,11 +17,11 @@
   ===========================================================================**/
 
 // syd
-#include "sydTiaImage.h"
+#include "sydFitImages.h"
 #include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
-syd::TiaImage::TiaImage():
+syd::FitImages::FitImages():
   syd::Record(),
   syd::RecordWithHistory(),
   syd::RecordWithTags()
@@ -40,29 +40,22 @@ syd::TiaImage::TiaImage():
 
 
 // --------------------------------------------------------------------
-syd::TiaImage::~TiaImage()
+syd::FitImages::~FitImages()
 {
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::string syd::TiaImage::ToString() const
+std::string syd::FitImages::ToString() const
 {
   std::stringstream ss;
   ss << id << " ";
   if (images.size() == 0) ss << " no images ";
   else ss << images[0]->GetPatientName() << " ";
-  ss << images.size() << " imgs "
-     << min_activity << " "
-     << r2_min << " "
-     << max_iteration << " "
-     << (restricted_tac? "restricted":"non_restricted") << " "
-     << model_names.size() << " mod ("
-     << GetModelsName() << ") "
-     << akaike_criterion << " "
+  ss << images.size() << " imgs ["
+     << syd::FitOptions::ToString() << "] "
      << GetAllComments() << " "
-    // << GetOutputNames()
      << " pix: "
      << nb_success_pixels << "/" << nb_pixels;
   return ss.str();
@@ -71,7 +64,7 @@ std::string syd::TiaImage::ToString() const
 
 
 // --------------------------------------------------------------------
-std::string syd::TiaImage::GetOutputNames() const
+std::string syd::FitImages::GetOutputNames() const
 {
   std::stringstream ss;
   for(auto i=0; i<outputs.size(); i++) {
@@ -84,7 +77,7 @@ std::string syd::TiaImage::GetOutputNames() const
 
 
 // --------------------------------------------------------------------
-void syd::TiaImage::DumpInTable(syd::PrintTable & ta) const
+void syd::FitImages::DumpInTable(syd::PrintTable & ta) const
 {
   auto format = ta.GetFormat();
   if (format == "default") DumpInTable_default(ta);
@@ -93,7 +86,7 @@ void syd::TiaImage::DumpInTable(syd::PrintTable & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::TiaImage::DumpInTable_default(syd::PrintTable & ta) const
+void syd::FitImages::DumpInTable_default(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", images[0]->GetPatientName());
@@ -117,7 +110,7 @@ void syd::TiaImage::DumpInTable_default(syd::PrintTable & ta) const
 
 
 // --------------------------------------------------------------------
-void syd::TiaImage::AddOutput(syd::Image::pointer output, std::string name)
+void syd::FitImages::AddOutput(syd::Image::pointer output, std::string name)
 {
   outputs.push_back(output);
   output_names.push_back(name);
@@ -126,7 +119,7 @@ void syd::TiaImage::AddOutput(syd::Image::pointer output, std::string name)
 
 
 // --------------------------------------------------------------------
-syd::Image::pointer syd::TiaImage::GetOutput(std::string name)
+syd::Image::pointer syd::FitImages::GetOutput(std::string name)
 {
   int i=0;
   for(auto & n:output_names) {
@@ -139,8 +132,8 @@ syd::Image::pointer syd::TiaImage::GetOutput(std::string name)
 
 
 // --------------------------------------------------------------------
-void syd::TiaImage::Callback(odb::callback_event event,
-                             odb::database & db) const
+void syd::FitImages::Callback(odb::callback_event event,
+                              odb::database & db) const
 {
   syd::Record::Callback(event,db);
   syd::RecordWithHistory::Callback(event,db, db_);
@@ -153,8 +146,8 @@ void syd::TiaImage::Callback(odb::callback_event event,
 
 
 // --------------------------------------------------------------------
-void syd::TiaImage::Callback(odb::callback_event event,
-                             odb::database & db)
+void syd::FitImages::Callback(odb::callback_event event,
+                              odb::database & db)
 {
   syd::Record::Callback(event,db);
   syd::RecordWithHistory::Callback(event,db, db_);

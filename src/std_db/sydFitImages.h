@@ -16,34 +16,33 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTIAIMAGE_H
-#define SYDTIAIMAGE_H
+#ifndef SYDFITIMAGES_H
+#define SYDFITIMAGES_H
 
 #include "sydImage.h"
-#include "sydTiaFitOptions.h"
+#include "sydFitOptions.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::TiaImage") callback(Callback)
+#pragma db object polymorphic pointer(std::shared_ptr) table("syd::FitImages") callback(Callback)
   /// Store information about pixel-based time activity fitting to compute Time
   /// Integrated Activity image
-  class TiaImage:
+  class FitImages:
     public syd::Record,
     public syd::RecordWithHistory,
     public syd::RecordWithTags,
     public syd::RecordWithComments,
-    public syd::TiaFitOptions
-    {
-    public:
+    public syd::FitOptions {
+  public:
 
-      virtual ~TiaImage();
+      virtual ~FitImages();
 
 #pragma db on_delete(cascade)
-      /// List of input images to compute the TiaImage
+      /// List of input images to compute the FitImages
       syd::Image::vector images;
 
-      /// Initial threshold : do not compute TiaImage when activity is lower
+      /// Initial threshold : do not compute FitImages when activity is lower
       /// than this value
       double min_activity;
 
@@ -64,7 +63,7 @@ namespace syd {
       int nb_success_pixels;
 
       // ------------------------------------------------------------------------
-      TABLE_DEFINE(TiaImage, syd::TiaImage);
+      TABLE_DEFINE(FitImages, syd::FitImages);
       // ------------------------------------------------------------------------
 
       /// Write the element as a string
@@ -87,8 +86,8 @@ namespace syd {
       /// Get the output by name (nullptr if not found)
       syd::Image::pointer GetOutput(std::string name);
 
-    protected:
-      TiaImage();
+  protected:
+      FitImages();
 
     }; // end class
   // --------------------------------------------------------------------
