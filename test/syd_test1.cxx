@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   std::cout << "Create StandardDatabase " << dbname << std::endl;
   m->Create("StandardDatabase", dbname, folder, true);
 
-  std::cout << std::endl << "Open as generic Database" << std::endl;
+  std::cout << "Open as generic Database" << std::endl;
   syd::Database * db = m->Open(dbname);
   db->InsertDefaultRecords("all");
   db->Dump(std::cout);
