@@ -28,7 +28,6 @@
 syd::TimeIntegratedActivityImageFilter::TimeIntegratedActivityImageFilter():
   TimeIntegratedActivityFilter()
 {
-  DDF();
   mask_ = nullptr;
 }
 // --------------------------------------------------------------------
