@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTIAFITOPTIONS_H
-#define SYDTIAFITOPTIONS_H
+#ifndef SYDFITOPTIONS_H
+#define SYDFITOPTIONS_H
 
 #include "sydImage.h"
 #include "sydTimeIntegratedActivityFitOptions.h"
@@ -26,11 +26,11 @@
 namespace syd {
 
   /// Store common information on TAC fit options
-  class TiaFitOptions {
+  class FitOptions {
   public:
 
     /// Constructor
-    TiaFitOptions();
+    FitOptions();
 
     /// Fit is fail if r2 is lower than this value
     double r2_min;
@@ -53,11 +53,17 @@ namespace syd {
     /// Return a string with all model names
     std::string GetModelsName() const;
 
-    /// Return an options objects with the values from the TiaImage
-    void SetToOptions(syd::TimeIntegratedActivityFitOptions & options);
+    /// Return an options objects with the values from the record
+    void SetToOptions(syd::TimeIntegratedActivityFitOptions & options) const;
 
+    /// Return an options objects with the values from the record
+    syd::TimeIntegratedActivityFitOptions GetOptions() const;
+ 
     /// Set values from the options object
     void SetFromOptions(const syd::TimeIntegratedActivityFitOptions & options);
+
+    /// Write the element as a string
+    virtual std::string ToString() const;
 
   }; // end class
   // --------------------------------------------------------------------
