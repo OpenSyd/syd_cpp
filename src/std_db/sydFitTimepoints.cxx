@@ -107,7 +107,7 @@ void syd::FitTimepoints::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("nb", timepoints->times.size());
   ta.Set("tags", GetLabels(tags));
   ta.Set("model", model_name);
-  ta.Set("auc", auc, 7);
+  ta.Set("auc", auc, 2);
   ta.Set("r2", r2, 2);
   ta.Set("index", first_index);
   ta.Set("iter", iterations);
