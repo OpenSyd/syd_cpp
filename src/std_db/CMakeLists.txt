@@ -54,6 +54,10 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiStatisticHelper.cxx
   sydTimepointsHelper.cxx
 
+  ## Cannot put this file in the lib, because the plugin will be no more
+  ## recognized. I dont know why.
+  #sydTimeIntegratedActivityImageBuilder.cxx
+
   #  sydCropImageBuilder.cxx
   #  sydDecayCorrectedImageBuilder.cxx
   #  sydSubstituteRadionuclideImageBuilder.cxx
