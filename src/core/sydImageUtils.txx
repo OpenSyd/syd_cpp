@@ -335,7 +335,7 @@ ReadDicomFromSingleFile(std::string filename)
   LOG(2) << "Converting dicom file (" << filename << ") to itk image.";
   typename ImageType::Pointer output = ReadImage<ImageType>(filename);
 
-  // Update the iamge
+  // Update the image
   UpdateDicomImageInformation<PixelType>(output, filename);
   return output;
 }
