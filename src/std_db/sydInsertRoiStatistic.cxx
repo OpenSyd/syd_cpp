@@ -61,7 +61,6 @@ int main(int argc, char* argv[])
   // Loop on images
   int i = 0;
   for(auto image:images) {
-
     // Consider the masks
     syd::RoiMaskImage::vector masks;
     if (args_info.inputs[0] == std::string("all")) {
@@ -93,7 +92,7 @@ int main(int argc, char* argv[])
 
       if (args_info.tia_flag)
         stat = syd::NewRoiStatistic(tias[i], mask, mask_filename);
-      else 
+      else
         stat = syd::NewRoiStatistic(image, mask, mask_filename);
       // Tags
       syd::SetTagsFromCommandLine(stat->tags, db, args_info);
@@ -110,8 +109,8 @@ int main(int argc, char* argv[])
           LOG(1) << "Insert RoiStatistic: " << stat;
         }
       }
-      ++i;
     }
+    ++i;
   }
 }
 // --------------------------------------------------------------------
