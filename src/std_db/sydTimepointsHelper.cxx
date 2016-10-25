@@ -24,7 +24,6 @@
 // --------------------------------------------------------------------
 syd::RoiTimepoints::pointer syd::NewTimepoints(const syd::RoiStatistic::vector stats)
 {
-  DDF();
   if (stats.size() == 0) {
     EXCEPTION("Cannot create timepoints from empty vector of RoiStatistic");
   }
@@ -37,16 +36,13 @@ syd::RoiTimepoints::pointer syd::NewTimepoints(const syd::RoiStatistic::vector s
   db->New(rtp);
   rtp->patient = patient;
   rtp->injection = injection;
-  DD(rtp);
 
   // sort the roistat according to their times
   auto sorted_stats = stats;
   db->Sort<syd::RoiStatistic>(sorted_stats);
-  DDS(sorted_stats);
   rtp->roi_statistics = sorted_stats;
 
   for(auto stat:sorted_stats) {
-    DD(stat);
     if (stat->image->patient->id != patient->id) {
       EXCEPTION("The RoiStatistic do not have the same patient");
     }
@@ -61,8 +57,6 @@ syd::RoiTimepoints::pointer syd::NewTimepoints(const syd::RoiStatistic::vector s
     rtp->times.push_back(stat->image->GetHoursFromInjection());
     rtp->values.push_back(stat->mean);
   }
-  DD(rtp);
-
   return rtp;
 }
 // --------------------------------------------------------------------
@@ -72,7 +66,6 @@ syd::RoiTimepoints::pointer syd::NewTimepoints(const syd::RoiStatistic::vector s
 /// Create a TAC from a tp
 syd::TimeActivityCurve::pointer syd::GetTAC(const syd::Timepoints::pointer tp)
 {
-  DDF();
   auto tac = syd::TimeActivityCurve::New();
   GetTAC(tp, tac);
   return tac;
@@ -85,7 +78,7 @@ void syd::GetTAC(const syd::Timepoints::pointer tp, syd::TimeActivityCurve::poin
 {
   tac->Clear();
   for(auto i=0; i<tp->times.size(); i++)
-    tac->AddValue(tp->times[i], tp->values[i], tp->std_deviations[i]);
+    tac->AddValue(tp->times[i], tp->values[i]);//, tp->std_deviations[i]); FIXME
 }
 // --------------------------------------------------------------------
 
@@ -105,26 +98,24 @@ syd::NewFitTimepoints(syd::Timepoints::pointer tp,
                       syd::TimeIntegratedActivityFitOptions & options)
 {
   DDF();
+
+  // Set or check lambda
+  if (options.GetLambdaDecayConstantInHours() == 0.0)
+    options.SetLambdaDecayConstantInHours(tp->injection->GetLambdaDecayConstantInHours());
+
   // Create FitTimepoints
   syd::FitTimepoints::pointer ft;
   auto db = tp->GetDatabase<syd::StandardDatabase>();
   db->New(ft);
-  DD(ft);
   ft->timepoints = tp;
   ft->SetFromOptions(options);
-  DD(ft);
 
   // Perform fit
   syd::TimeIntegratedActivityFilter filter;
   auto tac = syd::GetTAC(ft->timepoints);
-  DD(tac);
   filter.SetTAC(tac);
-  if (options.GetLambdaDecayConstantInHours() == 0.0)
-    options.SetLambdaDecayConstantInHours(tp->injection->GetLambdaDecayConstantInHours());
   filter.SetOptions(options);
-  DD("Run");
   filter.Run();
-  DD("Run done");
 
   // Get results
   auto model = filter.GetFitModel();
