@@ -3,6 +3,10 @@
     <add-table name="syd::FitImages" kind="polymorphic root object">
       <column name="id" type="INTEGER" null="true"/>
       <column name="history" type="INTEGER" null="true"/>
+      <column name="r2_min" type="REAL" null="true"/>
+      <column name="max_iteration" type="INTEGER" null="true"/>
+      <column name="restricted_tac" type="INTEGER" null="true"/>
+      <column name="akaike_criterion" type="TEXT" null="true"/>
       <column name="typeid" type="TEXT" null="true"/>
       <column name="min_activity" type="REAL" null="true"/>
       <column name="nb_pixels" type="INTEGER" null="true"/>
@@ -54,6 +58,23 @@
         <column name="object_id"/>
       </index>
       <index name="syd::FitImages_comments_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+    <add-table name="syd::FitImages_model_names" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="TEXT" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::FitImages">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::FitImages_model_names_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::FitImages_model_names_index_i">
         <column name="index"/>
       </index>
     </add-table>

@@ -53,6 +53,7 @@ namespace syd {
     std::string GetAkaikeCriterion() const { return akaike_criterion_; }
     double GetLambdaDecayConstantInHours() const { return lambda_in_hours_; }
     std::string ToString() const;
+    void Check() const;
 
     /// Default function to print an element (must be inline here).
     friend std::ostream& operator<<(std::ostream& os, const TimeIntegratedActivityFitOptions & p) {

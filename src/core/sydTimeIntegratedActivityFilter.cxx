@@ -27,7 +27,6 @@
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityFilter::TimeIntegratedActivityFilter()
 {
-  DDF();
 }
 // --------------------------------------------------------------------
 
@@ -46,6 +45,7 @@ void syd::TimeIntegratedActivityFilter::Run()
   DDF();
 
   // Check inputs: size, times, negative values ? lambda
+  options_.Check();
   CheckInputs();
 
   // Initialisation TAC
@@ -53,13 +53,17 @@ void syd::TimeIntegratedActivityFilter::Run()
   //  DD("ADD value here");//FIXME
 
   // Init models
+  DD(options_);
   models_ = options_.GetModels();
 
   // Initialisation: Solver
   InitSolver();
 
   // Create working tac (restricted, + add value)
-  if (options_.GetRestrictedFlag()) GetRestrictedTac(initial_tac_, working_tac_);
+  if (options_.GetRestrictedFlag()) {
+    working_tac_ = syd::TimeActivityCurve::New();
+    GetRestrictedTac(initial_tac_, working_tac_);
+  }
   else working_tac_ = initial_tac_;
   DD(initial_tac_);
   DD(working_tac_);
@@ -72,7 +76,7 @@ void syd::TimeIntegratedActivityFilter::Run()
   // Select best one
   auto best_model = SelectBestModel(models_, working_tac_);
   DD(best_model);
-  if (best_model > 0) current_best_model_ = models_[best_model];
+  if (best_model >= 0) current_best_model_ = models_[best_model];
   else current_best_model_ = nullptr;
 
   if (current_best_model_ != nullptr) {
@@ -179,18 +183,8 @@ SelectBestModel(syd::FitModelBase::vector models,
                            << " R2 = " << R2;
     if (R2 > R2_threshold) {
       double criterion;
-      if (options_.GetAkaikeCriterion() == "AIC") {
-        criterion = m->ComputeAIC(tac);
-      } else {
-        if (options_.GetAkaikeCriterion() == "AICc") {
-          criterion = m->ComputeAICc(tac);
-        } else {
-          LOG(FATAL) << "Akaike criterion '"
-                     << options_.GetAkaikeCriterion() << "' not known"
-                     << ". Use AIC or AICc";
-        }
-      }
-
+      if (options_.GetAkaikeCriterion() == "AIC") criterion = m->ComputeAIC(tac);
+      else criterion = m->ComputeAICc(tac);
       if (verbose) std::cout << " valid=" <<  m->IsAICcValid(tac->size())
                              << " AICc = " << m->ComputeAICc(tac)
                              << " AIC = " << m->ComputeAIC(tac) << std::endl;

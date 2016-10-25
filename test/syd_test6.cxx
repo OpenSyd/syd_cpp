@@ -68,6 +68,7 @@ int main(int argc, char* argv[])
   injection->date = "2013-02-12 10:16";
   injection->activity_in_MBq = 1.0;
   std::cout << "Injection: " << injection << std::endl;
+  db->Insert(injection);
 
   // Insert image
   syd::Image::vector images;
@@ -103,7 +104,7 @@ int main(int argc, char* argv[])
   options.SetRestrictedFlag(false);
   options.SetR2MinThreshold(0.8);
   options.SetMaxNumIterations(50);
-  options.SetAkaikeCriterion("AICc");
+  options.SetAkaikeCriterion("AIC");
   options.AddModel("f3");
   options.AddModel("f4");
   // options.AddModel("f2");
@@ -112,6 +113,7 @@ int main(int argc, char* argv[])
   // options.AddModel("f4c");
   // options.AddTimeValue(0,0);
   // options.AddTimeValue(0,0); // FIXME
+  DD(options);
 
   // Test with builder
   syd::TimeIntegratedActivityImageBuilder builder;
@@ -120,12 +122,13 @@ int main(int argc, char* argv[])
   builder.SetOptions(options);
   builder.SetDebugOutputFlag(true);
   auto tia = builder.Run();
+  db->Insert(tia); // insert in the db
   std::cout << "tia : " << tia << std::endl;
   auto outputs = tia->outputs;
   auto & filter = builder.GetFilter();
 
   // Test some pixels (f3)
-  {
+  if (0) {
     std::cout << "Test1 : f3 " << std::endl;
     auto it = filter.GetIteratorAtPoint(-73, 15, 127);
     auto best_model_index = filter.FitOnePixel(it);
@@ -148,7 +151,7 @@ int main(int argc, char* argv[])
   }
 
   // Test some pixels (f3) restricted
-  {
+  if (0) {
     std::cout << "Test2 : restricted " << std::endl;
     options.SetRestrictedFlag(true);
     filter.SetOptions(options);
@@ -173,7 +176,7 @@ int main(int argc, char* argv[])
   }
 
   // Test some pixels (f4)
-  {
+  if (0) {
     std::cout << "Test3 : f4 " << std::endl;
     auto it = filter.GetIteratorAtPoint(77, 53, 79);
     auto best_model_index = filter.FitOnePixel(it);
@@ -219,7 +222,6 @@ int main(int argc, char* argv[])
   // Helpers function to use TIA on roi mask
   std::cout << "-------------------------------------" << std::endl
             << "Pixel-based TIA estimation" << std::endl;
-  db->Insert(tia); // insert in the db
   auto s1 = syd::NewRoiStatistic(tia, liver, "m1.mhd");
   auto s2 = syd::NewRoiStatistic(tia->GetOutput("fit_auc"), liver, "m2.mhd");
   auto s3 = syd::NewRoiStatistic(tia, nullptr, "m3.mhd");
@@ -253,7 +255,7 @@ int main(int argc, char* argv[])
   for(auto image:tia->images) {
     auto stat = syd::NewRoiStatistic(image, liver);
     stats.push_back(stat);
-    DD(stats.back());
+    DD(stat);
   }
   db->Insert(stats);
   // IN PROGRESS
@@ -265,15 +267,20 @@ int main(int argc, char* argv[])
   DD(res);
   db->Insert(res);
 
-  // check if recurse deletion
-  DDS(stats);
-  DD(rtp);
-  db->Delete(stats[0]);
-  syd::RoiTimepoints::vector rtps;
-  db->Query(rtps);
-  DDS(rtps);
-  DD("MUST be zero ?");
+  // check if recurse deletion --> no it does not work.
+  if (0) {
+    db->Delete(stats[0]);
+    syd::RoiTimepoints::vector rtps;
+    db->Query(rtps);
+    DDS(rtps);
+    DD("MUST be zero ?");
+  }
 
+  // Fit with restricted
+  options.SetRestrictedFlag(true);
+  auto res2 = syd::NewFitTimepoints(rtp, options);
+  DD(res2);
+  DD(tia);
 
   // -----------------------------------------------------------------
   // If needed create reference db

@@ -24,13 +24,10 @@
 syd::FitImages::FitImages():
   syd::Record(),
   syd::RecordWithHistory(),
-  syd::RecordWithTags()
+  syd::RecordWithTags(),
+  syd::FitOptions()
 {
   min_activity = 0.0;
-  r2_min = 0.9;
-  max_iteration = 50;
-  restricted_tac = false;
-  akaike_criterion = "AIC";
   nb_pixels = 0;
   nb_success_pixels = 0;
   // FIXME additional points
@@ -95,6 +92,7 @@ void syd::FitImages::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("min", min_activity);
   ta.Set("R2min", r2_min, 3);
   ta.Set("rest", (restricted_tac? "Y":"N"));
+  DD(akaike_criterion);
   ta.Set("Ak", akaike_criterion);
   ta.Set("itm", max_iteration);
   ta.Set("models", GetModelsName());
@@ -103,6 +101,9 @@ void syd::FitImages::DumpInTable_default(syd::PrintTable & ta) const
      << "(" << (double)nb_success_pixels/(double)nb_pixels*100.0 << "%)";
   ta.Set("res", ss.str());
   ta.Set("out", GetOutputNames(), 150);
+  std::stringstream sss;
+  for(auto im:images) sss << im->id << " ";
+  ta.Set("img", sss.str());
   auto c = GetAllComments();
   if (c.size() > 0) ta.Set("com", c);
 }

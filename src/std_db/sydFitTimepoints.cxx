@@ -50,10 +50,10 @@ std::string syd::FitTimepoints::ToString() const
   else ss << "no_tp ";
   ss << syd::GetLabels(tags) << " "
      << model_name << " "
-     << auc << " "
-     << r2 << " "
-     << first_index << " "
-     << iterations
+     << "auc=" << auc << " "
+     << "r2=" << r2 << " "
+     << "i=" << first_index << " "
+     << "it=" << iterations
      << " |";
   for(auto p:params) ss << " " << p;
   return ss.str();
@@ -113,6 +113,12 @@ void syd::FitTimepoints::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("iter", iterations);
   for(auto i=0; i<params.size(); i++)
     ta.Set("p"+std::to_string(i), params[i], 7);
+  ta.Set("R2min", r2_min, 3);
+  ta.Set("rest", (restricted_tac? "Y":"N"));
+  DD(akaike_criterion);
+  ta.Set("Ak", akaike_criterion);
+  ta.Set("itm", max_iteration);
+  ta.Set("models", GetModelsName()); 
 }
 // --------------------------------------------------------------------
 

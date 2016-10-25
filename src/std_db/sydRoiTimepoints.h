@@ -31,7 +31,7 @@ namespace syd {
   class RoiTimepoints: public syd::Timepoints {
   public:
 
-    /// list of RoiStatistic. The RoiTimepoints is deleted if the roi_statistics are.
+    /// list of RoiStatistic. (note: on_delete cascade does not work here because vector)
 #pragma db not_null on_delete(cascade)
     syd::RoiStatistic::vector roi_statistics;
 

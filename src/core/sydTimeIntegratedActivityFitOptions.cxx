@@ -18,6 +18,7 @@
 
 // syd
 #include "sydTimeIntegratedActivityFitOptions.h"
+#include "sydException.h"
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
@@ -79,6 +80,9 @@ void syd::TimeIntegratedActivityFitOptions::AddModel(const std::string & model_n
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityFitOptions::SetAkaikeCriterion(const std::string & criterion_name)
 {
+  if (criterion_name != "AIC" and criterion_name != "AICc") {
+    EXCEPTION("Akaike criterion can only be AIC or AICc, while you set " << criterion_name);
+  }
   akaike_criterion_ = criterion_name;
 }
 // --------------------------------------------------------------------
@@ -110,7 +114,21 @@ syd::FitModelBase::vector syd::TimeIntegratedActivityFitOptions::GetModels() con
   }
   for(auto m:models)
     m->SetLambdaDecayConstantInHours(lambda_in_hours_);
-
   return models;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::TimeIntegratedActivityFitOptions::Check() const
+{
+  if (lambda_in_hours_ == 0.0) {
+    LOG(FATAL) << "The decay constant (lambda in hours) is not set";
+  }
+  if (GetAkaikeCriterion() != "AIC" and GetAkaikeCriterion() != "AICc") {
+    LOG(FATAL) << "Akaike criterion '"
+               << GetAkaikeCriterion() << "' not known"
+               << ". Use AIC or AICc";
+  }
 }
 // --------------------------------------------------------------------

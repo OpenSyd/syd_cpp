@@ -43,7 +43,9 @@ syd::TimeIntegratedActivityImageFilter::~TimeIntegratedActivityImageFilter()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageFilter::Run()
 {
+  DD(options_);
   // Check inputs: size, times, negative values ?
+  options_.Check();
   CheckInputs();
 
   // Initialisation: mask (create if do not exist)
