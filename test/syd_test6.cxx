@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 {
   // Init
   SYD_INIT_GGO(syd_test6, 0);
-  LOG(WARNING) << "Need the test4 result";
+  LOG(WARNING) << "Use the test4 result";
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -113,7 +113,6 @@ int main(int argc, char* argv[])
   // options.AddModel("f4c");
   // options.AddTimeValue(0,0);
   // options.AddTimeValue(0,0); // FIXME
-  DD(options);
 
   // Test with builder
   syd::TimeIntegratedActivityImageBuilder builder;
@@ -128,7 +127,7 @@ int main(int argc, char* argv[])
   auto & filter = builder.GetFilter();
 
   // Test some pixels (f3)
-  if (0) {
+  if (1) {
     std::cout << "Test1 : f3 " << std::endl;
     auto it = filter.GetIteratorAtPoint(-73, 15, 127);
     auto best_model_index = filter.FitOnePixel(it);
@@ -151,7 +150,7 @@ int main(int argc, char* argv[])
   }
 
   // Test some pixels (f3) restricted
-  if (0) {
+  if (1) {
     std::cout << "Test2 : restricted " << std::endl;
     options.SetRestrictedFlag(true);
     filter.SetOptions(options);
@@ -176,7 +175,7 @@ int main(int argc, char* argv[])
   }
 
   // Test some pixels (f4)
-  if (0) {
+  if (1) {
     std::cout << "Test3 : f4 " << std::endl;
     auto it = filter.GetIteratorAtPoint(77, 53, 79);
     auto best_model_index = filter.FitOnePixel(it);
@@ -200,9 +199,6 @@ int main(int argc, char* argv[])
     TestDouble(model->GetLambda(1), 0.003648075848);
   }
 
-  // Add a mask
-  // auto mask = syd::InsertImageFromFile("input/OT_248_mask.mhd", patient);
-  // auto itk_mask = syd::ReadImage<MaskImageType>(mask->GetAbsolutePath());
   // Insert a roi from a mhd file
   std::string filename = "input/liver_18.mhd";
   auto image = tia->images[0];
@@ -255,17 +251,16 @@ int main(int argc, char* argv[])
   for(auto image:tia->images) {
     auto stat = syd::NewRoiStatistic(image, liver);
     stats.push_back(stat);
-    DD(stat);
   }
   db->Insert(stats);
   // IN PROGRESS
   auto rtp = syd::NewTimepoints(stats); // RoiTimepoints
-  DD(rtp);
+  std::cout << "Timepoints : " << rtp << std::endl;
   db->Insert(rtp);
   options = tia->GetOptions();
   auto res = syd::NewFitTimepoints(rtp, options);
-  DD(res);
   db->Insert(res);
+  std::cout << "FitTimepoints : " << res << std::endl;
 
   // check if recurse deletion --> no it does not work.
   if (0) {
@@ -279,10 +274,11 @@ int main(int argc, char* argv[])
   // Fit with restricted
   options.SetRestrictedFlag(true);
   auto res2 = syd::NewFitTimepoints(rtp, options);
-  DD(res2);
-  DD(tia);
+  db->Insert(res2);
+  std::cout << "FitTimepoints (restricted): " << res2 << std::endl;
 
   // -----------------------------------------------------------------
+  std::cout << "-------------------------------------" << std::endl;
   // If needed create reference db
   if (args_info.create_ref_flag) {
     LOG(0) << "Create reference db";
@@ -292,6 +288,7 @@ int main(int argc, char* argv[])
   // Open ref database
   auto db_ref = m->Open<syd::StandardDatabase>(ref_dbname);
 
+  // Test pixel-based
   syd::RoiStatistic::pointer ref;
   db_ref->QueryOne(ref, 1);
   if (s1 != ref) { LOG(FATAL) << "Error s1 different"; }
@@ -299,6 +296,16 @@ int main(int argc, char* argv[])
   if (s2 != ref) { LOG(FATAL) << "Error s2 different"; }
   db_ref->QueryOne(ref, 3);
   if (s3 != ref) { LOG(FATAL) << "Error s3 different"; }
+
+  // Test roi-based
+  syd::RoiTimepoints::pointer rtp_ref;
+  db_ref->QueryOne(rtp_ref, 1);
+  if (rtp != rtp_ref) { LOG(FATAL) << "Error rtp different"; }
+  syd::FitTimepoints::pointer ftp_ref;
+  db_ref->QueryOne(ftp_ref, 1);
+  if (res != ftp_ref) { LOG(FATAL) << "Error res different"; }
+  db_ref->QueryOne(ftp_ref, 2);
+  if (res2 != ftp_ref) { LOG(FATAL) << "Error res2 different"; }
 
   std::cout << "Success." << std::endl;
   return EXIT_SUCCESS;
