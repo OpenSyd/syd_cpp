@@ -26,6 +26,7 @@
 namespace syd {
 
   /// Store common information on TAC fit options
+#pragma db object abstract pointer(std::shared_ptr)
   class FitOptions {
   public:
 

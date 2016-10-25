@@ -66,6 +66,7 @@ SetToOptions(syd::TimeIntegratedActivityFitOptions & options) const
   options.SetMaxNumIterations(max_iteration);
   options.SetRestrictedFlag(restricted_tac);
   options.ClearModels();
+  options.SetAkaikeCriterion(akaike_criterion);
   for(auto m:model_names)
     options.AddModel(m);
 }
@@ -90,6 +91,7 @@ SetFromOptions(const syd::TimeIntegratedActivityFitOptions & options)
   r2_min = options.GetR2MinThreshold();
   max_iteration = options.GetMaxNumIterations();
   restricted_tac = options.GetRestrictedFlag();
+  akaike_criterion = options.GetAkaikeCriterion();
   model_names.clear();
   for(auto m:options.GetModels())
     model_names.push_back(m->GetName());

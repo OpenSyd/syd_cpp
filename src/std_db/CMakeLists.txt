@@ -14,9 +14,10 @@ wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
 wrap_odb(sydStandardDatabase sydRoiStatistic.h)
 wrap_odb(sydStandardDatabase sydElastix.h)
-wrap_odb(sydStandardDatabase sydFitImages.h)
 wrap_odb(sydStandardDatabase sydTimepoints.h)
 wrap_odb(sydStandardDatabase sydRoiTimepoints.h)
+wrap_odb(sydStandardDatabase sydFitOptions.h)
+wrap_odb(sydStandardDatabase sydFitImages.h)
 wrap_odb(sydStandardDatabase sydFitTimepoints.h)
 
 set(SYD_STANDARD_DATABASE_SRC
@@ -35,8 +36,8 @@ set(SYD_STANDARD_DATABASE_SRC
 
   sydElastix-odb.cxx sydElastix-schema.cxx sydElastix.cxx
 
-  sydFitOptions.cxx
   sydFitImages-odb.cxx sydFitImages-schema.cxx sydFitImages.cxx
+  sydFitOptions-odb.cxx sydFitOptions-schema.cxx sydFitOptions.cxx
   sydTimepoints-odb.cxx sydTimepoints-schema.cxx sydTimepoints.cxx
   sydRoiTimepoints-odb.cxx sydRoiTimepoints-schema.cxx sydRoiTimepoints.cxx
   sydFitTimepoints-odb.cxx sydFitTimepoints-schema.cxx sydFitTimepoints.cxx
