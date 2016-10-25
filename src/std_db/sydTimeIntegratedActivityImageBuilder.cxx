@@ -111,6 +111,8 @@ InsertOutputAUCImage()
   auto unit = output->pixel_unit->name+".h";// get pixel unit times hours
   auto desc = unit+" times hours";
   output->pixel_unit = syd::FindOrCreatePixelUnit(db, unit, desc);
+  auto t = syd::FindOrCreateTag(db, main_output->GetTagName());
+  syd::AddTag(output->tags, t);
   db->Update(output);
   return output;
 }
@@ -129,6 +131,8 @@ InsertOutputSuccessFitImage()
   syd::SetImageInfoFromImage(output, img);
   auto db = img->GetDatabase<syd::StandardDatabase>();
   output->pixel_unit = syd::FindOrCreatePixelUnit(db, "bool", "Boolean 0|1");
+  auto t = syd::FindOrCreateTag(db, success->GetTagName());
+  syd::AddTag(output->tags, t);
   db->Update(output);
   return output;
 }
@@ -169,6 +173,8 @@ InsertDebugOutputImages(std::vector<std::string> & names)
 syd::FitImages::pointer syd::TimeIntegratedActivityImageBuilder::
 Run()
 {
+  DDF();
+  DD(options_);
   // Check input data and get times
   auto times = CheckInputs();
 
@@ -224,7 +230,9 @@ Run()
   db->New(tia);
   for(auto in:images_) tia->images.push_back(in);
   tia->min_activity = min_activity_;
+  DD(options_);
   tia->SetFromOptions(options_);
+  DD(tia);
   tia->nb_pixels = GetFilter().GetNumberOfPixels();
   tia->nb_success_pixels = GetFilter().GetNumberOfSuccessfullyFitPixels();
 
