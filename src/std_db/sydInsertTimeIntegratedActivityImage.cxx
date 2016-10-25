@@ -83,17 +83,19 @@ int main(int argc, char* argv[])
 
   // Go !
   auto tia = builder.Run();
+  syd::SetCommentsFromCommandLine(tia->comments, db, args_info);
   db->Insert(tia);
 
   // Results
-  auto output = tia->outputs[0]; //builder.InsertOutputImage();
-  syd::SetImageInfoFromCommandLine(output, args_info);
-  syd::SetTagsFromCommandLine(output->tags, db, args_info);
-  syd::SetCommentsFromCommandLine(output->comments, db, args_info);
-  db->Update(output);
+  for(auto output:tia->outputs) {
+    syd::SetImageInfoFromCommandLine(output, args_info);
+    syd::SetTagsFromCommandLine(output->tags, db, args_info);
+    syd::SetCommentsFromCommandLine(output->comments, db, args_info);
+    db->Update(output);
+  }
   auto s = tia->nb_pixels;
   auto n = tia->nb_success_pixels;
-  LOG(1) << "TIA : " << tia;
+  LOG(1) << "Time Integrated Activity: " << tia;
 
   // This is the end, my friend.
 }
