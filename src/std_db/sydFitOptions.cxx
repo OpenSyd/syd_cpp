@@ -61,7 +61,6 @@ std::string syd::FitOptions::ToString() const
 void syd::FitOptions::
 SetToOptions(syd::TimeIntegratedActivityFitOptions & options) const
 {
-  DDF();
   options.SetR2MinThreshold(r2_min);
   options.SetMaxNumIterations(max_iteration);
   options.SetRestrictedFlag(restricted_tac);
@@ -87,7 +86,6 @@ syd::TimeIntegratedActivityFitOptions syd::FitOptions::GetOptions() const
 void syd::FitOptions::
 SetFromOptions(const syd::TimeIntegratedActivityFitOptions & options)
 {
-  DDF();
   r2_min = options.GetR2MinThreshold();
   max_iteration = options.GetMaxNumIterations();
   restricted_tac = options.GetRestrictedFlag();

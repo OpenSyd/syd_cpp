@@ -42,8 +42,6 @@ syd::TimeIntegratedActivityFilter::~TimeIntegratedActivityFilter()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityFilter::Run()
 {
-  DDF();
-
   // Check inputs: size, times, negative values ? lambda
   options_.Check();
   CheckInputs();
@@ -53,7 +51,6 @@ void syd::TimeIntegratedActivityFilter::Run()
   //  DD("ADD value here");//FIXME
 
   // Init models
-  DD(options_);
   models_ = options_.GetModels();
 
   // Initialisation: Solver
@@ -65,8 +62,6 @@ void syd::TimeIntegratedActivityFilter::Run()
     GetRestrictedTac(initial_tac_, working_tac_);
   }
   else working_tac_ = initial_tac_;
-  DD(initial_tac_);
-  DD(working_tac_);
 
   // Loop on models
   for(auto model:models_) {
@@ -75,7 +70,6 @@ void syd::TimeIntegratedActivityFilter::Run()
 
   // Select best one
   auto best_model = SelectBestModel(models_, working_tac_);
-  DD(best_model);
   if (best_model >= 0) current_best_model_ = models_[best_model];
   else current_best_model_ = nullptr;
 
@@ -84,7 +78,6 @@ void syd::TimeIntegratedActivityFilter::Run()
     nb_of_iterations = summary.num_unsuccessful_steps + summary.num_successful_steps;
   }
   else nb_of_iterations = 0;
-  DD(nb_of_iterations);
 }
 // --------------------------------------------------------------------
 

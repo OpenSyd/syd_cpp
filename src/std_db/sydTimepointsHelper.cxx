@@ -97,8 +97,6 @@ syd::FitTimepoints::pointer
 syd::NewFitTimepoints(syd::Timepoints::pointer tp,
                       syd::TimeIntegratedActivityFitOptions & options)
 {
-  DDF();
-
   // Set or check lambda
   if (options.GetLambdaDecayConstantInHours() == 0.0)
     options.SetLambdaDecayConstantInHours(tp->injection->GetLambdaDecayConstantInHours());
@@ -120,17 +118,14 @@ syd::NewFitTimepoints(syd::Timepoints::pointer tp,
   // Get results
   auto model = filter.GetFitModel();
   if (model == nullptr) {
-    DD("Fit unsuccesful");
     ft->auc = 0.0;
     ft->r2 = 0.0;
     ft->model_name = "";
     ft->params.clear();
   }
   else {
-    DD("fit ok");
     if (options.GetRestrictedFlag()) {
       auto working_tac = filter.GetWorkingTAC(); // restricted tac
-      DD(working_tac);
       ft->first_index = tac->GetSize()-working_tac->GetSize();
       ft->auc = model->ComputeAUC(working_tac, ft->first_index);
       ft->r2  = model->ComputeR2(working_tac);
@@ -143,9 +138,7 @@ syd::NewFitTimepoints(syd::Timepoints::pointer tp,
     ft->model_name = model->GetName();
     ft->params = model->GetParameters();
   }
-  DD(ft);
   ft->iterations = filter.GetNbOfIterations();
-  DD(ft);
 
   return ft;
 }

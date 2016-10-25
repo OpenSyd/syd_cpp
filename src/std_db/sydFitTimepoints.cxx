@@ -115,7 +115,6 @@ void syd::FitTimepoints::DumpInTable_default(syd::PrintTable & ta) const
     ta.Set("p"+std::to_string(i), params[i], 7);
   ta.Set("R2min", r2_min, 3);
   ta.Set("rest", (restricted_tac? "Y":"N"));
-  DD(akaike_criterion);
   ta.Set("Ak", akaike_criterion);
   ta.Set("itm", max_iteration);
   ta.Set("models", GetModelsName()); 

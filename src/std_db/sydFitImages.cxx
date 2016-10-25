@@ -92,12 +92,12 @@ void syd::FitImages::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("min", min_activity);
   ta.Set("R2min", r2_min, 3);
   ta.Set("rest", (restricted_tac? "Y":"N"));
-  DD(akaike_criterion);
   ta.Set("Ak", akaike_criterion);
   ta.Set("itm", max_iteration);
   ta.Set("models", GetModelsName());
   std::stringstream ss;
   ss << nb_success_pixels << "/" << nb_pixels
+     << std::setprecision(1)
      << "(" << (double)nb_success_pixels/(double)nb_pixels*100.0 << "%)";
   ta.Set("res", ss.str());
   ta.Set("out", GetOutputNames(), 150);

@@ -173,8 +173,6 @@ InsertDebugOutputImages(std::vector<std::string> & names)
 syd::FitImages::pointer syd::TimeIntegratedActivityImageBuilder::
 Run()
 {
-  DDF();
-  DD(options_);
   // Check input data and get times
   auto times = CheckInputs();
 
@@ -230,9 +228,7 @@ Run()
   db->New(tia);
   for(auto in:images_) tia->images.push_back(in);
   tia->min_activity = min_activity_;
-  DD(options_);
   tia->SetFromOptions(options_);
-  DD(tia);
   tia->nb_pixels = GetFilter().GetNumberOfPixels();
   tia->nb_success_pixels = GetFilter().GetNumberOfSuccessfullyFitPixels();
 
