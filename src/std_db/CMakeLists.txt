@@ -14,8 +14,11 @@ wrap_odb(sydStandardDatabase sydRoiType.h)
 wrap_odb(sydStandardDatabase sydRoiMaskImage.h)
 wrap_odb(sydStandardDatabase sydRoiStatistic.h)
 wrap_odb(sydStandardDatabase sydElastix.h)
-# wrap_odb(sydStandardDatabase sydTimepoints.h)
-# wrap_odb(sydStandardDatabase sydFitResult.h)
+wrap_odb(sydStandardDatabase sydTimepoints.h)
+wrap_odb(sydStandardDatabase sydRoiTimepoints.h)
+wrap_odb(sydStandardDatabase sydFitOptions.h)
+wrap_odb(sydStandardDatabase sydFitImages.h)
+wrap_odb(sydStandardDatabase sydFitTimepoints.h)
 
 set(SYD_STANDARD_DATABASE_SRC
   sydStandardDatabase.cxx
@@ -27,13 +30,17 @@ set(SYD_STANDARD_DATABASE_SRC
   sydDicomFile-odb.cxx sydDicomFile-schema.cxx  sydDicomFile.cxx
   sydPixelUnit-odb.cxx sydPixelUnit-schema.cxx  sydPixelUnit.cxx
   sydImage-odb.cxx sydImage-schema.cxx  sydImage.cxx
-  sydRoiType-odb.cxx sydRoiType-schema.cxx  sydRoiType.cxx
+  sydRoiType-odb.cxx sydRoiType-schema.cxx sydRoiType.cxx
   sydRoiMaskImage-odb.cxx sydRoiMaskImage-schema.cxx  sydRoiMaskImage.cxx
   sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
 
-  sydElastix-odb.cxx sydElastix-schema.cxx  sydElastix.cxx
-  # sydTimepoints-odb.cxx sydTimepoints-schema.cxx  sydTimepoints.cxx
-  # sydFitResult-odb.cxx sydFitResult-schema.cxx  sydFitResult.cxx
+  sydElastix-odb.cxx sydElastix-schema.cxx sydElastix.cxx
+
+  sydFitImages-odb.cxx sydFitImages-schema.cxx sydFitImages.cxx
+  sydFitOptions-odb.cxx sydFitOptions-schema.cxx sydFitOptions.cxx
+  sydTimepoints-odb.cxx sydTimepoints-schema.cxx sydTimepoints.cxx
+  sydRoiTimepoints-odb.cxx sydRoiTimepoints-schema.cxx sydRoiTimepoints.cxx
+  sydFitTimepoints-odb.cxx sydFitTimepoints-schema.cxx sydFitTimepoints.cxx
 
   sydPixelUnitHelper.cxx
   sydDicomSerieBuilder.cxx
@@ -44,15 +51,12 @@ set(SYD_STANDARD_DATABASE_SRC
   sydUpdateRadionuclideFilter.cxx
   sydElastixHelper.cxx
   sydRadionuclideHelper.cxx
-
-  #sydTimeIntegratedActivityImageBuilder.cxx
-
-  #sydRoiStatisticBuilder.cxx
+  sydRoiStatisticHelper.cxx
+  sydTimepointsHelper.cxx
 
   #  sydCropImageBuilder.cxx
   #  sydDecayCorrectedImageBuilder.cxx
   #  sydSubstituteRadionuclideImageBuilder.cxx
-  #  sydTimepointsBuilder.cxx
   )
 
 # Group all objects

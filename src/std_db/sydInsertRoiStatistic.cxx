@@ -25,12 +25,13 @@
 #include "sydRoiMaskImageHelper.h"
 #include "sydTagHelper.h"
 #include "sydCommentsHelper.h"
+#include "sydRoiStatisticHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertRoiStatistic, 2);
+  SYD_INIT_GGO(sydInsertRoiStatistic, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -42,16 +43,23 @@ int main(int argc, char* argv[])
   // Get the list of images
   std::vector<syd::IdType> ids;
   syd::ReadIdsFromInputPipe(ids);
-  for(auto i=1; i<args_info.inputs_num; i++) {
+  for(auto i=1; i<args_info.inputs_num; i++) { // start at 1 (because 0 is roi name)
     ids.push_back(atoi(args_info.inputs[i]));
   }
   syd::Image::vector images;
-  db->Query(images, ids);
+  syd::FitImages::vector tias;
+
+  if (!args_info.tia_flag) db->Query(images, ids);
+  else {
+    db->Query(tias, ids);
+    for(auto tia:tias) images.push_back(tia->GetOutput("fit_auc"));
+  }
   if (images.size() == 0) {
     LOG(FATAL) << "No image ids given. I do nothing.";
   }
 
   // Loop on images
+  int i = 0;
   for(auto image:images) {
 
     // Consider the masks
@@ -66,38 +74,43 @@ int main(int argc, char* argv[])
         masks.push_back(NULL);
       }
       else {
-        auto m = syd::FindRoiMaskImage(image, args_info.inputs[0]);
-        masks.push_back(m);
+        // find all masks with the same roi_name and frame_of_reference_uid
+        masks = syd::FindRoiMaskImage(image, args_info.inputs[0]);
       }
     }
 
-    // Loop over masks
-    for(auto mask:masks) {
-      std::string mask_filename = args_info.resampled_mask_arg;
-      auto stat = syd::FindOneRoiStatistic(image, mask);
-      bool newStat = false;
-      if (!stat) {
-        stat = syd::InsertRoiStatistic(image, mask, mask_filename);
-        newStat = true;
-      }
-      else {
-        auto mask = syd::ComputeRoiStatistic(stat);
-        if (mask_filename != "")
-          syd::WriteImage<itk::Image<unsigned char,3>>(mask, mask_filename);
-      }
+    if (masks.size() == 0) {
+      LOG(WARNING) << "No masks found for this image, I do nothing: " << image;
+    }
 
+    // Loop over masks
+    syd::RoiStatistic::pointer stat;
+    for(auto mask:masks) {
+      std::string mask_filename = "";
+      if (args_info.resampled_mask_given)
+        mask_filename = mask->roitype->name+"_"+std::to_string(image->id)
+          +"_"+args_info.resampled_mask_arg;
+
+      if (args_info.tia_flag)
+        stat = syd::NewRoiStatistic(tias[i], mask, mask_filename);
+      else 
+        stat = syd::NewRoiStatistic(image, mask, mask_filename);
       // Tags
       syd::SetTagsFromCommandLine(stat->tags, db, args_info);
       syd::SetCommentsFromCommandLine(stat->comments, db, args_info);
-      db->Update(stat);
 
-      // Update
-      if (newStat) {
-        LOG(1) << "Insert RoiStatistic: " << stat;
+      // Check already exist something similar ?
+      if (!args_info.force_flag) {
+        auto s = syd::FindSameRoiStatistic(stat);
+        if (s != nullptr) {
+          LOG(WARNING) << "Same RoiStatistic already exists, I skip it: " << s;
+        }
+        else {
+          db->Insert(stat);
+          LOG(1) << "Insert RoiStatistic: " << stat;
+        }
       }
-      else {
-        LOG(1) << "Update RoiStatistic: " << stat;
-      }
+      ++i;
     }
   }
 }

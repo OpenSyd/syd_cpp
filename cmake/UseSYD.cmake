@@ -132,3 +132,6 @@ include_directories(${SYD_BINARY_DIR}/src/std_db)
 include_directories(${SYD_BINARY_DIR}/src/plot)
 include_directories(${SYD_BINARY_DIR}/src/ext)
 # ----------------------------------------------------------
+
+set(SYD_COMMON_DB_LIBRARY sydCommonDatabase ${SYD_CORE_LIBRARIES})
+set(SYD_STD_DB_LIBRARY sydStandardDatabase ${SYD_COMMON_DB_LIBRARY})

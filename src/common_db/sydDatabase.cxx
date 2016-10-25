@@ -105,7 +105,7 @@ void syd::Database::OpenFromFile(std::string filename)
   if (file_version < current_version) { // should migrate ?
     LOG(WARNING) << "The version of the db schema in the file " << filename
                  << " is " << GetVersionAsString(file_version)
-                 << " while the current version is "
+                 << " while the current program version is "
                  << GetVersionAsString(current_version) << std::endl
                  << "You need db migration (but it is not always possible). "
                  << "Should I try (a backup is made before) ? ";
@@ -148,8 +148,11 @@ void syd::Database::TraceCallback(const char* sql)
 // --------------------------------------------------------------------
 void syd::Database::Dump(std::ostream & os)
 {
+  odb::schema_version file_version (odb_db_->schema_version(GetDatabaseSchema()));
   os << "Database file  : " << GetFilename() << std::endl;
-  os << "Database schema: " << GetDatabaseSchema() << std::endl;
+  os << "Database schema: " << GetDatabaseSchema()
+     << " " << GetVersionAsString(file_version)
+     << std::endl;
   os << "Database folder: " << GetDatabaseRelativeFolder();
   if (!fs::exists(GetDatabaseAbsoluteFolder()))
     os << warningColor << " -> does not exist ("

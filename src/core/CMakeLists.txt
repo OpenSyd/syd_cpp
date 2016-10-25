@@ -48,6 +48,7 @@ add_library(sydFit
   sydFitModel_f4b.cxx
   sydFitModel_f4c.cxx
   sydFitOutputImage.cxx
+  sydTimeIntegratedActivityFilter.cxx
   sydTimeIntegratedActivityImageFilter.cxx
   sydTimeIntegratedActivityFitOptions.cxx
   )

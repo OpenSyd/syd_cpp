@@ -51,22 +51,16 @@ namespace syd {
     void SetOptions(syd::TimeIntegratedActivityFitOptions options);
 
     /// Main functions
-    void Run();
-
-    /// Output: get the main output and insert in the db
-    syd::Image::pointer InsertOutputImage();
+    syd::FitImages::pointer Run();
 
     /// Output: write mhd debug
     void WriteDebugOutput();
-
-    /// Output: insert the debug images in the db
-    syd::Image::vector InsertDebugOutputImages();
 
     /// Return the main filter
     syd::TimeIntegratedActivityImageFilter & GetFilter() { return filter_; }
 
   protected:
-    syd::Image::vector inputs_;
+    syd::Image::vector images_;
     double min_activity_;
     bool debug_images_flag_;
 
@@ -92,6 +86,15 @@ namespace syd {
     typename MaskImageType::Pointer
     CreateMaskFromThreshold(std::vector<ImageType::Pointer> itk_images,
                             double min_activity);
+
+    /// Output: insert the debug images in the db
+    syd::Image::vector InsertDebugOutputImages(std::vector<std::string> & names);
+
+    /// Output: get the main output and insert in the db
+    syd::Image::pointer InsertOutputAUCImage();
+
+    /// Output: get the success fit map and insert in the db
+    syd::Image::pointer InsertOutputSuccessFitImage();
 
   }; // class TimeIntegratedActivityImageBuilder
 

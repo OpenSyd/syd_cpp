@@ -18,6 +18,7 @@
 
 // syd
 #include "sydTimepoints.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 syd::Timepoints::Timepoints():
@@ -26,6 +27,7 @@ syd::Timepoints::Timepoints():
   syd::RecordWithHistory(),
   syd::RecordWithMD5Signature()
 {
+
 }
 // --------------------------------------------------------------------
 
@@ -36,10 +38,8 @@ std::string syd::Timepoints::ToString() const
   std::stringstream ss ;
   ss << id << " "
      << (patient == NULL ? "no_patient":patient->name) << " "
-     << (injection == NULL ? "no_inj":injection->radionuclide->name) << " "
      << times.size() << " "
-     << (mask == NULL ? "no_mask":mask->roitype->name) << " "
-     << GetLabels(tags) << " ";
+     << syd::GetLabels(tags) << " ";
   for(auto i=0; i<times.size(); i++)
     ss << times[i] << " " << values[i] << " ";
   return ss.str();
@@ -90,17 +90,7 @@ void syd::Timepoints::DumpInTable_default(syd::PrintTable & ta) const
 {
   ta.Set("id", id);
   ta.Set("p", patient->name);
-  ta.Set("inj", injection->radionuclide->name);
   ta.Set("tags", GetLabels(tags));
-  if (mask != NULL) ta.Set("mask", mask->roitype->name);
-  else ta.Set("mask", "no_mask");
-  if (images.size() > 0) {
-    std::string s;
-    for(auto i:images) s += std::to_string(i->id)+",";
-    s.pop_back();
-    ta.Set("img", s);
-  }
-  else ta.Set("img", "no_img");
   ta.Set("nb", times.size());
   for(auto i=0; i<times.size(); i++)
     ta.Set("t"+std::to_string(i), times[i], 2);
@@ -135,27 +125,6 @@ void syd::Timepoints::DumpInTable_md5(syd::PrintTable & ta) const
 
 
 // --------------------------------------------------------------------
-syd::CheckResult syd::Timepoints::Check() const
-{
-  DD(" FIXME check Timepoints history ");
-  syd::CheckResult r;
-  return r;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Timepoints::GetTAC(syd::TimeActivityCurve & tac)
-{
-  tac.clear();
-  for(auto i=0; i<times.size(); i++) {
-    tac.AddValue(times[i], values[i], std_deviations[i]);
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 std::string syd::Timepoints::ToStringForMD5() const
 {
   std::stringstream ss;
@@ -163,24 +132,11 @@ std::string syd::Timepoints::ToStringForMD5() const
      << injection->id;
   for(auto i=0; i<times.size(); i++) {
     ss << std::setprecision(30)
-       << times[i] << values[i] << std_deviations[i];
+       << times[i] << values[i];
+    if (std_deviations.size() > i) ss << std_deviations[i];
   }
   return ss.str();
 }
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-void syd::Timepoints::CopyFrom(const syd::Timepoints::pointer & from)
-{
-  // Do not copy id, history, md5
-  syd::RecordWithTags::CopyFrom(from);
-  patient = from->patient;
-  injection = from->injection;
-  times = from->times;
-  values = from->values;
-  std_deviations = from->std_deviations;
-  images = from->images;
-  mask = from->mask;
-}
-// --------------------------------------------------------------------
