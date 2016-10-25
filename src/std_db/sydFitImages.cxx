@@ -97,7 +97,7 @@ void syd::FitImages::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("models", GetModelsName());
   std::stringstream ss;
   ss << nb_success_pixels << "/" << nb_pixels
-     << std::setprecision(1)
+     << std::setprecision(3)
      << "(" << (double)nb_success_pixels/(double)nb_pixels*100.0 << "%)";
   ta.Set("res", ss.str());
   ta.Set("out", GetOutputNames(), 150);
