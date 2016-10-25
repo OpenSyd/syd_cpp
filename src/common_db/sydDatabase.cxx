@@ -607,10 +607,16 @@ void syd::Database::Copy(std::string new_dbname, std::string new_folder)
     EXCEPTION("Exception while set temporary folder in DatabaseInformation");
   }
 
+  // Check new_folder
+  if (new_folder.find(PATH_SEPARATOR) != std::string::npos) {
+    LOG(FATAL) << "The new_folder must be a simple folder name, without path or subfolder.";
+  }
+
   // copy
   Copy(new_dbname);
-  std::string dbfolder = GetDatabaseAbsoluteFolder();
-  syd::copyDir(dbfolder, new_folder);
+  auto dbfolder = GetDatabaseAbsoluteFolder();
+  auto new_absolute_folder = syd::GetPathFromFilename(new_dbname)+PATH_SEPARATOR+cnew_folder;
+  syd::copyDir(dbfolder, new_absolute_folder);
 
   try {
     odb::transaction transaction (odb_db_->begin());
