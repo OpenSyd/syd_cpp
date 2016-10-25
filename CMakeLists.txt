@@ -186,18 +186,6 @@ CONFIGURE_FILE (cmake/SYDConfig.cmake.in SYDConfig.cmake @ONLY)
 
 
 #----------------------------------------------------------
-# tests
-include(CTest)
-if(BUILD_TESTING)
-  enable_testing()
-endif(BUILD_TESTING)
-if(BUILD_TESTING)
-  add_subdirectory(test)
-endif(BUILD_TESTING)
-#----------------------------------------------------------
-
-
-#----------------------------------------------------------
 # no install policy yet
 # DD(SYD_INCLUDE_FILES)
 # set(SYD_CMAKE_FILES  ${PROJECT_SOURCE_DIR}/cmake/UseSYD.cmake)

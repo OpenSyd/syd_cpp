@@ -615,7 +615,7 @@ void syd::Database::Copy(std::string new_dbname, std::string new_folder)
   // copy
   Copy(new_dbname);
   auto dbfolder = GetDatabaseAbsoluteFolder();
-  auto new_absolute_folder = syd::GetPathFromFilename(new_dbname)+PATH_SEPARATOR+cnew_folder;
+  auto new_absolute_folder = syd::GetPathFromFilename(new_dbname)+PATH_SEPARATOR+new_folder;
   syd::copyDir(dbfolder, new_absolute_folder);
 
   try {
