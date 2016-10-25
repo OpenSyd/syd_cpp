@@ -31,7 +31,7 @@ int main(int argc, char* argv[])
 {
   // Init
   SYD_INIT_GGO(syd_test5, 0);
-  LOG(WARNING) << "Need the test4 result";
+  LOG(WARNING) << "Use the test4 result";
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
