@@ -21,7 +21,7 @@
 
 // syd
 #include "sydImage.h"
-#include "sydStandardDatabase.h"
+#include "sydFitImages.h"
 #include "sydTimeIntegratedActivityImageFilter.h"
 
 // --------------------------------------------------------------------
@@ -84,8 +84,8 @@ namespace syd {
 
     std::vector<double> CheckInputs();
     typename MaskImageType::Pointer
-    CreateMaskFromThreshold(std::vector<ImageType::Pointer> itk_images,
-                            double min_activity);
+      CreateMaskFromThreshold(std::vector<ImageType::Pointer> itk_images,
+                              double min_activity);
 
     /// Output: insert the debug images in the db
     syd::Image::vector InsertDebugOutputImages(std::vector<std::string> & names);
