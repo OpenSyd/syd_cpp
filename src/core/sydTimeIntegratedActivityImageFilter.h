@@ -23,13 +23,15 @@
 #include "sydImageUtils.h"
 #include "sydFitModels.h"
 #include "sydFitOutputImage.h"
-#include "sydTimeIntegratedActivityFitOptions.h"
+#include "sydTimeIntegratedActivityFilter.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
   /// This class is used to create a pixel-based integrated activity.
-  class TimeIntegratedActivityImageFilter {
+  class TimeIntegratedActivityImageFilter:
+    public TimeIntegratedActivityFilter
+  {
 
   public:
     /// Constructor.
@@ -52,20 +54,13 @@ namespace syd {
     void AddInput(ImageType::Pointer image, double time);
     void ClearInput() { images_.clear(); }
     void SetMask(MaskImageType::Pointer m) { mask_ = m; }
-    void SetLambdaDecayConstantInHours(double l) { lambda_in_hours_ = l; }
-    void AddTimePointValue(double time, double value);
-    void SetOptions(syd::TimeIntegratedActivityFitOptions & options) { options_ = options; }
     void AddOutputImage(syd::FitOutputImage::pointer o);
-    void InitModels();
 
     /// Main function
     void Run();
 
     /// Helpers function
     Iterator4D GetIteratorAtPoint(double x, double y, double z);
-    syd::TimeActivityCurve::pointer GetCurrentTAC() const { return initial_tac_; }
-    syd::TimeActivityCurve::pointer GetWorkingTAC() const { return working_tac_; }
-    syd::FitModelBase::vector GetModels() const { return models_; }
     syd::FitOutputImage::vector GetOutputs() const { return outputs_; }
     std::vector<double> GetTimes() const { return times_; }
     int GetNumberOfPixels() const { return nb_pixels_; }
@@ -79,11 +74,6 @@ namespace syd {
     std::vector<ImageType::Pointer> images_;
     std::vector<double> times_;
     MaskImageType::Pointer mask_;
-    syd::TimeIntegratedActivityFitOptions options_;
-    double lambda_in_hours_;
-    std::vector<double> additional_point_times;
-    std::vector<double> additional_point_values;
-    syd::FitModelBase::vector models_;
     int nb_pixels_;
     int nb_successful_fit_;
 
@@ -92,18 +82,6 @@ namespace syd {
 
     /// Output
     syd::FitOutputImage::vector outputs_;
-
-    /// Options for the solver
-    ceres::Solver::Options * ceres_options_;
-    ceres::Solver::Summary ceres_summary_;
-    ceres::Solver::Summary current_ceres_summary_;
-
-    /// for computation
-    syd::TimeActivityCurve::pointer initial_tac_;
-    syd::TimeActivityCurve::pointer working_tac_;
-
-    /// Initialize the solver
-    void InitSolver();
 
     /// Initialize the outpus
     void InitOutputs();
@@ -115,20 +93,7 @@ namespace syd {
     void InitMask();
 
     /// Check the inputs (size etc)
-    void CheckInputs();
-
-    /// Try to fit a TAC with the given model
-    void FitTACWithModel(syd::FitModelBase::pointer model,
-                         syd::TimeActivityCurve::pointer tac);
-
-    /// Choose the best lmode according to Akaike criterion
-    int SelectBestModel(syd::FitModelBase::vector models,
-                        syd::TimeActivityCurve::pointer tac);
-
-    /// Compute the restricted tac from the max (3 points at min)
-    int GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
-                         syd::TimeActivityCurve::pointer restricted_tac);
-
+    virtual void CheckInputs();
 
   }; // class TimeIntegratedActivityImageFilter
 

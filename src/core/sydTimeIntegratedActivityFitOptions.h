@@ -39,11 +39,11 @@ namespace syd {
     void SetR2MinThreshold(double r) { R2_min_threshold_ = r; }
     void SetRestrictedFlag(bool b) { restricted_flag_ = b; }
     void AddModel(const std::string & model_name);
-    // void AddModels(const std::vector<std::string> & model_names);
-    // void AddModels(const std::string & model_names);
+    void ClearModels() { model_names_.clear(); }
     void SetAkaikeCriterion(const std::string & n);
     void AddTimeValue(double time, double value);
     void SetMaxNumIterations(int i) { max_num_iterations_ = i; }
+    void SetLambdaDecayConstantInHours(double l) { lambda_in_hours_ = l; }
 
     // Get model object
     syd::FitModelBase::vector GetModels() const;
@@ -51,15 +51,24 @@ namespace syd {
     bool GetRestrictedFlag() const { return restricted_flag_; }
     int GetMaxNumIterations() const { return max_num_iterations_; }
     std::string GetAkaikeCriterion() const { return akaike_criterion_; }
+    double GetLambdaDecayConstantInHours() const { return lambda_in_hours_; }
+    std::string ToString() const;
+    void Check() const;
+
+    /// Default function to print an element (must be inline here).
+    friend std::ostream& operator<<(std::ostream& os, const TimeIntegratedActivityFitOptions & p) {
+      os << p.ToString();
+      return os;
+    }
 
   protected:
-
     bool restricted_flag_;
     double R2_min_threshold_;
     std::set<std::string> model_names_;
     syd::FitModelBase::vector all_models_;
     int max_num_iterations_;
     std::string akaike_criterion_;
+    double lambda_in_hours_;
 
   }; // class TimeIntegratedActivityFitOptions
 

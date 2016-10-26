@@ -21,6 +21,8 @@
 #include "sydFileHelper.h"
 #include "sydRoiMaskImageHelper.h"
 #include "sydInjectionHelper.h"
+#include "sydImageStitch.h"
+#include "sydRoiStatisticHelper.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -425,7 +427,7 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
   syd::RoiStatistic::pointer stat;
   db->New(stat);
   stat->image = image;
-  syd::ComputeRoiStatistic(stat);
+  syd::UpdateRoiStatistic(stat);
 
   // activity by nb of counts
   double s = activity_at_acquisition / stat->sum;
@@ -506,5 +508,22 @@ void syd::SubstituteRadionuclide(syd::Image::pointer image,
   syd::ScaleImage(image, f1*f2);
   image->injection = new_injection;
   db->Update(image);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::vector<double> syd::GetTimesFromInjection(const syd::Image::vector images)
+{
+  std::vector<double> times;
+  for(auto image:images) {
+    if (image->injection == nullptr) {
+      EXCEPTION("Error no injection for image : " << image);
+    }
+    auto starting_date = image->injection->date;
+    double t = syd::DateDifferenceInHours(image->acquisition_date, starting_date);
+    times.push_back(t);
+  }
+  return times;
 }
 // --------------------------------------------------------------------

@@ -38,11 +38,11 @@
 #include "sydRoiType-odb.hxx"
 #include "sydRoiMaskImage-odb.hxx"
 #include "sydRoiStatistic-odb.hxx"
-
 #include "sydElastix-odb.hxx"
-// #include "sydCalibration-odb.hxx"
-// #include "sydTimepoints-odb.hxx"
-// #include "sydFitResult-odb.hxx"
+#include "sydFitImages-odb.hxx"
+#include "sydTimepoints-odb.hxx"
+#include "sydRoiTimepoints-odb.hxx"
+#include "sydFitTimepoints-odb.hxx"
 
 // itk
 #include <itkImage.h>
@@ -75,8 +75,8 @@ namespace syd {
 
     /// Find a record with the same MD5 than the input
     template<class RecordType>
-    bool FindSameMD5(const typename RecordType::pointer input,
-                     typename RecordType::pointer & output);
+      bool FindSameMD5(const typename RecordType::pointer input,
+                       typename RecordType::pointer & output);
 
   protected:
     /// Insert the tables

@@ -1,4 +1,10 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="289"/>
+
+  <changeset version="288"/>
+
+  <changeset version="280"/>
+
   <changeset version="279"/>
 
   <changeset version="278"/>

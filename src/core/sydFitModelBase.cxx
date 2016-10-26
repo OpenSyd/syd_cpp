@@ -79,7 +79,7 @@ syd::TimeActivityCurve::pointer syd::FitModelBase::GetTAC(const std::vector<doub
 
 
 // --------------------------------------------------------------------
-void syd::FitModelBase::SetParameters(std::vector<double> & p)
+void syd::FitModelBase::SetParameters(const std::vector<double> & p)
 {
   params_.clear();
   params_ = p;

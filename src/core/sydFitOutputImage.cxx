@@ -84,8 +84,8 @@ void syd::FitOutputImage::SetValue(double v)
 // --------------------------------------------------------------------
 syd::FitOutputImage_AUC::FitOutputImage_AUC():FitOutputImage()
 {
-  filename = "auc.mhd";
-  tag = "fit_auc";
+  filename = "auc_trap.mhd";
+  tag = "fit_auc_trapez";
 }
 // --------------------------------------------------------------------
 
@@ -103,8 +103,8 @@ void syd::FitOutputImage_AUC::Update(syd::FitModelBase::pointer model)
 // --------------------------------------------------------------------
 syd::FitOutputImage_Integrate::FitOutputImage_Integrate():FitOutputImage()
 {
-  filename = "integrate.mhd";
-  tag = "fit_integrate";
+  filename = "auc_integrate.mhd";
+  tag = "fit_auc_integrate";
 }
 // --------------------------------------------------------------------
 

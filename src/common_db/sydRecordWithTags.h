@@ -40,9 +40,6 @@ namespace syd {
     /// List of tags
     syd::Tag::vector tags;
 
-    /// Copy list of tags
-    void CopyFrom(const syd::RecordWithTags::pointer & from);
-
   protected:
     RecordWithTags();
 

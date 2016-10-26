@@ -30,6 +30,7 @@ syd::RecordWithComments::RecordWithComments()
 // --------------------------------------------------------------------
 std::string syd::RecordWithComments::GetAllComments() const
 {
+  if (comments.size() == 0) return "";
   std::stringstream ss;
   int i = 0;
   for(auto c:comments) {

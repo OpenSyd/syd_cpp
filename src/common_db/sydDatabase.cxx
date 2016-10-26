@@ -105,7 +105,7 @@ void syd::Database::OpenFromFile(std::string filename)
   if (file_version < current_version) { // should migrate ?
     LOG(WARNING) << "The version of the db schema in the file " << filename
                  << " is " << GetVersionAsString(file_version)
-                 << " while the current version is "
+                 << " while the current program version is "
                  << GetVersionAsString(current_version) << std::endl
                  << "You need db migration (but it is not always possible). "
                  << "Should I try (a backup is made before) ? ";
@@ -148,8 +148,11 @@ void syd::Database::TraceCallback(const char* sql)
 // --------------------------------------------------------------------
 void syd::Database::Dump(std::ostream & os)
 {
+  odb::schema_version file_version (odb_db_->schema_version(GetDatabaseSchema()));
   os << "Database file  : " << GetFilename() << std::endl;
-  os << "Database schema: " << GetDatabaseSchema() << std::endl;
+  os << "Database schema: " << GetDatabaseSchema()
+     << " " << GetVersionAsString(file_version)
+     << std::endl;
   os << "Database folder: " << GetDatabaseRelativeFolder();
   if (!fs::exists(GetDatabaseAbsoluteFolder()))
     os << warningColor << " -> does not exist ("
@@ -604,10 +607,16 @@ void syd::Database::Copy(std::string new_dbname, std::string new_folder)
     EXCEPTION("Exception while set temporary folder in DatabaseInformation");
   }
 
+  // Check new_folder
+  if (new_folder.find(PATH_SEPARATOR) != std::string::npos) {
+    LOG(FATAL) << "The new_folder must be a simple folder name, without path or subfolder.";
+  }
+
   // copy
   Copy(new_dbname);
-  std::string dbfolder = GetDatabaseAbsoluteFolder();
-  syd::copyDir(dbfolder, new_folder);
+  auto dbfolder = GetDatabaseAbsoluteFolder();
+  auto new_absolute_folder = syd::GetPathFromFilename(new_dbname)+PATH_SEPARATOR+new_folder;
+  syd::copyDir(dbfolder, new_absolute_folder);
 
   try {
     odb::transaction transaction (odb_db_->begin());

@@ -122,6 +122,8 @@ namespace syd {
   void SubstituteRadionuclide(syd::Image::pointer image,
                               syd::Radionuclide::pointer rad);
 
+  /// Get the times between injection and acquisition for a set of images. 
+  std::vector<double> GetTimesFromInjection(const syd::Image::vector images);
 
 } // namespace syd
 
