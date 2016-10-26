@@ -27,47 +27,48 @@ namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::RoiStatistic")
   /// Simple table to store a label and a description
-  class RoiStatistic : public syd::Record,
-                       public syd::RecordWithHistory,
-                       public syd::RecordWithTags,
-                       public syd::RecordWithComments {
+  class RoiStatistic :
+    public syd::Record,
+    public syd::RecordWithHistory,
+    public syd::RecordWithTags,
+    public syd::RecordWithComments {
   public:
 
 #pragma db not_null on_delete(cascade)
-    /// Linked image. If the image is deleted, the RoiStatistic also.
-    syd::Image::pointer image;
+      /// Linked image. If the image is deleted, the RoiStatistic also.
+      syd::Image::pointer image;
 
 #pragma db on_delete(cascade)
-    /// Linked mask. May be null (no mask). If the mask is deleted,
-    /// the RoiStatistic also.
-    syd::RoiMaskImage::pointer mask;
+      /// Linked mask. May be null (no mask). If the mask is deleted,
+      /// the RoiStatistic also.
+      syd::RoiMaskImage::pointer mask;
 
-    /// Stat values
-    double mean;
-    double std_dev;
-    double n;
-    double min;
-    double max;
-    double sum;
+      /// Stat values
+      double mean;
+      double std_dev;
+      double n;
+      double min;
+      double max;
+      double sum;
 
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(RoiStatistic, syd::RoiStatistic);
-    // ------------------------------------------------------------------------
+      // ------------------------------------------------------------------------
+      TABLE_DEFINE(RoiStatistic, syd::RoiStatistic);
+      // ------------------------------------------------------------------------
 
-    /// Write the element as a string
-    virtual std::string ToString() const;
+      /// Write the element as a string
+      virtual std::string ToString() const;
 
-    /// Add a line in the given PrintTable
-    virtual void DumpInTable(syd::PrintTable & table) const;
+      /// Add a line in the given PrintTable
+      virtual void DumpInTable(syd::PrintTable & table) const;
 
-    /// Callback : delete the associated files when the image is deleted.
-    void Callback(odb::callback_event, odb::database&) const;
-    void Callback(odb::callback_event, odb::database&);
+      /// Callback : delete the associated files when the image is deleted.
+      void Callback(odb::callback_event, odb::database&) const;
+      void Callback(odb::callback_event, odb::database&);
 
   protected:
-    RoiStatistic();
+      RoiStatistic();
 
-  }; // end of class
+    }; // end of class
 
 } // end namespace
 // --------------------------------------------------------------------

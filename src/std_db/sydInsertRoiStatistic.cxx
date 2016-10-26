@@ -85,29 +85,56 @@ int main(int argc, char* argv[])
     // Loop over masks
     syd::RoiStatistic::pointer stat;
     for(auto mask:masks) {
+      enum Mode {create, update, skip};
+      Mode mode=create;
+
+      if (!args_info.force_flag) {
+        // Check if similar RoiStatistic already exist
+        auto e = syd::FindRoiStatistic(image, mask);
+        if ((e.size() == 1) and (args_info.update_flag)) {
+          mode = update;
+          stat = e[0];
+        } else {
+          if (e.size() != 0) mode = skip;
+        }
+        if (mode == skip) {
+          std::stringstream ss;
+          for(auto ee:e) ss << ee << " ";
+          LOG(WARNING) << "Similar RoiStatistic already exists, I skip: " << ss.str();
+          continue;
+        }
+      }
+
+      // Get the mask filename (if needed)
       std::string mask_filename = "";
       if (args_info.resampled_mask_given)
         mask_filename = mask->roitype->name+"_"+std::to_string(image->id)
           +"_"+args_info.resampled_mask_arg;
 
-      if (args_info.tia_flag)
-        stat = syd::NewRoiStatistic(tias[i], mask, mask_filename);
+      // Compute RoiStatistic
+      syd::Image::pointer mask2 =nullptr;
+      if (args_info.tia_flag) {
+        mask2 = tias[i]->GetOutput("fit_success");
+        for(auto c:tias[i]->comments)
+          stat->comments.push_back(c); // copy comments from the tia
+      }
+
+      if (mode == update)
+        syd::ComputeRoiStatistic(stat, mask2, mask_filename);
       else
-        stat = syd::NewRoiStatistic(image, mask, mask_filename);
-      // Tags
+        stat = syd::NewRoiStatistic(image, mask, mask2, mask_filename);
+
+      // Set the command lines tags
       syd::SetTagsFromCommandLine(stat->tags, db, args_info);
       syd::SetCommentsFromCommandLine(stat->comments, db, args_info);
 
-      // Check already exist something similar ?
-      if (!args_info.force_flag) {
-        auto s = syd::FindSameRoiStatistic(stat);
-        if (s != nullptr) {
-          LOG(WARNING) << "Same RoiStatistic already exists, I skip it: " << s;
-        }
-        else {
-          db->Insert(stat);
-          LOG(1) << "Insert RoiStatistic: " << stat;
-        }
+      if (mode == update) {
+        db->Update(stat);
+        LOG(1) << "Update RoiStatistic: " << stat;
+      }
+      else  {
+        db->Insert(stat);
+        LOG(1) << "Insert RoiStatistic: " << stat;
       }
     }
     ++i;

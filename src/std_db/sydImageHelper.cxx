@@ -398,7 +398,6 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
   //   FIXME check pixel type = counts (warn or forcae
   // inverse ComputeDetectedCountsByAcitvityInMBq
 
-
   auto injection = image->injection;
   double injected_activity = injection->activity_in_MBq;
   double time = syd::DateDifferenceInHours(image->acquisition_date, injection->date);
@@ -410,7 +409,7 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
   syd::RoiStatistic::pointer stat;
   db->New(stat);
   stat->image = image;
-  syd::UpdateRoiStatistic(stat);
+  syd::ComputeRoiStatistic(stat);
 
   // activity by nb of counts
   double s = activity_at_acquisition / stat->sum;
