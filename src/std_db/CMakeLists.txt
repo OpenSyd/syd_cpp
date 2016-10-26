@@ -280,6 +280,19 @@ add_executable(sydInsertTimeIntegratedActivityImage
   ${sydInsertTimeIntegratedActivityImage_GGO_C})
 target_link_libraries(sydInsertTimeIntegratedActivityImage ${SYD_STD_DB_LIBRARY})
 
+# Create image of integrated activity
+wrap_ggo(sydInsertRoiBasedTimeIntegratedActivity_GGO_C
+  sydInsertRoiBasedTimeIntegratedActivity.ggo
+  sydCommandLineWithFitOptions.ggo
+  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertRoiBasedTimeIntegratedActivity
+  sydInsertRoiBasedTimeIntegratedActivity.cxx
+  sydTimeIntegratedActivityImageBuilder.cxx
+  ${sydInsertRoiBasedTimeIntegratedActivity_GGO_C})
+target_link_libraries(sydInsertRoiBasedTimeIntegratedActivity ${SYD_STD_DB_LIBRARY})
+
 #----------------------------------------------------------
 # External tool: clitkExtractPatient
 wrap_ggo(syd_clitkExtractPatient_GGO_C

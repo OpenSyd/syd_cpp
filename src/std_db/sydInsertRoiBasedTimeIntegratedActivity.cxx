@@ -49,33 +49,26 @@ int main(int argc, char* argv[])
   std::vector<std::string> roi_names;
   for(auto i=0; i<args_info.inputs_num; i++) {
     std::string s = args_info.inputs[i];
-    DD(s);
     int v;
     try {
       v = std::stoi(s);
-      DD(v);
       ids.push_back(v);
     } catch(std::exception & e) {
       roi_names.push_back(s);
     }
   }
-  DDS(ids);
-  DDS(roi_names);
   syd::FitImages::vector tias;
   db->Query(tias, ids);
   if (tias.size() == 0) {
     LOG(1) << "No FitImages.";
     return EXIT_SUCCESS;
   }
-  DDS(tias);
-
 
   // Loop on FitImages
   for(auto tia:tias) {
-    DD(tia);
-
     // loop on roi_names
     for(auto & roi_name:roi_names) {
+
       // Consider the masks
       syd::RoiMaskImage::vector masks;
       if (roi_name == "all") {
@@ -87,7 +80,6 @@ int main(int argc, char* argv[])
         // find all masks with the same roi_name and frame_of_reference_uid
         masks = syd::FindRoiMaskImage(tia->images[0], roi_name);
       }
-      DDS(masks);
 
       if (masks.size() == 0) {
         LOG(WARNING) << "No masks found for this image, I do nothing: " << tia->images[0];
@@ -95,83 +87,61 @@ int main(int argc, char* argv[])
 
       // Loop on mask
       for(auto mask:masks) {
-        DD(mask);
 
         // Insert roi stats for every images
         syd::RoiStatistic::vector stats;
         for(auto image:tia->images) {
-          auto stat = syd::NewRoiStatistic(image, mask);
+
+          // RoiStatistic
+          auto e = syd::FindRoiStatistic(image, mask);
+          syd::RoiStatistic::pointer stat;
+          if (e.size() == 1) stat = e[0]; // if already exist, do not recompute
+          if (e.size() == 0) { // if not compute it
+            stat = syd::NewRoiStatistic(image, mask);
+            db->Insert(stat);            
+          }
+          if (e.size() >  1) {
+            for(auto ee:e) std::cout << ee << std::endl;
+            LOG(FATAL) << "Error several RoiStatistic exist for this image/mask pair.";
+          }
           stats.push_back(stat);
-          DD(stat);
-        }
-        for(auto stat:stats) {
-          auto s = syd::FindSameRoiStatistic(stat);
-          if (s != nullptr) {
-            LOG(WARNING) << "Same RoiStatistic already exists, I skip it: " << s;
-          }
-          else {
-            LOG(1) << "Insert RoiStatistic: " << stat;
-            db->Insert(stat);
-          }
         }
 
-        // Insert a new timepoints
-        auto rtp = syd::NewTimepoints(stats); // RoiTimepoints
-        DD(rtp);
-        DD("check already exist ?");
+        // Timepoints
+        syd::Timepoints::pointer rtp;
+        auto ertp = syd::FindRoiTimepoints(stats);
+        if (ertp.size() == 1) rtp = ertp[0];
+        if (ertp.size() == 0) {
+          rtp = syd::NewTimepoints(stats); // RoiTimepoints
+          db->Insert(rtp);
+        }
+        if (ertp.size() > 1) {
+          for(auto e:ertp) std::cout << e << std::endl;
+          LOG(FATAL) << "Error several RoiTimepoints exist for this list of stats.";
+        }
 
-        // Fit 
+        // Fit
+        syd::FitTimepoints::pointer res;
         auto options = tia->GetOptions();
-        auto res = syd::NewFitTimepoints(rtp, options);
-        DD(res);
-        DD("check already exist ?");
+        auto eres = syd::FindFitTimepoints(rtp, options);
+        if (eres.size() == 0) {
+          res = syd::NewFitTimepoints(rtp, options);
+          db->Insert(res);
+          LOG(1) << "Insert FitTimepoints: " << res;
+        }
+        if (eres.size() == 1) {
+          res = eres[0];
+          syd::ComputeFitTimepoints(res);
+          db->Update(res);
+          LOG(1) << "Update FitTimepoints: " << res;
+        }
+        if (eres.size() > 1) {
+          LOG(FATAL) << "Error several FitTimepoints exist.";
+        }
 
       } // end loop mask
     }
   }
-  DD("end");
-
-
-  // // get models names
-  // std::vector<std::string> model_names;
-  // for(auto i=0; i<args_info.model_given; i++)
-  //   model_names.push_back(args_info.model_arg[i]);
-  // if (model_names.size() == 0)
-  //   model_names.push_back("f4"); // default model
-  // DD(model_names);
-
-  // // Fit options
-  // syd::TimeIntegratedActivityFitOptions options;
-  // options.SetRestrictedFlag(args_info.restricted_tac_flag);
-  // options.SetR2MinThreshold(args_info.r2_min_arg);
-  // options.SetMaxNumIterations(args_info.iterations_arg);
-  // options.SetAkaikeCriterion(args_info.akaike_arg);
-  // for(auto m:model_names) options.AddModel(m);
-  // //  options.AddTimeValue(0,0);
-  // // options.AddTimeValue(0,0);
-
-  // // Main builder
-  // syd::TimeIntegratedActivityImageBuilder builder;
-  // builder.SetInput(images);
-  // builder.SetImageActivityThreshold(args_info.min_activity_arg);
-  // builder.SetOptions(options);
-  // builder.SetDebugOutputFlag(args_info.debug_images_flag);
-
-  // // Go !
-  // auto tia = builder.Run();
-  // syd::SetCommentsFromCommandLine(tia->comments, db, args_info);
-  // db->Insert(tia);
-
-  // // Results
-  // for(auto output:tia->outputs) {
-  //   syd::SetImageInfoFromCommandLine(output, args_info);
-  //   syd::SetTagsFromCommandLine(output->tags, db, args_info);
-  //   syd::SetCommentsFromCommandLine(output->comments, db, args_info);
-  //   db->Update(output);
-  // }
-  // auto s = tia->nb_pixels;
-  // auto n = tia->nb_success_pixels;
-  // LOG(1) << "Time Integrated Activity: " << tia;
 
   // This is the end, my friend.
 }
