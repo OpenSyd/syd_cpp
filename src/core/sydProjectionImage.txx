@@ -30,7 +30,7 @@ syd::Projection(const ImageType * input,
 {
   //Project the image along dimension
   auto projection = syd::Projection<ImageType, OutputImageType>(input, dimension);
-  
+
   //Compute the mean if the flag is on
   if(mean)
   {
@@ -42,9 +42,9 @@ syd::Projection(const ImageType * input,
     divideImageFilter->SetInput(projection);
     divideImageFilter->SetScale(1/size);
     divideImageFilter->Update();
-    projection = divideImageFilter->GetOutput();    
+    projection = divideImageFilter->GetOutput();
   }
-  
+
   //Flip the image in order to have the head at the top and the feet at the bottom (flag ? car pas intéressant tout le temps)
   if(flip)
   {
@@ -54,11 +54,11 @@ syd::Projection(const ImageType * input,
       //I wanted to use PermuteAxesImageFilter but to have the correct orientation (ie. head at the top),
       //I have to use FlipImageFilter twice.
       //And PermuteAxesImageFilter save the image with an wrong direction matrix, so finally I have to correct it
-      
+
       itk::FixedArray<bool, 2> flipAxes;
       flipAxes[0] = false;
       flipAxes[1] = true;
-      
+
       typedef itk::FlipImageFilter <OutputImageType> FlipImageFilterType;
       typename FlipImageFilterType::Pointer flipFilter = FlipImageFilterType::New();
       flipFilter->SetInput(projection);
@@ -67,12 +67,12 @@ syd::Projection(const ImageType * input,
         flipFilter->SetCoordinateTolerance(-flipFilter->GetCoordinateTolerance());
       flipFilter->Update();
       projection = flipFilter->GetOutput();
-      
+
       typedef itk::PermuteAxesImageFilter<OutputImageType> PermuteAxesImageFilterType;
       itk::FixedArray<unsigned int, 2> order;
       order[0] = 1;
       order[1] = 0;
- 
+
       typename PermuteAxesImageFilterType::Pointer permuteAxesFilter = PermuteAxesImageFilterType::New();
       permuteAxesFilter->SetInput(projection);
       permuteAxesFilter->SetOrder(order);
@@ -80,7 +80,7 @@ syd::Projection(const ImageType * input,
         permuteAxesFilter->SetCoordinateTolerance(-permuteAxesFilter->GetCoordinateTolerance());
       permuteAxesFilter->Update();
       projection = permuteAxesFilter->GetOutput();
-      
+
       typename FlipImageFilterType::Pointer flipFilter2 = FlipImageFilterType::New();
       flipFilter2->SetInput(projection);
       flipFilter2->SetFlipAxes(flipAxes);
@@ -88,14 +88,14 @@ syd::Projection(const ImageType * input,
         flipFilter2->SetCoordinateTolerance(-flipFilter2->GetCoordinateTolerance());
       flipFilter2->Update();
       projection = flipFilter2->GetOutput();
-      
+
       typename OutputImageType::DirectionType matrix;
       matrix[0][0] = 1;
       matrix[1][0] = 0;
       matrix[0][1] = 0;
       matrix[1][1] = 1;
-      projection->SetDirection(matrix);      
-      
+      projection->SetDirection(matrix);
+
     }
     else if (dimension == 1)
     {
@@ -103,7 +103,7 @@ syd::Projection(const ImageType * input,
       itk::FixedArray<bool, 2> flipAxes;
       flipAxes[0] = false;
       flipAxes[1] = true;
-      
+
       typedef itk::FlipImageFilter <OutputImageType> FlipImageFilterType;
       typename FlipImageFilterType::Pointer flipFilter = FlipImageFilterType::New ();
       flipFilter->DebugOn();
@@ -115,9 +115,9 @@ syd::Projection(const ImageType * input,
       projection = flipFilter->GetOutput();
     }
   }
-  
+
   return projection;
-  
+
 }
 //--------------------------------------------------------------------
 
@@ -127,7 +127,7 @@ template<class ImageType, class OutputImageType>
 typename OutputImageType::Pointer
 syd::Projection(const ImageType * input, double dimension)
 {
-  
+
   //typedef typename ImageType::PixelType PixelType;
   //const int Dim = ImageType::ImageDimension;
   //typedef itk::Image<PixelType,Dim-1> OutputImageType;
@@ -139,6 +139,6 @@ syd::Projection(const ImageType * input, double dimension)
   filter->SetInput(input);
   filter->Update();
   return filter->GetOutput();
-  
+
 }
 //--------------------------------------------------------------------
