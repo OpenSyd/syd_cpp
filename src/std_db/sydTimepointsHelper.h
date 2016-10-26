@@ -30,6 +30,13 @@ namespace syd {
   /// Create a new timepoints from a set of RoiStatistics
   syd::RoiTimepoints::pointer NewTimepoints(const syd::RoiStatistic::vector stats);
 
+  /// Retrive similar RoiTimepoints sharing the same list of stats
+  syd::RoiTimepoints::vector FindRoiTimepoints(const syd::RoiStatistic::vector stats);
+
+  /// Retrive similar FitTimepoints sharing the same tp and options
+  syd::FitTimepoints::vector FindFitTimepoints(const syd::Timepoints::pointer tp,
+                                               const syd::TimeIntegratedActivityFitOptions & options);
+
   /// Create a TAC from a tp
   syd::TimeActivityCurve::pointer GetTAC(const syd::Timepoints::pointer tp);
   void GetTAC(const syd::Timepoints::pointer tp, syd::TimeActivityCurve::pointer tac);
@@ -40,8 +47,12 @@ namespace syd {
 
   /// Fit timepoints
   syd::FitTimepoints::pointer
-    NewFitTimepoints(syd::Timepoints::pointer tp,
+    NewFitTimepoints(const syd::Timepoints::pointer tp,
                      syd::TimeIntegratedActivityFitOptions & options);
+
+  /// Fit timepoints
+  void ComputeFitTimepoints(syd::FitTimepoints::pointer fit);
+
 } // end namespace
 // --------------------------------------------------------------------
 
