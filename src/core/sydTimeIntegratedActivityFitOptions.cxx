@@ -101,13 +101,11 @@ void syd::TimeIntegratedActivityFitOptions::AddTimeValue(double time, double val
 // --------------------------------------------------------------------
 std::string syd::TimeIntegratedActivityFitOptions::GetModelsName() const
 {
-  DDF();
   std::stringstream ss;
   auto models = GetModels();
   for(auto m:models)
     ss << m->GetName() << " ";
   auto s = ss.str();
-  DD(s);
   return syd::trim(s);
 }
 // --------------------------------------------------------------------
