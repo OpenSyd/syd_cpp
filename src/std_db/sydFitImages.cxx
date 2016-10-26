@@ -159,3 +159,13 @@ void syd::FitImages::Callback(odb::callback_event event,
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+syd::TimeIntegratedActivityFitOptions syd::FitImages::GetOptions() const
+{
+  auto options = syd::FitOptions::GetOptions();
+  if (images.size() > 0)
+    options.SetLambdaDecayConstantInHours(images[0]->injection->GetLambdaDecayConstantInHours());
+  return options;
+}
+// --------------------------------------------------------------------
+

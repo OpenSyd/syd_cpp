@@ -1,0 +1,10 @@
+#File sydInsertRoiBasedTimeIntegratedActivity.ggo
+
+package "syd"
+version "0.4"
+usage "sydInsertRoiBasedTimeIntegratedActivity <image_ids> <roi_name>"
+description "Create a FitTimepoints that fit region based time activity 
+- <list_of_fitimages_ids>     list FitImages id to get the images list
+- <roi_name>                  list of roi_names (or 'all')
+"
+

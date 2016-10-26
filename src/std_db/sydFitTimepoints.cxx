@@ -185,3 +185,12 @@ syd::FitModelBase::pointer syd::FitTimepoints::NewModel() const
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+syd::TimeIntegratedActivityFitOptions syd::FitTimepoints::GetOptions() const
+{
+  auto options = syd::FitOptions::GetOptions();
+  options.SetLambdaDecayConstantInHours(timepoints->injection->GetLambdaDecayConstantInHours());
+  return options;
+}
+// --------------------------------------------------------------------
+
