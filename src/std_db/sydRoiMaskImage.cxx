@@ -26,7 +26,7 @@
 // --------------------------------------------------------------------
 syd::RoiMaskImage::RoiMaskImage():Image()
 {
-  roitype = NULL;
+  roitype = nullptr;
 }
 // --------------------------------------------------------------------
 
@@ -36,7 +36,7 @@ std::string syd::RoiMaskImage::ToString() const
 {
   std::stringstream ss ;
   ss << syd::Image::ToString() << " "
-     << (roitype == NULL ? empty_value:roitype->name)
+     << (roitype == nullptr ? empty_value:roitype->name)
      << " ";
   return ss.str();
 }
@@ -71,7 +71,7 @@ void syd::RoiMaskImage::DumpInTable(syd::PrintTable & ta) const
       f == "ref_frame" or
       f == "history" or
       f == "file")
-    ta.Set("roi", roitype->name);
+    ta.Set("roi", (roitype != nullptr? roitype->name:empty_value));
 }
 // --------------------------------------------------
 

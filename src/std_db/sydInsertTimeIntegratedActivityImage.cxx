@@ -79,38 +79,22 @@ int main(int argc, char* argv[])
   builder.SetInput(images);
   builder.SetImageActivityThreshold(args_info.min_activity_arg);
   builder.SetOptions(options);
-  if (args_info.debug_images_in_db_flag) args_info.debug_images_flag = true;
   builder.SetDebugOutputFlag(args_info.debug_images_flag);
 
   // Go !
-  builder.Run();
+  auto tia = builder.Run();
+  db->Insert(tia);
 
   // Results
-  auto output = builder.InsertOutputImage();
+  auto output = tia->outputs[0]; //builder.InsertOutputImage();
   syd::SetImageInfoFromCommandLine(output, args_info);
   syd::SetTagsFromCommandLine(output->tags, db, args_info);
   syd::SetCommentsFromCommandLine(output->comments, db, args_info);
   db->Update(output);
-  LOG(1) << "Time Integrated Image (tia) is: " << output;
-  double n = builder.GetFilter().GetNumberOfPixels();
-  double s = builder.GetFilter().GetNumberOfSuccessfullyFitPixels();
-  LOG(1) << "Successfully fit pixels: "
-         << s << "/" << n << " (" << (s/n*100.0) << "%)";
+  auto s = tia->nb_pixels;
+  auto n = tia->nb_success_pixels;
+  LOG(1) << "TIA : " << tia;
 
-  // Debug output
-  if (args_info.debug_images_flag) {
-    if (!args_info.debug_images_in_db_flag)
-      builder.WriteDebugOutput(); // write files
-    else { // insert image in the db
-      auto outputs = builder.InsertDebugOutputImages();
-      // Output other images if needed
-      for(auto o:outputs) {
-        if (o->id != output->id) {
-          LOG(2) << "\tDebug images: " << o;
-        }
-      }
-    }
-  }
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

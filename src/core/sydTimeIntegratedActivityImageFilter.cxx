@@ -25,7 +25,8 @@
 #include <itkImageRegionConstIterator.h>
 
 // --------------------------------------------------------------------
-syd::TimeIntegratedActivityImageFilter::TimeIntegratedActivityImageFilter()
+syd::TimeIntegratedActivityImageFilter::TimeIntegratedActivityImageFilter():
+  TimeIntegratedActivityFilter()
 {
   mask_ = nullptr;
 }
@@ -35,7 +36,6 @@ syd::TimeIntegratedActivityImageFilter::TimeIntegratedActivityImageFilter()
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageFilter::~TimeIntegratedActivityImageFilter()
 {
-  delete ceres_options_;
 }
 // --------------------------------------------------------------------
 
@@ -44,6 +44,7 @@ syd::TimeIntegratedActivityImageFilter::~TimeIntegratedActivityImageFilter()
 void syd::TimeIntegratedActivityImageFilter::Run()
 {
   // Check inputs: size, times, negative values ?
+  options_.Check();
   CheckInputs();
 
   // Initialisation: mask (create if do not exist)
@@ -62,7 +63,7 @@ void syd::TimeIntegratedActivityImageFilter::Run()
   InitOutputs();
 
   // Initialisation: Models
-  InitModels();
+  models_ = options_.GetModels();
 
   // Initialisation: Solver
   InitSolver();
@@ -142,65 +143,6 @@ int syd::TimeIntegratedActivityImageFilter::FitOnePixel(Iterator4D it)
 
   // Select best one
   return SelectBestModel(models_, working_tac_);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-int syd::TimeIntegratedActivityImageFilter::
-GetRestrictedTac(syd::TimeActivityCurve::pointer initial_tac,
-                 syd::TimeActivityCurve::pointer restricted_tac)
-{
-  restricted_tac->clear();
-  // Select only the end of the curve from the largest value find from
-  // the end
-  int i = initial_tac->FindIndexOfMaxValueFromTheEnd(3);
-  for(int j=i; j<initial_tac->size(); j++)
-    restricted_tac->AddValue(initial_tac->GetTime(j), initial_tac->GetValue(j));
-  return i;
-}
-// --------------------------------------------------------------------
-
-
-
-
-
-// --------------------------------------------------------------------
-void syd::TimeIntegratedActivityImageFilter::InitSolver()
-{
-  // Solve
-  ceres_options_ = new ceres::Solver::Options;
-  ceres_options_->max_num_iterations = options_.GetMaxNumIterations();
-  ceres_options_->linear_solver_type = ceres::DENSE_QR; // because few parameters/data
-  //  ceres_options_->linear_solver_type = ceres::DENSE_SCHUR;
-  ceres_options_->minimizer_progress_to_stdout = false;
-  ceres_options_->trust_region_strategy_type = ceres::LEVENBERG_MARQUARDT; // LM is the default
-
-  /*
-    DD(ceres_options_->min_line_search_step_size);
-    DD(ceres_options_->max_line_search_step_contraction);
-    DD(ceres_options_->function_tolerance);
-    DD(ceres_options_->parameter_tolerance);
-    DD(ceres_options_->num_threads);
-  */
-
-  //ceres_options_->function_tolerance = 1e-8;
-
-  //ceres_options_->trust_region_strategy_type = ceres::DOGLEG;// (LM seems faster)
-  //ceres_options_->dogleg_type = ceres::SUBSPACE_DOGLEG;
-  ceres_options_->logging_type = ceres::SILENT;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::TimeIntegratedActivityImageFilter::InitModels()
-{
-  models_.clear();
-  models_ = options_.GetModels();
-  for(auto m:models_) {
-    m->SetLambdaDecayConstantInHours(lambda_in_hours_);
-  }
 }
 // --------------------------------------------------------------------
 
@@ -289,9 +231,9 @@ void syd::TimeIntegratedActivityImageFilter::CheckInputs()
   // Check image size
   bool b = true;
   for(auto image:images_)
-    b = b and syd::CheckImageSameSizeAndSpacing<3>(images_[0], image);
+    b = b and syd::ImagesHaveSameSupport<ImageType, ImageType>(images_[0], image);
   if (mask_ != nullptr)
-    b = b and syd::CheckImageSameSizeAndSpacing<3>(images_[0], mask_);
+    b = b and syd::ImagesHaveSameSupport<ImageType, MaskImageType>(images_[0], mask_);
   if (!b) {
     EXCEPTION("The images + mask must have the same size/spacing, abort.");
   }
@@ -313,72 +255,6 @@ void syd::TimeIntegratedActivityImageFilter::
 AddOutputImage(syd::FitOutputImage::pointer o)
 {
   outputs_.push_back(o);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::TimeIntegratedActivityImageFilter::
-FitTACWithModel(syd::FitModelBase::pointer model,
-                syd::TimeActivityCurve::pointer tac)
-{
-  ceres::Problem problem;// New problem each time. (I did not manage to change that)
-  model->ComputeStartingParametersValues(tac);
-  model->SetProblemResidual(&problem, *tac);
-  ceres::Solve(*ceres_options_, &problem, &model->GetSummary()); // Go !
-  //    DD(model->GetSummary().FullReport());
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-int syd::TimeIntegratedActivityImageFilter::
-SelectBestModel(syd::FitModelBase::vector models,
-                syd::TimeActivityCurve::pointer tac)
-{
-  bool verbose=false; // Debug
-  int best = -1;
-  double R2_threshold = options_.GetR2MinThreshold();
-  double min_Akaike_criterion = 666.0;
-  double best_R2 = 0.0;
-  if (verbose) {
-    std::cout << initial_tac_ << std::endl;
-    std::cout << working_tac_ << std::endl;
-  }
-
-  for(auto i=0; i<models.size(); i++) {
-    auto & m = models[i];
-    double R2 = m->ComputeR2(tac);
-    if (verbose) std::cout << m->GetName()
-                           << " SS = " << m->ComputeRSS(tac)
-                           << " R2 = " << R2;
-    if (R2 > R2_threshold) {
-      double criterion;
-      if (options_.GetAkaikeCriterion() == "AIC") {
-        criterion = m->ComputeAIC(tac);
-      } else {
-        if (options_.GetAkaikeCriterion() == "AICc") {
-          criterion = m->ComputeAICc(tac);
-        } else {
-          LOG(FATAL) << "Akaike criterion '"
-                     << options_.GetAkaikeCriterion() << "' not known"
-                     << ". Use AIC or AICc";
-        }
-      }
-
-      if (verbose) std::cout << " valid=" <<  m->IsAICcValid(tac->size())
-                             << " AICc = " << m->ComputeAICc(tac)
-                             << " AIC = " << m->ComputeAIC(tac) << std::endl;
-      if (criterion < min_Akaike_criterion) {
-        best = i;
-        min_Akaike_criterion = criterion;
-        best_R2 = R2;
-      }
-    }
-    else if (verbose) std::cout << std::endl;
-  }
-  if (verbose) std::cout << best << std::endl;
-  return best;
 }
 // --------------------------------------------------------------------
 

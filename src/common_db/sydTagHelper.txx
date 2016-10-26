@@ -32,8 +32,10 @@ void syd::SetTagsFromCommandLine(syd::Tag::vector & tags,
       syd::Tag::vector tags_temp;
       try {
         tags_temp = syd::FindTags(db, tagname);
-      } catch(std::exception & e) { } // ignore unknown tag
-      syd:: RemoveTag(tags, tags_temp);
+      } catch(std::exception & e) {
+        LOG(WARNING) << "Cannot remove unknown tag '" << tagname << "'.";
+      } // ignore unknown tag
+      syd::RemoveTag(tags, tags_temp);
     }
   }
 

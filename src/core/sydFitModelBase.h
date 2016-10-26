@@ -72,9 +72,8 @@ namespace syd {
     virtual double GetEffHalfLife() const;
     virtual int GetNumberOfExpo() const = 0;
 
-
     void SetLambdaDecayConstantInHours(double l) { lambda_in_hours_ = l; }
-    void SetParameters(std::vector<double> & p);
+    void SetParameters(const std::vector<double> & p);
     virtual void SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac);
 
     virtual void Scale(double s) = 0;

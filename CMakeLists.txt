@@ -122,8 +122,11 @@ if("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -fPIC"  )
   set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fPIC"  )
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC"  )
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp" )
 endif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
+
+if(NOT APPLE)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp" )
+endif(NOT APPLE)
 #----------------------------------------------------------
 
 
@@ -146,6 +149,7 @@ set(SYD_CORE_LIBRARIES
   sydCore
   sydFit
   sydItkUtils
+  ${CERES_LIBRARIES} glog
   ${SQLITE3_LIBRARY}
   ${ODB_SQLITE_LIBRARIES}
   ${ODB_LIBODB_LIBRARIES}
@@ -178,18 +182,6 @@ LIST(APPEND SYD_INCLUDE_DIRS "${PROJECT_SOURCE_DIR}/src/plot")
 SET (SYD_USE_FILE "${SYD_SOURCE_DIR}/cmake/UseSYD.cmake")
 SET (SYD_LIBRARY_DIRS ${SYD_LIBRARY_PATH})
 CONFIGURE_FILE (cmake/SYDConfig.cmake.in SYDConfig.cmake @ONLY)
-#----------------------------------------------------------
-
-
-#----------------------------------------------------------
-# tests
-include(CTest)
-if(BUILD_TESTING)
-  enable_testing()
-endif(BUILD_TESTING)
-if(BUILD_TESTING)
-  add_subdirectory(test)
-endif(BUILD_TESTING)
 #----------------------------------------------------------
 
 

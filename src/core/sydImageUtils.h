@@ -22,7 +22,6 @@
 // syd
 #include "sydCommon.h"
 #include "sydFileUtils.h"
-#include "sydImageCrop.h" // need for stitch. FIXME to change
 #include "sydDicomUtils.h"
 
 // itk
@@ -44,79 +43,83 @@ namespace syd {
 
   //--------------------------------------------------------------------
   template<class PixelType>
-  typename itk::Image<PixelType,3>::Pointer
-  ReadDicomFromSingleFile(std::string filename);
+    typename itk::Image<PixelType,3>::Pointer
+    ReadDicomFromSingleFile(std::string filename);
 
   template<class PixelType>
-  typename itk::Image<PixelType,3>::Pointer
-  ReadDicomSerieFromFolder(std::string folder, std::string serie_uid);
+    typename itk::Image<PixelType,3>::Pointer
+    ReadDicomSerieFromFolder(std::string folder, std::string serie_uid);
 
   template<class PixelType>
-  typename itk::Image<PixelType,3>::Pointer
-  ReadDicomSerieFromListOfFiles(std::string folder, const std::vector<std::string> & files);
+    typename itk::Image<PixelType,3>::Pointer
+    ReadDicomSerieFromListOfFiles(std::string folder, const std::vector<std::string> & files);
 
   template<class PixelType>
-  void UpdateDicomImageInformation(typename itk::Image<PixelType,3>::Pointer image,
-                                   const std::string & filename);
+    void UpdateDicomImageInformation(typename itk::Image<PixelType,3>::Pointer image,
+                                     const std::string & filename);
   //--------------------------------------------------------------------
 
 
   //--------------------------------------------------------------------
   template<class ImageType>
-  void WriteImage(typename ImageType::Pointer image, std::string filename);
+    void WriteImage(typename ImageType::Pointer image, std::string filename);
 
   void WriteImage(typename itk::ImageBase<3>::Pointer image, std::string filename);
 
   template<class ImageType>
-  typename ImageType::Pointer ReadImage(std::string filename);
+    typename ImageType::Pointer ReadImage(std::string filename);
 
   itk::ImageIOBase::Pointer ReadImageHeader(const std::string & filename);
 
   template<unsigned int Dimension>
-  typename itk::ImageBase<Dimension>::Pointer GetImageBase(const itk::ImageIOBase::Pointer & reader);
+    typename itk::ImageBase<Dimension>::Pointer GetImageBase(const itk::ImageIOBase::Pointer & reader);
 
   template<class ImageType>
-  typename ImageType::Pointer CreateImageLike(const typename itk::ImageBase<ImageType::ImageDimension> * like);
+    typename ImageType::Pointer CreateImageLike(const typename itk::ImageBase<ImageType::ImageDimension> * like);
 
   template<class ImageType>
-  std::string ComputeImageMD5(typename ImageType::Pointer image);
+    std::string ComputeImageMD5(typename ImageType::Pointer image);
 
   template<class ImageType>
-  typename itk::Image<float, ImageType::ImageDimension>::Pointer CastImageToFloat(ImageType * input);
+    typename itk::Image<float, ImageType::ImageDimension>::Pointer CastImageToFloat(ImageType * input);
   //--------------------------------------------------------------------
 
 
   //--------------------------------------------------------------------
   template<class ImageType>
-  typename ImageType::Pointer
-  ComputeAverageImage(std::vector<std::string> & filenames);
+    typename ImageType::Pointer
+    ComputeAverageImage(std::vector<std::string> & filenames);
 
   template<class ImageType>
-  typename ImageType::Pointer
-  ComputeMeanFilterKernel(const typename ImageType::SpacingType & spacing, double radius);
+    typename ImageType::Pointer
+    ComputeMeanFilterKernel(const typename ImageType::SpacingType & spacing, double radius);
 
   template<class ImageType, class MaskImageType>
-  typename ImageType::PointType
-  GetMaxPosition(const ImageType * input,
-                 const MaskImageType * mask);
+    typename ImageType::PointType
+    GetMaxPosition(const ImageType * input,
+                   const MaskImageType * mask);
 
   template<class ImageType>
-  void ScaleImage(ImageType * input, double scale);
+    void ScaleImage(ImageType * input, double scale);
   //--------------------------------------------------------------------
 
 
   //--------------------------------------------------------------------
-  template<class ImageType>
-  typename ImageType::Pointer
-  StitchImages(const ImageType * s1, const ImageType * s2,
-               double threshold_cumul, double skip_slices);
-  //--------------------------------------------------------------------
+  template<class ImageType1, class ImageType2=ImageType1>
+    bool ImagesHaveSameSize(const ImageType1 * a,
+                            const ImageType2 * b);
 
+  template<class ImageType1, class ImageType2=ImageType1>
+    bool ImagesHaveSameSpacing(const ImageType1 * a,
+                               const ImageType2 * b);
 
-  //--------------------------------------------------------------------
-  template<int Dimension>
-  bool CheckImageSameSizeAndSpacing(const itk::ImageBase<Dimension> * a,
-                                    const itk::ImageBase<Dimension> * b);
+  template<class ImageType1, class ImageType2=ImageType1>
+    bool ImagesHaveSameOrigin(const ImageType1 * a,
+                              const ImageType2 * b);
+
+  template<class ImageType1, class ImageType2=ImageType1>
+    bool ImagesHaveSameSupport(const ImageType1 * a,
+                               const ImageType2 * b);
   //--------------------------------------------------------------------
 
 
