@@ -47,12 +47,12 @@ syd::FindRoiMaskImage(const syd::Image::pointer image,
                       const std::string & roi_name)
 {
   auto db = image->GetDatabase<syd::StandardDatabase>();
-  syd::RoiType::pointer roitype = syd::FindRoiType(roi_name, db);
+  syd::RoiType::pointer roitype = syd::FindRoiType(roi_name, db); // will exception if not found
   syd::RoiMaskImage::vector rois;
   odb::query<syd::RoiMaskImage> q =
+    odb::query<syd::RoiMaskImage>::patient == image->patient->id and
     odb::query<syd::RoiMaskImage>::roitype == roitype->id and
-    odb::query<syd::RoiMaskImage>::frame_of_reference_uid ==
-    image->frame_of_reference_uid;
+    odb::query<syd::RoiMaskImage>::frame_of_reference_uid == image->frame_of_reference_uid;
   db->Query(rois, q);
   return rois;
 }
