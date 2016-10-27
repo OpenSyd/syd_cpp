@@ -23,6 +23,8 @@
 #include "sydInjectionHelper.h"
 #include "sydImageStitch.h"
 #include "sydRoiStatisticHelper.h"
+#include "sydProjectionImage.h"
+#include "sydAttenuationImage.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -359,6 +361,29 @@ syd::InsertProjectionImage(const syd::Image::pointer input,
 
   // Create the syd image
   return syd::InsertImage<OutputImageType>(projection, input->patient, input->modality);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertAttenuationImage(const syd::Image::pointer input, double numberEnergySPECT,
+                            double attenuationWaterCT, double attenuationBoneCT,
+                            std::vector<double>& attenuationAirSPECT,
+                            std::vector<double>& attenuationWaterSPECT,
+                            std::vector<double>& attenuationBoneSPECT,
+                            std::vector<double>& percentage)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
+  auto attenuation = syd::Attenuation<ImageType>(itk_input, numberEnergySPECT,
+                     attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT,
+                     attenuationWaterSPECT, attenuationBoneSPECT, percentage);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType>(attenuation, input->patient, input->modality);
 }
 // --------------------------------------------------------------------
 

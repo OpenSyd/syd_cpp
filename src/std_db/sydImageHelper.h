@@ -23,7 +23,6 @@
 #include "sydDicomSerieHelper.h"
 #include "sydImageExtractSlices.h"
 #include "sydImageGeometricalMean.h"
-#include "sydProjectionImage.h"
 #include "sydPixelUnitHelper.h"
 
 // --------------------------------------------------------------------
@@ -106,6 +105,14 @@ namespace syd {
   // Compute the projection of an image.
   syd::Image::pointer InsertProjectionImage(const syd::Image::pointer input,
                                             double dimension=0, bool mean=false, bool flip=false);
+
+  // Compute the attenuation map of an image.
+  syd::Image::pointer InsertAttenuationImage(const syd::Image::pointer input, double numberEnergySPECT,
+                                             double attenuationWaterCT, double attenuationBoneCT,
+                                             std::vector<double>& attenuationAirSPECT,
+                                             std::vector<double>& attenuationWaterSPECT,
+                                             std::vector<double>& attenuationBoneSPECT,
+                                             std::vector<double>& percentage);
 
   /// Crop an image like another one
   void CropImageLike(syd::Image::pointer image,
