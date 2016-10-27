@@ -50,11 +50,12 @@ std::string syd::FitImages::ToString() const
   ss << id << " ";
   if (images.size() == 0) ss << " no images ";
   else ss << images[0]->GetPatientName() << " ";
-  ss << images.size() << " imgs ["
+  ss << images.size() << " ["
      << syd::FitOptions::ToString() << "] "
      << GetAllComments() << " "
      << " pix: "
-     << nb_success_pixels << "/" << nb_pixels;
+     << nb_success_pixels << "/" << nb_pixels
+     << " output=" << outputs.size();
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -127,6 +128,8 @@ syd::Image::pointer syd::FitImages::GetOutput(std::string name)
     if (n == name) return outputs[i];
     ++i;
   }
+  EXCEPTION("Cannot find the output named " << name
+            << " in this FitImage: " << ToString());
   return nullptr;
 }
 // --------------------------------------------------------------------

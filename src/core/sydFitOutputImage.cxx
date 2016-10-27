@@ -85,7 +85,7 @@ void syd::FitOutputImage::SetValue(double v)
 syd::FitOutputImage_AUC::FitOutputImage_AUC():FitOutputImage()
 {
   filename = "auc_trap.mhd";
-  tag = "fit_auc_trapez";
+  tag = "fit_auc_trap";
 }
 // --------------------------------------------------------------------
 
@@ -104,7 +104,7 @@ void syd::FitOutputImage_AUC::Update(syd::FitModelBase::pointer model)
 syd::FitOutputImage_Integrate::FitOutputImage_Integrate():FitOutputImage()
 {
   filename = "auc_integrate.mhd";
-  tag = "fit_auc_integrate";
+  tag = "fit_auc_int";
 }
 // --------------------------------------------------------------------
 
@@ -141,7 +141,7 @@ syd::FitOutputImage_Model::FitOutputImage_Model():FitOutputImage()
 {
   filename = "best_model.mhd";
   SetValue(0);
-  tag = "fit_best_model";
+  tag = "fit_mo";
 }
 // --------------------------------------------------------------------
 
@@ -169,7 +169,7 @@ void syd::FitOutputImage_Model::Update(syd::FitModelBase::pointer model)
 syd::FitOutputImage_Iteration::FitOutputImage_Iteration():FitOutputImage()
 {
   filename = "iteration.mhd";
-  tag = "fit_nb_iterations";
+  tag = "fit_it";
 }
 // --------------------------------------------------------------------
 
@@ -189,7 +189,7 @@ void syd::FitOutputImage_Iteration::Update(syd::FitModelBase::pointer model)
 syd::FitOutputImage_Success::FitOutputImage_Success():FitOutputImage()
 {
   filename = "success.mhd";
-  tag = "fit_success";
+  tag = "fit_1";
 }
 // --------------------------------------------------------------------
 
@@ -259,7 +259,7 @@ void syd::FitOutputImage_NbOfPointsForFit::Update(syd::FitModelBase::pointer mod
 syd::FitOutputImage_ModelParams::FitOutputImage_ModelParams():FitOutputImage()
 {
   filename = "params.mhd";
-  tag = "fit_params";
+  tag = "fit_p";
 }
 // --------------------------------------------------------------------
 

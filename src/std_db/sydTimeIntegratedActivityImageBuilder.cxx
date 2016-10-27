@@ -147,15 +147,14 @@ InsertDebugOutputImages(std::vector<std::string> & names)
 {
   //outputs_.clear();
   syd::Image::vector outputs;
-  syd::FitOutputImage::pointer main_output = auc;
-  if (options_.GetRestrictedFlag()) main_output = auc;
-  else main_output = integrate;
   auto img = images_[0];
   auto db = img->GetDatabase<syd::StandardDatabase>();
 
   for(auto o:all_outputs_) {
-    if (o->GetTagName() != main_output->GetTagName() and
-        o->GetTagName() != success->GetTagName()) {
+    // do nothing for auc or integrate or success output
+    if (o->GetTagName() != auc->GetTagName() and
+        o->GetTagName() != success->GetTagName() and
+        o->GetTagName() != integrate->GetTagName()) {
       auto output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
       syd::SetImageInfoFromImage(output, img);
       output->tags.clear(); // remove all tags for the debug images

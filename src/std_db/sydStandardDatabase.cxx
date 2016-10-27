@@ -318,12 +318,12 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   tags.push_back(NewTag("tia", "Time Integrated Activity"));
   tags.push_back(NewTag("mask", "Mask image"));
 
+  tags.push_back(NewTag("fit_auc", "Fit AUC result"));
   tags.push_back(NewTag("fit_r2", "Fit R2 result"));
-  tags.push_back(NewTag("fit_best_model", "Fit nb of best model result"));
-  tags.push_back(NewTag("fit_nb_iterations", "Fit nb of iterations"));
-  tags.push_back(NewTag("fit_success", "Fit binary success/fail"));
-  tags.push_back(NewTag("fit_initial_mask", "Fit binary initial mask"));
-  tags.push_back(NewTag("fit_params", "Fit 4D parameters"));
+  tags.push_back(NewTag("fit_mo", "Fit nb of best model result"));
+  tags.push_back(NewTag("fit_it", "Fit nb of iterations"));
+  tags.push_back(NewTag("fit_1", "Fit binary success/fail"));
+  tags.push_back(NewTag("fit_p", "Fit 4D parameters"));
 
   for(auto r:radionuclides) {
     tags.push_back(NewTag(r->name, "Radionuclide " + r->name));

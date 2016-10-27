@@ -61,6 +61,7 @@ int main(int argc, char* argv[])
   // Loop on images
   int i = 0;
   for(auto image:images) {
+    LOG(3) << "Processing image " << image;
     // Consider the masks
     syd::RoiMaskImage::vector masks;
     if (args_info.inputs[0] == std::string("all")) {
@@ -85,6 +86,8 @@ int main(int argc, char* argv[])
     // Loop over masks
     syd::RoiStatistic::pointer stat;
     for(auto mask:masks) {
+      LOG(4) << "Processing mask " << mask;
+
       enum Mode {create, update, skip};
       Mode mode=create;
 
@@ -114,15 +117,18 @@ int main(int argc, char* argv[])
       // Compute RoiStatistic
       syd::Image::pointer mask2 =nullptr;
       if (args_info.tia_flag) {
-        mask2 = tias[i]->GetOutput("fit_success");
-        for(auto c:tias[i]->comments)
-          stat->comments.push_back(c); // copy comments from the tia
+        mask2 = tias[i]->GetOutput("fit_1");
       }
-
       if (mode == update)
         syd::ComputeRoiStatistic(stat, mask2, mask_filename);
       else
         stat = syd::NewRoiStatistic(image, mask, mask2, mask_filename);
+
+      // copy comments from the tia
+      if (args_info.tia_flag and mode == create) {
+        for(auto c:tias[i]->comments)
+          stat->comments.push_back(c);
+      }
 
       // Set the command lines tags
       syd::SetTagsFromCommandLine(stat->tags, db, args_info);
