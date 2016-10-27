@@ -58,7 +58,7 @@ namespace syd {
     void SetToOptions(syd::TimeIntegratedActivityFitOptions & options) const;
 
     /// Return an options objects with the values from the record
-    syd::TimeIntegratedActivityFitOptions GetOptions() const;
+    virtual syd::TimeIntegratedActivityFitOptions GetOptions() const;
  
     /// Set values from the options object
     void SetFromOptions(const syd::TimeIntegratedActivityFitOptions & options);

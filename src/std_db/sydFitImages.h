@@ -86,6 +86,9 @@ namespace syd {
       /// Get the output by name (nullptr if not found)
       syd::Image::pointer GetOutput(std::string name);
 
+      /// Return an options objects with the values from the record
+      virtual syd::TimeIntegratedActivityFitOptions GetOptions() const;
+
   protected:
       FitImages();
 

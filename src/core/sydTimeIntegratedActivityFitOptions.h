@@ -47,6 +47,7 @@ namespace syd {
 
     // Get model object
     syd::FitModelBase::vector GetModels() const;
+    std::string GetModelsName() const;
     double GetR2MinThreshold() const { return R2_min_threshold_; }
     bool GetRestrictedFlag() const { return restricted_flag_; }
     int GetMaxNumIterations() const { return max_num_iterations_; }

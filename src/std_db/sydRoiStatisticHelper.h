@@ -27,37 +27,33 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  // Default image type
+  typedef unsigned char RoiMaskImagePixelType;
+  typedef itk::Image<RoiMaskImagePixelType, 3> RoiMaskImageType;
 
   /// Search all RoiStatistic with the given image+mask. mask maybe nullptr.
-  syd::RoiStatistic::vector FindRoiStatistic(syd::Image::pointer image,
-                                             syd::RoiMaskImage::pointer mask);
+  syd::RoiStatistic::vector FindRoiStatistic(const syd::Image::pointer image,
+                                             const syd::RoiMaskImage::pointer mask);
 
   // Mask could be null (compute stat on the whole image)
-  syd::RoiStatistic::pointer NewRoiStatistic(syd::Image::pointer image,
-                                             syd::RoiMaskImage::pointer mask,
-                                             std::string mask_output_filename="");
-
-  // Mask could be null (compute stat on the whole image)
-  syd::RoiStatistic::pointer NewRoiStatistic(syd::Image::pointer image,
-                                             syd::RoiMaskImage::pointer mask,
-                                             syd::Image::pointer mask2,
-                                             std::string mask_output_filename="");
-
-  // Mask could be null (compute stat on the whole image)
-  syd::RoiStatistic::pointer NewRoiStatistic(syd::FitImages::pointer tia,
-                                             syd::RoiMaskImage::pointer mask,
-                                             std::string mask_output_filename="");
-
-  // Check if an exact same RoiStatistic already exist
-  syd::RoiStatistic::pointer FindSameRoiStatistic(syd::RoiStatistic::pointer stat);
+  syd::RoiStatistic::pointer NewRoiStatistic(const syd::Image::pointer image,
+                                             const syd::RoiMaskImage::pointer mask,
+                                             const syd::Image::pointer mask2 = nullptr,
+                                             const std::string mask_output_filename="");
 
   // Compute the statistic according to the stat's image and mask. return the
   // used mask image (that have been resampled). if itk_mask2 is given, a 'AND'
   // is performed between the stat mask and the itk_mask2.
-  itk::Image<unsigned char, 3>::Pointer
-    UpdateRoiStatistic(syd::RoiStatistic::pointer stat,
-                       const itk::Image<unsigned char, 3>::Pointer itk_mask2=nullptr);
+  RoiMaskImageType::Pointer
+    ComputeRoiStatistic(syd::RoiStatistic::pointer stat,
+                        const RoiMaskImageType::Pointer itk_mask2);
 
+  // Compute the statistic according to the stat's image and mask. return the
+  // used mask image (that have been resampled). if mask2 is given, a 'AND'
+  // is performed between the stat mask and the mask2.
+  void ComputeRoiStatistic(syd::RoiStatistic::pointer stat,
+                           const syd::Image::pointer mask2=nullptr,
+                           const std::string mask_output_filename="");
 
 } // namespace syd
 // --------------------------------------------------------------------

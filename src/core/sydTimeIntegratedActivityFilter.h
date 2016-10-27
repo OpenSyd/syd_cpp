@@ -48,9 +48,9 @@ namespace syd {
     /// Output
     syd::TimeActivityCurve::pointer GetCurrentTAC() const { return initial_tac_; }
     syd::TimeActivityCurve::pointer GetWorkingTAC() const { return working_tac_; }
-    syd::FitModelBase::vector GetModels() const { return models_; }
     syd::FitModelBase::pointer GetFitModel() const { return current_best_model_; }
     int GetNbOfIterations() const { return nb_of_iterations; }
+    syd::FitModelBase::vector GetModels() const { return models_; }
 
   protected:
     /// Input

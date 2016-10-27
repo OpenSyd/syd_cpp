@@ -22,6 +22,47 @@
 #include "sydTimeIntegratedActivityFilter.h"
 
 // --------------------------------------------------------------------
+syd::RoiTimepoints::vector syd::FindRoiTimepoints(const syd::RoiStatistic::vector stats)
+{
+  syd::RoiTimepoints::vector rtp;
+  if (stats.size() == 0) {
+    EXCEPTION("Cannot FindRoiTimepoints with empty stats vector");
+  }
+  auto db = stats[0]->GetDatabase<syd::StandardDatabase>();
+  db->Query(rtp);
+  syd::RoiTimepoints::vector tp;
+  for(auto r:rtp) {
+    if (std::equal(r->roi_statistics.begin(), r->roi_statistics.end(), stats.begin()))
+      tp.push_back(r);
+  }
+  return tp;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::FitTimepoints::vector syd::FindFitTimepoints(const syd::Timepoints::pointer tp,
+                                             const syd::TimeIntegratedActivityFitOptions & options)
+{
+  syd::FitTimepoints::vector ftp;
+  auto db = tp->GetDatabase<syd::StandardDatabase>();
+  typedef odb::query<syd::FitTimepoints> Q;
+  Q q = Q::timepoints == tp->id and
+    Q::r2_min == options.GetR2MinThreshold() and
+    Q::max_iteration == options.GetMaxNumIterations() and
+    Q::restricted_tac == options.GetRestrictedFlag() and
+    Q::akaike_criterion == options.GetAkaikeCriterion();
+  db->Query(ftp, q);
+  syd::FitTimepoints::vector fftp;
+  for(auto f:ftp) {
+    if (f->GetModelsName() == options.GetModelsName()) fftp.push_back(f);
+  }
+  return fftp;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::RoiTimepoints::pointer syd::NewTimepoints(const syd::RoiStatistic::vector stats)
 {
   if (stats.size() == 0) {
@@ -93,24 +134,12 @@ void syd::CopyTimepoints(const syd::Timepoints::pointer from, syd::Timepoints::p
 
 
 // --------------------------------------------------------------------
-syd::FitTimepoints::pointer
-syd::NewFitTimepoints(syd::Timepoints::pointer tp,
-                      syd::TimeIntegratedActivityFitOptions & options)
+void syd::ComputeFitTimepoints(syd::FitTimepoints::pointer ft)
 {
-  // Set or check lambda
-  if (options.GetLambdaDecayConstantInHours() == 0.0)
-    options.SetLambdaDecayConstantInHours(tp->injection->GetLambdaDecayConstantInHours());
-
-  // Create FitTimepoints
-  syd::FitTimepoints::pointer ft;
-  auto db = tp->GetDatabase<syd::StandardDatabase>();
-  db->New(ft);
-  ft->timepoints = tp;
-  ft->SetFromOptions(options);
-
   // Perform fit
   syd::TimeIntegratedActivityFilter filter;
   auto tac = syd::GetTAC(ft->timepoints);
+  auto options = ft->GetOptions();
   filter.SetTAC(tac);
   filter.SetOptions(options);
   filter.Run();
@@ -139,7 +168,28 @@ syd::NewFitTimepoints(syd::Timepoints::pointer tp,
     ft->params = model->GetParameters();
   }
   ft->iterations = filter.GetNbOfIterations();
+}
+// --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+syd::FitTimepoints::pointer
+syd::NewFitTimepoints(const syd::Timepoints::pointer tp,
+                      syd::TimeIntegratedActivityFitOptions & options)
+{
+  // Set or check lambda
+  if (options.GetLambdaDecayConstantInHours() == 0.0)
+    options.SetLambdaDecayConstantInHours(tp->injection->GetLambdaDecayConstantInHours());
+
+  // Create FitTimepoints
+  syd::FitTimepoints::pointer ft;
+  auto db = tp->GetDatabase<syd::StandardDatabase>();
+  db->New(ft);
+  ft->timepoints = tp;
+  ft->SetFromOptions(options);
+
+  // Compute
+  ComputeFitTimepoints(ft);
   return ft;
 }
 // --------------------------------------------------------------------

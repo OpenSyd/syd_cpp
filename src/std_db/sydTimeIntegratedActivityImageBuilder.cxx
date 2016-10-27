@@ -105,6 +105,7 @@ InsertOutputAUCImage()
   typedef syd::FitOutputImage::ImageType ImageType;
   auto output = syd::InsertImage<ImageType>(main_output->GetImage(), img->patient);
   syd::SetImageInfoFromImage(output, img);
+  output->tags.clear(); // remove all tags
   auto db = img->GetDatabase<syd::StandardDatabase>();
   if (output->pixel_unit == nullptr)
     output->pixel_unit = syd::FindOrCreatePixelUnit(db, "counts");
@@ -129,6 +130,7 @@ InsertOutputSuccessFitImage()
   typedef syd::FitOutputImage::ImageType ImageType;
   auto output = syd::InsertImage<ImageType>(success->GetImage(), img->patient);
   syd::SetImageInfoFromImage(output, img);
+  output->tags.clear(); // remove all tags
   auto db = img->GetDatabase<syd::StandardDatabase>();
   output->pixel_unit = syd::FindOrCreatePixelUnit(db, "bool", "Boolean 0|1");
   auto t = syd::FindOrCreateTag(db, success->GetTagName());
@@ -207,7 +209,7 @@ Run()
 
   // Print
   std::string sm;
-  auto models = filter_.GetModels();
+  auto models = options_.GetModels();
   for(auto m:models) sm += m->GetName()+"("+std::to_string(m->GetId())+") ";
 
   LOG(1) << "Starting fit: "

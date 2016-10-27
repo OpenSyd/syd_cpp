@@ -17,5 +17,5 @@ Options:
 
 option "resampled_mask"  m "Resampled mask output filename" string default="" no
 option "tia"             t "Given ids are TiaImage ids" flag off
-option "force"           f "Force the computation even if a RoiStatistic already exist" flag off
-
+option "force"           f "Force a new RoiStatistic even if a RoiStatistic already exist" flag off
+option "update"          u "Update if a RoiStatistic already exist (default=on, use --update for toggle to off)" flag on

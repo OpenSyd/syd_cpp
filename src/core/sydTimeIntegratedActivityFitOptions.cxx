@@ -19,6 +19,7 @@
 // syd
 #include "sydTimeIntegratedActivityFitOptions.h"
 #include "sydException.h"
+#include "sydCommon.h"
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
@@ -93,6 +94,19 @@ void syd::TimeIntegratedActivityFitOptions::AddTimeValue(double time, double val
 {
   DDF();
   DD("TODO");
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::TimeIntegratedActivityFitOptions::GetModelsName() const
+{
+  std::stringstream ss;
+  auto models = GetModels();
+  for(auto m:models)
+    ss << m->GetName() << " ";
+  auto s = ss.str();
+  return syd::trim(s);
 }
 // --------------------------------------------------------------------
 

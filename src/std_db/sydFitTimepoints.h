@@ -83,6 +83,9 @@ namespace syd {
       /// Create a model from the current result
       syd::FitModelBase::pointer NewModel() const;
 
+      /// Return an options objects with the values from the record
+      virtual syd::TimeIntegratedActivityFitOptions GetOptions() const;
+
   protected:
       FitTimepoints();
 
