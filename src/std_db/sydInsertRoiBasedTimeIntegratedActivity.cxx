@@ -73,7 +73,9 @@ int main(int argc, char* argv[])
       syd::RoiMaskImage::vector masks;
       if (roi_name == "all") {
         typedef odb::query<syd::RoiMaskImage> Q;
-        Q q = Q::frame_of_reference_uid == tia->images[0]->frame_of_reference_uid;
+        Q q =
+          Q::patient == tia->images[0]->patient->id and
+          Q::frame_of_reference_uid == tia->images[0]->frame_of_reference_uid;
         db->Query(masks, q);
       }
       else {
@@ -87,6 +89,7 @@ int main(int argc, char* argv[])
 
       // Loop on mask
       for(auto mask:masks) {
+
 
         // Insert roi stats for every images
         syd::RoiStatistic::vector stats;
@@ -129,13 +132,13 @@ int main(int argc, char* argv[])
         if (eres.size() == 0) {
           res = syd::NewFitTimepoints(rtp, options);
           db->Insert(res);
-          LOG(1) << "Insert FitTimepoints: " << res;
+          LOG(1) << "Insert FitTimepoints: " << options << " " << mask->roitype->name << " " << res;
         }
         if (eres.size() == 1) {
           res = eres[0];
           syd::ComputeFitTimepoints(res);
           db->Update(res);
-          LOG(1) << "Update FitTimepoints: " << res;
+          LOG(1) << "Update FitTimepoints: " << options << " " << mask->roitype->name << " " << res;
         }
         if (eres.size() > 1) {
           LOG(FATAL) << "Error several FitTimepoints exist.";
