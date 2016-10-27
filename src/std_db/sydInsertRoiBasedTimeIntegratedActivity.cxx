@@ -98,7 +98,8 @@ int main(int argc, char* argv[])
           if (e.size() == 1) stat = e[0]; // if already exist, do not recompute
           if (e.size() == 0) { // if not compute it
             stat = syd::NewRoiStatistic(image, mask);
-            db->Insert(stat);            
+            LOG(1) << "Insert RoiStatistic: " << stat;
+            db->Insert(stat);
           }
           if (e.size() >  1) {
             for(auto ee:e) std::cout << ee << std::endl;
@@ -113,6 +114,7 @@ int main(int argc, char* argv[])
         if (ertp.size() == 1) rtp = ertp[0];
         if (ertp.size() == 0) {
           rtp = syd::NewTimepoints(stats); // RoiTimepoints
+          LOG(1) << "Insert Timepoints: " << rtp;
           db->Insert(rtp);
         }
         if (ertp.size() > 1) {
