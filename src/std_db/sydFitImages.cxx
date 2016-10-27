@@ -96,10 +96,10 @@ void syd::FitImages::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("itm", max_iteration);
   ta.Set("models", GetModelsName());
   std::stringstream ss;
-  ss << nb_success_pixels << "/" << nb_pixels
-     << std::setprecision(3)
-     << "(" << (double)nb_success_pixels/(double)nb_pixels*100.0 << "%)";
-  ta.Set("res", ss.str());
+  ss << nb_success_pixels << "/" << nb_pixels;
+  ta.Set("pix", ss.str());
+  auto percent = (double)nb_success_pixels/(double)nb_pixels*100.0;
+  ta.Set("res", percent,2);
   ta.Set("out", GetOutputNames(), 150);
   std::stringstream sss;
   for(auto im:images) sss << im->id << " ";
