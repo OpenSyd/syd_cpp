@@ -1,0 +1,14 @@
+#File sydInsertAttenuationCorrectedProjectionImage.ggo
+
+package "syd"
+version "0.4"
+usage "sydInsertAttenuationCorrectedProjectionImage <image> -c water,bone -s air1,water1,bone1,air2,water2,bone2 -p %1,%2"
+description "Create a new (mhd) attenuation map image computed from the CT image <image>.
+The tag --attenuationCT (or -c) corresponds to the attenuation coefficients for water and bone (respect the order) for mean energy of the X-ray used for CT (2 expected values)
+The tag --attenuationSPECT (or -s) corresponds to the attenuation coefficients for air, water and bone (respect the order) for all targeted energies of the SPECT
+The tag --percentage (or -p) corresponds to the normalized percentage for all targeted energies of the SPECT (sum =1). If there is just 1 targeted energy, this parameter is optional
+"
+
+option "attenuationCT"              c "Attenuation for water and bone for kVeff"        double yes multiple(2)
+option "attenuationSPECT"    s "Attenuation for air, water and bone for all kEV" double yes multiple
+option "percentage"                 p "Pourcentage of each kEV emission"                double no multiple

@@ -216,6 +216,17 @@ add_executable(sydInsertAttenuationImage
   ${sydInsertAttenuationImage_GGO_C})
 target_link_libraries(sydInsertAttenuationImage ${SYD_STD_DB_LIBRARY})
 
+# Create the attenuation corrected of a projection image
+wrap_ggo(sydInsertAttenuationCorrectedProjectionImage_GGO_C
+  sydInsertAttenuationCorrectedProjectionImage.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertAttenuationCorrectedProjectionImage
+  sydInsertAttenuationCorrectedProjectionImage.cxx
+  ${sydInsertAttenuationCorrectedProjectionImage_GGO_C})
+target_link_libraries(sydInsertAttenuationCorrectedProjectionImage ${SYD_STD_DB_LIBRARY})
+
 # Insert a new RoiMaskImage
 wrap_ggo(sydInsertRoiMaskImage_GGO_C
   sydInsertRoiMaskImage.ggo

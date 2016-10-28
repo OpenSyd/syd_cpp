@@ -25,6 +25,7 @@
 #include "sydRoiStatisticHelper.h"
 #include "sydProjectionImage.h"
 #include "sydAttenuationImage.h"
+#include "sydAttenuationCorrectedProjectionImage.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -372,13 +373,36 @@ syd::InsertAttenuationImage(const syd::Image::pointer input, double numberEnergy
                             std::vector<double>& attenuationAirSPECT,
                             std::vector<double>& attenuationWaterSPECT,
                             std::vector<double>& attenuationBoneSPECT,
-                            std::vector<double>& percentage)
+                            std::vector<double>& weight)
 {
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
   auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
   auto attenuation = syd::Attenuation<ImageType>(itk_input, numberEnergySPECT,
+                     attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT,
+                     attenuationWaterSPECT, attenuationBoneSPECT, weight);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType>(attenuation, input->patient, input->modality);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input, double numberEnergySPECT,
+                            double attenuationWaterCT, double attenuationBoneCT,
+                            std::vector<double>& attenuationAirSPECT,
+                            std::vector<double>& attenuationWaterSPECT,
+                            std::vector<double>& attenuationBoneSPECT,
+                            std::vector<double>& percentage)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
+  auto attenuation = syd::AttenuationCorrectedProjection<ImageType>(itk_input, numberEnergySPECT,
                      attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT,
                      attenuationWaterSPECT, attenuationBoneSPECT, percentage);
 

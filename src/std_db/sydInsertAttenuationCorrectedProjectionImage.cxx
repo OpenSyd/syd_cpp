@@ -17,20 +17,20 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertAttenuationImage_ggo.h"
+#include "sydInsertAttenuationCorrectedProjectionImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
 #include "sydCommonGengetopt.h"
-#include "sydAttenuationImage.h"
+#include "sydAttenuationCorrectedProjectionImage.h"
 #include <numeric>
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertAttenuationImage, 1);
+  SYD_INIT_GGO(sydInsertAttenuationCorrectedProjectionImage, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -50,10 +50,10 @@ int main(int argc, char* argv[])
     LOG(FATAL) << "The numbers of attenuationCT inputs is not 2.";
 
   double numberEnergySPECT(1);
-  if (args_info.weight_given)
-    numberEnergySPECT = args_info.weight_given;
+  if (args_info.percentage_given)
+    numberEnergySPECT = args_info.percentage_given;
   if (3*numberEnergySPECT != args_info.attenuationSPECT_given)
-    LOG(FATAL) << "The numbers of weight and attenuationSPECT inputs do not match.";
+    LOG(FATAL) << "The numbers of percentage and attenuationSPECT inputs do not match.";
 
   double attenuationWaterCT(0);
   double attenuationBoneCT(0);
@@ -75,19 +75,19 @@ int main(int argc, char* argv[])
     }
   }
 
-  std::vector<double> weight;
-  if (args_info.weight_given) {
+  std::vector<double> percentage;
+  if (args_info.percentage_given) {
     for(unsigned int i=0; i<numberEnergySPECT; ++i)
-      weight.push_back(args_info.weight_arg[i]);
+      percentage.push_back(args_info.percentage_arg[i]);
   }
   else
-    weight.push_back(1.0);
+    percentage.push_back(1.0);
 
-  if (std::abs(std::accumulate(weight.begin(), weight.end(), 0.0)-1.0) > 0.000001)
-    LOG(FATAL) << "The sum of weights is not equal to 1.0";
+  if (std::abs(std::accumulate(percentage.begin(), percentage.end(), 0.0)-1.0) > 0.000001)
+    LOG(FATAL) << "The sum of percentages is not equal to 1.0";
 
   // Main computation
-  auto image = syd::InsertAttenuationImage(input, numberEnergySPECT, attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT, weight);
+  auto image = syd::InsertAttenuationImage(input, numberEnergySPECT, attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT, percentage);
 
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);

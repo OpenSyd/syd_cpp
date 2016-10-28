@@ -112,6 +112,14 @@ namespace syd {
                                              std::vector<double>& attenuationAirSPECT,
                                              std::vector<double>& attenuationWaterSPECT,
                                              std::vector<double>& attenuationBoneSPECT,
+                                             std::vector<double>& weight);
+
+  // Compute the attenuation correction of an projection image.
+  syd::Image::pointer InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input, double numberEnergySPECT,
+                                             double attenuationWaterCT, double attenuationBoneCT,
+                                             std::vector<double>& attenuationAirSPECT,
+                                             std::vector<double>& attenuationWaterSPECT,
+                                             std::vector<double>& attenuationBoneSPECT,
                                              std::vector<double>& percentage);
 
   /// Crop an image like another one

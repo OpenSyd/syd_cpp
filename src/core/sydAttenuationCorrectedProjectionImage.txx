@@ -26,12 +26,12 @@
 //--------------------------------------------------------------------
 template<class ImageType>
 typename ImageType::Pointer
-syd::Attenuation(const ImageType * input, double numberEnergySPECT,
+syd::AttenuationCorrectedProjection(const ImageType * input, double numberEnergySPECT,
                  double attenuationWaterCT, double attenuationBoneCT,
                  std::vector<double>& attenuationAirSPECT,
                  std::vector<double>& attenuationWaterSPECT,
                  std::vector<double>& attenuationBoneSPECT,
-                 std::vector<double>& weight)
+                 std::vector<double>& percentage)
 {
   //Create the output like the input (fill with 0)
   typedef itk::ImageDuplicator< ImageType > DuplicatorType;
@@ -71,11 +71,11 @@ syd::Attenuation(const ImageType * input, double numberEnergySPECT,
       ++imageIteratorInput;
     }
 
-    //Sum the temp image with weight and the attenuation map
+    //Sum the temp image with percentage and the attenuation map
     typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> MultiplyFilterType;
     typename MultiplyFilterType::Pointer multiplyFilter = MultiplyFilterType::New();
     multiplyFilter->SetInput(attenuationTemp);
-    multiplyFilter->SetConstant(weight[i]);
+    multiplyFilter->SetConstant(percentage[i]);
 
     typedef itk::AddImageFilter<ImageType, ImageType> AddFilterType;
     typename AddFilterType::Pointer addFilter = AddFilterType::New();
