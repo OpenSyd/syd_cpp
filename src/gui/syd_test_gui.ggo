@@ -1,0 +1,8 @@
+#File syd_test_gui.ggo
+
+package "syd"
+version "0.1"
+usage "syd_test_gui"
+description "TODO"
+
+

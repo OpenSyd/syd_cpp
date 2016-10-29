@@ -9,7 +9,6 @@ add_subdirectory(${SYD_SOURCE_DIR}/src/core)
 # Common database
 include_directories(${SYD_SOURCE_DIR}/src/core)
 add_subdirectory(${SYD_SOURCE_DIR}/src/common_db)
-
 #----------------------------------------------------------
 
 
@@ -18,10 +17,19 @@ add_subdirectory(${SYD_SOURCE_DIR}/src/common_db)
 include_directories(${SYD_SOURCE_DIR}/src/common_db)
 include_directories(${SYD_SOURCE_DIR}/src/std_db)
 add_subdirectory(${SYD_SOURCE_DIR}/src/std_db)
+#----------------------------------------------------------
 
+
+#----------------------------------------------------------
 IF(SYD_PLOT_MODULE)
   add_subdirectory(${SYD_SOURCE_DIR}/src/plot)
 ENDIF(SYD_PLOT_MODULE)
+#----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# gui test
+add_subdirectory(${SYD_SOURCE_DIR}/src/gui)
 #----------------------------------------------------------
 
 
