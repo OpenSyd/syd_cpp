@@ -38,21 +38,21 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // test
-  syd::Patient::vector patients;
-  db->Query(patients);
-  for(auto p:patients) std::cout << p << std::endl;
+  syd::Image::vector images;
+  syd::Image::vector results;
+  db->Query(images);
+  //for(auto p:patients) std::cout << p << std::endl;
 
   // Setup window
   glfwSetErrorCallback(error_callback);
-  if (!glfwInit())
-    return 1;
+  if (!glfwInit()) return 1;
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 #if __APPLE__
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-  GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(1280, 720, "syd gui test", NULL, NULL);
   glfwMakeContextCurrent(window);
   gl3wInit();
 
@@ -73,6 +73,18 @@ int main(int argc, char* argv[])
   bool show_another_window = false;
   ImVec4 clear_color = ImColor(114, 144, 154);
 
+
+  //
+  char filter_input_text[256];
+  *filter_input_text = 'a';
+  char previous_filter_input_text[256];
+  //  char * str = filter_input_text.c_str();
+  std::vector<std::string> patterns;
+  std::vector<std::string> exclude;
+
+  char label_id[32];
+  char label_pixel_type[64];
+
   // Main loop
   while (!glfwWindowShouldClose(window))
     {
@@ -84,13 +96,46 @@ int main(int argc, char* argv[])
       // Tip: if we don't call ImGui::Begin()/ImGui::End() the widgets appears
       // in a window automatically called "Debug"
       {
-        static float f = 0.0f;
+        ImGui::Begin("Hello world");
+        //static float f = 0.0f;
         ImGui::Text("Hello, world!");
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-        ImGui::ColorEdit3("clear color", (float*)&clear_color);
-        if (ImGui::Button("Test Window")) show_test_window ^= 1;
-        if (ImGui::Button("Another Window")) show_another_window ^= 1;
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        //ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+        //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        //ImGui::Text("float value %.3f",f);
+
+        // Filter box
+        ImGui::InputText("input text", filter_input_text, 256);
+        ImGui::Text("Input text filter %s", filter_input_text);
+        if (strcmp(filter_input_text, previous_filter_input_text) != 0) {
+          // images.clear();
+          // db->Query(images);
+          // make it too slow --> change to only update every x seconds.
+          patterns.clear();
+          results.clear();
+          patterns.push_back(filter_input_text);git
+          DDS(patterns);
+          db->Grep(results, images, patterns, exclude);
+          DD(results.size());
+          strcpy(previous_filter_input_text, filter_input_text);
+        }
+
+        // trial table
+        ImGui::Columns(2, "mycolumns2", false);  // 2-ways, no border
+        ImGui::Separator();
+        int max=10;
+        for (auto image:results) {
+          sprintf(label_id, "Id %i", (int)image->id);
+          if (ImGui::Selectable(label_id)) {}
+          //if (ImGui::Button(label, ImVec2(-1,0))) {}
+          ImGui::NextColumn();
+          sprintf(label_pixel_type, "%s", image->pixel_type.c_str());
+          if (ImGui::Selectable(label_pixel_type)) {}
+          ImGui::NextColumn();
+        }
+        ImGui::Columns(1); // back to 1 column
+        ImGui::Separator();
+
+        ImGui::End();
       }
 
       // Rendering
