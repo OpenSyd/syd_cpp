@@ -19,9 +19,10 @@ add_library(sydgui
   imgui_draw.cpp
   imgui_impl_glfw_gl3.cpp
   libs/gl3w/GL/gl3w.c
-  sydgui.h
+  sydgui.cxx
   )
 
+# -----------------------------------------------------------------------------
 ## reference example
 include_directories(libs/gl3w)
 add_executable(imgui_opengl3_example
@@ -33,6 +34,7 @@ target_link_libraries(imgui_opengl3_example
   glfw3
   ${SYD_STD_DB_LIBRARY})
 
+# -----------------------------------------------------------------------------
 # test gui
 wrap_ggo(syd_test_gui_GGO_C
   syd_test_gui.ggo
@@ -42,6 +44,21 @@ add_executable(syd_test_gui
   ${syd_test_gui_GGO_C})
 
 target_link_libraries(syd_test_gui
+  sydgui
+  ${OPENGL_LIBRARIES}
+  glfw3
+  ${SYD_STD_DB_LIBRARY})
+
+# -----------------------------------------------------------------------------
+# gui for AUC by rois single patient, single method at a time
+wrap_ggo(syd_gui_auc_by_roi_GGO_C
+  syd_gui_auc_by_roi.ggo
+  ../common_db/sydCommandLineDefault.ggo)
+add_executable(syd_gui_auc_by_roi
+  syd_gui_auc_by_roi.cxx
+  ${syd_gui_auc_by_roi_GGO_C})
+
+target_link_libraries(syd_gui_auc_by_roi
   sydgui
   ${OPENGL_LIBRARIES}
   glfw3

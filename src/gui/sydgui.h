@@ -19,17 +19,30 @@
 #ifndef SYDGUI_H
 #define SYDGUI_H
 
+// imgui
 #include <imgui.h>
 #include "imgui_impl_glfw_gl3.h"
 #include <stdio.h>
 #include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
-static void error_callback(int error, const char* description)
-{
-  fprintf(stderr, "Error %d: %s\n", error, description);
-}
+// std
+#include <string>
 
+// syd
+#include "sydDD.h"
+#include "sydLog.h"
 
+namespace syd {
+
+  void error_callback(int error, const char* description);
+
+  void sydguiInit();
+
+  GLFWwindow * sydguiCreateWindow(int width, int height, std::string title);
+
+  void sydguiRender(ImVec4 & color, GLFWwindow * window);
+
+} // end namespace
 
 #endif

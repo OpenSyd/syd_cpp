@@ -1,0 +1,8 @@
+#File syd_gui_auc_by_roi.ggo
+
+package "syd"
+version "0.1"
+usage "syd_gui_auc_by_roi"
+description "TODO"
+
+
