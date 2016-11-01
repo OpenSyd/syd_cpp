@@ -33,7 +33,10 @@ namespace syd {
 
   // Search a roi mask image by a roi name and the image
   syd::RoiMaskImage::vector FindRoiMaskImage(const syd::Image::pointer image,
-                                              const std::string & roi_name);
+                                             const std::string & roi_name);
+
+  // Search all RoiMaskImage that share the same frame_of_reference_uid than the image
+  syd::RoiMaskImage::vector FindAllRoiMaskImage(const syd::Image::pointer image);
 
   // Search a roi mask image by a roi name and the image
   syd::RoiMaskImage::pointer FindOneRoiMaskImage(const syd::Image::pointer image,

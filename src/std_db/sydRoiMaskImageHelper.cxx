@@ -60,6 +60,21 @@ syd::FindRoiMaskImage(const syd::Image::pointer image,
 
 
 // --------------------------------------------------------------------
+syd::RoiMaskImage::vector
+syd::FindAllRoiMaskImage(const syd::Image::pointer image)
+{
+  auto db = image->GetDatabase<syd::StandardDatabase>();
+  syd::RoiMaskImage::vector rois;
+  odb::query<syd::RoiMaskImage> q =
+    odb::query<syd::RoiMaskImage>::frame_of_reference_uid ==
+    image->frame_of_reference_uid;
+  db->Query(rois, q);
+  return rois;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::RoiMaskImage::pointer
 syd::FindOneRoiMaskImage(const syd::Image::pointer image,
                          const std::string & roi_name)
