@@ -31,17 +31,34 @@
 
 // syd
 #include "sydDD.h"
-#include "sydLog.h"
+#include "sydStandardDatabase.h"
 
-namespace syd {
+namespace sydgui {
 
+  /// Callback for error messages
   void error_callback(int error, const char* description);
 
-  void sydguiInit();
+  /// Main function to init the GUI
+  void InitGUI();
 
-  GLFWwindow * sydguiCreateWindow(int width, int height, std::string title);
+  /// Create the initial main window
+  GLFWwindow * CreateMainWindow(int width, int height, std::string title);
 
-  void sydguiRender(ImVec4 & color, GLFWwindow * window);
+  /// To call at the end of main loop
+  void Render(ImVec4 & color, GLFWwindow * window);
+
+  ///
+  syd::Image::vector GetInputImages(syd::Patient::pointer patient);
+
+  ///
+  syd::RoiMaskImage::vector GetRoiMaskImages(syd::Image::pointer image);
+
+  ///
+  syd::RoiStatistic::vector GetTimeIntegratedActivity(syd::Image::vector images,
+                                                      syd::RoiMaskImage::vector rois);
+
+  ///
+  void DisplayRoiStatisics(syd::RoiStatistic::vector stats);
 
 } // end namespace
 

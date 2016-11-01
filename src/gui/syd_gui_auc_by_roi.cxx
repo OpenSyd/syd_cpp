@@ -44,8 +44,8 @@ int main(int argc, char* argv[])
   //for(auto p:patients) std::cout << p << std::endl;
 
   // Init gui
-  syd::sydguiInit();
-  auto window = syd::sydguiCreateWindow(1280, 720, "syd gui test");
+  sydgui::InitGUI();
+  auto window = sydgui::CreateMainWindow(1280, 720, "syd gui test");
 
   //
   char filter_input_text[256];
@@ -58,6 +58,14 @@ int main(int argc, char* argv[])
   char label_id[32];
   char label_pixel_type[64];
 
+  // data
+  // syd::Images::vector images;
+  syd::RoiMaskImage::vector rois;
+  // syd::RoiStatistic::vector stats;
+  syd::Patient::pointer patient;
+  db->QueryOne(patient, 6);
+  DD(patient);
+
   // Main loop
   ImVec4 clear_color = ImColor(114, 144, 154);
   while (!glfwWindowShouldClose(window))
@@ -65,14 +73,27 @@ int main(int argc, char* argv[])
       glfwPollEvents();
       ImGui_ImplGlfwGL3_NewFrame();
 
-      {
-        ImGui::Begin("Hello world");
-        ImGui::Text("Hello, world!");
-        ImGui::End();
+      ImGui::Begin("TIA");
+
+      // Panel1: input images selection
+      auto images = sydgui::GetInputImages(patient);
+
+      // Panel2: rois selection
+      if (images.size() > 0) {
+        if (ImGui::CollapsingHeader("ROI selection"))
+          rois = sydgui::GetRoiMaskImages(images[0]);
       }
 
+      /// Panel3: 
+      auto stats = sydgui::GetTimeIntegratedActivity(images, rois);
+
+      // Panel4: results
+      sydgui::DisplayRoiStatisics(stats);
+
+      ImGui::End();
+
       // Rendering
-      syd::sydguiRender(clear_color, window);
+      sydgui::Render(clear_color, window);
     }
 
   // Cleanup
