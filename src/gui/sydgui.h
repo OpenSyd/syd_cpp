@@ -44,6 +44,9 @@ namespace sydgui {
   /// Create the initial main window
   GLFWwindow * CreateMainWindow(int width, int height, std::string title);
 
+  /// To call at each new frame. Return false if no focus or iconified
+  bool StartNewFrame(GLFWwindow * window);
+
   /// To call at the end of main loop
   void Render(ImVec4 & color, GLFWwindow * window);
 
@@ -53,7 +56,7 @@ namespace sydgui {
   ///
   syd::RoiMaskImage::vector GetRoiMaskImages(syd::Image::pointer image);
 
-  ///
+  /// FIXME --> to put in RoiStatisticHelper
   syd::RoiStatistic::vector GetRoiStatistics(const syd::Image::vector images,
                                              const syd::RoiMaskImage::vector rois,
                                              const syd::TimeIntegratedActivityFitOptions & options);

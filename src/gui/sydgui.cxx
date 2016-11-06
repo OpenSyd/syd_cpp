@@ -55,6 +55,25 @@ void sydgui::InitGUI()
 
 
 // --------------------------------------------------------------------
+bool sydgui::StartNewFrame(GLFWwindow * window)
+{
+  if (glfwGetWindowAttrib(window, GLFW_ICONIFIED)) {
+    glfwWaitEvents();
+    return false;
+  }
+
+  if (!glfwGetWindowAttrib(window, GLFW_FOCUSED)) {
+    glfwWaitEvents();
+    return false;
+  }
+  glfwPollEvents();
+  ImGui_ImplGlfwGL3_NewFrame();
+  return true;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 GLFWwindow* sydgui::CreateMainWindow(int width, int height, std::string title)
 {
   DDF();

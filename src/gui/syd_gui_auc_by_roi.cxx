@@ -72,8 +72,7 @@ int main(int argc, char* argv[])
   ImVec4 clear_color = ImColor(114, 144, 154);
   while (!glfwWindowShouldClose(window))
     {
-      glfwPollEvents();
-      ImGui_ImplGlfwGL3_NewFrame();
+      if (!sydgui::StartNewFrame(window)) continue;
 
       ImGui::Begin("TIA");
 
