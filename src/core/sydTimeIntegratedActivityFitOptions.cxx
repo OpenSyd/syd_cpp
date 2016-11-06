@@ -27,7 +27,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   SetR2MinThreshold(0.9);
   SetRestrictedFlag(false);
   SetMaxNumIterations(100);
-  SetAkaikeCriterion("AICc");
+  SetAkaikeCriterion("AIC");
   SetLambdaDecayConstantInHours(0.0);
   auto f1  = std::make_shared<syd::FitModel_f1>();
   auto f2  = std::make_shared<syd::FitModel_f2>();
