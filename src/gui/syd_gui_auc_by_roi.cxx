@@ -25,6 +25,8 @@
 
 // imgui + glfw
 #include "sydgui.h"
+#include "sydguiFitOptionsWidget.h"
+#include "sydguiRoisSelectionWidget.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -61,7 +63,7 @@ int main(int argc, char* argv[])
   // data
   // syd::Images::vector images;
   syd::RoiMaskImage::vector rois;
-  // syd::RoiStatistic::vector stats;
+  syd::RoiStatistic::vector stats;
   syd::Patient::pointer patient;
   db->QueryOne(patient, 6);
   DD(patient);
@@ -76,24 +78,46 @@ int main(int argc, char* argv[])
       ImGui::Begin("TIA");
 
       // Panel1: input images selection
+      // auto images = w_input_images.NewFrame();
       auto images = sydgui::GetInputImages(patient);
 
+      if (images.size() == 0) continue;
+      static bool images_changed = true; //FIXME
+
       // Panel2: rois selection
-      if (images.size() > 0) {
-        if (ImGui::CollapsingHeader("ROI selection"))
-          rois = sydgui::GetRoiMaskImages(images[0]);
+      static sydgui::RoisSelectionWidget rois_widget(rois);
+      if (images_changed)
+        rois_widget.SetImage(images[0]);
+      bool rois_changed = false;
+      if (ImGui::CollapsingHeader("ROI selection"))
+        rois_changed = rois_widget.NewFrame();
+
+      ImGui::Text("I will do TIA for the following rois:");
+      for(auto roi:rois) {
+        ImGui::Text("Id %lu : %s", roi->id, roi->roitype->name.c_str());
       }
 
-      /// Panel3: 
-      auto stats = sydgui::GetTimeIntegratedActivity(images, rois);
+      /// Panel3: consider options and find what have been computed
+      ImGui::Separator();
+      static syd::TimeIntegratedActivityFitOptions options;
+      static sydgui::FitOptionsWidget w_options(options);
+      if (images_changed)
+        w_options.SetImage(images[0]);
+      auto options_changed = w_options.NewFrame();
+      if (options_changed || images_changed || rois_changed) {
+        DD(options.ToString());
+        stats = sydgui::GetRoiStatistics(images, rois, options);
+      }
+      ImGui::Separator();
 
       // Panel4: results
-      sydgui::DisplayRoiStatisics(stats);
+      sydgui::DisplayRoiStatistics(stats);
 
       ImGui::End();
 
       // Rendering
       sydgui::Render(clear_color, window);
+      images_changed = false;
     }
 
   // Cleanup

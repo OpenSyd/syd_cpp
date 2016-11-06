@@ -18,6 +18,10 @@
 
 #include "sydgui.h"
 #include "sydRoiMaskImageHelper.h"
+#include "sydRoiStatisticHelper.h"
+
+// FIXME to remove
+#include "sydguiFitOptionsWidget.h"
 
 // Boost vector of bool (allow reference)
 #include <boost/container/vector.hpp>
@@ -112,6 +116,7 @@ syd::RoiMaskImage::vector sydgui::GetRoiMaskImages(syd::Image::pointer image)
 
   ImGui::Text("Rois");
   int i=0;
+  ImGui::Columns(3);
   for(auto roi:rois) {
     ImGui::PushID(i); // require to separate every checkbox ROI
     ImGui::Checkbox("ROI", &selected[i]);
@@ -120,21 +125,46 @@ syd::RoiMaskImage::vector sydgui::GetRoiMaskImages(syd::Image::pointer image)
     if (selected[i]) selected_rois.push_back(roi);
     ++i;
     ImGui::PopID();
+    ImGui::NextColumn();
   }
+  ImGui::Columns(1);
   return selected_rois;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::RoiStatistic::vector sydgui::GetTimeIntegratedActivity(syd::Image::vector images,
-                                                            syd::RoiMaskImage::vector rois)
+syd::RoiStatistic::vector
+sydgui::GetRoiStatistics(const syd::Image::vector images,
+                         const syd::RoiMaskImage::vector rois,
+                         const syd::TimeIntegratedActivityFitOptions & options)
 {
   syd::RoiStatistic::vector stats;
+  if (images.size() == 0) return stats; // should not happen
+  if (rois.size() == 0) return stats; // should not happen
 
-  ImGui::Text("I will do TIA for the following rois:");
-  for(auto roi:rois) {
-    ImGui::Text("Id %lu : %s", roi->id, roi->roitype->name.c_str());
+  auto db = images[0]->GetDatabase<syd::StandardDatabase>();
+
+  // Get FitImages
+  syd::FitImages::vector fis;
+  syd::FitImages::vector sfis;
+  db->Query(fis);
+  DD(fis.size());
+  DD(options.ToString());
+  for(auto fi:fis) {
+    DD(fi->GetOptions().ToString());
+    if (fi->images == images and
+        fi->GetOptions().ToString().compare(options.ToString()) == 0)
+      sfis.push_back(fi);
+  }
+  DD(sfis.size());
+
+  // Get RoiStatistic
+  for(auto fi:sfis) {
+    for(auto r:rois) {
+      auto ss = syd::FindRoiStatistic(fi->GetOutput("fit_auc"), r);
+      for(auto s:ss) stats.push_back(s);
+    }
   }
   return stats;
 }
@@ -142,11 +172,11 @@ syd::RoiStatistic::vector sydgui::GetTimeIntegratedActivity(syd::Image::vector i
 
 
 // --------------------------------------------------------------------
-void sydgui::DisplayRoiStatisics(syd::RoiStatistic::vector stats)
+void sydgui::DisplayRoiStatistics(syd::RoiStatistic::vector stats)
 {
   ImGui::Text("Hello, world!");
   for(auto stat:stats) {
-    ImGui::Text("Id %lu : %f", stat->id, stat->mean);
+    ImGui::Text("Id %lu : %f ", stat->id, stat->mean);
   }
 }
 // --------------------------------------------------------------------

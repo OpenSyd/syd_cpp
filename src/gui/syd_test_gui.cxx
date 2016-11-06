@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
   //for(auto p:patients) std::cout << p << std::endl;
 
   // Setup window
-  glfwSetErrorCallback(error_callback);
+  glfwSetErrorCallback(sydgui::error_callback);
   if (!glfwInit()) return 1;
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
           // make it too slow --> change to only update every x seconds.
           patterns.clear();
           results.clear();
-          patterns.push_back(filter_input_text);git
+          patterns.push_back(filter_input_text);
           DDS(patterns);
           db->Grep(results, images, patterns, exclude);
           DD(results.size());

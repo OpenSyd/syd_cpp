@@ -54,11 +54,12 @@ namespace sydgui {
   syd::RoiMaskImage::vector GetRoiMaskImages(syd::Image::pointer image);
 
   ///
-  syd::RoiStatistic::vector GetTimeIntegratedActivity(syd::Image::vector images,
-                                                      syd::RoiMaskImage::vector rois);
+  syd::RoiStatistic::vector GetRoiStatistics(const syd::Image::vector images,
+                                             const syd::RoiMaskImage::vector rois,
+                                             const syd::TimeIntegratedActivityFitOptions & options);
 
   ///
-  void DisplayRoiStatisics(syd::RoiStatistic::vector stats);
+  void DisplayRoiStatistics(syd::RoiStatistic::vector stats);
 
 } // end namespace
 

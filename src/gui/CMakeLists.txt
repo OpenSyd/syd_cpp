@@ -3,6 +3,13 @@
 find_package(OpenGL REQUIRED)
 # find_package(glfw3 REQUIRED CONFIG)
 
+# # if (APPLE)
+# #   SET
+# # else(APPLE)
+pkg_check_modules(GLFW REQUIRED glfw3)
+DD(GLFW_STATIC_LIBRARIES)
+#ndif(APPLE)
+
 #ImGui lib
 add_library(imgui
   imgui.cpp
@@ -20,10 +27,13 @@ add_library(sydgui
   imgui_impl_glfw_gl3.cpp
   libs/gl3w/GL/gl3w.c
   sydgui.cxx
+  sydguiFitOptionsWidget.cxx
+  sydguiRoisSelectionWidget.cxx
   )
 
 # -----------------------------------------------------------------------------
 ## reference example
+DD(OPENGL_LIBRARIES)
 include_directories(libs/gl3w)
 add_executable(imgui_opengl3_example
   main.cpp
@@ -31,8 +41,10 @@ add_executable(imgui_opengl3_example
 target_link_libraries(imgui_opengl3_example
   imgui
   ${OPENGL_LIBRARIES}
-  glfw3
+  ${GLFW_STATIC_LIBRARIES}
   ${SYD_STD_DB_LIBRARY})
+
+
 
 # -----------------------------------------------------------------------------
 # test gui
@@ -46,7 +58,7 @@ add_executable(syd_test_gui
 target_link_libraries(syd_test_gui
   sydgui
   ${OPENGL_LIBRARIES}
-  glfw3
+  ${GLFW_STATIC_LIBRARIES}
   ${SYD_STD_DB_LIBRARY})
 
 # -----------------------------------------------------------------------------
@@ -61,5 +73,5 @@ add_executable(syd_gui_auc_by_roi
 target_link_libraries(syd_gui_auc_by_roi
   sydgui
   ${OPENGL_LIBRARIES}
-  glfw3
+  ${GLFW_STATIC_LIBRARIES}
   ${SYD_STD_DB_LIBRARY})
