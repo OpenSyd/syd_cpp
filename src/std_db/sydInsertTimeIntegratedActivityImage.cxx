@@ -81,12 +81,12 @@ int main(int argc, char* argv[])
   builder.SetOptions(options);
   builder.SetDebugOutputFlag(args_info.debug_images_flag);
 
-   // Go !
+  // Go !
   auto tia = builder.Run();
-  syd::SetCommentsFromCommandLine(tia->comments, db, args_info);
-  db->Insert(tia);
 
   // Results
+  syd::SetCommentsFromCommandLine(tia->comments, db, args_info);
+  db->Insert(tia);
   for(auto output:tia->outputs) {
     syd::SetImageInfoFromCommandLine(output, args_info);
     syd::SetTagsFromCommandLine(output->tags, db, args_info);
