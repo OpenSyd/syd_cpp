@@ -23,14 +23,10 @@
 //--------------------------------------------------------------------
 namespace syd {
 
-  template<class ImageType>
-  typename ImageType::Pointer
-  AttenuationCorrectedProjection(const ImageType * input, double numberEnergySPECT,
-              double attenuationWaterCT, double attenuationBoneCT,
-              std::vector<double>& attenuationAirSPECT,
-              std::vector<double>& attenuationWaterSPECT,
-              std::vector<double>& attenuationBoneSPECT,
-              std::vector<double>& percentage);
+  template<class ImageType2D, class ImageType3D>
+  typename ImageType2D::Pointer
+  AttenuationCorrectedProjection(const ImageType2D * input_GM, const ImageType3D * input_AM,
+                                 int dimension);
 
 } // end namespace
 

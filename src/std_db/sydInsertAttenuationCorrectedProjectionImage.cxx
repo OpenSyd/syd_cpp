@@ -39,55 +39,29 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the list of images id
-  syd::IdType id = atoi(args_info.inputs[0]);
-  syd::Image::pointer input;
-  db->QueryOne(input, id); // will fail if not found
-  LOG(2) << "Read image :" << input;
+  // Get the Geometrical Mean (GM) image id
+  syd::IdType id_GM;
+  if (args_info.image1_given)
+    id_GM = args_info.image1_arg;
+  syd::Image::pointer input_GM;
+  db->QueryOne(input_GM, id_GM); // will fail if not found
+  LOG(2) << "Read geometrical mean image :" << input_GM;
 
-  //Verify inputs
-  if (args_info.attenuationCT_given != 2)
-    LOG(FATAL) << "The numbers of attenuationCT inputs is not 2.";
+  // Get the attenuation map (AM) id
+  syd::IdType id_AM;
+  if (args_info.image2_given)
+    id_AM = args_info.image2_arg;
+  syd::Image::pointer input_AM;
+  db->QueryOne(input_AM, id_AM); // will fail if not found
+  LOG(2) << "Read attenuation map :" << input_AM;
 
-  double numberEnergySPECT(1);
-  if (args_info.percentage_given)
-    numberEnergySPECT = args_info.percentage_given;
-  if (3*numberEnergySPECT != args_info.attenuationSPECT_given)
-    LOG(FATAL) << "The numbers of percentage and attenuationSPECT inputs do not match.";
-
-  double attenuationWaterCT(0);
-  double attenuationBoneCT(0);
-  attenuationWaterCT = args_info.attenuationCT_arg[0];
-  attenuationBoneCT = args_info.attenuationCT_arg[1];
-  if (attenuationWaterCT > attenuationBoneCT)
-    LOG(FATAL) << "Attenuation water coefficient > Attenuation bone coefficient (check the order of attenuationCT)";
-
-  std::vector<double> attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT;
-  for(unsigned int i=0; i<numberEnergySPECT; ++i) {
-    if (args_info.attenuationSPECT_arg[3*i] <= args_info.attenuationSPECT_arg[3*i+1] && args_info.attenuationSPECT_arg[3*i+1] <= args_info.attenuationSPECT_arg[3*i+2]) {
-      attenuationAirSPECT.push_back(args_info.attenuationSPECT_arg[3*i]);
-      attenuationWaterSPECT.push_back(args_info.attenuationSPECT_arg[3*i+1]);
-      attenuationBoneSPECT.push_back(args_info.attenuationSPECT_arg[3*i+2]);
-    }
-    else {
-      LOG(FATAL) << "Attenuation air coefficient > Attenuation water coefficient > Attenuation bone coefficient (check the order of attenuationSPECT)";
-      break;
-    }
-  }
-
-  std::vector<double> percentage;
-  if (args_info.percentage_given) {
-    for(unsigned int i=0; i<numberEnergySPECT; ++i)
-      percentage.push_back(args_info.percentage_arg[i]);
-  }
-  else
-    percentage.push_back(1.0);
-
-  if (std::abs(std::accumulate(percentage.begin(), percentage.end(), 0.0)-1.0) > 0.000001)
-    LOG(FATAL) << "The sum of percentages is not equal to 1.0";
+  //Read the projection dimension
+  int dimension(0);
+  if (args_info.dimension_given)
+    dimension = args_info.dimension_arg;
 
   // Main computation
-  auto image = syd::InsertAttenuationImage(input, numberEnergySPECT, attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT, percentage);
+  auto image = syd::InsertAttenuationCorrectedProjectionImage(input_GM, input_AM, dimension);
 
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);
