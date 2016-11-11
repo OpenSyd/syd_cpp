@@ -28,7 +28,7 @@ namespace sydgui {
 
   class ImagesListWidget {
   public:
-    ImagesListWidget();
+    ImagesListWidget(syd::Image::vector im);
 
     bool NewFrame();
     void SetImages(syd::Image::vector im);

@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
     // Begin windows
     ImGui::Begin("Selected images");
     //ImGui::Text("%lu images", images.size());
-    static sydgui::ImagesListWidget widget_list;
+    static sydgui::ImagesListWidget widget_list(images);
     if (changed) widget_list.SetImages(images);
     widget_list.NewFrame();
     ImGui::End();

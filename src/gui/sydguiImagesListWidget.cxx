@@ -20,9 +20,10 @@
 #include "sydRoiMaskImageHelper.h"
 
 // --------------------------------------------------------------------
-sydgui::ImagesListWidget::ImagesListWidget()
+sydgui::ImagesListWidget::ImagesListWidget(syd::Image::vector im)
 {
   DD("constructor");
+  SetImages(im);
 }
 // --------------------------------------------------------------------
 
