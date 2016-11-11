@@ -29,6 +29,7 @@ add_library(sydgui
   sydgui.cxx
   sydguiFitOptionsWidget.cxx
   sydguiRoisSelectionWidget.cxx
+  sydguiImagesSelectionWidget.cxx
   )
 
 # -----------------------------------------------------------------------------
@@ -71,6 +72,22 @@ add_executable(syd_gui_auc_by_roi
   ${syd_gui_auc_by_roi_GGO_C})
 
 target_link_libraries(syd_gui_auc_by_roi
+  sydgui
+  ${OPENGL_LIBRARIES}
+  ${GLFW_STATIC_LIBRARIES}
+  ${SYD_STD_DB_LIBRARY})
+
+
+# -----------------------------------------------------------------------------
+# gui for AUC by rois single patient, single method at a time
+wrap_ggo(syd_gui_images_GGO_C
+  syd_gui_images.ggo
+  ../common_db/sydCommandLineDefault.ggo)
+add_executable(syd_gui_images
+  syd_gui_images.cxx
+  ${syd_gui_images_GGO_C})
+
+target_link_libraries(syd_gui_images
   sydgui
   ${OPENGL_LIBRARIES}
   ${GLFW_STATIC_LIBRARIES}

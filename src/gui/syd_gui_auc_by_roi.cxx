@@ -103,14 +103,24 @@ int main(int argc, char* argv[])
       if (images_changed)
         w_options.SetImage(images[0]);
       auto options_changed = w_options.NewFrame();
+      static bool stats_changed = true;
       if (options_changed || images_changed || rois_changed) {
         DD(options.ToString());
         stats = sydgui::GetRoiStatistics(images, rois, options);
+        stats_changed = true;
       }
+      else stats_changed = false;
       ImGui::Separator();
 
       // Panel4: results
       sydgui::DisplayRoiStatistics(stats);
+      static std::vector<float> arr;
+      if (stats_changed) { // form stats to float array
+        arr.resize(stats.size());
+        for(auto s:stats) arr.push_back(s->mean);
+        DDS(arr);
+      }
+      ImGui::PlotHistogram("cr", &arr[0], arr.size());//, 0, NULL, 0.0f, 1.0f, ImVec2(0,80));
 
       ImGui::End();
 

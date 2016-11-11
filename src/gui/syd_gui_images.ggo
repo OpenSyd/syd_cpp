@@ -1,0 +1,8 @@
+#File syd_gui_images.ggo
+
+package "syd"
+version "0.1"
+usage "syd_gui_images"
+description "TODO"
+
+

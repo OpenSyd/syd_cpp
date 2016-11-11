@@ -194,6 +194,7 @@ sydgui::GetRoiStatistics(const syd::Image::vector images,
 void sydgui::DisplayRoiStatistics(syd::RoiStatistic::vector stats)
 {
   ImGui::Text("Hello, world!");
+
   for(auto stat:stats) {
     ImGui::Text("Id %lu : %f ", stat->id, stat->mean);
   }
