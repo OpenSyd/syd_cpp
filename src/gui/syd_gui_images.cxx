@@ -26,6 +26,7 @@
 // imgui + glfw
 #include "sydgui.h"
 #include "sydguiImagesSelectionWidget.h"
+#include "sydguiImagesListWidget.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -56,16 +57,16 @@ int main(int argc, char* argv[])
 
     ImGui::Separator();
     auto & images = widget_images.GetImages(); // reference (no copy)
-    if (changed) {
-      DD(changed);
-      DD(images.size());
-    }
+
     // End windows
     ImGui::End();
 
     // Begin windows
     ImGui::Begin("Selected images");
-    ImGui::Text("%lu images", images.size());
+    //ImGui::Text("%lu images", images.size());
+    static sydgui::ImagesListWidget widget_list;
+    if (changed) widget_list.SetImages(images);
+    widget_list.NewFrame();
     ImGui::End();
 
     // Rendering

@@ -22,9 +22,8 @@
 // --------------------------------------------------------------------
 sydgui::ImagesSelectionWidget::ImagesSelectionWidget(syd::StandardDatabase * d):db(d)
 {
-  DD("constructor");
   db->Query(all_images);
-  DD(all_images.size());
+  selected_images = all_images;
 }
 // --------------------------------------------------------------------
 
@@ -32,13 +31,19 @@ sydgui::ImagesSelectionWidget::ImagesSelectionWidget(syd::StandardDatabase * d):
 // --------------------------------------------------------------------
 bool sydgui::ImagesSelectionWidget::NewFrame()
 {
-  static char filter_input_text[256];
-  bool changed = ImGui::InputText("Filter", filter_input_text, 256);
+  static char filter_include_text[256];
+  bool changed = ImGui::InputText("Include", filter_include_text, 256);
+
+  static char filter_exclude_text[256];
+  changed = ImGui::InputText("Exclude", filter_exclude_text, 256) || changed;
 
   if (changed) {
     std::vector<std::string> patterns;
-    std::vector<std::string> exclude; // FIXME TODO 
-    patterns.push_back(filter_input_text);
+    std::vector<std::string> exclude; // FIXME TODO
+    std::string s(filter_include_text);
+    syd::GetWords(patterns, s);
+    std::string ss(filter_exclude_text);
+    syd::GetWords(exclude, ss);
     selected_images.clear();
     db->Grep(selected_images, all_images, patterns, exclude);
   }
