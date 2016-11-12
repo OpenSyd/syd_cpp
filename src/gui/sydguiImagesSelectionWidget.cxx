@@ -106,8 +106,6 @@ bool sydgui::ImagesSelectionWidget::PrintInfoImage(int i,
 syd::Image::pointer sydgui::ImagesSelectionWidget::GetSelectedImage() const
 {
   if (selected_id != -1) {
-    DD(selected_id);
-    DD(selected_i);
     return selected_images[selected_i];
   }
   return nullptr;

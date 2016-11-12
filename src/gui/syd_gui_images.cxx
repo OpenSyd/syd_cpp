@@ -27,6 +27,7 @@
 #include "sydgui.h"
 #include "sydguiImagesSelectionWidget.h"
 #include "sydguiImagesListWidget.h"
+#include "sydguiImageWidget.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -71,16 +72,9 @@ int main(int argc, char* argv[])
 
     // Begin windows
     ImGui::Begin("Selected image");
-    if (changed) {
-      auto im = widget_images.GetSelectedImage();
-      if (im != nullptr) {
-        DD(im);
-      }
-    }
-    /*    static sydgui::ImageWidget widget_image;
-    if (changed) widget_image.SetImage(widget_list->GetSelectedImage());
+    static sydgui::ImageWidget widget_image;
+    if (changed) widget_image.SetImage(widget_images.GetSelectedImage());
     widget_image.NewFrame();
-    */
     ImGui::End();
 
     // Rendering

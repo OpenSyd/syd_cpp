@@ -31,6 +31,7 @@ add_library(sydgui
   sydguiRoisSelectionWidget.cxx
   sydguiImagesSelectionWidget.cxx
   sydguiImagesListWidget.cxx
+  sydguiImageWidget.cxx
   )
 
 # -----------------------------------------------------------------------------
