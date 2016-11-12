@@ -69,6 +69,20 @@ int main(int argc, char* argv[])
     widget_list.NewFrame();
     ImGui::End();
 
+    // Begin windows
+    ImGui::Begin("Selected image");
+    if (changed) {
+      auto im = widget_images.GetSelectedImage();
+      if (im != nullptr) {
+        DD(im);
+      }
+    }
+    /*    static sydgui::ImageWidget widget_image;
+    if (changed) widget_image.SetImage(widget_list->GetSelectedImage());
+    widget_image.NewFrame();
+    */
+    ImGui::End();
+
     // Rendering
     sydgui::Render(clear_color, window);
   }

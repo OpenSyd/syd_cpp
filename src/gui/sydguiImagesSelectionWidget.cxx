@@ -24,6 +24,8 @@ sydgui::ImagesSelectionWidget::ImagesSelectionWidget(syd::StandardDatabase * d):
 {
   db->Query(all_images);
   selected_images = all_images;
+  selected_i = -1;
+  selected_id = -1;
 }
 // --------------------------------------------------------------------
 
@@ -49,11 +51,20 @@ bool sydgui::ImagesSelectionWidget::NewFrame()
   }
 
   int i=1;
+  int nb_of_selected = 0;
   for(auto image:selected_images) {
     ImGui::PushID(i); // require to separate every checkbox ROI
-    PrintInfoImage(i, image);
+    bool selected(image->id == selected_id);
+    changed = PrintInfoImage(i, image, selected) || changed;
+    if (selected) ++nb_of_selected;
     ImGui::PopID();
     ++i;
+  }
+
+  // if the previously selected is not present (filtered), reset the selection
+  if (nb_of_selected == 0) {
+    selected_id = selected_i = -1;
+    changed = true;
   }
 
   return changed;
@@ -62,15 +73,22 @@ bool sydgui::ImagesSelectionWidget::NewFrame()
 
 
 // --------------------------------------------------------------------
-void sydgui::ImagesSelectionWidget::PrintInfoImage(int i, syd::Image::pointer image)
+bool sydgui::ImagesSelectionWidget::PrintInfoImage(int i,
+                                                   syd::Image::pointer image,
+                                                   bool & selected)
 {
   std::stringstream ss;
   ss << i << ". " << image->ToString();
 
-  bool selected;
-  ImGui::Selectable(ss.str().c_str(), selected);
+  bool previous(selected);
+  bool changed = ImGui::Selectable(ss.str().c_str(), &selected);
 
-  if (selected) selected_image = image;
+  if (selected) {
+    selected_id = image->id;
+    selected_i = i-1; // because start at 1
+  }
+  return changed;//(previous != selected);
+
   /*
     columns:
     i id patient_name acqui_date tags injection type size spacing pixel_type dicom
@@ -80,5 +98,18 @@ void sydgui::ImagesSelectionWidget::PrintInfoImage(int i, syd::Image::pointer im
     }
   */
 
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer sydgui::ImagesSelectionWidget::GetSelectedImage() const
+{
+  if (selected_id != -1) {
+    DD(selected_id);
+    DD(selected_i);
+    return selected_images[selected_i];
+  }
+  return nullptr;
 }
 // --------------------------------------------------------------------

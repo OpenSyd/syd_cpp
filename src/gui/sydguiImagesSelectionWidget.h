@@ -32,14 +32,17 @@ namespace sydgui {
 
     bool NewFrame();
     const syd::Image::vector & GetImages() const { return selected_images; }
+    syd::Image::pointer GetSelectedImage() const;
 
   protected:
     syd::StandardDatabase * db;
     syd::Image::vector all_images;
     syd::Image::vector selected_images;
     syd::Image::pointer selected_image;
+    int selected_i;
+    syd::IdType selected_id;
 
-    void PrintInfoImage(int i, syd::Image::pointer image);
+    bool PrintInfoImage(int i, syd::Image::pointer image, bool & selected);
 
   };
 }
