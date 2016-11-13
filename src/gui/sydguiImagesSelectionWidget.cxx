@@ -50,10 +50,34 @@ bool sydgui::ImagesSelectionWidget::NewFrame()
     db->Grep(selected_images, all_images, patterns, exclude);
   }
 
+  // Keyboard arrow to change selected row
+  ImGuiIO& io = ImGui::GetIO();
+  static auto key_down_arrow = io.KeyMap[ImGuiKey_DownArrow];
+  static auto key_up_arrow = io.KeyMap[ImGuiKey_UpArrow];
+  if (selected_id != -1) {
+    for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++) {
+      if (ImGui::IsKeyPressed(i)) {
+        if (i==key_down_arrow) {
+          std::min(++selected_i, (int)selected_images.size()-1);
+          selected_id = selected_images[selected_i]->id;
+          changed = true;
+          continue;
+        }
+        if (i==key_up_arrow) {
+          std::max(0,--selected_i);
+          selected_id = selected_images[selected_i]->id;
+          changed = true;
+          continue;
+        }
+      }
+    }
+  }
+
   int i=1;
   int nb_of_selected = 0;
   for(auto image:selected_images) {
     ImGui::PushID(i); // require to separate every checkbox ROI
+    //    ImGui::SetKeyboardFocusHere();
     bool selected(image->id == selected_id);
     changed = PrintInfoImage(i, image, selected) || changed;
     if (selected) ++nb_of_selected;
@@ -87,6 +111,12 @@ bool sydgui::ImagesSelectionWidget::PrintInfoImage(int i,
     selected_id = image->id;
     selected_i = i-1; // because start at 1
   }
+
+
+  if (ImGui::IsItemActive()) {// NO
+    DD(i);
+  }
+
   return changed;//(previous != selected);
 
   /*

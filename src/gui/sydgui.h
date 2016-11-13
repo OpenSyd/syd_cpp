@@ -33,6 +33,8 @@
 #include "sydDD.h"
 #include "sydStandardDatabase.h"
 
+#define IM_ARRAYSIZE(_ARR)  ((int)(sizeof(_ARR)/sizeof(*_ARR)))
+
 namespace sydgui {
 
   /// Callback for error messages
