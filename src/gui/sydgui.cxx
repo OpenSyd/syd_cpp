@@ -37,7 +37,6 @@ void sydgui::error_callback(int error, const char* description)
 // --------------------------------------------------------------------
 void sydgui::InitGUI()
 {
-  DDF();
   glfwSetErrorCallback(error_callback);
   if (!glfwInit()) {
     using namespace sydlog;
@@ -76,7 +75,6 @@ bool sydgui::StartNewFrame(GLFWwindow * window)
 // --------------------------------------------------------------------
 GLFWwindow* sydgui::CreateMainWindow(int width, int height, std::string title)
 {
-  DDF();
   GLFWwindow* window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
   glfwMakeContextCurrent(window);
   gl3wInit();
