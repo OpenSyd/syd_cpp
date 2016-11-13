@@ -26,3 +26,9 @@ test/save
 /src/std_db/GTAGS
 save/
 superbuild.save/
+/src/core/GPATH
+/src/core/GRTAGS
+/src/core/GTAGS
+/src/gui/GPATH
+/src/gui/GRTAGS
+/src/gui/GTAGS
