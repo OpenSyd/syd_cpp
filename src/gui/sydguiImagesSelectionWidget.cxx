@@ -60,13 +60,13 @@ bool sydgui::ImagesSelectionWidget::NewFrame()
     for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++) {
       if (ImGui::IsKeyPressed(i)) {
         if (i==key_down_arrow) {
-          std::min(++selected_i, (int)selected_images.size()-1);
+          selected_i = std::min(++selected_i, (int)selected_images.size()-1);
           selected_id = selected_images[selected_i]->id;
           changed = true;
           continue;
         }
         if (i==key_up_arrow) {
-          std::max(0,--selected_i);
+          selected_i = std::max(0,--selected_i);
           selected_id = selected_images[selected_i]->id;
           changed = true;
           continue;
