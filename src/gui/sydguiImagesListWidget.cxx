@@ -22,7 +22,6 @@
 // --------------------------------------------------------------------
 sydgui::ImagesListWidget::ImagesListWidget(syd::Image::vector im)
 {
-  DD("constructor");
   SetImages(im);
 }
 // --------------------------------------------------------------------
