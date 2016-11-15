@@ -83,6 +83,7 @@ int main(int argc, char* argv[])
 
   // Go !
   auto tia = builder.Run();
+  DD(tia);
 
   // Results
   syd::SetCommentsFromCommandLine(tia->comments, db, args_info);

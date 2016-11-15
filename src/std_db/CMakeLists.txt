@@ -53,6 +53,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRadionuclideHelper.cxx
   sydRoiStatisticHelper.cxx
   sydTimepointsHelper.cxx
+  sydFitImagesHelper.cxx
 
   ## Cannot put this file in the lib, because the plugin will be no more
   ## recognized. I dont know why.

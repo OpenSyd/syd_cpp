@@ -35,12 +35,16 @@ TimeIntegratedActivityImageBuilder()
   best_model = std::make_shared<syd::FitOutputImage_Model>();
   iter = std::make_shared<syd::FitOutputImage_Iteration>();
   success = std::make_shared<syd::FitOutputImage_Success>();
+  params = std::make_shared<syd::FitOutputImage_ModelParams>();
+  mrt = std::make_shared<syd::FitOutputImage_MRT>();
   all_outputs_.push_back(auc);
   all_outputs_.push_back(integrate);
   all_outputs_.push_back(r2);
   all_outputs_.push_back(best_model);
   all_outputs_.push_back(iter);
   all_outputs_.push_back(success);
+  all_outputs_.push_back(params);
+  all_outputs_.push_back(mrt);
 }
 // --------------------------------------------------------------------
 
@@ -145,26 +149,42 @@ InsertOutputSuccessFitImage()
 syd::Image::vector syd::TimeIntegratedActivityImageBuilder::
 InsertDebugOutputImages(std::vector<std::string> & names)
 {
+  DDF();
   //outputs_.clear();
   syd::Image::vector outputs;
   auto img = images_[0];
   auto db = img->GetDatabase<syd::StandardDatabase>();
 
+  DD(all_outputs_.size());
   for(auto o:all_outputs_) {
+    DD(o->GetTagName());
+  }
+
+  for(auto o:all_outputs_) {
+    DD(o->GetTagName());
     // do nothing for auc or integrate or success output
-    if (o->GetTagName() != auc->GetTagName() and
-        o->GetTagName() != success->GetTagName() and
-        o->GetTagName() != integrate->GetTagName()) {
-      auto output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
-      syd::SetImageInfoFromImage(output, img);
-      output->tags.clear(); // remove all tags for the debug images
-      auto t = syd::FindOrCreateTag(db, o->GetTagName());
-      syd::AddTag(output->tags, t);
-      output->pixel_unit = syd::FindPixelUnit(db, "no_unit");
-      db->Update(output);
-      outputs.push_back(output);
-      names.push_back(o->GetTagName());
+    if (o->GetTagName() == auc->GetTagName() or
+        o->GetTagName() == success->GetTagName() or
+        o->GetTagName() == integrate->GetTagName()) continue;
+
+    syd::Image::pointer output;
+    if (o->GetTagName() != params->GetTagName()) {
+      output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
     }
+    if (o->GetTagName() == params->GetTagName()) {
+      DD("params debug output");
+      auto oo = std::dynamic_pointer_cast<syd::FitOutputImage_ModelParams>(o);
+      typedef FitOutputImage_ModelParams::Image4DType Image4DType;
+      output = syd::InsertImage<Image4DType>(oo->GetImage4D(), img->patient);
+    }
+    syd::SetImageInfoFromImage(output, img);
+    output->tags.clear(); // remove all tags for the debug images
+    auto t = syd::FindOrCreateTag(db, o->GetTagName());
+    syd::AddTag(output->tags, t);
+    output->pixel_unit = syd::FindPixelUnit(db, "no_unit");
+    db->Update(output);
+    outputs.push_back(output);
+    names.push_back(o->GetTagName());
   }
   return outputs;
 }
@@ -203,6 +223,8 @@ Run()
     filter_.AddOutputImage(r2);
     filter_.AddOutputImage(best_model);
     filter_.AddOutputImage(iter);
+    filter_.AddOutputImage(params);
+    filter_.AddOutputImage(mrt);
   }
   filter_.SetOptions(options_);
 
@@ -242,6 +264,7 @@ Run()
   if (options_.GetRestrictedFlag()) main_output = auc;
   else main_output = integrate;
   if (debug_images_flag_) {
+    DD(debug_images_flag_);
     std::vector<std::string> names;
     auto outputs = InsertDebugOutputImages(names);
     for(auto i=0; i<outputs.size(); i++) {

@@ -152,6 +152,13 @@ namespace syd {
     virtual void Update(syd::FitModelBase::pointer model);
   };
 
+  /// Store image with MRT Mean Residence Time
+  class FitOutputImage_MRT: public FitOutputImage {
+  public:
+    FitOutputImage_MRT();
+    virtual void Update(syd::FitModelBase::pointer model);
+  };
+
   /// Store the model params in a 4D image
   class FitOutputImage_ModelParams: public FitOutputImage {
   public:
@@ -165,6 +172,8 @@ namespace syd {
     virtual void Update(syd::FitModelBase::pointer model);
     virtual void Iterate();
     virtual void WriteImage();
+
+    Pointer4D GetImage4D() const { return image_4d; }
 
     Pointer4D image_4d;
     std::vector<double> values;

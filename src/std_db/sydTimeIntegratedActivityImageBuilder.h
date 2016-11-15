@@ -71,6 +71,8 @@ namespace syd {
     syd::FitOutputImage_Model::pointer best_model;
     syd::FitOutputImage_Iteration::pointer iter;
     syd::FitOutputImage_Success::pointer success;
+    syd::FitOutputImage_ModelParams::pointer params;
+    syd::FitOutputImage_MRT::pointer mrt;
 
     /// Image types
     typedef syd::TimeIntegratedActivityImageFilter::ImageType ImageType;
