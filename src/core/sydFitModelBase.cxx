@@ -329,3 +329,19 @@ void syd::FitModelBase::LogLinearFit(Eigen::Vector2d & x,
   x(0) = exp(x(0));
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModelBase::ComputeMRT() const
+{
+  double auc = Integrate();
+  double x=0.0;
+  for(auto k=0; k<GetNumberOfExpo(); k++) {
+    double A = GetA(k);
+    double l = GetLambda(k) + GetLambdaDecayConstantInHours();
+    x += A/l*l;
+  }
+  x = x/auc;
+  return x;
+}
+// --------------------------------------------------------------------
