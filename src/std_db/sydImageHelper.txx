@@ -66,7 +66,6 @@ syd::Image::pointer syd::InsertImage(typename ImageType::Pointer itk_image,
                                      syd::Patient::pointer patient,
                                      std::string modality)
 {
-  DDF();
   // New image
   auto db = patient->GetDatabase<syd::StandardDatabase>();
   syd::Image::pointer image;
@@ -78,8 +77,6 @@ syd::Image::pointer syd::InsertImage(typename ImageType::Pointer itk_image,
 
   // save the image
   std::string filename = db->GetUniqueTempFilename();
-  DD(itk_image->GetLargestPossibleRegion());
-  DD(itk_image->GetSpacing());
   syd::WriteImage<ImageType>(itk_image, filename);
 
   // insert the files

@@ -149,19 +149,12 @@ InsertOutputSuccessFitImage()
 syd::Image::vector syd::TimeIntegratedActivityImageBuilder::
 InsertDebugOutputImages(std::vector<std::string> & names)
 {
-  DDF();
   //outputs_.clear();
   syd::Image::vector outputs;
   auto img = images_[0];
   auto db = img->GetDatabase<syd::StandardDatabase>();
 
-  DD(all_outputs_.size());
   for(auto o:all_outputs_) {
-    DD(o->GetTagName());
-  }
-
-  for(auto o:all_outputs_) {
-    DD(o->GetTagName());
     // do nothing for auc or integrate or success output
     if (o->GetTagName() == auc->GetTagName() or
         o->GetTagName() == success->GetTagName() or

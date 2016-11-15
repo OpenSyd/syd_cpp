@@ -167,7 +167,7 @@ namespace syd {
     typedef Image4DType::Pointer Pointer4D;
     typedef itk::ImageRegionIterator<Image4DType> Iterator4D;
 
-    virtual void InitImage(Pointer input);
+    virtual void InitImageLike(Pointer input);
     //    void SetValue(double v);
     virtual void Update(syd::FitModelBase::pointer model);
     virtual void Iterate();

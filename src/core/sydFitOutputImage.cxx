@@ -282,9 +282,8 @@ syd::FitOutputImage_ModelParams::FitOutputImage_ModelParams():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_ModelParams::InitImage(Pointer input)
+void syd::FitOutputImage_ModelParams::InitImageLike(Pointer input)
 {
-  DDF();
   image_4d = Image4DType::New();
   Image4DType::RegionType region;
   Image4DType::SizeType size;
@@ -326,7 +325,6 @@ void syd::FitOutputImage_ModelParams::Iterate()
 // --------------------------------------------------------------------
 void syd::FitOutputImage_ModelParams::Update(syd::FitModelBase::pointer model)
 {
-  DDF();
   if (UseImageFlag) {
     auto p = model->GetParameters();
     auto iter = raw_pointer;
