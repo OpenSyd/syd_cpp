@@ -127,6 +127,8 @@ endif("${CMAKE_SYSTEM_PROCESSOR}" STREQUAL "x86_64")
 if(NOT APPLE)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp" )
 endif(NOT APPLE)
+
+# -Wno-deprecated-declarations ?
 #----------------------------------------------------------
 
 
