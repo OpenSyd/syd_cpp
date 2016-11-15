@@ -6,9 +6,13 @@ option(HUNTER_ENABLED "Enable Hunter package manager" ON)
 include("cmake/HunterGate.cmake")
 #list(APPEND HUNTER_CACHE_SERVERS "https://github.com/ingenue/hunter-cache")
 HunterGate(
-  URL "https://github.com/ruslo/hunter/archive/v0.16.29.tar.gz"
-  SHA1 "309d7d8eedc5b1229b710f856dc7a19e04fb7737"
+  URL "https://github.com/ruslo/hunter/archive/v0.15.25.tar.gz"
+  SHA1 "74993ddf2cf8a6a4c3e0b9d58027a624bf3060e7"
   )
+# HunterGate(
+#   URL "https://github.com/ruslo/hunter/archive/v0.16.29.tar.gz"
+#   SHA1 "309d7d8eedc5b1229b710f856dc7a19e04fb7737"
+#   )
 # ---------------------------------------------------------
 
 
@@ -42,6 +46,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED on)
 # hunter dependencies
 set(HUNTER_STATUS_DEBUG OFF)
 hunter_add_package(Boost COMPONENTS date_time system filesystem)
+#hunter_config(Boost VERSION 1.60.0)
 hunter_add_package(odb)
 hunter_add_package(odb-compiler)
 hunter_add_package(odb-sqlite)
