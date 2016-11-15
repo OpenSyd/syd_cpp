@@ -25,13 +25,13 @@ endif(APPLE)
 
 #----------------------------------------------------------
 # ITK tools library
-add_library(sydItkUtils
+add_library(sydItkUtils SHARED
   sydImageUtils.cxx
   sydDicomUtils.cxx
   sydKmeansFilter.cxx
   )
 
-target_link_libraries(sydItkUtils ${ITK_LIBRARIES})
+target_link_libraries(sydItkUtils sydCore ${ITK_LIBRARIES})
 #----------------------------------------------------------
 
 
