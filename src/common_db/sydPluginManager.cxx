@@ -126,7 +126,7 @@ void syd::PluginManager::Load(const std::string & filename)
   LOG(10) << "(syd plugin) Opening the file " << filename << " to register db schema";
   plugin = dlopen(filename.c_str(), RTLD_LAZY);
   if (!plugin) {
-    LOG(10) << "(syd plugin) The file '" << filename << "' is not a plugin.";
+    LOG(10) << "(syd plugin) The file '" << filename << "' is not a plugin. Error is " << dlerror();
     return;
   }
 
