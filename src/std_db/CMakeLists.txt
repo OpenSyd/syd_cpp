@@ -80,6 +80,8 @@ add_library(StandardDatabasePlugin MODULE
 if (APPLE)
   target_link_libraries(sydStandardDatabase ${SYD_COMMON_DB_LIBRARY})
   target_link_libraries(StandardDatabasePlugin ${SYD_COMMON_DB_LIBRARY})
+else(APPLE)
+  target_link_libraries(StandardDatabasePlugin sydCore sydFit sydItkUtils ${ITK_LIBRARIES})
 endif(APPLE)
 
 set_target_properties(StandardDatabasePlugin PROPERTIES MACOSX_BUNDLE TRUE)
