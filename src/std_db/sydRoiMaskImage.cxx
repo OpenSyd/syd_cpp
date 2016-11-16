@@ -32,12 +32,11 @@ syd::RoiMaskImage::RoiMaskImage():Image()
 
 
 // --------------------------------------------------------------------
-std::string syd::RoiMaskImage::ToString() const
+std::string syd::RoiMaskImage::ToShortString() const
 {
   std::stringstream ss ;
   ss << syd::Image::ToString() << " "
-     << (roitype == nullptr ? empty_value:roitype->name)
-     << " ";
+     << (roitype == nullptr ? empty_value:roitype->name);
   return ss.str();
 }
 // --------------------------------------------------------------------

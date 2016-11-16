@@ -42,12 +42,13 @@ syd::RoiTimepoints::vector syd::FindRoiTimepoints(const syd::RoiStatistic::vecto
 
 // --------------------------------------------------------------------
 syd::FitTimepoints::vector syd::FindFitTimepoints(const syd::Timepoints::pointer tp,
-                                             const syd::TimeIntegratedActivityFitOptions & options)
+                                                  const syd::TimeIntegratedActivityFitOptions & options)
 {
   syd::FitTimepoints::vector ftp;
   auto db = tp->GetDatabase<syd::StandardDatabase>();
   typedef odb::query<syd::FitTimepoints> Q;
-  Q q = Q::timepoints == tp->id and
+  Q q =
+    Q::timepoints == tp->id and
     Q::r2_min == options.GetR2MinThreshold() and
     Q::max_iteration == options.GetMaxNumIterations() and
     Q::restricted_tac == options.GetRestrictedFlag() and

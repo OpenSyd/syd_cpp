@@ -46,6 +46,7 @@ bool sydgui::ImageWidget::NewFrame()
   */
 
   static auto ro_flag = ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll;
+  static auto rw_flag = ImGuiInputTextFlags_AutoSelectAll;
   static char c[256];
   strcpy(c, std::to_string(image->id).c_str());
   ImGui::InputText("Id", c, 256, ro_flag);
@@ -60,7 +61,10 @@ bool sydgui::ImageWidget::NewFrame()
   ImGui::InputText("Acquisition date", c, 256, ro_flag);
 
   strcpy(c, image->modality.c_str());
-  ImGui::InputText("Modality", c, 256, ro_flag);
+  bool b = ImGui::InputText("*Modality", c, 256, rw_flag);
+  if (b) {
+    image->modality = c;
+  }
 
   strcpy(c, syd::GetLabels(image->tags).c_str());
   ImGui::InputText("Tags", c, 256, ro_flag);
@@ -85,7 +89,7 @@ bool sydgui::ImageWidget::NewFrame()
   ImGui::InputText("Type", c, 256, ro_flag);
 
   strcpy(c, image->pixel_type.c_str());
-  ImGui::InputText("Pixel type", c, 256, ro_flag);
+  ImGui::InputText("*Pixel type", c, 256, rw_flag);
 
   if (image->pixel_unit != nullptr) {
     strcpy(c, image->pixel_unit->name.c_str());
@@ -93,7 +97,7 @@ bool sydgui::ImageWidget::NewFrame()
   }
 
   strcpy(c, image->frame_of_reference_uid.c_str());
-  ImGui::InputText("Frame", c, 256, ro_flag);
+  ImGui::InputText("*Frame of ref.", c, 256, ro_flag);
 
   strcpy(c, std::to_string(image->dimension).c_str());
   ImGui::InputText("Dim", c, 256, ro_flag);

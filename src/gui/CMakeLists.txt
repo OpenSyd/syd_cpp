@@ -7,6 +7,7 @@ find_package(OpenGL REQUIRED)
 # #   SET
 # # else(APPLE)
 pkg_check_modules(GLFW REQUIRED glfw3)
+#find_package(GLFW)
 DD(GLFW_STATIC_LIBRARIES)
 #ndif(APPLE)
 

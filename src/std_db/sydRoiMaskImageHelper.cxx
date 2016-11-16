@@ -43,16 +43,16 @@ syd::RoiType::pointer syd::FindRoiType(const std::string & roiname,
 
 // --------------------------------------------------------------------
 syd::RoiMaskImage::vector
-syd::FindRoiMaskImage(const syd::Image::pointer image,
-                      const std::string & roi_name)
+syd::FindRoiMaskImages(const syd::Image::pointer image,
+                       const std::string & roi_name)
 {
   auto db = image->GetDatabase<syd::StandardDatabase>();
-  syd::RoiType::pointer roitype = syd::FindRoiType(roi_name, db);
+  syd::RoiType::pointer roitype = syd::FindRoiType(roi_name, db); // will exception if not found
   syd::RoiMaskImage::vector rois;
   odb::query<syd::RoiMaskImage> q =
+    odb::query<syd::RoiMaskImage>::patient == image->patient->id and
     odb::query<syd::RoiMaskImage>::roitype == roitype->id and
-    odb::query<syd::RoiMaskImage>::frame_of_reference_uid ==
-    image->frame_of_reference_uid;
+    odb::query<syd::RoiMaskImage>::frame_of_reference_uid == image->frame_of_reference_uid;
   db->Query(rois, q);
   return rois;
 }
@@ -61,7 +61,7 @@ syd::FindRoiMaskImage(const syd::Image::pointer image,
 
 // --------------------------------------------------------------------
 syd::RoiMaskImage::vector
-syd::FindAllRoiMaskImage(const syd::Image::pointer image)
+syd::FindRoiMaskImages(const syd::Image::pointer image)
 {
   auto db = image->GetDatabase<syd::StandardDatabase>();
   syd::RoiMaskImage::vector rois;
@@ -86,7 +86,7 @@ syd::FindOneRoiMaskImage(const syd::Image::pointer image,
               << " named '" << roi_name << "' (with same frame_of_reference_uid).");
   }
   EXCEPTION("Several RoiMaskImage exist for image " << image->id
-              << " named '" << roi_name << "' (with same frame_of_reference_uid).");
+            << " named '" << roi_name << "' (with same frame_of_reference_uid).");
 }
 // --------------------------------------------------------------------
 

@@ -35,6 +35,7 @@ namespace sydgui {
 
   protected:
     syd::Image::pointer image;
+    syd::Image::vector modified_images;
 
   };
 }

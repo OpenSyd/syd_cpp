@@ -283,7 +283,6 @@ target_link_libraries(sydInsertTimeIntegratedActivityImage ${SYD_STD_DB_LIBRARY}
 # Create image of integrated activity
 wrap_ggo(sydInsertRoiBasedTimeIntegratedActivity_GGO_C
   sydInsertRoiBasedTimeIntegratedActivity.ggo
-  sydCommandLineWithFitOptions.ggo
   sydCommandLineWithTags.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)

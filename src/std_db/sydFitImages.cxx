@@ -50,11 +50,12 @@ std::string syd::FitImages::ToString() const
   ss << id << " ";
   if (images.size() == 0) ss << " no images ";
   else ss << images[0]->GetPatientName() << " ";
-  ss << images.size() << " imgs ["
+  ss << images.size() << " ["
      << syd::FitOptions::ToString() << "] "
      << GetAllComments() << " "
      << " pix: "
-     << nb_success_pixels << "/" << nb_pixels;
+     << nb_success_pixels << "/" << nb_pixels
+     << " output=" << outputs.size();
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -96,10 +97,10 @@ void syd::FitImages::DumpInTable_default(syd::PrintTable & ta) const
   ta.Set("itm", max_iteration);
   ta.Set("models", GetModelsName());
   std::stringstream ss;
-  ss << nb_success_pixels << "/" << nb_pixels
-     << std::setprecision(3)
-     << "(" << (double)nb_success_pixels/(double)nb_pixels*100.0 << "%)";
-  ta.Set("res", ss.str());
+  ss << nb_success_pixels << "/" << nb_pixels;
+  ta.Set("pix", ss.str());
+  auto percent = (double)nb_success_pixels/(double)nb_pixels*100.0;
+  ta.Set("res", percent,2);
   ta.Set("out", GetOutputNames(), 150);
   std::stringstream sss;
   for(auto im:images) sss << im->id << " ";
@@ -127,6 +128,8 @@ syd::Image::pointer syd::FitImages::GetOutput(std::string name)
     if (n == name) return outputs[i];
     ++i;
   }
+  EXCEPTION("Cannot find the output named " << name
+            << " in this FitImage: " << ToString());
   return nullptr;
 }
 // --------------------------------------------------------------------
