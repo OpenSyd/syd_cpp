@@ -77,13 +77,13 @@ int main(int argc, char* argv[])
   // Main builder
   syd::TimeIntegratedActivityImageBuilder builder;
   builder.SetInput(images);
+  builder.SetMaskName(args_info.mask_arg);
   builder.SetImageActivityThreshold(args_info.min_activity_arg);
   builder.SetOptions(options);
   builder.SetDebugOutputFlag(args_info.debug_images_flag);
 
   // Go !
   auto tia = builder.Run();
-  DD(tia);
 
   // Results
   syd::SetCommentsFromCommandLine(tia->comments, db, args_info);

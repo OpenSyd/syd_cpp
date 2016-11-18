@@ -50,6 +50,9 @@ namespace syd {
     /// Set the fit options
     void SetOptions(syd::TimeIntegratedActivityFitOptions options);
 
+    /// Set the name of a mask to use
+    void SetMaskName(std::string n) { additional_mask_name_ = n; }
+
     /// Main functions
     syd::FitImages::pointer Run();
 
@@ -63,6 +66,7 @@ namespace syd {
     syd::Image::vector images_;
     double min_activity_;
     bool debug_images_flag_;
+    std::string additional_mask_name_;
 
     // list of outputs
     syd::FitOutputImage_AUC::pointer auc;
@@ -88,6 +92,8 @@ namespace syd {
     typename MaskImageType::Pointer
       CreateMaskFromThreshold(std::vector<ImageType::Pointer> itk_images,
                               double min_activity);
+
+    typename MaskImageType::Pointer FindAdditionalMask();
 
     /// Output: insert the debug images in the db
     syd::Image::vector InsertDebugOutputImages(std::vector<std::string> & names);

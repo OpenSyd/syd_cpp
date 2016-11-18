@@ -9,6 +9,7 @@ description "Create a new image with TIA in every pixels
 
 option "min_activity"     - "Dont fit if max activity over the n images is lower than this value"       float default="0" no
 option "debug_images"     - "Output some debug images"                         flag off
+option "mask"             - "Mask name to use"                                 string default="body" no
 
 #option "gauss"   	      g "Sigma of preprocess Gaussian filter (0=no)"       float default="0" no
 #option "median_filter"   - "Apply median filter at the end"                   flag off

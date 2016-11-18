@@ -20,6 +20,10 @@
 #include "sydTimeIntegratedActivityImageBuilder.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydImageUtils.h"
+#include "sydImageAnd.h"
+#include "sydRoiMaskImageHelper.h"
+#include "sydImageCrop.h"
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageBuilder::
@@ -27,6 +31,7 @@ TimeIntegratedActivityImageBuilder()
 {
   min_activity_ = 0.0;
   debug_images_flag_ = false;
+  additional_mask_name_ = "body";
 
   // Create FitOutputImage
   auc = std::make_shared<syd::FitOutputImage_AUC>();
@@ -165,7 +170,6 @@ InsertDebugOutputImages(std::vector<std::string> & names)
       output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
     }
     if (o->GetTagName() == params->GetTagName()) {
-      DD("params debug output");
       auto oo = std::dynamic_pointer_cast<syd::FitOutputImage_ModelParams>(o);
       typedef FitOutputImage_ModelParams::Image4DType Image4DType;
       output = syd::InsertImage<Image4DType>(oo->GetImage4D(), img->patient);
@@ -197,6 +201,16 @@ Run()
 
   // Build mask
   auto mask = CreateMaskFromThreshold(itk_images, min_activity_);
+  syd::WriteImage<MaskImageType>(mask, "mask1.mhd");
+  auto additional_mask = FindAdditionalMask();
+  if (additional_mask != nullptr) {
+    syd::WriteImage<MaskImageType>(additional_mask, "mask2.mhd");
+    if (!syd::ImagesHaveSameSupport<MaskImageType,MaskImageType>(mask, additional_mask))
+      additional_mask = syd::ResampleAndCropImageLike<MaskImageType>(additional_mask, mask, 0, 0);
+    syd::WriteImage<MaskImageType>(additional_mask, "mask2r.mhd");
+    mask = syd::AndImage<MaskImageType>(mask, additional_mask);
+  }
+  syd::WriteImage<MaskImageType>(mask, "mask3.mhd");
   int nb_pixels = syd::ComputeSumOfPixelValues<MaskImageType>(mask);
 
   // set filter info
@@ -257,7 +271,6 @@ Run()
   if (options_.GetRestrictedFlag()) main_output = auc;
   else main_output = integrate;
   if (debug_images_flag_) {
-    DD(debug_images_flag_);
     std::vector<std::string> names;
     auto outputs = InsertDebugOutputImages(names);
     for(auto i=0; i<outputs.size(); i++) {
@@ -296,7 +309,7 @@ CheckInputs()
   auto db = images_[0]->GetDatabase<syd::StandardDatabase>();
   db->Sort<syd::Image>(images_);
 
-  // Get times 
+  // Get times
   auto times = syd::GetTimesFromInjection(images_);
 
   // Check times
@@ -336,3 +349,21 @@ CreateMaskFromThreshold(std::vector<ImageType::Pointer> images,
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+typename syd::TimeIntegratedActivityImageBuilder::MaskImageType::Pointer
+syd::TimeIntegratedActivityImageBuilder::FindAdditionalMask()
+{
+  DDF();
+  DD(additional_mask_name_);
+  if (additional_mask_name_ != "none") {
+    auto mask = syd::FindOneRoiMaskImage(images_[0], additional_mask_name_);
+    if (mask == nullptr) {
+      EXCEPTION("Cannot find mask " << additional_mask_name_
+                << " for this image " << images_[0]);
+    }
+    return syd::ReadImage<MaskImageType>(mask->GetAbsolutePath());
+  }
+  return nullptr;
+}
+// --------------------------------------------------------------------
