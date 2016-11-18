@@ -21,6 +21,7 @@
 #include <itkImageRegionConstIterator.h>
 #include <itkMultiplyImageFilter.h>
 #include <itkAddImageFilter.h>
+#include <itkBinaryThresholdImageFilter.h>
 #include "itkImageDuplicator.h"
 
 //--------------------------------------------------------------------
@@ -85,6 +86,13 @@ syd::Attenuation(const ImageType * input, double numberEnergySPECT,
     attenuation=addFilter->GetOutput();
   }
 
+  //If the attenuation is <0, set it to 0
+  typedef itk::BinaryThresholdImageFilter <ImageType, ImageType> BinaryThresholdImageFilterType;
+  typename BinaryThresholdImageFilterType::Pointer thresholdFilter = BinaryThresholdImageFilterType::New();
+  thresholdFilter->SetInput(attenuation);
+  thresholdFilter->SetUpperThreshold(0);
+  thresholdFilter->SetInsideValue(0);
+  attenuation = thresholdFilter->GetOutput();
 
   return attenuation;
 
