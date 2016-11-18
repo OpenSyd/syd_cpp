@@ -339,9 +339,10 @@ double syd::FitModelBase::ComputeMRT() const
   for(auto k=0; k<GetNumberOfExpo(); k++) {
     double A = GetA(k);
     double l = GetLambda(k) + GetLambdaDecayConstantInHours();
-    x += A/l*l;
+    x += A/(l*l);
   }
   x = x/auc;
+  x = log(2.0)*x; // to get MRT in hours
   return x;
 }
 // --------------------------------------------------------------------
