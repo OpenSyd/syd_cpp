@@ -201,16 +201,12 @@ Run()
 
   // Build mask
   auto mask = CreateMaskFromThreshold(itk_images, min_activity_);
-  syd::WriteImage<MaskImageType>(mask, "mask1.mhd");
   auto additional_mask = FindAdditionalMask();
   if (additional_mask != nullptr) {
-    syd::WriteImage<MaskImageType>(additional_mask, "mask2.mhd");
     if (!syd::ImagesHaveSameSupport<MaskImageType,MaskImageType>(mask, additional_mask))
       additional_mask = syd::ResampleAndCropImageLike<MaskImageType>(additional_mask, mask, 0, 0);
-    syd::WriteImage<MaskImageType>(additional_mask, "mask2r.mhd");
     mask = syd::AndImage<MaskImageType>(mask, additional_mask);
   }
-  syd::WriteImage<MaskImageType>(mask, "mask3.mhd");
   int nb_pixels = syd::ComputeSumOfPixelValues<MaskImageType>(mask);
 
   // set filter info
