@@ -49,10 +49,12 @@ int main(int argc, char* argv[])
   syd::Image::vector images;
   syd::FitImages::vector tias;
 
+  std::string fit_output_name = args_info.fit_image_name_arg;
+
   if (!args_info.tia_flag) db->Query(images, ids);
   else {
     db->Query(tias, ids);
-    for(auto tia:tias) images.push_back(tia->GetOutput("fit_auc"));
+    for(auto tia:tias) images.push_back(tia->GetOutput(fit_output_name)); 
   }
   if (images.size() == 0) {
     LOG(FATAL) << "No image ids given. I do nothing.";
@@ -87,6 +89,13 @@ int main(int argc, char* argv[])
     syd::RoiStatistic::pointer stat;
     for(auto mask:masks) {
       LOG(4) << "Processing mask " << mask;
+
+      /*
+      auto stat = syd::FindRoiStatistic(image, mask);
+      if (!stat) stat = syd::NewRoiStatistic(image, mask);
+      syd::ComputeRoiStatistic(stat, mask2, output);
+      db->InsertOrUpdate(stat);
+      */
 
       enum Mode {create, update, skip};
       Mode mode=create;

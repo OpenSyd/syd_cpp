@@ -53,6 +53,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRadionuclideHelper.cxx
   sydRoiStatisticHelper.cxx
   sydTimepointsHelper.cxx
+  sydFitImagesHelper.cxx
 
   ## Cannot put this file in the lib, because the plugin will be no more
   ## recognized. I dont know why.
@@ -79,6 +80,8 @@ add_library(StandardDatabasePlugin MODULE
 if (APPLE)
   target_link_libraries(sydStandardDatabase ${SYD_COMMON_DB_LIBRARY})
   target_link_libraries(StandardDatabasePlugin ${SYD_COMMON_DB_LIBRARY})
+else(APPLE)
+  target_link_libraries(StandardDatabasePlugin sydCore sydFit sydItkUtils ${ITK_LIBRARIES})
 endif(APPLE)
 
 set_target_properties(StandardDatabasePlugin PROPERTIES MACOSX_BUNDLE TRUE)

@@ -52,6 +52,22 @@ syd::FindRoiStatistic(const syd::Image::pointer image,
 
 // --------------------------------------------------------------------
 syd::RoiStatistic::pointer
+syd::FindOneRoiStatistic(const syd::Image::pointer image,
+                         const syd::RoiMaskImage::pointer mask)
+{
+  syd::RoiStatistic::vector stats = FindRoiStatistic(image, mask);
+  if (stats.size() == 1) return stats[0];
+  if (stats.size() == 0) {
+    EXCEPTION("No RoiStatistic found with this image and mask: " << image << "; " << mask);
+  }
+  EXCEPTION("Several RoiStatistic found with this image and mask: " << image << "; " << mask);
+  //return stats[0];// to avoid warning.
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiStatistic::pointer
 syd::NewRoiStatistic(const syd::Image::pointer image,
                      const syd::RoiMaskImage::pointer mask,
                      const syd::Image::pointer mask2,

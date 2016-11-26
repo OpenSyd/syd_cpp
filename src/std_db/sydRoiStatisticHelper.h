@@ -35,6 +35,10 @@ namespace syd {
   syd::RoiStatistic::vector FindRoiStatistic(const syd::Image::pointer image,
                                              const syd::RoiMaskImage::pointer mask);
 
+  /// Search a single RoiStatistic with the given image+mask. mask maybe nullptr.
+  syd::RoiStatistic::pointer FindOneRoiStatistic(const syd::Image::pointer image,
+                                                 const syd::RoiMaskImage::pointer mask);
+
   // Mask could be null (compute stat on the whole image)
   syd::RoiStatistic::pointer NewRoiStatistic(const syd::Image::pointer image,
                                              const syd::RoiMaskImage::pointer mask,

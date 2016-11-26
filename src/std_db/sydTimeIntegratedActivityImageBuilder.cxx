@@ -20,6 +20,10 @@
 #include "sydTimeIntegratedActivityImageBuilder.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydImageUtils.h"
+#include "sydImageAnd.h"
+#include "sydRoiMaskImageHelper.h"
+#include "sydImageCrop.h"
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageBuilder::
@@ -27,6 +31,7 @@ TimeIntegratedActivityImageBuilder()
 {
   min_activity_ = 0.0;
   debug_images_flag_ = false;
+  additional_mask_name_ = "body";
 
   // Create FitOutputImage
   auc = std::make_shared<syd::FitOutputImage_AUC>();
@@ -35,12 +40,16 @@ TimeIntegratedActivityImageBuilder()
   best_model = std::make_shared<syd::FitOutputImage_Model>();
   iter = std::make_shared<syd::FitOutputImage_Iteration>();
   success = std::make_shared<syd::FitOutputImage_Success>();
+  params = std::make_shared<syd::FitOutputImage_ModelParams>();
+  mrt = std::make_shared<syd::FitOutputImage_MRT>();
   all_outputs_.push_back(auc);
   all_outputs_.push_back(integrate);
   all_outputs_.push_back(r2);
   all_outputs_.push_back(best_model);
   all_outputs_.push_back(iter);
   all_outputs_.push_back(success);
+  all_outputs_.push_back(params);
+  all_outputs_.push_back(mrt);
 }
 // --------------------------------------------------------------------
 
@@ -152,19 +161,27 @@ InsertDebugOutputImages(std::vector<std::string> & names)
 
   for(auto o:all_outputs_) {
     // do nothing for auc or integrate or success output
-    if (o->GetTagName() != auc->GetTagName() and
-        o->GetTagName() != success->GetTagName() and
-        o->GetTagName() != integrate->GetTagName()) {
-      auto output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
-      syd::SetImageInfoFromImage(output, img);
-      output->tags.clear(); // remove all tags for the debug images
-      auto t = syd::FindOrCreateTag(db, o->GetTagName());
-      syd::AddTag(output->tags, t);
-      output->pixel_unit = syd::FindPixelUnit(db, "no_unit");
-      db->Update(output);
-      outputs.push_back(output);
-      names.push_back(o->GetTagName());
+    if (o->GetTagName() == auc->GetTagName() or
+        o->GetTagName() == success->GetTagName() or
+        o->GetTagName() == integrate->GetTagName()) continue;
+
+    syd::Image::pointer output;
+    if (o->GetTagName() != params->GetTagName()) {
+      output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
     }
+    if (o->GetTagName() == params->GetTagName()) {
+      auto oo = std::dynamic_pointer_cast<syd::FitOutputImage_ModelParams>(o);
+      typedef FitOutputImage_ModelParams::Image4DType Image4DType;
+      output = syd::InsertImage<Image4DType>(oo->GetImage4D(), img->patient);
+    }
+    syd::SetImageInfoFromImage(output, img);
+    output->tags.clear(); // remove all tags for the debug images
+    auto t = syd::FindOrCreateTag(db, o->GetTagName());
+    syd::AddTag(output->tags, t);
+    output->pixel_unit = syd::FindPixelUnit(db, "no_unit");
+    db->Update(output);
+    outputs.push_back(output);
+    names.push_back(o->GetTagName());
   }
   return outputs;
 }
@@ -184,6 +201,12 @@ Run()
 
   // Build mask
   auto mask = CreateMaskFromThreshold(itk_images, min_activity_);
+  auto additional_mask = FindAdditionalMask();
+  if (additional_mask != nullptr) {
+    if (!syd::ImagesHaveSameSupport<MaskImageType,MaskImageType>(mask, additional_mask))
+      additional_mask = syd::ResampleAndCropImageLike<MaskImageType>(additional_mask, mask, 0, 0);
+    mask = syd::AndImage<MaskImageType>(mask, additional_mask);
+  }
   int nb_pixels = syd::ComputeSumOfPixelValues<MaskImageType>(mask);
 
   // set filter info
@@ -203,6 +226,8 @@ Run()
     filter_.AddOutputImage(r2);
     filter_.AddOutputImage(best_model);
     filter_.AddOutputImage(iter);
+    filter_.AddOutputImage(params);
+    filter_.AddOutputImage(mrt);
   }
   filter_.SetOptions(options_);
 
@@ -280,7 +305,7 @@ CheckInputs()
   auto db = images_[0]->GetDatabase<syd::StandardDatabase>();
   db->Sort<syd::Image>(images_);
 
-  // Get times 
+  // Get times
   auto times = syd::GetTimesFromInjection(images_);
 
   // Check times
@@ -320,3 +345,21 @@ CreateMaskFromThreshold(std::vector<ImageType::Pointer> images,
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+typename syd::TimeIntegratedActivityImageBuilder::MaskImageType::Pointer
+syd::TimeIntegratedActivityImageBuilder::FindAdditionalMask()
+{
+  DDF();
+  DD(additional_mask_name_);
+  if (additional_mask_name_ != "none") {
+    auto mask = syd::FindOneRoiMaskImage(images_[0], additional_mask_name_);
+    if (mask == nullptr) {
+      EXCEPTION("Cannot find mask " << additional_mask_name_
+                << " for this image " << images_[0]);
+    }
+    return syd::ReadImage<MaskImageType>(mask->GetAbsolutePath());
+  }
+  return nullptr;
+}
+// --------------------------------------------------------------------
