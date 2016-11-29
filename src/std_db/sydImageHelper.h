@@ -114,6 +114,11 @@ namespace syd {
                                              std::vector<double>& attenuationBoneSPECT,
                                              std::vector<double>& weight);
 
+  // Compute the registered attenuation map of an image.
+  syd::Image::pointer InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
+                                                const syd::Image::pointer inputSPECT,
+                                                const syd::Image::pointer inputAM);
+
   // Compute the attenuation correction of an projection image.
   syd::Image::pointer InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,
                                                                 const syd::Image::pointer input_AM,
