@@ -2,11 +2,9 @@
 
 package "syd"
 version "0.4"
-usage "sydInsertAttenuationCorrectedProjectionImage -i [image1] -j [image2] -d [dimension]"
+usage "sydInsertAttenuationCorrectedProjectionImage <image1> <image2> <image3> -d [dimension]"
 description "Create a new (mhd) image from the 2D Geometric Mean (GM) using the projected attenuation map.
-<images1> is a GM image id and <images2> is the corresponding attenuation map id. The attenuation map is projected along the d-axis given by --dimension (or -d).
+[image1] is a GM image id and [image2] is the projected attenuation map id. The spacing and the size along the d-axis given by --dimension (or -d) are computed thanks to the original 3D attenuation map [image3].
 "
 
-option "image1"     i "Geometric mean image"    int  yes
-option "image2"     j "Attenuation map"         int  yes
-option "dimension"  d "Dimension to project"    int  yes
+option "dimension"  d "Dimension of projection" int  yes

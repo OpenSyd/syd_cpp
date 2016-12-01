@@ -412,6 +412,7 @@ syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
 syd::Image::pointer
 syd::InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,
                                                const syd::Image::pointer input_AM,
+                                               const syd::Image::pointer input_AM_model,
                                                int dimension)
 {
   // Force to float
@@ -419,8 +420,9 @@ syd::InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_G
   typedef itk::Image<PixelType, 2> ImageType2D;
   typedef itk::Image<PixelType, 3> ImageType3D;
   auto itk_input_GM = syd::ReadImage<ImageType2D>(input_GM->GetAbsolutePath());
-  auto itk_input_AM = syd::ReadImage<ImageType3D>(input_AM->GetAbsolutePath());
-  auto attenuationCorrected = syd::AttenuationCorrectedProjection<ImageType2D, ImageType3D>(itk_input_GM, itk_input_AM, dimension);
+  auto itk_input_AM = syd::ReadImage<ImageType2D>(input_AM->GetAbsolutePath());
+  auto itk_input_AM_model = syd::ReadImage<ImageType3D>(input_AM_model->GetAbsolutePath());
+  auto attenuationCorrected = syd::AttenuationCorrectedProjection<ImageType2D, ImageType3D>(itk_input_GM, itk_input_AM, itk_input_AM_model, dimension);
 
   // Create the syd image
   return syd::InsertImage<ImageType2D>(attenuationCorrected, input_GM->patient, input_GM->modality);

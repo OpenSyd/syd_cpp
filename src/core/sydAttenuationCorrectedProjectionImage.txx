@@ -25,22 +25,19 @@
 //--------------------------------------------------------------------
 template<class ImageType2D,class  ImageType3D>
 typename ImageType2D::Pointer
-syd::AttenuationCorrectedProjection(const ImageType2D * input_GM, const ImageType3D * input_AM,
-                                    int dimension)
+syd::AttenuationCorrectedProjection(const ImageType2D * input_GM, const ImageType2D * input_AM,
+                                    const ImageType3D * input_AM_model, int dimension)
 {
   //Prepare variables
-  int size = input_AM->GetLargestPossibleRegion().GetSize(dimension);
-  int spacing = input_AM->GetSpacing()[dimension];
+  double size = input_AM_model->GetLargestPossibleRegion().GetSize(dimension);
+  double spacing = input_AM_model->GetSpacing()[dimension];
 
-  double tempValue = 0.2*spacing*size;
-
-  //Project AM
-  auto input_AMProjected = syd::Projection<ImageType3D, ImageType2D>(input_AM, dimension, 0, 1);
+  double tempValue = 0.05*spacing*size;
 
   //Multiply the projected AM by variables
   typedef itk::MultiplyImageFilter<ImageType2D, ImageType2D, ImageType2D> MultiplyImageFilterType;
   typename MultiplyImageFilterType::Pointer multiplyImageFilterAM = MultiplyImageFilterType::New();
-  multiplyImageFilterAM->SetInput(input_AMProjected);
+  multiplyImageFilterAM->SetInput(input_AM);
   multiplyImageFilterAM->SetConstant(tempValue);
 
   //Exponential
@@ -52,6 +49,7 @@ syd::AttenuationCorrectedProjection(const ImageType2D * input_GM, const ImageTyp
   typename MultiplyImageFilterType::Pointer multiplyImageFilterGM = MultiplyImageFilterType::New();
   multiplyImageFilterGM->SetInput1(input_GM);
   multiplyImageFilterGM->SetInput2(expImageFilter->GetOutput());
+  multiplyImageFilterGM->Update();
 
   return (multiplyImageFilterGM->GetOutput());
 }

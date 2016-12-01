@@ -40,20 +40,22 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Get the Geometrical Mean (GM) image id
-  syd::IdType id_GM;
-  if (args_info.image1_given)
-    id_GM = args_info.image1_arg;
+  syd::IdType id_GM = atoi(args_info.inputs[0]);
   syd::Image::pointer input_GM;
   db->QueryOne(input_GM, id_GM); // will fail if not found
   LOG(2) << "Read geometrical mean image :" << input_GM;
 
-  // Get the attenuation map (AM) id
-  syd::IdType id_AM;
-  if (args_info.image2_given)
-    id_AM = args_info.image2_arg;
+  // Get the projected attenuation map (AM) id
+  syd::IdType id_AM = atoi(args_info.inputs[1]);
   syd::Image::pointer input_AM;
   db->QueryOne(input_AM, id_AM); // will fail if not found
-  LOG(2) << "Read attenuation map :" << input_AM;
+  LOG(2) << "Read projected attenuation map :" << input_AM;
+
+  // Get the 3D attenuation map (AM_model) id
+  syd::IdType id_AM_model = atoi(args_info.inputs[2]);
+  syd::Image::pointer input_AM_model;
+  db->QueryOne(input_AM_model, id_AM_model); // will fail if not found
+  LOG(2) << "Read 3D attenuation map :" << input_AM_model;
 
   //Read the projection dimension
   int dimension(0);
@@ -61,7 +63,7 @@ int main(int argc, char* argv[])
     dimension = args_info.dimension_arg;
 
   // Main computation
-  auto image = syd::InsertAttenuationCorrectedProjectionImage(input_GM, input_AM, dimension);
+  auto image = syd::InsertAttenuationCorrectedProjectionImage(input_GM, input_AM, input_AM_model, dimension);
 
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);

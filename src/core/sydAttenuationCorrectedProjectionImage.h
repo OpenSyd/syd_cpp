@@ -25,8 +25,8 @@ namespace syd {
 
   template<class ImageType2D, class ImageType3D>
   typename ImageType2D::Pointer
-  AttenuationCorrectedProjection(const ImageType2D * input_GM, const ImageType3D * input_AM,
-                                 int dimension);
+  AttenuationCorrectedProjection(const ImageType2D * input_GM, const ImageType2D * input_AM,
+                                 const ImageType3D * input_AM_model, int dimension);
 
 } // end namespace
 

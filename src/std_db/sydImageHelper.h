@@ -122,6 +122,7 @@ namespace syd {
   // Compute the attenuation correction of an projection image.
   syd::Image::pointer InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,
                                                                 const syd::Image::pointer input_AM,
+                                                                const syd::Image::pointer input_AM_model,
                                                                 int dimension);
 
   /// Crop an image like another one
