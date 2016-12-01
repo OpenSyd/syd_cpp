@@ -20,9 +20,7 @@
 #include "itkResampleImageFilter.h"
 #include "itkIdentityTransform.h"
 #include "itkBSplineInterpolateImageFunction.h"
-#include <itkNormalizedCorrelationImageToImageMetric.h>
-#include <itkMattesMutualInformationImageToImageMetric.h>
-#include <itkCorrelationCoefficientHistogramImageToImageMetric.h>
+#include "itkNormalizedCorrelationImageToImageMetric.h"
 
 //--------------------------------------------------------------------
 template<class ImageType>
@@ -92,7 +90,7 @@ syd::RegisterPlanarSPECT(const ImageType * inputPlanar, const ImageType * inputS
 
   //Compute correlation coeff for different y-offset between inputPlanar and inputSPECT
   //typedef itk::NormalizedCorrelationImageToImageMetric<ImageType, ImageType> CorrelationCoeffFilterType;
-  typedef itk::CorrelationCoefficientHistogramImageToImageMetric<ImageType, ImageType> CorrelationCoeffFilterType;
+  typedef itk::NormalizedCorrelationImageToImageMetric<ImageType, ImageType> CorrelationCoeffFilterType;
   double maxCorrelation(-1);
   unsigned int maxTranslation(0);
   for (unsigned int translation=0 ; translation < inputPlanar->GetLargestPossibleRegion().GetSize()[1] - SPECTresample->GetLargestPossibleRegion().GetSize()[1] +1; ++translation)
@@ -114,14 +112,19 @@ syd::RegisterPlanarSPECT(const ImageType * inputPlanar, const ImageType * inputS
     if (correlationCoeffFilter->GetValue(transform->GetParameters()) > maxCorrelation) maxTranslation = translation;
   }
 
-  //Choose the best y-offset
-  originAM[1] = inputPlanar->GetOrigin()[1] + maxTranslation ; //Remove gap between SPECT and CT
+  //Choose the best y-offset and resample the image to fit with planar image
+  originAM[1] = inputPlanar->GetOrigin()[1] + maxTranslation - inputSPECT->GetOrigin()[1] + inputAM->GetOrigin()[1]; //Remove gap between SPECT and CT
   AMresample->SetOrigin(originAM);
-  
-  originSPECT[1] = inputPlanar->GetOrigin()[1] + maxTranslation;
-  SPECTresample->SetOrigin(originSPECT);
 
-  return SPECTresample;
+  typename ResampleFilterType::Pointer resampleFilter = ResampleFilterType::New();
+  resampleFilter->SetTransform(transform.GetPointer());
+  resampleFilter->SetInput(AMresample);
+  resampleFilter->SetOutputSpacing(inputPlanar->GetSpacing());
+  resampleFilter->SetOutputOrigin(inputPlanar->GetOrigin());
+  resampleFilter->SetSize(inputPlanar->GetLargestPossibleRegion().GetSize());
+  resampleFilter->Update();
+
+  return resampleFilter->GetOutput();
 
 }
 //--------------------------------------------------------------------
