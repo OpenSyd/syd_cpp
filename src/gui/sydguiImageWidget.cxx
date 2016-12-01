@@ -19,6 +19,7 @@
 #include "sydguiImageWidget.h"
 #include "sydRoiMaskImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydguiWidgets.h"
 
 // --------------------------------------------------------------------
 sydgui::ImageWidget::ImageWidget()
@@ -48,24 +49,24 @@ bool sydgui::ImageWidget::NewFrame()
   static auto ro_flag = ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll;
   static auto rw_flag = ImGuiInputTextFlags_AutoSelectAll;
   static char c[256];
-  strcpy(c, std::to_string(image->id).c_str());
-  ImGui::InputText("Id", c, 256, ro_flag);
+  bool modified = false;
+
+  // Id
+  sydgui::NonEditableFieldWidget("Id", image->id);
 
   strcpy(c, image->GetPatientName().c_str());
   ImGui::InputText("Patient", c, 256, ro_flag);
 
-  strcpy(c, image->GetInjectionName().c_str());
-  ImGui::InputText("Injection", c, 256, ro_flag);
+  // injection
+  sydgui::NonEditableFieldWidget("Injection", image->GetInjectionName().c_str());
 
-  strcpy(c, image->acquisition_date.c_str());
-  ImGui::InputText("Acquisition date", c, 256, ro_flag);
+  // acq date
+  sydgui::NonEditableFieldWidget("Acquisition_date", image->acquisition_date);
 
-  strcpy(c, image->modality.c_str());
-  bool b = ImGui::InputText("*Modality", c, 256, rw_flag);
-  if (b) {
-    image->modality = c;
-  }
+  // Modality
+  modified = sydgui::TextFieldWidget("Modality", image->modality);
 
+  // Tag
   strcpy(c, syd::GetLabels(image->tags).c_str());
   ImGui::InputText("Tags", c, 256, ro_flag);
 
@@ -85,8 +86,8 @@ bool sydgui::ImageWidget::NewFrame()
     ImGui::InputText("Dicoms", c, 256, ro_flag);
   }
 
-  strcpy(c, image->type.c_str());
-  ImGui::InputText("Type", c, 256, ro_flag);
+  // image type (ignored)
+  sydgui::NonEditableFieldWidget("Type", image->type);
 
   strcpy(c, image->pixel_type.c_str());
   ImGui::InputText("*Pixel type", c, 256, rw_flag);
@@ -99,40 +100,27 @@ bool sydgui::ImageWidget::NewFrame()
   strcpy(c, image->frame_of_reference_uid.c_str());
   ImGui::InputText("*Frame of ref.", c, 256, ro_flag);
 
-  strcpy(c, std::to_string(image->dimension).c_str());
-  ImGui::InputText("Dim", c, 256, ro_flag);
+  // Image properties
+  sydgui::NonEditableFieldWidget("Dim", image->dimension);
+  sydgui::NonEditableFieldWidget("Size", image->SizeAsString());
+  sydgui::NonEditableFieldWidget("Spacing", image->SpacingAsString());
 
-  strcpy(c, image->SizeAsString().c_str());
-  ImGui::InputText("Size", c, 256, ro_flag);
+  // Comments //to put as sygui::CommentFieldWidget
+  int i=0;
+  for(auto com:image->comments) {
+    std::string l = "Com "+std::to_string(i);
+    sydgui::NonEditableFieldWidget(l, com);
+    ++i;
+  }
+  if (i==0) ImGui::Text("no comment");
 
-  strcpy(c, image->SpacingAsString().c_str());
-  ImGui::InputText("Spacing", c, 256, ro_flag);
-
-  strcpy(c, image->history->update_date.c_str());
-  ImGui::InputText("Last modif", c, 256, ro_flag);
-
-  strcpy(c, image->history->insertion_date.c_str());
-  ImGui::InputText("Created", c, 256, ro_flag);
+  // History
+  sydgui::NonEditableFieldWidget("Created", image->history->insertion_date);
+  sydgui::NonEditableFieldWidget("Last modif", image->history->update_date);
 
   // history
   // tag
 
-  /*  std::stringstream ss;
-      for(auto image:images)
-      ss << image->id << " ";
-      static char c[5000];
-      strcpy(c, ss.str().c_str());
-      ImGui::Text("Ids: ");
-      ImGui::SameLine();
-      ImGui::InputText("", c, 5000, ImGuiInputTextFlags_ReadOnly | ImGuiInputTextFlags_AutoSelectAll);
-
-      // info about patients
-      for(auto patient:patients)
-      ImGui::Text("Patient %s (%lu): %i images",
-      patient->name.c_str(),
-      patient->id,
-      nb[patient->id]);
-  */
   return false;
 }
 // --------------------------------------------------------------------

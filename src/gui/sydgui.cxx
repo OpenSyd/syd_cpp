@@ -125,7 +125,7 @@ syd::RoiMaskImage::vector sydgui::GetRoiMaskImages(syd::Image::pointer image)
   static boost::container::vector<bool> selected;
   syd::RoiMaskImage::vector selected_rois;
   if (rois.size() == 0) {
-    rois = syd::FindAllRoiMaskImage(image);
+    rois = syd::FindAllRoiMaskImages(image);
     selected.resize(rois.size());
     for(auto i=0; i<rois.size(); i++) selected[i] = false;
     DDS(selected);
