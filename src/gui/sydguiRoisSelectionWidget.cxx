@@ -57,7 +57,7 @@ void sydgui::RoisSelectionWidget::SetImage(syd::Image::pointer im)
 {
   image = im;
   all_rois.clear();
-  all_rois = syd::FindAllRoiMaskImage(image);
+  all_rois = syd::FindAllRoiMaskImages(image);
   selected.resize(all_rois.size());
   for(auto & s:selected) s = false;
 }

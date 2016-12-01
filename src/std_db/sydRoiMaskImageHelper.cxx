@@ -61,7 +61,7 @@ syd::FindRoiMaskImages(const syd::Image::pointer image,
 
 // --------------------------------------------------------------------
 syd::RoiMaskImage::vector
-syd::FindRoiMaskImages(const syd::Image::pointer image)
+syd::FindAllRoiMaskImages(const syd::Image::pointer image)
 {
   auto db = image->GetDatabase<syd::StandardDatabase>();
   syd::RoiMaskImage::vector rois;
@@ -79,7 +79,7 @@ syd::RoiMaskImage::pointer
 syd::FindOneRoiMaskImage(const syd::Image::pointer image,
                          const std::string & roi_name)
 {
-  auto masks = FindRoiMaskImage(image, roi_name);
+  auto masks = FindRoiMaskImages(image, roi_name);
   if (masks.size() == 1) return masks[0];
   if (masks.size() == 0) {
     EXCEPTION("Cannot find a RoiMaskImage for image " << image->id

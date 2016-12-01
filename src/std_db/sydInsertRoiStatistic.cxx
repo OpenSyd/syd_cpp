@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
       }
       else {
         // find all masks with the same roi_name and frame_of_reference_uid
-        masks = syd::FindRoiMaskImage(image, args_info.inputs[0]);
+        masks = syd::FindRoiMaskImages(image, args_info.inputs[0]);
       }
     }
 
