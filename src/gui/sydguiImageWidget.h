@@ -20,6 +20,7 @@
 #define SYDGUIIMAGEWIDGET_H
 
 #include "sydgui.h"
+#include "sydguiListFieldWidget.h"
 #include "sydStandardDatabase.h"
 #include "sydImage.h"
 
@@ -35,8 +36,15 @@ namespace sydgui {
 
   protected:
     syd::Image::pointer image;
-    syd::Image::vector modified_images;
+    bool modified;
 
+    sydgui::ListFieldWidget<syd::Patient> patient_list_widget;
+    sydgui::ListFieldWidget<syd::Injection> injection_list_widget;
+    sydgui::ListFieldWidget<syd::PixelUnit> pixel_unit_list_widget;
+
+    void UpdateListOfPatients();
+    void UpdateListOfInjections();
+    void UpdateListOfPixelUnits();
   };
 }
 // --------------------------------------------------------------------
