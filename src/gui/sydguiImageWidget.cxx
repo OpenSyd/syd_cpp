@@ -34,6 +34,7 @@ sydgui::ImageWidget::ImageWidget()
 bool sydgui::ImageWidget::NewFrame()
 {
   if (image ==nullptr) return false;
+  auto id = image->id;
 
   ImGui::Button("View with vv");
   ImGui::SameLine();
@@ -73,11 +74,19 @@ bool sydgui::ImageWidget::NewFrame()
   sydgui::NonEditableFieldWidget("Acquisition_date", image->acquisition_date);
 
   // Modality
-  modified = sydgui::TextFieldWidget("Modality", image->modality) or modified;
+  modified = sydgui::TextFieldWidget(id, "Modality", image->modality) or modified;
 
   // Tag
   strcpy(c, syd::GetLabels(image->tags).c_str());
   ImGui::InputText("Tags", c, 256, ro_flag);
+  ImGui::SameLine();
+
+  /* FIXME here
+  static int item = -1;
+  bool modified = ImGui::Combo("Remove tag", &item,
+                               tag_to_remove_items,
+                               tag_to_remove_items_nb);
+  */
 
   if (image->files.size() > 0) {
     std::ostringstream ss;
@@ -102,7 +111,7 @@ bool sydgui::ImageWidget::NewFrame()
   modified = pixel_unit_list_widget.NewFrame() or modified;
 
   // frame of ref
-  modified = sydgui::TextFieldWidget("Frame of ref", image->frame_of_reference_uid) or modified;
+  modified = sydgui::TextFieldWidget(id, "Frame of ref", image->frame_of_reference_uid) or modified;
 
   // Image properties
   sydgui::NonEditableFieldWidget("Pixel Type", image->pixel_type);
@@ -115,7 +124,7 @@ bool sydgui::ImageWidget::NewFrame()
   ImGui::Text("Comments:");
   for(auto & com:image->comments) {
     std::string l = "Com "+std::to_string(i);
-    modified = sydgui::TextFieldWidget(l, com) or modified;
+    modified = sydgui::TextFieldWidget(id, l, com) or modified;
     ImGui::SameLine();
     ImGui::Button("Remove");
     ++i;
@@ -148,6 +157,12 @@ void sydgui::ImageWidget::SetImage(syd::Image::pointer im)
   UpdateListOfPatients();
   UpdateListOfInjections();
   UpdateListOfPixelUnits();
+
+  // Tags
+  /*FIXME
+    tag_to_remove_items
+    for(auto t:image->tags) {
+  }*/
 }
 // --------------------------------------------------------------------
 

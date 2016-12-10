@@ -26,7 +26,7 @@
 namespace sydgui {
 
   template<class RecordType>
-  class ListFieldWidget {
+    class ListFieldWidget {
   public:
     ListFieldWidget();
 
@@ -48,13 +48,15 @@ namespace sydgui {
 #include "sydguiListFieldWidget.txx"
 
 // --------------------------------------------------------------------
-// Specializations
-template<> std::string sydgui::ListFieldWidget<syd::Injection>::
-GetLabel(syd::Injection::pointer injection);
-template<> std::string sydgui::ListFieldWidget<syd::Patient>::
-GetLabel(syd::Patient::pointer injection);
-template<> std::string sydgui::ListFieldWidget<syd::PixelUnit>::
-GetLabel(syd::PixelUnit::pointer pixel_unit);
+namespace sydgui {
+  // Specializations
+  template<> std::string ListFieldWidget<syd::Injection>::
+    GetLabel(syd::Injection::pointer injection);
+  template<> std::string ListFieldWidget<syd::Patient>::
+    GetLabel(syd::Patient::pointer injection);
+  template<> std::string ListFieldWidget<syd::PixelUnit>::
+    GetLabel(syd::PixelUnit::pointer pixel_unit);
+}
 // --------------------------------------------------------------------
 
 

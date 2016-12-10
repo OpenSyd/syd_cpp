@@ -28,7 +28,7 @@ namespace sydgui {
   void NonEditableFieldWidget(std::string name, int i);
   void NonEditableFieldWidget(std::string name, double v, int precision);
   bool TextFieldWidget(std::string name, std::string & value);
-
+  bool TextFieldWidget(int id, std::string name, std::string & value);
 }
 // --------------------------------------------------------------------
 

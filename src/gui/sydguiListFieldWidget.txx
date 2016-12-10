@@ -22,7 +22,6 @@
 template<class RecordType>
 sydgui::ListFieldWidget<RecordType>::ListFieldWidget()
 {
-  DD("const ListFieldWidget");
 }
 // --------------------------------------------------------------------
 

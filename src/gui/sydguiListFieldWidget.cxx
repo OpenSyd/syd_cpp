@@ -50,7 +50,7 @@ std::string sydgui::ListFieldWidget<syd::PixelUnit>::
 GetLabel(syd::PixelUnit::pointer p)
 {
   std::ostringstream oss;
-  oss << p->name << " " << p->description;
+  oss << p->name << " (" << p->description << ")";
   return oss.str();
 }
 // --------------------------------------------------------------------

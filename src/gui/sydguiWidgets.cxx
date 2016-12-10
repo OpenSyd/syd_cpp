@@ -48,10 +48,17 @@ void sydgui::NonEditableFieldWidget(std::string name, int i)
 // --------------------------------------------------------------------
 void sydgui::NonEditableFieldWidget(std::string name, double v, int precision)
 {
-  DD("todod");
+  DD("todo");
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+bool sydgui::TextFieldWidget(int id, std::string name, std::string & value)
+{
+  return TextFieldWidget(name+"##"+std::to_string(id), value);
+}
+// --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
 bool sydgui::TextFieldWidget(std::string name, std::string & value)

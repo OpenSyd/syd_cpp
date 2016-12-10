@@ -60,12 +60,16 @@ bool sydgui::ImagesSelectionWidget::NewFrame()
     for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++) {
       if (ImGui::IsKeyPressed(i)) {
         if (i==key_down_arrow) {
+          // We set the focus here, because if currently editing a field, it
+          // will be copied to next image.
+          //          ImGui::SetKeyboardFocusHere();
           selected_i = std::min(++selected_i, (int)selected_images.size()-1);
           selected_id = selected_images[selected_i]->id;
           changed = true;
           continue;
         }
         if (i==key_up_arrow) {
+          //ImGui::SetKeyboardFocusHere();
           selected_i = std::max(0,--selected_i);
           selected_id = selected_images[selected_i]->id;
           changed = true;
@@ -111,9 +115,9 @@ bool sydgui::ImagesSelectionWidget::PrintInfoImage(int i,
   bool changed = ImGui::Selectable(ss.str().c_str(), &selected);
 
   /* mouse over
-  if (ImGui::IsItemHovered()) {
-    //    DD("IsItemHovered")
-  }
+     if (ImGui::IsItemHovered()) {
+     //    DD("IsItemHovered")
+     }
   */
 
   if (selected) {
@@ -122,9 +126,9 @@ bool sydgui::ImagesSelectionWidget::PrintInfoImage(int i,
   }
 
   /*
-  if (ImGui::IsItemActive()) {// NO
+    if (ImGui::IsItemActive()) {// NO
     DD(i);
-  }
+    }
   */
 
   return changed;
