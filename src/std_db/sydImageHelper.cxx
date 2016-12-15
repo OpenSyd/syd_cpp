@@ -26,6 +26,7 @@
 #include "sydProjectionImage.h"
 #include "sydAttenuationImage.h"
 #include "sydRegisterPlanarSPECT.h"
+#include "sydManualRegistration.h"
 #include "sydAttenuationCorrectedProjectionImage.h"
 
 // --------------------------------------------------------------------
@@ -405,6 +406,22 @@ syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
 
   // Create the syd image
   return syd::InsertImage<ImageType2D>(AM_register, inputAM->patient, inputAM->modality);
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertManualRegistration(const syd::Image::pointer inputImage,
+                              double x, double y, double z)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  auto itk_inputImage = syd::ReadImage<ImageType3D>(inputImage->GetAbsolutePath());
+  auto imageRegister = syd::ManualRegistration<ImageType3D>(itk_inputImage, x, y, z);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType3D>(imageRegister, inputImage->patient, inputImage->modality);
 }
 // --------------------------------------------------------------------
 
