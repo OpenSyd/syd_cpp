@@ -23,8 +23,16 @@
 #include "sydInjectionHelper.h"
 #include "sydImageStitch.h"
 #include "sydRoiStatisticHelper.h"
+<<<<<<< HEAD
 #include "sydImageFillHoles.h"
 #include "sydImage_GaussianFilter.h"
+=======
+#include "sydProjectionImage.h"
+#include "sydAttenuationImage.h"
+#include "sydRegisterPlanarSPECT.h"
+#include "sydManualRegistration.h"
+#include "sydAttenuationCorrectedProjectionImage.h"
+>>>>>>> 6028e60... Add manual registration
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -345,6 +353,23 @@ syd::InsertImageGeometricalMean(const syd::Image::pointer input,
 
   // Create the syd image
   return syd::InsertImage<ImageType>(gmean, input->patient, input->modality);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertManualRegistration(const syd::Image::pointer inputImage,
+                              double x, double y, double z)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  auto itk_inputImage = syd::ReadImage<ImageType3D>(inputImage->GetAbsolutePath());
+  auto imageRegister = syd::ManualRegistration<ImageType3D>(itk_inputImage, x, y, z);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType3D>(imageRegister, inputImage->patient, inputImage->modality);
 }
 // --------------------------------------------------------------------
 

@@ -101,6 +101,16 @@ namespace syd {
   // of 4 slices
   syd::Image::pointer InsertImageGeometricalMean(const syd::Image::pointer input,
                                                  double k=0.5);
+                                               
+  // Compute the manual registration of an image.
+  syd::Image::pointer InsertManualRegistration(const syd::Image::pointer inputImage,
+                                               double x, double y, double z);
+
+  // Compute the attenuation correction of an projection image.
+  syd::Image::pointer InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,
+                                                                const syd::Image::pointer input_AM,
+                                                                const syd::Image::pointer input_AM_model,
+                                                                int dimension);
 
   /// Crop an image like another one
   void CropImageLike(syd::Image::pointer image,
