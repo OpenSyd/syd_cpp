@@ -35,6 +35,7 @@ bool sydgui::ImageWidget::NewFrame()
 {
   if (image ==nullptr) return false;
   auto id = image->id;
+  auto db = image->GetDatabase<syd::StandardDatabase>();
 
   ImGui::Button("View with vv");
   ImGui::SameLine();
@@ -54,7 +55,7 @@ bool sydgui::ImageWidget::NewFrame()
   static char c[256];
 
   // Id
-  sydgui::NonEditableFieldWidget("Id", image->id);
+  sydgui::NonEditableFieldWidget("Id", id);
 
   // Patient
   bool patient_modified = patient_list_widget.NewFrame();
@@ -74,20 +75,12 @@ bool sydgui::ImageWidget::NewFrame()
   sydgui::NonEditableFieldWidget("Acquisition_date", image->acquisition_date);
 
   // Modality
-  modified = sydgui::TextFieldWidget(id, "Modality", image->modality) or modified;
+  modified = sydgui::TextFieldWidget("Modality", image->modality) or modified;
 
-  // Tag
-  strcpy(c, syd::GetLabels(image->tags).c_str());
-  ImGui::InputText("Tags", c, 256, ro_flag);
-  ImGui::SameLine();
+  // Tags
+  modified = sydgui::TagsFieldsWidget(db, image->tags) or modified;
 
-  /* FIXME here
-  static int item = -1;
-  bool modified = ImGui::Combo("Remove tag", &item,
-                               tag_to_remove_items,
-                               tag_to_remove_items_nb);
-  */
-
+  // Files and folder
   if (image->files.size() > 0) {
     std::ostringstream ss;
     for(auto f:image->files) ss << f->filename << " ";
@@ -111,7 +104,7 @@ bool sydgui::ImageWidget::NewFrame()
   modified = pixel_unit_list_widget.NewFrame() or modified;
 
   // frame of ref
-  modified = sydgui::TextFieldWidget(id, "Frame of ref", image->frame_of_reference_uid) or modified;
+  modified = sydgui::TextFieldWidget("Frame of ref", image->frame_of_reference_uid) or modified;
 
   // Image properties
   sydgui::NonEditableFieldWidget("Pixel Type", image->pixel_type);
@@ -124,7 +117,7 @@ bool sydgui::ImageWidget::NewFrame()
   ImGui::Text("Comments:");
   for(auto & com:image->comments) {
     std::string l = "Com "+std::to_string(i);
-    modified = sydgui::TextFieldWidget(id, l, com) or modified;
+    modified = sydgui::TextFieldWidget(l, com) or modified;
     ImGui::SameLine();
     ImGui::Button("Remove");
     ++i;
@@ -147,6 +140,10 @@ void sydgui::ImageWidget::SetImage(syd::Image::pointer im)
   image = im;
   if (image == nullptr) return;
 
+  // Important: every field with be with id specific to image id
+  ImGui::PopID();
+  ImGui::PushID(std::to_string(image->id).c_str());
+
   // Surprisingly fast enough
   auto db = image->GetDatabase<syd::StandardDatabase>();
   syd::Image::pointer im_db;
@@ -154,15 +151,12 @@ void sydgui::ImageWidget::SetImage(syd::Image::pointer im)
   if (im_db->ToString() != image->ToString()) modified = true;
   else modified = false;
 
+  //tag_in_progress_flag = false;
   UpdateListOfPatients();
   UpdateListOfInjections();
   UpdateListOfPixelUnits();
 
-  // Tags
-  /*FIXME
-    tag_to_remove_items
-    for(auto t:image->tags) {
-  }*/
+  //tags = syd::GetLabels(image->tags);
 }
 // --------------------------------------------------------------------
 
@@ -203,3 +197,5 @@ void sydgui::ImageWidget::UpdateListOfPixelUnits()
   pixel_unit_list_widget.Init("Pixel unit", &image->pixel_unit, pixel_units);
 }
 // --------------------------------------------------------------------
+
+

@@ -29,6 +29,11 @@ namespace sydgui {
   void NonEditableFieldWidget(std::string name, double v, int precision);
   bool TextFieldWidget(std::string name, std::string & value);
   bool TextFieldWidget(int id, std::string name, std::string & value);
+  bool TagsFieldsWidget(syd::Database * db,
+                        syd::Tag::vector & tags,
+                        std::string name = "Tags");
+  void string2char(char ** c, const std::string & s, const int max_size=256);
+
 }
 // --------------------------------------------------------------------
 

@@ -17,6 +17,7 @@
   ===========================================================================**/
 
 #include "sydguiWidgets.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 void sydgui::NonEditableFieldWidget(std::string name, std::string value)
@@ -60,6 +61,7 @@ bool sydgui::TextFieldWidget(int id, std::string name, std::string & value)
 }
 // --------------------------------------------------------------------
 
+
 // --------------------------------------------------------------------
 bool sydgui::TextFieldWidget(std::string name, std::string & value)
 {
@@ -69,5 +71,56 @@ bool sydgui::TextFieldWidget(std::string name, std::string & value)
   bool b = ImGui::InputText(name.c_str(), c, 256, rw_flag);
   if (b) value = c;
   return b;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void sydgui::string2char(char ** c, const std::string & s, int max_size)
+{
+  *c = (char*)realloc(*c,max_size);
+  strcpy(*c, s.c_str());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool sydgui::TagsFieldsWidget(syd::Database * db,
+                              syd::Tag::vector & tags,
+                              std::string name)
+{
+  auto tag_names = syd::GetLabels(tags);
+
+  static bool tag_in_progress_flag = false;
+  if (tag_in_progress_flag) {
+    // Use red color to indicate that some text have not been recognized
+    ImGui::PushStyleColor(ImGuiCol_Text, ImColor::HSV(0.0f, 1.0f, 1.0f));
+  }
+
+  bool tag_modified = sydgui::TextFieldWidget(name.c_str(), tag_names);
+  if (!ImGui::IsItemActive() and tag_in_progress_flag) {
+    tag_in_progress_flag = false;
+    ImGui::PopStyleColor();
+  }
+
+  if (tag_in_progress_flag) {
+    ImGui::PopStyleColor(); // back to default color
+    ImGui::Text("Recognized tags:");
+    ImGui::SameLine();
+    ImGui::Text("%s", syd::GetLabels(tags).c_str());
+  }
+
+  if (tag_modified) {
+    std::vector<std::string> tag_words;
+    syd::GetWords(tag_words, tag_names);
+    syd::Tag::vector new_tags;
+    odb::query<syd::Tag> q =
+      odb::query<syd::Tag>::label.in_range(tag_words.begin(), tag_words.end());
+    db->Query<syd::Tag>(new_tags, q);
+    tag_in_progress_flag = (new_tags.size() != tag_words.size());
+    tags = new_tags;
+    return true;
+  }
+  return false;
 }
 // --------------------------------------------------------------------

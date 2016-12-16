@@ -39,6 +39,9 @@ bool sydgui::ImagesSelectionWidget::NewFrame()
   static char filter_exclude_text[256];
   changed = ImGui::InputText("Exclude", filter_exclude_text, 256) || changed;
 
+  // Start a child region to allow vertical scrollbar independant of filters.
+  ImGui::BeginChild("ImageList");
+
   // If modified, change the list of images
   if (changed) {
     std::vector<std::string> patterns;
@@ -98,6 +101,7 @@ bool sydgui::ImagesSelectionWidget::NewFrame()
     changed = true;
   }
 
+  ImGui::EndChild();
   return changed;
 }
 // --------------------------------------------------------------------
