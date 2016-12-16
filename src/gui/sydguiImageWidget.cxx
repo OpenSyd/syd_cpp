@@ -19,6 +19,7 @@
 #include "sydguiImageWidget.h"
 #include "sydRoiMaskImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydFileHelper.h"
 #include "sydguiWidgets.h"
 
 // --------------------------------------------------------------------
@@ -34,15 +35,16 @@ sydgui::ImageWidget::ImageWidget()
 bool sydgui::ImageWidget::NewFrame()
 {
   if (image ==nullptr) return false;
-  auto id = image->id;
   auto db = image->GetDatabase<syd::StandardDatabase>();
 
   ImGui::Button("View with vv");
   ImGui::SameLine();
+  ImGui::Button("Copy path in clipboard");
+  ImGui::SameLine();
   ImGui::Button("Delete");
-  //ImGui::Button("Delete"); // copy ?
+  //ImGui::Button("Copy"); // copy ?
   if (modified) {
-    ImGui::SameLine();
+    //    ImGui::SameLine();
     ImGui::Button("Update");
     if (ImGui::IsItemActive() || ImGui::IsItemHovered())
       ImGui::SetTooltip("Record has been modified. Click here to save.");
@@ -55,7 +57,7 @@ bool sydgui::ImageWidget::NewFrame()
   static char c[256];
 
   // Id
-  sydgui::NonEditableFieldWidget("Id", id);
+  sydgui::NonEditableFieldWidget("Id", image->id);
 
   // Patient
   bool patient_modified = patient_list_widget.NewFrame();
@@ -72,7 +74,12 @@ bool sydgui::ImageWidget::NewFrame()
   modified = injection_list_widget.NewFrame() or modified;
 
   // acquisition date
-  sydgui::NonEditableFieldWidget("Acquisition_date", image->acquisition_date);
+  bool date_is_valid = syd::IsDateValid(image->acquisition_date);
+  if (!date_is_valid) {
+    ImGui::PushStyleColor(ImGuiCol_Text, ImColor::HSV(0.0f, 1.0f, 1.0f));
+  }
+  modified = sydgui::TextFieldWidget("Acquisition_date", image->acquisition_date) or modified;
+  if (!date_is_valid) ImGui::PopStyleColor();
 
   // Modality
   modified = sydgui::TextFieldWidget("Modality", image->modality) or modified;
@@ -81,21 +88,14 @@ bool sydgui::ImageWidget::NewFrame()
   modified = sydgui::TagsFieldsWidget(db, image->tags) or modified;
 
   // Files and folder
-  if (image->files.size() > 0) {
-    std::ostringstream ss;
-    for(auto f:image->files) ss << f->filename << " ";
-    strcpy(c, ss.str().c_str());
-    ImGui::InputText("Files", c, 256, ro_flag);
-    strcpy(c, image->files[0]->GetAbsolutePath().c_str());
-    ImGui::InputText("Folder", c, 256, ro_flag);
-  }
+  sydgui::NonEditableFieldWidget("Files", syd::GetFilenames(image->files));
+  sydgui::NonEditableFieldWidget("Folder", syd::GetRelativeFolder(image->files));
 
-  if (image->dicoms.size() > 0) {
-    std::ostringstream ss;
-    for(auto d:image->dicoms) ss << d->id << " ";
-    strcpy(c, ss.str().c_str());
-    ImGui::InputText("Dicoms", c, 256, ro_flag);
-  }
+  // Dicoms FIXME
+  std::ostringstream ss;
+  for(auto d:image->dicoms) ss << d->id << " ";
+  strcpy(c, ss.str().c_str());
+  ImGui::InputText("Dicoms", c, 256, ro_flag);
 
   // image type (ignored)
   sydgui::NonEditableFieldWidget("Type", image->type);

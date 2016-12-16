@@ -35,6 +35,9 @@ namespace syd {
                              std::string path,
                              std::string filename);
 
+  std::string GetFilenames(syd::File::vector files);
+  std::string GetRelativeFolder(syd::File::vector files);
+
 } // namespace syd
 // --------------------------------------------------------------------
 
