@@ -74,12 +74,21 @@ bool sydgui::ImageWidget::NewFrame()
   modified = injection_list_widget.NewFrame() or modified;
 
   // acquisition date
-  bool date_is_valid = syd::IsDateValid(image->acquisition_date);
+  bool date_is_valid =
+    image->GetAcquisitionDate() == syd::empty_value or
+    syd::IsDateValid(image->acquisition_date);
   if (!date_is_valid) {
     ImGui::PushStyleColor(ImGuiCol_Text, ImColor::HSV(0.0f, 1.0f, 1.0f));
   }
   modified = sydgui::TextFieldWidget("Acquisition_date", image->acquisition_date) or modified;
-  if (!date_is_valid) ImGui::PopStyleColor();
+  if (!date_is_valid) {
+    if (ImGui::IsItemHovered()) {
+      ImGui::BeginTooltip();
+      ImGui::Text("Format: 2016-08-27 12:33");
+      ImGui::EndTooltip();
+    }
+    ImGui::PopStyleColor();
+  }
 
   // Modality
   modified = sydgui::TextFieldWidget("Modality", image->modality) or modified;
@@ -91,12 +100,11 @@ bool sydgui::ImageWidget::NewFrame()
   sydgui::NonEditableFieldWidget("Files", syd::GetFilenames(image->files));
   sydgui::NonEditableFieldWidget("Folder", syd::GetRelativeFolder(image->files));
 
-  // Dicoms FIXME
+  // Dicoms FIXME not editable yet. To change
   std::ostringstream ss;
   for(auto d:image->dicoms) ss << d->id << " ";
-  strcpy(c, ss.str().c_str());
-  ImGui::InputText("Dicoms", c, 256, ro_flag);
-
+  sydgui::NonEditableFieldWidget("Dicoms", ss.str());
+ 
   // image type (ignored)
   sydgui::NonEditableFieldWidget("Type", image->type);
 
