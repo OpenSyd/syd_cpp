@@ -33,12 +33,14 @@ namespace sydgui {
   public:
     ImageWidget();
 
-    bool NewFrame(syd::Image::pointer im);
+    bool NewFrame();//syd::Image::pointer im);
     void SetImage(syd::Image::pointer im);
+    syd::Image::pointer GetImage() { return image; }
 
   protected:
     syd::Image::pointer image;
     bool modified;
+    void SetButtons();
 
     // Widget for list of choices
     sydgui::InjectionListWidget injections_widget;
@@ -46,9 +48,6 @@ namespace sydgui {
     sydgui::PixelUnitListWidget pixel_unit_widget;
 
   };
-
-  // FIXME trial as a simple function
-  bool ImageWidget2(syd::Image::pointer image);
 
 }
 // --------------------------------------------------------------------

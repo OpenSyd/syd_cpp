@@ -75,8 +75,9 @@ int main(int argc, char* argv[])
     // Begin windows
     ImGui::Begin("Selected image");
     static sydgui::ImageWidget widget_image;
-    //    if (changed) widget_image.SetImage(widget_images.GetSelectedImage());
-    widget_image.NewFrame(widget_images.GetSelectedImage());
+    if (changed) widget_image.SetImage(widget_images.GetSelectedImage());
+    widget_image.NewFrame();//widget_images.GetSelectedImage());
+    //    widget_images.GetSelectedImage() = widget_image.GetImage();
     ImGui::End();
 
     // Begin windows 2 TEST FIXME

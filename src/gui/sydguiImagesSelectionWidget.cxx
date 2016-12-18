@@ -96,7 +96,7 @@ bool sydgui::ImagesSelectionWidget::NewFrame()
 
   // if the previously selected is no more present in the list (filtered), reset
   // the selection
-  if (nb_of_selected == 0) {
+  if (nb_of_selected == 0 and selected_id != -1) {
     selected_id = selected_i = -1;
     changed = true;
   }

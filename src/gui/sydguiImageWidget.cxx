@@ -32,37 +32,18 @@ sydgui::ImageWidget::ImageWidget()
 
 
 // --------------------------------------------------------------------
-bool sydgui::ImageWidget::NewFrame(syd::Image::pointer im)
+bool sydgui::ImageWidget::NewFrame() //syd::Image::pointer im)
 {
-  if (im == nullptr) return false;
-  if (image == nullptr or image != im) SetImage(im);
+  //  if (im == nullptr) return false;
+  if (image == nullptr) return false;
+  //if (image == nullptr or image != im) SetImage(im);
   auto db = image->GetDatabase<syd::StandardDatabase>();
 
-  // Buttons
-  if (ImGui::Button("View with vv")) {
-    std::ostringstream oss;
-    oss << "vv " << image->GetAbsolutePath();
-    int r = syd::ExecuteCommandLineNoBlock(oss.str(), 2);
-    DD(r);
-    if (r == -1) {
-      LOG(WARNING) << "Error while executing the following command: " << std::endl << oss.str();
-    }
-  }
-  ImGui::SameLine();
-  ImGui::Button("Copy path in clipboard");
-  ImGui::SameLine();
-  ImGui::Button("Delete");
-  //ImGui::Button("Copy"); // copy ?
-  if (modified) {
-    ImGui::Button("Update");
-    if (ImGui::IsItemActive() || ImGui::IsItemHovered())
-      ImGui::SetTooltip("Record has been modified. Click here to save.");
-    ImGui::SameLine();
-    if (ImGui::Button("Revert")) {
-      db->QueryOne(image, image->id);
-      SetImage(image);
-    }
-  }
+  // Important: every field will be with id specific to image id
+  ImGui::PushID(std::to_string(image->id).c_str());
+
+  // Display the buttons
+  SetButtons();
 
   // Id
   sydgui::NonEditableFieldWidget("Id", image->id);
@@ -122,6 +103,10 @@ bool sydgui::ImageWidget::NewFrame(syd::Image::pointer im)
   sydgui::NonEditableFieldWidget("Size", image->SizeAsString());
   sydgui::NonEditableFieldWidget("Spacing", image->SpacingAsString());
 
+  // History
+  sydgui::NonEditableFieldWidget("Created", image->history->insertion_date);
+  sydgui::NonEditableFieldWidget("Last modif", image->history->update_date);
+
   // Comments //to put as sygui::CommentFieldWidget
   int i=0;
   ImGui::Text("Comments:");
@@ -137,10 +122,7 @@ bool sydgui::ImageWidget::NewFrame(syd::Image::pointer im)
   ImGui::SameLine();
   ImGui::SmallButton("Add a comment");
 
-  // History
-  sydgui::NonEditableFieldWidget("Created", image->history->insertion_date);
-  sydgui::NonEditableFieldWidget("Last modif", image->history->update_date);
-
+  ImGui::PopID();
   return modified;
 }
 // --------------------------------------------------------------------
@@ -151,10 +133,6 @@ void sydgui::ImageWidget::SetImage(syd::Image::pointer im)
 {
   image = im;
   if (image == nullptr) return;
-
-  // Important: every field with be with id specific to image id
-  ImGui::PopID();
-  ImGui::PushID(std::to_string(image->id).c_str());
 
   // Check if the current image is the same than the one in the db. 
   // Surprisingly fast enough
@@ -168,32 +146,46 @@ void sydgui::ImageWidget::SetImage(syd::Image::pointer im)
 
 
 // --------------------------------------------------------------------
-bool sydgui::ImageWidget2(syd::Image::pointer image)
+void sydgui::ImageWidget::SetButtons()
 {
-  /*
-    static syd::Image::pointer previous_image = nullptr;
-    bool image_changed = previous_image->id != image->id;
-    if (image == nullptr) {
-    previous_image = image;
-    return false;
+  // Button VV
+  if (ImGui::Button("View with vv")) {
+    std::ostringstream oss;
+    oss << "vv " << image->GetAbsolutePath() << "&";
+    int r = system(oss.str().c_str());
+  }
+
+  // Button copy path
+  ImGui::SameLine();
+  ImGui::Button("Copy path in clipboard");
+
+  // Button delete
+  ImGui::SameLine();
+  ImGui::Button("Delete");
+
+  //ImGui::Button("Copy"); // copy ?
+
+  // If image has been modified, display some additional buttons
+  if (modified) {
+    // Update
+    ImGui::SameLine();
+    bool udpate = ImGui::Button("Update");
+    if (ImGui::IsItemActive() || ImGui::IsItemHovered())
+      ImGui::SetTooltip("Record has been modified. Click here to save.");
+
+    // Revert
+    ImGui::SameLine();
+    bool revert = ImGui::Button("Revert");
+    if (ImGui::IsItemActive() || ImGui::IsItemHovered())
+      ImGui::SetTooltip("Record has been modified. Click here to revert like in the db");
+    if (revert) {
+      auto db = image->GetDatabase<syd::StandardDatabase>();
+      syd::Image::pointer temp;
+      db->QueryOne(temp, image->id);
+      // Need to copy the content to keep the same pointer
+      *image = *temp;
+      modified = false;
     }
-
-
-    auto db = image->GetDatabase<syd::StandardDatabase>();
-
-    // ID
-    sydgui::NonEditableFieldWidget("Id", image->id);
-  */
-  // Injection
-  // static syd::Injection::vector injections;
-  // if (image_changed) {
-  //   typedef odb::query<syd::Injection> Q;
-  //   Q q = Q::patient == image->patient->id;
-  //   db->Query(injections, q);
-  // }
-  // injection_list_widget.Init("Injection", &image->injection, injections);
-
-  // modified = injection_list_widget.NewFrame() or modified;
-  return false;
+  }
 }
 // --------------------------------------------------------------------
