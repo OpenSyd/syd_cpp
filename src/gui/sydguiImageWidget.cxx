@@ -157,7 +157,8 @@ void sydgui::ImageWidget::SetButtons()
 
   // Button copy path
   ImGui::SameLine();
-  ImGui::Button("Copy path in clipboard");
+  if (ImGui::Button("Copy path in clipboard"))
+    ImGui::SetClipboardText(image->GetAbsolutePath().c_str());
 
   // Button delete
   ImGui::SameLine();
