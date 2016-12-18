@@ -328,51 +328,6 @@ int syd::ExecuteCommandLine(const std::string & cmd, int logLevel)
 
 
 //------------------------------------------------------------------
-int syd::ExecuteCommandLineNoBlock(const std::string & cmd, int logLevel)
-{
-  DD(cmd);
-  const redi::pstreams::pmode mode = redi::pstreams::pstdout|redi::pstreams::pstderr;
-  redi::ipstream child(cmd, mode);
-  DD("here");
-  /*
-  char buf[1024];
-  std::streamsize n;
-  bool finished[2] = { false, false };
-  const std::string color = "\x1b[32m"; // green
-  std::cout << color;
-  bool error = false;
-  while (!finished[0] || !finished[1]) {
-    if (!finished[0]) {
-      while ((n = child.err().readsome(buf, sizeof(buf))) > 0) {
-        error = true;
-        std::cerr << fatalColor;
-        std::cerr.write(buf, n);
-      }
-      if (child.eof()) {
-        finished[0] = true;
-        if (!finished[1]) child.clear();
-      }
-    }
-
-    if (!finished[1]) {
-      while ((n = child.out().readsome(buf, sizeof(buf))) > 0) {
-        if (Log::LogLevel() >= logLevel) std::cout.write(buf, n).flush(); // only print if level ok
-      }
-      if (child.eof()) {
-        finished[1] = true;
-        if (!finished[0]) child.clear();
-      }
-    }
-  }
-  std::cout << DD_RESET;
-  if (error) return -1; // Error
-  */
-  return 0; // ok
-}
-//------------------------------------------------------------------
-
-
-//------------------------------------------------------------------
 // http://stackoverflow.com/questions/2844817/how-do-i-check-if-a-c-string-is-an-int
 bool syd::IsInteger(const std::string & s)
 {

@@ -123,7 +123,6 @@ namespace syd {
 
   //--------------------------------------------------------------------
   int ExecuteCommandLine(const std::string & cmd, int logLevel);
-  int ExecuteCommandLineNoBlock(const std::string & cmd, int logLevel);
   //--------------------------------------------------------------------
 
 
