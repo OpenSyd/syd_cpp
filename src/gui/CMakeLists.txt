@@ -34,7 +34,9 @@ add_library(sydgui
   sydguiImagesListWidget.cxx
   sydguiImageWidget.cxx
   sydguiWidgets.cxx
-  sydguiListFieldWidget.cxx
+  sydguiInjectionListWidget.cxx
+  sydguiPatientListWidget.cxx
+  sydguiPixelUnitListWidget.cxx
   )
 
 # -----------------------------------------------------------------------------

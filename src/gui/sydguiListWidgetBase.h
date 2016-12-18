@@ -16,41 +16,37 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDGUIIMAGEWIDGET_H
-#define SYDGUIIMAGEWIDGET_H
+#ifndef SYDGUILISTFWIDGETBASE_H
+#define SYDGUILISTFWIDGETBASE_H
 
 #include "sydgui.h"
-#include "sydguiInjectionListWidget.h"
-#include "sydguiPatientListWidget.h"
-#include "sydguiPixelUnitListWidget.h"
-#include "sydStandardDatabase.h"
-#include "sydImage.h"
+#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
 namespace sydgui {
 
-  class ImageWidget {
+  template<class RecordType>
+    class ListWidgetBase {
   public:
-    ImageWidget();
-
-    bool NewFrame(syd::Image::pointer im);
-    void SetImage(syd::Image::pointer im);
+    ListWidgetBase(bool allow_empty=false);
+    void SetAllowEmptyFlag(bool b) { allow_empty = b; }
+    bool NewFrame(std::string label, typename RecordType::pointer * p);
+    bool NewFrame(std::string label, typename RecordType::pointer * p, syd::Database * db);
 
   protected:
-    syd::Image::pointer image;
-    bool modified;
-
-    // Widget for list of choices
-    sydgui::InjectionListWidget injections_widget;
-    sydgui::PatientListWidget patients_widget;
-    sydgui::PixelUnitListWidget pixel_unit_widget;
-
+    void UpdateCurrentItem(typename RecordType::pointer p);
+    void Update(syd::Database * db);
+    void UpdateList();
+    virtual std::string GetLabel(typename RecordType::pointer p) = 0;
+    typename RecordType::pointer previous_item;
+    typename RecordType::vector list;
+    std::vector<std::string> items;
+    int current_item_num;
+    bool allow_empty;
+    syd::Database * previous_db;
   };
+} // end namespace
 
-  // FIXME trial as a simple function
-  bool ImageWidget2(syd::Image::pointer image);
-
-}
+#include "sydguiListWidgetBase.txx"
 // --------------------------------------------------------------------
-
-#endif // SYDGUIIMAGEWIDGET_H
+#endif // SYDGUILISTFWIDGETBASE_H

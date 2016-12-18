@@ -75,9 +75,15 @@ int main(int argc, char* argv[])
     // Begin windows
     ImGui::Begin("Selected image");
     static sydgui::ImageWidget widget_image;
-    if (changed) widget_image.SetImage(widget_images.GetSelectedImage());
-    widget_image.NewFrame();
+    //    if (changed) widget_image.SetImage(widget_images.GetSelectedImage());
+    widget_image.NewFrame(widget_images.GetSelectedImage());
     ImGui::End();
+
+    // Begin windows 2 TEST FIXME
+    /*ImGui::Begin("Selected image 2");
+    sydgui::ImageWidget2(widget_images.GetSelectedImage());
+    ImGui::End();
+    */
 
     // Rendering
     sydgui::Render(clear_color, window);

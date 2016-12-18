@@ -22,8 +22,17 @@
 #include "sydgui.h"
 
 // --------------------------------------------------------------------
-namespace sydgui {
+namespace ImGui
+{
+  // https://eliasdaler.github.io/using-imgui-with-sfml-pt2#combobox-listbox
+  bool Combo(const char* label, int* currIndex, std::vector<std::string>& values);
+  bool ListBox(const char* label, int* currIndex, std::vector<std::string>& values);
+}
+// --------------------------------------------------------------------
 
+// --------------------------------------------------------------------
+namespace sydgui
+{
   void NonEditableFieldWidget(std::string name, std::string value);
   void NonEditableFieldWidget(std::string name, int i);
   void NonEditableFieldWidget(std::string name, double v, int precision);
@@ -33,7 +42,6 @@ namespace sydgui {
                         syd::Tag::vector & tags,
                         std::string name = "Tags");
   void string2char(char ** c, const std::string & s, const int max_size=256);
-
 }
 // --------------------------------------------------------------------
 

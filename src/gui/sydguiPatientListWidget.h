@@ -16,41 +16,20 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDGUIIMAGEWIDGET_H
-#define SYDGUIIMAGEWIDGET_H
+#ifndef SYDGUIPATIENTLISTWIDGET_H
+#define SYDGUIPATIENTLISTWIDGET_H
 
-#include "sydgui.h"
-#include "sydguiInjectionListWidget.h"
-#include "sydguiPatientListWidget.h"
-#include "sydguiPixelUnitListWidget.h"
+#include "sydguiListWidgetBase.h"
 #include "sydStandardDatabase.h"
-#include "sydImage.h"
 
 // --------------------------------------------------------------------
 namespace sydgui {
 
-  class ImageWidget {
-  public:
-    ImageWidget();
-
-    bool NewFrame(syd::Image::pointer im);
-    void SetImage(syd::Image::pointer im);
-
+  class PatientListWidget:
+    public ListWidgetBase<syd::Patient> {
   protected:
-    syd::Image::pointer image;
-    bool modified;
-
-    // Widget for list of choices
-    sydgui::InjectionListWidget injections_widget;
-    sydgui::PatientListWidget patients_widget;
-    sydgui::PixelUnitListWidget pixel_unit_widget;
-
+    virtual std::string GetLabel(syd::Patient::pointer patient);
   };
-
-  // FIXME trial as a simple function
-  bool ImageWidget2(syd::Image::pointer image);
-
 }
-// --------------------------------------------------------------------
 
-#endif // SYDGUIIMAGEWIDGET_H
+#endif // SYDGUIPATIENTLISTWIDGET_H
