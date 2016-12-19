@@ -91,7 +91,9 @@ bool sydgui::ImagesSelectionWidget::NewFrame()
         }
         if (i==key_up_arrow) {
           selected_i = std::max((unsigned long)0,--selected_i);
-          selected_id = selected_images[selected_i]->id;
+          if (selected_i>0 and selected_i<selected_images.size())
+            selected_id = selected_images[selected_i]->id;
+          else selected_i = -1;
           changed = true;
           continue;
         }

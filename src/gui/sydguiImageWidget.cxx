@@ -34,7 +34,6 @@ sydgui::ImageWidget::ImageWidget()
 // --------------------------------------------------------------------
 bool sydgui::ImageWidget::NewFrame() //syd::Image::pointer im)
 {
-  //  if (im == nullptr) return false;
   if (image == nullptr) return false;
   //if (image == nullptr or image != im) SetImage(im);
   auto db = image->GetDatabase<syd::StandardDatabase>();
@@ -112,18 +111,35 @@ bool sydgui::ImageWidget::NewFrame() //syd::Image::pointer im)
 
   // Comments //to put as sygui::CommentFieldWidget
   int i=0;
+  ImGui::Separator();
   ImGui::Text("Comments:");
   for(auto & com:image->comments) {
     std::string l = "##"+std::to_string(i);
-    modified = sydgui::TextFieldWidget(l, com) or modified;
+    bool com_modified = sydgui::TextFieldWidget(l, com);
+    if (com_modified) {
+      image->comments[i] = com;
+      modified = true;
+    }
     ImGui::SameLine();
-    ImGui::Button("Delete");
+    // several "Delete" button
+    l = "Delete##"+std::to_string(i);
+    if (ImGui::Button(l.c_str())) {
+      image->comments.erase(image->comments.begin()+i);
+      modified = true;
+    }
     ++i;
   }
-  std::string new_comment;
-  sydgui::TextFieldWidget("", new_comment);
+  ImGui::Text("New comment:");
   ImGui::SameLine();
-  ImGui::SmallButton("Add a comment");
+  static char c[256];
+  bool b = ImGui::InputText("", c, 256, ImGuiInputTextFlags_EnterReturnsTrue);
+  ImGui::SameLine();
+  b = ImGui::Button("Add") or b;
+  if (b) {
+    image->comments.push_back(c);
+    strcpy(c, "");
+    modified = true;
+  }
 
   ImGui::PopID();
   return modified;
@@ -190,9 +206,15 @@ void sydgui::ImageWidget::SetButtons()
   if (modified) {
     // Update
     ImGui::SameLine();
-    bool udpate = ImGui::Button("Update");
+    bool update = ImGui::Button("Update");
     if (ImGui::IsItemActive() || ImGui::IsItemHovered())
       ImGui::SetTooltip("Record has been modified. Click here to save.");
+    if (update) {
+      auto db = image->GetDatabase<syd::StandardDatabase>();
+      db->Update(image);
+      modified = false;
+      return;
+    }
 
     // Revert
     ImGui::SameLine();

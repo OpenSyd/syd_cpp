@@ -46,7 +46,6 @@ int main(int argc, char* argv[])
 
   // Main loop
   ImVec4 clear_color = ImColor(114, 144, 154);
-
   while (!glfwWindowShouldClose(window)) {
     if (!sydgui::StartNewFrame(window)) continue;
 
@@ -55,7 +54,7 @@ int main(int argc, char* argv[])
 
     // Panel1: input images selection
     static sydgui::ImagesSelectionWidget select_image_widget(db);
-    auto changed = select_image_widget.NewFrame();
+    bool changed = select_image_widget.NewFrame();
 
     ImGui::Separator();
     auto & images = select_image_widget.GetImages(); // reference (no copy)
@@ -79,17 +78,14 @@ int main(int argc, char* argv[])
     if (changed) widget_image.SetImage(select_image_widget.GetSelectedImage());
     changed = widget_image.NewFrame();
     if (changed and widget_image.GetImage() == nullptr) {
-      DD("delete");
       select_image_widget.UpdateListOfImages(db); // record has been deleted
       widget_image.SetImage(select_image_widget.GetSelectedImage());
     }
     ImGui::End();
 
-    // Begin windows 2 TEST FIXME
-    /*ImGui::Begin("Selected image 2");
-      sydgui::ImageWidget2(select_image_widget.GetSelectedImage());
-      ImGui::End();
-    */
+
+    // In some situation, the filter of the select_image_widget is no more 
+
 
     // Rendering
     sydgui::Render(clear_color, window);

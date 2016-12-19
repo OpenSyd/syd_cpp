@@ -55,7 +55,7 @@ void sydgui::NonEditableFieldWidget(std::string name, double v, int precision)
 
 
 // --------------------------------------------------------------------
-bool sydgui::TextFieldWidget(int id, std::string name, std::string & value)
+bool sydgui::TextFieldWidget(int id, std::string name, std::string & value, ImGuiInputTextFlags flags)
 {
   return TextFieldWidget(name+"##"+std::to_string(id), value);
 }
@@ -63,7 +63,7 @@ bool sydgui::TextFieldWidget(int id, std::string name, std::string & value)
 
 
 // --------------------------------------------------------------------
-bool sydgui::TextFieldWidget(std::string name, std::string & value)
+bool sydgui::TextFieldWidget(std::string name, std::string & value, ImGuiInputTextFlags flags)
 {
   static auto rw_flag = ImGuiInputTextFlags_AutoSelectAll;
   static char c[256];

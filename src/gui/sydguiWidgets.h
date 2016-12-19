@@ -36,8 +36,10 @@ namespace sydgui
   void NonEditableFieldWidget(std::string name, std::string value);
   void NonEditableFieldWidget(std::string name, int i);
   void NonEditableFieldWidget(std::string name, double v, int precision);
-  bool TextFieldWidget(std::string name, std::string & value);
-  bool TextFieldWidget(int id, std::string name, std::string & value);
+  bool TextFieldWidget(std::string name, std::string & value,
+                       ImGuiInputTextFlags flags=ImGuiInputTextFlags_AutoSelectAll);
+  bool TextFieldWidget(int id, std::string name, std::string & value,
+                       ImGuiInputTextFlags flags=ImGuiInputTextFlags_AutoSelectAll);
   bool TagsFieldsWidget(syd::Database * db,
                         syd::Tag::vector & tags,
                         std::string name = "Tags");
