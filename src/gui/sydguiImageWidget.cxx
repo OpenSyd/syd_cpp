@@ -45,6 +45,9 @@ bool sydgui::ImageWidget::NewFrame() //syd::Image::pointer im)
   // Display the buttons
   SetButtons();
 
+  // Image may have been deleted
+  if (image == nullptr) return modified;
+
   // Id
   sydgui::NonEditableFieldWidget("Id", image->id);
 
@@ -114,7 +117,7 @@ bool sydgui::ImageWidget::NewFrame() //syd::Image::pointer im)
     std::string l = "##"+std::to_string(i);
     modified = sydgui::TextFieldWidget(l, com) or modified;
     ImGui::SameLine();
-    ImGui::Button("Remove");
+    ImGui::Button("Delete");
     ++i;
   }
   std::string new_comment;
@@ -162,7 +165,24 @@ void sydgui::ImageWidget::SetButtons()
 
   // Button delete
   ImGui::SameLine();
-  ImGui::Button("Delete");
+  if (ImGui::Button("Delete"))
+    ImGui::OpenPopup(" Really delete?");
+  if (ImGui::BeginPopupModal(" Really delete?", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+    ImGui::Text("This record will be definitively deleted.\nThis operation cannot be undone!\n\n");
+    if (ImGui::Button("OK, delete it!",
+                      ImVec2(120,0))) {
+      auto db = image->GetDatabase<syd::StandardDatabase>();
+      db->Delete(image);
+      image = nullptr;
+      modified = true;
+      ImGui::CloseCurrentPopup();
+      return;
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Cancel",
+                      ImVec2(120,0))) { ImGui::CloseCurrentPopup(); }
+    ImGui::EndPopup();
+  }
 
   //ImGui::Button("Copy"); // copy ?
 

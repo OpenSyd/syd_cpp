@@ -31,6 +31,7 @@ namespace sydgui {
     ImagesSelectionWidget(syd::StandardDatabase * db);
 
     bool NewFrame();
+    bool UpdateListOfImages(syd::StandardDatabase * db);
     const syd::Image::vector & GetImages() const { return selected_images; }
     syd::Image::pointer GetSelectedImage() const;
 
@@ -39,7 +40,7 @@ namespace sydgui {
     syd::Image::vector all_images;
     syd::Image::vector selected_images;
     syd::Image::pointer selected_image;
-    int selected_i;
+    unsigned long selected_i;
     syd::IdType selected_id;
 
     bool PrintInfoImage(int i, syd::Image::pointer image, bool & selected);

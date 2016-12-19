@@ -46,6 +46,7 @@ int main(int argc, char* argv[])
 
   // Main loop
   ImVec4 clear_color = ImColor(114, 144, 154);
+
   while (!glfwWindowShouldClose(window)) {
     if (!sydgui::StartNewFrame(window)) continue;
 
@@ -53,37 +54,41 @@ int main(int argc, char* argv[])
     ImGui::Begin("syd image selector");
 
     // Panel1: input images selection
-    static sydgui::ImagesSelectionWidget widget_images(db);
-    auto changed = widget_images.NewFrame();
+    static sydgui::ImagesSelectionWidget select_image_widget(db);
+    auto changed = select_image_widget.NewFrame();
 
     ImGui::Separator();
-    auto & images = widget_images.GetImages(); // reference (no copy)
+    auto & images = select_image_widget.GetImages(); // reference (no copy)
 
     // End windows
     ImGui::End();
 
     // Begin windows
     /*
-    ImGui::Begin("Selected images");
-    //ImGui::Text("%lu images", images.size());
-    static sydgui::ImagesListWidget widget_list(images);
-    if (changed) widget_list.SetImages(images);
-    widget_list.NewFrame();
-    ImGui::End();
+      ImGui::Begin("Selected images");
+      //ImGui::Text("%lu images", images.size());
+      static sydgui::ImagesListWidget widget_list(images);
+      if (changed) widget_list.SetImages(images);
+      widget_list.NewFrame();
+      ImGui::End();
     */
 
     // Begin windows
     ImGui::Begin("Selected image");
     static sydgui::ImageWidget widget_image;
-    if (changed) widget_image.SetImage(widget_images.GetSelectedImage());
-    widget_image.NewFrame();//widget_images.GetSelectedImage());
-    //    widget_images.GetSelectedImage() = widget_image.GetImage();
+    if (changed) widget_image.SetImage(select_image_widget.GetSelectedImage());
+    changed = widget_image.NewFrame();
+    if (changed and widget_image.GetImage() == nullptr) {
+      DD("delete");
+      select_image_widget.UpdateListOfImages(db); // record has been deleted
+      widget_image.SetImage(select_image_widget.GetSelectedImage());
+    }
     ImGui::End();
 
     // Begin windows 2 TEST FIXME
     /*ImGui::Begin("Selected image 2");
-    sydgui::ImageWidget2(widget_images.GetSelectedImage());
-    ImGui::End();
+      sydgui::ImageWidget2(select_image_widget.GetSelectedImage());
+      ImGui::End();
     */
 
     // Rendering

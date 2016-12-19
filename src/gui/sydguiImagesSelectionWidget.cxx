@@ -20,12 +20,33 @@
 #include "sydRoiMaskImageHelper.h"
 
 // --------------------------------------------------------------------
-sydgui::ImagesSelectionWidget::ImagesSelectionWidget(syd::StandardDatabase * d):db(d)
+sydgui::ImagesSelectionWidget::ImagesSelectionWidget(syd::StandardDatabase * d)
 {
+  UpdateListOfImages(d);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool sydgui::ImagesSelectionWidget::UpdateListOfImages(syd::StandardDatabase * d)
+{
+  db = d;
+  all_images.clear();
+  selected_images.clear();
   db->Query(all_images);
   selected_images = all_images;
-  selected_i = -1;
-  selected_id = -1;
+  auto previous_id = selected_id;
+  if (selected_i != -1 and all_images.size() > 0) {
+    if (selected_i == 0) selected_i = 1;
+    selected_i = std::min(all_images.size()-1, selected_i-1);
+    selected_i = std::max(selected_i, (unsigned long)0);
+    selected_id = all_images[selected_i]->id;
+  }
+  else {
+    selected_i = -1;
+    selected_id = -1;
+  }
+  return (previous_id != selected_id);
 }
 // --------------------------------------------------------------------
 
@@ -63,17 +84,13 @@ bool sydgui::ImagesSelectionWidget::NewFrame()
     for (int i = 0; i < IM_ARRAYSIZE(io.KeysDown); i++) {
       if (ImGui::IsKeyPressed(i)) {
         if (i==key_down_arrow) {
-          // We set the focus here, because if currently editing a field, it
-          // will be copied to next image.
-          //          ImGui::SetKeyboardFocusHere();
-          selected_i = std::min(++selected_i, (int)selected_images.size()-1);
+          selected_i = std::min(++selected_i, selected_images.size()-1);
           selected_id = selected_images[selected_i]->id;
           changed = true;
           continue;
         }
         if (i==key_up_arrow) {
-          //ImGui::SetKeyboardFocusHere();
-          selected_i = std::max(0,--selected_i);
+          selected_i = std::max((unsigned long)0,--selected_i);
           selected_id = selected_images[selected_i]->id;
           changed = true;
           continue;
@@ -158,3 +175,4 @@ syd::Image::pointer sydgui::ImagesSelectionWidget::GetSelectedImage() const
   return nullptr;
 }
 // --------------------------------------------------------------------
+
