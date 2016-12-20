@@ -350,8 +350,6 @@ CreateMaskFromThreshold(std::vector<ImageType::Pointer> images,
 typename syd::TimeIntegratedActivityImageBuilder::MaskImageType::Pointer
 syd::TimeIntegratedActivityImageBuilder::FindAdditionalMask()
 {
-  DDF();
-  DD(additional_mask_name_);
   if (additional_mask_name_ != "none") {
     auto mask = syd::FindOneRoiMaskImage(images_[0], additional_mask_name_);
     if (mask == nullptr) {
