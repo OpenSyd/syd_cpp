@@ -1,0 +1,9 @@
+#File syd_gate.ggo
+
+package "syd_gate"
+usage "syd_gate <fitimage> <mac> <N>"
+version "0.1"
+description "Generate a Gate command line to exec the template macro with data from the database. Alias are: CTIMAGE PATIENT RADIONUCLIDE Z A SPECTIMAGE N 
+"
+
+#option "dry_run" - "Do not insert in the db, only check " flag off
