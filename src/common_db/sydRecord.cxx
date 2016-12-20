@@ -150,3 +150,13 @@ bool syd::IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2)
   return (r1->ToString() == r2->ToString());
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Record::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const
+{
+  map["id"] = [](syd::Record::pointer r) { return std::to_string(r->id); };
+  map["raw"] = [](syd::Record::pointer r) { return r->ToString(); };
+}
+// --------------------------------------------------------------------
+

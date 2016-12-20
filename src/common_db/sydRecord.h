@@ -107,6 +107,10 @@ namespace syd {
     template<class DatabaseType>
     DatabaseType * GetDatabase() const;
 
+    /// Get (build) the list of default filed getter
+    typedef std::function<std::string(syd::Record::pointer)> GetFieldFunction;
+    virtual void SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const;
+
   protected:
     /// This default constructor allow to oblige class that inherit
     /// from Record to not have default constructor
@@ -163,7 +167,6 @@ namespace syd {
 
 #define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)                \
   TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, syd::Record)
-
 
 } // end namespace
 // --------------------------------------------------------------------

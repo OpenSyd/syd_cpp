@@ -285,7 +285,7 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records,
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Database::New(std::shared_ptr<RecordType> & record)
+void syd::Database::New(std::shared_ptr<RecordType> & record) const
 {
   // We consider the tablename of the given type.
   auto p = GetTable(RecordType::GetStaticTableName())->New();

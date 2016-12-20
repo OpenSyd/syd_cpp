@@ -203,3 +203,4 @@ std::vector<std::string> & syd::Table<RecordType>::GetInheritSQLTableNames() con
   return syd::Record::inherit_sql_tables_map_[RecordType::GetStaticTableName()];
 }
 // --------------------------------------------------------------------
+

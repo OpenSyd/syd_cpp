@@ -105,11 +105,11 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// Create a new record of the specified table.
-    std::shared_ptr<Record> New(const std::string & table_name);
+    std::shared_ptr<Record> New(const std::string & table_name) const;
 
     /// Create a new record of the table given by RecordType
     template<class RecordType>
-    void New(std::shared_ptr<RecordType> & record);
+    void New(std::shared_ptr<RecordType> & record) const;
     // ------------------------------------------------------------------------
 
 
@@ -292,13 +292,18 @@ namespace syd {
     /// Copy only the db file (warning not the folder)
     void Copy(std::string dbname);
 
-    /// Copy everything the db file + all files in folder (could be
-    /// long!)
+    /// Copy everything the db file + all files in folder (could be long!)
     void Copy(std::string dbname, std::string folder);
 
-
+    /// Global flag
     void SetOverwriteFileFlag(bool b) { overwrite_file_if_exists_flag_ = b; }
     bool GetOverwriteFileFlag() const { return overwrite_file_if_exists_flag_; }
+
+    /// Get a function that retrive a field value (string) according to table_name and field name
+    const syd::Record::GetFieldFunction & FieldGetter(std::string table_name, std::string field_name) const;
+
+    /// Get (initialize) the map of field getter function
+    const std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> & GetDefaultFields() const;
 
     // ----------------------------------------------------------------------------------
   protected:

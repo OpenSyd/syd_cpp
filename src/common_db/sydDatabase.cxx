@@ -293,7 +293,7 @@ std::string syd::Database::GetListOfTableNames() const
 
 // --------------------------------------------------------------------
 syd::Database::generic_record_pointer
-syd::Database::New(const std::string & table_name)
+syd::Database::New(const std::string & table_name) const
 {
   return GetTable(table_name)->New();
 }
@@ -627,5 +627,45 @@ void syd::Database::Copy(std::string new_dbname, std::string new_folder)
   catch (const odb::exception& e) {
     EXCEPTION("Exception while updating DatabaseInformation");
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+const syd::Record::GetFieldFunction &
+syd::Database::FieldGetter(std::string table_name, std::string field_name) const
+{
+  DDF();
+  auto map = GetDefaultFields();
+  auto it = map.find(table_name);
+  if (it == map.end()) {
+    EXCEPTION("Cannot find table '" << table_name << "' in FieldGetter.");
+  }
+  auto field_map = it->second;
+  auto iter = field_map.find(field_name);
+  if (iter == field_map.end()) {
+    EXCEPTION("Cannot find field '" << field_name
+              << "' in table '" << table_name << "' in FieldGetter.");
+  }
+  return iter->second;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+const std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> &
+syd::Database::GetDefaultFields() const
+{
+  static std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> map;
+  static bool already_here = false;
+  if (already_here) return map;
+  for(auto i:GetMapOfTables()) {
+    auto table = i.second;
+    auto name = table->GetTableName();
+    auto fake = New(name);
+    fake->SetDefaultFields(map[name]);
+  }
+  already_here = true;
+  return map;
 }
 // --------------------------------------------------------------------

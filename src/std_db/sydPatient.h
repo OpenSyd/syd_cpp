@@ -80,8 +80,7 @@ namespace syd {
 
     virtual void DumpInTable(syd::PrintTable & table) const;
 
-    // FIXME
-    //    virtual void InitTableDescription(syd::TableDescription * description) const;
+    void SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const;
 
   protected:
     Patient();
