@@ -39,6 +39,7 @@ add_library(sydgui
   sydguiPixelUnitListWidget.cxx
   )
 
+target_link_libraries(sydgui sydCore sydStandardDatabase)
 # -----------------------------------------------------------------------------
 ## reference example
 DD(OPENGL_LIBRARIES)
