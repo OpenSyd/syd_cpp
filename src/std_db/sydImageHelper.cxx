@@ -412,13 +412,13 @@ syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
 // --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertManualRegistration(const syd::Image::pointer inputImage,
-                              double x, double y, double z)
+                              double x, double y, double z, bool translateOrigin)
 {
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType3D;
   auto itk_inputImage = syd::ReadImage<ImageType3D>(inputImage->GetAbsolutePath());
-  auto imageRegister = syd::ManualRegistration<ImageType3D>(itk_inputImage, x, y, z);
+  auto imageRegister = syd::ManualRegistration<ImageType3D>(itk_inputImage, x, y, z, translateOrigin);
 
   // Create the syd image
   return syd::InsertImage<ImageType3D>(imageRegister, inputImage->patient, inputImage->modality);

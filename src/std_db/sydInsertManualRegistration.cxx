@@ -47,15 +47,18 @@ int main(int argc, char* argv[])
 
   //Get x, y, z displacement
   double x(0), y(0), z(0);
+  bool translateOrigin(0);
   if (args_info.x_given)
     x = args_info.x_arg;
   if (args_info.y_given)
     y = args_info.y_arg;
   if (args_info.z_given)
     z = args_info.z_arg;
+  if (args_info.origin_given)
+    translateOrigin = args_info.origin_flag;
 
   // Main computation
-  auto image = syd::InsertManualRegistration(inputImage, x, y, z);
+  auto image = syd::InsertManualRegistration(inputImage, x, y, z, translateOrigin);
 
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);

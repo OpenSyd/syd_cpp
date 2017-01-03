@@ -121,7 +121,7 @@ namespace syd {
 
   // Compute the manual registration of an image.
   syd::Image::pointer InsertManualRegistration(const syd::Image::pointer inputImage,
-                                               double x, double y, double z);
+                                               double x, double y, double z, bool translateOrigin);
 
   // Compute the attenuation correction of an projection image.
   syd::Image::pointer InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,
