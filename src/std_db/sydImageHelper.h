@@ -118,7 +118,7 @@ namespace syd {
   syd::Image::pointer InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
                                                 const syd::Image::pointer inputSPECT,
                                                 const syd::Image::pointer inputAM);
-                                                
+
   // Compute the manual registration of an image.
   syd::Image::pointer InsertManualRegistration(const syd::Image::pointer inputImage,
                                                double x, double y, double z);

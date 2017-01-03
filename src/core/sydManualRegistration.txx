@@ -123,7 +123,7 @@ syd::ManualRegistration(const ImageType * inputImage, double x, double y, double
   translation[1] = y;
   translation[2] = z;
   transform->Translate(translation);
-  
+
   typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;
   typename ResampleFilterType::Pointer resampleFilter = ResampleFilterType::New();
   resampleFilter->SetTransform(transform.GetPointer());
