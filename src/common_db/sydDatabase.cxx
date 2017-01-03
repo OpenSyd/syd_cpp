@@ -669,3 +669,25 @@ syd::Database::GetDefaultFields() const
   return map;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+/*const syd::Record::GetFieldFunction &
+syd::Database::GetFieldFunction(std::string table_name, std::string field_name) const
+{
+  DDF();
+  auto map = GetDefaultFields();
+  auto it = map.find(table_name);
+  if (it == map.end()) {
+    EXCEPTION("Cannot find table '" << table_name << "' in FieldGetter.");
+  }
+  auto field_map = it->second;
+  auto iter = field_map.find(field_name);
+  if (iter == field_map.end()) {
+    EXCEPTION("Cannot find field '" << field_name
+              << "' in table '" << table_name << "' in FieldGetter.");
+  }
+  return iter->second;
+}
+*/
+// --------------------------------------------------------------------

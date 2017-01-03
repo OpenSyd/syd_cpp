@@ -21,6 +21,9 @@
 #include "sydInjection.h"
 #include "sydStandardDatabase.h"
 
+template<>
+std::string syd::RecordTraits<syd::Patient>::table_name_ = "Patient";
+
 // --------------------------------------------------
 syd::Patient::Patient():
   syd::Record(),

@@ -16,32 +16,35 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDTABLEOFRECORDS_H
-#define SYDTABLEOFRECORDS_H
+#ifndef SYDRECORDTRAITS_H
+#define SYDRECORDTRAITS_H
 
 // syd
-#include "sydPatient.h"
+#include "sydCommon.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class TableOfRecords {
+  template<class RecordType>
+  class RecordTraits {
   public:
-    TableOfRecords();
-    void Set(syd::Record::vector records);
-    void Print(std::ostream & os) const;
-    void Print(std::ostream & os, syd::Record::pointer r) const;
-    void AddField(std::string field_name);
-    void ClearFieldList() { fields.clear(); }
+
+    typedef std::function<std::string(syd::Record::pointer)> FieldFunctionType;
+
+    static std::string GetTableName2();
+    static const FieldFunctionType & GetFieldFunction2(std::string field_name);
 
   protected:
-    syd::Record::vector records;
-    std::vector<std::function<std::string(syd::Record::pointer)>> fields;
-  };
+    static void BuildFieldFunctionMap();
+    static std::string table_name_;
+    static std::map<std::string, FieldFunctionType> field_map_;
 
-} // namespace syd
+  }; // end of class
+  // --------------------------------------------------------------------
 
-//#include "sydTableOfRecords.txx"
+#include "sydRecordTraits.txx"
+
+} // end namespace
 // --------------------------------------------------------------------
 
 #endif

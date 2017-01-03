@@ -33,6 +33,11 @@ void syd::TableOfRecords::Set(syd::Record::vector r)
 {
   DDF();
   records = r;
+  fields.clear();
+  auto start = *records.begin();
+  auto db = start->GetDatabase();
+  auto map = db->GetDefaultFields().at(start->GetTableName());
+  for(auto m:map) fields.push_back(m.second);
 }
 // --------------------------------------------------------------------
 
@@ -62,6 +67,13 @@ void syd::TableOfRecords::Print(std::ostream & os) const
   // or
   //fields.push_back(start->field_getter("pname"));
   //  fields.push_back(start->field_getter("study_id"));
+
+  auto start = *records.begin();
+  auto db = start->GetDatabase();
+  auto map = db->GetDefaultFields().at(start->GetTableName());
+  for(auto m:map) {
+    DD(m.first);
+  }
 
   for(auto & r:records)
     Print(os, r);

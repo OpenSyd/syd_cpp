@@ -21,6 +21,7 @@
 
 // syd
 #include "sydRecord.h"
+#include "sydRecordTraits.h"
 #include "sydPrintTable.h"
 #include "sydRecordWithComments.h"
 
@@ -35,6 +36,7 @@ namespace syd {
   /// Store information about a patient (id, study_id, name etc).
   class Patient:
     public syd::Record,
+    public syd::RecordTraits<syd::Patient>,
     public syd::RecordWithComments {
   public:
 

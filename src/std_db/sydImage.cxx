@@ -61,7 +61,7 @@ std::string syd::Image::GetInjectionName() const
 {
   std::string inj_name = empty_value;
   if (injection != nullptr) inj_name = injection->radionuclide->name
-                           +"("+std::to_string(injection->id)+")";
+                              +"("+std::to_string(injection->id)+")";
   return inj_name;
 }
 // --------------------------------------------------------------------
@@ -415,3 +415,45 @@ std::string syd::Image::ComputeDefaultMHDFilename()
   return oss.str();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Image::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const
+{
+  DDF();
+  syd::Record::SetDefaultFields(map);
+  /*
+    if pname date tag inj injq modality size spacing comments unit dicom
+  */
+
+  // To shorten the code
+  auto cast = [](syd::Record::pointer r) ->
+    syd::Image::pointer { return std::static_pointer_cast<syd::Image>(r); };
+  typedef syd::Record::pointer T;
+
+  // add_field<syd::Image>(map, "pname", XXXX?? ) how todo with macro ? NO
+
+  map["pname"] = [cast](T r) { return cast(r)->GetPatientName(); };
+  map["date"] = [cast](T r) { return cast(r)->GetAcquisitionDate(); };
+  map["inj"] = [cast](T r) { return cast(r)->GetInjectionName(); };
+  map["injq"] = [cast](T r) {
+    if (cast(r)->injection == nullptr) return syd::empty_value;
+    std::ostringstream oss;
+    oss << std::fixed << std::setprecision(2) << cast(r)->injection->activity_in_MBq;
+    return oss.str();
+  };
+
+  // FIXME WILL NOT WORK
+  std::map<std::string, syd::Record::GetFieldFunction> inj_map;
+  if (injection == nullptr) return;
+  injection->SetDefaultFields(inj_map); // FIXME !!! use fake injection ?
+  DD("here");
+  for(auto m:inj_map) {
+    std::string n= "injection->"+m.first;
+    DD(n);
+    map[n] = m.second;
+  }
+
+}
+// --------------------------------------------------------------------
+
