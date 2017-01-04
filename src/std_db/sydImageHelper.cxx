@@ -23,6 +23,7 @@
 #include "sydInjectionHelper.h"
 #include "sydImageStitch.h"
 #include "sydRoiStatisticHelper.h"
+#include "sydImageFillHoles.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -507,5 +508,23 @@ std::vector<double> syd::GetTimesFromInjection(const syd::Image::vector images)
     times.push_back(t);
   }
   return times;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FillHoles(syd::Image::pointer image,
+                    syd::Image::pointer mask,
+                    int radius,
+                    double mask_value,
+                    int & nb_failures,
+                    int & nb_changed)
+{
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto input_itk = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+  auto mask_itk = syd::ReadImage<ImageType>(mask->GetAbsolutePath());
+  syd::FillHoles<ImageType>(input_itk, mask_itk, radius, mask_value, nb_failures, nb_changed);
+  syd::WriteImage<ImageType>(input_itk, image->GetAbsolutePath());
 }
 // --------------------------------------------------------------------

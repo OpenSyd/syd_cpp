@@ -102,7 +102,10 @@ int main(int argc, char* argv[])
     double s = 1.0;
     if (args_info.scale_given) {
       s = args_info.scale_arg;
-      if (s != 1.0) syd::ScaleImage(image, s);
+      if (s != 1.0) {
+        syd::ScaleImage(image, s);
+        LOG(1) << "Image was scaled by " << s << ": " << image;
+      }
     }
 
     // Need to convert to another pixel_type ?
@@ -111,13 +114,24 @@ int main(int argc, char* argv[])
       //syd::CastImage(image, args_info.pixel_type_arg);
     }
 
+    // Need to fill empty pixels
+    if (args_info.fill_holes_arg > 0) {
+      syd::Image::pointer mask;
+      syd::IdType id = args_info.fill_mask_image_arg;
+      db->QueryOne(mask, id);
+      double value = args_info.fill_mask_value_arg;
+      int nb_fail;
+      int nb_changed;
+      syd::FillHoles(image, mask, args_info.fill_holes_arg, value, nb_fail, nb_changed);
+      LOG(1) << "Fill holes terminated with " << nb_fail << " fails and " << nb_changed << " voxels changed.";
+    }
+
     // update db
     syd::SetImageInfoFromCommandLine(image, args_info);
     syd::SetTagsFromCommandLine(image->tags, db, args_info);
     syd::SetCommentsFromCommandLine(image->comments, db, args_info);
     db->Update(image);
-    if (s != 1) LOG(1) << "Image was scaled by " << s << ": " << image;
-    else LOG(1) << "Image was updated: " << image;
+    LOG(1) << "Image was updated: " << image;
   }
 
   // This is the end, my friend.

@@ -5,9 +5,14 @@ version "0.2"
 usage "sydUpdateImage <image_ids>"
 description "Update information associated with an image, and/or scale.
 - <image_ids>      ids of the images to update
-
 "
 
 option "file"          -  "Content of the file will replace the image in the db"  string multiple no
 option "scale"         s  "Multiply the pixel by this value"                      double no
 option "pixel_type"    -  "Convert the current image to the given pixel_type"     string no
+
+option "fill_holes"      -  "Fill holes according to neighboring voxels (radius)"     int default="0" no
+option "fill_mask_image" -  "The 'holes' are given in this mask image"                int default="0" no
+option "fill_mask_value" -  "Values of the 'holes' in the mask image"                 float default="0" no
+
+
