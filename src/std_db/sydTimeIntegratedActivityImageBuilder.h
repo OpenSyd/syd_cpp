@@ -102,7 +102,7 @@ namespace syd {
     syd::Image::pointer InsertOutputAUCImage();
 
     /// Output: get the success fit map and insert in the db
-    syd::Image::pointer InsertOutputSuccessFitImage();
+    syd::Image::pointer InsertOutputSuccessFitImage(typename MaskImageType::Pointer mask_itk);
 
   }; // class TimeIntegratedActivityImageBuilder
 
