@@ -41,18 +41,9 @@ namespace syd {
     static RecordTraitsBase * GetTraits();
     static RecordTraitsBase * GetTraits(std::string table_name);
 
-    // Funtions
-    virtual std::string GetTableName() const; 
-
   protected:
-    //    RecordTraits() { DDF(); } // to prevent instanciation
-    RecordTraits(std::string table_name);// { DDF(); } // to prevent instanciation
-    static void CreateSingleton(std::string table_name);
+    RecordTraits(std::string table_name);
     static RecordTraitsBase * singleton_;
-    void SetTableName(std::string t) { table_name_ = t; }
-    std::string table_name_;
-
-    //    static std::string table_name_;
 
   }; // end of class
   // --------------------------------------------------------------------

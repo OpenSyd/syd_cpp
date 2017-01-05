@@ -16,34 +16,20 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDRECORDTRAITSBASE_H
-#define SYDRECORDTRAITSBASE_H
-
 // syd
-#include "sydCommon.h"
+#include "sydRecordTraitsBase.h"
 
 // --------------------------------------------------------------------
-namespace syd {
-
-  /*
-    This class containts common information (traits) for record.
-    We store here information that do not depends on the RecordType.
-   */
-
-  class RecordTraitsBase {
-  public:
-
-    // Return the table name
-    virtual std::string GetTableName() const;
-
-    protected:
-    RecordTraitsBase(std::string table_name);
-    std::string table_name_;
-
-  }; // end of class
-  // --------------------------------------------------------------------
-
-} // end namespace
+syd::RecordTraitsBase::RecordTraitsBase(std::string table_name)
+{
+  table_name_ = table_name;
+}
 // --------------------------------------------------------------------
 
-#endif
+
+// --------------------------------------------------------------------
+std::string syd::RecordTraitsBase::GetTableName() const
+{
+  return table_name_;
+}
+// --------------------------------------------------------------------

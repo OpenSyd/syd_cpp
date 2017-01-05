@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   // -----------------------------------------------------------------
 
   syd::Patient::pointer patient;
-  db->QueryOne(patient, 2);
+  db->QueryOne(patient, 1);
   DD(patient);
   DD(patient->GetTableName());
   syd::Record::pointer r = patient;

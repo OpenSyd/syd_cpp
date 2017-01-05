@@ -55,13 +55,8 @@ namespace syd {
 
     // ----------------------------------------------------
     /// FIXME
-    virtual RecordTraitsBase * GetTraits() const {
-      DDF();
-      DD("I am record");
-      return syd::RecordTraits<Record>::GetTraits("Record");
-    }
-    //    virtual std::string GetTableName() const { return RecordTraits<Record>::GetTraits()->GetTableName(); }
-    virtual std::string GetTableName() const { return GetTraits()->GetTableName(); }
+    virtual RecordTraitsBase * GetTraits() const;
+    virtual std::string GetTableName() const;
     // ----------------------------------------------------
 
     /// Return the name of the table

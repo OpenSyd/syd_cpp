@@ -61,13 +61,8 @@ namespace syd {
       // ------------------------------------------------------------------------
       //    TABLE_DEFINE(Patient, syd::Patient);
       virtual RecordTraitsBase * GetTraits() const {
-        DDF();
-        DD("I am patient");
-        //FIXME better : if RecordTraits<Patient>::SingletonExist GetTraits
-        // else build("patient");
         return RecordTraits<Patient>::GetTraits("Patient");
       }
-      //virtual std::string GetTableName() const { return RecordTraits<Patient>::GetTraits()->GetTableName(); }
 
       typedef std::shared_ptr<Patient> pointer;
       typedef std::vector<pointer> vector;

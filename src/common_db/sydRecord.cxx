@@ -23,20 +23,6 @@
 #include "sydPluginManager.h"
 
 
-
-// FIXME
-// template<>
-// syd::RecordTraitsBase * syd::RecordTraits<syd::Record>::
-// singleton_ = nullptr;
-
-// // Default implementation
-// template<>
-// std::string syd::RecordTraits<syd::Record>::
-// table_name_ = "Record";
-
-
-
-
 // Define static member
 std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
 
@@ -47,6 +33,22 @@ syd::Record::Record()
   db_ = NULL;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RecordTraitsBase * syd::Record::GetTraits() const
+{
+  return syd::RecordTraits<Record>::GetTraits("Record");
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Record::GetTableName() const
+{
+  return GetTraits()->GetTableName();
+}
+// ----------------------------------------------------
 
 
 // --------------------------------------------------------------------

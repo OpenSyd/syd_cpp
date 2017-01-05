@@ -17,36 +17,16 @@
   ===========================================================================**/
 
 
+// Default initialisation
 template<class RecordType>
 syd::RecordTraitsBase * syd::RecordTraits<RecordType>::
 singleton_ = nullptr;
 
-// // Default implementation
-// template<class RecordType>
-// std::string syd::RecordTraits<RecordType>::
-// table_name_ = "ERROR_you_should_set_the_table_name";
-
-
 // --------------------------------------------------------------------
 template<class RecordType>
 syd::RecordTraits<RecordType>::RecordTraits(std::string table_name)
+  :RecordTraitsBase(table_name)
 {
-  DDF();
-  table_name_ = table_name;
-  DD(table_name_);
-}
-// --------------------------------------------------------------------
-
-// --------------------------------------------------------------------
-template<class RecordType>
-syd::RecordTraitsBase * syd::RecordTraits<RecordType>::GetTraits(std::string table_name)
-{
-  DDF();
-  if (singleton_ != nullptr) return singleton_;
-  DD("First time singleton creation for");
-  DD(table_name);
-  CreateSingleton(table_name);
-  return singleton_;
 }
 // --------------------------------------------------------------------
 
@@ -55,9 +35,7 @@ syd::RecordTraitsBase * syd::RecordTraits<RecordType>::GetTraits(std::string tab
 template<class RecordType>
 syd::RecordTraitsBase * syd::RecordTraits<RecordType>::GetTraits()
 {
-  DDF();
   if (singleton_ != nullptr)  return singleton_;
-  DD("First time singleton creation");
   return GetTraits("ERROR_you_should_set_the_table_name");
 }
 // --------------------------------------------------------------------
@@ -65,20 +43,22 @@ syd::RecordTraitsBase * syd::RecordTraits<RecordType>::GetTraits()
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::RecordTraits<RecordType>::CreateSingleton(std::string table_name)
+syd::RecordTraitsBase * syd::RecordTraits<RecordType>::GetTraits(std::string table_name)
 {
+  if (singleton_ != nullptr) return singleton_;
   singleton_ = new RecordTraits<RecordType>(table_name);
+  return singleton_;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-std::string
-syd::RecordTraits<RecordType>::GetTableName() const 
-{
-  return table_name_;
-}
+// template<class RecordType>
+// std::string
+// syd::RecordTraits<RecordType>::GetTableName() const 
+// {
+//   return table_name_;
+// }
 // --------------------------------------------------------------------
 
 

@@ -35,6 +35,7 @@ set(sydCommonDatabase_src
   sydRecord-odb.cxx
   sydRecord-schema.cxx
   sydRecord.cxx
+  sydRecordTraitsBase.cxx
   sydRecordTraits.cxx
 
   sydRecordHistory-odb.cxx
