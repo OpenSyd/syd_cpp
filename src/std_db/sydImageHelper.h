@@ -35,9 +35,9 @@ namespace syd {
 
   /// Create a new image and save the itk as a mhd in the db
   template<typename ImageType>
-  syd::Image::pointer InsertImage(typename ImageType::Pointer itk_image,
-                                  syd::Patient::pointer patient,
-                                  std::string modality="image");
+    syd::Image::pointer InsertImage(typename ImageType::Pointer itk_image,
+                                    syd::Patient::pointer patient,
+                                    std::string modality="image");
 
   /// Create a new image from a DicomSerie. Pixel type could be float,
   /// short, auto etc
@@ -73,8 +73,8 @@ namespace syd {
 
   /// Fill som image properties from option given in args_info
   template<class ArgsInfo>
-  void SetImageInfoFromCommandLine(syd::Image::pointer image,
-                                   ArgsInfo & args_info);
+    void SetImageInfoFromCommandLine(syd::Image::pointer image,
+                                     ArgsInfo & args_info);
 
   /// Retrieve the syd::PixelUnit and set to the image
   void SetPixelUnit(syd::Image::pointer image, std::string pixel_unit);
@@ -119,6 +119,14 @@ namespace syd {
 
   /// Get the times between injection and acquisition for a set of images. 
   std::vector<double> GetTimesFromInjection(const syd::Image::vector images);
+
+  /// Fill holes in an image for the pixel in the background
+  void FillHoles(syd::Image::pointer image,
+                 syd::Image::pointer mask,
+                 int radius,
+                 double mask_value,
+                 int & nb_failures,
+                 int & nb_changed);
 
 } // namespace syd
 

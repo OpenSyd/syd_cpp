@@ -131,13 +131,26 @@ InsertOutputAUCImage()
 
 // --------------------------------------------------------------------
 syd::Image::pointer syd::TimeIntegratedActivityImageBuilder::
-InsertOutputSuccessFitImage()
+InsertOutputSuccessFitImage(typename MaskImageType::Pointer mask_itk)
 {
   CheckInputs();
   auto img = images_[0];
+  auto success_img_itk = success->GetImage();//syd::ReadImage<ImageType>(img->GetAbsolutePath());
+
+  // Modify the image according to the mask (put -1)
+  MaskIterator it_mask(mask_itk, mask_itk->GetLargestPossibleRegion());
+  Iterator it_img(success_img_itk, success_img_itk->GetLargestPossibleRegion());
+  it_mask.GoToBegin();
+  it_img.GoToBegin();
+  while (!it_mask.IsAtEnd()) {
+    if (it_mask.Get() == 0) it_img.Set(-1);
+    ++it_mask;
+    ++it_img;
+  }
+
   // Create output image
   typedef syd::FitOutputImage::ImageType ImageType;
-  auto output = syd::InsertImage<ImageType>(success->GetImage(), img->patient);
+  auto output = syd::InsertImage<ImageType>(success_img_itk, img->patient);
   syd::SetImageInfoFromImage(output, img);
   output->tags.clear(); // remove all tags
   auto db = img->GetDatabase<syd::StandardDatabase>();
@@ -154,7 +167,6 @@ InsertOutputSuccessFitImage()
 syd::Image::vector syd::TimeIntegratedActivityImageBuilder::
 InsertDebugOutputImages(std::vector<std::string> & names)
 {
-  //outputs_.clear();
   syd::Image::vector outputs;
   auto img = images_[0];
   auto db = img->GetDatabase<syd::StandardDatabase>();
@@ -260,7 +272,7 @@ Run()
 
   // Outputs
   auto output = InsertOutputAUCImage();
-  auto s = InsertOutputSuccessFitImage();
+  auto s = InsertOutputSuccessFitImage(mask);
   tia->AddOutput(output, "fit_auc");
   tia->AddOutput(s, success->GetTagName());
   syd::FitOutputImage::pointer main_output = auc;
@@ -350,8 +362,6 @@ CreateMaskFromThreshold(std::vector<ImageType::Pointer> images,
 typename syd::TimeIntegratedActivityImageBuilder::MaskImageType::Pointer
 syd::TimeIntegratedActivityImageBuilder::FindAdditionalMask()
 {
-  DDF();
-  DD(additional_mask_name_);
   if (additional_mask_name_ != "none") {
     auto mask = syd::FindOneRoiMaskImage(images_[0], additional_mask_name_);
     if (mask == nullptr) {
