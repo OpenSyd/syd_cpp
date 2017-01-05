@@ -27,7 +27,7 @@
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(syd_gate, 2);
+  SYD_INIT_GGO(syd_gate, 3);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
   // -----------------------------------------------------
   // PATIENT
   syd::Patient::pointer patient = tia->images[0]->patient;
-  std::string s = "[PATIENT, "+patient->name+"]";
+  std::string s = "[PATIENT,"+patient->name+"]";
   alias.push_back(s);
 
   // -----------------------------------------------------
@@ -61,7 +61,8 @@ int main(int argc, char* argv[])
   syd::Image::vector candidates;
   odb::query<syd::Image> q =
     odb::query<syd::Image>::patient == patient->id and
-    odb::query<syd::Image>::modality == "CT";
+    (odb::query<syd::Image>::modality == "CT" or
+     odb::query<syd::Image>::modality == "ct");
   db->Query(candidates, q);
 
   // remove ct too far away from the date
@@ -74,7 +75,7 @@ int main(int argc, char* argv[])
     else ++it;
   }
 
-  // Keep max spacing FIXME
+  // If several CT, keep the one with the largest spacing (FIXME)
   double max_spacing = 0.0;
   int i_max = -1;
   int i = 0;
@@ -86,36 +87,55 @@ int main(int argc, char* argv[])
     ++i;
   }
   auto ct = candidates[i_max];
-  s = "[CTIMAGE, "+ct->GetAbsolutePath()+"]";
+
+  auto path = ct->GetAbsolutePath();
+  if (args_info.relative_flag) {
+    fs::path p(path);
+    path = "data/"+p.filename().string();
+  }
+  s = "[CTIMAGE,"+path+"]";
   alias.push_back(s);
 
   // -----------------------------------------------------
   // RADIONUCLIDE
   auto rad = first_spect->injection->radionuclide;
-  s = "[RADIONUCLIDE, "+rad->name+"]";
+  s = "[RADIONUCLIDE,"+rad->name+"]";
   alias.push_back(s);
   int A = rad->mass_number;
-  s = "[A, "+std::to_string(A)+"]";
+  s = "[A,"+std::to_string(A)+"]";
   alias.push_back(s);
   int Z = rad->atomic_number;
-  s = "[Z, "+std::to_string(Z)+"]";
+  s = "[Z,"+std::to_string(Z)+"]";
   alias.push_back(s);
 
   // -----------------------------------------------------
   // SPECTIMAGE
-  s = "[SPECTIMAGE, "+tia->GetOutput("fit_auc")->GetAbsolutePath()+"]";
+  path = tia->GetOutput("fit_auc")->GetAbsolutePath();
+  if (args_info.relative_flag) {
+    fs::path p(path);
+    path = "data/"+p.filename().string();
+  }
+  s = "[SPECTIMAGE,"+path+"]";
   alias.push_back(s);
 
   // -----------------------------------------------------
   // N
-  s = "[N, "+std::to_string(N)+"]";
+  s = "[N,"+std::to_string(N)+"]";
   alias.push_back(s);
 
   // Final print //FIXME to the same for gate_run_submit_cluster
-  std::cout << "Gate " << mac_filename
-            << " -a '";
-  for(auto a:alias) std::cout << a << " ";
-  std::cout << "'" << std::endl;
+  if (args_info.cluster_flag) {
+    std::cout << "gate_run_submit_cluster " << mac_filename
+              << " 2 \"\" \"-a '";
+    for(auto a:alias) std::cout << a; // no space between alias
+    std::cout << "'\"" << std::endl;
+  }
+  else {
+    std::cout << "Gate " << mac_filename
+              << " -a '";
+    for(auto a:alias) std::cout << a << " ";
+    std::cout << "'" << std::endl;
+  }
 
   // This is the end, my friend.
 }

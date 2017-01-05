@@ -127,7 +127,6 @@ add_executable(sydInsertAnonymizedDicom
   ${sydInsertAnonymizedDicom_GGO_C})
 target_link_libraries(sydInsertAnonymizedDicom ${SYD_STD_DB_LIBRARY})
 
-
 # Update Radionuclide table
 wrap_ggo(sydUpdateRadionuclide_GGO_C
   sydUpdateRadionuclide.ggo
