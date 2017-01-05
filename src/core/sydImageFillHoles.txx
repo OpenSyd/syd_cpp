@@ -19,7 +19,7 @@
 
 //--------------------------------------------------------------------
 template<class ImageType>
-int FillHoles(ImageType * input,
+void FillHoles(ImageType * input,
               const ImageType * mask,
               int r,
               double foreground,
