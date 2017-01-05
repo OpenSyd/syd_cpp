@@ -21,8 +21,15 @@
 #include "sydInjection.h"
 #include "sydStandardDatabase.h"
 
-template<>
-std::string syd::RecordTraits<syd::Patient>::table_name_ = "Patient";
+// template<>
+// std::string syd::RecordTraits<syd::Patient>::
+// table_name_ = "Patient";
+
+// template<class RecordType>
+// std::string syd::RecordTraits<RecordType>::
+// table_name_ = "ERROR_you_should_set_the_table_name";
+
+
 
 // --------------------------------------------------
 syd::Patient::Patient():
@@ -156,6 +163,7 @@ void syd::Patient::Callback(odb::callback_event event, odb::database & db)
 // --------------------------------------------------
 
 
+/*
 // --------------------------------------------------------------------
 void syd::Patient::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const
 {
@@ -169,3 +177,4 @@ void syd::Patient::SetDefaultFields(std::map<std::string, syd::Record::GetFieldF
 }
 // --------------------------------------------------------------------
 
+*/

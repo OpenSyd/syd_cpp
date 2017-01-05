@@ -22,7 +22,7 @@ namespace temp {
 
     // To do in RecordTraits
     virtual const GetFieldFunctionMapType & GetFieldFunctionMap() = 0;
-    virtual std::vector<std::shared_ptr<FieldBase>> & GetFields() = 0;
+    //virtual std::vector<std::shared_ptr<FieldBase>> & GetFields() = 0;
 
   };
 
@@ -55,10 +55,10 @@ namespace temp {
     }
 
 
-    static std::vector<std::shared_ptr<FieldBase>> fields;
-    virtual std::vector<std::shared_ptr<FieldBase>> & GetFields() {
-      return fields;
-    }
+    /* static std::vector<std::shared_ptr<FieldBase>> fields; */
+    /* virtual std::vector<std::shared_ptr<FieldBase>> & GetFields() { */
+    /*   return fields; */
+    /* } */
 
 
     static RecordTraitsBase * singleton;
@@ -68,16 +68,16 @@ namespace temp {
 
   class Record {
   public:
-    virtual RecordTraitsBase * GetTraits() { return RecordTraits<Record>::singleton; }
+    virtual RecordTraitsBase * GetTraits() { return RecordTraits<Record>::singleton; } 
     typedef RecordTraitsBase::GetFieldFunctionType GetFieldFunctionType;
 
     // duplicate of RecordsTraits to ease access
-    std::string GetTableName() { return GetTraits()->GetTableName(); }
-    const GetFieldFunctionType & GetFieldFunction(std::string field_name) { return GetTraits()->GetFieldFunction(field_name); }
+    std::string GetTableName() { return RecordTraits<Record>::GetTraits()->GetTableName(); }
+    const GetFieldFunctionType & GetFieldFunction(std::string field_name) { return RecordTraits<Record>::GetTraits()->GetFieldFunction(field_name); }
 
-    virtual std::vector<std::shared_ptr<FieldBase>> & GetFields() {
-      return GetTraits()->GetFields();
-    }
+    /* virtual std::vector<std::shared_ptr<FieldBase>> & GetFields() { */
+    /*   return GetTraits()->GetFields(); */
+    /* } */
 
 
     int id; // odb
@@ -85,7 +85,12 @@ namespace temp {
 
   class Patient: public Record {
   public:
-    virtual RecordTraitsBase * GetTraits() { return RecordTraits<Patient>::singleton; }
+    // Needed:
+    virtual RecordTraitsBase * GetTraits() { return RecordTraits<Patient>::singleton; } 
+
+    // Not needed but convenient FIXME ---> maybe not to avoid too much function
+    static std::string GetTableName() { return RecordTraits<Patient>::GetTraits()->GetTableName(); }
+
     std::string name;
   };
 

@@ -23,6 +23,7 @@
 #include "sydCommon.h"
 #include "sydCheckResult.h"
 #include "sydVersion.h"
+#include "sydRecordTraits.h"
 
 // odb
 #include <odb/callback.hxx>
@@ -52,8 +53,19 @@ namespace syd {
     /// Virtual destructor
     virtual ~Record() { }
 
+    // ----------------------------------------------------
+    /// FIXME
+    virtual RecordTraitsBase * GetTraits() const {
+      DDF();
+      DD("I am record");
+      return syd::RecordTraits<Record>::GetTraits("Record");
+    }
+    //    virtual std::string GetTableName() const { return RecordTraits<Record>::GetTraits()->GetTableName(); }
+    virtual std::string GetTableName() const { return GetTraits()->GetTableName(); }
+    // ----------------------------------------------------
+
     /// Return the name of the table
-    virtual std::string GetTableName() const = 0;
+    //virtual std::string GetTableName() const = 0;
     virtual std::string GetSQLTableName() const = 0;
     static std::string GetStaticTableName() { return "Record"; }
     static std::string GetStaticSQLTableName() { return "syd::Record"; }

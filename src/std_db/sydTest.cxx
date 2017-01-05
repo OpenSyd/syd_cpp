@@ -25,7 +25,11 @@
 #include "sydTableOfRecords.h"
 
 #include "sydTestTemp3.h"
-#include "sydTestTemp4.h"
+// #include "sydTestTemp4.h"
+
+ // template<>
+ // std::string syd::RecordTraits<syd::Patient>::
+ // table_name_ = "Patient";
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -39,6 +43,20 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // -----------------------------------------------------------------
+
+  syd::Patient::pointer patient;
+  db->QueryOne(patient, 2);
+  DD(patient);
+  DD(patient->GetTableName());
+  syd::Record::pointer r = patient;
+  DD(r->GetTableName());
+
+  DD(syd::RecordTraits<syd::Patient>::GetTraits()->GetTableName());
+
+  // exit(0);
+  DD("=======================================================");
+
+  // -----------------------------------------------------------------
   {
     std::shared_ptr<temp::Patient> p(new temp::Patient);
     p->name = "toto";
@@ -46,7 +64,9 @@ int main(int argc, char* argv[])
     std::shared_ptr<temp::Record> r = p;
     DD(p->GetTraits()->GetTableName());
     DD(r->GetTraits()->GetTableName());
-    temp::RecordTraits<temp::Patient>::GetTraits()->GetTableName();
+    DD(temp::RecordTraits<temp::Patient>::GetTraits()->GetTableName());
+    //DD(temp::Patient::GetTraits()->GetTableName());
+    DD(temp::Patient::GetTableName());
     std::shared_ptr<temp::Record> b(new temp::Record);
     b->id = 2;
     DD(b->GetTraits()->GetTableName());
@@ -85,8 +105,7 @@ int main(int argc, char* argv[])
 
   }
 
-
-  {
+  /*{
     DD("=====================");
     syd::Record::vector records;
     db->Query(records, "Injection"); // query all
@@ -103,7 +122,7 @@ int main(int argc, char* argv[])
       DD(f->GetValue(records[0]));
     }
 
-  }
+    }*/
 
   exit(0);
 
