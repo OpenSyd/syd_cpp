@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
 
   // Final print //FIXME to the same for gate_run_submit_cluster
   if (args_info.cluster_flag) {
-    std::cout << "gate_run_submit_cluster " << mac_filename
+    std::cout << "gate_run_submit_cluster_sps.sh " << mac_filename
               << " 2 \"\" \"-a '";
     for(auto a:alias) std::cout << a; // no space between alias
     std::cout << "'\"" << std::endl;
