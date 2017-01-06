@@ -16,6 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+//#include "sydRecord.h"
+//#include "sydRecordTraitsBase.h"
 
 // Default initialisation
 template<class RecordType>
@@ -36,7 +38,7 @@ template<class RecordType>
 syd::RecordTraitsBase * syd::RecordTraits<RecordType>::GetTraits()
 {
   if (singleton_ != nullptr)  return singleton_;
-  return GetTraits("ERROR_you_should_set_the_table_name");
+  return GetTraits("ERROR_you_should_set_the_table_name : need macros DEFINE_TABLE_XXX (specialisation of RecordTraits<T>::GetTraits)");
 }
 // --------------------------------------------------------------------
 
@@ -53,12 +55,24 @@ syd::RecordTraitsBase * syd::RecordTraits<RecordType>::GetTraits(std::string tab
 
 
 // --------------------------------------------------------------------
-// template<class RecordType>
-// std::string
-// syd::RecordTraits<RecordType>::GetTableName() const 
-// {
-//   return table_name_;
-// }
+template<class RecordType>
+typename syd::RecordTraits<RecordType>::pointer
+syd::RecordTraits<RecordType>::New(syd::Database * db)
+{
+  auto p = pointer(new RecordType);
+  p->SetDatabasePointer(db);
+  return p;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+typename syd::RecordTraits<RecordType>::generic_record_pointer
+syd::RecordTraits<RecordType>::CreateNew(syd::Database * db) const
+{
+  return syd::RecordTraits<RecordType>::New(db);
+}
 // --------------------------------------------------------------------
 
 

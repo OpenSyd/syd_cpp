@@ -418,13 +418,12 @@ std::string syd::Image::ComputeDefaultMHDFilename()
 
 
 // --------------------------------------------------------------------
+/*
 void syd::Image::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const
 {
   DDF();
   syd::Record::SetDefaultFields(map);
-  /*
-    if pname date tag inj injq modality size spacing comments unit dicom
-  */
+  //    if pname date tag inj injq modality size spacing comments unit dicom
 
   // To shorten the code
   auto cast = [](syd::Record::pointer r) ->
@@ -455,5 +454,6 @@ void syd::Image::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFun
   }
 
 }
+*/
 // --------------------------------------------------------------------
 

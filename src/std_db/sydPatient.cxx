@@ -29,7 +29,33 @@
 // std::string syd::RecordTraits<RecordType>::
 // table_name_ = "ERROR_you_should_set_the_table_name";
 
+namespace syd {
+  template<>
+  syd::RecordTraitsBase * RecordTraits<syd::Patient>::GetTraits() {
+    return syd::RecordTraits<syd::Patient>::GetTraits("Patient");
+  }
 
+  RecordTraitsBase * Patient::traits() const {
+    return RecordTraits<Patient>::GetTraits();
+  }
+
+}
+
+
+// --------------------------------------------------
+/*syd::Patient::Patient(syd::Database * db):
+  syd::Record(db),
+  syd::RecordWithComments()
+  {
+  DDF();
+  // default value
+  name = empty_value; // must be unique
+  study_id = 0; // must be unique
+  weight_in_kg = 0;
+  dicom_patientid = empty_value;
+  sex = empty_value;
+  }*/
+// --------------------------------------------------
 
 // --------------------------------------------------
 syd::Patient::Patient():
@@ -167,13 +193,13 @@ void syd::Patient::Callback(odb::callback_event event, odb::database & db)
 // --------------------------------------------------------------------
 void syd::Patient::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const
 {
-  syd::Record::SetDefaultFields(map);
-  map["name"] = [](syd::Record::pointer r) {
-    return std::static_pointer_cast<syd::Patient>(r)->name; };
-  map["study_id"] = [](syd::Record::pointer r) {
-    return std::to_string(std::static_pointer_cast<syd::Patient>(r)->study_id); };
-  map["dicom"] = [](syd::Record::pointer r) {
-    return std::static_pointer_cast<syd::Patient>(r)->dicom_patientid; };
+syd::Record::SetDefaultFields(map);
+map["name"] = [](syd::Record::pointer r) {
+return std::static_pointer_cast<syd::Patient>(r)->name; };
+map["study_id"] = [](syd::Record::pointer r) {
+return std::to_string(std::static_pointer_cast<syd::Patient>(r)->study_id); };
+map["dicom"] = [](syd::Record::pointer r) {
+return std::static_pointer_cast<syd::Patient>(r)->dicom_patientid; };
 }
 // --------------------------------------------------------------------
 

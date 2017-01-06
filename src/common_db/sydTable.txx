@@ -35,9 +35,13 @@ typename syd::Table<RecordType>::generic_record_pointer
 syd::Table<RecordType>::New()
 {
   // This is the only place to create a new record.
-  auto p = RecordType::New();
-  p->SetDatabasePointer(db_);
-  return p;
+  DDF();
+  LOG(FATAL) << "to remove";
+  // FIXME
+  //  auto p = RecordType::New();
+  //p->SetDatabasePointer(db_);
+  //return p;
+  return nullptr;
 }
 // --------------------------------------------------------------------
 

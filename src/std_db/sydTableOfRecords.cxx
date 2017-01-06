@@ -32,12 +32,14 @@ syd::TableOfRecords::TableOfRecords()
 void syd::TableOfRecords::Set(syd::Record::vector r)
 {
   DDF();
+  /*
   records = r;
   fields.clear();
   auto start = *records.begin();
   auto db = start->GetDatabase();
   auto map = db->GetDefaultFields().at(start->GetTableName());
   for(auto m:map) fields.push_back(m.second);
+  */
 }
 // --------------------------------------------------------------------
 
@@ -46,6 +48,7 @@ void syd::TableOfRecords::Set(syd::Record::vector r)
 void syd::TableOfRecords::AddField(std::string field_name)
 {
   DDF();
+  /*
   if (records.size() == 0) {
     LOG(FATAL) << "Must use Set(records) before";
   }
@@ -54,6 +57,7 @@ void syd::TableOfRecords::AddField(std::string field_name)
   auto db = start->GetDatabase();
   auto f = db->FieldGetter(table_name, field_name);
   fields.push_back(f);
+  */
 }
 // --------------------------------------------------------------------
 
@@ -68,6 +72,7 @@ void syd::TableOfRecords::Print(std::ostream & os) const
   //fields.push_back(start->field_getter("pname"));
   //  fields.push_back(start->field_getter("study_id"));
 
+  /*
   auto start = *records.begin();
   auto db = start->GetDatabase();
   auto map = db->GetDefaultFields().at(start->GetTableName());
@@ -77,6 +82,7 @@ void syd::TableOfRecords::Print(std::ostream & os) const
 
   for(auto & r:records)
     Print(os, r);
+  */
 }
 // --------------------------------------------------------------------
 
@@ -84,10 +90,12 @@ void syd::TableOfRecords::Print(std::ostream & os) const
 // --------------------------------------------------------------------
 void syd::TableOfRecords::Print(std::ostream & os, syd::Record::pointer record) const
 {
+  /*
   for(auto &get_field:fields) {
     auto s = get_field(record);
     std::cout << s << " ";
   }
   std::cout << std::endl;
+  */
 }
 // --------------------------------------------------------------------

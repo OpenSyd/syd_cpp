@@ -40,7 +40,7 @@ namespace syd {
     std::string description;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(Tag, syd::Tag);
+    DEFINE_TABLE_CLASS(Tag);
     // ------------------------------------------------------------------------
 
     /// Write the element as a string
@@ -54,6 +54,8 @@ namespace syd {
     Tag();
 
   }; // end of class
+
+  DEFINE_TABLE_HEADER(Tag);
 
 }
 // --------------------------------------------------------------------

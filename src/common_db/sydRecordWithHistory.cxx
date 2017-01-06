@@ -36,7 +36,7 @@ void syd::RecordWithHistory::Callback(odb::callback_event event,
                                       syd::Database * db) const
 {
   if (event == odb::callback_event::pre_persist) {
-    db->New<syd::RecordHistory>(history);
+    history = db->New<syd::RecordHistory>();
     history->insertion_date = syd::Now();
     history->update_date = history->insertion_date;
     odb.persist(history);

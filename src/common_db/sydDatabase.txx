@@ -125,6 +125,15 @@ void syd::Database::AddTable()
   auto * t = new Table<RecordType>(this);
   map_[tablename] = t;
   map_lowercase_[str] = t;
+
+  // FIXME
+  auto traits = syd::RecordTraits<RecordType>::GetTraits();
+  auto table_name = traits->GetTableName();
+  if (map_of_traits_.find(table_name) != map_of_traits_.end()) {
+    LOG(FATAL) << "When creating the database, a table with the same name '" << table_name
+               << "' already exist.";
+  }
+  map_of_traits_[table_name] = traits;
 }
 // --------------------------------------------------------------------
 
@@ -285,12 +294,9 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records,
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Database::New(std::shared_ptr<RecordType> & record) const
+typename RecordType::pointer syd::Database::New()
 {
-  // We consider the tablename of the given type.
-  auto p = GetTable(RecordType::GetStaticTableName())->New();
-  // the type of the created record could be of a class that inherit from RecordType
-  record = std::dynamic_pointer_cast<RecordType>(p);
+  return syd::RecordTraits<RecordType>::New(this);
 }
 // --------------------------------------------------------------------
 

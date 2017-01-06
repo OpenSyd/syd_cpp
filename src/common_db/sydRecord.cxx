@@ -24,6 +24,7 @@
 
 
 // Define static member
+// FIXME 
 std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
 
 // --------------------------------------------------------------------
@@ -36,9 +37,9 @@ syd::Record::Record()
 
 
 // --------------------------------------------------------------------
-syd::RecordTraitsBase * syd::Record::GetTraits() const
+syd::RecordTraitsBase * syd::Record::traits() const
 {
-  return syd::RecordTraits<Record>::GetTraits("Record");
+  return syd::RecordTraits<Record>::GetTraits();
 }
 // --------------------------------------------------------------------
 
@@ -46,7 +47,7 @@ syd::RecordTraitsBase * syd::Record::GetTraits() const
 // --------------------------------------------------------------------
 std::string syd::Record::GetTableName() const
 {
-  return GetTraits()->GetTableName();
+  return traits()->GetTableName();
 }
 // ----------------------------------------------------
 
@@ -63,9 +64,7 @@ bool syd::Record::IsPersistent() const
 // --------------------------------------------------------------------
 std::string syd::Record::ToString() const
 {
-  std::stringstream ss ;
-  ss << id;
-  return ss.str();
+  return std::to_string(id);
 }
 // --------------------------------------------------------------------
 
@@ -170,10 +169,12 @@ bool syd::IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2)
 
 
 // --------------------------------------------------------------------
-void syd::Record::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const
-{
+/*
+  void syd::Record::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const
+  {
   map["id"] = [](syd::Record::pointer r) { return std::to_string(r->id); };
   map["raw"] = [](syd::Record::pointer r) { return r->ToString(); };
-}
+  }
+*/
 // --------------------------------------------------------------------
 

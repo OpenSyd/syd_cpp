@@ -36,7 +36,7 @@ syd::FindRoiStatistic(const syd::Image::pointer image,
   Q q = Q::image == image->id;
   if (mask != nullptr) q = q and (Q::mask == mask->id);
   syd::RoiStatistic::vector stats;
-  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto db = image->GetDatabase();
   db->Query(stats, q);
   if (mask==nullptr) {
     auto stats_copy = stats;
@@ -74,9 +74,8 @@ syd::NewRoiStatistic(const syd::Image::pointer image,
                      const std::string mask_output_filename)
 {
   // new
-  auto db = image->GetDatabase<syd::StandardDatabase>();
-  syd::RoiStatistic::pointer stat;
-  db->New(stat);
+  auto db = image->GetDatabase();
+  auto stat = db->New<syd::RoiStatistic>();
   stat->image = image;
   stat->mask = mask;
 

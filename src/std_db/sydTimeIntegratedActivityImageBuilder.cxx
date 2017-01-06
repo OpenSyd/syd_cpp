@@ -261,9 +261,8 @@ Run()
   filter_.Run();
 
   // Create output
-  auto db = images_[0]->GetDatabase<syd::StandardDatabase>();
-  syd::FitImages::pointer tia;
-  db->New(tia);
+  auto db = images_[0]->GetDatabase();
+  auto tia = db->New<syd::FitImages>();
   for(auto in:images_) tia->images.push_back(in);
   tia->min_activity = min_activity_;
   tia->SetFromOptions(options_);
@@ -314,7 +313,7 @@ CheckInputs()
   }
 
   // Sort images
-  auto db = images_[0]->GetDatabase<syd::StandardDatabase>();
+  auto db = images_[0]->GetDatabase();
   db->Sort<syd::Image>(images_);
 
   // Get times

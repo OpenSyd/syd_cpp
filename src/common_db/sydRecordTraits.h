@@ -31,15 +31,23 @@ namespace syd {
     - TODO GetSQLTableName
     - TODO Fields
     - TODO insert et al
-   */
+  */
 
   template<class RecordType>
     class RecordTraits: public syd::RecordTraitsBase {
   public:
 
+    typedef std::shared_ptr<RecordType> pointer;
+    typedef std::vector<pointer> vector;
+    typedef syd::RecordTraitsBase::generic_record_pointer generic_record_pointer;
+
     // Main static version to get the singleton traits
     static RecordTraitsBase * GetTraits();
     static RecordTraitsBase * GetTraits(std::string table_name);
+
+    // Create a new record associated with a db (it is not inserted yet)
+    static pointer New(syd::Database * db);
+    virtual generic_record_pointer CreateNew(syd::Database * db) const;
 
   protected:
     RecordTraits(std::string table_name);

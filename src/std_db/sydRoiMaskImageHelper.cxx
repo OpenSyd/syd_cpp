@@ -83,8 +83,7 @@ syd::InsertRoiMaskImageFromFile(std::string filename,
                                 syd::RoiType::pointer roitype)
 {
   auto db = patient->GetDatabase<syd::StandardDatabase>();
-  syd::RoiMaskImage::pointer mask;
-  db->New(mask);
+  auto mask = db->New<syd::RoiMaskImage>();
   mask->patient = patient;
   mask->type = "mhd";
   mask->roitype = roitype;

@@ -82,7 +82,7 @@ void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename)
 
   // If this is a new DicomSerie, we create it
   if (!b) {
-    db_->New(serie);
+    serie = db_->New<syd::DicomSerie>();
     UpdateDicomSerie(serie, filename, dicomIO);
     series_to_insert.push_back(serie);
     LOG(2) << "Creating a new serie: " << serie->dicom_series_uid;
@@ -356,8 +356,7 @@ CreateDicomFile(const std::string & filename,
                 DicomSerie::pointer serie)
 {
   // First create the file
-  syd::DicomFile::pointer dicomfile;
-  db_->New(dicomfile);
+  auto dicomfile = db_->New<syd::DicomFile>();
   std::string f = GetFilenameFromPath(filename);
   dicomfile->filename = f;
 

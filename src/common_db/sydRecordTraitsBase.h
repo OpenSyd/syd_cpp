@@ -28,15 +28,22 @@ namespace syd {
   /*
     This class containts common information (traits) for record.
     We store here information that do not depends on the RecordType.
-   */
+  */
+
+  class Record;
+  class Database;
 
   class RecordTraitsBase {
   public:
 
+    typedef std::shared_ptr<Record> generic_record_pointer;
+
     // Return the table name
     virtual std::string GetTableName() const;
 
-    protected:
+    virtual generic_record_pointer CreateNew(syd::Database * db) const = 0;
+
+  protected:
     RecordTraitsBase(std::string table_name);
     std::string table_name_;
 

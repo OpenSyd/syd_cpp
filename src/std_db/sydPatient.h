@@ -39,6 +39,7 @@ namespace syd {
     public syd::RecordWithComments {
   public:
 
+      //Patient(syd::Database * db);
       virtual ~Patient();
 
 #pragma db options("UNIQUE")
@@ -60,14 +61,17 @@ namespace syd {
 
       // ------------------------------------------------------------------------
       //    TABLE_DEFINE(Patient, syd::Patient);
-      virtual RecordTraitsBase * GetTraits() const {
+      // Needed : GetTraits
+      /*      virtual RecordTraitsBase * GetTraits() const {
         return RecordTraits<Patient>::GetTraits("Patient");
-      }
+        }*/
+      virtual RecordTraitsBase * traits() const;
+      // Neeed for traits to access constructor
+      friend syd::RecordTraits<syd::Patient>;
 
       typedef std::shared_ptr<Patient> pointer;
       typedef std::vector<pointer> vector;
       friend class odb::access;
-      static pointer New() { return pointer(new syd::Patient); }
       virtual std::string GetSQLTableName() const { return "syd::Patient"; }
       static std::string GetStaticTableName() { return "Patient"; }
       static std::string GetStaticSQLTableName() { return "syd::Patient"; }
@@ -104,9 +108,10 @@ namespace syd {
   /*   std::string syd::RecordTraits<syd::Patient>:: */
   /*   table_name_ = "Patient"; */
 
+  // Needed !!
+  template<> syd::RecordTraitsBase * RecordTraits<syd::Patient>::GetTraits();
 
-
-}
+} // end namespace
 // --------------------------------------------------------------------
 
 #endif

@@ -32,9 +32,8 @@ syd::InsertImageFromFile(std::string filename,
                          std::string modality)
 {
   // New image
-  auto db = patient->GetDatabase<syd::StandardDatabase>();
-  syd::Image::pointer image;
-  db->New(image);
+  auto db = patient->GetDatabase();
+  auto image = db->New<syd::Image>();
 
   // default information
   image->patient = patient;
@@ -68,9 +67,8 @@ syd::File::vector syd::InsertFilesFromMhd(syd::Database * db,
   syd::Replace(raw_filename, ".mhd", ".raw");
 
   // Create files
-  syd::File::pointer mhd_file, raw_file;
-  db->New(mhd_file);
-  db->New(raw_file);
+  auto mhd_file = db->New<syd::File>();
+  auto raw_file = db->New<syd::File>();
   mhd_file->path = to_relative_path;
   raw_file->path = to_relative_path;
   mhd_file->filename = to_filename;
@@ -124,7 +122,7 @@ syd::Image::pointer syd::InsertImageFromDicomSerie(syd::DicomSerie::pointer dico
     dicom_filenames.push_back(f->GetAbsolutePath());
 
   // Create a temporary filename
-  auto db = dicom->GetDatabase<syd::StandardDatabase>();
+  auto db = dicom->GetDatabase();
   std::string temp_filename = db->GetUniqueTempFilename();
 
   // Convert the dicom to a mhd
@@ -188,7 +186,7 @@ void syd::SetPixelUnit(syd::Image::pointer image, std::string pixel_unit)
 // --------------------------------------------------------------------
 void syd::SetInjection(syd::Image::pointer image, std::string injection)
 {
-  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto db = image->GetDatabase();
   auto i = syd::FindInjection(image->patient, injection);
   image->injection = i;
 }
@@ -197,7 +195,7 @@ void syd::SetInjection(syd::Image::pointer image, std::string injection)
 // --------------------------------------------------------------------
 void syd::AddDicomSerie(syd::Image::pointer image, syd::IdType id)
 {
-  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto db = image->GetDatabase();
   syd::DicomSerie::pointer d;
   db->QueryOne(d, id);
   image->AddDicomSerie(d);
@@ -215,7 +213,7 @@ void syd::ScaleImage(syd::Image::pointer image, double s)
   syd::ScaleImage<ImageType>(itk_image, s);
   syd::WriteImage<ImageType>(itk_image, image->GetAbsolutePath());
   image->pixel_type = "float";
-  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto db = image->GetDatabase();
   db->Update(image); // to change the history (on the pixel_type)
 }
 // --------------------------------------------------------------------
@@ -252,7 +250,7 @@ syd::Image::pointer syd::InsertStitchDicomImage(syd::DicomSerie::pointer a,
                                                 double skip_slices)
 {
   // Read the dicom images (force to float)
-  auto db = a->GetDatabase<syd::StandardDatabase>();
+  auto db = a->GetDatabase();
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
   auto image_a = syd::ReadDicomSerieImage<ImageType>(a);
@@ -406,9 +404,8 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
   double activity_at_acquisition = injected_activity * exp(-lambda * time);
 
   // Compute stat (without mask)
-  auto db = image->GetDatabase<syd::StandardDatabase>();
-  syd::RoiStatistic::pointer stat;
-  db->New(stat);
+  auto db = image->GetDatabase();
+  auto stat = db->New<syd::RoiStatistic>();
   stat->image = image;
   syd::ComputeRoiStatistic(stat);
 
@@ -436,7 +433,7 @@ bool syd::FlipImageIfNegativeSpacing(syd::Image::pointer image)
                    << " to float";
     }
     syd::SetImageInfoFromFile(image);
-    auto db = image->GetDatabase<syd::StandardDatabase>();
+    auto db = image->GetDatabase();
     db->Update(image); // for changed spacing , history
   }
   return flip;
@@ -451,7 +448,7 @@ syd::Image::pointer syd::CopyImage(syd::Image::pointer image)
                                          image->patient,
                                          image->modality);
   syd::SetImageInfoFromImage(output, image);
-  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto db = image->GetDatabase();
   db->Update(output);
   return output;
 }

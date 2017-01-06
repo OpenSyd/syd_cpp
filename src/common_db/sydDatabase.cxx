@@ -280,10 +280,24 @@ syd::TableBase * syd::Database::GetTable(const std::string & table_name) const
 
 
 // --------------------------------------------------------------------
+syd::RecordTraitsBase * syd::Database::GetTraits(const std::string & table_name) const
+{
+  DDF();
+  auto it = map_of_traits_.find(table_name);
+  if (it == map_of_traits_.end()) {
+    EXCEPTION("Cannot find the table '" << table_name << "'." << std::endl
+              << "Existing tables are: " << GetListOfTableNames());
+  }
+  return it->second;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 std::string syd::Database::GetListOfTableNames() const
 {
   std::stringstream os;
-  for(auto i = map_.begin(); i!=map_.end(); i++) {
+  for(auto i = map_of_traits_.begin(); i!=map_of_traits_.end(); i++) {
     os << i->first << " ";
   }
   return os.str();
@@ -293,9 +307,9 @@ std::string syd::Database::GetListOfTableNames() const
 
 // --------------------------------------------------------------------
 syd::Database::generic_record_pointer
-syd::Database::New(const std::string & table_name) const
+syd::Database::New(const std::string & table_name)
 {
-  return GetTable(table_name)->New();
+  return GetTraits(table_name)->CreateNew(this);
 }
 // --------------------------------------------------------------------
 
@@ -632,62 +646,64 @@ void syd::Database::Copy(std::string new_dbname, std::string new_folder)
 
 
 // --------------------------------------------------------------------
-const syd::Record::GetFieldFunction &
-syd::Database::FieldGetter(std::string table_name, std::string field_name) const
-{
+/*const syd::Record::GetFieldFunction &
+  syd::Database::FieldGetter(std::string table_name, std::string field_name) const
+  {
   DDF();
   auto map = GetDefaultFields();
   auto it = map.find(table_name);
   if (it == map.end()) {
-    EXCEPTION("Cannot find table '" << table_name << "' in FieldGetter.");
+  EXCEPTION("Cannot find table '" << table_name << "' in FieldGetter.");
   }
   auto field_map = it->second;
   auto iter = field_map.find(field_name);
   if (iter == field_map.end()) {
-    EXCEPTION("Cannot find field '" << field_name
-              << "' in table '" << table_name << "' in FieldGetter.");
+  EXCEPTION("Cannot find field '" << field_name
+  << "' in table '" << table_name << "' in FieldGetter.");
   }
   return iter->second;
-}
+  }
+*/
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-const std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> &
-syd::Database::GetDefaultFields() const
-{
+/*const std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> &
+  syd::Database::GetDefaultFields() const
+  {
   static std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> map;
   static bool already_here = false;
   if (already_here) return map;
   for(auto i:GetMapOfTables()) {
-    auto table = i.second;
-    auto name = table->GetTableName();
-    auto fake = New(name);
-    fake->SetDefaultFields(map[name]);
+  auto table = i.second;
+  auto name = table->GetTableName();
+  auto fake = New(name);
+  fake->SetDefaultFields(map[name]);
   }
   already_here = true;
   return map;
-}
+  }
+*/
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 /*const syd::Record::GetFieldFunction &
-syd::Database::GetFieldFunction(std::string table_name, std::string field_name) const
-{
+  syd::Database::GetFieldFunction(std::string table_name, std::string field_name) const
+  {
   DDF();
   auto map = GetDefaultFields();
   auto it = map.find(table_name);
   if (it == map.end()) {
-    EXCEPTION("Cannot find table '" << table_name << "' in FieldGetter.");
+  EXCEPTION("Cannot find table '" << table_name << "' in FieldGetter.");
   }
   auto field_map = it->second;
   auto iter = field_map.find(field_name);
   if (iter == field_map.end()) {
-    EXCEPTION("Cannot find field '" << field_name
-              << "' in table '" << table_name << "' in FieldGetter.");
+  EXCEPTION("Cannot find field '" << field_name
+  << "' in table '" << table_name << "' in FieldGetter.");
   }
   return iter->second;
-}
+  }
 */
 // --------------------------------------------------------------------

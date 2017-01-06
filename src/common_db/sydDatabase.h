@@ -41,8 +41,16 @@
 namespace syd {
 
   // The following classes will be defined elsewhere
-  template<class Record> class Table;
+  template<class Record> class Table; // FIXME TO REMOVE
   template<class DatabaseSchema> class DatabaseCreator;
+
+  // Comparator function for case insensitive map
+  /// (http://stackoverflow.com/questions/19102195/how-to-make-stlmap-key-case-insensitive)
+  struct case_insensitive_comp {
+    bool operator() (const std::string& lhs, const std::string& rhs) const {
+      return strcasecmp(lhs.c_str(), rhs.c_str()) < 0;
+    }
+  };
 
   // I dont know how to retrieve this value, so I fix it here. It is
   // used to split large query, in particular the ones with with
@@ -105,12 +113,30 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// Create a new record of the specified table.
-    std::shared_ptr<Record> New(const std::string & table_name) const;
+    generic_record_pointer New(const std::string & table_name);
 
     /// Create a new record of the table given by RecordType
+    /* template<class RecordType> */
+    /*   void New(std::shared_ptr<RecordType> & record) const; */
+
+    // Create a new record of the specified table type (RecordType)
     template<class RecordType>
-    void New(std::shared_ptr<RecordType> & record) const;
+      typename RecordType::pointer New();
     // ------------------------------------------------------------------------
+
+
+    // ------------------------------------------------------------------------
+    /// Type of the map that contains the association between names and tables
+    typedef std::map<std::string, TableBase*> MapOfTablesType;
+    typedef std::map<std::string, syd::RecordTraitsBase*, case_insensitive_comp> MapOfTraitsType;
+
+    /// Return the map that contains the association between names and tables
+    // FIXME
+    const MapOfTablesType & GetMapOfTables() const { return map_; }
+    const MapOfTraitsType & GetTraitsMap() const { return map_of_traits_; }
+    syd::RecordTraitsBase * GetTraits(const std::string & table_name) const;
+    // ------------------------------------------------------------------------
+
 
 
     // ------------------------------------------------------------------------
@@ -122,11 +148,11 @@ namespace syd {
 
     /// Insert an element
     template<class RecordType>
-    void Insert(std::shared_ptr<RecordType> record);
+      void Insert(std::shared_ptr<RecordType> record);
 
     /// Insert several elements
     template<class RecordType>
-    void Insert(std::vector<std::shared_ptr<RecordType>> records);
+      void Insert(std::vector<std::shared_ptr<RecordType>> records);
 
     /// Automatically insert some default records (should be overloaded)
     virtual void InsertDefaultRecords(const std::string & def) {}
@@ -142,11 +168,11 @@ namespace syd {
 
     /// Update an element
     template<class RecordType>
-    void Update(std::shared_ptr<RecordType> record);
+      void Update(std::shared_ptr<RecordType> record);
 
     /// Update several elements
     template<class RecordType>
-    void Update(std::vector<std::shared_ptr<RecordType>> records);
+      void Update(std::vector<std::shared_ptr<RecordType>> records);
 
     /// Update only one field of a element. The type of the element is unknown
     void Update(generic_record_pointer & record, std::string field_name, std::string value_name);
@@ -159,26 +185,26 @@ namespace syd {
 
     /// Query a single record according to query
     template<class RecordType>
-    void QueryOne(std::shared_ptr<RecordType> & record, const odb::query<RecordType> & q) const;
+      void QueryOne(std::shared_ptr<RecordType> & record, const odb::query<RecordType> & q) const;
 
     /// Query a single record according to the id
     template<class RecordType>
-    void QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const;
+      void QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const;
 
     /// Query a single record from the table_name
     void QueryOne(generic_record_pointer & r, const std::string & table_name, const IdType & id) const;
 
     /// Query several records according to query
     template<class RecordType>
-    void Query(std::vector<std::shared_ptr<RecordType>> & records, const odb::query<RecordType> & q) const;
+      void Query(std::vector<std::shared_ptr<RecordType>> & records, const odb::query<RecordType> & q) const;
 
     /// Query all records
     template<class RecordType>
-    void Query(std::vector<std::shared_ptr<RecordType>> & records) const;
+      void Query(std::vector<std::shared_ptr<RecordType>> & records) const;
 
     /// Query several records according to their id
     template<class RecordType>
-    void Query(std::vector<std::shared_ptr<RecordType>> & records, const std::vector<syd::IdType> & ids) const;
+      void Query(std::vector<std::shared_ptr<RecordType>> & records, const std::vector<syd::IdType> & ids) const;
 
     /// Query several records according to their id
     void Query(generic_record_vector & records, const std::string table_name, const std::vector<syd::IdType> & ids) const;
@@ -188,10 +214,10 @@ namespace syd {
 
     /// Find (grep)
     template<class RecordType>
-    void Grep(std::vector<std::shared_ptr<RecordType>> & output,
-              const std::vector<std::shared_ptr<RecordType>> & input,
-              const std::vector<std::string> & patterns,
-              const std::vector<std::string> & exclude);
+      void Grep(std::vector<std::shared_ptr<RecordType>> & output,
+                const std::vector<std::shared_ptr<RecordType>> & input,
+                const std::vector<std::string> & patterns,
+                const std::vector<std::string> & exclude);
     // ------------------------------------------------------------------------
 
 
@@ -208,17 +234,17 @@ namespace syd {
     /// needed because dont know how to substitute vector<ppatient>
     /// with vector<precord>)
     template<class RecordType>
-    void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
-              const std::string & format="",
-              std::ostream & os=std::cout);
+      void Dump(const std::vector<std::shared_ptr<RecordType>> & records,
+                const std::string & format="",
+                std::ostream & os=std::cout);
     // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
     /// Sort records (to be specialized in record->Sort
     template<class RecordType>
-    void Sort(std::vector<std::shared_ptr<RecordType>> & records,
-              const std::string & type="") const;
+      void Sort(std::vector<std::shared_ptr<RecordType>> & records,
+                const std::string & type="") const;
     /// Sort generic records
     virtual void Sort(generic_record_vector & records,
                       const std::string & table_name,
@@ -231,9 +257,9 @@ namespace syd {
     void Delete(generic_record_vector & records, const std::string & table_name);
     void Delete(generic_record_pointer record);
     template<class RecordType>
-    void Delete(std::shared_ptr<RecordType> record);
+      void Delete(std::shared_ptr<RecordType> record);
     template<class RecordType>
-    void Delete(std::vector<std::shared_ptr<RecordType>> & records);
+      void Delete(std::vector<std::shared_ptr<RecordType>> & records);
 
     /// Add a file to the files to delete (used by sydFile)
     void AddFilenameToDelete(const std::string & f);
@@ -253,7 +279,7 @@ namespace syd {
     /// Return the (base) table with table_name
     TableBase * GetTable(const std::string & table_name) const;
     template<class RecordType>
-    Table<RecordType> * GetTable() const;
+      Table<RecordType> * GetTable() const;
 
     /// Return a string with the list of the table names
     std::string GetListOfTableNames() const;
@@ -270,7 +296,7 @@ namespace syd {
 
     /// Get the number of elements in the table, knowing the type
     template<class RecordType>
-    long GetNumberOfElements();
+      long GetNumberOfElements();
 
     // FIXME
     odb::sqlite::database * GetODB_DB() const { return odb_db_; }
@@ -283,12 +309,6 @@ namespace syd {
     /// different from the syd version.
     void MigrateSchema();
 
-    /// Type of the map that contains the association between names and tables
-    typedef std::map<std::string, TableBase*> MapOfTablesType;
-
-    /// Return the map that contains the association between names and tables
-    const MapOfTablesType & GetMapOfTables() const { return map_; }
-
     /// Copy only the db file (warning not the folder)
     void Copy(std::string dbname);
 
@@ -300,14 +320,14 @@ namespace syd {
     bool GetOverwriteFileFlag() const { return overwrite_file_if_exists_flag_; }
 
     /// Get a function that retrive a field value (string) according to table_name and field name
-    const syd::Record::GetFieldFunction & FieldGetter(std::string table_name, std::string field_name) const;
+    //    const syd::Record::GetFieldFunction & FieldGetter(std::string table_name, std::string field_name) const;
 
     /*    static const syd::Record::GetFieldFunction & GetFieldFunction(std::string table_name,
-                                                                  std::string field_name) const;
+          std::string field_name) const;
     */
 
     /// Get (initialize) the map of field getter function
-    const std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> & GetDefaultFields() const;
+    //    const std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> & GetDefaultFields() const;
 
     // ----------------------------------------------------------------------------------
   protected:
@@ -322,7 +342,7 @@ namespace syd {
 
     /// Declare a new table in the database
     template<class Record>
-    void AddTable();
+      void AddTable();
 
     /// Delete files when needed
     void DeleteFiles();
@@ -334,6 +354,9 @@ namespace syd {
 
     /// Copy of the map with the table name in lowercase (for comparison)
     MapOfTablesType map_lowercase_;
+
+    /// Map of traits
+    MapOfTraitsType map_of_traits_;
 
     /// The sqlite database
     //std::unique_ptr<odb::sqlite::database> db_;

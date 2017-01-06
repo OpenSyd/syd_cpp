@@ -28,7 +28,7 @@ syd::RoiTimepoints::vector syd::FindRoiTimepoints(const syd::RoiStatistic::vecto
   if (stats.size() == 0) {
     EXCEPTION("Cannot FindRoiTimepoints with empty stats vector");
   }
-  auto db = stats[0]->GetDatabase<syd::StandardDatabase>();
+  auto db = stats[0]->GetDatabase();
   db->Query(rtp);
   syd::RoiTimepoints::vector tp;
   for(auto r:rtp) {
@@ -45,7 +45,7 @@ syd::FitTimepoints::vector syd::FindFitTimepoints(const syd::Timepoints::pointer
                                                   const syd::TimeIntegratedActivityFitOptions & options)
 {
   syd::FitTimepoints::vector ftp;
-  auto db = tp->GetDatabase<syd::StandardDatabase>();
+  auto db = tp->GetDatabase();
   typedef odb::query<syd::FitTimepoints> Q;
   Q q =
     Q::timepoints == tp->id and
@@ -69,13 +69,12 @@ syd::RoiTimepoints::pointer syd::NewTimepoints(const syd::RoiStatistic::vector s
   if (stats.size() == 0) {
     EXCEPTION("Cannot create timepoints from empty vector of RoiStatistic");
   }
-  syd::RoiTimepoints::pointer rtp;
-  auto db = stats[0]->GetDatabase<syd::StandardDatabase>();
+  auto db = stats[0]->GetDatabase();
   auto patient = stats[0]->image->patient;
   auto mask = stats[0]->mask; // maybe nullptr
   auto injection = stats[0]->image->injection;
 
-  db->New(rtp);
+  auto rtp = db->New<syd::RoiTimepoints>();
   rtp->patient = patient;
   rtp->injection = injection;
 
@@ -183,9 +182,8 @@ syd::NewFitTimepoints(const syd::Timepoints::pointer tp,
     options.SetLambdaDecayConstantInHours(tp->injection->GetLambdaDecayConstantInHours());
 
   // Create FitTimepoints
-  syd::FitTimepoints::pointer ft;
-  auto db = tp->GetDatabase<syd::StandardDatabase>();
-  db->New(ft);
+  auto db = tp->GetDatabase();
+  auto ft = db->New<syd::FitTimepoints>();
   ft->timepoints = tp;
   ft->SetFromOptions(options);
 

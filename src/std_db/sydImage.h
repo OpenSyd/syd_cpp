@@ -163,7 +163,7 @@ namespace syd {
       /// Compute the default image mhd filename (based on id + modality)
       virtual std::string ComputeDefaultMHDFilename();
 
-      void SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const;
+      //      void SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const;
 
     protected:
       Image();

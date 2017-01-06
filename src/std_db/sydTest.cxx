@@ -50,10 +50,22 @@ int main(int argc, char* argv[])
   DD(patient->GetTableName());
   syd::Record::pointer r = patient;
   DD(r->GetTableName());
-
   DD(syd::RecordTraits<syd::Patient>::GetTraits()->GetTableName());
 
-  // exit(0);
+  // syd::Patient::pointer p2;
+  // db->New<syd::Patient>(p2); // old style ? to remove
+
+  auto p5 = db->New<syd::Patient>(); // p5 is a syd::Patient
+  DD(p5->GetTableName());
+
+  auto p3 = db->New("Patient"); // p3 is a syd::Record::pointer
+  DD(p3->GetTableName());
+
+  auto db2 = patient->GetDatabase(); // ok ! no need to cast
+  auto p6 = db2->New<syd::Patient>();
+  DD(p6->GetTableName());
+
+  exit(0);
   DD("=======================================================");
 
   // -----------------------------------------------------------------

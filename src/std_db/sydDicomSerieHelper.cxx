@@ -85,7 +85,7 @@ syd::DicomSerie::pointer
 syd::InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom)
 {
   // Get the db
-  auto db = dicom->GetDatabase<syd::StandardDatabase>();
+  auto db = dicom->GetDatabase();
 
   // FIXME --> put itk/gdcm related code into sydDicomUtils, not here
 
@@ -237,8 +237,7 @@ syd::InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom)
   }
 
   // Create a new dicom serie
-  syd::DicomSerie::pointer new_dicom;
-  db->New(new_dicom);
+  auto new_dicom = db->New<syd::DicomSerie>();
   new_dicom->patient = dicom->patient;
   new_dicom->dicom_acquisition_date = dicom->dicom_acquisition_date;
   new_dicom->dicom_reconstruction_date = dicom->dicom_reconstruction_date;
@@ -249,8 +248,7 @@ syd::InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom)
   new_dicom->dicom_description = dicom->dicom_description;
   db->Insert(new_dicom);
 
-  syd::DicomFile::pointer dicom_file;
-  db->New(dicom_file);
+  auto dicom_file = db->New<syd::DicomFile>();
   dicom_file->dicom_sop_uid = sopInstanceUID; // last one
   dicom_file->dicom_instance_number = 1;
   dicom_file->path = dicom->dicom_files[0]->path;

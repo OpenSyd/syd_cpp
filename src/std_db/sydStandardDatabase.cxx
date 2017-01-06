@@ -158,11 +158,12 @@ syd::StandardDatabase::~StandardDatabase()
 void syd::StandardDatabase::CreateTables()
 {
   //  syd::Database::CreateTables();
-  AddTable<syd::RecordHistory>();
+  AddTable<syd::Patient>();
   AddTable<syd::Tag>();
+  /*
+  AddTable<syd::RecordHistory>();
   AddTable<syd::File>();
 
-  AddTable<syd::Patient>();
   AddTable<syd::Injection>();
   AddTable<syd::Radionuclide>();
 
@@ -177,11 +178,12 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::RoiStatistic>();
 
   AddTable<syd::Elastix>();
-  
+
   AddTable<syd::FitImages>();
   AddTable<syd::Timepoints>();
   AddTable<syd::RoiTimepoints>();
   AddTable<syd::FitTimepoints>();
+  */
 }
 // --------------------------------------------------------------------
 
@@ -288,8 +290,7 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   args.push_back({"Th-227", "449.23", "Thorium ", "90", "227", "N ", "0.00"});
 
   for (auto a:args) {
-    syd::Radionuclide::pointer r;
-    New(r);
+    auto  r = New<syd::Radionuclide>();
     r->Set(a);
     radionuclides.push_back(r);
   }
@@ -390,8 +391,7 @@ syd::Tag::pointer
 syd::StandardDatabase::NewTag(const std::string & name,
                               const std::string & description)
 {
-  syd::Tag::pointer tag;
-  New(tag);
+  auto tag = New<syd::Tag>();
   tag->label = name;
   tag->description = description;
   return tag;
@@ -404,8 +404,7 @@ syd::PixelUnit::pointer
 syd::StandardDatabase::NewPixelUnit(const std::string & name,
                                     const std::string & description)
 {
-  syd::PixelUnit::pointer v;
-  New(v);
+  auto v = New<PixelUnit>();
   v->name = name;
   v->description = description;
   return v;
@@ -418,8 +417,7 @@ syd::RoiType::pointer
 syd::StandardDatabase::NewRoiType(const std::string & name,
                                   const std::string & description)
 {
-  syd::RoiType::pointer v;
-  New(v);
+  auto v = New<RoiType>();
   v->name = name;
   v->description = description;
   return v;

@@ -54,7 +54,7 @@ syd::Tag::pointer syd::FindOrCreateTag(syd::Database * db,
   try {
     tag = syd::FindTag(db, name);
   } catch (std::exception & e) {
-    db->New<syd::Tag>(tag);
+    tag = db->New<syd::Tag>();
     tag->label = name;
     tag->description = desc;
     db->Insert(tag);

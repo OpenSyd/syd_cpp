@@ -23,6 +23,8 @@
 // std
 #include <set>
 
+DEFINE_TABLE_IMPL(Tag);
+
 // --------------------------------------------------------------------
 syd::Tag::Tag():syd::Record()
 {
