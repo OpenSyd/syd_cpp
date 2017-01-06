@@ -19,6 +19,7 @@
 // syd
 #include "sydTag.h"
 #include "sydPrintTable.h"
+#include "sydRecordTraits.h"
 
 // std
 #include <set>

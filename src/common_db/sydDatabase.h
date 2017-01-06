@@ -13,7 +13,6 @@
   It is distributed under dual licence
 
   - BSD        See included LICENSE.txt file
-  - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
 #ifndef SYDDATABASE_H
@@ -21,7 +20,11 @@
 
 // syd
 #include "sydException.h"
+
+#include "sydRecord.h"
+
 #include "sydDatabaseInformation-odb.hxx"
+//#include "sydRecordTraitsBase.h"
 #include "sydRecord-odb.hxx"
 #include "sydFile-odb.hxx"
 #include "sydRecordHistory-odb.hxx"
@@ -29,12 +32,12 @@
 #include "sydTag-odb.hxx"
 #include "sydRecordWithTags-odb.hxx"
 #include "sydTableBase.h"
-#include "sydDatabaseDescription.h"
+//#include "sydDatabaseDescription.h"
 
 // odb
-#include <odb/sqlite/database.hxx>
-#include <odb/sqlite/tracer.hxx>
-#include <odb/sqlite/statement.hxx>
+ #include <odb/sqlite/database.hxx>
+/* #include <odb/sqlite/tracer.hxx> */
+/* #include <odb/sqlite/statement.hxx> */
 #include <odb/schema-catalog.hxx>
 
 // --------------------------------------------------------------------
@@ -43,6 +46,7 @@ namespace syd {
   // The following classes will be defined elsewhere
   template<class Record> class Table; // FIXME TO REMOVE
   template<class DatabaseSchema> class DatabaseCreator;
+  class RecordTraitsBase;
 
   // Comparator function for case insensitive map
   /// (http://stackoverflow.com/questions/19102195/how-to-make-stlmap-key-case-insensitive)
@@ -72,10 +76,10 @@ namespace syd {
     virtual ~Database();
 
     /// Type of a generic record (pointer)
-    typedef syd::Record::pointer generic_record_pointer;
+    typedef typename std::shared_ptr<syd::Record> generic_record_pointer;
 
     /// Type of a generic vector of records (pointer)
-    typedef syd::Record::vector generic_record_vector;
+    typedef std::vector<generic_record_pointer> generic_record_vector;
 
     // ------------------------------------------------------------------------
     /// Return the type of the db (read in the file)
@@ -115,10 +119,6 @@ namespace syd {
     /// Create a new record of the specified table.
     generic_record_pointer New(const std::string & table_name);
 
-    /// Create a new record of the table given by RecordType
-    /* template<class RecordType> */
-    /*   void New(std::shared_ptr<RecordType> & record) const; */
-
     // Create a new record of the specified table type (RecordType)
     template<class RecordType>
       typename RecordType::pointer New();
@@ -135,6 +135,56 @@ namespace syd {
     const MapOfTablesType & GetMapOfTables() const { return map_; }
     const MapOfTraitsType & GetTraitsMap() const { return map_of_traits_; }
     syd::RecordTraitsBase * GetTraits(const std::string & table_name) const;
+    // ------------------------------------------------------------------------
+
+
+
+    // ------------------------------------------------------------------------
+    /// All Query function allocate new records
+
+    /// Query a single record according to query
+    template<class RecordType>
+      typename RecordType::pointer
+      QueryOne(const odb::query<RecordType> & q) const;
+
+    /// Query a single record according to the id
+    template<class RecordType>
+      typename RecordType::pointer
+      QueryOne(const IdType & id) const;
+
+    /// Query a single record from the table_name
+    generic_record_pointer
+      QueryOne(const std::string & table_name, IdType id) const;
+
+
+    /// Query a single record according to query
+    template<class RecordType>
+      void QueryOne(std::shared_ptr<RecordType> & record, const odb::query<RecordType> & q) const;
+
+    /// Query a single record according to the id
+    template<class RecordType>
+      void QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const;
+
+    /// Query a single record from the table_name
+    void QueryOne(generic_record_pointer & r, const std::string & table_name, const IdType & id) const;
+
+    /// Query several records according to query
+    template<class RecordType>
+      void Query(std::vector<std::shared_ptr<RecordType>> & records, const odb::query<RecordType> & q) const;
+
+    /// Query all records
+    template<class RecordType>
+      void Query(std::vector<std::shared_ptr<RecordType>> & records) const;
+
+    /// Query several records according to their id
+    template<class RecordType>
+      void Query(std::vector<std::shared_ptr<RecordType>> & records, const std::vector<syd::IdType> & ids) const;
+
+    /// Query several records according to their id
+    void Query(generic_record_vector & records, const std::string table_name, const std::vector<syd::IdType> & ids) const;
+
+    /// Query all records of the given tables
+    void Query(generic_record_vector & records, const std::string table_name) const;
     // ------------------------------------------------------------------------
 
 
@@ -179,38 +229,6 @@ namespace syd {
     // ------------------------------------------------------------------------
 
 
-
-    // ------------------------------------------------------------------------
-    /// All Query function allocate new records
-
-    /// Query a single record according to query
-    template<class RecordType>
-      void QueryOne(std::shared_ptr<RecordType> & record, const odb::query<RecordType> & q) const;
-
-    /// Query a single record according to the id
-    template<class RecordType>
-      void QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const;
-
-    /// Query a single record from the table_name
-    void QueryOne(generic_record_pointer & r, const std::string & table_name, const IdType & id) const;
-
-    /// Query several records according to query
-    template<class RecordType>
-      void Query(std::vector<std::shared_ptr<RecordType>> & records, const odb::query<RecordType> & q) const;
-
-    /// Query all records
-    template<class RecordType>
-      void Query(std::vector<std::shared_ptr<RecordType>> & records) const;
-
-    /// Query several records according to their id
-    template<class RecordType>
-      void Query(std::vector<std::shared_ptr<RecordType>> & records, const std::vector<syd::IdType> & ids) const;
-
-    /// Query several records according to their id
-    void Query(generic_record_vector & records, const std::string table_name, const std::vector<syd::IdType> & ids) const;
-
-    /// Query all records of the given tables
-    void Query(generic_record_vector & records, const std::string table_name) const;
 
     /// Find (grep)
     template<class RecordType>
@@ -280,15 +298,15 @@ namespace syd {
     TableBase * GetTable(const std::string & table_name) const;
     template<class RecordType>
       Table<RecordType> * GetTable() const;
-
+    
     /// Return a string with the list of the table names
     std::string GetListOfTableNames() const;
 
     /// Return (compute the first time) the db SQL description
-    syd::DatabaseDescription * GetDatabaseDescription();
+    //    syd::DatabaseDescription * GetDatabaseDescription();
 
     /// Return the sql descriptio of the table
-    syd::TableDescription * GetTableDescription(const std::string & table_name);
+    //    syd::TableDescription * GetTableDescription(const std::string & table_name);
 
     /// Get the number of elements in the table (cannot be const
     /// because create db description)
@@ -378,7 +396,7 @@ namespace syd {
     std::string current_sql_query_;
 
     /// Store the OO db schema description
-    syd::DatabaseDescription * description_;
+    //    syd::DatabaseDescription * description_;
 
     /// Global flag (will be used when write a file in the db)
     bool overwrite_file_if_exists_flag_;
@@ -388,9 +406,11 @@ namespace syd {
   // Helpers function to simplify native sqlite query
   std::string sqlite3_column_text_string(sqlite3_stmt * stmt, int iCol);
 
+} // end namespace
+
+// Outside namespace
 #include "sydDatabase.txx"
 
-} // end namespace
 // --------------------------------------------------------------------
 
 #endif

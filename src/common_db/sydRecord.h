@@ -23,7 +23,7 @@
 #include "sydCommon.h"
 #include "sydCheckResult.h"
 #include "sydVersion.h"
-#include "sydRecordTraits.h"
+//#include "sydRecordTraits.h"
 
 // odb
 #include <odb/callback.hxx>
@@ -34,6 +34,8 @@ namespace syd {
 
   class Database;
   class PrintTable;
+  class RecordTraitsBase;
+  template<class T> class RecordTraits;
 
   /// Base class for all record (or element, or row) in a table
 #pragma db object abstract pointer(std::shared_ptr) callback(Callback)
@@ -56,8 +58,8 @@ namespace syd {
     // ----------------------------------------------------
     /// FIXME
     // MUST BE overloaded
-    virtual RecordTraitsBase * traits() const;
     friend class syd::RecordTraits<syd::Record>;
+    virtual RecordTraitsBase * traits() const = 0;
     /// return the name of the table
     virtual std::string GetTableName() const;
     // ----------------------------------------------------
@@ -167,11 +169,9 @@ namespace syd {
 #define TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, INHERIT_TABLE_NAME)  \
   typedef std::shared_ptr<TABLE_NAME> pointer;                          \
   typedef std::vector<pointer> vector;                                  \
+  friend syd::RecordTraits<TABLE_NAME>;                                 \
   friend class odb::access;                                             \
-  friend class syd::RecordTraits<TABLE_NAME>;                           \
-  virtual RecordTraitsBase * GetTraits() const {                        \
-    return RecordTraits<TABLE_NAME>::GetTraits(#TABLE_NAME);            \
-  }                                                                     \
+  virtual RecordTraitsBase * traits() const { return nullptr;}          \
   virtual std::string GetTableName() const { return #TABLE_NAME; }      \
   virtual std::string GetSQLTableName() const { return #SQL_TABLE_NAME; } \
   static std::string GetStaticTableName() { return #TABLE_NAME; }       \
@@ -185,7 +185,9 @@ namespace syd {
   TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, syd::Record)
 
 
-  /// Macros REQUIRED in EVERY table
+  /// ---------------------------------
+  /// Macros *REQUIRED* in *ALL* tables
+  /// ---------------------------------
   /// First macro: in the class definition, public
   /// Second macro: after the class definition in the header
   /// Third macro: in the .cxx file
@@ -195,22 +197,30 @@ namespace syd {
   friend syd::RecordTraits<TABLE_NAME>;                               \
   typedef std::shared_ptr<TABLE_NAME> pointer;                        \
   typedef std::vector<pointer> vector;                                \
+  virtual RecordTraitsBase * traits() const;                          \
   /* FIXME TO REMOVE*/                                                \
   virtual std::string GetSQLTableName() const { return #TABLE_NAME; } \
   static std::string GetStaticTableName() { return #TABLE_NAME; }     \
-  static std::string GetStaticSQLTableName() { return #TABLE_NAME; }  \
+  static std::string GetStaticSQLTableName() { return #TABLE_NAME; }
 
-#define DEFINE_TABLE_HEADER(TABLE_NAME)                                 \
-  template<> syd::RecordTraitsBase * RecordTraits<TABLE_NAME>::GetTraits();
+  //  friend syd::RecordTraits<TABLE_NAME>;
 
-#define DEFINE_TABLE_IMPL(TABLE_NAME)                                 \
-  namespace syd {                                                     \
-    template<>                                                        \
-      syd::RecordTraitsBase * RecordTraits<TABLE_NAME>::GetTraits() { \
-      return syd::RecordTraits<TABLE_NAME>::GetTraits(#TABLE_NAME);   \
-    }                                                                 \
-  }                                                                   \
 
+#define DEFINE_TABLE_HEADER(TABLE_NAME)         \
+  template<> syd::RecordTraitsBase *            \
+    syd::RecordTraits<TABLE_NAME>::GetTraits();
+
+#define DEFINE_TABLE_IMPL(TABLE_NAME)                               \
+  namespace syd {                                                   \
+    template<>                                                      \
+      syd::RecordTraitsBase *                                       \
+      syd::RecordTraits<TABLE_NAME>::GetTraits() {                  \
+      return syd::RecordTraits<TABLE_NAME>::GetTraits(#TABLE_NAME); \
+    }                                                               \
+    RecordTraitsBase * TABLE_NAME::traits() const {                 \
+      return RecordTraits<TABLE_NAME>::GetTraits();                 \
+    }                                                               \
+  }                                                                 \
 
 
 } // end namespace

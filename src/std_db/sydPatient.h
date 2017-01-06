@@ -21,16 +21,19 @@
 
 // syd
 #include "sydRecord.h"
-#include "sydRecordTraits.h"
+//#include "sydRecordTraits.h"
 #include "sydPrintTable.h"
 #include "sydRecordWithComments.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class Injection;
-  class PatientStat;
-  class StandardDatabase;
+  //   class Injection;
+  //  class PatientStat;
+  //  class StandardDatabase; // FIXME needed ?
+
+  template<class T> class RecordTraits;
+
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Patient") callback(Callback)
   /// Store information about a patient (id, study_id, name etc).
@@ -60,22 +63,23 @@ namespace syd {
       std::string sex;
 
       // ------------------------------------------------------------------------
-      //    TABLE_DEFINE(Patient, syd::Patient);
+      //TABLE_DEFINE(Patient, syd::Patient);
       // Needed : GetTraits
       /*      virtual RecordTraitsBase * GetTraits() const {
         return RecordTraits<Patient>::GetTraits("Patient");
         }*/
-      virtual RecordTraitsBase * traits() const;
+      //      virtual RecordTraitsBase * traits() const;
       // Neeed for traits to access constructor
-      friend syd::RecordTraits<syd::Patient>;
-
+      //friend syd::RecordTraits<syd::Patient>;
+      DEFINE_TABLE_CLASS(Patient);
+      /*
       typedef std::shared_ptr<Patient> pointer;
       typedef std::vector<pointer> vector;
       friend class odb::access;
       virtual std::string GetSQLTableName() const { return "syd::Patient"; }
       static std::string GetStaticTableName() { return "Patient"; }
       static std::string GetStaticSQLTableName() { return "syd::Patient"; }
-
+      */
       // ------------------------------------------------------------------------
 
       /// Write the element as a string
@@ -109,9 +113,20 @@ namespace syd {
   /*   table_name_ = "Patient"; */
 
   // Needed !!
-  template<> syd::RecordTraitsBase * RecordTraits<syd::Patient>::GetTraits();
+  // template<> syd::RecordTraitsBase * RecordTraits<syd::Patient>::GetTraits();
 
 } // end namespace
+
+/* namespace syd{ */
+/*   class RecordTraitsBase; */
+/*   //  template<class T> class RecordTraits; */
+/*   //template<> class RecordTraits<syd::Patient>; */
+/*   //template<> syd::RecordTraitsBase * RecordTraits<syd::Patient>::GetTraits(); */
+/* } */
+//DEFINE_TABLE_HEADER(syd::Patient);
+
+
+
 // --------------------------------------------------------------------
 
 #endif

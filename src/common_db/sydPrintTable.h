@@ -31,6 +31,7 @@
 namespace syd {
 
   struct FormatType;
+  class Record;
 
   /// Helpers class to dump a table (line/column) of values,
   /// controling the precision and the column size
@@ -40,9 +41,13 @@ namespace syd {
     // Constructor
     PrintTable();
 
+    typedef std::shared_ptr<Record> pointer;
+    typedef std::vector<pointer> vector;
+
+
     // Main dump function
-    void Build(syd::Record::vector::const_iterator start,
-               syd::Record::vector::const_iterator end);
+    void Build(vector::const_iterator start,
+               vector::const_iterator end);
     void Print(std::ostream & os);
 
     void SetFormat(std::string f);

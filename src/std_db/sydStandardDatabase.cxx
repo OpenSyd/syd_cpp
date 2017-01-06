@@ -21,6 +21,10 @@
 #include "sydUpdateRadionuclideFilter.h"
 #include "sydDatabaseManager.h"
 
+DEFINE_TABLE_TRAITS_IMPL(Patient);
+DEFINE_TABLE_TRAITS_IMPL(Tag);
+
+
 // --------------------------------------------------------------------
 template<>
 void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & type) const

@@ -20,6 +20,7 @@
 #include "sydPatient.h"
 #include "sydInjection.h"
 #include "sydStandardDatabase.h"
+//#include "sydRecordTraits.h" // to remove
 
 // template<>
 // std::string syd::RecordTraits<syd::Patient>::
@@ -30,15 +31,15 @@
 // table_name_ = "ERROR_you_should_set_the_table_name";
 
 namespace syd {
+  /*
   template<>
   syd::RecordTraitsBase * RecordTraits<syd::Patient>::GetTraits() {
     return syd::RecordTraits<syd::Patient>::GetTraits("Patient");
   }
-
+  */
   RecordTraitsBase * Patient::traits() const {
     return RecordTraits<Patient>::GetTraits();
   }
-
 }
 
 

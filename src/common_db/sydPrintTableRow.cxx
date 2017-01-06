@@ -19,6 +19,7 @@
 // syd
 #include "sydPrintTableRow.h"
 #include "sydPrintTable.h"
+#include "sydRecord.h"
 
 //--------------------------------------------------------------------
 syd::PrintTableRow::PrintTableRow(syd::PrintTable * t)

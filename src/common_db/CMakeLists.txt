@@ -23,9 +23,9 @@ set(sydCommonDatabase_src
   sydPrintTableRow.cxx
   sydPrintTableColumnInfo.cxx
 
-  sydDatabaseDescription.cxx
-  sydTableDescription.cxx
-  sydFieldDescription.cxx
+  # sydDatabaseDescription.cxx
+  # sydTableDescription.cxx
+  # sydFieldDescription.cxx
 
   sydDatabaseSchemaName-odb.cxx
   sydDatabaseSchemaName-schema.cxx

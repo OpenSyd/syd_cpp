@@ -38,10 +38,14 @@ namespace syd {
 
     typedef std::shared_ptr<Record> generic_record_pointer;
 
-    // Return the table name
+    /// Return the table name
     virtual std::string GetTableName() const;
 
+    /// Create a new record
     virtual generic_record_pointer CreateNew(syd::Database * db) const = 0;
+
+    /// Basic functions: QueryOne
+    virtual generic_record_pointer QueryOne(const syd::Database * db, IdType id) const = 0;
 
   protected:
     RecordTraitsBase(std::string table_name);

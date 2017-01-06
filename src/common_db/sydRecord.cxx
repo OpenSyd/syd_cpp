@@ -21,6 +21,7 @@
 #include "sydDatabase.h"
 #include "sydPrintTable.h"
 #include "sydPluginManager.h"
+#include "sydRecordTraits.h"
 
 
 // Define static member
@@ -37,18 +38,18 @@ syd::Record::Record()
 
 
 // --------------------------------------------------------------------
-syd::RecordTraitsBase * syd::Record::traits() const
-{
-  return syd::RecordTraits<Record>::GetTraits();
-}
+// syd::RecordTraitsBase * syd::Record::traits() const
+// {
+//   return syd::RecordTraits<syd::Record>::GetTraits();
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 std::string syd::Record::GetTableName() const
-{
+  {
   return traits()->GetTableName();
-}
+  }
 // ----------------------------------------------------
 
 

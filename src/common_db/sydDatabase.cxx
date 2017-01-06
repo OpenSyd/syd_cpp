@@ -20,6 +20,13 @@
 #include "sydDatabase.h"
 #include "sydFileUtils.h"
 #include "sydPluginManager.h"
+#include "sydRecordTraitsBase.h"
+
+#include <odb/sqlite/database.hxx>
+#include <odb/sqlite/tracer.hxx>
+#include <odb/sqlite/statement.hxx>
+#include <odb/schema-catalog.hxx>
+
 
 // --------------------------------------------------------------------
 // http://stackoverflow.com/questions/1607368/sql-query-logging-for-sqlite
@@ -33,7 +40,7 @@ void trace_callback( void* udp, const char* sql ) {
 // --------------------------------------------------------------------
 syd::Database::Database()
 {
-  description_ = NULL;
+  //  description_ = NULL;
   overwrite_file_if_exists_flag_ = true;
 }
 // --------------------------------------------------------------------
@@ -315,7 +322,17 @@ syd::Database::New(const std::string & table_name)
 
 
 // --------------------------------------------------------------------
-void  syd::Database::QueryOne(generic_record_pointer & record,
+syd::Database::generic_record_pointer
+syd::Database::QueryOne(const std::string & table_name, IdType id) const
+{
+  DDF();
+  return GetTraits(table_name)->QueryOne(this, id);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Database::QueryOne(generic_record_pointer & record,
                               const std::string & table_name,
                               const IdType & id) const
 {
@@ -346,6 +363,9 @@ void syd::Database::Query(generic_record_vector & records,
 // --------------------------------------------------------------------
 long syd::Database::GetNumberOfElements(const std::string & table_name)
 {
+  DDF();
+  DD("TODO ");
+  /*
   // native query
   auto tdesc = GetTableDescription(table_name);
   auto table_sql_name = AddDoubleQuoteAround(tdesc->GetSQLTableName());
@@ -357,9 +377,9 @@ long syd::Database::GetNumberOfElements(const std::string & table_name)
   auto rc = sqlite3_prepare_v2(sdb, sql.str().c_str(), -1, &stmt, NULL);
   long nb = 0;
   if (rc==SQLITE_OK) {
-    /* Loop on result with the following structure:
-       TABLE sqlite_master
-       type TEXT, name TEXT, tbl_name TEXT, rootpage INTEGER, sql TEXT  */
+    // Loop on result with the following structure:
+    //   TABLE sqlite_master
+    //   type TEXT, name TEXT, tbl_name TEXT, rootpage INTEGER, sql TEXT  
     while(sqlite3_step(stmt) == SQLITE_ROW) {
       nb = sqlite3_column_int(stmt, 0);
     }
@@ -367,7 +387,8 @@ long syd::Database::GetNumberOfElements(const std::string & table_name)
   else {
     EXCEPTION("Could not retrieve the list of tables in the db");
   }
-  return nb;
+  return nb;*/
+  return 0;
 }
 // --------------------------------------------------------------------
 
@@ -429,6 +450,9 @@ void syd::Database::Update(generic_record_pointer & record,
                            std::string field_name,
                            std::string value)
 {
+  DDF();
+  DD("todo");
+  /*
   std::string table_name = record->GetTableName();
   auto desc = GetDatabaseDescription();
   syd::TableDescription * tdesc;
@@ -457,6 +481,7 @@ void syd::Database::Update(generic_record_pointer & record,
               << "Error is:" << e.what());
   }
   QueryOne(record, table_name, record->id);
+  */
 }
 // --------------------------------------------------------------------
 
@@ -483,6 +508,9 @@ sqlite3 * syd::Database::GetSqliteHandle() const
 //FIXME TO REMOVE ?
 void syd::Database::CheckDatabaseSchema()
 {
+  DDF();
+  DD("todo");
+  /*
   // FIXME -> check it is already open
 
   // Read sql db schema
@@ -516,25 +544,25 @@ void syd::Database::CheckDatabaseSchema()
       }
     }
   }
-
+  */
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
+/*syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
 {
   if (description_ == NULL) {
     description_ = new DatabaseDescription();
     description_->Init(this);
   }
   return description_;
-}
+  }*/
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::TableDescription * syd::Database::GetTableDescription(const std::string & table_name)
+   /*syd::TableDescription * syd::Database::GetTableDescription(const std::string & table_name)
 {
   auto desc = GetDatabaseDescription();
   syd::TableDescription * tdesc;
@@ -542,6 +570,7 @@ syd::TableDescription * syd::Database::GetTableDescription(const std::string & t
   if (!b) EXCEPTION("Could not find the table " << table_name);
   return tdesc;
 }
+   */
 // --------------------------------------------------------------------
 
 

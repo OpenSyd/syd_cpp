@@ -16,13 +16,21 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-//#include "sydRecord.h"
-//#include "sydRecordTraitsBase.h"
+#include "sydDatabase.h"
 
 // Default initialisation
 template<class RecordType>
 syd::RecordTraitsBase * syd::RecordTraits<RecordType>::
 singleton_ = nullptr;
+
+
+// template<class RecordType>
+// syd::RecordTraits<RecordType> * GetTrait(std::shared_ptr<RecordType> p)
+// {
+//   DDF();
+//   return RecordTraits<RecordType>::GetTrait();
+// }
+
 
 // --------------------------------------------------------------------
 template<class RecordType>
@@ -72,6 +80,18 @@ typename syd::RecordTraits<RecordType>::generic_record_pointer
 syd::RecordTraits<RecordType>::CreateNew(syd::Database * db) const
 {
   return syd::RecordTraits<RecordType>::New(db);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+typename syd::RecordTraits<RecordType>::generic_record_pointer
+syd::RecordTraits<RecordType>::QueryOne(const syd::Database * db, IdType id) const
+{
+  DDF();
+  DD("new queryone");
+  return db->QueryOne<RecordType>(id);
 }
 // --------------------------------------------------------------------
 

@@ -65,6 +65,12 @@ int main(int argc, char* argv[])
   auto p6 = db2->New<syd::Patient>();
   DD(p6->GetTableName());
 
+  auto p7 = db->QueryOne<syd::Patient>(1);
+  DD(p7->GetTableName());
+
+  auto r8 = db->QueryOne("Patient", 1);
+  DD(r8->GetTableName());
+
   exit(0);
   DD("=======================================================");
 

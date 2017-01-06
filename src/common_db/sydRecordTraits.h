@@ -48,17 +48,39 @@ namespace syd {
     // Create a new record associated with a db (it is not inserted yet)
     static pointer New(syd::Database * db);
     virtual generic_record_pointer CreateNew(syd::Database * db) const;
+    virtual generic_record_pointer QueryOne(const syd::Database * db, IdType id) const;
 
   protected:
     RecordTraits(std::string table_name);
     static RecordTraitsBase * singleton_;
 
   }; // end of class
-  // --------------------------------------------------------------------
 
+  /* template<class RecordType> */
+  /*   RecordTraits<RecordType> * GetTrait(std::shared_ptr<RecordType> p); */
+
+
+#define DEFINE_TABLE_TRAITS_HEADER(TABLE_NAME)  \
+  template<> syd::RecordTraitsBase *            \
+    RecordTraits<TABLE_NAME>::GetTraits();
+
+#define DEFINE_TABLE_TRAITS_IMPL(TABLE_NAME)                        \
+  namespace syd {                                                   \
+    template<>                                                      \
+      syd::RecordTraitsBase *                                       \
+      syd::RecordTraits<TABLE_NAME>::GetTraits() {                  \
+      return syd::RecordTraits<TABLE_NAME>::GetTraits(#TABLE_NAME); \
+    }                                                               \
+  }                                                                 \
+
+
+
+  // --------------------------------------------------------------------
+} // end namespace
+
+// Must *not* be in namespace syd (because include)
 #include "sydRecordTraits.txx"
 
-} // end namespace
 // --------------------------------------------------------------------
 
 #endif

@@ -106,6 +106,9 @@ namespace syd {
   template<> void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & records,
                                                       const std::string & type) const;
 
+  DEFINE_TABLE_TRAITS_HEADER(Patient);
+  DEFINE_TABLE_TRAITS_HEADER(Tag);
+
 } // namespace syd
 
 // --------------------------------------------------------------------

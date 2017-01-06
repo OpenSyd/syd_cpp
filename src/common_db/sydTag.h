@@ -40,6 +40,7 @@ namespace syd {
     std::string description;
 
     // ------------------------------------------------------------------------
+    //TABLE_DEFINE(Injection, syd::Injection);
     DEFINE_TABLE_CLASS(Tag);
     // ------------------------------------------------------------------------
 
@@ -55,9 +56,15 @@ namespace syd {
 
   }; // end of class
 
-  DEFINE_TABLE_HEADER(Tag);
+} // end of namespace
 
+namespace syd{
+  class RecordTraitsBase;
+  template<class T> class RecordTraits;
+  //  DEFINE_TABLE_HEADER(Tag);
 }
+
+
 // --------------------------------------------------------------------
 
 #endif

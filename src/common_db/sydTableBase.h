@@ -35,8 +35,8 @@ namespace syd {
   class TableBase {
   public:
 
-    typedef syd::Record::pointer record_pointer;
-    typedef syd::Record::vector record_vector;
+    typedef std::shared_ptr<syd::Record> record_pointer;
+    typedef std::vector<record_pointer> record_vector;
 
     virtual record_pointer New() = 0;
 

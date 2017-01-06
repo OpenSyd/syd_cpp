@@ -16,12 +16,13 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-//#include "sydPrintTable.h"
-
+#include "sydPrintTable.h"
+#include "sydTable.h"
+#include "sydRecordTraits.h"
 
 // ------------------------------------------------------------------------
 template<class RecordType>
-Table<RecordType> * syd::Database::GetTable() const
+syd::Table<RecordType> * syd::Database::GetTable() const
 {
   auto t = GetTable(RecordType::GetStaticTableName());
   return static_cast<Table<RecordType>*>(t);
@@ -127,13 +128,68 @@ void syd::Database::AddTable()
   map_lowercase_[str] = t;
 
   // FIXME
+  DDF();
+  DD(tablename);
   auto traits = syd::RecordTraits<RecordType>::GetTraits();
   auto table_name = traits->GetTableName();
+  DD(table_name);
   if (map_of_traits_.find(table_name) != map_of_traits_.end()) {
     LOG(FATAL) << "When creating the database, a table with the same name '" << table_name
                << "' already exist.";
   }
   map_of_traits_[table_name] = traits;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+/// Query a single record according to query
+template<class RecordType>
+typename RecordType::pointer
+syd::Database::QueryOne(const odb::query<RecordType> & q) const
+{
+  DDF();
+  try {
+    odb::transaction transaction (odb_db_->begin());
+    typename RecordType::pointer r(odb_db_->query_one<RecordType>(q));
+    if (r.get() == 0) {
+      EXCEPTION("No matching record in QueryOne(q) for the table '"
+                << RecordTraits<RecordType>::GetTraits()->GetTableName()
+                << "'. Last sql query is: "
+                << std::endl << GetLastSQLQuery());
+    }
+    transaction.commit();
+    return r;
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Error in QueryOne(q) for the table '" << RecordTraits<RecordType>::GetTraits()->GetTableName()
+              << "', cannot find the record. Last sql query is: "
+              << std::endl << GetLastSQLQuery());
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+/// Query a single record according to the id
+template<class RecordType>
+typename RecordType::pointer
+syd::Database::QueryOne(const IdType & id) const
+{
+  DDF();
+  try {
+    odb::transaction transaction (odb_db_->begin());
+    typename RecordType::pointer s;
+    s = odb_db_->load<RecordType>(id);
+    transaction.commit();
+    return s;
+  }
+  catch (const odb::exception& e) {
+    EXCEPTION("Error in QueryOne sql query for the table '" << RecordTraits<RecordType>::GetTraits()->GetTableName()
+              << "' and id = " << id << std::endl
+              << "\t odb message: " << e.what() << std::endl
+              << "\t last sql query: " << GetLastSQLQuery());
+  }
 }
 // --------------------------------------------------------------------
 
