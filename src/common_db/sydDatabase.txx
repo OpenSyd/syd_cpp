@@ -148,7 +148,6 @@ template<class RecordType>
 typename RecordType::pointer
 syd::Database::QueryOne(const odb::query<RecordType> & q) const
 {
-  DDF();
   try {
     odb::transaction transaction (odb_db_->begin());
     typename RecordType::pointer r(odb_db_->query_one<RecordType>(q));
@@ -174,9 +173,8 @@ syd::Database::QueryOne(const odb::query<RecordType> & q) const
 /// Query a single record according to the id
 template<class RecordType>
 typename RecordType::pointer
-syd::Database::QueryOne(const IdType & id) const
+syd::Database::QueryOne(IdType id) const
 {
-  DDF();
   try {
     odb::transaction transaction (odb_db_->begin());
     typename RecordType::pointer s;
@@ -185,54 +183,8 @@ syd::Database::QueryOne(const IdType & id) const
     return s;
   }
   catch (const odb::exception& e) {
-    EXCEPTION("Error in QueryOne sql query for the table '" << RecordTraits<RecordType>::GetTraits()->GetTableName()
-              << "' and id = " << id << std::endl
-              << "\t odb message: " << e.what() << std::endl
-              << "\t last sql query: " << GetLastSQLQuery());
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
-                             const odb::query<RecordType> & q) const
-{
-  try {
-    odb::transaction transaction (odb_db_->begin());
-    typename RecordType::pointer r(odb_db_->query_one<RecordType>(q));
-    if (r.get() == 0) {
-      EXCEPTION("No matching record in QueryOne(q) for the table '"
-                << RecordType::GetStaticTableName()
-                << "'. Last sql query is: "
-                << std::endl << GetLastSQLQuery());
-    }
-    record = r;
-    transaction.commit();
-  }
-  catch (const odb::exception& e) {
-    EXCEPTION("Error in QueryOne(q) for the table '" << RecordType::GetStaticTableName()
-              << "', cannot find the record. Last sql query is: "
-              << std::endl << GetLastSQLQuery());
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void syd::Database::QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const
-{
-  try {
-    odb::transaction transaction (odb_db_->begin());
-    typename RecordType::pointer s;
-    s = odb_db_->load<RecordType>(id);
-    record = s;
-    transaction.commit();
-  }
-  catch (const odb::exception& e) {
-    EXCEPTION("Error in QueryOne sql query for the table '" << RecordType::GetStaticTableName()
+    EXCEPTION("Error in QueryOne(id) for the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "' and id = " << id << std::endl
               << "\t odb message: " << e.what() << std::endl
               << "\t last sql query: " << GetLastSQLQuery());
@@ -258,7 +210,8 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
     transaction.commit();
   }
   catch (const odb::exception& e) {
-    EXCEPTION("Error during Query(r, q) for the table '" << RecordType::GetStaticTableName()
+    EXCEPTION("Error during Query(r, q) for the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "'. ODB error is:" << e.what() << std::endl
               << "Last sql query is: " << GetLastSQLQuery());
   }

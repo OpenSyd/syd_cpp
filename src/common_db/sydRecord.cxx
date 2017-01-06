@@ -38,14 +38,6 @@ syd::Record::Record()
 
 
 // --------------------------------------------------------------------
-// syd::RecordTraitsBase * syd::Record::traits() const
-// {
-//   return syd::RecordTraits<syd::Record>::GetTraits();
-// }
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 std::string syd::Record::GetTableName() const
   {
   return traits()->GetTableName();

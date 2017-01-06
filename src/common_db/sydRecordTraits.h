@@ -40,6 +40,7 @@ namespace syd {
     typedef std::shared_ptr<RecordType> pointer;
     typedef std::vector<pointer> vector;
     typedef syd::RecordTraitsBase::generic_record_pointer generic_record_pointer;
+    typedef syd::RecordTraitsBase::generic_record_vector generic_record_vector;
 
     // Main static version to get the singleton traits
     static RecordTraitsBase * GetTraits();
@@ -49,6 +50,11 @@ namespace syd {
     static pointer New(syd::Database * db);
     virtual generic_record_pointer CreateNew(syd::Database * db) const;
     virtual generic_record_pointer QueryOne(const syd::Database * db, IdType id) const;
+    virtual void Query(const syd::Database * db,
+                       generic_record_vector & r,
+                       const std::vector<syd::IdType> & id) const;
+    virtual void Query(const syd::Database * db,
+                       generic_record_vector & r) const;
 
   protected:
     RecordTraits(std::string table_name);

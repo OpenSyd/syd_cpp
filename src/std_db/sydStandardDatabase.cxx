@@ -195,17 +195,15 @@ void syd::StandardDatabase::CreateTables()
 // --------------------------------------------------------------------
 syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & name_or_study_id) const
 {
-  syd::Patient::pointer patient;
   odb::query<syd::Patient> q =
     odb::query<syd::Patient>::name == name_or_study_id or
     odb::query<syd::Patient>::study_id == atoi(name_or_study_id.c_str());
   try {
-    QueryOne(patient, q);
+    return QueryOne<syd::Patient>(q);
   } catch(std::exception & e) {
     EXCEPTION("No patient with name/sid = '" << name_or_study_id << "' found." << std::endl
               << "Error message is: " << e.what());
   }
-  return patient;
 }
 // --------------------------------------------------------------------
 

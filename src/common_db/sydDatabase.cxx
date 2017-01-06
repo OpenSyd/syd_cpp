@@ -325,20 +325,10 @@ syd::Database::New(const std::string & table_name)
 syd::Database::generic_record_pointer
 syd::Database::QueryOne(const std::string & table_name, IdType id) const
 {
-  DDF();
   return GetTraits(table_name)->QueryOne(this, id);
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-void syd::Database::QueryOne(generic_record_pointer & record,
-                              const std::string & table_name,
-                              const IdType & id) const
-{
-  GetTable(table_name)->QueryOne(record, id);
-}
-// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
@@ -346,7 +336,7 @@ void syd::Database::Query(generic_record_vector & records,
                           const std::string table_name,
                           const std::vector<syd::IdType> & ids) const
 {
-  GetTable(table_name)->Query(records, ids);
+  GetTraits(table_name)->Query(this, records, ids);
 }
 // --------------------------------------------------------------------
 
@@ -355,7 +345,7 @@ void syd::Database::Query(generic_record_vector & records,
 void syd::Database::Query(generic_record_vector & records,
                           const std::string table_name) const
 {
-  GetTable(table_name)->Query(records);
+  GetTraits(table_name)->Query(this, records);
 }
 // --------------------------------------------------------------------
 

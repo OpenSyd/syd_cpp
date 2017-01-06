@@ -35,7 +35,7 @@
 //#include "sydDatabaseDescription.h"
 
 // odb
- #include <odb/sqlite/database.hxx>
+#include <odb/sqlite/database.hxx>
 /* #include <odb/sqlite/tracer.hxx> */
 /* #include <odb/sqlite/statement.hxx> */
 #include <odb/schema-catalog.hxx>
@@ -147,26 +147,22 @@ namespace syd {
       typename RecordType::pointer
       QueryOne(const odb::query<RecordType> & q) const;
 
+    /// Query a single record according to the id (not needed, for compatibility)
+    template<class RecordType>
+      void QueryOne(std::shared_ptr<RecordType> & p,
+                    const odb::query<RecordType> & q) const { p = QueryOne(q); }
+    template<class RecordType>
+      void QueryOne(std::shared_ptr<RecordType> & p,
+                    IdType id) const { p = QueryOne<RecordType>(id); }
+
     /// Query a single record according to the id
     template<class RecordType>
       typename RecordType::pointer
-      QueryOne(const IdType & id) const;
+      QueryOne(IdType id) const;
 
     /// Query a single record from the table_name
     generic_record_pointer
       QueryOne(const std::string & table_name, IdType id) const;
-
-
-    /// Query a single record according to query
-    template<class RecordType>
-      void QueryOne(std::shared_ptr<RecordType> & record, const odb::query<RecordType> & q) const;
-
-    /// Query a single record according to the id
-    template<class RecordType>
-      void QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const;
-
-    /// Query a single record from the table_name
-    void QueryOne(generic_record_pointer & r, const std::string & table_name, const IdType & id) const;
 
     /// Query several records according to query
     template<class RecordType>

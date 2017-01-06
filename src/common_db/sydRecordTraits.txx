@@ -87,13 +87,40 @@ syd::RecordTraits<RecordType>::CreateNew(syd::Database * db) const
 // --------------------------------------------------------------------
 template<class RecordType>
 typename syd::RecordTraits<RecordType>::generic_record_pointer
-syd::RecordTraits<RecordType>::QueryOne(const syd::Database * db, IdType id) const
+syd::RecordTraits<RecordType>::
+QueryOne(const syd::Database * db, IdType id) const
 {
-  DDF();
-  DD("new queryone");
   return db->QueryOne<RecordType>(id);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::
+Query(const syd::Database * db,
+      generic_record_vector & records,
+      const std::vector<syd::IdType> & ids) const
+{
+  typename RecordType::vector specific_records;
+  db->Query<RecordType>(specific_records, ids);
+  for(auto r:specific_records) records.push_back(r);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+ void syd::RecordTraits<RecordType>::
+Query(const syd::Database * db,
+      generic_record_vector & records) const
+{
+  typename RecordType::vector specific_records;
+  db->Query<RecordType>(specific_records);
+  for(auto r:specific_records) records.push_back(r);
+}
+// --------------------------------------------------------------------
+
 
 
 // --------------------------------------------------------------------

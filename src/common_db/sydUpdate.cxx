@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
   // Get the element
   syd::Record::pointer r;
   try {
-    db->QueryOne(r, tablename, id);
+    r = db->QueryOne(tablename, id);
   } catch(std::exception & e) {
     LOG(FATAL) << "Cannot find the element " << id << " in the table " << tablename
                << ". The error is: " << e.what();
@@ -57,13 +57,16 @@ int main(int argc, char* argv[])
   // Update
   try {
     db->Update(r, fieldname, value);
-    db->QueryOne(r, tablename, id);
+    r = db->QueryOne(tablename, id);
     LOG(1) << "Update done: " << r->ToString();
   } catch (std::exception & e) {
+    LOG(FATAL) << e.what();
+    /* FIXME
     syd::TableDescription * t;
     bool b = db->GetDatabaseDescription()->FindTableDescription(tablename, &t);
     if (b) LOG(FATAL) << e.what() << std::endl << "Table is " << t;
     else LOG(FATAL) << e.what() << std::endl << "Table " << tablename << " is not found.";
+    */
   }
 
   // This is the end, my friend.

@@ -71,6 +71,16 @@ int main(int argc, char* argv[])
   auto r8 = db->QueryOne("Patient", 1);
   DD(r8->GetTableName());
 
+  std::cout << std::endl;
+
+  syd::Patient::vector v1;
+  db->Query(v1);
+  DDS(v1);
+
+  syd::Record::vector v2;
+  db->Query(v2, "Patient");
+  DDS(v2);
+
   exit(0);
   DD("=======================================================");
 

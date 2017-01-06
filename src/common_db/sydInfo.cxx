@@ -71,6 +71,7 @@ int main(int argc, char* argv[])
   }
 
   // Info about table
+  /* //FIXME
   auto dd = db->GetDatabaseDescription();
   for(auto i=0; i<args_info.inputs_num; i++) {
     auto table_name = args_info.inputs[i];
@@ -82,6 +83,7 @@ int main(int argc, char* argv[])
     dt->Print(os);
     os << "The table contains " << db->GetNumberOfElements(table_name) << " elements." << std::endl;
   }
+  */
 
   // This is the end, my friend.
   return EXIT_SUCCESS;

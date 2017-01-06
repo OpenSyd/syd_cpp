@@ -99,9 +99,11 @@ void syd::Table<RecordType>::Update(generic_record_vector records) const
 template<class RecordType>
 void syd::Table<RecordType>::QueryOne(generic_record_pointer & record, const syd::IdType & id) const
 {
+  /*
   typename RecordType::pointer p;
   db_->QueryOne<RecordType>(p,id);
   record = p;
+  */
 }
 // --------------------------------------------------------------------
 
