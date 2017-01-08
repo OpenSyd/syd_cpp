@@ -44,7 +44,8 @@ namespace syd {
     std::string md5;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(File, syd::File);
+    //    TABLE_DEFINE(File, syd::File);
+    DEFINE_TABLE_CLASS(File);
     // ------------------------------------------------------------------------
 
     /// Write the element as a string

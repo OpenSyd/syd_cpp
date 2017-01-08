@@ -21,8 +21,13 @@
 #include "sydUpdateRadionuclideFilter.h"
 #include "sydDatabaseManager.h"
 
-DEFINE_TABLE_TRAITS_IMPL(Patient);
 DEFINE_TABLE_TRAITS_IMPL(Tag);
+DEFINE_TABLE_TRAITS_IMPL(File);
+DEFINE_TABLE_TRAITS_IMPL(RecordHistory);
+
+DEFINE_TABLE_TRAITS_IMPL(Patient);
+DEFINE_TABLE_TRAITS_IMPL(Image);
+DEFINE_TABLE_TRAITS_IMPL(RoiMaskImage);
 
 
 // --------------------------------------------------------------------
@@ -162,11 +167,14 @@ syd::StandardDatabase::~StandardDatabase()
 void syd::StandardDatabase::CreateTables()
 {
   //  syd::Database::CreateTables();
-  AddTable<syd::Patient>();
   AddTable<syd::Tag>();
-  /*
-  AddTable<syd::RecordHistory>();
   AddTable<syd::File>();
+  AddTable<syd::RecordHistory>();
+
+  AddTable<syd::Patient>();
+  AddTable<syd::Image>();
+  //  AddTable<syd::RoiMaskImage>();
+  /*
 
   AddTable<syd::Injection>();
   AddTable<syd::Radionuclide>();

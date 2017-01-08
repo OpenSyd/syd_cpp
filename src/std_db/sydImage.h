@@ -93,7 +93,8 @@ namespace syd {
       std::vector<double> spacing;
 
       // ------------------------------------------------------------------------
-      TABLE_DEFINE(Image, syd::Image);
+      //TABLE_DEFINE(Image, syd::Image);
+      DEFINE_TABLE_CLASS(Image)
       // ------------------------------------------------------------------------
 
       /// Write the element as a string

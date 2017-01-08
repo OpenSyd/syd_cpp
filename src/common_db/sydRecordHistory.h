@@ -37,7 +37,7 @@ namespace syd {
     std::string update_date;
 
     // ------------------------------------------------------------------------
-    TABLE_DEFINE(RecordHistory, syd::RecordHistory);
+    DEFINE_TABLE_CLASS(RecordHistory)
     // ------------------------------------------------------------------------
 
     /// Write the element as a string
@@ -51,7 +51,6 @@ namespace syd {
     RecordHistory();
 
   }; // end of class
-
 
 } // end namespace
 // --------------------------------------------------------------------

@@ -20,24 +20,19 @@
 
 // syd
 #include "sydException.h"
-
 #include "sydRecord.h"
-
 #include "sydDatabaseInformation-odb.hxx"
-//#include "sydRecordTraitsBase.h"
 #include "sydRecord-odb.hxx"
 #include "sydFile-odb.hxx"
 #include "sydRecordHistory-odb.hxx"
 #include "sydRecordWithHistory-odb.hxx"
 #include "sydTag-odb.hxx"
 #include "sydRecordWithTags-odb.hxx"
-#include "sydTableBase.h"
+#include "sydTableBase.h" // FIXME 
 //#include "sydDatabaseDescription.h"
 
 // odb
 #include <odb/sqlite/database.hxx>
-/* #include <odb/sqlite/tracer.hxx> */
-/* #include <odb/sqlite/statement.hxx> */
 #include <odb/schema-catalog.hxx>
 
 // --------------------------------------------------------------------
@@ -141,87 +136,68 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// All Query function allocate new records
-
-    /// Query a single record according to query
     template<class RecordType>
       typename RecordType::pointer
       QueryOne(const odb::query<RecordType> & q) const;
-
-    /// Query a single record according to the id (not needed, for compatibility)
     template<class RecordType>
       void QueryOne(std::shared_ptr<RecordType> & p,
                     const odb::query<RecordType> & q) const { p = QueryOne(q); }
     template<class RecordType>
       void QueryOne(std::shared_ptr<RecordType> & p,
                     IdType id) const { p = QueryOne<RecordType>(id); }
-
-    /// Query a single record according to the id
     template<class RecordType>
       typename RecordType::pointer
       QueryOne(IdType id) const;
-
-    /// Query a single record from the table_name
     generic_record_pointer
       QueryOne(const std::string & table_name, IdType id) const;
-
-    /// Query several records according to query
     template<class RecordType>
-      void Query(std::vector<std::shared_ptr<RecordType>> & records, const odb::query<RecordType> & q) const;
-
-    /// Query all records
+      void Query(std::vector<std::shared_ptr<RecordType>> & records,
+                 const odb::query<RecordType> & q) const;
     template<class RecordType>
       void Query(std::vector<std::shared_ptr<RecordType>> & records) const;
-
-    /// Query several records according to their id
     template<class RecordType>
-      void Query(std::vector<std::shared_ptr<RecordType>> & records, const std::vector<syd::IdType> & ids) const;
-
-    /// Query several records according to their id
-    void Query(generic_record_vector & records, const std::string table_name, const std::vector<syd::IdType> & ids) const;
-
-    /// Query all records of the given tables
+      void Query(std::vector<std::shared_ptr<RecordType>> & records,
+                 const std::vector<syd::IdType> & ids) const;
+    void Query(generic_record_vector & records,
+               const std::string table_name,
+               const std::vector<syd::IdType> & ids) const;
     void Query(generic_record_vector & records, const std::string table_name) const;
     // ------------------------------------------------------------------------
 
 
-
     // ------------------------------------------------------------------------
-    /// Insert an element. The type of the element is unknown
+    /// Insert
     void Insert(generic_record_pointer record);
-
-    /// Insert several elements. The type of the element is unknown
     void Insert(generic_record_vector record, const std::string & table_name);
-
-    /// Insert an element
     template<class RecordType>
       void Insert(std::shared_ptr<RecordType> record);
-
-    /// Insert several elements
     template<class RecordType>
       void Insert(std::vector<std::shared_ptr<RecordType>> records);
-
-    /// Automatically insert some default records (should be overloaded)
     virtual void InsertDefaultRecords(const std::string & def) {}
     // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
-    /// Update an element. The type of the element is unknown
+    /// Update
     void Update(generic_record_pointer record);
-
-    /// Update several elements. The type of the element is unknown
     void Update(generic_record_vector record, const std::string & table_name);
-
-    /// Update an element
     template<class RecordType>
       void Update(std::shared_ptr<RecordType> record);
-
-    /// Update several elements
     template<class RecordType>
       void Update(std::vector<std::shared_ptr<RecordType>> records);
+    // FIXME 
+    void Update(generic_record_pointer & record, std::string field_name,
+                std::string value_name);
+    // ------------------------------------------------------------------------
 
-    /// Update only one field of a element. The type of the element is unknown
-    void Update(generic_record_pointer & record, std::string field_name, std::string value_name);
+
+    // ------------------------------------------------------------------------
+    void Delete(generic_record_vector & records, const std::string & table_name);
+    void Delete(generic_record_pointer record);
+    template<class RecordType>
+      void Delete(std::shared_ptr<RecordType> record);
+    template<class RecordType>
+      void Delete(std::vector<std::shared_ptr<RecordType>> & records);
     // ------------------------------------------------------------------------
 
 
@@ -267,14 +243,6 @@ namespace syd {
 
 
 
-    // ------------------------------------------------------------------------
-    void Delete(generic_record_vector & records, const std::string & table_name);
-    void Delete(generic_record_pointer record);
-    template<class RecordType>
-      void Delete(std::shared_ptr<RecordType> record);
-    template<class RecordType>
-      void Delete(std::vector<std::shared_ptr<RecordType>> & records);
-
     /// Add a file to the files to delete (used by sydFile)
     void AddFilenameToDelete(const std::string & f);
     // ------------------------------------------------------------------------
@@ -294,7 +262,7 @@ namespace syd {
     TableBase * GetTable(const std::string & table_name) const;
     template<class RecordType>
       Table<RecordType> * GetTable() const;
-    
+
     /// Return a string with the list of the table names
     std::string GetListOfTableNames() const;
 

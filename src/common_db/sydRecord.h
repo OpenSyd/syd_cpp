@@ -206,21 +206,16 @@ namespace syd {
   //  friend syd::RecordTraits<TABLE_NAME>;
 
 
-#define DEFINE_TABLE_HEADER(TABLE_NAME)         \
-  template<> syd::RecordTraitsBase *            \
-    syd::RecordTraits<TABLE_NAME>::GetTraits();
+  /* #define DEFINE_TABLE_HEADER(TABLE_NAME)         \ */
+  /*   template<> syd::RecordTraitsBase *            \ */
+  /*     syd::RecordTraits<TABLE_NAME>::GetTraits(); */
 
-#define DEFINE_TABLE_IMPL(TABLE_NAME)                               \
-  namespace syd {                                                   \
-    template<>                                                      \
-      syd::RecordTraitsBase *                                       \
-      syd::RecordTraits<TABLE_NAME>::GetTraits() {                  \
-      return syd::RecordTraits<TABLE_NAME>::GetTraits(#TABLE_NAME); \
-    }                                                               \
-    RecordTraitsBase * TABLE_NAME::traits() const {                 \
-      return RecordTraits<TABLE_NAME>::GetTraits();                 \
-    }                                                               \
-  }                                                                 \
+#define DEFINE_TABLE_IMPL(TABLE_NAME)               \
+  namespace syd {                                   \
+    RecordTraitsBase * TABLE_NAME::traits() const { \
+      return RecordTraits<TABLE_NAME>::GetTraits(); \
+    }                                               \
+  }                                                 \
 
 
 } // end namespace

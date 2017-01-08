@@ -23,6 +23,8 @@
 #include "sydImage.h"
 #include "sydImage-odb.hxx"
 
+//DEFINE_TABLE_IMPL(RoiMaskImage)
+
 // --------------------------------------------------------------------
 syd::RoiMaskImage::RoiMaskImage():Image()
 {

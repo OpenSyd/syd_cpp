@@ -57,14 +57,6 @@ namespace syd {
   }; // end of class
 
 } // end of namespace
-
-namespace syd{
-  class RecordTraitsBase;
-  template<class T> class RecordTraits;
-  //  DEFINE_TABLE_HEADER(Tag);
-}
-
-
 // --------------------------------------------------------------------
 
 #endif

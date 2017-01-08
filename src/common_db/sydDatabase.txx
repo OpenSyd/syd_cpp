@@ -322,7 +322,8 @@ void syd::Database::Delete(std::shared_ptr<RecordType> record)
   catch (const odb::exception& e) {
     files_to_delete_.clear();
     EXCEPTION("Error while deleting element "
-              << record << " in the table '" << RecordType::GetStaticTableName()
+              << record << " in the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "', message is: " << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());
@@ -347,7 +348,7 @@ void syd::Database::Delete(std::vector<std::shared_ptr<RecordType>> & records)
     files_to_delete_.clear();
     EXCEPTION("Error while deleting "
               << records.size() << " elements in the table '"
-              << RecordType::GetStaticTableName()
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "', message is: " << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());

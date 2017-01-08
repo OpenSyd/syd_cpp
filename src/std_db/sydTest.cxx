@@ -81,6 +81,24 @@ int main(int argc, char* argv[])
   db->Query(v2, "Patient");
   DDS(v2);
 
+  // Insert
+  DD(p5);
+  p5->study_id = 14;
+  p5->name = "bideeon";
+  // DD(p5);
+  // db->Insert(p5);
+  DD(p5);
+  DD(r8);
+  DD(patient);
+  patient->name = "tototoot";
+  DD(patient);
+  DD(r8);
+  db->Update(r8);
+  DD(r8);
+
+  //  auto mask = db->QueryOne<syd::RoiMaskImage>(1);
+  //DD(mask->GetTableName());
+
   exit(0);
   DD("=======================================================");
 

@@ -20,13 +20,12 @@
 #include "sydDatabase.h"
 #include "sydFileUtils.h"
 #include "sydPluginManager.h"
-#include "sydRecordTraitsBase.h"
+#include "sydRecordTraits.h"
 
 #include <odb/sqlite/database.hxx>
 #include <odb/sqlite/tracer.hxx>
 #include <odb/sqlite/statement.hxx>
 #include <odb/schema-catalog.hxx>
-
 
 // --------------------------------------------------------------------
 // http://stackoverflow.com/questions/1607368/sql-query-logging-for-sqlite
@@ -238,7 +237,7 @@ void syd::Database::Dump(const std::string & table_name,
 // --------------------------------------------------------------------
 void syd::Database::Insert(generic_record_pointer record)
 {
-  GetTable(record->GetTableName())->Insert(record);
+  record->traits()->Insert(this, record);
 }
 // --------------------------------------------------------------------
 
@@ -248,7 +247,7 @@ void syd::Database::Insert(generic_record_vector records,
                            const std::string & table_name)
 {
   if (records.size() == 0) return;
-  GetTable(table_name)->Insert(records);
+  GetTraits(table_name)->Insert(this, records);
 }
 // --------------------------------------------------------------------
 
@@ -256,7 +255,7 @@ void syd::Database::Insert(generic_record_vector records,
 // --------------------------------------------------------------------
 void syd::Database::Update(generic_record_pointer record)
 {
-  GetTable(record->GetTableName())->Update(record);
+  GetTraits(record->GetTableName())->Update(this, record);
 }
 // --------------------------------------------------------------------
 
@@ -266,7 +265,7 @@ void syd::Database::Update(generic_record_vector records,
                            const std::string & table_name)
 {
   if (records.size() == 0) return;
-  GetTable(table_name)->Update(records);
+  GetTraits(table_name)->Update(this, records);
 }
 // --------------------------------------------------------------------
 
@@ -399,7 +398,7 @@ void syd::Database::Delete(generic_record_vector & records,
                            const std::string & table_name)
 {
   if (records.size() == 0) return;
-  GetTable(table_name)->Delete(records);
+  GetTraits(table_name)->Delete(this, records);
 }
 // --------------------------------------------------------------------
 

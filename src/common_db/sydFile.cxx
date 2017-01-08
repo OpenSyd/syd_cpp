@@ -21,6 +21,8 @@
 #include "sydDatabase.h"
 #include "sydPrintTable.h"
 
+DEFINE_TABLE_IMPL(File)
+
 // --------------------------------------------------------------------
 syd::File::File():syd::Record()
 {

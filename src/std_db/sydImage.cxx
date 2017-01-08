@@ -22,6 +22,8 @@
 #include "sydDicomSerie.h"
 #include "sydTagHelper.h"
 
+DEFINE_TABLE_IMPL(Image)
+
 // --------------------------------------------------------------------
 syd::Image::Image():
   syd::Record(),

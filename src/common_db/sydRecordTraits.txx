@@ -111,7 +111,7 @@ Query(const syd::Database * db,
 
 // --------------------------------------------------------------------
 template<class RecordType>
- void syd::RecordTraits<RecordType>::
+void syd::RecordTraits<RecordType>::
 Query(const syd::Database * db,
       generic_record_vector & records) const
 {
@@ -121,6 +121,67 @@ Query(const syd::Database * db,
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::
+Insert(syd::Database * db, generic_record_pointer record) const
+{
+  auto p = std::static_pointer_cast<RecordType>(record);
+  db->Insert<RecordType>(p);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::
+Insert(syd::Database * db, const generic_record_vector & records) const
+{
+  //  auto p = std::dynamic_pointer_cast<Record>(record);
+  typename RecordType::vector specific_records;
+  for(auto r:records) 
+    specific_records.push_back(std::dynamic_pointer_cast<RecordType>(r));
+  db->Insert<RecordType>(specific_records);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::
+Update(syd::Database * db, generic_record_pointer record) const
+{
+  auto p = std::static_pointer_cast<RecordType>(record);
+  db->Update<RecordType>(p);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::
+Update(syd::Database * db, const generic_record_vector & records) const
+{
+  typename RecordType::vector specific_records;
+  for(auto r:records) 
+    specific_records.push_back(std::dynamic_pointer_cast<RecordType>(r));
+  db->Update<RecordType>(specific_records);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::
+Delete(syd::Database * db, const generic_record_vector & records) const
+{
+  typename RecordType::vector specific_records;
+  for(auto r:records)
+    specific_records.push_back(std::dynamic_pointer_cast<RecordType>(r));
+  db->Delete<RecordType>(specific_records);
+}
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------

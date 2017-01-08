@@ -38,6 +38,7 @@ namespace syd {
 
     // ----------------------------------------------------------------
     TABLE_DEFINE_I(RoiMaskImage, syd::RoiMaskImage, syd::Image);
+    //DEFINE_TABLE_CLASS(RoiMaskImage)
     // ----------------------------------------------------------------
 
     /// Write the element as a string

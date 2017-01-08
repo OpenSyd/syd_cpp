@@ -56,6 +56,13 @@ namespace syd {
     virtual void Query(const syd::Database * db,
                        generic_record_vector & r) const;
 
+    /// Insert Update
+    virtual void Insert(syd::Database * db, generic_record_pointer record) const;
+    virtual void Insert(syd::Database * db, const generic_record_vector & records) const;
+    virtual void Update(syd::Database * db, generic_record_pointer record) const;
+    virtual void Update(syd::Database * db, const generic_record_vector & records) const;
+    virtual void Delete(syd::Database * db, const generic_record_vector & records) const;
+
   protected:
     RecordTraits(std::string table_name);
     static RecordTraitsBase * singleton_;
