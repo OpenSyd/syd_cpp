@@ -23,11 +23,6 @@
 #include "sydPluginManager.h"
 #include "sydRecordTraits.h"
 
-
-// Define static member
-// FIXME 
-std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
-
 // --------------------------------------------------------------------
 syd::Record::Record()
 {
@@ -39,9 +34,17 @@ syd::Record::Record()
 
 // --------------------------------------------------------------------
 std::string syd::Record::GetTableName() const
-  {
+{
   return traits()->GetTableName();
-  }
+}
+// ----------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Record::GetSQLTableName() const
+{
+  return traits()->GetSQLTableName();
+}
 // ----------------------------------------------------
 
 

@@ -57,7 +57,8 @@ void syd::Database::Insert(std::vector<std::shared_ptr<RecordType>> records)
   }
   catch (const odb::exception& e) {
     EXCEPTION("Cannot insert " << records.size()
-              << " element(s) in the table '" << RecordType::GetStaticTableName()
+              << " element(s) in the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "'. The error is: "  << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());
@@ -88,7 +89,8 @@ void syd::Database::Update(std::vector<std::shared_ptr<RecordType>> records)
   }
   catch (const odb::exception& e) {
     EXCEPTION("Cannot update " << records.size()
-              << " element(s) in the table '" << RecordType::GetStaticTableName()
+              << " element(s) in the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "'. The error is: "  << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());

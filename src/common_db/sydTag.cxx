@@ -24,10 +24,6 @@
 // std
 #include <set>
 
-
-template class syd::RecordTraits<syd::Tag>;
-//DEFINE_TABLE_TRAITS_HEADER(Tag);
-
 DEFINE_TABLE_IMPL(Tag);
 
 // --------------------------------------------------------------------

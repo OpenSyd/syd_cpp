@@ -21,16 +21,12 @@
 
 // syd
 #include "sydCommonDatabase.h"
-//#include "sydTable.h"
 #include "sydImageUtils.h"
 
 // syd tables
-//#include "sydRecordHistory-odb.hxx"
 #include "sydPatient-odb.hxx"
 #include "sydInjection-odb.hxx"
 #include "sydRadionuclide-odb.hxx"
-/* #include "sydTag-odb.hxx" */
-/* #include "sydFile-odb.hxx" */
 #include "sydDicomSerie-odb.hxx"
 #include "sydDicomFile-odb.hxx"
 #include "sydPixelUnit-odb.hxx"
