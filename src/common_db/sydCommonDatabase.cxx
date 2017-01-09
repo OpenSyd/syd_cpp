@@ -16,43 +16,34 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDROITYPE_H
-#define SYDROITYPE_H
-
 // syd
-#include "sydRecord.h"
-#include "sydPrintTable.h"
+#include "sydCommonDatabase.h"
+
+DEFINE_TABLE_TRAITS_IMPL(Tag)
+DEFINE_TABLE_TRAITS_IMPL(File)
+DEFINE_TABLE_TRAITS_IMPL(RecordHistory)
 
 // --------------------------------------------------------------------
-namespace syd {
-
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::RoiType")
-  /// Store information about a type of ROI (liver, kidney etc)
-  class RoiType:
-    public syd::Record {
-  public:
-
-    DEFINE_TABLE_CLASS(RoiType);
-
-#pragma db options("UNIQUE")
-    /// Name of the roi (unique)
-    std::string name;
-
-    /// Description associated with the roitype
-    std::string description;
-
-    /// Write the element as a string
-    virtual std::string ToString() const;
-
-    void Set(const std::vector<std::string> & arg);
-
-    virtual void DumpInTable(syd::PrintTable & table) const;
-
-  protected:
-    RoiType();
-
-  }; // end class
-} // end namespace
+syd::CommonDatabase::CommonDatabase():syd::Database()
+{
+}
 // --------------------------------------------------------------------
 
-#endif
+
+// --------------------------------------------------------------------
+syd::CommonDatabase::~CommonDatabase()
+{
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+void syd::CommonDatabase::CreateTables()
+{
+  //  syd::Database::CreateTables();
+  AddTable<syd::Tag>();
+  AddTable<syd::File>();
+  AddTable<syd::RecordHistory>();
+
+}
+// --------------------------------------------------------------------
+

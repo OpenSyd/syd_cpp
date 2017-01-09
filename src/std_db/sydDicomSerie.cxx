@@ -20,6 +20,8 @@
 #include "sydDicomSerie.h"
 #include "sydStandardDatabase.h" // needed for type odb db
 
+DEFINE_TABLE_IMPL(DicomSerie);
+
 // --------------------------------------------------------------------
 syd::DicomSerie::DicomSerie():
   syd::Record(),

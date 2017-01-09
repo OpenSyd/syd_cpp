@@ -21,15 +21,18 @@
 
 // syd
 #include "sydRecord.h"
-#include "sydPrintTable.h"
+//#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Radionuclide")
   /// Store information about a radionuclide
-  class Radionuclide : public syd::Record {
+  class Radionuclide:
+    public syd::Record {
   public:
+
+    DEFINE_TABLE_CLASS(Radionuclide);
 
 #pragma db options("UNIQUE")
     std::string name;
@@ -51,10 +54,6 @@ namespace syd {
 
     /// Max beta- energy (Q-)
     double max_beta_minus_energy_in_kev;
-
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(Radionuclide, syd::Radionuclide);
-    // ------------------------------------------------------------------------
 
     /// Write the element as a string
     virtual std::string ToString() const;

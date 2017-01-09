@@ -29,8 +29,6 @@ namespace syd {
   class RecordWithComments  {
   public:
 
-    virtual ~RecordWithComments() {}
-
     /// Define pointer type
     typedef std::shared_ptr<RecordWithComments> pointer;
 

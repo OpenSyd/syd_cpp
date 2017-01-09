@@ -19,6 +19,9 @@
 // syd
 #include "sydFitImages.h"
 #include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(FitImages);
 
 // --------------------------------------------------------------------
 syd::FitImages::FitImages():
@@ -32,13 +35,6 @@ syd::FitImages::FitImages():
   nb_success_pixels = 0;
   // FIXME additional points
   // FIXME post processes
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::FitImages::~FitImages()
-{
 }
 // --------------------------------------------------------------------
 

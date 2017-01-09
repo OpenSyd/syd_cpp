@@ -17,17 +17,7 @@
   ===========================================================================**/
 
 #include "sydPrintTable.h"
-#include "sydTable.h"
 #include "sydRecordTraits.h"
-
-// ------------------------------------------------------------------------
-template<class RecordType>
-syd::Table<RecordType> * syd::Database::GetTable() const
-{
-  auto t = GetTable(RecordType::GetStaticTableName());
-  return static_cast<Table<RecordType>*>(t);
-}
-// ------------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
@@ -109,30 +99,23 @@ void syd::Database::Update(std::vector<std::shared_ptr<RecordType>> records)
 
 // --------------------------------------------------------------------
 template<class RecordType>
+void syd::Database::UpdateField(std::shared_ptr<RecordType> & record,
+                                std::string field_name,
+                                std::string value_name)
+{
+  RecordPointer r = record;
+  UpdateField(r, field_name, value_name);
+  record = std::static_pointer_cast<RecordType>(r);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
 void syd::Database::AddTable()
 {
-  // No exception handling here, fatal error if fail.
-  if (odb_db_ == NULL) {
-    LOG(FATAL) << "Could not AddTable, open a db before";
-  }
-  std::string tablename = RecordType::GetStaticTableName();
-  std::string str = tablename;
-  std::transform(str.begin(), str.end(),str.begin(), ::tolower);
-  auto it = map_lowercase_.find(str);
-  if (it != map_lowercase_.end()) {
-    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
-               << "' already exist.";
-  }
-  auto * t = new Table<RecordType>(this);
-  map_[tablename] = t;
-  map_lowercase_[str] = t;
-
-  // FIXME
-  DDF();
-  DD(tablename);
   auto traits = syd::RecordTraits<RecordType>::GetTraits();
   auto table_name = traits->GetTableName();
-  DD(table_name);
   if (map_of_traits_.find(table_name) != map_of_traits_.end()) {
     LOG(FATAL) << "When creating the database, a table with the same name '" << table_name
                << "' already exist.";
@@ -161,7 +144,8 @@ syd::Database::QueryOne(const odb::query<RecordType> & q) const
     return r;
   }
   catch (const odb::exception& e) {
-    EXCEPTION("Error in QueryOne(q) for the table '" << RecordTraits<RecordType>::GetTraits()->GetTableName()
+    EXCEPTION("Error in QueryOne(q) for the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "', cannot find the record. Last sql query is: "
               << std::endl << GetLastSQLQuery());
   }
@@ -246,18 +230,18 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-long syd::Database::GetNumberOfElements()
-{
-  DD("GetNumberOfElements template");
+// template<class RecordType>
+// long syd::Database::GetNumberOfElements() const
+// {
+//   DD("GetNumberOfElements template");
 
-  // FIXME TO remove
-  // Brute force. This is inefficient. Should use view and count.
-  std::vector<std::shared_ptr<RecordType>> records;
-  Query(records);
-  DD(records.size());
-  return GetNumberOfElements<RecordType>();
-}
+//   // FIXME TO remove
+//   // Brute force. This is inefficient. Should use view and count.
+//   std::vector<std::shared_ptr<RecordType>> records;
+//   Query(records);
+//   DD(records.size());
+//   return GetNumberOfElements<RecordType>();
+// }
 // --------------------------------------------------------------------
 
 
@@ -295,8 +279,11 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records,
                          const std::string & order) const
 {
   if (records.size() == 0) return;
-  auto t = GetTable<RecordType>();
-  t->Sort(records, order);
+  DD("TODO SORT");
+  /*
+    auto t = GetTable<RecordType>();
+    t->Sort(records, order);
+  */
 }
 // --------------------------------------------------------------------
 

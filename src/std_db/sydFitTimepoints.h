@@ -37,6 +37,8 @@ namespace syd {
     public syd::FitOptions {
   public:
 
+      DEFINE_TABLE_CLASS(FitTimepoints);
+
 #pragma db not_null on_delete(cascade)
       /// Linked Timepoints. If the tp is deleted, the FitTimepoints also.
       syd::Timepoints::pointer timepoints;
@@ -59,10 +61,6 @@ namespace syd {
 
       /// Number of iterations
       int iterations;
-
-      // ------------------------------------------------------------------------
-      TABLE_DEFINE(FitTimepoints, syd::FitTimepoints);
-      // ------------------------------------------------------------------------
 
       /// Write the element as a string
       virtual std::string ToString() const;

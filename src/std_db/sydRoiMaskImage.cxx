@@ -18,12 +18,13 @@
 
 // syd
 #include "sydRoiMaskImage.h"
-#include "sydDatabase.h"
-#include "sydTable.h"
-#include "sydImage.h"
-#include "sydImage-odb.hxx"
+#include "sydStandardDatabase.h"
+//#include "sydTable.h"
+// #include "sydImage.h"
+// #include "sydImage-odb.hxx"
+#include "sydRecordTraits.h"
 
-//DEFINE_TABLE_IMPL(RoiMaskImage)
+DEFINE_TABLE_IMPL(RoiMaskImage);
 
 // --------------------------------------------------------------------
 syd::RoiMaskImage::RoiMaskImage():Image()

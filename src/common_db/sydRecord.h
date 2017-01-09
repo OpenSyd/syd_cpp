@@ -203,13 +203,6 @@ namespace syd {
   static std::string GetStaticTableName() { return #TABLE_NAME; }     \
   static std::string GetStaticSQLTableName() { return #TABLE_NAME; }
 
-  //  friend syd::RecordTraits<TABLE_NAME>;
-
-
-  /* #define DEFINE_TABLE_HEADER(TABLE_NAME)         \ */
-  /*   template<> syd::RecordTraitsBase *            \ */
-  /*     syd::RecordTraits<TABLE_NAME>::GetTraits(); */
-
 #define DEFINE_TABLE_IMPL(TABLE_NAME)               \
   namespace syd {                                   \
     RecordTraitsBase * TABLE_NAME::traits() const { \

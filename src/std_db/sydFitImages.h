@@ -36,7 +36,7 @@ namespace syd {
     public syd::FitOptions {
   public:
 
-      virtual ~FitImages();
+      DEFINE_TABLE_CLASS(FitImages);
 
 #pragma db on_delete(cascade)
       /// List of input images to compute the FitImages
@@ -61,10 +61,6 @@ namespace syd {
 
       /// Resulting nb of successful fit pixels
       int nb_success_pixels;
-
-      // ------------------------------------------------------------------------
-      TABLE_DEFINE(FitImages, syd::FitImages);
-      // ------------------------------------------------------------------------
 
       /// Write the element as a string
       virtual std::string ToString() const;

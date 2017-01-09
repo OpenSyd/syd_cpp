@@ -19,6 +19,9 @@
 // syd
 #include "sydInjection.h"
 #include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(Injection);
 
 // --------------------------------------------------------------------
 syd::Injection::Injection():

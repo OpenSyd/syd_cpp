@@ -41,6 +41,7 @@ namespace syd {
 
     /// Return the table name
     virtual std::string GetTableName() const;
+    virtual std::string GetSQLTableName() const;
 
     /// Create a new record
     virtual generic_record_pointer CreateNew(syd::Database * db) const = 0;
@@ -61,6 +62,7 @@ namespace syd {
   protected:
     RecordTraitsBase(std::string table_name);
     std::string table_name_;
+    std::string sql_table_name_;
 
   }; // end of class
   // --------------------------------------------------------------------

@@ -20,8 +20,8 @@
 #include "sydDatabase.h"
 #include "sydFileUtils.h"
 #include "sydPluginManager.h"
-#include "sydRecordTraits.h"
 
+// odb
 #include <odb/sqlite/database.hxx>
 #include <odb/sqlite/tracer.hxx>
 #include <odb/sqlite/statement.hxx>
@@ -29,7 +29,8 @@
 
 // --------------------------------------------------------------------
 // http://stackoverflow.com/questions/1607368/sql-query-logging-for-sqlite
-void trace_callback( void* udp, const char* sql ) {
+void trace_callback( void* udp, const char* sql )
+{
   syd::Database * d = static_cast<syd::Database*>(udp);
   d->TraceCallback(sql);
 }
@@ -164,7 +165,7 @@ void syd::Database::Dump(std::ostream & os)
     os << warningColor << " -> does not exist ("
        << GetDatabaseAbsoluteFolder() << ")" << resetColor;
   os << std::endl;
-  for(auto i=map_.begin(); i != map_.end(); i++) {
+  for(auto i=map_of_traits_.begin(); i != map_of_traits_.end(); i++) {
     int n = GetNumberOfElements(i->first);
     os << "Table: " << std::setw(15) << i->first << " " <<  std::setw(10) << n;
     if (n>1) os << " elements" << std::endl;
@@ -235,7 +236,7 @@ void syd::Database::Dump(const std::string & table_name,
 
 
 // --------------------------------------------------------------------
-void syd::Database::Insert(generic_record_pointer record)
+void syd::Database::Insert(RecordPointer record)
 {
   record->traits()->Insert(this, record);
 }
@@ -243,7 +244,7 @@ void syd::Database::Insert(generic_record_pointer record)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Insert(generic_record_vector records,
+void syd::Database::Insert(RecordVector records,
                            const std::string & table_name)
 {
   if (records.size() == 0) return;
@@ -253,7 +254,7 @@ void syd::Database::Insert(generic_record_vector records,
 
 
 // --------------------------------------------------------------------
-void syd::Database::Update(generic_record_pointer record)
+void syd::Database::Update(RecordPointer record)
 {
   GetTraits(record->GetTableName())->Update(this, record);
 }
@@ -261,7 +262,7 @@ void syd::Database::Update(generic_record_pointer record)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Update(generic_record_vector records,
+void syd::Database::Update(RecordVector records,
                            const std::string & table_name)
 {
   if (records.size() == 0) return;
@@ -271,30 +272,12 @@ void syd::Database::Update(generic_record_vector records,
 
 
 // --------------------------------------------------------------------
-syd::TableBase * syd::Database::GetTable(const std::string & table_name) const
-{
-  std::string str=table_name;
-  std::transform(str.begin(), str.end(),str.begin(), ::tolower);
-  auto it = map_lowercase_.find(str);
-  if (it == map_lowercase_.end()) {
-    EXCEPTION("Cannot find the table '" << table_name << "'." << std::endl
-              << "Existing tables are: " << GetListOfTableNames());
-  }
-  return it->second;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 syd::RecordTraitsBase * syd::Database::GetTraits(const std::string & table_name) const
 {
-  DDF();
   auto it = map_of_traits_.find(table_name);
-  if (it == map_of_traits_.end()) {
-    EXCEPTION("Cannot find the table '" << table_name << "'." << std::endl
-              << "Existing tables are: " << GetListOfTableNames());
-  }
-  return it->second;
+  if (it != map_of_traits_.end()) return it->second;
+  EXCEPTION("Cannot find the table '" << table_name << "'." << std::endl
+            << "Existing tables are: " << GetListOfTableNames());
 }
 // --------------------------------------------------------------------
 
@@ -312,7 +295,7 @@ std::string syd::Database::GetListOfTableNames() const
 
 
 // --------------------------------------------------------------------
-syd::Database::generic_record_pointer
+syd::Database::RecordPointer
 syd::Database::New(const std::string & table_name)
 {
   return GetTraits(table_name)->CreateNew(this);
@@ -321,7 +304,7 @@ syd::Database::New(const std::string & table_name)
 
 
 // --------------------------------------------------------------------
-syd::Database::generic_record_pointer
+syd::Database::RecordPointer
 syd::Database::QueryOne(const std::string & table_name, IdType id) const
 {
   return GetTraits(table_name)->QueryOne(this, id);
@@ -331,7 +314,7 @@ syd::Database::QueryOne(const std::string & table_name, IdType id) const
 
 
 // --------------------------------------------------------------------
-void syd::Database::Query(generic_record_vector & records,
+void syd::Database::Query(RecordVector & records,
                           const std::string table_name,
                           const std::vector<syd::IdType> & ids) const
 {
@@ -341,7 +324,7 @@ void syd::Database::Query(generic_record_vector & records,
 
 
 // --------------------------------------------------------------------
-void syd::Database::Query(generic_record_vector & records,
+void syd::Database::Query(RecordVector & records,
                           const std::string table_name) const
 {
   GetTraits(table_name)->Query(this, records);
@@ -350,14 +333,12 @@ void syd::Database::Query(generic_record_vector & records,
 
 
 // --------------------------------------------------------------------
-long syd::Database::GetNumberOfElements(const std::string & table_name)
+long syd::Database::GetNumberOfElements(const std::string & table_name) const
 {
-  DDF();
-  DD("TODO ");
-  /*
   // native query
-  auto tdesc = GetTableDescription(table_name);
-  auto table_sql_name = AddDoubleQuoteAround(tdesc->GetSQLTableName());
+  auto s = GetTraits(table_name)->GetSQLTableName();
+  auto table_sql_name = AddDoubleQuoteAround(s);
+
   std::ostringstream sql;
   sql << "SELECT COUNT(*) FROM " << table_sql_name;
 
@@ -368,7 +349,7 @@ long syd::Database::GetNumberOfElements(const std::string & table_name)
   if (rc==SQLITE_OK) {
     // Loop on result with the following structure:
     //   TABLE sqlite_master
-    //   type TEXT, name TEXT, tbl_name TEXT, rootpage INTEGER, sql TEXT  
+    //   type TEXT, name TEXT, tbl_name TEXT, rootpage INTEGER, sql TEXT
     while(sqlite3_step(stmt) == SQLITE_ROW) {
       nb = sqlite3_column_int(stmt, 0);
     }
@@ -376,25 +357,26 @@ long syd::Database::GetNumberOfElements(const std::string & table_name)
   else {
     EXCEPTION("Could not retrieve the list of tables in the db");
   }
-  return nb;*/
-  return 0;
+  return nb;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::Database::Sort(generic_record_vector & records,
+void syd::Database::Sort(RecordVector & records,
                          const std::string & table_name,
                          const std::string & type) const
 {
   if (records.size() == 0) return;
-  GetTable(table_name)->Sort(records, type);
+  DDF();
+  DD("TODO SORT");
+  //  GetTable(table_name)->Sort(records, type);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::Database::Delete(generic_record_vector & records,
+void syd::Database::Delete(RecordVector & records,
                            const std::string & table_name)
 {
   if (records.size() == 0) return;
@@ -404,9 +386,9 @@ void syd::Database::Delete(generic_record_vector & records,
 
 
 // --------------------------------------------------------------------
-void syd::Database::Delete(generic_record_pointer record)
+void syd::Database::Delete(RecordPointer record)
 {
-  generic_record_vector r;
+  RecordVector r;
   r.push_back(record);
   Delete(r, record->GetTableName());
 }
@@ -435,30 +417,20 @@ void syd::Database::AddFilenameToDelete(const std::string & f)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Update(generic_record_pointer & record,
-                           std::string field_name,
-                           std::string value)
+void syd::Database::UpdateField(RecordPointer & record,
+                                std::string field_name,
+                                std::string value)
 {
-  DDF();
-  DD("todo");
-  /*
-  std::string table_name = record->GetTableName();
-  auto desc = GetDatabaseDescription();
-  syd::TableDescription * tdesc;
-  bool b = desc->FindTableDescription(table_name, &tdesc);
-  if (!b) EXCEPTION("Could not find the table " << table_name);
-  syd::FieldDescription * field;
-  b = tdesc->FindField(field_name, &field);
-  if (!b) EXCEPTION("Could not find the field " << field_name);
-
-  std::string table_sql_name = AddDoubleQuoteAround(field->GetSQLTableName());
-  std::string field_sql_name = AddDoubleQuoteAround(field->GetName());
+  // SQL native query
+  auto table_name = record->GetTableName();
+  auto table_sql_name = AddDoubleQuoteAround(record->traits()->GetSQLTableName());
+  auto field_sql_name = AddDoubleQuoteAround(field_name);
   std::string v = value;
-
+  auto id = record->id;
   std::ostringstream sql;
   sql << "UPDATE " << table_sql_name
       << " SET " << field_sql_name << " = \"" << v << "\""
-      << " WHERE id=" << record->id;
+      << " WHERE id=" << id;
 
   try {
     odb::transaction t (odb_db_->begin ());
@@ -469,8 +441,7 @@ void syd::Database::Update(generic_record_pointer & record,
               << sql.str() << std::endl
               << "Error is:" << e.what());
   }
-  QueryOne(record, table_name, record->id);
-  */
+  record = QueryOne(table_name, id);
 }
 // --------------------------------------------------------------------
 
@@ -509,29 +480,29 @@ void syd::Database::CheckDatabaseSchema()
   // Check
   auto desc = GetDatabaseDescription(); // OO db description
   for(auto t:desc->GetTablesDescription()) {
-    if (t->GetTableName() == "Record") continue; // FIXME temporary, to remove !
-    for(auto f:t->GetFields()) {
-      syd::TableDescription * d;
-      bool b = sql_desc->FindTableDescription(f->GetSQLTableName(), &d);
-      if (!b) {
-        LOG(FATAL) << "The table '"
-                   << f->GetSQLTableName()
-                   << "' is needed and not found in the db. You should migrate the db. ";
-      }
-      else {
-        syd::FieldDescription * field;
-        b = d->FindField(f->GetName(), &field);
-        if (!b) {
-          LOG(FATAL) << "The field '"
-                     << f->GetName()
-                     << "' is needed and not found in the db. You should migrate the db. ";
-        }
-        else {
-          LOG(1) << t->GetTableName() << "." << f->GetName() << " is found (in "
-                 << f->GetSQLTableName() << "." << f->GetName() << ")";
-        }
-      }
-    }
+  if (t->GetTableName() == "Record") continue; // FIXME temporary, to remove !
+  for(auto f:t->GetFields()) {
+  syd::TableDescription * d;
+  bool b = sql_desc->FindTableDescription(f->GetSQLTableName(), &d);
+  if (!b) {
+  LOG(FATAL) << "The table '"
+  << f->GetSQLTableName()
+  << "' is needed and not found in the db. You should migrate the db. ";
+  }
+  else {
+  syd::FieldDescription * field;
+  b = d->FindField(f->GetName(), &field);
+  if (!b) {
+  LOG(FATAL) << "The field '"
+  << f->GetName()
+  << "' is needed and not found in the db. You should migrate the db. ";
+  }
+  else {
+  LOG(1) << t->GetTableName() << "." << f->GetName() << " is found (in "
+  << f->GetSQLTableName() << "." << f->GetName() << ")";
+  }
+  }
+  }
   }
   */
 }
@@ -540,10 +511,10 @@ void syd::Database::CheckDatabaseSchema()
 
 // --------------------------------------------------------------------
 /*syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
-{
+  {
   if (description_ == NULL) {
-    description_ = new DatabaseDescription();
-    description_->Init(this);
+  description_ = new DatabaseDescription();
+  description_->Init(this);
   }
   return description_;
   }*/
@@ -551,15 +522,15 @@ void syd::Database::CheckDatabaseSchema()
 
 
 // --------------------------------------------------------------------
-   /*syd::TableDescription * syd::Database::GetTableDescription(const std::string & table_name)
-{
+/*syd::TableDescription * syd::Database::GetTableDescription(const std::string & table_name)
+  {
   auto desc = GetDatabaseDescription();
   syd::TableDescription * tdesc;
   bool b = desc->FindTableDescription(table_name, &tdesc);
   if (!b) EXCEPTION("Could not find the table " << table_name);
   return tdesc;
-}
-   */
+  }
+*/
 // --------------------------------------------------------------------
 
 

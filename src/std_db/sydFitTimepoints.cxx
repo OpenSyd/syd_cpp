@@ -19,6 +19,10 @@
 // syd
 #include "sydFitTimepoints.h"
 #include "sydTagHelper.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(FitTimepoints);
 
 // --------------------------------------------------------------------
 syd::FitTimepoints::FitTimepoints():

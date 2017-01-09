@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
 
   // Update
   try {
-    db->Update(r, fieldname, value);
+    db->UpdateField(r, fieldname, value);
     r = db->QueryOne(tablename, id);
     LOG(1) << "Update done: " << r->ToString();
   } catch (std::exception & e) {

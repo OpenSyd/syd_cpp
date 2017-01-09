@@ -18,7 +18,11 @@
 
 // syd
 #include "sydRoiType.h"
-#include "sydPrintTable.h"
+//#include "sydPrintTable.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(RoiType);
 
 // --------------------------------------------------------------------
 syd::RoiType::RoiType():Record()

@@ -18,6 +18,10 @@
 
 // syd
 #include "sydRoiTimepoints.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(RoiTimepoints);
 
 // --------------------------------------------------------------------
 syd::RoiTimepoints::RoiTimepoints():syd::Timepoints()

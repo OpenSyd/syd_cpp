@@ -19,22 +19,19 @@
 // syd
 #include "sydPixelUnit.h"
 #include "sydPrintTable.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
 
 // std
 #include <set>
+
+DEFINE_TABLE_IMPL(PixelUnit);
 
 // --------------------------------------------------
 syd::PixelUnit::PixelUnit():syd::Record()
 {
   name = empty_value;
   description = empty_value;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-syd::PixelUnit::~PixelUnit()
-{
 }
 // --------------------------------------------------
 

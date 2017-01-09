@@ -47,7 +47,7 @@ namespace syd {
     {
     public:
 
-      virtual ~Image();
+      DEFINE_TABLE_CLASS(Image);
 
 #pragma db not_null
       /// Foreign key, it must exist in the Patient table.
@@ -91,11 +91,6 @@ namespace syd {
 
       /// Image spacing aka size of the pixel (in mm)
       std::vector<double> spacing;
-
-      // ------------------------------------------------------------------------
-      //TABLE_DEFINE(Image, syd::Image);
-      DEFINE_TABLE_CLASS(Image)
-      // ------------------------------------------------------------------------
 
       /// Write the element as a string
       virtual std::string ToString() const;

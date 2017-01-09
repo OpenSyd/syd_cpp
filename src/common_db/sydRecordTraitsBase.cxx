@@ -23,6 +23,7 @@
 syd::RecordTraitsBase::RecordTraitsBase(std::string table_name)
 {
   table_name_ = table_name;
+  sql_table_name_ = "syd::"+table_name_;
 }
 // --------------------------------------------------------------------
 
@@ -31,5 +32,13 @@ syd::RecordTraitsBase::RecordTraitsBase(std::string table_name)
 std::string syd::RecordTraitsBase::GetTableName() const
 {
   return table_name_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::RecordTraitsBase::GetSQLTableName() const
+{
+  return sql_table_name_;
 }
 // --------------------------------------------------------------------

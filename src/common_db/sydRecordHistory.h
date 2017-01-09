@@ -28,17 +28,14 @@ namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::RecordHistory") callback(Callback)
   /// Store information about the history for a RecordHistory
-  class RecordHistory: public syd::Record {
+  class RecordHistory:
+    public syd::Record {
   public:
 
-    virtual ~RecordHistory() { }
+    DEFINE_TABLE_CLASS(RecordHistory);
 
     std::string insertion_date;
     std::string update_date;
-
-    // ------------------------------------------------------------------------
-    DEFINE_TABLE_CLASS(RecordHistory)
-    // ------------------------------------------------------------------------
 
     /// Write the element as a string
     virtual std::string ToString() const;

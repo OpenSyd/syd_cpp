@@ -22,6 +22,8 @@
 #include "sydFile.h"
 #include "sydTagHelper.h"
 
+DEFINE_TABLE_IMPL(Elastix);
+
 // --------------------------------------------------------------------
 syd::Elastix::Elastix():
   Record(),

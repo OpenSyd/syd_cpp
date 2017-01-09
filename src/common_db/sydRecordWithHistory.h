@@ -29,8 +29,6 @@ namespace syd {
   class RecordWithHistory {
   public:
 
-    virtual ~RecordWithHistory() {}
-
     /// Define pointer type
     typedef std::shared_ptr<RecordWithHistory> pointer;
 

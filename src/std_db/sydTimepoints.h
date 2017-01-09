@@ -40,6 +40,8 @@ namespace syd {
     public syd::RecordWithComments{
   public:
 
+      DEFINE_TABLE_CLASS(Timepoints);
+
 #pragma db not_null on_delete(cascade)
       /// Foreign key
       syd::Patient::pointer patient;
@@ -57,10 +59,6 @@ namespace syd {
 
       /// Associated std dev (not required)
       std::vector<double> std_deviations;
-
-      // ----------------------------------------------------------------
-      TABLE_DEFINE(Timepoints, syd::Timepoints);
-      // ----------------------------------------------------------------
 
       /// Write the element as a string
       virtual std::string ToString() const;

@@ -13,46 +13,40 @@
   It is distributed under dual licence
 
   - BSD        See included LICENSE.txt file
-  - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDDICOMFILE_H
-#define SYDDICOMFILE_H
+#ifndef SYDCOMMONDATABASE_H
+#define SYDCOMMONDATABASE_H
 
 // syd
-#include "sydFile.h"
+#include "sydDatabase.h"
+#include "sydRecord.h"
+#include "sydDatabaseInformation-odb.hxx"
+#include "sydRecord-odb.hxx"
+#include "sydFile-odb.hxx"
+#include "sydRecordHistory-odb.hxx"
+#include "sydRecordWithHistory-odb.hxx"
+#include "sydTag-odb.hxx"
+#include "sydRecordWithTags-odb.hxx"
+//#include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  // class DicomSerie;
+  DEFINE_TABLE_TRAITS_HEADER(Tag);
+  DEFINE_TABLE_TRAITS_HEADER(File);
+  DEFINE_TABLE_TRAITS_HEADER(RecordHistory);
 
-#pragma db object polymorphic pointer(std::shared_ptr) table("syd::DicomFile") callback(Callback)
-  /// Store information about a dicom file (unique dicom identifier
-  /// dicom_sop_uid).
-  class DicomFile: public syd::File {
+  class CommonDatabase: public Database {
   public:
-
-    DEFINE_TABLE_CLASS(DicomFile);
-
-#pragma db options("UNIQUE")
-    /// Dicom SOPInstanceUID. Unique dicom file identifier. Unique in db.
-    std::string dicom_sop_uid;
-
-    /// Dicom InstanceNumber.
-    int dicom_instance_number;
-
-    /// Write the element as a string
-    virtual std::string ToString() const;
-
-    virtual void DumpInTable(syd::PrintTable & table) const;
+    CommonDatabase();
+    virtual ~CommonDatabase();
 
   protected:
-    DicomFile();
-
+    /// Insert the tables
+    virtual void CreateTables();
   }; // end class
 
-} // end syd namespace
+} // end namespace
 // --------------------------------------------------------------------
-
 #endif

@@ -48,9 +48,14 @@ int main(int argc, char* argv[])
   db->QueryOne(patient, 1);
   DD(patient);
   DD(patient->GetTableName());
+  DD(patient->GetSQLTableName());
   syd::Record::pointer r = patient;
   DD(r->GetTableName());
+  DD(r->GetSQLTableName());
   DD(syd::RecordTraits<syd::Patient>::GetTraits()->GetTableName());
+
+  db->UpdateField(patient, "name", "teereriti");
+  DD(patient);
 
   // syd::Patient::pointer p2;
   // db->New<syd::Patient>(p2); // old style ? to remove

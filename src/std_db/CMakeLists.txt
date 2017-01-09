@@ -21,17 +21,15 @@ wrap_odb(sydStandardDatabase sydFitImages.h)
 wrap_odb(sydStandardDatabase sydFitTimepoints.h)
 
 set(SYD_STANDARD_DATABASE_SRC
-  sydStandardDatabase.cxx
-
+  sydRadionuclide-odb.cxx sydRadionuclide-schema.cxx sydRadionuclide.cxx
   sydPatient-odb.cxx sydPatient-schema.cxx  sydPatient.cxx
-  sydRadionuclide-odb.cxx sydRadionuclide-schema.cxx  sydRadionuclide.cxx
   sydInjection-odb.cxx sydInjection-schema.cxx  sydInjection.cxx
   sydDicomSerie-odb.cxx sydDicomSerie-schema.cxx  sydDicomSerie.cxx
   sydDicomFile-odb.cxx sydDicomFile-schema.cxx  sydDicomFile.cxx
-  sydPixelUnit-odb.cxx sydPixelUnit-schema.cxx  sydPixelUnit.cxx
+  sydPixelUnit-odb.cxx sydPixelUnit-schema.cxx sydPixelUnit.cxx
   sydImage-odb.cxx sydImage-schema.cxx  sydImage.cxx
   sydRoiType-odb.cxx sydRoiType-schema.cxx sydRoiType.cxx
-  sydRoiMaskImage-odb.cxx sydRoiMaskImage-schema.cxx  sydRoiMaskImage.cxx
+  sydRoiMaskImage-odb.cxx sydRoiMaskImage-schema.cxx sydRoiMaskImage.cxx
   sydRoiStatistic-odb.cxx sydRoiStatistic-schema.cxx  sydRoiStatistic.cxx
 
   sydElastix-odb.cxx sydElastix-schema.cxx sydElastix.cxx
@@ -69,11 +67,13 @@ add_library(sydStandardDatabaseObjects OBJECT ${SYD_STANDARD_DATABASE_SRC})
 
 # Conventional shared lib for command line executables
 add_library(sydStandardDatabase SHARED
+  sydStandardDatabase.cxx
   sydStandardDatabaseStatic.cxx
   $<TARGET_OBJECTS:sydStandardDatabaseObjects>)
 
 # Plugin library : MUST be called lib<DatabaseType>Plugin.so
 add_library(StandardDatabasePlugin MODULE
+  sydStandardDatabase.cxx
   sydStandardDatabasePlugin.cxx
   $<TARGET_OBJECTS:sydStandardDatabaseObjects>)
 

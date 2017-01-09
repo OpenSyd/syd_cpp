@@ -21,23 +21,34 @@
 #include "sydUpdateRadionuclideFilter.h"
 #include "sydDatabaseManager.h"
 
-DEFINE_TABLE_TRAITS_IMPL(Tag);
-DEFINE_TABLE_TRAITS_IMPL(File);
-DEFINE_TABLE_TRAITS_IMPL(RecordHistory);
+DEFINE_TABLE_TRAITS_IMPL(Patient)
+DEFINE_TABLE_TRAITS_IMPL(Injection)
+DEFINE_TABLE_TRAITS_IMPL(Radionuclide)
 
-DEFINE_TABLE_TRAITS_IMPL(Patient);
-DEFINE_TABLE_TRAITS_IMPL(Image);
-DEFINE_TABLE_TRAITS_IMPL(RoiMaskImage);
+DEFINE_TABLE_TRAITS_IMPL(DicomFile)
+DEFINE_TABLE_TRAITS_IMPL(DicomSerie)
 
+DEFINE_TABLE_TRAITS_IMPL(PixelUnit)
+DEFINE_TABLE_TRAITS_IMPL(Image)
+DEFINE_TABLE_TRAITS_IMPL(RoiType);
+DEFINE_TABLE_TRAITS_IMPL(RoiMaskImage)
+DEFINE_TABLE_TRAITS_IMPL(RoiStatistic);
 
+DEFINE_TABLE_TRAITS_IMPL(Elastix)
+DEFINE_TABLE_TRAITS_IMPL(FitImages)
+DEFINE_TABLE_TRAITS_IMPL(Timepoints)
+DEFINE_TABLE_TRAITS_IMPL(RoiTimepoints)
+DEFINE_TABLE_TRAITS_IMPL(FitTimepoints)
+
+/*
 // --------------------------------------------------------------------
 template<>
 void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & type) const
 {
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              return a->acquisition_date < b->acquisition_date;
-            });
+std::sort(begin(v), end(v),
+[v](pointer a, pointer b) {
+return a->acquisition_date < b->acquisition_date;
+});
 }
 // --------------------------------------------------------------------
 
@@ -45,12 +56,12 @@ void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & ty
 // --------------------------------------------------------------------
 template<>
 void syd::Table<syd::Injection>::Sort(syd::Injection::vector & v,
-                                      const std::string & type) const
+const std::string & type) const
 {
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              return a->date < b->date;
-            });
+std::sort(begin(v), end(v),
+[v](pointer a, pointer b) {
+return a->date < b->date;
+});
 }
 // --------------------------------------------------------------------
 
@@ -58,14 +69,14 @@ void syd::Table<syd::Injection>::Sort(syd::Injection::vector & v,
 // --------------------------------------------------
 template<>
 void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v,
-                                         const std::string & type) const
+const std::string & type) const
 {
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              if (a->dicoms.size() == 0) return true;
-              if (b->dicoms.size() == 0) return false;
-              return a->acquisition_date < b->acquisition_date;
-            });
+std::sort(begin(v), end(v),
+[v](pointer a, pointer b) {
+if (a->dicoms.size() == 0) return true;
+if (b->dicoms.size() == 0) return false;
+return a->acquisition_date < b->acquisition_date;
+});
 }
 // --------------------------------------------------
 
@@ -73,21 +84,21 @@ void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v,
 // --------------------------------------------------
 template<>
 void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & v,
-                                       const std::string & order) const
+const std::string & order) const
 {
-  // Sort by acquisition_date and if equal, by reconstruction_date or
-  // id is equal
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              if (a->dicom_acquisition_date == b->dicom_acquisition_date) {
-                if (a->dicom_reconstruction_date == b->dicom_reconstruction_date)
-                  return (a->id < b->id);
-                else return syd::IsDateBefore(a->dicom_reconstruction_date,
-                                              b->dicom_reconstruction_date);
-              }
-              else return syd::IsDateBefore(a->dicom_acquisition_date,
-                                            b->dicom_acquisition_date);
-            });
+// Sort by acquisition_date and if equal, by reconstruction_date or
+// id is equal
+std::sort(begin(v), end(v),
+[v](pointer a, pointer b) {
+if (a->dicom_acquisition_date == b->dicom_acquisition_date) {
+if (a->dicom_reconstruction_date == b->dicom_reconstruction_date)
+return (a->id < b->id);
+else return syd::IsDateBefore(a->dicom_reconstruction_date,
+b->dicom_reconstruction_date);
+}
+else return syd::IsDateBefore(a->dicom_acquisition_date,
+b->dicom_acquisition_date);
+});
 }
 // --------------------------------------------------
 
@@ -95,10 +106,10 @@ void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & v,
 // --------------------------------------------------
 template<>
 void syd::Table<syd::Patient>::Sort(syd::Patient::vector & v,
-                                    const std::string & order) const
+const std::string & order) const
 {
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) { return a->study_id < b->study_id; });
+std::sort(begin(v), end(v),
+[v](pointer a, pointer b) { return a->study_id < b->study_id; });
 }
 // --------------------------------------------------
 
@@ -106,13 +117,13 @@ void syd::Table<syd::Patient>::Sort(syd::Patient::vector & v,
 // --------------------------------------------------
 template<>
 void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & v,
-                                         const std::string & order) const
+const std::string & order) const
 {
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) { return a->atomic_number < b->atomic_number; });
+std::sort(begin(v), end(v),
+[v](pointer a, pointer b) { return a->atomic_number < b->atomic_number; });
 }
 // --------------------------------------------------
-
+*/
 
 // --------------------------------------------------
 /*template<>
@@ -128,16 +139,16 @@ void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & v,
   }*/
 // --------------------------------------------------
 
-
+/*
 // --------------------------------------------------
 template<>
 void syd::Table<syd::PixelUnit>::Sort(syd::PixelUnit::vector & v,
-                                      const std::string & order) const
+const std::string & order) const
 {
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              return a->name < b->name;
-            });
+std::sort(begin(v), end(v),
+[v](pointer a, pointer b) {
+return a->name < b->name;
+});
 }
 // --------------------------------------------------
 
@@ -145,17 +156,23 @@ void syd::Table<syd::PixelUnit>::Sort(syd::PixelUnit::vector & v,
 // --------------------------------------------------
 template<>
 void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & v,
-                                         const std::string & order) const
+const std::string & order) const
 {
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              if (a->image->acquisition_date == b->image->acquisition_date)
-                return (a->id < b->id);
-              return (a->image->acquisition_date < b->image->acquisition_date);
-            });
+std::sort(begin(v), end(v),
+[v](pointer a, pointer b) {
+            if (a->image->acquisition_date == b->image->acquisition_date)
+              return (a->id < b->id);
+            return (a->image->acquisition_date < b->image->acquisition_date);
+          });
 }
 // --------------------------------------------------
+*/
 
+// --------------------------------------------------
+syd::StandardDatabase::StandardDatabase():CommonDatabase()
+{
+}
+// --------------------------------------------------
 
 // --------------------------------------------------
 syd::StandardDatabase::~StandardDatabase()
@@ -166,16 +183,8 @@ syd::StandardDatabase::~StandardDatabase()
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {
-  //  syd::Database::CreateTables();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
-  AddTable<syd::RecordHistory>();
-
+  syd::CommonDatabase::CreateTables();
   AddTable<syd::Patient>();
-  AddTable<syd::Image>();
-  //  AddTable<syd::RoiMaskImage>();
-  /*
-
   AddTable<syd::Injection>();
   AddTable<syd::Radionuclide>();
 
@@ -184,18 +193,15 @@ void syd::StandardDatabase::CreateTables()
 
   AddTable<syd::PixelUnit>();
   AddTable<syd::Image>();
-
   AddTable<syd::RoiType>();
   AddTable<syd::RoiMaskImage>();
   AddTable<syd::RoiStatistic>();
 
   AddTable<syd::Elastix>();
-
   AddTable<syd::FitImages>();
   AddTable<syd::Timepoints>();
   AddTable<syd::RoiTimepoints>();
   AddTable<syd::FitTimepoints>();
-  */
 }
 // --------------------------------------------------------------------
 

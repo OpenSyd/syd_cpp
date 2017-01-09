@@ -24,14 +24,6 @@ syd::RecordTraitsBase * syd::RecordTraits<RecordType>::
 singleton_ = nullptr;
 
 
-// template<class RecordType>
-// syd::RecordTraits<RecordType> * GetTrait(std::shared_ptr<RecordType> p)
-// {
-//   DDF();
-//   return RecordTraits<RecordType>::GetTrait();
-// }
-
-
 // --------------------------------------------------------------------
 template<class RecordType>
 syd::RecordTraits<RecordType>::RecordTraits(std::string table_name)
@@ -164,7 +156,7 @@ void syd::RecordTraits<RecordType>::
 Update(syd::Database * db, const generic_record_vector & records) const
 {
   typename RecordType::vector specific_records;
-  for(auto r:records) 
+  for(auto r:records)
     specific_records.push_back(std::dynamic_pointer_cast<RecordType>(r));
   db->Update<RecordType>(specific_records);
 }

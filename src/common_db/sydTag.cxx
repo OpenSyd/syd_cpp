@@ -24,6 +24,10 @@
 // std
 #include <set>
 
+
+template class syd::RecordTraits<syd::Tag>;
+//DEFINE_TABLE_TRAITS_HEADER(Tag);
+
 DEFINE_TABLE_IMPL(Tag);
 
 // --------------------------------------------------------------------
@@ -67,3 +71,5 @@ void syd::Tag::DumpInTable(syd::PrintTable & ta) const
   ta.Set("description", description);
 }
 // --------------------------------------------------------------------
+
+

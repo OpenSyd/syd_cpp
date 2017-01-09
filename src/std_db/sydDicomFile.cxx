@@ -20,6 +20,8 @@
 #include "sydDicomFile.h"
 #include "sydStandardDatabase.h"
 
+DEFINE_TABLE_IMPL(DicomFile);
+
 // --------------------------------------------------------------------
 syd::DicomFile::DicomFile():syd::File()
 {

@@ -22,7 +22,7 @@
 #include "sydDicomSerie.h"
 #include "sydTagHelper.h"
 
-DEFINE_TABLE_IMPL(Image)
+DEFINE_TABLE_IMPL(Image);
 
 // --------------------------------------------------------------------
 syd::Image::Image():
@@ -37,13 +37,6 @@ syd::Image::Image():
   modality = "image"; // default (not empty_value)
   type = pixel_type = acquisition_date = frame_of_reference_uid = empty_value;
   dimension = 0;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Image::~Image()
-{
 }
 // --------------------------------------------------------------------
 
@@ -421,15 +414,15 @@ std::string syd::Image::ComputeDefaultMHDFilename()
 
 // --------------------------------------------------------------------
 /*
-void syd::Image::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const
-{
+  void syd::Image::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const
+  {
   DDF();
   syd::Record::SetDefaultFields(map);
   //    if pname date tag inj injq modality size spacing comments unit dicom
 
   // To shorten the code
   auto cast = [](syd::Record::pointer r) ->
-    syd::Image::pointer { return std::static_pointer_cast<syd::Image>(r); };
+  syd::Image::pointer { return std::static_pointer_cast<syd::Image>(r); };
   typedef syd::Record::pointer T;
 
   // add_field<syd::Image>(map, "pname", XXXX?? ) how todo with macro ? NO
@@ -438,10 +431,10 @@ void syd::Image::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFun
   map["date"] = [cast](T r) { return cast(r)->GetAcquisitionDate(); };
   map["inj"] = [cast](T r) { return cast(r)->GetInjectionName(); };
   map["injq"] = [cast](T r) {
-    if (cast(r)->injection == nullptr) return syd::empty_value;
-    std::ostringstream oss;
-    oss << std::fixed << std::setprecision(2) << cast(r)->injection->activity_in_MBq;
-    return oss.str();
+  if (cast(r)->injection == nullptr) return syd::empty_value;
+  std::ostringstream oss;
+  oss << std::fixed << std::setprecision(2) << cast(r)->injection->activity_in_MBq;
+  return oss.str();
   };
 
   // FIXME WILL NOT WORK
@@ -450,12 +443,12 @@ void syd::Image::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFun
   injection->SetDefaultFields(inj_map); // FIXME !!! use fake injection ?
   DD("here");
   for(auto m:inj_map) {
-    std::string n= "injection->"+m.first;
-    DD(n);
-    map[n] = m.second;
+  std::string n= "injection->"+m.first;
+  DD(n);
+  map[n] = m.second;
   }
 
-}
+  }
 */
 // --------------------------------------------------------------------
 

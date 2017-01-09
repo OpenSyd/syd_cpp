@@ -49,14 +49,14 @@ namespace syd {
     // Create a new record associated with a db (it is not inserted yet)
     static pointer New(syd::Database * db);
     virtual generic_record_pointer CreateNew(syd::Database * db) const;
+
+    // Query Insert Update Delete
     virtual generic_record_pointer QueryOne(const syd::Database * db, IdType id) const;
     virtual void Query(const syd::Database * db,
                        generic_record_vector & r,
                        const std::vector<syd::IdType> & id) const;
     virtual void Query(const syd::Database * db,
                        generic_record_vector & r) const;
-
-    /// Insert Update
     virtual void Insert(syd::Database * db, generic_record_pointer record) const;
     virtual void Insert(syd::Database * db, const generic_record_vector & records) const;
     virtual void Update(syd::Database * db, generic_record_pointer record) const;

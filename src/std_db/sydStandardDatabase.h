@@ -20,17 +20,17 @@
 #define SYDSTANDARDDATABASE_H
 
 // syd
-#include "sydDatabase.h"
-#include "sydTable.h"
+#include "sydCommonDatabase.h"
+//#include "sydTable.h"
 #include "sydImageUtils.h"
 
 // syd tables
-#include "sydRecordHistory-odb.hxx"
+//#include "sydRecordHistory-odb.hxx"
 #include "sydPatient-odb.hxx"
 #include "sydInjection-odb.hxx"
 #include "sydRadionuclide-odb.hxx"
-#include "sydTag-odb.hxx"
-#include "sydFile-odb.hxx"
+/* #include "sydTag-odb.hxx" */
+/* #include "sydFile-odb.hxx" */
 #include "sydDicomSerie-odb.hxx"
 #include "sydDicomFile-odb.hxx"
 #include "sydPixelUnit-odb.hxx"
@@ -51,9 +51,9 @@
 namespace syd {
 
   /// This database manages a set of 'standard' tables: Patient, Injection etc.
-  class StandardDatabase: public Database {
+  class StandardDatabase: public CommonDatabase {
   public:
-
+    StandardDatabase();
     virtual ~StandardDatabase();
 
     // Search for a patient by name (or id)
@@ -84,9 +84,7 @@ namespace syd {
 
   }; // class StandardDatabase
 
-#include "sydStandardDatabase.txx"
-
-
+  /*
   template<> void syd::Table<syd::Image>::Sort(syd::Image::vector & records,
                                                const std::string & type) const;
   template<> void syd::Table<syd::Injection>::Sort(syd::Injection::vector & records,
@@ -105,16 +103,30 @@ namespace syd {
                                                    const std::string & type) const;
   template<> void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & records,
                                                       const std::string & type) const;
+  */
 
-  DEFINE_TABLE_TRAITS_HEADER(Tag);
-  DEFINE_TABLE_TRAITS_HEADER(File);
-  DEFINE_TABLE_TRAITS_HEADER(RecordHistory);
   DEFINE_TABLE_TRAITS_HEADER(Patient);
+  DEFINE_TABLE_TRAITS_HEADER(Injection);
+  DEFINE_TABLE_TRAITS_HEADER(Radionuclide);
+
+  DEFINE_TABLE_TRAITS_HEADER(DicomFile);
+  DEFINE_TABLE_TRAITS_HEADER(DicomSerie);
+
+  DEFINE_TABLE_TRAITS_HEADER(PixelUnit);
   DEFINE_TABLE_TRAITS_HEADER(Image);
+  DEFINE_TABLE_TRAITS_HEADER(RoiType);
   DEFINE_TABLE_TRAITS_HEADER(RoiMaskImage);
+  DEFINE_TABLE_TRAITS_HEADER(RoiStatistic);
+
+  DEFINE_TABLE_TRAITS_HEADER(Elastix);
+  DEFINE_TABLE_TRAITS_HEADER(FitImages);
+  DEFINE_TABLE_TRAITS_HEADER(Timepoints);
+  DEFINE_TABLE_TRAITS_HEADER(RoiTimepoints);
+  DEFINE_TABLE_TRAITS_HEADER(FitTimepoints);
 
 } // namespace syd
 
-// --------------------------------------------------------------------
+#include "sydStandardDatabase.txx"
 
+// --------------------------------------------------------------------
 #endif

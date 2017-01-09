@@ -36,7 +36,7 @@ set(sydCommonDatabase_src
   sydRecord-schema.cxx
   sydRecord.cxx
   sydRecordTraitsBase.cxx
-  sydRecordTraits.cxx
+#  sydRecordTraits.cxx
 
   sydRecordHistory-odb.cxx
   sydRecordHistory-schema.cxx
@@ -65,6 +65,8 @@ set(sydCommonDatabase_src
   sydDatabaseInformation.cxx
   sydPluginManager.cxx
   sydDatabaseInformation.cxx
+
+  sydCommonDatabase.cxx
 
   sydRecordHelper.cxx
   sydTagHelper.cxx

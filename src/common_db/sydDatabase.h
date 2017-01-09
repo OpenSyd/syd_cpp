@@ -28,8 +28,6 @@
 #include "sydRecordWithHistory-odb.hxx"
 #include "sydTag-odb.hxx"
 #include "sydRecordWithTags-odb.hxx"
-#include "sydTableBase.h" // FIXME 
-//#include "sydDatabaseDescription.h"
 
 // odb
 #include <odb/sqlite/database.hxx>
@@ -39,9 +37,7 @@
 namespace syd {
 
   // The following classes will be defined elsewhere
-  template<class Record> class Table; // FIXME TO REMOVE
   template<class DatabaseSchema> class DatabaseCreator;
-  class RecordTraitsBase;
 
   // Comparator function for case insensitive map
   /// (http://stackoverflow.com/questions/19102195/how-to-make-stlmap-key-case-insensitive)
@@ -62,19 +58,18 @@ namespace syd {
   /// composed of a list of tables. Use DatabaseManager to Create or
   /// Read a database.
   class Database {
-
     // Only the class DatabaseCreator can acces to protected members such as Open and Create.
     template<class DatabaseSchema> friend class DatabaseCreator;
-
   public:
 
+    /// Destructor
     virtual ~Database();
 
     /// Type of a generic record (pointer)
-    typedef typename std::shared_ptr<syd::Record> generic_record_pointer;
+    typedef typename std::shared_ptr<syd::Record> RecordPointer;
 
     /// Type of a generic vector of records (pointer)
-    typedef std::vector<generic_record_pointer> generic_record_vector;
+    typedef std::vector<RecordPointer> RecordVector;
 
     // ------------------------------------------------------------------------
     /// Return the type of the db (read in the file)
@@ -112,63 +107,56 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// Create a new record of the specified table.
-    generic_record_pointer New(const std::string & table_name);
+    RecordPointer New(const std::string & table_name);
 
     // Create a new record of the specified table type (RecordType)
-    template<class RecordType>
-      typename RecordType::pointer New();
+    template<class RecordType> typename RecordType::pointer New();
     // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
     /// Type of the map that contains the association between names and tables
-    typedef std::map<std::string, TableBase*> MapOfTablesType;
     typedef std::map<std::string, syd::RecordTraitsBase*, case_insensitive_comp> MapOfTraitsType;
 
     /// Return the map that contains the association between names and tables
-    // FIXME
-    const MapOfTablesType & GetMapOfTables() const { return map_; }
     const MapOfTraitsType & GetTraitsMap() const { return map_of_traits_; }
     syd::RecordTraitsBase * GetTraits(const std::string & table_name) const;
     // ------------------------------------------------------------------------
 
 
-
     // ------------------------------------------------------------------------
     /// All Query function allocate new records
-    template<class RecordType>
-      typename RecordType::pointer
+    template<class RecordType> typename RecordType::pointer
       QueryOne(const odb::query<RecordType> & q) const;
-    template<class RecordType>
-      void QueryOne(std::shared_ptr<RecordType> & p,
-                    const odb::query<RecordType> & q) const { p = QueryOne(q); }
-    template<class RecordType>
-      void QueryOne(std::shared_ptr<RecordType> & p,
-                    IdType id) const { p = QueryOne<RecordType>(id); }
-    template<class RecordType>
-      typename RecordType::pointer
+    template<class RecordType> void
+      QueryOne(std::shared_ptr<RecordType> & p,
+               const odb::query<RecordType> & q) const { p = QueryOne(q); }
+    template<class RecordType> void
+      QueryOne(std::shared_ptr<RecordType> & p,
+               IdType id) const { p = QueryOne<RecordType>(id); }
+    template<class RecordType> typename RecordType::pointer
       QueryOne(IdType id) const;
-    generic_record_pointer
+    RecordPointer
       QueryOne(const std::string & table_name, IdType id) const;
-    template<class RecordType>
-      void Query(std::vector<std::shared_ptr<RecordType>> & records,
-                 const odb::query<RecordType> & q) const;
-    template<class RecordType>
-      void Query(std::vector<std::shared_ptr<RecordType>> & records) const;
-    template<class RecordType>
-      void Query(std::vector<std::shared_ptr<RecordType>> & records,
-                 const std::vector<syd::IdType> & ids) const;
-    void Query(generic_record_vector & records,
+    template<class RecordType> void
+      Query(std::vector<std::shared_ptr<RecordType>> & records,
+            const odb::query<RecordType> & q) const;
+    template<class RecordType> void
+      Query(std::vector<std::shared_ptr<RecordType>> & records) const;
+    template<class RecordType> void
+      Query(std::vector<std::shared_ptr<RecordType>> & records,
+            const std::vector<syd::IdType> & ids) const;
+    void Query(RecordVector & records,
                const std::string table_name,
                const std::vector<syd::IdType> & ids) const;
-    void Query(generic_record_vector & records, const std::string table_name) const;
+    void Query(RecordVector & records, const std::string table_name) const;
     // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
     /// Insert
-    void Insert(generic_record_pointer record);
-    void Insert(generic_record_vector record, const std::string & table_name);
+    void Insert(RecordPointer record);
+    void Insert(RecordVector record, const std::string & table_name);
     template<class RecordType>
       void Insert(std::shared_ptr<RecordType> record);
     template<class RecordType>
@@ -179,21 +167,25 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// Update
-    void Update(generic_record_pointer record);
-    void Update(generic_record_vector record, const std::string & table_name);
+    void Update(RecordPointer record);
+    void Update(RecordVector record, const std::string & table_name);
     template<class RecordType>
       void Update(std::shared_ptr<RecordType> record);
     template<class RecordType>
       void Update(std::vector<std::shared_ptr<RecordType>> records);
-    // FIXME 
-    void Update(generic_record_pointer & record, std::string field_name,
-                std::string value_name);
+    void UpdateField(RecordPointer & record,
+                     std::string field_name,
+                     std::string value_name);
+    template<class RecordType>
+      void UpdateField(std::shared_ptr<RecordType> & record,
+                       std::string field_name,
+                       std::string value_name);
     // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
-    void Delete(generic_record_vector & records, const std::string & table_name);
-    void Delete(generic_record_pointer record);
+    void Delete(RecordVector & records, const std::string & table_name);
+    void Delete(RecordPointer record);
     template<class RecordType>
       void Delete(std::shared_ptr<RecordType> record);
     template<class RecordType>
@@ -201,7 +193,7 @@ namespace syd {
     // ------------------------------------------------------------------------
 
 
-
+    // ------------------------------------------------------------------------
     /// Find (grep)
     template<class RecordType>
       void Grep(std::vector<std::shared_ptr<RecordType>> & output,
@@ -236,7 +228,7 @@ namespace syd {
       void Sort(std::vector<std::shared_ptr<RecordType>> & records,
                 const std::string & type="") const;
     /// Sort generic records
-    virtual void Sort(generic_record_vector & records,
+    virtual void Sort(RecordVector & records,
                       const std::string & table_name,
                       const std::string & type="") const;
     // ------------------------------------------------------------------------
@@ -258,11 +250,6 @@ namespace syd {
 
 
     // ------------------------------------------------------------------------
-    /// Return the (base) table with table_name
-    TableBase * GetTable(const std::string & table_name) const;
-    template<class RecordType>
-      Table<RecordType> * GetTable() const;
-
     /// Return a string with the list of the table names
     std::string GetListOfTableNames() const;
 
@@ -272,13 +259,11 @@ namespace syd {
     /// Return the sql descriptio of the table
     //    syd::TableDescription * GetTableDescription(const std::string & table_name);
 
-    /// Get the number of elements in the table (cannot be const
-    /// because create db description)
-    long GetNumberOfElements(const std::string & table_name);
+    /// Get the number of elements in the table
+    long GetNumberOfElements(const std::string & table_name) const;
 
     /// Get the number of elements in the table, knowing the type
-    template<class RecordType>
-      long GetNumberOfElements();
+    //template<class RecordType> long GetNumberOfElements() const;
 
     // FIXME
     odb::sqlite::database * GetODB_DB() const { return odb_db_; }
@@ -323,19 +308,11 @@ namespace syd {
     virtual void CreateTables() = 0;
 
     /// Declare a new table in the database
-    template<class Record>
-      void AddTable();
+    template<class Record> void AddTable();
 
     /// Delete files when needed
     void DeleteFiles();
-
     std::vector<std::string> files_to_delete_;
-
-    /// Map that contains the association between names and tables
-    MapOfTablesType map_;
-
-    /// Copy of the map with the table name in lowercase (for comparison)
-    MapOfTablesType map_lowercase_;
 
     /// Map of traits
     MapOfTraitsType map_of_traits_;
@@ -365,7 +342,6 @@ namespace syd {
     /// Global flag (will be used when write a file in the db)
     bool overwrite_file_if_exists_flag_;
   };
-
 
   // Helpers function to simplify native sqlite query
   std::string sqlite3_column_text_string(sqlite3_stmt * stmt, int iCol);

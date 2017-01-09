@@ -20,43 +20,8 @@
 #include "sydPatient.h"
 #include "sydInjection.h"
 #include "sydStandardDatabase.h"
-//#include "sydRecordTraits.h" // to remove
 
-// template<>
-// std::string syd::RecordTraits<syd::Patient>::
-// table_name_ = "Patient";
-
-// template<class RecordType>
-// std::string syd::RecordTraits<RecordType>::
-// table_name_ = "ERROR_you_should_set_the_table_name";
-
-namespace syd {
-  /*
-  template<>
-  syd::RecordTraitsBase * RecordTraits<syd::Patient>::GetTraits() {
-    return syd::RecordTraits<syd::Patient>::GetTraits("Patient");
-  }
-  */
-  RecordTraitsBase * Patient::traits() const {
-    return RecordTraits<Patient>::GetTraits();
-  }
-}
-
-
-// --------------------------------------------------
-/*syd::Patient::Patient(syd::Database * db):
-  syd::Record(db),
-  syd::RecordWithComments()
-  {
-  DDF();
-  // default value
-  name = empty_value; // must be unique
-  study_id = 0; // must be unique
-  weight_in_kg = 0;
-  dicom_patientid = empty_value;
-  sex = empty_value;
-  }*/
-// --------------------------------------------------
+DEFINE_TABLE_IMPL(Patient);
 
 // --------------------------------------------------
 syd::Patient::Patient():
@@ -71,14 +36,6 @@ syd::Patient::Patient():
   sex = empty_value;
 }
 // --------------------------------------------------
-
-
-// --------------------------------------------------
-syd::Patient::~Patient()
-{
-}
-// --------------------------------------------------
-
 
 
 // --------------------------------------------------

@@ -19,9 +19,10 @@
 // syd
 #include "sydRecordHistory.h"
 #include "sydPrintTable.h"
+#include "sydDatabase.h"
 #include "sydRecordTraits.h"
 
-DEFINE_TABLE_IMPL(RecordHistory)
+DEFINE_TABLE_IMPL(RecordHistory);
 
 // --------------------------------------------------------------------
 syd::RecordHistory::RecordHistory():syd::Record()

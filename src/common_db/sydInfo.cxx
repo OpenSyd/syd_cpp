@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
       os << warningColor << " -> does not exist ("
          << db->GetDatabaseAbsoluteFolder() << ")" << resetColor;
     os << std::endl;
-    auto map = db->GetMapOfTables();
+    auto map = db->GetTraitsMap();
     if (map.size() > 1) os << map.size() << " tables" << std::endl;
     else os << map.size() << " table" << std::endl;
     for(auto i=map.begin(); i != map.end(); i++) {

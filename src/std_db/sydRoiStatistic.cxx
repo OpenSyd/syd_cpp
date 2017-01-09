@@ -18,7 +18,11 @@
 
 // syd
 #include "sydRoiStatistic.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
 #include "sydTagHelper.h"
+
+DEFINE_TABLE_IMPL(RoiStatistic);
 
 // --------------------------------------------------
 syd::RoiStatistic::RoiStatistic():
