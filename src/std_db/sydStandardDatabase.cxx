@@ -40,6 +40,23 @@ DEFINE_TABLE_TRAITS_IMPL(Timepoints)
 DEFINE_TABLE_TRAITS_IMPL(RoiTimepoints)
 DEFINE_TABLE_TRAITS_IMPL(FitTimepoints)
 
+// --------------------------------------------------------------------
+template<> void syd::RecordTraits<syd::Image>::
+Sort(const syd::Database * db,
+     syd::Image::vector & v,
+     const std::string & type) const
+{
+  DDF();
+  DD("image sort");
+  if (type == "id")
+    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+        return a->id < b->id; });
+  if (type == "default" or type=="date")
+    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+        return a->acquisition_date < b->acquisition_date; });
+}
+// --------------------------------------------------------------------
+
 /*
 // --------------------------------------------------------------------
 template<>
@@ -160,10 +177,10 @@ const std::string & order) const
 {
 std::sort(begin(v), end(v),
 [v](pointer a, pointer b) {
-            if (a->image->acquisition_date == b->image->acquisition_date)
-              return (a->id < b->id);
-            return (a->image->acquisition_date < b->image->acquisition_date);
-          });
+if (a->image->acquisition_date == b->image->acquisition_date)
+return (a->id < b->id);
+return (a->image->acquisition_date < b->image->acquisition_date);
+});
 }
 // --------------------------------------------------
 */

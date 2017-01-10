@@ -23,6 +23,27 @@ template<class RecordType>
 syd::RecordTraitsBase * syd::RecordTraits<RecordType>::
 singleton_ = nullptr;
 
+/*
+template<class RecordType>
+std::vector<std::shared_ptr<RecordType>> &
+CastRecordVector(const syd::RecordTraitsBase::RecordBaseVector & records)
+{
+  std::vector<std::shared_ptr<RecordType>> specific;
+  for(auto & r:records)
+    specific.push_back(std::static_pointer_cast<RecordType>(r));
+  return specific;
+}
+
+template<class RecordType>
+syd::RecordTraitsBase::RecordBaseVector &
+ConvertToRecordBaseVector(const std::vector<std::shared_ptr<RecordType>> & records)
+{
+  syd::RecordTraitsBase::RecordBaseVector generic(records);
+  for(auto & r:records) generic.push_back(r);
+  return generic;
+}
+*/
+
 
 // --------------------------------------------------------------------
 template<class RecordType>
@@ -68,7 +89,7 @@ syd::RecordTraits<RecordType>::New(syd::Database * db)
 
 // --------------------------------------------------------------------
 template<class RecordType>
-typename syd::RecordTraits<RecordType>::generic_record_pointer
+typename syd::RecordTraits<RecordType>::RecordBasePointer
 syd::RecordTraits<RecordType>::CreateNew(syd::Database * db) const
 {
   return syd::RecordTraits<RecordType>::New(db);
@@ -78,7 +99,7 @@ syd::RecordTraits<RecordType>::CreateNew(syd::Database * db) const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-typename syd::RecordTraits<RecordType>::generic_record_pointer
+typename syd::RecordTraits<RecordType>::RecordBasePointer
 syd::RecordTraits<RecordType>::
 QueryOne(const syd::Database * db, IdType id) const
 {
@@ -91,7 +112,7 @@ QueryOne(const syd::Database * db, IdType id) const
 template<class RecordType>
 void syd::RecordTraits<RecordType>::
 Query(const syd::Database * db,
-      generic_record_vector & records,
+      RecordBaseVector & records,
       const std::vector<syd::IdType> & ids) const
 {
   typename RecordType::vector specific_records;
@@ -105,7 +126,7 @@ Query(const syd::Database * db,
 template<class RecordType>
 void syd::RecordTraits<RecordType>::
 Query(const syd::Database * db,
-      generic_record_vector & records) const
+      RecordBaseVector & records) const
 {
   typename RecordType::vector specific_records;
   db->Query<RecordType>(specific_records);
@@ -117,7 +138,7 @@ Query(const syd::Database * db,
 // --------------------------------------------------------------------
 template<class RecordType>
 void syd::RecordTraits<RecordType>::
-Insert(syd::Database * db, generic_record_pointer record) const
+Insert(syd::Database * db, RecordBasePointer record) const
 {
   auto p = std::static_pointer_cast<RecordType>(record);
   db->Insert<RecordType>(p);
@@ -128,11 +149,11 @@ Insert(syd::Database * db, generic_record_pointer record) const
 // --------------------------------------------------------------------
 template<class RecordType>
 void syd::RecordTraits<RecordType>::
-Insert(syd::Database * db, const generic_record_vector & records) const
+Insert(syd::Database * db, const RecordBaseVector & records) const
 {
   //  auto p = std::dynamic_pointer_cast<Record>(record);
   typename RecordType::vector specific_records;
-  for(auto r:records) 
+  for(auto r:records)
     specific_records.push_back(std::dynamic_pointer_cast<RecordType>(r));
   db->Insert<RecordType>(specific_records);
 }
@@ -142,7 +163,7 @@ Insert(syd::Database * db, const generic_record_vector & records) const
 // --------------------------------------------------------------------
 template<class RecordType>
 void syd::RecordTraits<RecordType>::
-Update(syd::Database * db, generic_record_pointer record) const
+Update(syd::Database * db, RecordBasePointer record) const
 {
   auto p = std::static_pointer_cast<RecordType>(record);
   db->Update<RecordType>(p);
@@ -153,7 +174,7 @@ Update(syd::Database * db, generic_record_pointer record) const
 // --------------------------------------------------------------------
 template<class RecordType>
 void syd::RecordTraits<RecordType>::
-Update(syd::Database * db, const generic_record_vector & records) const
+Update(syd::Database * db, const RecordBaseVector & records) const
 {
   typename RecordType::vector specific_records;
   for(auto r:records)
@@ -166,12 +187,48 @@ Update(syd::Database * db, const generic_record_vector & records) const
 // --------------------------------------------------------------------
 template<class RecordType>
 void syd::RecordTraits<RecordType>::
-Delete(syd::Database * db, const generic_record_vector & records) const
+Delete(syd::Database * db, const RecordBaseVector & records) const
 {
   typename RecordType::vector specific_records;
   for(auto r:records)
     specific_records.push_back(std::dynamic_pointer_cast<RecordType>(r));
   db->Delete<RecordType>(specific_records);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::Sort(const syd::Database * db,
+                                         RecordBaseVector & records,
+                                         const std::string & type) const
+{
+  DDF();
+
+  typename RecordType::vector specific_records;
+  for(auto r:records)
+    specific_records.push_back(std::dynamic_pointer_cast<RecordType>(r)); // or static ?
+  DD("convertion ok");
+  Sort(db, specific_records, type);
+  DD("convertion back");
+  records.clear();
+  for(auto r:specific_records) records.push_back(r);
+  DD("end");
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::Sort(const syd::Database * db,
+                                         vector & v,
+                                         const std::string & type) const
+{
+  DDF();
+  DD("default sort");
+  std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+      return a->id < b->id;
+    });
 }
 // --------------------------------------------------------------------
 

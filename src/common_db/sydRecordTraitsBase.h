@@ -36,28 +36,33 @@ namespace syd {
   class RecordTraitsBase {
   public:
 
-    typedef std::shared_ptr<Record> generic_record_pointer;
-    typedef std::vector<generic_record_pointer> generic_record_vector;
+    typedef std::shared_ptr<Record> RecordBasePointer;
+    typedef std::vector<RecordBasePointer> RecordBaseVector;
 
     /// Return the table name
     virtual std::string GetTableName() const;
     virtual std::string GetSQLTableName() const;
 
     /// Create a new record
-    virtual generic_record_pointer CreateNew(syd::Database * db) const = 0;
+    virtual RecordBasePointer CreateNew(syd::Database * db) const = 0;
 
-    /// Basic functions: Query Insert Update Delete 
-    virtual generic_record_pointer QueryOne(const syd::Database * db, syd::IdType id) const = 0;
+    /// Basic functions: Query Insert Update Delete
+    virtual RecordBasePointer QueryOne(const syd::Database * db, syd::IdType id) const = 0;
     virtual void Query(const syd::Database * db,
-                       generic_record_vector & r,
+                       RecordBaseVector & r,
                        const std::vector<syd::IdType> & id) const = 0;
     virtual void Query(const syd::Database * db,
-                       generic_record_vector & r) const = 0;
-    virtual void Insert(syd::Database * db, generic_record_pointer record) const = 0;
-    virtual void Insert(syd::Database * db, const generic_record_vector & records) const = 0;
-    virtual void Update(syd::Database * db, generic_record_pointer record) const = 0;
-    virtual void Update(syd::Database * db, const generic_record_vector & records) const = 0;
-    virtual void Delete(syd::Database * db, const generic_record_vector & records) const = 0;
+                       RecordBaseVector & r) const = 0;
+    virtual void Insert(syd::Database * db, RecordBasePointer record) const = 0;
+    virtual void Insert(syd::Database * db, const RecordBaseVector & records) const = 0;
+    virtual void Update(syd::Database * db, RecordBasePointer record) const = 0;
+    virtual void Update(syd::Database * db, const RecordBaseVector & records) const = 0;
+    virtual void Delete(syd::Database * db, const RecordBaseVector & records) const = 0;
+
+    /// Other functions
+    virtual void Sort(const syd::Database * db,
+                      RecordBaseVector & records,
+                      const std::string & type) const = 0;
 
   protected:
     RecordTraitsBase(std::string table_name);

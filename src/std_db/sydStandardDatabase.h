@@ -120,6 +120,13 @@ namespace syd {
   DEFINE_TABLE_TRAITS_HEADER(RoiTimepoints);
   DEFINE_TABLE_TRAITS_HEADER(FitTimepoints);
 
+
+  template<>
+    void syd::RecordTraits<syd::Image>::Sort(const syd::Database * db,
+                                             syd::Image::vector & v,
+                                             const std::string & type) const;
+
+
 } // namespace syd
 
 #include "sydStandardDatabase.txx"

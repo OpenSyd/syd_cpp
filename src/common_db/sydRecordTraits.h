@@ -26,21 +26,25 @@
 namespace syd {
 
   /*
-    This class containts all common elements for a table.
-    - GetTableName
-    - TODO GetSQLTableName
-    - TODO Fields
-    - TODO insert et al
+    template<class RecordType>
+    std::vector<std::shared_ptr<RecordType>> &
+    CastRecordVector(const syd::RecordTraitsBase::RecordBaseVector & records);
+    template<class RecordType>
+    syd::RecordTraitsBase::RecordBaseVector &
+    ConvertToRecordBaseVector(const std::vector<std::shared_ptr<RecordType>> & records);
   */
 
+  /*
+    This class containts all common elements for a table.
+  */
   template<class RecordType>
     class RecordTraits: public syd::RecordTraitsBase {
   public:
 
     typedef std::shared_ptr<RecordType> pointer;
     typedef std::vector<pointer> vector;
-    typedef syd::RecordTraitsBase::generic_record_pointer generic_record_pointer;
-    typedef syd::RecordTraitsBase::generic_record_vector generic_record_vector;
+    typedef syd::RecordTraitsBase::RecordBasePointer RecordBasePointer;
+    typedef syd::RecordTraitsBase::RecordBaseVector RecordBaseVector;
 
     // Main static version to get the singleton traits
     static RecordTraitsBase * GetTraits();
@@ -48,20 +52,23 @@ namespace syd {
 
     // Create a new record associated with a db (it is not inserted yet)
     static pointer New(syd::Database * db);
-    virtual generic_record_pointer CreateNew(syd::Database * db) const;
+    virtual RecordBasePointer CreateNew(syd::Database * db) const;
 
     // Query Insert Update Delete
-    virtual generic_record_pointer QueryOne(const syd::Database * db, IdType id) const;
-    virtual void Query(const syd::Database * db,
-                       generic_record_vector & r,
-                       const std::vector<syd::IdType> & id) const;
-    virtual void Query(const syd::Database * db,
-                       generic_record_vector & r) const;
-    virtual void Insert(syd::Database * db, generic_record_pointer record) const;
-    virtual void Insert(syd::Database * db, const generic_record_vector & records) const;
-    virtual void Update(syd::Database * db, generic_record_pointer record) const;
-    virtual void Update(syd::Database * db, const generic_record_vector & records) const;
-    virtual void Delete(syd::Database * db, const generic_record_vector & records) const;
+    virtual RecordBasePointer QueryOne(const syd::Database * db, IdType id) const;
+    virtual void Query(const syd::Database * db, RecordBaseVector & r,
+                       const std::vector<syd::IdType> & ids) const;
+    virtual void Query(const syd::Database * db, RecordBaseVector & r) const;
+    virtual void Insert(syd::Database * db, RecordBasePointer record) const;
+    virtual void Insert(syd::Database * db, const RecordBaseVector & records) const;
+    virtual void Update(syd::Database * db, RecordBasePointer record) const;
+    virtual void Update(syd::Database * db, const RecordBaseVector & records) const;
+    virtual void Delete(syd::Database * db, const RecordBaseVector & records) const;
+
+
+    /// other functions
+    void Sort(const syd::Database * db, RecordBaseVector & records, const std::string & type) const;
+    void Sort(const syd::Database * db, vector & records, const std::string & type) const;
 
   protected:
     RecordTraits(std::string table_name);

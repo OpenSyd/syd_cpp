@@ -236,7 +236,7 @@ void syd::Database::Dump(const std::string & table_name,
 
 
 // --------------------------------------------------------------------
-void syd::Database::Insert(RecordPointer record)
+void syd::Database::Insert(RecordBasePointer record)
 {
   record->traits()->Insert(this, record);
 }
@@ -244,7 +244,7 @@ void syd::Database::Insert(RecordPointer record)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Insert(RecordVector records,
+void syd::Database::Insert(RecordBaseVector records,
                            const std::string & table_name)
 {
   if (records.size() == 0) return;
@@ -254,7 +254,7 @@ void syd::Database::Insert(RecordVector records,
 
 
 // --------------------------------------------------------------------
-void syd::Database::Update(RecordPointer record)
+void syd::Database::Update(RecordBasePointer record)
 {
   GetTraits(record->GetTableName())->Update(this, record);
 }
@@ -262,7 +262,7 @@ void syd::Database::Update(RecordPointer record)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Update(RecordVector records,
+void syd::Database::Update(RecordBaseVector records,
                            const std::string & table_name)
 {
   if (records.size() == 0) return;
@@ -295,7 +295,7 @@ std::string syd::Database::GetListOfTableNames() const
 
 
 // --------------------------------------------------------------------
-syd::Database::RecordPointer
+syd::Database::RecordBasePointer
 syd::Database::New(const std::string & table_name)
 {
   return GetTraits(table_name)->CreateNew(this);
@@ -304,7 +304,7 @@ syd::Database::New(const std::string & table_name)
 
 
 // --------------------------------------------------------------------
-syd::Database::RecordPointer
+syd::Database::RecordBasePointer
 syd::Database::QueryOne(const std::string & table_name, IdType id) const
 {
   return GetTraits(table_name)->QueryOne(this, id);
@@ -314,7 +314,7 @@ syd::Database::QueryOne(const std::string & table_name, IdType id) const
 
 
 // --------------------------------------------------------------------
-void syd::Database::Query(RecordVector & records,
+void syd::Database::Query(RecordBaseVector & records,
                           const std::string table_name,
                           const std::vector<syd::IdType> & ids) const
 {
@@ -324,7 +324,7 @@ void syd::Database::Query(RecordVector & records,
 
 
 // --------------------------------------------------------------------
-void syd::Database::Query(RecordVector & records,
+void syd::Database::Query(RecordBaseVector & records,
                           const std::string table_name) const
 {
   GetTraits(table_name)->Query(this, records);
@@ -363,20 +363,21 @@ long syd::Database::GetNumberOfElements(const std::string & table_name) const
 
 
 // --------------------------------------------------------------------
-void syd::Database::Sort(RecordVector & records,
+void syd::Database::Sort(RecordBaseVector & records,
                          const std::string & table_name,
                          const std::string & type) const
 {
   if (records.size() == 0) return;
   DDF();
-  DD("TODO SORT");
-  //  GetTable(table_name)->Sort(records, type);
+  DD(table_name);
+  DD(type);
+  GetTraits(table_name)->Sort(this, records, type);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::Database::Delete(RecordVector & records,
+void syd::Database::Delete(RecordBaseVector & records,
                            const std::string & table_name)
 {
   if (records.size() == 0) return;
@@ -386,9 +387,9 @@ void syd::Database::Delete(RecordVector & records,
 
 
 // --------------------------------------------------------------------
-void syd::Database::Delete(RecordPointer record)
+void syd::Database::Delete(RecordBasePointer record)
 {
-  RecordVector r;
+  RecordBaseVector r;
   r.push_back(record);
   Delete(r, record->GetTableName());
 }
@@ -417,7 +418,7 @@ void syd::Database::AddFilenameToDelete(const std::string & f)
 
 
 // --------------------------------------------------------------------
-void syd::Database::UpdateField(RecordPointer & record,
+void syd::Database::UpdateField(RecordBasePointer & record,
                                 std::string field_name,
                                 std::string value)
 {
@@ -437,9 +438,24 @@ void syd::Database::UpdateField(RecordPointer & record,
     odb_db_->execute (sql.str());
     t.commit ();
   } catch (const odb::exception& e) {
+
+    /*
+    std::string q = "PRAGMA table_info("+AddDoubleQuoteAround(table_name)+")";
+    auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
+    if (rc==SQLITE_OK) {
+      // Loop on result with the following structure:
+      //   cid name type notnull dflt_value  pk 
+      while(sqlite3_step(stmt) == SQLITE_ROW) {
+        std::string name = sqlite3_column_text_string(stmt, 1);
+        std::string type = sqlite3_column_text_string(stmt, 2);
+        AddField(name, type);
+      }
+      */
     EXCEPTION("Error during the following sql query: " << std::endl
               << sql.str() << std::endl
-              << "Error is:" << e.what());
+              << "Error is:" << e.what()
+              << std::endl
+              << "Note: warning, here the table name is case sensitive.");
   }
   record = QueryOne(table_name, id);
 }

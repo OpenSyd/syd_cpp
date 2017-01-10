@@ -66,10 +66,10 @@ namespace syd {
     virtual ~Database();
 
     /// Type of a generic record (pointer)
-    typedef typename std::shared_ptr<syd::Record> RecordPointer;
+    typedef typename std::shared_ptr<syd::Record> RecordBasePointer;
 
     /// Type of a generic vector of records (pointer)
-    typedef std::vector<RecordPointer> RecordVector;
+    typedef std::vector<RecordBasePointer> RecordBaseVector;
 
     // ------------------------------------------------------------------------
     /// Return the type of the db (read in the file)
@@ -107,7 +107,7 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// Create a new record of the specified table.
-    RecordPointer New(const std::string & table_name);
+    RecordBasePointer New(const std::string & table_name);
 
     // Create a new record of the specified table type (RecordType)
     template<class RecordType> typename RecordType::pointer New();
@@ -136,7 +136,7 @@ namespace syd {
                IdType id) const { p = QueryOne<RecordType>(id); }
     template<class RecordType> typename RecordType::pointer
       QueryOne(IdType id) const;
-    RecordPointer
+    RecordBasePointer
       QueryOne(const std::string & table_name, IdType id) const;
     template<class RecordType> void
       Query(std::vector<std::shared_ptr<RecordType>> & records,
@@ -146,17 +146,17 @@ namespace syd {
     template<class RecordType> void
       Query(std::vector<std::shared_ptr<RecordType>> & records,
             const std::vector<syd::IdType> & ids) const;
-    void Query(RecordVector & records,
+    void Query(RecordBaseVector & records,
                const std::string table_name,
                const std::vector<syd::IdType> & ids) const;
-    void Query(RecordVector & records, const std::string table_name) const;
+    void Query(RecordBaseVector & records, const std::string table_name) const;
     // ------------------------------------------------------------------------
 
 
     // ------------------------------------------------------------------------
     /// Insert
-    void Insert(RecordPointer record);
-    void Insert(RecordVector record, const std::string & table_name);
+    void Insert(RecordBasePointer record);
+    void Insert(RecordBaseVector record, const std::string & table_name);
     template<class RecordType>
       void Insert(std::shared_ptr<RecordType> record);
     template<class RecordType>
@@ -167,13 +167,13 @@ namespace syd {
 
     // ------------------------------------------------------------------------
     /// Update
-    void Update(RecordPointer record);
-    void Update(RecordVector record, const std::string & table_name);
+    void Update(RecordBasePointer record);
+    void Update(RecordBaseVector record, const std::string & table_name);
     template<class RecordType>
       void Update(std::shared_ptr<RecordType> record);
     template<class RecordType>
       void Update(std::vector<std::shared_ptr<RecordType>> records);
-    void UpdateField(RecordPointer & record,
+    void UpdateField(RecordBasePointer & record,
                      std::string field_name,
                      std::string value_name);
     template<class RecordType>
@@ -184,8 +184,8 @@ namespace syd {
 
 
     // ------------------------------------------------------------------------
-    void Delete(RecordVector & records, const std::string & table_name);
-    void Delete(RecordPointer record);
+    void Delete(RecordBaseVector & records, const std::string & table_name);
+    void Delete(RecordBasePointer record);
     template<class RecordType>
       void Delete(std::shared_ptr<RecordType> record);
     template<class RecordType>
@@ -223,12 +223,12 @@ namespace syd {
 
 
     // ------------------------------------------------------------------------
-    /// Sort records (to be specialized in record->Sort
+    /// Sort records (to be specialized in traits>Sort)
     template<class RecordType>
       void Sort(std::vector<std::shared_ptr<RecordType>> & records,
                 const std::string & type="") const;
     /// Sort generic records
-    virtual void Sort(RecordVector & records,
+    virtual void Sort(RecordBaseVector & records,
                       const std::string & table_name,
                       const std::string & type="") const;
     // ------------------------------------------------------------------------

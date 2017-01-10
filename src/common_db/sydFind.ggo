@@ -1,7 +1,7 @@
 #File sydFind.ggo
 
 package "syd"
-version "0.4"
+version "0.5"
 usage "sydFind <table> <pattern> "
 description "Find the ids of elements in the table that match the pattern. Parameters are:
 - <table>     name of the table
@@ -25,3 +25,4 @@ option "id"       i "Display the record with this id (maybe multiple)"         i
 option "oneOutput"  o "The output is one and only one image (An error occurs if there is zero or multiples images)" flag    off
 option "vv"       -   "Open images with vv (result must be image)"             flag    off
 option "vvs"      -   "Open images with vv --sequence (result must be images)" flag    off
+option "sort"     -   "Sort type default/name/date etc (depends on table)"      string default="" no

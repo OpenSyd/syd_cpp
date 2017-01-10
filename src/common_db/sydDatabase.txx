@@ -105,7 +105,7 @@ void syd::Database::UpdateField(std::shared_ptr<RecordType> & record,
                                 std::string field_name,
                                 std::string value_name)
 {
-  RecordPointer r = record;
+  RecordBasePointer r = record;
   UpdateField(r, field_name, value_name);
   record = std::static_pointer_cast<RecordType>(r);
 }
@@ -281,11 +281,9 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records,
                          const std::string & order) const
 {
   if (records.size() == 0) return;
-  DD("TODO SORT");
-  /*
-    auto t = GetTable<RecordType>();
-    t->Sort(records, order);
-  */
+  RecordBaseVector v;
+  for(auto & r:records) v.push_back(r);
+  syd::RecordTraits<RecordType>::GetTraits()->Sort(this, v, order);
 }
 // --------------------------------------------------------------------
 

@@ -27,9 +27,9 @@
 #include "sydTestTemp3.h"
 // #include "sydTestTemp4.h"
 
- // template<>
- // std::string syd::RecordTraits<syd::Patient>::
- // table_name_ = "Patient";
+// template<>
+// std::string syd::RecordTraits<syd::Patient>::
+// table_name_ = "Patient";
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -41,6 +41,25 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
+
+  // -----------------------------------------------------------------
+
+
+  syd::Image::vector images;
+  db->Query(images);
+  DD(images.size());
+  for(auto i:images) std::cout << i->id << " "; std::cout << std::endl;
+  db->Sort(images);
+  for(auto i:images) std::cout << i->id << " "; std::cout << std::endl;
+
+  syd::Record::vector records;
+  db->Query(records, "Image");
+  DD(records.size());
+  for(auto i:records) std::cout << i->id << " "; std::cout << std::endl;
+  db->Sort(records, "Image", "date");
+  for(auto i:records) std::cout << i->id << " "; std::cout << std::endl;
+
+
 
   // -----------------------------------------------------------------
 
@@ -170,7 +189,7 @@ int main(int argc, char* argv[])
     fields.push_back(traits->GetField("patient->name"));
 
     for(auto f:fields) {
-      DD(f->GetValue(records[0]));
+    DD(f->GetValue(records[0]));
     }
 
     }*/
@@ -209,35 +228,36 @@ int main(int argc, char* argv[])
 
 
   // ------------------------------------------------------------------
-  syd::Patient::vector patients;
-  db->Query(patients);
-  // DDS(patients);
+  {
+    syd::Patient::vector patients;
+    db->Query(patients);
+    // DDS(patients);
 
-  syd::Record::vector records;
-  for(auto & p:patients) records.push_back(p); // maybe at templated function in TableOfRecords
+    syd::Record::vector records;
+    for(auto & p:patients) records.push_back(p); // maybe at templated function in TableOfRecords
 
-  syd::TableOfRecords table;
-  table.Set(records);
-  table.AddField("name");
-  table.AddField("id");
-  table.AddField("dicom");
-  table.AddField("study_id");
-  table.Print(std::cout);
+    syd::TableOfRecords table;
+    table.Set(records);
+    table.AddField("name");
+    table.AddField("id");
+    table.AddField("dicom");
+    table.AddField("study_id");
+    table.Print(std::cout);
 
-  syd::Image::vector images;
-  db->Query(images);
-  records.clear();
-  for(auto & p:images) records.push_back(p);
+    syd::Image::vector images;
+    db->Query(images);
+    records.clear();
+    for(auto & p:images) records.push_back(p);
 
-  table.Set(records);
-  table.ClearFieldList();
-  table.AddField("id");
-  table.AddField("pname");
-  table.AddField("date");
-  table.AddField("inj");
-  table.AddField("injq");
-  table.Print(std::cout);
-
+    table.Set(records);
+    table.ClearFieldList();
+    table.AddField("id");
+    table.AddField("pname");
+    table.AddField("date");
+    table.AddField("inj");
+    table.AddField("injq");
+    table.Print(std::cout);
+  }
   // ------------------------------------------------------------------
   DD("end");
   // This is the end, my friend.
