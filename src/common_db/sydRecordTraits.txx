@@ -23,26 +23,30 @@ template<class RecordType>
 syd::RecordTraitsBase * syd::RecordTraits<RecordType>::
 singleton_ = nullptr;
 
-/*
+
+// --------------------------------------------------------------------
 template<class RecordType>
-std::vector<std::shared_ptr<RecordType>> &
-CastRecordVector(const syd::RecordTraitsBase::RecordBaseVector & records)
+std::vector<std::shared_ptr<RecordType>>
+syd::CastFromVectorOfRecords(const syd::RecordTraitsBase::RecordBaseVector & records)
 {
   std::vector<std::shared_ptr<RecordType>> specific;
   for(auto & r:records)
     specific.push_back(std::static_pointer_cast<RecordType>(r));
   return specific;
 }
+// --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
 template<class RecordType>
-syd::RecordTraitsBase::RecordBaseVector &
-ConvertToRecordBaseVector(const std::vector<std::shared_ptr<RecordType>> & records)
+syd::RecordTraitsBase::RecordBaseVector
+syd::ConvertToVectorOfRecords(const std::vector<std::shared_ptr<RecordType>> & records)
 {
-  syd::RecordTraitsBase::RecordBaseVector generic(records);
+  syd::RecordTraitsBase::RecordBaseVector generic;
   for(auto & r:records) generic.push_back(r);
   return generic;
 }
-*/
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------

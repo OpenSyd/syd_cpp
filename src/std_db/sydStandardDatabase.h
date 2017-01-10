@@ -81,24 +81,24 @@ namespace syd {
   }; // class StandardDatabase
 
   /*
-  template<> void syd::Table<syd::Image>::Sort(syd::Image::vector & records,
-                                               const std::string & type) const;
-  template<> void syd::Table<syd::Injection>::Sort(syd::Injection::vector & records,
-                                                   const std::string & type) const;
-  template<> void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & records,
-                                                      const std::string & type) const;
-  template<> void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & records,
-                                                    const std::string & type) const;
-  template<> void syd::Table<syd::Patient>::Sort(syd::Patient::vector & records,
-                                                 const std::string & type) const;
-  template<> void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & records,
-                                                      const std::string & type) const;
-  // template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records,
-  //                                                    const std::string & type) const;
-  template<> void syd::Table<syd::PixelUnit>::Sort(syd::PixelUnit::vector & records,
-                                                   const std::string & type) const;
-  template<> void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & records,
-                                                      const std::string & type) const;
+    template<> void syd::Table<syd::Image>::Sort(syd::Image::vector & records,
+    const std::string & type) const;
+    template<> void syd::Table<syd::Injection>::Sort(syd::Injection::vector & records,
+    const std::string & type) const;
+    template<> void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & records,
+    const std::string & type) const;
+    template<> void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & records,
+    const std::string & type) const;
+    template<> void syd::Table<syd::Patient>::Sort(syd::Patient::vector & records,
+    const std::string & type) const;
+    template<> void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & records,
+    const std::string & type) const;
+    // template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records,
+    //                                                    const std::string & type) const;
+    template<> void syd::Table<syd::PixelUnit>::Sort(syd::PixelUnit::vector & records,
+    const std::string & type) const;
+    template<> void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & records,
+    const std::string & type) const;
   */
 
   DEFINE_TABLE_TRAITS_HEADER(Patient);
@@ -120,11 +120,16 @@ namespace syd {
   DEFINE_TABLE_TRAITS_HEADER(RoiTimepoints);
   DEFINE_TABLE_TRAITS_HEADER(FitTimepoints);
 
+#define DEFINE_SORT(TABLE_NAME)                 \
+  template<>                                    \
+    void                                        \
+    syd::RecordTraits<TABLE_NAME>::             \
+    Sort(const syd::Database * db,              \
+         TABLE_NAME::vector & v,                \
+         const std::string & type) const;
 
-  template<>
-    void syd::RecordTraits<syd::Image>::Sort(const syd::Database * db,
-                                             syd::Image::vector & v,
-                                             const std::string & type) const;
+  DEFINE_SORT(Image);
+  DEFINE_SORT(RoiMaskImage);
 
 
 } // namespace syd

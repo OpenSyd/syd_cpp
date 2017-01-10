@@ -51,9 +51,27 @@ Sort(const syd::Database * db,
   if (type == "id")
     std::sort(begin(v), end(v), [v](pointer a, pointer b) {
         return a->id < b->id; });
-  if (type == "default" or type=="date")
+  if (type == "default" or type=="date" or type=="")
     std::sort(begin(v), end(v), [v](pointer a, pointer b) {
         return a->acquisition_date < b->acquisition_date; });
+  if (type == "help") {
+    LOG(0) << "Available sort type: 'id' or 'date'";
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> void syd::RecordTraits<syd::RoiMaskImage>::
+Sort(const syd::Database * db,
+     syd::RoiMaskImage::vector & v,
+     const std::string & type) const
+{
+  DDF();
+  DD("roimask image sort");
+  auto temp = syd::ConvertToVectorOfRecords(v);
+  syd::RecordTraits<syd::Image>::GetTraits()->Sort(db, temp, type);
+  v = syd::CastFromVectorOfRecords<syd::RoiMaskImage>(temp);
 }
 // --------------------------------------------------------------------
 

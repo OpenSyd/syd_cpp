@@ -25,14 +25,12 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  /*
-    template<class RecordType>
-    std::vector<std::shared_ptr<RecordType>> &
-    CastRecordVector(const syd::RecordTraitsBase::RecordBaseVector & records);
-    template<class RecordType>
-    syd::RecordTraitsBase::RecordBaseVector &
-    ConvertToRecordBaseVector(const std::vector<std::shared_ptr<RecordType>> & records);
-  */
+  template<class RecordType>
+    std::vector<std::shared_ptr<RecordType>>
+    CastFromVectorOfRecords(const syd::RecordTraitsBase::RecordBaseVector & records);
+  template<class RecordType>
+    syd::RecordTraitsBase::RecordBaseVector
+    ConvertToVectorOfRecords(const std::vector<std::shared_ptr<RecordType>> & records);
 
   /*
     This class containts all common elements for a table.
