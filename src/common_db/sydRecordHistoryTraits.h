@@ -12,33 +12,28 @@
 
   It is distributed under dual licence
 
-  - BSD        See included LICENSE.txt file
+  - BSD        See included LICENSE.txt RecordHistory
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SYDRECORDHISTORYTRAITS_H
+#define SYDRECORDHISTORYTRAITS_H
+
 // syd
+#include "sydRecordHistory.h"
 #include "sydCommonDatabase.h"
+#include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------
-syd::CommonDatabase::CommonDatabase():syd::Database()
-{
-}
+namespace syd {
+
+  /// Main GetTraits function
+  DEFINE_TABLE_TRAITS_HEADER(RecordHistory);
+
+  /// Specific Sort for RecordHistory
+  //DEFINE_TABLE_TRAITS_SORT_HEADER(RecordHistory);
+
+} // end namespace
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-syd::CommonDatabase::~CommonDatabase()
-{
-}
-// --------------------------------------------------------------------
-
-// --------------------------------------------------------------------
-void syd::CommonDatabase::CreateTables()
-{
-  //  syd::Database::CreateTables();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
-  AddTable<syd::RecordHistory>();
-}
-// --------------------------------------------------------------------
-
+#endif

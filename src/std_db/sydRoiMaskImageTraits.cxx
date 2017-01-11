@@ -17,28 +17,22 @@
   ===========================================================================**/
 
 // syd
-#include "sydCommonDatabase.h"
+#include "sydRoiMaskImageTraits.h"
 
 // --------------------------------------------------------------------
-syd::CommonDatabase::CommonDatabase():syd::Database()
+DEFINE_TABLE_TRAITS_IMPL(RoiMaskImage);
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+/*
+template<> void syd::RecordTraits<syd::RoiMaskImage>::
+Sort(syd::RoiMaskImage::vector & v, const std::string & type) const
 {
-}
+  auto temp = syd::ConvertToVectorOfRecords(v);
+  syd::RecordTraits<syd::Image>::GetTraits()->Sort(temp, type);
+  v = syd::CastFromVectorOfRecords<syd::RoiMaskImage>(temp);
+  }*/
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-syd::CommonDatabase::~CommonDatabase()
-{
-}
-// --------------------------------------------------------------------
-
-// --------------------------------------------------------------------
-void syd::CommonDatabase::CreateTables()
-{
-  //  syd::Database::CreateTables();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
-  AddTable<syd::RecordHistory>();
-}
-// --------------------------------------------------------------------
 

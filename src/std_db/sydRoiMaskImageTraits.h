@@ -16,29 +16,24 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SYDROIMASKIMAGETRAITS_H
+#define SYDROIMASKIMAGETRAITS_H
+
 // syd
-#include "sydCommonDatabase.h"
+#include "sydRoiMaskImage.h"
+#include "sydStandardDatabase.h"
+#include "sydImageTraits.h"
 
 // --------------------------------------------------------------------
-syd::CommonDatabase::CommonDatabase():syd::Database()
-{
+namespace syd {
+
+  /// Main GetTraits function
+  DEFINE_TABLE_TRAITS_HEADER(RoiMaskImage);
+
+  /// Specific Sort for Tag
+  //DEFINE_TABLE_TRAITS_SORT_HEADER(RoiMaskImage);
+
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-syd::CommonDatabase::~CommonDatabase()
-{
-}
-// --------------------------------------------------------------------
-
-// --------------------------------------------------------------------
-void syd::CommonDatabase::CreateTables()
-{
-  //  syd::Database::CreateTables();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
-  AddTable<syd::RecordHistory>();
-}
-// --------------------------------------------------------------------
-
+#endif

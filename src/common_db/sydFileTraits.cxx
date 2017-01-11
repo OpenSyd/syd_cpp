@@ -17,28 +17,26 @@
   ===========================================================================**/
 
 // syd
-#include "sydCommonDatabase.h"
+#include "sydFileTraits.h"
 
 // --------------------------------------------------------------------
-syd::CommonDatabase::CommonDatabase():syd::Database()
+DEFINE_TABLE_TRAITS_IMPL(File);
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+/*
+template<> void syd::RecordTraits<syd::File>::
+Sort(syd::File::vector & v, const std::string & type) const
 {
+  DD("specific file sort");
+  if (type == "id")
+    return std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+        return a->id < b->id; });
+  if (type == "default" or type=="filename" or type == "name" or type=="")
+    return std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+        return a->filename < b->filename; });
+  LOG(0) << "Available sort type: 'id' or 'filename' (or 'name')";
 }
+*/
 // --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::CommonDatabase::~CommonDatabase()
-{
-}
-// --------------------------------------------------------------------
-
-// --------------------------------------------------------------------
-void syd::CommonDatabase::CreateTables()
-{
-  //  syd::Database::CreateTables();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
-  AddTable<syd::RecordHistory>();
-}
-// --------------------------------------------------------------------
-

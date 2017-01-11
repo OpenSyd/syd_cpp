@@ -16,29 +16,24 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SYDFILETRAITS_H
+#define SYDFILETRAITS_H
+
 // syd
+#include "sydFile.h"
 #include "sydCommonDatabase.h"
+#include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------
-syd::CommonDatabase::CommonDatabase():syd::Database()
-{
-}
+namespace syd {
+
+  /// Main GetTraits function
+  DEFINE_TABLE_TRAITS_HEADER(File);
+
+  /// Specific Sort for File
+  //  DEFINE_TABLE_TRAITS_SORT_HEADER(File);
+
+} // end namespace
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-syd::CommonDatabase::~CommonDatabase()
-{
-}
-// --------------------------------------------------------------------
-
-// --------------------------------------------------------------------
-void syd::CommonDatabase::CreateTables()
-{
-  //  syd::Database::CreateTables();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
-  AddTable<syd::RecordHistory>();
-}
-// --------------------------------------------------------------------
-
+#endif

@@ -16,29 +16,24 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SYDINJECTIONTRAITS_H
+#define SYDINJECTIONTRAITS_H
+
 // syd
-#include "sydCommonDatabase.h"
+#include "sydInjection.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------
-syd::CommonDatabase::CommonDatabase():syd::Database()
-{
-}
+namespace syd {
+
+  /// Main GetTraits function
+  DEFINE_TABLE_TRAITS_HEADER(Injection);
+
+  /// Specific Sort for Injection
+  DEFINE_TABLE_TRAITS_SORT_HEADER(Injection);
+
+} // end of namespace
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-syd::CommonDatabase::~CommonDatabase()
-{
-}
-// --------------------------------------------------------------------
-
-// --------------------------------------------------------------------
-void syd::CommonDatabase::CreateTables()
-{
-  //  syd::Database::CreateTables();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
-  AddTable<syd::RecordHistory>();
-}
-// --------------------------------------------------------------------
-
+#endif

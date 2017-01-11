@@ -65,6 +65,9 @@ set(sydCommonDatabase_src
   sydPluginManager.cxx
   sydDatabaseInformation.cxx
 
+  sydTagTraits.cxx
+  sydFileTraits.cxx
+  sydRecordHistoryTraits.cxx
   sydCommonDatabase.cxx
 
   sydRecordHelper.cxx

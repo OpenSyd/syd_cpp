@@ -17,28 +17,29 @@
   ===========================================================================**/
 
 // syd
-#include "sydCommonDatabase.h"
+#include "sydInjectionTraits.h"
 
 // --------------------------------------------------------------------
-syd::CommonDatabase::CommonDatabase():syd::Database()
+DEFINE_TABLE_TRAITS_IMPL(Injection);
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> void syd::RecordTraits<syd::Injection>::
+Sort(const syd::Database * db, syd::Injection::vector & v, const std::string & type) const
 {
+  auto b = syd::RecordTraits<syd::Record>::GetTraits()->Sort(db, temp, type);
+  if (b) return;
+
+  if (type == "id")
+    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+        return a->id < b->id; });
+  if (type == "default" or type=="date" or type=="")
+    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+        return a->acquisition_date < b->acquisition_date; });
+  if (type == "help") {
+    LOG(0) << "Available sort type: 'id' or 'date'";
+  }
+
 }
 // --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::CommonDatabase::~CommonDatabase()
-{
-}
-// --------------------------------------------------------------------
-
-// --------------------------------------------------------------------
-void syd::CommonDatabase::CreateTables()
-{
-  //  syd::Database::CreateTables();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
-  AddTable<syd::RecordHistory>();
-}
-// --------------------------------------------------------------------
-

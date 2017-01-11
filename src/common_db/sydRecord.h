@@ -37,7 +37,8 @@ namespace syd {
   class RecordTraitsBase;
   template<class T> class RecordTraits;
 
-  /// Base class for all record (or element, or row) in a table
+  /// Base class for all record (or element, or row) in a table.
+  /// Need to be abstract class (pure virtual method)
 #pragma db object abstract pointer(std::shared_ptr) callback(Callback)
   class Record {
   public:

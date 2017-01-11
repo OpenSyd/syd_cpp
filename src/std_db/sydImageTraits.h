@@ -16,29 +16,27 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SYDIMAGETRAITS_H
+#define SYDIMAGETRAITS_H
+
 // syd
-#include "sydCommonDatabase.h"
+#include "sydImage.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------
-syd::CommonDatabase::CommonDatabase():syd::Database()
-{
-}
-// --------------------------------------------------------------------
+namespace syd {
+
+  /// Main GetTraits function
+  DEFINE_TABLE_TRAITS_HEADER(Image);
 
 
-// --------------------------------------------------------------------
-syd::CommonDatabase::~CommonDatabase()
-{
-}
+  /// Specific Sort for Image
+  //  DEFINE_TABLE_TRAITS_SORT_HEADER(Image);
+  template<> void syd::RecordTraits<syd::Image>::BuildMapOfSortFunctions(CompareFunctionMap & map) ;
+
+
+} // end of namespace
 // --------------------------------------------------------------------
 
-// --------------------------------------------------------------------
-void syd::CommonDatabase::CreateTables()
-{
-  //  syd::Database::CreateTables();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
-  AddTable<syd::RecordHistory>();
-}
-// --------------------------------------------------------------------
-
+#endif

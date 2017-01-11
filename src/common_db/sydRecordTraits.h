@@ -63,20 +63,29 @@ namespace syd {
     virtual void Update(syd::Database * db, const RecordBaseVector & records) const;
     virtual void Delete(syd::Database * db, const RecordBaseVector & records) const;
 
+    /// Function to sort elements in a vector
 
-    /// other functions
-    void Sort(const syd::Database * db, RecordBaseVector & records, const std::string & type) const;
-    void Sort(const syd::Database * db, vector & records, const std::string & type) const;
+    typedef std::function<bool(pointer a, pointer b)> CompareFunction;
+    typedef std::map<std::string, CompareFunction> CompareFunctionMap;
+    void Sort(RecordBaseVector & records, const std::string & type) const;
+    const CompareFunctionMap & GetMapOfSortFunctions() const;
+    static void BuildMapOfSortFunctions(CompareFunctionMap & map);
 
   protected:
     RecordTraits(std::string table_name);
     static RecordTraitsBase * singleton_;
 
+    // For sorting elements
+    // The following is mutable because may be initialized the first time it is
+    // call (from a const function)
+    void InternalSort(vector & records, const std::string & type) const;
+    mutable CompareFunctionMap compare_record_fmap_;
+    //virtual void BuildMapOfSortFunctions() const;
+
   }; // end of class
 
-  /* template<class RecordType> */
-  /*   RecordTraits<RecordType> * GetTrait(std::shared_ptr<RecordType> p); */
 
+  /// Macros to simplify the traits classes
 
 #define DEFINE_TABLE_TRAITS_HEADER(TABLE_NAME)  \
   template<> syd::RecordTraitsBase *            \
@@ -90,6 +99,11 @@ namespace syd {
       return syd::RecordTraits<TABLE_NAME>::GetTraits(#TABLE_NAME); \
     }                                                               \
   }                                                                 \
+
+#define DEFINE_TABLE_TRAITS_SORT_HEADER(TABLE_NAME) \
+  template<> void syd::RecordTraits<TABLE_NAME>::   \
+    Sort(TABLE_NAME::vector & v,                    \
+         const std::string & type) const;
 
 
 

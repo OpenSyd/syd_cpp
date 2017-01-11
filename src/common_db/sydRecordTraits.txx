@@ -203,36 +203,66 @@ Delete(syd::Database * db, const RecordBaseVector & records) const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::RecordTraits<RecordType>::Sort(const syd::Database * db,
-                                         RecordBaseVector & records,
+void syd::RecordTraits<RecordType>::Sort(RecordBaseVector & records,
                                          const std::string & type) const
 {
-  DDF();
-
-  typename RecordType::vector specific_records;
-  for(auto r:records)
-    specific_records.push_back(std::dynamic_pointer_cast<RecordType>(r)); // or static ?
-  DD("convertion ok");
-  Sort(db, specific_records, type);
-  DD("convertion back");
-  records.clear();
-  for(auto r:specific_records) records.push_back(r);
-  DD("end");
+  DD("RecordTraits<RecordType>::Sort (specific)");
+  DD("convert");
+  auto specific_records = CastFromVectorOfRecords<RecordType>(records);
+  InternalSort(specific_records, type);
+  DD("convert back");
+  records = ConvertToVectorOfRecords(specific_records);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::RecordTraits<RecordType>::Sort(const syd::Database * db,
-                                         vector & v,
-                                         const std::string & type) const
+const typename syd::RecordTraits<RecordType>::CompareFunctionMap &
+syd::RecordTraits<RecordType>::GetMapOfSortFunctions() const
+{
+  return compare_record_fmap_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::InternalSort(vector & v, const std::string & type) const
+{
+  DD("default sort");
+  DD(type);
+  DD(compare_record_fmap_.size());
+
+  if (compare_record_fmap_.size() == 0)
+    BuildMapOfSortFunctions(compare_record_fmap_);
+
+  auto it = compare_record_fmap_.find(type);
+  if (it == compare_record_fmap_.end()) {
+    // auto help = build list of type
+    // print help
+    DD("not dfound");
+    return;
+  }
+  DD("found");
+
+  std::sort(begin(v), end(v), it->second);
+  /*
+    if (type == "id")
+    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+    return a->id < b->id; });
+  */
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::BuildMapOfSortFunctions(CompareFunctionMap & map) 
 {
   DDF();
-  DD("default sort");
-  std::sort(begin(v), end(v), [v](pointer a, pointer b) {
-      return a->id < b->id;
-    });
+  map["id"] =
+    [](pointer a, pointer b) -> bool { return a->id < b->id; };
 }
 // --------------------------------------------------------------------
 

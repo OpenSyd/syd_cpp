@@ -29,9 +29,9 @@ DEFINE_TABLE_TRAITS_IMPL(DicomFile)
 DEFINE_TABLE_TRAITS_IMPL(DicomSerie)
 
 DEFINE_TABLE_TRAITS_IMPL(PixelUnit)
-DEFINE_TABLE_TRAITS_IMPL(Image)
+//DEFINE_TABLE_TRAITS_IMPL(Image)
 DEFINE_TABLE_TRAITS_IMPL(RoiType);
-DEFINE_TABLE_TRAITS_IMPL(RoiMaskImage)
+//DEFINE_TABLE_TRAITS_IMPL(RoiMaskImage)
 DEFINE_TABLE_TRAITS_IMPL(RoiStatistic);
 
 DEFINE_TABLE_TRAITS_IMPL(Elastix)
@@ -40,28 +40,29 @@ DEFINE_TABLE_TRAITS_IMPL(Timepoints)
 DEFINE_TABLE_TRAITS_IMPL(RoiTimepoints)
 DEFINE_TABLE_TRAITS_IMPL(FitTimepoints)
 
-// --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Image>::
-Sort(const syd::Database * db,
-     syd::Image::vector & v,
-     const std::string & type) const
-{
-  DDF();
-  DD("image sort");
-  if (type == "id")
-    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
-        return a->id < b->id; });
-  if (type == "default" or type=="date" or type=="")
-    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
-        return a->acquisition_date < b->acquisition_date; });
-  if (type == "help") {
-    LOG(0) << "Available sort type: 'id' or 'date'";
-  }
-}
-// --------------------------------------------------------------------
+// // --------------------------------------------------------------------
+// template<> void syd::RecordTraits<syd::Image>::
+// Sort(const syd::Database * db,
+//      syd::Image::vector & v,
+//      const std::string & type) const
+// {
+//   DDF();
+//   DD("image sort");
+//   if (type == "id")
+//     std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+//         return a->id < b->id; });
+//   if (type == "default" or type=="date" or type=="")
+//     std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+//         return a->acquisition_date < b->acquisition_date; });
+//   if (type == "help") {
+//     LOG(0) << "Available sort type: 'id' or 'date'";
+//   }
+// }
+// // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
+/*
 template<> void syd::RecordTraits<syd::RoiMaskImage>::
 Sort(const syd::Database * db,
      syd::RoiMaskImage::vector & v,
@@ -73,6 +74,7 @@ Sort(const syd::Database * db,
   syd::RecordTraits<syd::Image>::GetTraits()->Sort(db, temp, type);
   v = syd::CastFromVectorOfRecords<syd::RoiMaskImage>(temp);
 }
+*/
 // --------------------------------------------------------------------
 
 /*

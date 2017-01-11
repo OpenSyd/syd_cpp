@@ -20,7 +20,6 @@
 
 // syd
 #include "sydDatabase.h"
-#include "sydRecord.h"
 #include "sydDatabaseInformation-odb.hxx"
 #include "sydRecord-odb.hxx"
 #include "sydFile-odb.hxx"
@@ -28,14 +27,13 @@
 #include "sydRecordWithHistory-odb.hxx"
 #include "sydTag-odb.hxx"
 #include "sydRecordWithTags-odb.hxx"
-//#include "sydRecordTraits.h"
+
+#include "sydTagTraits.h"
+#include "sydFileTraits.h"
+#include "sydRecordHistoryTraits.h"
 
 // --------------------------------------------------------------------
 namespace syd {
-
-  DEFINE_TABLE_TRAITS_HEADER(Tag);
-  DEFINE_TABLE_TRAITS_HEADER(File);
-  DEFINE_TABLE_TRAITS_HEADER(RecordHistory);
 
   class CommonDatabase: public Database {
   public:

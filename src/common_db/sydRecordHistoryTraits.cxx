@@ -12,33 +12,33 @@
 
   It is distributed under dual licence
 
-  - BSD        See included LICENSE.txt file
+  - BSD        See included LICENSE.txt RecordHistory
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
 // syd
-#include "sydCommonDatabase.h"
+#include "sydRecordHistoryTraits.h"
 
 // --------------------------------------------------------------------
-syd::CommonDatabase::CommonDatabase():syd::Database()
+DEFINE_TABLE_TRAITS_IMPL(RecordHistory);
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+/*
+template<> void syd::RecordTraits<syd::RecordHistory>::
+Sort(syd::RecordHistory::vector & v, const std::string & type) const
 {
+  DD("specific RecordHistory sort");
+  if (type == "id")
+    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+        return a->id < b->id; });
+  if (type == "default" or type=="update")
+    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
+        return a->update_date < b->update_date; });
+  if (type == "help") {
+    LOG(0) << "Available sort type: 'id' or 'update'";
+  }
 }
+*/
 // --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::CommonDatabase::~CommonDatabase()
-{
-}
-// --------------------------------------------------------------------
-
-// --------------------------------------------------------------------
-void syd::CommonDatabase::CreateTables()
-{
-  //  syd::Database::CreateTables();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
-  AddTable<syd::RecordHistory>();
-}
-// --------------------------------------------------------------------
-

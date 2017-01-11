@@ -40,6 +40,9 @@
 #include "sydRoiTimepoints-odb.hxx"
 #include "sydFitTimepoints-odb.hxx"
 
+#include "sydImageTraits.h"
+#include "sydRoiMaskImageTraits.h"
+
 // itk
 #include <itkImage.h>
 
@@ -109,9 +112,9 @@ namespace syd {
   DEFINE_TABLE_TRAITS_HEADER(DicomSerie);
 
   DEFINE_TABLE_TRAITS_HEADER(PixelUnit);
-  DEFINE_TABLE_TRAITS_HEADER(Image);
+  //DEFINE_TABLE_TRAITS_HEADER(Image);
   DEFINE_TABLE_TRAITS_HEADER(RoiType);
-  DEFINE_TABLE_TRAITS_HEADER(RoiMaskImage);
+  //DEFINE_TABLE_TRAITS_HEADER(RoiMaskImage);
   DEFINE_TABLE_TRAITS_HEADER(RoiStatistic);
 
   DEFINE_TABLE_TRAITS_HEADER(Elastix);
@@ -124,12 +127,11 @@ namespace syd {
   template<>                                    \
     void                                        \
     syd::RecordTraits<TABLE_NAME>::             \
-    Sort(const syd::Database * db,              \
-         TABLE_NAME::vector & v,                \
+    Sort(TABLE_NAME::vector & v,                \
          const std::string & type) const;
 
-  DEFINE_SORT(Image);
-  DEFINE_SORT(RoiMaskImage);
+  /* DEFINE_SORT(Image); */
+  //  DEFINE_SORT(RoiMaskImage);
 
 
 } // namespace syd

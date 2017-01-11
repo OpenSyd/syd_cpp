@@ -40,6 +40,10 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiTimepoints-odb.cxx sydRoiTimepoints-schema.cxx sydRoiTimepoints.cxx
   sydFitTimepoints-odb.cxx sydFitTimepoints-schema.cxx sydFitTimepoints.cxx
 
+  sydImageTraits.cxx
+  sydRoiMaskImageTraits.cxx
+  sydStandardDatabase.cxx
+
   sydPixelUnitHelper.cxx
   sydDicomSerieBuilder.cxx
   sydDicomSerieHelper.cxx
@@ -67,13 +71,11 @@ add_library(sydStandardDatabaseObjects OBJECT ${SYD_STANDARD_DATABASE_SRC})
 
 # Conventional shared lib for command line executables
 add_library(sydStandardDatabase SHARED
-  sydStandardDatabase.cxx
   sydStandardDatabaseStatic.cxx
   $<TARGET_OBJECTS:sydStandardDatabaseObjects>)
 
 # Plugin library : MUST be called lib<DatabaseType>Plugin.so
 add_library(StandardDatabasePlugin MODULE
-  sydStandardDatabase.cxx
   sydStandardDatabasePlugin.cxx
   $<TARGET_OBJECTS:sydStandardDatabaseObjects>)
 

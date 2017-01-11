@@ -60,9 +60,7 @@ namespace syd {
     virtual void Delete(syd::Database * db, const RecordBaseVector & records) const = 0;
 
     /// Other functions
-    virtual void Sort(const syd::Database * db,
-                      RecordBaseVector & records,
-                      const std::string & type) const = 0;
+    virtual void Sort(RecordBaseVector & records, const std::string & type) const = 0;
 
   protected:
     RecordTraitsBase(std::string table_name);
