@@ -206,11 +206,8 @@ template<class RecordType>
 void syd::RecordTraits<RecordType>::Sort(RecordBaseVector & records,
                                          const std::string & type) const
 {
-  DD("RecordTraits<RecordType>::Sort (specific)");
-  DD("convert");
   auto specific_records = CastFromVectorOfRecords<RecordType>(records);
   InternalSort(specific_records, type);
-  DD("convert back");
   records = ConvertToVectorOfRecords(specific_records);
 }
 // --------------------------------------------------------------------
