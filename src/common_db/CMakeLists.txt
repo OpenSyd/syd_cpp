@@ -67,7 +67,6 @@ set(sydCommonDatabase_src
 
   sydTagTraits.cxx
   sydFileTraits.cxx
-  sydRecordHistoryTraits.cxx
   sydCommonDatabase.cxx
 
   sydRecordHelper.cxx

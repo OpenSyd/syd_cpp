@@ -26,20 +26,16 @@ DEFINE_TABLE_TRAITS_IMPL(Injection);
 
 // --------------------------------------------------------------------
 template<> void syd::RecordTraits<syd::Injection>::
-Sort(const syd::Database * db, syd::Injection::vector & v, const std::string & type) const
+BuildMapOfSortFunctions(CompareFunctionMap & map)
 {
-  auto b = syd::RecordTraits<syd::Record>::GetTraits()->Sort(db, temp, type);
-  if (b) return;
+  // Sort functions from Record
+  syd::RecordTraits<syd::Record>::CompareFunctionMap m;
+  syd::RecordTraits<syd::Record>::BuildMapOfSortFunctions(m);
+  map.insert(m.begin(), m.end());
 
-  if (type == "id")
-    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
-        return a->id < b->id; });
-  if (type == "default" or type=="date" or type=="")
-    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
-        return a->acquisition_date < b->acquisition_date; });
-  if (type == "help") {
-    LOG(0) << "Available sort type: 'id' or 'date'";
-  }
-
+  // New sort comparison
+  auto f = [](pointer a, pointer b) -> bool { return a->date < b->date; };
+  map["date"] = f;
+  map[""] = f; // make it the default
 }
 // --------------------------------------------------------------------

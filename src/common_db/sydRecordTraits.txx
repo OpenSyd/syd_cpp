@@ -230,39 +230,33 @@ syd::RecordTraits<RecordType>::GetMapOfSortFunctions() const
 template<class RecordType>
 void syd::RecordTraits<RecordType>::InternalSort(vector & v, const std::string & type) const
 {
-  DD("default sort");
-  DD(type);
-  DD(compare_record_fmap_.size());
-
+  // Only once: build the map of sorting function
   if (compare_record_fmap_.size() == 0)
     BuildMapOfSortFunctions(compare_record_fmap_);
 
+  // Try to find the sort function
   auto it = compare_record_fmap_.find(type);
   if (it == compare_record_fmap_.end()) {
-    // auto help = build list of type
-    // print help
-    DD("not dfound");
+    std::string help;
+    for(auto & c:compare_record_fmap_)
+      help += "'"+c.first+"' ";
+    LOG(WARNING) << "Cannot find the sorting type '"
+                 << type << "'. Current known types are: "
+                 << help;
     return;
   }
-  DD("found");
-
   std::sort(begin(v), end(v), it->second);
-  /*
-    if (type == "id")
-    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
-    return a->id < b->id; });
-  */
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::RecordTraits<RecordType>::BuildMapOfSortFunctions(CompareFunctionMap & map) 
+void syd::RecordTraits<RecordType>::BuildMapOfSortFunctions(CompareFunctionMap & map)
 {
-  DDF();
-  map["id"] =
-    [](pointer a, pointer b) -> bool { return a->id < b->id; };
+  auto f = [](pointer a, pointer b) -> bool { return a->id < b->id; };
+  map["id"] = f;
+  map[""] = f; // default 
 }
 // --------------------------------------------------------------------
 

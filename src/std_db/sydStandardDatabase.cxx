@@ -22,7 +22,7 @@
 #include "sydDatabaseManager.h"
 
 DEFINE_TABLE_TRAITS_IMPL(Patient)
-DEFINE_TABLE_TRAITS_IMPL(Injection)
+//DEFINE_TABLE_TRAITS_IMPL(Injection)
 DEFINE_TABLE_TRAITS_IMPL(Radionuclide)
 
 DEFINE_TABLE_TRAITS_IMPL(DicomFile)

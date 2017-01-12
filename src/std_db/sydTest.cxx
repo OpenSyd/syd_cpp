@@ -48,9 +48,17 @@ int main(int argc, char* argv[])
   syd::Image::vector images;
   db->Query(images);
   DD(images.size());
+  DD(images[0]->GetTableName());
   for(auto i:images) std::cout << i->id << " "; std::cout << std::endl;
+  db->Sort<syd::Image>(images);
   db->Sort(images);
   for(auto i:images) std::cout << i->id << " "; std::cout << std::endl;
+
+  // syd::RecordHistory::pointer h;
+  // db->QueryOne(h, 1);
+  // DD(h);
+  // h = images[0];
+  // DD(h);
 
   syd::Record::vector records;
   db->Query(records, "Image");

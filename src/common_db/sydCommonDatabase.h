@@ -30,7 +30,6 @@
 
 #include "sydTagTraits.h"
 #include "sydFileTraits.h"
-#include "sydRecordHistoryTraits.h"
 
 // --------------------------------------------------------------------
 namespace syd {

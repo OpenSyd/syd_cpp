@@ -25,18 +25,22 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  /// WARNING: this class does not inherit from syd::Record. It is used for
+  /// composition such that class may multiple inherit from syd::Record and
+  /// other syd::RecordWithSomething classes
+
 #pragma db object abstract pointer(std::shared_ptr)
   class RecordWithHistory {
   public:
 
-    /// Define pointer type
-    typedef std::shared_ptr<RecordWithHistory> pointer;
-
-    /// Define vectortype
-    typedef std::vector<pointer> vector;
-
     /// Store the history. It is 'mutable' because is changed in the const Callback.
     mutable syd::RecordHistory::pointer history;
+
+    /// Specific case for RecordWithHistory (composition not inheritance)
+    typedef std::shared_ptr<syd::RecordWithHistory> pointer;
+    typedef std::function<bool(pointer a, pointer b)> CompareFunction;
+    typedef std::map<std::string, CompareFunction> CompareFunctionMap;
+    static void BuildMapOfSortFunctions(CompareFunctionMap & map);
 
     void SetPrintHistoryFlag(bool b) { print_history_flag_ = b; }
 
@@ -49,11 +53,12 @@ namespace syd {
   protected:
     RecordWithHistory();
 
-    /// Not stored in the db
+    /// Not stored in the db //FIXME to remove ?
  #pragma db transient
    bool print_history_flag_;
 
   };
+
 
 } // end namespace
 // --------------------------------------------------------------------

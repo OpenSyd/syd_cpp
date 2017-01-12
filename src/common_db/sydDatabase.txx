@@ -280,14 +280,9 @@ template<class RecordType>
 void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records,
                          const std::string & order) const
 {
-  DD("syd::Database::Sort (specific)");
   if (records.size() == 0) return;
-  DD("convert");
   RecordBaseVector v = ConvertToVectorOfRecords(records);
-  //  for(auto & r:records) v.push_back(r);
-  //  syd::RecordTraits<RecordType>::GetTraits()->Sort(this, v, order);
-  Sort(v, order, RecordTraits<RecordType>::GetTraits()->GetTableName());
-  DD("convert back");
+  Sort(v, RecordTraits<RecordType>::GetTraits()->GetTableName(), order);
   records = CastFromVectorOfRecords<RecordType>(v);
 }
 // --------------------------------------------------------------------

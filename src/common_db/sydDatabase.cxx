@@ -367,7 +367,6 @@ void syd::Database::Sort(RecordBaseVector & records,
                          const std::string & table_name,
                          const std::string & type) const
 {
-  DD("syd::Database::Sort (generic)");
   if (records.size() == 0) return;
   GetTraits(table_name)->Sort(records, type);
 }

@@ -31,7 +31,7 @@ namespace syd {
   DEFINE_TABLE_TRAITS_HEADER(RoiMaskImage);
 
   /// Specific Sort for Tag
-  //DEFINE_TABLE_TRAITS_SORT_HEADER(RoiMaskImage);
+  DEFINE_TABLE_TRAITS_SORT_HEADER(RoiMaskImage);
 
 }
 // --------------------------------------------------------------------

@@ -68,3 +68,14 @@ void syd::RecordWithHistory::DumpInTable(syd::PrintTable & ta) const
   ta.Set("updated", history->update_date);
 }
 // --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+void syd::RecordWithHistory::BuildMapOfSortFunctions(CompareFunctionMap & map)
+{
+  map["update"] =
+    [](pointer a, pointer b) -> bool { return a->history->update_date < b->history->update_date; };
+}
+// --------------------------------------------------------------------
+

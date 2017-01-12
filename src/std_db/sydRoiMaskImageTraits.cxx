@@ -25,14 +25,12 @@ DEFINE_TABLE_TRAITS_IMPL(RoiMaskImage);
 
 
 // --------------------------------------------------------------------
-/*
 template<> void syd::RecordTraits<syd::RoiMaskImage>::
-Sort(syd::RoiMaskImage::vector & v, const std::string & type) const
+BuildMapOfSortFunctions(CompareFunctionMap & map)
 {
-  auto temp = syd::ConvertToVectorOfRecords(v);
-  syd::RecordTraits<syd::Image>::GetTraits()->Sort(temp, type);
-  v = syd::CastFromVectorOfRecords<syd::RoiMaskImage>(temp);
-  }*/
+  // Like image
+  syd::RecordTraits<syd::Image>::CompareFunctionMap m;
+  syd::RecordTraits<syd::Image>::BuildMapOfSortFunctions(m);
+  map.insert(m.begin(), m.end());
+}
 // --------------------------------------------------------------------
-
-

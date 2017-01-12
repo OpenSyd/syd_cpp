@@ -100,11 +100,9 @@ namespace syd {
     }                                                               \
   }                                                                 \
 
-#define DEFINE_TABLE_TRAITS_SORT_HEADER(TABLE_NAME) \
-  template<> void syd::RecordTraits<TABLE_NAME>::   \
-    Sort(TABLE_NAME::vector & v,                    \
-         const std::string & type) const;
-
+#define DEFINE_TABLE_TRAITS_SORT_HEADER(TABLE_NAME)     \
+  template<> void syd::RecordTraits<TABLE_NAME>::       \
+    BuildMapOfSortFunctions(CompareFunctionMap & map) ;
 
 
   // --------------------------------------------------------------------
