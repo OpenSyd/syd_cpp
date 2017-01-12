@@ -25,4 +25,4 @@ option "id"       i "Display the record with this id (maybe multiple)"         i
 option "oneOutput"  o "The output is one and only one image (An error occurs if there is zero or multiples images)" flag    off
 option "vv"       -   "Open images with vv (result must be image)"             flag    off
 option "vvs"      -   "Open images with vv --sequence (result must be images)" flag    off
-option "sort"     -   "Sort type default/name/date etc (depends on table)"      string default="" no
+option "sort"     s   "Sort type default/name/date etc (depends on table)"      string default="" no
