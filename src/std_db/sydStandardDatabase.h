@@ -43,6 +43,7 @@
 #include "sydImageTraits.h"
 #include "sydRoiMaskImageTraits.h"
 #include "sydInjectionTraits.h"
+#include "sydPatientTraits.h"
 #include "sydDicomSerieTraits.h"
 
 // itk
@@ -106,7 +107,7 @@ namespace syd {
     const std::string & type) const;
   */
 
-  DEFINE_TABLE_TRAITS_HEADER(Patient);
+  //  DEFINE_TABLE_TRAITS_HEADER(Patient);
   //DEFINE_TABLE_TRAITS_HEADER(Injection);
   DEFINE_TABLE_TRAITS_HEADER(Radionuclide);
 

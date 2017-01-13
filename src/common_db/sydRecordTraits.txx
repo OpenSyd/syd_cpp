@@ -20,8 +20,7 @@
 
 // Default initialisation
 template<class RecordType>
-syd::RecordTraitsBase * syd::RecordTraits<RecordType>::
-singleton_ = nullptr;
+syd::RecordTraits<RecordType> * syd::RecordTraits<RecordType>::singleton_ = nullptr;
 
 
 // --------------------------------------------------------------------
@@ -61,7 +60,8 @@ RecordTraits(std::string table_name)
 
 // --------------------------------------------------------------------
 template<class RecordType>
-syd::RecordTraitsBase * syd::RecordTraits<RecordType>::
+syd::RecordTraits<RecordType> *
+syd::RecordTraits<RecordType>::
 GetTraits()
 {
   if (singleton_ != nullptr)  return singleton_;
@@ -72,7 +72,8 @@ GetTraits()
 
 // --------------------------------------------------------------------
 template<class RecordType>
-syd::RecordTraitsBase * syd::RecordTraits<RecordType>::
+syd::RecordTraits<RecordType> *
+syd::RecordTraits<RecordType>::
 GetTraits(std::string table_name)
 {
   if (singleton_ != nullptr) return singleton_;
@@ -297,12 +298,23 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map)
 
 // --------------------------------------------------------------------
 template<class RecordType>
+const typename syd::RecordTraits<RecordType>::FieldFunctionMap &
+syd::RecordTraits<RecordType>::
+GetFieldMap() const
+{
+  if (field_fmap_.size() == 0) BuildMapOfFieldsFunctions(field_fmap_);
+  return field_fmap_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
 typename syd::RecordTraits<RecordType>::FieldFunc
 syd::RecordTraits<RecordType>::
 GetField(std::string field) const
 {
   DDF();
-  DD(__PRETTY_FUNCTION__);
   DD(field);
 
   // Build map (first time)

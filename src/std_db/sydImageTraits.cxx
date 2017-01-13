@@ -62,13 +62,16 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map)
   DEFINE_FIELD_FUNCTION(frame_of_reference_uid);
 
   // patient ?
-  /*
-  auto map = syd::RecordTraits<syd::Patient>GetFieldMap();
-  for(auto & m:map) {
-    std::string = "patient."+m.first();
-    map[] = [](pointer a) -> std::string { return a->FIELD; };
-    }*/
-
+  auto pmap = syd::RecordTraits<syd::Patient>::GetTraits()->GetFieldMap();
+  for(auto & m:pmap) {
+    std::string s = "patient."+m.first;
+    DD(s);
+    auto f = m.second;
+    map[s] = [f](pointer a) -> std::string {
+      //if (a->patient == nullptr)
+      return f(a->patient);
+    };
+  }
   DD(map.size());
 }
 // --------------------------------------------------------------------

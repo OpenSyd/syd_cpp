@@ -21,7 +21,7 @@
 #include "sydUpdateRadionuclideFilter.h"
 #include "sydDatabaseManager.h"
 
-DEFINE_TABLE_TRAITS_IMPL(Patient)
+//DEFINE_TABLE_TRAITS_IMPL(Patient)
 //DEFINE_TABLE_TRAITS_IMPL(Injection)
 DEFINE_TABLE_TRAITS_IMPL(Radionuclide)
 
@@ -71,7 +71,7 @@ Sort(const syd::Database * db,
   DDF();
   DD("roimask image sort");
   auto temp = syd::ConvertToVectorOfRecords(v);
-  syd::RecordTraits<syd::Image>::GetTraits()->Sort(db, temp, type);
+
   v = syd::CastFromVectorOfRecords<syd::RoiMaskImage>(temp);
 }
 */

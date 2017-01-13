@@ -47,8 +47,7 @@ namespace syd {
     typedef std::map<std::string, CompareFunction> CompareFunctionMap;
 
     // Main static version to get the singleton traits
-    static RecordTraitsBase * GetTraits();
-    static RecordTraitsBase * GetTraits(std::string table_name);
+    static RecordTraits<RecordType> * GetTraits();
 
     // Create a new record associated with a db (it is not inserted yet)
     static pointer New(syd::Database * db);
@@ -68,17 +67,23 @@ namespace syd {
     /// Function to sort elements in a vector
     void Sort(RecordBaseVector & records, const std::string & type) const;
     const CompareFunctionMap & GetMapOfSortFunctions() const;
-    static void BuildMapOfSortFunctions(CompareFunctionMap & map);
+    static void BuildMapOfSortFunctions(CompareFunctionMap & map); // FIXME not static ?
 
     /// FIXME
     FieldFunc GetField(std::string field) const;
     typedef std::function<std::string(pointer)> SpecificFieldFunc;
     typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
     static void BuildMapOfFieldsFunctions(FieldFunctionMap & map);
+    const FieldFunctionMap & GetFieldMap() const;
 
   protected:
     RecordTraits(std::string table_name);
-    static RecordTraitsBase * singleton_;
+
+    /// Really build the singleton
+    static RecordTraits<RecordType> * GetTraits(std::string table_name);
+
+    /// Unique instance (singleton)
+    static RecordTraits<RecordType> * singleton_;
 
     // For sorting elements. The following is mutable because may be
     // initialized the first time it is call (from a const function)
@@ -89,20 +94,19 @@ namespace syd {
     // FIXME
     mutable FieldFunctionMap field_fmap_;
 
-
   }; // end of class
 
 
   /// Macros to simplify the traits classes
 
 #define DEFINE_TABLE_TRAITS_HEADER(TABLE_NAME)  \
-  template<> syd::RecordTraitsBase *            \
+  template<> syd::RecordTraits<TABLE_NAME> *    \
     RecordTraits<TABLE_NAME>::GetTraits();
 
 #define DEFINE_TABLE_TRAITS_IMPL(TABLE_NAME)                        \
   namespace syd {                                                   \
     template<>                                                      \
-      syd::RecordTraitsBase *                                       \
+      syd::RecordTraits<TABLE_NAME> *                               \
       syd::RecordTraits<TABLE_NAME>::GetTraits() {                  \
       return syd::RecordTraits<TABLE_NAME>::GetTraits(#TABLE_NAME); \
     }                                                               \
