@@ -23,6 +23,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydRecordHelper.h"
 #include "sydPrintTable.h"
+#include "sydPrintTable2.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -112,6 +113,21 @@ int main(int argc, char* argv[])
       LOG(1) << "No records match";
       return EXIT_SUCCESS;
     }
+    DD("table");
+    DD(table_name);
+
+    syd::PrintTable2 table;
+    table.Build(results, args_info.format_arg);
+    //    db->GetField(table_name, )
+
+    auto f = db->GetField("Image", "id");
+    DD(f(records[0]));
+    //    DD(records[0]->GetField("id")); // FIXME possible in record
+
+
+    table.Print(std::cout);
+
+    /*
     syd::PrintTable table;
     table.SetFormat(format);
     table.SetHeaderFlag(!args_info.noheader_flag);
@@ -138,6 +154,7 @@ int main(int argc, char* argv[])
                    << std::endl << "Query error is: " << e.what();
       }
     }
+    */
   }
 
   // Check

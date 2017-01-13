@@ -71,6 +71,7 @@ namespace syd {
 
     /// FIXME
     FieldFunc GetField(std::string field) const;
+    std::vector<FieldFunc> GetFields(std::string fields) const;
     typedef std::function<std::string(pointer)> SpecificFieldFunc;
     typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
     void BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;

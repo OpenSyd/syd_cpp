@@ -64,6 +64,7 @@ namespace syd {
 
     /// FIXME
     virtual FieldFunc GetField(std::string field) const = 0;
+    virtual std::vector<FieldFunc> GetFields(std::string fields) const = 0;
 
   protected:
     RecordTraitsBase(std::string table_name);

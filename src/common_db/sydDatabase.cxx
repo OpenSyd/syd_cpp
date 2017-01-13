@@ -657,6 +657,16 @@ GetField(std::string table_name, std::string field)
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+std::vector<syd::Database::FieldFunc> syd::Database::
+GetFields(std::string table_name, std::string fields)
+{
+  DDF();
+  return GetTraits(table_name)->GetFields(fields);
+}
+// --------------------------------------------------------------------
+
 // --------------------------------------------------------------------
 /*const syd::Record::GetFieldFunction &
   syd::Database::FieldGetter(std::string table_name, std::string field_name) const

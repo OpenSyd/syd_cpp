@@ -16,9 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#include "sydPrintTable.h"
 #include "sydRecordTraits.h"
-
+#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 template<class RecordType>
@@ -26,11 +25,12 @@ void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & record
                          const std::string & format,
                          std::ostream & os)
 {
+  /*
   syd::PrintTable table;
   table.SetFormat(format);
   //table.SetHeaderFlag(!args_info.noheader_flag);
   table.Build(records.begin(), records.end());
-  table.Print(os);
+  table.Print(os);*/
 }
 // --------------------------------------------------------------------
 

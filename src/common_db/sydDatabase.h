@@ -289,6 +289,7 @@ namespace syd {
     /// FIXME
     typedef std::function<std::string(RecordBasePointer)> FieldFunc;
     FieldFunc GetField(std::string table_name, std::string field);
+    std::vector<FieldFunc> GetFields(std::string table_name, std::string fields);
 
     // ----------------------------------------------------------------------------------
   protected:

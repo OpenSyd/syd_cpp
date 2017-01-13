@@ -95,7 +95,7 @@ target_link_libraries(sydInsert ${SYD_COMMON_DB_LIBRARY})
 
 #----------------------------------------------------------
 wrap_ggo(sydFind_GGO_C sydFind.ggo sydCommandLineDefault.ggo)
-add_executable(sydFind sydFind.cxx ${sydFind_GGO_C})
+add_executable(sydFind sydPrintTable2.cxx sydFind.cxx ${sydFind_GGO_C})
 target_link_libraries(sydFind ${SYD_COMMON_DB_LIBRARY})
 #----------------------------------------------------------
 

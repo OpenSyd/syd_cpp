@@ -61,6 +61,7 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
   DEFINE_FIELD_FUNCTION(modality);
   DEFINE_FIELD_FUNCTION(type);
   DEFINE_FIELD_FUNCTION(pixel_type);
+  DEFINE_FIELD_FUNCTION(acquisition_date);
   DEFINE_FIELD_FUNCTION(frame_of_reference_uid);
 
   // patient ? FIXME --> as a templated function !

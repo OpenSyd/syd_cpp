@@ -348,6 +348,25 @@ GetField(std::string field) const
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+template<class RecordType>
+std::vector<typename syd::RecordTraits<RecordType>::FieldFunc> 
+syd::RecordTraits<RecordType>::
+GetFields(std::string fields) const
+{
+  DDF();
+  DD(fields);
+  std::vector<std::string> words;
+  syd::GetWords(words, fields);
+  std::vector<FieldFunc> f;
+  for(auto & w:words) f.push_back(GetField(w));
+  return f;
+}
+// --------------------------------------------------------------------
+
+
+
 // --------------------------------------------------------------------
 /*template<class RecordType>
   const typename syd::RecordTraits<RecordType>::FieldFunctionType &
