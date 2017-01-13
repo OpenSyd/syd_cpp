@@ -224,7 +224,7 @@ Sort(RecordBaseVector & records,
 template<class RecordType>
 const typename syd::RecordTraits<RecordType>::CompareFunctionMap &
 syd::RecordTraits<RecordType>::
-GetMapOfSortFunctions() const
+GetSortFunctionMap() const
 {
   return compare_record_fmap_;
 }
@@ -259,7 +259,17 @@ InternalSort(vector & v, const std::string & type) const
 // --------------------------------------------------------------------
 template<class RecordType>
 void syd::RecordTraits<RecordType>::
-BuildMapOfSortFunctions(CompareFunctionMap & map)
+BuildMapOfSortFunctions(CompareFunctionMap & map) const
+{
+  SetDefaultSortFunctions(map);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::
+SetDefaultSortFunctions(CompareFunctionMap & map) const
 {
   auto f = [](pointer a, pointer b) -> bool { return a->id < b->id; };
   map["id"] = f;
@@ -270,12 +280,11 @@ BuildMapOfSortFunctions(CompareFunctionMap & map)
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::RecordTraits<RecordType>::
-MergeRecordMapOfSortFunctions(CompareFunctionMap & map)
+void
+syd::RecordTraits<RecordType>::
+BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 {
-  syd::RecordTraits<syd::Record>::CompareFunctionMap m;
-  syd::RecordTraits<syd::Record>::BuildMapOfSortFunctions(m);
-  map.insert(m.begin(), m.end());
+  SetDefaultFieldFunctions(map);
 }
 // --------------------------------------------------------------------
 
@@ -284,7 +293,7 @@ MergeRecordMapOfSortFunctions(CompareFunctionMap & map)
 template<class RecordType>
 void
 syd::RecordTraits<RecordType>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map)
+SetDefaultFieldFunctions(FieldFunctionMap & map) const
 {
   DDF();
   auto f = [](pointer a) -> std::string { return std::to_string(a->id); };

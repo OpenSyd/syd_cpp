@@ -35,7 +35,7 @@ namespace syd {
 
 
   template<> void syd::RecordTraits<syd::Image>::
-    BuildMapOfFieldsFunctions(FieldFunctionMap & map);
+    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
 
 
 } // end of namespace

@@ -66,14 +66,14 @@ namespace syd {
 
     /// Function to sort elements in a vector
     void Sort(RecordBaseVector & records, const std::string & type) const;
-    const CompareFunctionMap & GetMapOfSortFunctions() const;
-    static void BuildMapOfSortFunctions(CompareFunctionMap & map); // FIXME not static ?
+    const CompareFunctionMap & GetSortFunctionMap() const;
+    void BuildMapOfSortFunctions(CompareFunctionMap & map) const;
 
     /// FIXME
     FieldFunc GetField(std::string field) const;
     typedef std::function<std::string(pointer)> SpecificFieldFunc;
     typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
-    static void BuildMapOfFieldsFunctions(FieldFunctionMap & map);
+    void BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
     const FieldFunctionMap & GetFieldMap() const;
 
   protected:
@@ -89,10 +89,12 @@ namespace syd {
     // initialized the first time it is call (from a const function)
     void InternalSort(vector & records, const std::string & type) const;
     mutable CompareFunctionMap compare_record_fmap_;
-    static void MergeRecordMapOfSortFunctions(CompareFunctionMap & map);
+    void SetDefaultSortFunctions(CompareFunctionMap & map) const;
 
     // FIXME
     mutable FieldFunctionMap field_fmap_;
+    void SetDefaultFieldFunctions(FieldFunctionMap & map) const;
+
 
   }; // end of class
 
@@ -112,9 +114,9 @@ namespace syd {
     }                                                               \
   }                                                                 \
 
-#define DEFINE_TABLE_TRAITS_SORT_HEADER(TABLE_NAME)     \
-  template<> void syd::RecordTraits<TABLE_NAME>::       \
-    BuildMapOfSortFunctions(CompareFunctionMap & map) ;
+#define DEFINE_TABLE_TRAITS_SORT_HEADER(TABLE_NAME)           \
+  template<> void syd::RecordTraits<TABLE_NAME>::             \
+    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
 
   // --------------------------------------------------------------------
 } // end namespace

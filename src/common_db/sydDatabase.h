@@ -290,17 +290,6 @@ namespace syd {
     typedef std::function<std::string(RecordBasePointer)> FieldFunc;
     FieldFunc GetField(std::string table_name, std::string field);
 
-
-    /// Get a function that retrive a field value (string) according to table_name and field name
-    //    const syd::Record::GetFieldFunction & FieldGetter(std::string table_name, std::string field_name) const;
-
-    /*    static const syd::Record::GetFieldFunction & GetFieldFunction(std::string table_name,
-          std::string field_name) const;
-    */
-
-    /// Get (initialize) the map of field getter function
-    //    const std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> & GetDefaultFields() const;
-
     // ----------------------------------------------------------------------------------
   protected:
     // Create an empty database

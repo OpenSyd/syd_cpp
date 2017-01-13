@@ -292,7 +292,7 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records,
 template<class RecordType>
 typename RecordType::pointer syd::Database::New()
 {
-  return syd::RecordTraits<RecordType>::New(this);
+  return syd::RecordTraits<RecordType>::New(this); // FIXME change to not static ?
 }
 // --------------------------------------------------------------------
 

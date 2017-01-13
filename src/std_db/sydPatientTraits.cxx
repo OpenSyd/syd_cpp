@@ -17,37 +17,31 @@
   ===========================================================================**/
 
 // syd
-#include "sydImageTraits.h"
+#include "sydPatientTraits.h"
 
 // --------------------------------------------------------------------
-DEFINE_TABLE_TRAITS_IMPL(Image);
+DEFINE_TABLE_TRAITS_IMPL(Patient);
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Image>::
+template<> void syd::RecordTraits<syd::Patient>::
 BuildMapOfSortFunctions(CompareFunctionMap & map) const
 {
-  // Inherit from Record and RecordWithHistory, so get additional sort function
-  // from those classes.
-
   // Sort functions from Record
   SetDefaultSortFunctions(map);
 
-  syd::RecordWithHistory::CompareFunctionMap m2;
-  syd::RecordWithHistory::BuildMapOfSortFunctions(m2);
-  map.insert(m2.begin(), m2.end());
-
   // New sort comparison
-  auto f = [](pointer a, pointer b) -> bool { return a->acquisition_date < b->acquisition_date; };
-  map["date"] = f;
+  map["name"] = [](pointer a, pointer b) -> bool { return a->name < b->name; };
+  auto f = [](pointer a, pointer b) -> bool { return a->study_id < b->study_id; };
+  map["study_id"] = f;
   map[""] = f; // make it the default
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Image>::
+template<> void syd::RecordTraits<syd::Patient>::
 BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 {
   DDF();
@@ -58,22 +52,11 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 #define DEFINE_FIELD_FUNCTION(FIELD) \
   map[#FIELD] = [](pointer a) -> std::string { return a->FIELD; };
 
-  DEFINE_FIELD_FUNCTION(modality);
-  DEFINE_FIELD_FUNCTION(type);
-  DEFINE_FIELD_FUNCTION(pixel_type);
-  DEFINE_FIELD_FUNCTION(frame_of_reference_uid);
+  DEFINE_FIELD_FUNCTION(name);
+  //  DEFINE_FIELD_FUNCTION(study_id);
+  DEFINE_FIELD_FUNCTION(dicom_patientid);
+  DEFINE_FIELD_FUNCTION(sex);
 
-  // patient ? FIXME --> as a templated function !
-  auto pmap = syd::RecordTraits<syd::Patient>::GetTraits()->GetFieldMap();
-  for(auto & m:pmap) {
-    std::string s = "patient."+m.first;
-    DD(s);
-    auto f = m.second;
-    map[s] = [f](pointer a) -> std::string {
-      //if (a->patient == nullptr)
-      return f(a->patient);
-    };
-  }
   DD(map.size());
 }
 // --------------------------------------------------------------------

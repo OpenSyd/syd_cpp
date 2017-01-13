@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
   db->Query(images);
   DD(images.size());
   auto table_name = images[0]->GetTableName();
-  auto columns = "patient.name";
+  auto columns = "raw";
 
   syd::Record::vector records;
   for(auto &im:images) records.push_back(im);
@@ -57,13 +57,8 @@ int main(int argc, char* argv[])
   syd::Table table;
   table.Build(records, columns);
   table.Print(std::cout);
-  table.Build(records, "bidon");
+  table.Build(records, "patient.id");
   // table.SetHeaderFlag(true); // options
-
-
-
-
-
   // Step3
   table.Print(std::cout);
 

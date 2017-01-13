@@ -16,21 +16,29 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SYDPATIENTTRAITS_H
+#define SYDPATIENTTRAITS_H
+
 // syd
-#include "sydRoiMaskImageTraits.h"
+#include "sydPatient.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------
-DEFINE_TABLE_TRAITS_IMPL(RoiMaskImage);
-// --------------------------------------------------------------------
+namespace syd {
+
+  /// Main GetTraits function
+  DEFINE_TABLE_TRAITS_HEADER(Patient);
+
+  /// Specific Sort for Patient
+  DEFINE_TABLE_TRAITS_SORT_HEADER(Patient);
 
 
+  template<> void syd::RecordTraits<syd::Patient>::
+    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
+
+
+} // end of namespace
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::RoiMaskImage>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
-{
-  // Like image
-  syd::RecordTraits<syd::Image>::CompareFunctionMap m;
-  syd::RecordTraits<syd::Image>::GetTraits()->BuildMapOfSortFunctions(m);
-  map.insert(m.begin(), m.end());
-}
-// --------------------------------------------------------------------
+
+#endif

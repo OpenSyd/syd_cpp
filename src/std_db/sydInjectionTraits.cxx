@@ -26,12 +26,10 @@ DEFINE_TABLE_TRAITS_IMPL(Injection);
 
 // --------------------------------------------------------------------
 template<> void syd::RecordTraits<syd::Injection>::
-BuildMapOfSortFunctions(CompareFunctionMap & map)
+BuildMapOfSortFunctions(CompareFunctionMap & map) const
 {
   // Sort functions from Record
-  syd::RecordTraits<syd::Record>::CompareFunctionMap m;
-  syd::RecordTraits<syd::Record>::BuildMapOfSortFunctions(m);
-  map.insert(m.begin(), m.end());
+  SetDefaultSortFunctions(map);
 
   // New sort comparison
   auto f = [](pointer a, pointer b) -> bool { return a->date < b->date; };

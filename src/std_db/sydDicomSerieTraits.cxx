@@ -26,9 +26,9 @@ DEFINE_TABLE_TRAITS_IMPL(DicomSerie);
 
 // --------------------------------------------------------------------
 template<> void syd::RecordTraits<syd::DicomSerie>::
-BuildMapOfSortFunctions(CompareFunctionMap & map)
+BuildMapOfSortFunctions(CompareFunctionMap & map) const
 {
-  MergeRecordMapOfSortFunctions(map);
+  SetDefaultSortFunctions(map);
   // New sort comparison
   auto f = [](pointer a, pointer b) -> bool
     { return a->dicom_acquisition_date < b->dicom_acquisition_date; };
