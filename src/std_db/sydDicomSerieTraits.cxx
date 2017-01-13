@@ -16,24 +16,25 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDIMAGETRAITS_H
-#define SYDIMAGETRAITS_H
-
 // syd
-#include "sydImage.h"
-#include "sydStandardDatabase.h"
-#include "sydRecordTraits.h"
+#include "sydDicomSerieTraits.h"
 
 // --------------------------------------------------------------------
-namespace syd {
-
-  /// Main GetTraits function
-  DEFINE_TABLE_TRAITS_HEADER(Image);
-
-  /// Specific Sort for Image
-  DEFINE_TABLE_TRAITS_SORT_HEADER(Image);
-
-} // end of namespace
+DEFINE_TABLE_TRAITS_IMPL(DicomSerie);
 // --------------------------------------------------------------------
 
-#endif
+
+// --------------------------------------------------------------------
+template<> void syd::RecordTraits<syd::DicomSerie>::
+BuildMapOfSortFunctions(CompareFunctionMap & map)
+{
+  MergeRecordMapOfSortFunctions(map);
+  // New sort comparison
+  auto f = [](pointer a, pointer b) -> bool
+    { return a->dicom_acquisition_date < b->dicom_acquisition_date; };
+  map["date"] = f;
+  map[""] = f; // make it the default
+  map["recon_date"] = [](pointer a, pointer b) -> bool
+    { return a->dicom_reconstruction_date < b->dicom_reconstruction_date; };
+}
+// --------------------------------------------------------------------

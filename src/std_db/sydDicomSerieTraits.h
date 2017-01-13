@@ -16,11 +16,11 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDIMAGETRAITS_H
-#define SYDIMAGETRAITS_H
+#ifndef SYDDICOMSERIETRAITS_H
+#define SYDDICOMSERIETRAITS_H
 
 // syd
-#include "sydImage.h"
+#include "sydDicomSerie.h"
 #include "sydStandardDatabase.h"
 #include "sydRecordTraits.h"
 
@@ -28,10 +28,10 @@
 namespace syd {
 
   /// Main GetTraits function
-  DEFINE_TABLE_TRAITS_HEADER(Image);
+  DEFINE_TABLE_TRAITS_HEADER(DicomSerie);
 
-  /// Specific Sort for Image
-  DEFINE_TABLE_TRAITS_SORT_HEADER(Image);
+  /// Specific Sort for DicomSerie
+  DEFINE_TABLE_TRAITS_SORT_HEADER(DicomSerie);
 
 } // end of namespace
 // --------------------------------------------------------------------

@@ -43,6 +43,7 @@
 #include "sydImageTraits.h"
 #include "sydRoiMaskImageTraits.h"
 #include "sydInjectionTraits.h"
+#include "sydDicomSerieTraits.h"
 
 // itk
 #include <itkImage.h>
@@ -110,7 +111,7 @@ namespace syd {
   DEFINE_TABLE_TRAITS_HEADER(Radionuclide);
 
   DEFINE_TABLE_TRAITS_HEADER(DicomFile);
-  DEFINE_TABLE_TRAITS_HEADER(DicomSerie);
+  //DEFINE_TABLE_TRAITS_HEADER(DicomSerie);
 
   DEFINE_TABLE_TRAITS_HEADER(PixelUnit);
   //DEFINE_TABLE_TRAITS_HEADER(Image);

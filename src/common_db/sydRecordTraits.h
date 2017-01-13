@@ -70,6 +70,7 @@ namespace syd {
     void Sort(RecordBaseVector & records, const std::string & type) const;
     const CompareFunctionMap & GetMapOfSortFunctions() const;
     static void BuildMapOfSortFunctions(CompareFunctionMap & map);
+    static void MergeRecordMapOfSortFunctions(CompareFunctionMap & map);
 
   protected:
     RecordTraits(std::string table_name);
@@ -103,7 +104,6 @@ namespace syd {
 #define DEFINE_TABLE_TRAITS_SORT_HEADER(TABLE_NAME)     \
   template<> void syd::RecordTraits<TABLE_NAME>::       \
     BuildMapOfSortFunctions(CompareFunctionMap & map) ;
-
 
   // --------------------------------------------------------------------
 } // end namespace

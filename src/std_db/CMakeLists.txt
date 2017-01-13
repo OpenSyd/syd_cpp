@@ -40,6 +40,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiTimepoints-odb.cxx sydRoiTimepoints-schema.cxx sydRoiTimepoints.cxx
   sydFitTimepoints-odb.cxx sydFitTimepoints-schema.cxx sydFitTimepoints.cxx
 
+  sydDicomSerieTraits.cxx
   sydImageTraits.cxx
   sydRoiMaskImageTraits.cxx
   sydInjectionTraits.cxx

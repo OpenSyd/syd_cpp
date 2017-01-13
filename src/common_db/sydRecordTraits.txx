@@ -259,6 +259,17 @@ void syd::RecordTraits<RecordType>::BuildMapOfSortFunctions(CompareFunctionMap &
 
 
 // --------------------------------------------------------------------
+template<class RecordType>
+void syd::RecordTraits<RecordType>::MergeRecordMapOfSortFunctions(CompareFunctionMap & map)
+{
+  syd::RecordTraits<syd::Record>::CompareFunctionMap m;
+  syd::RecordTraits<syd::Record>::BuildMapOfSortFunctions(m);
+  map.insert(m.begin(), m.end());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 /*template<class RecordType>
   const typename syd::RecordTraits<RecordType>::FieldFunctionType &
   syd::RecordTraits<RecordType>::GetFieldFunction2(std::string field_name)

@@ -32,9 +32,7 @@ BuildMapOfSortFunctions(CompareFunctionMap & map)
   // from those classes.
 
   // Sort functions from Record
-  syd::RecordTraits<syd::Record>::CompareFunctionMap m;
-  syd::RecordTraits<syd::Record>::BuildMapOfSortFunctions(m);
-  map.insert(m.begin(), m.end());
+  MergeRecordMapOfSortFunctions(map);
 
   syd::RecordWithHistory::CompareFunctionMap m2;
   syd::RecordWithHistory::BuildMapOfSortFunctions(m2);
