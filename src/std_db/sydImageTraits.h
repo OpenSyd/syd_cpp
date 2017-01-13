@@ -33,6 +33,11 @@ namespace syd {
   /// Specific Sort for Image
   DEFINE_TABLE_TRAITS_SORT_HEADER(Image);
 
+
+  template<> void syd::RecordTraits<syd::Image>::
+    BuildMapOfFieldsFunctions(FieldFunctionMap & map);
+
+
 } // end of namespace
 // --------------------------------------------------------------------
 

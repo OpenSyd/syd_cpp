@@ -605,6 +605,7 @@ void syd::Database::Copy(std::string new_dbname)
 }
 // --------------------------------------------------------------------
 
+
 // --------------------------------------------------------------------
 void syd::Database::Copy(std::string new_dbname, std::string new_folder)
 {
@@ -646,6 +647,15 @@ void syd::Database::Copy(std::string new_dbname, std::string new_folder)
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+syd::Database::FieldFunc syd::Database::
+GetField(std::string table_name, std::string field)
+{
+  DDF();
+  return GetTraits(table_name)->GetField(field);
+}
+// --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
 /*const syd::Record::GetFieldFunction &

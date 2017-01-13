@@ -286,6 +286,11 @@ namespace syd {
     void SetOverwriteFileFlag(bool b) { overwrite_file_if_exists_flag_ = b; }
     bool GetOverwriteFileFlag() const { return overwrite_file_if_exists_flag_; }
 
+    /// FIXME
+    typedef std::function<std::string(RecordBasePointer)> FieldFunc;
+    FieldFunc GetField(std::string table_name, std::string field);
+
+
     /// Get a function that retrive a field value (string) according to table_name and field name
     //    const syd::Record::GetFieldFunction & FieldGetter(std::string table_name, std::string field_name) const;
 

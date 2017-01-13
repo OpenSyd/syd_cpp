@@ -51,7 +51,8 @@ syd::ConvertToVectorOfRecords(const std::vector<std::shared_ptr<RecordType>> & r
 
 // --------------------------------------------------------------------
 template<class RecordType>
-syd::RecordTraits<RecordType>::RecordTraits(std::string table_name)
+syd::RecordTraits<RecordType>::
+RecordTraits(std::string table_name)
   :RecordTraitsBase(table_name)
 {
 }
@@ -60,17 +61,19 @@ syd::RecordTraits<RecordType>::RecordTraits(std::string table_name)
 
 // --------------------------------------------------------------------
 template<class RecordType>
-syd::RecordTraitsBase * syd::RecordTraits<RecordType>::GetTraits()
+syd::RecordTraitsBase * syd::RecordTraits<RecordType>::
+GetTraits()
 {
   if (singleton_ != nullptr)  return singleton_;
-  return GetTraits("ERROR_you_should_set_the_table_name : need macros DEFINE_TABLE_XXX (specialisation of RecordTraits<T>::GetTraits)");
+  return GetTraits("ERROR_you_should_set_the_table_name: need macros DEFINE_TABLE_XXX (specialisation of RecordTraits<T>::GetTraits)");
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class RecordType>
-syd::RecordTraitsBase * syd::RecordTraits<RecordType>::GetTraits(std::string table_name)
+syd::RecordTraitsBase * syd::RecordTraits<RecordType>::
+GetTraits(std::string table_name)
 {
   if (singleton_ != nullptr) return singleton_;
   singleton_ = new RecordTraits<RecordType>(table_name);
@@ -82,7 +85,8 @@ syd::RecordTraitsBase * syd::RecordTraits<RecordType>::GetTraits(std::string tab
 // --------------------------------------------------------------------
 template<class RecordType>
 typename syd::RecordTraits<RecordType>::pointer
-syd::RecordTraits<RecordType>::New(syd::Database * db)
+syd::RecordTraits<RecordType>::
+New(syd::Database * db)
 {
   auto p = pointer(new RecordType);
   p->SetDatabasePointer(db);
@@ -94,7 +98,8 @@ syd::RecordTraits<RecordType>::New(syd::Database * db)
 // --------------------------------------------------------------------
 template<class RecordType>
 typename syd::RecordTraits<RecordType>::RecordBasePointer
-syd::RecordTraits<RecordType>::CreateNew(syd::Database * db) const
+syd::RecordTraits<RecordType>::
+CreateNew(syd::Database * db) const
 {
   return syd::RecordTraits<RecordType>::New(db);
 }
@@ -203,8 +208,9 @@ Delete(syd::Database * db, const RecordBaseVector & records) const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::RecordTraits<RecordType>::Sort(RecordBaseVector & records,
-                                         const std::string & type) const
+void syd::RecordTraits<RecordType>::
+Sort(RecordBaseVector & records,
+     const std::string & type) const
 {
   auto specific_records = CastFromVectorOfRecords<RecordType>(records);
   InternalSort(specific_records, type);
@@ -216,7 +222,8 @@ void syd::RecordTraits<RecordType>::Sort(RecordBaseVector & records,
 // --------------------------------------------------------------------
 template<class RecordType>
 const typename syd::RecordTraits<RecordType>::CompareFunctionMap &
-syd::RecordTraits<RecordType>::GetMapOfSortFunctions() const
+syd::RecordTraits<RecordType>::
+GetMapOfSortFunctions() const
 {
   return compare_record_fmap_;
 }
@@ -225,7 +232,8 @@ syd::RecordTraits<RecordType>::GetMapOfSortFunctions() const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::RecordTraits<RecordType>::InternalSort(vector & v, const std::string & type) const
+void syd::RecordTraits<RecordType>::
+InternalSort(vector & v, const std::string & type) const
 {
   // Only once: build the map of sorting function
   if (compare_record_fmap_.size() == 0)
@@ -249,18 +257,20 @@ void syd::RecordTraits<RecordType>::InternalSort(vector & v, const std::string &
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::RecordTraits<RecordType>::BuildMapOfSortFunctions(CompareFunctionMap & map)
+void syd::RecordTraits<RecordType>::
+BuildMapOfSortFunctions(CompareFunctionMap & map)
 {
   auto f = [](pointer a, pointer b) -> bool { return a->id < b->id; };
   map["id"] = f;
-  map[""] = f; // default 
+  map[""] = f; // default
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::RecordTraits<RecordType>::MergeRecordMapOfSortFunctions(CompareFunctionMap & map)
+void syd::RecordTraits<RecordType>::
+MergeRecordMapOfSortFunctions(CompareFunctionMap & map)
 {
   syd::RecordTraits<syd::Record>::CompareFunctionMap m;
   syd::RecordTraits<syd::Record>::BuildMapOfSortFunctions(m);
@@ -268,6 +278,54 @@ void syd::RecordTraits<RecordType>::MergeRecordMapOfSortFunctions(CompareFunctio
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void
+syd::RecordTraits<RecordType>::
+BuildMapOfFieldsFunctions(FieldFunctionMap & map)
+{
+  DDF();
+  auto f = [](pointer a) -> std::string { return std::to_string(a->id); };
+  map["id"] = f;
+  auto f2 = [](pointer a) -> std::string { return a->ToString(); };
+  map["raw"] = f2;
+  DD(map.size());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+typename syd::RecordTraits<RecordType>::FieldFunc
+syd::RecordTraits<RecordType>::
+GetField(std::string field) const
+{
+  DDF();
+  DD(__PRETTY_FUNCTION__);
+  DD(field);
+
+  // Build map (first time)
+  if (field_fmap_.size() == 0) BuildMapOfFieldsFunctions(field_fmap_);
+
+  // Use map
+  auto it = field_fmap_.find(field);
+  if (it == field_fmap_.end()) {
+    auto field_not_found = [field](syd::Record::pointer p) -> std::string
+      { return "field_"+field+"_not_found"; };
+    return field_not_found;
+  }
+  DD("found");
+  auto f = it->second;
+  auto gf = [f](syd::Record::pointer gr) -> std::string {
+    // cast from generic to specific record
+    auto r = std::static_pointer_cast<RecordType>(gr);
+    return f(r);
+  };
+  return gf;
+
+}
+// --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
 /*template<class RecordType>

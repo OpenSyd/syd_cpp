@@ -44,3 +44,31 @@ BuildMapOfSortFunctions(CompareFunctionMap & map)
   map[""] = f; // make it the default
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> void syd::RecordTraits<syd::Image>::
+BuildMapOfFieldsFunctions(FieldFunctionMap & map)
+{
+  DDF();
+  DD(map.size());
+
+#define DEFINE_FIELD_FUNCTION(FIELD) \
+  map[#FIELD] = [](pointer a) -> std::string { return a->FIELD; };
+
+  DEFINE_FIELD_FUNCTION(modality);
+  DEFINE_FIELD_FUNCTION(type);
+  DEFINE_FIELD_FUNCTION(pixel_type);
+  DEFINE_FIELD_FUNCTION(frame_of_reference_uid);
+
+  // patient ?
+  /*
+  auto map = syd::RecordTraits<syd::Patient>GetFieldMap();
+  for(auto & m:map) {
+    std::string = "patient."+m.first();
+    map[] = [](pointer a) -> std::string { return a->FIELD; };
+    }*/
+
+  DD(map.size());
+}
+// --------------------------------------------------------------------

@@ -43,6 +43,8 @@ namespace syd {
     typedef std::vector<pointer> vector;
     typedef syd::RecordTraitsBase::RecordBasePointer RecordBasePointer;
     typedef syd::RecordTraitsBase::RecordBaseVector RecordBaseVector;
+    typedef std::function<bool(pointer a, pointer b)> CompareFunction;
+    typedef std::map<std::string, CompareFunction> CompareFunctionMap;
 
     // Main static version to get the singleton traits
     static RecordTraitsBase * GetTraits();
@@ -64,24 +66,29 @@ namespace syd {
     virtual void Delete(syd::Database * db, const RecordBaseVector & records) const;
 
     /// Function to sort elements in a vector
-
-    typedef std::function<bool(pointer a, pointer b)> CompareFunction;
-    typedef std::map<std::string, CompareFunction> CompareFunctionMap;
     void Sort(RecordBaseVector & records, const std::string & type) const;
     const CompareFunctionMap & GetMapOfSortFunctions() const;
     static void BuildMapOfSortFunctions(CompareFunctionMap & map);
-    static void MergeRecordMapOfSortFunctions(CompareFunctionMap & map);
+
+    /// FIXME
+    FieldFunc GetField(std::string field) const;
+    typedef std::function<std::string(pointer)> SpecificFieldFunc;
+    typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
+    static void BuildMapOfFieldsFunctions(FieldFunctionMap & map);
 
   protected:
     RecordTraits(std::string table_name);
     static RecordTraitsBase * singleton_;
 
-    // For sorting elements
-    // The following is mutable because may be initialized the first time it is
-    // call (from a const function)
+    // For sorting elements. The following is mutable because may be
+    // initialized the first time it is call (from a const function)
     void InternalSort(vector & records, const std::string & type) const;
     mutable CompareFunctionMap compare_record_fmap_;
-    //virtual void BuildMapOfSortFunctions() const;
+    static void MergeRecordMapOfSortFunctions(CompareFunctionMap & map);
+
+    // FIXME
+    mutable FieldFunctionMap field_fmap_;
+
 
   }; // end of class
 

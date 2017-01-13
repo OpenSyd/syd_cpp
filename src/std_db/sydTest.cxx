@@ -24,12 +24,9 @@
 #include "sydStandardDatabase.h"
 #include "sydTableOfRecords.h"
 
-#include "sydTestTemp3.h"
+//#include "sydTestTemp3.h"
 // #include "sydTestTemp4.h"
-
-// template<>
-// std::string syd::RecordTraits<syd::Patient>::
-// table_name_ = "Patient";
+#include "sydTestTemp5.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -44,229 +41,53 @@ int main(int argc, char* argv[])
 
   // -----------------------------------------------------------------
 
-
   syd::Image::vector images;
   db->Query(images);
   DD(images.size());
-  DD(images[0]->GetTableName());
-  for(auto i:images) std::cout << i->id << " "; std::cout << std::endl;
-  db->Sort<syd::Image>(images);
-  db->Sort(images);
-  for(auto i:images) std::cout << i->id << " "; std::cout << std::endl;
-
-  // syd::RecordHistory::pointer h;
-  // db->QueryOne(h, 1);
-  // DD(h);
-  // h = images[0];
-  // DD(h);
+  auto table_name = images[0]->GetTableName();
+  auto columns = "modality";
 
   syd::Record::vector records;
-  db->Query(records, "Image");
-  DD(records.size());
-  for(auto i:records) std::cout << i->id << " "; std::cout << std::endl;
-  db->Sort(records, "Image", "date");
-  for(auto i:records) std::cout << i->id << " "; std::cout << std::endl;
+  for(auto &im:images) records.push_back(im);
 
+  // Step1
+  //auto columns_info = TableBuildColumns(table_name, columns);
+
+  // Step2
+  syd::Table table;
+  table.Build(records, columns);
+  table.Print(std::cout);
+
+  table.Build(records, "bidon");
+  // table.SetHeaderFlag(true); // options
+
+  // Step3
+  table.Print(std::cout);
 
 
   // -----------------------------------------------------------------
-
-  syd::Patient::pointer patient;
-  db->QueryOne(patient, 1);
-  DD(patient);
-  DD(patient->GetTableName());
-  DD(patient->GetSQLTableName());
-  syd::Record::pointer r = patient;
-  DD(r->GetTableName());
-  DD(r->GetSQLTableName());
-  DD(syd::RecordTraits<syd::Patient>::GetTraits()->GetTableName());
-
-  db->UpdateField(patient, "name", "teereriti");
-  DD(patient);
-
-  // syd::Patient::pointer p2;
-  // db->New<syd::Patient>(p2); // old style ? to remove
-
-  auto p5 = db->New<syd::Patient>(); // p5 is a syd::Patient
-  DD(p5->GetTableName());
-
-  auto p3 = db->New("Patient"); // p3 is a syd::Record::pointer
-  DD(p3->GetTableName());
-
-  auto db2 = patient->GetDatabase(); // ok ! no need to cast
-  auto p6 = db2->New<syd::Patient>();
-  DD(p6->GetTableName());
-
-  auto p7 = db->QueryOne<syd::Patient>(1);
-  DD(p7->GetTableName());
-
-  auto r8 = db->QueryOne("Patient", 1);
-  DD(r8->GetTableName());
-
-  std::cout << std::endl;
-
-  syd::Patient::vector v1;
-  db->Query(v1);
-  DDS(v1);
-
-  syd::Record::vector v2;
-  db->Query(v2, "Patient");
-  DDS(v2);
-
-  // Insert
-  DD(p5);
-  p5->study_id = 14;
-  p5->name = "bideeon";
-  // DD(p5);
-  // db->Insert(p5);
-  DD(p5);
-  DD(r8);
-  DD(patient);
-  patient->name = "tototoot";
-  DD(patient);
-  DD(r8);
-  db->Update(r8);
-  DD(r8);
-
-  //  auto mask = db->QueryOne<syd::RoiMaskImage>(1);
-  //DD(mask->GetTableName());
-
-  exit(0);
-  DD("=======================================================");
-
-  // -----------------------------------------------------------------
-  {
-    std::shared_ptr<temp::Patient> p(new temp::Patient);
-    p->name = "toto";
-    p->id = 1;
-    std::shared_ptr<temp::Record> r = p;
-    DD(p->GetTraits()->GetTableName());
-    DD(r->GetTraits()->GetTableName());
-    DD(temp::RecordTraits<temp::Patient>::GetTraits()->GetTableName());
-    //DD(temp::Patient::GetTraits()->GetTableName());
-    DD(temp::Patient::GetTableName());
-    std::shared_ptr<temp::Record> b(new temp::Record);
-    b->id = 2;
-    DD(b->GetTraits()->GetTableName());
-
-    DD("-----------------");
-    DD(p->GetTableName());
-    DD(r->GetTableName());
-    DD(b->GetTableName());
-
-    DD("-----------------");
-    auto f = p->GetFieldFunction("name");
-    auto g = r->GetFieldFunction("id");
-    auto h = b->GetFieldFunction("id");
-    try {
-      auto i = b->GetFieldFunction("name");
-    } catch(std::exception & e) {
-      std::cout << "OK name does not exists" << std::endl;
-    }
-
-    DD("-----------------");
-    DD(f(p));
-    DD(f(r));
-    DD(f(b)); // !!  BUG --> dyn cast required 
-
-    DD("-----------------");
-    DD(g(p));
-    DD(g(r));
-    DD(g(b));
-
-    DD("-----------------");
-    DD(h(p));
-    DD(h(r));
-    DD(h(b));
-
-    DD("-----------------");
-
-  }
-
-  /*{
-    DD("=====================");
-    syd::Record::vector records;
-    db->Query(records, "Injection"); // query all
-
-    syd::FieldBase::vector fields;
-    auto traits = records[0]->GetTraits();  // consider only the first one
-    //auto traits = GetTraits("Injection"); // alternative
-    fields.push_back(traits->GetField("id"));
-    fields.push_back(traits->GetField("date"));
-    fields.push_back(traits->GetField("activity_in_MBq", 2));
-    fields.push_back(traits->GetField("patient->name"));
-
-    for(auto f:fields) {
-    DD(f->GetValue(records[0]));
-    }
-
-    }*/
-
-  exit(0);
-
-
-  // ------------------------------------------------------------------
-  {
-    /*
-      syd::Patient::vector patients;
-      db->Query(patients);
-      syd::Record::vector records;
-      for(auto p:patients) records.push_back(p); // maybe at templated function in TableOfRecords
-
-      auto g = patients[0]->GetFieldFunction2("name");
-      DD(g(patients[0]));
-      DD(g(records[0]));
-
-      auto f = records[0]->GetFieldFunction2("name");
-      DD(f(patients[0]));
-      DD(f(records[0]));
-
-      auto h = syd::Patient::GetFieldFunction2("name");
-      DD(h(patients[0]));
-      DD(h(records[0]));
-    */
-
-    /*    auto g = db->GetFieldFunction("Patient", "name");
-          DD(g(patients[0]));
-          DD(g(records[0]));
-    */
-
-  }
-
-
-
-  // ------------------------------------------------------------------
-  {
-    syd::Patient::vector patients;
-    db->Query(patients);
-    // DDS(patients);
-
-    syd::Record::vector records;
-    for(auto & p:patients) records.push_back(p); // maybe at templated function in TableOfRecords
-
-    syd::TableOfRecords table;
-    table.Set(records);
-    table.AddField("name");
-    table.AddField("id");
-    table.AddField("dicom");
-    table.AddField("study_id");
-    table.Print(std::cout);
+  if (0) {
 
     syd::Image::vector images;
     db->Query(images);
-    records.clear();
-    for(auto & p:images) records.push_back(p);
+    DD(images.size());
+    DD(images[0]->GetTableName());
+    for(auto i:images) std::cout << i->id << " "; std::cout << std::endl;
+    db->Sort<syd::Image>(images);
+    db->Sort(images);
+    for(auto i:images) std::cout << i->id << " "; std::cout << std::endl;
 
-    table.Set(records);
-    table.ClearFieldList();
-    table.AddField("id");
-    table.AddField("pname");
-    table.AddField("date");
-    table.AddField("inj");
-    table.AddField("injq");
-    table.Print(std::cout);
+    syd::Record::vector records;
+    db->Query(records, "Image");
+    DD(records.size());
+    for(auto i:records) std::cout << i->id << " "; std::cout << std::endl;
+    db->Sort(records, "Image", "date");
+    for(auto i:records) std::cout << i->id << " "; std::cout << std::endl;
+
   }
-  // ------------------------------------------------------------------
+  // -----------------------------------------------------------------
+
+
   DD("end");
   // This is the end, my friend.
 }
