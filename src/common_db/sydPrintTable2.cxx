@@ -34,40 +34,41 @@ syd::PrintTable2::PrintTable2()
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::Build(const RecordBaseVector records, std::string columns)
+/*void syd::PrintTable2::Build(const RecordBaseVector records, std::string columns)
 {
-  DDF();
   values_.resize(records.size());
   if (records.size() == 0) return;
   auto table_name = records[0]->GetTableName();
-  DD(table_name);
   auto db = records[0]->GetDatabase();
   //auto field = db->GetField(table_name, columns);
   auto fields = db->GetFields(table_name, columns);
   Build(records, fields);
 }
+*/
 //------------------------------------------------------------------
 
 
 // -----------------------------------------------------------------
 // FIXME template Build<T>(T::vector ...)
-void syd::PrintTable2::Build(const RecordBaseVector records,
+void syd::PrintTable2::Build(const RecordBaseVector & records,
                              const std::vector<FieldFunc> & fields)
 {
   DDF();
   values_.resize(records.size());
   int i=0; // row
+  DD(fields.size());
   for(auto & r:records) {
-    //values_[i].resize(1);
-    //    values_[i][0] = f(r);
-    int j=0; // column
+     int j=0; // column
     values_[i].resize(fields.size());
     for(auto & f:fields) {
       values_[i][j] = f(r); // get the value
+      //      DD(values_[i][j]);
       ++j;
     }
     ++i;
   }
+  column_widths_.resize(fields.size());
+  SetDefaultColumnsSize();
 }
 // -----------------------------------------------------------------
 
@@ -76,12 +77,41 @@ void syd::PrintTable2::Build(const RecordBaseVector records,
 // -----------------------------------------------------------------
 void syd::PrintTable2::Print(std::ostream & os)
 {
-  DDF();
   //for(auto & h:headers_) h->Print(os);
   //for(auto & r:rows_) r->Print(os);
   for(auto & row:values_) {
-    for(auto & col:row) os << col << " ";
+    PrintRow(os, row);
     os << std::endl;
+  }
+}
+// -----------------------------------------------------------------
+
+
+// -----------------------------------------------------------------
+void syd::PrintTable2::SetDefaultColumnsSize()
+{
+  // compute max length by columns
+  std::fill(column_widths_.begin(), column_widths_.end(), 0);
+  for(auto & row:values_) {
+    int i=0;
+    for(auto & col:row) {
+      int n = col.size();
+      column_widths_[i] = std::max(column_widths_[i], n);
+      ++i;
+    }
+  }
+}
+// -----------------------------------------------------------------
+
+
+// -----------------------------------------------------------------
+void syd::PrintTable2::PrintRow(std::ostream & os, std::vector<std::string> & row)
+{
+  int i=0;
+  for(auto & col:row) {
+    os << std::setw(column_widths_[i]);
+    os << col << " ";
+    ++i;
   }
 }
 // -----------------------------------------------------------------

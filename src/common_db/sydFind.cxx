@@ -113,19 +113,22 @@ int main(int argc, char* argv[])
       LOG(1) << "No records match";
       return EXIT_SUCCESS;
     }
-    DD("table");
     DD(table_name);
 
+
+    // auto map = db->GetTraits("Image")->GetFieldMap();
+    // for(auto m:map) DD(m);
+
     syd::PrintTable2 table;
-    table.Build(results, args_info.format_arg);
+    auto fields = db->GetFields(table_name, args_info.format_arg);
+    table.Build(results, fields);
+    //    table.Build(results, args_info.format_arg);
     //    db->GetField(table_name, )
+    //auto f = db->GetField("Image", "id");
+    //DD(f(records[0]));
+    //DD(records[0]->GetField("id")); // FIXME possible in record
 
-    auto f = db->GetField("Image", "id");
-    DD(f(records[0]));
-    //    DD(records[0]->GetField("id")); // FIXME possible in record
-
-
-    table.Print(std::cout);
+    table.Print(std::cout); // Print total number at the end !
 
     /*
     syd::PrintTable table;

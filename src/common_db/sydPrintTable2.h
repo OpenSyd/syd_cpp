@@ -37,13 +37,15 @@ namespace syd {
     typedef syd::RecordTraitsBase::RecordBaseVector RecordBaseVector;
     typedef std::function<std::string(RecordBasePointer)> FieldFunc;
 
-    void Build(const RecordBaseVector records, std::string columns);
-    void Build(const RecordBaseVector records, const std::vector<FieldFunc> & f);
+    //    void Build(const RecordBaseVector records, std::string columns);
+    void Build(const RecordBaseVector & records, const std::vector<FieldFunc> & f);
+    void SetDefaultColumnsSize();
     void Print(std::ostream & os);
 
   protected:
     std::vector<std::vector<std::string>> values_;
-
+    std::vector<int> column_widths_;
+    void PrintRow(std::ostream & os, std::vector<std::string> & row);
   };
 
 

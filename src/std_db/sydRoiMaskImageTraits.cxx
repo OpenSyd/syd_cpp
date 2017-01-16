@@ -32,5 +32,20 @@ BuildMapOfSortFunctions(CompareFunctionMap & map) const
   syd::RecordTraits<syd::Image>::CompareFunctionMap m;
   syd::RecordTraits<syd::Image>::GetTraits()->BuildMapOfSortFunctions(m);
   map.insert(m.begin(), m.end());
+  for(auto mm:map) DD(mm.first);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> void syd::RecordTraits<syd::RoiMaskImage>::
+BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
+{
+  syd::RecordTraits<syd::Image>::FieldFunctionMap m;
+  syd::RecordTraits<syd::Image>::GetTraits()->BuildMapOfFieldsFunctions(m);
+  map.insert(m.begin(), m.end());
+
+  // add roitype 
+
 }
 // --------------------------------------------------------------------

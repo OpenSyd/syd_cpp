@@ -33,6 +33,11 @@ namespace syd {
   /// Specific Sort for Tag
   DEFINE_TABLE_TRAITS_SORT_HEADER(RoiMaskImage);
 
+
+  template<> void syd::RecordTraits<syd::RoiMaskImage>::
+    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
+
+
 }
 // --------------------------------------------------------------------
 
