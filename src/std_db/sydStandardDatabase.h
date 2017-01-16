@@ -45,6 +45,7 @@
 #include "sydInjectionTraits.h"
 #include "sydPatientTraits.h"
 #include "sydDicomSerieTraits.h"
+#include "sydRadionuclideTraits.h"
 
 // itk
 #include <itkImage.h>
@@ -109,7 +110,7 @@ namespace syd {
 
   //  DEFINE_TABLE_TRAITS_HEADER(Patient);
   //DEFINE_TABLE_TRAITS_HEADER(Injection);
-  DEFINE_TABLE_TRAITS_HEADER(Radionuclide);
+  //DEFINE_TABLE_TRAITS_HEADER(Radionuclide);
 
   DEFINE_TABLE_TRAITS_HEADER(DicomFile);
   //DEFINE_TABLE_TRAITS_HEADER(DicomSerie);

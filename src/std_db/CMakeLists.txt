@@ -45,6 +45,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiMaskImageTraits.cxx
   sydInjectionTraits.cxx
   sydPatientTraits.cxx
+  sydRadionuclideTraits.cxx
   sydStandardDatabase.cxx
 
   sydPixelUnitHelper.cxx
