@@ -411,6 +411,7 @@ double syd::Rescale(const double v,
 }
 //--------------------------------------------------------------------
 
+
 //--------------------------------------------------------------------
 double syd::ComputeMedian(std::vector<double> values)
 {
@@ -420,5 +421,15 @@ double syd::ComputeMedian(std::vector<double> values)
   if (N % 2 == 0) median = (values[N / 2 - 1] + values[N / 2]) / 2;
   else median = values[N/2];
   return median;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+std::string syd::ToString(double a, int precision)
+{
+  std::stringstream str;
+  str << std::fixed << std::setprecision(precision) << a;
+  return str.str();
 }
 //--------------------------------------------------------------------
