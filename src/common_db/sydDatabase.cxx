@@ -652,7 +652,6 @@ void syd::Database::Copy(std::string new_dbname, std::string new_folder)
 syd::Database::FieldFunc syd::Database::
 GetField(std::string table_name, std::string field)
 {
-  DDF();
   return GetTraits(table_name)->GetField(field);
 }
 // --------------------------------------------------------------------
@@ -662,7 +661,6 @@ GetField(std::string table_name, std::string field)
 std::vector<syd::Database::FieldFunc> syd::Database::
 GetFields(std::string table_name, std::string fields)
 {
-  DDF();
   return GetTraits(table_name)->GetFields(fields);
 }
 // --------------------------------------------------------------------
