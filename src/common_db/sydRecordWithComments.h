@@ -41,6 +41,11 @@ namespace syd {
     /// Concatenate all comments in a single string
     std::string GetAllComments() const;
 
+    /// Specific case for RecordWithComments (composition not inheritance)
+    typedef std::function<std::string(pointer)> SpecificFieldFunc;
+    typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
+    static void BuildMapOfFieldsFunctions(FieldFunctionMap & map);
+
   protected:
     RecordWithComments();
 

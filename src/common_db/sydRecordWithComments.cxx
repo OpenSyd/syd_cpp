@@ -42,3 +42,12 @@ std::string syd::RecordWithComments::GetAllComments() const
   return rtrim(s); // remove space at the end (or at start)
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::RecordWithComments::
+BuildMapOfFieldsFunctions(FieldFunctionMap & map) 
+{
+  map["comments"] = [](pointer a) -> std::string { return a->GetAllComments(); };
+}
+// --------------------------------------------------------------------
