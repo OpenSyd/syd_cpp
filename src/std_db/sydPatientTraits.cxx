@@ -28,10 +28,7 @@ DEFINE_TABLE_TRAITS_IMPL(Patient);
 template<> void syd::RecordTraits<syd::Patient>::
 BuildMapOfSortFunctions(CompareFunctionMap & map) const
 {
-  // Sort functions from Record
   SetDefaultSortFunctions(map);
-
-  // New sort comparison
   map["name"] = [](pointer a, pointer b) -> bool { return a->name < b->name; };
   auto f = [](pointer a, pointer b) -> bool { return a->study_id < b->study_id; };
   map["study_id"] = f;
@@ -44,19 +41,10 @@ BuildMapOfSortFunctions(CompareFunctionMap & map) const
 template<> void syd::RecordTraits<syd::Patient>::
 BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 {
-  DDF();
-  DD(map.size());
-
   SetDefaultFieldFunctions(map);
-
-#define DEFINE_FIELD_FUNCTION(FIELD) \
-  map[#FIELD] = [](pointer a) -> std::string { return a->FIELD; };
-
-  DEFINE_FIELD_FUNCTION(name);
-  //  DEFINE_FIELD_FUNCTION(study_id);
-  DEFINE_FIELD_FUNCTION(dicom_patientid);
-  DEFINE_FIELD_FUNCTION(sex);
-
-  DD(map.size());
+  map["name"] = [](pointer a) -> std::string { return a->name; };
+  map["dicom_patientid"] = [](pointer a) -> std::string { return a->dicom_patientid; };
+  map["sex"] = [](pointer a) -> std::string { return a->sex; };
+  map["study_id"] = [](pointer a) -> std::string { return std::to_string(a->study_id); };
 }
 // --------------------------------------------------------------------
