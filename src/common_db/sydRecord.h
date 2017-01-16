@@ -40,7 +40,8 @@ namespace syd {
   /// Base class for all record (or element, or row) in a table.
   /// Need to be abstract class (pure virtual method)
 #pragma db object abstract pointer(std::shared_ptr) callback(Callback)
-  class Record {
+  class Record:
+    public std::enable_shared_from_this<Record> {
   public:
 
 #pragma db id auto

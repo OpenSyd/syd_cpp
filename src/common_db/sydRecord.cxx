@@ -167,7 +167,12 @@ bool syd::IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2)
 // --------------------------------------------------------------------
 std::string syd::Record::GetField(std::string field_name) const
 {
-  traits()->GetField(field_name);
+  // We retrive the field function and apply it on this as a shared pointer
+  DD("todo");
+
+  // Issue with const ! 
+
+  //traits()->GetField(field_name)(shared_from_this());
 }
 // --------------------------------------------------------------------
 
