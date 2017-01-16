@@ -19,7 +19,6 @@
 // syd
 #include "sydRadionuclide.h"
 #include "sydStandardDatabase.h"
-//#include "sydPrintTable.h"
 #include "sydRecordTraits.h"
 
 DEFINE_TABLE_IMPL(Radionuclide);
