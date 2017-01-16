@@ -289,18 +289,17 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 // --------------------------------------------------------------------
 
 
+
 // --------------------------------------------------------------------
 template<class RecordType>
 void
 syd::RecordTraits<RecordType>::
 SetDefaultFieldFunctions(FieldFunctionMap & map) const
 {
-  DDF();
   auto f = [](pointer a) -> std::string { return std::to_string(a->id); };
   map["id"] = f;
   auto f2 = [](pointer a) -> std::string { return a->ToString(); };
   map["raw"] = f2;
-  DD(map.size());
 }
 // --------------------------------------------------------------------
 
@@ -323,9 +322,6 @@ typename syd::RecordTraits<RecordType>::FieldFunc
 syd::RecordTraits<RecordType>::
 GetField(std::string field) const
 {
-  DDF();
-  DD(field);
-
   // Build map (first time)
   if (field_fmap_.size() == 0) BuildMapOfFieldsFunctions(field_fmap_);
 
@@ -336,7 +332,6 @@ GetField(std::string field) const
       { return "field_"+field+"_not_found"; };
     return field_not_found;
   }
-  DD("found");
   auto f = it->second;
   auto gf = [f](syd::Record::pointer gr) -> std::string {
     // cast from generic to specific record
@@ -351,12 +346,11 @@ GetField(std::string field) const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-std::vector<typename syd::RecordTraits<RecordType>::FieldFunc> 
+std::vector<typename syd::RecordTraits<RecordType>::FieldFunc>
 syd::RecordTraits<RecordType>::
 GetFields(std::string fields) const
 {
-  DDF();
-  DD(fields);
+  if (fields == "") return GetFields(GetDefaultFields());
   std::vector<std::string> words;
   syd::GetWords(words, fields);
   std::vector<FieldFunc> f;
@@ -366,6 +360,15 @@ GetFields(std::string fields) const
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+template<class RecordType>
+std::string
+syd::RecordTraits<RecordType>::
+GetDefaultFields() const
+{
+  return "id"; // by default, only the id
+}
+// --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
 /*template<class RecordType>

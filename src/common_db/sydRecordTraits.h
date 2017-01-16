@@ -45,6 +45,8 @@ namespace syd {
     typedef syd::RecordTraitsBase::RecordBaseVector RecordBaseVector;
     typedef std::function<bool(pointer a, pointer b)> CompareFunction;
     typedef std::map<std::string, CompareFunction> CompareFunctionMap;
+    typedef std::function<std::string(pointer)> SpecificFieldFunc;
+    typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
 
     // Main static version to get the singleton traits
     static RecordTraits<RecordType> * GetTraits();
@@ -72,10 +74,9 @@ namespace syd {
     /// FIXME
     FieldFunc GetField(std::string field) const;
     std::vector<FieldFunc> GetFields(std::string fields) const;
-    typedef std::function<std::string(pointer)> SpecificFieldFunc;
-    typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
     void BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
     const FieldFunctionMap & GetFieldMap() const;
+    virtual std::string GetDefaultFields() const;
 
   protected:
     RecordTraits(std::string table_name);
