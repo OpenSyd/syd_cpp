@@ -33,6 +33,13 @@ namespace syd {
   /// Specific Sort for Injection
   DEFINE_TABLE_TRAITS_SORT_HEADER(Injection);
 
+  template<> void syd::RecordTraits<syd::Injection>::
+    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
+
+  template<> std::string syd::RecordTraits<syd::Injection>::
+    GetDefaultFields() const;
+
+
 } // end of namespace
 // --------------------------------------------------------------------
 
