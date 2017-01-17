@@ -109,7 +109,7 @@ namespace syd {
     template<class DatabaseType> DatabaseType * GetDatabase() const;
 
     /// FIXME
-    std::string GetField(std::string field_name) const;
+    std::string GetFieldValue(std::string field_name);
 
   protected:
     /// This default constructor allow to oblige class that inherit
