@@ -49,6 +49,7 @@
 #include "sydDicomFileTraits.h"
 #include "sydPixelUnitTraits.h"
 #include "sydRoiTypeTraits.h"
+#include "sydRoiStatisticTraits.h"
 
 // itk
 #include <itkImage.h>
@@ -122,7 +123,7 @@ namespace syd {
   //DEFINE_TABLE_TRAITS_HEADER(Image);
   //DEFINE_TABLE_TRAITS_HEADER(RoiType);
   //DEFINE_TABLE_TRAITS_HEADER(RoiMaskImage);
-  DEFINE_TABLE_TRAITS_HEADER(RoiStatistic);
+  //  DEFINE_TABLE_TRAITS_HEADER(RoiStatistic);
 
   DEFINE_TABLE_TRAITS_HEADER(Elastix);
   DEFINE_TABLE_TRAITS_HEADER(FitImages);
