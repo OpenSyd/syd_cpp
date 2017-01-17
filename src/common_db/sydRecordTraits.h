@@ -100,9 +100,7 @@ namespace syd {
 
   }; // end of class
 
-
   /// Macros to simplify the traits classes
-
 #define DEFINE_TABLE_TRAITS_HEADER(TABLE_NAME)  \
   template<> syd::RecordTraits<TABLE_NAME> *    \
     RecordTraits<TABLE_NAME>::GetTraits();
@@ -116,10 +114,6 @@ namespace syd {
     }                                                               \
   }                                                                 \
 
-#define DEFINE_TABLE_TRAITS_SORT_HEADER(TABLE_NAME)           \
-  template<> void syd::RecordTraits<TABLE_NAME>::             \
-    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
-
   // --------------------------------------------------------------------
 } // end namespace
 
@@ -127,5 +121,4 @@ namespace syd {
 #include "sydRecordTraits.txx"
 
 // --------------------------------------------------------------------
-
 #endif

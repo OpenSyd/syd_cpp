@@ -339,7 +339,6 @@ GetField(std::string field) const
     return f(r);
   };
   return gf;
-
 }
 // --------------------------------------------------------------------
 
