@@ -47,6 +47,9 @@ set(SYD_STANDARD_DATABASE_SRC
   sydPatientTraits.cxx
   sydRadionuclideTraits.cxx
   sydStandardDatabase.cxx
+  sydDicomFileTraits.cxx
+  sydPixelUnitTraits.cxx
+  sydRoiTypeTraits.cxx
 
   sydPixelUnitHelper.cxx
   sydDicomSerieBuilder.cxx
