@@ -34,7 +34,46 @@ BuildMapOfSortFunctions(CompareFunctionMap & map) const
     { return a->dicom_acquisition_date < b->dicom_acquisition_date; };
   map["date"] = f;
   map[""] = f; // make it the default
-  map["recon_date"] = [](pointer a, pointer b) -> bool
+  map["reconstruction_date"] = [](pointer a, pointer b) -> bool
     { return a->dicom_reconstruction_date < b->dicom_reconstruction_date; };
+  map["acquisition_date"] = [](pointer a, pointer b) -> bool
+    { return a->dicom_acquisition_date < b->dicom_acquisition_date; };
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> void syd::RecordTraits<syd::DicomSerie>::
+BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
+{
+  SetDefaultFieldFunctions(map);
+
+  map["acquisition_date"] = [](pointer a) -> std::string { return a->dicom_acquisition_date; };
+  map["reconstruction_date"] = [](pointer a) -> std::string { return a->dicom_reconstruction_date; };
+  map["dicom_study_uid"] = [](pointer a) -> std::string { return a->dicom_study_uid; };
+  map["dicom_serie_uid"] = [](pointer a) -> std::string { return a->dicom_series_uid; };
+  map["dicom_frame_of_reference_uid"] = [](pointer a) -> std::string { return a->dicom_frame_of_reference_uid; };
+  map["dicom_modality"] = [](pointer a) -> std::string { return a->dicom_modality; };
+  map["dicom_description"] = [](pointer a) -> std::string { return a->dicom_description; };
+
+  map["dicom_files"] = [](pointer a) -> std::string { return syd::ToString(a->dicom_files.size(),0); };
+
+  auto pmap = syd::RecordTraits<syd::Patient>::GetTraits()->GetFieldMap();
+  for(auto & m:pmap) {
+    std::string s = "patient."+m.first;
+    auto f = m.second;
+    map[s] = [f](pointer a) -> std::string { return f(a->patient); };
+  }
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> std::string syd::RecordTraits<syd::DicomSerie>::
+GetDefaultFields() const
+{
+  std::string s = "id patient.name acquisition_date dicom_files dicom_modality dicom_description reconstruction_date";
+  return s;
 }
 // --------------------------------------------------------------------
