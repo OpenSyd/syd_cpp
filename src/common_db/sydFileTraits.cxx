@@ -24,19 +24,39 @@ DEFINE_TABLE_TRAITS_IMPL(File);
 // --------------------------------------------------------------------
 
 
+
 // --------------------------------------------------------------------
-/*
 template<> void syd::RecordTraits<syd::File>::
-Sort(syd::File::vector & v, const std::string & type) const
+BuildMapOfSortFunctions(CompareFunctionMap & map) const
 {
-  DD("specific file sort");
-  if (type == "id")
-    return std::sort(begin(v), end(v), [v](pointer a, pointer b) {
-        return a->id < b->id; });
-  if (type == "default" or type=="filename" or type == "name" or type=="")
-    return std::sort(begin(v), end(v), [v](pointer a, pointer b) {
-        return a->filename < b->filename; });
-  LOG(0) << "Available sort type: 'id' or 'filename' (or 'name')";
+  // Sort functions from Record
+  SetDefaultSortFunctions(map);
+  // New sort comparison
+  auto f = [](pointer a, pointer b) -> bool { return a->filename < b->filename; };
+  map["filename"] = f;
+  map[""] = f; // make this one the default
+  map["path"] = [](pointer a, pointer b) -> bool { return a->path < b->path; };
 }
-*/
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> void syd::RecordTraits<syd::File>::
+BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
+{
+  SetDefaultFieldFunctions(map);
+  map["filename"] = [](pointer a) -> std::string { return a->filename; };
+  map["path"] = [](pointer a) -> std::string { return a->path; };
+  map["md5"] = [](pointer a) -> std::string { return a->md5; };
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> std::string syd::RecordTraits<syd::File>::
+GetDefaultFields() const
+{
+  std::string s = "id filename path md5";
+  return s;
+}
 // --------------------------------------------------------------------
