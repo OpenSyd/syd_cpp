@@ -49,7 +49,7 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
   if (already_here) return;
   already_here = true;
 
-  // Build map field for patient and injection
+  // Build map field for patient and radionuclide
   {
     auto pmap = syd::RecordTraits<syd::Patient>::GetTraits()->GetFieldMap();
     for(auto & m:pmap) {
@@ -66,6 +66,11 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
       map[s] = [f](pointer a) -> std::string { return f(a->radionuclide); };
     }
   }
+
+  // Contains a RecordHistory, so special case
+  syd::RecordWithComments::FieldFunctionMap m2;
+  syd::RecordWithComments::BuildMapOfFieldsFunctions(m2);
+  map.insert(m2.begin(), m2.end());
   already_here = false;
 }
 // --------------------------------------------------------------------
