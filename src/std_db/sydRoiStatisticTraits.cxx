@@ -104,8 +104,8 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
   map.insert(m2.begin(), m2.end());
   already_here = false;
 
-  for(auto m:map) DD(m.first);
-
+  map["pat"] = map["image.patient.name"];
+  map["mask"] = map["mask.roi.name"];
 }
 // --------------------------------------------------------------------
 
@@ -114,7 +114,7 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 template<> std::string syd::RecordTraits<syd::RoiStatistic>::
 GetDefaultFields() const
 {
-  std::string s = "id image.patient.name mask.roi.name image.id tags mean std_dev n min max sum";
+  std::string s = "id pat mask image.id tags mean std_dev n min max sum";
   return s;
 }
 // --------------------------------------------------------------------
