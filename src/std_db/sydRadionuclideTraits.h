@@ -30,16 +30,17 @@ namespace syd {
   /// Main GetTraits function
   DEFINE_TABLE_TRAITS_HEADER(Radionuclide);
 
-  /// Specific Sort for Radionuclide
-  DEFINE_TABLE_TRAITS_SORT_HEADER(Radionuclide);
+  /// Specific Sort
+  template<> void syd::RecordTraits<syd::Radionuclide>::
+    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
 
-
+  /// Specific fields
   template<> void syd::RecordTraits<syd::Radionuclide>::
     BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
 
+  /// Default fields
   template<> std::string syd::RecordTraits<syd::Radionuclide>::
     GetDefaultFields() const;
-
 
 } // end of namespace
 // --------------------------------------------------------------------
