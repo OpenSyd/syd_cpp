@@ -42,6 +42,11 @@ namespace syd {
     typedef std::map<std::string, CompareFunction> CompareFunctionMap;
     static void BuildMapOfSortFunctions(CompareFunctionMap & map);
 
+    /// Specific case for RecordWithHistory (composition not inheritance)
+    typedef std::function<std::string(pointer)> SpecificFieldFunc;
+    typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
+    static void BuildMapOfFieldsFunctions(FieldFunctionMap & map);
+
     void SetPrintHistoryFlag(bool b) { print_history_flag_ = b; }
 
     virtual void DumpInTable(syd::PrintTable & table) const;

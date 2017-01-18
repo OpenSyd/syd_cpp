@@ -70,12 +70,22 @@ void syd::RecordWithHistory::DumpInTable(syd::PrintTable & ta) const
 // --------------------------------------------------------------------
 
 
-
 // --------------------------------------------------------------------
 void syd::RecordWithHistory::BuildMapOfSortFunctions(CompareFunctionMap & map)
 {
-  map["update"] =
+  map["update_date"] =
     [](pointer a, pointer b) -> bool { return a->history->update_date < b->history->update_date; };
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::RecordWithHistory::BuildMapOfFieldsFunctions(FieldFunctionMap & map)
+{
+
+  map["update_date"] = [](pointer a) -> std::string { return a->history->update_date; };
+  map["insertion_date"] = [](pointer a) -> std::string { return a->history->insertion_date; };
+}
+// --------------------------------------------------------------------
+
 
