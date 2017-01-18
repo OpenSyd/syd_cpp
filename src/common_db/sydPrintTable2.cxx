@@ -36,6 +36,22 @@ syd::PrintTable2::PrintTable2()
 
 
 //------------------------------------------------------------------
+void syd::PrintTable2::SetHeaderFlag(bool b)
+{
+  header_flag_ = b;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable2::SetFooterFlag(bool b)
+{
+  footer_flag_ = b;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
 void syd::PrintTable2::Build(std::string table_name, const RecordBaseVector records, std::string columns)
 {
   values_.resize(records.size());
@@ -44,14 +60,12 @@ void syd::PrintTable2::Build(std::string table_name, const RecordBaseVector reco
 
   auto fields_names = columns;
   if (fields_names == "") fields_names = db->GetTraits(table_name)->GetDefaultFields();
-  DD(fields_names);
   auto fields = db->GetFields(table_name, fields_names);
-  DD(fields.size());
+
   // Header
   header_.resize(fields.size());
   std::vector<std::string> words;
   syd::GetWords(words, fields_names);
-  DD(words.size());
   header_.resize(words.size());
   int i=0;
   if (words.size() != fields.size()) {
@@ -61,7 +75,6 @@ void syd::PrintTable2::Build(std::string table_name, const RecordBaseVector reco
     header_[i] = col;
     ++i;
   }
-  DDS(header_);
   // Build
   Build(records, fields);
 }
@@ -73,16 +86,13 @@ void syd::PrintTable2::Build(std::string table_name, const RecordBaseVector reco
 void syd::PrintTable2::Build(const RecordBaseVector & records,
                              const std::vector<FieldFunc> & fields)
 {
-  DDF();
   values_.resize(records.size());
   int i=0; // row
-  DD(fields.size());
   for(auto & r:records) {
      int j=0; // column
     values_[i].resize(fields.size());
     for(auto & f:fields) {
       values_[i][j] = f(r); // get the value
-      //      DD(values_[i][j]);
       ++j;
     }
     ++i;
@@ -98,8 +108,6 @@ void syd::PrintTable2::Build(const RecordBaseVector & records,
 // -----------------------------------------------------------------
 void syd::PrintTable2::Print(std::ostream & os)
 {
-  //for(auto & h:headers_) h->Print(os);
-  //for(auto & r:rows_) r->Print(os);
   if (header_flag_) PrintHeader(os);
   for(auto & row:values_) {
     PrintRow(os, row);
@@ -149,7 +157,6 @@ void syd::PrintTable2::PrintRow(std::ostream & os, std::vector<std::string> & ro
 void syd::PrintTable2::PrintHeader(std::ostream & os)
 {
   int i=0;
-  DDS(column_widths_);
   for(auto & h:header_) {
     os << std::setw(column_widths_[i]) << h;
     ++i;

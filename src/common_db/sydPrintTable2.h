@@ -39,6 +39,8 @@ namespace syd {
 
     void Build(std::string table_name, const RecordBaseVector records, std::string columns);
     void Build(const RecordBaseVector & records, const std::vector<FieldFunc> & f);
+    void SetHeaderFlag(bool b);
+    void SetFooterFlag(bool b);
     void SetDefaultColumnsSize();
     void Print(std::ostream & os);
     void PrintHeader(std::ostream & os);

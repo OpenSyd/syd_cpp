@@ -104,48 +104,49 @@ int main(int argc, char* argv[])
   }
   else {
     if (args_info.oneOutput_flag && results.size() == 0) {
-          LOG(FATAL) << "Zero image found";
+      LOG(FATAL) << "Zero element found";
     }
     else if (args_info.oneOutput_flag && results.size() > 1) {
-          LOG(FATAL) << "Multiple images found";
+      LOG(FATAL) << "Several elements found";
     }
     if (results.size() == 0) {
       LOG(1) << "No records match";
       return EXIT_SUCCESS;
     }
-    DD(table_name);
 
     syd::PrintTable2 table;
     table.Build(table_name, results, args_info.format_arg);
+    table.SetHeaderFlag(!args_info.noheader_flag);
+    table.SetFooterFlag(!args_info.nofooter_flag);
     table.Print(std::cout); // Print total number at the end !
 
     /*
-    syd::PrintTable table;
-    table.SetFormat(format);
-    table.SetHeaderFlag(!args_info.noheader_flag);
-    try {
+      syd::PrintTable table;
+      table.SetFormat(format);
+      table.SetHeaderFlag(!args_info.noheader_flag);
+      try {
       table.Build(results.begin(), results.end());
       for(auto i=0; i<args_info.col_given; i++) {
-        std::string s = args_info.col_arg[i];
-        std::vector<std::string> w;
-        syd::GetWords(w, s);
-        if (w.size() != 3) {
-          LOG(FATAL) << "Format must be 3 strings: 'num_col' 'p' 'value'";
-        }
-        int col = atoi(w[0].c_str());
-        if (w[1] != "p") {
-          LOG(FATAL) << "Format not known. Must be 'p'.";
-        }
-        int v = atoi(w[2].c_str());
-        table.SetColumnPrecision(col, v);
+      std::string s = args_info.col_arg[i];
+      std::vector<std::string> w;
+      syd::GetWords(w, s);
+      if (w.size() != 3) {
+      LOG(FATAL) << "Format must be 3 strings: 'num_col' 'p' 'value'";
+      }
+      int col = atoi(w[0].c_str());
+      if (w[1] != "p") {
+      LOG(FATAL) << "Format not known. Must be 'p'.";
+      }
+      int v = atoi(w[2].c_str());
+      table.SetColumnPrecision(col, v);
       }
       table.Print(os);
-    } catch (std::exception & e) {
+      } catch (std::exception & e) {
       if (args_info.vv_flag or args_info.vvs_flag) {
-        LOG(FATAL) << "Error, results *must* be images with filenames to be able to be open with vv"
-                   << std::endl << "Query error is: " << e.what();
+      LOG(FATAL) << "Error, results *must* be images with filenames to be able to be open with vv"
+      << std::endl << "Query error is: " << e.what();
       }
-    }
+      }
     */
   }
 
