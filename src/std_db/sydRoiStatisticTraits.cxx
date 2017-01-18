@@ -43,7 +43,7 @@ BuildMapOfSortFunctions(CompareFunctionMap & map) const
   map["date"] = f;
   map[""] = f; // make this one the default
   map["mask"]  = [](pointer a, pointer b) -> bool {
-    if (a->mask == nullptr or b->make == nullptr) return true;
+    if (a->mask == nullptr or b->mask == nullptr) return true;
     return a->mask->roitype->name < b->mask->roitype->name; };
   map["mean"]  = [](pointer a, pointer b) -> bool { return a->mean < b->mean; };
   map["n"]  = [](pointer a, pointer b) -> bool { return a->n < b->n; };
@@ -63,7 +63,12 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 
   map["date"] = [](pointer a) -> std::string { return a->image->acquisition_date; };
   map["tags"]  = [](pointer a) -> std::string { return syd::GetLabels(a->image->tags); };
-  map["mean"] = [](pointer a, int p=2) -> std::string { return std::ToString(a->mean,p); };
+  map["mean"] = [](pointer a, int p=2) -> std::string { return syd::ToString(a->mean,p); };
+  map["std_dev"] = [](pointer a, int p=2) -> std::string { return syd::ToString(a->std_dev,p); };
+  map["n"] = [](pointer a) -> std::string { return syd::ToString(a->n,0); };
+  map["sum"] = [](pointer a, int p=2) -> std::string { return syd::ToString(a->sum,p); };
+  map["min"] = [](pointer a, int p=2) -> std::string { return syd::ToString(a->min,p); };
+  map["max"] = [](pointer a, int p=2) -> std::string { return syd::ToString(a->max,p); };
 
   // Prevent to loop if sub-record contains an RoiStatistic
   static int already_here = false;
@@ -83,13 +88,13 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
     }
   }
   {
-    auto pmap = syd::RecordTraits<syd::mask>::GetTraits()->GetFieldMap();
+    auto pmap = syd::RecordTraits<syd::RoiMaskImage>::GetTraits()->GetFieldMap();
     for(auto & m:pmap) {
       std::string s = "mask."+m.first;
       auto f = m.second;
       map[s] = [f](pointer a) -> std::string {
-        if (!a->injection) return empty_value;
-        return f(a->injection); };
+        if (!a->mask) return empty_value;
+        return f(a->mask); };
     }
   }
 
@@ -98,6 +103,9 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
   syd::RecordWithComments::BuildMapOfFieldsFunctions(m2);
   map.insert(m2.begin(), m2.end());
   already_here = false;
+
+  for(auto m:map) DD(m.first);
+
 }
 // --------------------------------------------------------------------
 
@@ -106,7 +114,7 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 template<> std::string syd::RecordTraits<syd::RoiStatistic>::
 GetDefaultFields() const
 {
-  std::string s = "id image.patient.name mask.roitype.name image.id tags mean std_dev n min max sum";
+  std::string s = "id image.patient.name mask.roi.name image.id tags mean std_dev n min max sum";
   return s;
 }
 // --------------------------------------------------------------------
