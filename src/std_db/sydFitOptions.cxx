@@ -95,3 +95,20 @@ SetFromOptions(const syd::TimeIntegratedActivityFitOptions & options)
     model_names.push_back(m->GetName());
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitOptions::
+BuildMapOfFieldsFunctions(FieldFunctionMap & map)
+{
+  map["r2_min"] = [](pointer a, int p=2) -> std::string { return syd::ToString(a->r2_min, p); };
+  map["max_iteration"] = [](pointer a) -> std::string { return syd::ToString(a->max_iteration, 0); };
+  map["restricted_tac"] = [](pointer a) -> std::string { return syd::ToString(a->restricted_tac); };
+  map["models"] = [](pointer a) -> std::string { return a->GetModelsName(); };
+  map["akaike_criterion"] = [](pointer a) -> std::string { return a->akaike_criterion; };
+
+  map["it"] = map["max_iteration"];
+  map["ak"] = map["akaike_criterion"];
+  map["rest"] = map["restricted_tac"];
+}
+// --------------------------------------------------------------------

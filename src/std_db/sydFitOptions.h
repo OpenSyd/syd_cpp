@@ -51,6 +51,12 @@ namespace syd {
     // FIXME additional points
     // FIXME post processes
 
+    /// Specific case for RecordWithComments (composition not inheritance)
+    typedef std::shared_ptr<FitOptions> pointer;
+    typedef std::function<std::string(pointer)> SpecificFieldFunc;
+    typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
+    static void BuildMapOfFieldsFunctions(FieldFunctionMap & map);
+
     /// Return a string with all model names
     std::string GetModelsName() const;
 
