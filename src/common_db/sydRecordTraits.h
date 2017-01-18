@@ -71,7 +71,7 @@ namespace syd {
     const CompareFunctionMap & GetSortFunctionMap() const;
     void BuildMapOfSortFunctions(CompareFunctionMap & map) const;
 
-    /// FIXME
+    /// Functions to get fields value as string
     FieldFunc GetField(std::string field) const;
     std::vector<FieldFunc> GetFields(std::string fields) const;
     void BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
@@ -93,10 +93,9 @@ namespace syd {
     mutable CompareFunctionMap compare_record_fmap_;
     void SetDefaultSortFunctions(CompareFunctionMap & map) const;
 
-    // FIXME
+    // For get field function
     mutable FieldFunctionMap field_fmap_;
     void SetDefaultFieldFunctions(FieldFunctionMap & map) const;
-
 
   }; // end of class
 

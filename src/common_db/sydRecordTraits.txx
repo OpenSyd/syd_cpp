@@ -349,7 +349,7 @@ std::vector<typename syd::RecordTraits<RecordType>::FieldFunc>
 syd::RecordTraits<RecordType>::
 GetFields(std::string fields) const
 {
-  if (fields == "") return GetFields(GetDefaultFields());
+  // if (fields == "") return GetFields(GetDefaultFields());
   std::vector<std::string> words;
   syd::GetWords(words, fields);
   std::vector<FieldFunc> f;
@@ -365,7 +365,7 @@ std::string
 syd::RecordTraits<RecordType>::
 GetDefaultFields() const
 {
-  return "id"; // by default, only the id
+  return "raw"; // by default: raw output
 }
 // --------------------------------------------------------------------
 

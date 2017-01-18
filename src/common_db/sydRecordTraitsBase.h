@@ -62,9 +62,10 @@ namespace syd {
     /// Sort function
     virtual void Sort(RecordBaseVector & records, const std::string & type) const = 0;
 
-    /// FIXME
+    /// Get field functions
     virtual FieldFunc GetField(std::string field) const = 0;
     virtual std::vector<FieldFunc> GetFields(std::string fields) const = 0;
+    virtual std::string GetDefaultFields() const = 0;
 
   protected:
     RecordTraitsBase(std::string table_name);
