@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
     table.SetHeaderFlag(!args_info.noheader_flag);
     table.SetFooterFlag(!args_info.nofooter_flag);
     table.Print(std::cout); // Print total number at the end !
-
+    std::cout << results.size() << " elements found in table " << table_name << std::endl;
     /*
       syd::PrintTable table;
       table.SetFormat(format);

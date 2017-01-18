@@ -52,6 +52,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiTypeTraits.cxx
   sydRoiStatisticTraits.cxx
   sydFitImagesTraits.cxx
+  sydTimepointsTraits.cxx
 
   sydPixelUnitHelper.cxx
   sydDicomSerieBuilder.cxx
