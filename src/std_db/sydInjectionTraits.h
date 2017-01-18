@@ -31,11 +31,14 @@ namespace syd {
   DEFINE_TABLE_TRAITS_HEADER(Injection);
 
   /// Specific Sort for Injection
-  DEFINE_TABLE_TRAITS_SORT_HEADER(Injection);
+  template<> void syd::RecordTraits<syd::Injection>::
+    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
 
+  /// Specific fields
   template<> void syd::RecordTraits<syd::Injection>::
     BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
 
+  /// Default fields
   template<> std::string syd::RecordTraits<syd::Injection>::
     GetDefaultFields() const;
 
