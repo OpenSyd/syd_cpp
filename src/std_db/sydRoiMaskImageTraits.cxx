@@ -32,7 +32,6 @@ BuildMapOfSortFunctions(CompareFunctionMap & map) const
   syd::RecordTraits<syd::Image>::CompareFunctionMap m;
   syd::RecordTraits<syd::Image>::GetTraits()->BuildMapOfSortFunctions(m);
   map.insert(m.begin(), m.end());
-  for(auto mm:map) DD(mm.first);
 }
 // --------------------------------------------------------------------
 
@@ -41,11 +40,26 @@ BuildMapOfSortFunctions(CompareFunctionMap & map) const
 template<> void syd::RecordTraits<syd::RoiMaskImage>::
 BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 {
+  // From image
   syd::RecordTraits<syd::Image>::FieldFunctionMap m;
   syd::RecordTraits<syd::Image>::GetTraits()->BuildMapOfFieldsFunctions(m);
   map.insert(m.begin(), m.end());
+  // add roitype
+  auto pmap = syd::RecordTraits<syd::RoiType>::GetTraits()->GetFieldMap();
+  for(auto & m:pmap) {
+    std::string s = "roi."+m.first;
+    auto f = m.second;
+    map[s] = [f](pointer a) -> std::string { return f(a->roitype); };
+  }
+}
+// --------------------------------------------------------------------
 
-  // add roitype 
 
+// --------------------------------------------------------------------
+template<> std::string syd::RecordTraits<syd::RoiMaskImage>::
+GetDefaultFields() const
+{
+  std::string s = "id patient.name roi.name tags modality size spacing dicoms comments";
+  return s;
 }
 // --------------------------------------------------------------------
