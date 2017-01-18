@@ -23,6 +23,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
 #include "sydTableOfRecords.h"
+#include "sydPrintTable2.h"
 
 //#include "sydTestTemp3.h"
 // #include "sydTestTemp4.h"
@@ -54,13 +55,14 @@ int main(int argc, char* argv[])
   //auto columns_info = TableBuildColumns(table_name, columns);
 
   // Step2
-  syd::Table table;
-  table.Build(records, columns);
+  syd::PrintTable2 table;
+  auto fields = db->GetFields(table_name, "raw");
+  table.Build(records, fields);
   table.Print(std::cout);
-  table.Build(records, "patient.id");
+  //  table.Build(records, "patient.id");
   // table.SetHeaderFlag(true); // options
   // Step3
-  table.Print(std::cout);
+  //table.Print(std::cout);
 
 
   // -----------------------------------------------------------------

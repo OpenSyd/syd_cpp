@@ -115,19 +115,8 @@ int main(int argc, char* argv[])
     }
     DD(table_name);
 
-
-    // auto map = db->GetTraits("Image")->GetFieldMap();
-    // for(auto m:map) DD(m);
-
     syd::PrintTable2 table;
-    auto fields = db->GetFields(table_name, args_info.format_arg);
-    table.Build(results, fields);
-    //    table.Build(results, args_info.format_arg);
-    //    db->GetField(table_name, )
-    //auto f = db->GetField("Image", "id");
-    //DD(f(records[0]));
-    //DD(records[0]->GetField("id")); // FIXME possible in record
-
+    table.Build(table_name, results, args_info.format_arg);
     table.Print(std::cout); // Print total number at the end !
 
     /*
