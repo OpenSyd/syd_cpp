@@ -104,6 +104,16 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
   syd::RecordWithComments::FieldFunctionMap m2;
   syd::RecordWithComments::BuildMapOfFieldsFunctions(m2);
   map.insert(m2.begin(), m2.end());
+  syd::RecordWithHistory::FieldFunctionMap m3;
+  syd::RecordWithHistory::BuildMapOfFieldsFunctions(m3);
+  map.insert(m2.begin(), m2.end());
+
+  // Shorter field names
+  map["pat"] = map["patient.name"];
+  map["rad"] = map["injection.radionuclide.name"];
+  map["inj"] = map["injection.id"];
+  map["date"] = map["acquisition_date"];
+
   already_here = false;
 }
 // --------------------------------------------------------------------
@@ -113,7 +123,7 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 template<> std::string syd::RecordTraits<syd::Image>::
 GetDefaultFields() const
 {
-  std::string s = "id patient.name acquisition_date tags injection.radionuclide.name injection.id modality size spacing dicoms comments";
+  std::string s = "id pat date tags rad inj modality size spacing dicoms comments";
   return s;
 }
 // --------------------------------------------------------------------
