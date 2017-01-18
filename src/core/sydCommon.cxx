@@ -425,11 +425,21 @@ double syd::ComputeMedian(std::vector<double> values)
 //--------------------------------------------------------------------
 
 
+
 //--------------------------------------------------------------------
 std::string syd::ToString(double a, int precision)
 {
   std::stringstream str;
   str << std::fixed << std::setprecision(precision) << a;
   return str.str();
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+std::string syd::ToString(bool b)
+{
+  if (b) return "Y";
+  return "N";
 }
 //--------------------------------------------------------------------
