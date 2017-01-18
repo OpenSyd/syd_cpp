@@ -36,7 +36,7 @@ BuildMapOfSortFunctions(CompareFunctionMap & map) const
   syd::RecordWithHistory::CompareFunctionMap m2;
   syd::RecordWithHistory::BuildMapOfSortFunctions(m2);
   map.insert(m2.begin(), m2.end());
-  map[""] = map["update"]; // make this one the default
+  map[""] = map["update_date"]; // make this one the default
 }
 // --------------------------------------------------------------------
 
@@ -58,6 +58,11 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
   map["nb_success_pixels"] = [](pointer a) -> std::string { return syd::ToString(a->nb_success_pixels,0); };
   map["tags"]  = [](pointer a) -> std::string { return syd::GetLabels(a->tags); };
   map["outputs"] = [](pointer a) -> std::string { return a->GetOutputNames(); };
+  map["%"] = [](pointer a, int p=2) -> std::string {
+    double d = 100.0*(double)a->nb_success_pixels/(double)a->nb_pixels;
+    auto s = syd::ToString(d, 2)+"%";
+    return s;
+  };
 
   // Patient
   auto pmap = syd::RecordTraits<syd::Patient>::GetTraits()->GetFieldMap();
@@ -69,22 +74,35 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
       return f(a->images[0]->patient); };
   }
 
-  // FIXME FitOptions !
+  // injection
+  auto pmap2 = syd::RecordTraits<syd::Injection>::GetTraits()->GetFieldMap();
+  for(auto & m:pmap2) {
+    std::string s = "injection."+m.first;
+    auto f = m.second;
+    map[s] = [f](pointer a) -> std::string {
+      if (a->images.size() == 0) return empty_value;
+      if (a->images[0]->injection == nullptr) return empty_value;
+      return f(a->images[0]->injection); };
+  }
 
-  // Contains a RecordWithComments, so special case
+ // Contains a RecordWithComments, so special case
   syd::RecordWithComments::FieldFunctionMap m2;
   syd::RecordWithComments::BuildMapOfFieldsFunctions(m2);
   map.insert(m2.begin(), m2.end());
   syd::RecordWithHistory::FieldFunctionMap m3;
   syd::RecordWithHistory::BuildMapOfFieldsFunctions(m3);
   map.insert(m2.begin(), m2.end());
+  syd::FitOptions::FieldFunctionMap m4;
+  syd::FitOptions::BuildMapOfFieldsFunctions(m4);
+  map.insert(m4.begin(), m4.end());
 
   // Shorter field names
   map["pat"] = map["patient.name"];
-  // map["rad"] = map["injection.radionuclide.name"];
+  map["n"] = map["nb_pixels"];
+  map["mina"] = map["min_activity"];
+  map["rad"] = map["injection.radionuclide.name"];
   // map["inj"] = map["injection.id"];
   // map["date"] = map["acquisition_date"];
-
 }
 // --------------------------------------------------------------------
 
@@ -93,7 +111,7 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 template<> std::string syd::RecordTraits<syd::FitImages>::
 GetDefaultFields() const
 {
-  std::string s = "id pat min_activity nb_pixels nb_success_pixels outputs";
+  std::string s = "id pat rad images models mina r2_min ak rest it n % outputs";
   return s;
 }
 // --------------------------------------------------------------------
