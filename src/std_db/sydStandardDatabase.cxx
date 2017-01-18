@@ -37,7 +37,7 @@
 DEFINE_TABLE_TRAITS_IMPL(Elastix)
 //DEFINE_TABLE_TRAITS_IMPL(FitImages)
 //DEFINE_TABLE_TRAITS_IMPL(Timepoints)
-DEFINE_TABLE_TRAITS_IMPL(RoiTimepoints)
+//DEFINE_TABLE_TRAITS_IMPL(RoiTimepoints)
 DEFINE_TABLE_TRAITS_IMPL(FitTimepoints)
 
 // // --------------------------------------------------------------------
