@@ -31,12 +31,16 @@ namespace syd {
   DEFINE_TABLE_TRAITS_HEADER(Patient);
 
   /// Specific Sort for Patient
-  DEFINE_TABLE_TRAITS_SORT_HEADER(Patient);
+  template<> void syd::RecordTraits<syd::Patient>::
+    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
 
-
+  /// Default fields
   template<> void syd::RecordTraits<syd::Patient>::
     BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
 
+  /// Default fields
+  template<> std::string syd::RecordTraits<syd::Patient>::
+    GetDefaultFields() const;
 
 } // end of namespace
 // --------------------------------------------------------------------

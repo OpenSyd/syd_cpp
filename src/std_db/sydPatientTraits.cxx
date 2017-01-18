@@ -48,3 +48,13 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
   map["study_id"] = [](pointer a) -> std::string { return std::to_string(a->study_id); };
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> std::string syd::RecordTraits<syd::Patient>::
+GetDefaultFields() const
+{
+  std::string s = "id study_id name weight_in_kg sex dicom_patientid";
+  return s;
+}
+// --------------------------------------------------------------------
