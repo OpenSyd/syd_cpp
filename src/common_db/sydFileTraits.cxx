@@ -24,7 +24,6 @@ DEFINE_TABLE_TRAITS_IMPL(File);
 // --------------------------------------------------------------------
 
 
-
 // --------------------------------------------------------------------
 template<> void syd::RecordTraits<syd::File>::
 BuildMapOfSortFunctions(CompareFunctionMap & map) const

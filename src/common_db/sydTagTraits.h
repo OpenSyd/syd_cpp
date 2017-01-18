@@ -30,8 +30,17 @@ namespace syd {
   /// Main GetTraits function
   DEFINE_TABLE_TRAITS_HEADER(Tag);
 
-  /// Specific Sort for Tag
-  //DEFINE_TABLE_TRAITS_SORT_HEADER(Tag);
+  /// Specific Sort
+  template<> void syd::RecordTraits<syd::Tag>::
+    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
+
+  /// Specific fields
+  template<> void syd::RecordTraits<syd::Tag>::
+    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
+
+  /// Default fields
+  template<> std::string syd::RecordTraits<syd::Tag>::
+    GetDefaultFields() const;
 
 } // end of namespace
 // --------------------------------------------------------------------

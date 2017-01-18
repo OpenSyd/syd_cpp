@@ -20,6 +20,7 @@ wrap_odb(sydCore sydRecordWithMD5Signature.h)
 set(sydCommonDatabase_src
   sydVersion.h
   sydPrintTable.cxx
+  sydPrintTable2.cxx
   sydPrintTableRow.cxx
   sydPrintTableColumnInfo.cxx
 
@@ -36,6 +37,10 @@ set(sydCommonDatabase_src
   sydRecord-schema.cxx
   sydRecord.cxx
   sydRecordTraitsBase.cxx
+
+  ## must be before !
+  sydTagTraits.cxx
+  sydFileTraits.cxx
 
   sydRecordHistory-odb.cxx
   sydRecordHistory-schema.cxx
@@ -65,8 +70,6 @@ set(sydCommonDatabase_src
   sydPluginManager.cxx
   sydDatabaseInformation.cxx
 
-  sydTagTraits.cxx
-  sydFileTraits.cxx
   sydCommonDatabase.cxx
 
   sydRecordHelper.cxx
@@ -95,7 +98,7 @@ target_link_libraries(sydInsert ${SYD_COMMON_DB_LIBRARY})
 
 #----------------------------------------------------------
 wrap_ggo(sydFind_GGO_C sydFind.ggo sydCommandLineDefault.ggo)
-add_executable(sydFind sydPrintTable2.cxx sydFind.cxx ${sydFind_GGO_C})
+add_executable(sydFind sydFind.cxx ${sydFind_GGO_C})
 target_link_libraries(sydFind ${SYD_COMMON_DB_LIBRARY})
 #----------------------------------------------------------
 

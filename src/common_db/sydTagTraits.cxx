@@ -25,20 +25,39 @@ DEFINE_TABLE_TRAITS_IMPL(Tag);
 
 
 // --------------------------------------------------------------------
-/*
-  template<> void syd::RecordTraits<syd::Tag>::
-Sort(syd::Tag::vector & v, const std::string & type) const
+template<> void syd::RecordTraits<syd::Tag>::
+BuildMapOfSortFunctions(CompareFunctionMap & map) const
 {
-  DD("specific tag sort");
-  if (type == "id")
-    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
-        return a->id < b->id; });
-  if (type == "default" or type=="name" or type == "label" or type=="")
-    std::sort(begin(v), end(v), [v](pointer a, pointer b) {
-        return a->label < b->label; });
-  if (type == "help") {
-    LOG(0) << "Available sort type: 'id' or 'label' (or 'name')";
-  }
+  DDF();
+  DD("tag");
+  // Sort functions from Record
+  SetDefaultSortFunctions(map);
+  // New sort comparison
+  auto f = [](pointer a, pointer b) -> bool { return a->label < b->label; };
+  map["label"] = f;
+  map[""] = f; // make this one the default
 }
-*/
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> void syd::RecordTraits<syd::Tag>::
+BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
+{
+  DDF();
+  DD("tag");
+  SetDefaultFieldFunctions(map);
+  map["label"] = [](pointer a) -> std::string { return a->label; };
+  map["description"] = [](pointer a) -> std::string { return a->description; };
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> std::string syd::RecordTraits<syd::Tag>::
+GetDefaultFields() const
+{
+  std::string s = "id label description";
+  return s;
+}
 // --------------------------------------------------------------------

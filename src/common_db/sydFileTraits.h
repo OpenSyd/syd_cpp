@@ -42,7 +42,6 @@ namespace syd {
   template<> std::string syd::RecordTraits<syd::File>::
     GetDefaultFields() const;
 
-
 } // end namespace
 // --------------------------------------------------------------------
 
