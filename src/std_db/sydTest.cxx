@@ -25,6 +25,8 @@
 #include "sydTableOfRecords.h"
 #include "sydPrintTable2.h"
 
+#include <boost/variant.hpp>
+
 //#include "sydTestTemp3.h"
 // #include "sydTestTemp4.h"
 #include "sydTestTemp5.h"
@@ -41,6 +43,20 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // -----------------------------------------------------------------
+
+
+  struct A {
+    int a;
+    std::string b;
+  };
+  boost::variant<int, std::string> a;
+
+  a = 12;
+  DD(a);
+  a = "toto";
+  DD(a);
+
+  exit(0);
 
   syd::Image::vector images;
   db->Query(images);

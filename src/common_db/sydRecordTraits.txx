@@ -309,7 +309,6 @@ template<class RecordType>
 void syd::RecordTraits<RecordType>::
 InitFields() const
 {
-  DDF();
   if (record_field_fmap_.size() != 0) return; // already done
   if (field_fmap_.size() == 0) BuildMapOfFieldsFunctions(field_fmap_); 
   for(auto m:field_fmap_) {
@@ -321,7 +320,6 @@ InitFields() const
     };
     record_field_fmap_[m.first] = gf;
   }
-  DD("done");
 }
 // --------------------------------------------------------------------
 
@@ -354,13 +352,6 @@ GetField(std::string field) const
     return field_not_found;
   }
   else return it->second;
-  // auto f = it->second;
-  // auto gf = [f](syd::Record::pointer gr) -> std::string {
-  //   // cast from generic to specific record
-  //   auto r = std::static_pointer_cast<RecordType>(gr);
-  //   return f(r);
-  // };
-  // return gf;
 }
 // --------------------------------------------------------------------
 
@@ -401,38 +392,4 @@ GetDefaultFields() const
   return "raw"; // by default: raw output
 }
 // --------------------------------------------------------------------
-
-// --------------------------------------------------------------------
-/*template<class RecordType>
-  const typename syd::RecordTraits<RecordType>::FieldFunctionType &
-  syd::RecordTraits<RecordType>::GetFieldFunction2(std::string field_name)
-  {
-  DDF();
-  //static std::map<std::string, GetFieldFunction> field_map_;
-  static bool already_here = false;
-  if (!already_here) BuildFieldFunctionMap();
-
-  auto it = field_map_.find(field_name);
-  if (it == field_map_.end()) {
-  EXCEPTION("Cannot find the field '" << field_name << "' in table '"
-  << GetTableName2() << "'");
-  }
-  return it->second;
-  }
-*/
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-/*template<class RecordType>
-  void
-  syd::RecordTraits<RecordType>::BuildFieldFunctionMap()
-  {
-  DDF();
-  typedef syd::Record::pointer pointer;
-  field_map_["id"] = [](pointer r) { return std::to_string(r->id); };
-  field_map_["raw"] = [](pointer r) { return r->ToString(); };
-  }*/
-// --------------------------------------------------------------------
-
 

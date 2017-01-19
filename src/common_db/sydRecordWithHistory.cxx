@@ -75,6 +75,7 @@ void syd::RecordWithHistory::BuildMapOfSortFunctions(CompareFunctionMap & map)
 {
   map["update_date"] =
     [](pointer a, pointer b) -> bool { return a->history->update_date < b->history->update_date; };
+  map[""] = map["update_date"];
 }
 // --------------------------------------------------------------------
 

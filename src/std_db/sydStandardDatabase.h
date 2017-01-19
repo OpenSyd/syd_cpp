@@ -54,6 +54,7 @@
 #include "sydTimepointsTraits.h"
 #include "sydRoiTimepointsTraits.h"
 #include "sydFitTimepointsTraits.h"
+#include "sydElastixTraits.h"
 
 // itk
 #include <itkImage.h>
@@ -94,57 +95,6 @@ namespace syd {
     virtual void CreateTables();
 
   }; // class StandardDatabase
-
-  /*
-    template<> void syd::Table<syd::Image>::Sort(syd::Image::vector & records,
-    const std::string & type) const;
-    template<> void syd::Table<syd::Injection>::Sort(syd::Injection::vector & records,
-    const std::string & type) const;
-    template<> void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & records,
-    const std::string & type) const;
-    template<> void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & records,
-    const std::string & type) const;
-    template<> void syd::Table<syd::Patient>::Sort(syd::Patient::vector & records,
-    const std::string & type) const;
-    template<> void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & records,
-    const std::string & type) const;
-    // template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records,
-    //                                                    const std::string & type) const;
-    template<> void syd::Table<syd::PixelUnit>::Sort(syd::PixelUnit::vector & records,
-    const std::string & type) const;
-    template<> void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & records,
-    const std::string & type) const;
-  */
-
-  //  DEFINE_TABLE_TRAITS_HEADER(Patient);
-  //DEFINE_TABLE_TRAITS_HEADER(Injection);
-  //DEFINE_TABLE_TRAITS_HEADER(Radionuclide);
-
-  //DEFINE_TABLE_TRAITS_HEADER(DicomFile);
-  //DEFINE_TABLE_TRAITS_HEADER(DicomSerie);
-
-  //  DEFINE_TABLE_TRAITS_HEADER(PixelUnit);
-  //DEFINE_TABLE_TRAITS_HEADER(Image);
-  //DEFINE_TABLE_TRAITS_HEADER(RoiType);
-  //DEFINE_TABLE_TRAITS_HEADER(RoiMaskImage);
-  //  DEFINE_TABLE_TRAITS_HEADER(RoiStatistic);
-
-  DEFINE_TABLE_TRAITS_HEADER(Elastix);
-  //DEFINE_TABLE_TRAITS_HEADER(FitImages);
-  //DEFINE_TABLE_TRAITS_HEADER(Timepoints);
-  //DEFINE_TABLE_TRAITS_HEADER(RoiTimepoints);
-  //  DEFINE_TABLE_TRAITS_HEADER(FitTimepoints);
-
-#define DEFINE_SORT(TABLE_NAME)                 \
-  template<>                                    \
-    void                                        \
-    syd::RecordTraits<TABLE_NAME>::             \
-    Sort(TABLE_NAME::vector & v,                \
-         const std::string & type) const;
-
-  /* DEFINE_SORT(Image); */
-  //  DEFINE_SORT(RoiMaskImage);
-
 
 } // namespace syd
 
