@@ -37,6 +37,7 @@
 #include <itkImageSliceIteratorWithIndex.h>
 #include <itkImageSliceConstIteratorWithIndex.h>
 #include <itkConvolutionImageFilter.h>
+#include "gdcmImageHelper.h"
 
 // --------------------------------------------------------------------
 namespace syd {

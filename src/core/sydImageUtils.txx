@@ -39,6 +39,7 @@ typename ImageType::Pointer ReadImage(std::string filename)
   typedef itk::ImageFileReader<ImageType> ReaderType;
   typename ReaderType::Pointer reader = ReaderType::New();
   reader->SetFileName(filename.c_str());
+  gdcm::ImageHelper::SetForcePixelSpacing(true);
   try { reader->Update(); }
   catch(itk::ExceptionObject & err) {
     EXCEPTION("Error in 'ReadImage' while reading [" << filename << "]");
@@ -361,6 +362,7 @@ ReadDicomSerieFromFolder(std::string folder, std::string serie_uid)
     typename ReaderType::Pointer reader = ReaderType::New();
     LOG(2) << "Loading " << temp.size() << " files for serie " << serie_uid << " in " << folder << ".";
     reader->SetFileNames(temp);
+    gdcm::ImageHelper::SetForcePixelSpacing(true);
     file = temp[0];
     reader->Update();
     output = reader->GetOutput();
@@ -391,6 +393,7 @@ ReadDicomSerieFromListOfFiles(std::string folder, const std::vector<std::string>
     typename ReaderType::Pointer reader = ReaderType::New();
     LOG(2) << "Loading " << files.size() << " files for serie in " << folder << ".";
     reader->SetFileNames(files);
+    gdcm::ImageHelper::SetForcePixelSpacing(true);
     file = files[0];
     reader->Update();
     output = reader->GetOutput();
