@@ -65,6 +65,11 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
     map[s] = [f](pointer a) -> std::string { return f(a->patient); };
   }
 
+  map["date"] = map["acquisition_date"];
+  map["pat"] = map["patient.name"];
+  map["files"] = map["dicom_files"];
+  map["mod"] = map["dicom_modality"];
+  map["description"] = map["dicom_description"];
 }
 // --------------------------------------------------------------------
 
@@ -73,7 +78,7 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
 template<> std::string syd::RecordTraits<syd::DicomSerie>::
 GetDefaultFields() const
 {
-  std::string s = "id patient.name acquisition_date dicom_files dicom_modality dicom_description reconstruction_date";
+  std::string s = "id pat date files mod dicom_description reconstruction_date";
   return s;
 }
 // --------------------------------------------------------------------
