@@ -45,8 +45,9 @@ namespace syd {
     typedef syd::RecordTraitsBase::RecordBaseVector RecordBaseVector;
     typedef std::function<bool(pointer a, pointer b)> CompareFunction;
     typedef std::map<std::string, CompareFunction> CompareFunctionMap;
-    typedef std::function<std::string(pointer)> SpecificFieldFunc;
-    typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
+    typedef std::function<std::string(pointer)> FieldFunc;
+    typedef std::map<std::string, FieldFunc> FieldFunctionMap;
+    typedef syd::RecordTraitsBase::RecordFieldFunctionMap RecordFieldFunctionMap;
 
     // Main static version to get the singleton traits
     static RecordTraits<RecordType> * GetTraits();
@@ -72,10 +73,11 @@ namespace syd {
     void BuildMapOfSortFunctions(CompareFunctionMap & map) const;
 
     /// Functions to get fields value as string
-    FieldFunc GetField(std::string field) const;
-    std::vector<FieldFunc> GetFields(std::string fields) const;
     void BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
+    RecordFieldFunc GetField(std::string field) const;
+    std::vector<RecordFieldFunc> GetFields(std::string fields) const;
     const FieldFunctionMap & GetFieldMap() const;
+    const RecordFieldFunctionMap & GetRecordFieldMap() const;
     virtual std::string GetDefaultFields() const;
 
   protected:
@@ -96,6 +98,7 @@ namespace syd {
     // For get field function
     mutable FieldFunctionMap field_fmap_;
     void SetDefaultFieldFunctions(FieldFunctionMap & map) const;
+    void InitFields() const;
 
   }; // end of class
 

@@ -89,7 +89,7 @@ void syd::PrintTable2::Build(const RecordBaseVector & records,
   values_.resize(records.size());
   int i=0; // row
   for(auto & r:records) {
-     int j=0; // column
+    int j=0; // column
     values_[i].resize(fields.size());
     for(auto & f:fields) {
       values_[i][j] = f(r); // get the value

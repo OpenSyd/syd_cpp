@@ -38,7 +38,8 @@ namespace syd {
 
     typedef std::shared_ptr<Record> RecordBasePointer;
     typedef std::vector<RecordBasePointer> RecordBaseVector;
-    typedef std::function<std::string(RecordBasePointer)> FieldFunc;
+    typedef std::function<std::string(RecordBasePointer)> RecordFieldFunc;
+    typedef std::map<std::string, RecordFieldFunc> RecordFieldFunctionMap;
 
     /// Return the table name
     virtual std::string GetTableName() const;
@@ -63,14 +64,16 @@ namespace syd {
     virtual void Sort(RecordBaseVector & records, const std::string & type) const = 0;
 
     /// Get field functions
-    virtual FieldFunc GetField(std::string field) const = 0;
-    virtual std::vector<FieldFunc> GetFields(std::string fields) const = 0;
+    virtual RecordFieldFunc GetField(std::string field) const = 0;
+    virtual std::vector<RecordFieldFunc> GetFields(std::string fields) const = 0;
     virtual std::string GetDefaultFields() const = 0;
+    virtual const RecordFieldFunctionMap & GetRecordFieldMap() const = 0;
 
   protected:
     RecordTraitsBase(std::string table_name);
     std::string table_name_;
     std::string sql_table_name_;
+    mutable RecordFieldFunctionMap record_field_fmap_;
 
   }; // end of class
   // --------------------------------------------------------------------

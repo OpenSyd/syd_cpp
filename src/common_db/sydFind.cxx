@@ -25,6 +25,8 @@
 #include "sydPrintTable.h"
 #include "sydPrintTable2.h"
 
+#include <boost/variant.hpp>
+
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -120,6 +122,14 @@ int main(int argc, char* argv[])
     table.SetFooterFlag(!args_info.nofooter_flag);
     table.Print(std::cout); // Print total number at the end !
     std::cout << results.size() << " elements found in table " << table_name << std::endl;
+
+    if (args_info.list_fields_flag) {
+      auto map = db->GetTraits(table_name)->GetRecordFieldMap();
+      for(auto m:map) {
+        std::cout << m.first << std::endl;
+      }
+    }
+
     /*
       syd::PrintTable table;
       table.SetFormat(format);

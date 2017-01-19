@@ -53,6 +53,7 @@
 #include "sydFitImagesTraits.h"
 #include "sydTimepointsTraits.h"
 #include "sydRoiTimepointsTraits.h"
+#include "sydFitTimepointsTraits.h"
 
 // itk
 #include <itkImage.h>
@@ -132,7 +133,7 @@ namespace syd {
   //DEFINE_TABLE_TRAITS_HEADER(FitImages);
   //DEFINE_TABLE_TRAITS_HEADER(Timepoints);
   //DEFINE_TABLE_TRAITS_HEADER(RoiTimepoints);
-  DEFINE_TABLE_TRAITS_HEADER(FitTimepoints);
+  //  DEFINE_TABLE_TRAITS_HEADER(FitTimepoints);
 
 #define DEFINE_SORT(TABLE_NAME)                 \
   template<>                                    \

@@ -306,11 +306,33 @@ SetDefaultFieldFunctions(FieldFunctionMap & map) const
 
 // --------------------------------------------------------------------
 template<class RecordType>
+void syd::RecordTraits<RecordType>::
+InitFields() const
+{
+  DDF();
+  if (record_field_fmap_.size() != 0) return; // already done
+  if (field_fmap_.size() == 0) BuildMapOfFieldsFunctions(field_fmap_); 
+  for(auto m:field_fmap_) {
+    auto f = m.second;
+    auto gf = [f](syd::Record::pointer gr) -> std::string {
+      // cast from generic to specific record. Static = no check !!
+      auto r = std::static_pointer_cast<RecordType>(gr);
+      return f(r);
+    };
+    record_field_fmap_[m.first] = gf;
+  }
+  DD("done");
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
 const typename syd::RecordTraits<RecordType>::FieldFunctionMap &
 syd::RecordTraits<RecordType>::
 GetFieldMap() const
 {
-  if (field_fmap_.size() == 0) BuildMapOfFieldsFunctions(field_fmap_);
+  InitFields();
   return field_fmap_;
 }
 // --------------------------------------------------------------------
@@ -318,41 +340,52 @@ GetFieldMap() const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-typename syd::RecordTraits<RecordType>::FieldFunc
+typename syd::RecordTraits<RecordType>::RecordFieldFunc
 syd::RecordTraits<RecordType>::
 GetField(std::string field) const
 {
-  // Build map (first time)
-  if (field_fmap_.size() == 0) BuildMapOfFieldsFunctions(field_fmap_);
+  InitFields();
 
   // Use map
-  auto it = field_fmap_.find(field);
-  if (it == field_fmap_.end()) {
+  auto it = record_field_fmap_.find(field);
+  if (it == record_field_fmap_.end()) {
     auto field_not_found = [field](syd::Record::pointer p) -> std::string
-      { return "field_"+field+"_not_found"; };
+      { return field+"_not_found"; };
     return field_not_found;
   }
-  auto f = it->second;
-  auto gf = [f](syd::Record::pointer gr) -> std::string {
-    // cast from generic to specific record
-    auto r = std::static_pointer_cast<RecordType>(gr);
-    return f(r);
-  };
-  return gf;
+  else return it->second;
+  // auto f = it->second;
+  // auto gf = [f](syd::Record::pointer gr) -> std::string {
+  //   // cast from generic to specific record
+  //   auto r = std::static_pointer_cast<RecordType>(gr);
+  //   return f(r);
+  // };
+  // return gf;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class RecordType>
-std::vector<typename syd::RecordTraits<RecordType>::FieldFunc>
+const typename syd::RecordTraits<RecordType>::RecordFieldFunctionMap &
+syd::RecordTraits<RecordType>::
+GetRecordFieldMap() const
+{
+  InitFields();
+  return record_field_fmap_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+std::vector<typename syd::RecordTraits<RecordType>::RecordFieldFunc>
 syd::RecordTraits<RecordType>::
 GetFields(std::string fields) const
 {
-  // if (fields == "") return GetFields(GetDefaultFields());
   std::vector<std::string> words;
   syd::GetWords(words, fields);
-  std::vector<FieldFunc> f;
+  std::vector<RecordFieldFunc> f;
   for(auto & w:words) f.push_back(GetField(w));
   return f;
 }
