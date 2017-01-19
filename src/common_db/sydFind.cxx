@@ -22,7 +22,7 @@
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydRecordHelper.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 #include <boost/variant.hpp>
 
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
       return EXIT_SUCCESS;
     }
 
-    syd::PrintTable2 table;
+    syd::PrintTable table;
     table.Build(table_name, results, args_info.format_arg);
     table.SetHeaderFlag(!args_info.noheader_flag);
     table.SetFooterFlag(!args_info.nofooter_flag);
@@ -128,34 +128,6 @@ int main(int argc, char* argv[])
       std::cout << std::endl << "Total of " << map.size() << " fields.";
     }
 
-    /*
-      syd::PrintTable table;
-      table.SetFormat(format);
-      table.SetHeaderFlag(!args_info.noheader_flag);
-      try {
-      table.Build(results.begin(), results.end());
-      for(auto i=0; i<args_info.col_given; i++) {
-      std::string s = args_info.col_arg[i];
-      std::vector<std::string> w;
-      syd::GetWords(w, s);
-      if (w.size() != 3) {
-      LOG(FATAL) << "Format must be 3 strings: 'num_col' 'p' 'value'";
-      }
-      int col = atoi(w[0].c_str());
-      if (w[1] != "p") {
-      LOG(FATAL) << "Format not known. Must be 'p'.";
-      }
-      int v = atoi(w[2].c_str());
-      table.SetColumnPrecision(col, v);
-      }
-      table.Print(os);
-      } catch (std::exception & e) {
-      if (args_info.vv_flag or args_info.vvs_flag) {
-      LOG(FATAL) << "Error, results *must* be images with filenames to be able to be open with vv"
-      << std::endl << "Query error is: " << e.what();
-      }
-      }
-    */
   }
 
   // Check

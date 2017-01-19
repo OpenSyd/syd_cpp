@@ -17,18 +17,11 @@
   ===========================================================================**/
 
 // syd
-#include "sydPrintTable2.h"
-//#include "sydRecord.h"
-//#include "sydPrintTable.h"
-//#include "sydDatabase.h"
+#include "sydPrintTable.h"
 
 //------------------------------------------------------------------
-syd::PrintTable2::PrintTable2()
+syd::PrintTable::PrintTable()
 {
-  // format_ = "default";
-  // use_single_row_flag_ = false;
-  // use_header_flag_ = true;
-  // AddFormat("raw", "Print every fields as a simple line");
   header_flag_ = true;
   footer_flag_ = true;
 }
@@ -36,7 +29,7 @@ syd::PrintTable2::PrintTable2()
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::SetHeaderFlag(bool b)
+void syd::PrintTable::SetHeaderFlag(bool b)
 {
   header_flag_ = b;
 }
@@ -44,7 +37,7 @@ void syd::PrintTable2::SetHeaderFlag(bool b)
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::SetFooterFlag(bool b)
+void syd::PrintTable::SetFooterFlag(bool b)
 {
   footer_flag_ = b;
 }
@@ -52,7 +45,7 @@ void syd::PrintTable2::SetFooterFlag(bool b)
 
 
 //------------------------------------------------------------------
-void syd::PrintTable2::Build(std::string table_name, const RecordBaseVector records, std::string columns)
+void syd::PrintTable::Build(std::string table_name, const RecordBaseVector records, std::string columns)
 {
   values_.resize(records.size());
   if (records.size() == 0) return;
@@ -69,7 +62,7 @@ void syd::PrintTable2::Build(std::string table_name, const RecordBaseVector reco
   header_.resize(words.size());
   int i=0;
   if (words.size() != fields.size()) {
-    LOG(FATAL) << "Internal error fields in syd::PrintTable2::Build";
+    LOG(FATAL) << "Internal error fields in syd::PrintTable::Build";
   }
   for(auto col:words) {
     header_[i] = col;
@@ -83,8 +76,8 @@ void syd::PrintTable2::Build(std::string table_name, const RecordBaseVector reco
 
 // -----------------------------------------------------------------
 // FIXME template Build<T>(T::vector ...)
-void syd::PrintTable2::Build(const RecordBaseVector & records,
-                             const std::vector<FieldFunc> & fields)
+void syd::PrintTable::Build(const RecordBaseVector & records,
+                            const std::vector<FieldFunc> & fields)
 {
   values_.resize(records.size());
   int i=0; // row
@@ -106,7 +99,7 @@ void syd::PrintTable2::Build(const RecordBaseVector & records,
 
 
 // -----------------------------------------------------------------
-void syd::PrintTable2::Print(std::ostream & os)
+void syd::PrintTable::Print(std::ostream & os)
 {
   if (header_flag_) PrintHeader(os);
   for(auto & row:values_) {
@@ -119,7 +112,7 @@ void syd::PrintTable2::Print(std::ostream & os)
 
 
 // -----------------------------------------------------------------
-void syd::PrintTable2::SetDefaultColumnsSize()
+void syd::PrintTable::SetDefaultColumnsSize()
 {
   // compute max length by columns
   std::fill(column_widths_.begin(), column_widths_.end(), 0);
@@ -142,7 +135,7 @@ void syd::PrintTable2::SetDefaultColumnsSize()
 
 
 // -----------------------------------------------------------------
-void syd::PrintTable2::PrintRow(std::ostream & os, std::vector<std::string> & row)
+void syd::PrintTable::PrintRow(std::ostream & os, std::vector<std::string> & row)
 {
   int i=0;
   for(auto & col:row) {
@@ -154,7 +147,7 @@ void syd::PrintTable2::PrintRow(std::ostream & os, std::vector<std::string> & ro
 
 
 // -----------------------------------------------------------------
-void syd::PrintTable2::PrintHeader(std::ostream & os)
+void syd::PrintTable::PrintHeader(std::ostream & os)
 {
   int i=0;
   for(auto & h:header_) {

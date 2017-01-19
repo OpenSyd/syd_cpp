@@ -23,7 +23,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
 #include "sydTableOfRecords.h"
-#include "sydPrintTable2.h"
+#include "sydPrintTable.h"
 
 #include <boost/variant.hpp>
 
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
   //auto columns_info = TableBuildColumns(table_name, columns);
 
   // Step2
-  syd::PrintTable2 table;
+  syd::PrintTable table;
   auto fields = db->GetFields(table_name, "raw");
   table.Build(records, fields);
   table.Print(std::cout);
