@@ -43,9 +43,6 @@ namespace syd {
     /// Build a string to compute MD5
     virtual std::string ToStringForMD5() const;
 
-    /// Add a line in the given PrintTable
-    virtual void DumpInTable_default(syd::PrintTable & table) const;
-
   protected:
     RoiTimepoints();
 

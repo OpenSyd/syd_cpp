@@ -72,12 +72,6 @@ namespace syd {
       /// Callback
       void Callback(odb::callback_event, odb::database&);
 
-      /// Add a line in the given PrintTable
-      virtual void DumpInTable(syd::PrintTable & table) const;
-      virtual void DumpInTable_default(syd::PrintTable & table) const;
-      virtual void DumpInTable_md5(syd::PrintTable & table) const;
-      virtual void DumpInTable_history(syd::PrintTable & table) const;
-
   protected:
       Timepoints();
 

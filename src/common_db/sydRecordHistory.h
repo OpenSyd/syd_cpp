@@ -21,7 +21,6 @@
 
 // syd
 #include "sydRecord.h"
-#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -41,8 +40,6 @@ namespace syd {
     virtual std::string ToString() const;
 
     void Set(const syd::Database * db, const std::vector<std::string> & arg);
-
-    virtual void DumpInTable(syd::PrintTable & table) const;
 
   protected:
     RecordHistory();

@@ -65,10 +65,6 @@ namespace syd {
       /// Write the element as a string
       virtual std::string ToString() const;
 
-      /// Add a line in the given PrintTable
-      virtual void DumpInTable(syd::PrintTable & table) const;
-      virtual void DumpInTable_default(syd::PrintTable & table) const;
-
       /// Return a string that describe all associated output (id + name)
       std::string GetOutputNames() const;
 

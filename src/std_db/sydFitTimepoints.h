@@ -72,12 +72,6 @@ namespace syd {
       void Callback(odb::callback_event, odb::database&) const;
       void Callback(odb::callback_event, odb::database&);
 
-      /// Print table dump
-      virtual void DumpInTable(syd::PrintTable & table) const;
-      virtual void DumpInTable_default(syd::PrintTable & table) const;
-      virtual void DumpInTable_history(syd::PrintTable & table) const;
-      virtual void DumpInTable_md5(syd::PrintTable & table) const;
-
       /// Create a model from the current result
       syd::FitModelBase::pointer NewModel() const;
 

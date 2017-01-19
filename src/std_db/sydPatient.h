@@ -21,7 +21,6 @@
 
 // syd
 #include "sydRecord.h"
-#include "sydPrintTable.h"
 #include "sydRecordWithComments.h"
 
 // --------------------------------------------------------------------
@@ -69,10 +68,6 @@ namespace syd {
 
       void Callback(odb::callback_event, odb::database&) const;
       void Callback(odb::callback_event, odb::database&);
-
-      virtual void DumpInTable(syd::PrintTable & table) const;
-
-      //void SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const;
 
   protected:
       Patient();

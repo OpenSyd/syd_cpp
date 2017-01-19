@@ -49,8 +49,6 @@ namespace syd {
 
     void SetPrintHistoryFlag(bool b) { print_history_flag_ = b; }
 
-    virtual void DumpInTable(syd::PrintTable & table) const;
-
     virtual void Callback(odb::callback_event,
                           odb::database & odb,
                           syd::Database * db) const;

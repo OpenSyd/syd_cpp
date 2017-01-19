@@ -93,23 +93,6 @@ void syd::Injection::Set(const std::vector<std::string> & args)
 
 
 // --------------------------------------------------
-void syd::Injection::DumpInTable(syd::PrintTable & ta) const
-{
-  std::string pname = empty_value;
-  if (patient != NULL) pname = patient->name;
-  std::string rad = empty_value;
-  if (radionuclide != NULL) rad = radionuclide->name;
-  ta.Set("id", id);
-  ta.Set("p", pname);
-  ta.Set("rad", rad);
-  ta.Set("date", date);
-  ta.Set("A(MBq)", activity_in_MBq, 2);
-  ta.Set("com", GetAllComments());
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Injection::Callback(odb::callback_event event, odb::database & db) const
 {
   syd::Record::Callback(event, db);

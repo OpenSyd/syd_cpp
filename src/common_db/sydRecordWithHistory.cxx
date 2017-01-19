@@ -19,7 +19,6 @@
 // syd
 #include "sydRecordWithHistory.h"
 #include "sydDatabase.h"
-#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::RecordWithHistory::RecordWithHistory()
@@ -53,19 +52,6 @@ void syd::RecordWithHistory::Callback(odb::callback_event event,
 
   // Events in Callback const : persist, update, erase
   // event load can only be here if the non-const version does not exist
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::RecordWithHistory::DumpInTable(syd::PrintTable & ta) const
-{
-  if (history == NULL) {
-    LOG(WARNING) << "Error no history ?";
-    return;
-  }
-  ta.Set("inserted", history->insertion_date);
-  ta.Set("updated", history->update_date);
 }
 // --------------------------------------------------------------------
 

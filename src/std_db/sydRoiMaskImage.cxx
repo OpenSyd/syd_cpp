@@ -19,9 +19,6 @@
 // syd
 #include "sydRoiMaskImage.h"
 #include "sydStandardDatabase.h"
-//#include "sydTable.h"
-// #include "sydImage.h"
-// #include "sydImage-odb.hxx"
 #include "sydRecordTraits.h"
 
 DEFINE_TABLE_IMPL(RoiMaskImage);
@@ -45,38 +42,22 @@ std::string syd::RoiMaskImage::ToShortString() const
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::RoiMaskImage::Callback(odb::callback_event event,
                                  odb::database & db) const
 {
   syd::Image::Callback(event,db);
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::RoiMaskImage::Callback(odb::callback_event event,
                                  odb::database & db)
 {
   syd::Image::Callback(event,db);
 }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::RoiMaskImage::DumpInTable(syd::PrintTable & ta) const
-{
-  syd::Image::DumpInTable(ta);
-  auto f = ta.GetFormat();
-  if (f == "short" or
-      f == "default" or
-      f == "ref_frame" or
-      f == "history" or
-      f == "file")
-    ta.Set("roi", (roitype != nullptr? roitype->name:empty_value));
-}
-// --------------------------------------------------
-
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------

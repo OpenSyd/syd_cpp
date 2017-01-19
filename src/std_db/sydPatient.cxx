@@ -88,25 +88,6 @@ void syd::Patient::Set(const std::string & pname,
 
 
 // --------------------------------------------------
-void syd::Patient::DumpInTable(syd::PrintTable & ta) const
-{
-  ta.Set("id",id);
-  ta.Set("p", name);
-  ta.Set("sid", study_id);
-  ta.Set("w(kg)", weight_in_kg);
-  ta.Set("dicom", dicom_patientid);
-  syd::StandardDatabase* db = static_cast<syd::StandardDatabase*>(db_);
-  syd::Injection::vector injections;
-  odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
-  db->Query(injections, q);
-  ta.Set("injection", injections.size());
-  ta.Set("sex", sex);
-  ta.Set("com", GetAllComments());
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 bool syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const {
   if (dicom_patientid != vdicom_patientid) return false;
   // Try to guess initials. Consider the first letter and the first after the symbol '^'

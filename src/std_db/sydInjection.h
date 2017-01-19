@@ -26,8 +26,6 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  class InjectionStat;
-
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Injection") callback(Callback)
   /// Store information about a radionuclide injection (date, etc).
   class Injection :
@@ -58,8 +56,6 @@ namespace syd {
 
       virtual void Callback(odb::callback_event, odb::database&) const;
       virtual void Callback(odb::callback_event, odb::database&);
-
-      virtual void DumpInTable(syd::PrintTable & table) const;
 
       double GetLambdaDecayConstantInHours() const;
 

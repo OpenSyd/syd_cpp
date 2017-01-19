@@ -19,7 +19,6 @@
 // syd
 #include "sydRecord.h"
 #include "sydDatabase.h"
-#include "sydPrintTable.h"
 #include "sydPluginManager.h"
 #include "sydRecordTraits.h"
 
@@ -81,14 +80,6 @@ void syd::Record::Set(const std::vector<std::string> & args)
 {
   LOG(FATAL) << "No function Set(args) for table " << GetTableName()
              << ". Use alternative tool to insert an element.";
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Record::DumpInTable(syd::PrintTable & table) const
-{
-  std::cout << ToString() << std::endl;
 }
 // --------------------------------------------------------------------
 

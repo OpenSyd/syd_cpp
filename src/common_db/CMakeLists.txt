@@ -19,10 +19,7 @@ wrap_odb(sydCore sydRecordWithMD5Signature.h)
 
 set(sydCommonDatabase_src
   sydVersion.h
-  sydPrintTable.cxx
   sydPrintTable2.cxx
-  sydPrintTableRow.cxx
-  sydPrintTableColumnInfo.cxx
 
   # sydDatabaseDescription.cxx
   # sydTableDescription.cxx
@@ -38,7 +35,7 @@ set(sydCommonDatabase_src
   sydRecord.cxx
   sydRecordTraitsBase.cxx
 
-  ## must be before !
+  ## must be before the next files !
   sydTagTraits.cxx
   sydFileTraits.cxx
 

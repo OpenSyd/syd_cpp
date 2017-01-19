@@ -81,12 +81,6 @@ namespace syd {
       void Callback(odb::callback_event, odb::database&) const;
       void Callback(odb::callback_event, odb::database&);
 
-      virtual void DumpInTable(syd::PrintTable & table) const;
-      virtual void DumpInTable_default(syd::PrintTable & table) const;
-      virtual void DumpInTable_file(syd::PrintTable & table) const;
-      virtual void DumpInTable_filelist(syd::PrintTable & table) const;
-      virtual void DumpInTable_details(syd::PrintTable & table) const;
-
       /// Check if the associated files exist on disk
       virtual syd::CheckResult Check() const;
 

@@ -50,14 +50,21 @@ int main(int argc, char* argv[])
     std::string b;
   };
   boost::variant<int, std::string> a;
-
   a = 12;
   DD(a);
   a = "toto";
   DD(a);
+  // DD(a.size()); // does not work obviously
+
+  auto s = boost::get<std::string>(&a);
+  if (s) {
+    DD("this is a string");
+    DD(*s);
+  }
 
   exit(0);
 
+  // -----------------------------------------------------------------
   syd::Image::vector images;
   db->Query(images);
   DD(images.size());

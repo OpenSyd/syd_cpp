@@ -56,9 +56,6 @@ namespace syd {
       /// Write the element as a string
       virtual std::string ToString() const;
 
-      /// Add a line in the given PrintTable
-      virtual void DumpInTable(syd::PrintTable & table) const;
-
       /// Callback : delete the associated files when the image is deleted.
       void Callback(odb::callback_event, odb::database&) const;
       void Callback(odb::callback_event, odb::database&);

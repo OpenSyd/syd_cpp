@@ -18,7 +18,6 @@
 
 // syd
 #include "sydPixelUnit.h"
-#include "sydPrintTable.h"
 #include "sydStandardDatabase.h"
 #include "sydRecordTraits.h"
 
@@ -56,15 +55,5 @@ void syd::PixelUnit::Set(const std::vector<std::string> & arg)
   }
   name = arg[0];
   description = arg[1];
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::PixelUnit::DumpInTable(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("name", name);
-  ta.Set("description", description);
 }
 // --------------------------------------------------

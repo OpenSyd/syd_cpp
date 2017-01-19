@@ -17,23 +17,6 @@
   ===========================================================================**/
 
 #include "sydRecordTraits.h"
-#include "sydPrintTable.h"
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & records,
-                         const std::string & format,
-                         std::ostream & os)
-{
-  /*
-  syd::PrintTable table;
-  table.SetFormat(format);
-  //table.SetHeaderFlag(!args_info.noheader_flag);
-  table.Build(records.begin(), records.end());
-  table.Print(os);*/
-}
-// --------------------------------------------------------------------
-
 
 // --------------------------------------------------------------------
 template<class RecordType>

@@ -22,7 +22,6 @@
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydRecordHelper.h"
-#include "sydPrintTable.h"
 #include "sydPrintTable2.h"
 
 #include <boost/variant.hpp>

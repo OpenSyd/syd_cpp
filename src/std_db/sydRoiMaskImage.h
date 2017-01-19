@@ -46,8 +46,6 @@ namespace syd {
     void Callback(odb::callback_event, odb::database&) const;
     void Callback(odb::callback_event, odb::database&);
 
-    virtual void DumpInTable(syd::PrintTable & table) const;
-
     /// Compute the default image path (based on the patient's name)
     virtual std::string ComputeDefaultRelativePath();
 

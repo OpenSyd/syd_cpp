@@ -18,7 +18,6 @@
 
 // syd
 #include "sydRecordHistory.h"
-#include "sydPrintTable.h"
 #include "sydDatabase.h"
 #include "sydRecordTraits.h"
 
@@ -38,7 +37,6 @@ std::string syd::RecordHistory::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
-    //<< record->id << " "
      << insertion_date << " "
      << update_date;
   return ss.str();
@@ -58,12 +56,3 @@ void syd::RecordHistory::Set(const syd::Database * db, const std::vector<std::st
 }
 // --------------------------------------------------
 
-
-// --------------------------------------------------------------------
-void syd::RecordHistory::DumpInTable(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("insertion_date", insertion_date);
-  ta.Set("update_date", update_date);
-}
-// --------------------------------------------------------------------

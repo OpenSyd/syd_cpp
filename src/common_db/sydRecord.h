@@ -33,7 +33,6 @@ namespace syd {
 
   // Forward declaration
   class Database;
-  class PrintTable;
   class RecordTraitsBase;
   template<class T> class RecordTraits;
 
@@ -69,9 +68,6 @@ namespace syd {
 
     /// Set the values of the fields from some string.
     virtual void Set(const std::vector<std::string> & args);
-
-    /// Add a line in the given PrintTable
-    virtual void DumpInTable(syd::PrintTable & table) const;
 
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const;

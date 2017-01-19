@@ -44,19 +44,6 @@ std::string syd::RoiTimepoints::ToString() const
 
 
 // --------------------------------------------------------------------
-void syd::RoiTimepoints::DumpInTable_default(syd::PrintTable & ta) const
-{
-  syd::Timepoints::DumpInTable_default(ta);
-  if (roi_statistics.size() > 0 and roi_statistics[0]->mask != nullptr)
-    ta.Set("roi", roi_statistics[0]->mask->roitype->name);
-  std::string ids = "";
-  for(auto stat:roi_statistics) ids = ids+std::to_string(stat->id)+" ";
-  ta.Set("stat", ids);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 std::string syd::RoiTimepoints::ToStringForMD5() const
 {
   std::stringstream ss;

@@ -71,43 +71,6 @@ std::string syd::FitImages::GetOutputNames() const
 
 
 // --------------------------------------------------------------------
-void syd::FitImages::DumpInTable(syd::PrintTable & ta) const
-{
-  auto format = ta.GetFormat();
-  if (format == "default") DumpInTable_default(ta);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::FitImages::DumpInTable_default(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("p", images[0]->GetPatientName());
-  ta.Set("n", images.size());
-  if (images.size() == 0) return;
-  ta.Set("min", min_activity);
-  ta.Set("R2min", r2_min, 3);
-  ta.Set("rest", (restricted_tac? "Y":"N"));
-  ta.Set("Ak", akaike_criterion);
-  ta.Set("itm", max_iteration);
-  ta.Set("models", GetModelsName());
-  std::stringstream ss;
-  ss << nb_success_pixels << "/" << nb_pixels;
-  ta.Set("pix", ss.str());
-  auto percent = (double)nb_success_pixels/(double)nb_pixels*100.0;
-  ta.Set("res", percent,2);
-  ta.Set("out", GetOutputNames(), 150);
-  std::stringstream sss;
-  for(auto im:images) sss << im->id << " ";
-  ta.Set("img", sss.str());
-  auto c = GetAllComments();
-  if (c.size() > 0) ta.Set("com", c);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::FitImages::AddOutput(syd::Image::pointer output, std::string name)
 {
   outputs.push_back(output);

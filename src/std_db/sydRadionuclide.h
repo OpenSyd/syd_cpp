@@ -21,7 +21,6 @@
 
 // syd
 #include "sydRecord.h"
-//#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -57,8 +56,6 @@ namespace syd {
 
     /// Write the element as a string
     virtual std::string ToString() const;
-
-    virtual void DumpInTable(syd::PrintTable & table) const;
 
     void Set(const std::vector<std::string> & arg);
 

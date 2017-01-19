@@ -63,11 +63,6 @@ namespace syd {
       /// Write the element as a string
       virtual std::string ToString() const;
 
-      /// Add a line in the given PrintTable
-      virtual void DumpInTable(syd::PrintTable & table) const;
-      virtual void DumpInTable_default(syd::PrintTable & table) const;
-      virtual void DumpInTable_history(syd::PrintTable & table) const;
-
       virtual void Callback(odb::callback_event, odb::database&) const;
 
       /// Check if the associated files exist on disk

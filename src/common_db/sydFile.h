@@ -52,11 +52,6 @@ namespace syd {
       void Callback(odb::callback_event, odb::database&) const;
       void Callback(odb::callback_event, odb::database&);
 
-      virtual void DumpInTable(syd::PrintTable & table) const;
-      virtual void DumpInTable_default(syd::PrintTable & table) const;
-      virtual void DumpInTable_file(syd::PrintTable & table) const;
-      virtual void DumpInTable_md5(syd::PrintTable & table) const;
-
       /// Return the full absolute path of the file inside the db (must be persistent)
       std::string GetAbsolutePath() const;
 

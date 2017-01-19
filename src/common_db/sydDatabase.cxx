@@ -224,18 +224,6 @@ void syd::Database::CheckOrCreateRelativePath(std::string relative_path)
 
 
 // --------------------------------------------------------------------
-void syd::Database::Dump(const std::string & table_name,
-                         const std::string & format,
-                         std::ostream & os)
-{
-  syd::Record::vector records;
-  Query(records, table_name); // get all records
-  Dump(records, format, os);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Database::Insert(RecordBasePointer record)
 {
   record->traits()->Insert(this, record);
