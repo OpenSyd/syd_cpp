@@ -61,7 +61,6 @@ namespace syd {
     std::vector<double> & GetVariances() { return variances; }
 
     // Functions
-    void CopyFrom(syd::TimeActivityCurve & tac);
     void SortByTime();
     unsigned int FindIndexOfMaxValueFromTheEnd(unsigned int min_nb_of_values=3) const;
     unsigned int FindIndexOfMaxValue() const;

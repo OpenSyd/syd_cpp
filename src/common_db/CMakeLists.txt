@@ -14,17 +14,16 @@ wrap_odb(sydCore sydRecordWithHistory.h)
 wrap_odb(sydCore sydFile.h)
 wrap_odb(sydCore sydTag.h)
 wrap_odb(sydCore sydRecordWithTags.h)
+wrap_odb(sydCore sydRecordWithComments.h)
 wrap_odb(sydCore sydRecordWithMD5Signature.h)
 
 set(sydCommonDatabase_src
   sydVersion.h
   sydPrintTable.cxx
-  sydPrintTableRow.cxx
-  sydPrintTableColumnInfo.cxx
 
-  sydDatabaseDescription.cxx
-  sydTableDescription.cxx
-  sydFieldDescription.cxx
+  # sydDatabaseDescription.cxx
+  # sydTableDescription.cxx
+  # sydFieldDescription.cxx
 
   sydDatabaseSchemaName-odb.cxx
   sydDatabaseSchemaName-schema.cxx
@@ -34,6 +33,12 @@ set(sydCommonDatabase_src
   sydRecord-odb.cxx
   sydRecord-schema.cxx
   sydRecord.cxx
+  sydRecordTraitsBase.cxx
+
+  ## must be before the next files !
+  sydTagTraits.cxx
+  sydFileTraits.cxx
+
   sydRecordHistory-odb.cxx
   sydRecordHistory-schema.cxx
   sydRecordHistory.cxx
@@ -52,12 +57,17 @@ set(sydCommonDatabase_src
   sydRecordWithTags-odb.cxx
   sydRecordWithTags-schema.cxx
   sydRecordWithTags.cxx
+  sydRecordWithComments-odb.cxx
+  sydRecordWithComments-schema.cxx
+  sydRecordWithComments.cxx
 
   sydDatabase.cxx
   sydDatabaseManager.cxx
   sydDatabaseInformation.cxx
   sydPluginManager.cxx
   sydDatabaseInformation.cxx
+
+  sydCommonDatabase.cxx
 
   sydRecordHelper.cxx
   sydTagHelper.cxx

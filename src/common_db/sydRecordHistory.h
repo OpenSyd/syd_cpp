@@ -21,37 +21,30 @@
 
 // syd
 #include "sydRecord.h"
-#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::RecordHistory") callback(Callback)
   /// Store information about the history for a RecordHistory
-  class RecordHistory: public syd::Record {
+  class RecordHistory:
+    public syd::Record {
   public:
 
-    virtual ~RecordHistory() { }
+    DEFINE_TABLE_CLASS(RecordHistory);
 
     std::string insertion_date;
     std::string update_date;
-
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(RecordHistory, syd::RecordHistory);
-    // ------------------------------------------------------------------------
 
     /// Write the element as a string
     virtual std::string ToString() const;
 
     void Set(const syd::Database * db, const std::vector<std::string> & arg);
 
-    virtual void DumpInTable(syd::PrintTable & table) const;
-
   protected:
     RecordHistory();
 
   }; // end of class
-
 
 } // end namespace
 // --------------------------------------------------------------------

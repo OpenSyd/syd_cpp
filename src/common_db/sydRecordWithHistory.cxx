@@ -19,7 +19,6 @@
 // syd
 #include "sydRecordWithHistory.h"
 #include "sydDatabase.h"
-#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 syd::RecordWithHistory::RecordWithHistory()
@@ -36,7 +35,7 @@ void syd::RecordWithHistory::Callback(odb::callback_event event,
                                       syd::Database * db) const
 {
   if (event == odb::callback_event::pre_persist) {
-    db->New<syd::RecordHistory>(history);
+    history = db->New<syd::RecordHistory>();
     history->insertion_date = syd::Now();
     history->update_date = history->insertion_date;
     odb.persist(history);
@@ -58,13 +57,22 @@ void syd::RecordWithHistory::Callback(odb::callback_event event,
 
 
 // --------------------------------------------------------------------
-void syd::RecordWithHistory::DumpInTable(syd::PrintTable & ta) const
+void syd::RecordWithHistory::BuildMapOfSortFunctions(CompareFunctionMap & map)
 {
-  if (history == NULL) {
-    LOG(WARNING) << "Error no history ?";
-    return;
-  }
-  ta.Set("inserted", history->insertion_date);
-  ta.Set("updated", history->update_date);
+  map["update_date"] =
+    [](pointer a, pointer b) -> bool { return a->history->update_date < b->history->update_date; };
+  map[""] = map["update_date"];
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::RecordWithHistory::BuildMapOfFieldsFunctions(FieldFunctionMap & map)
+{
+
+  map["update_date"] = [](pointer a) -> std::string { return a->history->update_date; };
+  map["insertion_date"] = [](pointer a) -> std::string { return a->history->insertion_date; };
+}
+// --------------------------------------------------------------------
+
+

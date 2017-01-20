@@ -23,9 +23,8 @@
 // --------------------------------------------------------------------
 syd::Injection::pointer syd::CopyInjection(syd::Injection::pointer injection)
 {
-  syd::Injection::pointer output;
-  auto db = injection->GetDatabase<syd::StandardDatabase>();
-  db->New(output);
+  auto db = injection->GetDatabase();
+  auto output = db->New<syd::Injection>();
   output->patient = injection->patient;
   output->radionuclide = injection->radionuclide;
   output->date = injection->date;
@@ -39,7 +38,7 @@ syd::Injection::pointer syd::CopyInjection(syd::Injection::pointer injection)
 syd::Injection::pointer syd::FindInjection(const syd::Patient::pointer patient,
                                            const std::string & rad_name_or_inj_id)
 {
-  auto db = patient->GetDatabase<syd::StandardDatabase>();
+  auto db = patient->GetDatabase();
   syd::Injection::pointer injection;
   odb::query<syd::Injection> q =
     odb::query<syd::Injection>::patient == patient->id
@@ -54,5 +53,27 @@ syd::Injection::pointer syd::FindInjection(const syd::Patient::pointer patient,
               << "Error message is: " << e.what());
   }
   return injection;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Injection::vector syd::GetSimilarInjection(syd::StandardDatabase * db,
+                                                 const syd::Injection::pointer injection)
+{
+  syd::Injection::vector injections;
+  odb::query<syd::Injection> q =
+    odb::query<syd::Injection>::patient == injection->patient->id and
+    odb::query<syd::Injection>::radionuclide == injection->radionuclide->id and
+    odb::query<syd::Injection>::date == injection->date and
+    odb::query<syd::Injection>::activity_in_MBq == injection->activity_in_MBq and
+    odb::query<syd::Injection>::id != injection->id;
+  try {
+    db->Query(injections, q);
+  } catch(std::exception & e) {
+    EXCEPTION("Error in GetSimilarInjection for injection " << injection
+              << "Error message is: " << e.what());
+  }
+  return injections;
 }
 // --------------------------------------------------------------------

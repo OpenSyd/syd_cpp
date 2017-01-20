@@ -89,9 +89,6 @@ namespace syd {
     /// Return the SQL names of the tables from which we inherit
     virtual std::vector<std::string> & GetInheritSQLTableNames() const;
 
-    /// Build the initial description of the table (not done at creation, only when needed)
-    //    virtual void InitTableDescription(syd::DatabaseDescription * d);
-
   protected:
     syd::Database * db_;
 

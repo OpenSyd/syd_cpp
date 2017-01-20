@@ -19,11 +19,8 @@
 // syd
 #include "sydRecord.h"
 #include "sydDatabase.h"
-#include "sydPrintTable.h"
 #include "sydPluginManager.h"
-
-// Define static member
-std::map<std::string, std::vector<std::string>> syd::Record::inherit_sql_tables_map_;
+#include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------
 syd::Record::Record()
@@ -32,6 +29,22 @@ syd::Record::Record()
   db_ = NULL;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Record::GetTableName() const
+{
+  return traits()->GetTableName();
+}
+// ----------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Record::GetSQLTableName() const
+{
+  return traits()->GetSQLTableName();
+}
+// ----------------------------------------------------
 
 
 // --------------------------------------------------------------------
@@ -46,9 +59,7 @@ bool syd::Record::IsPersistent() const
 // --------------------------------------------------------------------
 std::string syd::Record::ToString() const
 {
-  std::stringstream ss ;
-  ss << id;
-  return ss.str();
+  return std::to_string(id);
 }
 // --------------------------------------------------------------------
 
@@ -69,14 +80,6 @@ void syd::Record::Set(const std::vector<std::string> & args)
 {
   LOG(FATAL) << "No function Set(args) for table " << GetTableName()
              << ". Use alternative tool to insert an element.";
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Record::DumpInTable(syd::PrintTable & table) const
-{
-  std::cout << ToString() << std::endl;
 }
 // --------------------------------------------------------------------
 
@@ -150,3 +153,14 @@ bool syd::IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2)
   return (r1->ToString() == r2->ToString());
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::Record::GetFieldValue(std::string field_name)
+{
+  // We retrive the field function and apply it on this as a shared pointer
+  // Issue with const ! --> make this function const (later)
+  return traits()->GetField(field_name)(shared_from_this());
+}
+// --------------------------------------------------------------------
+

@@ -61,7 +61,7 @@ syd::Radionuclide::pointer syd::UpdateRadionuclideFilter::GetOrCreate(const std:
     db_->QueryOne(r, q);
   } catch (std::exception & e) {
     LOG(1) << "Radionuclide '" << rad_name << "' not exist. We create it.";
-    db_->New(r);
+    r = db_->New<syd::Radionuclide>();
     r->name = rad_name;
     db_->Insert(r);
   }

@@ -24,6 +24,8 @@
 #include "sydRecordHelper.h"
 #include "sydPrintTable.h"
 
+#include <boost/variant.hpp>
+
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -78,7 +80,7 @@ int main(int argc, char* argv[])
   db->Grep(results, records, patterns, exclude);
 
   // Sort
-  db->Sort(results, table_name);
+  db->Sort(results, table_name, args_info.sort_arg);
 
   // Consider vv flag
   std::string format = args_info.format_arg;
@@ -102,36 +104,30 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
   }
   else {
+    if (args_info.oneOutput_flag && results.size() == 0) {
+      LOG(FATAL) << "Zero element found";
+    }
+    else if (args_info.oneOutput_flag && results.size() > 1) {
+      LOG(FATAL) << "Several elements found";
+    }
     if (results.size() == 0) {
       LOG(1) << "No records match";
       return EXIT_SUCCESS;
     }
+
     syd::PrintTable table;
-    table.SetFormat(format);
+    table.Build(table_name, results, args_info.format_arg);
     table.SetHeaderFlag(!args_info.noheader_flag);
-    try {
-      table.Build(results.begin(), results.end());
-      for(auto i=0; i<args_info.col_given; i++) {
-        std::string s = args_info.col_arg[i];
-        std::vector<std::string> w;
-        syd::GetWords(w, s);
-        if (w.size() != 3) {
-          LOG(FATAL) << "Format must be 3 strings: 'num_col' 'p' 'value'";
-        }
-        int col = atoi(w[0].c_str());
-        if (w[1] != "p") {
-          LOG(FATAL) << "Format not known. Must be 'p'.";
-        }
-        int v = atoi(w[2].c_str());
-        table.SetColumnPrecision(col, v);
-      }
-      table.Print(os);
-    } catch (std::exception & e) {
-      if (args_info.vv_flag or args_info.vvs_flag) {
-        LOG(FATAL) << "Error, results *must* be images with filenames to be able to be open with vv"
-                   << std::endl << "Query error is: " << e.what();
-      }
+    table.SetFooterFlag(!args_info.nofooter_flag);
+    table.Print(std::cout); // Print total number at the end !
+    LOG(1) << results.size() << " elements found in table " << table_name;
+
+    if (args_info.list_fields_flag) {
+      auto map = db->GetTraits(table_name)->GetRecordFieldMap();
+      for(auto m:map) std::cout << m.first << " ";
+      std::cout << std::endl << "Total of " << map.size() << " fields.";
     }
+
   }
 
   // Check

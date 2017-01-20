@@ -27,7 +27,7 @@ int syd::ExecuteElastix(syd::Elastix::pointer elastix,
                         std::string options,
                         int verbose)
 {
-  auto db = elastix->GetDatabase<syd::StandardDatabase>();
+  auto db = elastix->GetDatabase();
   auto output_dir = db->GetUniqueTempFilename("");
   fs::create_directories(output_dir);
 
@@ -85,7 +85,7 @@ syd::Image::pointer syd::InsertTransformixImage(const syd::Elastix::pointer elas
   std::string input_image_path = image->GetAbsolutePath();
 
   // Modify the transform file according to the input image spacing
-  auto db = elastix->GetDatabase<syd::StandardDatabase>();
+  auto db = elastix->GetDatabase();
   std::ifstream in(transform_path);
   auto temp_folder = db->GetUniqueTempFilename("");
   fs::create_directories(temp_folder);

@@ -37,6 +37,11 @@ namespace syd {
   syd::Injection::pointer FindInjection(const syd::Patient::pointer patient,
                                         const std::string & rad_name_or_inj_id);
 
+  /// Check if a similar injection already exist (same date, quantity,
+  /// rad, but different id)
+  syd::Injection::vector GetSimilarInjection(syd::StandardDatabase * db,
+                                             const syd::Injection::pointer injection);
+
 }
 // --------------------------------------------------------------------
 

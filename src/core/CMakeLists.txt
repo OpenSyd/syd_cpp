@@ -25,13 +25,13 @@ endif(APPLE)
 
 #----------------------------------------------------------
 # ITK tools library
-add_library(sydItkUtils
+add_library(sydItkUtils SHARED
   sydImageUtils.cxx
   sydDicomUtils.cxx
   sydKmeansFilter.cxx
   )
 
-target_link_libraries(sydItkUtils ${ITK_LIBRARIES})
+target_link_libraries(sydItkUtils sydCore ${ITK_LIBRARIES})
 #----------------------------------------------------------
 
 
@@ -49,6 +49,8 @@ add_library(sydFit
   sydFitModel_f4c.cxx
   sydFitOutputImage.cxx
   sydTimeIntegratedActivityFilter.cxx
+  sydTimeIntegratedActivityImageFilter.cxx
+  sydTimeIntegratedActivityFitOptions.cxx
   )
 
 target_link_libraries(sydFit ${CERES_LIBRARIES} glog)
@@ -66,7 +68,8 @@ set(SYD_INCLUDE_FILES ${SYD_INCLUDE_FILES}
   sydDD.h
   sydException.h
 
-  sydTimeIntegratedActivityFilter.h
+  sydTimeIntegratedActivityImageFilter.h
+  sydTimeIntegratedActivityFitOptions.h
   itkMedianWithMaskImageFilter.h
   sydImageCrop.h
   sydImageFillHoles.h

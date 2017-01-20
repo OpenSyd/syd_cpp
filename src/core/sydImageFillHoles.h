@@ -21,53 +21,20 @@
 namespace syd {
 
   /* This function consider all pixels in the input image that are in
-    the mask image. They replace their value by the mean value of a
-    neighborhood, provided that the neighboring pixels are not in the
-    mask and does not have value at zero.
+     the mask image. They replace their value by the mean value of a
+     neighborhood, provided that the neighboring pixels are not in the
+     mask and does not have value at zero.
   */
 
   template<class ImageType>
-  int FillHoles(ImageType * input, const ImageType * mask, int r)
-  {
-    typedef itk::NeighborhoodIterator<ImageType> Iterator;
-    typedef itk::ConstNeighborhoodIterator<ImageType> CIterator;
-    typename Iterator::RadiusType radius;
-    for(auto i=0; i<3; i++) radius[i] = r;
+    void FillHoles(ImageType * input,
+                  const ImageType * mask,
+                  int r,
+                  double foreground,
+                  int & nb_failures,
+                  int & nb_changed);
 
-    Iterator it_n(radius, input, input->GetLargestPossibleRegion());
-    CIterator it_mask(radius, mask, mask->GetLargestPossibleRegion());
-    it_n.GoToBegin();
-    it_mask.GoToBegin();
+#include "sydImageFillHoles.txx"
 
-    int n = 1;
-    for(auto i=0; i<3; i++) n *= it_n.GetSize(i);
-
-    int failure = 0;
-    const double background = 0;
-    while (!it_mask.IsAtEnd()) {
-      if (it_mask.GetCenterPixel() != background) { // background is 0
-        double s = 0.0;
-        int m = 0;
-        for(auto i=0; i<n; i++) {
-          double v = it_n.GetPixel(i);
-          double vm = it_mask.GetPixel(i);
-          // do not consider foreground values nor 0.0 values
-          if (vm == background and v != 0) { s+=v; ++m; }
-        }
-        if (m == 0) {
-          LOG(WARNING) << "Too large hole to fill (no pixels in mask around this one). index is "
-                       << it_n.GetIndex();
-          ++failure;
-        }
-        else {
-          s = s/(double)m; // mean of neighbor pixels
-          it_n.SetCenterPixel(s);
-        }
-      }
-      ++it_mask;
-      ++it_n;
-    } //  end loop
-    return failure;
-  } // end function
 } // end namespace
 //--------------------------------------------------------------------

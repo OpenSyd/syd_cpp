@@ -19,9 +19,14 @@
 // syd
 #include "sydInjection.h"
 #include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(Injection);
 
 // --------------------------------------------------------------------
-syd::Injection::Injection():syd::Record()
+syd::Injection::Injection():
+  syd::Record(),
+  syd::RecordWithComments()
 {
   date = empty_value;
   activity_in_MBq = 0.0;
@@ -43,8 +48,10 @@ std::string syd::Injection::ToString() const
      << name << " "
      << r  << " "
      << date << " "
-     << activity_in_MBq;
-  return ss.str();
+     << activity_in_MBq << " "
+     << GetAllComments();
+  auto s = ss.str();
+  return trim(s);
 }
 // --------------------------------------------------
 
@@ -70,7 +77,7 @@ void syd::Injection::Set(const std::vector<std::string> & args)
   odb::query<syd::Radionuclide> q = odb::query<syd::Radionuclide>::name == args[1] or
     odb::query<syd::Radionuclide>::id == atoi(args[1].c_str());
   try {
-    db->QueryOne(rad, q);
+    rad = db->QueryOne<syd::Radionuclide>(q);
   } catch(std::exception & e) {
     LOG(FATAL) << "Error while creating the Injection, the radionuclide '"
                << args[1] << "' is not found (or several exist).";
@@ -81,22 +88,6 @@ void syd::Injection::Set(const std::vector<std::string> & args)
     LOG(FATAL) << "The date is not valid for this injection: " << date;
   }
   activity_in_MBq = atof(args[3].c_str());
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Injection::DumpInTable(syd::PrintTable & ta) const
-{
-  std::string pname = empty_value;
-  if (patient != NULL) pname = patient->name;
-  std::string rad = empty_value;
-  if (radionuclide != NULL) rad = radionuclide->name;
-  ta.Set("id", id);
-  ta.Set("p", pname);
-  ta.Set("rad", rad);
-  ta.Set("date", date);
-  ta.Set("A(MBq)", activity_in_MBq, 2);
 }
 // --------------------------------------------------
 
@@ -118,8 +109,8 @@ void syd::Injection::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------
-double syd::Injection::GetLambdaInHours() const
+double syd::Injection::GetLambdaDecayConstantInHours() const
 {
-  return radionuclide->GetLambdaInHours();
+  return radionuclide->GetLambdaDecayConstantInHours();
 }
 // --------------------------------------------------

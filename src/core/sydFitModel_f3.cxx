@@ -39,14 +39,14 @@ void syd::FitModel_f3::ComputeStartingParametersValues(const syd::TimeActivityCu
 
   // Initialisation
   params_[0] = 0.0;
-  params_[1] = GetLambdaPhysicHours();
+  params_[1] = GetLambdaDecayConstantInHours();
   params_[2] = 0.0;
 
   // log linear fit, simple mean to estimate the A2 parameters
   int n = tac->size()-first_index;
   double b = 0.0;
   for(auto i=first_index; i<tac->size(); i++) {
-    b += log(tac->GetValue(i)) - (-GetLambdaPhysicHours() * tac->GetTime(i));
+    b += log(tac->GetValue(i)) - (-GetLambdaDecayConstantInHours() * tac->GetTime(i));
   }
   b /= n;
   params_[2] = exp(b);
@@ -63,7 +63,7 @@ void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   // need to be created each time
   residuals_.clear();
   for(auto i=0; i<tac.size(); i++) {
-    auto r = new ResidualType(tac.GetTime(i), tac.GetValue(i), GetLambdaPhysicHours());
+    auto r = new ResidualType(tac.GetTime(i), tac.GetValue(i), GetLambdaDecayConstantInHours());
     residuals_.push_back(r);
   }
   // could be templated by CostFctType and param_nb ? not easy
@@ -75,7 +75,7 @@ void syd::FitModel_f3::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
 
   //problem->SetParameterLowerBound(&params_[0], 0, 0.0);
   problem->SetParameterLowerBound(&params_[1], 0, 0);
-  problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaPhysicHours());
+  problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaDecayConstantInHours());
 
   /*
   problem->SetParameterLowerBound(&params_[0], 0, 0.0);
@@ -118,7 +118,7 @@ double syd::FitModel_f3::GetValue(const double & t) const
   const double A1 = params_[0];
   const double lambda_1 = params_[1];
   const double A2 = params_[2];
-  const double l = lambda_phys_hours_;
+  const double l = lambda_in_hours_;
   return A1 * exp(-(l+lambda_1)*t) + A2* exp(-l*t);
 }
 // --------------------------------------------------------------------

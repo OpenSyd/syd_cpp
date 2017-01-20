@@ -19,14 +19,12 @@
 #ifndef SYDTIMEPOINTS_H
 #define SYDTIMEPOINTS_H
 
-// std
-#include <array>
-
 // syd
 #include "sydRoiMaskImage.h"
 #include "sydRecordWithTags.h"
 #include "sydRecordWithHistory.h"
 #include "sydRecordWithMD5Signature.h"
+#include "sydRecordWithComments.h"
 #include "sydTimeActivityCurve.h"
 
 // --------------------------------------------------------------------
@@ -34,70 +32,50 @@ namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Timepoints") callback(Callback)
   /// Store information about a time activity curve (Timepoints).
-  class Timepoints : public syd::Record,
-                     public syd::RecordWithHistory,
-                     public syd::RecordWithTags,
-                     public syd::RecordWithMD5Signature {
+  class Timepoints :
+    public syd::Record,
+    public syd::RecordWithHistory,
+    public syd::RecordWithTags,
+    public syd::RecordWithMD5Signature,
+    public syd::RecordWithComments{
   public:
 
-#pragma db not_null
-    /// Foreign key, it must exist in the Patient table
-    syd::Patient::pointer patient;
+      DEFINE_TABLE_CLASS(Timepoints);
 
-#pragma db not_null
-    /// Foreign key, it must exist in the Injection table (could be a 'fake' injection)
-    syd::Injection::pointer injection;
+#pragma db not_null on_delete(cascade)
+      /// Foreign key
+      syd::Patient::pointer patient;
 
-    /// List of times
-    std::vector<double> times;
+#pragma db not_null on_delete(cascade)
+      /// Foreign key. Timepoints must be associated with an injection (to
+      /// consider the decay when fit)
+      syd::Injection::pointer injection;
 
-    /// List values
-    std::vector<double> values;
+      /// List of times
+      std::vector<double> times;
 
-    /// Associated std dev (not required)
-    std::vector<double> std_deviations;
+      /// List values
+      std::vector<double> values;
 
-    /// Associated images (not required)
-    syd::Image::vector images;
+      /// Associated std dev (not required)
+      std::vector<double> std_deviations;
 
-    /// Associated mask (not required)
-    syd::RoiMaskImage::pointer mask;
+      /// Write the element as a string
+      virtual std::string ToString() const;
 
-    // ----------------------------------------------------------------
-    TABLE_DEFINE(Timepoints, syd::Timepoints);
-    // ----------------------------------------------------------------
+      /// Build a string to compute MD5
+      virtual std::string ToStringForMD5() const;
 
-    /// Write the element as a string
-    virtual std::string ToString() const;
+      /// Callback (const)
+      void Callback(odb::callback_event, odb::database&) const;
 
-    /// Build a string to compute MD5
-    virtual std::string ToStringForMD5() const;
-
-    /// Callback (const)
-    void Callback(odb::callback_event, odb::database&) const;
-
-    /// Callback
-    void Callback(odb::callback_event, odb::database&);
-
-    /// Add a line in the given PrintTable
-    virtual void DumpInTable(syd::PrintTable & table) const;
-    virtual void DumpInTable_default(syd::PrintTable & table) const;
-    virtual void DumpInTable_md5(syd::PrintTable & table) const;
-    virtual void DumpInTable_history(syd::PrintTable & table) const;
-
-    /// Check if the history are ok
-    virtual syd::CheckResult Check() const; //FIXME
-
-    // Helper function, build a TAC
-    void GetTAC(syd::TimeActivityCurve & tac);
-
-    // Copy
-    void CopyFrom(const syd::Timepoints::pointer & from);
+      /// Callback
+      void Callback(odb::callback_event, odb::database&);
 
   protected:
-    Timepoints();
+      Timepoints();
 
-  }; // end class
+    }; // end class
   // ------------------------------------------------------------------
 
 } // end namespace

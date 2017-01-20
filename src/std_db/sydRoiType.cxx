@@ -18,7 +18,10 @@
 
 // syd
 #include "sydRoiType.h"
-#include "sydPrintTable.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(RoiType);
 
 // --------------------------------------------------------------------
 syd::RoiType::RoiType():Record()
@@ -49,15 +52,5 @@ void syd::RoiType::Set(const std::vector<std::string> & arg)
   }
   name = arg[0];
   description = arg[1];
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::RoiType::DumpInTable(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("name", name);
-  ta.Set("description", description);
 }
 // --------------------------------------------------

@@ -33,6 +33,8 @@ namespace syd {
   class DicomFile: public syd::File {
   public:
 
+    DEFINE_TABLE_CLASS(DicomFile);
+
 #pragma db options("UNIQUE")
     /// Dicom SOPInstanceUID. Unique dicom file identifier. Unique in db.
     std::string dicom_sop_uid;
@@ -40,14 +42,8 @@ namespace syd {
     /// Dicom InstanceNumber.
     int dicom_instance_number;
 
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(DicomFile, syd::DicomFile);
-    // ------------------------------------------------------------------------
-
     /// Write the element as a string
     virtual std::string ToString() const;
-
-    virtual void DumpInTable(syd::PrintTable & table) const;
 
   protected:
     DicomFile();

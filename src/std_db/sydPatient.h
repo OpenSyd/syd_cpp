@@ -21,71 +21,58 @@
 
 // syd
 #include "sydRecord.h"
-#include "sydPrintTable.h"
-
+#include "sydRecordWithComments.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class Injection;
-  class PatientStat;
-  class StandardDatabase;
-
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Patient") callback(Callback)
   /// Store information about a patient (id, study_id, name etc).
-  class Patient: public syd::Record {
+  class Patient:
+    public syd::Record,
+    public syd::RecordWithComments {
   public:
 
-    virtual ~Patient();
+      DEFINE_TABLE_CLASS(Patient);
 
 #pragma db options("UNIQUE")
-    /// Patient name (unique)
-    std::string name;
+      /// Patient name (unique)
+      std::string name;
 
 #pragma db options("UNIQUE")
-    /// Patient number in the study (unique)
-    IdType study_id;
+      /// Patient number in the study (unique)
+      IdType study_id;
 
-    /// Patient weight_in_kg
-    double weight_in_kg;
+      /// Patient weight_in_kg
+      double weight_in_kg;
 
-    /// Patient dicom ID. Not unique because could be unknown.
-    std::string dicom_patientid;
+      /// Patient dicom ID. Not unique because could be unknown.
+      std::string dicom_patientid;
 
-    /// Patient sex
-    std::string sex;
+      /// Patient sex
+      std::string sex;
 
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(Patient, syd::Patient);
-    // ------------------------------------------------------------------------
+      /// Write the element as a string
+      virtual std::string ToString() const;
 
-    /// Write the element as a string
-    virtual std::string ToString() const;
+      /// Additional Set function to shorter patient inclusion
+      virtual void Set(const std::vector<std::string> & args);
+      virtual void Set(const std::string & pname,
+                       const IdType & pstudy_id,
+                       const double pweight_in_kg=-1,
+                       const std::string pdicom_patientid=empty_value,
+                       const std::string sex=empty_value);
 
-    /// Additional Set function to shorter patient inclusion
-    virtual void Set(const std::vector<std::string> & args);
-    virtual void Set(const std::string & pname,
-                     const IdType & pstudy_id,
-                     const double pweight_in_kg=-1,
-                     const std::string pdicom_patientid=empty_value,
-                     const std::string sex=empty_value);
+      virtual bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
+      virtual std::string ComputeRelativeFolder() const;
 
-    virtual bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
-    virtual std::string ComputeRelativeFolder() const;
-
-    void Callback(odb::callback_event, odb::database&) const;
-    void Callback(odb::callback_event, odb::database&);
-
-    virtual void DumpInTable(syd::PrintTable & table) const;
-
-    // FIXME
-    //    virtual void InitTableDescription(syd::TableDescription * description) const;
+      void Callback(odb::callback_event, odb::database&) const;
+      void Callback(odb::callback_event, odb::database&);
 
   protected:
-    Patient();
+      Patient();
 
-  }; // end of class
-}
+    }; // end of class
+} // end namespace
 // --------------------------------------------------------------------
-
 #endif

@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
     LOG(FATAL) << "Please provide at least one Elastix record id.";
   }
 
-  // Get the Elasitx objectfs
+  // Get the Elastix objects
   syd::Elastix::vector elastixs;
   db->Query(elastixs, ids);
 

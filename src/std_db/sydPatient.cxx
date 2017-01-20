@@ -21,8 +21,12 @@
 #include "sydInjection.h"
 #include "sydStandardDatabase.h"
 
+DEFINE_TABLE_IMPL(Patient);
+
 // --------------------------------------------------
-syd::Patient::Patient():syd::Record()
+syd::Patient::Patient():
+  syd::Record(),
+  syd::RecordWithComments()
 {
   // default value
   name = empty_value; // must be unique
@@ -35,14 +39,6 @@ syd::Patient::Patient():syd::Record()
 
 
 // --------------------------------------------------
-syd::Patient::~Patient()
-{
-}
-// --------------------------------------------------
-
-
-
-// --------------------------------------------------
 std::string syd::Patient::ToString() const
 {
   std::stringstream ss ;
@@ -51,8 +47,10 @@ std::string syd::Patient::ToString() const
      << name << " "
      << weight_in_kg << " "
      << dicom_patientid << " "
-     << sex;
-  return ss.str();
+     << sex << " "
+     << GetAllComments();
+  auto s = ss.str();
+  return trim(s);
 }
 // --------------------------------------------------
 
@@ -85,24 +83,6 @@ void syd::Patient::Set(const std::string & pname,
   weight_in_kg = pweight_in_kg;
   dicom_patientid = pdicom_patientid;
   sex = s;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Patient::DumpInTable(syd::PrintTable & ta) const
-{
-  ta.Set("id",id);
-  ta.Set("p", name);
-  ta.Set("sid", study_id);
-  ta.Set("w(kg)", weight_in_kg);
-  ta.Set("dicom", dicom_patientid);
-  syd::StandardDatabase* db = static_cast<syd::StandardDatabase*>(db_);
-  syd::Injection::vector injections;
-  odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
-  db->Query(injections, q);
-  ta.Set("injection", injections.size());
-  ta.Set("sex", sex);
 }
 // --------------------------------------------------
 
@@ -146,3 +126,20 @@ void syd::Patient::Callback(odb::callback_event event, odb::database & db)
   syd::Record::Callback(event,db);
 }
 // --------------------------------------------------
+
+
+/*
+// --------------------------------------------------------------------
+void syd::Patient::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const
+{
+syd::Record::SetDefaultFields(map);
+map["name"] = [](syd::Record::pointer r) {
+return std::static_pointer_cast<syd::Patient>(r)->name; };
+map["study_id"] = [](syd::Record::pointer r) {
+return std::to_string(std::static_pointer_cast<syd::Patient>(r)->study_id); };
+map["dicom"] = [](syd::Record::pointer r) {
+return std::static_pointer_cast<syd::Patient>(r)->dicom_patientid; };
+}
+// --------------------------------------------------------------------
+
+*/

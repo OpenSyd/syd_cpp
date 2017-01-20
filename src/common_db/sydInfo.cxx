@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
       os << warningColor << " -> does not exist ("
          << db->GetDatabaseAbsoluteFolder() << ")" << resetColor;
     os << std::endl;
-    auto map = db->GetMapOfTables();
+    auto map = db->GetTraitsMap();
     if (map.size() > 1) os << map.size() << " tables" << std::endl;
     else os << map.size() << " table" << std::endl;
     for(auto i=map.begin(); i != map.end(); i++) {
@@ -71,6 +71,7 @@ int main(int argc, char* argv[])
   }
 
   // Info about table
+  /* //FIXME
   auto dd = db->GetDatabaseDescription();
   for(auto i=0; i<args_info.inputs_num; i++) {
     auto table_name = args_info.inputs[i];
@@ -82,6 +83,7 @@ int main(int argc, char* argv[])
     dt->Print(os);
     os << "The table contains " << db->GetNumberOfElements(table_name) << " elements." << std::endl;
   }
+  */
 
   // This is the end, my friend.
   return EXIT_SUCCESS;

@@ -82,7 +82,7 @@ void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename)
 
   // If this is a new DicomSerie, we create it
   if (!b) {
-    db_->New(serie);
+    serie = db_->New<syd::DicomSerie>();
     UpdateDicomSerie(serie, filename, dicomIO);
     series_to_insert.push_back(serie);
     LOG(2) << "Creating a new serie: " << serie->dicom_series_uid;
@@ -356,8 +356,7 @@ CreateDicomFile(const std::string & filename,
                 DicomSerie::pointer serie)
 {
   // First create the file
-  syd::DicomFile::pointer dicomfile;
-  db_->New(dicomfile);
+  auto dicomfile = db_->New<syd::DicomFile>();
   std::string f = GetFilenameFromPath(filename);
   dicomfile->filename = f;
 
@@ -397,7 +396,7 @@ CreateDicomFile(const std::string & filename,
 
 
 // --------------------------------------------------------------------
-void syd::DicomSerieBuilder::InsertDicomSeries()
+syd::DicomSerie::vector syd::DicomSerieBuilder::InsertDicomSeries()
 {
   // Update the database first to get the File id
   db_->Insert(dicomfiles_to_insert); // must be before serie
@@ -443,11 +442,11 @@ void syd::DicomSerieBuilder::InsertDicomSeries()
   LOG(1) << files_to_copy.size()-nb_of_skip_copy << " files have been copied.";
 
   // Once done, clear vectors
-  series_to_insert.clear();
   dicomfiles_to_insert.clear();
-  //files.clear();
   files_to_copy.clear();
   destination_folders.clear();
   nb_of_skip_files = 0;
+
+  return series_to_insert;
 }
 // --------------------------------------------------------------------

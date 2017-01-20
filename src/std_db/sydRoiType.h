@@ -21,15 +21,17 @@
 
 // syd
 #include "sydRecord.h"
-#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::RoiType")
   /// Store information about a type of ROI (liver, kidney etc)
-  class RoiType : public syd::Record {
+  class RoiType:
+    public syd::Record {
   public:
+
+    DEFINE_TABLE_CLASS(RoiType);
 
 #pragma db options("UNIQUE")
     /// Name of the roi (unique)
@@ -38,22 +40,16 @@ namespace syd {
     /// Description associated with the roitype
     std::string description;
 
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(RoiType, syd::RoiType);
-    // ------------------------------------------------------------------------
-
     /// Write the element as a string
     virtual std::string ToString() const;
 
     void Set(const std::vector<std::string> & arg);
 
-    virtual void DumpInTable(syd::PrintTable & table) const;
-
   protected:
     RoiType();
 
   }; // end class
-}
+} // end namespace
 // --------------------------------------------------------------------
 
 #endif

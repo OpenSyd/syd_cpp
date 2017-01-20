@@ -17,7 +17,6 @@
   ===========================================================================**/
 
 #include "sydFitOutputImage.h"
-#include "sydTimeIntegratedActivityFilter.h"
 #include "sydImageUtils.h"
 
 // --------------------------------------------------------------------
@@ -30,7 +29,7 @@ syd::FitOutputImage::FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage::InitImage(Pointer input)
+void syd::FitOutputImage::InitImageLike(Pointer input)
 {
   image = syd::CreateImageLike<ImageType>(input);
   iterator = Iterator(image, image->GetLargestPossibleRegion());
@@ -38,6 +37,23 @@ void syd::FitOutputImage::InitImage(Pointer input)
   UseImageFlag = true;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitOutputImage::SetInitialTimeActivityCurve(syd::TimeActivityCurve::pointer tac)
+{
+  initial_tac_ = tac;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitOutputImage::SetWorkingTimeActivityCurve(syd::TimeActivityCurve::pointer tac)
+{
+  working_tac_ = tac;
+}
+// --------------------------------------------------------------------
+
 
 
 // --------------------------------------------------------------------
@@ -68,17 +84,17 @@ void syd::FitOutputImage::SetValue(double v)
 // --------------------------------------------------------------------
 syd::FitOutputImage_AUC::FitOutputImage_AUC():FitOutputImage()
 {
-  filename = "auc.mhd";
-  tag = "fit_auc";
-  index_ = 0;
+  filename = "auc_trap.mhd";
+  tag = "fit_auc_trap";
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_AUC::Update()
+void syd::FitOutputImage_AUC::Update(syd::FitModelBase::pointer model)
 {
-  double r = model_->ComputeAUC(initial_tac_, index_);
+  auto index = initial_tac_->size() - working_tac_->size();
+  double r = model->ComputeAUC(initial_tac_, index);
   SetValue(r);
 }
 // --------------------------------------------------------------------
@@ -87,16 +103,16 @@ void syd::FitOutputImage_AUC::Update()
 // --------------------------------------------------------------------
 syd::FitOutputImage_Integrate::FitOutputImage_Integrate():FitOutputImage()
 {
-  filename = "integrate.mhd";
-  tag = "fit_integrate";
+  filename = "auc_integrate.mhd";
+  tag = "fit_auc_int";
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Integrate::Update()
+void syd::FitOutputImage_Integrate::Update(syd::FitModelBase::pointer model)
 {
-  double r = model_->Integrate();
+  double r = model->Integrate();
   SetValue(r);
 }
 // --------------------------------------------------------------------
@@ -112,9 +128,9 @@ syd::FitOutputImage_R2::FitOutputImage_R2():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_R2::Update()
+void syd::FitOutputImage_R2::Update(syd::FitModelBase::pointer model)
 {
-  double R2 = model_->ComputeR2(working_tac_);
+  double R2 = model->ComputeR2(working_tac_);
   SetValue(R2);
 }
 // --------------------------------------------------------------------
@@ -125,15 +141,25 @@ syd::FitOutputImage_Model::FitOutputImage_Model():FitOutputImage()
 {
   filename = "best_model.mhd";
   SetValue(0);
-  tag = "fit_best_model";
+  tag = "fit_mo";
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Model::Update()
+void syd::FitOutputImage_Model::InitImageLike(Pointer input)
 {
-  int id = model_->id_;
+  syd::FitOutputImage::InitImageLike(input);
+  image->FillBuffer(-1.0);
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+void syd::FitOutputImage_Model::Update(syd::FitModelBase::pointer model)
+{
+  int id = model->GetId();
   SetValue(id);
 }
 // --------------------------------------------------------------------
@@ -143,16 +169,17 @@ void syd::FitOutputImage_Model::Update()
 syd::FitOutputImage_Iteration::FitOutputImage_Iteration():FitOutputImage()
 {
   filename = "iteration.mhd";
-  tag = "fit_nb_iterations";
+  tag = "fit_it";
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Iteration::Update()
+void syd::FitOutputImage_Iteration::Update(syd::FitModelBase::pointer model)
 {
-  int it = model_->ceres_summary_.num_unsuccessful_steps +
-    model_->ceres_summary_.num_successful_steps;
+  auto summary = model->GetSummary();
+  int it = summary.num_unsuccessful_steps +
+    summary.num_successful_steps;
   SetValue(it);
 }
 // --------------------------------------------------------------------
@@ -162,13 +189,13 @@ void syd::FitOutputImage_Iteration::Update()
 syd::FitOutputImage_Success::FitOutputImage_Success():FitOutputImage()
 {
   filename = "success.mhd";
-  tag = "fit_success";
+  tag = "fit_1";
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Success::Update()
+void syd::FitOutputImage_Success::Update(syd::FitModelBase::pointer model)
 {
   SetValue(1);
 }
@@ -185,9 +212,9 @@ syd::FitOutputImage_EffHalfLife::FitOutputImage_EffHalfLife():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_EffHalfLife::Update()
+void syd::FitOutputImage_EffHalfLife::Update(syd::FitModelBase::pointer model)
 {
-  double h = model_->GetEffHalfLife();
+  double h = model->GetEffHalfLife();
   SetValue(h);
 }
 // --------------------------------------------------------------------
@@ -203,9 +230,9 @@ syd::FitOutputImage_Lambda::FitOutputImage_Lambda():FitOutputImage()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_Lambda::Update()
+void syd::FitOutputImage_Lambda::Update(syd::FitModelBase::pointer model)
 {
-  double h = model_->GetLambda(0);
+  double h = model->GetLambda(0);
   SetValue(h);
 }
 // --------------------------------------------------------------------
@@ -221,9 +248,26 @@ syd::FitOutputImage_NbOfPointsForFit::FitOutputImage_NbOfPointsForFit():FitOutpu
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_NbOfPointsForFit::Update()
+void syd::FitOutputImage_NbOfPointsForFit::Update(syd::FitModelBase::pointer model)
 {
   SetValue(working_tac_->size());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::FitOutputImage_MRT::FitOutputImage_MRT():FitOutputImage()
+{
+  filename = "mrt.mhd";
+  tag = "fit_mrt";
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FitOutputImage_MRT::Update(syd::FitModelBase::pointer model)
+{
+  SetValue(model->ComputeMRT());
 }
 // --------------------------------------------------------------------
 
@@ -232,13 +276,13 @@ void syd::FitOutputImage_NbOfPointsForFit::Update()
 syd::FitOutputImage_ModelParams::FitOutputImage_ModelParams():FitOutputImage()
 {
   filename = "params.mhd";
-  tag = "fit_params";
+  tag = "fit_p";
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_ModelParams::InitImage(Pointer input)
+void syd::FitOutputImage_ModelParams::InitImageLike(Pointer input)
 {
   image_4d = Image4DType::New();
   Image4DType::RegionType region;
@@ -279,10 +323,10 @@ void syd::FitOutputImage_ModelParams::Iterate()
 
 
 // --------------------------------------------------------------------
-void syd::FitOutputImage_ModelParams::Update()
+void syd::FitOutputImage_ModelParams::Update(syd::FitModelBase::pointer model)
 {
   if (UseImageFlag) {
-    auto p = model_->GetParameters();
+    auto p = model->GetParameters();
     auto iter = raw_pointer;
     for(auto i=0; i<p.size(); i++) {
       *iter = p[i];
@@ -294,7 +338,7 @@ void syd::FitOutputImage_ModelParams::Update()
     }
   }
   else {
-    value = model_->GetParameters()[0];
+    value = model->GetParameters()[0];
   }
 }
 // --------------------------------------------------------------------

@@ -25,6 +25,7 @@
 #include "sydRoiMaskImageHelper.h"
 #include "sydFileHelper.h"
 #include "sydTagHelper.h"
+#include "sydCommentsHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -46,7 +47,7 @@ int main(int argc, char* argv[])
   for(auto i=1; i<args_info.inputs_num; i++)
     ids.push_back(atoi(args_info.inputs[i]));
   if (ids.size() < 2) {
-    LOG(FATAL) << "Please provide at least two image ids (fixed and moving  images).";
+    LOG(FATAL) << "Please provide at least two image ids (fixed and moving images).";
   }
 
   // Get the reference image
@@ -57,7 +58,7 @@ int main(int argc, char* argv[])
   // Get the masks
   syd::RoiMaskImage::pointer fixed_mask;
   if (args_info.fMask_given) {
-    fixed_mask = syd::FindRoiMaskImage(fixed_image, args_info.fMask_arg);
+    fixed_mask = syd::FindOneRoiMaskImage(fixed_image, args_info.fMask_arg);
   }
 
   // Loop over all images (also with first image ids[0] !)
@@ -69,12 +70,11 @@ int main(int argc, char* argv[])
     syd::RoiMaskImage::pointer moving_mask;
     std::string moving_mask_path;
     if (args_info.mMask_given) {
-      moving_mask = syd::FindRoiMaskImage(moving_image, args_info.mMask_arg);
+      moving_mask = syd::FindOneRoiMaskImage(moving_image, args_info.mMask_arg);
     }
 
     // Create the object
-    syd::Elastix::pointer elastix;
-    db->New(elastix);
+    auto elastix = db->New<syd::Elastix>();
     elastix->fixed_image = fixed_image;
     elastix->fixed_mask = fixed_mask;
     elastix->moving_image = moving_image;
@@ -90,9 +90,9 @@ int main(int argc, char* argv[])
     fs::copy(config_filename, config->GetAbsolutePath());
     elastix->config_file = config;
 
-    // Tag
+    // Tag & comments
     syd::SetTagsFromCommandLine(elastix->tags, db, args_info);
-
+    syd::SetCommentsFromCommandLine(elastix->comments, db, args_info);
     db->Update(elastix);
     LOG(1) << "Insert elastix: " << elastix;
   }

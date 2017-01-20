@@ -31,12 +31,16 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  // Forward declaration
   class Database;
-  class PrintTable;
+  class RecordTraitsBase;
+  template<class T> class RecordTraits;
 
-  /// Base class for all record (or element, or row) in a table
+  /// Base class for all record (or element, or row) in a table.
+  /// Need to be abstract class (pure virtual method)
 #pragma db object abstract pointer(std::shared_ptr) callback(Callback)
-  class Record {
+  class Record:
+    public std::enable_shared_from_this<Record> {
   public:
 
 #pragma db id auto
@@ -52,35 +56,35 @@ namespace syd {
     /// Virtual destructor
     virtual ~Record() { }
 
-    /// Return the name of the table
-    virtual std::string GetTableName() const = 0;
-    virtual std::string GetSQLTableName() const = 0;
-    static std::string GetStaticTableName() { return "Record"; }
-    static std::string GetStaticSQLTableName() { return "syd::Record"; }
-    static void InitInheritance() { }
+    // ----------------------------------------------------
+    friend class syd::RecordTraits<syd::Record>;
+    virtual RecordTraitsBase * traits() const = 0;
+    virtual std::string GetTableName() const;
+    virtual std::string GetSQLTableName() const;
+    // ----------------------------------------------------
 
-    /// Set the db
-    virtual void SetDatabasePointer(syd::Database * db);
+    // FIXME will be removed
+    // static void InitInheritance() { }
 
     /// Set the values of the fields from some string.
     virtual void Set(const std::vector<std::string> & args);
 
-    /// Add a line in the given PrintTable
-    virtual void DumpInTable(syd::PrintTable & table) const;
-
     /// Use to write the element as a string (must be overloaded)
-    virtual std::string ToString() const = 0;
+    virtual std::string ToString() const;
+
+    /// Use to write the element as a string but more shortly than previous
+    virtual std::string ToShortString() const { return ToString(); }
 
     /// Default function to print an element (must be inline here).
     friend std::ostream& operator<<(std::ostream& os, const Record & p) {
-      os << p.ToString();
+      os << p.ToShortString();
       return os;
     }
 
     /// Default function to print a pointer to an element (must be inline here).
     template<class R>
-    friend std::ostream& operator<<(std::ostream& os, const std::shared_ptr<R> p) {
-      os << p->ToString();
+      friend std::ostream& operator<<(std::ostream& os, const std::shared_ptr<R> p) {
+      os << p->ToShortString();
       return os;
     }
 
@@ -94,15 +98,14 @@ namespace syd {
     bool IsPersistent() const;
     void CheckIfPersistant() const;
 
-    // FIXME
-    static std::map<std::string, std::vector<std::string> > inherit_sql_tables_map_;
-
     /// Return the db where this record is stored
     syd::Database * GetDatabase() const;
 
     /// Return the db where this record is stored and consider it as a DatabaseType
-    template<class DatabaseType>
-    DatabaseType * GetDatabase() const;
+    template<class DatabaseType> DatabaseType * GetDatabase() const;
+
+    /// FIXME
+    std::string GetFieldValue(std::string field_name);
 
   protected:
     /// This default constructor allow to oblige class that inherit
@@ -116,6 +119,9 @@ namespace syd {
     /// mutable.
 #pragma db transient
     mutable syd::Database * db_;
+
+    /// Set the db
+    virtual void SetDatabasePointer(syd::Database * db);
 
     // Search for the sydDatebase from the odb::database (slow, but
     // call every new object). It is declare const, but will change
@@ -131,36 +137,42 @@ namespace syd {
   /// Default function to check equality (with tostring)
   bool IsEqual(const syd::Record::pointer r1, const syd::Record::pointer r2);
   template<class R>
-  inline bool operator==(const std::shared_ptr<R> & left,
-                         const std::shared_ptr<R> & right)
-  { return (syd::IsEqual(left, right)); }
+    inline bool operator==(const std::shared_ptr<R> & left,
+                           const std::shared_ptr<R> & right)
+    { return (syd::IsEqual(left, right)); }
   template<class R>
-  inline bool operator!=(const std::shared_ptr<R> & left,
-                         const std::shared_ptr<R> & right)
-  { return !(left == right); }
+    inline bool operator!=(const std::shared_ptr<R> & left,
+                           const std::shared_ptr<R> & right)
+    { return !(left == right); }
 
 #include "sydRecord.txx"
   // --------------------------------------------------------------------
 
 
-  // --------------------------------------------------------------------
-  /// odb::access is needed for polymorphism
-#define TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, INHERIT_TABLE_NAME)  \
-  typedef std::shared_ptr<TABLE_NAME> pointer;                          \
-  typedef std::vector<pointer> vector;                                  \
-  friend class odb::access;                                             \
-  virtual std::string GetTableName() const { return #TABLE_NAME; }      \
-  virtual std::string GetSQLTableName() const { return #SQL_TABLE_NAME; } \
-  static std::string GetStaticTableName() { return #TABLE_NAME; }       \
-  static std::string GetStaticSQLTableName() { return #SQL_TABLE_NAME; } \
-  static void InitInheritance() {                                       \
-    INHERIT_TABLE_NAME::InitInheritance();                              \
-    inherit_sql_tables_map_[#TABLE_NAME].push_back(INHERIT_TABLE_NAME::GetStaticSQLTableName());} \
-  static pointer New() { return pointer(new TABLE_NAME); }
+  /// ---------------------------------
+  /// Macros *REQUIRED* in *ALL* tables
+  /// ---------------------------------
+  /// First macro: in the class definition, public
+  /// Second macro: after the class definition in the header
+  /// Third macro: in the .cxx file
+  ///
+  /// friend odb::access is needed for polymorphism
+  /// friend RecordTraits access is needed for traits() function
 
-#define TABLE_DEFINE(TABLE_NAME, SQL_TABLE_NAME)                \
-  TABLE_DEFINE_I(TABLE_NAME, SQL_TABLE_NAME, syd::Record)
+#define DEFINE_TABLE_CLASS(TABLE_NAME)          \
+  friend class odb::access;                     \
+  friend syd::RecordTraits<TABLE_NAME>;         \
+  typedef std::shared_ptr<TABLE_NAME> pointer;  \
+  typedef std::vector<pointer> vector;          \
+  virtual RecordTraitsBase * traits() const;
 
+
+#define DEFINE_TABLE_IMPL(TABLE_NAME)               \
+  namespace syd {                                   \
+    RecordTraitsBase * TABLE_NAME::traits() const { \
+      return RecordTraits<TABLE_NAME>::GetTraits(); \
+    }                                               \
+  }                                                 \
 
 } // end namespace
 // --------------------------------------------------------------------

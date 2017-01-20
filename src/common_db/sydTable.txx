@@ -35,9 +35,13 @@ typename syd::Table<RecordType>::generic_record_pointer
 syd::Table<RecordType>::New()
 {
   // This is the only place to create a new record.
-  auto p = RecordType::New();
-  p->SetDatabasePointer(db_);
-  return p;
+  DDF();
+  LOG(FATAL) << "to remove";
+  // FIXME
+  //  auto p = RecordType::New();
+  //p->SetDatabasePointer(db_);
+  //return p;
+  return nullptr;
 }
 // --------------------------------------------------------------------
 
@@ -95,9 +99,11 @@ void syd::Table<RecordType>::Update(generic_record_vector records) const
 template<class RecordType>
 void syd::Table<RecordType>::QueryOne(generic_record_pointer & record, const syd::IdType & id) const
 {
+  /*
   typename RecordType::pointer p;
   db_->QueryOne<RecordType>(p,id);
   record = p;
+  */
 }
 // --------------------------------------------------------------------
 
@@ -203,3 +209,4 @@ std::vector<std::string> & syd::Table<RecordType>::GetInheritSQLTableNames() con
   return syd::Record::inherit_sql_tables_map_[RecordType::GetStaticTableName()];
 }
 // --------------------------------------------------------------------
+

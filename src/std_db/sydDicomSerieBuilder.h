@@ -53,7 +53,7 @@ namespace syd {
     void SearchDicomInFile(std::string filename);
 
     /// Insert the created DicomSerie/DicomFile into the db
-    void InsertDicomSeries();
+    syd::DicomSerie::vector InsertDicomSeries();
 
     /// Update the information from the file
     void UpdateDicomSerie(DicomSerie::pointer serie);

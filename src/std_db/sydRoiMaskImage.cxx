@@ -18,63 +18,46 @@
 
 // syd
 #include "sydRoiMaskImage.h"
-#include "sydDatabase.h"
-#include "sydTable.h"
-#include "sydImage.h"
-#include "sydImage-odb.hxx"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(RoiMaskImage);
 
 // --------------------------------------------------------------------
 syd::RoiMaskImage::RoiMaskImage():Image()
 {
-  roitype = NULL;
+  roitype = nullptr;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::string syd::RoiMaskImage::ToString() const
+std::string syd::RoiMaskImage::ToShortString() const
 {
   std::stringstream ss ;
   ss << syd::Image::ToString() << " "
-     << (roitype == NULL ? empty_value:roitype->name)
-     << " ";
+     << (roitype == nullptr ? empty_value:roitype->name);
   return ss.str();
 }
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::RoiMaskImage::Callback(odb::callback_event event,
                                  odb::database & db) const
 {
   syd::Image::Callback(event,db);
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::RoiMaskImage::Callback(odb::callback_event event,
                                  odb::database & db)
 {
   syd::Image::Callback(event,db);
 }
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::RoiMaskImage::DumpInTable(syd::PrintTable & ta) const
-{
-  syd::Image::DumpInTable(ta);
-  auto f = ta.GetFormat();
-  if (f == "short" or
-      f == "default" or
-      f == "ref_frame" or
-      f == "history" or
-      f == "file")
-    ta.Set("roi", roitype->name);
-}
-// --------------------------------------------------
-
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------

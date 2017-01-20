@@ -30,7 +30,7 @@ namespace syd {
   class Tag : public syd::Record {
   public:
 
-    virtual ~Tag() { }
+    DEFINE_TABLE_CLASS(Tag);
 
 #pragma db options("UNIQUE")
     /// Label of the tag (name)
@@ -39,23 +39,17 @@ namespace syd {
     /// Description associated with the tag
     std::string description;
 
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(Tag, syd::Tag);
-    // ------------------------------------------------------------------------
-
     /// Write the element as a string
     virtual std::string ToString() const;
 
     void Set(const std::vector<std::string> & arg);
-
-    virtual void DumpInTable(syd::PrintTable & table) const;
 
   protected:
     Tag();
 
   }; // end of class
 
-}
+} // end of namespace
 // --------------------------------------------------------------------
 
 #endif

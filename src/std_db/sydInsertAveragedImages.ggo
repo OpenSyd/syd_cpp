@@ -1,0 +1,8 @@
+#File sydInsertAveragedImages.ggo
+
+package "syd"
+version "0.2"
+usage "sydInsertAveragedImages <image_ids>"
+description "Create an image by averaging all given images (must be the same size).
+- <image_ids>      ids of the images to update
+"

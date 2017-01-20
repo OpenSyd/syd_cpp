@@ -42,6 +42,9 @@ namespace syd {
   // This is needed only once in the main to ensure that solver is SILENT
 #define SYD_CERES_STATIC_INIT google::InitGoogleLogging("");
 
+
+  //FIXME to clean
+
   // Base class for a fit model (multi exponential)
   class FitModelBase {
   public:
@@ -54,37 +57,27 @@ namespace syd {
     FitModelBase();
     virtual ~FitModelBase() {}
 
-    // Nested class to store residual
-    class ResidualBaseType {
-    public:
-      ResidualBaseType(double x, double y, double l): x_(x), y_(y), lambda(l) {}
-      const double x_;
-      const double y_;
-      const double lambda;
-    };
-
-    int id_;
-    double robust_scaling_;
-
-    virtual std::string GetName() const { return name_; }
+    int GetId() { return id_; }
     int GetK()  const { return params_.size(); }
-    virtual int GetNumberOfExpo() const = 0;
-
-    void SetLambdaPhysicHours(double l) { lambda_phys_hours_ = l; }
-
-    double GetLambdaPhysicHours() const { return lambda_phys_hours_; }
+    ceres::Solver::Summary & GetSummary() { return ceres_summary_; }
+    double GetLambdaDecayConstantInHours() const { return lambda_in_hours_; }
     std::vector<double> & GetParameters() { return params_; }
     const std::vector<double> & GetParameters() const { return params_; }
-    void SetParameters(std::vector<double> & p);
-    virtual void Scale(double s) = 0;
-
-    virtual FitModelBase * Clone() const = 0;
-    virtual void SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac);
-    virtual syd::TimeActivityCurve::pointer GetTAC(double first_time, double last_time, int n) const;
     syd::TimeActivityCurve::pointer GetTAC(const std::vector<double> & times) const;
-
+    virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); return 0.0; }
+    virtual syd::TimeActivityCurve::pointer GetTAC(double first_time, double last_time, int n) const;
+    virtual std::string GetName() const { return name_; }
     virtual double GetValue(const double & time) const = 0;
+    virtual double GetA(const int i) const { LOG(FATAL) << "GetA to implement " << GetName(); return 0.0; }
+    virtual double GetEffHalfLife() const;
+    virtual int GetNumberOfExpo() const = 0;
 
+    void SetLambdaDecayConstantInHours(double l) { lambda_in_hours_ = l; }
+    void SetParameters(const std::vector<double> & p);
+    virtual void SetProblemResidual(ceres::Problem * problem, syd::TimeActivityCurve & tac);
+
+    virtual void Scale(double s) = 0;
+    virtual FitModelBase * Clone() const = 0;
     void CopyFrom(const syd::FitModelBase * model);
 
     friend std::ostream& operator<<(std::ostream& os, const FitModelBase & p);
@@ -98,29 +91,38 @@ namespace syd {
     double ComputeAICc(const syd::TimeActivityCurve::pointer tac) const;
     double ComputeAIC(const syd::TimeActivityCurve::pointer tac) const;
     double ComputeRSS(const syd::TimeActivityCurve::pointer tac) const;
+    virtual double ComputeMRT() const;
     virtual void ComputeStartingParametersValues(const syd::TimeActivityCurve::pointer tac) {
       DD("ComputeStartingParametersValues not implemented ");
     }
     bool IsAICcValid(int N) const;
     virtual bool IsAcceptable() const;
 
-    virtual double GetA(const int i) const { LOG(FATAL) << "GetA to implement " << GetName(); return 0.0; }
-    virtual double GetLambda(const int i) const { LOG(FATAL) << "GetLambda to implement " << GetName(); return 0.0; }
-    virtual double GetEffHalfLife() const;
-
     void LogLinearFit(Eigen::Vector2d & x,
                       const syd::TimeActivityCurve::pointer tac,
                       int start=0, int end=-1);
 
-    bool start_from_max_flag;
+    // Nested class to store residual
+    class ResidualBaseType {
+    public:
+      ResidualBaseType(double x, double y, double l): x_(x), y_(y), lambda(l) {}
+      const double x_;
+      const double y_;
+      const double lambda;
+    };
 
+  protected:
     // protected:
+    int id_;
     std::string name_;
-    double lambda_phys_hours_;
+    double lambda_in_hours_;
     std::vector<double> params_;
     syd::TimeActivityCurve * current_tac;
     double current_starting_time;
     ceres::Solver::Summary ceres_summary_;
+    bool start_from_max_flag;
+    double robust_scaling_;
+
 
   };
 

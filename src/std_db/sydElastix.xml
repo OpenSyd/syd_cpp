@@ -1,4 +1,30 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="289"/>
+
+  <changeset version="288"/>
+
+  <changeset version="280"/>
+
+  <changeset version="279">
+    <add-table name="syd::Elastix_comments" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="TEXT" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::Elastix">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::Elastix_comments_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::Elastix_comments_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+  </changeset>
+
   <changeset version="278">
     <add-table name="syd::Elastix" kind="polymorphic root object">
       <column name="id" type="INTEGER" null="true"/>

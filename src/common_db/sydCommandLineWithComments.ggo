@@ -1,0 +1,4 @@
+
+section "Comments option"
+option "add_comment" -  "Add a comment" string multiple no
+option "rm_comment"  -  "Remove a comment" int multiple no
