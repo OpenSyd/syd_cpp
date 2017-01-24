@@ -128,6 +128,17 @@ GetDefaultFields() const
 }
 // --------------------------------------------------------------------
 
+// template<class RecordType, class FieldValueType>
+// void AddField(typename syd::RecordTraits<RecordType>::FieldMapType & map,
+//               std::string name,
+//               typename syd::Field<RecordType, FieldValueType>::Function f)
+// {
+//   DDF();
+//   typedef syd::Field<RecordType,FieldValueType> T;
+//   auto t = new T("modality", f);
+//   map["modality"] = std::shared_ptr<T>(t);
+// }
+
 
 // --------------------------------------------------------------------
 template<>
@@ -138,20 +149,15 @@ BuildFields(FieldMapType & map) const
   std::cout << "SPECIFIC RecordTraits<" << GetTableName() << "> BuildFields(map)" << std::endl;
 
   InitCommonFields(map);
-  {
-    auto f = [](pointer p) -> std::string & { return p->acquisition_date; };
-    typedef Field<syd::Image,std::string> T;
-    auto t = new T("date", f);
-    map["date"] = std::shared_ptr<T>(t);
-  }
 
-  {
-    auto f = [](pointer p) -> syd::Patient::pointer & { return p->patient; };
-    typedef Field<syd::Image,syd::Patient::pointer> T;
-    auto t = new T("patient", f);
-    t->type = "Patient"; // FIXME
-    map["patient"] = std::shared_ptr<T>(t);
-  }
+  AddField<std::string>(map, "date",
+                        [](pointer p) -> std::string & { return p->acquisition_date; });
+  AddField<std::string>(map, "modality",
+                        [](pointer p) -> std::string & { return p->modality; });
+  AddTableField<Patient>(map, "patient",
+                         [](pointer p) -> Patient::pointer & { return p->patient; });
+  AddTableField<Injection>(map, "injection",
+                           [](pointer p) -> Injection::pointer & { return p->injection; });
 
   DD(map.size());
 }

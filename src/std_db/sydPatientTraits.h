@@ -51,11 +51,6 @@ namespace syd {
   template<> void syd::RecordTraits<syd::Patient>::
     BuildFields(FieldMapType & map) const;
 
-  template<>
-    void
-    syd::FieldType<syd::Patient::pointer>::Compose(CastFunction f, GenericFunction h);
-  
-
 } // end of namespace
 // --------------------------------------------------------------------
 

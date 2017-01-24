@@ -483,3 +483,40 @@ InitCommonFields(FieldMapType & map) const
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+template<class RecordType>
+template<class FieldValueType>
+void
+syd::RecordTraits<RecordType>::
+AddField(FieldMapType & map,
+         std::string name,
+         std::function<FieldValueType & (typename RecordType::pointer p)> f) const
+{
+  auto t = syd::Field<RecordType,FieldValueType>::CreateField(name, f);
+  t->type = typeid(FieldValueType).name();
+  std::cout << "Add field " << GetTableName() << " "
+            << name  << " " << t->type << std::endl;
+  // FIXME Check if already exist ?
+  map[name] = t;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+template<class RecordType2>
+void
+syd::RecordTraits<RecordType>::
+AddTableField(FieldMapType & map,
+              std::string name,
+              std::function<typename RecordType2::pointer & (typename RecordType::pointer p)> f) const
+{
+  auto t = syd::Field<RecordType,typename RecordType2::pointer>::CreateField(name, f);
+  t->type = syd::RecordTraits<RecordType2>::GetTraits()->GetTableName();
+  std::cout << "Add table field " << GetTableName() << " "
+            << name  << " " << t->type << std::endl;
+  // FIXME Check if already exist ?
+  map[name] = t;
+}
+// --------------------------------------------------------------------

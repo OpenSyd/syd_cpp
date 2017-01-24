@@ -50,17 +50,25 @@ namespace syd {
 
   template<>
     typename syd::FieldType<std::string>::GenericFunction
-    syd::FieldType<std::string>::
-    BuildGenericFunction(CastFunction f) const;
+    syd::FieldType<std::string>::BuildGenericFunction(CastFunction f) const;
+
+  template<>
+    typename syd::FieldType<syd::IdType>::GenericFunction
+    syd::FieldType<syd::IdType>::BuildGenericFunction(CastFunction f) const;
+
+  template<>
+    typename syd::FieldType<double>::GenericFunction
+    syd::FieldType<double>::BuildGenericFunction(CastFunction f) const;
 
   template<>
     typename syd::FieldType<FieldBase::RecordPointer>::GenericFunction
-    syd::FieldType<FieldBase::RecordPointer>::
-    BuildGenericFunction(CastFunction f) const;
+    syd::FieldType<FieldBase::RecordPointer>::BuildGenericFunction(CastFunction f) const;
 
-  template<>
-    void
-    syd::FieldType<FieldBase::RecordPointer>::Compose(CastFunction f, GenericFunction h);
+  // I need to declare this function (empty) because the default 'compose' is
+  // intended for syd::Record elements.
+  template<> void syd::FieldType<syd::IdType>::Compose(CastFunction f, GenericFunction h);
+  template<> void syd::FieldType<std::string>::Compose(CastFunction f, GenericFunction h);
+  template<> void syd::FieldType<double>::Compose(CastFunction f, GenericFunction h);
 
   // --------------------------------------------------------------------
 } // end namespace

@@ -83,36 +83,9 @@ BuildFields(FieldMapType & map) const
   std::cout << "SPECIFIC RecordTraits<" << GetTableName() << "> BuildFields(map)" << std::endl;
 
   InitCommonFields(map);
-  {
-    auto f = [](pointer p) -> std::string & { return p->name; };
-    typedef Field<syd::Patient,std::string> T;
-    auto t = new T("name", f);
-    map["name"] = std::shared_ptr<T>(t);
-  }
-
-  {
-    auto f = [](pointer p) -> syd::IdType & { return p->study_id; };
-    typedef Field<syd::Patient,syd::IdType> T;
-    auto t = new T("study_id", f);
-    map["study_id"] = std::shared_ptr<T>(t);
-  }
-
-  DD(map.size());
+  AddField<std::string>(map, "name",     [](pointer p) -> std::string & { return p->name; });
+  AddField<syd::IdType>(map, "study_id", [](pointer p) -> syd::IdType & { return p->study_id; });
 }
 // --------------------------------------------------------------------
 
 
-
-// --------------------------------------------------------------------
-template<>
-void
-syd::FieldType<syd::Patient::pointer>::
-Compose(CastFunction f, GenericFunction h)
-{
-  std::cout << "FieldType<Patient> Compose [default]" << std::endl;
-  this->gf = [f, h](syd::Record::pointer p) -> std::string {
-    auto r = f(p); // r is Patient
-    return h(r); // r should be a record
-  };
-}
-// --------------------------------------------------------------------

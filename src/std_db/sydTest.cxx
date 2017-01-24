@@ -80,7 +80,19 @@ int main(int argc, char* argv[])
   DD(field->get(record));
   DD("");
 
+  field = db->GetField2("Image", "modality");
+  DD(field->get(record));
+  DD("");
+
   field = db->GetField2("Image", "patient.name");
+  DD(field->get(record));
+  DD("");
+
+  field = db->GetField2("Image", "injection.patient");
+  DD(field->get(record));
+  DD("");
+
+  field = db->GetField2("Image", "injection.patient.name");
   DD(field->get(record));
   DD("");
 

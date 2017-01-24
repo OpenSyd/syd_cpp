@@ -45,6 +45,10 @@ namespace syd {
     CastFunction BuildCastFunction(Function f) const;
     pointer CreateField(const syd::Database * db, std::string field_names) const;
 
+    static pointer CreateField(std::string name, Function f, std::string type="");
+    static void AddField(typename syd::RecordTraits<RecordType>::FieldMapType & map,
+                         std::string name, Function f, std::string type="");
+
   }; // end of class
 
   // --------------------------------------------------------------------

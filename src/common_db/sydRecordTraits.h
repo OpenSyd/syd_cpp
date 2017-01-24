@@ -87,7 +87,16 @@ namespace syd {
     void BuildFields(FieldMapType & map) const;
     void InitCommonFields(FieldMapType & map) const;
     FieldBasePointer GetField2(const syd::Database * db, std::string field_name) const;
-    FieldBasePointer GetField2(std::string field_name) const; // FIXME change name 
+    FieldBasePointer GetField2(std::string field_name) const; // FIXME change name
+
+    template<class FieldValueType>
+      void AddField(FieldMapType & map,
+                    std::string name,
+                    std::function<FieldValueType & (typename RecordType::pointer p)> f) const;
+    template<class RecordType2>
+      void AddTableField(FieldMapType & map,
+                         std::string name,
+                         std::function<typename RecordType2::pointer & (typename RecordType::pointer p)> f) const;
 
   protected:
     RecordTraits(std::string table_name);

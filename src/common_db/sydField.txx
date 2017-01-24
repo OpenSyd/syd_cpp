@@ -134,6 +134,21 @@ CreateField(const syd::Database * db, std::string field_names) const
 
 
 // --------------------------------------------------------------------
+template<class RecordType, class FieldValueType>
+typename syd::Field<RecordType, FieldValueType>::pointer
+syd::Field<RecordType, FieldValueType>::
+CreateField(std::string name, Function f, std::string type_name)
+{
+  typedef syd::Field<RecordType,FieldValueType> T;
+  auto t = new T(name, f);
+  t->type = type_name;
+  return std::shared_ptr<T>(t);
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
 /*template<class RecordType, class FieldValueType>
 void
 syd::Field<RecordType, FieldValueType>::

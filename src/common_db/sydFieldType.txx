@@ -47,7 +47,9 @@ BuildGenericFunction(CastFunction f) const
   auto g = [f](RecordPointer p) -> std::string {
     DD("default convert to_string");
     auto a = f(p);
-    return std::to_string(a); };
+    //return std::to_string(a);
+    return a->ToString();
+  };
   return g;
 }
 // --------------------------------------------------------------------
@@ -59,14 +61,13 @@ void
 syd::FieldType<FieldValueType>::
 Compose(CastFunction f, GenericFunction h)
 {
-  DD("do nothing");
+  DD("DEFAULT");
   std::cout << "FieldType<" << typeid(FieldValueType).name()
-             << "> Compose [default]" << std::endl;
-  // auto g = [h,f](RecordPointer p) -> std::string {
-  //   DD("compose ");
-  //   auto a = f(p);
-  //   return h(a); };
-  // return g;
+            << "> Compose [default]" << std::endl;
+  this->gf = [h,f](RecordPointer p) -> std::string {
+    DD("compose ");
+    auto a = f(p);
+    return h(a); };
 }
 // --------------------------------------------------------------------
 

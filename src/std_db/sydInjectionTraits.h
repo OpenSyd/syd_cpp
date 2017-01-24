@@ -42,6 +42,9 @@ namespace syd {
   template<> std::string syd::RecordTraits<syd::Injection>::
     GetDefaultFields() const;
 
+  template<> void syd::RecordTraits<syd::Injection>::
+    BuildFields(FieldMapType & map) const;
+
 
 } // end of namespace
 // --------------------------------------------------------------------

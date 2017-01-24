@@ -52,14 +52,56 @@ BuildGenericFunction(CastFunction f) const
 
 // --------------------------------------------------------------------
 template<>
-void
-syd::FieldType<syd::FieldBase::RecordPointer>::
-Compose(CastFunction f, GenericFunction h)
+typename syd::FieldType<syd::IdType>::GenericFunction
+syd::FieldType<syd::IdType>::
+BuildGenericFunction(CastFunction f) const
 {
-  std::cout << "FieldType<RECORD> Compose [default]" << std::endl;
-  this->gf = [f, h](syd::Record::pointer p) -> std::string {
-    auto r = f(p); // r is Patient
-    return h(r); // r should be a record
-  };
+  std::cout << "FieldType<long> BuildGenericFunction [default]" << std::endl;
+  auto g = [f](RecordPointer p) -> std::string {
+    DD("default record to idtype");
+    return std::to_string(f(p)); };
+  return g;
 }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<>
+typename syd::FieldType<double>::GenericFunction
+syd::FieldType<double>::
+BuildGenericFunction(CastFunction f) const
+{
+  std::cout << "FieldType<double> BuildGenericFunction [default]" << std::endl;
+  auto prec = this->precision;
+  auto g = [prec, f](RecordPointer p) -> std::string {
+    DD("default record to double");
+    std::ostringstream ss;
+    ss << std::fixed << std::setprecision(prec) << f(p);
+    return ss.str(); };
+  return g;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<> void syd::FieldType<syd::IdType>::Compose(CastFunction f, GenericFunction h) {}
+template<> void syd::FieldType<std::string>::Compose(CastFunction f, GenericFunction h) {}
+template<> void syd::FieldType<double>::Compose(CastFunction f, GenericFunction h) {}
+
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+// template<class FieldValueType>
+// typename std::enable_if<std::is_arithmetic<FieldValueType>::value, FieldValueType>::type
+// void
+// syd::FieldType<FieldValueType>::
+// Compose(CastFunction f, GenericFunction h)
+// {
+//   std::cout << "FieldType<RECORD> Compose [default]" << std::endl;
+//   this->gf = [f, h](syd::Record::pointer p) -> std::string {
+//     auto r = f(p); // r is Patient
+//     return h(r); // r should be a record
+//   };
+// }
 // --------------------------------------------------------------------
