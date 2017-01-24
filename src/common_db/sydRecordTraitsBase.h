@@ -32,6 +32,7 @@ namespace syd {
 
   class Record;
   class Database;
+  class FieldBase;
 
   class RecordTraitsBase {
   public:
@@ -40,6 +41,7 @@ namespace syd {
     typedef std::vector<RecordBasePointer> RecordBaseVector;
     typedef std::function<std::string(RecordBasePointer)> RecordFieldFunc;
     typedef std::map<std::string, RecordFieldFunc> RecordFieldFunctionMap;
+    typedef std::shared_ptr<FieldBase> FieldBasePointer;
 
     /// Return the table name
     virtual std::string GetTableName() const;
@@ -68,6 +70,10 @@ namespace syd {
     virtual std::vector<RecordFieldFunc> GetFields(std::string fields) const = 0;
     virtual std::string GetDefaultFields() const = 0;
     virtual const RecordFieldFunctionMap & GetRecordFieldMap() const = 0;
+
+    /// FIXME
+    virtual FieldBasePointer GetField2(const syd::Database * db, std::string field_name) const = 0;
+    virtual FieldBasePointer GetField2(std::string field_name) const = 0;
 
   protected:
     RecordTraitsBase(std::string table_name);

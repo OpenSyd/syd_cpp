@@ -28,6 +28,7 @@
 #include "sydRecordWithHistory-odb.hxx"
 #include "sydTag-odb.hxx"
 #include "sydRecordWithTags-odb.hxx"
+#include "sydFieldBase.h"
 
 // odb
 #include <odb/sqlite/database.hxx>
@@ -240,12 +241,6 @@ namespace syd {
     /// Return a string with the list of the table names
     std::string GetListOfTableNames() const;
 
-    /// Return (compute the first time) the db SQL description
-    //    syd::DatabaseDescription * GetDatabaseDescription();
-
-    /// Return the sql descriptio of the table
-    //    syd::TableDescription * GetTableDescription(const std::string & table_name);
-
     /// Get the number of elements in the table
     long GetNumberOfElements(const std::string & table_name) const;
 
@@ -277,6 +272,10 @@ namespace syd {
     typedef std::function<std::string(RecordBasePointer)> FieldFunc;
     FieldFunc GetField(std::string table_name, std::string field);
     std::vector<FieldFunc> GetFields(std::string table_name, std::string fields);
+
+    /// FIXME  --> new GetField
+    syd::FieldBase::pointer GetField2(std::string table_name, std::string field_name) const;
+
 
     // ----------------------------------------------------------------------------------
   protected:

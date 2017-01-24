@@ -425,17 +425,17 @@ void syd::Database::UpdateField(RecordBasePointer & record,
   } catch (const odb::exception& e) {
 
     /*
-    std::string q = "PRAGMA table_info("+AddDoubleQuoteAround(table_name)+")";
-    auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
-    if (rc==SQLITE_OK) {
+      std::string q = "PRAGMA table_info("+AddDoubleQuoteAround(table_name)+")";
+      auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
+      if (rc==SQLITE_OK) {
       // Loop on result with the following structure:
       //   cid name type notnull dflt_value  pk 
       while(sqlite3_step(stmt) == SQLITE_ROW) {
-        std::string name = sqlite3_column_text_string(stmt, 1);
-        std::string type = sqlite3_column_text_string(stmt, 2);
-        AddField(name, type);
+      std::string name = sqlite3_column_text_string(stmt, 1);
+      std::string type = sqlite3_column_text_string(stmt, 2);
+      AddField(name, type);
       }
-      */
+    */
     EXCEPTION("Error during the following sql query: " << std::endl
               << sql.str() << std::endl
               << "Error is:" << e.what()
@@ -650,6 +650,15 @@ std::vector<syd::Database::FieldFunc> syd::Database::
 GetFields(std::string table_name, std::string fields)
 {
   return GetTraits(table_name)->GetFields(fields);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::FieldBase::pointer syd::Database::
+GetField2(std::string table_name, std::string field_name) const
+{
+  return GetTraits(table_name)->GetField2(this, field_name);
 }
 // --------------------------------------------------------------------
 

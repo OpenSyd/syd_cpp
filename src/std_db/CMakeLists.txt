@@ -105,7 +105,7 @@ set_target_properties(StandardDatabasePlugin PROPERTIES BUNDLE_EXTENSION ".so")
 ##############################
 # Not really a tool, for debug only
 wrap_ggo(sydTest_GGO_C sydTest.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-add_executable(sydTest sydTableOfRecords.cxx sydTest.cxx ${sydTest_GGO_C})
+add_executable(sydTest sydTest.cxx ${sydTest_GGO_C})
 target_link_libraries(sydTest ${SYD_STD_DB_LIBRARY})
 
 

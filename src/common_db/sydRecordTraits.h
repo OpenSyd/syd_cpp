@@ -48,6 +48,7 @@ namespace syd {
     typedef std::function<std::string(pointer)> FieldFunc;
     typedef std::map<std::string, FieldFunc> FieldFunctionMap;
     typedef syd::RecordTraitsBase::RecordFieldFunctionMap RecordFieldFunctionMap;
+    //typedef syd::RecordTraitsBase::FieldBasePointer FieldBasePointer;
 
     // Main static version to get the singleton traits
     static RecordTraits<RecordType> * GetTraits();
@@ -80,6 +81,14 @@ namespace syd {
     const RecordFieldFunctionMap & GetRecordFieldMap() const;
     virtual std::string GetDefaultFields() const;
 
+    /// FIXME
+    typedef std::map<std::string, FieldBasePointer> FieldMapType;
+    const FieldMapType & GetFieldMap2() const;
+    void BuildFields(FieldMapType & map) const;
+    void InitCommonFields(FieldMapType & map) const;
+    FieldBasePointer GetField2(const syd::Database * db, std::string field_name) const;
+    FieldBasePointer GetField2(std::string field_name) const; // FIXME change name 
+
   protected:
     RecordTraits(std::string table_name);
 
@@ -99,6 +108,9 @@ namespace syd {
     mutable FieldFunctionMap field_fmap_;
     void SetDefaultFieldFunctions(FieldFunctionMap & map) const;
     void InitFields() const;
+
+    /// FIXME
+    mutable FieldMapType field_map_;
 
   }; // end of class
 

@@ -16,37 +16,31 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDIMAGETRAITS_H
-#define SYDIMAGETRAITS_H
-
 // syd
-#include "sydImage.h"
-#include "sydStandardDatabase.h"
-#include "sydField.h"
-#include "sydRecordTraits.h"
+#include "sydFieldBase.h"
 
 // --------------------------------------------------------------------
-namespace syd {
-
-  /// Main GetTraits function
-  DEFINE_TABLE_TRAITS_HEADER(Image);
-
-  /// Specific Sort
-  template<> void syd::RecordTraits<syd::Image>::
-    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
-
-  /// Specific fields
-  template<> void syd::RecordTraits<syd::Image>::
-    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
-
-  /// Default fields
-  template<> std::string syd::RecordTraits<syd::Image>::
-    GetDefaultFields() const;
-
-  template<> void syd::RecordTraits<syd::Image>::
-    BuildFields(FieldMapType & map) const;
-
-} // end of namespace
+syd::FieldBase::FieldBase(std::string n)
+{
+  name = n;
+}
 // --------------------------------------------------------------------
 
-#endif
+
+// --------------------------------------------------------------------
+syd::FieldBase::~FieldBase()
+{
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::FieldBase::get(RecordPointer p)
+{
+  if (gf != nullptr) return gf(p);
+  LOG(FATAL) << "in syd::FieldBase::get: need to set the f before";
+}
+// --------------------------------------------------------------------
+
+

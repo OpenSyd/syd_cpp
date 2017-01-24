@@ -127,3 +127,34 @@ GetDefaultFields() const
   return s;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<>
+void
+syd::RecordTraits<syd::Image>::
+BuildFields(FieldMapType & map) const
+{
+  std::cout << "SPECIFIC RecordTraits<" << GetTableName() << "> BuildFields(map)" << std::endl;
+
+  InitCommonFields(map);
+  {
+    auto f = [](pointer p) -> std::string & { return p->acquisition_date; };
+    typedef Field<syd::Image,std::string> T;
+    auto t = new T("date", f);
+    map["date"] = std::shared_ptr<T>(t);
+  }
+
+  {
+    auto f = [](pointer p) -> syd::Patient::pointer & { return p->patient; };
+    typedef Field<syd::Image,syd::Patient::pointer> T;
+    auto t = new T("patient", f);
+    t->type = "Patient"; // FIXME
+    map["patient"] = std::shared_ptr<T>(t);
+  }
+
+  DD(map.size());
+}
+// --------------------------------------------------------------------
+
+
