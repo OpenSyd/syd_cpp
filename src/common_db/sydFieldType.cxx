@@ -37,7 +37,11 @@ typename syd::FieldType<syd::FieldBase::RecordPointer>::GenericFunction
 syd::FieldType<syd::FieldBase::RecordPointer>::
 BuildGenericFunction(CastFunction f) const
 {
-  return [f](RecordPointer p) -> std::string { return f(p)->ToString(); };
+  return [f](RecordPointer p) -> std::string {
+    auto a = f(p);
+    if (a == nullptr) return empty_value;
+    return a->ToString();
+  };
 }
 // --------------------------------------------------------------------
 

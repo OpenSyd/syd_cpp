@@ -223,7 +223,7 @@ int main(int argc, char* argv[])
   exit(0);
   */
   // -----------------------------------------------------------------
-  if (0) {
+  /*if (0) {
     syd::Image::vector images;
     db->Query(images);
     DD(images.size());
@@ -245,10 +245,10 @@ int main(int argc, char* argv[])
     // table.SetHeaderFlag(true); // options
     // Step3
     //table.Print(std::cout);
-  }
+    }*/
 
   // -----------------------------------------------------------------
-  if (0) {
+  /*  if (0) {
 
     syd::Image::vector images;
     db->Query(images);
@@ -267,6 +267,7 @@ int main(int argc, char* argv[])
     for(auto i:records) std::cout << i->id << " "; std::cout << std::endl;
 
   }
+  */
   // -----------------------------------------------------------------
 
 

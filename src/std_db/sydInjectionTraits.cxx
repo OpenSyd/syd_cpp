@@ -92,21 +92,11 @@ void
 syd::RecordTraits<syd::Injection>::
 BuildFields(FieldMapType & map) const
 {
-  std::cout << "SPECIFIC RecordTraits<" << GetTableName() << "> BuildFields(map)" << std::endl;
-
   InitCommonFields(map);
-
-  AddField<std::string>(map, "date",
-                        [](pointer p) -> std::string & { return p->date; });
-  AddField<double>(map, "activity_in_MBq",
-                   [](pointer p) -> double & { return p->activity_in_MBq; });
-
-  AddTableField<syd::Patient>(map, "patient",
-                              [](pointer p) -> syd::Patient::pointer & { return p->patient; });
-  AddTableField<syd::Radionuclide>(map, "radionuclide",
-                                   [](pointer p) -> syd::Radionuclide::pointer & { return p->radionuclide; });
-
-  DD(map.size());
+  ADD_TABLE_FIELD(patient, syd::Patient);
+  ADD_TABLE_FIELD(radionuclide, syd::Radionuclide);
+  ADD_FIELD(date, std::string);
+  ADD_FIELD(activity_in_MBq, double);
 }
 // --------------------------------------------------------------------
 

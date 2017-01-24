@@ -44,6 +44,7 @@ BuildGenericFunction(CastFunction f) const
 {
   auto g = [f](RecordPointer p) -> std::string {
     auto a = f(p);
+    if (a == nullptr) return empty_value;
     return a->ToString();
   };
   return g;
@@ -59,6 +60,7 @@ Compose(CastFunction f, GenericFunction h)
 {
   this->gf = [h,f](RecordPointer p) -> std::string {
     auto a = f(p);
+    if (a == nullptr) return empty_value;
     return h(a); };
 }
 // --------------------------------------------------------------------

@@ -60,20 +60,6 @@ GetDefaultFields() const
 // --------------------------------------------------------------------
 
 
-
-// template<>
-// typename syd::FieldType<syd::Patient::pointer>::GenericFunction
-// syd::FieldType<syd::Patient::pointer>::
-// BuildGenericFunction(CastFunction f) const
-// {
-//   std::cout << "FieldType<RECORD> BuildGenericFunction [default]" << std::endl;
-//   auto g = [f](RecordPointer p) -> std::string {
-//     DD("default record to string");
-//     return f(p)->ToString(); };
-//   return g;
-// }
-
-
 // --------------------------------------------------------------------
 template<>
 void

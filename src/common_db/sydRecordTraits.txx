@@ -424,6 +424,9 @@ GetField2(std::string field_name) const
   auto map = GetFieldMap2();
   auto it = map.find(field_name);
   if (it == map.end()) {
+    for(auto m:map) {
+      DD(m.first);
+    }
     LOG(FATAL) << "cannot find the field " << field_name;
   }
   return it->second;

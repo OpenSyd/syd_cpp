@@ -140,6 +140,13 @@ BuildFields(FieldMapType & map) const
   ADD_TABLE_FIELD(injection, syd::Injection);
   ADD_TABLE_FIELD(pixel_unit, syd::PixelUnit);
 
+  /*  auto f = [](pointer p) -> syd::Injection::pointer & {
+
+    return p->injection;
+  };
+  AddTableField<syd::Injection>(map, "injection", f);
+  */
+
   ADD_FIELD(type, std::string);
   ADD_FIELD(pixel_type, std::string);
   ADD_FIELD(frame_of_reference_uid, std::string);

@@ -52,22 +52,31 @@ void syd::PrintTable::Build(std::string table_name, const RecordBaseVector recor
   auto db = records[0]->GetDatabase();
 
   auto fields_names = columns;
+
+  /*
   if (fields_names == "") fields_names = db->GetTraits(table_name)->GetDefaultFields();
   auto fields = db->GetFields(table_name, fields_names);
+  */
+  std::vector<std::string> field_names;
+  syd::GetWords(field_names, columns);
+  DDS(field_names);
+  std::vector<syd::FieldBase::pointer> fields;
+  for(auto f:field_names) fields.push_back(db->GetField2(table_name, f));
 
   // Header
   header_.resize(fields.size());
-  std::vector<std::string> words;
-  syd::GetWords(words, fields_names);
-  header_.resize(words.size());
+  // std::vector<std::string> words;
+  // syd::GetWords(words, fields_names);
+  header_.resize(field_names.size());
   int i=0;
-  if (words.size() != fields.size()) {
-    LOG(FATAL) << "Internal error fields in syd::PrintTable::Build";
-  }
+  // if (words.size() != fields.size()) {
+  //   LOG(FATAL) << "Internal error fields in syd::PrintTable::Build";
+  // }
+  /*
   for(auto col:words) {
     header_[i] = col;
     ++i;
-  }
+    }*/
   // Build
   Build(records, fields);
 }
@@ -77,7 +86,9 @@ void syd::PrintTable::Build(std::string table_name, const RecordBaseVector recor
 // -----------------------------------------------------------------
 // FIXME template Build<T>(T::vector ...)
 void syd::PrintTable::Build(const RecordBaseVector & records,
-                            const std::vector<FieldFunc> & fields)
+                            syd::FieldBase::vector & fields)
+// void syd::PrintTable::Build(const RecordBaseVector & records,
+//                             const std::vector<FieldFunc> & fields)
 {
   values_.resize(records.size());
   int i=0; // row
@@ -85,7 +96,7 @@ void syd::PrintTable::Build(const RecordBaseVector & records,
     int j=0; // column
     values_[i].resize(fields.size());
     for(auto & f:fields) {
-      values_[i][j] = f(r); // get the value
+      values_[i][j] = f->get(r); // get the value
       ++j;
     }
     ++i;

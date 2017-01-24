@@ -35,6 +35,7 @@ namespace syd {
   public:
 
     typedef std::shared_ptr<FieldBase> pointer;
+    typedef std::vector<pointer> vector;
     typedef std::shared_ptr<Record> RecordPointer;
     typedef std::function<std::string (RecordPointer p)> GenericFunction;
 
