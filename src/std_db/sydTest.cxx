@@ -72,29 +72,23 @@ int main(int argc, char* argv[])
   DD("----------------------------");
 
   //  auto traits = syd::RecordTraits<syd::Image>::GetTraits();
-  auto field = db->GetField2("Image","date");
+  auto field = db->GetField2("Image","acquisition_date");
   DD(field->get(record));
-  DD("");
 
   field = db->GetField2("Image", "patient");
-  DD(field->get(record));
-  DD("");
+  std::cout << field->name << " " << field->get(record) << std::endl;
 
   field = db->GetField2("Image", "modality");
-  DD(field->get(record));
-  DD("");
+  std::cout << field->name << " " << field->get(record) << std::endl;
 
   field = db->GetField2("Image", "patient.name");
-  DD(field->get(record));
-  DD("");
+  std::cout << field->name << " " << field->get(record) << std::endl;
 
   field = db->GetField2("Image", "injection.patient");
-  DD(field->get(record));
-  DD("");
+  std::cout << field->name << " " << field->get(record) << std::endl;
 
   field = db->GetField2("Image", "injection.patient.name");
-  DD(field->get(record));
-  DD("");
+  std::cout << field->name << " " << field->get(record) << std::endl;
 
   /*
   auto field = db->GetField2("Image", "id");

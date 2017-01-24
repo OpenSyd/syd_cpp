@@ -42,12 +42,6 @@ namespace syd {
   template<> std::string syd::RecordTraits<syd::Patient>::
     GetDefaultFields() const;
 
-  template<>
-    typename syd::FieldType<syd::Patient::pointer>::GenericFunction
-    syd::FieldType<syd::Patient::pointer>::
-    BuildGenericFunction(CastFunction f) const;
-
-
   template<> void syd::RecordTraits<syd::Patient>::
     BuildFields(FieldMapType & map) const;
 

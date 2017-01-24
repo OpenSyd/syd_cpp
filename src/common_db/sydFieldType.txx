@@ -42,12 +42,8 @@ typename syd::FieldType<FieldValueType>::GenericFunction
 syd::FieldType<FieldValueType>::
 BuildGenericFunction(CastFunction f) const
 {
-  std::cout << "FieldType<" << typeid(FieldValueType).name()
-            << "> BuildGenericFunction [default]" << std::endl;
   auto g = [f](RecordPointer p) -> std::string {
-    DD("default convert to_string");
     auto a = f(p);
-    //return std::to_string(a);
     return a->ToString();
   };
   return g;
@@ -61,11 +57,7 @@ void
 syd::FieldType<FieldValueType>::
 Compose(CastFunction f, GenericFunction h)
 {
-  DD("DEFAULT");
-  std::cout << "FieldType<" << typeid(FieldValueType).name()
-            << "> Compose [default]" << std::endl;
   this->gf = [h,f](RecordPointer p) -> std::string {
-    DD("compose ");
     auto a = f(p);
     return h(a); };
 }

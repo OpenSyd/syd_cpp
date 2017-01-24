@@ -61,17 +61,17 @@ GetDefaultFields() const
 
 
 
-template<>
-typename syd::FieldType<syd::Patient::pointer>::GenericFunction
-syd::FieldType<syd::Patient::pointer>::
-BuildGenericFunction(CastFunction f) const
-{
-  std::cout << "FieldType<RECORD> BuildGenericFunction [default]" << std::endl;
-  auto g = [f](RecordPointer p) -> std::string {
-    DD("default record to string");
-    return f(p)->ToString(); };
-  return g;
-}
+// template<>
+// typename syd::FieldType<syd::Patient::pointer>::GenericFunction
+// syd::FieldType<syd::Patient::pointer>::
+// BuildGenericFunction(CastFunction f) const
+// {
+//   std::cout << "FieldType<RECORD> BuildGenericFunction [default]" << std::endl;
+//   auto g = [f](RecordPointer p) -> std::string {
+//     DD("default record to string");
+//     return f(p)->ToString(); };
+//   return g;
+// }
 
 
 // --------------------------------------------------------------------
@@ -80,11 +80,12 @@ void
 syd::RecordTraits<syd::Patient>::
 BuildFields(FieldMapType & map) const
 {
-  std::cout << "SPECIFIC RecordTraits<" << GetTableName() << "> BuildFields(map)" << std::endl;
-
   InitCommonFields(map);
-  AddField<std::string>(map, "name",     [](pointer p) -> std::string & { return p->name; });
-  AddField<syd::IdType>(map, "study_id", [](pointer p) -> syd::IdType & { return p->study_id; });
+  ADD_FIELD(name, std::string);
+  ADD_FIELD(study_id, syd::IdType);
+  ADD_FIELD(weight_in_kg, double);
+  ADD_FIELD(dicom_patientid, std::string);
+  ADD_FIELD(sex, std::string);
 }
 // --------------------------------------------------------------------
 

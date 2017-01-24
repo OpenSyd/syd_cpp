@@ -140,6 +140,21 @@ namespace syd {
   // --------------------------------------------------------------------
 } // end namespace
 
+
+#define ADD_FIELD(NAME, TYPE)                             \
+  {                                                       \
+    auto f = [](pointer p) -> TYPE & { return p->NAME; }; \
+    AddField<TYPE>(map, #NAME, f);                        \
+  }
+
+#define ADD_TABLE_FIELD(NAME, TYPE)                                 \
+  {                                                                 \
+    auto f = [](pointer p) -> TYPE::pointer & { return p->NAME; };  \
+    AddTableField<TYPE>(map, #NAME, f);                             \
+  }
+
+
+
 // Must *not* be in namespace syd (because include)
 #include "sydRecordTraits.txx"
 

@@ -404,8 +404,6 @@ typename syd::RecordTraits<RecordType>::FieldBasePointer
 syd::RecordTraits<RecordType>::
 GetField2(const syd::Database * db, std::string field_names) const
 {
-  DDF();
-  DD(field_names);
   auto first_field = field_names;
   std::size_t found = field_names.find_first_of(".");
   if (found != std::string::npos) {
@@ -413,8 +411,6 @@ GetField2(const syd::Database * db, std::string field_names) const
     field_names = field_names.substr(found+1, field_names.size());
   }
   else field_names = "";
-  DD(first_field);
-  DD(field_names);
   return GetField2(first_field)->CreateField(db, field_names);
 }
 // --------------------------------------------------------------------
@@ -425,15 +421,11 @@ syd::FieldBase::pointer
 syd::RecordTraits<RecordType>::
 GetField2(std::string field_name) const
 {
-  DDF();
-  DD(field_name);
   auto map = GetFieldMap2();
   auto it = map.find(field_name);
   if (it == map.end()) {
     LOG(FATAL) << "cannot find the field " << field_name;
   }
-  DD("found");
-  // Build the field
   return it->second;
 }
 // --------------------------------------------------------------------
@@ -446,7 +438,6 @@ syd::RecordTraits<RecordType>::
 GetFieldMap2() const
 {
   if (field_map_.size() != 0) return field_map_;
-  std::cout << "RecordTraits<" << GetTableName() << "> GetFieldMap2 " << std::endl;
   BuildFields(field_map_);
   return field_map_;
 }
@@ -460,7 +451,6 @@ syd::RecordTraits<RecordType>::
 BuildFields(FieldMapType & map) const
 {
   // This function will be overwritten
-  std::cout << "RecordTraits<" << GetTableName() << "> BuildFields(map)" << std::endl;
   InitCommonFields(map);
 }
 // --------------------------------------------------------------------
@@ -471,15 +461,7 @@ void
 syd::RecordTraits<RecordType>::
 InitCommonFields(FieldMapType & map) const
 {
-  std::cout << "RecordTraits<" << GetTableName() << "> CommonFields(map)" << std::endl;
-
-  auto f = [](typename RecordType::pointer p) -> syd::IdType & { return p->id; };
-  //  AddField(map, "id", f);
-  typedef syd::Field<RecordType,long unsigned int> T;
-  auto t = new T("id", f);
-  map["id"] = std::shared_ptr<T>(t);
-  DD(map.size());
-
+  ADD_FIELD(id, syd::IdType);
 }
 // --------------------------------------------------------------------
 
