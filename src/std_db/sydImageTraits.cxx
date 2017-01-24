@@ -64,6 +64,9 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
   map["spacing"]  = [](pointer a) -> std::string { return a->SpacingAsString(); };
   map["tags"]  = [](pointer a) -> std::string { return syd::GetLabels(a->tags); };
   map["files"]  = [](pointer a) -> std::string { return std::to_string(a->files.size()); };
+  map["filenames"] = [](pointer a) -> std::string { std::string pathFiles="";
+                                               for(auto f:a->files) pathFiles += f->GetAbsolutePath()+"\n";
+                                               return pathFiles; };
   map["dicoms"]  = [](pointer a) -> std::string {
     if (a->dicoms.size() == 0) return empty_value;
     std::ostringstream oss;

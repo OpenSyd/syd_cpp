@@ -57,6 +57,9 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
   map["dicom_description"] = [](pointer a) -> std::string { return a->dicom_description; };
 
   map["dicom_files"] = [](pointer a) -> std::string { return syd::ToString(a->dicom_files.size(),0); };
+  map["dicom_filenames"] = [](pointer a) -> std::string { std::string pathDicom="";
+                                               for(auto d:a->dicom_files) pathDicom += d->GetAbsolutePath()+"\n";
+                                               return pathDicom; };
 
   auto pmap = syd::RecordTraits<syd::Patient>::GetTraits()->GetFieldMap();
   for(auto & m:pmap) {
@@ -68,6 +71,7 @@ BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
   map["date"] = map["acquisition_date"];
   map["pat"] = map["patient.name"];
   map["files"] = map["dicom_files"];
+  map["filenames"] = map["dicom_filenames"];
   map["mod"] = map["dicom_modality"];
   map["description"] = map["dicom_description"];
 }
