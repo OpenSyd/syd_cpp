@@ -22,6 +22,57 @@ syd::Field<RecordType, FieldValueType>::Field(std::string name, Function ff)
   :FieldType<FieldValueType>(name)
 {
   f = ff;
+  rof = nullptr;// FIXME ff;
+  //rof = [f] (typename RecordType::pointer a) -> FieldValueType { return f(a); };
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType, class FieldValueType>
+syd::Field<RecordType, FieldValueType>::Field(std::string name, ROFunction ff)
+  :FieldType<FieldValueType>(name)
+{
+  rof = ff;
+  f = nullptr;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType, class FieldValueType>
+std::shared_ptr<syd::Field<RecordType, FieldValueType>>
+syd::Field<RecordType, FieldValueType>::Copy() const
+{
+  typedef Field<RecordType, FieldValueType> T;
+  DD(ToString());
+  auto a = new T(this->name, this->f);
+  auto t = std::shared_ptr<T>(a);
+  t->type = this->type;
+  t->read_only = this->read_only;
+  t->rof = this->rof;
+  t->precision = this->precision;
+  t->gf = this->gf;
+  DD(t->ToString());
+  return t;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType, class FieldValueType>
+std::string
+syd::Field<RecordType, FieldValueType>::
+ToString() const
+{
+  std::ostringstream oss;
+  auto table_name = syd::RecordTraits<RecordType>::GetTraits()->GetTableName();
+  oss << table_name << "->" << this->name  << " [" << this->type << "] "
+      << (this->read_only ? "read_only":"edit") << " prec=" << this->precision
+      << (this->f==nullptr? "f_null":"f_ok") << " "
+      << (this->rof==nullptr? "rof_null":"rof_ok") << " "
+      << (this->gf==nullptr? "gf_null":"gf_ok");
+  return oss.str();
 }
 // --------------------------------------------------------------------
 
@@ -37,12 +88,60 @@ syd::Field<RecordType, FieldValueType>::~Field()
 
 // --------------------------------------------------------------------
 template<class RecordType, class FieldValueType>
+void
+syd::Field<RecordType, FieldValueType>::
+SetPrecision(int p) const
+{
+  DDF();
+  this->precision_ = p; // FIXME no need
+
+  DD(this->read_only);
+  DD(this->name);
+  /*
+  auto first_field = this->name;
+  std::size_t found = field_names.find_first_of(".");
+  if (found != std::string::npos) {
+    first_field = field_names.substr(0,found);
+    field_names = field_names.substr(found+1, field_names.size());
+  }
+  else field_names = "";
+
+  if (!read_only) {
+    auto cast = BuildCastFunction(t->f);
+
+
+
+    if (field_names == "") {
+      t->gf = syd::FieldType<FieldValueType>::BuildGenericFunction(cast);
+      t->name = s; // FIXME ??
+      return t;
+    }
+    else {
+      auto subfield = db->GetField2(t->type, field_names);
+      t->type = subfield->type;
+      t->Compose(cast, subfield->gf);
+      t->name = s; // FIXME ??
+      return t;
+    }
+  }
+  else {
+    LOG(FATAL) << "TODO";
+  }
+  */
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType, class FieldValueType>
 typename syd::Field<RecordType, FieldValueType>::CastFunction
 syd::Field<RecordType, FieldValueType>::
 BuildCastFunction(Function f) const
 {
   auto t = syd::RecordTraits<RecordType>::GetTraits()->GetTableName();
-  auto h = [t,f](RecordPointer p) -> FieldValueType & {
+  auto h = [t,f, this](RecordPointer p) -> FieldValueType & {
+    std::cout << "Cast from " << p->GetTableName() << "to " << t << std::endl;
+    std::cout << "In field : " << ToString() << std::endl;
     auto r = std::dynamic_pointer_cast<RecordType>(p);
     if (!r) {
       LOG(FATAL) << "Error while using fct cast "
@@ -58,6 +157,27 @@ BuildCastFunction(Function f) const
 
 // --------------------------------------------------------------------
 template<class RecordType, class FieldValueType>
+typename syd::Field<RecordType, FieldValueType>::ROCastFunction
+syd::Field<RecordType, FieldValueType>::
+BuildCastFunction(ROFunction ff) const
+{
+  auto t = syd::RecordTraits<RecordType>::GetTraits()->GetTableName();
+  auto h = [t,ff](RecordPointer p) -> FieldValueType {
+    auto r = std::dynamic_pointer_cast<RecordType>(p);
+    if (!r) {
+      LOG(FATAL) << "Error while using fct cast "
+                 << " I expect " << t << std::endl
+                 << " while record is " << p->GetTableName();
+    }
+    return ff(r);
+  };
+  return h;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType, class FieldValueType>
 typename syd::Field<RecordType, FieldValueType>::pointer
 syd::Field<RecordType, FieldValueType>::
 CreateField(const syd::Database * db, std::string field_names) const
@@ -65,25 +185,45 @@ CreateField(const syd::Database * db, std::string field_names) const
   auto ta = syd::RecordTraits<RecordType>::GetTraits()->GetTableName();
   auto first_field = this->name;
   std::string s = first_field+"."+field_names;
+  if (field_names == "") s = first_field;
 
-  // Create a field
-  typedef Field<RecordType, FieldValueType> T; // first one
-  auto a = new T(s, f); // copy ; f = Image->Injection //FIXME COPY
-  auto t = std::shared_ptr<T>(a);
-  t->type = this->type;
-
-  // end ?
-  if (field_names == "") {
-    auto cast = BuildCastFunction(t->f); // Cast, h = (record)->Injection
-    t->gf = syd::FieldType<FieldValueType>::BuildGenericFunction(cast);
+  // Create a field, change name
+  auto t = Copy();
+  if (t->gf !=nullptr) {
+    DD("no need to build");
     return t;
   }
+
+  // end ?
+  if (!t->read_only) {
+    auto cast = BuildCastFunction(t->f);
+    if (field_names == "") {
+      t->gf = syd::FieldType<FieldValueType>::BuildGenericFunction(cast);
+      t->name = s; // FIXME ??
+      return t;
+    }
+    else {
+      auto subfield = db->GetField2(t->type, field_names);
+      t->type = subfield->type;
+      t->Compose(cast, subfield->gf);
+      t->name = s; // FIXME ??
+      return t;
+    }
+  }
   else {
-    auto type = t->type;
-    auto subfield = db->GetField2(type, field_names);
-    auto f_record = BuildCastFunction(t->f); // Cast, h = (record)->Patient
-    t->Compose(f_record, subfield->gf);
-    return t;
+    auto cast = BuildCastFunction(t->rof); // Cast, h = (record)->Injection
+    if (field_names == "") {
+      t->gf = syd::FieldType<FieldValueType>::BuildGenericFunction(cast);
+      t->name = s; // FIXME ??
+      return t;
+    }
+    else {
+      auto subfield = db->GetField2(t->type, field_names);
+      t->type = subfield->type;
+      t->Compose(cast, subfield->gf);
+      t->name = s; // FIXME ??
+      return t;
+    }
   }
 }
 // --------------------------------------------------------------------
@@ -102,3 +242,56 @@ CreateField(std::string name, Function f, std::string type_name)
 }
 // --------------------------------------------------------------------
 
+
+
+// --------------------------------------------------------------------
+template<class RecordType, class FieldValueType>
+typename syd::Field<RecordType, FieldValueType>::pointer
+syd::Field<RecordType, FieldValueType>::
+CreateField(std::string name, ROFunction f, std::string type_name)
+{
+  typedef syd::Field<RecordType,FieldValueType> T;
+  auto t = new T(name, f);
+  t->type = type_name;
+  return std::shared_ptr<T>(t);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType, class FieldValueType>
+typename syd::Field<RecordType, FieldValueType>::pointer
+syd::Field<RecordType, FieldValueType>::
+Build()
+{
+  DDF();
+  DD(ToString());
+
+  std::size_t found = this->name.find_first_of(".");
+  DD(found);
+  std::string first_field;
+  std::string field_names="";
+  if (found != std::string::npos) {
+    first_field = field_names.substr(0,found);
+    field_names = field_names.substr(found+1, field_names.size());
+  }
+  DD(first_field);
+  DD(field_names);
+
+  if (!read_only) {
+    auto cast = BuildCastFunction(f);
+    if (field_names == "") {
+      DD("simple");
+      gf = syd::FieldType<FieldValueType>::BuildGenericFunction(cast);
+    }
+    else {
+      DD(this->type);
+      auto subfield = db->GetField2(this->type, field_names);
+      Compose(cast, subfield->gf);
+    }
+  }
+  else {
+    LOG(FATAL) << "TODO";
+  }
+}
+// --------------------------------------------------------------------

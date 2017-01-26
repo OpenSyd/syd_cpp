@@ -20,9 +20,8 @@
 #define SYDIMAGETRAITS_H
 
 // syd
+#include "sydPatientTraits.h"
 #include "sydImage.h"
-#include "sydStandardDatabase.h"
-#include "sydField.h"
 #include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------

@@ -54,9 +54,38 @@ BuildGenericFunction(CastFunction f) const
 
 // --------------------------------------------------------------------
 template<class FieldValueType>
+typename syd::FieldType<FieldValueType>::GenericFunction
+syd::FieldType<FieldValueType>::
+BuildGenericFunction(ROCastFunction f) const
+{
+  auto g = [f](RecordPointer p) -> std::string {
+    auto a = f(p);
+    if (a == nullptr) return empty_value;
+    return a->ToString();
+  };
+  return g;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class FieldValueType>
 void
 syd::FieldType<FieldValueType>::
 Compose(CastFunction f, GenericFunction h)
+{
+  this->gf = [h,f](RecordPointer p) -> std::string {
+    auto a = f(p);
+    if (a == nullptr) return empty_value;
+    return h(a); };
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+template<class FieldValueType>
+void
+syd::FieldType<FieldValueType>::
+Compose(ROCastFunction f, GenericFunction h)
 {
   this->gf = [h,f](RecordPointer p) -> std::string {
     auto a = f(p);

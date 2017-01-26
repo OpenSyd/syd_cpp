@@ -82,17 +82,22 @@ namespace syd {
     virtual std::string GetDefaultFields() const;
 
     /// FIXME
-    typedef std::map<std::string, FieldBasePointer> FieldMapType;
+    typedef syd::RecordTraitsBase::FieldMapType FieldMapType;
     const FieldMapType & GetFieldMap2() const;
     void BuildFields(FieldMapType & map) const;
     void InitCommonFields(FieldMapType & map) const;
-    FieldBasePointer GetField2(const syd::Database * db, std::string field_name) const;
+    FieldBasePointer CreateField(const syd::Database * db, std::string field_name) const;
     FieldBasePointer GetField2(std::string field_name) const; // FIXME change name
+    //    std::vector<syd::FieldBase::pointer> GetFields2(syd::Database * db) const;
 
     template<class FieldValueType>
       void AddField(FieldMapType & map,
                     std::string name,
                     std::function<FieldValueType & (typename RecordType::pointer p)> f) const;
+    template<class FieldValueType>
+      void AddField(FieldMapType & map,
+                    std::string name,
+                    std::function<FieldValueType (typename RecordType::pointer p)> f) const;
     template<class RecordType2>
       void AddTableField(FieldMapType & map,
                          std::string name,
@@ -120,6 +125,7 @@ namespace syd {
 
     /// FIXME
     mutable FieldMapType field_map_;
+    mutable const syd::Database * db_;
 
   }; // end of class
 
@@ -145,6 +151,12 @@ namespace syd {
   {                                                       \
     auto f = [](pointer p) -> TYPE & { return p->NAME; }; \
     AddField<TYPE>(map, #NAME, f);                        \
+  }
+
+#define ADD_RO_FIELD(NAME, TYPE)                        \
+  {                                                     \
+    auto f = [](pointer p) -> TYPE { return p->NAME; }; \
+    AddField<TYPE>(map, #NAME, f);                      \
   }
 
 #define ADD_TABLE_FIELD(NAME, TYPE)                                 \

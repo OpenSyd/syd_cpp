@@ -24,8 +24,6 @@
 #include "sydRecordHelper.h"
 #include "sydPrintTable.h"
 
-#include <boost/variant.hpp>
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -115,16 +113,29 @@ int main(int argc, char* argv[])
       return EXIT_SUCCESS;
     }
 
+    DDS(results);
+    DD(args_info.precision_arg);
     syd::PrintTable table;
+    table.SetPrecision(args_info.precision_arg);
     table.Build(table_name, results, args_info.format_arg);
+
+    // Global precision for numbers
+    //    for(auto )
+    //table.SetFieldParam(args_info.)
+
     table.SetHeaderFlag(!args_info.noheader_flag);
     table.SetFooterFlag(!args_info.nofooter_flag);
     table.Print(std::cout); // Print total number at the end !
     LOG(1) << results.size() << " elements found in table " << table_name;
 
     if (args_info.list_fields_flag) {
-      auto map = db->GetTraits(table_name)->GetRecordFieldMap();
-      for(auto m:map) std::cout << m.first << " ";
+      //      auto map = db->GetTraits(table_name)->GetRecordFieldMap();
+      auto map = db->GetTraits(table_name)->GetFieldMap2();
+      for(auto m:map) {
+        std::ostringstream oss;
+        if (m.first == m.second->name) std::cout << m.first << " ";
+        else std::cout << m.first << "(" << m.second->name << ") ";
+      }
       std::cout << std::endl << "Total of " << map.size() << " fields.";
     }
 

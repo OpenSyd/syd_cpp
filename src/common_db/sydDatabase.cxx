@@ -658,9 +658,21 @@ GetFields(std::string table_name, std::string fields)
 syd::FieldBase::pointer syd::Database::
 GetField2(std::string table_name, std::string field_name) const
 {
-  return GetTraits(table_name)->GetField2(this, field_name);
+  return GetTraits(table_name)->CreateField(this, field_name);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::vector<syd::FieldBase::pointer>
+syd::Database::
+GetFields2(std::string table_name, std::string fields) const
+{
+  std::vector<syd::FieldBase::pointer> a;
+  return a; //GetTraits(table_name)->GetFields2(this); // FIXME 
+}
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 /*const syd::Record::GetFieldFunction &

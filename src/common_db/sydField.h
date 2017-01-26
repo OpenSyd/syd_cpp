@@ -32,22 +32,43 @@ namespace syd {
     class Field: public FieldType<FieldValueType> {
   public:
 
+    typedef Field<RecordType,FieldValueType> Self;
     typedef FieldBase::pointer pointer;
     typedef FieldBase::GenericFunction GenericFunction;
     typedef FieldBase::RecordPointer RecordPointer;
     typedef std::function<FieldValueType & (RecordPointer p)> CastFunction;
     typedef std::function<FieldValueType & (typename RecordType::pointer p)> Function;
+    typedef std::function<FieldValueType (RecordPointer p)> ROCastFunction;
+    typedef std::function<FieldValueType (typename RecordType::pointer p)> ROFunction;
 
     Function f;
+    ROFunction rof;
 
     Field(std::string name, Function f);
+    Field(std::string name, ROFunction f);
     virtual ~Field();
+    std::shared_ptr<Self> Copy() const;
+
+    void BuildFunction();
+
     CastFunction BuildCastFunction(Function f) const;
+    ROCastFunction BuildCastFunction(ROFunction f) const;
     pointer CreateField(const syd::Database * db, std::string field_names) const;
 
+    virtual std::string ToString() const;
+
+    /// Default function to print an element (must be inline here).
+    friend std::ostream& operator<<(std::ostream& os, const Self & p) {
+      os << p.ToString();
+      return os;
+    }
+    friend std::ostream& operator<<(std::ostream& os, const std::shared_ptr<Self> p) {
+      os << p->ToString();
+      return os;
+    }
+
     static pointer CreateField(std::string name, Function f, std::string type="");
-    static void AddField(typename syd::RecordTraits<RecordType>::FieldMapType & map,
-                         std::string name, Function f, std::string type="");
+    static pointer CreateField(std::string name, ROFunction f, std::string type="");
 
   }; // end of class
 

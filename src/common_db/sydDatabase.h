@@ -275,7 +275,7 @@ namespace syd {
 
     /// FIXME  --> new GetField
     syd::FieldBase::pointer GetField2(std::string table_name, std::string field_name) const;
-
+    std::vector<syd::FieldBase::pointer> GetFields2(std::string table_name, std::string fields) const;
 
     // ----------------------------------------------------------------------------------
   protected:

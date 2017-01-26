@@ -23,6 +23,8 @@
 syd::FieldBase::FieldBase(std::string n)
 {
   name = n;
+  precision = 2;
+  read_only = false;
 }
 // --------------------------------------------------------------------
 
@@ -40,6 +42,7 @@ std::string syd::FieldBase::get(RecordPointer p)
 {
   if (gf != nullptr) return gf(p);
   LOG(FATAL) << "in syd::FieldBase::get: need to set the f before";
+  return ""; // to avoid warning
 }
 // --------------------------------------------------------------------
 

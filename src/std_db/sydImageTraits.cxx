@@ -24,7 +24,6 @@
 DEFINE_TABLE_TRAITS_IMPL(Image);
 // --------------------------------------------------------------------
 
-
 // --------------------------------------------------------------------
 template<> void syd::RecordTraits<syd::Image>::
 BuildMapOfSortFunctions(CompareFunctionMap & map) const
@@ -135,24 +134,33 @@ void
 syd::RecordTraits<syd::Image>::
 BuildFields(FieldMapType & map) const
 {
+  DD("image");
   InitCommonFields(map);
   ADD_TABLE_FIELD(patient, syd::Patient);
   ADD_TABLE_FIELD(injection, syd::Injection);
   ADD_TABLE_FIELD(pixel_unit, syd::PixelUnit);
-
-  /*  auto f = [](pointer p) -> syd::Injection::pointer & {
-
-    return p->injection;
-  };
-  AddTableField<syd::Injection>(map, "injection", f);
-  */
 
   ADD_FIELD(type, std::string);
   ADD_FIELD(pixel_type, std::string);
   ADD_FIELD(frame_of_reference_uid, std::string);
   ADD_FIELD(acquisition_date, std::string);
   ADD_FIELD(modality, std::string);
+
+  // Read only fields
+  ADD_RO_FIELD(dimension, unsigned short int);
+  auto f_fn = [](pointer p) -> std::string { return p->GetAbsolutePath(); };
+  AddField<std::string>(map, "filename", f_fn);
+  auto f_size = [](pointer p) -> std::string { return p->SizeAsString(); };
+  AddField<std::string>(map, "size", f_size);
+  auto f_spacing = [](pointer p) -> std::string { return p->SpacingAsString(); };
+  AddField<std::string>(map, "spacing", f_spacing);
+
+  DD(" trial abbreviation");
+  map["pat"] = db_->GetField2("Image", "patient.name");
+
+  for(auto m:map) {
+    DD(m.first);
+    DD(m.second);
+  }
 }
 // --------------------------------------------------------------------
-
-

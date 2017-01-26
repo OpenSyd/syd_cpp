@@ -21,8 +21,7 @@
 
 // syd
 #include "sydPatient.h"
-#include "sydStandardDatabase.h"
-#include "sydRecordTraits.h"
+#include "sydStandardDatabase.h" // needed here
 
 // --------------------------------------------------------------------
 namespace syd {

@@ -24,16 +24,7 @@
 #include "sydStandardDatabase.h"
 #include "sydTableOfRecords.h"
 #include "sydPrintTable.h"
-
 #include "sydField.h"
-
-//#include <boost/variant.hpp>
-//#include "sydTestTemp3.h"
-// #include "sydTestTemp4.h"
-// #include "sydTestTemp5.h"
-// #include "sydTestTemp6.h"
-//#include "sydTestTemp7.h"
-//#include "sydTestTemp8.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -61,34 +52,47 @@ int main(int argc, char* argv[])
   DD(record);
 
   DD("----------------------------");
-  auto f = [](syd::Image::pointer p) -> std::string & { return p->acquisition_date; };
-  typedef syd::Field<syd::Image,std::string> T;
-  auto t = new T("date", f);
-  DD(t->name);
-  //T t;
-  //map["date"] = std::shared_ptr<T>(t);
-
-
-  DD("----------------------------");
 
   //  auto traits = syd::RecordTraits<syd::Image>::GetTraits();
   auto field = db->GetField2("Image","acquisition_date");
   DD(field->get(record));
 
-  field = db->GetField2("Image", "patient");
-  std::cout << field->name << " " << field->get(record) << std::endl;
+  // field = db->GetField2("Image", "patient");
+  // std::cout << field->name << " " << field->get(record) << std::endl;
 
-  field = db->GetField2("Image", "modality");
+  // field = db->GetField2("Image", "modality");
+  // std::cout << field->name << " " << field->get(record) << std::endl;
+
+  field = db->GetField2("Image", "bidon3");
   std::cout << field->name << " " << field->get(record) << std::endl;
+  DD(field);
+  DD(field->ToString());
+
+  // field = db->GetField2("Image", "injection.patient");
+  // std::cout << field->name << " " << field->get(record) << std::endl;
+
+  // field = db->GetField2("Image", "injection.patient.name");
+  // std::cout << field->name << " " << field->get(record) << std::endl;
 
   field = db->GetField2("Image", "patient.name");
   std::cout << field->name << " " << field->get(record) << std::endl;
 
-  field = db->GetField2("Image", "injection.patient");
+  DD(field);
+  DD(field->ToString());
+
+  auto t = syd::RecordTraits<syd::Image>::GetTraits();
+  auto map = t->GetFieldMap2();
+  syd::RecordTraitsBase::FieldMapType mm;
+  mm = map; // copy ?
+  mm["toto"] = field;
+  field = mm["toto"];
   std::cout << field->name << " " << field->get(record) << std::endl;
 
-  field = db->GetField2("Image", "injection.patient.name");
-  std::cout << field->name << " " << field->get(record) << std::endl;
+
+  // field = db->GetField2("Image", "bidon");
+  // std::cout << field->name << " " << field->get(record) << std::endl;
+  // DD(field);
+  // DD(field->ToString());
 
   /*
   auto field = db->GetField2("Image", "id");

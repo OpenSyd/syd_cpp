@@ -24,6 +24,7 @@ syd::PrintTable::PrintTable()
 {
   header_flag_ = true;
   footer_flag_ = true;
+  precision_ = -1;
 }
 //------------------------------------------------------------------
 
@@ -45,7 +46,17 @@ void syd::PrintTable::SetFooterFlag(bool b)
 
 
 //------------------------------------------------------------------
-void syd::PrintTable::Build(std::string table_name, const RecordBaseVector records, std::string columns)
+void syd::PrintTable::SetPrecision(int p)
+{
+  precision_ = p;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable::Build(std::string table_name,
+                            const RecordBaseVector records,
+                            std::string columns)
 {
   values_.resize(records.size());
   if (records.size() == 0) return;
@@ -54,14 +65,17 @@ void syd::PrintTable::Build(std::string table_name, const RecordBaseVector recor
   auto fields_names = columns;
 
   /*
-  if (fields_names == "") fields_names = db->GetTraits(table_name)->GetDefaultFields();
-  auto fields = db->GetFields(table_name, fields_names);
+    if (fields_names == "") fields_names = db->GetTraits(table_name)->GetDefaultFields();
+    auto fields = db->GetFields(table_name, fields_names);
   */
   std::vector<std::string> field_names;
   syd::GetWords(field_names, columns);
   DDS(field_names);
   std::vector<syd::FieldBase::pointer> fields;
   for(auto f:field_names) fields.push_back(db->GetField2(table_name, f));
+
+  //  auto fields = db->GetFields2(table_name, f);
+
 
   // Header
   header_.resize(fields.size());
@@ -73,7 +87,7 @@ void syd::PrintTable::Build(std::string table_name, const RecordBaseVector recor
   //   LOG(FATAL) << "Internal error fields in syd::PrintTable::Build";
   // }
   /*
-  for(auto col:words) {
+    for(auto col:words) {
     header_[i] = col;
     ++i;
     }*/
@@ -84,18 +98,24 @@ void syd::PrintTable::Build(std::string table_name, const RecordBaseVector recor
 
 
 // -----------------------------------------------------------------
-// FIXME template Build<T>(T::vector ...)
 void syd::PrintTable::Build(const RecordBaseVector & records,
                             syd::FieldBase::vector & fields)
-// void syd::PrintTable::Build(const RecordBaseVector & records,
-//                             const std::vector<FieldFunc> & fields)
 {
   values_.resize(records.size());
+  DD(precision_);
+  if (precision_ != -1) {
+    DD(precision_);
+    for(auto &f:fields) f->precision = precision_;
+    for(auto &f:fields) DD(f->precision);
+    for(auto &f:fields) DD(f->name);
+  }
+
   int i=0; // row
   for(auto & r:records) {
     int j=0; // column
     values_[i].resize(fields.size());
     for(auto & f:fields) {
+      DD(f->precision);
       values_[i][j] = f->get(r); // get the value
       ++j;
     }

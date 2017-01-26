@@ -45,13 +45,31 @@ namespace syd {
     std::string name;
     std::string type;
     int precision;
+    bool read_only;
     GenericFunction gf; // protected ?
+
+    virtual void SetPrecision(int p) = 0;
+
+    virtual void BuildFunction() = 0;
 
     /// Get value
     std::string get(RecordPointer p);
 
     /// Set value
     // FIXME    virtual void set(syd::Record::pointer p, std::string value); //later
+
+    /// To print
+    virtual std::string ToString() const = 0;
+
+    /// Default function to print an element (must be inline here).
+    friend std::ostream& operator<<(std::ostream& os, const FieldBase & p) {
+      os << p.ToString();
+      return os;
+    }
+    friend std::ostream& operator<<(std::ostream& os, const pointer p) {
+      os << p->ToString();
+      return os;
+    }
 
     /// Create the generic function 'f'
     virtual pointer CreateField(const syd::Database * db, std::string field_names) const = 0;

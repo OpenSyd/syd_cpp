@@ -72,8 +72,12 @@ namespace syd {
     virtual const RecordFieldFunctionMap & GetRecordFieldMap() const = 0;
 
     /// FIXME
-    virtual FieldBasePointer GetField2(const syd::Database * db, std::string field_name) const = 0;
+    typedef std::map<std::string, FieldBasePointer> FieldMapType;
+    virtual const FieldMapType & GetFieldMap2() const = 0;
+    virtual FieldBasePointer CreateField(const syd::Database * db,
+                                         std::string field_name) const = 0;
     virtual FieldBasePointer GetField2(std::string field_name) const = 0;
+    //    std::vector<syd::FieldBase::pointer> GetFields2(syd::Database * db) const = 0;
 
   protected:
     RecordTraitsBase(std::string table_name);

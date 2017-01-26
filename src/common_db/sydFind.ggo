@@ -15,8 +15,9 @@ Use --exclude option to exclude words.
 option "exclude"  e   "Exclude pattern (multiple)"	         string  no multiple
 option "list"     l   "Dump list of ids only"                    flag    off
 option "format"   f   "Field format when dump results"                 string  default="" no
+option "precision" p "Global precision for field (-1 for default)" float default="-1" no
+option "field" - "Set options for a given field, ie 'mean(2)' to set precision=2 for the field named 'mean'" string multiple no
 option "list_fields"   -   "List fields available for the given table" flag off
-#option "col"      -   "Change column precision or size, e.g. '7 p 5' (col nb, p or s, value)" string no multiple
 option "check"    c   "Check files associated to found records"  flag    off
 option "noheader" -   "Do not display table header"              flag    off
 option "nofooter" -   "Do not display table footer"              flag    off

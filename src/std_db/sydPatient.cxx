@@ -18,7 +18,6 @@
 
 // syd
 #include "sydPatient.h"
-#include "sydInjection.h"
 #include "sydStandardDatabase.h"
 
 DEFINE_TABLE_IMPL(Patient);
@@ -128,18 +127,3 @@ void syd::Patient::Callback(odb::callback_event event, odb::database & db)
 // --------------------------------------------------
 
 
-/*
-// --------------------------------------------------------------------
-void syd::Patient::SetDefaultFields(std::map<std::string, syd::Record::GetFieldFunction> & map) const
-{
-syd::Record::SetDefaultFields(map);
-map["name"] = [](syd::Record::pointer r) {
-return std::static_pointer_cast<syd::Patient>(r)->name; };
-map["study_id"] = [](syd::Record::pointer r) {
-return std::to_string(std::static_pointer_cast<syd::Patient>(r)->study_id); };
-map["dicom"] = [](syd::Record::pointer r) {
-return std::static_pointer_cast<syd::Patient>(r)->dicom_patientid; };
-}
-// --------------------------------------------------------------------
-
-*/

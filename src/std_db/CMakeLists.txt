@@ -21,6 +21,9 @@ wrap_odb(sydStandardDatabase sydFitImages.h)
 wrap_odb(sydStandardDatabase sydFitTimepoints.h)
 
 set(SYD_STANDARD_DATABASE_SRC
+
+  sydStandardDatabase.cxx
+
   sydRadionuclide-odb.cxx sydRadionuclide-schema.cxx sydRadionuclide.cxx
   sydPatient-odb.cxx sydPatient-schema.cxx  sydPatient.cxx
   sydInjection-odb.cxx sydInjection-schema.cxx  sydInjection.cxx
@@ -40,15 +43,14 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiTimepoints-odb.cxx sydRoiTimepoints-schema.cxx sydRoiTimepoints.cxx
   sydFitTimepoints-odb.cxx sydFitTimepoints-schema.cxx sydFitTimepoints.cxx
 
+  sydPatientTraits.cxx
+  sydInjectionTraits.cxx
+  sydRadionuclideTraits.cxx
+  sydPixelUnitTraits.cxx
+  sydDicomFileTraits.cxx
   sydDicomSerieTraits.cxx
   sydImageTraits.cxx
   sydRoiMaskImageTraits.cxx
-  sydInjectionTraits.cxx
-  sydPatientTraits.cxx
-  sydRadionuclideTraits.cxx
-  sydStandardDatabase.cxx
-  sydDicomFileTraits.cxx
-  sydPixelUnitTraits.cxx
   sydRoiTypeTraits.cxx
   sydRoiStatisticTraits.cxx
   sydFitImagesTraits.cxx
