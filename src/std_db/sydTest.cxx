@@ -54,27 +54,27 @@ int main(int argc, char* argv[])
   DD("----------------------------");
 
   //  auto traits = syd::RecordTraits<syd::Image>::GetTraits();
-  auto field = db->GetField2("Image","acquisition_date");
+  auto field = db->NewField("Image","acquisition_date");
   DD(field->get(record));
 
-  // field = db->GetField2("Image", "patient");
+  // field = db->NewField("Image", "patient");
   // std::cout << field->name << " " << field->get(record) << std::endl;
 
-  // field = db->GetField2("Image", "modality");
+  // field = db->NewField("Image", "modality");
   // std::cout << field->name << " " << field->get(record) << std::endl;
 
-  field = db->GetField2("Image", "bidon3");
+  field = db->NewField("Image", "bidon3");
   std::cout << field->name << " " << field->get(record) << std::endl;
   DD(field);
   DD(field->ToString());
 
-  // field = db->GetField2("Image", "injection.patient");
+  // field = db->NewField("Image", "injection.patient");
   // std::cout << field->name << " " << field->get(record) << std::endl;
 
-  // field = db->GetField2("Image", "injection.patient.name");
+  // field = db->NewField("Image", "injection.patient.name");
   // std::cout << field->name << " " << field->get(record) << std::endl;
 
-  field = db->GetField2("Image", "patient.name");
+  field = db->NewField("Image", "patient.name");
   std::cout << field->name << " " << field->get(record) << std::endl;
 
   DD(field);
@@ -89,23 +89,23 @@ int main(int argc, char* argv[])
   std::cout << field->name << " " << field->get(record) << std::endl;
 
 
-  // field = db->GetField2("Image", "bidon");
+  // field = db->NewField("Image", "bidon");
   // std::cout << field->name << " " << field->get(record) << std::endl;
   // DD(field);
   // DD(field->ToString());
 
   /*
-  auto field = db->GetField2("Image", "id");
+  auto field = db->NewField("Image", "id");
   DD(field->get(record));
   DD(field->name);
   DD(field->type);
 
-  field = db->GetField2("Injection", "date");
+  field = db->NewField("Injection", "date");
   DD(field->get(image->injection));
   DD(field->name);
   DD(field->type);
 
-  field = db->GetField2("Image", "injection.date");
+  field = db->NewField("Image", "injection.date");
   DD(field->get(record));
   DD(field->name);
   DD(field->type);

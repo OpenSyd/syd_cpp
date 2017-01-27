@@ -66,18 +66,16 @@ namespace syd {
     virtual void Sort(RecordBaseVector & records, const std::string & type) const = 0;
 
     /// Get field functions
-    virtual RecordFieldFunc GetField(std::string field) const = 0;
+    virtual RecordFieldFunc GetFieldOLD(std::string field) const = 0;
     virtual std::vector<RecordFieldFunc> GetFields(std::string fields) const = 0;
     virtual std::string GetDefaultFields() const = 0;
     virtual const RecordFieldFunctionMap & GetRecordFieldMap() const = 0;
 
     /// FIXME
     typedef std::map<std::string, FieldBasePointer> FieldMapType;
-    virtual const FieldMapType & GetFieldMap2() const = 0;
-    virtual FieldBasePointer CreateField(const syd::Database * db,
-                                         std::string field_name) const = 0;
-    virtual FieldBasePointer GetField2(std::string field_name) const = 0;
-    //    std::vector<syd::FieldBase::pointer> GetFields2(syd::Database * db) const = 0;
+    virtual const FieldMapType & GetFieldsMap() const = 0;
+    virtual FieldBasePointer NewField(const syd::Database * db,
+                                      std::string field_name) const = 0;
 
   protected:
     RecordTraitsBase(std::string table_name);

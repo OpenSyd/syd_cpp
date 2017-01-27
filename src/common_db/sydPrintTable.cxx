@@ -72,7 +72,7 @@ void syd::PrintTable::Build(std::string table_name,
   syd::GetWords(field_names, columns);
   DDS(field_names);
   std::vector<syd::FieldBase::pointer> fields;
-  for(auto f:field_names) fields.push_back(db->GetField2(table_name, f));
+  for(auto f:field_names) fields.push_back(db->NewField(table_name, f));
 
   //  auto fields = db->GetFields2(table_name, f);
 

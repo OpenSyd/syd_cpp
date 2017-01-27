@@ -134,7 +134,6 @@ void
 syd::RecordTraits<syd::Image>::
 BuildFields(FieldMapType & map) const
 {
-  DD("image");
   InitCommonFields(map);
   ADD_TABLE_FIELD(patient, syd::Patient);
   ADD_TABLE_FIELD(injection, syd::Injection);
@@ -155,13 +154,9 @@ BuildFields(FieldMapType & map) const
   auto f_spacing = [](pointer p) -> std::string { return p->SpacingAsString(); };
   AddField<std::string>(map, "spacing", f_spacing);
 
-  DD(" trial abbreviation");
-  map["pat"] = db_->GetField2("Image", "patient.name");
-  map["rad"] = db_->GetField2("Image", "injection.radionuclide.name");
+  // Abbreviation
+  map["pat"] = db_->NewField("Image", "patient.name");
+  map["rad"] = db_->NewField("Image", "injection.radionuclide.name");
 
-  for(auto m:map) {
-    DD(m.first);
-    DD(m.second);
-  }
 }
 // --------------------------------------------------------------------

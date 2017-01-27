@@ -306,7 +306,7 @@ BuildFunction(const syd::Database * db, std::string field_names)
     }
     else {
       DD(this->type);
-      auto subfield = db->GetField2(this->type, field_names);
+      auto subfield = db->NewField(this->type, field_names);
       DD("get subfield");
       DD(subfield);
       subfield->precision = this->precision;
@@ -326,7 +326,7 @@ BuildFunction(const syd::Database * db, std::string field_names)
     }
     else {
       DD(this->type);
-      auto subfield = db->GetField2(this->type, field_names);
+      auto subfield = db->NewField(this->type, field_names);
       DD("ro get subfield");
       DD(subfield);
       subfield->precision = this->precision;

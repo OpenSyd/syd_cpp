@@ -49,6 +49,7 @@ namespace syd {
     typedef std::map<std::string, FieldFunc> FieldFunctionMap;
     typedef syd::RecordTraitsBase::RecordFieldFunctionMap RecordFieldFunctionMap;
     //typedef syd::RecordTraitsBase::FieldBasePointer FieldBasePointer;
+    typedef syd::RecordTraitsBase::FieldMapType FieldMapType;
 
     // Main static version to get the singleton traits
     static RecordTraits<RecordType> * GetTraits();
@@ -75,33 +76,17 @@ namespace syd {
 
     /// Functions to get fields value as string
     void BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
-    RecordFieldFunc GetField(std::string field) const;
+    RecordFieldFunc GetFieldOLD(std::string field) const;
     std::vector<RecordFieldFunc> GetFields(std::string fields) const;
     const FieldFunctionMap & GetFieldMap() const;
     const RecordFieldFunctionMap & GetRecordFieldMap() const;
     virtual std::string GetDefaultFields() const;
 
-    /// FIXME
-    typedef syd::RecordTraitsBase::FieldMapType FieldMapType;
-    const FieldMapType & GetFieldMap2() const;
-    void BuildFields(FieldMapType & map) const;
-    void InitCommonFields(FieldMapType & map) const;
-    FieldBasePointer CreateField(const syd::Database * db, std::string field_name) const;
-    FieldBasePointer GetField2(std::string field_name) const; // FIXME change name
-    //    std::vector<syd::FieldBase::pointer> GetFields2(syd::Database * db) const;
+    /// Return the list of initial fields
+    virtual const FieldMapType & GetFieldsMap() const;
 
-    template<class FieldValueType>
-      void AddField(FieldMapType & map,
-                    std::string name,
-                    std::function<FieldValueType & (typename RecordType::pointer p)> f) const;
-    template<class FieldValueType>
-      void AddField(FieldMapType & map,
-                    std::string name,
-                    std::function<FieldValueType (typename RecordType::pointer p)> f) const;
-    template<class RecordType2>
-      void AddTableField(FieldMapType & map,
-                         std::string name,
-                         std::function<typename RecordType2::pointer & (typename RecordType::pointer p)> f) const;
+    /// Create and build a field according to the name
+    virtual FieldBasePointer NewField(const syd::Database * db, std::string field_name) const;
 
   protected:
     RecordTraits(std::string table_name);
@@ -123,9 +108,38 @@ namespace syd {
     void SetDefaultFieldFunctions(FieldFunctionMap & map) const;
     void InitFields() const;
 
-    /// FIXME
+    /// Map of fields (mutable because lazy initialisation)
     mutable FieldMapType field_map_;
+
+    /// Needed in BuildFields
     mutable const syd::Database * db_;
+
+    /// Initial function to build the fields (will be overloaded)
+    void BuildFields(FieldMapType & map) const;
+
+    /// Common fields for all records (id, raw)
+    void InitCommonFields(FieldMapType & map) const;
+
+    /// Look in the map to get a field by his name
+    FieldBasePointer GetField(std::string field_name) const;
+
+    /// Define a new Field, of a given type by reference
+    template<class FieldValueType>
+      void AddField(FieldMapType & map,
+                    std::string name,
+                    std::function<FieldValueType & (typename RecordType::pointer p)> f) const;
+
+    /// Define a new Field, of a given type by value (read only)
+    template<class FieldValueType>
+      void AddField(FieldMapType & map,
+                    std::string name,
+                    std::function<FieldValueType (typename RecordType::pointer p)> f) const;
+
+    /// Define a new Field, of a given record pointer
+    template<class RecordType2>
+      void AddTableField(FieldMapType & map,
+                         std::string name,
+                         std::function<typename RecordType2::pointer & (typename RecordType::pointer p)> f) const;
 
   }; // end of class
 
