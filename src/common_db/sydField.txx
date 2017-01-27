@@ -171,10 +171,6 @@ BuildCastFunction(ROFunction ff) const
     std::cout << "ROCast from " << p->GetTableName() << " to " << t << std::endl;
     //std::cout << "In field : " << this->ToString() << std::endl; // FIXME no this !!
     std::cout << "With p : " << p << std::endl;
-    if (p == nullptr) {
-      DD("BUG nullptr");
-      return nullptr;
-    }
     auto r = std::dynamic_pointer_cast<RecordType>(p);
     if (!r) {
       LOG(FATAL) << "Error while using fct cast "
@@ -313,6 +309,7 @@ BuildFunction(const syd::Database * db, std::string field_names)
       auto subfield = db->GetField2(this->type, field_names);
       DD("get subfield");
       DD(subfield);
+      subfield->precision = this->precision;
       subfield->BuildFunction(db, "bidon");
       DD(subfield);
       DD("Compose:");
@@ -322,7 +319,24 @@ BuildFunction(const syd::Database * db, std::string field_names)
     }
   }
   else {
-    LOG(FATAL) << "TODO";
+    auto cast = BuildCastFunction(rof);
+    if (field_names == "") {
+      DD("ro simple");
+      this->gf = syd::FieldType<FieldValueType>::BuildGenericFunction(cast);
+    }
+    else {
+      DD(this->type);
+      auto subfield = db->GetField2(this->type, field_names);
+      DD("ro get subfield");
+      DD(subfield);
+      subfield->precision = this->precision;
+      subfield->BuildFunction(db, "bidon");
+      DD(subfield);
+      DD("ro Compose:");
+      this->Compose(cast, subfield->gf); // set the gf
+      DD(ToString());
+      DD("ro end compose");
+    }
   }
   DD("end Build");
 }

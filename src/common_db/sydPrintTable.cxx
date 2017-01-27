@@ -102,12 +102,16 @@ void syd::PrintTable::Build(const RecordBaseVector & records,
                             syd::FieldBase::vector & fields)
 {
   values_.resize(records.size());
+  if (records.size() == 0) return;
+
   DD(precision_);
   if (precision_ != -1) {
     DD(precision_);
+    auto db = records[0]->GetDatabase();
     for(auto &f:fields) f->precision = precision_;
     for(auto &f:fields) DD(f->precision);
     for(auto &f:fields) DD(f->name);
+    for(auto &f:fields) f->BuildFunction(db, "");
   }
 
   int i=0; // row
