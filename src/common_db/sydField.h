@@ -47,9 +47,11 @@ namespace syd {
     Field(std::string name, Function f);
     Field(std::string name, ROFunction f);
     virtual ~Field();
-    std::shared_ptr<Self> Copy() const;
+    virtual pointer Copy() const;
 
-    void BuildFunction();
+    virtual void SetPrecision(int p);
+
+    virtual void BuildFunction(const syd::Database * db, std::string field_names);
 
     CastFunction BuildCastFunction(Function f) const;
     ROCastFunction BuildCastFunction(ROFunction f) const;

@@ -65,3 +65,20 @@ GetDefaultFields() const
   return s;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<>
+void
+syd::RecordTraits<syd::Radionuclide>::
+BuildFields(FieldMapType & map) const
+{
+  InitCommonFields(map);
+  ADD_FIELD(name, std::string);
+  // ADD_TABLE_FIELD(radionuclide, syd::Radionuclide);
+  // ADD_FIELD(date, std::string);
+  // ADD_FIELD(activity_in_MBq, double);
+}
+// --------------------------------------------------------------------
+
+

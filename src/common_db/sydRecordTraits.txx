@@ -407,14 +407,28 @@ CreateField(const syd::Database * db, std::string field_names) const
   std::cout << "_______________ Main GetField "
             << field_names << " in " << GetTableName() << std::endl;
   db_ = db;
+
+  // 1 create field
+  ///// separate first + fields
+  ///// f = GetField(first)
+  ///// Copy
+  ///// build(db, field_names)
+
   auto first_field = field_names;
   std::size_t found = field_names.find_first_of(".");
   if (found != std::string::npos) {
     first_field = field_names.substr(0,found);
-    field_names = field_names.substr(found+1, field_names.size());
+    field_names = field_names.substr(found, field_names.size());
   }
   else field_names = "";
-  return GetField2(first_field)->CreateField(db, field_names);
+  //  return GetField2(first_field)->CreateField(db, field_names);
+
+  auto field = GetField2(first_field); // this is a copy
+  //  field = field->Copy();
+  field->name = field->name+field_names;
+  DD(field->name);
+  field->BuildFunction(db, field_names);// field_name not used
+  return field;
 }
 // --------------------------------------------------------------------
 
@@ -436,7 +450,7 @@ GetField2(std::string field_name) const
     LOG(FATAL) << "cannot find the field " << field_name;
   }
   DD(it->second->name);
-  return it->second;
+  return it->second->Copy();
 }
 // --------------------------------------------------------------------
 
@@ -501,7 +515,10 @@ AddField(FieldMapType & map,
 {
   std::cout << "Add field " << GetTableName() << " "
             << name  << " " << typeid(FieldValueType).name() << std::endl;
-  auto t = syd::Field<RecordType,FieldValueType>::CreateField(name, f);
+  //  auto t = syd::Field<RecordType,FieldValueType>::CreateField(name, f);
+  typedef Field<RecordType, FieldValueType> T;
+  auto a = new T(name, f);
+  auto t = std::shared_ptr<T>(a);
   t->type = typeid(FieldValueType).name();
   t->read_only = false;
   // FIXME Check if already exist ?
@@ -521,7 +538,10 @@ AddField(FieldMapType & map,
 {
   std::cout << "Add ro field " << GetTableName() << " "
             << name  << " " << typeid(FieldValueType).name() << std::endl;
-  auto t = syd::Field<RecordType,FieldValueType>::CreateField(name, f);
+  //  auto t = syd::Field<RecordType,FieldValueType>::CreateField(name, f);
+  typedef Field<RecordType, FieldValueType> T;
+  auto a = new T(name, f);
+  auto t = std::shared_ptr<T>(a);
   t->type = typeid(FieldValueType).name();
   t->read_only = true;
   // FIXME Check if already exist ?
@@ -539,10 +559,14 @@ AddTableField(FieldMapType & map,
               std::string name,
               std::function<typename RecordType2::pointer & (typename RecordType::pointer p)> f) const
 {
-  auto t = syd::Field<RecordType,typename RecordType2::pointer>::CreateField(name, f);
+  //  auto t = syd::Field<RecordType,typename RecordType2::pointer>::CreateField(name, f);
+  typedef syd::Field<RecordType,typename RecordType2::pointer> T;
+  auto a = new T(name, f);
+  auto t = std::shared_ptr<T>(a);
   t->type = syd::RecordTraits<RecordType2>::GetTraits()->GetTableName();
   std::cout << "Add table field " << GetTableName() << " "
             << name  << " " << t->type << std::endl;
+  t->read_only = false;
   // FIXME Check if already exist ?
   map[name] = t;
 }

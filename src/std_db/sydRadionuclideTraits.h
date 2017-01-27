@@ -42,6 +42,10 @@ namespace syd {
   template<> std::string syd::RecordTraits<syd::Radionuclide>::
     GetDefaultFields() const;
 
+  template<> void syd::RecordTraits<syd::Radionuclide>::
+    BuildFields(FieldMapType & map) const;
+
+
 } // end of namespace
 // --------------------------------------------------------------------
 

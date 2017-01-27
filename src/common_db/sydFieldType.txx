@@ -74,9 +74,14 @@ void
 syd::FieldType<FieldValueType>::
 Compose(CastFunction f, GenericFunction h)
 {
+  DDF();
+  DD(ToString());
   this->gf = [h,f](RecordPointer p) -> std::string {
+    DD("in f compose");
     auto a = f(p);
     if (a == nullptr) return empty_value;
+    DD(a);
+    DD("before h");
     return h(a); };
 }
 // --------------------------------------------------------------------
@@ -88,6 +93,7 @@ syd::FieldType<FieldValueType>::
 Compose(ROCastFunction f, GenericFunction h)
 {
   this->gf = [h,f](RecordPointer p) -> std::string {
+    DD("in ro f compose");
     auto a = f(p);
     if (a == nullptr) return empty_value;
     return h(a); };

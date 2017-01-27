@@ -50,7 +50,9 @@ namespace syd {
 
     virtual void SetPrecision(int p) = 0;
 
-    virtual void BuildFunction() = 0;
+    virtual void BuildFunction(const syd::Database * db, std::string field_names) = 0;
+
+    virtual pointer Copy() const = 0;
 
     /// Get value
     std::string get(RecordPointer p);

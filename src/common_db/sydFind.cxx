@@ -113,6 +113,18 @@ int main(int argc, char* argv[])
       return EXIT_SUCCESS;
     }
 
+    // Dump list of fields for this table
+    if (args_info.list_fields_flag) {
+      //      auto map = db->GetTraits(table_name)->GetRecordFieldMap();
+      auto map = db->GetTraits(table_name)->GetFieldMap2();
+      for(auto m:map) {
+        std::ostringstream oss;
+        if (m.first == m.second->name) std::cout << m.first << " ";
+        else std::cout << m.first << "(" << m.second->name << ") ";
+      }
+      std::cout << std::endl << "Total of " << map.size() << " fields.";
+    }
+
     DDS(results);
     DD(args_info.precision_arg);
     syd::PrintTable table;
@@ -128,16 +140,6 @@ int main(int argc, char* argv[])
     table.Print(std::cout); // Print total number at the end !
     LOG(1) << results.size() << " elements found in table " << table_name;
 
-    if (args_info.list_fields_flag) {
-      //      auto map = db->GetTraits(table_name)->GetRecordFieldMap();
-      auto map = db->GetTraits(table_name)->GetFieldMap2();
-      for(auto m:map) {
-        std::ostringstream oss;
-        if (m.first == m.second->name) std::cout << m.first << " ";
-        else std::cout << m.first << "(" << m.second->name << ") ";
-      }
-      std::cout << std::endl << "Total of " << map.size() << " fields.";
-    }
 
   }
 

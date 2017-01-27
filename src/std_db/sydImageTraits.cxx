@@ -157,6 +157,7 @@ BuildFields(FieldMapType & map) const
 
   DD(" trial abbreviation");
   map["pat"] = db_->GetField2("Image", "patient.name");
+  map["rad"] = db_->GetField2("Image", "injection.radionuclide.name");
 
   for(auto m:map) {
     DD(m.first);
