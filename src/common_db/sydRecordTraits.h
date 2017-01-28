@@ -83,7 +83,7 @@ namespace syd {
     virtual std::string GetDefaultFields() const;
 
     /// Return the list of initial fields
-    virtual const FieldMapType & GetFieldsMap() const;
+    virtual const FieldMapType & GetFieldsMap(const syd::Database * db) const;
 
     /// Create and build a field according to the name
     virtual FieldBasePointer NewField(const syd::Database * db, std::string field_name) const;
@@ -111,17 +111,14 @@ namespace syd {
     /// Map of fields (mutable because lazy initialisation)
     mutable FieldMapType field_map_;
 
-    /// Needed in BuildFields
-    mutable const syd::Database * db_;
-
     /// Initial function to build the fields (will be overloaded)
-    void BuildFields(FieldMapType & map) const;
+    void BuildFields(const syd::Database * db, FieldMapType & map) const;
 
     /// Common fields for all records (id, raw)
     void InitCommonFields(FieldMapType & map) const;
 
     /// Look in the map to get a field by his name
-    FieldBasePointer GetField(std::string field_name) const;
+    FieldBasePointer GetField(const syd::Database * db, std::string field_name) const;
 
     /// Define a new Field, of a given type by reference
     template<class FieldValueType>

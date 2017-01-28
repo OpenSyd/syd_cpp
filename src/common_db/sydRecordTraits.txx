@@ -415,10 +415,6 @@ typename syd::RecordTraits<RecordType>::FieldBasePointer
 syd::RecordTraits<RecordType>::
 NewField(const syd::Database * db, std::string field_names) const
 {
-  std::cout << "_______________ Main GetField "
-            << field_names << " in " << GetTableName() << std::endl;
-  // We store the db for the BuildFields
-  db_ = db;
   // Decompose the field_names
   auto first_field = field_names;
   std::size_t found = field_names.find_first_of(".");
@@ -429,11 +425,11 @@ NewField(const syd::Database * db, std::string field_names) const
   else field_names = "";
 
   // Get a copy of the existing field
-  auto field = GetField(first_field); // this is a copy
+  auto field = GetField(db, first_field); // this is a copy
   // Change his name (for complex field, that will be build recursively)
   field->name = field->name+field_names;
   // Create the main function
-  field->BuildFunction(db, "");
+  field->BuildFunction(db);
   return field;
 }
 // --------------------------------------------------------------------
@@ -443,9 +439,9 @@ NewField(const syd::Database * db, std::string field_names) const
 template<class RecordType>
 syd::FieldBase::pointer
 syd::RecordTraits<RecordType>::
-GetField(std::string field_name) const
+GetField(const syd::Database * db, std::string field_name) const
 {
-  auto map = GetFieldsMap();
+  auto map = GetFieldsMap(db);
   auto it = map.find(field_name);
   if (it == map.end()) {
     for(auto m:map) {
@@ -462,10 +458,10 @@ GetField(std::string field_name) const
 template<class RecordType>
 const typename syd::RecordTraits<RecordType>::FieldMapType &
 syd::RecordTraits<RecordType>::
-GetFieldsMap() const
+GetFieldsMap(const syd::Database * db) const
 {
   if (field_map_.size() != 0) return field_map_;
-  BuildFields(field_map_);
+  BuildFields(db, field_map_);
   return field_map_;
 }
 // --------------------------------------------------------------------
@@ -475,7 +471,7 @@ GetFieldsMap() const
 template<class RecordType>
 void
 syd::RecordTraits<RecordType>::
-BuildFields(FieldMapType & map) const
+BuildFields(const syd::Database * db, FieldMapType & map) const
 {
   // This function will be overwritten
   InitCommonFields(map);
@@ -507,8 +503,6 @@ AddField(FieldMapType & map,
          std::string name,
          std::function<FieldValueType & (typename RecordType::pointer p)> f) const
 {
-  std::cout << "Add field " << GetTableName() << " "
-            << name  << " " << typeid(FieldValueType).name() << std::endl;
   typedef Field<RecordType, FieldValueType> T;
   auto a = new T(name, f);
   auto t = std::shared_ptr<T>(a);
@@ -529,8 +523,6 @@ AddField(FieldMapType & map,
          std::string name,
          std::function<FieldValueType (typename RecordType::pointer p)> f) const
 {
-  std::cout << "Add ro field " << GetTableName() << " "
-            << name  << " " << typeid(FieldValueType).name() << std::endl;
   typedef Field<RecordType, FieldValueType> T;
   auto a = new T(name, f);
   auto t = std::shared_ptr<T>(a);
@@ -555,8 +547,6 @@ AddTableField(FieldMapType & map,
   auto a = new T(name, f);
   auto t = std::shared_ptr<T>(a);
   t->type = syd::RecordTraits<RecordType2>::GetTraits()->GetTableName();
-  std::cout << "Add table field " << GetTableName() << " "
-            << name  << " " << t->type << std::endl;
   t->read_only = false;
   // FIXME Check if already exist ?
   map[name] = t;

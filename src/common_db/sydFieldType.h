@@ -37,16 +37,17 @@ namespace syd {
     typedef std::function<FieldValueType & (RecordPointer p)> CastFunction;
     typedef std::function<FieldValueType (RecordPointer p)> ROCastFunction;
 
-    FieldType(std::string name);  // FIXME ? protected
+    /// Constructor
+    FieldType(std::string name);
+
+    /// Destructor
     virtual ~FieldType();
 
     GenericFunction BuildGenericFunction(CastFunction f) const;
     GenericFunction BuildGenericFunction(ROCastFunction f) const;
 
-    //    GenericFunction ComposeGenericFunction(CastFunction f, GenericFunction h) const;
-    void Compose(CastFunction f, GenericFunction h);
-    void Compose(ROCastFunction f, GenericFunction h);
-
+    GenericFunction BuildComposedFunction(CastFunction f, GenericFunction h) const;
+    GenericFunction BuildComposedFunction(ROCastFunction f, GenericFunction h) const;
 
   }; // end of class
   // --------------------------------------------------------------------
@@ -70,17 +71,23 @@ namespace syd {
 
   // I need to declare this function (empty) because the default 'compose' is
   // intended for syd::Record elements.
-#define DECLARE_COMPOSE(TYPE)                     \
-  template<> void syd::FieldType<TYPE>::          \
-    Compose(CastFunction f, GenericFunction h);   \
-  template<> void syd::FieldType<TYPE>::          \
-    Compose(ROCastFunction f, GenericFunction h);
+#define DECLARE_COMPOSE(TYPE)                                         \
+  template<> typename syd::FieldType<TYPE>::GenericFunction           \
+    syd::FieldType<TYPE>::                                            \
+    BuildComposedFunction(CastFunction f, GenericFunction h) const;   \
+  template<> typename syd::FieldType<TYPE>::GenericFunction           \
+    syd::FieldType<TYPE>::                                            \
+    BuildComposedFunction(ROCastFunction f, GenericFunction h) const;
 
-#define DEFINE_COMPOSE(TYPE)                        \
-  template<> void syd::FieldType<TYPE>::            \
-    Compose(CastFunction f, GenericFunction h){}    \
-  template<> void syd::FieldType<TYPE>::            \
-    Compose(ROCastFunction f, GenericFunction h){}
+#define DEFINE_COMPOSE(TYPE)                                    \
+  template<> typename syd::FieldType<TYPE>::GenericFunction     \
+    syd::FieldType<TYPE>::                                      \
+    BuildComposedFunction(CastFunction f, GenericFunction h)    \
+    const {return nullptr;}                                     \
+  template<> typename syd::FieldType<TYPE>::GenericFunction     \
+    syd::FieldType<TYPE>::                                      \
+    BuildComposedFunction(ROCastFunction f, GenericFunction h)  \
+    const { return nullptr;}
 
   DECLARE_COMPOSE(syd::IdType);
   DECLARE_COMPOSE(double);
@@ -94,5 +101,5 @@ namespace syd {
 
 #include "sydFieldType.txx"
 
-// --------------------------------------------------------------------
+  // --------------------------------------------------------------------
 #endif

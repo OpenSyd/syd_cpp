@@ -132,7 +132,7 @@ GetDefaultFields() const
 template<>
 void
 syd::RecordTraits<syd::Image>::
-BuildFields(FieldMapType & map) const
+BuildFields(const syd::Database * db, FieldMapType & map) const
 {
   InitCommonFields(map);
   ADD_TABLE_FIELD(patient, syd::Patient);
@@ -154,9 +154,16 @@ BuildFields(FieldMapType & map) const
   auto f_spacing = [](pointer p) -> std::string { return p->SpacingAsString(); };
   AddField<std::string>(map, "spacing", f_spacing);
 
-  // Abbreviation
-  map["pat"] = db_->NewField("Image", "patient.name");
-  map["rad"] = db_->NewField("Image", "injection.radionuclide.name");
+  // History ? FIXME syd::RecordWithHistory::BuildFields(db, map);
+  // comments ? FIXME
 
+  // Abbreviation
+  map["pat"] = db->NewField("Image", "patient.name");
+  map["rad"] = db->NewField("Image", "injection.radionuclide.name");
+  DD(map.size());
+
+  // Format lists
+  std::string s = "id pat date tags rad inj modality size spacing dicoms comments";
+  // format_map_[""] = s; // default
 }
 // --------------------------------------------------------------------

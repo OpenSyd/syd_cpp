@@ -273,9 +273,8 @@ namespace syd {
     FieldFunc GetField(std::string table_name, std::string field);
     std::vector<FieldFunc> GetFields(std::string table_name, std::string fields);
 
-    /// FIXME  --> new GetField
+    /// Build the given Field of the given table_name
     syd::FieldBase::pointer NewField(std::string table_name, std::string field_name) const;
-    //std::vector<syd::FieldBase::pointer> GetFields2(std::string table_name, std::string fields) const;
 
     // ----------------------------------------------------------------------------------
   protected:

@@ -1,7 +1,7 @@
 #File sydFind.ggo
 
 package "syd"
-version "0.5"
+version "0.6"
 usage "sydFind <table> <pattern> "
 description "Find the ids of elements in the table that match the pattern. Parameters are:
 - <table>     name of the table
@@ -17,7 +17,7 @@ option "list"     l   "Dump list of ids only"                    flag    off
 option "format"   f   "Field format when dump results"                 string  default="" no
 option "precision" p "Global precision for field (-1 for default)" float default="-1" no
 option "field" - "Set options for a given field, ie 'mean(2)' to set precision=2 for the field named 'mean'" string multiple no
-option "list_fields"   -   "List fields available for the given table" flag off
+option "list_fields"   -   "Print the list of fields available for the given table and exit" flag off
 option "check"    c   "Check files associated to found records"  flag    off
 option "noheader" -   "Do not display table header"              flag    off
 option "nofooter" -   "Do not display table footer"              flag    off

@@ -81,7 +81,7 @@ int main(int argc, char* argv[])
   DD(field->ToString());
 
   auto t = syd::RecordTraits<syd::Image>::GetTraits();
-  auto map = t->GetFieldMap2();
+  auto map = t->GetFieldsMap();
   syd::RecordTraitsBase::FieldMapType mm;
   mm = map; // copy ?
   mm["toto"] = field;

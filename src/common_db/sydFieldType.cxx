@@ -106,10 +106,8 @@ DEFINE_GENERIC_RO_FUNCTION(unsigned short int)
 DEFINE_GENERIC_FUNCTION(double)
 {
   auto prec = this->precision;
-  DD(prec);
   auto g = [prec, f](RecordPointer p) -> std::string {
     std::ostringstream ss;
-    DD(prec);
     ss << std::fixed << std::setprecision(prec) << f(p);
     return ss.str(); };
   return g;
@@ -117,10 +115,8 @@ DEFINE_GENERIC_FUNCTION(double)
 DEFINE_GENERIC_RO_FUNCTION(double)
 {
   auto prec = this->precision;
-  DD(prec);
   auto g = [prec, f](RecordPointer p) -> std::string {
     std::ostringstream ss;
-    DD(prec);
     ss << std::fixed << std::setprecision(prec) << f(p);
     return ss.str(); };
   return g;

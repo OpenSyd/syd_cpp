@@ -73,7 +73,7 @@ namespace syd {
 
     /// FIXME
     typedef std::map<std::string, FieldBasePointer> FieldMapType;
-    virtual const FieldMapType & GetFieldsMap() const = 0;
+    virtual const FieldMapType & GetFieldsMap(const syd::Database * db) const = 0;
     virtual FieldBasePointer NewField(const syd::Database * db,
                                       std::string field_name) const = 0;
 

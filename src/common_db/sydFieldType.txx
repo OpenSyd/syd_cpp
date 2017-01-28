@@ -70,33 +70,30 @@ BuildGenericFunction(ROCastFunction f) const
 
 // --------------------------------------------------------------------
 template<class FieldValueType>
-void
+typename syd::FieldType<FieldValueType>::GenericFunction
 syd::FieldType<FieldValueType>::
-Compose(CastFunction f, GenericFunction h)
+BuildComposedFunction(CastFunction f, GenericFunction h) const
 {
-  DDF();
-  DD(ToString());
-  this->gf = [h,f](RecordPointer p) -> std::string {
-    DD("in f compose");
+  auto gf = [h,f](RecordPointer p) -> std::string {
     auto a = f(p);
     if (a == nullptr) return empty_value;
-    DD(a);
-    DD("before h");
     return h(a); };
+  return gf;
 }
 // --------------------------------------------------------------------
 
+
 // --------------------------------------------------------------------
 template<class FieldValueType>
-void
+typename syd::FieldType<FieldValueType>::GenericFunction
 syd::FieldType<FieldValueType>::
-Compose(ROCastFunction f, GenericFunction h)
+BuildComposedFunction(ROCastFunction f, GenericFunction h) const
 {
-  this->gf = [h,f](RecordPointer p) -> std::string {
-    DD("in ro f compose");
+  auto gf = [h,f](RecordPointer p) -> std::string {
     auto a = f(p);
     if (a == nullptr) return empty_value;
     return h(a); };
+  return gf;
 }
 // --------------------------------------------------------------------
 

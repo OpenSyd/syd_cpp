@@ -26,7 +26,9 @@
 namespace syd {
 
   /*
-    This class is the base class for all Field of a given type in a given table
+    This class manage a field of a table. The type of the table is 'RecordType'
+    while the type of the field is 'FieldValueType'.
+    The function 'f' allows to retrieve the reference to a given record.
   */
   template<class RecordType, class FieldValueType>
     class Field: public FieldType<FieldValueType> {
@@ -44,18 +46,23 @@ namespace syd {
     Function f;
     ROFunction rof;
 
+    /// Constructor (function by reference)
     Field(std::string name, Function f);
-    Field(std::string name, ROFunction f);
-    virtual ~Field();
-    virtual pointer Copy() const;
 
+    /// Constructor (function by value)
+    Field(std::string name, ROFunction f);
+
+    /// Destructor
+    virtual ~Field();
+
+    /// Main function. Must be call before using 'get' or 'set'
+    virtual void BuildFunction(const syd::Database * db);
+
+    /// Change the precision. Will rebuild the function
     virtual void SetPrecision(int p);
 
-    virtual void BuildFunction(const syd::Database * db, std::string field_names);
-
-    CastFunction BuildCastFunction(Function f) const;
-    ROCastFunction BuildCastFunction(ROFunction f) const;
-    pointer CreateField(const syd::Database * db, std::string field_names) const;
+    /// Return a copy
+    virtual pointer Copy() const;
 
     virtual std::string ToString() const;
 
@@ -68,6 +75,11 @@ namespace syd {
       os << p->ToString();
       return os;
     }
+
+  protected:
+    CastFunction BuildCastFunction(Function f) const;
+    ROCastFunction BuildCastFunction(ROFunction f) const;
+    //    pointer CreateField(const syd::Database * db, std::string field_names) const;
 
     static pointer CreateField(std::string name, Function f, std::string type="");
     static pointer CreateField(std::string name, ROFunction f, std::string type="");

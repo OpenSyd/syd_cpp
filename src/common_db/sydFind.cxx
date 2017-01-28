@@ -45,6 +45,20 @@ int main(int argc, char* argv[])
   // Get the table name
   std::string table_name = args_info.inputs[0];
 
+  // Dump list of fields for this table
+  if (args_info.list_fields_flag) {
+    std::ostringstream oss;
+    auto map = db->GetTraits(table_name)->GetFieldsMap(db);
+    oss << "Available fields for table " << table_name << ": ";
+    for(auto m:map) {
+      if (m.first == m.second->name) oss << m.first << " ";
+      else oss << m.first << "(" << m.second->name << ") ";
+    }
+    oss << std::endl << "Total of " << map.size() << " fields.";
+    LOG(0) << oss.str();
+    return EXIT_SUCCESS;
+  }
+
   // Prepare the list of arguments
   std::vector<std::string> patterns;
   for(auto i=1; i<args_info.inputs_num; i++)
@@ -113,34 +127,13 @@ int main(int argc, char* argv[])
       return EXIT_SUCCESS;
     }
 
-    // Dump list of fields for this table
-    if (args_info.list_fields_flag) {
-      //      auto map = db->GetTraits(table_name)->GetRecordFieldMap();
-      auto map = db->GetTraits(table_name)->GetFieldMap2();
-      for(auto m:map) {
-        std::ostringstream oss;
-        if (m.first == m.second->name) std::cout << m.first << " ";
-        else std::cout << m.first << "(" << m.second->name << ") ";
-      }
-      std::cout << std::endl << "Total of " << map.size() << " fields.";
-    }
-
-    DDS(results);
-    DD(args_info.precision_arg);
     syd::PrintTable table;
     table.SetPrecision(args_info.precision_arg);
     table.Build(table_name, results, args_info.format_arg);
-
-    // Global precision for numbers
-    //    for(auto )
-    //table.SetFieldParam(args_info.)
-
     table.SetHeaderFlag(!args_info.noheader_flag);
     table.SetFooterFlag(!args_info.nofooter_flag);
     table.Print(std::cout); // Print total number at the end !
     LOG(1) << results.size() << " elements found in table " << table_name;
-
-
   }
 
   // Check

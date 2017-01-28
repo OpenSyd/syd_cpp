@@ -74,7 +74,11 @@ void syd::PrintTable::Build(std::string table_name,
   std::vector<syd::FieldBase::pointer> fields;
   for(auto f:field_names) fields.push_back(db->NewField(table_name, f));
 
-  //  auto fields = db->GetFields2(table_name, f);
+
+  //  auto fields = db->NewFields(table_name, columns);
+  // Columns = 1 or several names
+  // for each search: in abbrev or in simple fi
+
 
 
   // Header
@@ -104,14 +108,10 @@ void syd::PrintTable::Build(const RecordBaseVector & records,
   values_.resize(records.size());
   if (records.size() == 0) return;
 
-  DD(precision_);
   if (precision_ != -1) {
-    DD(precision_);
     auto db = records[0]->GetDatabase();
     for(auto &f:fields) f->precision = precision_;
-    for(auto &f:fields) DD(f->precision);
-    for(auto &f:fields) DD(f->name);
-    for(auto &f:fields) f->BuildFunction(db, "");
+    for(auto &f:fields) f->BuildFunction(db);
   }
 
   int i=0; // row
@@ -119,7 +119,6 @@ void syd::PrintTable::Build(const RecordBaseVector & records,
     int j=0; // column
     values_[i].resize(fields.size());
     for(auto & f:fields) {
-      DD(f->precision);
       values_[i][j] = f->get(r); // get the value
       ++j;
     }
