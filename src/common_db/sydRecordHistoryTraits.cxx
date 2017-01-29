@@ -131,9 +131,9 @@ GetDefaultFields() const
 template<>
 void
 syd::RecordTraits<syd::RecordHistory>::
-BuildFields(const syd::Database * db, FieldMapType & map) const
+BuildFields(const syd::Database * db) const
 {
-  InitCommonFields(map); 
+  InitCommonFields();
   ADD_FIELD(update_date, std::string);
   ADD_FIELD(insertion_date, std::string);
 

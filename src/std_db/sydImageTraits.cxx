@@ -132,38 +132,56 @@ GetDefaultFields() const
 template<>
 void
 syd::RecordTraits<syd::Image>::
-BuildFields(const syd::Database * db, FieldMapType & map) const
+BuildFields(const syd::Database * db) const
 {
-  InitCommonFields(map);
+  InitCommonFields();
   ADD_TABLE_FIELD(patient, syd::Patient);
   ADD_TABLE_FIELD(injection, syd::Injection);
   ADD_TABLE_FIELD(pixel_unit, syd::PixelUnit);
+  ADD_TABLE_FIELD(history, syd::RecordHistory);
 
   ADD_FIELD(type, std::string);
   ADD_FIELD(pixel_type, std::string);
   ADD_FIELD(frame_of_reference_uid, std::string);
   ADD_FIELD(acquisition_date, std::string);
   ADD_FIELD(modality, std::string);
+  //ADD_FIELD(dicoms, syd::DicomSerie::vector);
 
   // Read only fields
   ADD_RO_FIELD(dimension, unsigned short int);
   auto f_fn = [](pointer p) -> std::string { return p->GetAbsolutePath(); };
-  AddField<std::string>(map, "filename", f_fn);
+  AddField<std::string>("filename", f_fn);
   auto f_size = [](pointer p) -> std::string { return p->SizeAsString(); };
-  AddField<std::string>(map, "size", f_size);
+  AddField<std::string>("size", f_size);
   auto f_spacing = [](pointer p) -> std::string { return p->SpacingAsString(); };
-  AddField<std::string>(map, "spacing", f_spacing);
+  AddField<std::string>("spacing", f_spacing);
 
-  // History ? FIXME syd::RecordWithHistory::BuildFields(db, map);
-  // comments ? FIXME
+  // dicoms
+  auto f_dicoms = [](pointer p) -> std::string {
+    if (p->dicoms.size() == 0) return empty_value;
+    std::ostringstream oss;
+    for(auto d:p->dicoms) oss << d->id << " ";
+    auto s = oss.str();
+    return syd::trim(s); };
+  AddField<std::string>("dicoms", f_dicoms);
+
+  // comments
+  auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
+  AddField<std::string>("comments", f_c);
+
+  // tags
+  auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
+  AddField<std::string>("tags", f_t);
 
   // Abbreviation
-  map["pat"] = db->NewField("Image", "patient.name");
-  map["rad"] = db->NewField("Image", "injection.radionuclide.name");
-  DD(map.size());
+  field_map_["pat"] = db->NewField("Image", "patient.name");
+  field_map_["rad"] = db->NewField("Image", "injection.radionuclide.name");
+  field_map_["date"] = field_map_["acquisition_date"];
 
   // Format lists
-  std::string s = "id pat date tags rad inj modality size spacing dicoms comments";
-  // format_map_[""] = s; // default
+  field_format_map_["short"] =
+    "id pat date tags rad modality";
+  field_format_map_["default"] =
+    "id pat date tags rad injection.id modality size spacing dicoms comments";
 }
 // --------------------------------------------------------------------

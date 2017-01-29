@@ -43,7 +43,7 @@ namespace syd {
     GetDefaultFields() const;
 
   template<> void syd::RecordTraits<syd::Radionuclide>::
-    BuildFields(const syd::Database * db, FieldMapType & map) const;
+    BuildFields(const syd::Database * db) const;
 
 
 } // end of namespace

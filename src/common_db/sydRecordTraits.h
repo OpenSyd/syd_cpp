@@ -118,30 +118,27 @@ namespace syd {
     mutable FieldFormatMapType field_format_map_;
 
     /// Initial function to build the fields (will be overloaded)
-    void BuildFields(const syd::Database * db, FieldMapType & map) const;
+    void BuildFields(const syd::Database * db) const;
 
     /// Common fields for all records (id, raw)
-    void InitCommonFields(FieldMapType & map) const;
+    void InitCommonFields() const;
 
     /// Look in the map to get a field by his name
     FieldBasePointer GetField(const syd::Database * db, std::string field_name) const;
 
     /// Define a new Field, of a given type by reference
     template<class FieldValueType>
-      void AddField(FieldMapType & map,
-                    std::string name,
+      void AddField(std::string name,
                     std::function<FieldValueType & (typename RecordType::pointer p)> f) const;
 
     /// Define a new Field, of a given type by value (read only)
     template<class FieldValueType>
-      void AddField(FieldMapType & map,
-                    std::string name,
+      void AddField(std::string name,
                     std::function<FieldValueType (typename RecordType::pointer p)> f) const;
 
     /// Define a new Field, of a given record pointer
     template<class RecordType2>
-      void AddTableField(FieldMapType & map,
-                         std::string name,
+      void AddTableField(std::string name,
                          std::function<typename RecordType2::pointer & (typename RecordType::pointer p)> f) const;
 
   }; // end of class
@@ -167,19 +164,19 @@ namespace syd {
 #define ADD_FIELD(NAME, TYPE)                             \
   {                                                       \
     auto f = [](pointer p) -> TYPE & { return p->NAME; }; \
-    AddField<TYPE>(map, #NAME, f);                        \
+    AddField<TYPE>(#NAME, f);                             \
   }
 
 #define ADD_RO_FIELD(NAME, TYPE)                        \
   {                                                     \
     auto f = [](pointer p) -> TYPE { return p->NAME; }; \
-    AddField<TYPE>(map, #NAME, f);                      \
+    AddField<TYPE>(#NAME, f);                           \
   }
 
 #define ADD_TABLE_FIELD(NAME, TYPE)                                 \
   {                                                                 \
     auto f = [](pointer p) -> TYPE::pointer & { return p->NAME; };  \
-    AddTableField<TYPE>(map, #NAME, f);                             \
+    AddTableField<TYPE>(#NAME, f);                                  \
   }
 
 

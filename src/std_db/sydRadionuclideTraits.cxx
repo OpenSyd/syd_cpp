@@ -71,9 +71,9 @@ GetDefaultFields() const
 template<>
 void
 syd::RecordTraits<syd::Radionuclide>::
-BuildFields(const syd::Database * db, FieldMapType & map) const
+BuildFields(const syd::Database * db) const
 {
-  InitCommonFields(map);
+  InitCommonFields();
   ADD_FIELD(name, std::string);
   // ADD_TABLE_FIELD(radionuclide, syd::Radionuclide);
   // ADD_FIELD(date, std::string);

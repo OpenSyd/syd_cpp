@@ -64,9 +64,9 @@ GetDefaultFields() const
 template<>
 void
 syd::RecordTraits<syd::Patient>::
-BuildFields(const syd::Database * db, FieldMapType & map) const
+BuildFields(const syd::Database * db) const
 {
-  InitCommonFields(map);
+  InitCommonFields();
   ADD_FIELD(name, std::string);
   ADD_FIELD(study_id, syd::IdType);
   ADD_FIELD(weight_in_kg, double);

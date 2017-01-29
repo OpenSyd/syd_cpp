@@ -490,7 +490,7 @@ syd::RecordTraits<RecordType>::
 GetFieldsMap(const syd::Database * db) const
 {
   if (field_map_.size() != 0) return field_map_;
-  BuildFields(db, field_map_);
+  BuildFields(db);
   return field_map_;
 }
 // --------------------------------------------------------------------
@@ -503,7 +503,7 @@ syd::RecordTraits<RecordType>::
 GetFieldFormatsMap(const syd::Database * db) const
 {
   if (field_format_map_.size() != 0) return field_format_map_;
-  BuildFields(db, field_map_);
+  BuildFields(db);
   return field_format_map_;
 }
 // --------------------------------------------------------------------
@@ -513,10 +513,10 @@ GetFieldFormatsMap(const syd::Database * db) const
 template<class RecordType>
 void
 syd::RecordTraits<RecordType>::
-BuildFields(const syd::Database * db, FieldMapType & map) const
+BuildFields(const syd::Database * db) const
 {
-  // This function will be overwritten
-  InitCommonFields(map);
+  // Only the default (this function will be overwritten)
+  InitCommonFields();
 }
 // --------------------------------------------------------------------
 
@@ -525,13 +525,13 @@ BuildFields(const syd::Database * db, FieldMapType & map) const
 template<class RecordType>
 void
 syd::RecordTraits<RecordType>::
-InitCommonFields(FieldMapType & map) const
+InitCommonFields() const
 {
   // Add the id (read_only)
   ADD_RO_FIELD(id, syd::IdType);
   // Add the raw version (read only)
   auto f = [](pointer p) -> std::string { return p->ToString(); };
-  AddField<std::string>(map, "raw", f);
+  AddField<std::string>("raw", f);
 }
 // --------------------------------------------------------------------
 
@@ -541,8 +541,7 @@ template<class RecordType>
 template<class FieldValueType>
 void
 syd::RecordTraits<RecordType>::
-AddField(FieldMapType & map,
-         std::string name,
+AddField(std::string name,
          std::function<FieldValueType & (typename RecordType::pointer p)> f) const
 {
   typedef Field<RecordType, FieldValueType> T;
@@ -551,7 +550,7 @@ AddField(FieldMapType & map,
   t->type = typeid(FieldValueType).name();
   t->read_only = false;
   // FIXME Check if already exist ?
-  map[name] = t;
+  field_map_[name] = t;
 }
 // --------------------------------------------------------------------
 
@@ -561,8 +560,7 @@ template<class RecordType>
 template<class FieldValueType>
 void
 syd::RecordTraits<RecordType>::
-AddField(FieldMapType & map,
-         std::string name,
+AddField(std::string name,
          std::function<FieldValueType (typename RecordType::pointer p)> f) const
 {
   typedef Field<RecordType, FieldValueType> T;
@@ -571,7 +569,7 @@ AddField(FieldMapType & map,
   t->type = typeid(FieldValueType).name();
   t->read_only = true;
   // FIXME Check if already exist ?
-  map[name] = t;
+  field_map_[name] = t;
 }
 // --------------------------------------------------------------------
 
@@ -581,8 +579,7 @@ template<class RecordType>
 template<class RecordType2>
 void
 syd::RecordTraits<RecordType>::
-AddTableField(FieldMapType & map,
-              std::string name,
+AddTableField(std::string name,
               std::function<typename RecordType2::pointer & (typename RecordType::pointer p)> f) const
 {
   typedef syd::Field<RecordType,typename RecordType2::pointer> T;
@@ -591,6 +588,6 @@ AddTableField(FieldMapType & map,
   t->type = syd::RecordTraits<RecordType2>::GetTraits()->GetTableName();
   t->read_only = false;
   // FIXME Check if already exist ?
-  map[name] = t;
+  field_map_[name] = t;
 }
 // --------------------------------------------------------------------
