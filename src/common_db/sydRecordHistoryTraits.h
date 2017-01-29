@@ -13,38 +13,38 @@
   It is distributed under dual licence
 
   - BSD        See included LICENSE.txt file
+  - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDCOMMONDATABASE_H
-#define SYDCOMMONDATABASE_H
+#ifndef SYDRECORDHISTORYTRAITS_H
+#define SYDRECORDHISTORYTRAITS_H
 
 // syd
-#include "sydDatabase.h"
-#include "sydDatabaseInformation-odb.hxx"
-#include "sydRecord-odb.hxx"
-#include "sydFile-odb.hxx"
-#include "sydRecordHistory-odb.hxx"
-#include "sydRecordWithHistory-odb.hxx"
-#include "sydTag-odb.hxx"
-#include "sydRecordWithTags-odb.hxx"
-
-#include "sydTagTraits.h"
-#include "sydFileTraits.h"
 #include "sydRecordHistory.h"
+#include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class CommonDatabase: public Database {
-  public:
-    CommonDatabase();
-    virtual ~CommonDatabase();
+  /// Main GetTraits function
+  DEFINE_TABLE_TRAITS_HEADER(RecordHistory);
 
-  protected:
-    /// Insert the tables
-    virtual void CreateTables();
-  }; // end class
+  /// Specific Sort
+  template<> void syd::RecordTraits<syd::RecordHistory>::
+    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
 
-} // end namespace
+  /// Specific fields
+  template<> void syd::RecordTraits<syd::RecordHistory>::
+    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
+
+  /// Default fields
+  template<> std::string syd::RecordTraits<syd::RecordHistory>::
+    GetDefaultFields() const;
+
+  template<> void syd::RecordTraits<syd::RecordHistory>::
+    BuildFields(const syd::Database * db, FieldMapType & map) const;
+
+} // end of namespace
 // --------------------------------------------------------------------
+
 #endif

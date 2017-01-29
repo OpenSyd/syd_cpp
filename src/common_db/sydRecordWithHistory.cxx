@@ -69,10 +69,24 @@ void syd::RecordWithHistory::BuildMapOfSortFunctions(CompareFunctionMap & map)
 // --------------------------------------------------------------------
 void syd::RecordWithHistory::BuildMapOfFieldsFunctions(FieldFunctionMap & map)
 {
-
   map["update_date"] = [](pointer a) -> std::string { return a->history->update_date; };
   map["insertion_date"] = [](pointer a) -> std::string { return a->history->insertion_date; };
 }
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+void syd::RecordWithHistory::
+BuildFields(const syd::Database * db, FieldMapType & map)
+{
+  DDF();
+  /*
+  auto fd = [](pointer a) -> std::string { return a->history->update_date; };
+  AddField<std::string>(map, "update_date", fd);
+
+  auto fi = [](pointer a) -> std::string { return a->history->insertion_date; };
+  AddField<std::string>(map, "insertion_date", fi);
+  */
+  DD("end");
+}
+// --------------------------------------------------------------------

@@ -38,9 +38,7 @@ void syd::CommonDatabase::CreateTables()
   //  syd::Database::CreateTables();
   AddTable<syd::Tag>();
   AddTable<syd::File>();
-
-  //no need to explicit RecordHistory table. only used internally
-  //AddTable<syd::RecordHistory>();
+  AddTable<syd::RecordHistory>(); // needed for traits
 }
 // --------------------------------------------------------------------
 

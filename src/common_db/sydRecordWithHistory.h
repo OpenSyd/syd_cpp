@@ -21,6 +21,7 @@
 
 // syd
 #include "sydRecordHistory.h"
+#include "sydRecordTraitsBase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -46,6 +47,9 @@ namespace syd {
     typedef std::function<std::string(pointer)> SpecificFieldFunc;
     typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
     static void BuildMapOfFieldsFunctions(FieldFunctionMap & map);
+
+    typedef syd::RecordTraitsBase::FieldMapType FieldMapType;
+    static void BuildFields(const syd::Database * db, FieldMapType & map);
 
     void SetPrintHistoryFlag(bool b) { print_history_flag_ = b; }
 

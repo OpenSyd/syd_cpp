@@ -41,6 +41,7 @@ set(sydCommonDatabase_src
   ## must be before the next files !
   sydTagTraits.cxx
   sydFileTraits.cxx
+  sydRecordHistoryTraits.cxx
 
   sydRecordHistory-odb.cxx
   sydRecordHistory-schema.cxx
