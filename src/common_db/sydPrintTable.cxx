@@ -62,30 +62,20 @@ void syd::PrintTable::Build(std::string table_name,
   if (records.size() == 0) return;
   auto db = records[0]->GetDatabase();
 
-  auto fields_names = columns;
-
   /*
-    if (fields_names == "") fields_names = db->GetTraits(table_name)->GetDefaultFields();
-    auto fields = db->GetFields(table_name, fields_names);
-  */
+  auto fields_names = columns;
   std::vector<std::string> field_names;
   syd::GetWords(field_names, columns);
-  DDS(field_names);
   std::vector<syd::FieldBase::pointer> fields;
   for(auto f:field_names) fields.push_back(db->NewField(table_name, f));
+  */
 
-
-  //  auto fields = db->NewFields(table_name, columns);
+  auto fields = db->NewFields(table_name, columns);
   // Columns = 1 or several names
   // for each search: in abbrev or in simple fi
 
-
-
   // Header
   header_.resize(fields.size());
-  // std::vector<std::string> words;
-  // syd::GetWords(words, fields_names);
-  header_.resize(field_names.size());
   int i=0;
   // if (words.size() != fields.size()) {
   //   LOG(FATAL) << "Internal error fields in syd::PrintTable::Build";

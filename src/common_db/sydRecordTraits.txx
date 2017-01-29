@@ -437,6 +437,35 @@ NewField(const syd::Database * db, std::string field_names) const
 
 // --------------------------------------------------------------------
 template<class RecordType>
+typename syd::RecordTraits<RecordType>::FieldBaseVector
+syd::RecordTraits<RecordType>::
+NewFields(const syd::Database * db, std::string field_names) const
+{
+  DDF();
+  typename syd::RecordTraits<RecordType>::FieldBaseVector fields;
+  std::vector<std::string> words;
+  syd::GetWords(words, field_names);
+
+  auto map = GetFieldFormatsMap(db);
+  for(auto w:words) {
+    auto it = map.find(w);
+    if (it != map.end()) {// find it
+      auto fs = NewFields(db, it->second);
+      for(auto f:fs) fields.push_back(f);
+    }
+    else {
+      auto f = NewField(db, w);
+      fields.push_back(f);
+    }
+  }
+  DD(fields.size());
+  return fields;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
 syd::FieldBase::pointer
 syd::RecordTraits<RecordType>::
 GetField(const syd::Database * db, std::string field_name) const
@@ -463,6 +492,19 @@ GetFieldsMap(const syd::Database * db) const
   if (field_map_.size() != 0) return field_map_;
   BuildFields(db, field_map_);
   return field_map_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+const typename syd::RecordTraits<RecordType>::FieldFormatMapType &
+syd::RecordTraits<RecordType>::
+GetFieldFormatsMap(const syd::Database * db) const
+{
+  if (field_format_map_.size() != 0) return field_format_map_;
+  BuildFields(db, field_map_);
+  return field_format_map_;
 }
 // --------------------------------------------------------------------
 

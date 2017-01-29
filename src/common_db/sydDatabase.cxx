@@ -662,6 +662,16 @@ NewField(std::string table_name, std::string field_name) const
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+syd::FieldBase::vector syd::Database::
+NewFields(std::string table_name, std::string field_names) const
+{
+  return GetTraits(table_name)->NewFields(this, field_names);
+}
+// --------------------------------------------------------------------
+
+
 // --------------------------------------------------------------------
 /*const syd::Record::GetFieldFunction &
   syd::Database::FieldGetter(std::string table_name, std::string field_name) const

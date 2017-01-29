@@ -276,6 +276,9 @@ namespace syd {
     /// Build the given Field of the given table_name
     syd::FieldBase::pointer NewField(std::string table_name, std::string field_name) const;
 
+    /// Build the given Field of the given table_name
+    syd::FieldBase::vector NewFields(std::string table_name, std::string field_names) const;
+
     // ----------------------------------------------------------------------------------
   protected:
     // Create an empty database

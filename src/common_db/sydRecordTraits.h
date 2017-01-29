@@ -50,6 +50,7 @@ namespace syd {
     typedef syd::RecordTraitsBase::RecordFieldFunctionMap RecordFieldFunctionMap;
     //typedef syd::RecordTraitsBase::FieldBasePointer FieldBasePointer;
     typedef syd::RecordTraitsBase::FieldMapType FieldMapType;
+    typedef std::map<std::string, std::string> FieldFormatMapType;
 
     // Main static version to get the singleton traits
     static RecordTraits<RecordType> * GetTraits();
@@ -84,9 +85,11 @@ namespace syd {
 
     /// Return the list of initial fields
     virtual const FieldMapType & GetFieldsMap(const syd::Database * db) const;
+    const FieldFormatMapType & GetFieldFormatsMap(const syd::Database * db) const;
 
     /// Create and build a field according to the name
     virtual FieldBasePointer NewField(const syd::Database * db, std::string field_name) const;
+    virtual FieldBaseVector NewFields(const syd::Database * db, std::string field_names) const;
 
   protected:
     RecordTraits(std::string table_name);
@@ -110,6 +113,9 @@ namespace syd {
 
     /// Map of fields (mutable because lazy initialisation)
     mutable FieldMapType field_map_;
+
+    // Map of format string
+    mutable FieldFormatMapType field_format_map_;
 
     /// Initial function to build the fields (will be overloaded)
     void BuildFields(const syd::Database * db, FieldMapType & map) const;

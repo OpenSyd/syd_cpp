@@ -42,6 +42,7 @@ namespace syd {
     typedef std::function<std::string(RecordBasePointer)> RecordFieldFunc;
     typedef std::map<std::string, RecordFieldFunc> RecordFieldFunctionMap;
     typedef std::shared_ptr<FieldBase> FieldBasePointer;
+    typedef std::vector<FieldBasePointer> FieldBaseVector;
 
     /// Return the table name
     virtual std::string GetTableName() const;
@@ -75,6 +76,8 @@ namespace syd {
     typedef std::map<std::string, FieldBasePointer> FieldMapType;
     virtual const FieldMapType & GetFieldsMap(const syd::Database * db) const = 0;
     virtual FieldBasePointer NewField(const syd::Database * db,
+                                      std::string field_name) const = 0;
+    virtual FieldBaseVector NewFields(const syd::Database * db,
                                       std::string field_name) const = 0;
 
   protected:
