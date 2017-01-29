@@ -441,7 +441,6 @@ typename syd::RecordTraits<RecordType>::FieldBaseVector
 syd::RecordTraits<RecordType>::
 NewFields(const syd::Database * db, std::string field_names) const
 {
-  DDF();
   typename syd::RecordTraits<RecordType>::FieldBaseVector fields;
   std::vector<std::string> words;
   syd::GetWords(words, field_names);
@@ -458,7 +457,6 @@ NewFields(const syd::Database * db, std::string field_names) const
       fields.push_back(f);
     }
   }
-  DD(fields.size());
   return fields;
 }
 // --------------------------------------------------------------------
@@ -473,10 +471,11 @@ GetField(const syd::Database * db, std::string field_name) const
   auto map = GetFieldsMap(db);
   auto it = map.find(field_name);
   if (it == map.end()) {
-    for(auto m:map) {
-      DD(m.first);
-    }
-    LOG(FATAL) << "cannot find the field " << field_name;
+    std::ostringstream ss;
+    for(auto m:map) ss << m.first << " ";
+    for(auto m:field_format_map_) ss << m.first << " ";
+    EXCEPTION("Cannot find the field '" << field_name
+              << "'. Available fields: " << ss.str());
   }
   return it->second->Copy();
 }
