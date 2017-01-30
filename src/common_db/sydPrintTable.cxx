@@ -61,30 +61,9 @@ void syd::PrintTable::Build(std::string table_name,
   values_.resize(records.size());
   if (records.size() == 0) return;
   auto db = records[0]->GetDatabase();
-
-  /*
-  auto fields_names = columns;
-  std::vector<std::string> field_names;
-  syd::GetWords(field_names, columns);
-  std::vector<syd::FieldBase::pointer> fields;
-  for(auto f:field_names) fields.push_back(db->NewField(table_name, f));
-  */
-
+  DD(columns);
   auto fields = db->NewFields(table_name, columns);
-  // Columns = 1 or several names
-  // for each search: in abbrev or in simple fi
 
-  // Header
-  header_.resize(fields.size());
-  int i=0;
-  // if (words.size() != fields.size()) {
-  //   LOG(FATAL) << "Internal error fields in syd::PrintTable::Build";
-  // }
-  /*
-    for(auto col:words) {
-    header_[i] = col;
-    ++i;
-    }*/
   // Build
   Build(records, fields);
 }
@@ -98,13 +77,25 @@ void syd::PrintTable::Build(const RecordBaseVector & records,
   values_.resize(records.size());
   if (records.size() == 0) return;
 
-  if (precision_ != -1) {
-    auto db = records[0]->GetDatabase();
-    for(auto &f:fields) f->precision = precision_;
-    for(auto &f:fields) f->BuildFunction(db);
+  // Header
+  header_.resize(fields.size());
+  int i=0;
+  for(auto f:fields) {
+    header_[i] = f->abbrev;
+    DD(f);
+    ++i;
   }
 
-  int i=0; // row
+  // Precision
+  if (precision_ != -1) {
+    auto db = records[0]->GetDatabase();
+    for(auto &f:fields) {
+      f->precision = precision_;
+      f->BuildFunction(db);
+    }
+  }
+
+  i=0; // row
   for(auto & r:records) {
     int j=0; // column
     values_[i].resize(fields.size());
@@ -114,6 +105,7 @@ void syd::PrintTable::Build(const RecordBaseVector & records,
     }
     ++i;
   }
+
   // Columns width
   column_widths_.resize(fields.size());
   SetDefaultColumnsSize();
