@@ -49,12 +49,17 @@ int main(int argc, char* argv[])
   if (args_info.list_fields_flag) {
     std::ostringstream oss;
     auto map = db->GetTraits(table_name)->GetFieldsMap(db);
-    oss << "Available fields for table " << table_name << ": ";
+    oss << "Available fields for table " << table_name << ": " << std::endl;
     for(auto m:map) {
       if (m.first == m.second->name) oss << m.first << " ";
       else oss << m.first << "(" << m.second->name << ") ";
     }
     oss << std::endl << "Total of " << map.size() << " fields.";
+    auto fmap = db->GetTraits(table_name)->GetFieldFormatsMap(db);
+    if (fmap.size() > 0) {
+      oss << " Available formats : " << std::endl;
+      for(auto m:fmap) oss << " - '" << m.first << "': " << m.second << std::endl;
+    }
     LOG(0) << oss.str();
     return EXIT_SUCCESS;
   }
@@ -127,6 +132,7 @@ int main(int argc, char* argv[])
       return EXIT_SUCCESS;
     }
 
+    DD(args_info.format_arg);
     syd::PrintTable table;
     table.SetPrecision(args_info.precision_arg);
     table.Build(table_name, results, args_info.format_arg);
