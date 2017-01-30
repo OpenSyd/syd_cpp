@@ -30,7 +30,7 @@ syd::RecordWithComments::RecordWithComments()
 // --------------------------------------------------------------------
 std::string syd::RecordWithComments::GetAllComments() const
 {
-  if (comments.size() == 0) return "";
+  if (comments.size() == 0) return empty_value;
   std::stringstream ss;
   int i = 0;
   for(auto c:comments) {
@@ -46,7 +46,7 @@ std::string syd::RecordWithComments::GetAllComments() const
 
 // --------------------------------------------------------------------
 void syd::RecordWithComments::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) 
+BuildMapOfFieldsFunctions(FieldFunctionMap & map)
 {
   map["comments"] = [](pointer a) -> std::string { return a->GetAllComments(); };
 }
