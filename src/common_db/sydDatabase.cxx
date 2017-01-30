@@ -656,9 +656,9 @@ GetFields(std::string table_name, std::string fields)
 
 // --------------------------------------------------------------------
 syd::FieldBase::pointer syd::Database::
-NewField(std::string table_name, std::string field_name) const
+NewField(std::string table_name, std::string field_name, std::string abbrev) const
 {
-  return GetTraits(table_name)->NewField(this, field_name);
+  return GetTraits(table_name)->NewField(this, field_name, abbrev);
 }
 // --------------------------------------------------------------------
 

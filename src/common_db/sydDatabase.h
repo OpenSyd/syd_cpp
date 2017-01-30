@@ -274,7 +274,7 @@ namespace syd {
     std::vector<FieldFunc> GetFields(std::string table_name, std::string fields);
 
     /// Build the given Field of the given table_name
-    syd::FieldBase::pointer NewField(std::string table_name, std::string field_name) const;
+    syd::FieldBase::pointer NewField(std::string table_name, std::string field_name, std::string abbrev="") const;
 
     /// Build the given Field of the given table_name
     syd::FieldBase::vector NewFields(std::string table_name, std::string field_names) const;
