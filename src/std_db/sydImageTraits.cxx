@@ -141,20 +141,20 @@ BuildFields(const syd::Database * db) const
   ADD_TABLE_FIELD(history, syd::RecordHistory);
 
   ADD_FIELD(type, std::string);
-  ADD_FIELD(pixel_type, std::string);
-  ADD_FIELD(frame_of_reference_uid, std::string);
-  ADD_FIELD(acquisition_date, std::string);
-  ADD_FIELD(modality, std::string);
+  ADD_FIELD_A(pixel_type, std::string, "pix");
+  ADD_FIELD_A(frame_of_reference_uid, std::string, "fr");
+  ADD_FIELD_A(acquisition_date, std::string, "date");
+  ADD_FIELD_A(modality, std::string, "mod");
   //ADD_FIELD(dicoms, syd::DicomSerie::vector);
 
   // Read only fields
   ADD_RO_FIELD(dimension, unsigned short int);
   auto f_fn = [](pointer p) -> std::string { return p->GetAbsolutePath(); };
-  AddField<std::string>("filename", f_fn);
+  AddField<std::string>("filename", f_fn, "file");
   auto f_size = [](pointer p) -> std::string { return p->SizeAsString(); };
   AddField<std::string>("size", f_size);
   auto f_spacing = [](pointer p) -> std::string { return p->SpacingAsString(); };
-  AddField<std::string>("spacing", f_spacing);
+  AddField<std::string>("spacing", f_spacing, "sp");
 
   // dicoms
   auto f_dicoms = [](pointer p) -> std::string {
@@ -167,21 +167,20 @@ BuildFields(const syd::Database * db) const
 
   // comments
   auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
-  AddField<std::string>("comments", f_c);
+  AddField<std::string>("comments", f_c, "com");
 
   // tags
   auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
   AddField<std::string>("tags", f_t);
 
   // Abbreviation
-  field_map_["pat"] = db->NewField("Image", "patient.name");
-  field_map_["rad"] = db->NewField("Image", "injection.radionuclide.name");
-  field_map_["date"] = field_map_["acquisition_date"];
+  field_map_["pat"] = db->NewField("Image", "patient.name", "pat");
+  field_map_["rad"] = db->NewField("Image", "injection.radionuclide.name", "rad");
 
   // Format lists
   field_format_map_["short"] =
-    "id pat date tags rad modality";
+    "id pat acquisition_date tags rad modality";
   field_format_map_["default"] =
-    "id pat date tags rad injection.id modality size spacing dicoms comments";
+    "id pat acquisition_date tags rad injection.id modality size spacing dicoms comments";
 }
 // --------------------------------------------------------------------
