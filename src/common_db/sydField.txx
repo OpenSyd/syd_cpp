@@ -40,15 +40,45 @@ syd::Field<RecordType, FieldValueType>::Field(std::string name, ROFunction ff)
 
 // --------------------------------------------------------------------
 template<class RecordType, class FieldValueType>
+typename syd::Field<RecordType, FieldValueType>::SelfPointer
+syd::Field<RecordType, FieldValueType>::
+New(std::string name, Function f, bool read_only, std::string abbrev)
+{
+  DDF();
+  auto t = std::make_shared<Self>(name, f);
+  t->type = typeid(FieldValueType).name();
+  t->read_only = read_only;
+  if (abbrev == "") t->abbrev = name;
+  else t->abbrev = abbrev;
+  return t;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType, class FieldValueType>
+typename syd::Field<RecordType, FieldValueType>::SelfPointer
+syd::Field<RecordType, FieldValueType>::
+New(std::string name, ROFunction f, bool read_only, std::string abbrev)
+{
+  auto t = std::make_shared<Self>(name, f);
+  t->type = typeid(FieldValueType).name();
+  t->read_only = read_only;
+  if (abbrev == "") t->abbrev = name;
+  else t->abbrev = abbrev;
+  return t;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType, class FieldValueType>
 typename syd::Field<RecordType, FieldValueType>::pointer
 syd::Field<RecordType, FieldValueType>::Copy() const
 {
-  typedef Field<RecordType, FieldValueType> T;
-  auto a = new T(this->name, this->f);
-  auto t = std::shared_ptr<T>(a);
-  t->type = this->type;
-  t->read_only = this->read_only;
+  auto t = Self::New(this->name, this->f, this->read_only, this->abbrev);
   t->rof = this->rof;
+  t->type = this->type;
   t->precision = this->precision;
   t->gf = this->gf;
   return t;
@@ -64,12 +94,15 @@ ToString() const
 {
   std::ostringstream oss;
   auto table_name = syd::RecordTraits<RecordType>::GetTraits()->GetTableName();
-  oss << table_name << "->" << this->name  << " [" << this->type << "] "
+  oss << table_name << "->" << this->name
+      << " (" << this->abbrev << ")"
+      << " [" << this->type << "] "
       << (this->read_only ? "read_only":"edit") << " prec=" << this->precision
-      << " " 
+      << " "
       << (this->f==nullptr? "f_null":"f_ok") << " "
       << (this->rof==nullptr? "rof_null":"rof_ok") << " "
-      << (this->gf==nullptr? "gf_null":"gf_ok");
+      << (this->gf==nullptr? "gf_null":"gf_ok") << " "
+      << (this->sort_f==nullptr? "sort_null":"sort_ok");
   return oss.str();
 }
 // --------------------------------------------------------------------
@@ -177,6 +210,7 @@ void
 syd::Field<RecordType, FieldValueType>::
 BuildFunction(const syd::Database * db)
 {
+  DDF();
   std::size_t found = this->name.find_first_of(".");
   std::string first_field;
   std::string field_names="";
@@ -209,5 +243,18 @@ BuildFunction(const syd::Database * db)
       this->gf = this->BuildComposedFunction(cast, subfield->gf); // set the gf
     }
   }
+
+  // Build sort function
+  DD("build sort function");
+  DD(ToString());
+  if (!this->read_only) {
+    auto cast = BuildCastFunction(f);
+    this->sort_f = [cast](RecordPointer a, RecordPointer b) -> bool { return cast(a) < cast(b); };
+  }
+  else {
+    auto cast = BuildCastFunction(rof);
+    this->sort_f = [cast](RecordPointer a, RecordPointer b) -> bool { return cast(a) < cast(b); };
+  }
+  DD("done");
 }
 // --------------------------------------------------------------------

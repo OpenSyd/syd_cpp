@@ -35,8 +35,10 @@ namespace syd {
   public:
 
     typedef Field<RecordType,FieldValueType> Self;
+    typedef std::shared_ptr<Self> SelfPointer;
     typedef FieldBase::pointer pointer;
     typedef FieldBase::GenericFunction GenericFunction;
+    typedef FieldBase::SortFunction SortFunction;
     typedef FieldBase::RecordPointer RecordPointer;
     typedef std::function<FieldValueType & (RecordPointer p)> CastFunction;
     typedef std::function<FieldValueType & (typename RecordType::pointer p)> Function;
@@ -60,6 +62,12 @@ namespace syd {
 
     /// Change the precision. Will rebuild the function
     virtual void SetPrecision(int p);
+
+    /// Create a new pointer (function with ref)
+    static SelfPointer New(std::string name, Function f, bool read_only, std::string abbrev);
+
+    /// Create a new pointer (function wo ref)
+    static SelfPointer New(std::string name, ROFunction f, bool read_only, std::string abbrev);
 
     /// Return a copy
     virtual pointer Copy() const;
