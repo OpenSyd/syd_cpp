@@ -38,6 +38,7 @@ namespace syd {
     typedef std::vector<pointer> vector;
     typedef std::shared_ptr<Record> RecordPointer;
     typedef std::function<std::string (RecordPointer p)> GenericFunction;
+    typedef std::function<bool (RecordPointer a, RecordPointer b)> SortFunction;
 
     /// Constructor
     FieldBase(std::string name);
@@ -47,10 +48,12 @@ namespace syd {
 
     // FIXME to put protected
     std::string name;
+    std::string abbrev; // short name
     std::string type;
     int precision;
     bool read_only;
     GenericFunction gf; // protected ?
+    SortFunction sort_f;
 
     /// Main function. Must be call before using 'get' or 'set'
     virtual void BuildFunction(const syd::Database * db) = 0;

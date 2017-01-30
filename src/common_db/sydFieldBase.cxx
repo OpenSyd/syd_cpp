@@ -23,6 +23,7 @@
 syd::FieldBase::FieldBase(std::string n)
 {
   name = n;
+  abbrev = n;
   precision = 2;
   read_only = false;
 }
