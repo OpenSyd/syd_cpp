@@ -72,6 +72,8 @@ BuildFields(const syd::Database * db) const
   ADD_FIELD(weight_in_kg, double);
   ADD_FIELD(dicom_patientid, std::string);
   ADD_FIELD(sex, std::string);
+
+  field_format_map_["default"] = "id study_id name weight_in_kg sex dicom_patientid";
 }
 // --------------------------------------------------------------------
 
