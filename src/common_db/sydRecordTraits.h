@@ -145,12 +145,6 @@ namespace syd {
                          std::function<typename RecordType2::pointer (typename RecordType::pointer p)> f,
                          std::string abbrev="") const;
 
-    template<class RecordType2>
-      void
-      AddTableField2(std::string name,
-                     std::string abbrev,
-                     std::function<typename RecordType2::pointer (typename RecordType::pointer)> f) const;
-
   }; // end of class
 
   /// Macros to simplify the traits classes

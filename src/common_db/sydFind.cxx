@@ -132,7 +132,6 @@ int main(int argc, char* argv[])
       return EXIT_SUCCESS;
     }
 
-    DD(args_info.format_arg);
     syd::PrintTable table;
     table.SetPrecision(args_info.precision_arg);
     table.Build(table_name, results, args_info.format_arg);

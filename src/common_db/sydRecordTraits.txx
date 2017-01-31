@@ -18,7 +18,6 @@
 
 #include "sydDatabase.h"
 #include "sydField.h"
-#include "sydFieldTable.h"
 
 // For boost split string
 #include <boost/algorithm/string.hpp>
@@ -599,23 +598,3 @@ AddTableField(std::string name,
 }
 // --------------------------------------------------------------------
 
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-template<class RecordType2>
-void
-syd::RecordTraits<RecordType>::
-AddTableField2(std::string name,
-               std::string abbrev,
-               std::function<typename RecordType2::pointer (typename RecordType::pointer)> f) const
-{
-  DDF();
-  auto t = syd::FieldTable<RecordType, RecordType2>::New(name, abbrev, f);
-  t->f = f;
-  t->read_only = true;
-  // FIXME Check if already exist ?
-  DD(t);
-  field_map2_[name] = t;
-}
-// --------------------------------------------------------------------
