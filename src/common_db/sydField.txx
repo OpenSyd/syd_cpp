@@ -22,7 +22,10 @@ syd::Field<RecordType, FieldValueType>::Field(std::string name, Function ff)
   :FieldType<FieldValueType>(name)
 {
   f = ff;
+  auto g = f;
   rof = nullptr;
+  // rof = [g](typename RecordType::pointer p) -> FieldValueType {
+  //   return g(p);};
 }
 // --------------------------------------------------------------------
 
@@ -44,7 +47,6 @@ typename syd::Field<RecordType, FieldValueType>::SelfPointer
 syd::Field<RecordType, FieldValueType>::
 New(std::string name, Function f, bool read_only, std::string abbrev)
 {
-  DDF();
   auto t = std::make_shared<Self>(name, f);
   t->type = typeid(FieldValueType).name();
   t->read_only = read_only;
@@ -139,7 +141,7 @@ BuildCastFunction(Function f) const
 {
   auto t = syd::RecordTraits<RecordType>::GetTraits()->GetTableName();
   auto h = [t,f](RecordPointer p) -> FieldValueType & {
-    auto r = std::dynamic_pointer_cast<RecordType>(p);
+    auto r = std::static_pointer_cast<RecordType>(p);
     if (!r) {
       LOG(FATAL) << "Error while using fct cast "
                  << " I expect " << t << std::endl
@@ -160,9 +162,9 @@ BuildCastFunction(ROFunction ff) const
 {
   auto t = syd::RecordTraits<RecordType>::GetTraits()->GetTableName();
   auto h = [t,ff](RecordPointer p) -> FieldValueType {
-    auto r = std::dynamic_pointer_cast<RecordType>(p);
+    auto r = std::static_pointer_cast<RecordType>(p);
     if (!r) {
-      LOG(FATAL) << "Error while using fct cast "
+      LOG(FATAL) << "Error while using fct cast (ro) "
                  << " I expect " << t << std::endl
                  << " while record is " << p->GetTableName();
     }
@@ -173,44 +175,12 @@ BuildCastFunction(ROFunction ff) const
 // --------------------------------------------------------------------
 
 
-
-
-// // --------------------------------------------------------------------
-// template<class RecordType, class FieldValueType>
-// typename syd::Field<RecordType, FieldValueType>::pointer
-// syd::Field<RecordType, FieldValueType>::
-// CreateField(std::string name, Function f, std::string type_name)
-// {
-//   typedef syd::Field<RecordType,FieldValueType> T;
-//   auto t = new T(name, f);
-//   t->type = type_name;
-//   return std::shared_ptr<T>(t);
-// }
-// // --------------------------------------------------------------------
-
-
-
-// // --------------------------------------------------------------------
-// template<class RecordType, class FieldValueType>
-// typename syd::Field<RecordType, FieldValueType>::pointer
-// syd::Field<RecordType, FieldValueType>::
-// CreateField(std::string name, ROFunction f, std::string type_name)
-// {
-//   typedef syd::Field<RecordType,FieldValueType> T;
-//   auto t = new T(name, f);
-//   t->type = type_name;
-//   return std::shared_ptr<T>(t);
-// }
-// // --------------------------------------------------------------------
-
-
 // --------------------------------------------------------------------
 template<class RecordType, class FieldValueType>
 void
 syd::Field<RecordType, FieldValueType>::
 BuildFunction(const syd::Database * db)
 {
-  DDF();
   std::size_t found = this->name.find_first_of(".");
   std::string first_field;
   std::string field_names="";
@@ -219,42 +189,40 @@ BuildFunction(const syd::Database * db)
     field_names = this->name.substr(found+1, this->name.size());
   }
 
-  if (!this->read_only) {
-    auto cast = BuildCastFunction(f);
-    if (field_names == "") {
-      this->gf = syd::FieldType<FieldValueType>::BuildGenericFunction(cast);
-    }
-    else {
-      auto subfield = db->NewField(this->type, field_names);
-      subfield->precision = this->precision;
-      subfield->BuildFunction(db);
-      this->gf = this->BuildComposedFunction(cast, subfield->gf); // set the gf
-    }
+  // The following is *very* ugly (you have been warned).
+
+
+  if (field_names != "") {
+    auto subfield = db->NewField(this->type, field_names);
+    subfield->precision = this->precision;
+    subfield->BuildFunction(db);
+    this->subfield_ = subfield; // need to store to avoid destruction
   }
   else {
-    auto cast = BuildCastFunction(rof);
-    if (field_names == "") {
-      this->gf = syd::FieldType<FieldValueType>::BuildGenericFunction(cast);
+    if (this->f != nullptr) {
+      auto cast = BuildCastFunction(f);
+      this->gf = syd::FieldType<FieldValueType>::BuildToStringFunction(cast);
+      this->sort_f = syd::FieldType<FieldValueType>::BuildSortFunction(cast);
+      return;
     }
     else {
-      auto subfield = db->NewField(this->type, field_names);
-      subfield->precision = this->precision;
-      subfield->BuildFunction(db);
-      this->gf = this->BuildComposedFunction(cast, subfield->gf); // set the gf
+      auto cast = BuildCastFunction(rof);
+      this->gf = syd::FieldType<FieldValueType>::BuildToStringFunction(cast);
+      this->sort_f = syd::FieldType<FieldValueType>::BuildSortFunction(cast);
+      return;
     }
   }
 
-  // Build sort function
-  DD("build sort function");
-  DD(ToString());
-  if (!this->read_only) {
+  // subfield
+  if (this->f != nullptr) {
     auto cast = BuildCastFunction(f);
-    this->sort_f = [cast](RecordPointer a, RecordPointer b) -> bool { return cast(a) < cast(b); };
+    this->gf = this->BuildComposedFunction(cast, this->subfield_->gf); // set the gf
+    this->sort_f = this->BuildComposedFunction(cast, this->subfield_->sort_f); // set the sort_f
   }
   else {
     auto cast = BuildCastFunction(rof);
-    this->sort_f = [cast](RecordPointer a, RecordPointer b) -> bool { return cast(a) < cast(b); };
+    this->gf = this->BuildComposedFunction(cast, this->subfield_->gf); // set the gf
+    this->sort_f = this->BuildComposedFunction(cast, this->subfield_->sort_f); // set the sort_f
   }
-  DD("done");
 }
 // --------------------------------------------------------------------

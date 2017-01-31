@@ -50,7 +50,7 @@ namespace syd {
     typedef syd::RecordTraitsBase::RecordFieldFunctionMap RecordFieldFunctionMap;
     //typedef syd::RecordTraitsBase::FieldBasePointer FieldBasePointer;
     typedef syd::RecordTraitsBase::FieldMapType FieldMapType;
-    typedef std::map<std::string, std::string> FieldFormatMapType;
+    typedef syd::RecordTraitsBase::FieldFormatMapType FieldFormatMapType;
 
     // Main static version to get the singleton traits
     static RecordTraits<RecordType> * GetTraits();
@@ -88,7 +88,7 @@ namespace syd {
     const FieldFormatMapType & GetFieldFormatsMap(const syd::Database * db) const;
 
     /// Create and build a field according to the name
-    virtual FieldBasePointer NewField(const syd::Database * db, std::string field_name) const;
+    virtual FieldBasePointer NewField(const syd::Database * db, std::string field_name, std::string abbrev="") const;
     virtual FieldBaseVector NewFields(const syd::Database * db, std::string field_names) const;
 
   protected:
@@ -102,7 +102,7 @@ namespace syd {
 
     // For sorting elements. The following is mutable because may be
     // initialized the first time it is call (from a const function)
-    void InternalSort(vector & records, const std::string & type) const;
+    void InternalSort(vector & records, std::string type) const;
     mutable CompareFunctionMap compare_record_fmap_;
     void SetDefaultSortFunctions(CompareFunctionMap & map) const;
 
@@ -113,6 +113,7 @@ namespace syd {
 
     /// Map of fields (mutable because lazy initialisation)
     mutable FieldMapType field_map_;
+    mutable FieldMapType field_map2_;
 
     // Map of format string
     mutable FieldFormatMapType field_format_map_;
@@ -129,17 +130,26 @@ namespace syd {
     /// Define a new Field, of a given type by reference
     template<class FieldValueType>
       void AddField(std::string name,
-                    std::function<FieldValueType & (typename RecordType::pointer p)> f) const;
+                    std::function<FieldValueType & (typename RecordType::pointer p)> f,
+                    std::string abbrev="") const;
 
     /// Define a new Field, of a given type by value (read only)
     template<class FieldValueType>
       void AddField(std::string name,
-                    std::function<FieldValueType (typename RecordType::pointer p)> f) const;
+                    std::function<FieldValueType (typename RecordType::pointer p)> f,
+                    std::string abbrev="") const;
 
     /// Define a new Field, of a given record pointer
     template<class RecordType2>
       void AddTableField(std::string name,
-                         std::function<typename RecordType2::pointer & (typename RecordType::pointer p)> f) const;
+                         std::function<typename RecordType2::pointer (typename RecordType::pointer p)> f,
+                         std::string abbrev="") const;
+
+    template<class RecordType2>
+      void
+      AddTableField2(std::string name,
+                     std::string abbrev,
+                     std::function<typename RecordType2::pointer (typename RecordType::pointer)> f) const;
 
   }; // end of class
 
@@ -175,8 +185,27 @@ namespace syd {
 
 #define ADD_TABLE_FIELD(NAME, TYPE)                                 \
   {                                                                 \
-    auto f = [](pointer p) -> TYPE::pointer & { return p->NAME; };  \
+    auto f = [](pointer p) -> TYPE::pointer { return p->NAME; };  \
     AddTableField<TYPE>(#NAME, f);                                  \
+  }
+
+
+#define ADD_FIELD_A(NAME, TYPE, ABBREV)                   \
+  {                                                       \
+    auto f = [](pointer p) -> TYPE & { return p->NAME; }; \
+    AddField<TYPE>(#NAME, f, ABBREV);                     \
+  }
+
+#define ADD_RO_FIELD_A(NAME, TYPE, ABBREV)              \
+  {                                                     \
+    auto f = [](pointer p) -> TYPE { return p->NAME; }; \
+    AddField<TYPE>(#NAME, f, ABBREV);                   \
+  }
+
+#define ADD_TABLE_FIELD_A(NAME, TYPE, ABBREV)                       \
+  {                                                                 \
+    auto f = [](pointer p) -> TYPE::pointer { return p->NAME; };  \
+    AddTableField<TYPE>(#NAME, f, ABBREV);                          \
   }
 
 

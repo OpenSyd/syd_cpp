@@ -61,10 +61,7 @@ void syd::PrintTable::Build(std::string table_name,
   values_.resize(records.size());
   if (records.size() == 0) return;
   auto db = records[0]->GetDatabase();
-  DD(columns);
   auto fields = db->NewFields(table_name, columns);
-
-  // Build
   Build(records, fields);
 }
 //------------------------------------------------------------------
@@ -82,7 +79,6 @@ void syd::PrintTable::Build(const RecordBaseVector & records,
   int i=0;
   for(auto f:fields) {
     header_[i] = f->abbrev;
-    DD(f);
     ++i;
   }
 

@@ -18,6 +18,7 @@
 
 #include "sydDatabase.h"
 #include "sydField.h"
+#include "sydFieldTable.h"
 
 // For boost split string
 #include <boost/algorithm/string.hpp>
@@ -238,24 +239,33 @@ GetSortFunctionMap() const
 // --------------------------------------------------------------------
 template<class RecordType>
 void syd::RecordTraits<RecordType>::
-InternalSort(vector & v, const std::string & type) const
+InternalSort(vector & v, std::string type) const
 {
-  // Only once: build the map of sorting function
-  if (compare_record_fmap_.size() == 0)
-    BuildMapOfSortFunctions(compare_record_fmap_);
+  if (0){
+    // Only once: build the map of sorting function
+    if (compare_record_fmap_.size() == 0)
+      BuildMapOfSortFunctions(compare_record_fmap_);
 
-  // Try to find the sort function
-  auto it = compare_record_fmap_.find(type);
-  if (it == compare_record_fmap_.end()) {
-    std::string help;
-    for(auto & c:compare_record_fmap_)
-      help += "'"+c.first+"' ";
-    LOG(WARNING) << "Cannot find the sorting type '"
-                 << type << "'. Current known types are: "
-                 << help;
-    return;
+    // Try to find the sort function
+    auto it = compare_record_fmap_.find(type);
+    if (it == compare_record_fmap_.end()) {
+      std::string help;
+      for(auto & c:compare_record_fmap_)
+        help += "'"+c.first+"' ";
+      LOG(WARNING) << "Cannot find the sorting type '"
+                   << type << "'. Current known types are: "
+                   << help;
+      return;
+    }
+    std::sort(begin(v), end(v), it->second);
   }
-  std::sort(begin(v), end(v), it->second);
+  // sort
+  if (type == "") type = "id";
+  if (v.size() == 0) return;
+  auto db = v[0]->GetDatabase();
+  auto f = NewField(db, type);
+  f->BuildFunction(db);
+  std::sort(begin(v), end(v), f->sort_f);
 }
 // --------------------------------------------------------------------
 
@@ -413,7 +423,7 @@ GetDefaultFields() const
 template<class RecordType>
 typename syd::RecordTraits<RecordType>::FieldBasePointer
 syd::RecordTraits<RecordType>::
-NewField(const syd::Database * db, std::string field_names) const
+NewField(const syd::Database * db, std::string field_names, std::string abbrev) const
 {
   // Decompose the field_names
   auto first_field = field_names;
@@ -428,6 +438,7 @@ NewField(const syd::Database * db, std::string field_names) const
   auto field = GetField(db, first_field); // this is a copy
   // Change his name (for complex field, that will be build recursively)
   field->name = field->name+field_names;
+  if (abbrev != "") field->abbrev = abbrev;
   // Create the main function
   field->BuildFunction(db);
   return field;
@@ -531,6 +542,10 @@ InitCommonFields() const
   // Add the raw version (read only)
   auto f = [](pointer p) -> std::string { return p->ToString(); };
   AddField<std::string>("raw", f);
+
+  ///
+  
+
 }
 // --------------------------------------------------------------------
 
@@ -541,13 +556,10 @@ template<class FieldValueType>
 void
 syd::RecordTraits<RecordType>::
 AddField(std::string name,
-         std::function<FieldValueType & (typename RecordType::pointer p)> f) const
+         std::function<FieldValueType & (typename RecordType::pointer p)> f,
+         std::string abbrev) const
 {
-  typedef Field<RecordType, FieldValueType> T;
-  auto a = new T(name, f);
-  auto t = std::shared_ptr<T>(a);
-  t->type = typeid(FieldValueType).name();
-  t->read_only = false;
+  auto t = Field<RecordType, FieldValueType>::New(name, f, false, abbrev);
   // FIXME Check if already exist ?
   field_map_[name] = t;
 }
@@ -560,13 +572,11 @@ template<class FieldValueType>
 void
 syd::RecordTraits<RecordType>::
 AddField(std::string name,
-         std::function<FieldValueType (typename RecordType::pointer p)> f) const
+         std::function<FieldValueType (typename RecordType::pointer p)> f,
+         std::string abbrev) const
 {
-  typedef Field<RecordType, FieldValueType> T;
-  auto a = new T(name, f);
-  auto t = std::shared_ptr<T>(a);
-  t->type = typeid(FieldValueType).name();
-  t->read_only = true;
+  // true = read_only
+  auto t = Field<RecordType, FieldValueType>::New(name, f, true, abbrev);
   // FIXME Check if already exist ?
   field_map_[name] = t;
 }
@@ -579,14 +589,33 @@ template<class RecordType2>
 void
 syd::RecordTraits<RecordType>::
 AddTableField(std::string name,
-              std::function<typename RecordType2::pointer & (typename RecordType::pointer p)> f) const
+              std::function<typename RecordType2::pointer (typename RecordType::pointer p)> f,
+              std::string abbrev) const
 {
-  typedef syd::Field<RecordType,typename RecordType2::pointer> T;
-  auto a = new T(name, f);
-  auto t = std::shared_ptr<T>(a);
+  auto t = syd::Field<RecordType, typename RecordType2::pointer>::New(name, f, false, abbrev);
   t->type = syd::RecordTraits<RecordType2>::GetTraits()->GetTableName();
-  t->read_only = false;
   // FIXME Check if already exist ?
   field_map_[name] = t;
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+template<class RecordType2>
+void
+syd::RecordTraits<RecordType>::
+AddTableField2(std::string name,
+               std::string abbrev,
+               std::function<typename RecordType2::pointer (typename RecordType::pointer)> f) const
+{
+  DDF();
+  auto t = syd::FieldTable<RecordType, RecordType2>::New(name, abbrev, f);
+  t->f = f;
+  t->read_only = true;
+  // FIXME Check if already exist ?
+  DD(t);
+  field_map2_[name] = t;
 }
 // --------------------------------------------------------------------

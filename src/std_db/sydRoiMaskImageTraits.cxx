@@ -63,3 +63,20 @@ GetDefaultFields() const
   return s;
 }
 // --------------------------------------------------------------------
+
+
+template<> void syd::RecordTraits<syd::RoiMaskImage>::
+BuildFields(const syd::Database * db) const
+{
+  // Retrive fields from image
+  auto map = syd::RecordTraits<syd::Image>::GetTraits()->GetFieldsMap(db);
+  for(auto & m:map) field_map_[m.first] = m.second->Copy();
+
+  // Format lists
+  field_format_map_["short"] =
+    "id pat roitype.name tags rad modality";
+  field_format_map_["default"] =
+    "id pat roitype.name tags rad injection.id modality size spacing dicoms comments";
+
+  DD("done roimask");
+}

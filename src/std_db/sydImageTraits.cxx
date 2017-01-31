@@ -179,8 +179,10 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["short"] =
-    "id pat acquisition_date tags rad modality";
+  "id pat acquisition_date tags rad modality";
   field_format_map_["default"] =
-    "id pat acquisition_date tags rad injection.id modality size spacing dicoms comments";
+  "id pat acquisition_date tags rad injection.id modality size spacing dicoms comments";
+
 }
 // --------------------------------------------------------------------
+

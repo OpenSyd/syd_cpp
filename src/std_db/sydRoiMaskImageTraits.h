@@ -42,6 +42,9 @@ namespace syd {
   template<> std::string syd::RecordTraits<syd::RoiMaskImage>::
     GetDefaultFields() const;
 
+  template<> void syd::RecordTraits<syd::RoiMaskImage>::
+    BuildFields(const syd::Database * db) const;
+
 }
 // --------------------------------------------------------------------
 

@@ -23,15 +23,15 @@
 
 #define DEFINE_GENERIC_FUNCTION(TYPE)             \
   template<>                                      \
-  typename syd::FieldType<TYPE>::GenericFunction  \
+  typename syd::FieldType<TYPE>::ToStringFunction  \
   syd::FieldType<TYPE>::                          \
-  BuildGenericFunction(CastFunction f) const
+  BuildToStringFunction(CastFunction f) const
 
 #define DEFINE_GENERIC_RO_FUNCTION(TYPE)          \
   template<>                                      \
-  typename syd::FieldType<TYPE>::GenericFunction  \
+  typename syd::FieldType<TYPE>::ToStringFunction  \
   syd::FieldType<TYPE>::                          \
-  BuildGenericFunction(ROCastFunction f) const
+  BuildToStringFunction(ROCastFunction f) const
 
 
 // --------------------------------------------------------------------
@@ -49,6 +49,7 @@ DEFINE_GENERIC_RO_FUNCTION(std::string)
 // --------------------------------------------------------------------
 DEFINE_GENERIC_FUNCTION(syd::FieldBase::RecordPointer)
 {
+  //FIXME NEVER HERE
   return [f](RecordPointer p) -> std::string {
     auto a = f(p);
     if (a == nullptr) return empty_value;
@@ -57,6 +58,7 @@ DEFINE_GENERIC_FUNCTION(syd::FieldBase::RecordPointer)
 }
 DEFINE_GENERIC_RO_FUNCTION(syd::FieldBase::RecordPointer)
 {
+  //FIXME NEVER HERE
   return [f](RecordPointer p) -> std::string {
     auto a = f(p);
     if (a == nullptr) return empty_value;

@@ -34,13 +34,14 @@ namespace syd {
     class Field: public FieldType<FieldValueType> {
   public:
 
+    // Typedefs
     typedef Field<RecordType,FieldValueType> Self;
     typedef std::shared_ptr<Self> SelfPointer;
     typedef FieldBase::pointer pointer;
-    typedef FieldBase::GenericFunction GenericFunction;
+    typedef FieldBase::ToStringFunction ToStringFunction;
     typedef FieldBase::SortFunction SortFunction;
     typedef FieldBase::RecordPointer RecordPointer;
-    typedef std::function<FieldValueType & (RecordPointer p)> CastFunction;
+    typedef std::function<FieldValueType & (RecordPointer p)> CastFunction; // FIXME from FieldType
     typedef std::function<FieldValueType & (typename RecordType::pointer p)> Function;
     typedef std::function<FieldValueType (RecordPointer p)> ROCastFunction;
     typedef std::function<FieldValueType (typename RecordType::pointer p)> ROFunction;
@@ -89,10 +90,21 @@ namespace syd {
     ROCastFunction BuildCastFunction(ROFunction f) const;
     //    pointer CreateField(const syd::Database * db, std::string field_names) const;
 
-    static pointer CreateField(std::string name, Function f, std::string type="");
-    static pointer CreateField(std::string name, ROFunction f, std::string type="");
+    /* static pointer CreateField(std::string name, Function f, std::string type=""); */
+    /* static pointer CreateField(std::string name, ROFunction f, std::string type=""); */
 
   }; // end of class
+
+
+  /// Build a cast function with a return by reference
+  /* template<class RecordType, class FieldValueType> */
+  /*   std::function<FieldValueType & (typename FieldBase::RecordPointer)> */
+  /*   BuildCastRefFunction(std::function<FieldValueType & (typename RecordType::pointer)> f); */
+
+  /* /// Build a cast function with a return by value */
+  /* template<class RecordType, class FieldValueType> */
+  /*   std::function<FieldValueType (typename FieldBase::RecordPointer)> */
+  /*   BuildCastValueFunction(std::function<FieldValueType (typename RecordType::pointer)> f); */
 
   // --------------------------------------------------------------------
 } // end namespace

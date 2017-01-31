@@ -32,8 +32,9 @@ namespace syd {
     class FieldType: public FieldBase {
   public:
 
-    typedef FieldBase::GenericFunction GenericFunction;
+    typedef FieldBase::ToStringFunction ToStringFunction;
     typedef FieldBase::RecordPointer RecordPointer;
+    typedef FieldBase::SortFunction SortFunction;
     typedef std::function<FieldValueType & (RecordPointer p)> CastFunction;
     typedef std::function<FieldValueType (RecordPointer p)> ROCastFunction;
 
@@ -43,24 +44,39 @@ namespace syd {
     /// Destructor
     virtual ~FieldType();
 
-    GenericFunction BuildGenericFunction(CastFunction f) const;
-    GenericFunction BuildGenericFunction(ROCastFunction f) const;
+    ToStringFunction BuildToStringFunction(CastFunction f) const;
+    ToStringFunction BuildToStringFunction(ROCastFunction f) const;
 
-    GenericFunction BuildComposedFunction(CastFunction f, GenericFunction h) const;
-    GenericFunction BuildComposedFunction(ROCastFunction f, GenericFunction h) const;
+    ToStringFunction BuildComposedFunction(CastFunction f, ToStringFunction h) const;
+    ToStringFunction BuildComposedFunction(ROCastFunction f, ToStringFunction h) const;
+    SortFunction BuildComposedFunction(CastFunction f, SortFunction h) const;
+    SortFunction BuildComposedFunction(ROCastFunction f, SortFunction h) const;
+
+    SortFunction BuildSortFunction(CastFunction f) const;
+    SortFunction BuildSortFunction(ROCastFunction f) const;
 
   }; // end of class
   // --------------------------------------------------------------------
 
 #define DECLARE_BUILD_GENERIC_FUNCTION(TYPE)        \
   template<>                                        \
-    typename syd::FieldType<TYPE>::GenericFunction  \
+    typename syd::FieldType<TYPE>::ToStringFunction \
     syd::FieldType<TYPE>::                          \
-    BuildGenericFunction(CastFunction f) const;     \
+    BuildToStringFunction(CastFunction f) const;    \
   template<>                                        \
-    typename syd::FieldType<TYPE>::GenericFunction  \
+    typename syd::FieldType<TYPE>::ToStringFunction \
     syd::FieldType<TYPE>::                          \
-    BuildGenericFunction(ROCastFunction f) const;
+    BuildToStringFunction(ROCastFunction f) const;
+
+  /*template<>                                   \
+    typename syd::FieldType<TYPE>::SortFunction  \
+    syd::FieldType<TYPE>::                          \
+    BuildSortFunction(CastFunction f) const;     \
+    template<>                                        \
+    typename syd::FieldType<TYPE>::SortFunction  \
+    syd::FieldType<TYPE>::                          \
+    BuildSortFunction(ROCastFunction f) const;
+  */
 
   DECLARE_BUILD_GENERIC_FUNCTION(std::string);
   DECLARE_BUILD_GENERIC_FUNCTION(syd::IdType);
@@ -71,30 +87,43 @@ namespace syd {
 
   // I need to declare this function (empty) because the default 'compose' is
   // intended for syd::Record elements.
-#define DECLARE_COMPOSE(TYPE)                                         \
-  template<> typename syd::FieldType<TYPE>::GenericFunction           \
-    syd::FieldType<TYPE>::                                            \
-    BuildComposedFunction(CastFunction f, GenericFunction h) const;   \
-  template<> typename syd::FieldType<TYPE>::GenericFunction           \
-    syd::FieldType<TYPE>::                                            \
-    BuildComposedFunction(ROCastFunction f, GenericFunction h) const;
+#define DECLARE_COMPOSE(TYPE)                                           \
+  template<> typename syd::FieldType<TYPE>::ToStringFunction            \
+    syd::FieldType<TYPE>::                                              \
+    BuildComposedFunction(CastFunction f, ToStringFunction h) const;    \
+  template<> typename syd::FieldType<TYPE>::ToStringFunction            \
+    syd::FieldType<TYPE>::                                              \
+    BuildComposedFunction(ROCastFunction f, ToStringFunction h) const;  \
+  template<> typename syd::FieldType<TYPE>::SortFunction                \
+    syd::FieldType<TYPE>::                                              \
+    BuildComposedFunction(CastFunction f, SortFunction h) const;        \
+  template<> typename syd::FieldType<TYPE>::SortFunction                \
+    syd::FieldType<TYPE>::                                              \
+    BuildComposedFunction(ROCastFunction f, SortFunction h) const;
 
-#define DEFINE_COMPOSE(TYPE)                                    \
-  template<> typename syd::FieldType<TYPE>::GenericFunction     \
-    syd::FieldType<TYPE>::                                      \
-    BuildComposedFunction(CastFunction f, GenericFunction h)    \
-    const {return nullptr;}                                     \
-  template<> typename syd::FieldType<TYPE>::GenericFunction     \
-    syd::FieldType<TYPE>::                                      \
-    BuildComposedFunction(ROCastFunction f, GenericFunction h)  \
-    const { return nullptr;}
+#define DEFINE_COMPOSE(TYPE)                                            \
+  template<> typename syd::FieldType<TYPE>::ToStringFunction            \
+    syd::FieldType<TYPE>::                                              \
+    BuildComposedFunction(CastFunction f, ToStringFunction h)           \
+    const { return nullptr;}                                            \
+  template<> typename syd::FieldType<TYPE>::ToStringFunction            \
+    syd::FieldType<TYPE>::                                              \
+    BuildComposedFunction(ROCastFunction f, ToStringFunction h)         \
+    const { return nullptr;}                                            \
+  template<> typename syd::FieldType<TYPE>::SortFunction                \
+    syd::FieldType<TYPE>::                                              \
+    BuildComposedFunction(CastFunction f, SortFunction h)               \
+    const { DD("BuildComposedFunction sort null"); DD(#TYPE); return nullptr;} \
+  template<> typename syd::FieldType<TYPE>::SortFunction                \
+    syd::FieldType<TYPE>::                                              \
+    BuildComposedFunction(ROCastFunction f, SortFunction h)             \
+    const { DD("BuildComposedFunction sort null"); DD(#TYPE); return nullptr;} \
 
   DECLARE_COMPOSE(syd::IdType);
   DECLARE_COMPOSE(double);
   DECLARE_COMPOSE(std::string);
   DECLARE_COMPOSE(int);
   DECLARE_COMPOSE(unsigned short int);
-
 
   // --------------------------------------------------------------------
 } // end namespace

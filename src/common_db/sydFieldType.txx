@@ -38,9 +38,9 @@ syd::FieldType<FieldValueType>::~FieldType()
 
 // --------------------------------------------------------------------
 template<class FieldValueType>
-typename syd::FieldType<FieldValueType>::GenericFunction
+typename syd::FieldType<FieldValueType>::ToStringFunction
 syd::FieldType<FieldValueType>::
-BuildGenericFunction(CastFunction f) const
+BuildToStringFunction(CastFunction f) const
 {
   auto g = [f](RecordPointer p) -> std::string {
     auto a = f(p);
@@ -54,9 +54,9 @@ BuildGenericFunction(CastFunction f) const
 
 // --------------------------------------------------------------------
 template<class FieldValueType>
-typename syd::FieldType<FieldValueType>::GenericFunction
+typename syd::FieldType<FieldValueType>::ToStringFunction
 syd::FieldType<FieldValueType>::
-BuildGenericFunction(ROCastFunction f) const
+BuildToStringFunction(ROCastFunction f) const
 {
   auto g = [f](RecordPointer p) -> std::string {
     auto a = f(p);
@@ -70,9 +70,9 @@ BuildGenericFunction(ROCastFunction f) const
 
 // --------------------------------------------------------------------
 template<class FieldValueType>
-typename syd::FieldType<FieldValueType>::GenericFunction
+typename syd::FieldType<FieldValueType>::ToStringFunction
 syd::FieldType<FieldValueType>::
-BuildComposedFunction(CastFunction f, GenericFunction h) const
+BuildComposedFunction(CastFunction f, ToStringFunction h) const
 {
   auto gf = [h,f](RecordPointer p) -> std::string {
     auto a = f(p);
@@ -85,9 +85,9 @@ BuildComposedFunction(CastFunction f, GenericFunction h) const
 
 // --------------------------------------------------------------------
 template<class FieldValueType>
-typename syd::FieldType<FieldValueType>::GenericFunction
+typename syd::FieldType<FieldValueType>::ToStringFunction
 syd::FieldType<FieldValueType>::
-BuildComposedFunction(ROCastFunction f, GenericFunction h) const
+BuildComposedFunction(ROCastFunction f, ToStringFunction h) const
 {
   auto gf = [h,f](RecordPointer p) -> std::string {
     auto a = f(p);
@@ -97,3 +97,76 @@ BuildComposedFunction(ROCastFunction f, GenericFunction h) const
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+template<class FieldValueType>
+typename syd::FieldType<FieldValueType>::SortFunction
+syd::FieldType<FieldValueType>::
+BuildComposedFunction(CastFunction f, SortFunction h) const
+{
+  auto gf = [h,f](const RecordPointer a, const RecordPointer b) -> bool {
+    if (a == nullptr) return true;
+    if (b == nullptr) return false;
+    auto aa = f(a);
+    auto bb = f(b);
+    if (aa == nullptr) { return true; }
+    if (bb == nullptr) { return false; }
+    return h(aa,bb);};
+  return gf;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class FieldValueType>
+typename syd::FieldType<FieldValueType>::SortFunction
+syd::FieldType<FieldValueType>::
+BuildComposedFunction(ROCastFunction f, SortFunction h) const
+{
+  auto gf = [h,f](const RecordPointer a, const RecordPointer b) -> bool {
+    DD("sort function RO");
+    if (a == nullptr) { DD("a null -> true"); return true; }
+    if (b == nullptr) { DD("b null -> false"); return false;}
+    // return true;
+    auto aa = f(a);
+    auto bb = f(b);
+    if (aa == nullptr) { DD("aa null -> true"); return true; }
+    if (bb == nullptr) { DD("bb null -> false"); return false;}
+    auto res = h(aa,bb); //FIXME
+    DD("call h, return res");
+    DD(res);
+    return res;
+  };
+  return gf;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class FieldValueType>
+typename syd::FieldType<FieldValueType>::SortFunction
+syd::FieldType<FieldValueType>::
+BuildSortFunction(CastFunction cast) const
+{
+  auto sort = [cast](const RecordPointer a, const RecordPointer b) -> bool {
+    auto aa = cast(a);
+    auto bb = cast(b);
+    return aa < bb; };
+  return sort;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class FieldValueType>
+typename syd::FieldType<FieldValueType>::SortFunction
+syd::FieldType<FieldValueType>::
+BuildSortFunction(ROCastFunction cast) const
+{
+  auto sort = [cast](const RecordPointer a, const RecordPointer b) -> bool {
+    auto aa = cast(a);
+    auto bb = cast(b);
+    return aa < bb; };
+  return sort;
+}
+// --------------------------------------------------------------------
