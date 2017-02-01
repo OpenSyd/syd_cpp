@@ -1,10 +1,10 @@
 #File syd_gate.ggo
 
 package "syd_gate"
-usage "syd_gate <fitimage> <mac> <N>"
-version "0.1"
-description "Generate a Gate command line to exec the template macro with data from the database. Alias are: CTIMAGE PATIENT RADIONUCLIDE Z A SPECTIMAGE N 
+usage "syd_gate <mac> <image>"
+version "0.2"
+description "Generate a Gate command line to exec the template macro with data from the database. Alias are: CT_IMAGE PATIENT RADIONUCLIDE Z A SOURCE_IMAGE
 "
 
-option "cluster"  - "Display gate_run_submit_cluster instead of Gate" flag off
+#option "cluster"  - "Display gate_run_submit_cluster instead of Gate" flag off
 option "relative" r "Relative path for images" flag off

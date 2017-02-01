@@ -23,11 +23,31 @@
 #include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
 
+class GateAlias
+{
+public:
+  typedef std::shared_ptr<GateAlias> pointer;
+  std::string alias;
+  std::string value;
+  std::string GetMacro() const {
+    std::ostringstream oss;
+    oss << "/control/alias " << alias << " " << value;
+    return oss.str();
+  }
+};
+
+GateAlias::pointer AddAlias(std::vector<GateAlias::pointer> & aliases, std::string alias_name) {
+  auto a = std::make_shared<GateAlias>();
+  a->alias = alias_name;
+  aliases.push_back(a);
+  return a;
+}
+
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(syd_gate, 3);
+  SYD_INIT_GGO(syd_gate, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -36,28 +56,32 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the study and patient name
-  syd::IdType fit_image_id = atoi(args_info.inputs[0]);
-  std::string mac_filename = args_info.inputs[1];
-  int N = atoi(args_info.inputs[2]);
+  // Define the known aliases
+  std::vector<GateAlias::pointer> aliases;
+  auto apatient = AddAlias(aliases, "PATIENT");
+  auto act = AddAlias(aliases, "CT_IMAGE");
+  auto asrc = AddAlias(aliases, "SOURCE_IMAGE");
+  auto arad = AddAlias(aliases, "RADIONUCLIDE");
+  auto az = AddAlias(aliases, "Z");
+  auto aa = AddAlias(aliases, "A");
+  // other ? spacing dose or input etc
 
-  // Define the alias
-  std::vector<std::string> alias;
+  // Fill the aliases values
+  std::string mac_filename = args_info.inputs[0];
+  syd::IdType image_id = atoi(args_info.inputs[1]);
 
-  // Get the FitImage
-  syd::FitImages::pointer tia;
-  db->QueryOne(tia, fit_image_id);
+  // Get input source image
+  auto image = db->QueryOne<syd::Image>(image_id);
+  asrc->value = image->GetAbsolutePath();
 
-  // -----------------------------------------------------
-  // PATIENT
-  syd::Patient::pointer patient = tia->images[0]->patient;
-  std::string s = "[PATIENT,"+patient->name+"]";
-  alias.push_back(s);
+  // Find the patient
+  auto patient = image->patient;
+  apatient->value = patient->name;
+
 
   // -----------------------------------------------------
   // CTIMAGE -> select with tag = ct and same acqui date than the first image
-  auto first_spect = tia->images[0];
-  auto date = first_spect->GetAcquisitionDate();
+  auto date = image->GetAcquisitionDate();
   syd::Image::vector candidates;
   odb::query<syd::Image> q =
     odb::query<syd::Image>::patient == patient->id and
@@ -87,55 +111,32 @@ int main(int argc, char* argv[])
     ++i;
   }
   auto ct = candidates[i_max];
+  act->value = ct->GetAbsolutePath();
 
-  auto path = ct->GetAbsolutePath();
-  if (args_info.relative_flag) {
-    fs::path p(path);
-    path = "data/"+p.filename().string();
+  // Radionuclide
+  if (image->injection == nullptr) {
+    LOG(WARNING) << "No injection in the patient";
+    arad->value = "Unknown";
+    az->value = "Unknown";
+    aa->value = "Unknown";
   }
-  s = "[CTIMAGE,"+path+"]";
-  alias.push_back(s);
+  auto rad = image->injection->radionuclide;
+  arad->value = rad->name;
+  az->value = syd::ToString(rad->atomic_number, 0);
+  aa->value = syd::ToString(rad->mass_number, 0);
 
-  // -----------------------------------------------------
-  // RADIONUCLIDE
-  auto rad = first_spect->injection->radionuclide;
-  s = "[RADIONUCLIDE,"+rad->name+"]";
-  alias.push_back(s);
-  int A = rad->mass_number;
-  s = "[A,"+std::to_string(A)+"]";
-  alias.push_back(s);
-  int Z = rad->atomic_number;
-  s = "[Z,"+std::to_string(Z)+"]";
-  alias.push_back(s);
-
-  // -----------------------------------------------------
-  // SPECTIMAGE
-  path = tia->GetOutput("fit_auc")->GetAbsolutePath();
-  if (args_info.relative_flag) {
-    fs::path p(path);
-    path = "data/"+p.filename().string();
-  }
-  s = "[SPECTIMAGE,"+path+"]";
-  alias.push_back(s);
-
-  // -----------------------------------------------------
-  // N
-  s = "[N,"+std::to_string(N)+"]";
-  alias.push_back(s);
-
-  // Final print //FIXME to the same for gate_run_submit_cluster
-  if (args_info.cluster_flag) {
-    std::cout << "gate_run_submit_cluster_sps.sh " << mac_filename
-              << " 2 \"\" \"-a '";
-    for(auto a:alias) std::cout << a; // no space between alias
-    std::cout << "'\"" << std::endl;
-  }
-  else {
-    std::cout << "Gate " << mac_filename
-              << " -a '";
-    for(auto a:alias) std::cout << a << " ";
-    std::cout << "'" << std::endl;
-  }
+  // Print alias (or as a file)
+  std::ostringstream oss;
+  oss << "# Inputs are: " << std::endl
+      << "#        patient = " << patient << std::endl
+      << "#        source  = " << image << std::endl
+      << "#                = " << image->history << std::endl
+      << "#        ct      = " << ct << std::endl
+      << "#                = " << ct->history << std::endl
+      << "#        rad     = " << rad << std::endl;
+  for(auto a:aliases) oss << a->GetMacro() << std::endl;
+  oss << "/control/execute " << mac_filename << std::endl;
+  std::cout << oss.str() << std::endl;
 
   // This is the end, my friend.
 }
