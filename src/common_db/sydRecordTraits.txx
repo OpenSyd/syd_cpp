@@ -541,10 +541,6 @@ InitCommonFields() const
   // Add the raw version (read only)
   auto f = [](pointer p) -> std::string { return p->ToString(); };
   AddField<std::string>("raw", f);
-
-  ///
-  
-
 }
 // --------------------------------------------------------------------
 
