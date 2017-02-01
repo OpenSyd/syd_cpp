@@ -144,7 +144,6 @@ add_executable(sydInsertAnonymizedDicom
   ${sydInsertAnonymizedDicom_GGO_C})
 target_link_libraries(sydInsertAnonymizedDicom ${SYD_STD_DB_LIBRARY})
 
-
 # Update Radionuclide table
 wrap_ggo(sydUpdateRadionuclide_GGO_C
   sydUpdateRadionuclide.ggo
@@ -353,6 +352,15 @@ add_executable(syd_transformix
   ${syd_transformix_GGO_C})
 target_link_libraries(syd_transformix ${SYD_STD_DB_LIBRARY})
 
+wrap_ggo(syd_gate syd_gate.ggo sydCommandLineDefault.ggo)
+add_executable(syd_gate syd_gate.cxx syd_gate_ggo.c)
+target_link_libraries(syd_gate ${SYD_STD_DB_LIBRARY})
+
+# wrap_ggo(sydInsertGateOutput sydInsertGateOutput.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+# add_executable(sydInsertGateOutput sydInsertGateOutput.cxx sydInsertGateOutput_ggo.c)
+# target_link_libraries(sydInsertGateOutput ${SYD_STD_DB_LIBRARY})
+
+
 # -----------------------------------------------------
 # -----------------------------------------------------
 # -----------------------------------------------------
@@ -420,12 +428,6 @@ target_link_libraries(syd_transformix ${SYD_STD_DB_LIBRARY})
 # add_executable(sydInsertPixelTimepoints sydInsertPixelTimepoints.cxx ${sydInsertPixelTimepoints_GGO_C})
 # target_link_libraries(sydInsertPixelTimepoints ${SYD_STD_DB_LIBRARY})
 
-
-#----------------------------------------------------------
-# External link Gate
-# wrap_ggo(sydInsertGateOutput sydInsertGateOutput.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-# add_executable(sydInsertGateOutput sydInsertGateOutput.cxx sydInsertGateOutput_ggo.c)
-# target_link_libraries(sydInsertGateOutput ${SYD_STD_DB_LIBRARY})
 
 #----------------------------------------------------------
 # Compute RootMeanSquareError in a mask
