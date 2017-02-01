@@ -45,6 +45,7 @@ namespace syd {
     void SetFooterFlag(bool b);
     void SetDefaultColumnsSize();
     void SetPrecision(int p);
+    void SetSingleLineFlag(bool b);
     void Print(std::ostream & os);
     void PrintHeader(std::ostream & os);
 
@@ -55,6 +56,7 @@ namespace syd {
     bool header_flag_;
     bool footer_flag_;
     int precision_;
+    bool single_line_flag_;
     void PrintRow(std::ostream & os, std::vector<std::string> & row);
   };
 

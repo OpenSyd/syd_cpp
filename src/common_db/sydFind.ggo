@@ -21,6 +21,7 @@ option "list_fields"   -   "Print the list of fields available for the given tab
 option "check"    c   "Check files associated to found records"  flag    off
 option "noheader" -   "Do not display table header"              flag    off
 option "nofooter" -   "Do not display table footer"              flag    off
+option "single_line" -   "All results in a single line"          flag    off
 option "delete"   d   "Delete all found elements"                  flag    off
 option "force"    - "Dont ask confirmation if --delete. DANGEROUS. You have been warned." flag off
 option "tag"      t   "List of tag to match (all)"               string  no multiple

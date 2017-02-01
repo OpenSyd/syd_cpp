@@ -137,6 +137,7 @@ int main(int argc, char* argv[])
     table.Build(table_name, results, args_info.format_arg);
     table.SetHeaderFlag(!args_info.noheader_flag);
     table.SetFooterFlag(!args_info.nofooter_flag);
+    table.SetSingleLineFlag(args_info.single_line_flag);
     table.Print(std::cout); // Print total number at the end !
     LOG(1) << results.size() << " elements found in table " << table_name;
   }
@@ -163,6 +164,13 @@ int main(int argc, char* argv[])
 
   // VV
   if (args_info.vv_flag or args_info.vvs_flag) {
+    syd::PrintTable table;
+    table.Build(table_name, results, "filename");
+    table.SetHeaderFlag(false);
+    table.SetFooterFlag(false);
+    table.SetSingleLineFlag(true);
+    table.Print(oss);
+    table.Print(std::cout);
     LOG(1) << "Executing the following command: " << std::endl << oss.str();
     int r = syd::ExecuteCommandLine(oss.str(), 2);
     // Stop if error in cmd

@@ -25,6 +25,7 @@ syd::PrintTable::PrintTable()
   header_flag_ = true;
   footer_flag_ = true;
   precision_ = -1;
+  single_line_flag_ = false;
 }
 //------------------------------------------------------------------
 
@@ -49,6 +50,14 @@ void syd::PrintTable::SetFooterFlag(bool b)
 void syd::PrintTable::SetPrecision(int p)
 {
   precision_ = p;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable::SetSingleLineFlag(bool b)
+{
+  single_line_flag_ = b;
 }
 //------------------------------------------------------------------
 
@@ -116,7 +125,7 @@ void syd::PrintTable::Print(std::ostream & os)
   if (header_flag_) PrintHeader(os);
   for(auto & row:values_) {
     PrintRow(os, row);
-    os << std::endl;
+    if (!single_line_flag_) os << std::endl;
   }
   if (footer_flag_) PrintHeader(os);
 }
