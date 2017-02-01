@@ -21,13 +21,13 @@
 #include "sydRecord.h"
 
 
-#define DEFINE_GENERIC_FUNCTION(TYPE)             \
+#define DEFINE_TOSTRING_FUNCTION(TYPE)             \
   template<>                                      \
   typename syd::FieldType<TYPE>::ToStringFunction  \
   syd::FieldType<TYPE>::                          \
   BuildToStringFunction(CastFunction f) const
 
-#define DEFINE_GENERIC_RO_FUNCTION(TYPE)          \
+#define DEFINE_TOSTRING_RO_FUNCTION(TYPE)          \
   template<>                                      \
   typename syd::FieldType<TYPE>::ToStringFunction  \
   syd::FieldType<TYPE>::                          \
@@ -35,57 +35,45 @@
 
 
 // --------------------------------------------------------------------
-DEFINE_GENERIC_FUNCTION(std::string)
+DEFINE_TOSTRING_FUNCTION(std::string)
 {
   return [f](RecordPointer p) -> std::string { return f(p); };
 }
-DEFINE_GENERIC_RO_FUNCTION(std::string)
+DEFINE_TOSTRING_RO_FUNCTION(std::string)
 {
   return [f](RecordPointer p) -> std::string { return f(p); };
 }
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-DEFINE_GENERIC_FUNCTION(syd::FieldBase::RecordPointer)
-{
-  //FIXME NEVER HERE
-  return [f](RecordPointer p) -> std::string {
-    auto a = f(p);
-    if (a == nullptr) return empty_value;
-    return a->ToString();
-  };
-}
-DEFINE_GENERIC_RO_FUNCTION(syd::FieldBase::RecordPointer)
-{
-  //FIXME NEVER HERE
-  return [f](RecordPointer p) -> std::string {
-    auto a = f(p);
-    if (a == nullptr) return empty_value;
-    return a->ToString();
-  };
-}
-// --------------------------------------------------------------------
+// // --------------------------------------------------------------------
+// DEFINE_TOSTRING_FUNCTION(syd::FieldBase::RecordPointer)
+// {
+//   //FIXME NEVER HERE
+//   return [f](RecordPointer p) -> std::string {
+//     auto a = f(p);
+//     if (a == nullptr) return empty_value;
+//     return a->ToString();
+//   };
+// }
+// DEFINE_TOSTRING_RO_FUNCTION(syd::FieldBase::RecordPointer)
+// {
+//   //FIXME NEVER HERE
+//   return [f](RecordPointer p) -> std::string {
+//     auto a = f(p);
+//     if (a == nullptr) return empty_value;
+//     return a->ToString();
+//   };
+// }
+// // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-DEFINE_GENERIC_FUNCTION(syd::IdType)
+DEFINE_TOSTRING_FUNCTION(syd::IdType)
 {
   return [f](RecordPointer p) -> std::string { return std::to_string(f(p)); };
 }
-DEFINE_GENERIC_RO_FUNCTION(syd::IdType)
-{
-  return [f](RecordPointer p) -> std::string { return std::to_string(f(p)); };
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-DEFINE_GENERIC_FUNCTION(int)
-{
-  return [f](RecordPointer p) -> std::string { return std::to_string(f(p)); };
-}
-DEFINE_GENERIC_RO_FUNCTION(int)
+DEFINE_TOSTRING_RO_FUNCTION(syd::IdType)
 {
   return [f](RecordPointer p) -> std::string { return std::to_string(f(p)); };
 }
@@ -93,11 +81,11 @@ DEFINE_GENERIC_RO_FUNCTION(int)
 
 
 // --------------------------------------------------------------------
-DEFINE_GENERIC_FUNCTION(unsigned short int)
+DEFINE_TOSTRING_FUNCTION(int)
 {
   return [f](RecordPointer p) -> std::string { return std::to_string(f(p)); };
 }
-DEFINE_GENERIC_RO_FUNCTION(unsigned short int)
+DEFINE_TOSTRING_RO_FUNCTION(int)
 {
   return [f](RecordPointer p) -> std::string { return std::to_string(f(p)); };
 }
@@ -105,7 +93,19 @@ DEFINE_GENERIC_RO_FUNCTION(unsigned short int)
 
 
 // --------------------------------------------------------------------
-DEFINE_GENERIC_FUNCTION(double)
+DEFINE_TOSTRING_FUNCTION(unsigned short int)
+{
+  return [f](RecordPointer p) -> std::string { return std::to_string(f(p)); };
+}
+DEFINE_TOSTRING_RO_FUNCTION(unsigned short int)
+{
+  return [f](RecordPointer p) -> std::string { return std::to_string(f(p)); };
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+DEFINE_TOSTRING_FUNCTION(double)
 {
   auto prec = this->precision;
   auto g = [prec, f](RecordPointer p) -> std::string {
@@ -114,7 +114,7 @@ DEFINE_GENERIC_FUNCTION(double)
     return ss.str(); };
   return g;
 }
-DEFINE_GENERIC_RO_FUNCTION(double)
+DEFINE_TOSTRING_RO_FUNCTION(double)
 {
   auto prec = this->precision;
   auto g = [prec, f](RecordPointer p) -> std::string {

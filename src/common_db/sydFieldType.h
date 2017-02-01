@@ -58,7 +58,7 @@ namespace syd {
   }; // end of class
   // --------------------------------------------------------------------
 
-#define DECLARE_BUILD_GENERIC_FUNCTION(TYPE)        \
+#define DECLARE_BUILD_TOSTRING_FUNCTION(TYPE)        \
   template<>                                        \
     typename syd::FieldType<TYPE>::ToStringFunction \
     syd::FieldType<TYPE>::                          \
@@ -78,12 +78,13 @@ namespace syd {
     BuildSortFunction(ROCastFunction f) const;
   */
 
-  DECLARE_BUILD_GENERIC_FUNCTION(std::string);
-  DECLARE_BUILD_GENERIC_FUNCTION(syd::IdType);
-  DECLARE_BUILD_GENERIC_FUNCTION(int);
-  DECLARE_BUILD_GENERIC_FUNCTION(unsigned short int);
-  DECLARE_BUILD_GENERIC_FUNCTION(double);
-  DECLARE_BUILD_GENERIC_FUNCTION(FieldBase::RecordPointer);
+  DECLARE_BUILD_TOSTRING_FUNCTION(std::string);
+  DECLARE_BUILD_TOSTRING_FUNCTION(syd::IdType);
+  DECLARE_BUILD_TOSTRING_FUNCTION(int);
+  DECLARE_BUILD_TOSTRING_FUNCTION(unsigned short int);
+  DECLARE_BUILD_TOSTRING_FUNCTION(double);
+  //DECLARE_BUILD_TOSTRING_FUNCTION(FieldBase::RecordPointer);
+  DECLARE_BUILD_TOSTRING_FUNCTION(bool);
 
   // I need to declare this function (empty) because the default 'compose' is
   // intended for syd::Record elements.
@@ -124,6 +125,7 @@ namespace syd {
   DECLARE_COMPOSE(std::string);
   DECLARE_COMPOSE(int);
   DECLARE_COMPOSE(unsigned short int);
+  DECLARE_COMPOSE(bool);
 
   // --------------------------------------------------------------------
 } // end namespace

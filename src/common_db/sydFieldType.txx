@@ -124,17 +124,13 @@ syd::FieldType<FieldValueType>::
 BuildComposedFunction(ROCastFunction f, SortFunction h) const
 {
   auto gf = [h,f](const RecordPointer a, const RecordPointer b) -> bool {
-    DD("sort function RO");
-    if (a == nullptr) { DD("a null -> true"); return true; }
-    if (b == nullptr) { DD("b null -> false"); return false;}
-    // return true;
+    if (a == nullptr) return true;
+    if (b == nullptr) return false;
     auto aa = f(a);
     auto bb = f(b);
-    if (aa == nullptr) { DD("aa null -> true"); return true; }
-    if (bb == nullptr) { DD("bb null -> false"); return false;}
-    auto res = h(aa,bb); //FIXME
-    DD("call h, return res");
-    DD(res);
+    if (aa == nullptr) return true;
+    if (bb == nullptr) return false;
+    auto res = h(aa,bb);
     return res;
   };
   return gf;
