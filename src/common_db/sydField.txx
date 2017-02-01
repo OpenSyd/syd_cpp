@@ -161,7 +161,14 @@ syd::Field<RecordType, FieldValueType>::
 BuildCastFunction(ROFunction ff) const
 {
   auto t = syd::RecordTraits<RecordType>::GetTraits()->GetTableName();
-  auto h = [t,ff](RecordPointer p) -> FieldValueType {
+  auto s = this->type;
+  auto h = [t,ff,s](RecordPointer p) -> FieldValueType {
+    /*DD("cast");
+    DD(s);
+    DD(syd::RecordTraits<RecordType>::GetTraits()->GetTableName());
+    if (p != nullptr) {
+      DD(p->GetTableName());
+      }*/
     auto r = std::static_pointer_cast<RecordType>(p);
     if (!r) {
       LOG(FATAL) << "Error while using fct cast (ro) "
