@@ -30,18 +30,7 @@ namespace syd {
   /// Main GetTraits function
   DEFINE_TABLE_TRAITS_HEADER(Image);
 
-  /// Specific Sort
-  template<> void syd::RecordTraits<syd::Image>::
-    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
-
-  /// Specific fields
-  template<> void syd::RecordTraits<syd::Image>::
-    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
-
-  /// Default fields
-  template<> std::string syd::RecordTraits<syd::Image>::
-    GetDefaultFields() const;
-
+  /// Build the fields
   template<> void syd::RecordTraits<syd::Image>::
     BuildFields(const syd::Database * db) const;
 
