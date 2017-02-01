@@ -21,15 +21,15 @@
 #include "sydRecord.h"
 
 
-#define DEFINE_TOSTRING_FUNCTION(TYPE)             \
+#define DEFINE_TOSTRING_FUNCTION(TYPE)            \
   template<>                                      \
-  typename syd::FieldType<TYPE>::ToStringFunction  \
+  typename syd::FieldType<TYPE>::ToStringFunction \
   syd::FieldType<TYPE>::                          \
   BuildToStringFunction(CastFunction f) const
 
-#define DEFINE_TOSTRING_RO_FUNCTION(TYPE)          \
+#define DEFINE_TOSTRING_RO_FUNCTION(TYPE)         \
   template<>                                      \
-  typename syd::FieldType<TYPE>::ToStringFunction  \
+  typename syd::FieldType<TYPE>::ToStringFunction \
   syd::FieldType<TYPE>::                          \
   BuildToStringFunction(ROCastFunction f) const
 
@@ -105,6 +105,18 @@ DEFINE_TOSTRING_RO_FUNCTION(unsigned short int)
 
 
 // --------------------------------------------------------------------
+DEFINE_TOSTRING_FUNCTION(bool)
+{
+  return [f](RecordPointer p) -> std::string { if (f(p)) return "Y"; return "N"; };
+}
+DEFINE_TOSTRING_RO_FUNCTION(bool)
+{
+  return [f](RecordPointer p) -> std::string { if (f(p)) return "Y"; return "N"; };
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 DEFINE_TOSTRING_FUNCTION(double)
 {
   auto prec = this->precision;
@@ -132,5 +144,6 @@ DEFINE_COMPOSE(double);
 DEFINE_COMPOSE(std::string);
 DEFINE_COMPOSE(int);
 DEFINE_COMPOSE(unsigned short int);
+DEFINE_COMPOSE(bool);
 // --------------------------------------------------------------------
 
