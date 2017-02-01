@@ -29,18 +29,7 @@ namespace syd {
   /// Main GetTraits function
   DEFINE_TABLE_TRAITS_HEADER(RecordHistory);
 
-  /// Specific Sort
-  template<> void syd::RecordTraits<syd::RecordHistory>::
-    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
-
-  /// Specific fields
-  template<> void syd::RecordTraits<syd::RecordHistory>::
-    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
-
-  /// Default fields
-  template<> std::string syd::RecordTraits<syd::RecordHistory>::
-    GetDefaultFields() const;
-
+  /// Build fields 
   template<> void syd::RecordTraits<syd::RecordHistory>::
     BuildFields(const syd::Database * db) const;
 
