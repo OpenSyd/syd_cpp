@@ -72,6 +72,7 @@ BuildFields(const syd::Database * db) const
   // Abbreviation
   field_map_["pat"] = db->NewField("Image", "patient.name", "pat");
   field_map_["rad"] = db->NewField("Image", "injection.radionuclide.name", "rad");
+  field_map_["frame"] = field_map_["frame_of_reference_uid"];
 
   // Format lists
   field_format_map_["short"] =
