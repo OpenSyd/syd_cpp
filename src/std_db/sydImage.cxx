@@ -86,9 +86,9 @@ std::string syd::Image::ToString() const
   else ss << empty_value << " ";
   if (history and print_history_flag_) {
     ss << " " << history->insertion_date << " "
-       << history->update_date;
+       << history->update_date << " ";
   }
-  else ss << empty_value;
+  else ss << empty_value << " ";
   ss << GetAllComments() << std::endl;
   auto s = ss.str();
   return trim(s);
