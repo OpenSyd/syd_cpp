@@ -43,7 +43,7 @@ BuildFields(const syd::Database * db) const
   // abbreviation
   field_map_["Q"] = field_map_["max_beta_minus_energy_in_kev"];
 
-  field_format_map_["default"] = "id name element Z A metastable half_life_in_hours max_beta_minus_energy_in_kev";
+  field_format_map_["default"] = "id name element atomic_number mass_number metastable half_life_in_hours max_beta_minus_energy_in_kev";
 
 }
 // --------------------------------------------------------------------
