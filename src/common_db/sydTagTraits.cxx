@@ -25,39 +25,16 @@ DEFINE_TABLE_TRAITS_IMPL(Tag);
 
 
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Tag>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
+template<>
+void
+syd::RecordTraits<syd::Tag>::
+BuildFields(const syd::Database * db) const
 {
-  DDF();
-  DD("tag");
-  // Sort functions from Record
-  SetDefaultSortFunctions(map);
-  // New sort comparison
-  auto f = [](pointer a, pointer b) -> bool { return a->label < b->label; };
-  map["label"] = f;
-  map[""] = f; // make this one the default
-}
-// --------------------------------------------------------------------
+  InitCommonFields();
+  ADD_FIELD(label, std::string);
+  ADD_FIELD(description, std::string);
 
-
-// --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Tag>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  DDF();
-  DD("tag");
-  SetDefaultFieldFunctions(map);
-  map["label"] = [](pointer a) -> std::string { return a->label; };
-  map["description"] = [](pointer a) -> std::string { return a->description; };
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<> std::string syd::RecordTraits<syd::Tag>::
-GetDefaultFields() const
-{
-  std::string s = "id label description";
-  return s;
+  // Format lists
+  field_format_map_["default"] = "id label description";
 }
 // --------------------------------------------------------------------
