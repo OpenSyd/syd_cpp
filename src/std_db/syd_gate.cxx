@@ -43,6 +43,20 @@ GateAlias::pointer AddAlias(std::vector<GateAlias::pointer> & aliases, std::stri
   return a;
 }
 
+std::string PrintCopyPath(std::string mhd, bool relative, std::string output)
+{
+  if (!relative) return mhd;
+  fs::path file_mhd(mhd);
+  fs::path file_raw(file_mhd);
+  file_raw.replace_extension(".raw");
+  fs::path folder_output(output);
+  std::cout << "cp " << file_mhd.string() << " " << folder_output.string() << std::endl;
+  std::cout << "cp " << file_raw.string() << " " << folder_output.string() << std::endl;
+  fs::path out(folder_output/file_mhd.filename());
+  return out.string();
+}
+
+
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -64,6 +78,8 @@ int main(int argc, char* argv[])
   auto arad = AddAlias(aliases, "RADIONUCLIDE");
   auto az = AddAlias(aliases, "Z");
   auto aa = AddAlias(aliases, "A");
+  GateAlias::pointer an;
+  if (args_info.N_given) an = AddAlias(aliases, "N");
   // other ? spacing dose or input etc
 
   // Fill the aliases values
@@ -72,12 +88,15 @@ int main(int argc, char* argv[])
 
   // Get input source image
   auto image = db->QueryOne<syd::Image>(image_id);
-  asrc->value = image->GetAbsolutePath();
+  auto output = PrintCopyPath(image->GetAbsolutePath(), args_info.relative_flag, args_info.output_folder_arg);
+  asrc->value = output;
 
   // Find the patient
   auto patient = image->patient;
   apatient->value = patient->name;
 
+  // Option for file path
+  //  DD(args_info.relative_flag);
 
   // -----------------------------------------------------
   // CTIMAGE -> select with tag = ct and same acqui date than the first image
@@ -111,7 +130,8 @@ int main(int argc, char* argv[])
     ++i;
   }
   auto ct = candidates[i_max];
-  act->value = ct->GetAbsolutePath();
+  output = PrintCopyPath(ct->GetAbsolutePath(), args_info.relative_flag, args_info.output_folder_arg);
+  act->value = output;
 
   // Radionuclide
   if (image->injection == nullptr) {
@@ -125,7 +145,15 @@ int main(int argc, char* argv[])
   az->value = syd::ToString(rad->atomic_number, 0);
   aa->value = syd::ToString(rad->mass_number, 0);
 
+  // N
+  if (args_info.N_given)
+    an->value = syd::ToString(args_info.N_arg, 0);
+
   // Print alias (or as a file)
+  std::ofstream of(args_info.output_arg, std::ios::out);
+  if (!of) {
+    LOG(FATAL) << "Error while writing file " << args_info.output_arg;
+  }
   std::ostringstream oss;
   oss << "# Inputs are: " << std::endl
       << "#        patient = " << patient << std::endl
@@ -136,7 +164,10 @@ int main(int argc, char* argv[])
       << "#        rad     = " << rad << std::endl;
   for(auto a:aliases) oss << a->GetMacro() << std::endl;
   oss << "/control/execute " << mac_filename << std::endl;
+  of << oss.str() << std::endl;
+  of.close();
   std::cout << oss.str() << std::endl;
+  LOG(1) << "File " << args_info.output_arg << " written.";
 
   // This is the end, my friend.
 }
