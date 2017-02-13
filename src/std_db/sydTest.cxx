@@ -26,7 +26,7 @@
 #include "sydPrintTable.h"
 #include "sydField.h"
 
-#include "sydTestTemp9.h"
+//#include "sydTestTemp9.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
   // -----------------------------------------------------------------
 
   syd::Record::vector records;
-  db->Query("Image", records);
+  db->Query(records, "Image");
   DDS(records);
   auto r = records[0];
   DD(r);
