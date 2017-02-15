@@ -28,6 +28,7 @@
 #include <fstream>
 #include <algorithm>
 #include <numeric>
+#include <typeinfo>
 
 // To get current working directory
 // http://stackoverflow.com/questions/143174/how-do-i-get-the-directory-that-a-program-is-running-from
@@ -156,8 +157,11 @@ namespace syd {
   // --------------------------------------------------------------------
 
 
-#include "sydCommon.txx"
+  // --------------------------------------------------------------------
+  std::string demangle(const char* name);
 
+
+#include "sydCommon.txx"
 } // end namespace
 
 #endif /* end #define SYDCOMMON_H */
