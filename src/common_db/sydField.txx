@@ -48,7 +48,8 @@ syd::Field<RecordType, FieldValueType>::
 New(std::string name, Function f, bool read_only, std::string abbrev)
 {
   auto t = std::make_shared<Self>(name, f);
-  t->type = typeid(FieldValueType).name();
+  t->type = syd::demangle(typeid(FieldValueType).name());
+  if (typeid(FieldValueType) == typeid(std::string)) t->type = "string";
   t->read_only = read_only;
   if (abbrev == "") t->abbrev = name;
   else t->abbrev = abbrev;
@@ -64,7 +65,8 @@ syd::Field<RecordType, FieldValueType>::
 New(std::string name, ROFunction f, bool read_only, std::string abbrev)
 {
   auto t = std::make_shared<Self>(name, f);
-  t->type = typeid(FieldValueType).name();
+  t->type = syd::demangle(typeid(FieldValueType).name());
+  if (typeid(FieldValueType) == typeid(std::string)) t->type = "string";
   t->read_only = read_only;
   if (abbrev == "") t->abbrev = name;
   else t->abbrev = abbrev;
