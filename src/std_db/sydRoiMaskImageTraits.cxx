@@ -23,54 +23,15 @@
 DEFINE_TABLE_TRAITS_IMPL(RoiMaskImage);
 // --------------------------------------------------------------------
 
-
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::RoiMaskImage>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
-{
-  // Like image
-  syd::RecordTraits<syd::Image>::CompareFunctionMap m;
-  syd::RecordTraits<syd::Image>::GetTraits()->BuildMapOfSortFunctions(m);
-  map.insert(m.begin(), m.end());
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::RoiMaskImage>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  // From image
-  syd::RecordTraits<syd::Image>::FieldFunctionMap m;
-  syd::RecordTraits<syd::Image>::GetTraits()->BuildMapOfFieldsFunctions(m);
-  map.insert(m.begin(), m.end());
-  // add roitype
-  auto pmap = syd::RecordTraits<syd::RoiType>::GetTraits()->GetFieldMap();
-  for(auto & m:pmap) {
-    std::string s = "roi."+m.first;
-    auto f = m.second;
-    map[s] = [f](pointer a) -> std::string { return f(a->roitype); };
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<> std::string syd::RecordTraits<syd::RoiMaskImage>::
-GetDefaultFields() const
-{
-  std::string s = "id patient.name roi.name tags modality size spacing dicoms comments";
-  return s;
-}
-// --------------------------------------------------------------------
-
-
 template<> void syd::RecordTraits<syd::RoiMaskImage>::
 BuildFields(const syd::Database * db) const
 {
   // Retrive fields from image
   auto map = syd::RecordTraits<syd::Image>::GetTraits()->GetFieldsMap(db);
   for(auto & m:map) field_map_[m.first] = m.second->Copy();
+
+  ADD_TABLE_FIELD(roitype, syd::RoiType);
 
   // Format lists
   field_format_map_["short"] =
@@ -80,3 +41,4 @@ BuildFields(const syd::Database * db) const
 
   DD("done roimask");
 }
+// --------------------------------------------------------------------

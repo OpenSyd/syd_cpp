@@ -30,18 +30,7 @@ namespace syd {
   /// Main GetTraits function
   DEFINE_TABLE_TRAITS_HEADER(RoiMaskImage);
 
-  /// Specific Sort for Tag
-  template<> void syd::RecordTraits<syd::RoiMaskImage>::
-    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
-
-  /// Specific fields
-  template<> void syd::RecordTraits<syd::RoiMaskImage>::
-    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
-
-  /// Default fields
-  template<> std::string syd::RecordTraits<syd::RoiMaskImage>::
-    GetDefaultFields() const;
-
+  /// Build the fields
   template<> void syd::RecordTraits<syd::RoiMaskImage>::
     BuildFields(const syd::Database * db) const;
 

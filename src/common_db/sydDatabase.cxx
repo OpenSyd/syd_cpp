@@ -165,9 +165,9 @@ void syd::Database::Dump(std::ostream & os)
     os << warningColor << " -> does not exist ("
        << GetDatabaseAbsoluteFolder() << ")" << resetColor;
   os << std::endl;
-  for(auto i=map_of_traits_.begin(); i != map_of_traits_.end(); i++) {
-    int n = GetNumberOfElements(i->first);
-    os << "Table: " << std::setw(15) << i->first << " " <<  std::setw(10) << n;
+  for(auto & i:map_of_traits_) {
+    int n = GetNumberOfElements(i.first);
+    os << "Table: " << std::setw(15) << i.first << " " <<  std::setw(10) << n;
     if (n>1) os << " elements" << std::endl;
     else os << " element" << std::endl;
   }
