@@ -34,7 +34,6 @@ namespace syd {
   template<> void syd::RecordTraits<syd::FitImages>::
     BuildFields(const syd::Database * db) const;
 
-
 } // end of namespace
 // --------------------------------------------------------------------
 
