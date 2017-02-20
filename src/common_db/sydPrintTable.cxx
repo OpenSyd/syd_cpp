@@ -65,12 +65,12 @@ void syd::PrintTable::SetSingleLineFlag(bool b)
 //------------------------------------------------------------------
 void syd::PrintTable::Build(std::string table_name,
                             const RecordBaseVector records,
-                            std::string columns)
+                            std::string format)
 {
   values_.resize(records.size());
   if (records.size() == 0) return;
   auto db = records[0]->GetDatabase();
-  auto fields = db->NewFields(table_name, columns);
+  auto fields = db->NewFields(table_name, format);
   Build(records, fields);
 }
 //------------------------------------------------------------------
