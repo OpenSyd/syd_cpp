@@ -52,9 +52,9 @@ int main(int argc, char* argv[])
     oss << "Available fields for table " << table_name << ": " << std::endl;
     for(auto m:map) {
       if (m.first == m.second->name) oss << m.first << " ";
-      else oss << m.first << "(" << m.second->name << ") ";
+      else oss << m.second->name << "[" << m.first << "] ";
     }
-    oss << std::endl << "Total of " << map.size() << " fields.";
+    oss << std::endl << "Total of " << map.size() << " fields." << std::endl;
     auto fmap = db->GetTraits(table_name)->GetFieldFormatsMap(db);
     if (fmap.size() > 0) {
       oss << " Available formats : " << std::endl;
