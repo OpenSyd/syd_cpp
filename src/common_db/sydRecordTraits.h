@@ -125,7 +125,7 @@ namespace syd {
     void InitCommonFields() const;
 
     /// Look in the map to get a field by his name
-    FieldBasePointer GetField(const syd::Database * db, std::string field_name) const;
+    FieldBasePointer FindField(const syd::Database * db, std::string field_name) const;
 
     /// Define a new Field, of a given type by reference
     template<class FieldValueType>

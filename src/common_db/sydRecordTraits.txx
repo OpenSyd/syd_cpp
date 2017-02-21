@@ -433,8 +433,25 @@ NewField(const syd::Database * db, std::string field_names, std::string abbrev) 
   }
   else field_names = "";
 
+  std::string name = first_field;
+  std::string short_name = "";
+  auto index1 = first_field.find_first_of("[");
+  if (index1 != std::string::npos) {
+    auto index2 = first_field.find_first_of("]");
+    if (index2  == std::string::npos) {
+      LOG(FATAL) << "malformed field name, need both '[' and ']'";
+    }
+    name = first_field.substr(0, index1);
+    int l = index2-index1-1;
+    short_name = first_field.substr(index1+1,l);
+  }
+
   // Get a copy of the existing field
-  auto field = GetField(db, first_field); // this is a copy
+  auto field = FindField(db, name); // this is a copy
+
+  // abbrev ?
+  if (short_name != "") field->abbrev = short_name;
+
   // Change his name (for complex field, that will be build recursively)
   field->name = field->name+field_names;
   if (abbrev != "") field->abbrev = abbrev;
@@ -451,10 +468,13 @@ typename syd::RecordTraits<RecordType>::FieldBaseVector
 syd::RecordTraits<RecordType>::
 NewFields(const syd::Database * db, std::string field_names) const
 {
+  // Split field_names into words
   typename syd::RecordTraits<RecordType>::FieldBaseVector fields;
   std::vector<std::string> words;
   syd::GetWords(words, field_names);
 
+  // For each words, look first if it is a format (several fields)
+  // or if it is a simple field.
   auto map = GetFieldFormatsMap(db);
   for(auto w:words) {
     auto it = map.find(w);
@@ -476,7 +496,7 @@ NewFields(const syd::Database * db, std::string field_names) const
 template<class RecordType>
 syd::FieldBase::pointer
 syd::RecordTraits<RecordType>::
-GetField(const syd::Database * db, std::string field_name) const
+FindField(const syd::Database * db, std::string field_name) const
 {
   auto map = GetFieldsMap(db);
   auto it = map.find(field_name);
@@ -487,7 +507,8 @@ GetField(const syd::Database * db, std::string field_name) const
     EXCEPTION("Cannot find the field '" << field_name
               << "'. Available fields: " << ss.str());
   }
-  return it->second->Copy();
+  auto f = it->second->Copy();
+  return f;
 }
 // --------------------------------------------------------------------
 

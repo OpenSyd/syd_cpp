@@ -199,12 +199,11 @@ BuildFunction(const syd::Database * db)
   }
 
   // The following is *very* ugly (you have been warned).
-
-
   if (field_names != "") {
     auto subfield = db->NewField(this->type, field_names);
     subfield->precision = this->precision;
     subfield->BuildFunction(db);
+    this->abbrev = subfield->abbrev;
     this->subfield_ = subfield; // need to store to avoid destruction
   }
   else {
