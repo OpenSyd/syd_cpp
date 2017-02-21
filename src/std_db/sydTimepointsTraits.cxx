@@ -46,7 +46,7 @@ BuildFields(const syd::Database * db) const
   // values
   auto f_values = [](pointer p) -> std::string {
     std::ostringstream oss;
-    for(auto t:p->values) oss << t << " ";
+    for(auto t:p->values) oss << t << " "; //FIXME how to deal with precision ?
     auto s = oss.str();
     return syd::trim(s); };
   AddField<std::string>("values", f_values);

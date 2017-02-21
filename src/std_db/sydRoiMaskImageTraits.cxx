@@ -35,8 +35,15 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["short"] =
-    "id pat roitype.name tags rad modality";
+    "id patient.name[pat] "
+    "roitype.name[roi] "
+    "acquisition_date[date] tags "
+    "injection.radionuclide.name[rad]"; // no need for 'modality' here 
   field_format_map_["default"] =
-    "id pat roitype.name tags rad injection.id modality size spacing dicoms comments";
+    "short size spacing dicoms comments[com]";
+  field_format_map_["hist"] =
+    "short history.insertion_date[insert] history.update_date[update]";
+  field_format_map_["frame"] =
+    "default frame_of_reference_uid[frame]";
 }
 // --------------------------------------------------------------------

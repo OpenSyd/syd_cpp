@@ -36,11 +36,7 @@ BuildFields(const syd::Database * db) const
   ADD_FIELD(date, std::string);
   ADD_FIELD(activity_in_MBq, double);
 
-  // Abbreviation
-  field_map_["pat"] = db->NewField("Injection", "patient.name", "pat");
-  field_map_["rad"] = db->NewField("Injection", "radionuclide.name", "rad");
-
-  field_format_map_["default"] = "id pat rad date activity_in_MBq";
+  field_format_map_["default"] = "id patient.name[pat] radionuclide.name[rad] date activity_in_MBq[activity]";
 }
 // --------------------------------------------------------------------
 
