@@ -77,13 +77,9 @@ BuildFields(const syd::Database * db) const
   AddField<std::string>("models", f_mo);
   ADD_FIELD_A(akaike_criterion, std::string, "ak");
 
-  // Abbreviation
-  field_map_["pat"] = db->NewField("FitImages", "first_image.patient.name", "pat");
-  field_map_["rad"] = db->NewField("FitImages", "first_image.injection.radionuclide.name", "rad");
-
   // Format lists
   field_format_map_["default"] =
-    "id pat rad images models min_activity r2_min akaike_criterion restricted_tac max_iteration images_n success_rate outputs";
+    "id first_image.patient.name[pat] first_image.injection.radionuclide.name[rad] images models min_activity r2_min akaike_criterion restricted_tac max_iteration images_n success_rate outputs";
 }
 // --------------------------------------------------------------------
 
