@@ -57,7 +57,7 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["default"] =
-    "id patient.name dicom_acquisition_date dicom_files dicom_modality dicom_description reconstruction_date";
+    "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_description[description] dicom_reconstruction_date[rec_date]";
 }
 // --------------------------------------------------------------------
 

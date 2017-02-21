@@ -24,6 +24,7 @@
 DEFINE_TABLE_TRAITS_IMPL(Image);
 // --------------------------------------------------------------------
 
+
 // --------------------------------------------------------------------
 template<>
 void
@@ -69,17 +70,15 @@ BuildFields(const syd::Database * db) const
   auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
   AddField<std::string>("tags", f_t);
 
-  // Abbreviation
-  field_map_["pat"] = db->NewField("Image", "patient.name", "pat");
-  field_map_["rad"] = db->NewField("Image", "injection.radionuclide.name", "rad");
-  field_map_["frame"] = field_map_["frame_of_reference_uid"];
-
   // Format lists
   field_format_map_["short"] =
-  "id pat acquisition_date tags rad modality";
+    "id patient.name[pat] acquisition_date[date] tags injection.radionuclide.name[rad] modality[mod]";
   field_format_map_["default"] =
-  "id pat acquisition_date tags rad injection.id modality size spacing dicoms comments";
-
+    "id patient.name[pat] acquisition_date[date] tags injection.radionuclide.name[rad] injection.id[inj] modality[mod] size spacing dicoms comments[com]";
+  field_format_map_["hist"] =
+    "id patient.name[pat] acquisition_date[date] tags injection.radionuclide.name[rad] history.insertion_date[insert] history.update_date[update]";
+  field_format_map_["frame"] =
+    "default frame_of_reference_uid[frame]";
 }
 // --------------------------------------------------------------------
 
