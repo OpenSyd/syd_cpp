@@ -32,14 +32,12 @@ syd::RecordTraits<syd::DicomFile>::
 BuildFields(const syd::Database * db) const
 {
   InitCommonFields();
-
   ADD_FIELD(dicom_sop_uid, std::string);
   ADD_FIELD(dicom_instance_number, int);
 
-  // Inherit File
-  field_map_["filename"] = db->NewField("File", "filename");
-  field_map_["path"] = db->NewField("File", "path");
-  field_map_["md5"] = db->NewField("File", "md5");
+  // Retrive fields from File  (inherit)
+  auto map = syd::RecordTraits<syd::File>::GetTraits()->GetFieldsMap(db);
+  for(auto & m:map) field_map_[m.first] = m.second->Copy();
 
   // Format lists
   field_format_map_["default"] =
