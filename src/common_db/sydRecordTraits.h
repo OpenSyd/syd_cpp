@@ -43,11 +43,11 @@ namespace syd {
     typedef std::vector<pointer> vector;
     typedef syd::RecordTraitsBase::RecordBasePointer RecordBasePointer;
     typedef syd::RecordTraitsBase::RecordBaseVector RecordBaseVector;
-    typedef std::function<bool(pointer a, pointer b)> CompareFunction;
-    typedef std::map<std::string, CompareFunction> CompareFunctionMap;
-    typedef std::function<std::string(pointer)> FieldFunc;
-    typedef std::map<std::string, FieldFunc> FieldFunctionMap;
-    typedef syd::RecordTraitsBase::RecordFieldFunctionMap RecordFieldFunctionMap;
+    /* typedef std::function<bool(pointer a, pointer b)> CompareFunction; */
+    /* typedef std::map<std::string, CompareFunction> CompareFunctionMap; */
+    /* typedef std::function<std::string(pointer)> FieldFunc; */
+    /* typedef std::map<std::string, FieldFunc> FieldFunctionMap; */
+    /* typedef syd::RecordTraitsBase::RecordFieldFunctionMap RecordFieldFunctionMap; */
     //typedef syd::RecordTraitsBase::FieldBasePointer FieldBasePointer;
     typedef syd::RecordTraitsBase::FieldMapType FieldMapType;
     typedef syd::RecordTraitsBase::FieldFormatMapType FieldFormatMapType;
@@ -72,24 +72,24 @@ namespace syd {
 
     /// Function to sort elements in a vector
     void Sort(RecordBaseVector & records, const std::string & type) const;
-    const CompareFunctionMap & GetSortFunctionMap() const;
-    void BuildMapOfSortFunctions(CompareFunctionMap & map) const;
+    /* const CompareFunctionMap & GetSortFunctionMap() const; */
+    /* void BuildMapOfSortFunctions(CompareFunctionMap & map) const; */
 
-    /// Functions to get fields value as string
-    void BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
-    RecordFieldFunc GetFieldOLD(std::string field) const;
-    std::vector<RecordFieldFunc> GetFields(std::string fields) const;
-    const FieldFunctionMap & GetFieldMap() const;
-    const RecordFieldFunctionMap & GetRecordFieldMap() const;
-    virtual std::string GetDefaultFields() const;
+    /* /// Functions to get fields value as string */
+    /* void BuildMapOfFieldsFunctions(FieldFunctionMap & map) const; */
+    /* RecordFieldFunc GetFieldOLD(std::string field) const; */
+    /* std::vector<RecordFieldFunc> GetFields(std::string fields) const; */
+    /* const FieldFunctionMap & GetFieldMap() const; */
+    /* const RecordFieldFunctionMap & GetRecordFieldMap() const; */
+    /* virtual std::string GetDefaultFields() const; */
 
     /// Return the list of initial fields
     virtual const FieldMapType & GetFieldsMap(const syd::Database * db) const;
     const FieldFormatMapType & GetFieldFormatsMap(const syd::Database * db) const;
 
     /// Create and build a field according to the name
-    virtual FieldBasePointer NewField(const syd::Database * db, std::string field_name, std::string abbrev="") const;
-    virtual FieldBaseVector NewFields(const syd::Database * db, std::string field_names) const;
+    virtual FieldBasePointer GetField(const syd::Database * db, std::string field_name, std::string abbrev="") const;
+    virtual FieldBaseVector GetFields(const syd::Database * db, std::string field_names) const;
 
   protected:
     RecordTraits(std::string table_name);
@@ -103,17 +103,17 @@ namespace syd {
     // For sorting elements. The following is mutable because may be
     // initialized the first time it is call (from a const function)
     void InternalSort(vector & records, std::string type) const;
-    mutable CompareFunctionMap compare_record_fmap_;
-    void SetDefaultSortFunctions(CompareFunctionMap & map) const;
+    /* mutable CompareFunctionMap compare_record_fmap_; */
+    /* void SetDefaultSortFunctions(CompareFunctionMap & map) const; */
 
     // For get field function
-    mutable FieldFunctionMap field_fmap_;
-    void SetDefaultFieldFunctions(FieldFunctionMap & map) const;
-    void InitFields() const;
+    /* mutable FieldFunctionMap field_fmap_; */
+    /* void SetDefaultFieldFunctions(FieldFunctionMap & map) const; */
+    /* void InitFields() const; */
 
     /// Map of fields (mutable because lazy initialisation)
     mutable FieldMapType field_map_;
-    mutable FieldMapType field_map2_;
+    /* mutable FieldMapType field_map2_; */
 
     // Map of format string
     mutable FieldFormatMapType field_format_map_;

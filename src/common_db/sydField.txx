@@ -24,8 +24,6 @@ syd::Field<RecordType, FieldValueType>::Field(std::string name, Function ff)
   f = ff;
   auto g = f;
   rof = nullptr;
-  // rof = [g](typename RecordType::pointer p) -> FieldValueType {
-  //   return g(p);};
 }
 // --------------------------------------------------------------------
 
@@ -200,7 +198,7 @@ BuildFunction(const syd::Database * db)
 
   // The following is *very* ugly (you have been warned).
   if (field_names != "") {
-    auto subfield = db->NewField(this->type, field_names);
+    auto subfield = db->GetField(this->type, field_names);
     subfield->precision = this->precision;
     subfield->BuildFunction(db);
     this->abbrev = subfield->abbrev;

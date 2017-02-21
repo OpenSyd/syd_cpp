@@ -160,7 +160,8 @@ std::string syd::Record::GetFieldValue(std::string field_name)
 {
   // We retrive the field function and apply it on this as a shared pointer
   // Issue with const ! --> make this function const (later)
-  return traits()->GetFieldOLD(field_name)(shared_from_this());
+  auto field = traits()->GetField(db_, field_name, "");
+  return field->get(shared_from_this());
 }
 // --------------------------------------------------------------------
 

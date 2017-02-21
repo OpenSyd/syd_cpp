@@ -510,30 +510,6 @@ void syd::Database::CheckDatabaseSchema()
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-/*syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
-  {
-  if (description_ == NULL) {
-  description_ = new DatabaseDescription();
-  description_->Init(this);
-  }
-  return description_;
-  }*/
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-/*syd::TableDescription * syd::Database::GetTableDescription(const std::string & table_name)
-  {
-  auto desc = GetDatabaseDescription();
-  syd::TableDescription * tdesc;
-  bool b = desc->FindTableDescription(table_name, &tdesc);
-  if (!b) EXCEPTION("Could not find the table " << table_name);
-  return tdesc;
-  }
-*/
-// --------------------------------------------------------------------
-
 
 // --------------------------------------------------------------------
 void syd::Database::MigrateSchema()
@@ -637,100 +613,19 @@ void syd::Database::Copy(std::string new_dbname, std::string new_folder)
 
 
 // --------------------------------------------------------------------
-syd::Database::FieldFunc syd::Database::
-GetField(std::string table_name, std::string field)
-{
-  return GetTraits(table_name)->GetFieldOLD(field);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-std::vector<syd::Database::FieldFunc> syd::Database::
-GetFields(std::string table_name, std::string fields)
-{
-  return GetTraits(table_name)->GetFields(fields);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 syd::FieldBase::pointer syd::Database::
-NewField(std::string table_name, std::string field_name, std::string abbrev) const
+GetField(std::string table_name, std::string field_name, std::string abbrev) const
 {
-  return GetTraits(table_name)->NewField(this, field_name, abbrev);
+  return GetTraits(table_name)->GetField(this, field_name, abbrev);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 syd::FieldBase::vector syd::Database::
-NewFields(std::string table_name, std::string field_names) const
+GetFields(std::string table_name, std::string field_names) const
 {
-  return GetTraits(table_name)->NewFields(this, field_names);
+  return GetTraits(table_name)->GetFields(this, field_names);
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-/*const syd::Record::GetFieldFunction &
-  syd::Database::FieldGetter(std::string table_name, std::string field_name) const
-  {
-  DDF();
-  auto map = GetDefaultFields();
-  auto it = map.find(table_name);
-  if (it == map.end()) {
-  EXCEPTION("Cannot find table '" << table_name << "' in FieldGetter.");
-  }
-  auto field_map = it->second;
-  auto iter = field_map.find(field_name);
-  if (iter == field_map.end()) {
-  EXCEPTION("Cannot find field '" << field_name
-  << "' in table '" << table_name << "' in FieldGetter.");
-  }
-  return iter->second;
-  }
-*/
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-/*const std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> &
-  syd::Database::GetDefaultFields() const
-  {
-  static std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> map;
-  static bool already_here = false;
-  if (already_here) return map;
-  for(auto i:GetMapOfTables()) {
-  auto table = i.second;
-  auto name = table->GetTableName();
-  auto fake = New(name);
-  fake->SetDefaultFields(map[name]);
-  }
-  already_here = true;
-  return map;
-  }
-*/
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-/*const syd::Record::GetFieldFunction &
-  syd::Database::GetFieldFunction(std::string table_name, std::string field_name) const
-  {
-  DDF();
-  auto map = GetDefaultFields();
-  auto it = map.find(table_name);
-  if (it == map.end()) {
-  EXCEPTION("Cannot find table '" << table_name << "' in FieldGetter.");
-  }
-  auto field_map = it->second;
-  auto iter = field_map.find(field_name);
-  if (iter == field_map.end()) {
-  EXCEPTION("Cannot find field '" << field_name
-  << "' in table '" << table_name << "' in FieldGetter.");
-  }
-  return iter->second;
-  }
-*/
-// --------------------------------------------------------------------

@@ -225,13 +225,13 @@ Sort(RecordBaseVector & records,
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-const typename syd::RecordTraits<RecordType>::CompareFunctionMap &
-syd::RecordTraits<RecordType>::
-GetSortFunctionMap() const
-{
-  return compare_record_fmap_;
-}
+// template<class RecordType>
+// const typename syd::RecordTraits<RecordType>::CompareFunctionMap &
+// syd::RecordTraits<RecordType>::
+// GetSortFunctionMap() const
+// {
+//   return compare_record_fmap_;
+// }
 // --------------------------------------------------------------------
 
 
@@ -240,29 +240,11 @@ template<class RecordType>
 void syd::RecordTraits<RecordType>::
 InternalSort(vector & v, std::string type) const
 {
-  if (0){
-    // Only once: build the map of sorting function
-    if (compare_record_fmap_.size() == 0)
-      BuildMapOfSortFunctions(compare_record_fmap_);
-
-    // Try to find the sort function
-    auto it = compare_record_fmap_.find(type);
-    if (it == compare_record_fmap_.end()) {
-      std::string help;
-      for(auto & c:compare_record_fmap_)
-        help += "'"+c.first+"' ";
-      LOG(WARNING) << "Cannot find the sorting type '"
-                   << type << "'. Current known types are: "
-                   << help;
-      return;
-    }
-    std::sort(begin(v), end(v), it->second);
-  }
   // sort
   if (type == "") type = "id";
   if (v.size() == 0) return;
   auto db = v[0]->GetDatabase();
-  auto f = NewField(db, type);
+  auto f = GetField(db, type);
   f->BuildFunction(db);
   std::sort(begin(v), end(v), f->sort_f);
 }
@@ -270,140 +252,140 @@ InternalSort(vector & v, std::string type) const
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-void syd::RecordTraits<RecordType>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
-{
-  SetDefaultSortFunctions(map);
-}
+// template<class RecordType>
+// void syd::RecordTraits<RecordType>::
+// BuildMapOfSortFunctions(CompareFunctionMap & map) const
+// {
+//   SetDefaultSortFunctions(map);
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-void syd::RecordTraits<RecordType>::
-SetDefaultSortFunctions(CompareFunctionMap & map) const
-{
-  auto f = [](pointer a, pointer b) -> bool { return a->id < b->id; };
-  map["id"] = f;
-  map[""] = f; // default
-}
+// template<class RecordType>
+// void syd::RecordTraits<RecordType>::
+// SetDefaultSortFunctions(CompareFunctionMap & map) const
+// {
+//   auto f = [](pointer a, pointer b) -> bool { return a->id < b->id; };
+//   map["id"] = f;
+//   map[""] = f; // default
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-void
-syd::RecordTraits<RecordType>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  SetDefaultFieldFunctions(map);
-}
+// template<class RecordType>
+// void
+// syd::RecordTraits<RecordType>::
+// BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
+// {
+//   SetDefaultFieldFunctions(map);
+// }
 // --------------------------------------------------------------------
 
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-void
-syd::RecordTraits<RecordType>::
-SetDefaultFieldFunctions(FieldFunctionMap & map) const
-{
-  auto f = [](pointer a) -> std::string { return std::to_string(a->id); };
-  map["id"] = f;
-  auto f2 = [](pointer a) -> std::string { return a->ToString(); };
-  map["raw"] = f2;
-}
+// template<class RecordType>
+// void
+// syd::RecordTraits<RecordType>::
+// SetDefaultFieldFunctions(FieldFunctionMap & map) const
+// {
+//   auto f = [](pointer a) -> std::string { return std::to_string(a->id); };
+//   map["id"] = f;
+//   auto f2 = [](pointer a) -> std::string { return a->ToString(); };
+//   map["raw"] = f2;
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-void syd::RecordTraits<RecordType>::
-InitFields() const
-{
-  if (record_field_fmap_.size() != 0) return; // already done
-  if (field_fmap_.size() == 0) BuildMapOfFieldsFunctions(field_fmap_); 
-  for(auto m:field_fmap_) {
-    auto f = m.second;
-    auto gf = [f](syd::Record::pointer gr) -> std::string {
-      // cast from generic to specific record. Static = no check !!
-      auto r = std::static_pointer_cast<RecordType>(gr);
-      return f(r);
-    };
-    record_field_fmap_[m.first] = gf;
-  }
-}
+// template<class RecordType>
+// void syd::RecordTraits<RecordType>::
+// InitFields() const
+// {
+//   if (record_field_fmap_.size() != 0) return; // already done
+//   if (field_fmap_.size() == 0) BuildMapOfFieldsFunctions(field_fmap_);
+//   for(auto m:field_fmap_) {
+//     auto f = m.second;
+//     auto gf = [f](syd::Record::pointer gr) -> std::string {
+//       // cast from generic to specific record. Static = no check !!
+//       auto r = std::static_pointer_cast<RecordType>(gr);
+//       return f(r);
+//     };
+//     record_field_fmap_[m.first] = gf;
+//   }
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-const typename syd::RecordTraits<RecordType>::FieldFunctionMap &
-syd::RecordTraits<RecordType>::
-GetFieldMap() const
-{
-  InitFields();
-  return field_fmap_;
-}
+// template<class RecordType>
+// const typename syd::RecordTraits<RecordType>::FieldFunctionMap &
+// syd::RecordTraits<RecordType>::
+// GetFieldMap() const
+// {
+//   InitFields();
+//   return field_fmap_;
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-typename syd::RecordTraits<RecordType>::RecordFieldFunc
-syd::RecordTraits<RecordType>::
-GetFieldOLD(std::string field) const
-{
-  InitFields();
+// template<class RecordType>
+// typename syd::RecordTraits<RecordType>::RecordFieldFunc
+// syd::RecordTraits<RecordType>::
+// GetFieldOLD(std::string field) const
+// {
+//   InitFields();
 
-  // Use map
-  auto it = record_field_fmap_.find(field);
-  if (it == record_field_fmap_.end()) {
-    auto field_not_found = [field](syd::Record::pointer p) -> std::string
-      { return field+"_not_found"; };
-    return field_not_found;
-  }
-  else return it->second;
-}
+//   // Use map
+//   auto it = record_field_fmap_.find(field);
+//   if (it == record_field_fmap_.end()) {
+//     auto field_not_found = [field](syd::Record::pointer p) -> std::string
+//       { return field+"_not_found"; };
+//     return field_not_found;
+//   }
+//   else return it->second;
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-const typename syd::RecordTraits<RecordType>::RecordFieldFunctionMap &
-syd::RecordTraits<RecordType>::
-GetRecordFieldMap() const
-{
-  InitFields();
-  return record_field_fmap_;
-}
+// template<class RecordType>
+// const typename syd::RecordTraits<RecordType>::RecordFieldFunctionMap &
+// syd::RecordTraits<RecordType>::
+// GetRecordFieldMap() const
+// {
+//   InitFields();
+//   return record_field_fmap_;
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-std::vector<typename syd::RecordTraits<RecordType>::RecordFieldFunc>
-syd::RecordTraits<RecordType>::
-GetFields(std::string fields) const
-{
-  std::vector<std::string> words;
-  syd::GetWords(words, fields);
-  std::vector<RecordFieldFunc> f;
-  for(auto & w:words) f.push_back(GetFieldOLD(w));
-  return f;
-}
+// template<class RecordType>
+// std::vector<typename syd::RecordTraits<RecordType>::RecordFieldFunc>
+// syd::RecordTraits<RecordType>::
+// GetFields(std::string fields) const
+// {
+//   std::vector<std::string> words;
+//   syd::GetWords(words, fields);
+//   std::vector<RecordFieldFunc> f;
+//   for(auto & w:words) f.push_back(GetFieldOLD(w));
+//   return f;
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-std::string
-syd::RecordTraits<RecordType>::
-GetDefaultFields() const
-{
-  return "raw"; // by default: raw output
-}
+// template<class RecordType>
+// std::string
+// syd::RecordTraits<RecordType>::
+// GetDefaultFields() const
+// {
+//   return "raw"; // by default: raw output
+// }
 // --------------------------------------------------------------------
 
 
@@ -422,7 +404,7 @@ GetDefaultFields() const
 template<class RecordType>
 typename syd::RecordTraits<RecordType>::FieldBasePointer
 syd::RecordTraits<RecordType>::
-NewField(const syd::Database * db, std::string field_names, std::string abbrev) const
+GetField(const syd::Database * db, std::string field_names, std::string abbrev) const
 {
   // Decompose the field_names
   auto first_field = field_names;
@@ -466,7 +448,7 @@ NewField(const syd::Database * db, std::string field_names, std::string abbrev) 
 template<class RecordType>
 typename syd::RecordTraits<RecordType>::FieldBaseVector
 syd::RecordTraits<RecordType>::
-NewFields(const syd::Database * db, std::string field_names) const
+GetFields(const syd::Database * db, std::string field_names) const
 {
   // Split field_names into words
   typename syd::RecordTraits<RecordType>::FieldBaseVector fields;
@@ -479,11 +461,11 @@ NewFields(const syd::Database * db, std::string field_names) const
   for(auto w:words) {
     auto it = map.find(w);
     if (it != map.end()) {// find it
-      auto fs = NewFields(db, it->second);
+      auto fs = GetFields(db, it->second);
       for(auto f:fs) fields.push_back(f);
     }
     else {
-      auto f = NewField(db, w);
+      auto f = GetField(db, w);
       fields.push_back(f);
     }
   }

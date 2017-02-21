@@ -70,7 +70,7 @@ void syd::PrintTable::Build(std::string table_name,
   values_.resize(records.size());
   if (records.size() == 0) return;
   auto db = records[0]->GetDatabase();
-  auto fields = db->NewFields(table_name, format);
+  auto fields = db->GetFields(table_name, format);
   Build(records, fields);
 }
 //------------------------------------------------------------------
