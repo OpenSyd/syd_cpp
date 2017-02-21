@@ -77,7 +77,7 @@ BuildFields(const syd::Database * db) const
     "injection.radionuclide.name[rad] "
     "modality[mod]";
   field_format_map_["default"] =
-    "short size spacing dicoms comments[com]";
+    "short size spacing pixel_type[pix] pixel_unit.name[unit] dicoms comments[com]";
   field_format_map_["hist"] =
     "short history.insertion_date[insert] history.update_date[update]";
   field_format_map_["frame"] =
