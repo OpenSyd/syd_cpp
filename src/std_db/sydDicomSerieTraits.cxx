@@ -37,10 +37,17 @@ BuildFields(const syd::Database * db) const
   // dicom_files
   auto f_dicoms = [](pointer p) -> std::string {
     if (p->dicom_files.size() == 0) return empty_value;
-    std::ostringstream oss;
-    for(auto d:p->dicom_files) oss << d->id << " ";
+    if (p->dicom_files.size() < 4) { // small number of files
+      std::ostringstream oss;
+      for(auto d:p->dicom_files) oss << d->id << " ";
+      auto s = oss.str();
+      return syd::trim(s);
+    }
+    std::ostringstream oss; // large nub of files
+    oss << p->dicom_files[0]->id << "-" << p->dicom_files.back()->id;
     auto s = oss.str();
-    return syd::trim(s); };
+    return syd::trim(s);
+    };
   AddField<std::string>("dicom_files", f_dicoms);
 
   ADD_FIELD(dicom_acquisition_date, std::string);
