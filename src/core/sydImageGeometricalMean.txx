@@ -49,7 +49,10 @@ syd::RemoveScatter(const ImageType * em, const ImageType * sc, double k)
   iter_sc.GoToBegin();
   iter_output.GoToBegin();
   while (!iter_em.IsAtEnd()) {
-    iter_output.Set(iter_em.Get()-k*iter_sc.Get());
+    double tempGeometricalMean = iter_em.Get()-k*iter_sc.Get();
+    if (tempGeometricalMean < 0)
+      tempGeometricalMean = 0;
+    iter_output.Set(tempGeometricalMean);
     ++iter_em;
     ++iter_sc;
     ++iter_output;
