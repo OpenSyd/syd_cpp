@@ -26,95 +26,36 @@ DEFINE_TABLE_TRAITS_IMPL(RoiStatistic);
 
 
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::RoiStatistic>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
+template<>
+void
+syd::RecordTraits<syd::RoiStatistic>::
+BuildFields(const syd::Database * db) const
 {
-  // Sort functions from Record
-  SetDefaultSortFunctions(map);
+  InitCommonFields();
+  ADD_TABLE_FIELD(image, syd::Image);
+  ADD_TABLE_FIELD(mask, syd::RoiMaskImage);
+  ADD_TABLE_FIELD(history, syd::RecordHistory);
 
-  // Contains a RecordHistory, so special case
-  syd::RecordWithHistory::CompareFunctionMap m2;
-  syd::RecordWithHistory::BuildMapOfSortFunctions(m2);
-  map.insert(m2.begin(), m2.end());
+  ADD_FIELD(mean, double);
+  ADD_FIELD(std_dev, double);
+  ADD_FIELD(n, double);
+  ADD_FIELD(min, double);
+  ADD_FIELD(max, double);
+  ADD_FIELD(sum, double);
 
-  // New sort comparison
-  auto f = [](pointer a, pointer b) ->
-    bool { return a->image->acquisition_date < b->image->acquisition_date; };
-  map["date"] = f;
-  map[""] = f; // make this one the default
-  map["mask"]  = [](pointer a, pointer b) -> bool {
-    if (a->mask == nullptr or b->mask == nullptr) return true;
-    return a->mask->roitype->name < b->mask->roitype->name; };
-  map["mean"]  = [](pointer a, pointer b) -> bool { return a->mean < b->mean; };
-  map["n"]  = [](pointer a, pointer b) -> bool { return a->n < b->n; };
-  map["sum"]  = [](pointer a, pointer b) -> bool { return a->sum < b->sum; };
-  map["std_dev"]  = [](pointer a, pointer b) -> bool { return a->std_dev < b->std_dev; };
-  map["min"]  = [](pointer a, pointer b) -> bool { return a->min < b->min; };
-  map["max"]  = [](pointer a, pointer b) -> bool { return a->max < b->max; };
+  // comments
+  auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
+  AddField<std::string>("comments", f_c, "com");
+
+  // tags
+  auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
+  AddField<std::string>("tags", f_t);
+
+  // Format lists
+  field_format_map_["default"] =
+    "id image.patient.name mask.roitype.name image.id tags mean std_dev n min max sum";
+  field_format_map_["hist"] =
+    "id image.patient.name mask.roitype.name image.id tags mean std_dev n min max sum history.insertion_date history.update_date";
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::RoiStatistic>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  SetDefaultFieldFunctions(map);
-
-  map["date"] = [](pointer a) -> std::string { return a->image->acquisition_date; };
-  map["tags"]  = [](pointer a) -> std::string { return syd::GetLabels(a->image->tags); };
-  map["mean"] = [](pointer a, int p=2) -> std::string { return syd::ToString(a->mean,p); };
-  map["std_dev"] = [](pointer a, int p=2) -> std::string { return syd::ToString(a->std_dev,p); };
-  map["n"] = [](pointer a) -> std::string { return syd::ToString(a->n,0); };
-  map["sum"] = [](pointer a, int p=2) -> std::string { return syd::ToString(a->sum,p); };
-  map["min"] = [](pointer a, int p=2) -> std::string { return syd::ToString(a->min,p); };
-  map["max"] = [](pointer a, int p=2) -> std::string { return syd::ToString(a->max,p); };
-
-  // Prevent to loop if sub-record contains an RoiStatistic
-  static int already_here = false;
-  if (already_here) {
-    LOG(WARNING) << "in RoiStatisticTraits BuildMapOfFieldsFunctions : loop detected";
-    return;
-  }
-  already_here = true;
-
-  // Build map field for patient and injection
-  {
-    auto pmap = syd::RecordTraits<syd::Image>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "image."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string { return f(a->image); };
-    }
-  }
-  {
-    auto pmap = syd::RecordTraits<syd::RoiMaskImage>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "mask."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string {
-        if (!a->mask) return empty_value;
-        return f(a->mask); };
-    }
-  }
-
-  // Contains a RecordHistory, so special case
-  syd::RecordWithComments::FieldFunctionMap m2;
-  syd::RecordWithComments::BuildMapOfFieldsFunctions(m2);
-  map.insert(m2.begin(), m2.end());
-  already_here = false;
-
-  map["pat"] = map["image.patient.name"];
-  map["mask"] = map["mask.roi.name"];
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<> std::string syd::RecordTraits<syd::RoiStatistic>::
-GetDefaultFields() const
-{
-  std::string s = "id pat mask image.id tags mean std_dev n min max sum";
-  return s;
-}
-// --------------------------------------------------------------------
