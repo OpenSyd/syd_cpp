@@ -43,7 +43,7 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["default"] =
-    "id filename path dicom_instance_number dicom_sop_uid md5";
+    "id filename path dicom_instance_number[n] dicom_sop_uid[uid] md5";
 }
 // --------------------------------------------------------------------
 
