@@ -24,8 +24,6 @@
 #include "sydRecordHelper.h"
 #include "sydPrintTable.h"
 
-#include <boost/variant.hpp>
-
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
@@ -46,6 +44,25 @@ int main(int argc, char* argv[])
 
   // Get the table name
   std::string table_name = args_info.inputs[0];
+
+  // Dump list of fields for this table
+  if (args_info.list_fields_flag) {
+    std::ostringstream oss;
+    auto map = db->GetTraits(table_name)->GetFieldsMap(db);
+    oss << "Available fields for table " << table_name << ": " << std::endl;
+    for(auto m:map) {
+      if (m.first == m.second->name) oss << m.first << " ";
+      else oss << m.second->name << "[" << m.first << "] ";
+    }
+    oss << std::endl << "Total of " << map.size() << " fields." << std::endl;
+    auto fmap = db->GetTraits(table_name)->GetFieldFormatsMap(db);
+    if (fmap.size() > 0) {
+      oss << " Available formats : " << std::endl;
+      for(auto m:fmap) oss << " - '" << m.first << "': " << m.second << std::endl;
+    }
+    LOG(0) << oss.str();
+    return EXIT_SUCCESS;
+  }
 
   // Prepare the list of arguments
   std::vector<std::string> patterns;
@@ -116,18 +133,13 @@ int main(int argc, char* argv[])
     }
 
     syd::PrintTable table;
+    table.SetPrecision(args_info.precision_arg);
     table.Build(table_name, results, args_info.format_arg);
     table.SetHeaderFlag(!args_info.noheader_flag);
     table.SetFooterFlag(!args_info.nofooter_flag);
+    table.SetSingleLineFlag(args_info.single_line_flag);
     table.Print(std::cout); // Print total number at the end !
     LOG(1) << results.size() << " elements found in table " << table_name;
-
-    if (args_info.list_fields_flag) {
-      auto map = db->GetTraits(table_name)->GetRecordFieldMap();
-      for(auto m:map) std::cout << m.first << " ";
-      std::cout << std::endl << "Total of " << map.size() << " fields.";
-    }
-
   }
 
   // Check
@@ -152,6 +164,13 @@ int main(int argc, char* argv[])
 
   // VV
   if (args_info.vv_flag or args_info.vvs_flag) {
+    syd::PrintTable table;
+    table.Build(table_name, results, "filename");
+    table.SetHeaderFlag(false);
+    table.SetFooterFlag(false);
+    table.SetSingleLineFlag(true);
+    table.Print(oss);
+    table.Print(std::cout);
     LOG(1) << "Executing the following command: " << std::endl << oss.str();
     int r = syd::ExecuteCommandLine(oss.str(), 2);
     // Stop if error in cmd

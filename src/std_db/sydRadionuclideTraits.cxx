@@ -26,42 +26,26 @@ DEFINE_TABLE_TRAITS_IMPL(Radionuclide);
 
 
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Radionuclide>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
+template<>
+void
+syd::RecordTraits<syd::Radionuclide>::
+BuildFields(const syd::Database * db) const
 {
-  SetDefaultSortFunctions(map);
-  map["name"] = [](pointer a, pointer b) -> bool { return a->name < b->name; };
-  map["element"] = [](pointer a, pointer b) -> bool { return a->name < b->element; };
-  map["half_life"] = [](pointer a, pointer b) -> bool { return a->half_life_in_hours < b->half_life_in_hours; };
-  map["Z"] = [](pointer a, pointer b) -> bool { return a->atomic_number < b->atomic_number; };
-  map["A"] = [](pointer a, pointer b) -> bool { return a->mass_number < b->mass_number; };
-  map[""] = map["Z"]; // default
+  InitCommonFields();
+  ADD_FIELD(name, std::string);
+  ADD_FIELD(element, std::string);
+  ADD_FIELD_A(atomic_number, double, "Z");
+  ADD_FIELD_A(mass_number, double, "A");
+  ADD_FIELD(metastable, bool);
+  ADD_FIELD_A(half_life_in_hours, double, "hl");
+  ADD_FIELD_A(max_beta_minus_energy_in_kev, double, "Q");
+
+  // abbreviation
+  field_map_["Q"] = field_map_["max_beta_minus_energy_in_kev"];
+
+  field_format_map_["default"] = "id name element atomic_number mass_number metastable half_life_in_hours max_beta_minus_energy_in_kev";
+
 }
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Radionuclide>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  SetDefaultFieldFunctions(map);
-
-  map["name"] = [](pointer a) -> std::string { return a->name; };
-  map["element"] = [](pointer a) -> std::string { return a->element; };
-  map["Z"] = [](pointer a) -> std::string { return syd::ToString(a->atomic_number,0); };
-  map["A"] = [](pointer a) -> std::string { return syd::ToString(a->mass_number, 0); };
-  map["metastable"] = [](pointer a) -> std::string { return std::to_string(a->metastable); };
-  map["half_life"] = [](pointer a) -> std::string { return syd::ToString(a->half_life_in_hours,2); };
-  map["Q-"] = [](pointer a) -> std::string { return syd::ToString(a->max_beta_minus_energy_in_kev,2); };
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<> std::string syd::RecordTraits<syd::Radionuclide>::
-GetDefaultFields() const
-{
-  std::string s = "id name element Z A metastable half_life Q-";
-  return s;
-}
-// --------------------------------------------------------------------

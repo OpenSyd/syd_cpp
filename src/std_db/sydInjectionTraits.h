@@ -30,17 +30,9 @@ namespace syd {
   /// Main GetTraits function
   DEFINE_TABLE_TRAITS_HEADER(Injection);
 
-  /// Specific Sort for Injection
-  template<> void syd::RecordTraits<syd::Injection>::
-    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
-
   /// Specific fields
   template<> void syd::RecordTraits<syd::Injection>::
-    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
-
-  /// Default fields
-  template<> std::string syd::RecordTraits<syd::Injection>::
-    GetDefaultFields() const;
+    BuildFields(const syd::Database * db) const;
 
 
 } // end of namespace

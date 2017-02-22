@@ -26,107 +26,62 @@ DEFINE_TABLE_TRAITS_IMPL(Image);
 
 
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Image>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
+template<>
+void
+syd::RecordTraits<syd::Image>::
+BuildFields(const syd::Database * db) const
 {
-  // Sort functions from Record
-  SetDefaultSortFunctions(map);
+  InitCommonFields();
+  ADD_TABLE_FIELD(patient, syd::Patient);
+  ADD_TABLE_FIELD(injection, syd::Injection);
+  ADD_TABLE_FIELD(pixel_unit, syd::PixelUnit);
+  ADD_TABLE_FIELD(history, syd::RecordHistory);
 
-  // Contains a RecordHistory, so special case
-  syd::RecordWithHistory::CompareFunctionMap m2;
-  syd::RecordWithHistory::BuildMapOfSortFunctions(m2);
-  map.insert(m2.begin(), m2.end());
+  ADD_FIELD(type, std::string);
+  ADD_FIELD_A(pixel_type, std::string, "pix");
+  ADD_FIELD_A(frame_of_reference_uid, std::string, "fr");
+  ADD_FIELD_A(acquisition_date, std::string, "date");
+  ADD_FIELD_A(modality, std::string, "mod");
+  //ADD_FIELD(dicoms, syd::DicomSerie::vector);
 
-  // New sort comparison
-  auto f = [](pointer a, pointer b) -> bool { return a->acquisition_date < b->acquisition_date; };
-  map["date"] = f;
-  map[""] = f; // make this one the default
-}
-// --------------------------------------------------------------------
+  // Read only fields
+  ADD_RO_FIELD(dimension, unsigned short int);
+  auto f_fn = [](pointer p) -> std::string { return p->GetAbsolutePath(); };
+  AddField<std::string>("filename", f_fn, "file");
+  auto f_size = [](pointer p) -> std::string { return p->SizeAsString(); };
+  AddField<std::string>("size", f_size);
+  auto f_spacing = [](pointer p) -> std::string { return p->SpacingAsString(); };
+  AddField<std::string>("spacing", f_spacing, "sp");
 
-
-// --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Image>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  SetDefaultFieldFunctions(map);
-
-#define DEFINE_FIELD_FUNCTION(FIELD)                                \
-  map[#FIELD] = [](pointer a) -> std::string { return a->FIELD; };
-
-  DEFINE_FIELD_FUNCTION(type);
-  DEFINE_FIELD_FUNCTION(pixel_type);
-  DEFINE_FIELD_FUNCTION(frame_of_reference_uid);
-  DEFINE_FIELD_FUNCTION(acquisition_date);
-  DEFINE_FIELD_FUNCTION(modality);
-  map["dimension"]  = [](pointer a) -> std::string { return std::to_string(a->dimension); };
-  map["size"]  = [](pointer a) -> std::string { return a->SizeAsString(); };
-  map["spacing"]  = [](pointer a) -> std::string { return a->SpacingAsString(); };
-  map["tags"]  = [](pointer a) -> std::string { return syd::GetLabels(a->tags); };
-  map["files"]  = [](pointer a) -> std::string { return std::to_string(a->files.size()); };
-  map["filenames"] = [](pointer a) -> std::string { std::string pathFiles="";
-                                               for(auto f:a->files) pathFiles += f->GetAbsolutePath()+"\n";
-                                               return pathFiles; };
-  map["dicoms"]  = [](pointer a) -> std::string {
-    if (a->dicoms.size() == 0) return empty_value;
+  // dicoms
+  auto f_dicoms = [](pointer p) -> std::string {
+    if (p->dicoms.size() == 0) return empty_value;
     std::ostringstream oss;
-    for (auto & d:a->dicoms) oss << d->id << " ";
+    for(auto d:p->dicoms) oss << d->id << " ";
     auto s = oss.str();
-    return rtrim(s);
-  };
+    return syd::trim(s); };
+  AddField<std::string>("dicoms", f_dicoms);
 
-  // Prevent to loop if sub-record contains an image
-  static int already_here = false;
-  if (already_here) {
-    LOG(WARNING) << "in ImageTraits BuildMapOfFieldsFunctions : loop detected";
-    return;
-  }
-  already_here = true;
+  // comments
+  auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
+  AddField<std::string>("comments", f_c, "com");
 
-  // Build map field for patient and injection
-  {
-    auto pmap = syd::RecordTraits<syd::Patient>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "patient."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string { return f(a->patient); };
-    }
-  }
-  {
-    auto pmap = syd::RecordTraits<syd::Injection>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "injection."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string {
-        if (!a->injection) return empty_value;
-        return f(a->injection); };
-    }
-  }
+  // tags
+  auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
+  AddField<std::string>("tags", f_t);
 
-  // Contains a RecordHistory, so special case
-  syd::RecordWithComments::FieldFunctionMap m2;
-  syd::RecordWithComments::BuildMapOfFieldsFunctions(m2);
-  map.insert(m2.begin(), m2.end());
-  syd::RecordWithHistory::FieldFunctionMap m3;
-  syd::RecordWithHistory::BuildMapOfFieldsFunctions(m3);
-  map.insert(m2.begin(), m2.end());
-
-  // Shorter field names
-  map["pat"] = map["patient.name"];
-  map["rad"] = map["injection.radionuclide.name"];
-  map["inj"] = map["injection.id"];
-  map["date"] = map["acquisition_date"];
-
-  already_here = false;
+  // Format lists
+  field_format_map_["short"] =
+    "id patient.name[pat] "
+    "acquisition_date[date] tags "
+    "injection.radionuclide.name[rad] "
+    "modality[mod]";
+  field_format_map_["default"] =
+    "short size spacing pixel_type[pix] pixel_unit.name[unit] dicoms comments[com]";
+  field_format_map_["hist"] =
+    "short history.insertion_date[insert] history.update_date[update]";
+  field_format_map_["frame"] =
+    "default frame_of_reference_uid[frame]";
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-template<> std::string syd::RecordTraits<syd::Image>::
-GetDefaultFields() const
-{
-  std::string s = "id pat date tags rad inj modality size spacing dicoms comments";
-  return s;
-}
-// --------------------------------------------------------------------

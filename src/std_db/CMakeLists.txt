@@ -21,6 +21,9 @@ wrap_odb(sydStandardDatabase sydFitImages.h)
 wrap_odb(sydStandardDatabase sydFitTimepoints.h)
 
 set(SYD_STANDARD_DATABASE_SRC
+
+  sydStandardDatabase.cxx
+
   sydRadionuclide-odb.cxx sydRadionuclide-schema.cxx sydRadionuclide.cxx
   sydPatient-odb.cxx sydPatient-schema.cxx  sydPatient.cxx
   sydInjection-odb.cxx sydInjection-schema.cxx  sydInjection.cxx
@@ -40,15 +43,14 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiTimepoints-odb.cxx sydRoiTimepoints-schema.cxx sydRoiTimepoints.cxx
   sydFitTimepoints-odb.cxx sydFitTimepoints-schema.cxx sydFitTimepoints.cxx
 
+  sydPatientTraits.cxx
+  sydInjectionTraits.cxx
+  sydRadionuclideTraits.cxx
+  sydPixelUnitTraits.cxx
+  sydDicomFileTraits.cxx
   sydDicomSerieTraits.cxx
   sydImageTraits.cxx
   sydRoiMaskImageTraits.cxx
-  sydInjectionTraits.cxx
-  sydPatientTraits.cxx
-  sydRadionuclideTraits.cxx
-  sydStandardDatabase.cxx
-  sydDicomFileTraits.cxx
-  sydPixelUnitTraits.cxx
   sydRoiTypeTraits.cxx
   sydRoiStatisticTraits.cxx
   sydFitImagesTraits.cxx
@@ -105,7 +107,7 @@ set_target_properties(StandardDatabasePlugin PROPERTIES BUNDLE_EXTENSION ".so")
 ##############################
 # Not really a tool, for debug only
 wrap_ggo(sydTest_GGO_C sydTest.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-add_executable(sydTest sydTableOfRecords.cxx sydTest.cxx ${sydTest_GGO_C})
+add_executable(sydTest sydTest.cxx ${sydTest_GGO_C})
 target_link_libraries(sydTest ${SYD_STD_DB_LIBRARY})
 
 
@@ -141,7 +143,6 @@ add_executable(sydInsertAnonymizedDicom
   sydInsertAnonymizedDicom.cxx
   ${sydInsertAnonymizedDicom_GGO_C})
 target_link_libraries(sydInsertAnonymizedDicom ${SYD_STD_DB_LIBRARY})
-
 
 # Update Radionuclide table
 wrap_ggo(sydUpdateRadionuclide_GGO_C
@@ -351,6 +352,15 @@ add_executable(syd_transformix
   ${syd_transformix_GGO_C})
 target_link_libraries(syd_transformix ${SYD_STD_DB_LIBRARY})
 
+wrap_ggo(syd_gate syd_gate.ggo sydCommandLineDefault.ggo)
+add_executable(syd_gate syd_gate.cxx syd_gate_ggo.c)
+target_link_libraries(syd_gate ${SYD_STD_DB_LIBRARY})
+
+# wrap_ggo(sydInsertGateOutput sydInsertGateOutput.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+# add_executable(sydInsertGateOutput sydInsertGateOutput.cxx sydInsertGateOutput_ggo.c)
+# target_link_libraries(sydInsertGateOutput ${SYD_STD_DB_LIBRARY})
+
+
 # -----------------------------------------------------
 # -----------------------------------------------------
 # -----------------------------------------------------
@@ -418,12 +428,6 @@ target_link_libraries(syd_transformix ${SYD_STD_DB_LIBRARY})
 # add_executable(sydInsertPixelTimepoints sydInsertPixelTimepoints.cxx ${sydInsertPixelTimepoints_GGO_C})
 # target_link_libraries(sydInsertPixelTimepoints ${SYD_STD_DB_LIBRARY})
 
-
-#----------------------------------------------------------
-# External link Gate
-# wrap_ggo(sydInsertGateOutput sydInsertGateOutput.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-# add_executable(sydInsertGateOutput sydInsertGateOutput.cxx sydInsertGateOutput_ggo.c)
-# target_link_libraries(sydInsertGateOutput ${SYD_STD_DB_LIBRARY})
 
 #----------------------------------------------------------
 # Compute RootMeanSquareError in a mask

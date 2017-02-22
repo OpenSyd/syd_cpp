@@ -30,17 +30,9 @@ namespace syd {
   /// Main GetTraits function
   DEFINE_TABLE_TRAITS_HEADER(RoiStatistic);
 
-  /// Specific Sort
+  /// Build the fields
   template<> void syd::RecordTraits<syd::RoiStatistic>::
-    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
-
-  /// Specific fields
-  template<> void syd::RecordTraits<syd::RoiStatistic>::
-    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
-
-  /// Default fields
-  template<> std::string syd::RecordTraits<syd::RoiStatistic>::
-    GetDefaultFields() const;
+    BuildFields(const syd::Database * db) const;
 
 } // end of namespace
 // --------------------------------------------------------------------

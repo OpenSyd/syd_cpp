@@ -24,37 +24,19 @@
 DEFINE_TABLE_TRAITS_IMPL(PixelUnit);
 // --------------------------------------------------------------------
 
-
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::PixelUnit>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
+template<>
+void
+syd::RecordTraits<syd::PixelUnit>::
+BuildFields(const syd::Database * db) const
 {
-  // Sort functions from Record
-  SetDefaultSortFunctions(map);
-  // New sort comparison
-  auto f = [](pointer a, pointer b) -> bool { return a->name < b->name; };
-  map["name"] = f;
-  map[""] = f; // make this one the default
+  InitCommonFields();
+
+  ADD_FIELD(name, std::string);
+  ADD_FIELD(description, std::string);
+
+  // Format lists
+  field_format_map_["default"] = "id name description";
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::PixelUnit>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  SetDefaultFieldFunctions(map);
-  map["name"] = [](pointer a) -> std::string { return a->name; };
-  map["description"] = [](pointer a) -> std::string { return a->description; };
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<> std::string syd::RecordTraits<syd::PixelUnit>::
-GetDefaultFields() const
-{
-  std::string s = "id name description";
-  return s;
-}
-// --------------------------------------------------------------------

@@ -16,21 +16,21 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDPATIENTTRAITS_H
-#define SYDPATIENTTRAITS_H
+#ifndef SYDRECORDHISTORYTRAITS_H
+#define SYDRECORDHISTORYTRAITS_H
 
 // syd
-#include "sydPatient.h"
-#include "sydStandardDatabase.h" // needed here
+#include "sydRecordHistory.h"
+#include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
   /// Main GetTraits function
-  DEFINE_TABLE_TRAITS_HEADER(Patient);
+  DEFINE_TABLE_TRAITS_HEADER(RecordHistory);
 
-  /// Build the fields
-  template<> void syd::RecordTraits<syd::Patient>::
+  /// Build fields 
+  template<> void syd::RecordTraits<syd::RecordHistory>::
     BuildFields(const syd::Database * db) const;
 
 } // end of namespace

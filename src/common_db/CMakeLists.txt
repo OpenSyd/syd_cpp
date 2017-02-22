@@ -35,9 +35,13 @@ set(sydCommonDatabase_src
   sydRecord.cxx
   sydRecordTraitsBase.cxx
 
+  sydFieldBase.cxx
+  sydFieldType.cxx
+
   ## must be before the next files !
   sydTagTraits.cxx
   sydFileTraits.cxx
+  sydRecordHistoryTraits.cxx
 
   sydRecordHistory-odb.cxx
   sydRecordHistory-schema.cxx

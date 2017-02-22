@@ -24,103 +24,55 @@
 DEFINE_TABLE_TRAITS_IMPL(Timepoints);
 // --------------------------------------------------------------------
 
-
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Timepoints>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
+template<>
+void
+syd::RecordTraits<syd::Timepoints>::
+BuildFields(const syd::Database * db) const
 {
-  // Sort functions from Record
-  SetDefaultSortFunctions(map);
+  InitCommonFields();
+  ADD_TABLE_FIELD(patient, syd::Patient);
+  ADD_TABLE_FIELD(injection, syd::Injection);
+  ADD_TABLE_FIELD(history, syd::RecordHistory);
 
-  // Contains a RecordHistory, so special case
-  syd::RecordWithHistory::CompareFunctionMap m2;
-  syd::RecordWithHistory::BuildMapOfSortFunctions(m2);
-  map.insert(m2.begin(), m2.end());
+  // times
+  auto f_times = [](pointer p) -> std::string {
+    std::ostringstream oss;
+    for(auto t:p->times) oss << t << " ";
+    auto s = oss.str();
+    return syd::trim(s); };
+  AddField<std::string>("times", f_times);
 
-  // New sort comparison
-  map["date"] = [](pointer a, pointer b) -> bool { return a->injection->date < b->injection->date; };
-  map["time"] = [](pointer a, pointer b) -> bool {
-    if (a->times.size() == 0 or b->times.size() ==0) return true;
-    return a->times[0] < b->times[0]; };
-  map[""] = map["date"]; // make this one the default
+  // values
+  auto f_values = [](pointer p) -> std::string {
+    std::ostringstream oss;
+    for(auto t:p->values) oss << t << " "; //FIXME how to deal with precision ?
+    auto s = oss.str();
+    return syd::trim(s); };
+  AddField<std::string>("values", f_values);
+
+  // std_deviations
+  auto f_std_deviations = [](pointer p) -> std::string {
+    std::ostringstream oss;
+    for(auto t:p->std_deviations) oss << t << " ";
+    auto s = oss.str();
+    return syd::trim(s); };
+  AddField<std::string>("std_deviations", f_std_deviations);
+
+  // comments
+  auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
+  AddField<std::string>("comments", f_c, "com");
+
+  // tags
+  auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
+  AddField<std::string>("tags", f_t);
+
+  // md5
+  ADD_FIELD(md5, std::string);
+
+  // Format lists
+  field_format_map_["default"] =
+    "id patient.name[pat] injection.radionuclide.name[rad] injection.id[inj] times values std_deviations[std] comments[com]";
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Timepoints>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  SetDefaultFieldFunctions(map);
-
-  map["tags"]  = [](pointer a) -> std::string { return syd::GetLabels(a->tags); };
-  map["nb"]  = [](pointer a) -> std::string { return syd::ToString(a->times.size()); };
-  map["times"] = [](pointer a, int p=1) -> std::string {
-    std::ostringstream oss;
-    for(auto t:a->times) oss << std::fixed << std::setprecision(p) << t << " ";
-    return oss.str(); };
-
-  map["values"] = [](pointer a, int p=2) -> std::string {
-    std::ostringstream oss;
-    for(auto v:a->values) oss << std::fixed << std::setprecision(p) << v << " ";
-    return oss.str(); };
-
-  map["std_dev"] = [](pointer a, int p=2) -> std::string {
-    std::ostringstream oss;
-    for(auto v:a->std_deviations) oss << std::fixed << std::setprecision(p) << v << " ";
-    return oss.str(); };
-
-  // Prevent to loop if sub-record contains an Timepoints
-  static int already_here = false;
-  if (already_here) {
-    LOG(WARNING) << "in TimepointsTraits BuildMapOfFieldsFunctions : loop detected";
-    return;
-  }
-  already_here = true;
-
-  // Build map field for patient and injection
-  {
-    auto pmap = syd::RecordTraits<syd::Patient>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "patient."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string { return f(a->patient); };
-    }
-  }
-  {
-    auto pmap = syd::RecordTraits<syd::Injection>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "injection."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string {
-        if (!a->injection) return empty_value;
-        return f(a->injection); };
-    }
-  }
-
-  // Contains a RecordHistory, so special case
-  syd::RecordWithComments::FieldFunctionMap m2;
-  syd::RecordWithComments::BuildMapOfFieldsFunctions(m2);
-  map.insert(m2.begin(), m2.end());
-  syd::RecordWithHistory::FieldFunctionMap m3;
-  syd::RecordWithHistory::BuildMapOfFieldsFunctions(m3);
-  map.insert(m2.begin(), m2.end());
-
-  // Shorter field names
-  map["pat"] = map["patient.name"];
-  map["rad"] = map["injection.radionuclide.name"];
-  map["inj"] = map["injection.id"];
-
-  already_here = false;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<> std::string syd::RecordTraits<syd::Timepoints>::
-GetDefaultFields() const
-{
-  std::string s = "id pat rad tags nb times values";
-  return s;
-}
-// --------------------------------------------------------------------

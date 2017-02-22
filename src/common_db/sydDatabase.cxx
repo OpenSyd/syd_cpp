@@ -165,9 +165,9 @@ void syd::Database::Dump(std::ostream & os)
     os << warningColor << " -> does not exist ("
        << GetDatabaseAbsoluteFolder() << ")" << resetColor;
   os << std::endl;
-  for(auto i=map_of_traits_.begin(); i != map_of_traits_.end(); i++) {
-    int n = GetNumberOfElements(i->first);
-    os << "Table: " << std::setw(15) << i->first << " " <<  std::setw(10) << n;
+  for(auto & i:map_of_traits_) {
+    int n = GetNumberOfElements(i.first);
+    os << "Table: " << std::setw(15) << i.first << " " <<  std::setw(10) << n;
     if (n>1) os << " elements" << std::endl;
     else os << " element" << std::endl;
   }
@@ -425,17 +425,17 @@ void syd::Database::UpdateField(RecordBasePointer & record,
   } catch (const odb::exception& e) {
 
     /*
-    std::string q = "PRAGMA table_info("+AddDoubleQuoteAround(table_name)+")";
-    auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
-    if (rc==SQLITE_OK) {
+      std::string q = "PRAGMA table_info("+AddDoubleQuoteAround(table_name)+")";
+      auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
+      if (rc==SQLITE_OK) {
       // Loop on result with the following structure:
       //   cid name type notnull dflt_value  pk 
       while(sqlite3_step(stmt) == SQLITE_ROW) {
-        std::string name = sqlite3_column_text_string(stmt, 1);
-        std::string type = sqlite3_column_text_string(stmt, 2);
-        AddField(name, type);
+      std::string name = sqlite3_column_text_string(stmt, 1);
+      std::string type = sqlite3_column_text_string(stmt, 2);
+      AddField(name, type);
       }
-      */
+    */
     EXCEPTION("Error during the following sql query: " << std::endl
               << sql.str() << std::endl
               << "Error is:" << e.what()
@@ -509,30 +509,6 @@ void syd::Database::CheckDatabaseSchema()
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-/*syd::DatabaseDescription * syd::Database::GetDatabaseDescription()
-  {
-  if (description_ == NULL) {
-  description_ = new DatabaseDescription();
-  description_->Init(this);
-  }
-  return description_;
-  }*/
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-/*syd::TableDescription * syd::Database::GetTableDescription(const std::string & table_name)
-  {
-  auto desc = GetDatabaseDescription();
-  syd::TableDescription * tdesc;
-  bool b = desc->FindTableDescription(table_name, &tdesc);
-  if (!b) EXCEPTION("Could not find the table " << table_name);
-  return tdesc;
-  }
-*/
-// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
@@ -637,81 +613,19 @@ void syd::Database::Copy(std::string new_dbname, std::string new_folder)
 
 
 // --------------------------------------------------------------------
-syd::Database::FieldFunc syd::Database::
-GetField(std::string table_name, std::string field)
+syd::FieldBase::pointer syd::Database::
+GetField(std::string table_name, std::string field_name, std::string abbrev) const
 {
-  return GetTraits(table_name)->GetField(field);
+  return GetTraits(table_name)->GetField(this, field_name, abbrev);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-std::vector<syd::Database::FieldFunc> syd::Database::
-GetFields(std::string table_name, std::string fields)
+syd::FieldBase::vector syd::Database::
+GetFields(std::string table_name, std::string field_names) const
 {
-  return GetTraits(table_name)->GetFields(fields);
+  return GetTraits(table_name)->GetFields(this, field_names);
 }
 // --------------------------------------------------------------------
 
-// --------------------------------------------------------------------
-/*const syd::Record::GetFieldFunction &
-  syd::Database::FieldGetter(std::string table_name, std::string field_name) const
-  {
-  DDF();
-  auto map = GetDefaultFields();
-  auto it = map.find(table_name);
-  if (it == map.end()) {
-  EXCEPTION("Cannot find table '" << table_name << "' in FieldGetter.");
-  }
-  auto field_map = it->second;
-  auto iter = field_map.find(field_name);
-  if (iter == field_map.end()) {
-  EXCEPTION("Cannot find field '" << field_name
-  << "' in table '" << table_name << "' in FieldGetter.");
-  }
-  return iter->second;
-  }
-*/
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-/*const std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> &
-  syd::Database::GetDefaultFields() const
-  {
-  static std::map<std::string, std::map<std::string, syd::Record::GetFieldFunction>> map;
-  static bool already_here = false;
-  if (already_here) return map;
-  for(auto i:GetMapOfTables()) {
-  auto table = i.second;
-  auto name = table->GetTableName();
-  auto fake = New(name);
-  fake->SetDefaultFields(map[name]);
-  }
-  already_here = true;
-  return map;
-  }
-*/
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-/*const syd::Record::GetFieldFunction &
-  syd::Database::GetFieldFunction(std::string table_name, std::string field_name) const
-  {
-  DDF();
-  auto map = GetDefaultFields();
-  auto it = map.find(table_name);
-  if (it == map.end()) {
-  EXCEPTION("Cannot find table '" << table_name << "' in FieldGetter.");
-  }
-  auto field_map = it->second;
-  auto iter = field_map.find(field_name);
-  if (iter == field_map.end()) {
-  EXCEPTION("Cannot find field '" << field_name
-  << "' in table '" << table_name << "' in FieldGetter.");
-  }
-  return iter->second;
-  }
-*/
-// --------------------------------------------------------------------

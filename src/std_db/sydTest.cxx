@@ -24,12 +24,9 @@
 #include "sydStandardDatabase.h"
 #include "sydTableOfRecords.h"
 #include "sydPrintTable.h"
+#include "sydField.h"
 
-#include <boost/variant.hpp>
-
-//#include "sydTestTemp3.h"
-// #include "sydTestTemp4.h"
-#include "sydTestTemp5.h"
+//#include "sydTestTemp9.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -41,76 +38,38 @@ int main(int argc, char* argv[])
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
-
   // -----------------------------------------------------------------
-
-
-  struct A {
-    int a;
-    std::string b;
-  };
-  boost::variant<int, std::string> a;
-  a = 12;
-  DD(a);
-  a = "toto";
-  DD(a);
-  // DD(a.size()); // does not work obviously
-
-  auto s = boost::get<std::string>(&a);
-  if (s) {
-    DD("this is a string");
-    DD(*s);
-  }
-
-  exit(0);
-
-  // -----------------------------------------------------------------
-  syd::Image::vector images;
-  db->Query(images);
-  DD(images.size());
-  auto table_name = images[0]->GetTableName();
-  auto columns = "raw";
 
   syd::Record::vector records;
-  for(auto &im:images) records.push_back(im);
+  db->Query(records, "Image");
+  DDS(records);
+  auto r = records[0];
+  DD(r);
 
-  // Step1
-  //auto columns_info = TableBuildColumns(table_name, columns);
-
-  // Step2
-  syd::PrintTable table;
-  auto fields = db->GetFields(table_name, "raw");
-  table.Build(records, fields);
-  table.Print(std::cout);
-  //  table.Build(records, "patient.id");
-  // table.SetHeaderFlag(true); // options
-  // Step3
-  //table.Print(std::cout);
-
-
-  // -----------------------------------------------------------------
-  if (0) {
-
-    syd::Image::vector images;
-    db->Query(images);
-    DD(images.size());
-    DD(images[0]->GetTableName());
-    for(auto i:images) std::cout << i->id << " "; std::cout << std::endl;
-    db->Sort<syd::Image>(images);
-    db->Sort(images);
-    for(auto i:images) std::cout << i->id << " "; std::cout << std::endl;
-
-    syd::Record::vector records;
-    db->Query(records, "Image");
-    DD(records.size());
-    for(auto i:records) std::cout << i->id << " "; std::cout << std::endl;
-    db->Sort(records, "Image", "date");
-    for(auto i:records) std::cout << i->id << " "; std::cout << std::endl;
-
+  //
+  /*
+  {
+    auto f = [](syd::Image::pointer p) -> std::string & { return p->acquisition_date; };
+    auto rcast = BuildRefCastFunction(f);
+    auto s = BuildToStringFunction<syd::Image, RefCastFunction, std::string>(rcast);
+    DD(s(r));
   }
+  {
+    auto f = [](syd::Image::pointer p) -> std::string { return p->acquisition_date; };
+    auto vcast = BuildValueCastFunction(f);
+    auto s = BuildToStringFunction<syd::Image, ValueCastFunction, std::string>(vcast);
+    DD(s(r));
+  }
+  {
+    auto f = [](syd::Image::pointer p) { return p->patient; };
+    auto vcast = BuildValueCastFunction(f);
+    auto s = BuildToStringFunction<syd::Image, ValueCastFunction, syd::Patient>(vcast);
+    DD(s(r));
+  }
+  */
+
+
   // -----------------------------------------------------------------
-
-
   DD("end");
   // This is the end, my friend.
 }

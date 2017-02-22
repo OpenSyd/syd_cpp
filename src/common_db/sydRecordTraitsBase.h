@@ -32,14 +32,17 @@ namespace syd {
 
   class Record;
   class Database;
+  class FieldBase;
 
   class RecordTraitsBase {
   public:
 
     typedef std::shared_ptr<Record> RecordBasePointer;
     typedef std::vector<RecordBasePointer> RecordBaseVector;
-    typedef std::function<std::string(RecordBasePointer)> RecordFieldFunc;
-    typedef std::map<std::string, RecordFieldFunc> RecordFieldFunctionMap;
+    typedef std::shared_ptr<FieldBase> FieldBasePointer;
+    typedef std::vector<FieldBasePointer> FieldBaseVector;
+    typedef std::map<std::string, std::string> FieldFormatMapType;
+    typedef std::map<std::string, FieldBasePointer> FieldMapType;
 
     /// Return the table name
     virtual std::string GetTableName() const;
@@ -63,17 +66,25 @@ namespace syd {
     /// Sort function
     virtual void Sort(RecordBaseVector & records, const std::string & type) const = 0;
 
-    /// Get field functions
-    virtual RecordFieldFunc GetField(std::string field) const = 0;
-    virtual std::vector<RecordFieldFunc> GetFields(std::string fields) const = 0;
-    virtual std::string GetDefaultFields() const = 0;
-    virtual const RecordFieldFunctionMap & GetRecordFieldMap() const = 0;
+    /// Return the map of all default fields
+    virtual const FieldMapType & GetFieldsMap(const syd::Database * db) const = 0;
+
+    /// Return the list of format type
+    virtual const FieldFormatMapType & GetFieldFormatsMap(const syd::Database * db) const = 0;
+
+    /// Get (copy) a field from name
+    virtual FieldBasePointer GetField(const syd::Database * db,
+                                      std::string field_name,
+                                      std::string abbrev) const = 0;
+
+    /// Get (copy) fields from names separated with space
+    virtual FieldBaseVector GetFields(const syd::Database * db,
+                                      std::string field_name) const = 0;
 
   protected:
     RecordTraitsBase(std::string table_name);
     std::string table_name_;
     std::string sql_table_name_;
-    mutable RecordFieldFunctionMap record_field_fmap_;
 
   }; // end of class
   // --------------------------------------------------------------------

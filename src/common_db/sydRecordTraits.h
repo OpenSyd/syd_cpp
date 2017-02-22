@@ -43,11 +43,8 @@ namespace syd {
     typedef std::vector<pointer> vector;
     typedef syd::RecordTraitsBase::RecordBasePointer RecordBasePointer;
     typedef syd::RecordTraitsBase::RecordBaseVector RecordBaseVector;
-    typedef std::function<bool(pointer a, pointer b)> CompareFunction;
-    typedef std::map<std::string, CompareFunction> CompareFunctionMap;
-    typedef std::function<std::string(pointer)> FieldFunc;
-    typedef std::map<std::string, FieldFunc> FieldFunctionMap;
-    typedef syd::RecordTraitsBase::RecordFieldFunctionMap RecordFieldFunctionMap;
+    typedef syd::RecordTraitsBase::FieldMapType FieldMapType;
+    typedef syd::RecordTraitsBase::FieldFormatMapType FieldFormatMapType;
 
     // Main static version to get the singleton traits
     static RecordTraits<RecordType> * GetTraits();
@@ -69,16 +66,14 @@ namespace syd {
 
     /// Function to sort elements in a vector
     void Sort(RecordBaseVector & records, const std::string & type) const;
-    const CompareFunctionMap & GetSortFunctionMap() const;
-    void BuildMapOfSortFunctions(CompareFunctionMap & map) const;
 
-    /// Functions to get fields value as string
-    void BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
-    RecordFieldFunc GetField(std::string field) const;
-    std::vector<RecordFieldFunc> GetFields(std::string fields) const;
-    const FieldFunctionMap & GetFieldMap() const;
-    const RecordFieldFunctionMap & GetRecordFieldMap() const;
-    virtual std::string GetDefaultFields() const;
+    /// Return the list of initial fields
+    virtual const FieldMapType & GetFieldsMap(const syd::Database * db) const;
+    const FieldFormatMapType & GetFieldFormatsMap(const syd::Database * db) const;
+
+    /// Create and build a field according to the name
+    virtual FieldBasePointer GetField(const syd::Database * db, std::string field_name, std::string abbrev="") const;
+    virtual FieldBaseVector GetFields(const syd::Database * db, std::string field_names) const;
 
   protected:
     RecordTraits(std::string table_name);
@@ -91,14 +86,40 @@ namespace syd {
 
     // For sorting elements. The following is mutable because may be
     // initialized the first time it is call (from a const function)
-    void InternalSort(vector & records, const std::string & type) const;
-    mutable CompareFunctionMap compare_record_fmap_;
-    void SetDefaultSortFunctions(CompareFunctionMap & map) const;
+    void InternalSort(vector & records, std::string type) const;
 
-    // For get field function
-    mutable FieldFunctionMap field_fmap_;
-    void SetDefaultFieldFunctions(FieldFunctionMap & map) const;
-    void InitFields() const;
+    /// Map of fields (mutable because lazy initialisation)
+    mutable FieldMapType field_map_;
+
+    // Map of format string
+    mutable FieldFormatMapType field_format_map_;
+
+    /// Initial function to build the fields (will be overloaded)
+    void BuildFields(const syd::Database * db) const;
+
+    /// Common fields for all records (id, raw)
+    void InitCommonFields() const;
+
+    /// Look in the map to get a field by his name
+    FieldBasePointer FindField(const syd::Database * db, std::string field_name) const;
+
+    /// Define a new Field, of a given type by reference
+    template<class FieldValueType>
+      void AddField(std::string name,
+                    std::function<FieldValueType & (typename RecordType::pointer p)> f,
+                    std::string abbrev="") const;
+
+    /// Define a new Field, of a given type by value (read only)
+    template<class FieldValueType>
+      void AddField(std::string name,
+                    std::function<FieldValueType (typename RecordType::pointer p)> f,
+                    std::string abbrev="") const;
+
+    /// Define a new Field, of a given record pointer
+    template<class RecordType2>
+      void AddTableField(std::string name,
+                         std::function<typename RecordType2::pointer (typename RecordType::pointer p)> f,
+                         std::string abbrev="") const;
 
   }; // end of class
 
@@ -118,6 +139,46 @@ namespace syd {
 
   // --------------------------------------------------------------------
 } // end namespace
+
+
+#define ADD_FIELD(NAME, TYPE)                             \
+  {                                                       \
+    auto f = [](pointer p) -> TYPE & { return p->NAME; }; \
+    AddField<TYPE>(#NAME, f);                             \
+  }
+
+#define ADD_RO_FIELD(NAME, TYPE)                        \
+  {                                                     \
+    auto f = [](pointer p) -> TYPE { return p->NAME; }; \
+    AddField<TYPE>(#NAME, f);                           \
+  }
+
+#define ADD_TABLE_FIELD(NAME, TYPE)                               \
+  {                                                               \
+    auto f = [](pointer p) -> TYPE::pointer { return p->NAME; };  \
+    AddTableField<TYPE>(#NAME, f);                                \
+  }
+
+
+#define ADD_FIELD_A(NAME, TYPE, ABBREV)                   \
+  {                                                       \
+    auto f = [](pointer p) -> TYPE & { return p->NAME; }; \
+    AddField<TYPE>(#NAME, f, ABBREV);                     \
+  }
+
+#define ADD_RO_FIELD_A(NAME, TYPE, ABBREV)              \
+  {                                                     \
+    auto f = [](pointer p) -> TYPE { return p->NAME; }; \
+    AddField<TYPE>(#NAME, f, ABBREV);                   \
+  }
+
+#define ADD_TABLE_FIELD_A(NAME, TYPE, ABBREV)                     \
+  {                                                               \
+    auto f = [](pointer p) -> TYPE::pointer { return p->NAME; };  \
+    AddTableField<TYPE>(#NAME, f, ABBREV);                        \
+  }
+
+
 
 // Must *not* be in namespace syd (because include)
 #include "sydRecordTraits.txx"

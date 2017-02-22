@@ -16,24 +16,35 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDPATIENTTRAITS_H
-#define SYDPATIENTTRAITS_H
-
 // syd
-#include "sydPatient.h"
-#include "sydStandardDatabase.h" // needed here
+#include "sydFieldBase.h"
 
 // --------------------------------------------------------------------
-namespace syd {
-
-  /// Main GetTraits function
-  DEFINE_TABLE_TRAITS_HEADER(Patient);
-
-  /// Build the fields
-  template<> void syd::RecordTraits<syd::Patient>::
-    BuildFields(const syd::Database * db) const;
-
-} // end of namespace
+syd::FieldBase::FieldBase(std::string n)
+{
+  name = n;
+  abbrev = n;
+  precision = 2;
+  read_only = false;
+}
 // --------------------------------------------------------------------
 
-#endif
+
+// --------------------------------------------------------------------
+syd::FieldBase::~FieldBase()
+{
+
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::FieldBase::get(RecordPointer p)
+{
+  if (gf != nullptr) return gf(p);
+  LOG(FATAL) << "in syd::FieldBase::get: need to set the f before";
+  return ""; // to avoid warning
+}
+// --------------------------------------------------------------------
+
+

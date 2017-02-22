@@ -25,37 +25,18 @@ DEFINE_TABLE_TRAITS_IMPL(File);
 
 
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::File>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
+template<>
+void
+syd::RecordTraits<syd::File>::
+BuildFields(const syd::Database * db) const
 {
-  // Sort functions from Record
-  SetDefaultSortFunctions(map);
-  // New sort comparison
-  auto f = [](pointer a, pointer b) -> bool { return a->filename < b->filename; };
-  map["filename"] = f;
-  map[""] = f; // make this one the default
-  map["path"] = [](pointer a, pointer b) -> bool { return a->path < b->path; };
+  InitCommonFields();
+  ADD_RO_FIELD(filename, std::string);
+  ADD_RO_FIELD(path, std::string);
+  ADD_RO_FIELD(md5, std::string);
+
+  // Format lists
+  field_format_map_["default"] = "id filename path md5";
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::File>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  SetDefaultFieldFunctions(map);
-  map["filename"] = [](pointer a) -> std::string { return a->filename; };
-  map["path"] = [](pointer a) -> std::string { return a->path; };
-  map["md5"] = [](pointer a) -> std::string { return a->md5; };
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<> std::string syd::RecordTraits<syd::File>::
-GetDefaultFields() const
-{
-  std::string s = "id filename path md5";
-  return s;
-}
-// --------------------------------------------------------------------
