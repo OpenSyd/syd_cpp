@@ -75,7 +75,7 @@ namespace syd {
     /// Get (copy) a field from name
     virtual FieldBasePointer GetField(const syd::Database * db,
                                       std::string field_name,
-                                      std::string abbrev) const = 0;
+                                      std::string abbrev="") const = 0;
 
     /// Get (copy) fields from names separated with space
     virtual FieldBaseVector GetFields(const syd::Database * db,
