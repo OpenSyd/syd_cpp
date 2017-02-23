@@ -1,7 +1,7 @@
 #File sydFind.ggo
 
 package "syd"
-version "0.5"
+version "0.6"
 usage "sydFind <table> <pattern> "
 description "Find the ids of elements in the table that match the pattern. Parameters are:
 - <table>     name of the table
@@ -12,14 +12,16 @@ Case sensitive.
 Use --exclude option to exclude words.
 "
 
-option "exclude"  e   "Exclude pattern (multiple)"	         string  no multiple
-option "list"     l   "Dump list of ids only"                    flag    off
-option "format"   f   "Field format when dump results"                 string  default="" no
-option "list_fields"   -   "List fields available for the given table" flag off
-#option "col"      -   "Change column precision or size, e.g. '7 p 5' (col nb, p or s, value)" string no multiple
+option "exclude"  e   "Exclude pattern (multiple)"	string  no multiple
+option "list"     l   "Dump list of ids only"  flag    off
+option "format"   f   "Field format when dump results"  string  default="default" no
+option "precision" p "Global precision for field (-1 for default)" float default="-1" no
+option "field" - "Set options for a given field, ie 'mean(2)' to set precision=2 for the field named 'mean'" string multiple no
+option "list_fields"   -   "Print the list of fields available for the given table and exit" flag off
 option "check"    c   "Check files associated to found records"  flag    off
 option "noheader" -   "Do not display table header"              flag    off
 option "nofooter" -   "Do not display table footer"              flag    off
+option "single_line" -   "All results in a single line"          flag    off
 option "delete"   d   "Delete all found elements"                  flag    off
 option "force"    - "Dont ask confirmation if --delete. DANGEROUS. You have been warned." flag off
 option "tag"      t   "List of tag to match (all)"               string  no multiple

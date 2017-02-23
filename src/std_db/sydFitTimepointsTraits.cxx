@@ -24,63 +24,48 @@
 DEFINE_TABLE_TRAITS_IMPL(FitTimepoints);
 // --------------------------------------------------------------------
 
-
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::FitTimepoints>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
+template<>
+void
+syd::RecordTraits<syd::FitTimepoints>::
+BuildFields(const syd::Database * db) const
 {
-  // Sort functions from Record
-  SetDefaultSortFunctions(map);
+  InitCommonFields();
+  ADD_TABLE_FIELD(timepoints, syd::Timepoints);
+  ADD_TABLE_FIELD(history, syd::RecordHistory);
 
-  // Contains a RecordHistory, so special case
-  syd::RecordWithHistory::CompareFunctionMap m2;
-  syd::RecordWithHistory::BuildMapOfSortFunctions(m2);
-  map.insert(m2.begin(), m2.end());
+  ADD_RO_FIELD(auc, double);
+  ADD_RO_FIELD(r2, double);
+  ADD_RO_FIELD(model_name, std::string);
+  ADD_RO_FIELD_A(first_index, int, "index");
+  ADD_RO_FIELD(iterations, int);
 
-  map[""] = map["update_date"]; // make this one the default
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::FitTimepoints>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  SetDefaultFieldFunctions(map);
-
-  map["tags"]  = [](pointer a) -> std::string { return syd::GetLabels(a->tags); };
-  map["params"]  = [](pointer a, int p=2) -> std::string {
+  // params
+  auto f = [](pointer p) -> std::string {
     std::ostringstream oss;
-    for(auto pa:a->params) oss << std::fixed << std::setprecision(p) << pa << " ";
-    return oss.str();
-  };
-  map["auc"]  = [](pointer a, int p=2) -> std::string { return syd::ToString(a->auc, p); };
-  map["r2"]  = [](pointer a, int p=2) -> std::string { return syd::ToString(a->r2, p); };
-  map["first_index"]  = [](pointer a) -> std::string { return syd::ToString(a->first_index, 0); };
-  map["iterations"]  = [](pointer a) -> std::string { return syd::ToString(a->iterations, 0); };
-  map["model"]  = [](pointer a) -> std::string { return a->model_name; };
+    for(auto param:p->params) oss << param << " "; //FIXME how to deal with precision ?
+    auto s = oss.str();
+    return trim(s); };
+  AddField<std::string>("params", f);
 
   // FitOptions
-  syd::FitOptions::FieldFunctionMap m4;
-  syd::FitOptions::BuildMapOfFieldsFunctions(m4);
-  map.insert(m4.begin(), m4.end());
+  ADD_FIELD(r2_min, double);
+  ADD_FIELD_A(max_iteration, int, "mit");
+  ADD_FIELD_A(restricted_tac, bool, "rest");
+  auto f_mo = [](pointer p) -> std::string { return p->GetModelsName(); };
+  AddField<std::string>("models", f_mo);
+  ADD_FIELD_A(akaike_criterion, std::string, "ak");
 
-  // Timepoints
-  auto pmap = syd::RecordTraits<syd::Timepoints>::GetTraits()->GetFieldMap();
-  for(auto & m:pmap) {
-    std::string s = "timepoints."+m.first;
-    auto f = m.second;
-    map[s] = [f](pointer a) -> std::string { return f(a->timepoints); };
-  }
+  // tags
+  auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
+  AddField<std::string>("tags", f_t);
+
+  // Format lists
+  field_format_map_["default"] =
+    "id timepoints.id[tid] timepoints.patient.name[pat] timepoints.injection.radionuclide.name[rad] tags model_name[model] auc r2 first_index iterations[it] params r2_min akaike_criterion restricted_tac max_iteration models";
+
+  field_format_map_["hist"] =
+    "default history.insertion_date[insert] history.update_date[update]";
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-template<> std::string syd::RecordTraits<syd::FitTimepoints>::
-GetDefaultFields() const
-{
-  std::string s = "id timepoints.id timepoints.pat timepoints.rad timepoints.nb tags model auc r2 first_index iterations params r2_min ak rest it models";
-  return s;
-}
-// --------------------------------------------------------------------

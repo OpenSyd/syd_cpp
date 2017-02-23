@@ -35,3 +35,23 @@ syd::NewFile(syd::Database * db,
   return f;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetFilenames(syd::File::vector files)
+{
+  if (files.size() == 0) return syd::empty_value;
+  std::ostringstream ss;
+  for(auto f:files) ss << f->filename << " ";
+  return ss.str();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetRelativeFolder(syd::File::vector files)
+{
+  if (files.size() == 0) return syd::empty_value;
+  return files[0]->path+PATH_SEPARATOR;
+}
+// --------------------------------------------------------------------

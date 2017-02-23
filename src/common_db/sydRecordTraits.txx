@@ -17,6 +17,10 @@
   ===========================================================================**/
 
 #include "sydDatabase.h"
+#include "sydField.h"
+
+// For boost split string
+#include <boost/algorithm/string.hpp>
 
 // Default initialisation
 template<class RecordType>
@@ -221,163 +225,122 @@ Sort(RecordBaseVector & records,
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-const typename syd::RecordTraits<RecordType>::CompareFunctionMap &
-syd::RecordTraits<RecordType>::
-GetSortFunctionMap() const
-{
-  return compare_record_fmap_;
-}
+// template<class RecordType>
+// const typename syd::RecordTraits<RecordType>::CompareFunctionMap &
+// syd::RecordTraits<RecordType>::
+// GetSortFunctionMap() const
+// {
+//   return compare_record_fmap_;
+// }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class RecordType>
 void syd::RecordTraits<RecordType>::
-InternalSort(vector & v, const std::string & type) const
+InternalSort(vector & v, std::string type) const
 {
-  // Only once: build the map of sorting function
-  if (compare_record_fmap_.size() == 0)
-    BuildMapOfSortFunctions(compare_record_fmap_);
+  // sort
+  if (type == "") type = "id";
+  if (v.size() == 0) return;
+  auto db = v[0]->GetDatabase();
+  auto f = GetField(db, type);
+  f->BuildFunction(db);
+  std::sort(begin(v), end(v), f->sort_f);
+}
+// --------------------------------------------------------------------
 
-  // Try to find the sort function
-  auto it = compare_record_fmap_.find(type);
-  if (it == compare_record_fmap_.end()) {
-    std::string help;
-    for(auto & c:compare_record_fmap_)
-      help += "'"+c.first+"' ";
-    LOG(WARNING) << "Cannot find the sorting type '"
-                 << type << "'. Current known types are: "
-                 << help;
-    return;
+
+// --------------------------------------------------------------------
+template<class RecordType>
+typename syd::RecordTraits<RecordType>::FieldBasePointer
+syd::RecordTraits<RecordType>::
+GetField(const syd::Database * db, std::string field_names, std::string abbrev) const
+{
+  // Decompose the field_names
+  auto first_field = field_names;
+  std::size_t found = field_names.find_first_of(".");
+  if (found != std::string::npos) {
+    first_field = field_names.substr(0,found);
+    field_names = field_names.substr(found, field_names.size());
   }
-  std::sort(begin(v), end(v), it->second);
-}
-// --------------------------------------------------------------------
+  else field_names = "";
 
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void syd::RecordTraits<RecordType>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
-{
-  SetDefaultSortFunctions(map);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void syd::RecordTraits<RecordType>::
-SetDefaultSortFunctions(CompareFunctionMap & map) const
-{
-  auto f = [](pointer a, pointer b) -> bool { return a->id < b->id; };
-  map["id"] = f;
-  map[""] = f; // default
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void
-syd::RecordTraits<RecordType>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  SetDefaultFieldFunctions(map);
-}
-// --------------------------------------------------------------------
-
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void
-syd::RecordTraits<RecordType>::
-SetDefaultFieldFunctions(FieldFunctionMap & map) const
-{
-  auto f = [](pointer a) -> std::string { return std::to_string(a->id); };
-  map["id"] = f;
-  auto f2 = [](pointer a) -> std::string { return a->ToString(); };
-  map["raw"] = f2;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void syd::RecordTraits<RecordType>::
-InitFields() const
-{
-  if (record_field_fmap_.size() != 0) return; // already done
-  if (field_fmap_.size() == 0) BuildMapOfFieldsFunctions(field_fmap_); 
-  for(auto m:field_fmap_) {
-    auto f = m.second;
-    auto gf = [f](syd::Record::pointer gr) -> std::string {
-      // cast from generic to specific record. Static = no check !!
-      auto r = std::static_pointer_cast<RecordType>(gr);
-      return f(r);
-    };
-    record_field_fmap_[m.first] = gf;
+  std::string name = first_field;
+  std::string short_name = "";
+  auto index1 = first_field.find_first_of("[");
+  if (index1 != std::string::npos) {
+    auto index2 = first_field.find_first_of("]");
+    if (index2  == std::string::npos) {
+      LOG(FATAL) << "malformed field name, need both '[' and ']'";
+    }
+    name = first_field.substr(0, index1);
+    int l = index2-index1-1;
+    short_name = first_field.substr(index1+1,l);
   }
+
+  // Get a copy of the existing field
+  auto field = FindField(db, name); // this is a copy
+
+  // abbrev ?
+  if (short_name != "") field->abbrev = short_name;
+
+  // Change his name (for complex field, that will be build recursively)
+  field->name = field->name+field_names;
+  if (abbrev != "") field->abbrev = abbrev;
+  // Create the main function
+  field->BuildFunction(db);
+  return field;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class RecordType>
-const typename syd::RecordTraits<RecordType>::FieldFunctionMap &
+typename syd::RecordTraits<RecordType>::FieldBaseVector
 syd::RecordTraits<RecordType>::
-GetFieldMap() const
+GetFields(const syd::Database * db, std::string field_names) const
 {
-  InitFields();
-  return field_fmap_;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-typename syd::RecordTraits<RecordType>::RecordFieldFunc
-syd::RecordTraits<RecordType>::
-GetField(std::string field) const
-{
-  InitFields();
-
-  // Use map
-  auto it = record_field_fmap_.find(field);
-  if (it == record_field_fmap_.end()) {
-    auto field_not_found = [field](syd::Record::pointer p) -> std::string
-      { return field+"_not_found"; };
-    return field_not_found;
-  }
-  else return it->second;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-const typename syd::RecordTraits<RecordType>::RecordFieldFunctionMap &
-syd::RecordTraits<RecordType>::
-GetRecordFieldMap() const
-{
-  InitFields();
-  return record_field_fmap_;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-std::vector<typename syd::RecordTraits<RecordType>::RecordFieldFunc>
-syd::RecordTraits<RecordType>::
-GetFields(std::string fields) const
-{
+  // Split field_names into words
+  typename syd::RecordTraits<RecordType>::FieldBaseVector fields;
   std::vector<std::string> words;
-  syd::GetWords(words, fields);
-  std::vector<RecordFieldFunc> f;
-  for(auto & w:words) f.push_back(GetField(w));
+  syd::GetWords(words, field_names);
+
+  // For each words, look first if it is a format (several fields)
+  // or if it is a simple field.
+  auto map = GetFieldFormatsMap(db);
+  for(auto w:words) {
+    auto it = map.find(w);
+    if (it != map.end()) {// find it
+      auto fs = GetFields(db, it->second);
+      for(auto f:fs) fields.push_back(f);
+    }
+    else {
+      auto f = GetField(db, w);
+      fields.push_back(f);
+    }
+  }
+  return fields;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+syd::FieldBase::pointer
+syd::RecordTraits<RecordType>::
+FindField(const syd::Database * db, std::string field_name) const
+{
+  auto map = GetFieldsMap(db);
+  auto it = map.find(field_name);
+  if (it == map.end()) {
+    std::ostringstream ss;
+    for(auto m:map) ss << m.first << " ";
+    for(auto m:field_format_map_) ss << m.first << " ";
+    EXCEPTION("Cannot find the field '" << field_name
+              << "'. Available fields: " << ss.str());
+  }
+  auto f = it->second->Copy();
   return f;
 }
 // --------------------------------------------------------------------
@@ -385,11 +348,103 @@ GetFields(std::string fields) const
 
 // --------------------------------------------------------------------
 template<class RecordType>
-std::string
+const typename syd::RecordTraits<RecordType>::FieldMapType &
 syd::RecordTraits<RecordType>::
-GetDefaultFields() const
+GetFieldsMap(const syd::Database * db) const
 {
-  return "raw"; // by default: raw output
+  if (field_map_.size() != 0) return field_map_;
+  BuildFields(db);
+  return field_map_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+const typename syd::RecordTraits<RecordType>::FieldFormatMapType &
+syd::RecordTraits<RecordType>::
+GetFieldFormatsMap(const syd::Database * db) const
+{
+  if (field_format_map_.size() != 0) return field_format_map_;
+  BuildFields(db);
+  return field_format_map_;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void
+syd::RecordTraits<RecordType>::
+BuildFields(const syd::Database * db) const
+{
+  // Only the default (this function will be overwritten)
+  InitCommonFields();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void
+syd::RecordTraits<RecordType>::
+InitCommonFields() const
+{
+  // Add the id (read_only)
+  ADD_RO_FIELD(id, syd::IdType);
+  // Add the raw version (read only)
+  auto f = [](pointer p) -> std::string { return p->ToString(); };
+  AddField<std::string>("raw", f);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+template<class FieldValueType>
+void
+syd::RecordTraits<RecordType>::
+AddField(std::string name,
+         std::function<FieldValueType & (typename RecordType::pointer p)> f,
+         std::string abbrev) const
+{
+  auto t = Field<RecordType, FieldValueType>::New(name, f, false, abbrev);
+  // FIXME Check if already exist ?
+  field_map_[name] = t;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+template<class FieldValueType>
+void
+syd::RecordTraits<RecordType>::
+AddField(std::string name,
+         std::function<FieldValueType (typename RecordType::pointer p)> f,
+         std::string abbrev) const
+{
+  // true = read_only
+  auto t = Field<RecordType, FieldValueType>::New(name, f, true, abbrev);
+  // FIXME Check if already exist ?
+  field_map_[name] = t;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+template<class RecordType2>
+void
+syd::RecordTraits<RecordType>::
+AddTableField(std::string name,
+              std::function<typename RecordType2::pointer (typename RecordType::pointer p)> f,
+              std::string abbrev) const
+{
+  auto t = syd::Field<RecordType, typename RecordType2::pointer>::New(name, f, false, abbrev);
+  t->type = syd::RecordTraits<RecordType2>::GetTraits()->GetTableName();
+  // FIXME Check if already exist ?
+  field_map_[name] = t;
 }
 // --------------------------------------------------------------------
 

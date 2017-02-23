@@ -46,9 +46,27 @@ int main(int argc, char* argv[])
   db->QueryOne(input, id); // will fail if not found
   LOG(2) << "Read image :" << input;
 
+  // Check options
+  if (args_info.like_given && args_info.patient_given) {
+    LOG(FATAL) << "Please, only set either --like or --patient, not both.";
+  }
+  if (!args_info.like_given && !args_info.patient_given) {
+    LOG(FATAL) << "Please, set --like or --patient (but not both).";
+  }
+
+  syd::Image::pointer like;
+  if (args_info.like_given) {
+    syd::IdType id = args_info.like_arg;
+    db->QueryOne(like, id);
+  }
+
   // Main computation
   double k = args_info.k_arg;
   auto image = syd::InsertImageGeometricalMean(input, k);
+
+  // set properties from the image
+  if (args_info.like_given)
+    syd::SetImageInfoFromImage(image, like);
 
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);

@@ -24,6 +24,8 @@ syd::PrintTable::PrintTable()
 {
   header_flag_ = true;
   footer_flag_ = true;
+  precision_ = -1;
+  single_line_flag_ = false;
 }
 //------------------------------------------------------------------
 
@@ -45,51 +47,70 @@ void syd::PrintTable::SetFooterFlag(bool b)
 
 
 //------------------------------------------------------------------
-void syd::PrintTable::Build(std::string table_name, const RecordBaseVector records, std::string columns)
+void syd::PrintTable::SetPrecision(int p)
+{
+  precision_ = p;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable::SetSingleLineFlag(bool b)
+{
+  single_line_flag_ = b;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::PrintTable::Build(std::string table_name,
+                            const RecordBaseVector records,
+                            std::string format)
 {
   values_.resize(records.size());
   if (records.size() == 0) return;
   auto db = records[0]->GetDatabase();
-
-  auto fields_names = columns;
-  if (fields_names == "") fields_names = db->GetTraits(table_name)->GetDefaultFields();
-  auto fields = db->GetFields(table_name, fields_names);
-
-  // Header
-  header_.resize(fields.size());
-  std::vector<std::string> words;
-  syd::GetWords(words, fields_names);
-  header_.resize(words.size());
-  int i=0;
-  if (words.size() != fields.size()) {
-    LOG(FATAL) << "Internal error fields in syd::PrintTable::Build";
-  }
-  for(auto col:words) {
-    header_[i] = col;
-    ++i;
-  }
-  // Build
+  auto fields = db->GetFields(table_name, format);
   Build(records, fields);
 }
 //------------------------------------------------------------------
 
 
 // -----------------------------------------------------------------
-// FIXME template Build<T>(T::vector ...)
 void syd::PrintTable::Build(const RecordBaseVector & records,
-                            const std::vector<FieldFunc> & fields)
+                            syd::FieldBase::vector & fields)
 {
   values_.resize(records.size());
-  int i=0; // row
+  if (records.size() == 0) return;
+
+  // Header
+  header_.resize(fields.size());
+  int i=0;
+  for(auto f:fields) {
+    header_[i] = f->abbrev;
+    ++i;
+  }
+
+  // Precision
+  if (precision_ != -1) {
+    auto db = records[0]->GetDatabase();
+    for(auto &f:fields) {
+      f->precision = precision_;
+      f->BuildFunction(db);
+    }
+  }
+
+  i=0; // row
   for(auto & r:records) {
     int j=0; // column
     values_[i].resize(fields.size());
     for(auto & f:fields) {
-      values_[i][j] = f(r); // get the value
+      values_[i][j] = f->get(r); // get the value
       ++j;
     }
     ++i;
   }
+
   // Columns width
   column_widths_.resize(fields.size());
   SetDefaultColumnsSize();
@@ -104,7 +125,7 @@ void syd::PrintTable::Print(std::ostream & os)
   if (header_flag_) PrintHeader(os);
   for(auto & row:values_) {
     PrintRow(os, row);
-    os << std::endl;
+    if (!single_line_flag_) os << std::endl;
   }
   if (footer_flag_) PrintHeader(os);
 }

@@ -24,115 +24,38 @@
 DEFINE_TABLE_TRAITS_IMPL(Elastix);
 // --------------------------------------------------------------------
 
-
 // --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Elastix>::
-BuildMapOfSortFunctions(CompareFunctionMap & map) const
+template<>
+void
+syd::RecordTraits<syd::Elastix>::
+BuildFields(const syd::Database * db) const
 {
-  // Sort functions from Record
-  SetDefaultSortFunctions(map);
-  // Contains a RecordHistory, so special case
-  syd::RecordWithHistory::CompareFunctionMap m2;
-  syd::RecordWithHistory::BuildMapOfSortFunctions(m2);
-  map.insert(m2.begin(), m2.end());
+  InitCommonFields();
+  ADD_TABLE_FIELD(fixed_image, syd::Image);
+  ADD_TABLE_FIELD(moving_image, syd::Image);
+  ADD_TABLE_FIELD(fixed_mask, syd::RoiMaskImage);
+  ADD_TABLE_FIELD(moving_mask, syd::RoiMaskImage);
+  ADD_TABLE_FIELD(history, syd::RecordHistory);
+  ADD_TABLE_FIELD(config_file, syd::File);
+  ADD_TABLE_FIELD(transform_file, syd::File);
+
+  // comments
+  auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
+  AddField<std::string>("comments", f_c, "com");
+
+  // tags
+  auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
+  AddField<std::string>("tags", f_t);
+
+  // Format lists
+  field_format_map_["default"] =
+    "id fixed_image.patient.name[pat] "
+    "fixed_image.id[fixed] moving_image.id[moving] "
+    "fixed_mask.id[fmask] moving_mask.id[mmask] "
+    "config_file.filename[config] transform_file.filename[transform] "
+    "comments[com]";
+  field_format_map_["hist"] =
+    "default history.insertion_date[insert] history.update_date[update]";
 }
 // --------------------------------------------------------------------
 
-
-// --------------------------------------------------------------------
-template<> void syd::RecordTraits<syd::Elastix>::
-BuildMapOfFieldsFunctions(FieldFunctionMap & map) const
-{
-  SetDefaultFieldFunctions(map);
-
-  map["tags"]  = [](pointer a) -> std::string { return syd::GetLabels(a->tags); };
-
-  // Build map field for moving_image
-  {
-    auto pmap = syd::RecordTraits<syd::Image>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "moving_image."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string { return f(a->moving_image); };
-    }
-  }
-  {
-    auto pmap = syd::RecordTraits<syd::Image>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "fixed_image."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string { return f(a->fixed_image); };
-    }
-  }
-  {
-    auto pmap = syd::RecordTraits<syd::RoiMaskImage>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "fixed_mask."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string {
-        if (a->fixed_mask == nullptr) return empty_value;
-        return f(a->fixed_mask); };
-    }
-  }
-  {
-    auto pmap = syd::RecordTraits<syd::RoiMaskImage>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "moving_mask."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string {
-        if (a->moving_mask == nullptr) return empty_value;
-        return f(a->moving_mask); };
-    }
-  }
-  {
-    auto pmap = syd::RecordTraits<syd::File>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "config_file."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string {
-        if (a->config_file == nullptr) return empty_value;
-        return f(a->config_file); };
-    }
-  }
-  {
-    auto pmap = syd::RecordTraits<syd::File>::GetTraits()->GetFieldMap();
-    for(auto & m:pmap) {
-      std::string s = "transform_file."+m.first;
-      auto f = m.second;
-      map[s] = [f](pointer a) -> std::string {
-        if (a->transform_file == nullptr) return empty_value;
-        return f(a->transform_file); };
-    }
-  }
-
-  // Contains a RecordHistory, so special case
-  syd::RecordWithComments::FieldFunctionMap m2;
-  syd::RecordWithComments::BuildMapOfFieldsFunctions(m2);
-  map.insert(m2.begin(), m2.end());
-  syd::RecordWithHistory::FieldFunctionMap m3;
-  syd::RecordWithHistory::BuildMapOfFieldsFunctions(m3);
-  map.insert(m2.begin(), m2.end());
-
-  // Shorter field names
-  map["pat"] = map["fixed_image.patient.name"];
-  map["date"] = map["fixed_image.acquisition_date"];
-  map["config"] = map["config_file.filename"];
-  map["result"] = map["transform_file.path"];
-  map["f"] = map["fixed_image.id"];
-  map["m"] = map["moving_image.id"];
-  map["mf"] = map["fixed_mask.roi.name"];
-  map["mm"] = map["moving_mask.roi.name"];
-  map["fframe"] = map["fixed_mask.frame_of_reference_uid"];
-  map["mframe"] = map["moving_mask.frame_of_reference_uid"];
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<> std::string syd::RecordTraits<syd::Elastix>::
-GetDefaultFields() const
-{
-  std::string s = "id pat date tags config result f m mf mm fframe comments";
-  return s;
-}
-// --------------------------------------------------------------------

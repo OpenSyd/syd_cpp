@@ -20,8 +20,8 @@
 #define SYDIMAGETRAITS_H
 
 // syd
+#include "sydPatientTraits.h"
 #include "sydImage.h"
-#include "sydStandardDatabase.h"
 #include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------
@@ -30,17 +30,9 @@ namespace syd {
   /// Main GetTraits function
   DEFINE_TABLE_TRAITS_HEADER(Image);
 
-  /// Specific Sort
+  /// Build the fields
   template<> void syd::RecordTraits<syd::Image>::
-    BuildMapOfSortFunctions(CompareFunctionMap & map) const;
-
-  /// Specific fields
-  template<> void syd::RecordTraits<syd::Image>::
-    BuildMapOfFieldsFunctions(FieldFunctionMap & map) const;
-
-  /// Default fields
-  template<> std::string syd::RecordTraits<syd::Image>::
-    GetDefaultFields() const;
+    BuildFields(const syd::Database * db) const;
 
 } // end of namespace
 // --------------------------------------------------------------------

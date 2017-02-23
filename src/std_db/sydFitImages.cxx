@@ -45,7 +45,12 @@ std::string syd::FitImages::ToString() const
   std::stringstream ss;
   ss << id << " ";
   if (images.size() == 0) ss << " no images ";
-  else ss << images[0]->GetPatientName() << " ";
+  else {
+    ss << images[0]->GetPatientName() << " ";
+    if( images[0]->injection != nullptr) {
+      ss << images[0]->injection->radionuclide->name << " ";
+    }
+  }
   ss << images.size() << " ["
      << syd::FitOptions::ToString() << "] "
      << GetAllComments() << " "
