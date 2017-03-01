@@ -424,9 +424,14 @@ target_link_libraries(syd_gate ${SYD_STD_DB_LIBRARY})
 
 
 # insert a timepoints from a pixel coord
-# wrap_ggo(sydInsertPixelTimepoints_GGO_C sydInsertPixelTimepoints.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-# add_executable(sydInsertPixelTimepoints sydInsertPixelTimepoints.cxx ${sydInsertPixelTimepoints_GGO_C})
-# target_link_libraries(sydInsertPixelTimepoints ${SYD_STD_DB_LIBRARY})
+wrap_ggo(sydInsertPixelTimepoints_GGO_C
+  sydInsertPixelTimepoints.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertPixelTimepoints
+  sydInsertPixelTimepoints.cxx
+  ${sydInsertPixelTimepoints_GGO_C})
+target_link_libraries(sydInsertPixelTimepoints ${SYD_STD_DB_LIBRARY})
 
 
 #----------------------------------------------------------

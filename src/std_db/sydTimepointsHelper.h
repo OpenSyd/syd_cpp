@@ -53,6 +53,10 @@ namespace syd {
   /// Fit timepoints
   void ComputeFitTimepoints(syd::FitTimepoints::pointer fit);
 
+  /// Create the timepoints at the pixel coord, from a list of images
+  syd::Timepoints::pointer NewTimepoints(const syd::Image::vector & images,
+                                         const std::vector<double> & pixel);
+
 } // end namespace
 // --------------------------------------------------------------------
 

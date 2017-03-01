@@ -260,7 +260,7 @@ Run()
   // Go !
   filter_.Run();
 
-  // Create output
+  // Create output (FitImages)
   auto db = images_[0]->GetDatabase();
   auto tia = db->New<syd::FitImages>();
   for(auto in:images_) tia->images.push_back(in);
@@ -285,6 +285,7 @@ Run()
     }
   }
   // tia->comments.push_back("tia builder "+Now());
+
   return tia;
 }
 // --------------------------------------------------------------------

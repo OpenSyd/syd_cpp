@@ -21,7 +21,10 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
-#include "sydTimepointsBuilder.h"
+#include "sydStandardDatabase.h"
+//#include "sydTimepointsBuilder.h"
+#include "sydTimepointsHelper.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -42,7 +45,6 @@ int main(int argc, char* argv[])
   for(auto i=0; i<args_info.inputs_num; i++) {
     ids.push_back(atoi(args_info.inputs[i]));
   }
-  DDS(ids);
   syd::Image::vector images;
   db->Query(images, ids);
   if (images.size() ==0) {
@@ -55,26 +57,16 @@ int main(int argc, char* argv[])
   p.push_back(args_info.pixel_arg[0]);
   p.push_back(args_info.pixel_arg[1]);
   p.push_back(args_info.pixel_arg[2]);
-  DDS(p);
 
   // Create (or update) the tac
-  syd::TimepointsBuilder builder(db);
-  builder.SetImages(images);
-  builder.SetPixel(p);
-  syd::Timepoints::pointer tac = builder.ComputeTimepoints();
+  auto tac = syd::NewTimepoints(images, p);
 
   // Set tags
-  db->UpdateTagsFromCommandLine(tac->tags, args_info);
+  syd::SetTagsFromCommandLine(tac->tags, db, args_info);
 
-  // Insert or update
-  if (tac->IsPersistent()) {
-    LOG(1) << "Update " << tac;
-    db->Update(tac);
-  }
-  else {
-    db->Insert(tac);
-    LOG(1) << "Insert " << tac;
-  }
+  // Insert (do not check already exist)
+  db->Insert(tac);
+  LOG(1) << "Insert " << tac;
 
   // This is the end, my friend.
   return EXIT_SUCCESS;
