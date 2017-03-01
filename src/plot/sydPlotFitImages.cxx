@@ -40,7 +40,6 @@ int main(int argc, char* argv[])
   // Get FitImages
   syd::IdType id = atoi(args_info.inputs[0]);
   auto fitimages = db->QueryOne<syd::FitImages>(id);
-  DD(fitimages);
 
   // Get images and pixel
   auto images = fitimages->images;
@@ -48,13 +47,10 @@ int main(int argc, char* argv[])
   p.push_back(args_info.pixel_arg[0]);
   p.push_back(args_info.pixel_arg[1]);
   p.push_back(args_info.pixel_arg[2]);
-  DDS(p);
 
   // Create timepoints and associated fit
   auto ftp = syd::NewFitTimepointsAtPixel(fitimages, p);
-  DD(ftp);
   auto tp = ftp->timepoints;
-  DD(tp);
 
   // Create PyPlotBuilder to display curves
   syd::PyPlotBuilder builder;
@@ -68,13 +64,11 @@ int main(int argc, char* argv[])
   // Curve 2: Display curve fit from models
   if (ftp->iterations != 0) { // else, means that fit fails
     auto model = ftp->NewModel();
-    DD(model);
     double last = tp->times[tp->times.size()-1];
     double first = last-tp->times[0];
     auto times = syd::arange<double>(0, last, first/100.0); // FIXME 100 = param
     std::vector<double> values;
     for(auto t:times) values.push_back(model->GetValue(t));
-    DDS(values);
     builder.AddCurve(times, values, "-", label.str());//, "color=base_line.get_color()");
   }
 
