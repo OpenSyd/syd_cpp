@@ -79,8 +79,8 @@ void syd::FitModel_f4a::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
                               &params_[0], &params_[1], &params_[2]);
   }
 
-  // Allow A to be negative
-  //  problem->SetParameterLowerBound(&params_[0], 0, 0.0);
+  // Allow A to be negative ?
+  problem->SetParameterLowerBound(&params_[0], 0, 0.0);
 
   // If l1 is negative, means uptake. If too negative, could be continuous uptake.
   problem->SetParameterLowerBound(&params_[1], 0, 0.0);
