@@ -30,6 +30,9 @@ namespace syd {
   syd::Image::pointer NewOutputFitImages(const syd::FitImages::pointer tia,
                                          const std::string fit_output_name);
 
+  /// Get the model name from the model id
+  std::string GetModelNameFromId(int value);
+
   /// Create the fit model at the given pixel coordinate
   syd::FitTimepoints::pointer
     NewFitTimepointsAtPixel(const syd::FitImages::pointer tia,

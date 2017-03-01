@@ -17,54 +17,74 @@
   ===========================================================================**/
 
 // syd
-#include "sydPlotTimepoints_ggo.h"
+#include "sydPlotFitImages_ggo.h"
 #include "sydPyPlotBuilder.h" // (must be first)
 #include "sydCommonGengetopt.h"
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydStandardDatabase.h"
+#include "sydFitModels.h"
+#include "sydFitImagesHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(sydPlotTimepoints, 0);
+  SYD_INIT_GGO(sydPlotFitImages, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the list of timepoints
-  std::vector<syd::IdType> ids;
-  syd::ReadIdsFromInputPipe(ids);
-  for(auto i=0; i<args_info.inputs_num; i++) {
-    ids.push_back(atoi(args_info.inputs[i]));
-  }
-  syd::Timepoints::vector timepoints;
-  db->Query(timepoints, ids);
-  if (timepoints.size() == 0) {
-    LOG(FATAL) << "No timepoints ids given. I do nothing.";
-  }
+  // Get FitImages
+  syd::IdType id = atoi(args_info.inputs[0]);
+  auto fitimages = db->QueryOne<syd::FitImages>(id);
+  DD(fitimages);
+
+  // Get images and pixel
+  auto images = fitimages->images;
+  std::vector<double> p;
+  p.push_back(args_info.pixel_arg[0]);
+  p.push_back(args_info.pixel_arg[1]);
+  p.push_back(args_info.pixel_arg[2]);
+  DDS(p);
+
+  // Create timepoints and associated fit
+  auto ftp = syd::NewFitTimepointsAtPixel(fitimages, p);
+  DD(ftp);
+  auto tp = ftp->timepoints;
+  DD(tp);
 
   // Create PyPlotBuilder to display curves
   syd::PyPlotBuilder builder;
-  for(auto tp:timepoints) {
-    std::stringstream label;
-    label << tp->id << " "
-          << tp->patient->name << " "
-          << tp->injection->radionuclide->name;
-    builder.AddCurve(tp->times, tp->values, "-o", label.str());
+  std::stringstream label;
+  label << tp->patient->name << " "
+        << tp->injection->radionuclide->name;
+
+  // Curve 1: timepoints
+  builder.AddCurve(tp->times, tp->values, "-o", label.str());
+
+  // Curve 2: Display curve fit from models
+  if (ftp->iterations != 0) { // else, means that fit fails
+    auto model = ftp->NewModel();
+    DD(model);
+    double last = tp->times[tp->times.size()-1];
+    double first = last-tp->times[0];
+    auto times = syd::arange<double>(0, last, first/100.0); // FIXME 100 = param
+    std::vector<double> values;
+    for(auto t:times) values.push_back(model->GetValue(t));
+    DDS(values);
+    builder.AddCurve(times, values, "-", label.str());//, "color=base_line.get_color()");
   }
 
   // axes labels
   builder.Add("plt.xlabel('Times from injection in hours')");
   builder.Add("plt.ylabel('Activity')");
 
-  // Plot
+  // Ending part
   if (args_info.pdf_given) builder.AddPdfOutput(args_info.pdf_arg);
   builder.AddEndPart();
-  builder.Run();
 
   // Get and save output
   if (args_info.output_given) {
@@ -73,6 +93,9 @@ int main(int argc, char* argv[])
     os << o;
     os.close();
   }
+
+  // Plot
+  builder.Run();
 
   // ------------------------------------------------------------------
   // This is the end, my friend.
