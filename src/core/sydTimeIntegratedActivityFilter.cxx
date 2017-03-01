@@ -182,9 +182,27 @@ SelectBestModel(syd::FitModelBase::vector models,
                              << " AICc = " << m->ComputeAICc(tac)
                              << " AIC = " << m->ComputeAIC(tac) << std::endl;
       if (criterion < min_Akaike_criterion) {
-        best = i;
-        min_Akaike_criterion = criterion;
-        best_R2 = R2;
+
+        // Check positive auc
+        auto index = initial_tac_->size() - working_tac_->size();
+        auto auc = m->ComputeAUC(initial_tac_, index);
+        if (auc < 0) {
+          // Error ! could not be negative
+          std::cout << "negative auc " << tac << std::endl
+                    << m->GetName() << " " << i << " " << index << " "
+                    << auc << " " << m->GetLambdaDecayConstantInHours() << " "
+                    << m->Integrate()
+                    << std::endl;
+          std::cout << " valid=" <<  m->IsAICcValid(tac->size())
+                    << " AICc = " << m->ComputeAICc(tac)
+                    << " AIC = " << m->ComputeAIC(tac) << std::endl;
+          for(auto p:m->GetParameters()) std::cout << p << " " << std::endl;
+        }
+        else {
+          best = i;
+          min_Akaike_criterion = criterion;
+          best_R2 = R2;
+        }
       }
     }
     else if (verbose) std::cout << std::endl;
