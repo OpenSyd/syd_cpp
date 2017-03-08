@@ -51,6 +51,10 @@ namespace syd {
     // FIXME additional points
     // FIXME post processes
 
+    // Not stored in the db (set/get with SetToOptions and SetFromOptions)
+#pragma db transient
+    bool fit_verbose_flag;
+
     /// Specific case for RecordWithComments (composition not inheritance)
     typedef std::shared_ptr<FitOptions> pointer;
     typedef std::function<std::string(pointer)> SpecificFieldFunc;

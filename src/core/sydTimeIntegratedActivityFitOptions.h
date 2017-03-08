@@ -44,6 +44,7 @@ namespace syd {
     void AddTimeValue(double time, double value);
     void SetMaxNumIterations(int i) { max_num_iterations_ = i; }
     void SetLambdaDecayConstantInHours(double l) { lambda_in_hours_ = l; }
+    void SetFitVerboseFlag(bool b) { fit_verbose_flag_ = b; }
 
     // Get model object
     syd::FitModelBase::vector GetModels() const;
@@ -55,6 +56,7 @@ namespace syd {
     double GetLambdaDecayConstantInHours() const { return lambda_in_hours_; }
     std::string ToString() const;
     void Check() const;
+    bool GetFitVerboseFlag() const { return fit_verbose_flag_; }
 
     /// Default function to print an element (must be inline here).
     friend std::ostream& operator<<(std::ostream& os, const TimeIntegratedActivityFitOptions & p) {
@@ -63,6 +65,7 @@ namespace syd {
     }
 
   protected:
+    bool fit_verbose_flag_;
     bool restricted_flag_;
     double R2_min_threshold_;
     std::set<std::string> model_names_;

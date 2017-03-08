@@ -29,6 +29,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   SetMaxNumIterations(100);
   SetAkaikeCriterion("AICc");
   SetLambdaDecayConstantInHours(0.0);
+  SetFitVerboseFlag(false);
   auto f1  = std::make_shared<syd::FitModel_f1>();
   auto f2  = std::make_shared<syd::FitModel_f2>();
   auto f3  = std::make_shared<syd::FitModel_f3>();
@@ -63,7 +64,8 @@ std::string syd::TimeIntegratedActivityFitOptions::ToString() const
      << (GetRestrictedFlag() ? "restricted":"non_restricted") << " "
      << GetMaxNumIterations() << " "
      << GetAkaikeCriterion() << " "
-     << GetLambdaDecayConstantInHours() << "h ";
+     << GetLambdaDecayConstantInHours() << "h "
+     << (GetFitVerboseFlag() ? "verbose ":"");
   for(auto & m:model_names_) ss << m << " ";
   return ss.str();
 }

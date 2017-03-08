@@ -6,3 +6,4 @@ option "restricted_tac"  r "Fit only end of the curve (max to end)" flag off
 option "model" m "Set the model list use to fit f2 f3 f4a etc" string multiple no
 option "akaike" a "Set the Akaike criterion AIC or AICc" string default="AIC" no
 #option "add" - "Add a time/value point to the tac (--add 4.0 --add 20 to add time 5 and value 20)" double multiple no
+option "fit_verbose"  - "Verbose fit tentative" flag off

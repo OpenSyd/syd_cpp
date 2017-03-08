@@ -26,6 +26,7 @@ syd::FitOptions::FitOptions()
   max_iteration = 50;
   restricted_tac = false;
   akaike_criterion = "AIC";
+  fit_verbose_flag = false;
   // FIXME additional points
   // FIXME post processes
 }
@@ -66,6 +67,7 @@ SetToOptions(syd::TimeIntegratedActivityFitOptions & options) const
   options.SetRestrictedFlag(restricted_tac);
   options.ClearModels();
   options.SetAkaikeCriterion(akaike_criterion);
+  options.SetFitVerboseFlag(fit_verbose_flag);
   for(auto m:model_names)
     options.AddModel(m);
 }
@@ -90,6 +92,7 @@ SetFromOptions(const syd::TimeIntegratedActivityFitOptions & options)
   max_iteration = options.GetMaxNumIterations();
   restricted_tac = options.GetRestrictedFlag();
   akaike_criterion = options.GetAkaikeCriterion();
+  fit_verbose_flag = options.GetFitVerboseFlag();
   model_names.clear();
   for(auto m:options.GetModels())
     model_names.push_back(m->GetName());

@@ -158,7 +158,7 @@ int syd::TimeIntegratedActivityFilter::
 SelectBestModel(syd::FitModelBase::vector models,
                 syd::TimeActivityCurve::pointer tac)
 {
-  bool verbose=false; // Debug
+  bool verbose=options_.GetFitVerboseFlag(); // Debug
   int best = -1;
   double R2_threshold = options_.GetR2MinThreshold();
   double min_Akaike_criterion = 666.0;
@@ -171,9 +171,30 @@ SelectBestModel(syd::FitModelBase::vector models,
   for(auto i=0; i<models.size(); i++) {
     auto & m = models[i];
     double R2 = m->ComputeR2(tac);
-    if (verbose) std::cout << m->GetName()
-                           << " SS = " << m->ComputeRSS(tac)
-                           << " R2 = " << R2;
+    if (verbose) {
+      double mean = 0.0;
+      double n = tac->size();
+      for(auto i=0; i<tac->size(); i++) mean += tac->GetValue(i);
+      mean = mean / (double)tac->size();
+      double SS_tot = 0.0;
+      for(auto i=0; i<tac->size(); i++)
+        SS_tot += pow(tac->GetValue(i)-mean, 2);
+      double SS_res = m->ComputeRSS(tac);
+      double SS_alt = 0.0;
+      for(auto i=0; i<tac->size(); i++)
+        SS_alt += pow(tac->GetValue(i)-0.0, 2);
+      double R2_alt = 1.0 - (SS_res/SS_alt);
+      double RMSE = sqrt(SS_res/n);
+      double NRMSE = RMSE/mean;
+      std::cout << m->GetName()
+                << " SS = " << m->ComputeRSS(tac)
+                << " R2 = " << R2
+                << " RMSE = " << RMSE
+                << " NRMSE = " << NRMSE
+                << " mean = " << mean
+                << " tot = " << SS_tot
+                << " R2_alt = " << R2_alt;
+    }
     if (R2 > R2_threshold) {
       double criterion;
       if (options_.GetAkaikeCriterion() == "AIC") criterion = m->ComputeAIC(tac);
