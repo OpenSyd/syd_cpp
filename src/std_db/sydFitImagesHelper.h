@@ -33,12 +33,20 @@ namespace syd {
   /// Get the model name from the model id
   std::string GetModelNameFromId(int value);
 
+  /// Fill an Options structure from ggo
+  template<class ArgsInfo>
+  void SetOptionsFromCommandLine(syd::TimeIntegratedActivityFitOptions & options,
+                                 ArgsInfo & args_info);
+
   /// Create the fit model at the given pixel coordinate
   syd::FitTimepoints::pointer
     NewFitTimepointsAtPixel(const syd::FitImages::pointer tia,
                             const std::vector<double> & pixel);
 
 } // namespace syd
+
+#include "sydFitImagesHelper.txx"
+
 // --------------------------------------------------------------------
 
 #endif

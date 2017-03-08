@@ -19,6 +19,7 @@
 // syd
 #include "sydFitImagesHelper.h"
 #include "sydTimepointsHelper.h"
+#include "sydTimeIntegratedActivityFilter.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer syd::NewOutputFitImages(const syd::FitImages::pointer tia,
@@ -71,7 +72,7 @@ syd::NewFitTimepointsAtPixel(const syd::FitImages::pointer tia,
 {
   auto db = tia->GetDatabase<syd::StandardDatabase>();
   auto ftp = db->New<syd::FitTimepoints>();
-  auto tp = syd::NewTimepoints(tia->images, pixel);
+  auto tp = syd::NewTimepointsAtPixel(tia->images, pixel);
   ftp->timepoints = tp;
 
   // Fit options from tia
