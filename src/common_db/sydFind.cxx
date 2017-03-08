@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
   db->Sort(results, table_name, args_info.sort_arg);
 
   // Consider vv flag
-  std::string format = args_info.format_arg;
+  std::string format = args_info.field_arg;
   std::streambuf * buf = std::cout.rdbuf();
   std::ostringstream oss;
   if (args_info.vv_flag or args_info.vvs_flag) {
@@ -134,7 +134,7 @@ int main(int argc, char* argv[])
 
     syd::PrintTable table;
     table.SetPrecision(args_info.precision_arg);
-    table.Build(table_name, results, args_info.format_arg);
+    table.Build(table_name, results, args_info.field_arg);
     table.SetHeaderFlag(!args_info.noheader_flag);
     table.SetFooterFlag(!args_info.nofooter_flag);
     table.SetSingleLineFlag(args_info.single_line_flag);
