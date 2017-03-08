@@ -87,7 +87,10 @@ namespace syd {
 
     double ComputeAUC_OLD(const syd::TimeActivityCurve & tac, bool use_current_tac=false) const;
     double ComputeAUC(const syd::TimeActivityCurve::pointer tac, int index) const;
+
+    /// R2 is coefficient of determination
     double ComputeR2(const syd::TimeActivityCurve::pointer tac) const;
+    
     double ComputeAICc(const syd::TimeActivityCurve::pointer tac) const;
     double ComputeAIC(const syd::TimeActivityCurve::pointer tac) const;
     double ComputeRSS(const syd::TimeActivityCurve::pointer tac) const;

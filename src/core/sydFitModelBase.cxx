@@ -195,6 +195,7 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve::pointer tac, 
 // --------------------------------------------------------------------
 double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve::pointer tac) const
 {
+  // https://en.wikipedia.org/wiki/Coefficient_of_determination
   double mean = 0.0;
   for(auto i=0; i<tac->size(); i++) mean += tac->GetValue(i);
   mean = mean / (double)tac->size();
