@@ -428,10 +428,10 @@ wrap_ggo(sydInsertPixelTimepoints_GGO_C
   sydInsertPixelTimepoints.ggo
   sydCommandLineWithTags.ggo
   sydCommandLineDefault.ggo)
-add_executable(sydInsertPixelTimepoints
-  sydInsertPixelTimepoints.cxx
-  ${sydInsertPixelTimepoints_GGO_C})
-target_link_libraries(sydInsertPixelTimepoints ${SYD_STD_DB_LIBRARY})
+# add_executable(sydInsertPixelTimepoints
+#   sydInsertPixelTimepoints.cxx
+#   ${sydInsertPixelTimepoints_GGO_C})
+# target_link_libraries(sydInsertPixelTimepoints ${SYD_STD_DB_LIBRARY})
 
 
 #----------------------------------------------------------

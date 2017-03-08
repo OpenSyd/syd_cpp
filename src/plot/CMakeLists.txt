@@ -10,9 +10,9 @@ target_link_libraries(sydPlot sydCore sydStandardDatabase ${PYTHON_LIBRARY})
 
 #----------------------------------------------------------
 # Not really a tool, for debug only
-wrap_ggo(sydPlotTest_GGO_C sydPlotTest.ggo ../std_db/sydCommandLineDefault.ggo)
-add_executable(sydPlotTest sydPlotTest.cxx ${sydPlotTest_GGO_C})
-target_link_libraries(sydPlotTest sydPlot StandardDatabase ${PYTHON_LIBRARY})
+# wrap_ggo(sydPlotTest_GGO_C sydPlotTest.ggo ../std_db/sydCommandLineDefault.ggo)
+# add_executable(sydPlotTest sydPlotTest.cxx ${sydPlotTest_GGO_C})
+# target_link_libraries(sydPlotTest sydPlot StandardDatabase ${PYTHON_LIBRARY})
 
 
 # Plot Timepoints
@@ -21,9 +21,9 @@ add_executable(sydPlotTimepoints sydPlotTimepoints.cxx ${sydPlotTimepoints_GGO_C
 target_link_libraries(sydPlotTimepoints sydPlot ${PYTHON_LIBRARY} ${SYD_STD_DB_LIBRARY})
 
 # Plot FitResult
-wrap_ggo(sydPlotFitResult_GGO_C sydPlotFitResult.ggo ../std_db/sydCommandLineDefault.ggo)
-add_executable(sydPlotFitResult sydPlotFitResult.cxx ${sydPlotFitResult_GGO_C})
-target_link_libraries(sydPlotFitResult StandardDatabase sydPlot ${PYTHON_LIBRARY})
+# wrap_ggo(sydPlotFitResult_GGO_C sydPlotFitResult.ggo ../std_db/sydCommandLineDefault.ggo)
+# add_executable(sydPlotFitResult sydPlotFitResult.cxx ${sydPlotFitResult_GGO_C})
+# target_link_libraries(sydPlotFitResult StandardDatabase sydPlot ${PYTHON_LIBRARY})
 
 
 # Plot FitImages
