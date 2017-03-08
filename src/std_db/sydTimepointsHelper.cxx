@@ -65,7 +65,8 @@ syd::FitTimepoints::vector syd::FindFitTimepoints(const syd::Timepoints::pointer
 
 
 // --------------------------------------------------------------------
-syd::RoiTimepoints::pointer syd::NewTimepoints(const syd::RoiStatistic::vector stats)
+syd::RoiTimepoints::pointer
+syd::NewTimepoints(const syd::RoiStatistic::vector stats)
 {
   if (stats.size() == 0) {
     EXCEPTION("Cannot create timepoints from empty vector of RoiStatistic");
@@ -197,8 +198,8 @@ syd::NewFitTimepoints(const syd::Timepoints::pointer tp,
 
 // --------------------------------------------------------------------
 syd::Timepoints::pointer
-syd::NewTimepoints(const syd::Image::vector & images,
-                   const std::vector<double> & pixel)
+syd::NewTimepointsAtPixel(const syd::Image::vector & images,
+                          const std::vector<double> & pixel)
 {
   if (images.size() == 0) return nullptr;
 

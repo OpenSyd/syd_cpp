@@ -25,6 +25,7 @@
 #include "sydStandardDatabase.h"
 #include "sydFitModels.h"
 #include "sydFitImagesHelper.h"
+#include "sydTimepointsHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -49,8 +50,20 @@ int main(int argc, char* argv[])
   p.push_back(args_info.pixel_arg[2]);
 
   // Create timepoints and associated fit
-  auto ftp = syd::NewFitTimepointsAtPixel(fitimages, p);
-  auto tp = ftp->timepoints;
+  syd::FitTimepoints::pointer ftp;
+  syd::Timepoints::pointer tp;
+
+  //
+  if (args_info.fit_flag) {
+    tp = syd::NewTimepointsAtPixel(fitimages->images, p);
+    syd::TimeIntegratedActivityFitOptions options;
+    syd::SetOptionsFromCommandLine(options, args_info);
+    ftp = syd::NewFitTimepoints(tp, options);
+  }
+  else {
+    ftp = syd::NewFitTimepointsAtPixel(fitimages, p);
+    tp = ftp->timepoints;
+  }
 
   // Create PyPlotBuilder to display curves
   syd::PyPlotBuilder builder;

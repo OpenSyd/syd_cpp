@@ -8,7 +8,8 @@ description "Plot TAC and fit from a FitImages at the given pixel (mm)
 "
 
 
-#option "norm"	    n	"Divide by auc" flag off
+option "pixel"      - "Pixel coord in mm"       float yes multiple(3)
+option "fit"	      f	"If given, try to fit instead of getting FitImage results" flag off
+
 option "output"	    o	"Output python file for script" string no
 option "pdf"	      p	"Output pdf file" string no
-option "pixel"  -  "Pixel coord in mm"       float yes multiple(3)

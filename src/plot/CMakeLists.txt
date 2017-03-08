@@ -27,6 +27,14 @@ target_link_libraries(sydPlotFitResult StandardDatabase sydPlot ${PYTHON_LIBRARY
 
 
 # Plot FitImages
-wrap_ggo(sydPlotFitImages_GGO_C sydPlotFitImages.ggo ../std_db/sydCommandLineDefault.ggo)
-add_executable(sydPlotFitImages sydPlotFitImages.cxx ${sydPlotFitImages_GGO_C})
-target_link_libraries(sydPlotFitImages sydPlot ${PYTHON_LIBRARY} ${SYD_STD_DB_LIBRARY})
+wrap_ggo(sydPlotFitImages_GGO_C
+  sydPlotFitImages.ggo
+  ../std_db/sydCommandLineWithFitOptions.ggo
+  ../std_db/sydCommandLineDefault.ggo)
+add_executable(sydPlotFitImages
+  sydPlotFitImages.cxx
+  ${sydPlotFitImages_GGO_C})
+target_link_libraries(sydPlotFitImages
+  sydPlot
+  ${PYTHON_LIBRARY}
+  ${SYD_STD_DB_LIBRARY})
