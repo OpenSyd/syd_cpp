@@ -47,7 +47,7 @@ BuildFields(const syd::Database * db) const
   // Read only fields
   ADD_RO_FIELD(dimension, unsigned short int);
   auto f_fn = [](pointer p) -> std::string { return p->GetAbsolutePath(); };
-  AddField<std::string>("filename", f_fn, "file");
+  AddField<std::string>("filepath", f_fn, "file");
   auto f_size = [](pointer p) -> std::string { return p->SizeAsString(); };
   AddField<std::string>("size", f_size);
   auto f_spacing = [](pointer p) -> std::string { return p->SpacingAsString(); };

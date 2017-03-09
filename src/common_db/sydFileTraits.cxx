@@ -34,6 +34,8 @@ BuildFields(const syd::Database * db) const
   ADD_RO_FIELD(filename, std::string);
   ADD_RO_FIELD(path, std::string);
   ADD_RO_FIELD(md5, std::string);
+  auto f = [](pointer p) -> std::string { return p->GetAbsolutePath(); };
+  AddField<std::string>("filepath", f, "file");
 
   // Format lists
   field_format_map_["default"] = "id filename path md5";

@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
   // VV
   if (args_info.vv_flag or args_info.vvs_flag) {
     syd::PrintTable table;
-    table.Build(table_name, results, "filename");
+    table.Build(table_name, results, "filepath");
     table.SetHeaderFlag(false);
     table.SetFooterFlag(false);
     table.SetSingleLineFlag(true);

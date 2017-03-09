@@ -58,6 +58,12 @@ BuildFields(const syd::Database * db) const
   ADD_FIELD(dicom_modality, std::string);
   ADD_FIELD(dicom_description, std::string);
 
+  // Complete file path -> first image only
+  auto f_fp = [](pointer p) -> std::string {
+    if (p->dicom_files.size() == 0) return empty_value;
+    return p->dicom_files[0]->GetAbsolutePath(); };
+  AddField<std::string>("filepath", f_fp, "file");
+
   // comments
   auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
   AddField<std::string>("comments", f_c, "com");
