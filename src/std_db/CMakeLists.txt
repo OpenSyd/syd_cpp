@@ -71,6 +71,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiStatisticHelper.cxx
   sydTimepointsHelper.cxx
   sydFitImagesHelper.cxx
+  sydImageType.cxx
 
   ## Cannot put this file in the lib, because the plugin will be no more
   ## recognized. I dont know why.
@@ -176,6 +177,15 @@ add_executable(sydInsertImageFromDicom
   sydInsertImageFromDicom.cxx
   ${sydInsertImageFromDicom_GGO_C})
 target_link_libraries(sydInsertImageFromDicom ${SYD_STD_DB_LIBRARY})
+
+# identify the type of an image
+wrap_ggo(sydIdentifyImageType_GGO_C
+  sydIdentifyImageType.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydIdentifyImageType
+  sydIdentifyImageType.cxx
+  ${sydIdentifyImageType_GGO_C})
+target_link_libraries(sydIdentifyImageType ${SYD_STD_DB_LIBRARY})
 
 # Update image
 wrap_ggo(sydUpdateImage_GGO_C
