@@ -54,7 +54,8 @@ int main(int argc, char* argv[])
   for(auto d:dicom_series) {
     auto image_type = syd::IdentifyImageType(d);
     //LOG(1) << "Inserting Image " << image;
-    std::cout << d->id << " " << d->dicom_description << ": " << image_type << std::endl;
+    //    std::cout << d->id << " " << d->dicom_description << ": " << image_type << std::endl;
+    std::cout << d->id << " " << image_type << "\t\t" << d->dicom_description << std::endl;
   }
 
   // This is the end, my friend.

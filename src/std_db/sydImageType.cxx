@@ -188,7 +188,26 @@ syd::ImageType::pointer syd::ImageType::BuildImageType_SPECT()
     if (found != std::string::npos) p->properties["AC"] = PropertiesValue::No;
     found = d.find("TB_KNIT_AC");
     if (found != std::string::npos) p->properties["AC"] = PropertiesValue::Yes;
-    found = d.find("TRANS-AC-S1");
+    found = d.find("TRANS-AC-S1"); // S1 or S2 = table step
+    if (found != std::string::npos) {
+      p->properties["AC"] = PropertiesValue::Yes;
+      p->properties["S1"] = PropertiesValue::Yes;
+    }
+    found = d.find("TRANS-AC-S2");
+    if (found != std::string::npos) {
+      p->properties["AC"] = PropertiesValue::Yes;
+      p->properties["S2"] = PropertiesValue::Yes;
+    }
+    found = d.find("TRANS-S1"); // S1 or S2 = table step
+    if (found != std::string::npos) {
+      p->properties["AC"] = PropertiesValue::No;
+      p->properties["S1"] = PropertiesValue::Yes;
+    }
+    found = d.find("TRANS-S2"); 
+    if (found != std::string::npos) {
+      p->properties["AC"] = PropertiesValue::No;
+      p->properties["S2"] = PropertiesValue::Yes;
+    }
     if (found != std::string::npos) p->properties["AC"] = PropertiesValue::Yes;
     found = d.find("SPECT_KNITTED");
     if (found != std::string::npos) v = 1.0; // We know it is a spect
