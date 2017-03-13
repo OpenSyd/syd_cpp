@@ -83,6 +83,10 @@ int main(int argc, char* argv[])
     for(auto i=0; i<args_info.id_given; i++) ids.push_back(args_info.id_arg[i]);
     db->Query(records, table_name, ids);
   }
+  syd::Record::pointer r(records[0]);
+  std::string pattern("11:52");
+  std::string traits("dicom_reconstruction_date");
+  db->FindField(r, traits, pattern);
 
   // Only keep the ones with the given tags (we do not check that the tags exist)
   if (args_info.tag_given and records.size() >0) {

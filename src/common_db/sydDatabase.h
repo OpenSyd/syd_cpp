@@ -182,7 +182,10 @@ namespace syd {
                        std::string field_name,
                        std::string value_name);
     // ------------------------------------------------------------------------
-
+    // Find value_name in field_name
+    void FindField(RecordBasePointer & record,
+                     std::string& field_name,
+                     std::string& value_name);
 
     // ------------------------------------------------------------------------
     void Delete(RecordBaseVector & records, const std::string & table_name);

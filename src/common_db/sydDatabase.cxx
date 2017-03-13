@@ -447,6 +447,52 @@ void syd::Database::UpdateField(RecordBasePointer & record,
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+void syd::Database::FindField(RecordBasePointer & record,
+                                std::string& field_name,
+                                std::string& value)
+{
+  // SQL native query
+  auto table_name = record->GetTableName();
+  auto table_sql_name = AddDoubleQuoteAround(record->traits()->GetSQLTableName());
+  syd::FieldBase::vector fieldsVector = GetFields(std::string table_name, std::string field_names);
+  auto field_sql_name = AddDoubleQuoteAround(fieldVector[0]);
+  std::string v = "'%" + value + "%'";
+  auto id = record->id;
+  std::ostringstream sql;
+  sql << "SELECT * FROM " << table_sql_name
+      << " WHERE " << field_sql_name
+      << " LIKE " << v;
+
+  try {
+    odb::transaction t (odb_db_->begin ());
+    odb_db_->execute (sql.str());
+    t.commit ();
+  } catch (const odb::exception& e) {
+
+    /*
+      std::string q = "PRAGMA table_info("+AddDoubleQuoteAround(table_name)+")";
+      auto rc = sqlite3_prepare_v2(sdb, q.c_str(), -1, &stmt, NULL);
+      if (rc==SQLITE_OK) {
+      // Loop on result with the following structure:
+      //   cid name type notnull dflt_value  pk
+      while(sqlite3_step(stmt) == SQLITE_ROW) {
+      std::string name = sqlite3_column_text_string(stmt, 1);
+      std::string type = sqlite3_column_text_string(stmt, 2);
+      AddField(name, type);
+      }
+    */
+    EXCEPTION("Error during the following sql query: " << std::endl
+              << sql.str() << std::endl
+              << "Error is:" << e.what()
+              << std::endl
+              << "Note: warning, here the table name is case sensitive.");
+  }
+  record = QueryOne(table_name, id);
+}
+// --------------------------------------------------------------------
+
+
 //---------------------------------------------------------------------
 std::string syd::sqlite3_column_text_string(sqlite3_stmt * stmt, int iCol)
 {
