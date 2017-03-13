@@ -111,6 +111,18 @@ int main(int argc, char* argv[])
   }
   std::ostream os(buf);
 
+  // Be sure to have exactly one result
+  if (args_info.oneOutput_flag && results.size() == 0) {
+    LOG(FATAL) << "Zero element found";
+  }
+  else if (args_info.oneOutput_flag && results.size() > 1) {
+    LOG(FATAL) << "Several elements found";
+  }
+  if (results.size() == 0) {
+    LOG(1) << "No records match";
+    return EXIT_SUCCESS;
+  }
+
   // Dump results
   if (args_info.list_flag) {
     // Get ids
@@ -121,17 +133,6 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
   }
   else {
-    if (args_info.oneOutput_flag && results.size() == 0) {
-      LOG(FATAL) << "Zero element found";
-    }
-    else if (args_info.oneOutput_flag && results.size() > 1) {
-      LOG(FATAL) << "Several elements found";
-    }
-    if (results.size() == 0) {
-      LOG(1) << "No records match";
-      return EXIT_SUCCESS;
-    }
-
     syd::PrintTable table;
     table.SetPrecision(args_info.precision_arg);
     table.Build(table_name, results, args_info.field_arg);
