@@ -97,7 +97,11 @@ std::string syd::ImageType::ToString() const
   std::ostringstream oss;
   oss << name  << " " << pixel_unit->name << " ";
   for(auto p:properties)
-    oss << p.first << "(" << p.second << ") ";
+    oss << p.first << "("
+        << (p.second == PropertiesValue::Yes ? "Y":"")
+        << (p.second == PropertiesValue::No ? "N":"")
+        << (p.second == PropertiesValue::Unknown ? "?":"")
+        << ") ";
   return oss.str();
 }
 // --------------------------------------------------------------------
