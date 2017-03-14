@@ -37,9 +37,9 @@ void syd::FitModel_f4a::ComputeStartingParametersValues(const syd::TimeActivityC
   first_index = std::min(first_index, tac->size()-3);
 
   // Initialisation
-  params_[0] = tac->GetValue(0);
-  params_[1] = 0.0;
-  params_[2] = -0.8*GetLambdaDecayConstantInHours();
+  params_[0] = tac->GetValue(0); // A1
+  params_[1] = 0.0; // l1
+  params_[2] = -0.8*GetLambdaDecayConstantInHours(); // l2
 
   // Second part of the curve
   /*  Eigen::Vector2d x;
@@ -59,13 +59,6 @@ void syd::FitModel_f4a::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
 {
   syd::FitModelBase::SetProblemResidual(problem, tac);
 
-  // Initialisation
-  /*
-  params_[0] = tac.GetValue(0); // A1
-  params_[1] = 0.0;//GetLambdaDecayConstantInHours(); // lambda_1
-  params_[2] = 0.0;//GetLambdaDecayConstantInHours()*1.2; // lambda_2
-  */
-
   // need to be created each time
   residuals_.clear();
   for(auto i=0; i<tac.size(); i++) {
@@ -79,13 +72,11 @@ void syd::FitModel_f4a::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
                               &params_[0], &params_[1], &params_[2]);
   }
 
-  // Allow A to be negative ?
-  problem->SetParameterLowerBound(&params_[0], 0, 0.0);
+  // Constraints
+  problem->SetParameterLowerBound(&params_[0], 0, 0.0); // A1
+  problem->SetParameterLowerBound(&params_[1], 0, 0.0); // l1
+  problem->SetParameterLowerBound(&params_[2], 0, 0.0); // l2
 
-  // If l1 is negative, means uptake. If too negative, could be continuous uptake.
-  problem->SetParameterLowerBound(&params_[1], 0, 0.0);
-  problem->SetParameterLowerBound(&params_[2], 0, 0.0);
-  //  problem->SetParameterUpperBound(&params_[2], 0, 10*GetLambdaDecayConstantInHours());
   problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaDecayConstantInHours());
   problem->SetParameterUpperBound(&params_[2], 0, 100*GetLambdaDecayConstantInHours());
 }

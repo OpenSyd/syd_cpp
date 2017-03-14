@@ -92,17 +92,12 @@ void syd::FitModel_f4::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
   }
 
   problem->SetParameterLowerBound(&params_[0], 0, 0.0);   // A1 positive
+  problem->SetParameterLowerBound(&params_[1], 0, 0.0);   // l1 positive
   problem->SetParameterLowerBound(&params_[2], 0, 0.0);   // A2 positive
+  problem->SetParameterLowerBound(&params_[3], 0, 0.0);   // l2 positive
 
-  problem->SetParameterLowerBound(&params_[1], 0, 0);//-0.9*GetLambdaDecayConstantInHours());
-  problem->SetParameterLowerBound(&params_[3], 0, 0);//-0.9*GetLambdaDecayConstantInHours());
   problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaDecayConstantInHours());
   problem->SetParameterUpperBound(&params_[3], 0, 100*GetLambdaDecayConstantInHours());
-
-
-  //problem->SetParameterUpperBound(&params_[1], 0, 0.0);//GetLambdaDecayConstantInHours()*2.0); // positive
-  // problem->SetParameterLowerBound(&params_[3], 0, 0.1*GetLambdaDecayConstantInHours()); // positive
-  // problem->SetParameterUpperBound(&params_[3], 0, GetLambdaDecayConstantInHours()); // positive
 }
 // --------------------------------------------------------------------
 
