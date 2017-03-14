@@ -106,6 +106,7 @@ syd::FitModelBase::pointer syd::FitTimepoints::NewModel() const
   if (model_name == "f4a") model = std::make_shared<syd::FitModel_f4a>();
   if (model_name == "f4b") model = std::make_shared<syd::FitModel_f4b>();
   if (model_name == "f4") model = std::make_shared<syd::FitModel_f4>();
+  if (model_name == "f5") model = std::make_shared<syd::FitModel_f5>();
   if (model == nullptr) {
     LOG(FATAL) << "Model " << model_name << " unknown.";
   }

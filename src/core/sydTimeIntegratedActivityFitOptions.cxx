@@ -37,6 +37,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   auto f4b = std::make_shared<syd::FitModel_f4b>();
   auto f4c = std::make_shared<syd::FitModel_f4c>();
   auto f4  = std::make_shared<syd::FitModel_f4>();
+  auto f5  = std::make_shared<syd::FitModel_f5>();
   all_models_.push_back(f1);
   all_models_.push_back(f2);
   all_models_.push_back(f3);
@@ -44,6 +45,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   all_models_.push_back(f4b);
   all_models_.push_back(f4c);
   all_models_.push_back(f4);
+  all_models_.push_back(f5);
 }
 // --------------------------------------------------------------------
 
