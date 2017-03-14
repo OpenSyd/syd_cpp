@@ -187,6 +187,7 @@ SelectBestModel(syd::FitModelBase::vector models,
       double RMSE = sqrt(SS_res/n);
       double NRMSE = RMSE/mean;
       std::cout << m->GetName()
+                << "(" << m->GetId() << ")"
                 << " SS = " << m->ComputeRSS(tac)
                 << " R2 = " << R2
                 << " RMSE = " << RMSE
