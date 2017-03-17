@@ -24,6 +24,7 @@
 #include "sydImageStitch.h"
 #include "sydRoiStatisticHelper.h"
 #include "sydImageFillHoles.h"
+#include "sydImage_GaussianFilter.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -310,6 +311,8 @@ void syd::SetImageInfoFromImage(syd::Image::pointer image,
   image->modality = like->modality;
   image->tags.clear();
   for(auto t:like->tags) image->tags.push_back(t);
+  image->comments.clear();
+  for(auto c:like->comments) image->comments.push_back(c);
   // (The history is not copied)
 }
 // --------------------------------------------------------------------
@@ -523,5 +526,21 @@ void syd::FillHoles(syd::Image::pointer image,
   auto mask_itk = syd::ReadImage<ImageType>(mask->GetAbsolutePath());
   syd::FillHoles<ImageType>(input_itk, mask_itk, radius, mask_value, nb_failures, nb_changed);
   syd::WriteImage<ImageType>(input_itk, image->GetAbsolutePath());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ApplyGaussianFilter(syd::Image::pointer image, double sigma_in_mm)
+{
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+  itk_image = syd::GaussianFilter<ImageType>(itk_image, sigma_in_mm);
+  syd::WriteImage<ImageType>(itk_image, image->GetAbsolutePath());
+
+  // update the image to set the history
+  auto db = image->GetDatabase();
+  db->Update(image);
 }
 // --------------------------------------------------------------------

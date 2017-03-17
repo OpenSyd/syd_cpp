@@ -16,3 +16,6 @@ option "fill_mask_image" -  "The 'holes' are given in this mask image"          
 option "fill_mask_value" -  "Values of the 'holes' in the mask image"                 float default="0" no
 
 
+option "gauss" g "Smooth the image with a Gaussian filter, the parameter is the sigma in mm (0=no smooth)" float default="0" no
+option "copy" - "Make a copy of the image before update. The initial image is not modified" flag off
+

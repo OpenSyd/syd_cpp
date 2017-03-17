@@ -128,6 +128,9 @@ namespace syd {
                  int & nb_failures,
                  int & nb_changed);
 
+  /// Apply a gaussian filter to the image
+  void ApplyGaussianFilter(syd::Image::pointer image, double sigma_in_mm);
+
 } // namespace syd
 
 #include "sydImageHelper.txx"

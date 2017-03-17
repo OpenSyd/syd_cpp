@@ -74,6 +74,16 @@ int main(int argc, char* argv[])
       }
     }
 
+    if (args_info.copy_flag) {
+      auto copy = syd::CopyImage(image);
+      image = copy;
+    }
+
+    if (args_info.gauss_arg != 0) {
+      double sigma_in_mm = args_info.gauss_arg;
+      syd::ApplyGaussianFilter(image, sigma_in_mm);
+    }
+
     // Need to import a new mhd ?
     if (args_info.file_given) {
       if (image->type != "mhd") {
