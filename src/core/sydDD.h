@@ -55,6 +55,6 @@ void _print_container(T const& a)
     _print_container(a) ; std::cout << "]" << DD_RESET << std::endl;  \
     std::cout.flush();}
 
-#define DDF() { std::cout << DD_COLOR << "--> Function " << __func__ << std::endl; }
+#define DDF() { std::cout << DD_COLOR << "--> Function " << __func__ << DD_RESET << std::endl; }
 
 #endif
