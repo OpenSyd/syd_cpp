@@ -199,6 +199,17 @@ add_executable(sydUpdateImage
   ${sydUpdateImage_GGO_C})
 target_link_libraries(sydUpdateImage ${SYD_STD_DB_LIBRARY})
 
+# Update tags
+wrap_ggo(sydUpdateTags_GGO_C
+  sydUpdateTags.ggo
+  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydUpdateTags
+  sydUpdateTags.cxx
+  ${sydUpdateTags_GGO_C})
+target_link_libraries(sydUpdateTags ${SYD_STD_DB_LIBRARY})
+
 # Create images by stitching 2 dicom
 wrap_ggo(sydStitchDicom_GGO_C
   sydStitchDicom.ggo
