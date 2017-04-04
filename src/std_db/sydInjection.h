@@ -30,7 +30,8 @@ namespace syd {
   /// Store information about a radionuclide injection (date, etc).
   class Injection :
     public syd::Record,
-    public syd::RecordWithComments {
+    public syd::RecordWithComments,
+    public syd::RecordWithTags {
   public:
 
       DEFINE_TABLE_CLASS(Injection);

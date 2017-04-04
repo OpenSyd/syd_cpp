@@ -22,6 +22,7 @@
 // syd
 #include "sydRecord.h"
 #include "sydRecordWithComments.h"
+#include "sydRecordWithTags.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -30,7 +31,8 @@ namespace syd {
   /// Store information about a patient (id, study_id, name etc).
   class Patient:
     public syd::Record,
-    public syd::RecordWithComments {
+    public syd::RecordWithComments,
+    public syd::RecordWithTags {
   public:
 
       DEFINE_TABLE_CLASS(Patient);

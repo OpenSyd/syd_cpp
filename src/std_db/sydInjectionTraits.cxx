@@ -18,11 +18,11 @@
 
 // syd
 #include "sydInjectionTraits.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 DEFINE_TABLE_TRAITS_IMPL(Injection);
 // --------------------------------------------------------------------
-
 
 // --------------------------------------------------------------------
 template<>
@@ -36,7 +36,15 @@ BuildFields(const syd::Database * db) const
   ADD_FIELD(date, std::string);
   ADD_FIELD(activity_in_MBq, double);
 
-  field_format_map_["default"] = "id patient.name[pat] radionuclide.name[rad] date activity_in_MBq[activity]";
+  // comments
+  auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
+  AddField<std::string>("comments", f_c, "com");
+
+  // tags
+  auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
+  AddField<std::string>("tags", f_t);
+
+  field_format_map_["default"] = "id patient.name[pat] radionuclide.name[rad] date activity_in_MBq[activity] tags comments";
 }
 // --------------------------------------------------------------------
 

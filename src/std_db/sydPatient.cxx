@@ -19,13 +19,15 @@
 // syd
 #include "sydPatient.h"
 #include "sydStandardDatabase.h"
+#include "sydTagHelper.h"
 
 DEFINE_TABLE_IMPL(Patient);
 
 // --------------------------------------------------
 syd::Patient::Patient():
   syd::Record(),
-  syd::RecordWithComments()
+  syd::RecordWithComments(),
+  syd::RecordWithTags()
 {
   // default value
   name = empty_value; // must be unique
@@ -47,6 +49,7 @@ std::string syd::Patient::ToString() const
      << weight_in_kg << " "
      << dicom_patientid << " "
      << sex << " "
+     << syd::GetLabels(tags) << " "
      << GetAllComments();
   auto s = ss.str();
   return trim(s);

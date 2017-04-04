@@ -20,13 +20,15 @@
 #include "sydInjection.h"
 #include "sydStandardDatabase.h"
 #include "sydRecordTraits.h"
+#include "sydTagHelper.h"
 
 DEFINE_TABLE_IMPL(Injection);
 
 // --------------------------------------------------------------------
 syd::Injection::Injection():
   syd::Record(),
-  syd::RecordWithComments()
+  syd::RecordWithComments(),
+  syd::RecordWithTags()
 {
   date = empty_value;
   activity_in_MBq = 0.0;
@@ -49,6 +51,7 @@ std::string syd::Injection::ToString() const
      << r  << " "
      << date << " "
      << activity_in_MBq << " "
+     << syd::GetLabels(tags) << " "
      << GetAllComments();
   auto s = ss.str();
   return trim(s);

@@ -18,6 +18,7 @@
 
 // syd
 #include "sydPatientTraits.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 DEFINE_TABLE_TRAITS_IMPL(Patient);
@@ -36,7 +37,15 @@ BuildFields(const syd::Database * db) const
   ADD_FIELD(dicom_patientid, std::string);
   ADD_FIELD(sex, std::string);
 
-  field_format_map_["default"] = "id study_id name weight_in_kg[weight] sex dicom_patientid[dicom_id]";
+  // comments
+  auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
+  AddField<std::string>("comments", f_c, "com");
+
+  // tags
+  auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
+  AddField<std::string>("tags", f_t);
+
+  field_format_map_["default"] = "id study_id name weight_in_kg[weight] sex dicom_patientid[dicom_id] tags comments";
 }
 // --------------------------------------------------------------------
 
