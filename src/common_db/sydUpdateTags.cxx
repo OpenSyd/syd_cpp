@@ -29,7 +29,7 @@
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydUpdateTags, 0);
+  SYD_INIT_GGO(sydUpdateTags, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();

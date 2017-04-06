@@ -47,7 +47,7 @@ void syd::SetTagsFromCommandLine(syd::Tag::vector & tags,
       try {
         tags_temp = syd::FindTags(db, tagname);
       } catch(std::exception & e) {
-        LOG(WARNING) << "Some tags are ignored. " << e.what();
+        LOG(WARNING) << "Some tags were not found. " << e.what();
       }
       syd::AddTag(tags, tags_temp);
     }
