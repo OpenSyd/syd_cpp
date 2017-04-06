@@ -56,8 +56,8 @@ namespace syd {
                                     const std::string & desc="");
 
   /// Check if all tags are in the first list
-  bool IsAllTagsIn(syd::Tag::vector & input_tags,
-                   syd::Tag::vector & to_search_tags);
+  bool IsAllTagsIn(const syd::Tag::vector & input_tags,
+                   const syd::Tag::vector & to_search_tags);
 
   /// Add a tag to the list (check not already exist)
   int AddTag(syd::Tag::vector & tags,
