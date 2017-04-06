@@ -107,7 +107,7 @@ set_target_properties(StandardDatabasePlugin PROPERTIES BUNDLE_EXTENSION ".so")
 
 ##############################
 # Not really a tool, for debug only
-wrap_ggo(sydTest_GGO_C sydTest.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
+wrap_ggo(sydTest_GGO_C sydTest.ggo ../common_db/sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
 add_executable(sydTest sydTest.cxx ${sydTest_GGO_C})
 target_link_libraries(sydTest ${SYD_STD_DB_LIBRARY})
 
@@ -157,7 +157,7 @@ target_link_libraries(sydUpdateRadionuclide ${SYD_STD_DB_LIBRARY})
 # Create images
 wrap_ggo(sydInsertImage_GGO_C
   sydInsertImage.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
@@ -169,7 +169,7 @@ target_link_libraries(sydInsertImage ${SYD_STD_DB_LIBRARY})
 # Create images
 wrap_ggo(sydInsertImageFromDicom_GGO_C
   sydInsertImageFromDicom.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
@@ -190,7 +190,7 @@ target_link_libraries(sydIdentifyImageType ${SYD_STD_DB_LIBRARY})
 # Update image
 wrap_ggo(sydUpdateImage_GGO_C
   sydUpdateImage.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
@@ -199,21 +199,10 @@ add_executable(sydUpdateImage
   ${sydUpdateImage_GGO_C})
 target_link_libraries(sydUpdateImage ${SYD_STD_DB_LIBRARY})
 
-# Update tags
-wrap_ggo(sydUpdateTags_GGO_C
-  sydUpdateTags.ggo
-  sydCommandLineWithTags.ggo
-  ../common_db/sydCommandLineWithComments.ggo
-  sydCommandLineDefault.ggo)
-add_executable(sydUpdateTags
-  sydUpdateTags.cxx
-  ${sydUpdateTags_GGO_C})
-target_link_libraries(sydUpdateTags ${SYD_STD_DB_LIBRARY})
-
 # Create images by stitching 2 dicom
 wrap_ggo(sydStitchDicom_GGO_C
   sydStitchDicom.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
@@ -225,7 +214,7 @@ target_link_libraries(sydStitchDicom ${SYD_STD_DB_LIBRARY})
 # Create image with geometrical mean from 4 planar images
 wrap_ggo(sydInsertPlanarGeometricalMean_GGO_C
   sydInsertPlanarGeometricalMean.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
@@ -237,7 +226,7 @@ target_link_libraries(sydInsertPlanarGeometricalMean ${SYD_STD_DB_LIBRARY})
 # Insert a new RoiMaskImage
 wrap_ggo(sydInsertRoiMaskImage_GGO_C
   sydInsertRoiMaskImage.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
@@ -249,7 +238,7 @@ target_link_libraries(sydInsertRoiMaskImage ${SYD_STD_DB_LIBRARY})
 # Insert a new RoiStatistic
 wrap_ggo(sydInsertRoiStatistic_GGO_C
   sydInsertRoiStatistic.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertRoiStatistic
@@ -271,7 +260,7 @@ target_link_libraries(sydComputeActivityInMBqByDetectedCounts ${SYD_STD_DB_LIBRA
 # Calibrate image
 wrap_ggo(sydCalibrateImage_GGO_C
   sydCalibrateImage.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
@@ -284,7 +273,7 @@ target_link_libraries(sydCalibrateImage ${SYD_STD_DB_LIBRARY})
 # Average image
 wrap_ggo(sydInsertAveragedImages_GGO_C
   sydInsertAveragedImages.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
@@ -297,7 +286,7 @@ target_link_libraries(sydInsertAveragedImages ${SYD_STD_DB_LIBRARY})
 # Substitute a radionuclide
 wrap_ggo(sydSubstituteRadionuclide_GGO_C
   sydSubstituteRadionuclide.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydSubstituteRadionuclide
@@ -310,7 +299,7 @@ target_link_libraries(sydSubstituteRadionuclide ${SYD_STD_DB_LIBRARY})
 wrap_ggo(sydInsertTimeIntegratedActivityImage_GGO_C
   sydInsertTimeIntegratedActivityImage.ggo
   sydCommandLineWithFitOptions.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
@@ -323,7 +312,7 @@ target_link_libraries(sydInsertTimeIntegratedActivityImage ${SYD_STD_DB_LIBRARY}
 # Create image of integrated activity
 wrap_ggo(sydInsertRoiBasedTimeIntegratedActivity_GGO_C
   sydInsertRoiBasedTimeIntegratedActivity.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertRoiBasedTimeIntegratedActivity
@@ -336,7 +325,7 @@ target_link_libraries(sydInsertRoiBasedTimeIntegratedActivity ${SYD_STD_DB_LIBRA
 # External tool: clitkExtractPatient
 wrap_ggo(syd_clitkExtractPatient_GGO_C
   syd_clitkExtractPatient.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineWithImageInfo.ggo
   sydCommandLineDefault.ggo)
@@ -346,7 +335,7 @@ target_link_libraries(syd_clitkExtractPatient ${SYD_STD_DB_LIBRARY})
 
 wrap_ggo(sydInsertElastixRegistration_GGO_C
   sydInsertElastixRegistration.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertElastixRegistration
@@ -364,7 +353,7 @@ target_link_libraries(syd_elastix ${SYD_STD_DB_LIBRARY})
 
 wrap_ggo(syd_transformix_GGO_C
   syd_transformix.ggo
-  sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)

@@ -130,3 +130,16 @@ wrap_ggo(sydInfo_GGO_C sydInfo.ggo sydCommandLineDefault.ggo)
 add_executable(sydInfo sydInfo.cxx ${sydInfo_GGO_C})
 target_link_libraries(sydInfo ${SYD_COMMON_DB_LIBRARY})
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# Update tags
+wrap_ggo(sydUpdateTags_GGO_C
+  sydUpdateTags.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydUpdateTags sydUpdateTags.cxx ${sydUpdateTags_GGO_C})
+target_link_libraries(sydUpdateTags ${SYD_COMMON_DB_LIBRARY})
+#----------------------------------------------------------
+

@@ -96,7 +96,7 @@ bool syd::IsAllTagsIn(const syd::Tag::vector & input_tags,
                         s2.begin(), s2.end(),
                         std::back_inserter(v3),
                         [](const syd::Tag::pointer a, const syd::Tag::pointer b) {
-                          return a->id == b->id; } );
+                          return a->id != b->id; } );
   return (v3.size() == to_search_tags.size());
 }
 // --------------------------------------------------------------------

@@ -101,7 +101,6 @@ typename RecordType::vector
 syd::GetRecordsThatContainAllTags(const typename RecordType::vector & records,
                                   const syd::Tag::vector tags)
 {
-  DDF();
   // Loop on records with tags
   typename RecordType::vector results;
   for(auto record:records) {

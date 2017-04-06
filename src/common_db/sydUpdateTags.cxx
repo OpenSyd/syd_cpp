@@ -19,7 +19,7 @@
 // syd
 #include "sydUpdateTags_ggo.h"
 #include "sydDatabaseManager.h"
-#include "sydStandardDatabase.h"
+#include "sydCommonDatabase.h"
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydTagHelper.h"
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
 
   // Get the database
-  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
+  syd::CommonDatabase * db = m->Open<syd::CommonDatabase>(args_info.db_arg);
 
   // Get the ids
   std::vector<syd::IdType> ids;
@@ -62,7 +62,6 @@ int main(int argc, char* argv[])
 
   db->Update(records, table_name);
   LOG(1) << records.size() << " records were updated.";
-
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------
