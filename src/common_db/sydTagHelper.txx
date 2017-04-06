@@ -108,7 +108,9 @@ syd::GetRecordsThatContainAllTags(const typename RecordType::vector & records,
     if (x == nullptr) {
       EXCEPTION("The record does not have tags. Cannot use the function GetRecordsThatContainAllTags");
     }
-    if (syd::IsAllTagsIn(x->tags, tags)) results.push_back(record);
+    if (syd::IsAllTagsIn(x->tags, tags)) {
+      results.push_back(record);
+    }
   }
   return results;
 }

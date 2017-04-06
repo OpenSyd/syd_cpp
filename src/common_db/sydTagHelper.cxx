@@ -88,16 +88,22 @@ syd::Tag::vector syd::FindTags(const syd::Database * db,
 bool syd::IsAllTagsIn(const syd::Tag::vector & input_tags,
                       const syd::Tag::vector & to_search_tags)
 {
+  /*
   // http://stackoverflow.com/questions/5225820/compare-two-vectors-c
   std::set<syd::Tag::pointer> s1(input_tags.begin(), input_tags.end());
   std::set<syd::Tag::pointer> s2(to_search_tags.begin(), to_search_tags.end());
   std::vector<syd::Tag::pointer> v3;
   std::set_intersection(s1.begin(), s1.end(),
-                        s2.begin(), s2.end(),
-                        std::back_inserter(v3),
-                        [](const syd::Tag::pointer a, const syd::Tag::pointer b) {
-                          return a->id != b->id; } );
+  s2.begin(), s2.end(),
+  std::back_inserter(v3),
+  [](const syd::Tag::pointer a, const syd::Tag::pointer b) {
+  return a->id < b->id; } );
   return (v3.size() == to_search_tags.size());
+  */
+  for(auto tag_to_search:to_search_tags) {
+    if (!syd::IsTagIn(input_tags, tag_to_search)) return false;
+  }
+  return true;
 }
 // --------------------------------------------------------------------
 
