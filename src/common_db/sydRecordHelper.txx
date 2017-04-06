@@ -25,8 +25,10 @@ typename RecordType::vector syd::BindTo(const syd::Record::vector & records)
   for(auto & r:records) {
     auto x = std::dynamic_pointer_cast<RecordType>(r);
     if (x == NULL) {
-      LOG(FATAL) << "The record is not a " << typeid(RecordType).name()
-                 << " (not subclass of), it is a " << r->GetTableName();
+      EXCEPTION("The record is not a " << typeid(RecordType).name()
+                << " (not subclass of), it is a " << r->GetTableName()
+                << std::endl
+                << "It cannot be converted (fc BindTo).");
     }
     results.push_back(x);
   }
@@ -49,32 +51,3 @@ typename syd::Record::vector syd::BindFrom(const typename RecordType::vector & r
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-template<class RecordType>
-typename RecordType::vector
-syd::KeepRecordIfContainsAllTags(const typename RecordType::vector & records,
-                                 const std::string & tag_name)
-{
-  std::vector<std::string> t = {tag_name};
-  return KeepRecordIfContainsAllTags<RecordType>(records, t);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-typename RecordType::vector
-syd::KeepRecordIfContainsAllTags(const typename RecordType::vector & records,
-                                 const std::vector<std::string> & tag_names)
-{
-  typename RecordType::vector results;
-  for(auto record:records) {
-    auto x = std::dynamic_pointer_cast<syd::RecordWithTags>(record);
-    if (x == NULL) {
-      LOG(FATAL) << "The table " << record->GetTableName() << " does not contains tags.";
-    }
-    if (ContainsAllTags(x, tag_names)) results.push_back(record);
-  }
-  return results;
-}
-// --------------------------------------------------------------------

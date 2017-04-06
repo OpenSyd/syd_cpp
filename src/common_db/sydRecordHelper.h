@@ -20,32 +20,24 @@
 #define SYDRECORDHELPERS_H
 
 // syd
-#include "sydRecordWithTags.h"
+#include "sydRecord.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
+
+  /// CANNOT MANAGE TO MAKE THIS WORK ...
+
+
+  /// Cast generic records to RecordType
   template<class RecordType>
   typename RecordType::vector BindTo(const syd::Record::vector & records);
+
+  /// Consider RecordType as generic records
   template<class RecordType>
   typename syd::Record::vector BindFrom(const typename RecordType::vector & records);
 
-  template<class RecordType>
-  typename RecordType::vector
-  KeepRecordIfContainsAllTags(const typename RecordType::vector & records,
-                              const std::vector<std::string> & tag_names);
-
-  template<class RecordType>
-  typename RecordType::vector
-  KeepRecordIfContainsAllTags(const typename RecordType::vector & records,
-                              const std::string & tag_name);
-
-  bool ContainsAllTags(const syd::RecordWithTags::pointer & record,
-                       const std::vector<std::string> & tag_names);
-
-
 }
-
 #include "sydRecordHelper.txx"
 // --------------------------------------------------------------------
 

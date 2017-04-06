@@ -18,6 +18,7 @@
 
 // syd
 #include "sydTagHelper.h"
+#include "sydRecordHelper.h"
 
 // --------------------------------------------------------------------
 syd::Tag::vector syd::FindTags(const syd::Database * db,
@@ -37,8 +38,7 @@ syd::Tag::pointer syd::FindTag(const syd::Database * db,
   syd::Tag::vector tags = syd::FindTags(db, name);
   if (tags.size() != 1) {
     EXCEPTION("Error in FindTag '" << name << "', I find "
-              << tags.size() << " tags";
-              );
+              << tags.size() << " tags");
   }
   return tags[0];
 }
@@ -96,8 +96,19 @@ bool syd::IsAllTagsIn(const syd::Tag::vector & input_tags,
                         s2.begin(), s2.end(),
                         std::back_inserter(v3),
                         [](const syd::Tag::pointer a, const syd::Tag::pointer b) {
-                          return a->id != b->id; } );
+                          return a->id == b->id; } );
   return (v3.size() == to_search_tags.size());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::IsTagIn(const syd::Tag::vector & input_tags,
+                  const syd::Tag::pointer & to_search_tag)
+{
+  for(auto & t:input_tags)
+    if (t->id == to_search_tag->id) return true;
+  return false;
 }
 // --------------------------------------------------------------------
 
@@ -172,3 +183,5 @@ std::string syd::GetLabels(const syd::Tag::vector & tags)
   return os.str();
 }
 // --------------------------------------------------------------------
+
+

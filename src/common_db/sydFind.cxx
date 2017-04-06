@@ -21,7 +21,7 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
-#include "sydRecordHelper.h"
+#include "sydTagHelper.h"
 #include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
     std::vector<std::string> tag_names;
     for(auto i=0; i<args_info.tag_given; i++)
       syd::GetWords(tag_names, args_info.tag_arg[i]);
-    records = syd::KeepRecordIfContainsAllTags<syd::Record>(records, tag_names);
+    records = syd::GetRecordsThatContainAllTags<syd::Record>(records, tag_names);
   }
 
   // Grep
