@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
     }
 
     if (args_info.copy_flag) {
-      auto copy = syd::CopyImage(image);
+      auto copy = syd::InsertCopyImage(image);
       image = copy;
     }
 

@@ -6,9 +6,13 @@ option(HUNTER_ENABLED "Enable Hunter package manager" ON)
 include("cmake/HunterGate.cmake")
 #list(APPEND HUNTER_CACHE_SERVERS "https://github.com/ingenue/hunter-cache")
 HunterGate(
-  URL "https://github.com/ruslo/hunter/archive/v0.15.25.tar.gz"
-  SHA1 "74993ddf2cf8a6a4c3e0b9d58027a624bf3060e7"
+  URL "https://github.com/ruslo/hunter/archive/v0.18.39.tar.gz"
+  SHA1 "a6fbc056c3d9d7acdaa0a07c575c9352951c2f6c"
   )
+# HunterGate(
+# URL "https://github.com/ruslo/hunter/archive/v0.15.25.tar.gz"
+# SHA1 "74993ddf2cf8a6a4c3e0b9d58027a624bf3060e7"
+#)
 # HunterGate(
 #   URL "https://github.com/ruslo/hunter/archive/v0.16.29.tar.gz"
 #   SHA1 "309d7d8eedc5b1229b710f856dc7a19e04fb7737"
@@ -44,9 +48,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED on)
 #----------------------------------------------------------
 # Disable some warnings.
 add_definitions (
-   # for auto_ptr in odb
-   -Wno-deprecated-declarations
-)
+  # for auto_ptr in odb
+  -Wno-deprecated-declarations
+  )
 #----------------------------------------------------------
 
 #----------------------------------------------------------
@@ -57,7 +61,9 @@ hunter_add_package(Boost COMPONENTS date_time system filesystem)
 hunter_add_package(odb)
 hunter_add_package(odb-compiler)
 hunter_add_package(odb-sqlite)
+#hunter_add_package(ceres-solver)
 hunter_add_package(Eigen)
+unset(EIGEN_HAS_CXX11_MATH)
 #----------------------------------------------------------
 
 
@@ -123,7 +129,7 @@ set(CXX_TEST_PATH ${EXECUTABLE_OUTPUT_PATH})
 #----------------------------------------------------------
 # not used yet
 set(SYD_VERSION_MAJOR "0")
-set(SYD_VERSION_MINOR "2")
+set(SYD_VERSION_MINOR "3")
 set(SYD_VERSION_PATCH "0")
 #----------------------------------------------------------
 

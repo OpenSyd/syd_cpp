@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
   // Loop over the images
   for(auto image:images) {
     // Make a copy
-    auto output = syd::CopyImage(image);
+    auto output = syd::InsertCopyImage(image);
 
     // Change the radionuclide
     syd::SubstituteRadionuclide(output, rad);

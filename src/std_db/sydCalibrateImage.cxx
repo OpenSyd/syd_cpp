@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
   s = s*1000000;
 
   for(auto image:images) {
-    auto output = syd::CopyImage(image);
+    auto output = syd::InsertCopyImage(image);
     syd::ScaleImage(output, s);
     if (args_info.by_IA_flag) {
       output->injection = new_injection;

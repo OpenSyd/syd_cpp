@@ -445,7 +445,7 @@ bool syd::FlipImageIfNegativeSpacing(syd::Image::pointer image)
 
 
 // --------------------------------------------------------------------
-syd::Image::pointer syd::CopyImage(syd::Image::pointer image)
+syd::Image::pointer syd::InsertCopyImage(syd::Image::pointer image)
 {
   auto output = syd::InsertImageFromFile(image->GetAbsolutePath(),
                                          image->patient,

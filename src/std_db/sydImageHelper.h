@@ -57,7 +57,7 @@ namespace syd {
                                        std::string to_filename);
 
   /// Copy an image
-  syd::Image::pointer CopyImage(syd::Image::pointer image);
+  syd::Image::pointer InsertCopyImage(syd::Image::pointer image);
 
   /// Read the attached file and set image spacing, size dimension,
   /// and pixel_type. The image is not updated
