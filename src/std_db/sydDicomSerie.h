@@ -30,7 +30,8 @@ namespace syd {
   /// Store basic information about a dicom image (serie).
   class DicomSerie:
     public syd::Record,
-    public syd::RecordWithComments {
+    public syd::RecordWithComments,
+    public syd::RecordWithTags {
   public:
 
       DEFINE_TABLE_CLASS(DicomSerie);
