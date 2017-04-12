@@ -106,7 +106,8 @@ syd::GetRecordsThatContainAllTags(const typename RecordType::vector & records,
   for(auto record:records) {
     auto x = std::dynamic_pointer_cast<syd::RecordWithTags>(record);
     if (x == nullptr) {
-      EXCEPTION("The record does not have tags. Cannot use the function GetRecordsThatContainAllTags");
+      EXCEPTION("The record does not have tags. "
+                "Cannot use the function GetRecordsThatContainAllTags");
     }
     if (syd::IsAllTagsIn(x->tags, tags)) {
       results.push_back(record);
@@ -117,3 +118,21 @@ syd::GetRecordsThatContainAllTags(const typename RecordType::vector & records,
 // --------------------------------------------------------------------
 
 
+
+//--------------------------------------------------------------------
+template<class RecordType>
+syd::RecordWithTags::vector
+syd::BindToRecordWithTags(const typename RecordType::vector & records)
+{
+  syd::RecordWithTags::vector records_with_tags;
+  for(auto record:records) {
+    auto r = std::dynamic_pointer_cast<syd::RecordWithTags>(record);
+    if (r == nullptr) {
+      EXCEPTION("Error, the records of table " << record->GetTableName()
+                << " do not have tags");
+    }
+    records_with_tags.push_back(r);
+  }
+  return records_with_tags;
+}
+//--------------------------------------------------------------------

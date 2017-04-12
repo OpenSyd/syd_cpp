@@ -104,6 +104,12 @@ namespace syd {
     GetRecordsThatContainTag(const typename RecordType::vector & records,
                              const syd::Tag::pointer tag);
 
+  /// Bind vector of records to vector of RecordWithTags. Raise exception if not
+  /// possible
+  template<class RecordType>
+    syd::RecordWithTags::vector
+    BindToRecordWithTags(const typename RecordType::vector & records);
+
 } // namespace syd
 
 #include "sydTagHelper.txx"
