@@ -19,13 +19,15 @@
 // syd
 #include "sydDicomSerie.h"
 #include "sydStandardDatabase.h" // needed for type odb db
+#include "sydTagHelper.h"
 
 DEFINE_TABLE_IMPL(DicomSerie);
 
 // --------------------------------------------------------------------
 syd::DicomSerie::DicomSerie():
   syd::Record(),
-  syd::RecordWithComments()
+  syd::RecordWithComments(),
+  syd::RecordWithTags()
 {
   patient = NULL;
   dicom_modality = dicom_acquisition_date
@@ -49,6 +51,7 @@ std::string syd::DicomSerie::ToString() const
      << dicom_frame_of_reference_uid << " "
      << dicom_study_uid << " "
      << dicom_series_uid << " "
+     << syd::GetLabels(tags) << " "
      << GetAllComments();
   auto s = ss.str();
   return trim(s);

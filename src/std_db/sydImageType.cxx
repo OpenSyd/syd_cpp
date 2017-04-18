@@ -102,7 +102,8 @@ std::string syd::ImageType::ToString() const
         << (p.second == PropertiesValue::No ? "N":"")
         << (p.second == PropertiesValue::Unknown ? "?":"")
         << ") ";
-  return oss.str();
+  auto s = oss.str();
+  return trim(s);
 }
 // --------------------------------------------------------------------
 

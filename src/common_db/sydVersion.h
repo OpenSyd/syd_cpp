@@ -26,11 +26,12 @@
 // the change is legitimate: 1) open and 2) increment the
 // version. 3) Once checked, close again.
 // It  means that we can migrate from base version to current version)
-#define SYD_VERSION      0122 // version 1.22 (current version)
+#define SYD_VERSION      0123 // version 1.23 (current version)
 #define SYD_BASE_VERSION 0101 // version 1.1 (base version)
 
 // Log:
-// 1.22 : add tag in Injection and Patient
+// 1.23 : add tag to DicomSerie
+// 1.22 : add tag to Injection and Patient
 // 1.21 : add table Timepoints RoiTimepoints FitTimepoints, rename TiaImage to FitImages
 // 1.20 : fields modification in TiaImage
 // 1.19 : rename TIA TiaImage

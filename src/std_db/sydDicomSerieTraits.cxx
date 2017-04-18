@@ -18,6 +18,7 @@
 
 // syd
 #include "sydDicomSerieTraits.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 DEFINE_TABLE_TRAITS_IMPL(DicomSerie);
@@ -64,13 +65,17 @@ BuildFields(const syd::Database * db) const
     return p->dicom_files[0]->GetAbsolutePath(); };
   AddField<std::string>("filepath", f_fp, "file");
 
-  // comments
+  // tags
+  auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
+  AddField<std::string>("tags", f_t);
+
+// comments
   auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
   AddField<std::string>("comments", f_c, "com");
 
   // Format lists
   field_format_map_["default"] =
-    "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_description[description] dicom_reconstruction_date[rec_date]";
+    "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_description[description] dicom_reconstruction_date[rec_date] tags comments[com]";
 }
 // --------------------------------------------------------------------
 
