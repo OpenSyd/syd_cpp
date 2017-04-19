@@ -34,6 +34,7 @@ namespace syd {
     // Constructor
     Thumbnail();
 
+    typedef std::shared_ptr<Thumbnail> pointer;
     typedef syd::RecordTraitsBase::RecordBasePointer RecordBasePointer;
     typedef syd::RecordTraitsBase::RecordBaseVector RecordBaseVector;
     //    typedef std::function<std::string(RecordBasePointer)> FieldFunc;
