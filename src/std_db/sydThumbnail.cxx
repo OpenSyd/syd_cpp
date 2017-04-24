@@ -20,6 +20,7 @@
 #include "sydThumbnail.h"
 #include "sydImageUtils.h"
 #include "sydStandardDatabase.h"
+#include "sydDicomSerieHelper.h"
 
 //itk
 #include "itkResampleImageFilter.h"
@@ -27,7 +28,7 @@
 #include "itkScaleTransform.h"
 #include "itkLinearInterpolateImageFunction.h"
 #include "itkChangeInformationImageFilter.h"
-#include "itkMinimumMaximumImageCalculator.h"
+#include "itkStatisticsImageFilter.h"
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionConstIterator.h"
 
@@ -41,47 +42,79 @@ syd::Thumbnail::Thumbnail()
 
 
 //------------------------------------------------------------------
+void syd::Thumbnail::computeThumbnail(const syd::DicomSerie::pointer images, const std::string& thumbnailPath)
+{
+  // Convert the dicom to a mhd
+  typedef float PixelType;
+  typedef itk::Image<PixelType,3> ImageType;
+  auto image = syd::ReadDicomSerieImage<ImageType>(images);
+
+  //Create the thumbnail
+  computeThumbnail(image, thumbnailPath);
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
 void syd::Thumbnail::computeThumbnail(const syd::Image::pointer image, const std::string& thumbnailPath)
 {
-
-  int sizeZ = image->size[2];
-  unsigned int stepZ = 20;
-  unsigned int sizeThumbnail = 100; // X,Y size of 1 thumbnail in px
-  double scale = std::max(((double)image->size[0])/sizeThumbnail,((double)image->size[1])/sizeThumbnail);
-
   // Read the mhd
   typedef float PixelType;
   typedef itk::Image<PixelType,3> ImageType;
-  ImageType::Pointer itkImage = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+  computeThumbnail(syd::ReadImage<ImageType>(image->GetAbsolutePath()), thumbnailPath);
+}
+//------------------------------------------------------------------
 
+
+//------------------------------------------------------------------
+void syd::Thumbnail::computeThumbnail(const itk::Image<float,3>::Pointer image, const std::string& thumbnailPath)
+{
   //Set the origin to 0
+  typedef float PixelType;
+  typedef itk::Image<PixelType,3> ImageType;
   typedef itk::ChangeInformationImageFilter<ImageType> FilterType;
-  FilterType::Pointer filterChangeInformation = FilterType::New(); 
+  FilterType::Pointer filterChangeInformation = FilterType::New();
   ImageType::PointType offsetPoint;
-  offsetPoint[0] = 0;
-  offsetPoint[1] = 0;
-  offsetPoint[2] = 0;
-  filterChangeInformation->SetInput(itkImage);
+  offsetPoint.Fill(0);
+  ImageType::DirectionType directionVector;
+  directionVector.Fill(0);
+  directionVector[0][0] = 1;
+  directionVector[1][1] = 1;
+  directionVector[2][2] = 1;
+  filterChangeInformation->SetInput(image);
   filterChangeInformation->SetOutputOrigin(offsetPoint);
   filterChangeInformation->ChangeOriginOn();
+  filterChangeInformation->SetOutputDirection(directionVector);
+  filterChangeInformation->ChangeDirectionOn();
   filterChangeInformation->Update();
 
   //Find the minimum
-  typedef itk::MinimumMaximumImageCalculator<ImageType> ImageCalculatorFilterType;
+  typedef itk::StatisticsImageFilter<ImageType> ImageCalculatorFilterType;
   ImageCalculatorFilterType::Pointer imageCalculatorFilter = ImageCalculatorFilterType::New ();
-  imageCalculatorFilter->SetImage(filterChangeInformation->GetOutput());
-  imageCalculatorFilter->ComputeMinimum();
+  imageCalculatorFilter->SetInput(filterChangeInformation->GetOutput());
+  imageCalculatorFilter->Update();
   ImageType::PixelType minItkImage = imageCalculatorFilter->GetMinimum();
+  ImageType::PixelType maxItkImage = imageCalculatorFilter->GetMaximum();
+  ImageType::PixelType meanItkImage = imageCalculatorFilter->GetMean();
+
+  //Modify Window/Level
+  level = (maxItkImage + minItkImage)/2.0;
+  window = maxItkImage - minItkImage;
 
   //Resize the input image
+  int sizeZ = image->GetLargestPossibleRegion().GetSize()[2];
+  unsigned int stepZ = 20;
+  unsigned int sizeThumbnail = 100; // X,Y size of 1 thumbnail in px
+  double scale = std::max(((double)image->GetLargestPossibleRegion().GetSize()[0])/sizeThumbnail,((double)image->GetLargestPossibleRegion().GetSize()[1])/sizeThumbnail);
+  int nbImageZ = std::floor((sizeZ-1)/stepZ)+1;
   ImageType::SizeType resampleSize;
   resampleSize[0] = sizeThumbnail;
   resampleSize[1] = sizeThumbnail;
   resampleSize[2] = sizeZ;
   ImageType::SpacingType resampleSpacing;
-  resampleSpacing[0] = itkImage->GetLargestPossibleRegion().GetSize()[1]*itkImage->GetSpacing()[0]/sizeThumbnail;
-  resampleSpacing[1] = itkImage->GetLargestPossibleRegion().GetSize()[2]*itkImage->GetSpacing()[1]/sizeThumbnail;
-  resampleSpacing[2] = itkImage->GetSpacing()[2];
+  resampleSpacing[0] = image->GetLargestPossibleRegion().GetSize()[1]*image->GetSpacing()[0]/sizeThumbnail;
+  resampleSpacing[1] = image->GetLargestPossibleRegion().GetSize()[2]*image->GetSpacing()[1]/sizeThumbnail;
+  resampleSpacing[2] = image->GetSpacing()[2];
 
   //Scale the input image
   typedef itk::ScaleTransform<double, 3> ScaleTransformType;
@@ -104,7 +137,7 @@ void syd::Thumbnail::computeThumbnail(const syd::Image::pointer image, const std
   ResampleImageFilterType::Pointer resample = ResampleImageFilterType::New();
   resample->SetInput(filterChangeInformation->GetOutput());
   resample->SetSize(resampleSize);
-  resample->SetOutputSpacing(itkImage->GetSpacing());
+  resample->SetOutputSpacing(image->GetSpacing());
   resample->SetTransform(scaleTransform);
   resample->SetInterpolator(interpolator);
   resample->SetDefaultPixelValue(minItkImage);
@@ -119,7 +152,7 @@ void syd::Thumbnail::computeThumbnail(const syd::Image::pointer image, const std
   start[1] = 0;
   Image2DType::SizeType size;
   size[0] = sizeThumbnail;
-  size[1] = sizeThumbnail*(std::floor(sizeZ/stepZ) +1) + 3*(std::floor(sizeZ/stepZ));
+  size[1] = sizeThumbnail*nbImageZ + 3*(nbImageZ-1);
   region.SetSize(size);
   region.SetIndex(start);
   stackedImage->SetRegions(region);
@@ -127,7 +160,7 @@ void syd::Thumbnail::computeThumbnail(const syd::Image::pointer image, const std
   stackedImage->FillBuffer(255);
 
   //Fill the stack image
-  for (unsigned int i=0; i<(std::floor(sizeZ/stepZ) +1); ++i)
+  for (unsigned int i=0; i<nbImageZ; ++i)
   {
     //Create the iterator for the stack image
     Image2DType::RegionType iteratorStackedRegion;

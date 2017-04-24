@@ -22,6 +22,7 @@
 // syd
 #include "sydCommonDatabase.h"
 #include "sydImage.h"
+#include "itkImage.h"
 
 //--------------------------------------------------------------------
 namespace syd {
@@ -42,6 +43,8 @@ namespace syd {
 
     //Compute the png image with all concatenated thumbnails
     void computeThumbnail(const syd::Image::pointer image, const std::string& thumbnailPath);
+    void computeThumbnail(const syd::DicomSerie::pointer images, const std::string& thumbnailPath);
+    void computeThumbnail(const itk::Image<float,3>::Pointer image, const std::string& thumbnailPath);
 
   protected:
     //Window/Level values
