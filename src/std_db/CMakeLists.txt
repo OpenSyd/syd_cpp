@@ -72,6 +72,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydTimepointsHelper.cxx
   sydFitImagesHelper.cxx
   sydImageType.cxx
+  sydThumbnail.cxx
 
   ## Cannot put this file in the lib, because the plugin will be no more
   ## recognized. I dont know why.
