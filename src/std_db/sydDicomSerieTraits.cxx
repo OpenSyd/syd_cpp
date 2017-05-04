@@ -54,6 +54,7 @@ BuildFields(const syd::Database * db) const
   ADD_FIELD(dicom_acquisition_date, std::string);
   ADD_FIELD(dicom_reconstruction_date, std::string);
   ADD_FIELD(dicom_study_uid, std::string);
+  ADD_FIELD(dicom_study_name, std::string);
   ADD_FIELD(dicom_series_uid, std::string);
   ADD_FIELD(dicom_frame_of_reference_uid, std::string);
   ADD_FIELD(dicom_modality, std::string);
@@ -77,11 +78,13 @@ BuildFields(const syd::Database * db) const
   auto f_spacing = [](pointer p) -> std::string { return syd::ArrayToString(p->dicom_spacing); };
   AddField<std::string>("dicom_spacing", f_spacing, "sp");
 
-  ADD_FIELD(dicom_pixel_scale, double);
-  ADD_FIELD(dicom_pixel_offset, double);
+  ADD_FIELD_A(dicom_pixel_scale, double, "ps");
+  ADD_FIELD_A(dicom_pixel_offset, double, "po");
+  ADD_FIELD_A(dicom_window_center, double, "wc");
+  ADD_FIELD_A(dicom_window_width, double, "wl");
 
-  ADD_FIELD(dicom_radionuclide_name, std::string);
-  ADD_FIELD(dicom_counts_accumulated, double);
+  ADD_FIELD_A(dicom_radionuclide_name, std::string, "rad");
+  ADD_FIELD_A(dicom_counts_accumulated, double, "cts");
   ADD_FIELD(dicom_actual_frame_duration_in_msec, double);
   ADD_FIELD(dicom_number_of_frames_in_rotation, int);
   ADD_FIELD(dicom_number_of_rotations, int);
@@ -104,10 +107,10 @@ BuildFields(const syd::Database * db) const
   AddField<std::string>("comments", f_c, "com");
 
   // Format lists
+  field_format_map_["default"] =
+    "id patient.name[pat] dicom_acquisition_date[date] dicom_modality[mod] dicom_series_description[serie] dicom_reconstruction_date[rec_date] tags comments[com]";
   field_format_map_["desc"] =
     "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_description[description] dicom_reconstruction_date[rec_date] tags comments[com]";
-  field_format_map_["default"] =
-    "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_series_description[serie] dicom_reconstruction_date[rec_date] tags comments[com]";
   field_format_map_["image"] =
     "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_size[size] dicom_spacing[spacing] dicom_reconstruction_date[rec_date] tags comments[com]";
 }

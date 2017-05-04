@@ -1,4 +1,12 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="293">
+    <alter-table name="syd::DicomSerie">
+      <add-column name="dicom_study_name" type="TEXT" null="true"/>
+      <add-column name="dicom_window_center" type="REAL" null="true"/>
+      <add-column name="dicom_window_width" type="REAL" null="true"/>
+    </alter-table>
+  </changeset>
+
   <changeset version="292">
     <alter-table name="syd::DicomSerie">
       <add-column name="dicom_series_description" type="TEXT" null="true"/>

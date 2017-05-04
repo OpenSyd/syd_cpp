@@ -77,11 +77,12 @@ namespace syd {
       /// Dicom tags
       std::string dicom_series_description;
       std::string dicom_study_description;
+      std::string dicom_study_name;
+      std::string dicom_study_id;
       std::string dicom_image_id;
       std::string dicom_dataset_name;
       std::string dicom_manufacturer;
       std::string dicom_manufacturer_model_name;
-      std::string dicom_study_id;
       std::string dicom_software_version;
       std::string dicom_patient_name;
       std::string dicom_patient_id;
@@ -92,9 +93,11 @@ namespace syd {
       std::vector<int> dicom_size;
       std::vector<double> dicom_spacing;
 
-      /// Dicom tags related to pixel scaling
+      /// Dicom tags related to pixel scaling and window display
       double dicom_pixel_scale;
       double dicom_pixel_offset;
+      double dicom_window_center;
+      double dicom_window_width;
 
       /// Specific NM
       std::string dicom_radionuclide_name;

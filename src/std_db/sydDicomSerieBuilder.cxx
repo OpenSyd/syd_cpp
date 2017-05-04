@@ -309,9 +309,11 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
     GetTagValueFromTagKey(dicomIO, "0011|1012", empty_value); // DatasetName
   std::string StudyID =
     GetTagValueFromTagKey(dicomIO, "0020|0010", empty_value); // StudyID
+  std::string StudyName =
+    GetTagValueFromTagKey(dicomIO, "0009|1010", empty_value); // StudyName
   std::string description =
     SeriesDescription+" "+StudyDescription
-    +" "+ImageID+" "+DatasetName+" "+StudyID;
+    +" "+ImageID+" "+DatasetName+" "+StudyID+" "+StudyName;
 
   // Device
   std::string Manufacturer =
@@ -319,6 +321,7 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   std::string ManufacturerModelName =
     GetTagValueFromTagKey(dicomIO, "0008|1090", empty_value); //ManufacturerModelName
   description = description + " " + Manufacturer + " " + ManufacturerModelName;
+  description = trim(description);
 
   // Store description
   serie->dicom_description = description;
@@ -353,7 +356,7 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   if (serie->dicom_spacing[1] == 0) serie->dicom_spacing[1] = 1.0;
   if (sz != 0) serie->dicom_spacing[2] = sz; // only update if found
 
-  // Image size ?
+  // Image size
   serie->dicom_size.resize(3); // will be updated in CreateDicomFile
   unsigned int rows = GetTagDoubleValueFromTagKey(dicomIO, "0028|0010", 0); // Rows
   unsigned int columns = GetTagDoubleValueFromTagKey(dicomIO, "0028|0011", 0); // Columns
@@ -370,6 +373,12 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   double po = 0.0;
   po = GetTagDoubleValueFromTagKey(dicomIO, "0011|103c", 0.0); // PixelOffset
   serie->dicom_pixel_offset = po;
+
+  // Window/level
+  double wc = GetTagDoubleValueFromTagKey(dicomIO, "0028|1050", 0.0); // WindowCenter
+  double ww = GetTagDoubleValueFromTagKey(dicomIO, "0028|1051", 0.0); // WindowWidth
+  serie->dicom_window_center = wc;
+  serie->dicom_window_width = ww;
 
   // Specific tag for NM
   serie->dicom_table_traverse_in_mm =
