@@ -246,7 +246,7 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   std::string patientID =
     GetTagValueFromTagKey(dicomIO, "0010|0020", empty_value); // Patient ID
   std::string patientName =
-    GetTagValueFromTagKey(dicomIO, "0010|1001", empty_value); //Patient Name
+    GetTagValueFromTagKey(dicomIO, "0010|1001", empty_value); // Patient Name
   char * sex = new char[100];
   dicomIO->GetPatientSex(sex);
 
@@ -290,6 +290,14 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   serie->dicom_acquisition_date = acquisition_date;
   serie->dicom_reconstruction_date = reconstruction_date;
 
+  // Patient info
+  serie->dicom_patient_name = patientName;
+  serie->dicom_patient_id = patientID;
+  serie->dicom_patient_sex = sex;
+  serie->dicom_patient_birth_date =
+    GetTagValueFromTagKey(dicomIO, "0010|0030", empty_value); // Patient's Birth Date
+ 
+
   // Description. We merge the tag because it is never consistant
   std::string SeriesDescription =
     GetTagValueFromTagKey(dicomIO, "0008|103e", empty_value); // SeriesDescription
@@ -299,9 +307,11 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
     GetTagValueFromTagKey(dicomIO, "0054|0400", empty_value); // Image ID
   std::string DatasetName =
     GetTagValueFromTagKey(dicomIO, "0011|1012", empty_value); // DatasetName
+  std::string StudyID =
+    GetTagValueFromTagKey(dicomIO, "0020|0010", empty_value); // StudyID
   std::string description =
     SeriesDescription+" "+StudyDescription
-    +" "+ImageID+" "+DatasetName;
+    +" "+ImageID+" "+DatasetName+" "+StudyID;
 
   // Device
   std::string Manufacturer =
@@ -313,37 +323,71 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   // Store description
   serie->dicom_description = description;
 
-  // Image spacing
-  /*
-    double sz = GetTagValueDouble(dset, "SpacingBetweenSlices");
-    if (sz == 0) {
-    sz = GetTagValueDouble(dset, "SliceThickness");
-    if (sz == 0) sz = 1.0; // not found, default
-    }
-    std::string spacing = GetTagValueFromTagKey(dicomIO, "PixelSpacing");
-    int n = spacing.find("\\");
-    std::string sx = spacing.substr(0,n);
-    spacing = spacing.substr(n+1,spacing.size());
-    n = spacing.find("\\");
-    std::string sy = spacing.substr(0,n);
-    // serie->spacing[0] = atof(sx.c_str());
-    // serie->spacing[1] = atof(sy.c_str());
-    // serie->spacing[2] = sz;
-    // if (serie->spacing[0] == 0) serie->spacing[0] = 1.0;
-    // if (serie->spacing[1] == 0) serie->spacing[1] = 1.0;
-    //  if (sz != 0) serie->spacing[2] = sz; // only update if found
-    */
-  //    DD("TODO spacing");
+  serie->dicom_series_description = SeriesDescription;
+  serie->dicom_study_description = StudyDescription;
+  serie->dicom_image_id = ImageID;
+  serie->dicom_dataset_name = DatasetName;
+  serie->dicom_manufacturer = Manufacturer;
+  serie->dicom_manufacturer_model_name = ManufacturerModelName;
+  serie->dicom_study_id = StudyID;
+  serie->dicom_software_version =
+    GetTagValueFromTagKey(dicomIO, "0018|1020", empty_value); // Software version
 
-  // other (needed ?)
-  // std::string TableTraverse = GetTagValueFromTagKey(dicomIO, "TableTraverse");
-  // std::string InstanceNumber = GetTagValueFromTagKey(dicomIO, "InstanceNumber");
+  // Image spacing
+  double sz = GetTagDoubleValueFromTagKey(dicomIO, "0018|0088", 0.0); // SpacingBetweenSlices
+  if (sz == 0) {
+    sz = GetTagDoubleValueFromTagKey(dicomIO, "0018|0050", 0.0); // SliceThickness
+    if (sz == 0) sz = 1.0; // not found, default
+  }
+  std::string spacing = GetTagValueFromTagKey(dicomIO, "0028|0030", empty_value); // PixelSpacing
+  int n = spacing.find("\\");
+  std::string sx = spacing.substr(0,n);
+  spacing = spacing.substr(n+1,spacing.size());
+  n = spacing.find("\\");
+  std::string sy = spacing.substr(0,n);
+  serie->dicom_spacing.resize(3);
+  serie->dicom_spacing[0] = atof(sx.c_str());
+  serie->dicom_spacing[1] = atof(sy.c_str());
+  serie->dicom_spacing[2] = sz;
+  if (serie->dicom_spacing[0] == 0) serie->dicom_spacing[0] = 1.0;
+  if (serie->dicom_spacing[1] == 0) serie->dicom_spacing[1] = 1.0;
+  if (sz != 0) serie->dicom_spacing[2] = sz; // only update if found
+
+  // Image size ?
+  serie->dicom_size.resize(3); // will be updated in CreateDicomFile
+  unsigned int rows = GetTagDoubleValueFromTagKey(dicomIO, "0028|0010", 0); // Rows
+  unsigned int columns = GetTagDoubleValueFromTagKey(dicomIO, "0028|0011", 0); // Columns
+  int slice = GetTagDoubleValueFromTagKey(dicomIO, "0028|0008", 0); // Number of Frames
+  serie->dicom_size[0] = rows;
+  serie->dicom_size[1] = columns;
+  serie->dicom_size[2] = slice; // will be updated in CreateDicomFile if == 0
 
   // Pixel scale
-  // double ps = 1.0;
-  // ps = GetTagValueFromTagKey(dicomIO, "0011|103b", 1.0); // PixelScale
-  // if (ps == 0.0) ps = 1.0;
-  // serie->dicom_pixel_scale = ps;
+  double ps = 1.0;
+  ps = GetTagDoubleValueFromTagKey(dicomIO, "0011|103b", 1.0); // PixelScale
+  if (ps == 0.0) ps = 1.0;
+  serie->dicom_pixel_scale = ps;
+  double po = 0.0;
+  po = GetTagDoubleValueFromTagKey(dicomIO, "0011|103c", 0.0); // PixelOffset
+  serie->dicom_pixel_offset = po;
+
+  // Specific tag for NM
+  serie->dicom_table_traverse_in_mm =
+    GetTagDoubleValueFromTagKey(dicomIO, "0018|1131", 0.0); // TableTraverse
+  serie->dicom_table_height_in_mm =
+    GetTagDoubleValueFromTagKey(dicomIO, "0018|1130", 0.0); // TableHeight
+  serie->dicom_radionuclide_name =
+    GetTagValueFromTagKey(dicomIO, "0011|100d", empty_value); // RadionuclideName
+  serie->dicom_counts_accumulated =
+    GetTagDoubleValueFromTagKey(dicomIO, "0018|0070", 0); // CountsAccumulated
+  serie->dicom_actual_frame_duration_in_msec =
+    GetTagDoubleValueFromTagKey(dicomIO, "0018|1242", 0.0); // ActualFrameDuration
+  serie->dicom_number_of_frames_in_rotation =
+    GetTagDoubleValueFromTagKey(dicomIO, "0054|0053", 0); // NumberOfFramesInRotation
+  serie->dicom_number_of_rotations =
+    GetTagDoubleValueFromTagKey(dicomIO, "0054|0051", 0); // NumberOfRotations
+  serie->dicom_rotation_angle =
+    GetTagDoubleValueFromTagKey(dicomIO, "0070|0230", 0.0); // RotationAngle
 }
 // --------------------------------------------------------------------
 
@@ -381,14 +425,11 @@ CreateDicomFile(const std::string & filename,
   dicomfile->dicom_instance_number = instance_number;
 
   // Update the nb of slices
-  // Image size
-  // unsigned int rows = GetTagValueFromTagKey(dicomIO, "0028|0010", 0); // Rows
-  // unsigned int columns = GetTagValueFromTagKey(dicomIO, "0028|0011", 0); // Columns
-  // description = ToString(rows) + "x" +
-  // int slice = atoi(GetTagValueFromTagKey(dicomIO, "NumberOfFrames").c_str());
-  // if (slice != 0) serie->size[2] = slice;
-  // else serie->size[2]++;
-  //    DD("update size");
+  int slice = GetTagDoubleValueFromTagKey(dicomIO, "0028|0008", 0); // Number of Frames
+  // if no NumberOfFrames, we count the nb of dicomfile
+  if (slice == 0) serie->dicom_size[2] = serie->dicom_files.size()+1;
+
+  // Update dicom file
   serie->dicom_files.push_back(dicomfile);
   return dicomfile;
 }

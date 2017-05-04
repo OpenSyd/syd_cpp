@@ -74,6 +74,38 @@ namespace syd {
       /// StudyDescription, ImageID, DatasetName, Manufacturer)
       std::string dicom_description;
 
+      /// Dicom tags
+      std::string dicom_series_description;
+      std::string dicom_study_description;
+      std::string dicom_image_id;
+      std::string dicom_dataset_name;
+      std::string dicom_manufacturer;
+      std::string dicom_manufacturer_model_name;
+      std::string dicom_study_id;
+      std::string dicom_software_version;
+      std::string dicom_patient_name;
+      std::string dicom_patient_id;
+      std::string dicom_patient_birth_date;
+      std::string dicom_patient_sex;
+
+      /// Dicom tags related to image size/spacing
+      std::vector<int> dicom_size;
+      std::vector<double> dicom_spacing;
+
+      /// Dicom tags related to pixel scaling
+      double dicom_pixel_scale;
+      double dicom_pixel_offset;
+
+      /// Specific NM
+      std::string dicom_radionuclide_name;
+      double dicom_counts_accumulated;
+      double dicom_actual_frame_duration_in_msec;
+      int    dicom_number_of_frames_in_rotation;
+      int    dicom_number_of_rotations;
+      double dicom_table_traverse_in_mm;
+      double dicom_table_height_in_mm;
+      double dicom_rotation_angle;
+
       /// Write the element as a string
       virtual std::string ToString() const;
 

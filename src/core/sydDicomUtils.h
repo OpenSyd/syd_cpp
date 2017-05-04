@@ -49,6 +49,11 @@ namespace syd {
                                 const std::string & key,
                                 const TagType & defaultValue);
 
+  /// Retrive the tag value with the correct type
+  double GetTagDoubleValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
+                                     const std::string & key,
+                                     const double & defaultValue);
+
 #include "sydDicomUtils.txx"
 
 } // end namespace

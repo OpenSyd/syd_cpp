@@ -24,7 +24,7 @@ TagType GetTagValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
 {
   TagType v = defaultValue;
   typedef itk::MetaDataDictionary DictionaryType;
-  const  DictionaryType & dictionary = dicomIO->GetMetaDataDictionary();
+  const DictionaryType & dictionary = dicomIO->GetMetaDataDictionary();
   typedef itk::MetaDataObject< TagType > MetaDataTagType;
   DictionaryType::ConstIterator tagItr = dictionary.Find(key);
   DictionaryType::ConstIterator end = dictionary.End();

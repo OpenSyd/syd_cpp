@@ -93,3 +93,17 @@ itk::GDCMImageIO::Pointer syd::ReadDicomHeader(std::string filename)
   return dicomIO;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::GetTagDoubleValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
+                                        const std::string & key,
+                                        const double & defaultValue)
+{
+  std::ostringstream oss;
+  oss << defaultValue;
+  std::string r = GetTagValueFromTagKey(dicomIO, key, oss.str());
+  double rr = stod(r);
+  return rr;
+}
+// --------------------------------------------------------------------
