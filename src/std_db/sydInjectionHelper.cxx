@@ -77,3 +77,16 @@ syd::Injection::vector syd::GetSimilarInjection(syd::StandardDatabase * db,
   return injections;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Injection::vector syd::FindInjections(const syd::Patient::pointer patient)
+{
+  auto db = patient->GetDatabase();
+  syd::Injection::vector injections;
+  odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == patient->id;
+  db->Query(injections, q);
+  return injections;
+}
+// --------------------------------------------------------------------
+
