@@ -52,11 +52,17 @@ namespace syd {
     /// return the "not_found" image type
     static pointer GetNotFoundImageType();
 
+    /// Get an image type by name
+    static pointer GetImageType(std::string name);
+
     /// try to identify the given dicom, return a value [0-1]
     double Identify(syd::DicomSerie::pointer dicom) const;
 
     /// Write information as a string
     std::string ToString() const;
+
+    /// Image type name
+    std::string GetName() const { return name; }
 
     /// make a copy
     pointer Clone() const;
@@ -70,6 +76,15 @@ namespace syd {
       os << p->ToString();
       return os;
     }
+
+    /// Return the properties
+    const std::map<std::string, PropertiesValue> & GetProperties() const { return properties; }
+
+    /// Check if the type is among the list
+    bool IsAcceptableImageType(syd::ImageType::vector types);
+
+    /// Check if the type is similar to the given type
+    bool IsAcceptableImageType(syd::ImageType::pointer type);
 
   protected:
     static vector all_types;

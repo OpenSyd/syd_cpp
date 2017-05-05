@@ -95,7 +95,9 @@ double syd::ImageType::Identify(syd::DicomSerie::pointer dicom) const
 std::string syd::ImageType::ToString() const
 {
   std::ostringstream oss;
-  oss << name  << " " << pixel_unit->name << " ";
+  std::string pu = empty_value;
+  if (pixel_unit != nullptr) pu = pixel_unit->name;
+  oss << name  << " " << pu << " ";
   for(auto p:properties)
     oss << p.first << "("
         << (p.second == PropertiesValue::Yes ? "Y":"")
@@ -208,12 +210,11 @@ syd::ImageType::pointer syd::ImageType::BuildImageType_SPECT()
       p->properties["AC"] = PropertiesValue::No;
       p->properties["S1"] = PropertiesValue::Yes;
     }
-    found = d.find("TRANS-S2"); 
+    found = d.find("TRANS-S2");
     if (found != std::string::npos) {
       p->properties["AC"] = PropertiesValue::No;
       p->properties["S2"] = PropertiesValue::Yes;
     }
-    if (found != std::string::npos) p->properties["AC"] = PropertiesValue::Yes;
     found = d.find("SPECT_KNITTED");
     if (found != std::string::npos) v = 1.0; // We know it is a spect
 
@@ -324,3 +325,59 @@ syd::ImageType::pointer syd::ImageType::BuildImageType_AttMap()
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+syd::ImageType::pointer syd::ImageType::GetImageType(std::string name)
+{
+  std::vector<std::string> words;
+  syd::GetWords(words, name);
+  if (words.size() == 0) return GetNotFoundImageType();
+  auto types = syd::ImageType::GetImageTypes();
+  auto wname = words[0];
+  words.erase(words.begin());
+  for(auto t:types) {
+    if (t->GetName() == wname) {
+      auto type  = t->Clone();
+      type->properties.clear();
+      // Set the properties if any
+      for(auto w:words) {
+        auto x = w.find("(");
+        if (x == std::string::npos) continue; // properties not found
+        auto p = w.substr(0,x);
+        auto v = w.substr(x+1,1);
+        if (v == "Y") type->properties[p] = PropertiesValue::Yes;
+        else if (v == "N") type->properties[p] = PropertiesValue::No;
+        else type->properties[p] = PropertiesValue::Unknown;
+      }
+      return type;
+    }
+  }
+  return GetNotFoundImageType();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::ImageType::IsAcceptableImageType(syd::ImageType::vector types)
+{
+  for(auto t:types)
+    if (IsAcceptableImageType(t)) return true;
+  return false;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::ImageType::IsAcceptableImageType(syd::ImageType::pointer type)
+{
+  if (type->GetName() != GetName()) return false;
+
+  for(auto p:type->GetProperties()) {
+    auto f = properties.find(p.first);
+    if (f == properties.end()) continue; // properties does not exist, so acceptable
+    if (f->second == p.second) continue; // same value, acceptable
+    if (f->second == PropertiesValue::Unknown) continue; // unknown value, acceptable
+    return false;
+  }
+  return true;
+}
+// --------------------------------------------------------------------
