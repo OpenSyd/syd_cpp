@@ -577,7 +577,6 @@ syd::Image::vector syd::FindImagesFromDicom(const syd::DicomSerie::pointer dicom
     for(auto d:im->dicoms) if (d->id == dicom->id) imageIsFromThisDicom = true;
     if (imageIsFromThisDicom) images_from_dicom.push_back(im);
   }
-  DD(images_from_dicom.size());
   return images_from_dicom;
 }
 // --------------------------------------------------------------------
