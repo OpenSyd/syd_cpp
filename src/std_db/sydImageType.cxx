@@ -182,15 +182,35 @@ syd::ImageType::pointer syd::ImageType::BuildImageType_SPECT()
     auto d = dicom->dicom_description;
     size_t found;
     found = d.find("IRNC");
-    if (found != std::string::npos) p->properties["AC"] = PropertiesValue::No;
+    if (found != std::string::npos) {
+      p->properties["AC"] = PropertiesValue::No;
+      p->properties["SC"] = PropertiesValue::No;
+      p->properties["RR"] = PropertiesValue::No;
+    }
     found = d.find("IRAC");
-    if (found != std::string::npos) p->properties["AC"] = PropertiesValue::Yes;
+    if (found != std::string::npos) {
+      p->properties["AC"] = PropertiesValue::Yes;
+      p->properties["SC"] = PropertiesValue::No;
+      p->properties["RR"] = PropertiesValue::No;
+    }
     found = d.find("IRACSC");
-    if (found != std::string::npos) p->properties["SC"] = PropertiesValue::Yes;
+    if (found != std::string::npos) {
+      p->properties["AC"] = PropertiesValue::Yes;
+      p->properties["SC"] = PropertiesValue::Yes;
+      p->properties["RR"] = PropertiesValue::No;
+    }
     found = d.find("IRACSCRR");
-    if (found != std::string::npos) p->properties["RR"] = PropertiesValue::Yes;
+    if (found != std::string::npos) {
+      p->properties["AC"] = PropertiesValue::Yes;
+      p->properties["SC"] = PropertiesValue::Yes;
+      p->properties["RR"] = PropertiesValue::Yes;
+    }
     found = d.find("IRACRR");
-    if (found != std::string::npos) p->properties["RR"] = PropertiesValue::Yes;
+    if (found != std::string::npos) {
+      p->properties["AC"] = PropertiesValue::Yes;
+      p->properties["SC"] = PropertiesValue::No;
+      p->properties["RR"] = PropertiesValue::Yes;
+    }
     found = d.find("TB_KNIT_NOAC");
     if (found != std::string::npos) p->properties["AC"] = PropertiesValue::No;
     found = d.find("TB_KNIT_AC");
