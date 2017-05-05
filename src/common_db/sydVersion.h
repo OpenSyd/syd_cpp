@@ -26,10 +26,11 @@
 // the change is legitimate: 1) open and 2) increment the
 // version. 3) Once checked, close again.
 // It  means that we can migrate from base version to current version)
-#define SYD_VERSION      0125 // version 1.25 (current version)
+#define SYD_VERSION      0126 // version 1.26 (current version)
 #define SYD_BASE_VERSION 0101 // version 1.1 (base version)
 
 // Log:
+// 1.26 : add injection to DicomSerie
 // 1.25 : add other dicom_tags to DicomSerie
 // 1.24 : add dicom_tags to DicomSerie
 // 1.23 : add tag to DicomSerie

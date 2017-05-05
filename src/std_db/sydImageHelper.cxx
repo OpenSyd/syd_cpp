@@ -154,6 +154,7 @@ void syd::SetImageInfoFromDicomSerie(syd::Image::pointer image,
   image->acquisition_date = dicom->dicom_acquisition_date;
   image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
   image->AddDicomSerie(dicom);
+  image->injection = dicom->injection;
 
   // try to guess pixel_unit ?
   auto db = image->GetDatabase<syd::StandardDatabase>();

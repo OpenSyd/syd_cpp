@@ -20,7 +20,7 @@
 #define SYDDICOMSERIE_H
 
 // syd
-#include "sydPatient.h"
+#include "sydInjection.h"
 #include "sydDicomFile.h"
 
 // --------------------------------------------------------------------
@@ -39,6 +39,9 @@ namespace syd {
 #pragma db not_null
       /// Foreign key, it must exist in the Patient table.
       syd::Patient::pointer patient;
+
+      /// Foreign key, can be null
+      syd::Injection::pointer injection;
 
       /// List of DicomFile
       syd::DicomFile::vector dicom_files;

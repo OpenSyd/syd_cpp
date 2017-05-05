@@ -34,6 +34,7 @@ BuildFields(const syd::Database * db) const
   InitCommonFields();
 
   ADD_TABLE_FIELD(patient, syd::Patient);
+  ADD_TABLE_FIELD(injection, syd::Injection);
 
   // dicom_files
   auto f_dicoms = [](pointer p) -> std::string {
@@ -110,7 +111,7 @@ BuildFields(const syd::Database * db) const
   field_format_map_["default"] =
     "id patient.name[pat] dicom_acquisition_date[date] dicom_modality[mod] dicom_series_description[serie] dicom_dataset_name[dsn] dicom_image_id[dii] dicom_reconstruction_date[rec_date] tags comments[com]";
   field_format_map_["desc"] =
-    "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_description[description] dicom_reconstruction_date[rec_date] tags comments[com]";
+    "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_description[description] dicom_reconstruction_date[rec_date] injection.id[inj] tags comments[com]";
   field_format_map_["image"] =
     "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_size[size] dicom_spacing[spacing] dicom_reconstruction_date[rec_date] tags comments[com]";
 }

@@ -1,4 +1,16 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="294">
+    <alter-table name="syd::DicomSerie">
+      <add-column name="injection" type="INTEGER" null="true"/>
+      <add-foreign-key name="injection_fk" deferrable="DEFERRED">
+        <column name="injection"/>
+        <references table="syd::Injection">
+          <column name="id"/>
+        </references>
+      </add-foreign-key>
+    </alter-table>
+  </changeset>
+
   <changeset version="293">
     <alter-table name="syd::DicomSerie">
       <add-column name="dicom_study_name" type="TEXT" null="true"/>
