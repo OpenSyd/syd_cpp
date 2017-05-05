@@ -571,7 +571,6 @@ syd::Image::vector syd::FindImagesFromDicom(const syd::DicomSerie::pointer dicom
 {
   auto patient = dicom->patient;
   auto images = syd::FindImages(patient);
-  DD(images.size());
   syd::Image::vector images_from_dicom;
   for(auto im:images) {
     bool imageIsFromThisDicom = false;
