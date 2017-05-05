@@ -131,6 +131,15 @@ namespace syd {
   /// Apply a gaussian filter to the image
   void ApplyGaussianFilter(syd::Image::pointer image, double sigma_in_mm);
 
+  /// Retrieve all images for this patient
+  syd::Image::vector FindImages(const syd::Patient::pointer patient);
+
+  /// Retrieve all images for this patient
+  syd::Image::vector FindImages(syd::StandardDatabase * db, const std::string & patient_name);
+
+  /// Retrieve all images linked to this dicom
+  syd::Image::vector FindImagesFromDicom(const syd::DicomSerie::pointer dicom);
+
 } // namespace syd
 
 #include "sydImageHelper.txx"

@@ -9,14 +9,6 @@ HunterGate(
   URL "https://github.com/ruslo/hunter/archive/v0.18.39.tar.gz"
   SHA1 "a6fbc056c3d9d7acdaa0a07c575c9352951c2f6c"
   )
-# HunterGate(
-# URL "https://github.com/ruslo/hunter/archive/v0.15.25.tar.gz"
-# SHA1 "74993ddf2cf8a6a4c3e0b9d58027a624bf3060e7"
-#)
-# HunterGate(
-#   URL "https://github.com/ruslo/hunter/archive/v0.16.29.tar.gz"
-#   SHA1 "309d7d8eedc5b1229b710f856dc7a19e04fb7737"
-#   )
 # ---------------------------------------------------------
 
 

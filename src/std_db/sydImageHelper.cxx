@@ -544,3 +544,41 @@ void syd::ApplyGaussianFilter(syd::Image::pointer image, double sigma_in_mm)
   db->Update(image);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImages(syd::StandardDatabase * db, const std::string & patient_name)
+{
+  return syd::FindImages(db->FindPatient(patient_name));
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImages(const syd::Patient::pointer patient)
+{
+  auto db = patient->GetDatabase();
+  odb::query<syd::Image> q = odb::query<syd::Image>::patient == patient->id;
+  syd::Image::vector images;
+  db->Query(images, q);
+  return images;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImagesFromDicom(const syd::DicomSerie::pointer dicom)
+{
+  auto patient = dicom->patient;
+  auto images = syd::FindImages(patient);
+  DD(images.size());
+  syd::Image::vector images_from_dicom;
+  for(auto im:images) {
+    bool imageIsFromThisDicom = false;
+    for(auto d:im->dicoms) if (d->id == dicom->id) imageIsFromThisDicom = true;
+    if (imageIsFromThisDicom) images_from_dicom.push_back(im);
+  }
+  DD(images_from_dicom.size());
+  return images_from_dicom;
+}
+// --------------------------------------------------------------------

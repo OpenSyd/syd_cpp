@@ -51,6 +51,7 @@ std::string syd::DicomSerie::ToString() const
      << dicom_frame_of_reference_uid << " "
      << dicom_study_uid << " "
      << dicom_series_uid << " "
+     << dicom_radionuclide_name << " "
      << syd::GetLabels(tags) << " "
      << GetAllComments();
   auto s = ss.str();

@@ -76,25 +76,6 @@ syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & nam
 
 
 // --------------------------------------------------------------------
-syd::Image::vector syd::StandardDatabase::FindImages(const syd::Patient::pointer patient) const
-{
-  odb::query<syd::Image> q = odb::query<syd::Image>::patient == patient->id;
-  syd::Image::vector images;
-  Query(images, q);
-  return images;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Image::vector syd::StandardDatabase::FindImages(const std::string & patient_name) const
-{
-  return FindImages(FindPatient(patient_name));
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
 {
   if (def == "none") return;
