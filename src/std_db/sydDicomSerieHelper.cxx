@@ -278,3 +278,80 @@ syd::InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom)
   return new_dicom;
 }
 // --------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+std::string syd::GetDateOfOlderDicom(const syd::DicomSerie::vector & dicoms)
+{
+  auto d =
+    std::min_element(begin(dicoms), end(dicoms),
+                     [] (const syd::DicomSerie::pointer & s1, const syd::DicomSerie::pointer & s2) {
+                       return s1->dicom_acquisition_date < s2->dicom_acquisition_date;
+                     });
+  return (*d)->dicom_acquisition_date;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+bool syd::IsDicomStitchable(const syd::DicomSerie::pointer a,
+                            const syd::DicomSerie::pointer b,
+                            double max_reconstruction_delay)
+{
+  // Must be same frame_of_reference_uid and modality
+  if (a->dicom_frame_of_reference_uid != b->dicom_frame_of_reference_uid) return false;
+  if (a->dicom_modality != b->dicom_modality) return false;
+  // if same series_uid, it is ok
+  if (a->dicom_series_uid == b->dicom_series_uid) return true;
+  // Cannot be acquired at the same time
+  if (a->dicom_acquisition_date == b->dicom_acquisition_date) return false;
+  // tentative with reconstruction_date
+  // if reconstruction date difference larger than x hour, probably not the same
+  double delay = syd::DateDifferenceInHours(a->dicom_reconstruction_date, b->dicom_reconstruction_date);
+  if (delay > max_reconstruction_delay) return false;
+  // default
+  return true;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+std::vector<syd::DicomSerie::vector> syd::GroupByStitchableDicom(syd::DicomSerie::vector dicoms)
+{
+  // Search if some dicoms are stichable (brute force)
+  std::vector<syd::DicomSerie::vector> final_dicoms;
+  for(auto d:dicoms) { // Look for every dicom
+    bool stichable = false;
+    for(auto & fd:final_dicoms) { // is already stichable with a group ?
+      bool ok = true;
+      // We check that this dicom is stichable with all elements of the group
+      for(auto & ffd:fd) {
+        if (!IsDicomStitchable(ffd, d)) { ok = false; continue; }
+      }
+      if (ok) { // Yes stichable -> we add id to the group
+        stichable = true;
+        fd.push_back(d);
+        continue;
+      }
+    }
+    if (!stichable) { // no stichable -> we add a new group
+      syd::DicomSerie::vector a;
+      a.push_back(d);
+      final_dicoms.push_back(a);
+    }
+  }
+
+  // Sort by date
+  std::sort(begin(final_dicoms), end(final_dicoms),
+            [](const syd::DicomSerie::vector & a,
+               const syd::DicomSerie::vector & b) -> bool {
+              auto first_date_a = syd::GetDateOfOlderDicom(a);
+              auto first_date_b = syd::GetDateOfOlderDicom(b);
+              return IsDateBefore(first_date_a, first_date_b);
+            });
+  return final_dicoms;
+}
+//--------------------------------------------------------------------
+
+
+

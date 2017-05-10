@@ -36,22 +36,33 @@ namespace syd {
 
   // Write the dicom in the DicomSerie to a mhd file
   template<class ImageType>
-  void WriteDicomToMhd(syd::DicomSerie::pointer dicom,
-                       std::string mhd_filename);
+    void WriteDicomToMhd(syd::DicomSerie::pointer dicom,
+                         std::string mhd_filename);
 
   // Read a dicom into an itk_image
   template<class ImageType>
-  typename ImageType::Pointer
-  ReadDicomSerieImage(syd::DicomSerie::pointer dicom);
+    typename ImageType::Pointer
+    ReadDicomSerieImage(syd::DicomSerie::pointer dicom);
 
   /// Helper function (will change)
   template<typename F>
-  F GetFctByPixelType(std::map<std::string, F> & map,
-                           std::string pixel_type);
+    F GetFctByPixelType(std::map<std::string, F> & map,
+                        std::string pixel_type);
 
   /// Anonymize dicom serie
   void CopyDictionary (itk::MetaDataDictionary &fromDict, itk::MetaDataDictionary &toDict);
   syd::DicomSerie::pointer InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom);
+
+  /// Return the date of the older dicom in the list
+  std::string GetDateOfOlderDicom(const syd::DicomSerie::vector & dicoms);
+
+  /// Try to guess if the 2 dicoms can be stitched
+  bool IsDicomStitchable(const syd::DicomSerie::pointer a,
+                         const syd::DicomSerie::pointer b,
+                         double max_reconstruction_delay=1.0);
+
+  /// Group dicoms by stitchable dicom
+  std::vector<syd::DicomSerie::vector> GroupByStitchableDicom(syd::DicomSerie::vector dicoms);
 
 }
 #include "sydDicomSerieHelper.txx"
