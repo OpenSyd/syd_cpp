@@ -64,6 +64,17 @@ namespace syd {
   /// Group dicoms by stitchable dicom
   std::vector<syd::DicomSerie::vector> GroupByStitchableDicom(syd::DicomSerie::vector dicoms);
 
+  /// Set the dicom patient (display warning is different dicomID)
+  void CheckAndSetPatient(syd::DicomSerie::pointer dicom,
+                          syd::Patient::pointer patient);
+
+  /// Try to guess the patient or create a new one
+  void GuessAndSetPatient(syd::DicomSerie::pointer dicom);
+
+  /// Set patient info from the dicom (name, id, sex)
+  void SetPatientInfoFromDicom(syd::DicomSerie::pointer dicom,
+                               syd::Patient::pointer patient);
+
 }
 #include "sydDicomSerieHelper.txx"
 // --------------------------------------------------------------------

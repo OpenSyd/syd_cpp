@@ -18,16 +18,13 @@
 
 // syd
 #include "sydDicomSerieBuilder.h"
-
-
+#include "sydDicomSerieHelper.h"
 
 // --------------------------------------------------------------------
-syd::DicomSerieBuilder::DicomSerieBuilder(StandardDatabase * db)
+syd::DicomSerieBuilder::DicomSerieBuilder(syd::StandardDatabase * db_)
 {
-  patient_ = NULL;
-  db_ = db;
-  forcePatientFlag_ = false;
   nb_of_skip_files = 0;
+  db = db_;
 }
 // --------------------------------------------------------------------
 
@@ -40,26 +37,16 @@ syd::DicomSerieBuilder::~DicomSerieBuilder()
 
 
 // --------------------------------------------------------------------
-void syd::DicomSerieBuilder::SetPatient(Patient::pointer p)
+void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename,
+                                               syd::Patient::pointer patient,
+                                               bool update_patient_info_from_file_flag)
 {
-  patient_ = p;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename)
-{
-  if (patient_ == NULL) {
-    EXCEPTION("Patient must be set before using SearchDicomInFile");
-  }
-
   itk::GDCMImageIO::Pointer dicomIO;
   try {
     dicomIO = syd::ReadDicomHeader(filename);
-  } catch (...) {
+  } catch (std::exception & e) {
     LOG(3) << sydlog::warningColor << "Warning cannot read '"
-           << filename << "' (it is not a dicom file ?).";
+           << filename << "' (it is not a dicom image file ?). " << e.what();
     return;
   }
 
@@ -82,8 +69,24 @@ void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename)
 
   // If this is a new DicomSerie, we create it
   if (!b) {
-    serie = db_->New<syd::DicomSerie>();
+    serie = db->New<syd::DicomSerie>();
     UpdateDicomSerie(serie, filename, dicomIO);
+    // Set patient
+    if (patient != nullptr) CheckAndSetPatient(serie, patient);
+    else {
+      syd::GuessAndSetPatient(serie);
+      patient = serie->patient;
+    }
+    // Update patient
+    if (update_patient_info_from_file_flag) {
+      syd::SetPatientInfoFromDicom(serie, serie->patient);
+      db->Update(serie->patient);
+    }
+    // Create folder if needed
+    std::string relative_folder = serie->ComputeRelativeFolder();
+    std::string absolute_folder = db->ConvertToAbsolutePath(relative_folder);
+    if (!fs::exists(absolute_folder)) fs::create_directories(absolute_folder);
+
     series_to_insert.push_back(serie);
     LOG(2) << "Creating a new serie: " << serie->dicom_series_uid;
   }
@@ -100,12 +103,11 @@ bool syd::DicomSerieBuilder::DicomFileAlreadyExist(const std::string & sop_uid)
 {
   DicomFile::vector df;
   odb::query<DicomFile> q = odb::query<DicomFile>::dicom_sop_uid == sop_uid;
-  db_->Query(df, q);
+  db->Query(df, q);
   int n = df.size();
   if (n>0) return true;
-  for(auto f:dicomfiles_to_insert) {
+  for(auto f:dicomfiles_to_insert)
     if (f->dicom_sop_uid == sop_uid) return true;
-  }
   return false;
 }
 // --------------------------------------------------------------------
@@ -158,7 +160,7 @@ bool syd::DicomSerieBuilder::GuessDicomSerieForThisFile(const std::string & file
   // Find all existing DicomSerie with the same uid, in the db
   DicomSerie::vector series;
   odb::query<DicomSerie> q = odb::query<DicomSerie>::dicom_series_uid == series_uid;
-  db_->Query(series, q);
+  db->Query(series, q);
   index=-1;
   for(auto i=0; i<series.size(); i++) {
     auto s = series[i];
@@ -195,9 +197,6 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie)
   if (serie->dicom_files.size() == 0) {
     EXCEPTION("No DicomFile for this DicomSerie");
   }
-
-  // Set the current patient
-  patient_ = serie->patient;
 
   // Open the first file
   auto filename = serie->dicom_files[0]->GetAbsolutePath();
@@ -246,32 +245,9 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   std::string patientID =
     GetTagValueFromTagKey(dicomIO, "0010|0020", empty_value); // Patient ID
   std::string patientName =
-    GetTagValueFromTagKey(dicomIO, "0010|1001", empty_value); // Patient Name
+    GetTagValueFromTagKey(dicomIO, "0010|0010", empty_value); // Patient Name
   char * sex = new char[100];
   dicomIO->GetPatientSex(sex);
-
-  if (!forcePatientFlag_) {
-    LOG(3) << "Check patient dicom_patientid is the same than the given patient";
-    if (patient_->dicom_patientid != patientID) {
-      LOG(FATAL) << "Patient does not seems to be the same. You ask for " << patient_->name
-                 << " with dicom_id = " << patient_->dicom_patientid
-                 << " while in dicom, it is " << patientID
-                 << " with name: " << patientName << std::endl
-                 << "Filename is " << filename << std::endl
-                 << "Use 'forcePatient' if you want to bypass this check";
-    }
-    /*if (patient_->sex != std::string(sex)) {
-      LOG(FATAL) << "Patient's sex is different in the db and in the dicom: "
-      << patient_->sex << " vs " << sex;
-      }*/
-  }
-  if (patient_->dicom_patientid != patientID) {
-    // update the dicom id if it is different (force flag)
-    patient_->dicom_patientid = patientID;
-    patient_->sex = sex;
-    db_->Update<Patient>(patient_);
-  }
-  serie->patient = patient_;
 
   // Modality
   serie->dicom_modality =
@@ -291,12 +267,11 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   serie->dicom_reconstruction_date = reconstruction_date;
 
   // Patient info
-  serie->dicom_patient_name = patientName;
+  serie->dicom_patient_name = trim(patientName);
   serie->dicom_patient_id = patientID;
   serie->dicom_patient_sex = sex;
   serie->dicom_patient_birth_date =
     GetTagValueFromTagKey(dicomIO, "0010|0030", empty_value); // Patient's Birth Date
- 
 
   // Description. We merge the tag because it is never consistant
   std::string SeriesDescription =
@@ -409,17 +384,12 @@ CreateDicomFile(const std::string & filename,
                 DicomSerie::pointer serie)
 {
   // First create the file
-  auto dicomfile = db_->New<syd::DicomFile>();
+  auto dicomfile = db->New<syd::DicomFile>();
   std::string f = GetFilenameFromPath(filename);
   dicomfile->filename = f;
-
-  std::string relative_folder = serie->ComputeRelativeFolder(); // FIXME
-  std::string absolute_folder = db_->ConvertToAbsolutePath(relative_folder);
-  if (!fs::exists(absolute_folder)) fs::create_directories(absolute_folder);
-
+  std::string relative_folder = serie->ComputeRelativeFolder();
   dicomfile->path = relative_folder;
   files_to_copy.push_back(filename);
-  destination_folders.push_back(absolute_folder);
 
   // Then create the dicomfile
   //    dicomfile->dicom_serie = serie;
@@ -449,8 +419,8 @@ CreateDicomFile(const std::string & filename,
 syd::DicomSerie::vector syd::DicomSerieBuilder::InsertDicomSeries()
 {
   // Update the database first to get the File id
-  db_->Insert(dicomfiles_to_insert); // must be before serie
-  db_->Insert(series_to_insert);
+  db->Insert(dicomfiles_to_insert); // must be before serie
+  db->Insert(series_to_insert);
   assert(dicomfiles_to_insert.size() == files_to_copy.size());
 
   // Copy files
@@ -461,24 +431,25 @@ syd::DicomSerie::vector syd::DicomSerieBuilder::InsertDicomSeries()
 
     // Add the id at the beginning of the file to insure unicity
     std::stringstream dss;
-    dss << destination_folders[i] << PATH_SEPARATOR
+    auto destination_folder = db->ConvertToAbsolutePath(dicomfiles_to_insert[i]->path);
+    dss << destination_folder << PATH_SEPARATOR
         << "dcm_" << dicomfiles_to_insert[i]->id << "_" << f;
     dicomfiles_to_insert[i]->filename =
       "dcm_" + std::to_string(dicomfiles_to_insert[i]->id) +
       "_" +dicomfiles_to_insert[i]->filename;
-    std::string destination =dss.str();
+    std::string destination = dss.str();
     if (fs::exists(destination)) {
       LOG(3) << "Destination file already exist, ignoring";
       nb_of_skip_copy++;
       continue;
     }
-    LOG(3) << "Copying " << f << " to " << destination_folders[i] << std::endl;
+    LOG(3) << "Copying " << f << " to " << destination_folder << std::endl;
     fs::copy_file(files_to_copy[i].c_str(), destination);
     loadbar(i,n);
   }
 
   // Update because the filename changed
-  db_->Update(dicomfiles_to_insert);
+  db->Update(dicomfiles_to_insert);
 
   // Log
   LOG(1) << dicomfiles_to_insert.size() << " DicomFiles have been added in the db";
@@ -494,7 +465,6 @@ syd::DicomSerie::vector syd::DicomSerieBuilder::InsertDicomSeries()
   // Once done, clear vectors
   dicomfiles_to_insert.clear();
   files_to_copy.clear();
-  destination_folders.clear();
   nb_of_skip_files = 0;
 
   return series_to_insert;

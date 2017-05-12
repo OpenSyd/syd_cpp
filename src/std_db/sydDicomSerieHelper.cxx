@@ -354,4 +354,56 @@ std::vector<syd::DicomSerie::vector> syd::GroupByStitchableDicom(syd::DicomSerie
 //--------------------------------------------------------------------
 
 
+//--------------------------------------------------------------------
+void syd::CheckAndSetPatient(syd::DicomSerie::pointer dicom,
+                             syd::Patient::pointer patient)
+{
+  if (patient->dicom_patientid != dicom->dicom_patient_id) {
+    LOG(WARNING) << "Different dicom_patient_id in db and in DicomSerie " << std::endl
+                 << "Patient    patient dicom id : " << patient->dicom_patientid << std::endl
+                 << "DicomSerie patient dicom id : " << dicom->dicom_patient_id;
+  }
+  dicom->patient = patient;
+}
+//--------------------------------------------------------------------
 
+
+//--------------------------------------------------------------------
+void syd::GuessAndSetPatient(syd::DicomSerie::pointer dicom)
+{
+  auto db = dicom->GetDatabase();
+  odb::query<syd::Patient> q =
+    odb::query<syd::Patient>::dicom_patientid == dicom->dicom_patient_id;
+  syd::Patient::vector patients;
+  db->Query(patients, q);
+  if (patients.size() > 0) {
+    dicom->patient = patients[0];
+    if (patients.size() > 1) {
+      std::ostringstream oss;
+      for(auto p:patients) oss << p << std::endl;
+      LOG(WARNING) << "Warning, several patients with same dicom_patient_id: " << oss.str();
+    }
+    return;
+  }
+  // Create a patient
+  auto patient = db->New<syd::Patient>();
+  syd::SetPatientInfoFromDicom(dicom, patient);
+  db->Query(patients);
+  int max = 0;
+  for(auto p:patients) if (p->study_id > max) max = p->study_id;
+  patient->study_id = max+1;
+  db->Insert(patient);
+  dicom->patient = patient;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+void syd::SetPatientInfoFromDicom(syd::DicomSerie::pointer dicom,
+                                  syd::Patient::pointer patient)
+{
+  patient->dicom_patientid = dicom->dicom_patient_id;
+  patient->name = dicom->dicom_patient_name;
+  patient->sex = dicom->dicom_patient_sex;
+}
+//--------------------------------------------------------------------

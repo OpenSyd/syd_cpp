@@ -88,7 +88,8 @@ itk::GDCMImageIO::Pointer syd::ReadDicomHeader(std::string filename)
   try {
     dicomIO->ReadImageInformation();
   } catch (std::exception & e) {
-    EXCEPTION("Error cannot read '" << filename << "' (it is not a dicom file ?).");
+    EXCEPTION("Error cannot read '" << filename << "' (it is not a dicom file ?) "
+              << e.what() << ".");
   }
   return dicomIO;
 }

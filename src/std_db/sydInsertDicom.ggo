@@ -2,11 +2,13 @@
 
 package "syd"
 version "0.3"
-usage "sydInsertDicom <patient> <files or folders>"
+usage "sydInsertDicom <files or folders>"
 description "Insert the all dicom series in a db. Parameters are:
-- <patient>        name or study_id of the patient
 - <files/folders>  list of files or folders to look for dicom series
+
+If the option --patient <id> is given, the patient is forced. If not, the patient is guessed from the dicom id. If no patient was found, a new one is created.
+
 "
 
-option "forcePatient"    	f       "If true : do not check patient name initial" flag      off
-# option "forceUpdate"    	u       "Force reinsert even if dicom already exist"  flag      off
+option "patient" p "Associate the dicom with this patient id or name" string no
+option "updatePatient" u "If true, update patient info from dicom" flag off

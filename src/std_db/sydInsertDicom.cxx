@@ -28,20 +28,16 @@
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertDicom, 2);
+  SYD_INIT_GGO(sydInsertDicom, 1);
 
   // Load plugin and get the database
   syd::PluginManager::GetInstance()->Load();
   syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the patient
-  std::string name = args_info.inputs[0];
-  auto patient = db->FindPatient(name);
-
   // Get the list of folders to look for
   std::vector<std::string> files_folders;
-  for(auto i=1; i<args_info.inputs_num; i++) files_folders.push_back(args_info.inputs[i]);
+  for(auto i=0; i<args_info.inputs_num; i++) files_folders.push_back(args_info.inputs[i]);
 
   // Get the whole list of files
   std::vector<std::string> files;
@@ -55,17 +51,19 @@ int main(int argc, char* argv[])
   }
   LOG(1) << "Searching for dicom in " << files.size() << " files ...";
 
+  // Get the patient if needed
+  syd::Patient::pointer patient = nullptr;
+  if (args_info.patient_given)
+    patient = db->FindPatient(args_info.patient_arg);
+
   // Dicom insertion
   syd::DicomSerieBuilder builder(db);
-  builder.SetPatient(patient);
-  builder.SetForcePatientFlag(args_info.forcePatient_flag);
   int i=0;
   for(auto f:files) {
     syd::loadbar(i, files.size());
-    builder.SearchDicomInFile(f);
+    builder.SearchDicomInFile(f, patient, args_info.updatePatient_flag);
     ++i;
   }
-
   // Insert dicom and update comments if needed
   auto dicoms = builder.InsertDicomSeries();
   for(auto d:dicoms) syd::SetCommentsFromCommandLine(d->comments, db, args_info);

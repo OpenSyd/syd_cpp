@@ -36,41 +36,28 @@ namespace syd {
 
   public:
     /// Constructor.
-    DicomSerieBuilder(StandardDatabase * db);
+    DicomSerieBuilder(syd::StandardDatabase * db);
 
     /// Destructor (empty)
     virtual ~DicomSerieBuilder();
 
-    /// Set the patient (required)
-    void SetPatient(Patient::pointer p);
-
-    /// Don't stop even if the patient in the dicom seems different
-    /// from the patient
-    void SetForcePatientFlag(bool b) { forcePatientFlag_ = b; }
-
     /// Create a DicomSerie/DicomFile (still not inserted into the db,
     /// use UpdateDicomSerie for that)
-    void SearchDicomInFile(std::string filename);
+    void SearchDicomInFile(std::string filename,
+                           syd::Patient::pointer patient,
+                           bool update_patient_info_from_file_flag);
 
     /// Insert the created DicomSerie/DicomFile into the db
     syd::DicomSerie::vector InsertDicomSeries();
 
     /// Update the information from the file
-    void UpdateDicomSerie(DicomSerie::pointer serie);
+    void UpdateDicomSerie(syd::DicomSerie::pointer serie);
 
   protected:
-    /// Protected constructor. No need to use directly.
-    DicomSerieBuilder();
-
-    StandardDatabase * db_;
-    Patient::pointer patient_;
-    bool forcePatientFlag_;
-
-    DicomSerie::vector series_to_insert;
-    DicomSerie::vector series_to_update;
-    DicomFile::vector dicomfiles_to_insert;
+    syd::StandardDatabase * db;
+    syd::DicomSerie::vector series_to_insert;
+    syd::DicomFile::vector dicomfiles_to_insert;
     std::vector<std::string> files_to_copy;
-    std::vector<std::string> destination_folders;
     int nb_of_skip_files;
 
     void UpdateDicomSerie(DicomSerie::pointer serie,
