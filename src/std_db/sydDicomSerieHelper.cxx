@@ -378,6 +378,7 @@ void syd::GuessAndSetPatient(syd::DicomSerie::pointer dicom)
   db->Query(patients, q);
   if (patients.size() > 0) {
     dicom->patient = patients[0];
+    LOG(2) << "Find patient " << dicom->patient;
     if (patients.size() > 1) {
       std::ostringstream oss;
       for(auto p:patients) oss << p << std::endl;
@@ -394,6 +395,7 @@ void syd::GuessAndSetPatient(syd::DicomSerie::pointer dicom)
   patient->study_id = max+1;
   db->Insert(patient);
   dicom->patient = patient;
+  LOG(2) << "Create patient " << dicom->patient;
 }
 //--------------------------------------------------------------------
 
