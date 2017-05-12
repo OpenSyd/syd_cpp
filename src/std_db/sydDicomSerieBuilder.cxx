@@ -268,7 +268,7 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
 
   // Patient info
   serie->dicom_patient_name = trim(patientName);
-  serie->dicom_patient_id = patientID;
+  serie->dicom_patient_id = trim(patientID);
   serie->dicom_patient_sex = sex;
   serie->dicom_patient_birth_date =
     GetTagValueFromTagKey(dicomIO, "0010|0030", empty_value); // Patient's Birth Date
