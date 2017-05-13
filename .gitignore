@@ -20,3 +20,5 @@ GTAGS
 /src/std_db/.dir-locals.el
 save/
 superbuild.save/
+/save*
+
