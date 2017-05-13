@@ -50,6 +50,11 @@ int main(int argc, char* argv[])
     syd::DicomSerie::pointer dicomserie;
     try {
       db->QueryOne(dicomserie, id);
+      // // Retrieve the filename
+      // syd::DicomFile::vector dfiles;
+      // typedef odb::query<syd::DicomFile> QDF;
+      // QDF q = QDF::dicom_serie == id;
+      // db->Query(dfiles, q);
       // Only the first file is considered
       if (dicomserie->dicom_files.size() == 0) {
         LOG(FATAL) << "No DicomFile with this DicomSerie ?";

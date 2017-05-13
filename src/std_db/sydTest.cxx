@@ -27,7 +27,6 @@
 #include "sydField.h"
 
 //#include "sydTestTemp9.h"
-#include "gdcmReader.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -41,31 +40,33 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
   // -----------------------------------------------------------------
 
-  std::string filename = args_info.inputs[0];
-  DD(filename);
+  syd::Record::vector records;
+  db->Query(records, "Image");
+  DDS(records);
+  auto r = records[0];
+  DD(r);
 
-  gdcm::Reader RTreader;
-  RTreader.SetFileName(filename.c_str());
-  if (!RTreader.Read()) {
-    std::cout << "Problem reading file: " << filename << std::endl;
+  //
+  /*
+  {
+    auto f = [](syd::Image::pointer p) -> std::string & { return p->acquisition_date; };
+    auto rcast = BuildRefCastFunction(f);
+    auto s = BuildToStringFunction<syd::Image, RefCastFunction, std::string>(rcast);
+    DD(s(r));
   }
-  const gdcm::DataSet& ds = RTreader.GetFile().GetDataSet();
-  gdcm::MediaStorage ms;
-  ms.SetFromFile(RTreader.GetFile());
-  // (3006,0020) SQ (Sequence with explicit length #=4)      # 370, 1 StructureSetROISequence  
-  gdcm::Tag tssroisq(0x3006,0x0020);
-  if( !ds.FindDataElement( tssroisq ) )
-    {
-      std::cout << "Problem locating 0x3006,0x0020 - Is this a valid RT Struct file?" << std::endl;
-    }
-  gdcm::Tag troicsq(0x3006,0x0039);
-  if( !ds.FindDataElement( troicsq ) )
-    {
-      std::cout << "Problem locating 0x3006,0x0039 - Is this a valid RT Struct file?" << std::endl;
-    }
-  DD("ok");
-
-
+  {
+    auto f = [](syd::Image::pointer p) -> std::string { return p->acquisition_date; };
+    auto vcast = BuildValueCastFunction(f);
+    auto s = BuildToStringFunction<syd::Image, ValueCastFunction, std::string>(vcast);
+    DD(s(r));
+  }
+  {
+    auto f = [](syd::Image::pointer p) { return p->patient; };
+    auto vcast = BuildValueCastFunction(f);
+    auto s = BuildToStringFunction<syd::Image, ValueCastFunction, syd::Patient>(vcast);
+    DD(s(r));
+  }
+  */
 
 
   // -----------------------------------------------------------------
