@@ -47,6 +47,12 @@ namespace syd {
                            syd::Patient::pointer patient,
                            bool update_patient_info_from_file_flag);
 
+    /// Create a DicomStruct (still not inserted into the db,
+    /// use UpdateDicomSerie for that)
+    void SearchDicomStructInFile(std::string filename,
+                                 syd::Patient::pointer patient,
+                                 bool update_patient_info_from_file_flag);
+
     /// Insert the created DicomSerie/DicomFile into the db
     syd::DicomSerie::vector InsertDicomSeries();
 

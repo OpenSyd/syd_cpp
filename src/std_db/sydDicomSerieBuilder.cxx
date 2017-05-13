@@ -19,6 +19,7 @@
 // syd
 #include "sydDicomSerieBuilder.h"
 #include "sydDicomSerieHelper.h"
+#include "gdcmAttribute.h"
 
 // --------------------------------------------------------------------
 syd::DicomSerieBuilder::DicomSerieBuilder(syd::StandardDatabase * db_)
@@ -45,9 +46,14 @@ void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename,
   try {
     dicomIO = syd::ReadDicomHeader(filename);
   } catch (std::exception & e) {
-    LOG(3) << sydlog::warningColor << "Warning cannot read '"
-           << filename << "' (it is not a dicom image file ?). " << e.what();
-    return;
+    try {
+      SearchDicomStructInFile(filename, patient, update_patient_info_from_file_flag);
+    }
+    catch (std::exception & e) {
+      LOG(3) << sydlog::warningColor << "Warning cannot read '"
+             << filename << "' (it is not a dicom (image/struct) file ?). " << e.what();
+      return;
+    }
   }
 
   // Test if this dicom file already exist in the db
@@ -468,5 +474,24 @@ syd::DicomSerie::vector syd::DicomSerieBuilder::InsertDicomSeries()
   nb_of_skip_files = 0;
 
   return series_to_insert;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::DicomSerieBuilder::SearchDicomStructInFile(std::string filename,
+                                                     syd::Patient::pointer patient,
+                                                     bool update_patient_info_from_file_flag)
+{
+  DDF();
+
+  auto & dataset = ReadDicomStructHeader(filename);
+  DD("done");
+
+  gdcm::Attribute<0x20,0x10> studyid;
+  studyid.SetFromDataSet(dataset);
+  auto mStudyID = studyid.GetValue();
+  DD(mStudyID);
+
 }
 // --------------------------------------------------------------------

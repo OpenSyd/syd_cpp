@@ -19,6 +19,9 @@
 // syd
 #include "sydDicomUtils.h"
 
+// gdcm (form itk)
+#include "gdcmAttribute.h"
+
 // --------------------------------------------------------------------
 std::string syd::ConvertDicomDateToStringDate(std::string date, std::string time)
 {
@@ -108,3 +111,36 @@ double syd::GetTagDoubleValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
   return rr;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+const gdcm::DataSet & syd::ReadDicomStructHeader(std::string filename)
+{
+  DDF();
+  DD(filename);
+
+  gdcm::Reader RTreader;
+  RTreader.SetFileName(filename.c_str());
+  if (!RTreader.Read()) {
+    EXCEPTION("Error cannot read '" << filename
+              << "' (it is not a dicom struct file ?)");
+  }
+
+  auto & dataset = RTreader.GetFile().GetDataSet();
+  gdcm::MediaStorage ms;
+  ms.SetFromFile(RTreader.GetFile());
+  // (3006,0020) SQ (Sequence with explicit length #=4) # 370, 1 StructureSetROISequence
+  gdcm::Tag tssroisq(0x3006,0x0020);
+  if (!dataset.FindDataElement(tssroisq)) {
+    EXCEPTION("Error cannot read tag 0x3006,0x0020");
+  }
+  gdcm::Tag troicsq(0x3006,0x0039);
+  if (!dataset.FindDataElement(troicsq)) {
+    EXCEPTION("Error cannot read tag 0x3006,0x0039");
+  }
+
+  return dataset;
+}
+// --------------------------------------------------------------------
+
+
