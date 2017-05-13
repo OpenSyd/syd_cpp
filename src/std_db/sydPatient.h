@@ -48,8 +48,8 @@ namespace syd {
       /// Patient weight_in_kg
       double weight_in_kg;
 
-      /// Patient dicom ID. Not unique because could be unknown.
-      std::string dicom_patientid;
+      /// Patient dicom ID (may have several ones)
+      std::vector<std::string> dicom_patient_ids;
 
       /// Patient sex
       std::string sex;
@@ -62,10 +62,10 @@ namespace syd {
       virtual void Set(const std::string & pname,
                        const IdType & pstudy_id,
                        const double pweight_in_kg=-1,
-                       const std::string pdicom_patientid=empty_value,
+                       const std::string pdicom_patient_id=empty_value,
                        const std::string sex=empty_value);
 
-      virtual bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
+      //      virtual bool CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const;
       virtual std::string ComputeRelativeFolder() const;
 
       void Callback(odb::callback_event, odb::database&) const;

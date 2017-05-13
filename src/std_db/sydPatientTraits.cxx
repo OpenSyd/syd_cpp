@@ -34,8 +34,15 @@ BuildFields(const syd::Database * db) const
   ADD_FIELD(name, std::string);
   ADD_FIELD(study_id, syd::IdType);
   ADD_FIELD(weight_in_kg, double);
-  ADD_FIELD(dicom_patientid, std::string);
   ADD_FIELD(sex, std::string);
+
+  // dicom_patient_ids
+  auto f_d = [](pointer p) -> std::string {
+    std::ostringstream oss;
+    for(auto d:p->dicom_patient_ids) oss << d << " ";
+    return oss.str();
+  };
+  AddField<std::string>("dicom_patient_ids", f_d, "dicom_id");
 
   // comments
   auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
@@ -45,7 +52,7 @@ BuildFields(const syd::Database * db) const
   auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
   AddField<std::string>("tags", f_t);
 
-  field_format_map_["default"] = "id study_id name weight_in_kg[weight] sex dicom_patientid[dicom_id] tags comments";
+  field_format_map_["default"] = "id study_id name weight_in_kg[weight] sex dicom_patient_ids[dicom_id] tags comments";
 }
 // --------------------------------------------------------------------
 

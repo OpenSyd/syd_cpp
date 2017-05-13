@@ -358,12 +358,14 @@ std::vector<syd::DicomSerie::vector> syd::GroupByStitchableDicom(syd::DicomSerie
 void syd::CheckAndSetPatient(syd::DicomSerie::pointer dicom,
                              syd::Patient::pointer patient)
 {
-  if (patient->dicom_patientid != dicom->dicom_patient_id) {
-    LOG(WARNING) << "Different dicom_patient_id in db and in DicomSerie " << std::endl
-                 << "Patient    patient dicom id : " << patient->dicom_patientid << std::endl
-                 << "DicomSerie patient dicom id : " << dicom->dicom_patient_id;
-  }
   dicom->patient = patient;
+  for(auto d:patient->dicom_patient_ids)
+    if (d == dicom->dicom_patient_id) return;
+  std::ostringstream ss;
+  for(auto d:patient->dicom_patient_ids) ss << d << " ";
+  LOG(WARNING) << "Different dicom_patient_id in db and in DicomSerie " << std::endl
+               << "Patient    patient dicom ids : " << ss.str() << std::endl
+               << "DicomSerie patient dicom id  : " << dicom->dicom_patient_id;
 }
 //--------------------------------------------------------------------
 
@@ -371,20 +373,17 @@ void syd::CheckAndSetPatient(syd::DicomSerie::pointer dicom,
 //--------------------------------------------------------------------
 void syd::GuessAndSetPatient(syd::DicomSerie::pointer dicom)
 {
+  // Search for a patient with the same dicom_patient_id
   auto db = dicom->GetDatabase();
-  odb::query<syd::Patient> q =
-    odb::query<syd::Patient>::dicom_patientid == dicom->dicom_patient_id;
   syd::Patient::vector patients;
-  db->Query(patients, q);
-  if (patients.size() > 0) {
-    dicom->patient = patients[0];
-    LOG(2) << "Find patient " << dicom->patient;
-    if (patients.size() > 1) {
-      std::ostringstream oss;
-      for(auto p:patients) oss << p << std::endl;
-      LOG(WARNING) << "Warning, several patients with same dicom_patient_id: " << oss.str();
-    }
-    return;
+  db->Query(patients);
+  for(auto p:patients) {
+    for(auto d:p->dicom_patient_ids)
+      if (d == dicom->dicom_patient_id) {
+        dicom->patient = p;
+        LOG(2) << "Find patient " << dicom->patient;
+        return;
+      }
   }
   // Create a patient
   auto patient = db->New<syd::Patient>();
@@ -404,7 +403,7 @@ void syd::GuessAndSetPatient(syd::DicomSerie::pointer dicom)
 void syd::SetPatientInfoFromDicom(syd::DicomSerie::pointer dicom,
                                   syd::Patient::pointer patient)
 {
-  patient->dicom_patientid = dicom->dicom_patient_id;
+  patient->dicom_patient_ids.push_back(dicom->dicom_patient_id);
   patient->name = dicom->dicom_patient_name;
   patient->sex = dicom->dicom_patient_sex;
 }

@@ -33,7 +33,6 @@ syd::Patient::Patient():
   name = empty_value; // must be unique
   study_id = 0; // must be unique
   weight_in_kg = 0;
-  dicom_patientid = empty_value;
   sex = empty_value;
 }
 // --------------------------------------------------
@@ -46,9 +45,9 @@ std::string syd::Patient::ToString() const
   ss << id << " "
      << study_id << " "
      << name << " "
-     << weight_in_kg << " "
-     << dicom_patientid << " "
-     << sex << " "
+     << weight_in_kg << " ";
+  for(auto d:dicom_patient_ids) ss << d << " ";
+  ss << sex << " "
      << syd::GetLabels(tags) << " "
      << GetAllComments();
   auto s = ss.str();
@@ -67,7 +66,7 @@ void syd::Patient::Set(const std::vector<std::string> & arg)
   name = arg[0];
   study_id = atoi(arg[1].c_str());
   if (arg.size() > 2) weight_in_kg = atof(arg[2].c_str());
-  if (arg.size() > 3) dicom_patientid = arg[3];
+  if (arg.size() > 3) GetWords(dicom_patient_ids, arg[3]);
   if (arg.size() > 4) sex = arg[4];
 }
 // --------------------------------------------------
@@ -83,14 +82,14 @@ void syd::Patient::Set(const std::string & pname,
   name = pname;
   study_id = pstudy_id;
   weight_in_kg = pweight_in_kg;
-  dicom_patientid = pdicom_patientid;
+  GetWords(dicom_patient_ids, pdicom_patientid);
   sex = s;
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-bool syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const {
+/*bool syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const {
   if (dicom_patientid != vdicom_patientid) return false;
   // Try to guess initials. Consider the first letter and the first after the symbol '^'
   int n = vdicom_name.find("^");
@@ -103,6 +102,7 @@ bool syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdico
   }
   return false; // do not consider ok with a patient name not having a '^' inside
 }
+*/
 // --------------------------------------------------
 
 
