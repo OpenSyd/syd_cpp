@@ -80,6 +80,8 @@ void syd::Database::OpenFromFile(std::string filename)
     r.begin().load(s);
     relative_folder_ = s.folder;
     database_schema_ = s.database_schema;
+    LOG(5) << "Relative folder: " << relative_folder_;
+    LOG(5) << "DB Schema      : " << database_schema_;
     transaction.commit();
   }
   catch (const odb::exception& e) {
@@ -130,6 +132,9 @@ void syd::Database::OpenFromFile(std::string filename)
                << GetVersionAsString(current_version)
                << "), please upgrade syd.";
   }
+  LOG(5) << "File version    :" << GetVersionAsString(file_version);
+  LOG(5) << "Program version :" << GetVersionAsString(current_version);
+  LOG(5) << "Base version    :" << GetVersionAsString(base_version);
 
   // Define the tables
   CreateTables();
