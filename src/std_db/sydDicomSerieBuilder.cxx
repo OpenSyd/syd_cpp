@@ -236,7 +236,7 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   std::string InstanceCreationDate =
     GetTagValueFromTagKey(dicomIO, "0008|0012", empty_value); // Instance Creation Date
   std::string InstanceCreationTime =
-    GetTagValueFromTagKey(dicomIO, "0008|0013", empty_value); //Instance Creation Time
+    GetTagValueFromTagKey(dicomIO, "0008|0013", empty_value); // Instance Creation Time
   std::string acquisition_date =
     ConvertDicomDateToStringDate(AcquisitionDate, AcquisitionTime);
   std::string reconstruction_date =
@@ -484,12 +484,13 @@ void syd::DicomSerieBuilder::SearchDicomStructInFile(std::string filename,
                                                      bool update_patient_info_from_file_flag)
 {
   DDF();
-
-  auto & dataset = ReadDicomStructHeader(filename);
-  DD("done");
+  auto reader = syd::ReadDicomStructHeader(filename);
+  const gdcm::DataSet & dataset = reader.GetFile().GetDataSet();
 
   gdcm::Attribute<0x20,0x10> studyid;
+  DD("done");
   studyid.SetFromDataSet(dataset);
+  DD("done");
   auto mStudyID = studyid.GetValue();
   DD(mStudyID);
 

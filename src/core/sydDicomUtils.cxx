@@ -114,32 +114,30 @@ double syd::GetTagDoubleValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
 
 
 // --------------------------------------------------------------------
-const gdcm::DataSet & syd::ReadDicomStructHeader(std::string filename)
+gdcm::Reader syd::ReadDicomStructHeader(std::string filename)
 {
-  DDF();
-  DD(filename);
-
-  gdcm::Reader RTreader;
-  RTreader.SetFileName(filename.c_str());
-  if (!RTreader.Read()) {
+  gdcm::Reader reader;
+  reader.SetFileName(filename.c_str());
+  if (!reader.Read()) {
     EXCEPTION("Error cannot read '" << filename
               << "' (it is not a dicom struct file ?)");
   }
 
-  auto & dataset = RTreader.GetFile().GetDataSet();
+  const gdcm::DataSet & dataset = reader.GetFile().GetDataSet();
   gdcm::MediaStorage ms;
-  ms.SetFromFile(RTreader.GetFile());
+  ms.SetFromFile(reader.GetFile());
   // (3006,0020) SQ (Sequence with explicit length #=4) # 370, 1 StructureSetROISequence
   gdcm::Tag tssroisq(0x3006,0x0020);
   if (!dataset.FindDataElement(tssroisq)) {
     EXCEPTION("Error cannot read tag 0x3006,0x0020");
   }
+
   gdcm::Tag troicsq(0x3006,0x0039);
   if (!dataset.FindDataElement(troicsq)) {
     EXCEPTION("Error cannot read tag 0x3006,0x0039");
   }
 
-  return dataset;
+  return reader;
 }
 // --------------------------------------------------------------------
 

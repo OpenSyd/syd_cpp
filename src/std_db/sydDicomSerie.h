@@ -21,7 +21,7 @@
 
 // syd
 #include "sydInjection.h"
-#include "sydDicomFile.h"
+#include "sydDicomBase.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -30,21 +30,13 @@ namespace syd {
   /// Store basic information about a dicom image (serie).
   class DicomSerie:
     public syd::Record,
-    public syd::RecordWithComments,
-    public syd::RecordWithTags {
+    public syd::DicomBase {
   public:
 
       DEFINE_TABLE_CLASS(DicomSerie);
 
-#pragma db not_null
-      /// Foreign key, it must exist in the Patient table.
-      syd::Patient::pointer patient;
-
       /// Foreign key, can be null
       syd::Injection::pointer injection;
-
-      /// List of DicomFile
-      syd::DicomFile::vector dicom_files;
 
       /// Date when the image has been acquired. Dicom tag =
       /// AcquisitionTime & AcquisitionDate
@@ -53,44 +45,6 @@ namespace syd {
       /// Date when the image has been reconstructed. Dicom tag =
       /// ContentDate/Time or InstanceCreationDate/Tiem
       std::string dicom_reconstruction_date;
-
-      /// Dicom StudyInstanceUID
-      std::string dicom_study_uid;
-
-      /// Dicom SeriesInstanceUID. In general, slices of a same CT share
-      /// the same SeriesInstanceUID. Sometimes SPECT acquisition at
-      /// different table position share the same SeriesInstanceUID.
-      std::string dicom_series_uid;
-
-      /// Dicom FrameOfReferenceUID. to allow link between CT and SPECT
-      /// image. "All images in a Series that share the same Frame of
-      /// Reference UID shall be spatially related to each
-      /// other.". Warning, sometimes CT and SPECT dot not share the
-      /// same FrameOfReferenceUID even if they were acquired in the
-      /// same session because, for example, of different table height.
-      std::string dicom_frame_of_reference_uid;
-
-      /// Modality as indicated in the dicom tag Modality
-      std::string dicom_modality;
-
-      /// Concatenation of several descriptions tag (SeriesDescription
-      /// StudyDescription, ImageID, DatasetName, Manufacturer)
-      std::string dicom_description;
-
-      /// Dicom tags
-      std::string dicom_series_description;
-      std::string dicom_study_description;
-      std::string dicom_study_name;
-      std::string dicom_study_id;
-      std::string dicom_image_id;
-      std::string dicom_dataset_name;
-      std::string dicom_manufacturer;
-      std::string dicom_manufacturer_model_name;
-      std::string dicom_software_version;
-      std::string dicom_patient_name;
-      std::string dicom_patient_id;
-      std::string dicom_patient_birth_date;
-      std::string dicom_patient_sex;
 
       /// Dicom tags related to image size/spacing
       std::vector<int> dicom_size;
@@ -112,13 +66,17 @@ namespace syd {
       double dicom_table_height_in_mm;
       double dicom_rotation_angle;
 
-      /// Write the element as a string
-      virtual std::string ToString() const;
-
+      /// Compute the folder to store the dicom
       virtual std::string ComputeRelativeFolder() const;
 
+      /// Database callback
       void Callback(odb::callback_event, odb::database&) const;
+
+      /// Database callback
       void Callback(odb::callback_event, odb::database&);
+
+      /// Write the element as a string
+      virtual std::string ToString() const;
 
       /// Check if the associated files exist on disk
       virtual syd::CheckResult Check() const;

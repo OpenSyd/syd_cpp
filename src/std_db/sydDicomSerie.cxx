@@ -26,13 +26,10 @@ DEFINE_TABLE_IMPL(DicomSerie);
 // --------------------------------------------------------------------
 syd::DicomSerie::DicomSerie():
   syd::Record(),
-  syd::RecordWithComments(),
-  syd::RecordWithTags()
+  syd::DicomBase()
 {
-  patient = NULL;
-  dicom_modality = dicom_acquisition_date
-    = dicom_reconstruction_date = dicom_description
-    = dicom_frame_of_reference_uid = empty_value;
+  dicom_acquisition_date = empty_value;
+  dicom_reconstruction_date = empty_value;
 }
 // --------------------------------------------------------------------
 
@@ -41,30 +38,19 @@ syd::DicomSerie::DicomSerie():
 std::string syd::DicomSerie::ToString() const
 {
   std::stringstream ss ;
-  ss << id << " "
-     << (patient != NULL? patient->name:empty_value) << " "
-     << dicom_files.size() << " "
-     << dicom_modality << " "
-     << dicom_acquisition_date << " "
-     << dicom_reconstruction_date << " "
-     << dicom_description << " "
-     << dicom_frame_of_reference_uid << " "
-     << dicom_study_uid << " "
-     << dicom_series_uid << " "
-     << dicom_radionuclide_name << " "
-     << syd::GetLabels(tags) << " "
-     << GetAllComments();
+  ss << id << " " << syd::DicomBase::ToString();
   auto s = ss.str();
   return trim(s);
 }
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 std::string syd::DicomSerie::ComputeRelativeFolder() const
 {
   if (patient == NULL) {
-    LOG(FATAL) << "Error calling ComputeRelativeFolder for a serie, patient pointer is not set. " << ToString();
+    LOG(FATAL) << "Error calling ComputeRelativeFolder for a serie, patient pointer is not set. "
+               << ToString();
   }
   // Part 1: patient
   std::string f = patient->ComputeRelativeFolder()+PATH_SEPARATOR;
@@ -80,43 +66,32 @@ std::string syd::DicomSerie::ComputeRelativeFolder() const
   f = f+PATH_SEPARATOR+dicom_modality;
   return f;
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 void syd::DicomSerie::Callback(odb::callback_event event,
                                odb::database & db) const
 {
   syd::Record::Callback(event,db);
-
-  // not needed, but safer (be sure to store file modif)
-  if (event == odb::callback_event::pre_update) {
-    // update the files
-    for(auto f:dicom_files) db.update(f);
-  }
-
-  // When a serie is deleted, we need to delete the
-  // associated DicomFiles
-  if (event == odb::callback_event::pre_erase) {
-    for(auto d:dicom_files) db.erase(d); //
-  }
+  syd::DicomBase::Callback(event, db);
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
-// --------------------------------------------------
-void syd::DicomSerie::Callback(odb::callback_event event, odb::database & db)
+// --------------------------------------------------------------------
+void syd::DicomSerie::Callback(odb::callback_event event,
+                               odb::database & db)
 {
   syd::Record::Callback(event,db);
+  syd::DicomBase::Callback(event, db);
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 syd::CheckResult syd::DicomSerie::Check() const
 {
-  syd::CheckResult r;
-  for(auto d:dicom_files) r.merge(d->Check());
-  return r;
+  return syd::DicomBase::Check();
 }
 // --------------------------------------------------------------------

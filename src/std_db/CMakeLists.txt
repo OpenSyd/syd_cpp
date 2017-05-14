@@ -6,6 +6,7 @@ set(SCHEMA_NAME StandardDatabase)
 wrap_odb(sydStandardDatabase sydPatient.h)
 wrap_odb(sydStandardDatabase sydRadionuclide.h)
 wrap_odb(sydStandardDatabase sydInjection.h)
+wrap_odb(sydStandardDatabase sydDicomBase.h)
 wrap_odb(sydStandardDatabase sydDicomSerie.h)
 wrap_odb(sydStandardDatabase sydDicomFile.h)
 wrap_odb(sydStandardDatabase sydPixelUnit.h)
@@ -27,6 +28,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRadionuclide-odb.cxx sydRadionuclide-schema.cxx sydRadionuclide.cxx
   sydPatient-odb.cxx sydPatient-schema.cxx  sydPatient.cxx
   sydInjection-odb.cxx sydInjection-schema.cxx  sydInjection.cxx
+  sydDicomBase-odb.cxx sydDicomBase-schema.cxx  sydDicomBase.cxx
   sydDicomSerie-odb.cxx sydDicomSerie-schema.cxx  sydDicomSerie.cxx
   sydDicomFile-odb.cxx sydDicomFile-schema.cxx  sydDicomFile.cxx
   sydPixelUnit-odb.cxx sydPixelUnit-schema.cxx sydPixelUnit.cxx
