@@ -62,7 +62,7 @@ std::string syd::DicomBase::ToString() const
      << dicom_frame_of_reference_uid << " "
      << dicom_study_uid << " "
      << dicom_series_uid << " "
-       << syd::GetLabels(tags) << " "
+     << syd::GetLabels(tags) << " "
      << GetAllComments();
   auto s = ss.str();
   return trim(s);
@@ -120,5 +120,27 @@ syd::CheckResult syd::DicomBase::Check() const
   syd::CheckResult r;
   for(auto d:dicom_files) r.merge(d->Check());
   return r;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::function<std::string(syd::DicomBase::pointer)>
+syd::DicomBase::GetDicomFileFunction()
+{
+  auto f = [](pointer p) -> std::string {
+    if (p->dicom_files.size() == 0) return empty_value;
+    if (p->dicom_files.size() < 4) { // small number of files
+      std::ostringstream oss;
+      for(auto d:p->dicom_files) oss << d->id << " ";
+      auto s = oss.str();
+      return syd::trim(s);
+    }
+    std::ostringstream oss; // large nub of files
+    oss << p->dicom_files[0]->id << "-" << p->dicom_files.back()->id;
+    auto s = oss.str();
+    return syd::trim(s);
+  };
+  return f;
 }
 // --------------------------------------------------------------------

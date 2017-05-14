@@ -21,17 +21,19 @@
 #include "sydUpdateRadionuclideFilter.h"
 #include "sydDatabaseManager.h"
 
-// --------------------------------------------------
+// --------------------------------------------------------------------
 syd::StandardDatabase::StandardDatabase():CommonDatabase()
 {
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
 
-// --------------------------------------------------
+
+// --------------------------------------------------------------------
 syd::StandardDatabase::~StandardDatabase()
 {
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
@@ -43,6 +45,7 @@ void syd::StandardDatabase::CreateTables()
 
   AddTable<syd::DicomFile>();
   AddTable<syd::DicomSerie>();
+  AddTable<syd::DicomStruct>();
 
   AddTable<syd::PixelUnit>();
   AddTable<syd::Image>();

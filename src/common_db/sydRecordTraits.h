@@ -138,7 +138,23 @@ namespace syd {
   }                                                                 \
 
   // --------------------------------------------------------------------
+
+  template<class RecordType, class FieldValueType>
+    void
+    AddField(syd::RecordTraitsBase::FieldMapType & map,
+             std::string name,
+             std::function<FieldValueType (typename RecordType::pointer p)> f,
+             std::string abbrev="");
+  template<class RecordType, class RecordType2>
+    void
+    AddTableField(syd::RecordTraitsBase::FieldMapType & map,
+                  std::string name,
+                  std::function<typename RecordType2::pointer (typename RecordType::pointer p)> f,
+                  std::string abbrev="");
+
 } // end namespace
+
+
 
 
 #define ADD_FIELD(NAME, TYPE)                             \

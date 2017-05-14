@@ -16,24 +16,21 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDDICOMSERIETRAITS_H
-#define SYDDICOMSERIETRAITS_H
+#ifndef SYDDICOMBASETRAITS_H
+#define SYDDICOMBASETRAITS_H
 
 // syd
-#include "sydDicomSerie.h"
-#include "sydStandardDatabase.h"
+#include "sydDicomBase.h"
 #include "sydRecordTraits.h"
-#include "sydDicomBaseTraits.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// Main GetTraits function
-  DEFINE_TABLE_TRAITS_HEADER(DicomSerie);
-
-  /// Build the fields
-  template<> void syd::RecordTraits<syd::DicomSerie>::
-    BuildFields(const syd::Database * db) const;
+  /* Not clear.
+     - Cannot be a rela traits because DicomBase not a real table
+     - cannot set file_map because BuildFields is const
+     - BuildFields is const because lasy initialisation + mutable
+   */
 
 } // end of namespace
 // --------------------------------------------------------------------

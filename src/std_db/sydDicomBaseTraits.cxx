@@ -16,26 +16,7 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDDICOMSERIETRAITS_H
-#define SYDDICOMSERIETRAITS_H
-
 // syd
-#include "sydDicomSerie.h"
-#include "sydStandardDatabase.h"
-#include "sydRecordTraits.h"
 #include "sydDicomBaseTraits.h"
+#include "sydTagHelper.h"
 
-// --------------------------------------------------------------------
-namespace syd {
-
-  /// Main GetTraits function
-  DEFINE_TABLE_TRAITS_HEADER(DicomSerie);
-
-  /// Build the fields
-  template<> void syd::RecordTraits<syd::DicomSerie>::
-    BuildFields(const syd::Database * db) const;
-
-} // end of namespace
-// --------------------------------------------------------------------
-
-#endif

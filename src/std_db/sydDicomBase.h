@@ -36,6 +36,12 @@ namespace syd {
     public syd::RecordWithTags {
   public:
 
+      /// Define pointer type
+      typedef std::shared_ptr<DicomBase> pointer;
+
+      /// Define vectortype
+      typedef std::vector<pointer> vector;
+
 #pragma db not_null
       /// Foreign key, it must exist in the Patient table.
       syd::Patient::pointer patient;
@@ -96,6 +102,9 @@ namespace syd {
       /// Check if the associated files exist on disk. MUST be redefined in
       /// derived class because syd::Record also defined it.
       virtual syd::CheckResult Check() const;
+
+      /// To easy 'BuildFields' in DicomSerie + DicomStruct
+      static std::function<std::string(pointer)> GetDicomFileFunction();
 
   protected:
       DicomBase();

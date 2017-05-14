@@ -424,10 +424,7 @@ AddField(std::string name,
          std::function<FieldValueType (typename RecordType::pointer p)> f,
          std::string abbrev) const
 {
-  // true = read_only
-  auto t = Field<RecordType, FieldValueType>::New(name, f, true, abbrev);
-  // FIXME Check if already exist ?
-  field_map_[name] = t;
+  syd::AddField<RecordType, FieldValueType>(field_map_, name, f, abbrev);
 }
 // --------------------------------------------------------------------
 
@@ -441,10 +438,40 @@ AddTableField(std::string name,
               std::function<typename RecordType2::pointer (typename RecordType::pointer p)> f,
               std::string abbrev) const
 {
+  syd::AddTableField<RecordType, RecordType2>(field_map_, name, f, abbrev);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType, class RecordType2>
+void
+syd::AddTableField(syd::RecordTraitsBase::FieldMapType & map,
+                   std::string name,
+                   std::function<typename RecordType2::pointer (typename RecordType::pointer p)> f,
+                   std::string abbrev)
+{
   auto t = syd::Field<RecordType, typename RecordType2::pointer>::New(name, f, false, abbrev);
   t->type = syd::RecordTraits<RecordType2>::GetTraits()->GetTableName();
   // FIXME Check if already exist ?
-  field_map_[name] = t;
+  map[name] = t;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType, class FieldValueType>
+void
+syd::AddField(syd::RecordTraitsBase::FieldMapType & map,
+              std::string name,
+              std::function<FieldValueType (typename RecordType::pointer p)> f,
+              std::string abbrev)
+{
+  // true = read_only
+  auto t = Field<RecordType, FieldValueType>::New(name, f, true, abbrev);
+  // FIXME Check if already exist ?
+  map[name] = t;
+}
+// --------------------------------------------------------------------
+
 

@@ -48,6 +48,7 @@ void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename,
   } catch (std::exception & e) {
     try {
       SearchDicomStructInFile(filename, patient, update_patient_info_from_file_flag);
+      return;
     }
     catch (std::exception & e) {
       LOG(3) << sydlog::warningColor << "Warning cannot read '"

@@ -17,24 +17,27 @@
   ===========================================================================**/
 
 // syd
-#include "sydDicomSerieTraits.h"
+#include "sydDicomStructTraits.h"
 #include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
-DEFINE_TABLE_TRAITS_IMPL(DicomSerie);
+DEFINE_TABLE_TRAITS_IMPL(DicomStruct);
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<>
 void
-syd::RecordTraits<syd::DicomSerie>::
+syd::RecordTraits<syd::DicomStruct>::
 BuildFields(const syd::Database * db) const
 {
   InitCommonFields();
 
+  /*
+    Duplicate in DicomSerie. Not clear how to do.
+  */
+
   ADD_TABLE_FIELD(patient, syd::Patient);
-  ADD_TABLE_FIELD(injection, syd::Injection);
   AddField<std::string>("dicom_files", syd::DicomBase::GetDicomFileFunction());
 
   ADD_FIELD(dicom_study_uid, std::string);
@@ -56,27 +59,11 @@ BuildFields(const syd::Database * db) const
   ADD_FIELD(dicom_patient_birth_date, std::string);
   ADD_FIELD(dicom_patient_sex, std::string);
 
-  ADD_FIELD(dicom_acquisition_date, std::string);
-  ADD_FIELD(dicom_reconstruction_date, std::string);
-
-  auto f_size = [](pointer p) -> std::string { return syd::ArrayToString(p->dicom_size); };
-  AddField<std::string>("dicom_size", f_size);
-  auto f_spacing = [](pointer p) -> std::string { return syd::ArrayToString(p->dicom_spacing); };
-  AddField<std::string>("dicom_spacing", f_spacing, "sp");
-
-  ADD_FIELD_A(dicom_pixel_scale, double, "ps");
-  ADD_FIELD_A(dicom_pixel_offset, double, "po");
-  ADD_FIELD_A(dicom_window_center, double, "wc");
-  ADD_FIELD_A(dicom_window_width, double, "wl");
-
-  ADD_FIELD_A(dicom_radionuclide_name, std::string, "rad");
-  ADD_FIELD_A(dicom_counts_accumulated, double, "cts");
-  ADD_FIELD(dicom_actual_frame_duration_in_msec, double);
-  ADD_FIELD(dicom_number_of_frames_in_rotation, int);
-  ADD_FIELD(dicom_number_of_rotations, int);
-  ADD_FIELD(dicom_table_traverse_in_mm, double);
-  ADD_FIELD(dicom_table_height_in_mm, double);
-  ADD_FIELD(dicom_rotation_angle, double);
+  ADD_FIELD(dicom_structure_set_date, std::string);
+  ADD_FIELD(dicom_structure_set_label, std::string);
+  ADD_FIELD(dicom_structure_set_name, std::string);
+  ADD_FIELD(dicom_station_name, std::string);
+  ADD_FIELD(dicom_protocol_name, std::string);
 
   // Complete file path -> first image only
   auto f_fp = [](pointer p) -> std::string {
@@ -94,11 +81,7 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["default"] =
-    "id patient.name[pat] dicom_acquisition_date[date] dicom_modality[mod] dicom_series_description[serie] dicom_dataset_name[dsn] dicom_image_id[dii] dicom_reconstruction_date[rec_date] tags comments[com]";
-  field_format_map_["desc"] =
-    "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_description[description] dicom_reconstruction_date[rec_date] injection.id[inj] tags comments[com]";
-  field_format_map_["image"] =
-    "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_size[size] dicom_spacing[spacing] dicom_reconstruction_date[rec_date] tags comments[com]";
+    "id patient.name[pat] dicom_structure_set_date[date] dicom_modality[mod] dicom_series_description[serie] dicom_dataset_name[dsn] dicom_image_id[dii] tags comments[com]";
 }
 // --------------------------------------------------------------------
 

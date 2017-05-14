@@ -1,0 +1,106 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="296">
+    <add-table name="syd::DicomStruct" kind="polymorphic root object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="patient" type="INTEGER" null="true"/>
+      <column name="dicom_study_uid" type="TEXT" null="true"/>
+      <column name="dicom_series_uid" type="TEXT" null="true"/>
+      <column name="dicom_frame_of_reference_uid" type="TEXT" null="true"/>
+      <column name="dicom_modality" type="TEXT" null="true"/>
+      <column name="dicom_description" type="TEXT" null="true"/>
+      <column name="dicom_series_description" type="TEXT" null="true"/>
+      <column name="dicom_study_description" type="TEXT" null="true"/>
+      <column name="dicom_study_name" type="TEXT" null="true"/>
+      <column name="dicom_study_id" type="TEXT" null="true"/>
+      <column name="dicom_image_id" type="TEXT" null="true"/>
+      <column name="dicom_dataset_name" type="TEXT" null="true"/>
+      <column name="dicom_manufacturer" type="TEXT" null="true"/>
+      <column name="dicom_manufacturer_model_name" type="TEXT" null="true"/>
+      <column name="dicom_software_version" type="TEXT" null="true"/>
+      <column name="dicom_patient_name" type="TEXT" null="true"/>
+      <column name="dicom_patient_id" type="TEXT" null="true"/>
+      <column name="dicom_patient_birth_date" type="TEXT" null="true"/>
+      <column name="dicom_patient_sex" type="TEXT" null="true"/>
+      <column name="typeid" type="TEXT" null="true"/>
+      <column name="dicom_station_name" type="TEXT" null="true"/>
+      <column name="dicom_protocol_name" type="TEXT" null="true"/>
+      <column name="dicom_structure_set_label" type="TEXT" null="true"/>
+      <column name="dicom_structure_set_name" type="TEXT" null="true"/>
+      <column name="dicom_structure_set_date" type="TEXT" null="true"/>
+      <primary-key auto="true">
+        <column name="id"/>
+      </primary-key>
+      <foreign-key name="patient_fk" deferrable="DEFERRED">
+        <column name="patient"/>
+        <references table="syd::Patient">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::DicomStruct_comments" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="TEXT" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::DicomStruct">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::DicomStruct_comments_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::DicomStruct_comments_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+    <add-table name="syd::DicomStruct_tags" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::DicomStruct">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::DicomStruct_tags_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::DicomStruct_tags_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::Tag">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::DicomStruct_dicom_files" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::DicomStruct">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::DicomStruct_dicom_files_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::DicomStruct_dicom_files_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::DicomFile">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
+  <model version="257"/>
+</changelog>
