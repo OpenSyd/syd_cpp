@@ -38,3 +38,15 @@ TagType GetTagValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
   return v;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<uint16_t Group, uint16_t Element>
+std::string GetTagValueAsString(const gdcm::DataSet & dataset)
+{
+  gdcm::Attribute<Group,Element> tag;
+  tag.SetFromDataSet(dataset);
+  return tag.GetValue();
+}
+// --------------------------------------------------------------------
+

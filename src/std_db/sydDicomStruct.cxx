@@ -60,14 +60,9 @@ std::string syd::DicomStruct::ComputeRelativeFolder() const
     LOG(FATAL) << "Error calling ComputeRelativeFolder for a serie, patient pointer is not set. "
                << ToString();
   }
-  // Part 1: patient
-  std::string f = patient->ComputeRelativeFolder()+PATH_SEPARATOR;
+  // Folder name: patient + 'roi'
+  std::string f = patient->ComputeRelativeFolder()+PATH_SEPARATOR+"roi"+PATH_SEPARATOR;
 
-  // Part 2: "roi"
-  f = f+PATH_SEPARATOR+"roi";
-
-  // Part 3: modality
-  f = f+PATH_SEPARATOR+dicom_modality;
   return f;
 }
 // --------------------------------------------------------------------

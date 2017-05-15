@@ -355,7 +355,7 @@ std::vector<syd::DicomSerie::vector> syd::GroupByStitchableDicom(syd::DicomSerie
 
 
 //--------------------------------------------------------------------
-void syd::CheckAndSetPatient(syd::DicomSerie::pointer dicom,
+void syd::CheckAndSetPatient(syd::DicomBase::pointer dicom,
                              syd::Patient::pointer patient)
 {
   dicom->patient = patient;
@@ -363,48 +363,140 @@ void syd::CheckAndSetPatient(syd::DicomSerie::pointer dicom,
     if (d == dicom->dicom_patient_id) return;
   std::ostringstream ss;
   for(auto d:patient->dicom_patient_ids) ss << d << " ";
-  LOG(WARNING) << "Different dicom_patient_id in db and in DicomSerie " << std::endl
+  LOG(WARNING) << "Different dicom_patient_id in db and in the Dicom file " << std::endl
                << "Patient    patient dicom ids : " << ss.str() << std::endl
-               << "DicomSerie patient dicom id  : " << dicom->dicom_patient_id;
+               << "Dicom file patient dicom id  : " << dicom->dicom_patient_id;
 }
 //--------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------
-void syd::GuessAndSetPatient(syd::DicomSerie::pointer dicom)
+syd::Patient::pointer syd::FindPatientFromDicomInfo(syd::StandardDatabase * db, syd::DicomBase::pointer dicom)
 {
-  // Search for a patient with the same dicom_patient_id
-  auto db = dicom->GetDatabase();
+  DDF();
+  DD(dicom->dicom_patient_id);
+  // Search for a patient with the same dicom_patient_id (brute force search)
   syd::Patient::vector patients;
   db->Query(patients);
-  for(auto p:patients) {
+  for(auto p:patients)
     for(auto d:p->dicom_patient_ids)
-      if (d == dicom->dicom_patient_id) {
-        dicom->patient = p;
-        LOG(2) << "Find patient " << dicom->patient;
-        return;
-      }
-  }
+      if (d == dicom->dicom_patient_id) return p;
+  return nullptr;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+syd::Patient::pointer syd::NewPatientFromDicomInfo(syd::StandardDatabase * db, syd::DicomBase::pointer dicom)
+{
+  DDF();
   // Create a patient
   auto patient = db->New<syd::Patient>();
   syd::SetPatientInfoFromDicom(dicom, patient);
+  // Look for max study_id value
+  syd::Patient::vector patients;
   db->Query(patients);
   int max = 0;
   for(auto p:patients) if (p->study_id > max) max = p->study_id;
   patient->study_id = max+1;
-  db->Insert(patient);
   dicom->patient = patient;
-  LOG(2) << "Create patient " << dicom->patient;
 }
 //--------------------------------------------------------------------
 
 
 //--------------------------------------------------------------------
-void syd::SetPatientInfoFromDicom(syd::DicomSerie::pointer dicom,
+void syd::SetPatientInfoFromDicom(const syd::DicomBase::pointer dicom,
                                   syd::Patient::pointer patient)
 {
   patient->dicom_patient_ids.push_back(dicom->dicom_patient_id);
+  std::unique(patient->dicom_patient_ids.begin(), patient->dicom_patient_ids.end());
   patient->name = dicom->dicom_patient_name;
   patient->sex = dicom->dicom_patient_sex;
 }
 //--------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::CreateDicomFolder(const syd::StandardDatabase * db,
+                            const syd::DicomBase::pointer dicom)
+{
+  std::string relative_folder = dicom->ComputeRelativeFolder();
+  DD(relative_folder);
+  std::string absolute_folder = db->ConvertToAbsolutePath(relative_folder);
+  if (!fs::exists(absolute_folder)) fs::create_directories(absolute_folder);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::CopyFileToDicomFile(const std::string & filename,
+                              const syd::DicomFile::pointer dicom_file,
+                              int log_level,
+                              bool ignore_if_exist)
+{
+  DDF();
+  auto destination = dicom_file->GetAbsolutePath();
+  if (ignore_if_exist and fs::exists(destination)) {
+    LOG(log_level) << "Destination file already exist, ignoring";
+    return;
+  }
+  fs::copy_file(filename.c_str(), destination);
+  LOG(log_level) << "Copying " << filename << " to " << dicom_file->path << std::endl;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
+                                      const std::string & filename,
+                                      const syd::DicomSerie::pointer & serie)
+{
+  if (file->id == 0) {
+    LOG(FATAL) << "Cannot SetDicomFilePathAndFilename, DicomFile is not persistant: " << file;
+  }
+
+  // check if the prefix already exist
+  auto f = GetFilenameFromPath(filename);
+  if (f.substr(0, 4) == "dcm_") {
+    f = f.substr(4, f.size()); // remove dcm_
+    f = f.substr(f.find("_")+1, f.size()); // remove id_
+  }
+
+  // Build the filename
+  std::ostringstream oss;
+  oss << "dcm_" << file->id << "_" << f;
+  file->filename = oss.str();
+
+  // Build the relative folder
+  file->path = serie->ComputeRelativeFolder();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
+                                      const std::string & filename,
+                                      const syd::DicomStruct::pointer & dicom_struct)
+{
+  DDF();
+
+  if (file->id == 0) {
+    LOG(FATAL) << "Cannot SetDicomFilePathAndFilename, DicomFile is not persistant: " << file;
+  }
+
+  // check if the prefix already exist
+  auto f = GetFilenameFromPath(filename);
+  if (f.substr(0, 10) == "dcm_struct") {
+    f = f.substr(4, f.size()); // remove dcm_struct
+    f = f.substr(f.find("_")+1, f.size()); // remove id_
+  }
+
+  // Build the filename
+  std::ostringstream oss;
+  oss << "dcm_struct_" << file->id << "_" << GetFilenameFromPath(filename);
+  file->filename = oss.str();
+
+  // Build the relative folder
+  file->path = dicom_struct->ComputeRelativeFolder();
+}
+// --------------------------------------------------------------------

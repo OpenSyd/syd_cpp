@@ -17,12 +17,11 @@
   ===========================================================================**/
 
 // syd
-#include "sydDicomSerieBuilder.h"
+#include "sydDicomBuilder.h"
 #include "sydDicomSerieHelper.h"
-#include "gdcmAttribute.h"
 
 // --------------------------------------------------------------------
-syd::DicomSerieBuilder::DicomSerieBuilder(syd::StandardDatabase * db_)
+syd::DicomBuilder::DicomBuilder(syd::StandardDatabase * db_)
 {
   nb_of_skip_files = 0;
   db = db_;
@@ -31,16 +30,16 @@ syd::DicomSerieBuilder::DicomSerieBuilder(syd::StandardDatabase * db_)
 
 
 // --------------------------------------------------------------------
-syd::DicomSerieBuilder::~DicomSerieBuilder()
+syd::DicomBuilder::~DicomBuilder()
 {
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename,
-                                               syd::Patient::pointer patient,
-                                               bool update_patient_info_from_file_flag)
+void syd::DicomBuilder::SearchDicomInFile(std::string filename,
+                                          syd::Patient::pointer patient,
+                                          bool update_patient_info_from_file_flag)
 {
   itk::GDCMImageIO::Pointer dicomIO;
   try {
@@ -51,8 +50,9 @@ void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename,
       return;
     }
     catch (std::exception & e) {
-      LOG(3) << sydlog::warningColor << "Warning cannot read '"
-             << filename << "' (it is not a dicom (image/struct) file ?). " << e.what();
+      LOG(3) << sydlog::warningColor
+             << "Warning cannot read/insert " << filename
+             << std::endl << e.what();
       return;
     }
   }
@@ -64,7 +64,7 @@ void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename,
     LOG(WARNING) << "Cannot find tag 0008|0018 SOPInstanceUID. Ignored";
     return;
   }
-  if (DicomFileAlreadyExist(sop_uid)) {
+  if (FindDicomFile(sop_uid) != nullptr) {
     LOG(2) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
     nb_of_skip_files++;
     return;
@@ -78,21 +78,11 @@ void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename,
   if (!b) {
     serie = db->New<syd::DicomSerie>();
     UpdateDicomSerie(serie, filename, dicomIO);
-    // Set patient
-    if (patient != nullptr) CheckAndSetPatient(serie, patient);
-    else {
-      syd::GuessAndSetPatient(serie);
-      patient = serie->patient;
-    }
-    // Update patient
-    if (update_patient_info_from_file_flag) {
-      syd::SetPatientInfoFromDicom(serie, serie->patient);
-      db->Update(serie->patient);
-    }
+    SetDicomPatient(serie, patient, update_patient_info_from_file_flag);
+    if (update_patient_info_from_file_flag) db->Update(serie->patient);
+
     // Create folder if needed
-    std::string relative_folder = serie->ComputeRelativeFolder();
-    std::string absolute_folder = db->ConvertToAbsolutePath(relative_folder);
-    if (!fs::exists(absolute_folder)) fs::create_directories(absolute_folder);
+    syd::CreateDicomFolder(db, serie);
 
     series_to_insert.push_back(serie);
     LOG(2) << "Creating a new serie: " << serie->dicom_series_uid;
@@ -101,29 +91,30 @@ void syd::DicomSerieBuilder::SearchDicomInFile(std::string filename,
   // Then we add this dicomfile to the serie
   DicomFile::pointer dicomfile = CreateDicomFile(filename, dicomIO, serie);
   dicomfiles_to_insert.push_back(dicomfile);
+  corresponding_dicomseries.push_back(serie);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-bool syd::DicomSerieBuilder::DicomFileAlreadyExist(const std::string & sop_uid)
+syd::DicomFile::pointer syd::DicomBuilder::FindDicomFile(const std::string & sop_uid)
 {
   DicomFile::vector df;
   odb::query<DicomFile> q = odb::query<DicomFile>::dicom_sop_uid == sop_uid;
   db->Query(df, q);
   int n = df.size();
-  if (n>0) return true;
+  if (n>0) return df[0];
   for(auto f:dicomfiles_to_insert)
-    if (f->dicom_sop_uid == sop_uid) return true;
-  return false;
+    if (f->dicom_sop_uid == sop_uid) return f;
+  return nullptr;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-bool syd::DicomSerieBuilder::GuessDicomSerieForThisFile(const std::string & filename,
-                                                        itk::GDCMImageIO::Pointer dicomIO,
-                                                        DicomSerie::pointer & serie)
+bool syd::DicomBuilder::GuessDicomSerieForThisFile(const std::string & filename,
+                                                   itk::GDCMImageIO::Pointer dicomIO,
+                                                   DicomSerie::pointer & serie)
 {
   // Check in the future series
   std::string series_uid;
@@ -199,7 +190,7 @@ bool syd::DicomSerieBuilder::GuessDicomSerieForThisFile(const std::string & file
 
 // --------------------------------------------------------------------
 /// Update the field
-void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie)
+void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie)
 {
   if (serie->dicom_files.size() == 0) {
     EXCEPTION("No DicomFile for this DicomSerie");
@@ -221,9 +212,9 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie)
 
 // --------------------------------------------------------------------
 /// Do not check if the serie already exist
-void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
-                                              const std::string & filename,
-                                              itk::GDCMImageIO::Pointer dicomIO)
+void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
+                                         const std::string & filename,
+                                         itk::GDCMImageIO::Pointer dicomIO)
 {
   // get date
   std::string AcquisitionTime =
@@ -385,17 +376,13 @@ void syd::DicomSerieBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
 
 // --------------------------------------------------------------------
 /// Do not check if the DicomFile and the file already exist
-syd::DicomFile::pointer syd::DicomSerieBuilder::
+syd::DicomFile::pointer syd::DicomBuilder::
 CreateDicomFile(const std::string & filename,
                 itk::GDCMImageIO::Pointer dicomIO,
                 DicomSerie::pointer serie)
 {
   // First create the file
   auto dicomfile = db->New<syd::DicomFile>();
-  std::string f = GetFilenameFromPath(filename);
-  dicomfile->filename = f;
-  std::string relative_folder = serie->ComputeRelativeFolder();
-  dicomfile->path = relative_folder;
   files_to_copy.push_back(filename);
 
   // Then create the dicomfile
@@ -423,7 +410,7 @@ CreateDicomFile(const std::string & filename,
 
 
 // --------------------------------------------------------------------
-syd::DicomSerie::vector syd::DicomSerieBuilder::InsertDicomSeries()
+syd::DicomSerie::vector syd::DicomBuilder::InsertDicomSeries()
 {
   // Update the database first to get the File id
   db->Insert(dicomfiles_to_insert); // must be before serie
@@ -434,24 +421,8 @@ syd::DicomSerie::vector syd::DicomSerieBuilder::InsertDicomSeries()
   int nb_of_skip_copy=0;
   int n = files_to_copy.size();
   for(auto i=0; i<files_to_copy.size(); i++) {
-    std::string f = GetFilenameFromPath(files_to_copy[i]);
-
-    // Add the id at the beginning of the file to insure unicity
-    std::stringstream dss;
-    auto destination_folder = db->ConvertToAbsolutePath(dicomfiles_to_insert[i]->path);
-    dss << destination_folder << PATH_SEPARATOR
-        << "dcm_" << dicomfiles_to_insert[i]->id << "_" << f;
-    dicomfiles_to_insert[i]->filename =
-      "dcm_" + std::to_string(dicomfiles_to_insert[i]->id) +
-      "_" +dicomfiles_to_insert[i]->filename;
-    std::string destination = dss.str();
-    if (fs::exists(destination)) {
-      LOG(3) << "Destination file already exist, ignoring";
-      nb_of_skip_copy++;
-      continue;
-    }
-    LOG(3) << "Copying " << f << " to " << destination_folder << std::endl;
-    fs::copy_file(files_to_copy[i].c_str(), destination);
+    syd::SetDicomFilePathAndFilename(dicomfiles_to_insert[i], files_to_copy[i], corresponding_dicomseries[i]);
+    syd::CopyFileToDicomFile(files_to_copy[i], dicomfiles_to_insert[i]);
     loadbar(i,n);
   }
 
@@ -480,20 +451,175 @@ syd::DicomSerie::vector syd::DicomSerieBuilder::InsertDicomSeries()
 
 
 // --------------------------------------------------------------------
-void syd::DicomSerieBuilder::SearchDicomStructInFile(std::string filename,
-                                                     syd::Patient::pointer patient,
-                                                     bool update_patient_info_from_file_flag)
+void syd::DicomBuilder::SearchDicomStructInFile(std::string filename,
+                                                syd::Patient::pointer patient,
+                                                bool update_patient_info_from_file_flag)
 {
   DDF();
   auto reader = syd::ReadDicomStructHeader(filename);
-  const gdcm::DataSet & dataset = reader.GetFile().GetDataSet();
+  auto dataset = reader.GetFile().GetDataSet();
 
-  gdcm::Attribute<0x20,0x10> studyid;
-  DD("done");
-  studyid.SetFromDataSet(dataset);
-  DD("done");
-  auto mStudyID = studyid.GetValue();
-  DD(mStudyID);
+  // Test if this dicom file already exist in the db
+  auto dicom_struct = GetOrCreateDicomStruct(dataset);
+  DD(update_patient_info_from_file_flag); // TODO
+  if (dicom_struct == nullptr) {
+    LOG(2) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
+    nb_of_skip_files++;
+    return;
+  }
+  DD(dicom_struct);
 
+  // Update Patient
+  UpdateDicomStructPatient(dicom_struct, dataset);
+  SetDicomPatient(dicom_struct, patient, update_patient_info_from_file_flag);
+  DD(dicom_struct);
+
+  // Update
+  UpdateDicomStruct(dicom_struct, dataset);
+  DD(dicom_struct);
+  auto dicom_file = dicom_struct->dicom_files[0]; // at least one
+  DD(dicom_file);
+
+  // Insert in the db if new
+  DD("Before insert");
+  if (!dicom_file->IsPersistent()) db->Insert(dicom_file);
+  DD("Before insert");
+  if (!dicom_struct->IsPersistent()) db->Insert(dicom_struct);
+  DD(dicom_file);
+  DD(dicom_struct);
+
+  // Create folder if needed
+  syd::CreateDicomFolder(db, dicom_struct);
+
+  // Copy files
+  syd::SetDicomFilePathAndFilename(dicom_file, filename, dicom_struct);
+  CopyFileToDicomFile(filename, dicom_file);
+
+  std::string f = GetFilenameFromPath(filename);
+  DD(f);
+  std::stringstream dss;
+  auto destination_folder = db->ConvertToAbsolutePath(dicom_file->path);
+  dss << destination_folder << PATH_SEPARATOR << "dcm_struct_" << dicom_file->id << "_" << f;
+  dicom_file->filename = "dcm_struct_" + std::to_string(dicom_file->id) +
+    "_" + dicom_file->filename;
+  std::string destination = dss.str();
+  DD(destination);
+  if (fs::exists(destination)) {
+    LOG(3) << "Destination file already exist, ignoring";
+  }
+  else {
+    LOG(3) << "Copying " << f << " to " << destination_folder << std::endl;
+  }
+  fs::copy_file(filename, destination);
+
+  // We update the db (no really need to do it in bulk here)
+  DD("Update");
+  db->Update(dicom_file);
+  db->Update(dicom_struct);
+  DD(dicom_file);
+  DD(dicom_struct);
+  DD("done");
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::DicomStruct::pointer
+syd::DicomBuilder::GetOrCreateDicomStruct(const gdcm::DataSet & dataset)
+{
+  DDF();
+
+  // Series Instance UID tag
+  auto serie_uid = syd::GetTagValueAsString<0x20,0x0e>(dataset);
+  DD(serie_uid);
+  syd::DicomStruct::vector structs;
+  odb::query<DicomStruct> q = odb::query<DicomStruct>::dicom_series_uid == serie_uid;
+  db->Query(structs, q);
+  DD(structs.size());
+
+  if (structs.size() > 1) {
+    LOG(WARNING) << "Several DicomStruct with similar serie_uid exist. Ignored.";
+    return nullptr;
+  }
+
+  // Get or create DicomStruct
+  syd::DicomStruct::pointer dicom_struct;
+  if (structs.size() == 1) dicom_struct = structs[0];
+  else {
+    LOG(3) << "Create a new DicomStruct " << serie_uid;
+    dicom_struct = db->New<syd::DicomStruct>();
+  }
+
+  // SOP Instance UID tag
+  auto sop_uid = syd::GetTagValueAsString<0x08,0x18>(dataset);
+  DD(sop_uid);
+  auto dicom_file = FindDicomFile(sop_uid);
+  if (dicom_file == nullptr) {
+    LOG(3) << "Create a new DicomFile " << sop_uid;
+    dicom_file = db->New<syd::DicomFile>();
+  }
+
+  // Set DicomFile
+  dicom_struct->dicom_files.clear();
+  dicom_struct->dicom_files.push_back(dicom_file);
+  return dicom_struct;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::DicomBuilder::UpdateDicomStructPatient(syd::DicomStruct::pointer dicom_struct,
+                                                 const gdcm::DataSet & dataset)
+{
+  DDF();
+  auto s = syd::GetTagValueAsString<0x10,0x10>(dataset);
+  DD(s);
+  dicom_struct->dicom_patient_name = syd::GetTagValueAsString<0x10,0x10>(dataset);
+  dicom_struct->dicom_patient_id = syd::GetTagValueAsString<0x10,0x20>(dataset);
+  dicom_struct->dicom_patient_id = trim(dicom_struct->dicom_patient_id);
+  dicom_struct->dicom_patient_birth_date = syd::GetTagValueAsString<0x10,0x30>(dataset);
+  dicom_struct->dicom_patient_sex = syd::GetTagValueAsString<0x10,0x40>(dataset);
+  DD(dicom_struct);
+  DD(dicom_struct->dicom_patient_id);
+  return;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::DicomBuilder::UpdateDicomStruct(syd::DicomStruct::pointer dicom_struct,
+                                          const gdcm::DataSet & dataset)
+{
+  DDF();
+
+  return;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::DicomBuilder::SetDicomPatient(syd::DicomBase::pointer dicom,
+                                        syd::Patient::pointer patient,
+                                        bool update_patient_info_from_file_flag)
+{
+  DDF();
+
+  if (patient == nullptr) patient = syd::FindPatientFromDicomInfo(db, dicom);
+  if (patient == nullptr) {
+    patient = syd::NewPatientFromDicomInfo(db, dicom);
+    LOG(2) << "Create patient " << dicom->patient;
+  }
+  syd::CheckAndSetPatient(dicom, patient);
+
+  // Update patient
+  if (update_patient_info_from_file_flag)
+    syd::SetPatientInfoFromDicom(dicom, dicom->patient);
+}
+// --------------------------------------------------------------------
+
+
+
+
+
+
+

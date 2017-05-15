@@ -64,16 +64,41 @@ namespace syd {
   /// Group dicoms by stitchable dicom
   std::vector<syd::DicomSerie::vector> GroupByStitchableDicom(syd::DicomSerie::vector dicoms);
 
+
+
   /// Set the dicom patient (display warning is different dicomID)
-  void CheckAndSetPatient(syd::DicomSerie::pointer dicom,
+  void CheckAndSetPatient(syd::DicomBase::pointer dicom,
                           syd::Patient::pointer patient);
 
-  /// Try to guess the patient or create a new one
-  void GuessAndSetPatient(syd::DicomSerie::pointer dicom);
+  /// Try to Find an existing patient from the dicom tag patient_dicom_id
+  syd::Patient::pointer FindPatientFromDicomInfo(syd::StandardDatabase * db, syd::DicomBase::pointer dicom);
+
+  /// Create a new patient according to patient_dicom_ids
+  syd::Patient::pointer NewPatientFromDicomInfo(syd::StandardDatabase * db, syd::DicomBase::pointer dicom);
 
   /// Set patient info from the dicom (name, id, sex)
-  void SetPatientInfoFromDicom(syd::DicomSerie::pointer dicom,
-                               syd::Patient::pointer patient);
+  void SetPatientInfoFromDicom(const syd::DicomBase::pointer dicom, syd::Patient::pointer patient);
+
+
+  /// TODO
+  void CreateDicomFolder(const syd::StandardDatabase * db, const syd::DicomBase::pointer dicom);
+
+  /// TODO
+  void CopyFileToDicomFile(const std::string & filename,
+                           const syd::DicomFile::pointer dicom_file,
+                           int log_level=3,
+                           bool ignore_if_exist=true);
+
+  /// TODO
+  void SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
+                                   const std::string & filename,
+                                   const syd::DicomSerie::pointer & serie);
+
+  /// TODO
+  void SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
+                                   const std::string & filename,
+                                   const syd::DicomStruct::pointer & dicom_struct);
+
 
 }
 #include "sydDicomSerieHelper.txx"

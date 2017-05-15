@@ -18,7 +18,7 @@
 
 // syd
 #include "sydInsertDicom_ggo.h"
-#include "sydDicomSerieBuilder.h"
+#include "sydDicomBuilder.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydCommonGengetopt.h"
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     patient = db->FindPatient(args_info.patient_arg);
 
   // Dicom insertion
-  syd::DicomSerieBuilder builder(db);
+  syd::DicomBuilder builder(db);
   int i=0;
   for(auto f:files) {
     syd::loadbar(i, files.size());
@@ -68,6 +68,11 @@ int main(int argc, char* argv[])
   auto dicoms = builder.InsertDicomSeries();
   for(auto d:dicoms) syd::SetCommentsFromCommandLine(d->comments, db, args_info);
   db->Update(dicoms);
+
+  for(auto d:dicoms) {
+    LOG(3) << "Insert " << d;
+  }
+
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

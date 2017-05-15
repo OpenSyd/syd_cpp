@@ -91,7 +91,7 @@ namespace syd {
       virtual std::string ToString() const;
 
       /// Compute the folder to store the dicom
-      virtual std::string ComputeRelativeFolder() const;
+      virtual std::string ComputeRelativeFolder() const = 0;
 
       /// Database callback (MUST be called in derived class)
       void Callback(odb::callback_event, odb::database&) const;

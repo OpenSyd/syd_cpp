@@ -16,13 +16,14 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDDICOMSERIEBUILDER_H
-#define SYDDICOMSERIEBUILDER_H
+#ifndef SYDDICOMBUILDER_H
+#define SYDDICOMBUILDER_H
 
 // syd
 #include "sydStandardDatabase.h"
 #include "sydDicomFile.h"
 #include "sydDicomSerie.h"
+#include "sydDicomStruct.h"
 #include "sydDicomUtils.h"
 
 // --------------------------------------------------------------------
@@ -32,14 +33,14 @@ namespace syd {
   /// DicomSerie and DicomFile in the db.  A check on the patient
   /// name/id is performed (could be forced with
   /// SetForcePatientFlag(true)).
-  class DicomSerieBuilder {
+  class DicomBuilder {
 
   public:
     /// Constructor.
-    DicomSerieBuilder(syd::StandardDatabase * db);
+    DicomBuilder(syd::StandardDatabase * db);
 
     /// Destructor (empty)
-    virtual ~DicomSerieBuilder();
+    virtual ~DicomBuilder();
 
     /// Create a DicomSerie/DicomFile (still not inserted into the db,
     /// use UpdateDicomSerie for that)
@@ -63,6 +64,7 @@ namespace syd {
     syd::StandardDatabase * db;
     syd::DicomSerie::vector series_to_insert;
     syd::DicomFile::vector dicomfiles_to_insert;
+    syd::DicomSerie::vector corresponding_dicomseries;
     std::vector<std::string> files_to_copy;
     int nb_of_skip_files;
 
@@ -78,11 +80,23 @@ namespace syd {
                                     itk::GDCMImageIO::Pointer dicomIO,
                                     DicomSerie::pointer & serie);
 
-    bool DicomFileAlreadyExist(const std::string & sop_uid);
+    syd::DicomFile::pointer FindDicomFile(const std::string & sop_uid);
+
+    syd::DicomStruct::pointer GetOrCreateDicomStruct(const gdcm::DataSet & dataset);
+
+    void SetDicomPatient(syd::DicomBase::pointer dicom,
+                         syd::Patient::pointer patient,
+                         bool update_patient_info_from_file_flag);
+
+    void UpdateDicomStruct(syd::DicomStruct::pointer dicom_struct,
+                           const gdcm::DataSet & dataset);
+
+    void UpdateDicomStructPatient(syd::DicomStruct::pointer dicom_struct,
+                                  const gdcm::DataSet & dataset);
 
     typedef itk::MetaDataDictionary DictionaryType;
 
-  }; // class DicomSerieBuilder
+  }; // class DicomBuilder
 } // namespace syd
 // --------------------------------------------------------------------
 

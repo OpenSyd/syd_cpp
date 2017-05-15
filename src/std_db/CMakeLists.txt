@@ -66,7 +66,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydElastixTraits.cxx
 
   sydPixelUnitHelper.cxx
-  sydDicomSerieBuilder.cxx
+  sydDicomBuilder.cxx
   sydDicomSerieHelper.cxx
   sydImageHelper.cxx
   sydInjectionHelper.cxx

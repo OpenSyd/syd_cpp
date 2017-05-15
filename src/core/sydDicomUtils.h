@@ -32,6 +32,7 @@
 #include "gdcmDictEntry.h"
 #include "gdcmDicts.h"
 #include "gdcmReader.h"
+#include "gdcmAttribute.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -59,6 +60,10 @@ namespace syd {
   double GetTagDoubleValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
                                      const std::string & key,
                                      const double & defaultValue);
+
+  /// Retrive tag value
+  template<uint16_t Group, uint16_t Element>
+    std::string GetTagValueAsString(const gdcm::DataSet & dataset);
 
 #include "sydDicomUtils.txx"
 
