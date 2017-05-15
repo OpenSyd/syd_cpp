@@ -80,21 +80,21 @@ namespace syd {
   void SetPatientInfoFromDicom(const syd::DicomBase::pointer dicom, syd::Patient::pointer patient);
 
 
-  /// TODO
+  /// Create if needed the folder that will store the dicom
   void CreateDicomFolder(const syd::StandardDatabase * db, const syd::DicomBase::pointer dicom);
 
-  /// TODO
-  void CopyFileToDicomFile(const std::string & filename,
+  /// Copy the filename according to dicom_file path
+  bool CopyFileToDicomFile(const std::string & filename,
                            const syd::DicomFile::pointer dicom_file,
                            int log_level=3,
                            bool ignore_if_exist=true);
 
-  /// TODO
+  /// Create file/path of DicomFile according to serie
   void SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
                                    const std::string & filename,
                                    const syd::DicomSerie::pointer & serie);
 
-  /// TODO
+  /// Create file/path of DicomFile according to struct
   void SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
                                    const std::string & filename,
                                    const syd::DicomStruct::pointer & dicom_struct);

@@ -423,13 +423,16 @@ void syd::CreateDicomFolder(const syd::StandardDatabase * db,
   std::string relative_folder = dicom->ComputeRelativeFolder();
   DD(relative_folder);
   std::string absolute_folder = db->ConvertToAbsolutePath(relative_folder);
-  if (!fs::exists(absolute_folder)) fs::create_directories(absolute_folder);
+  if (!fs::exists(absolute_folder)) {
+    DD(absolute_folder);
+    fs::create_directories(absolute_folder);
+  }
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-void syd::CopyFileToDicomFile(const std::string & filename,
+bool syd::CopyFileToDicomFile(const std::string & filename,
                               const syd::DicomFile::pointer dicom_file,
                               int log_level,
                               bool ignore_if_exist)
@@ -438,10 +441,11 @@ void syd::CopyFileToDicomFile(const std::string & filename,
   auto destination = dicom_file->GetAbsolutePath();
   if (ignore_if_exist and fs::exists(destination)) {
     LOG(log_level) << "Destination file already exist, ignoring";
-    return;
+    return false;
   }
   fs::copy_file(filename.c_str(), destination);
   LOG(log_level) << "Copying " << filename << " to " << dicom_file->path << std::endl;
+  return true;
 }
 // --------------------------------------------------------------------
 

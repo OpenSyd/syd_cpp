@@ -65,13 +65,11 @@ int main(int argc, char* argv[])
     ++i;
   }
   // Insert dicom and update comments if needed
-  auto dicoms = builder.InsertDicomSeries();
-  for(auto d:dicoms) syd::SetCommentsFromCommandLine(d->comments, db, args_info);
-  db->Update(dicoms);
-
-  for(auto d:dicoms) {
-    LOG(3) << "Insert " << d;
-  }
+  auto series = builder.GetDicomSeries();
+  for(auto d:series) syd::SetCommentsFromCommandLine(d->comments, db, args_info);
+  auto structs = builder.GetDicomStruct();
+  for(auto d:structs) syd::SetCommentsFromCommandLine(d->comments, db, args_info);
+  builder.InsertDicom();
 
   // This is the end, my friend.
 }
