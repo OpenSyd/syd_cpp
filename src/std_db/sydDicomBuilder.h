@@ -37,22 +37,20 @@ namespace syd {
 
   public:
     /// Constructor.
-    DicomBuilder(syd::StandardDatabase * db);
+    DicomBuilder(syd::StandardDatabase * db, bool update_patient_info_from_file_flag);
 
     /// Destructor (empty)
     virtual ~DicomBuilder();
 
-    /// Create a DicomSerie/DicomFile (still not inserted into the db,
-    /// use UpdateDicomSerie for that)
-    void SearchDicomInFile(std::string filename,
-                           syd::Patient::pointer patient,
-                           bool update_patient_info_from_file_flag);
+    /// Create a DicomSerie/DicomFile (still not inserted into the db, use
+    /// UpdateDicom for that)
+    void SearchDicomInFile(std::string filename, syd::Patient::pointer patient);
 
-    /// Create a DicomStruct (still not inserted into the db,
-    /// use UpdateDicomSerie for that)
-    void SearchDicomStructInFile(std::string filename,
-                                 syd::Patient::pointer patient,
-                                 bool update_patient_info_from_file_flag);
+    /// Search for a DicomSerie
+    void SearchDicomSerieInFile(std::string filename, syd::Patient::pointer patient);
+
+    /// Search for a DicomStruct
+    void SearchDicomStructInFile(std::string filename, syd::Patient::pointer patient);
 
     /// Insert the created DicomSerie/DicomFile/DicomStruct into the db
     void InsertDicom();
@@ -81,6 +79,8 @@ namespace syd {
     int nb_of_skip_files;
     int nb_of_skip_copy;
 
+    bool update_patient_info_from_file_flag;
+
     void UpdateDicomSerie(DicomSerie::pointer serie,
                           const std::string & filename,
                           itk::GDCMImageIO::Pointer dicomIO);
@@ -101,11 +101,9 @@ namespace syd {
 
     syd::DicomFile::pointer FindDicomFile(const std::string & sop_uid);
 
-    syd::DicomStruct::pointer GetOrCreateDicomStruct(const gdcm::DataSet & dataset, std::string filename);
+    syd::DicomStruct::pointer CreateDicomStruct(const gdcm::DataSet & dataset, std::string filename);
 
-    void SetDicomPatient(syd::DicomBase::pointer dicom,
-                         syd::Patient::pointer patient,
-                         bool update_patient_info_from_file_flag);
+    void SetDicomPatient(syd::DicomBase::pointer dicom, syd::Patient::pointer patient);
 
     void UpdateDicomStruct(syd::DicomStruct::pointer dicom_struct,
                            const gdcm::DataSet & dataset);

@@ -57,11 +57,11 @@ int main(int argc, char* argv[])
     patient = db->FindPatient(args_info.patient_arg);
 
   // Dicom insertion
-  syd::DicomBuilder builder(db);
+  syd::DicomBuilder builder(db, args_info.updatePatient_flag);
   int i=0;
   for(auto f:files) {
     syd::loadbar(i, files.size());
-    builder.SearchDicomInFile(f, patient, args_info.updatePatient_flag);
+    builder.SearchDicomInFile(f, patient);
     ++i;
   }
   // Insert dicom and update comments if needed

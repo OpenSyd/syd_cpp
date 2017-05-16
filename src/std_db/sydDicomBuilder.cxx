@@ -21,11 +21,13 @@
 #include "sydDicomSerieHelper.h"
 
 // --------------------------------------------------------------------
-syd::DicomBuilder::DicomBuilder(syd::StandardDatabase * db_)
+syd::DicomBuilder::DicomBuilder(syd::StandardDatabase * db_,
+                                bool update_patient_info_from_file_flag_)
 {
   db = db_;
   nb_of_skip_files = 0;
   nb_of_skip_copy = 0;
+  update_patient_info_from_file_flag = update_patient_info_from_file_flag_;
 }
 // --------------------------------------------------------------------
 
@@ -39,34 +41,40 @@ syd::DicomBuilder::~DicomBuilder()
 
 // --------------------------------------------------------------------
 void syd::DicomBuilder::SearchDicomInFile(std::string filename,
-                                          syd::Patient::pointer patient,
-                                          bool update_patient_info_from_file_flag)
+                                          syd::Patient::pointer patient)
 {
-  itk::GDCMImageIO::Pointer dicomIO;
   try {
-    dicomIO = syd::ReadDicomHeader(filename);
+    SearchDicomSerieInFile(filename, patient);
   } catch (std::exception & e) {
     try {
-      SearchDicomStructInFile(filename, patient, update_patient_info_from_file_flag);
-      return;
-    }
-    catch (std::exception & e) {
+      SearchDicomStructInFile(filename, patient);
+    } catch (std::exception & e) {
       LOG(3) << sydlog::warningColor
              << "Warning cannot read/insert " << filename
              << std::endl << e.what();
       return;
     }
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::DicomBuilder::SearchDicomSerieInFile(std::string filename,
+                                               syd::Patient::pointer patient)
+{
+  auto dicomIO = syd::ReadDicomHeader(filename); // will raise exception if not ok
 
   // Test if this dicom file already exist in the db
   std::string sop_uid;
   bool b = dicomIO->GetValueFromTag("0008|0018", sop_uid); // SOPInstanceUID
   if (!b) {
-    LOG(WARNING) << "Cannot find tag 0008|0018 SOPInstanceUID. Ignored";
+    LOG(WARNING) << "Cannot find tag 0008|0018 SOPInstanceUID. Skipping " << filename;
+    nb_of_skip_files++;
     return;
   }
   if (FindDicomFile(sop_uid) != nullptr) {
-    LOG(2) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
+    LOG(WARNING) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
     nb_of_skip_files++;
     return;
   }
@@ -79,7 +87,7 @@ void syd::DicomBuilder::SearchDicomInFile(std::string filename,
   if (!b) {
     serie = db->New<syd::DicomSerie>();
     UpdateDicomSerie(serie, filename, dicomIO);
-    SetDicomPatient(serie, patient, update_patient_info_from_file_flag);
+    SetDicomPatient(serie, patient);
     if (update_patient_info_from_file_flag) db->Update(serie->patient);
     dicom_series_to_insert.push_back(serie);
     LOG(2) << "Creating a new serie: " << serie->dicom_series_uid;
@@ -120,13 +128,15 @@ bool syd::DicomBuilder::GuessDicomSerieForThisFile(const std::string & filename,
   std::string series_uid;
   bool b = dicomIO->GetValueFromTag("0020|000e", series_uid); // SeriesInstanceUID
   if (!b) {
-    LOG(WARNING) << "Cannot find tag 00020|000a SeriesInstanceUID. Ignored";
+    LOG(WARNING) << "Cannot find tag 0020|000e SeriesInstanceUID. Skipping " << filename;
+    nb_of_skip_files++;
     return false;
   }
   std::string modality;
   b = dicomIO->GetValueFromTag("0008|0060", modality); // Modality
   if (!b) {
-    LOG(WARNING) << "Cannot find tag 0008|0060 Modality. Ignored";
+    LOG(WARNING) << "Cannot find tag 0008|0060 Modality. Skipping " << filename;
+    nb_of_skip_files++;
     return false;
   }
 
@@ -411,26 +421,18 @@ CreateDicomFile(const std::string & filename,
 
 // --------------------------------------------------------------------
 void syd::DicomBuilder::SearchDicomStructInFile(std::string filename,
-                                                syd::Patient::pointer patient,
-                                                bool update_patient_info_from_file_flag)
+                                                syd::Patient::pointer patient)
 {
-  auto reader = syd::ReadDicomStructHeader(filename);
+  auto reader = syd::ReadDicomStructHeader(filename); // will raise exception if not ok
   auto dataset = reader.GetFile().GetDataSet();
 
   // Test if this dicom file already exist in the db
-  auto dicom_struct = GetOrCreateDicomStruct(dataset, filename);
-  if (dicom_struct == nullptr) {
-    LOG(2) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
-    nb_of_skip_files++;
-    return;
-  }
+  auto dicom_struct = CreateDicomStruct(dataset, filename);
+  if (dicom_struct == nullptr) return;
 
   // Update Patient
   UpdateDicomStructPatient(dicom_struct, dataset);
-  SetDicomPatient(dicom_struct, patient, update_patient_info_from_file_flag);
-
-
-  DD(update_patient_info_from_file_flag); // TODO
+  SetDicomPatient(dicom_struct, patient);
 
   // Update
   UpdateDicomStruct(dicom_struct, dataset);
@@ -444,7 +446,7 @@ void syd::DicomBuilder::SearchDicomStructInFile(std::string filename,
 
 // --------------------------------------------------------------------
 syd::DicomStruct::pointer
-syd::DicomBuilder::GetOrCreateDicomStruct(const gdcm::DataSet & dataset, std::string filename)
+syd::DicomBuilder::CreateDicomStruct(const gdcm::DataSet & dataset, std::string filename)
 {
   // Series Instance UID tag
   auto serie_uid = syd::GetTagValueAsString<0x20,0x0e>(dataset);
@@ -452,18 +454,15 @@ syd::DicomBuilder::GetOrCreateDicomStruct(const gdcm::DataSet & dataset, std::st
   odb::query<DicomStruct> q = odb::query<DicomStruct>::dicom_series_uid == serie_uid;
   db->Query(structs, q);
 
-  if (structs.size() > 1) {
-    LOG(WARNING) << "Several DicomStruct with similar serie_uid exist. Ignored.";
+  if (structs.size() > 0) {
+    LOG(WARNING) << "DicomStruct with similar serie_uid already exist. Skipping " << filename;
+    ++nb_of_skip_files;
     return nullptr;
   }
 
   // Get or create DicomStruct
-  syd::DicomStruct::pointer dicom_struct;
-  if (structs.size() == 1) dicom_struct = structs[0];
-  else {
-    LOG(3) << "Create a new DicomStruct " << serie_uid;
-    dicom_struct = db->New<syd::DicomStruct>();
-  }
+  LOG(3) << "Create a new DicomStruct " << serie_uid;
+  auto dicom_struct = db->New<syd::DicomStruct>();
 
   // SOP Instance UID tag
   auto sop_uid = syd::GetTagValueAsString<0x08,0x18>(dataset);
@@ -557,8 +556,7 @@ void syd::DicomBuilder::UpdateDicomStruct(syd::DicomStruct::pointer dicom_struct
 
 // --------------------------------------------------------------------
 void syd::DicomBuilder::SetDicomPatient(syd::DicomBase::pointer dicom,
-                                        syd::Patient::pointer patient,
-                                        bool update_patient_info_from_file_flag)
+                                        syd::Patient::pointer patient)
 {
   if (patient == nullptr) patient = syd::FindPatientFromDicomInfo(db, dicom);
   if (patient == nullptr) {
