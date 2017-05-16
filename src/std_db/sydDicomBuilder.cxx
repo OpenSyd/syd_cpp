@@ -90,7 +90,7 @@ void syd::DicomBuilder::SearchDicomSerieInFile(std::string filename,
     SetDicomPatient(serie, patient);
     if (update_patient_info_from_file_flag) db->Update(serie->patient);
     dicom_series_to_insert.push_back(serie);
-    LOG(2) << "Creating a new serie: " << serie->dicom_series_uid;
+    LOG(2) << "Creating DicomSerie " << serie->dicom_series_uid;
   }
 
   // Then we add this dicomfile to the serie
@@ -461,7 +461,7 @@ syd::DicomBuilder::CreateDicomStruct(const gdcm::DataSet & dataset, std::string 
   }
 
   // Get or create DicomStruct
-  LOG(3) << "Create a new DicomStruct " << serie_uid;
+  LOG(2) << "Creating DicomStruct " << serie_uid;
   auto dicom_struct = db->New<syd::DicomStruct>();
 
   // SOP Instance UID tag
