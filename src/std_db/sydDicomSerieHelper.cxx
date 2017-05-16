@@ -318,27 +318,30 @@ bool syd::IsDicomStitchable(const syd::DicomSerie::pointer a,
 //--------------------------------------------------------------------
 std::vector<syd::DicomSerie::vector> syd::GroupByStitchableDicom(syd::DicomSerie::vector dicoms)
 {
-  // Search if some dicoms are stichable (brute force)
   std::vector<syd::DicomSerie::vector> final_dicoms;
-  for(auto d:dicoms) { // Look for every dicom
-    bool stichable = false;
-    for(auto & fd:final_dicoms) { // is already stichable with a group ?
-      bool ok = true;
-      // We check that this dicom is stichable with all elements of the group
-      for(auto & ffd:fd) {
-        if (!IsDicomStitchable(ffd, d)) { ok = false; continue; }
+  std::list<syd::DicomSerie::pointer> list;
+  std::copy(dicoms.begin(), dicoms.end(), std::back_inserter(list));
+
+  // The algorithm is:
+  // 1. loop on the list of dicoms
+  // 2. Search in the remaning part of the list, if another dicom is stitchable.
+  // 3. If yes, group together, and remove both dicom from the list
+  // ONLY valid for 2 stitched dicom max !
+  // Use list instead of vector (should be faster to remove). 
+
+  while (!list.empty()) {
+    auto dicom1 = list.front();
+    list.pop_front();
+    syd::DicomSerie::vector a;
+    a.push_back(dicom1);
+    for(auto i = list.begin(); i != list.end();) {
+      if (IsDicomStitchable(dicom1, *i)) {
+        a.push_back(*i);
+        i = list.erase(i);
       }
-      if (ok) { // Yes stichable -> we add id to the group
-        stichable = true;
-        fd.push_back(d);
-        continue;
-      }
+      else ++i;
     }
-    if (!stichable) { // no stichable -> we add a new group
-      syd::DicomSerie::vector a;
-      a.push_back(d);
-      final_dicoms.push_back(a);
-    }
+    final_dicoms.push_back(a);
   }
 
   // Sort by date
