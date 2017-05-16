@@ -22,3 +22,18 @@ save/
 superbuild.save/
 /save*
 
+/src/edlib/.gitignore
+/src/edlib/.travis.yml
+/src/edlib/CMakeLists.txt
+/src/edlib/Doxyfile
+/src/edlib/LICENSE
+/src/edlib/README.md
+/cmake/test.cmake
+/src/edlib/apps
+/src/edlib/apps/
+/src/edlib/appveyor.yml
+/src/edlib/build/
+/src/edlib/doxygen-files/
+/src/edlib/test/
+/src/edlib/test_data/
+

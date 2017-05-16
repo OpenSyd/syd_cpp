@@ -17,6 +17,7 @@ add_library(sydCore SHARED
   kmeans/KMeans.cpp
   kmeans/KmTree.cpp
   kmeans/KmUtils.cpp
+  ../edlib/edlib/src/edlib.cpp
   )
 
 if (APPLE) ## needed on osx

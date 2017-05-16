@@ -18,6 +18,7 @@
 
 // syd
 #include "sydDicomSerieHelper.h"
+#include "edlib.h"
 
 // itk
 #include "gdcmUIDGenerator.h"
@@ -301,14 +302,26 @@ bool syd::IsDicomStitchable(const syd::DicomSerie::pointer a,
   // Must be same frame_of_reference_uid and modality
   if (a->dicom_frame_of_reference_uid != b->dicom_frame_of_reference_uid) return false;
   if (a->dicom_modality != b->dicom_modality) return false;
+
   // if same series_uid, it is ok
   if (a->dicom_series_uid == b->dicom_series_uid) return true;
+
   // Cannot be acquired at the same time
   if (a->dicom_acquisition_date == b->dicom_acquisition_date) return false;
   // tentative with reconstruction_date
   // if reconstruction date difference larger than x hour, probably not the same
   double delay = syd::DateDifferenceInHours(a->dicom_reconstruction_date, b->dicom_reconstruction_date);
   if (delay > max_reconstruction_delay) return false;
+
+  // Trial with description -> if too different, we consider it is not stichable
+  auto s1 = a->dicom_description;
+  auto s2 = b->dicom_description;
+  EdlibAlignResult result = edlibAlign(s1.c_str(), s1.size(),
+                                       s2.c_str(), s2.size(),
+                                       edlibDefaultAlignConfig());
+  int max = 10;
+  if (result.editDistance > max) return false;
+
   // default
   return true;
 }
@@ -335,7 +348,10 @@ std::vector<syd::DicomSerie::vector> syd::GroupByStitchableDicom(syd::DicomSerie
     syd::DicomSerie::vector a;
     a.push_back(dicom1);
     for(auto i = list.begin(); i != list.end();) {
-      if (IsDicomStitchable(dicom1, *i)) {
+      // Check if stichable with all dicoms in the stitch group
+      bool stichable = true;
+      for(auto d:a) if (!IsDicomStitchable(d, *i)) stichable = false;
+      if (stichable) {
         a.push_back(*i);
         i = list.erase(i);
       }

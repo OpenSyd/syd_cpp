@@ -1,6 +1,7 @@
 
 #----------------------------------------------------------
 # libCore: main library
+include_directories(${SYD_SOURCE_DIR}/src/edlib/edlib/include)
 add_subdirectory(${SYD_SOURCE_DIR}/src/core)
 #----------------------------------------------------------
 
