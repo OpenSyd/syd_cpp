@@ -373,8 +373,6 @@ void syd::CheckAndSetPatient(syd::DicomBase::pointer dicom,
 //--------------------------------------------------------------------
 syd::Patient::pointer syd::FindPatientFromDicomInfo(syd::StandardDatabase * db, syd::DicomBase::pointer dicom)
 {
-  DDF();
-  DD(dicom->dicom_patient_id);
   // Search for a patient with the same dicom_patient_id (brute force search)
   syd::Patient::vector patients;
   db->Query(patients);
@@ -389,7 +387,6 @@ syd::Patient::pointer syd::FindPatientFromDicomInfo(syd::StandardDatabase * db, 
 //--------------------------------------------------------------------
 syd::Patient::pointer syd::NewPatientFromDicomInfo(syd::StandardDatabase * db, syd::DicomBase::pointer dicom)
 {
-  DDF();
   // Create a patient
   auto patient = db->New<syd::Patient>();
   syd::SetPatientInfoFromDicom(dicom, patient);
@@ -400,6 +397,7 @@ syd::Patient::pointer syd::NewPatientFromDicomInfo(syd::StandardDatabase * db, s
   for(auto p:patients) if (p->study_id > max) max = p->study_id;
   patient->study_id = max+1;
   dicom->patient = patient;
+  return patient;
 }
 //--------------------------------------------------------------------
 
@@ -421,12 +419,8 @@ void syd::CreateDicomFolder(const syd::StandardDatabase * db,
                             const syd::DicomBase::pointer dicom)
 {
   std::string relative_folder = dicom->ComputeRelativeFolder();
-  DD(relative_folder);
   std::string absolute_folder = db->ConvertToAbsolutePath(relative_folder);
-  if (!fs::exists(absolute_folder)) {
-    DD(absolute_folder);
-    fs::create_directories(absolute_folder);
-  }
+  if (!fs::exists(absolute_folder)) fs::create_directories(absolute_folder);
 }
 // --------------------------------------------------------------------
 
@@ -437,7 +431,6 @@ bool syd::CopyFileToDicomFile(const std::string & filename,
                               int log_level,
                               bool ignore_if_exist)
 {
-  DDF();
   auto destination = dicom_file->GetAbsolutePath();
   if (ignore_if_exist and fs::exists(destination)) {
     LOG(log_level) << "Destination file already exist, ignoring";
@@ -482,8 +475,6 @@ void syd::SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
                                       const std::string & filename,
                                       const syd::DicomStruct::pointer & dicom_struct)
 {
-  DDF();
-
   if (file->id == 0) {
     LOG(FATAL) << "Cannot SetDicomFilePathAndFilename, DicomFile is not persistant: " << file;
   }

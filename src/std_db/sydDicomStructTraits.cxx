@@ -79,9 +79,21 @@ BuildFields(const syd::Database * db) const
   auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
   AddField<std::string>("comments", f_c, "com");
 
+  // Number of rois
+  auto f_nr = [](pointer p) -> int { return p->dicom_roi_names.size(); };
+  AddField<int>("dicom_roi_nb", f_nr, "roi");
+
+  // List of rois
+  auto f_lr = [](pointer p) -> std::string { //TODO to put in DicomStruct 
+    std::ostringstream oss;
+    for(auto r:p->dicom_roi_names) oss << r << " ";
+    auto s = oss.str();
+    return trim(s); };
+  AddField<std::string>("dicom_roi_names", f_lr, "rois");
+
   // Format lists
   field_format_map_["default"] =
-    "id patient.name[pat] dicom_structure_set_date[date] dicom_modality[mod] dicom_series_description[serie] dicom_dataset_name[dsn] dicom_image_id[dii] tags comments[com]";
+    "id patient.name[pat] dicom_structure_set_date[date] dicom_modality[mod] dicom_roi_nb[roi] dicom_roi_names[rois] tags comments[com]";
 }
 // --------------------------------------------------------------------
 

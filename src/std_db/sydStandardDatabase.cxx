@@ -215,6 +215,8 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
 
   // Add some RoiType
   syd::RoiType::vector rois;
+  rois.push_back(NewRoiType("unknown", "Unknown contour"));
+  rois.push_back(NewRoiType("ignored", "Ignored contour"));
   rois.push_back(NewRoiType("body", "Contour of the patient"));
   rois.push_back(NewRoiType("liver", "Contour of the liver"));
   rois.push_back(NewRoiType("spleen", "Contour of the spleen"));

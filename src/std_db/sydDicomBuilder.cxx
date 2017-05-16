@@ -414,35 +414,30 @@ void syd::DicomBuilder::SearchDicomStructInFile(std::string filename,
                                                 syd::Patient::pointer patient,
                                                 bool update_patient_info_from_file_flag)
 {
-  DDF();
   auto reader = syd::ReadDicomStructHeader(filename);
   auto dataset = reader.GetFile().GetDataSet();
 
   // Test if this dicom file already exist in the db
   auto dicom_struct = GetOrCreateDicomStruct(dataset, filename);
-  DD(update_patient_info_from_file_flag); // TODO
   if (dicom_struct == nullptr) {
     LOG(2) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
     nb_of_skip_files++;
     return;
   }
-  DD(dicom_struct);
 
   // Update Patient
   UpdateDicomStructPatient(dicom_struct, dataset);
   SetDicomPatient(dicom_struct, patient, update_patient_info_from_file_flag);
-  DD(dicom_struct);
+
+
+  DD(update_patient_info_from_file_flag); // TODO
 
   // Update
   UpdateDicomStruct(dicom_struct, dataset);
-  DD(dicom_struct);
   auto dicom_file = dicom_struct->dicom_files[0]; // at least one
-  DD(dicom_file);
 
   // Ready to be inserted
   dicom_struct_to_insert.push_back(dicom_struct);
-  //  dicom_struct_dicom_files_to_insert.push_back(dicom_file); // only if create
-  //dicom_struct_filenames_to_copy.push_back(filename);
 }
 // --------------------------------------------------------------------
 
@@ -451,15 +446,11 @@ void syd::DicomBuilder::SearchDicomStructInFile(std::string filename,
 syd::DicomStruct::pointer
 syd::DicomBuilder::GetOrCreateDicomStruct(const gdcm::DataSet & dataset, std::string filename)
 {
-  DDF();
-
   // Series Instance UID tag
   auto serie_uid = syd::GetTagValueAsString<0x20,0x0e>(dataset);
-  DD(serie_uid);
   syd::DicomStruct::vector structs;
   odb::query<DicomStruct> q = odb::query<DicomStruct>::dicom_series_uid == serie_uid;
   db->Query(structs, q);
-  DD(structs.size());
 
   if (structs.size() > 1) {
     LOG(WARNING) << "Several DicomStruct with similar serie_uid exist. Ignored.";
@@ -476,7 +467,6 @@ syd::DicomBuilder::GetOrCreateDicomStruct(const gdcm::DataSet & dataset, std::st
 
   // SOP Instance UID tag
   auto sop_uid = syd::GetTagValueAsString<0x08,0x18>(dataset);
-  DD(sop_uid);
   auto dicom_file = FindDicomFile(sop_uid);
   if (dicom_file == nullptr) {
     LOG(3) << "Create a new DicomFile " << sop_uid;
@@ -497,16 +487,12 @@ syd::DicomBuilder::GetOrCreateDicomStruct(const gdcm::DataSet & dataset, std::st
 void syd::DicomBuilder::UpdateDicomStructPatient(syd::DicomStruct::pointer dicom_struct,
                                                  const gdcm::DataSet & dataset)
 {
-  DDF();
   auto s = syd::GetTagValueAsString<0x10,0x10>(dataset);
-  DD(s);
   dicom_struct->dicom_patient_name = syd::GetTagValueAsString<0x10,0x10>(dataset);
   dicom_struct->dicom_patient_id = syd::GetTagValueAsString<0x10,0x20>(dataset);
   dicom_struct->dicom_patient_id = trim(dicom_struct->dicom_patient_id);
   dicom_struct->dicom_patient_birth_date = syd::GetTagValueAsString<0x10,0x30>(dataset);
   dicom_struct->dicom_patient_sex = syd::GetTagValueAsString<0x10,0x40>(dataset);
-  DD(dicom_struct);
-  DD(dicom_struct->dicom_patient_id);
   return;
 }
 // --------------------------------------------------------------------
@@ -516,8 +502,6 @@ void syd::DicomBuilder::UpdateDicomStructPatient(syd::DicomStruct::pointer dicom
 void syd::DicomBuilder::UpdateDicomStruct(syd::DicomStruct::pointer dicom_struct,
                                           const gdcm::DataSet & dataset)
 {
-  DDF();
-
   dicom_struct->dicom_study_uid = syd::GetTagValueAsString<0x20,0x0d>(dataset);
   dicom_struct->dicom_series_uid = syd::GetTagValueAsString<0x20,0x0e>(dataset);
   dicom_struct->dicom_frame_of_reference_uid = syd::GetTagValueAsString<0x20,0x52>(dataset);
@@ -549,6 +533,24 @@ void syd::DicomBuilder::UpdateDicomStruct(syd::DicomStruct::pointer dicom_struct
   auto dicom_file = dicom_struct->dicom_files[0];
   dicom_file->dicom_sop_uid = syd::GetTagValueAsString<0x08,0x18>(dataset);
   dicom_file->dicom_instance_number = 1;
+
+  // Contours ?
+  gdcm::Tag tssroisq(0x3006,0x0020);
+  if (!dataset.FindDataElement(tssroisq)) {
+    LOG(WARNING) << "Problem locating 0x3006,0x0020 - Is this a valid RT Struct file?" << std::endl;
+    return;
+  }
+  auto & ssroisq = dataset.GetDataElement(tssroisq);
+  auto roi_seq = ssroisq.GetValueAsSQ();
+  for(auto i = 0; i < roi_seq->GetNumberOfItems(); ++i){
+    auto & item = roi_seq->GetItem(i+1); // Item starts at 1
+    auto & nested_dataset = item.GetNestedDataSet();
+    auto name = syd::GetTagValueAsString<0x3006,0x26>(nested_dataset);
+    dicom_struct->dicom_roi_names.push_back(name);
+  }
+
+  // Set the same size (nullptr)
+  dicom_struct->roi_types.resize(dicom_struct->dicom_roi_names.size());
 }
 // --------------------------------------------------------------------
 
@@ -558,12 +560,11 @@ void syd::DicomBuilder::SetDicomPatient(syd::DicomBase::pointer dicom,
                                         syd::Patient::pointer patient,
                                         bool update_patient_info_from_file_flag)
 {
-  DDF();
-
   if (patient == nullptr) patient = syd::FindPatientFromDicomInfo(db, dicom);
   if (patient == nullptr) {
     patient = syd::NewPatientFromDicomInfo(db, dicom);
     LOG(2) << "Create patient " << dicom->patient;
+    db->Insert(patient);
   }
   syd::CheckAndSetPatient(dicom, patient);
 
@@ -577,7 +578,6 @@ void syd::DicomBuilder::SetDicomPatient(syd::DicomBase::pointer dicom,
 // --------------------------------------------------------------------
 void syd::DicomBuilder::InsertDicom()
 {
-  DDF();
   int n_series = InsertDicomSeries();
   int n_struct = InsertDicomStruct();
   int n_dicomfiles = dicom_series_dicom_files_to_insert.size()+n_struct;
@@ -606,12 +606,12 @@ void syd::DicomBuilder::InsertDicom()
   nb_of_skip_files = 0;
   nb_of_skip_copy = 0;
 }
+// --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 int syd::DicomBuilder::InsertDicomSeries()
 {
-  DDF();
   // Create folder if needed
   for(auto dicom_serie:dicom_series_to_insert)
     syd::CreateDicomFolder(db, dicom_serie);
@@ -622,7 +622,6 @@ int syd::DicomBuilder::InsertDicomSeries()
 
   // Copy files
   int n = dicom_series_filenames_to_copy.size();
-  int copied = 0;
   for(auto i=0; i<n; i++) {
     auto filename = dicom_series_filenames_to_copy[i];
     auto dicom_file = dicom_series_dicom_files_to_insert[i];
@@ -631,15 +630,13 @@ int syd::DicomBuilder::InsertDicomSeries()
                                      dicom_files_corresponding_series[i]);
     bool b = syd::CopyFileToDicomFile(filename, dicom_file);
     if (!b) ++nb_of_skip_copy;
-    else ++copied;
     loadbar(i,n);
   }
-  DD(nb_of_skip_copy);
 
   // Update because the filename changed
   db->Update(dicom_series_dicom_files_to_insert);
 
-  return copied;
+  return n;
 }
 // --------------------------------------------------------------------
 
@@ -647,7 +644,6 @@ int syd::DicomBuilder::InsertDicomSeries()
 // --------------------------------------------------------------------
 int syd::DicomBuilder::InsertDicomStruct()
 {
-  DDF();
   // Create folder if needed
   for(auto dicom_struct:dicom_struct_to_insert)
     syd::CreateDicomFolder(db, dicom_struct);
@@ -657,8 +653,7 @@ int syd::DicomBuilder::InsertDicomStruct()
   db->Insert(dicom_struct_to_insert);
 
   // Copy files
-  int copied = 0;
-  int n = dicom_struct_filenames_to_copy.size();
+  int n = dicom_struct_to_insert.size();
   for(auto i=0; i<n; i++) {
     auto filename = dicom_struct_filenames_to_copy[i];
     auto dicom_file = dicom_struct_dicom_files_to_insert[i];
@@ -667,15 +662,13 @@ int syd::DicomBuilder::InsertDicomStruct()
                                      dicom_struct_to_insert[i]);
     bool b = syd::CopyFileToDicomFile(filename, dicom_file);
     if (!b) ++nb_of_skip_copy;
-    else ++copied;
     loadbar(i,n);
   }
-  DD(nb_of_skip_copy);
 
   // Update because the filename changed
   db->Update(dicom_struct_dicom_files_to_insert);
 
-  return copied;
+  return n;
 }
 // --------------------------------------------------------------------
 

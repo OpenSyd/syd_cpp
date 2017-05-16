@@ -46,7 +46,8 @@ std::string syd::DicomStruct::ToString() const
      << syd::DicomBase::ToString()
      << dicom_structure_set_date << " "
      << dicom_structure_set_name << " "
-     << dicom_structure_set_label;
+     << dicom_structure_set_label << " "
+     << dicom_roi_names.size();
   auto s = ss.str();
   return trim(s);
 }
@@ -74,6 +75,9 @@ void syd::DicomStruct::Callback(odb::callback_event event,
 {
   syd::Record::Callback(event,db);
   syd::DicomBase::Callback(event, db);
+
+  if (event == odb::callback_event::pre_persist or
+      event == odb::callback_event::pre_update) CheckAndCorrectROI();
 }
 // --------------------------------------------------------------------
 
@@ -84,6 +88,9 @@ void syd::DicomStruct::Callback(odb::callback_event event,
 {
   syd::Record::Callback(event,db);
   syd::DicomBase::Callback(event, db);
+
+  if (event == odb::callback_event::pre_persist or
+      event == odb::callback_event::pre_update) CheckAndCorrectROI();
 }
 // --------------------------------------------------------------------
 
@@ -92,5 +99,14 @@ void syd::DicomStruct::Callback(odb::callback_event event,
 syd::CheckResult syd::DicomStruct::Check() const
 {
   return syd::DicomBase::Check();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::DicomStruct::CheckAndCorrectROI() const
+{
+  if (dicom_roi_names.size() == roi_types.size()) return;
+  roi_types.resize(dicom_roi_names.size()); // vector of nullptr
 }
 // --------------------------------------------------------------------

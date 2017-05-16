@@ -100,6 +100,46 @@
         </references>
       </foreign-key>
     </add-table>
+    <add-table name="syd::DicomStruct_dicom_roi_names" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="TEXT" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::DicomStruct">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::DicomStruct_dicom_roi_names_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::DicomStruct_dicom_roi_names_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+    <add-table name="syd::DicomStruct_roi_types" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::DicomStruct">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::DicomStruct_roi_types_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::DicomStruct_roi_types_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::RoiType">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
   </changeset>
 
   <model version="257"/>

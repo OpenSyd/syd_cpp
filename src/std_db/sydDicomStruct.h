@@ -22,6 +22,7 @@
 // syd
 #include "sydInjection.h"
 #include "sydDicomBase.h"
+#include "sydRoiType.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -35,12 +36,19 @@ namespace syd {
 
       DEFINE_TABLE_CLASS(DicomStruct);
 
-      // Dicom tag elements
+      /// Dicom tag elements
       std::string dicom_station_name;
       std::string dicom_protocol_name;
       std::string dicom_structure_set_label;
       std::string dicom_structure_set_name;
       std::string dicom_structure_set_date; // (date+time)
+
+      /// Contours information read in the dicom file
+      std::vector<std::string> dicom_roi_names;
+
+      /// Tentative corresponding contours information. Mutable to be able to
+      /// synchronize with dicom_roi_names during const Callback
+      mutable std::vector<syd::RoiType::pointer> roi_types;
 
       /// Write the element as a string
       virtual std::string ToString() const;
@@ -59,6 +67,9 @@ namespace syd {
 
   protected:
       DicomStruct();
+
+      /// Ensure that roi_types has the same size than dicom_roi_names
+      void CheckAndCorrectROI() const;
 
     }; // end class
 }
