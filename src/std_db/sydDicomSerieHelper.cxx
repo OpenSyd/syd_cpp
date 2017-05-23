@@ -368,6 +368,9 @@ std::vector<syd::DicomSerie::vector> syd::GroupByStitchableDicom(syd::DicomSerie
               auto first_date_b = syd::GetDateOfOlderDicom(b);
               return IsDateBefore(first_date_a, first_date_b);
             });
+
+  // Remove if duplicate
+  final_dicoms.erase(unique(final_dicoms.begin(), final_dicoms.end()), final_dicoms.end());
   return final_dicoms;
 }
 //--------------------------------------------------------------------
