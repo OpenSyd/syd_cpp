@@ -23,12 +23,12 @@ void syd::SetTagsFromCommandLine(syd::Tag::vector & tags,
                                  ArgsInfo & args_info)
 {
   // Remove all tags
-  if (args_info.remove_all_tag_flag) tags.clear();
+  if (args_info.rm_all_tags_flag) tags.clear();
 
   // Remove some tags
-  if (args_info.remove_tag_given) {
-    for(auto i=0; i<args_info.remove_tag_given; i++) {
-      std::string tagname = args_info.remove_tag_arg[i];
+  if (args_info.rm_tag_given) {
+    for(auto i=0; i<args_info.rm_tag_given; i++) {
+      std::string tagname = args_info.rm_tag_arg[i];
       syd::Tag::vector tags_temp;
       try {
         tags_temp = syd::FindTags(db, tagname);
@@ -40,9 +40,9 @@ void syd::SetTagsFromCommandLine(syd::Tag::vector & tags,
   }
 
   // Add tags
-  if (args_info.tag_given) {
-    for(auto i=0; i<args_info.tag_given; i++) {
-      std::string tagname = args_info.tag_arg[i];
+  if (args_info.add_tag_given) {
+    for(auto i=0; i<args_info.add_tag_given; i++) {
+      std::string tagname = args_info.add_tag_arg[i];
       syd::Tag::vector tags_temp;
       try {
         tags_temp = syd::FindTags(db, tagname);
