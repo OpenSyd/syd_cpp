@@ -174,10 +174,6 @@ int main(int argc, char* argv[])
     table.Print(std::cout);
     LOG(1) << "Executing the following command: " << std::endl << oss.str();
     int r = syd::ExecuteCommandLine(oss.str(), 2);
-    // Stop if error in cmd
-    if (r == -1) {
-      LOG(WARNING) << "Error while executing the following command: " << std::endl << oss.str();
-    }
   }
 
   // Delete

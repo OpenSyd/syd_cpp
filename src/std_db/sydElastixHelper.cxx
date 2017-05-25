@@ -126,29 +126,31 @@ syd::Image::pointer syd::InsertTransformixImage(const syd::Elastix::pointer elas
   LOG(1) << cmd.str();
   int r = syd::ExecuteCommandLine(cmd.str(), verbose);
 
-  // Test end of command
-  if (r!=0) { // fail
-    LOG(WARNING) << "Command transformix fail";
+  // Test end of command --> we dont test because sometimes fail, only because warning.
+  /*
+    if (r!=0) { // fail
+      LOG(WARNING) << "Command transformix fail";
+      fs::remove_all(temp_folder);
+      }
+      else {
+  */
+  std::string f = temp_folder+PATH_SEPARATOR+"result.mhd";
+  if (!fs::exists(f)) { // fail
+    LOG(1) << "Command fail, cannot find " << f;
     fs::remove_all(temp_folder);
   }
-  else {
-    std::string f = temp_folder+PATH_SEPARATOR+"result.mhd";
-    if (!fs::exists(f)) { // fail
-      LOG(1) << "Command fail, cannot find " << f;
-      fs::remove_all(temp_folder);
-    }
-    else  {
-      // Create warp image
-      auto output = syd::InsertImageFromFile(f, image->patient, image->modality);
-      // Copy information from the deformed image ...
-      syd::SetImageInfoFromImage(output, image);
-      // ... but change the frame_of_reference_uid as the target image.
-      output->frame_of_reference_uid = elastix->fixed_image->frame_of_reference_uid;
-      db->Update(output);
-      fs::remove_all(temp_folder);
-      return output;
-    }
+  else  {
+    // Create warp image
+    auto output = syd::InsertImageFromFile(f, image->patient, image->modality);
+    // Copy information from the deformed image ...
+    syd::SetImageInfoFromImage(output, image);
+    // ... but change the frame_of_reference_uid as the target image.
+    output->frame_of_reference_uid = elastix->fixed_image->frame_of_reference_uid;
+    db->Update(output);
+    fs::remove_all(temp_folder);
+    return output;
   }
+
   return NULL;
 }
 // --------------------------------------------------------------------
