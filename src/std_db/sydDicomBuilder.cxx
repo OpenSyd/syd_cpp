@@ -433,6 +433,7 @@ void syd::DicomBuilder::SearchDicomStructInFile(std::string filename,
   // Update Patient
   UpdateDicomStructPatient(dicom_struct, dataset);
   SetDicomPatient(dicom_struct, patient);
+  if (update_patient_info_from_file_flag) db->Update(dicom_struct->patient);
 
   // Update
   UpdateDicomStruct(dicom_struct, dataset);
