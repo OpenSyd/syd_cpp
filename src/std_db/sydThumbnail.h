@@ -41,15 +41,21 @@ namespace syd {
     //    typedef std::function<std::string(RecordBasePointer)> FieldFunc;
     //    typedef syd::FieldBase::pointer FieldFunc;
 
+    //Set the input image from syd::Image or syd::DicomSerie
+    void setInputImage(const syd::DicomSerie::pointer images);
+    void setInputImage(const syd::Image::pointer image);
+    void setThumbnailPath(const std::string& thumbnailPath);
+
     //Compute the png image with all concatenated thumbnails
-    void computeThumbnail(const syd::Image::pointer image, const std::string& thumbnailPath);
-    void computeThumbnail(const syd::DicomSerie::pointer images, const std::string& thumbnailPath);
+    void computeThumbnail();
     void computeThumbnail(const itk::Image<float,3>::Pointer image, const std::string& thumbnailPath);
 
   protected:
     //Window/Level values
-    double window;
-    double level;
+    double m_window;
+    double m_level;
+    std::string m_thumbnailPath;
+    itk::Image<float,3>::Pointer m_image;
 
   };
 

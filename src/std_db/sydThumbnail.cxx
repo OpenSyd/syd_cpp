@@ -35,33 +35,48 @@
 //------------------------------------------------------------------
 syd::Thumbnail::Thumbnail()
 {
-  window = 6000.0;
-  level = 23.5;
+  m_window = 6000.0;
+  m_level = 23.5;
+  m_thumbnailPath = "";
 }
 //------------------------------------------------------------------
 
 
 //------------------------------------------------------------------
-void syd::Thumbnail::computeThumbnail(const syd::DicomSerie::pointer images, const std::string& thumbnailPath)
+void syd::Thumbnail::computeThumbnail()
+{
+  //Create the thumbnail
+  computeThumbnail(m_image, m_thumbnailPath);
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::Thumbnail::setInputImage(const syd::DicomSerie::pointer images)
 {
   // Convert the dicom to a mhd
   typedef float PixelType;
   typedef itk::Image<PixelType,3> ImageType;
-  auto image = syd::ReadDicomSerieImage<ImageType>(images);
-
-  //Create the thumbnail
-  computeThumbnail(image, thumbnailPath);
+  m_image = syd::ReadDicomSerieImage<ImageType>(images);
 }
 //------------------------------------------------------------------
 
 
 //------------------------------------------------------------------
-void syd::Thumbnail::computeThumbnail(const syd::Image::pointer image, const std::string& thumbnailPath)
+void syd::Thumbnail::setInputImage(const syd::Image::pointer image)
 {
   // Read the mhd
   typedef float PixelType;
   typedef itk::Image<PixelType,3> ImageType;
-  computeThumbnail(syd::ReadImage<ImageType>(image->GetAbsolutePath()), thumbnailPath);
+  m_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+void syd::Thumbnail::setThumbnailPath(const std::string& thumbnailPath)
+{
+  m_thumbnailPath = thumbnailPath;
 }
 //------------------------------------------------------------------
 
@@ -98,8 +113,8 @@ void syd::Thumbnail::computeThumbnail(const itk::Image<float,3>::Pointer image, 
   ImageType::PixelType meanItkImage = imageCalculatorFilter->GetMean();
 
   //Modify Window/Level
-  level = (maxItkImage + minItkImage)/2.0;
-  window = maxItkImage - minItkImage;
+  m_level = (maxItkImage + minItkImage)/2.0;
+  m_window = maxItkImage - minItkImage;
 
   //Resize the input image
   int sizeZ = image->GetLargestPossibleRegion().GetSize()[2];
@@ -143,7 +158,7 @@ void syd::Thumbnail::computeThumbnail(const itk::Image<float,3>::Pointer image, 
   resample->SetDefaultPixelValue(minItkImage);
   resample->Update();
 
-  //Create the staked image
+  //Create the staked image (thumbnailLimitX thumbnails / line)
   typedef itk::Image<unsigned char,2> Image2DType;
   Image2DType::Pointer stackedImage = Image2DType::New();
   Image2DType::RegionType region;
@@ -151,8 +166,18 @@ void syd::Thumbnail::computeThumbnail(const itk::Image<float,3>::Pointer image, 
   start[0] = 0;
   start[1] = 0;
   Image2DType::SizeType size;
-  size[0] = sizeThumbnail;
-  size[1] = sizeThumbnail*nbImageZ + 3*(nbImageZ-1);
+  int nbDisplayX, nbDisplayY;
+  int thumbnailLimitX = 4;
+  if (nbImageZ < thumbnailLimitX) {
+    nbDisplayX = nbImageZ;
+    nbDisplayY = 1;
+  }
+  else {
+    nbDisplayX = thumbnailLimitX;
+    nbDisplayY = nbImageZ/thumbnailLimitX + 1;
+  }
+  size[0] = sizeThumbnail*nbDisplayX + 3*(nbDisplayX-1);
+  size[1] = sizeThumbnail*nbDisplayY + 3*(nbDisplayY-1);
   region.SetSize(size);
   region.SetIndex(start);
   stackedImage->SetRegions(region);
@@ -160,50 +185,61 @@ void syd::Thumbnail::computeThumbnail(const itk::Image<float,3>::Pointer image, 
   stackedImage->FillBuffer(255);
 
   //Fill the stack image
+  unsigned int i = 0;
+  for (unsigned int y=0; y<nbDisplayY; ++y) {
+    for (unsigned int x=0; x<nbDisplayX; ++x) {
+      //Just check if it's not out of borders
+      if (i*stepZ >= sizeZ)
+        break;
+
+      //Create the iterator for the stack image
+      Image2DType::RegionType iteratorStackedRegion;
+      Image2DType::IndexType iteratorStackedStart;
+      iteratorStackedStart[0] = x*(sizeThumbnail+3);
+      iteratorStackedStart[1] = y*(sizeThumbnail+3);
+      Image2DType::SizeType iteratorStackedSize;
+      iteratorStackedSize[0] = sizeThumbnail;
+      iteratorStackedSize[1] = sizeThumbnail;
+      iteratorStackedRegion.SetSize(iteratorStackedSize);
+      iteratorStackedRegion.SetIndex(iteratorStackedStart);
+      itk::ImageRegionIterator<Image2DType> imageStackedIterator(stackedImage, iteratorStackedRegion);
+
+      //Create the iterator for the resize image
+      ImageType::RegionType iteratorResampleRegion;
+      ImageType::IndexType iteratorResampleStart;
+      iteratorResampleStart[0] = 0;
+      iteratorResampleStart[1] = 0;
+      iteratorResampleStart[2] = i*stepZ;
+      ImageType::SizeType iteratorResampleSize;
+      iteratorResampleSize[0] = sizeThumbnail;
+      iteratorResampleSize[1] = sizeThumbnail;
+      iteratorResampleSize[2] = 1;
+      iteratorResampleRegion.SetSize(iteratorResampleSize);
+      iteratorResampleRegion.SetIndex(iteratorResampleStart);
+      itk::ImageRegionConstIterator<ImageType> imageResampleIterator(resample->GetOutput(), iteratorResampleRegion);
+
+      while(!imageStackedIterator.IsAtEnd())
+      {
+        // Set the current pixel into the stackedImage with the corresponding window/level value
+        //if window = 0, the output value = 0
+        double value = imageResampleIterator.Get();
+
+        if (value <= (m_level - m_window/2))
+          imageStackedIterator.Set(0);
+        else if (value >= (m_level + m_window/2))
+          imageStackedIterator.Set(255);
+        else
+          imageStackedIterator.Set((unsigned char)((value/m_window-(m_level-m_window/2)/m_window)*255));
+
+        ++imageStackedIterator;
+        ++imageResampleIterator;
+      }
+      ++i;
+    }
+  }
   for (unsigned int i=0; i<nbImageZ; ++i)
   {
-    //Create the iterator for the stack image
-    Image2DType::RegionType iteratorStackedRegion;
-    Image2DType::IndexType iteratorStackedStart;
-    iteratorStackedStart[0] = 0;
-    iteratorStackedStart[1] = i*(sizeThumbnail+3);
-    Image2DType::SizeType iteratorStackedSize;
-    iteratorStackedSize[0] = sizeThumbnail;
-    iteratorStackedSize[1] = sizeThumbnail;
-    iteratorStackedRegion.SetSize(iteratorStackedSize);
-    iteratorStackedRegion.SetIndex(iteratorStackedStart);
-    itk::ImageRegionIterator<Image2DType> imageStackedIterator(stackedImage, iteratorStackedRegion);
 
-    //Create the iterator for the resize image
-    ImageType::RegionType iteratorResampleRegion;
-    ImageType::IndexType iteratorResampleStart;
-    iteratorResampleStart[0] = 0;
-    iteratorResampleStart[1] = 0;
-    iteratorResampleStart[2] = i*stepZ;
-    ImageType::SizeType iteratorResampleSize;
-    iteratorResampleSize[0] = sizeThumbnail;
-    iteratorResampleSize[1] = sizeThumbnail;
-    iteratorResampleSize[2] = 1;
-    iteratorResampleRegion.SetSize(iteratorResampleSize);
-    iteratorResampleRegion.SetIndex(iteratorResampleStart);
-    itk::ImageRegionConstIterator<ImageType> imageResampleIterator(resample->GetOutput(), iteratorResampleRegion);
-
-    while(!imageStackedIterator.IsAtEnd())
-    {
-      // Set the current pixel into the stackedImage with the corresponding window/level value
-      //if window = 0, the output value = 0
-      double value = imageResampleIterator.Get();
-
-      if (value <= (level - window/2))
-        imageStackedIterator.Set(0);
-      else if (value >= (level + window/2))
-        imageStackedIterator.Set(255);
-      else
-        imageStackedIterator.Set((unsigned char)((value/window-(level-window/2)/window)*255));
-
-      ++imageStackedIterator;
-      ++imageResampleIterator;
-    }
   }
 
   typedef  itk::ImageFileWriter<Image2DType> WriterType;
