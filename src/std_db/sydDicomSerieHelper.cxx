@@ -429,7 +429,10 @@ void syd::SetPatientInfoFromDicom(const syd::DicomBase::pointer dicom,
                                   syd::Patient::pointer patient)
 {
   patient->dicom_patient_ids.push_back(dicom->dicom_patient_id);
-  std::unique(patient->dicom_patient_ids.begin(), patient->dicom_patient_ids.end());
+  // Eliminate duplicate ids (1) sort (2) unique (3) remove last indeterminate values
+  std::sort(patient->dicom_patient_ids.begin(), patient->dicom_patient_ids.end());
+  auto last = std::unique(patient->dicom_patient_ids.begin(), patient->dicom_patient_ids.end());
+  patient->dicom_patient_ids.erase(last, patient->dicom_patient_ids.end());
   patient->name = dicom->dicom_patient_name;
   patient->sex = dicom->dicom_patient_sex;
 }
