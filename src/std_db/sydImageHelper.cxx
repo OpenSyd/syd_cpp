@@ -23,16 +23,9 @@
 #include "sydInjectionHelper.h"
 #include "sydImageStitch.h"
 #include "sydRoiStatisticHelper.h"
-<<<<<<< HEAD
 #include "sydImageFillHoles.h"
 #include "sydImage_GaussianFilter.h"
-=======
-#include "sydProjectionImage.h"
-#include "sydAttenuationImage.h"
-#include "sydRegisterPlanarSPECT.h"
 #include "sydManualRegistration.h"
-#include "sydAttenuationCorrectedProjectionImage.h"
->>>>>>> 6028e60... Add manual registration
 
 // --------------------------------------------------------------------
 syd::Image::pointer
