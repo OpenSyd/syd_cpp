@@ -231,15 +231,15 @@ add_executable(sydInsertPlanarGeometricalMean
 target_link_libraries(sydInsertPlanarGeometricalMean ${SYD_STD_DB_LIBRARY})
 
 # Create the manual registered image
-wrap_ggo(sydInsertManualRegistration_GGO_C
-  sydInsertManualRegistration.ggo
-  sydCommandLineWithTags.ggo
+wrap_ggo(sydInsertManualRegisteredImage_GGO_C
+  sydInsertManualRegisteredImage.ggo
+  ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   sydCommandLineDefault.ggo )
-add_executable(sydInsertManualRegistration
-  sydInsertManualRegistration.cxx
-  ${sydInsertManualRegistration_GGO_C})
-target_link_libraries(sydInsertManualRegistration ${SYD_STD_DB_LIBRARY})
+add_executable(sydInsertManualRegisteredImage
+  sydInsertManualRegisteredImage.cxx
+  ${sydInsertManualRegisteredImage_GGO_C})
+target_link_libraries(sydInsertManualRegisteredImage ${SYD_STD_DB_LIBRARY})
 
 # Insert a new RoiMaskImage
 wrap_ggo(sydInsertRoiMaskImage_GGO_C

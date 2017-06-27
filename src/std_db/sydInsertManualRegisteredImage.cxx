@@ -17,7 +17,7 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertManualRegistration_ggo.h"
+#include "sydInsertManualRegisteredImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydImageHelper.h"
@@ -30,7 +30,7 @@
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertManualRegistration, 1);
+  SYD_INIT_GGO(sydInsertManualRegisteredImage, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();

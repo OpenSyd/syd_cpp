@@ -1,8 +1,8 @@
-#File sydInsertManualRegistration.ggo
+#File sydInsertManualRegisteredImage.ggo
 
 package "syd"
 version "0.4"
-usage "sydInsertManualRegistration <image1> -x [x] -y [y] -z [z] -o"
+usage "sydInsertManualRegisteredImage <image1> -x [x] -y [y] -z [z] -o"
 description "Create a new (mhd) registered image.
 The registration takes an image <image1> and translates it along x,y and z axis.
 "
