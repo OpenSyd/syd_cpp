@@ -11,4 +11,4 @@ The registration takes an image <image1> and translates it along x,y and z axis.
 option "x"  x "Displacement along x axis [mm]"  double no
 option "y"  y "Displacement along y axis [mm]"  double no
 option "z"  z "Displacement along z axis [mm]"  double no
-option "center"  c "Center image1 and image2"   int no
+option "center"  c "Align the centers of image1 and image2"   int no

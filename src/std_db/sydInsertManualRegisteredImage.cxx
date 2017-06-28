@@ -78,6 +78,8 @@ int main(int argc, char* argv[])
   }
 
   // Update image info
+  syd::SetImageInfoFromImage(image, inputImage);
+  syd::SetImageInfoFromFile(image);
   syd::SetTagsFromCommandLine(image->tags, db, args_info);
   syd::SetImageInfoFromCommandLine(image, args_info);
   db->Update(image);
