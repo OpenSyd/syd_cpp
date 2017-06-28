@@ -47,18 +47,35 @@ int main(int argc, char* argv[])
 
   //Get x, y, z displacement
   double x(0), y(0), z(0);
-  bool translateOrigin(0);
   if (args_info.x_given)
     x = args_info.x_arg;
   if (args_info.y_given)
     y = args_info.y_arg;
   if (args_info.z_given)
     z = args_info.z_arg;
-  if (args_info.origin_given)
-    translateOrigin = args_info.origin_flag;
+  syd::Image::pointer image;
 
-  // Main computation
-  auto image = syd::InsertManualRegistration(inputImage, x, y, z, translateOrigin);
+  //Center the 2 images (if needed)
+  if (args_info.center_given) {
+    syd::IdType idCenterImage = args_info.center_arg;
+    syd::Image::pointer centerImage;
+    db->QueryOne(centerImage, idCenterImage); // will fail if not found
+    LOG(2) << "Read image :" << centerImage;
+    typedef float PixelType;
+    typedef itk::Image<PixelType, 3> ImageType3D;
+    auto itk_centerImage = syd::ReadImage<ImageType3D>(centerImage->GetAbsolutePath());
+    auto itk_inputImage = syd::ReadImage<ImageType3D>(inputImage->GetAbsolutePath());
+
+    double xCenter(0), yCenter(0), zCenter(0);
+    xCenter = itk_centerImage->GetOrigin()[0] + itk_centerImage->GetLargestPossibleRegion().GetSize()[0]*itk_centerImage->GetSpacing()[0]/2 - itk_inputImage->GetOrigin()[0] - itk_inputImage->GetLargestPossibleRegion().GetSize()[0]*itk_inputImage->GetSpacing()[0]/2 +x;
+    yCenter = itk_centerImage->GetOrigin()[1] + itk_centerImage->GetLargestPossibleRegion().GetSize()[1]*itk_centerImage->GetSpacing()[1]/2 - itk_inputImage->GetOrigin()[1] - itk_inputImage->GetLargestPossibleRegion().GetSize()[1]*itk_inputImage->GetSpacing()[1]/2 +y;
+    zCenter = itk_centerImage->GetOrigin()[2] + itk_centerImage->GetLargestPossibleRegion().GetSize()[2]*itk_centerImage->GetSpacing()[2]/2 - itk_inputImage->GetOrigin()[2] - itk_inputImage->GetLargestPossibleRegion().GetSize()[2]*itk_inputImage->GetSpacing()[2]/2 +z;
+    image = syd::InsertManualRegistration(inputImage, xCenter, yCenter, zCenter);
+  }
+  else {
+    // Just main computation
+    image = syd::InsertManualRegistration(inputImage, x, y, z);
+  }
 
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);

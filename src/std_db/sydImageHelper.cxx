@@ -353,13 +353,13 @@ syd::InsertImageGeometricalMean(const syd::Image::pointer input,
 // --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertManualRegistration(const syd::Image::pointer inputImage,
-                              double x, double y, double z, bool translateOrigin)
+                              double x, double y, double z)
 {
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType3D;
   auto itk_inputImage = syd::ReadImage<ImageType3D>(inputImage->GetAbsolutePath());
-  auto imageRegister = syd::ManualRegistration<ImageType3D>(itk_inputImage, x, y, z, translateOrigin);
+  auto imageRegister = syd::ManualRegistration<ImageType3D>(itk_inputImage, x, y, z);
 
   // Create the syd image
   return syd::InsertImage<ImageType3D>(imageRegister, inputImage->patient, inputImage->modality);
