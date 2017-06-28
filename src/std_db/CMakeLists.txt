@@ -241,6 +241,17 @@ add_executable(sydInsertManualRegisteredImage
   ${sydInsertManualRegisteredImage_GGO_C})
 target_link_libraries(sydInsertManualRegisteredImage ${SYD_STD_DB_LIBRARY})
 
+# Create the flipped image
+wrap_ggo(sydInsertFlippedImage_GGO_C
+  sydInsertFlippedImage.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertFlippedImage
+  sydInsertFlippedImage.cxx
+  ${sydInsertFlippedImage_GGO_C})
+target_link_libraries(sydInsertFlippedImage ${SYD_STD_DB_LIBRARY})
+
 # Insert a new RoiMaskImage
 wrap_ggo(sydInsertRoiMaskImage_GGO_C
   sydInsertRoiMaskImage.ggo

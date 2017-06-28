@@ -106,6 +106,10 @@ namespace syd {
   syd::Image::pointer InsertManualRegistration(const syd::Image::pointer inputImage,
                                                double x, double y, double z);
 
+  // Compute the flip of an image.
+  syd::Image::pointer InsertFlip(const syd::Image::pointer inputImage,
+                                 int axis, bool flipOrigin);
+
   // Compute the attenuation correction of an projection image.
   syd::Image::pointer InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,
                                                                 const syd::Image::pointer input_AM,

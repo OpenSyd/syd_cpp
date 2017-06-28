@@ -26,6 +26,7 @@
 #include "sydImageFillHoles.h"
 #include "sydImage_GaussianFilter.h"
 #include "sydManualRegistration.h"
+#include "sydFlip.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -363,6 +364,23 @@ syd::InsertManualRegistration(const syd::Image::pointer inputImage,
 
   // Create the syd image
   return syd::InsertImage<ImageType3D>(imageRegister, inputImage->patient, inputImage->modality);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertFlip(const syd::Image::pointer inputImage,
+                 int axis, bool flipOrigin)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  auto itk_inputImage = syd::ReadImage<ImageType3D>(inputImage->GetAbsolutePath());
+  auto imageFlipped = syd::Flip<ImageType3D>(itk_inputImage, axis, flipOrigin);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType3D>(imageFlipped, inputImage->patient, inputImage->modality);
 }
 // --------------------------------------------------------------------
 
