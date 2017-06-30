@@ -38,7 +38,10 @@ syd::DicomSerie::DicomSerie():
 std::string syd::DicomSerie::ToString() const
 {
   std::stringstream ss ;
-  ss << id << " " << syd::DicomBase::ToString();
+  ss << id << " "
+     << syd::DicomBase::ToString() << " "
+     << dicom_reconstruction_date << " "
+     << dicom_acquisition_date;
   auto s = ss.str();
   return trim(s);
 }
