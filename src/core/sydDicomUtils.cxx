@@ -107,6 +107,8 @@ double syd::GetTagDoubleValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
   std::ostringstream oss;
   oss << defaultValue;
   std::string r = GetTagValueFromTagKey(dicomIO, key, oss.str());
+  if (r == "")
+   return defaultValue;
   double rr = stod(r);
   return rr;
 }
