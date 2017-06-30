@@ -82,7 +82,6 @@ void syd::DicomBuilder::SearchDicomSerieInFile(std::string filename,
   // Test if a serie already exist in the database
   DicomSerie::pointer serie;
   b = GuessDicomSerieForThisFile(filename, dicomIO, serie);
-
   // If this is a new DicomSerie, we create it
   if (!b) {
     serie = db->New<syd::DicomSerie>();
@@ -635,7 +634,7 @@ int syd::DicomBuilder::InsertDicomSeries()
   // Update because the filename changed
   db->Update(dicom_series_dicom_files_to_insert);
 
-  return n;
+  return dicom_series_to_insert.size();
 }
 // --------------------------------------------------------------------
 
