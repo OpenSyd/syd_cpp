@@ -347,15 +347,17 @@ std::vector<syd::DicomSerie::vector> syd::GroupByStitchableDicom(syd::DicomSerie
     list.pop_front();
     syd::DicomSerie::vector a;
     a.push_back(dicom1);
-    for(auto i = list.begin(); i != list.end();) {
-      // Check if stichable with all dicoms in the stitch group
-      bool stichable = true;
-      for(auto d:a) if (!IsDicomStitchable(d, *i)) stichable = false;
-      if (stichable) {
-        a.push_back(*i);
-        i = list.erase(i);
+    if (dicom1->dicom_modality != "CT") {
+      for(auto i = list.begin(); i != list.end();) {
+        // Check if stichable with all dicoms in the stitch group
+        bool stichable = true;
+        for(auto d:a) if (!IsDicomStitchable(d, *i)) stichable = false;
+        if (stichable) {
+          a.push_back(*i);
+          i = list.erase(i);
+        }
+        else ++i;
       }
-      else ++i;
     }
     final_dicoms.push_back(a);
   }
