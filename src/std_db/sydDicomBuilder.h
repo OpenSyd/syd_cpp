@@ -64,6 +64,9 @@ namespace syd {
     /// Update the information from the file
     void UpdateDicomSerie(syd::DicomSerie::pointer serie);
 
+    /// Set flag to force update dicomfile
+    void SetForceDicomFileUpdateFlag(bool b) { force_overwrite_existing_dicomfile_flag = b; }
+
   protected:
     syd::StandardDatabase * db;
 
@@ -80,6 +83,7 @@ namespace syd {
     int nb_of_skip_copy;
 
     bool update_patient_info_from_file_flag;
+    bool force_overwrite_existing_dicomfile_flag;
 
     void UpdateDicomSerie(DicomSerie::pointer serie,
                           const std::string & filename,

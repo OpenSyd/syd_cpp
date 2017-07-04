@@ -58,6 +58,7 @@ int main(int argc, char* argv[])
 
   // Dicom insertion
   syd::DicomBuilder builder(db, args_info.updatePatient_flag);
+  builder.SetForceDicomFileUpdateFlag(args_info.force_flag);
   int i=0;
   for(auto f:files) {
     syd::loadbar(i, files.size());

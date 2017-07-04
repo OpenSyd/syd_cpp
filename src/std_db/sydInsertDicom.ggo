@@ -6,9 +6,10 @@ usage "sydInsertDicom <files or folders>"
 description "Insert the all dicom series in a db. Parameters are:
 - <files/folders>  list of files or folders to look for dicom series
 
-If the option --patient <id> is given, the patient is forced. If not, the patient is guessed from the dicom id. If no patient was found, a new one is created.
+If the option --patient <study_id> is given, the patient is forced. If not, the patient is guessed from the dicom id. If no patient was found, a new one is created. WARNING: this is the <study_id> not the <id> !
 
 "
 
 option "patient" p "Associate the dicom with this patient id or name" string no
 option "updatePatient" u "If true, update patient info from dicom" flag off
+option "force" f "If DicomFile already exist, overwrite" flag off

@@ -28,6 +28,7 @@ syd::DicomBuilder::DicomBuilder(syd::StandardDatabase * db_,
   nb_of_skip_files = 0;
   nb_of_skip_copy = 0;
   update_patient_info_from_file_flag = update_patient_info_from_file_flag_;
+  force_overwrite_existing_dicomfile_flag = false;
 }
 // --------------------------------------------------------------------
 
@@ -74,9 +75,19 @@ void syd::DicomBuilder::SearchDicomSerieInFile(std::string filename,
     return;
   }
   if (FindDicomFile(sop_uid) != nullptr) {
-    LOG(WARNING) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
-    nb_of_skip_files++;
-    return;
+    if (!force_overwrite_existing_dicomfile_flag) {
+      LOG(WARNING) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
+      nb_of_skip_files++;
+      return;
+    }
+    auto df = FindDicomFile(sop_uid);
+    try {
+      db->Delete(df);
+    } catch(std::exception & e) {
+      LOG(WARNING) << "Dicom file with same sop_uid already exist and cannot be removed. Skipping " << filename;
+      nb_of_skip_files++;
+      return;
+    }
   }
 
   // Test if a serie already exist in the database
