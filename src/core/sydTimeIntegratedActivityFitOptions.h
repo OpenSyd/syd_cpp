@@ -20,7 +20,7 @@
 #define SYDTIMEINTEGRATEDACTIVITYFITOPTIONS_H
 
 // syd
-#include "sydFitModels.h"
+#include "sydFitModelBase.h"
 
 // --------------------------------------------------------------------
 namespace syd {

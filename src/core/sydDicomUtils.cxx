@@ -20,9 +20,6 @@
 #include "sydDicomUtils.h"
 #include "sydCommon.h"
 
-// gdcm (form itk)
-#include "gdcmAttribute.h"
-
 // --------------------------------------------------------------------
 std::string syd::ConvertDicomDateToStringDate(std::string date, std::string time)
 {

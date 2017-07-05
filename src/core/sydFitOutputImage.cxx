@@ -17,7 +17,6 @@
   ===========================================================================**/
 
 #include "sydFitOutputImage.h"
-#include "sydImageUtils.h"
 
 // --------------------------------------------------------------------
 syd::FitOutputImage::FitOutputImage()

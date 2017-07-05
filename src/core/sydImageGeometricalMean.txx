@@ -16,7 +16,13 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+// syd
 #include "sydImageUtils.h"
+#include "sydImageFlip.h"
+
+// itk
+#include <itkRecursiveGaussianImageFilter.h>
+
 
 //--------------------------------------------------------------------
 template<class ImageType>

@@ -20,6 +20,7 @@
 #include "sydTimeIntegratedActivityFitOptions.h"
 #include "sydException.h"
 #include "sydCommon.h"
+#include "sydFitModels.h"
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()

@@ -19,12 +19,6 @@
 #ifndef SYDTIMEACTIVITYCURVE_H
 #define SYDTIMEACTIVITYCURVE_H
 
-// syd
-#include "sydDD.h"
-#include "sydLog.h"
-
-using namespace sydlog;
-
 // std
 #include <vector>
 #include <memory>

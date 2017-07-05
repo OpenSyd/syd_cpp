@@ -20,8 +20,6 @@
 #define SYDIMAGECROP_H
 
 // syd
-#include "sydCommon.h"
-#include "sydFileUtils.h"
 #include "sydImageUtils.h"
 
 // itk

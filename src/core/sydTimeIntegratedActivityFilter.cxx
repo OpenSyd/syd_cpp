@@ -19,6 +19,7 @@
 // syd
 #include "sydTimeIntegratedActivityFilter.h"
 #include "sydImageUtils.h"
+#include "sydFitModels.h"
 
 // itk
 #include <itkImageRegionIterator.h>

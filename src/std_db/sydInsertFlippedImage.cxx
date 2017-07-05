@@ -47,7 +47,7 @@ int main(int argc, char* argv[])
 
   //Get the axis
   std::string axis("");
-  if (args_info.axis_given);
+  if (args_info.axis_given)
     axis = args_info.axis_arg;
   syd::Image::pointer image;
 
