@@ -64,6 +64,9 @@ namespace syd {
       return os;
     }
 
+    /// Comparison operator
+    bool operator==(const TimeIntegratedActivityFitOptions & a) const;
+
   protected:
     bool fit_verbose_flag_;
     bool restricted_flag_;

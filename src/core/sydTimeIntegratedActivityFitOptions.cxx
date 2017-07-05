@@ -151,3 +151,18 @@ void syd::TimeIntegratedActivityFitOptions::Check() const
   }
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::TimeIntegratedActivityFitOptions::operator==(const TimeIntegratedActivityFitOptions & other) const
+{
+  DDF();
+  if (fit_verbose_flag_ != other.GetFitVerboseFlag()) return false;
+  if (restricted_flag_ != other.GetRestrictedFlag()) return false;
+  if (R2_min_threshold_ != other.GetR2MinThreshold()) return false;
+  if (max_num_iterations_ != other.GetMaxNumIterations()) return false;
+  if (lambda_in_hours_ != other.GetLambdaDecayConstantInHours()) return false;
+  if (GetModelsName() != other.GetModelsName()) return false;
+  return true;
+}
+// --------------------------------------------------------------------
