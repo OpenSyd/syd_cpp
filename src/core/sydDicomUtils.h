@@ -20,7 +20,7 @@
 #define SYDDICOMUTILS_H
 
 // syd
-#include "sydCommon.h"
+//#include "sydCommon.h"
 
 // itk
 #include <itkImage.h>

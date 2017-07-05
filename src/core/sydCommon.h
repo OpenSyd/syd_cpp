@@ -43,6 +43,7 @@
 // syd
 #include "sydDD.h"
 #include "sydLog.h"
+using namespace sydlog;
 #include "sydException.h"
 #include "md5.h"
 

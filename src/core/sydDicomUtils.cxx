@@ -18,6 +18,7 @@
 
 // syd
 #include "sydDicomUtils.h"
+#include "sydCommon.h"
 
 // gdcm (form itk)
 #include "gdcmAttribute.h"
