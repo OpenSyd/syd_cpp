@@ -54,8 +54,8 @@ hunter_add_package(odb)
 hunter_add_package(odb-compiler)
 hunter_add_package(odb-sqlite)
 #hunter_add_package(ceres-solver)
-hunter_add_package(Eigen)
-unset(EIGEN_HAS_CXX11_MATH)
+#hunter_add_package(Eigen)
+#unset(EIGEN_HAS_CXX11_MATH)
 #----------------------------------------------------------
 
 
