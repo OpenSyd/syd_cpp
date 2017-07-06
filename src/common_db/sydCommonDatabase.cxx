@@ -18,6 +18,17 @@
 
 // syd
 #include "sydCommonDatabase.h"
+#include "sydDatabaseInformation-odb.hxx"
+#include "sydRecord-odb.hxx"
+#include "sydFile-odb.hxx"
+#include "sydRecordHistory-odb.hxx"
+#include "sydRecordWithHistory-odb.hxx"
+#include "sydTag-odb.hxx"
+#include "sydRecordWithTags-odb.hxx"
+
+#include "sydTagTraits.h"
+#include "sydFileTraits.h"
+#include "sydRecordHistoryTraits.h"
 
 // --------------------------------------------------------------------
 syd::CommonDatabase::CommonDatabase():syd::Database()

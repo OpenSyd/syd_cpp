@@ -19,9 +19,6 @@
 #ifndef SYDCHECKRESULT_H
 #define SYDCHECKRESULT_H
 
-// syd
-#include "sydCommon.h"
-
 // --------------------------------------------------------------------
 namespace syd {
 
