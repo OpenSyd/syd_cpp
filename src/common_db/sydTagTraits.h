@@ -21,7 +21,6 @@
 
 // syd
 #include "sydTag.h"
-#include "sydCommonDatabase.h"
 #include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------

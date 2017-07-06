@@ -22,7 +22,6 @@
 // syd
 #include "sydDatabase.h"
 #include "sydRecordWithTags.h"
-#include "sydRecordHelper.h"
 
 // --------------------------------------------------------------------
 namespace syd {
