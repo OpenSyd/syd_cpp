@@ -29,7 +29,7 @@ namespace syd {
   /// Main GetTraits function
   DEFINE_TABLE_TRAITS_HEADER(RecordHistory);
 
-  /// Build fields 
+  /// Build fields
   template<> void syd::RecordTraits<syd::RecordHistory>::
     BuildFields(const syd::Database * db) const;
 

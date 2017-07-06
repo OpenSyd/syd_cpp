@@ -18,6 +18,7 @@
 
 // syd
 #include "sydFile.h"
+#include "sydFileUtils.h"
 #include "sydDatabase.h"
 
 DEFINE_TABLE_IMPL(File);

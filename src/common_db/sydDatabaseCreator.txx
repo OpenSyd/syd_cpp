@@ -16,10 +16,11 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#include "sydFileUtils.h"
 
 // --------------------------------------------------------------------
 template<class DatabaseType>
-Database * syd::DatabaseCreator<DatabaseType>::Open(std::string filename)
+syd::Database * syd::DatabaseCreator<DatabaseType>::Open(std::string filename)
 {
   DatabaseType * db = new DatabaseType;
   db->OpenFromFile(filename);

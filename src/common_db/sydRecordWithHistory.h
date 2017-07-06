@@ -59,6 +59,7 @@ namespace syd {
 
   protected:
     RecordWithHistory();
+    virtual ~RecordWithHistory() {}
 
     /// Not stored in the db //FIXME to remove ?
  #pragma db transient

@@ -19,8 +19,8 @@
 #ifndef SYDFIELDDESCRIPTION_H
 #define SYDFIELDDESCRIPTION_H
 
-// syd
-#include "sydCommon.h"
+// std
+#include <string>
 
 // --------------------------------------------------------------------
 namespace syd {

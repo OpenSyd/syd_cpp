@@ -20,7 +20,8 @@
 #define SYDPRINTTABLE_H
 
 // syd
-#include "sydCommonDatabase.h"
+#include "sydRecordTraitsBase.h"
+#include "sydFieldBase.h"
 
 //--------------------------------------------------------------------
 namespace syd {
@@ -35,11 +36,8 @@ namespace syd {
 
     typedef syd::RecordTraitsBase::RecordBasePointer RecordBasePointer;
     typedef syd::RecordTraitsBase::RecordBaseVector RecordBaseVector;
-    //    typedef std::function<std::string(RecordBasePointer)> FieldFunc;
-    //    typedef syd::FieldBase::pointer FieldFunc;
 
     void Build(std::string table_name, const RecordBaseVector records, std::string columns);
-    //    void Build(const RecordBaseVector & records, const std::vector<FieldFunc> & f);
     void Build(const RecordBaseVector & records, syd::FieldBase::vector & f);
     void SetHeaderFlag(bool b);
     void SetFooterFlag(bool b);

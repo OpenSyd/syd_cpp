@@ -19,8 +19,10 @@
 #ifndef SYDRECORDWITHCOMMENTS_H
 #define SYDRECORDWITHCOMMENTS_H
 
-// syd
-#include "sydRecord.h"
+// std
+#include <vector>
+#include <map>
+#include <memory>
 
 // --------------------------------------------------------------------
 namespace syd {

@@ -83,6 +83,7 @@ namespace syd {
 
   protected:
     RecordTraitsBase(std::string table_name);
+    virtual ~RecordTraitsBase() {}
     std::string table_name_;
     std::string sql_table_name_;
 

@@ -21,6 +21,7 @@
 
 // syd
 #include "sydFieldBase.h"
+#include "sydCommon.h"
 
 // --------------------------------------------------------------------
 namespace syd {

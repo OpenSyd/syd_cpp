@@ -51,10 +51,9 @@ namespace syd {
     virtual void Create(std::string dbtype, std::string filename, std::string folder, bool force);
   };
 
-#include "sydDatabaseCreator.txx"
-
 } // end namespace
 
+#include "sydDatabaseCreator.txx"
 // --------------------------------------------------------------------
 
 #endif

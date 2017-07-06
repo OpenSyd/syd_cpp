@@ -18,6 +18,8 @@
 
 // syd
 #include "sydPrintTable.h"
+#include "sydRecord.h"
+#include "sydDatabase.h"
 
 //------------------------------------------------------------------
 syd::PrintTable::PrintTable()
