@@ -19,8 +19,7 @@
 #ifndef SYDDATABASESCHEMANAME_H
 #define SYDDATABASESCHEMANAME_H
 
-#include "sydCommon.h"
-#include "sydTableElementBase.h"
+#include <string>
 
 namespace syd {
 

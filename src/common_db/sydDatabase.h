@@ -19,7 +19,6 @@
 #define SYDDATABASE_H
 
 // syd
-#include "sydException.h"
 #include "sydRecord.h"
 #include "sydDatabaseInformation-odb.hxx"
 #include "sydRecord-odb.hxx"

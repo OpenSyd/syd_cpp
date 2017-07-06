@@ -20,10 +20,7 @@
 #define SYDDATABASEDESCRIPTION_H
 
 // syd
-#include "sydCommon.h"
 #include "sydTableDescription.h"
-
-//#include "sydDatabase.h"
 
 // --------------------------------------------------------------------
 namespace syd {

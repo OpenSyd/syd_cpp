@@ -20,9 +20,7 @@
 #define SYDDATABASECREATOR_H
 
 // syd
-//#include "sydDatabaseManager.h"
 #include "sydDatabase.h"
-#include "sydFileUtils.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -42,7 +40,7 @@ namespace syd {
 
   /// Main class to create/open a database of a given type, with a list of schema
   template<class DatabaseSchema>
-  class DatabaseCreator:public DatabaseCreatorBase {
+    class DatabaseCreator:public DatabaseCreatorBase {
   public:
     virtual ~DatabaseCreator() { }
 

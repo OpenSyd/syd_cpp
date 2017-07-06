@@ -21,8 +21,7 @@
 #ifndef SYDDATABASEINFORMATION_H
 #define SYDDATABASEINFORMATION_H
 
-// syd
-#include "sydCommon.h"
+#include <string>
 
 // --------------------------------------------------------------------
 namespace syd {
