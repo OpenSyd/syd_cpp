@@ -79,14 +79,10 @@ int main(int argc, char* argv[])
       image = copy;
     }
 
-    /* LATER 
     if (args_info.rename_flag) {
-      //auto copy = syd::InsertCopyImage(image);
-      // image = copy;
       auto folder = image->patient->ComputeRelativeFolder();
-      for (auto f:image->files) syd::MoveFile(f, folder);
+      syd::Move(image, folder);
     }
-    */
 
     if (args_info.gauss_arg != 0) {
       double sigma_in_mm = args_info.gauss_arg;

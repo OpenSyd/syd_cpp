@@ -371,7 +371,7 @@ syd::InsertManualRegistration(const syd::Image::pointer inputImage,
 // --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertFlip(const syd::Image::pointer inputImage,
-                 int axis, bool flipOrigin)
+                int axis, bool flipOrigin)
 {
   // Force to float
   typedef float PixelType;
@@ -615,5 +615,42 @@ syd::Image::vector syd::FindImagesFromDicom(const syd::DicomSerie::pointer dicom
     if (imageIsFromThisDicom) images_from_dicom.push_back(im);
   }
   return images_from_dicom;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Move(syd::Image::pointer image, std::string relative_folder)
+{
+  // Get old path
+  auto old_file = image->GetAbsolutePath();
+  if (image->files.size() == 0) return;
+  auto old_path = image->files[0]->path;
+
+  // Set new one
+  for(auto f:image->files) f->path = relative_folder;
+
+  // Get new path
+  auto new_file = image->GetAbsolutePath();
+  if (new_file == old_file) return; // do noting
+
+  if (fs::exists(new_file)) {
+    LOG(WARNING) << "File exist, cannot overwrite " << new_file;
+    for(auto f:image->files) f->path = old_path;
+    return;
+  }
+
+  // Create folder (if does not exist)
+  auto db = image->GetDatabase();
+  auto absolute_folder = db->ConvertToAbsolutePath(relative_folder);
+  fs::create_directories(absolute_folder);
+
+  // Rename
+  if (image->type == "mhd") {
+    syd::RenameMHDImage(old_file, new_file, false);
+  }
+  else {
+    fs::rename(old_file, new_file);
+  }
 }
 // --------------------------------------------------------------------

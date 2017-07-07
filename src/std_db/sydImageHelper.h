@@ -154,6 +154,9 @@ namespace syd {
   /// Retrieve all images linked to this dicom
   syd::Image::vector FindImagesFromDicom(const syd::DicomSerie::pointer dicom);
 
+  /// Move the file internally
+  void Move(syd::Image::pointer image, std::string relative_folder);
+
 } // namespace syd
 
 #include "sydImageHelper.txx"
