@@ -22,6 +22,8 @@
 // std
 #include <string>
 #include <functional>
+#include <memory>
+#include <vector>
 
 // --------------------------------------------------------------------
 namespace syd {

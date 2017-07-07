@@ -21,7 +21,7 @@
 
 // syd
 #include "sydFitImages.h"
-#include "sydImageHelper.h"
+#include "sydFitTimepoints.h"
 
 // --------------------------------------------------------------------
 namespace syd {

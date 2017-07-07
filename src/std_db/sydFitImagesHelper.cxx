@@ -20,6 +20,7 @@
 #include "sydFitImagesHelper.h"
 #include "sydTimepointsHelper.h"
 #include "sydTimeIntegratedActivityFilter.h"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer syd::NewOutputFitImages(const syd::FitImages::pointer tia,
