@@ -55,3 +55,22 @@ std::string syd::GetRelativeFolder(syd::File::vector files)
   return files[0]->path+PATH_SEPARATOR;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+/*
+void syd::Move(syd::File::pointer file, std::string relative_folder)
+{
+  // Set folder
+  auto old_file = f->GetAbsolutePath();
+  f->path = relative_folder;
+  // Create folder (if does not exist)
+  auto absolute_folder = db->ConvertToAbsolutePath(path);
+  fs::create_directories(absolute_folder);
+  // Rename file
+  auto new_file = f->GetAbsolutePath();
+  fs::rename(old_file, new_file);
+  RenameMHDImage FIXME
+}
+*/
+// --------------------------------------------------------------------

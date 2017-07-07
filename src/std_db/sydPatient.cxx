@@ -109,7 +109,11 @@ void syd::Patient::Set(const std::string & pname,
 // --------------------------------------------------
 std::string syd::Patient::ComputeRelativeFolder() const
 {
-  return name;
+  std::string s = name;
+  syd::ReplaceAll(s, "^", " ");
+  s = syd::trim(s);
+  syd::ReplaceAll(s, " ", "_");
+  return s;
 }
 // --------------------------------------------------
 

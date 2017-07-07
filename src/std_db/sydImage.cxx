@@ -274,12 +274,10 @@ std::string syd::Image::ComputeDefaultRelativePath()
               << ", no patient ar yet associated with the image: "
               << ToString());
   }
-  auto s = patient->name;
-  syd::Replace(s, " ", "_"); // replace space with underscore
-  syd::Replace(s, "^", "_"); // replace ^ with underscore
+  auto s = patient->ComputeRelativeFolder();
   if (!fs::portable_name(s)) {
     EXCEPTION("The folder name '" << s << "' does not seems a "
-              << " valid and portable dir name. (you man change "
+              << " valid and portable dir name. (you may change "
               << "the patient name. Abort.");
   }
   return s;
