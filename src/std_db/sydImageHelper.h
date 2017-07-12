@@ -101,7 +101,7 @@ namespace syd {
   // of 4 slices
   syd::Image::pointer InsertImageGeometricalMean(const syd::Image::pointer input,
                                                  double k=0.5);
-                                               
+
   // Compute the manual registration of an image.
   syd::Image::pointer InsertManualRegistration(const syd::Image::pointer inputImage,
                                                double x, double y, double z);
@@ -156,6 +156,17 @@ namespace syd {
 
   /// Move the file internally
   void Move(syd::Image::pointer image, std::string relative_folder);
+
+  /// Retrieve all images for this injection+modality+unit+tags
+  syd::Image::vector FindImages(syd::Injection::pointer injection,
+                                std::string modalities,
+                                std::string pixel_units,
+                                syd::Tag::vector & tags);
+
+  /// Retrieve all images for this injection+modality+tags
+  syd::Image::vector FindImages(syd::Injection::pointer injection,
+                                std::string modalities,
+                                syd::Tag::vector & tags);
 
 } // namespace syd
 

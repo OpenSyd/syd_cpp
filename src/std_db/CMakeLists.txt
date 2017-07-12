@@ -392,8 +392,12 @@ wrap_ggo(syd_gate syd_gate.ggo sydCommandLineDefault.ggo)
 add_executable(syd_gate syd_gate.cxx syd_gate_ggo.c)
 target_link_libraries(syd_gate ${SYD_STD_DB_LIBRARY})
 
-# wrap_ggo(sydInsertGateOutput sydInsertGateOutput.ggo sydCommandLineWithTags.ggo sydCommandLineDefault.ggo)
-# add_executable(sydInsertGateOutput sydInsertGateOutput.cxx sydInsertGateOutput_ggo.c)
+
+# wrap_ggo(sydInsertGateOutput_GGO_C
+#   sydInsertGateOutput.ggo
+#   ../common_db/sydCommandLineWithTags.ggo
+#   sydCommandLineDefault.ggo)
+# add_executable(sydInsertGateOutput sydInsertGateOutput.cxx ${sydInsertGateOutput_GGO_C})
 # target_link_libraries(sydInsertGateOutput ${SYD_STD_DB_LIBRARY})
 
 

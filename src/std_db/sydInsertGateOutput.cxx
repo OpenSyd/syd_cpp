@@ -21,9 +21,8 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
-#include "sydRoiStatisticBuilder.h"
-#include "sydScaleImageBuilder.h"
-#include "sydRecordHelpers.h"
+#include "sydRoiStatisticHelper.h"
+#include "sydImageHelper.h"
 
 #include <boost/tokenizer.hpp>
 

@@ -27,6 +27,7 @@
 #include "sydImage_GaussianFilter.h"
 #include "sydManualRegistration.h"
 #include "sydFlip.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -652,5 +653,46 @@ void syd::Move(syd::Image::pointer image, std::string relative_folder)
   else {
     fs::rename(old_file, new_file);
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImages(syd::Injection::pointer injection,
+                                   std::string modalities,
+                                   std::string pixel_units,
+                                   syd::Tag::vector & tags)
+{
+  auto db = injection->GetDatabase<syd::StandardDatabase>();
+  auto unit = syd::FindPixelUnit(db, pixel_units);
+  syd::Image::vector images;
+  std::vector<std::string> mod;
+  syd::GetWords(mod, modalities);
+  typedef odb::query<syd::Image> QI;
+  QI q = QI::modality.in_range(mod.begin(), mod.end());
+  q = QI::injection == injection->id and
+    QI::pixel_unit == unit->id and q;
+  db->Query(images, q);
+  images = syd::GetRecordsThatContainAllTags<syd::Image>(images, tags);
+  return images;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImages(syd::Injection::pointer injection,
+                                   std::string modalities,
+                                   syd::Tag::vector & tags)
+{
+  auto db = injection->GetDatabase<syd::StandardDatabase>();
+  syd::Image::vector images;
+  std::vector<std::string> mod;
+  syd::GetWords(mod, modalities);
+  typedef odb::query<syd::Image> QI;
+  QI q = QI::modality.in_range(mod.begin(), mod.end());
+  q = QI::injection == injection->id and q;
+  db->Query(images, q);
+  images = syd::GetRecordsThatContainAllTags<syd::Image>(images, tags);
+  return images;
 }
 // --------------------------------------------------------------------
