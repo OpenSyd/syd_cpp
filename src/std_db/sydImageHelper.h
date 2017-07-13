@@ -157,16 +157,20 @@ namespace syd {
   /// Move the file internally
   void Move(syd::Image::pointer image, std::string relative_folder);
 
-  /// Retrieve all images for this injection+modality+unit+tags
-  syd::Image::vector FindImages(syd::Injection::pointer injection,
-                                std::string modalities,
-                                std::string pixel_units,
-                                syd::Tag::vector & tags);
+  /// Helper to build query
+  odb::query<syd::Image> QueryImage(syd::Patient::pointer patient);
 
-  /// Retrieve all images for this injection+modality+tags
-  syd::Image::vector FindImages(syd::Injection::pointer injection,
-                                std::string modalities,
-                                syd::Tag::vector & tags);
+  /// Helper to build query
+  odb::query<syd::Image> QueryImageModality(std::string modalities);
+
+  /// Helper to build query
+  odb::query<syd::Image> QueryImagePixelUnit(std::string);
+
+  /// Retrieve all images
+  syd::Image::vector FindImages(syd::Patient::pointer patient,
+                                odb::query<syd::Image> q,
+                                const syd::Tag::vector & tags);
+
 
 } // namespace syd
 

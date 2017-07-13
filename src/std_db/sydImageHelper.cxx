@@ -658,39 +658,42 @@ void syd::Move(syd::Image::pointer image, std::string relative_folder)
 
 
 // --------------------------------------------------------------------
-syd::Image::vector syd::FindImages(syd::Injection::pointer injection,
-                                   std::string modalities,
-                                   std::string pixel_units,
-                                   syd::Tag::vector & tags)
+odb::query<syd::Image> syd::QueryImage(syd::Patient::pointer patient)
 {
-  auto db = injection->GetDatabase<syd::StandardDatabase>();
-  auto unit = syd::FindPixelUnit(db, pixel_units);
-  syd::Image::vector images;
-  std::vector<std::string> mod;
-  syd::GetWords(mod, modalities);
-  typedef odb::query<syd::Image> QI;
-  QI q = QI::modality.in_range(mod.begin(), mod.end());
-  q = QI::injection == injection->id and
-    QI::pixel_unit == unit->id and q;
-  db->Query(images, q);
-  images = syd::GetRecordsThatContainAllTags<syd::Image>(images, tags);
-  return images;
+  odb::query<syd::Image> q = odb::query<syd::Image>::patient == patient->id;
+  return q;
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-syd::Image::vector syd::FindImages(syd::Injection::pointer injection,
-                                   std::string modalities,
-                                   syd::Tag::vector & tags)
+odb::query<syd::Image> syd::QueryImageModality(std::string modalities)
 {
-  auto db = injection->GetDatabase<syd::StandardDatabase>();
-  syd::Image::vector images;
   std::vector<std::string> mod;
   syd::GetWords(mod, modalities);
-  typedef odb::query<syd::Image> QI;
-  QI q = QI::modality.in_range(mod.begin(), mod.end());
-  q = QI::injection == injection->id and q;
+  odb::query<syd::Image> q = odb::query<syd::Image>::modality.in_range(mod.begin(), mod.end());
+  return q;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+odb::query<syd::Image> syd::QueryImagePixelUnit(std::string pixel_unit)
+{
+  odb::query<syd::Image> q = odb::query<syd::Image>::pixel_unit->name == pixel_unit;
+  return q;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImages(syd::Patient::pointer patient,
+                                   odb::query<syd::Image> q,
+                                   const syd::Tag::vector & tags)
+{
+  auto db = patient->GetDatabase<syd::StandardDatabase>();
+  syd::Image::vector images;
+  q = q and QueryImage(patient);
   db->Query(images, q);
   images = syd::GetRecordsThatContainAllTags<syd::Image>(images, tags);
   return images;
