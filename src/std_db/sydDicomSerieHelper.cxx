@@ -522,3 +522,16 @@ void syd::SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
   file->path = dicom_struct->ComputeRelativeFolder();
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::DicomSerie::vector syd::FindDicomSeries(const syd::Patient::pointer patient)
+{
+  auto db = patient->GetDatabase();
+  syd::DicomSerie::vector dicoms;
+  typedef odb::query<syd::DicomSerie> QI;
+  QI q = QI::patient == patient->id;
+  db->Query(dicoms, q);
+  return dicoms;
+}
+// --------------------------------------------------------------------

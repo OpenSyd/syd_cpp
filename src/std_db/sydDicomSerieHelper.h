@@ -99,6 +99,8 @@ namespace syd {
                                    const std::string & filename,
                                    const syd::DicomStruct::pointer & dicom_struct);
 
+  /// Retrieve all Dicom for this patient
+  syd::DicomSerie::vector FindDicomSeries(const syd::Patient::pointer patient);
 
 }
 #include "sydDicomSerieHelper.txx"

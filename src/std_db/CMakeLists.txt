@@ -77,6 +77,8 @@ set(SYD_STANDARD_DATABASE_SRC
   sydRoiStatisticHelper.cxx
   sydTimepointsHelper.cxx
   sydFitImagesHelper.cxx
+  sydGateHelper.cxx
+
   sydImageType.cxx
   sydThumbnail.cxx
   sydTimeIntegratedActivityImageBuilder.cxx
