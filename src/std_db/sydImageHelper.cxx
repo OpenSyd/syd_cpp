@@ -498,36 +498,26 @@ syd::Image::pointer syd::InsertCopyImage(syd::Image::pointer image)
 
 // --------------------------------------------------------------------
 void syd::SubstituteRadionuclide(syd::Image::pointer image,
-                                 syd::Radionuclide::pointer rad)
+                                 syd::Injection::pointer injection)
 {
   if (image->injection == NULL) {
     EXCEPTION("Cannot SubstituteRadionuclide because the image is not associated with an injection: "
               << image);
   }
 
-  // Create new injection
+  // Set new injection
   auto db = image->GetDatabase<syd::StandardDatabase>();
-  auto new_injection = syd::CopyInjection(image->injection);
-  new_injection->radionuclide = rad;
-  auto inj = syd::GetSimilarInjection(db, new_injection);
-  if (inj.size() != 0) {
-    LOG(2) << "Similar injection exist, do not add " << std::endl
-           << new_injection << std::endl
-           << inj[0];
-    new_injection = inj[0];
-  }
-  else db->Insert(new_injection);
 
   // Get the time and the half_life (lambda)
   double time = syd::DateDifferenceInHours(image->acquisition_date, image->injection->date);
   double lambda_old = image->injection->radionuclide->GetLambdaDecayConstantInHours();
-  double lambda_new = rad->GetLambdaDecayConstantInHours();
+  double lambda_new = injection->radionuclide->GetLambdaDecayConstantInHours();
   double f1 = exp(lambda_old * time); // decay correction: multiply by exp(lambda x time)
   double f2 = exp(-lambda_new * time); // new radionuclide decay
 
   // substitute the radionuclide taking into account the half life
   syd::ScaleImage(image, f1*f2);
-  image->injection = new_injection;
+  image->injection = injection;
   db->Update(image);
 }
 // --------------------------------------------------------------------

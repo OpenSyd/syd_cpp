@@ -18,7 +18,6 @@
 
 // syd
 #include "sydInjectionHelper.h"
-#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 syd::Injection::pointer syd::CopyInjection(syd::Injection::pointer injection)
