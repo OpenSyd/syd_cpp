@@ -49,6 +49,13 @@ namespace syd {
                                   int N,
                                   std::string output="");
 
+  /// Run Gate simulations
+  std::string RunGate(std::string folder,
+                      std::string mac_filename,
+                      int nb_thread,
+                      std::string & error_output,
+                      std::string & output);
+
 } // namespace syd
 
 // --------------------------------------------------------------------

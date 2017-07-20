@@ -95,3 +95,38 @@ std::string syd::CreateGateMacroFile(std::string mac_filename,
   return output;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::RunGate(std::string folder,
+                         std::string mac_filename,
+                         int nb_thread,
+                         std::string & error_output,
+                         std::string & output)
+{
+  // Create command line
+  std::ostringstream cmd;
+  cmd  << "cd " << folder << " ; "
+       << "pwd ; "
+       << " which gate_run_submit_cluster.sh ; "
+       << "gate_run_submit_cluster.sh " << mac_filename << " " << nb_thread
+       << "; pwd;";
+
+  // Execute the cmd line
+  LOG(1) << cmd.str();
+  int r = syd::ExecuteCommandLine(cmd.str(), 5/*not output*/,
+                                  error_output, output);
+
+  // Find the name of the simulation into the output stream
+  std::string text = "runid is ";
+  auto pos = output.find(text);
+  std::string simu_name="";
+  if (pos != std::string::npos) {
+    simu_name = output.substr(pos+text.size(), 4);
+  }
+  else {
+    LOG(WARNING) << "Cannot find the name of the simulation";
+  }
+  return simu_name;
+}
+// --------------------------------------------------------------------

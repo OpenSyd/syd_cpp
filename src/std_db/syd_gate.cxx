@@ -52,11 +52,19 @@ int main(int argc, char* argv[])
   auto rad = syd::FindRadionuclide(db, rad_name);
 
   // Create macro
-  auto f = syd::CreateGateMacroFile(mac_filename, ct, source, rad, N, output);
-  DD(f);
+  auto main_mac = syd::CreateGateMacroFile(mac_filename, ct, source, rad, N, output);
+  DD(main_mac);
 
-  // Exec
-
+  // Run simulation
+  if (args_info.run_given) {
+    auto cwd = boost::filesystem::current_path();
+    std::string output;
+    std::string error_output;
+    auto simu_name = syd::RunGate(cwd.string(), main_mac, args_info.run_arg, error_output, output);
+    LOG(2) << "Simulation output " << output;
+    LOG(2) << "Simulation err output " << error_output;
+    LOG(1) << "Simulation started: " << simu_name;
+  }
 
   // This is the end, my friend.
 }
