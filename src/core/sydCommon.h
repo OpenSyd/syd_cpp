@@ -127,6 +127,10 @@ namespace syd {
 
 
   //--------------------------------------------------------------------
+  int ExecuteCommandLine(const std::string & cmd,
+                         int logLevel,
+                         std::string & error_output,
+                         std::string & output);
   int ExecuteCommandLine(const std::string & cmd, int logLevel);
   //--------------------------------------------------------------------
 

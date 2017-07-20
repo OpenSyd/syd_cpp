@@ -16,9 +16,15 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+// syd
 #include "sydCommon.h"
 
+// http://pstreams.sourceforge.net/
 #include "pstream.h"
+
+// std
+#include <chrono>
+#include <thread>
 
 // --------------------------------------------------------------------
 std::string syd::ConvertDateTime(std::string date, std::string time)
@@ -303,20 +309,36 @@ void syd::ReadIdsFromInputPipe(std::vector<syd::IdType> & ids)
 //------------------------------------------------------------------
 int syd::ExecuteCommandLine(const std::string & cmd, int logLevel)
 {
+  std::string output;
+  std::string error_output;
+  return ExecuteCommandLine(cmd, logLevel, error_output, output);
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+int syd::ExecuteCommandLine(const std::string & cmd,
+                            int logLevel,
+                            std::string & error_output,
+                            std::string & output)
+{
   const redi::pstreams::pmode mode = redi::pstreams::pstdout|redi::pstreams::pstderr;
   redi::ipstream child(cmd, mode);
   char buf[1024];
+  output.clear();
+  error_output.clear();
   std::streamsize n;
   bool finished[2] = { false, false };
   const std::string color = "\x1b[32m"; // green
   std::cout << color;
   bool error = false;
-  while (!finished[0] || !finished[1]) {
+  while (!finished[0] and !finished[1]) { // if one is finished, we stop
+    std::this_thread::sleep_for(std::chrono::seconds(3));
     if (!finished[0]) {
       while ((n = child.err().readsome(buf, sizeof(buf))) > 0) {
         error = true;
-        std::cerr << fatalColor;
-        std::cerr.write(buf, n);
+        error_output.insert(error_output.size(), buf, n);
+        if (Log::LogLevel() >= logLevel) std::cout.write(buf, n).flush(); // only print if level ok
       }
       if (child.eof()) {
         finished[0] = true;
@@ -326,6 +348,7 @@ int syd::ExecuteCommandLine(const std::string & cmd, int logLevel)
 
     if (!finished[1]) {
       while ((n = child.out().readsome(buf, sizeof(buf))) > 0) {
+        output.insert(output.size(), buf, n);
         if (Log::LogLevel() >= logLevel) std::cout.write(buf, n).flush(); // only print if level ok
       }
       if (child.eof()) {
