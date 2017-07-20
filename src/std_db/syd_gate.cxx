@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
   auto rad = syd::FindRadionuclide(db, rad_name);
 
   // Create macro
-  auto main_mac = syd::CreateGateMacroFile(mac_filename, ct, source, rad, N, output);
+  auto main_mac = syd::GateCreateMacroFile(mac_filename, ct, source, rad, N, output);
   DD(main_mac);
 
   // Run simulation
@@ -60,10 +60,15 @@ int main(int argc, char* argv[])
     auto cwd = boost::filesystem::current_path();
     std::string output;
     std::string error_output;
-    auto simu_name = syd::RunGate(cwd.string(), main_mac, args_info.run_arg, error_output, output);
+    auto simu_name = syd::GateRun(cwd.string(), main_mac, args_info.run_arg, error_output, output);
     LOG(2) << "Simulation output " << output;
     LOG(2) << "Simulation err output " << error_output;
-    LOG(1) << "Simulation started: " << simu_name;
+    if (simu_name != "") {
+      LOG(1) << "Simulation started: " << simu_name;
+    }
+    else {
+      LOG(1) << "Error : no simulation started (both gate_run_submit_cluster.sh and Gate must be in PATH).";
+    }
   }
 
   // This is the end, my friend.

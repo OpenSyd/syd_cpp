@@ -42,7 +42,7 @@ namespace syd {
   GateAlias::pointer AddAlias(std::vector<GateAlias::pointer> & aliases, std::string alias_name);
 
   /// Create a macro from the template
-  std::string CreateGateMacroFile(std::string mac_filename,
+  std::string GateCreateMacroFile(std::string mac_filename,
                                   syd::Image::pointer ct,
                                   syd::Image::pointer source,
                                   syd::Radionuclide::pointer rad,
@@ -50,11 +50,18 @@ namespace syd {
                                   std::string output="");
 
   /// Run Gate simulations
-  std::string RunGate(std::string folder,
+  std::string GateRun(std::string folder,
                       std::string mac_filename,
                       int nb_thread,
                       std::string & error_output,
                       std::string & output);
+
+  /// Get the simulation name from a folder results.XXYZ
+  std::string GateGetSimulationNameFromFolder(std::string folder);
+
+  /// Retrieve Gate output images
+  syd::Image::vector GateReadOutputImages(std::string folder,
+                                          syd::Injection::pointer injection);
 
 } // namespace syd
 

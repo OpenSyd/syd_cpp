@@ -333,7 +333,6 @@ int syd::ExecuteCommandLine(const std::string & cmd,
   std::cout << color;
   bool error = false;
   while (!finished[0] and !finished[1]) { // if one is finished, we stop
-    std::this_thread::sleep_for(std::chrono::seconds(3));
     if (!finished[0]) {
       while ((n = child.err().readsome(buf, sizeof(buf))) > 0) {
         error = true;
@@ -356,6 +355,8 @@ int syd::ExecuteCommandLine(const std::string & cmd,
         if (!finished[0]) child.clear();
       }
     }
+    if (!finished[0] and !finished[1])
+      std::this_thread::sleep_for(std::chrono::seconds(3));
   }
   std::cout << DD_RESET;
   if (error) return -1; // Error

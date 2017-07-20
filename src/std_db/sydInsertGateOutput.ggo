@@ -1,16 +1,19 @@
 #File sydInsertGateOutput.ggo
 
 package "sydInsertGateOutput"
-usage "sydInsertGateOutput <study> <gate_output_folder>"
+usage "sydInsertGateOutput <gate_output_folder> <injection_id>"
 version "0.3"
 description "
 
 Read the files in the <gate_output_folder> and look for mhd file in the form:
      <patient>-<radionuclide>-Edep.mhd etc
 
-When found (edep, dose, uncert), insert the image. Dose are scaled according to the nb of particles (found in stat.txt file) and the total sum of value in the tia image.
+The images (edep, dose, uncert) are inserted into the db according to the injection.
 
-Tags image are assumed to be : <study> <radionuclide> then tia, dose, edep
+FIXME Dose are scaled according to the nb of particles (found in stat.txt file) and the total sum of value in the tia image.
+
+FIXME Tags image are assumed to be : <study> <radionuclide> then tia, dose, edep
 "
 
 option "dry_run" - "Do not insert in the db, only check " flag off
+
