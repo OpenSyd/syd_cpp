@@ -66,9 +66,20 @@ namespace syd {
   /// Parse the filename and retrive the type (edep, dose etc)
   std::string GateGetFileType(std::string filename);
 
-  // Create an image from a mhd Gate output file
+  /// Create an image from a mhd Gate output file
   syd::Image::pointer GateInsertImage(std::string filename,
                                       syd::Image::pointer source);
+
+  /// Compute the scaling factor for a dose image, according to input activity
+  /// and nb of events in the simulations. Results will be in Gy by injected
+  /// MBq.
+  double GateComputeDoseScalingFactor(syd::Image::pointer source, double nb_events);
+
+  /// Read Gate output folder and search for stat file
+  syd::File::pointer GateInsertStatFile(std::string folder_name, syd::Patient::pointer patient);
+
+  /// From a stat file, determine the NumberOfEvents
+  double GateGetNumberOfEvents(syd::File::pointer stat_file);
 
 } // namespace syd
 

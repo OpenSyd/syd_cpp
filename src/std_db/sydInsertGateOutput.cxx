@@ -23,6 +23,10 @@
 #include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
 #include "sydGateHelper.h"
+#include "sydPixelUnitHelper.h"
+#include "sydImageHelper.h"
+#include "sydTagHelper.h"
+#include "sydCommentsHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -43,23 +47,44 @@ int main(int argc, char* argv[])
   // Get the injection
   syd::IdType id = atoi(args_info.inputs[1]);
   auto source = db->QueryOne<syd::Image>(id);
-  DD(source);
 
   // Get the images (dose+edep+uncert)
   auto images = syd::GateInsertOutputImages(folder_name, source);
   DDS(images);
 
-  // Scaling ?
+  // Get the stat file
+  auto stat_file = syd::GateInsertStatFile(folder_name, source->patient);
+  if (stat_file != nullptr) {
+    DD(stat_file);
+    double nb_events = syd::GateGetNumberOfEvents(stat_file);
 
-  //  auto stat_file = syd::GateGetStatFile(folder_name);
-  //DD(stat_file);
+    // Scale the image to get it in cGy by injection MBq
+    double s = syd::GateComputeDoseScalingFactor(source, nb_events);
+    double cGy = 100.0;
+    s = s * cGy;
+    auto unit = syd::FindOrCreatePixelUnit(db, "cGy/IA[MBq]");
+    for(auto & image:images) {
+      syd::ScaleImage(image, s);
+      image->pixel_unit = unit;
+    }
+    DDS(images);
+  }
+  else {
+    LOG(WARNING) << "Cannot find stat file, no scaling.";
+  }
 
-  // Scaling process FIXME
+  // Tags and info from cmd line
+  for(auto & image:images) {
+    syd::SetTagsFromCommandLine(image->tags, db, args_info);
+    syd::SetImageInfoFromCommandLine(image, args_info);
+    syd::SetCommentsFromCommandLine(image->comments, db, args_info);
+  }
+  db->Update(images);
 
-
-  // Tags from cmd line
-  //  db->UpdateTagsFromCommandLine(output->tags, args_info); // user defined tags
-
+  LOG(1) << "Inserted: " << images.size() << " images.";
+  for(auto & image:images) {
+    LOG(2) << image;
+  }
 
   // This is the end, my friend.
 }

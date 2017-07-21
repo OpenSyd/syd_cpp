@@ -19,11 +19,12 @@
 // syd
 #include "sydFile.h"
 #include "sydDatabase.h"
+#include "sydTagHelper.h"
 
 DEFINE_TABLE_IMPL(File);
 
 // --------------------------------------------------------------------
-syd::File::File():syd::Record()
+syd::File::File():syd::Record(), syd::RecordWithTags()
 {
   // default value
   filename = empty_value;
@@ -55,7 +56,9 @@ std::string syd::File::ToString() const
   ss << id << " "
      << filename << " "
      << path << " "
-     << md5;
+     << md5//  << " "
+    // << syd::GetLabels(tags) << " "
+    ;
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -94,6 +97,7 @@ void syd::File::SetFilenamesToErase() const
 // --------------------------------------------------------------------
 std::string syd::File::GetAbsolutePath() const
 {
+  if (path == empty_value) return "";
   std::string apath = db_->ConvertToAbsolutePath(path+PATH_SEPARATOR+filename);
   return apath;
 }

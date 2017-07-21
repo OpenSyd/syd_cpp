@@ -21,6 +21,8 @@
 #include "sydStandardDatabase.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydRoiStatisticHelper.h"
+#include "sydFileHelper.h"
 
 // boost
 #include <boost/tokenizer.hpp>
@@ -187,36 +189,6 @@ syd::Image::vector syd::GateInsertOutputImages(std::string folder,
     syd::AddTag(image->tags, tag);
   db->Update(images);
 
-  /*
-
-  if (N != 0) {
-  syd::RoiStatisticBuilder rsbuilder(db);
-  syd::RoiStatistic::pointer stat;
-  db->New(stat);
-  stat->image = tia;
-  rsbuilder.ComputeStatistic(stat);// no mask
-  N = N/1000.0; // 1000 because tia is in kBq.h
-  double scale = (3600 * 100) * (stat->sum/N); // 100 because in cGy
-  for(auto & m:map_images) {
-  syd::Image::pointer image = m.second;
-  std::string type = m.first;
-  // Scale
-  double s = scale;
-  if (type == "dose_squared" or type == "edep_squared") s = scale*scale;
-  if (type == "dose" or type == "edep" or
-  type == "dose_squared" or type == "edep_squared") {
-  syd::ScaleImageBuilder builder(db);
-  builder.Scale(image, s);
-  // unit
-  image->pixel_unit = db->FindPixelUnit("cGy/IA[MBq]");
-  // Update
-  LOG(1) << "Scaling: " << image;
-  if (!args_info.dry_run_flag) db->Update(image);
-  }
-  }
-  }
-  */
-
   return images;
 }
 // --------------------------------------------------------------------
@@ -283,5 +255,111 @@ syd::Image::pointer syd::GateInsertImage(std::string filename,
   db->Update(image);
 
   return image;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::GateComputeDoseScalingFactor(syd::Image::pointer source, double nb_events)
+{
+  DDF();
+
+  // Check source unit
+  auto db = source->GetDatabase<syd::StandardDatabase>();
+  double Bq_unit_scale = 0.0;
+  if (source->pixel_unit->id != syd::FindOrCreatePixelUnit(db, "Bq.h")->id)
+    Bq_unit_scale = 1.0;
+  if (source->pixel_unit->id != syd::FindOrCreatePixelUnit(db, "kBq.h")->id)
+    Bq_unit_scale = 1000.0;
+  if (source->pixel_unit->id != syd::FindOrCreatePixelUnit(db, "MBq.h")->id)
+    Bq_unit_scale = 1000000.0;
+
+  if (Bq_unit_scale == 0.0) {
+    LOG(WARNING) << "Only scale possible if source unit is Bq.h. Images were not scaled";
+    return 1.0;
+  }
+
+  // Compute total activity in the image
+  auto stat = syd::NewRoiStatistic(source);
+  DD(stat);
+  double total_activity = stat->sum;
+
+  // Compute final scaling factor
+  double injected_activity = source->injection->activity_in_MBq;
+  double scale = (Bq_unit_scale * 3600.0 * total_activity / injected_activity)/nb_events;
+  return scale;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::File::pointer syd::GateInsertStatFile(std::string folder, syd::Patient::pointer patient)
+{
+  // get simu name
+  auto simu_name = syd::GateGetSimulationNameFromFolder(folder);
+  if (simu_name == "") return nullptr;
+
+  // Find all files ".txt" in output folder
+  std::vector<fs::path> files;
+  std::copy(fs::directory_iterator(folder), fs::directory_iterator(), std::back_inserter(files));
+  std::vector<fs::path> txt_files;
+  for(auto & file:files)
+    if (file.extension() == ".txt") txt_files.push_back(file);
+
+  // For each -> determine if stat file
+  int i=0;
+  for(auto & filename:txt_files) {
+    std::ifstream is(filename.string());
+    std::string line;
+    std::getline(is,line);
+    if (line.find("# NumberOfRun = ") == 0) break;
+    ++i;
+  }
+  if (i == txt_files.size()) return nullptr;
+
+  // Create file + insert
+  auto db = patient->GetDatabase();
+  auto filename = txt_files[i].filename().string();
+  auto relative_folder = patient->ComputeRelativeFolder()+PATH_SEPARATOR+simu_name;
+  auto absolute_folder = db->ConvertToAbsolutePath(relative_folder);
+  fs::create_directories(absolute_folder);
+  DD(filename);
+  DD(relative_folder);
+  DD(absolute_folder);
+  fs::copy_file(txt_files[i], absolute_folder+PATH_SEPARATOR+filename, fs::copy_option::overwrite_if_exists);
+  auto file = syd::NewFile(db, relative_folder, filename);
+
+  // set the tags: simu_name + tag stat_file
+  syd::Tag::vector tags;
+  tags.push_back(syd::FindOrCreateTag(db, simu_name));
+  tags.push_back(syd::FindOrCreateTag(db, "simulation_stat_file"));
+  syd::AddTag(file->tags, tags);
+  db->Insert(file);
+
+  return file;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::GateGetNumberOfEvents(syd::File::pointer stat_file)
+{
+  DDF();
+
+  auto filename = stat_file->GetAbsolutePath();
+  DD(filename);
+  std::ifstream is(filename);
+  std::string line;
+  std::getline(is,line);
+  DD(line);
+  if (line.find("# NumberOfRun = ") != 0) return 0.0;
+  std::getline(is,line);
+  DD(line);
+  if (line.find("# NumberOfEvents = ") != 0) return 0.0;
+  auto s = line.substr(19, line.size());
+  DD(s);
+  double n = atof(s.c_str());
+  DD(n);
+  return n;
 }
 // --------------------------------------------------------------------

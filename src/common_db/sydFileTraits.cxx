@@ -18,6 +18,7 @@
 
 // syd
 #include "sydFileTraits.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 DEFINE_TABLE_TRAITS_IMPL(File);
@@ -37,8 +38,12 @@ BuildFields(const syd::Database * db) const
   auto f = [](pointer p) -> std::string { return p->GetAbsolutePath(); };
   AddField<std::string>("filepath", f, "file");
 
+  // tags
+  auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
+  AddField<std::string>("tags", f_t);
+
   // Format lists
-  field_format_map_["default"] = "id filename path md5";
+  field_format_map_["default"] = "id filename path md5 tags";
 }
 // --------------------------------------------------------------------
 

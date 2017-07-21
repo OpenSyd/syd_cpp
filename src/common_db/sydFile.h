@@ -22,6 +22,7 @@
 // syd
 #include "sydRecord.h"
 #include "sydFileUtils.h"
+#include "sydRecordWithTags.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -29,7 +30,8 @@ namespace syd {
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::File") callback(Callback)
   /// Store information about a file linked to a database.
   class File:
-    public syd::Record {
+    public syd::Record,
+    public syd::RecordWithTags {
   public:
 
       DEFINE_TABLE_CLASS(File);
