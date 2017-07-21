@@ -50,24 +50,38 @@ int main(int argc, char* argv[])
 
   // Get the images (dose+edep+uncert)
   auto images = syd::GateInsertOutputImages(folder_name, source);
-  DDS(images);
 
   // Get the stat file
   auto stat_file = syd::GateInsertStatFile(folder_name, source->patient);
   if (stat_file != nullptr) {
-    DD(stat_file);
     double nb_events = syd::GateGetNumberOfEvents(stat_file);
-
-    // Scale the image to get it in cGy by injection MBq
-    double s = syd::GateComputeDoseScalingFactor(source, nb_events);
-    double cGy = 100.0;
-    s = s * cGy;
-    auto unit = syd::FindOrCreatePixelUnit(db, "cGy/IA[MBq]");
-    for(auto & image:images) {
-      syd::ScaleImage(image, s);
-      image->pixel_unit = unit;
+    if (nb_events != 0) {
+      // Scale the image to get it in cGy by injection MBq
+      double s = syd::GateComputeDoseScalingFactor(source, nb_events);
+      double s_dose = s * 100.0;  // Gy  --> cGy
+      double s_edep = s * 1000.0; // MeV --> keV
+      auto unit_dose = syd::FindOrCreatePixelUnit(db, "cGy/IA[MBq]");
+      auto unit_edep = syd::FindOrCreatePixelUnit(db, "keV/IA[MBq]");
+      LOG(1) << "Found " << nb_events << " events. Scaling factor is " << s;
+      for(auto & image:images) {
+        if (image->modality == "dose") {
+          syd::ScaleImage(image, s);
+          image->pixel_unit = unit_dose;
+        }
+        if (image->modality == "dose_squared") {
+          syd::ScaleImage(image, s*s);
+          image->pixel_unit = unit_dose;
+        }
+        if (image->modality == "edep") {
+          syd::ScaleImage(image, s);
+          image->pixel_unit = unit_edep;
+        }
+        if (image->modality == "edep_squared") {
+          syd::ScaleImage(image, s*s);
+          image->pixel_unit = unit_edep;
+        }
+      }
     }
-    DDS(images);
   }
   else {
     LOG(WARNING) << "Cannot find stat file, no scaling.";

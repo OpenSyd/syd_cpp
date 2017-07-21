@@ -262,8 +262,6 @@ syd::Image::pointer syd::GateInsertImage(std::string filename,
 // --------------------------------------------------------------------
 double syd::GateComputeDoseScalingFactor(syd::Image::pointer source, double nb_events)
 {
-  DDF();
-
   // Check source unit
   auto db = source->GetDatabase<syd::StandardDatabase>();
   double Bq_unit_scale = 0.0;
@@ -281,7 +279,6 @@ double syd::GateComputeDoseScalingFactor(syd::Image::pointer source, double nb_e
 
   // Compute total activity in the image
   auto stat = syd::NewRoiStatistic(source);
-  DD(stat);
   double total_activity = stat->sum;
 
   // Compute final scaling factor
@@ -322,10 +319,17 @@ syd::File::pointer syd::GateInsertStatFile(std::string folder, syd::Patient::poi
   auto filename = txt_files[i].filename().string();
   auto relative_folder = patient->ComputeRelativeFolder()+PATH_SEPARATOR+simu_name;
   auto absolute_folder = db->ConvertToAbsolutePath(relative_folder);
+
+  // Delete if a file already exist
+  odb::query<syd::File> q =
+    odb::query<syd::File>::filename == filename and
+    odb::query<syd::File>::path == relative_folder;
+  syd::File::vector pfiles;
+  db->Query(pfiles, q);
+  db->Delete(pfiles);
+
+  // Go
   fs::create_directories(absolute_folder);
-  DD(filename);
-  DD(relative_folder);
-  DD(absolute_folder);
   fs::copy_file(txt_files[i], absolute_folder+PATH_SEPARATOR+filename, fs::copy_option::overwrite_if_exists);
   auto file = syd::NewFile(db, relative_folder, filename);
 
@@ -344,22 +348,15 @@ syd::File::pointer syd::GateInsertStatFile(std::string folder, syd::Patient::poi
 // --------------------------------------------------------------------
 double syd::GateGetNumberOfEvents(syd::File::pointer stat_file)
 {
-  DDF();
-
   auto filename = stat_file->GetAbsolutePath();
-  DD(filename);
   std::ifstream is(filename);
   std::string line;
   std::getline(is,line);
-  DD(line);
   if (line.find("# NumberOfRun = ") != 0) return 0.0;
   std::getline(is,line);
-  DD(line);
   if (line.find("# NumberOfEvents = ") != 0) return 0.0;
   auto s = line.substr(19, line.size());
-  DD(s);
   double n = atof(s.c_str());
-  DD(n);
   return n;
 }
 // --------------------------------------------------------------------
