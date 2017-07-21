@@ -41,7 +41,7 @@ namespace syd {
 
   // Mask could be null (compute stat on the whole image)
   syd::RoiStatistic::pointer NewRoiStatistic(const syd::Image::pointer image,
-                                             const syd::RoiMaskImage::pointer mask,
+                                             const syd::RoiMaskImage::pointer mask=nullptr,
                                              const syd::Image::pointer mask2 = nullptr,
                                              const std::string mask_output_filename="");
 
