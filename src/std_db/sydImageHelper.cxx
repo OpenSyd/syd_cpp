@@ -595,6 +595,18 @@ syd::Image::vector syd::FindImages(const syd::Patient::pointer patient)
 
 
 // --------------------------------------------------------------------
+syd::Image::vector syd::FindImages(const syd::Injection::pointer injection)
+{
+  auto db = injection->GetDatabase();
+  odb::query<syd::Image> q = odb::query<syd::Image>::injection == injection->id;
+  syd::Image::vector images;
+  db->Query(images, q);
+  return images;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::Image::vector syd::FindImagesFromDicom(const syd::DicomSerie::pointer dicom)
 {
   auto patient = dicom->patient;

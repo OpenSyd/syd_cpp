@@ -41,13 +41,15 @@ int main(int argc, char* argv[])
   std::string folder_name = args_info.inputs[0];
 
   // Get the injection
-  syd::IdType inj_id = atoi(args_info.inputs[1]);
-  auto injection = db->QueryOne<syd::Injection>(inj_id);
-  DD(injection);
+  syd::IdType id = atoi(args_info.inputs[1]);
+  auto source = db->QueryOne<syd::Image>(id);
+  DD(source);
 
   // Get the images (dose+edep+uncert)
-  auto images = syd::GateReadOutputImages(folder_name, injection);
+  auto images = syd::GateInsertOutputImages(folder_name, source);
   DDS(images);
+
+  // Scaling ?
 
   //  auto stat_file = syd::GateGetStatFile(folder_name);
   //DD(stat_file);
@@ -56,6 +58,8 @@ int main(int argc, char* argv[])
 
 
   // Tags from cmd line
+  //  db->UpdateTagsFromCommandLine(output->tags, args_info); // user defined tags
+
 
   // This is the end, my friend.
 }

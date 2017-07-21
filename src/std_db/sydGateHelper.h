@@ -60,8 +60,15 @@ namespace syd {
   std::string GateGetSimulationNameFromFolder(std::string folder);
 
   /// Retrieve Gate output images
-  syd::Image::vector GateReadOutputImages(std::string folder,
-                                          syd::Injection::pointer injection);
+  syd::Image::vector GateInsertOutputImages(std::string folder,
+                                            syd::Image::pointer source);
+
+  /// Parse the filename and retrive the type (edep, dose etc)
+  std::string GateGetFileType(std::string filename);
+
+  // Create an image from a mhd Gate output file
+  syd::Image::pointer GateInsertImage(std::string filename,
+                                      syd::Image::pointer source);
 
 } // namespace syd
 

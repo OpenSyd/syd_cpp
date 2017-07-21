@@ -19,6 +19,11 @@
 // syd
 #include "sydGateHelper.h"
 #include "sydStandardDatabase.h"
+#include "sydImageHelper.h"
+#include "sydTagHelper.h"
+
+// boost
+#include <boost/tokenizer.hpp>
 
 // --------------------------------------------------------------------
 syd::GateAlias::pointer
@@ -135,7 +140,7 @@ std::string syd::GateRun(std::string folder,
 // --------------------------------------------------------------------
 std::string syd::GateGetSimulationNameFromFolder(std::string folder)
 {
- fs::path p(folder);
+  fs::path p(folder);
   if (!fs::is_directory(p)) return "";
   auto folder_name = p.filename().string();
   //if (folder_name == ".") folder_name = p.parent_path().string();
@@ -148,138 +153,42 @@ std::string syd::GateGetSimulationNameFromFolder(std::string folder)
 
 
 // --------------------------------------------------------------------
-syd::Image::vector syd::GateReadOutputImages(std::string folder, syd::Injection::pointer injection)
+syd::Image::vector syd::GateInsertOutputImages(std::string folder,
+                                               syd::Image::pointer source)
 {
-  DDF();
   syd::Image::vector images;
 
   // Retrieve simu_name from folder must be "result.XYZ"
-  // syd::ConvertToAbsolutePath(folder);
+  auto simu_name = syd::GateGetSimulationNameFromFolder(folder);
+  if (simu_name == "") return images; // bug ?
 
-  // DD(folder);
-  auto simu_name = GateGetSimulationNameFromFolder(folder);
-  DD(simu_name);
+  // Clean potential already existing images
+  auto db = source->GetDatabase();
+  auto tag = syd::FindOrCreateTag(db, simu_name);
+  auto previous_images = syd::FindImages(source->injection);
+  previous_images = syd::GetRecordsThatContainTag<syd::Image>(previous_images, tag);
+  db->Delete(previous_images);
 
   // Find all files ".mhd" in output folder
-
-  // For each -> determine type (edep dose etc), insert + tag
-
-  /*
-  // Loop on mhd files and txt (no folder recursive yet)
-  fs::path folder(folder_name);
-  if (!fs::exists(folder)) {
-  LOG(FATAL) << "Folder '" << folder << "' does not exist.";
-  }
-  if (!fs::is_directory(folder)) {
-  LOG(FATAL) << "The file '" << folder << "' is not a directory.";
-  }
-
   std::vector<fs::path> files;
   std::copy(fs::directory_iterator(folder), fs::directory_iterator(), std::back_inserter(files));
+  std::vector<fs::path> mhd_files;
+  for(auto & file:files)
+    if (file.extension() == ".mhd") mhd_files.push_back(file);
 
-  syd::Image::pointer tia;
-  std::map<std::string, syd::Image::pointer> map_images;
-  double N = 0; // number of primary
-  for(auto & file:files) {
-  // Insert image
-  if (file.extension() == ".mhd") {
-  std::string patient_name;
-  std::string rad_name;
-  std::string type="";
-
-  // Parse the filename {patient}-{radionuclide}-Dose etc
-  auto f(file);
-  f.replace_extension();
-  std::string s = f.filename().string(); // (needed in tokens, cannot use .string directly)
-  boost::char_separator<char> sep("-");
-  boost::tokenizer< boost::char_separator<char> > tokens(s, sep);
-  std::vector<std::string> words;
-  for(auto t:tokens) words.push_back(t);
-  if (words.size() >= 4) {
-  patient_name = words[0];
-  rad_name = words[1]+"-"+words[2];
-  if (words[3] == "Edep") type = "edep";
-  if (words[3] == "Dose") type = "dose";
-  if (words.size()>4) {
-  if (words[4] == "Uncertainty") type = type+"_uncertainty";
-  if (words[4] == "Squared") type = type+"_squared";
-  }
+  // For each -> determine type (edep dose etc)
+  for(auto & filename:mhd_files) {
+    auto image = syd::GateInsertImage(fs::absolute(filename).string(), source);
+    if (image != nullptr) images.push_back(image);
   }
 
-  if (type != "") {
-  // Find image to copy info (dicom etc)
-  syd::Image::vector inputs = db->FindImages(patient_name);
-  std::vector<std::string> tag_names = {rad_name, study_name, "tia"};
-  inputs = syd::KeepRecordIfContainsAllTags<syd::Image>(inputs, tag_names);
-  if (inputs.size() < 1) {
-  LOG(FATAL) << "Cannot find initial image to copy";
-  }
-  if (inputs.size() > 1) {
-  LOG(FATAL) << inputs.size() << " images found. Try to select the one by adding tags selection.";
-  }
-  tia = inputs[0];
+  // Update tag
+  for(auto & image:images)
+    syd::AddTag(image->tags, tag);
+  db->Update(images);
 
-  // Check if such an image already exist
-  tag_names = {rad_name, study_name, type};
-  inputs = db->FindImages(patient_name);
-  inputs = syd::KeepRecordIfContainsAllTags<syd::Image>(inputs, tag_names);
-  if (inputs.size() != 0) {
-  LOG(WARNING) << "Image " << type << " already exist for this patient/rad: " << inputs[0] << " (skip)";
-  continue;
-  }
+  /*
 
-  // Create image
-  syd::ImageBuilder builder(db);
-  syd::Image::pointer output = builder.NewMHDImageLike(tia);
-  builder.CopyImageFromFile(output, file.string());
-
-  // Set tags
-  output->tags.clear(); // remove copied tags
-  syd::Tag::vector tags;
-  db->FindTags(tags, tag_names);
-  syd::AddTag(output->tags, tags); // set default tags
-  db->UpdateTagsFromCommandLine(output->tags, args_info); // user defined tags
-
-  // Unity ? edep -> MeV ; dose -> Gy to change in "cGy/kBq.h/IA[MBq]"
-  // uncer ? %
-  // squared ? idem edep/dose
-  syd::PixelValueUnit::pointer u;
-  if (type == "dose") u = db->FindPixelUnit("Gy");
-  if (type == "edep") u = db->FindPixelUnit("MeV");
-  if (type == "dose_uncertainty" or type == "edep_uncertainty") u = db->FindPixelUnit("%");
-  if (type == "dose_squared") u = db->FindPixelUnit("Gy");
-  if (type == "edep_squared") u = db->FindPixelUnit("MeV");
-  output->pixel_unit = u;
-
-  // Insert in the db
-  if (!args_info.dry_run_flag) builder.InsertAndRename(output);
-  LOG(1) << "File: " << file;
-  LOG(1) << "      "  << output;
-  map_images[type] = output;
-  }
-  }
-  if (file.extension() == ".txt") {
-  std::ifstream f(file.string());
-  std::string line;
-  bool found = false;
-  while (std::getline(f, line)) {
-  std::istringstream iss(line);
-  std::string s;
-  iss >> s; // first #
-  iss >> s; // second word
-  if (s == "NumberOfEvents") {
-  iss >> s; // read '='
-  iss >> N; // read value
-  found = true;
-  LOG(1) << "Found nb of particules: " << N << " in " << file;
-  continue;
-  }
-  }
-  if (!found) { LOG(WARNING) << "Ignoring file " << file; }
-  }
-  }
-
-  // Scale dose if needed
   if (N != 0) {
   syd::RoiStatisticBuilder rsbuilder(db);
   syd::RoiStatistic::pointer stat;
@@ -312,3 +221,67 @@ syd::Image::vector syd::GateReadOutputImages(std::string folder, syd::Injection:
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+std::string syd::GateGetFileType(std::string filename)
+{
+  // Parse the filename {something}-{Dose|Edep}-{Squared|Uncertainty|} etc
+  fs::path f(filename);
+  f.replace_extension();
+  std::string s = f.filename().string(); // (needed in tokens, cannot use .string directly)
+  boost::char_separator<char> sep("-");
+  boost::tokenizer< boost::char_separator<char> > tokens(s, sep);
+  std::vector<std::string> words;
+  for(auto t:tokens) words.push_back(t);
+  bool uncertainty_flag = false;
+  bool squared_flag = false;
+  if (words.back() == "Uncertainty") uncertainty_flag = true;
+  if (words.back() == "Squared") squared_flag = true;
+  int i = words.size()-1;
+  if (uncertainty_flag or squared_flag) --i;
+  std::string type  ="ignored";
+  if (words[i] == "Edep") type = "edep";
+  else {
+    if (words[i] == "Dose") type = "dose";
+    else {
+      LOG(WARNING) << "Ignored Gate output: " << s;
+      return type;
+    }
+  }
+  if (uncertainty_flag) type = type+"_uncertainty";
+  if (squared_flag)  type = type+"_squared";
+  return type;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer syd::GateInsertImage(std::string filename,
+                                         syd::Image::pointer source)
+{
+  // Check
+  if (source->injection == nullptr) return nullptr;
+
+  // Parse the filename {patient}-{radionuclide}-Dose etc
+  auto type = syd::GateGetFileType(filename);
+  if (type == "ignored") return nullptr;
+
+  // Create an image
+  auto db = source->GetDatabase<syd::StandardDatabase>();
+  auto image = syd::InsertImageFromFile(filename, source->patient, type);
+  image->injection = source->injection;
+  image->modality = type;
+  if (type.find("edep") != std::string::npos)
+    image->pixel_unit = syd::FindOrCreatePixelUnit(db, "MeV");
+  if (type.find("dose") != std::string::npos)
+    image->pixel_unit = syd::FindOrCreatePixelUnit(db, "Gy");
+  if (type.find("uncertainty") != std::string::npos)
+    image->pixel_unit = syd::FindOrCreatePixelUnit(db, "%");
+  image->frame_of_reference_uid = source->frame_of_reference_uid;
+  image->acquisition_date = source->acquisition_date;
+  image->dicoms = source->dicoms;
+  db->Update(image);
+
+  return image;
+}
+// --------------------------------------------------------------------
