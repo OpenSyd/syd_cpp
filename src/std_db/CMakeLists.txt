@@ -397,6 +397,8 @@ target_link_libraries(syd_gate ${SYD_STD_DB_LIBRARY})
 wrap_ggo(sydInsertGateOutput_GGO_C
   sydInsertGateOutput.ggo
   ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo)
 add_executable(sydInsertGateOutput sydInsertGateOutput.cxx ${sydInsertGateOutput_GGO_C})
 target_link_libraries(sydInsertGateOutput ${SYD_STD_DB_LIBRARY})
