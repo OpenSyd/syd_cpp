@@ -124,11 +124,8 @@ int main(int argc, char* argv[])
 
     // Need to resample/crop
     if (args_info.resample_like_given) {
-      DD("resample & crop");
       auto id = args_info.resample_like_arg;
-      DD(id);
       auto like = db->QueryOne<syd::Image>(id);
-      DD(like);
       auto interpolation = args_info.interpolation_arg;
       auto defaultValue = args_info.default_value_arg;
       syd::ResampleAndCropImageLike(image, like, interpolation, defaultValue);
@@ -157,7 +154,12 @@ int main(int argc, char* argv[])
     syd::SetTagsFromCommandLine(image->tags, db, args_info);
     syd::SetCommentsFromCommandLine(image->comments, db, args_info);
     db->Update(image);
-    LOG(1) << "Image was updated: " << image;
+    if (args_info.copy_flag) {
+      LOG(1) << "A new image was created: " << image;
+    }
+    else {
+      LOG(1) << "Image was updated: " << image;
+    }
   }
 
   // This is the end, my friend.
