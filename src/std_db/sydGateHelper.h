@@ -81,6 +81,14 @@ namespace syd {
   /// From a stat file, determine the NumberOfEvents
   double GateGetNumberOfEvents(syd::File::pointer stat_file);
 
+  /// Check if the simulation seems to be terminated
+  bool GateIsSimulationTerminated(std::string result_folder, int nb_threads);
+
+  /// Scale images to get results in Gy/Injected activity
+  void GateScaleImageAccordingToStatFile(syd::Image::vector images,
+                                         syd::Image::pointer source,
+                                         syd::File::pointer stat_file);
+
 } // namespace syd
 
 // --------------------------------------------------------------------

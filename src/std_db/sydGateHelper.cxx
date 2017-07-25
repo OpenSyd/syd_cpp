@@ -351,3 +351,58 @@ double syd::GateGetNumberOfEvents(syd::File::pointer stat_file)
   return n;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::GateIsSimulationTerminated(std::string result_folder, int nb_threads)
+{
+  std::string f = result_folder+PATH_SEPARATOR+"output.local_";
+  bool found = true;
+  for(auto i=0; i<nb_threads; ++i) {
+    auto ff = f+syd::ToString(i+1,0); // (+1 because start at 1)
+    if (!fs::exists(ff)) found = false;
+  }
+  return found;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::GateScaleImageAccordingToStatFile(syd::Image::vector images,
+                                            syd::Image::pointer source,
+                                            syd::File::pointer stat_file)
+{
+  DDF();
+  double nb_events = syd::GateGetNumberOfEvents(stat_file);
+  if (nb_events == 0) return;
+
+  // Scale the image to get it in cGy by injection MBq
+  double s = syd::GateComputeDoseScalingFactor(source, nb_events);
+  double s_dose = s * 100.0;  // Gy  --> cGy
+  double s_edep = s * 1000.0; // MeV --> keV
+  auto db = source->GetDatabase<syd::StandardDatabase>();
+  auto unit_dose = syd::FindOrCreatePixelUnit(db, "cGy/IA[MBq]");
+  auto unit_edep = syd::FindOrCreatePixelUnit(db, "keV/IA[MBq]");
+  LOG(1) << "Found " << nb_events << " events. Scaling factor is " << s;
+
+  // Scale images
+  for(auto & image:images) {
+    if (image->modality == "dose") {
+      syd::ScaleImage(image, s);
+      image->pixel_unit = unit_dose;
+    }
+    if (image->modality == "dose_squared") {
+      syd::ScaleImage(image, s*s);
+      image->pixel_unit = unit_dose;
+    }
+    if (image->modality == "edep") {
+      syd::ScaleImage(image, s);
+      image->pixel_unit = unit_edep;
+    }
+    if (image->modality == "edep_squared") {
+      syd::ScaleImage(image, s*s);
+      image->pixel_unit = unit_edep;
+    }
+  }
+}
+// --------------------------------------------------------------------
