@@ -40,12 +40,12 @@ syd::AddAlias(std::vector<GateAlias::pointer> & aliases, std::string alias_name)
 
 
 // --------------------------------------------------------------------
-std::string syd::GateCreateMacroFile(std::string mac_filename,
-                                     syd::Image::pointer ct,
-                                     syd::Image::pointer source,
-                                     syd::Radionuclide::pointer rad,
-                                     int N,
-                                     std::string output)
+void syd::GateCreateMacroFile(std::string mac_filename,
+                              syd::Image::pointer ct,
+                              syd::Image::pointer source,
+                              syd::Radionuclide::pointer rad,
+                              int N,
+                              std::string output)
 {
   // Check ?
   // same patient ct / source
@@ -60,12 +60,6 @@ std::string syd::GateCreateMacroFile(std::string mac_filename,
   auto az = AddAlias(aliases, "Z");
   auto aa = AddAlias(aliases, "A");
   auto an = AddAlias(aliases, "N");
-
-  // Get output filename
-  if (output == "") {
-    auto db = ct->GetDatabase();
-    output = db->GetUniqueTempFilename(".mac");
-  }
 
   // Set the alias value
   act->value = ct->GetAbsolutePath();
@@ -97,9 +91,6 @@ std::string syd::GateCreateMacroFile(std::string mac_filename,
   }
   of << oss.str() << std::endl;
   LOG(1) << "File " << output << " written.";
-
-  // end
-  return output;
 }
 // --------------------------------------------------------------------
 

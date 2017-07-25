@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
   syd::IdType source_id = atoi(args_info.inputs[2]);
   std::string rad_name = args_info.inputs[3];
   int N = args_info.N_arg;
-  std::string output = args_info.output_arg;
+  std::string output_mac = args_info.output_arg;
 
   // Get objects
   auto ct = db->QueryOne<syd::Image>(ct_id);
@@ -52,16 +52,17 @@ int main(int argc, char* argv[])
   auto rad = syd::FindRadionuclide(db, rad_name);
 
   // Create macro
-  auto main_mac = syd::GateCreateMacroFile(mac_filename, ct, source, rad, N, output);
-  DD(main_mac);
+  // Get output filename
+  if (output_mac == "") output_mac = db->GetUniqueTempFilename(".mac");
+  syd::GateCreateMacroFile(mac_filename, ct, source, rad, N, output_mac);
 
   // Run simulation
   if (args_info.run_given) {
     auto cwd = boost::filesystem::current_path();
     std::string output;
     std::string error_output;
-    auto simu_name = syd::GateRun(cwd.string(), main_mac, args_info.run_arg, error_output, output);
-    LOG(2) << "Simulation output " << output;
+    auto simu_name = syd::GateRun(cwd.string(), output_mac, args_info.run_arg, error_output, output);
+    LOG(2) << "Simulation output " << output_mac;
     LOG(2) << "Simulation err output " << error_output;
     if (simu_name != "") {
       LOG(1) << "Simulation started: " << simu_name;
