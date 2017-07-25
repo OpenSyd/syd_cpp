@@ -120,6 +120,12 @@ namespace syd {
   void CropImageLike(syd::Image::pointer image,
                      const syd::Image::pointer like);
 
+  /// Resample and crop an image like another one
+  void ResampleAndCropImageLike(syd::Image::pointer image,
+                                syd::Image::pointer like,
+                                int interpolationType,
+                                double defaultValue);
+
   /// Compute the activity in MBq by detected counts
   double ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image);
 
@@ -131,7 +137,7 @@ namespace syd {
   void SubstituteRadionuclide(syd::Image::pointer image,
                               syd::Injection::pointer injection);
 
-  /// Get the times between injection and acquisition for a set of images. 
+  /// Get the times between injection and acquisition for a set of images.
   std::vector<double> GetTimesFromInjection(const syd::Image::vector images);
 
   /// Fill holes in an image for the pixel in the background

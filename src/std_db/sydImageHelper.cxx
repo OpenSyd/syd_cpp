@@ -28,6 +28,7 @@
 #include "sydManualRegistration.h"
 #include "sydFlip.h"
 #include "sydTagHelper.h"
+#include "sydImageCrop.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -424,7 +425,32 @@ void syd::CropImageLike(syd::Image::pointer image,
     // save
     */
 }
+// --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+void syd::ResampleAndCropImageLike(syd::Image::pointer image,
+                                   syd::Image::pointer like,
+                                   int interpolationType,
+                                   double defaultValue)
+{
+  // Read input image
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+  auto itk_like = syd::ReadImage<ImageType>(like->GetAbsolutePath());
+
+  // Create fake 'like' image
+  itk_image = syd::ResampleAndCropImageLike<ImageType>(itk_image, itk_like, interpolationType, defaultValue);
+
+  // Replace image
+  syd::WriteImage<ImageType>(itk_image, image->GetAbsolutePath());
+
+  // Update image information (size etc)
+  syd::SetImageInfoFromFile(image);
+  auto db = image->GetDatabase();
+  db->Update(image);
+}
 // --------------------------------------------------------------------
 
 

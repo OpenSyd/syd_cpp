@@ -114,13 +114,24 @@ int main(int argc, char* argv[])
     }
 
     // Need to scale ?
-    double s = 1.0;
     if (args_info.scale_given) {
-      s = args_info.scale_arg;
+      double s = args_info.scale_arg;
       if (s != 1.0) {
         syd::ScaleImage(image, s);
         LOG(1) << "Image was scaled by " << s << ": " << image;
       }
+    }
+
+    // Need to resample/crop
+    if (args_info.resample_like_given) {
+      DD("resample & crop");
+      auto id = args_info.resample_like_arg;
+      DD(id);
+      auto like = db->QueryOne<syd::Image>(id);
+      DD(like);
+      auto interpolation = args_info.interpolation_arg;
+      auto defaultValue = args_info.default_value_arg;
+      syd::ResampleAndCropImageLike(image, like, interpolation, defaultValue);
     }
 
     // Need to convert to another pixel_type ?
