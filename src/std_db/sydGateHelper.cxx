@@ -157,7 +157,7 @@ syd::Image::vector syd::GateInsertOutputImages(std::string folder,
 
   // Clean potential already existing images
   auto db = source->GetDatabase();
-  auto tag = syd::FindOrCreateTag(db, simu_name);
+  auto tag = syd::FindOrCreateTag(db, "gate_"+simu_name);
   auto previous_images = syd::FindImages(source->injection);
   previous_images = syd::GetRecordsThatContainTag<syd::Image>(previous_images, tag);
   db->Delete(previous_images);
@@ -326,8 +326,8 @@ syd::File::pointer syd::GateInsertStatFile(std::string folder, syd::Patient::poi
 
   // set the tags: simu_name + tag stat_file
   syd::Tag::vector tags;
-  tags.push_back(syd::FindOrCreateTag(db, simu_name));
-  tags.push_back(syd::FindOrCreateTag(db, "simulation_stat_file"));
+  syd::AddTag(tags, syd::FindOrCreateTag(db, "gate_"+simu_name));
+  syd::AddTag(tags, syd::FindOrCreateTag(db, "gate_stat_file"));
   syd::AddTag(file->tags, tags);
   db->Insert(file);
 
@@ -372,7 +372,6 @@ void syd::GateScaleImageAccordingToStatFile(syd::Image::vector images,
                                             syd::Image::pointer source,
                                             syd::File::pointer stat_file)
 {
-  DDF();
   double nb_events = syd::GateGetNumberOfEvents(stat_file);
   if (nb_events == 0) return;
 
