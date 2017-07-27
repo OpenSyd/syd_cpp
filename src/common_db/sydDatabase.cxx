@@ -38,6 +38,15 @@ void trace_callback( void* udp, const char* sql )
 
 
 // --------------------------------------------------------------------
+int busy_handler_callback(void * udp, int retry)
+{
+  syd::Database * d = static_cast<syd::Database*>(udp);
+  return d->BusyHandlerCallback(retry);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::Database::Database()
 {
   //  description_ = NULL;
@@ -104,6 +113,11 @@ void syd::Database::OpenFromFile(std::string filename)
   sqlite3* handle (c->handle ());
   sqlite3_trace (handle, trace_callback, this);
 
+  // timeout
+  //  int timeout_ms =
+  //auto ret = sqlite3_busy_timeout(handle, timeout_ms);
+  sqlite3_busy_handler(handle, busy_handler_callback, this);
+
   // Check version etc
   odb::schema_version file_version (odb_db_->schema_version(GetDatabaseSchema()));
   odb::schema_version current_version
@@ -153,6 +167,25 @@ void syd::Database::TraceCallback(const char* sql)
   if (s == "BEGIN") return;
   LOG_SQL << s;
   current_sql_query_=s;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+int syd::Database::BusyHandlerCallback(int retry)
+{
+  static const int max_retry = 10;
+  static const int sleep_ms = 2000;
+  if (retry < max_retry) {
+    LOG(WARNING) << "Database is busy, I will retry in "
+                 << sleep_ms << " ms (" << retry << "/" << max_retry << ").";
+		sqlite3_sleep(sleep_ms);
+    return 1;
+  }
+  else {
+    LOG(WARNING) << "Error while accessing the db (concurrent access ?).";
+    return 0;
+  }
 }
 // --------------------------------------------------------------------
 

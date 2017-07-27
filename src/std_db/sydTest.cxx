@@ -41,29 +41,36 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
   // -----------------------------------------------------------------
 
-  std::string filename = args_info.inputs[0];
-  DD(filename);
-
-  gdcm::Reader RTreader;
-  RTreader.SetFileName(filename.c_str());
-  if (!RTreader.Read()) {
-    std::cout << "Problem reading file: " << filename << std::endl;
+  while (1) {
+    DD("test");
+    syd::File::vector files;
+    db->Query<syd::File>(files);
+    DD(files.size());
   }
-  const gdcm::DataSet& ds = RTreader.GetFile().GetDataSet();
-  gdcm::MediaStorage ms;
-  ms.SetFromFile(RTreader.GetFile());
-  // (3006,0020) SQ (Sequence with explicit length #=4)      # 370, 1 StructureSetROISequence  
-  gdcm::Tag tssroisq(0x3006,0x0020);
-  if( !ds.FindDataElement( tssroisq ) )
-    {
-      std::cout << "Problem locating 0x3006,0x0020 - Is this a valid RT Struct file?" << std::endl;
-    }
-  gdcm::Tag troicsq(0x3006,0x0039);
-  if( !ds.FindDataElement( troicsq ) )
-    {
-      std::cout << "Problem locating 0x3006,0x0039 - Is this a valid RT Struct file?" << std::endl;
-    }
-  DD("ok");
+
+  // std::string filename = args_info.inputs[0];
+  // DD(filename);
+
+  // gdcm::Reader RTreader;
+  // RTreader.SetFileName(filename.c_str());
+  // if (!RTreader.Read()) {
+  //   std::cout << "Problem reading file: " << filename << std::endl;
+  // }
+  // const gdcm::DataSet& ds = RTreader.GetFile().GetDataSet();
+  // gdcm::MediaStorage ms;
+  // ms.SetFromFile(RTreader.GetFile());
+  // // (3006,0020) SQ (Sequence with explicit length #=4)      # 370, 1 StructureSetROISequence  
+  // gdcm::Tag tssroisq(0x3006,0x0020);
+  // if( !ds.FindDataElement( tssroisq ) )
+  //   {
+  //     std::cout << "Problem locating 0x3006,0x0020 - Is this a valid RT Struct file?" << std::endl;
+  //   }
+  // gdcm::Tag troicsq(0x3006,0x0039);
+  // if( !ds.FindDataElement( troicsq ) )
+  //   {
+  //     std::cout << "Problem locating 0x3006,0x0039 - Is this a valid RT Struct file?" << std::endl;
+  //   }
+  // DD("ok");
 
 
 

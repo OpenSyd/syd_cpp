@@ -238,6 +238,11 @@ namespace syd {
 
 
     // ------------------------------------------------------------------------
+    /// Call back when busy
+    int BusyHandlerCallback(int retry);
+
+
+    // ------------------------------------------------------------------------
     /// Return a string with the list of the table names
     std::string GetListOfTableNames() const;
 
