@@ -26,7 +26,6 @@
 #include "sydImageFillHoles.h"
 #include "sydImage_GaussianFilter.h"
 #include "sydManualRegistration.h"
-#include "sydFlip.h"
 #include "sydTagHelper.h"
 #include "sydImageCrop.h"
 
