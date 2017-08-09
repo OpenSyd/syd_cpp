@@ -107,8 +107,8 @@ namespace syd {
                                                double x, double y, double z);
 
   // Compute the flip of an image.
-  syd::Image::pointer InsertFlip(const syd::Image::pointer inputImage,
-                                 int axis, bool flipOrigin);
+  void InsertFlip(const syd::Image::pointer inputImage,
+                                 std::vector<char> axis, bool flipOrigin);
 
   // Compute the attenuation correction of an projection image.
   syd::Image::pointer InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,

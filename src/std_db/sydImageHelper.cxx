@@ -370,18 +370,27 @@ syd::InsertManualRegistration(const syd::Image::pointer inputImage,
 
 
 // --------------------------------------------------------------------
-syd::Image::pointer
+void
 syd::InsertFlip(const syd::Image::pointer inputImage,
-                int axis, bool flipOrigin)
+                std::vector<char> axis, bool flipOrigin)
 {
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType3D;
-  auto itk_inputImage = syd::ReadImage<ImageType3D>(inputImage->GetAbsolutePath());
-  auto imageFlipped = syd::Flip<ImageType3D>(itk_inputImage, axis, flipOrigin);
-
-  // Create the syd image
-  return syd::InsertImage<ImageType3D>(imageFlipped, inputImage->patient, inputImage->modality);
+  auto imageFlipped = InsertCopyImage(inputImage);
+  auto itk_inputImage = syd::ReadImage<ImageType3D>(imageFlipped->GetAbsolutePath());
+  syd::FlipImage<ImageType3D>(itk_inputImage, axis, flipOrigin);
+  auto pixel_type = inputImage->pixel_type;
+  syd::WriteImage<ImageType3D>(itk_inputImage, imageFlipped->GetAbsolutePath());
+  if (pixel_type != "float") {
+    // Later --> conversion
+    //syd::ConvertImagePixelType(image, args_info.pixel_type_arg);
+    LOG(WARNING) << "Pixel type was changed from " << pixel_type
+                 << " to float";
+  }
+  syd::SetImageInfoFromFile(imageFlipped);
+  auto db = imageFlipped->GetDatabase();
+  db->Update(imageFlipped); // for changed spacing , history
 }
 // --------------------------------------------------------------------
 

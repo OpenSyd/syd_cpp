@@ -56,29 +56,20 @@ int main(int argc, char* argv[])
     flipOrigin = true;
   
   image = inputImage;
+  std::vector<char> axisChar;
   for (auto iter=axis.begin(); iter != axis.end(); ++iter) {
-    int axisInt;
     if (*iter == 'x')
-      axisInt=0;
+      axisChar.push_back(0);
     else if  (*iter == 'y')
-      axisInt=1;
+      axisChar.push_back(1);
     else if (*iter == 'z')
-      axisInt=2;
+      axisChar.push_back(2);
     else {
       LOG(2) << "Wrong axis";
       return -1;
     }
-    image = syd::InsertFlip(image, axisInt, flipOrigin);
   }
-  
-
-  // Update image info
-  syd::SetImageInfoFromImage(image, inputImage);
-  syd::SetImageInfoFromFile(image);
-  syd::SetTagsFromCommandLine(image->tags, db, args_info);
-  syd::SetImageInfoFromCommandLine(image, args_info);
-  db->Update(image);
-  LOG(1) << "Inserting Image " << image;
+  syd::InsertFlip(image, axisChar, flipOrigin);
 
   // This is the end, my friend.
 }

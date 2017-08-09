@@ -31,6 +31,8 @@ namespace syd {
 
   template<class ImageType>
   typename ImageType::Pointer FlipImage(const ImageType * input, int axe, bool flipOrigin=false);
+  template<class ImageType>
+  void FlipImage(typename ImageType::Pointer & input, std::vector<char> axes, bool flipOrigin);
 
   template<class ImageType>
   bool FlipImageIfNegativeSpacing(typename ImageType::Pointer & image);
