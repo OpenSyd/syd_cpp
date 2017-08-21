@@ -367,6 +367,15 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   po = GetTagDoubleValueFromTagKey(dicomIO, "0011|103c", 0.0); // PixelOffset
   serie->dicom_pixel_offset = po;
 
+  // Real world value intercept/slope (for NM)
+  double slope = 1.0;
+  slope = GetTagDoubleValueFromTagKey(dicomIO, "0040|9225", 1.0); // Real world value slope
+  if (slope == 0.0) slope = 1.0;
+  serie->dicom_real_world_value_slope = slope;
+  double intercept = 0.0;
+  intercept = GetTagDoubleValueFromTagKey(dicomIO, "0040|9224", 0.0); // Real world value intercept
+  serie->dicom_real_world_value_intercept = intercept;
+
   // Window/level
   double wc = GetTagDoubleValueFromTagKey(dicomIO, "0028|1050", 0.0); // WindowCenter
   double ww = GetTagDoubleValueFromTagKey(dicomIO, "0028|1051", 0.0); // WindowWidth

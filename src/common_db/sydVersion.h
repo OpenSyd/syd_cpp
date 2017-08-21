@@ -26,10 +26,11 @@
 // the change is legitimate: 1) open and 2) increment the
 // version. 3) Once checked, close again.
 // It  means that we can migrate from base version to current version)
-#define SYD_VERSION      0129 // version 1.29 (current version)
+#define SYD_VERSION      0130 // version 1.30 (current version)
 #define SYD_BASE_VERSION 0101 // version 1.1 (base version)
 
 // Log:
+// 1.30 : add tag dicom real world value intercept/slope
 // 1.29 : add tag to File
 // 1.28 : add DicomStruct (and refactor DicomSerie)
 // 1.27 : patient with multiple dicom_patient_id

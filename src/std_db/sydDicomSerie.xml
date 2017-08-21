@@ -1,4 +1,11 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="304">
+    <alter-table name="syd::DicomSerie">
+      <add-column name="dicom_real_world_value_slope" type="REAL" null="true"/>
+      <add-column name="dicom_real_world_value_intercept" type="REAL" null="true"/>
+    </alter-table>
+  </changeset>
+
   <changeset version="297"/>
 
   <changeset version="296"/>

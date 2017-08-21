@@ -55,6 +55,8 @@ namespace syd {
       double dicom_pixel_offset;
       double dicom_window_center;
       double dicom_window_width;
+      double dicom_real_world_value_slope;
+      double dicom_real_world_value_intercept;
 
       /// Specific NM
       std::string dicom_radionuclide_name;
