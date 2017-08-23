@@ -24,6 +24,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydTimeIntegratedActivityImageBuilder.h"
 #include "sydImageHelper.h"
+#include "sydFitImagesHelper.h"
 #include "sydTagHelper.h"
 #include "sydCommentsHelper.h"
 
@@ -57,36 +58,24 @@ int main(int argc, char* argv[])
     return EXIT_SUCCESS;
   }
 
-  // get models names
-  std::vector<std::string> model_names;
-  for(auto i=0; i<args_info.model_given; i++)
-    model_names.push_back(args_info.model_arg[i]);
-  if (model_names.size() == 0)
-    model_names.push_back("f4"); // default model
-
   // Fit options
   syd::TimeIntegratedActivityFitOptions options;
-  options.SetRestrictedFlag(args_info.restricted_tac_flag);
-  options.SetR2MinThreshold(args_info.r2_min_arg);
-  options.SetMaxNumIterations(args_info.iterations_arg);
-  options.SetAkaikeCriterion(args_info.akaike_arg);
-  for(auto m:model_names) options.AddModel(m);
-  //  options.AddTimeValue(0,0);
-  // options.AddTimeValue(0,0);
+  syd::SetOptionsFromCommandLine(options, args_info);
 
   // Main builder
   syd::TimeIntegratedActivityImageBuilder builder;
   builder.SetInput(images);
+  builder.SetMaskName(args_info.mask_arg);
   builder.SetImageActivityThreshold(args_info.min_activity_arg);
   builder.SetOptions(options);
   builder.SetDebugOutputFlag(args_info.debug_images_flag);
 
   // Go !
   auto tia = builder.Run();
-  syd::SetCommentsFromCommandLine(tia->comments, db, args_info);
-  db->Insert(tia);
 
   // Results
+  syd::SetCommentsFromCommandLine(tia->comments, db, args_info);
+  db->Insert(tia);
   for(auto output:tia->outputs) {
     syd::SetImageInfoFromCommandLine(output, args_info);
     syd::SetTagsFromCommandLine(output->tags, db, args_info);

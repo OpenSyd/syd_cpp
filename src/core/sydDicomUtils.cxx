@@ -18,6 +18,7 @@
 
 // syd
 #include "sydDicomUtils.h"
+#include "sydCommon.h"
 
 // --------------------------------------------------------------------
 std::string syd::ConvertDicomDateToStringDate(std::string date, std::string time)
@@ -88,8 +89,56 @@ itk::GDCMImageIO::Pointer syd::ReadDicomHeader(std::string filename)
   try {
     dicomIO->ReadImageInformation();
   } catch (std::exception & e) {
-    EXCEPTION("Error cannot read '" << filename << "' (it is not a dicom file ?).");
+    EXCEPTION("Error cannot read '" << filename << "' (it is not a dicom file ?) "
+              << e.what() << ".");
   }
   return dicomIO;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::GetTagDoubleValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
+                                        const std::string & key,
+                                        const double & defaultValue)
+{
+  std::ostringstream oss;
+  oss << defaultValue;
+  std::string r = GetTagValueFromTagKey(dicomIO, key, oss.str());
+  if (r == "")
+   return defaultValue;
+  double rr = stod(r);
+  return rr;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+gdcm::Reader syd::ReadDicomStructHeader(std::string filename)
+{
+  gdcm::Reader reader;
+  reader.SetFileName(filename.c_str());
+  if (!reader.Read()) {
+    EXCEPTION("Error cannot read '" << filename
+              << "' (it is not a dicom struct file ?)");
+  }
+
+  const gdcm::DataSet & dataset = reader.GetFile().GetDataSet();
+  gdcm::MediaStorage ms;
+  ms.SetFromFile(reader.GetFile());
+  // (3006,0020) SQ (Sequence with explicit length #=4) # 370, 1 StructureSetROISequence
+  gdcm::Tag tssroisq(0x3006,0x0020);
+  if (!dataset.FindDataElement(tssroisq)) {
+    EXCEPTION("Error cannot read tag 0x3006,0x0020");
+  }
+
+  gdcm::Tag troicsq(0x3006,0x0039);
+  if (!dataset.FindDataElement(troicsq)) {
+    EXCEPTION("Error cannot read tag 0x3006,0x0039");
+  }
+
+  return reader;
+}
+// --------------------------------------------------------------------
+
+

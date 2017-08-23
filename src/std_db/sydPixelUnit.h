@@ -21,7 +21,6 @@
 
 // syd
 #include "sydRecord.h"
-#include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -31,7 +30,7 @@ namespace syd {
   class PixelUnit : public syd::Record {
   public:
 
-    virtual ~PixelUnit();
+    DEFINE_TABLE_CLASS(PixelUnit);
 
 #pragma db options("UNIQUE")
     /// Label of the tag (name)
@@ -40,16 +39,10 @@ namespace syd {
     /// Description associated with the tag
     std::string description;
 
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(PixelUnit, syd::PixelUnit);
-    // ------------------------------------------------------------------------
-
     /// Write the element as a string
     virtual std::string ToString() const;
 
     void Set(const std::vector<std::string> & arg);
-
-    virtual void DumpInTable(syd::PrintTable & table) const;
 
   protected:
     PixelUnit();

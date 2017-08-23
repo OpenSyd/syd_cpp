@@ -35,8 +35,8 @@ namespace syd {
   class TableBase {
   public:
 
-    typedef syd::Record::pointer record_pointer;
-    typedef syd::Record::vector record_vector;
+    typedef std::shared_ptr<syd::Record> record_pointer;
+    typedef std::vector<record_pointer> record_vector;
 
     virtual record_pointer New() = 0;
 
@@ -68,9 +68,6 @@ namespace syd {
 
     /// Return the OO name of the inherit table
     virtual std::vector<std::string> & GetInheritSQLTableNames() const = 0;
-
-    /// Return the table description
-    //syd::TableDescription & GetTableDescription() { return table_description_; }
 
   protected:
     std::string inherit_table_name_;

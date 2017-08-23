@@ -25,46 +25,36 @@
 //--------------------------------------------------------------------
 template<class ImageType>
 typename ImageType::Pointer
-syd::ManualRegistration(const ImageType * inputImage, double x, double y, double z, bool translateOrigin)
+syd::ManualRegistration(const ImageType * inputImage, double x, double y, double z)
 {
   typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;
   typename ResampleFilterType::Pointer resampleFilter = ResampleFilterType::New();
   resampleFilter->SetSize(inputImage->GetLargestPossibleRegion().GetSize());
   resampleFilter->SetInput(inputImage);
   resampleFilter->SetOutputSpacing(inputImage->GetSpacing());
+  resampleFilter->SetOutputDirection(inputImage->GetDirection());
 
-  if(translateOrigin) //Just modify the origin of the image
-  {
-    // Instantiate the transform and specify it should be the id transform.
-    typedef itk::IdentityTransform<double, 3> TransformType;
-    TransformType::Pointer transform = TransformType::New();
-    transform->SetIdentity();
+  // Instantiate the transform
+  typedef itk::TranslationTransform<double,3> TranslationTransformType;
+  TranslationTransformType::Pointer transform = TranslationTransformType::New();
+  transform->SetIdentity();
 
-    typename ImageType::PointType origin = inputImage->GetOrigin();
-    origin[0] += x;
-    origin[1] += y;
-    origin[2] += z;
+  TranslationTransformType::OutputVectorType translation;
+  translation[0] = -x;
+  translation[1] = -y;
+  translation[2] = -z;
+  transform->Translate(translation);
 
-    resampleFilter->SetTransform(transform.GetPointer());
-    resampleFilter->SetOutputOrigin(origin);
-  }
-  else //Translate the image while the origin stay unchanged
-  {
-    typedef itk::TranslationTransform<double,3> TranslationTransformType;
-    TranslationTransformType::Pointer transform =
-      TranslationTransformType::New();
-    TranslationTransformType::OutputVectorType translation;
-    translation[0] = x;
-    translation[1] = y;
-    translation[2] = z;
-    transform->Translate(translation);
+  //Update the origin
+  typename ImageType::PointType origin = inputImage->GetOrigin();
+  origin[0] += x;
+  origin[1] += y;
+  origin[2] += z;
 
-    resampleFilter->SetTransform(transform.GetPointer());
-    resampleFilter->SetOutputOrigin(inputImage->GetOrigin());
-  }
+  resampleFilter->SetTransform(transform.GetPointer());
+  resampleFilter->SetOutputOrigin(origin);
 
   resampleFilter->Update();
   return resampleFilter->GetOutput();
 }
 //--------------------------------------------------------------------
-

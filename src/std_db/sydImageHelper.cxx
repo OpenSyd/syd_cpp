@@ -26,8 +26,12 @@
 #include "sydProjectionImage.h"
 #include "sydAttenuationImage.h"
 #include "sydRegisterPlanarSPECT.h"
-#include "sydManualRegistration.h"
 #include "sydAttenuationCorrectedProjectionImage.h"
+#include "sydImageFillHoles.h"
+#include "sydImage_GaussianFilter.h"
+#include "sydManualRegistration.h"
+#include "sydTagHelper.h"
+#include "sydImageCrop.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -36,9 +40,8 @@ syd::InsertImageFromFile(std::string filename,
                          std::string modality)
 {
   // New image
-  auto db = patient->GetDatabase<syd::StandardDatabase>();
-  syd::Image::pointer image;
-  db->New(image);
+  auto db = patient->GetDatabase();
+  auto image = db->New<syd::Image>();
 
   // default information
   image->patient = patient;
@@ -72,9 +75,8 @@ syd::File::vector syd::InsertFilesFromMhd(syd::Database * db,
   syd::Replace(raw_filename, ".mhd", ".raw");
 
   // Create files
-  syd::File::pointer mhd_file, raw_file;
-  db->New(mhd_file);
-  db->New(raw_file);
+  auto mhd_file = db->New<syd::File>();
+  auto raw_file = db->New<syd::File>();
   mhd_file->path = to_relative_path;
   raw_file->path = to_relative_path;
   mhd_file->filename = to_filename;
@@ -128,7 +130,7 @@ syd::Image::pointer syd::InsertImageFromDicomSerie(syd::DicomSerie::pointer dico
     dicom_filenames.push_back(f->GetAbsolutePath());
 
   // Create a temporary filename
-  auto db = dicom->GetDatabase<syd::StandardDatabase>();
+  auto db = dicom->GetDatabase();
   std::string temp_filename = db->GetUniqueTempFilename();
 
   // Convert the dicom to a mhd
@@ -159,6 +161,7 @@ void syd::SetImageInfoFromDicomSerie(syd::Image::pointer image,
   image->acquisition_date = dicom->dicom_acquisition_date;
   image->frame_of_reference_uid = dicom->dicom_frame_of_reference_uid;
   image->AddDicomSerie(dicom);
+  image->injection = dicom->injection;
 
   // try to guess pixel_unit ?
   auto db = image->GetDatabase<syd::StandardDatabase>();
@@ -192,7 +195,7 @@ void syd::SetPixelUnit(syd::Image::pointer image, std::string pixel_unit)
 // --------------------------------------------------------------------
 void syd::SetInjection(syd::Image::pointer image, std::string injection)
 {
-  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto db = image->GetDatabase();
   auto i = syd::FindInjection(image->patient, injection);
   image->injection = i;
 }
@@ -201,7 +204,7 @@ void syd::SetInjection(syd::Image::pointer image, std::string injection)
 // --------------------------------------------------------------------
 void syd::AddDicomSerie(syd::Image::pointer image, syd::IdType id)
 {
-  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto db = image->GetDatabase();
   syd::DicomSerie::pointer d;
   db->QueryOne(d, id);
   image->AddDicomSerie(d);
@@ -219,7 +222,7 @@ void syd::ScaleImage(syd::Image::pointer image, double s)
   syd::ScaleImage<ImageType>(itk_image, s);
   syd::WriteImage<ImageType>(itk_image, image->GetAbsolutePath());
   image->pixel_type = "float";
-  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto db = image->GetDatabase();
   db->Update(image); // to change the history (on the pixel_type)
 }
 // --------------------------------------------------------------------
@@ -256,7 +259,7 @@ syd::Image::pointer syd::InsertStitchDicomImage(syd::DicomSerie::pointer a,
                                                 double skip_slices)
 {
   // Read the dicom images (force to float)
-  auto db = a->GetDatabase<syd::StandardDatabase>();
+  auto db = a->GetDatabase();
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
   auto image_a = syd::ReadDicomSerieImage<ImageType>(a);
@@ -316,6 +319,8 @@ void syd::SetImageInfoFromImage(syd::Image::pointer image,
   image->modality = like->modality;
   image->tags.clear();
   for(auto t:like->tags) image->tags.push_back(t);
+  image->comments.clear();
+  for(auto c:like->comments) image->comments.push_back(c);
   // (The history is not copied)
 }
 // --------------------------------------------------------------------
@@ -409,21 +414,6 @@ syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
 }
 // --------------------------------------------------------------------
 
-// --------------------------------------------------------------------
-syd::Image::pointer
-syd::InsertManualRegistration(const syd::Image::pointer inputImage,
-                              double x, double y, double z, bool translateOrigin)
-{
-  // Force to float
-  typedef float PixelType;
-  typedef itk::Image<PixelType, 3> ImageType3D;
-  auto itk_inputImage = syd::ReadImage<ImageType3D>(inputImage->GetAbsolutePath());
-  auto imageRegister = syd::ManualRegistration<ImageType3D>(itk_inputImage, x, y, z, translateOrigin);
-
-  // Create the syd image
-  return syd::InsertImage<ImageType3D>(imageRegister, inputImage->patient, inputImage->modality);
-}
-// --------------------------------------------------------------------
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -443,6 +433,49 @@ syd::InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_G
 
   // Create the syd image
   return syd::InsertImage<ImageType2D>(attenuationCorrected, input_GM->patient, input_GM->modality);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertManualRegistration(const syd::Image::pointer inputImage,
+                              double x, double y, double z)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  auto itk_inputImage = syd::ReadImage<ImageType3D>(inputImage->GetAbsolutePath());
+  auto imageRegister = syd::ManualRegistration<ImageType3D>(itk_inputImage, x, y, z);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType3D>(imageRegister, inputImage->patient, inputImage->modality);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void
+syd::InsertFlip(const syd::Image::pointer inputImage,
+                std::vector<char> axis, bool flipOrigin)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  auto imageFlipped = InsertCopyImage(inputImage);
+  auto itk_inputImage = syd::ReadImage<ImageType3D>(imageFlipped->GetAbsolutePath());
+  syd::FlipImage<ImageType3D>(itk_inputImage, axis, flipOrigin);
+  auto pixel_type = inputImage->pixel_type;
+  syd::WriteImage<ImageType3D>(itk_inputImage, imageFlipped->GetAbsolutePath());
+  if (pixel_type != "float") {
+    // Later --> conversion
+    //syd::ConvertImagePixelType(image, args_info.pixel_type_arg);
+    LOG(WARNING) << "Pixel type was changed from " << pixel_type
+                 << " to float";
+  }
+  syd::SetImageInfoFromFile(imageFlipped);
+  auto db = imageFlipped->GetDatabase();
+  db->Update(imageFlipped); // for changed spacing , history
 }
 // --------------------------------------------------------------------
 
@@ -485,7 +518,32 @@ void syd::CropImageLike(syd::Image::pointer image,
     // save
     */
 }
+// --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+void syd::ResampleAndCropImageLike(syd::Image::pointer image,
+                                   syd::Image::pointer like,
+                                   int interpolationType,
+                                   double defaultValue)
+{
+  // Read input image
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+  auto itk_like = syd::ReadImage<ImageType>(like->GetAbsolutePath());
+
+  // Create fake 'like' image
+  itk_image = syd::ResampleAndCropImageLike<ImageType>(itk_image, itk_like, interpolationType, defaultValue);
+
+  // Replace image
+  syd::WriteImage<ImageType>(itk_image, image->GetAbsolutePath());
+
+  // Update image information (size etc)
+  syd::SetImageInfoFromFile(image);
+  auto db = image->GetDatabase();
+  db->Update(image);
+}
 // --------------------------------------------------------------------
 
 
@@ -506,9 +564,8 @@ double syd::ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image)
   double activity_at_acquisition = injected_activity * exp(-lambda * time);
 
   // Compute stat (without mask)
-  auto db = image->GetDatabase<syd::StandardDatabase>();
-  syd::RoiStatistic::pointer stat;
-  db->New(stat);
+  auto db = image->GetDatabase();
+  auto stat = db->New<syd::RoiStatistic>();
   stat->image = image;
   syd::ComputeRoiStatistic(stat);
 
@@ -536,7 +593,7 @@ bool syd::FlipImageIfNegativeSpacing(syd::Image::pointer image)
                    << " to float";
     }
     syd::SetImageInfoFromFile(image);
-    auto db = image->GetDatabase<syd::StandardDatabase>();
+    auto db = image->GetDatabase();
     db->Update(image); // for changed spacing , history
   }
   return flip;
@@ -545,13 +602,13 @@ bool syd::FlipImageIfNegativeSpacing(syd::Image::pointer image)
 
 
 // --------------------------------------------------------------------
-syd::Image::pointer syd::CopyImage(syd::Image::pointer image)
+syd::Image::pointer syd::InsertCopyImage(syd::Image::pointer image)
 {
   auto output = syd::InsertImageFromFile(image->GetAbsolutePath(),
                                          image->patient,
                                          image->modality);
   syd::SetImageInfoFromImage(output, image);
-  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto db = image->GetDatabase();
   db->Update(output);
   return output;
 }
@@ -560,36 +617,26 @@ syd::Image::pointer syd::CopyImage(syd::Image::pointer image)
 
 // --------------------------------------------------------------------
 void syd::SubstituteRadionuclide(syd::Image::pointer image,
-                                 syd::Radionuclide::pointer rad)
+                                 syd::Injection::pointer injection)
 {
   if (image->injection == NULL) {
     EXCEPTION("Cannot SubstituteRadionuclide because the image is not associated with an injection: "
               << image);
   }
 
-  // Create new injection
+  // Set new injection
   auto db = image->GetDatabase<syd::StandardDatabase>();
-  auto new_injection = syd::CopyInjection(image->injection);
-  new_injection->radionuclide = rad;
-  auto inj = syd::GetSimilarInjection(db, new_injection);
-  if (inj.size() != 0) {
-    LOG(2) << "Similar injection exist, do not add " << std::endl
-           << new_injection << std::endl
-           << inj[0];
-    new_injection = inj[0];
-  }
-  else db->Insert(new_injection);
 
   // Get the time and the half_life (lambda)
   double time = syd::DateDifferenceInHours(image->acquisition_date, image->injection->date);
   double lambda_old = image->injection->radionuclide->GetLambdaDecayConstantInHours();
-  double lambda_new = rad->GetLambdaDecayConstantInHours();
+  double lambda_new = injection->radionuclide->GetLambdaDecayConstantInHours();
   double f1 = exp(lambda_old * time); // decay correction: multiply by exp(lambda x time)
   double f2 = exp(-lambda_new * time); // new radionuclide decay
 
   // substitute the radionuclide taking into account the half life
   syd::ScaleImage(image, f1*f2);
-  image->injection = new_injection;
+  image->injection = injection;
   db->Update(image);
 }
 // --------------------------------------------------------------------
@@ -608,5 +655,168 @@ std::vector<double> syd::GetTimesFromInjection(const syd::Image::vector images)
     times.push_back(t);
   }
   return times;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::FillHoles(syd::Image::pointer image,
+                    syd::Image::pointer mask,
+                    int radius,
+                    double mask_value,
+                    int & nb_failures,
+                    int & nb_changed)
+{
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto input_itk = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+  auto mask_itk = syd::ReadImage<ImageType>(mask->GetAbsolutePath());
+  syd::FillHoles<ImageType>(input_itk, mask_itk, radius, mask_value, nb_failures, nb_changed);
+  syd::WriteImage<ImageType>(input_itk, image->GetAbsolutePath());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ApplyGaussianFilter(syd::Image::pointer image, double sigma_in_mm)
+{
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+  itk_image = syd::GaussianFilter<ImageType>(itk_image, sigma_in_mm);
+  syd::WriteImage<ImageType>(itk_image, image->GetAbsolutePath());
+
+  // update the image to set the history
+  auto db = image->GetDatabase();
+  db->Update(image);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImages(syd::StandardDatabase * db, const std::string & patient_name)
+{
+  return syd::FindImages(db->FindPatient(patient_name));
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImages(const syd::Patient::pointer patient)
+{
+  auto db = patient->GetDatabase();
+  odb::query<syd::Image> q = odb::query<syd::Image>::patient == patient->id;
+  syd::Image::vector images;
+  db->Query(images, q);
+  return images;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImages(const syd::Injection::pointer injection)
+{
+  auto db = injection->GetDatabase();
+  odb::query<syd::Image> q = odb::query<syd::Image>::injection == injection->id;
+  syd::Image::vector images;
+  db->Query(images, q);
+  return images;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImagesFromDicom(const syd::DicomSerie::pointer dicom)
+{
+  auto patient = dicom->patient;
+  auto images = syd::FindImages(patient);
+  syd::Image::vector images_from_dicom;
+  for(auto im:images) {
+    bool imageIsFromThisDicom = false;
+    for(auto d:im->dicoms) if (d->id == dicom->id) imageIsFromThisDicom = true;
+    if (imageIsFromThisDicom) images_from_dicom.push_back(im);
+  }
+  return images_from_dicom;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::Move(syd::Image::pointer image, std::string relative_folder)
+{
+  // Get old path
+  auto old_file = image->GetAbsolutePath();
+  if (image->files.size() == 0) return;
+  auto old_path = image->files[0]->path;
+
+  // Set new one
+  for(auto f:image->files) f->path = relative_folder;
+
+  // Get new path
+  auto new_file = image->GetAbsolutePath();
+  if (new_file == old_file) return; // do noting
+
+  if (fs::exists(new_file)) {
+    LOG(WARNING) << "File exist, cannot overwrite " << new_file;
+    for(auto f:image->files) f->path = old_path;
+    return;
+  }
+
+  // Create folder (if does not exist)
+  auto db = image->GetDatabase();
+  auto absolute_folder = db->ConvertToAbsolutePath(relative_folder);
+  fs::create_directories(absolute_folder);
+
+  // Rename
+  if (image->type == "mhd") {
+    syd::RenameMHDImage(old_file, new_file, false);
+  }
+  else {
+    fs::rename(old_file, new_file);
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+odb::query<syd::Image> syd::QueryImage(syd::Patient::pointer patient)
+{
+  odb::query<syd::Image> q = odb::query<syd::Image>::patient == patient->id;
+  return q;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+odb::query<syd::Image> syd::QueryImageModality(std::string modalities)
+{
+  std::vector<std::string> mod;
+  syd::GetWords(mod, modalities);
+  odb::query<syd::Image> q = odb::query<syd::Image>::modality.in_range(mod.begin(), mod.end());
+  return q;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+odb::query<syd::Image> syd::QueryImagePixelUnit(std::string pixel_unit)
+{
+  odb::query<syd::Image> q = odb::query<syd::Image>::pixel_unit->name == pixel_unit;
+  return q;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImages(syd::Patient::pointer patient,
+                                   odb::query<syd::Image> q,
+                                   const syd::Tag::vector & tags)
+{
+  auto db = patient->GetDatabase<syd::StandardDatabase>();
+  syd::Image::vector images;
+  q = q and QueryImage(patient);
+  db->Query(images, q);
+  images = syd::GetRecordsThatContainAllTags<syd::Image>(images, tags);
+  return images;
 }
 // --------------------------------------------------------------------

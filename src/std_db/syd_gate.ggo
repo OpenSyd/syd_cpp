@@ -1,0 +1,17 @@
+#File syd_gate.ggo
+
+package "syd_gate"
+usage "syd_gate <mac> <ct_id> <source_id> <rad_name>"
+version "0.2"
+description "Generate a Gate command line to exec the template macro with data from the database.
+Alias are: CT_IMAGE PATIENT RADIONUCLIDE Z A SOURCE_IMAGE
+"
+
+#option "cluster"      - "Display gate_run_submit_cluster instead of Gate" flag off
+#option "relative"      r "Relative path for images" flag off
+option "output_folder" f "Output folder when relative is on" string default="data/" no
+option "output"        o "Output file" string default="" no
+option "N"             n "Nb of primaries" double default="100" no
+option "run"           r "Execute the simulation with the given nb of thread" int default="1" no
+
+

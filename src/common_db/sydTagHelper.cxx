@@ -18,6 +18,7 @@
 
 // syd
 #include "sydTagHelper.h"
+#include "sydRecordHelper.h"
 
 // --------------------------------------------------------------------
 syd::Tag::vector syd::FindTags(const syd::Database * db,
@@ -37,8 +38,7 @@ syd::Tag::pointer syd::FindTag(const syd::Database * db,
   syd::Tag::vector tags = syd::FindTags(db, name);
   if (tags.size() != 1) {
     EXCEPTION("Error in FindTag '" << name << "', I find "
-              << tags.size() << " tags";
-              );
+              << tags.size() << " tags");
   }
   return tags[0];
 }
@@ -54,7 +54,7 @@ syd::Tag::pointer syd::FindOrCreateTag(syd::Database * db,
   try {
     tag = syd::FindTag(db, name);
   } catch (std::exception & e) {
-    db->New<syd::Tag>(tag);
+    tag = db->New<syd::Tag>();
     tag->label = name;
     tag->description = desc;
     db->Insert(tag);
@@ -85,19 +85,36 @@ syd::Tag::vector syd::FindTags(const syd::Database * db,
 
 
 // --------------------------------------------------------------------
-bool syd::IsAllTagsIn(syd::Tag::vector & input_tags,
-                      syd::Tag::vector & to_search_tags)
+bool syd::IsAllTagsIn(const syd::Tag::vector & input_tags,
+                      const syd::Tag::vector & to_search_tags)
 {
+  /*
   // http://stackoverflow.com/questions/5225820/compare-two-vectors-c
   std::set<syd::Tag::pointer> s1(input_tags.begin(), input_tags.end());
   std::set<syd::Tag::pointer> s2(to_search_tags.begin(), to_search_tags.end());
   std::vector<syd::Tag::pointer> v3;
   std::set_intersection(s1.begin(), s1.end(),
-                        s2.begin(), s2.end(),
-                        std::back_inserter(v3),
-                        [](const syd::Tag::pointer a, const syd::Tag::pointer b) {
-                          return a->label > b->label; } );
+  s2.begin(), s2.end(),
+  std::back_inserter(v3),
+  [](const syd::Tag::pointer a, const syd::Tag::pointer b) {
+  return a->id < b->id; } );
   return (v3.size() == to_search_tags.size());
+  */
+  for(auto tag_to_search:to_search_tags) {
+    if (!syd::IsTagIn(input_tags, tag_to_search)) return false;
+  }
+  return true;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::IsTagIn(const syd::Tag::vector & input_tags,
+                  const syd::Tag::pointer & to_search_tag)
+{
+  for(auto & t:input_tags)
+    if (t->id == to_search_tag->id) return true;
+  return false;
 }
 // --------------------------------------------------------------------
 
@@ -168,7 +185,9 @@ std::string syd::GetLabels(const syd::Tag::vector & tags)
   std::ostringstream os;
   if (tags.size() == 0) return empty_value;
   os << tags[0]->label;
-  for(auto i=1; i<tags.size(); i++) os << "," << tags[i]->label;
+  for(auto i=1; i<tags.size(); i++) os << " " << tags[i]->label;
   return os.str();
 }
 // --------------------------------------------------------------------
+
+

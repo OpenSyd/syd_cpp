@@ -20,8 +20,6 @@
 #define SYDTIMEINTEGRATEDACTIVITYIMAGEFILTER_H
 
 // syd
-#include "sydImageUtils.h"
-#include "sydFitModels.h"
 #include "sydFitOutputImage.h"
 #include "sydTimeIntegratedActivityFilter.h"
 

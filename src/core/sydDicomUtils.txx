@@ -24,7 +24,7 @@ TagType GetTagValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
 {
   TagType v = defaultValue;
   typedef itk::MetaDataDictionary DictionaryType;
-  const  DictionaryType & dictionary = dicomIO->GetMetaDataDictionary();
+  const DictionaryType & dictionary = dicomIO->GetMetaDataDictionary();
   typedef itk::MetaDataObject< TagType > MetaDataTagType;
   DictionaryType::ConstIterator tagItr = dictionary.Find(key);
   DictionaryType::ConstIterator end = dictionary.End();
@@ -38,3 +38,15 @@ TagType GetTagValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
   return v;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<uint16_t Group, uint16_t Element>
+std::string GetTagValueAsString(const gdcm::DataSet & dataset)
+{
+  gdcm::Attribute<Group,Element> tag;
+  tag.SetFromDataSet(dataset);
+  return tag.GetValue();
+}
+// --------------------------------------------------------------------
+

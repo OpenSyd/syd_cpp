@@ -22,8 +22,12 @@
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
 #include "sydStandardDatabase.h"
-#include "sydTimepointsBuilder.h"
-#include "sydRecordHelpers.h"
+#include "sydTableOfRecords.h"
+#include "sydPrintTable.h"
+#include "sydField.h"
+
+//#include "sydTestTemp9.h"
+#include "gdcmReader.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -31,28 +35,47 @@ int main(int argc, char* argv[])
   // Init command line
   SYD_INIT_GGO(sydTest, 1);
 
-  // Load plugin
-
-
-  //  syd::DatabaseManager::GetInstance()->RegisterDatabaseSchema<syd::StandardDatabase>("StandardDatabase");
-
-  syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
+  // Load plugin and db
   syd::PluginManager::GetInstance()->Load();
+  syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
+  // -----------------------------------------------------------------
 
-  // ------------------------------------------------------------------
-  // test
-  if (1) {
-    // auto images = db->FindImages("2");
-    // if (images.size() > 0) {  DD(images[0]); }
-    syd::Patient::vector patients;
-    db->Query(patients);
-    DDS(patients);
+  while (1) {
+    DD("test");
+    syd::File::vector files;
+    db->Query<syd::File>(files);
+    DD(files.size());
   }
 
+  // std::string filename = args_info.inputs[0];
+  // DD(filename);
 
-  // ------------------------------------------------------------------
-  syd::PluginManager::GetInstance()->UnLoad();
+  // gdcm::Reader RTreader;
+  // RTreader.SetFileName(filename.c_str());
+  // if (!RTreader.Read()) {
+  //   std::cout << "Problem reading file: " << filename << std::endl;
+  // }
+  // const gdcm::DataSet& ds = RTreader.GetFile().GetDataSet();
+  // gdcm::MediaStorage ms;
+  // ms.SetFromFile(RTreader.GetFile());
+  // // (3006,0020) SQ (Sequence with explicit length #=4)      # 370, 1 StructureSetROISequence  
+  // gdcm::Tag tssroisq(0x3006,0x0020);
+  // if( !ds.FindDataElement( tssroisq ) )
+  //   {
+  //     std::cout << "Problem locating 0x3006,0x0020 - Is this a valid RT Struct file?" << std::endl;
+  //   }
+  // gdcm::Tag troicsq(0x3006,0x0039);
+  // if( !ds.FindDataElement( troicsq ) )
+  //   {
+  //     std::cout << "Problem locating 0x3006,0x0039 - Is this a valid RT Struct file?" << std::endl;
+  //   }
+  // DD("ok");
+
+
+
+
+  // -----------------------------------------------------------------
   DD("end");
   // This is the end, my friend.
 }

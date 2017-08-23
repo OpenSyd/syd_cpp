@@ -11,7 +11,6 @@
   PURPOSE.  See the copyright notices for more information.
 
   It is distributed under dual licence
-
   - BSD        See included LICENSE.txt file
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
@@ -21,6 +20,8 @@
 #include "sydStandardDatabase.h"
 #include "sydDicomSerie.h"
 #include "sydTagHelper.h"
+
+DEFINE_TABLE_IMPL(Image);
 
 // --------------------------------------------------------------------
 syd::Image::Image():
@@ -40,13 +41,6 @@ syd::Image::Image():
 
 
 // --------------------------------------------------------------------
-syd::Image::~Image()
-{
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 std::string syd::Image::GetPatientName() const
 {
   std::string name = empty_value;
@@ -61,7 +55,7 @@ std::string syd::Image::GetInjectionName() const
 {
   std::string inj_name = empty_value;
   if (injection != nullptr) inj_name = injection->radionuclide->name
-                           +"("+std::to_string(injection->id)+")";
+                              +"("+std::to_string(injection->id)+")";
   return inj_name;
 }
 // --------------------------------------------------------------------
@@ -92,9 +86,9 @@ std::string syd::Image::ToString() const
   else ss << empty_value << " ";
   if (history and print_history_flag_) {
     ss << " " << history->insertion_date << " "
-       << history->update_date;
+       << history->update_date << " ";
   }
-  else ss << empty_value;
+  else ss << empty_value << " ";
   ss << GetAllComments() << std::endl;
   auto s = ss.str();
   return trim(s);
@@ -239,117 +233,6 @@ void syd::Image::CopyDicomSeries(const syd::Image::pointer image)
 // --------------------------------------------------
 
 
-// --------------------------------------------------
-void syd::Image::DumpInTable(syd::PrintTable & ta) const
-{
-  auto format = ta.GetFormat();
-  if (format == "default") DumpInTable_default(ta);
-  else if (format == "short") DumpInTable_short(ta);
-  else if (format == "ref_frame") DumpInTable_ref_frame(ta);
-  else if (format == "history") DumpInTable_history(ta);
-  else if (format == "file") DumpInTable_file(ta);
-  else if (format == "filelist") DumpInTable_filelist(ta);
-  else if (format == "details") DumpInTable_details(ta);
-  else {
-    ta.AddFormat("default", "id, date, tags, size etc");
-    ta.AddFormat("short", "no size");
-    ta.AddFormat("ref_frame", "with dicom_reference_frame");
-    ta.AddFormat("history", "with date inserted/updated");
-    ta.AddFormat("file", "with complete filename");
-    ta.AddFormat("filelist", "not a table a list of filenames");
-    ta.AddFormat("details", "all details");
-  }
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::DumpInTable_short(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("p", GetPatientName());
-  ta.Set("acqui_date", GetAcquisitionDate());
-  ta.Set("tags", GetLabels(tags), 100);
-  if (pixel_unit != nullptr) ta.Set("unit", pixel_unit->name);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::DumpInTable_default(syd::PrintTable & ta) const
-{
-  DumpInTable_short(ta);
-  ta.Set("inj", GetInjectionName());
-  ta.Set("mod", modality);
-  ta.Set("size", syd::ArrayToString(size));
-  ta.Set("spacing", syd::ArrayToString(spacing,1));
-  std::string dicom;
-  for(auto d:dicoms) dicom += std::to_string(d->id)+" ";
-  if (dicom.size() != 0) {
-    dicom.pop_back(); // remove last space
-    ta.Set("dicom", dicom);
-  }
-  ta.Set("com", GetAllComments());
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::DumpInTable_ref_frame(syd::PrintTable & ta) const
-{
-  DumpInTable_short(ta);
-  ta.Set("ref_frame", frame_of_reference_uid);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::DumpInTable_history(syd::PrintTable & ta) const
-{
-  DumpInTable_short(ta);
-  syd::RecordWithHistory::DumpInTable(ta);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::DumpInTable_file(syd::PrintTable & ta) const
-{
-  DumpInTable_short(ta);
-  ta.Set("file", GetAbsolutePath(), 100);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::DumpInTable_filelist(syd::PrintTable & ta) const
-{
-  ta.SetSingleRowFlag(true);
-  ta.SetHeaderFlag(false);
-  ta.Set("file", GetAbsolutePath(), 500);
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Image::DumpInTable_details(syd::PrintTable & ta) const
-{
-  DumpInTable_default(ta);
-  ta.Set("t", type);
-  ta.Set("pixel", pixel_type);
-  ta.Set("dim", dimension);
-  ta.Set("ref_frame", frame_of_reference_uid);
-  std::string f;
-  for(auto a:files) f += std::to_string(a->id)+" ";
-  if (files.size() != 0) {
-    f.pop_back(); // remove last space
-    ta.Set("files", f);
-  }
-  syd::RecordWithHistory::DumpInTable(ta);
-}
-// --------------------------------------------------
-
-
 // --------------------------------------------------------------------
 syd::CheckResult syd::Image::Check() const
 {
@@ -391,11 +274,10 @@ std::string syd::Image::ComputeDefaultRelativePath()
               << ", no patient ar yet associated with the image: "
               << ToString());
   }
-  auto s = patient->name;
-  syd::Replace(s, " ", "_"); // replace space with underscore
+  auto s = patient->ComputeRelativeFolder();
   if (!fs::portable_name(s)) {
     EXCEPTION("The folder name '" << s << "' does not seems a "
-              << " valid and portable dir name. (you man change "
+              << " valid and portable dir name. (you may change "
               << "the patient name. Abort.");
   }
   return s;
@@ -415,3 +297,4 @@ std::string syd::Image::ComputeDefaultMHDFilename()
   return oss.str();
 }
 // --------------------------------------------------------------------
+

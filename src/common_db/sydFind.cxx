@@ -21,7 +21,7 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
-#include "sydRecordHelper.h"
+#include "sydTagHelper.h"
 #include "sydPrintTable.h"
 
 // --------------------------------------------------------------------
@@ -44,6 +44,25 @@ int main(int argc, char* argv[])
 
   // Get the table name
   std::string table_name = args_info.inputs[0];
+
+  // Dump list of fields for this table
+  if (args_info.list_fields_flag) {
+    std::ostringstream oss;
+    auto map = db->GetTraits(table_name)->GetFieldsMap(db);
+    oss << "Available fields for table " << table_name << ": " << std::endl;
+    for(auto m:map) {
+      if (m.first == m.second->name) oss << m.first << " ";
+      else oss << m.second->name << "[" << m.first << "] ";
+    }
+    oss << std::endl << "Total of " << map.size() << " fields." << std::endl;
+    auto fmap = db->GetTraits(table_name)->GetFieldFormatsMap(db);
+    if (fmap.size() > 0) {
+      oss << " Available formats : " << std::endl;
+      for(auto m:fmap) oss << " - '" << m.first << "': " << m.second << std::endl;
+    }
+    LOG(0) << oss.str();
+    return EXIT_SUCCESS;
+  }
 
   // Prepare the list of arguments
   std::vector<std::string> patterns;
@@ -70,7 +89,7 @@ int main(int argc, char* argv[])
     std::vector<std::string> tag_names;
     for(auto i=0; i<args_info.tag_given; i++)
       syd::GetWords(tag_names, args_info.tag_arg[i]);
-    records = syd::KeepRecordIfContainsAllTags<syd::Record>(records, tag_names);
+    records = syd::GetRecordsThatContainAllTags<syd::Record>(records, tag_names);
   }
 
   // Grep
@@ -78,10 +97,10 @@ int main(int argc, char* argv[])
   db->Grep(results, records, patterns, exclude);
 
   // Sort
-  db->Sort(results, table_name);
+  db->Sort(results, table_name, args_info.sort_arg);
 
   // Consider vv flag
-  std::string format = args_info.format_arg;
+  std::string format = args_info.field_arg;
   std::streambuf * buf = std::cout.rdbuf();
   std::ostringstream oss;
   if (args_info.vv_flag or args_info.vvs_flag) {
@@ -91,6 +110,18 @@ int main(int argc, char* argv[])
     buf = oss.rdbuf();
   }
   std::ostream os(buf);
+
+  // Be sure to have exactly one result
+  if (args_info.oneOutput_flag && results.size() == 0) {
+    LOG(FATAL) << "Zero element found";
+  }
+  else if (args_info.oneOutput_flag && results.size() > 1) {
+    LOG(FATAL) << "Several elements found";
+  }
+  if (results.size() == 0) {
+    LOG(1) << "No records match";
+    return EXIT_SUCCESS;
+  }
 
   // Dump results
   if (args_info.list_flag) {
@@ -102,42 +133,14 @@ int main(int argc, char* argv[])
     std::cout << std::endl;
   }
   else {
-    if (args_info.oneOutput_flag && results.size() == 0) {
-          LOG(FATAL) << "Zero image found";
-    }
-    else if (args_info.oneOutput_flag && results.size() > 1) {
-          LOG(FATAL) << "Multiple images found";
-    }
-    if (results.size() == 0) {
-      LOG(1) << "No records match";
-      return EXIT_SUCCESS;
-    }
     syd::PrintTable table;
-    table.SetFormat(format);
+    table.SetPrecision(args_info.precision_arg);
+    table.Build(table_name, results, args_info.field_arg);
     table.SetHeaderFlag(!args_info.noheader_flag);
-    try {
-      table.Build(results.begin(), results.end());
-      for(auto i=0; i<args_info.col_given; i++) {
-        std::string s = args_info.col_arg[i];
-        std::vector<std::string> w;
-        syd::GetWords(w, s);
-        if (w.size() != 3) {
-          LOG(FATAL) << "Format must be 3 strings: 'num_col' 'p' 'value'";
-        }
-        int col = atoi(w[0].c_str());
-        if (w[1] != "p") {
-          LOG(FATAL) << "Format not known. Must be 'p'.";
-        }
-        int v = atoi(w[2].c_str());
-        table.SetColumnPrecision(col, v);
-      }
-      table.Print(os);
-    } catch (std::exception & e) {
-      if (args_info.vv_flag or args_info.vvs_flag) {
-        LOG(FATAL) << "Error, results *must* be images with filenames to be able to be open with vv"
-                   << std::endl << "Query error is: " << e.what();
-      }
-    }
+    table.SetFooterFlag(!args_info.nofooter_flag);
+    table.SetSingleLineFlag(args_info.single_line_flag);
+    table.Print(std::cout); // Print total number at the end !
+    LOG(1) << results.size() << " elements found in table " << table_name;
   }
 
   // Check
@@ -162,12 +165,15 @@ int main(int argc, char* argv[])
 
   // VV
   if (args_info.vv_flag or args_info.vvs_flag) {
+    syd::PrintTable table;
+    table.Build(table_name, results, "filepath");
+    table.SetHeaderFlag(false);
+    table.SetFooterFlag(false);
+    table.SetSingleLineFlag(true);
+    table.Print(oss);
+    table.Print(std::cout);
     LOG(1) << "Executing the following command: " << std::endl << oss.str();
     int r = syd::ExecuteCommandLine(oss.str(), 2);
-    // Stop if error in cmd
-    if (r == -1) {
-      LOG(WARNING) << "Error while executing the following command: " << std::endl << oss.str();
-    }
   }
 
   // Delete

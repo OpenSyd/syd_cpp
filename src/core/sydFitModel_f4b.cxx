@@ -50,6 +50,13 @@ void syd::FitModel_f4b::SetProblemResidual(ceres::Problem * problem, syd::TimeAc
     problem->AddResidualBlock(new CostFctType(residuals_[i]), NULL, &params_[0], &params_[1], &params_[2]);
   }
 
+  problem->SetParameterLowerBound(&params_[0], 0, 0.0);  // A1 positive
+  problem->SetParameterLowerBound(&params_[2], 0, 0.0);  // l1 positive
+  problem->SetParameterLowerBound(&params_[1], 0, 0.0);  // l2 positive
+
+  problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaDecayConstantInHours());
+  problem->SetParameterUpperBound(&params_[3], 0, 100*GetLambdaDecayConstantInHours());
+
 }
 // --------------------------------------------------------------------
 

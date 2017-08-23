@@ -18,30 +18,24 @@
 
 // syd
 #include "sydPatient.h"
-#include "sydInjection.h"
 #include "sydStandardDatabase.h"
+#include "sydTagHelper.h"
+
+DEFINE_TABLE_IMPL(Patient);
 
 // --------------------------------------------------
 syd::Patient::Patient():
   syd::Record(),
-  syd::RecordWithComments()
+  syd::RecordWithComments(),
+  syd::RecordWithTags()
 {
   // default value
   name = empty_value; // must be unique
   study_id = 0; // must be unique
   weight_in_kg = 0;
-  dicom_patientid = empty_value;
   sex = empty_value;
 }
 // --------------------------------------------------
-
-
-// --------------------------------------------------
-syd::Patient::~Patient()
-{
-}
-// --------------------------------------------------
-
 
 
 // --------------------------------------------------
@@ -51,9 +45,10 @@ std::string syd::Patient::ToString() const
   ss << id << " "
      << study_id << " "
      << name << " "
-     << weight_in_kg << " "
-     << dicom_patientid << " "
-     << sex << " "
+     << weight_in_kg << " ";
+  for(auto d:dicom_patient_ids) ss << d << " ";
+  ss << sex << " "
+     << syd::GetLabels(tags) << " "
      << GetAllComments();
   auto s = ss.str();
   return trim(s);
@@ -71,7 +66,7 @@ void syd::Patient::Set(const std::vector<std::string> & arg)
   name = arg[0];
   study_id = atoi(arg[1].c_str());
   if (arg.size() > 2) weight_in_kg = atof(arg[2].c_str());
-  if (arg.size() > 3) dicom_patientid = arg[3];
+  if (arg.size() > 3) GetWords(dicom_patient_ids, arg[3]);
   if (arg.size() > 4) sex = arg[4];
 }
 // --------------------------------------------------
@@ -87,33 +82,14 @@ void syd::Patient::Set(const std::string & pname,
   name = pname;
   study_id = pstudy_id;
   weight_in_kg = pweight_in_kg;
-  dicom_patientid = pdicom_patientid;
+  GetWords(dicom_patient_ids, pdicom_patientid);
   sex = s;
 }
 // --------------------------------------------------
 
 
 // --------------------------------------------------
-void syd::Patient::DumpInTable(syd::PrintTable & ta) const
-{
-  ta.Set("id",id);
-  ta.Set("p", name);
-  ta.Set("sid", study_id);
-  ta.Set("w(kg)", weight_in_kg);
-  ta.Set("dicom", dicom_patientid);
-  syd::StandardDatabase* db = static_cast<syd::StandardDatabase*>(db_);
-  syd::Injection::vector injections;
-  odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == id;
-  db->Query(injections, q);
-  ta.Set("injection", injections.size());
-  ta.Set("sex", sex);
-  ta.Set("com", GetAllComments());
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-bool syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const {
+/*bool syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdicom_name) const {
   if (dicom_patientid != vdicom_patientid) return false;
   // Try to guess initials. Consider the first letter and the first after the symbol '^'
   int n = vdicom_name.find("^");
@@ -126,13 +102,18 @@ bool syd::Patient::CheckIdentity(std::string vdicom_patientid, std::string vdico
   }
   return false; // do not consider ok with a patient name not having a '^' inside
 }
+*/
 // --------------------------------------------------
 
 
 // --------------------------------------------------
 std::string syd::Patient::ComputeRelativeFolder() const
 {
-  return name;
+  std::string s = name;
+  syd::ReplaceAll(s, "^", " ");
+  s = syd::trim(s);
+  syd::ReplaceAll(s, " ", "_");
+  return s;
 }
 // --------------------------------------------------
 
@@ -151,3 +132,5 @@ void syd::Patient::Callback(odb::callback_event event, odb::database & db)
   syd::Record::Callback(event,db);
 }
 // --------------------------------------------------
+
+

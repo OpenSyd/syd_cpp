@@ -29,8 +29,6 @@ namespace syd {
   class RecordWithComments  {
   public:
 
-    virtual ~RecordWithComments() {}
-
     /// Define pointer type
     typedef std::shared_ptr<RecordWithComments> pointer;
 
@@ -42,6 +40,11 @@ namespace syd {
 
     /// Concatenate all comments in a single string
     std::string GetAllComments() const;
+
+    /// Specific case for RecordWithComments (composition not inheritance)
+    typedef std::function<std::string(pointer)> SpecificFieldFunc;
+    typedef std::map<std::string, SpecificFieldFunc> FieldFunctionMap;
+    static void BuildMapOfFieldsFunctions(FieldFunctionMap & map);
 
   protected:
     RecordWithComments();

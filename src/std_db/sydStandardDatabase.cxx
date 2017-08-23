@@ -22,162 +22,38 @@
 #include "sydDatabaseManager.h"
 
 // --------------------------------------------------------------------
-template<>
-void syd::Table<syd::Image>::Sort(syd::Image::vector & v, const std::string & type) const
+syd::StandardDatabase::StandardDatabase():CommonDatabase()
 {
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              return a->acquisition_date < b->acquisition_date;
-            });
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-template<>
-void syd::Table<syd::Injection>::Sort(syd::Injection::vector & v,
-                                      const std::string & type) const
-{
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              return a->date < b->date;
-            });
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------
-template<>
-void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & v,
-                                         const std::string & type) const
-{
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              if (a->dicoms.size() == 0) return true;
-              if (b->dicoms.size() == 0) return false;
-              return a->acquisition_date < b->acquisition_date;
-            });
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-template<>
-void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & v,
-                                       const std::string & order) const
-{
-  // Sort by acquisition_date and if equal, by reconstruction_date or
-  // id is equal
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              if (a->dicom_acquisition_date == b->dicom_acquisition_date) {
-                if (a->dicom_reconstruction_date == b->dicom_reconstruction_date)
-                  return (a->id < b->id);
-                else return syd::IsDateBefore(a->dicom_reconstruction_date,
-                                              b->dicom_reconstruction_date);
-              }
-              else return syd::IsDateBefore(a->dicom_acquisition_date,
-                                            b->dicom_acquisition_date);
-            });
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-template<>
-void syd::Table<syd::Patient>::Sort(syd::Patient::vector & v,
-                                    const std::string & order) const
-{
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) { return a->study_id < b->study_id; });
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-template<>
-void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & v,
-                                         const std::string & order) const
-{
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) { return a->atomic_number < b->atomic_number; });
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-/*template<>
-  void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & v,
-  const std::string & order) const
-  {
-  std::sort(begin(v), end(v),
-  [v](pointer a, pointer b) {
-  if (a->image->dicoms.size() == 0) return true;
-  if (b->image->dicoms.size() == 0) return false;
-  return a->image->acquisition_date < b->image->acquisition_date;
-  });
-  }*/
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-template<>
-void syd::Table<syd::PixelUnit>::Sort(syd::PixelUnit::vector & v,
-                                      const std::string & order) const
-{
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              return a->name < b->name;
-            });
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-template<>
-void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & v,
-                                         const std::string & order) const
-{
-  std::sort(begin(v), end(v),
-            [v](pointer a, pointer b) {
-              if (a->image->acquisition_date == b->image->acquisition_date)
-                return (a->id < b->id);
-              return (a->image->acquisition_date < b->image->acquisition_date);
-            });
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 syd::StandardDatabase::~StandardDatabase()
 {
 }
-// --------------------------------------------------
+// --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 void syd::StandardDatabase::CreateTables()
 {
-  //  syd::Database::CreateTables();
-  AddTable<syd::RecordHistory>();
-  AddTable<syd::Tag>();
-  AddTable<syd::File>();
-
+  syd::CommonDatabase::CreateTables();
   AddTable<syd::Patient>();
   AddTable<syd::Injection>();
   AddTable<syd::Radionuclide>();
 
   AddTable<syd::DicomFile>();
   AddTable<syd::DicomSerie>();
+  AddTable<syd::DicomStruct>();
 
   AddTable<syd::PixelUnit>();
   AddTable<syd::Image>();
-
   AddTable<syd::RoiType>();
   AddTable<syd::RoiMaskImage>();
   AddTable<syd::RoiStatistic>();
 
   AddTable<syd::Elastix>();
-  
   AddTable<syd::FitImages>();
   AddTable<syd::Timepoints>();
   AddTable<syd::RoiTimepoints>();
@@ -189,36 +65,15 @@ void syd::StandardDatabase::CreateTables()
 // --------------------------------------------------------------------
 syd::Patient::pointer syd::StandardDatabase::FindPatient(const std::string & name_or_study_id) const
 {
-  syd::Patient::pointer patient;
   odb::query<syd::Patient> q =
     odb::query<syd::Patient>::name == name_or_study_id or
     odb::query<syd::Patient>::study_id == atoi(name_or_study_id.c_str());
   try {
-    QueryOne(patient, q);
+    return QueryOne<syd::Patient>(q);
   } catch(std::exception & e) {
     EXCEPTION("No patient with name/sid = '" << name_or_study_id << "' found." << std::endl
               << "Error message is: " << e.what());
   }
-  return patient;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Image::vector syd::StandardDatabase::FindImages(const syd::Patient::pointer patient) const
-{
-  odb::query<syd::Image> q = odb::query<syd::Image>::patient == patient->id;
-  syd::Image::vector images;
-  Query(images, q);
-  return images;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Image::vector syd::StandardDatabase::FindImages(const std::string & patient_name) const
-{
-  return FindImages(FindPatient(patient_name));
 }
 // --------------------------------------------------------------------
 
@@ -288,8 +143,7 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   args.push_back({"Th-227", "449.23", "Thorium ", "90", "227", "N ", "0.00"});
 
   for (auto a:args) {
-    syd::Radionuclide::pointer r;
-    New(r);
+    auto  r = New<syd::Radionuclide>();
     r->Set(a);
     radionuclides.push_back(r);
   }
@@ -318,12 +172,12 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   tags.push_back(NewTag("tia", "Time Integrated Activity"));
   tags.push_back(NewTag("mask", "Mask image"));
 
+  tags.push_back(NewTag("fit_auc", "Fit AUC result"));
   tags.push_back(NewTag("fit_r2", "Fit R2 result"));
-  tags.push_back(NewTag("fit_best_model", "Fit nb of best model result"));
-  tags.push_back(NewTag("fit_nb_iterations", "Fit nb of iterations"));
-  tags.push_back(NewTag("fit_success", "Fit binary success/fail"));
-  tags.push_back(NewTag("fit_initial_mask", "Fit binary initial mask"));
-  tags.push_back(NewTag("fit_params", "Fit 4D parameters"));
+  tags.push_back(NewTag("fit_mo", "Fit nb of best model result"));
+  tags.push_back(NewTag("fit_it", "Fit nb of iterations"));
+  tags.push_back(NewTag("fit_1", "Fit binary success/fail"));
+  tags.push_back(NewTag("fit_p", "Fit 4D parameters"));
 
   for(auto r:radionuclides) {
     tags.push_back(NewTag(r->name, "Radionuclide " + r->name));
@@ -361,6 +215,8 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
 
   // Add some RoiType
   syd::RoiType::vector rois;
+  rois.push_back(NewRoiType("unknown", "Unknown contour"));
+  rois.push_back(NewRoiType("ignored", "Ignored contour"));
   rois.push_back(NewRoiType("body", "Contour of the patient"));
   rois.push_back(NewRoiType("liver", "Contour of the liver"));
   rois.push_back(NewRoiType("spleen", "Contour of the spleen"));
@@ -390,8 +246,7 @@ syd::Tag::pointer
 syd::StandardDatabase::NewTag(const std::string & name,
                               const std::string & description)
 {
-  syd::Tag::pointer tag;
-  New(tag);
+  auto tag = New<syd::Tag>();
   tag->label = name;
   tag->description = description;
   return tag;
@@ -404,8 +259,7 @@ syd::PixelUnit::pointer
 syd::StandardDatabase::NewPixelUnit(const std::string & name,
                                     const std::string & description)
 {
-  syd::PixelUnit::pointer v;
-  New(v);
+  auto v = New<PixelUnit>();
   v->name = name;
   v->description = description;
   return v;
@@ -418,8 +272,7 @@ syd::RoiType::pointer
 syd::StandardDatabase::NewRoiType(const std::string & name,
                                   const std::string & description)
 {
-  syd::RoiType::pointer v;
-  New(v);
+  auto v = New<RoiType>();
   v->name = name;
   v->description = description;
   return v;

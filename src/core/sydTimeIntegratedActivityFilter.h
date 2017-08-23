@@ -20,7 +20,6 @@
 #define SYDTIMEINTEGRATEDACTIVITYFILTER_H
 
 // syd
-#include "sydFitModels.h"
 #include "sydTimeActivityCurve.h"
 #include "sydTimeIntegratedActivityFitOptions.h"
 

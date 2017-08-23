@@ -1,0 +1,10 @@
+#File sydIdentifyImageType.ggo
+
+package "syd"
+version "0.4"
+usage "sydIdentifyImageType <dicom_ids>"
+description "Create a new (mhd) image for all given dicoms
+- <dicom_ids>   list of dicom (serie) ids to identify
+"
+
+#option "pixel_type" t "Force the pixel type (i.e. float, short etc)"  string default = "auto" no

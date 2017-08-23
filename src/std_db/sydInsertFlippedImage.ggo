@@ -1,0 +1,11 @@
+#File sydInsertFlippedImage.ggo
+
+package "syd"
+version "0.4"
+usage "sydFlippedImage <image1> -a <xyzyxz>"
+description "Create a new (mhd) flipped image.
+The axis of the flips are defined according the sequence -a
+"
+
+option "axis"  a "Sequence of axis"  string no
+option "origin" - "Flip around origin  (default=off)" flag off

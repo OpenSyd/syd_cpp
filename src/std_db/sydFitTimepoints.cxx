@@ -19,6 +19,10 @@
 // syd
 #include "sydFitTimepoints.h"
 #include "sydTagHelper.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(FitTimepoints);
 
 // --------------------------------------------------------------------
 syd::FitTimepoints::FitTimepoints():
@@ -82,85 +86,12 @@ void syd::FitTimepoints::Callback(odb::callback_event event, odb::database & db)
 
 
 // --------------------------------------------------------------------
-void syd::FitTimepoints::DumpInTable(syd::PrintTable & ta) const
-{
-  auto format = ta.GetFormat();
-  if (format == "default") DumpInTable_default(ta);
-  else if (format == "history") DumpInTable_history(ta);
-  else if (format == "md5") DumpInTable_md5(ta);
-  else {
-    ta.AddFormat("default", "id, date, tags, size etc");
-    ta.AddFormat("history", "with date inserted/updated");
-    ta.AddFormat("md5", "with md5");
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::FitTimepoints::DumpInTable_default(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("tp", timepoints->id);
-  ta.Set("p", timepoints->patient->name);
-  ta.Set("inj", timepoints->injection->radionuclide->name);
-  ta.Set("nb", timepoints->times.size());
-  ta.Set("tags", GetLabels(tags));
-  ta.Set("model", model_name);
-  ta.Set("auc", auc, 2);
-  ta.Set("r2", r2, 2);
-  ta.Set("index", first_index);
-  ta.Set("iter", iterations);
-  for(auto i=0; i<params.size(); i++)
-    ta.Set("p"+std::to_string(i), params[i], 7);
-  ta.Set("R2min", r2_min, 3);
-  ta.Set("rest", (restricted_tac? "Y":"N"));
-  ta.Set("Ak", akaike_criterion);
-  ta.Set("itm", max_iteration);
-  ta.Set("models", GetModelsName()); 
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::FitTimepoints::DumpInTable_history(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("tp", timepoints->id);
-  ta.Set("p", timepoints->patient->name);
-  ta.Set("inj", timepoints->injection->radionuclide->name);
-  syd::RecordWithHistory::DumpInTable(ta);
-  ta.Set("nb", timepoints->times.size());
-  ta.Set("tags", GetLabels(tags));
-  ta.Set("model", model_name);
-  ta.Set("auc", auc);
-  ta.Set("r2", r2);
-  ta.Set("i", first_index);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::FitTimepoints::DumpInTable_md5(syd::PrintTable & ta) const
-{
-
-  ta.Set("id", id);
-  ta.Set("tp", timepoints->id);
-  ta.Set("p", timepoints->patient->name);
-  ta.Set("inj", timepoints->injection->radionuclide->name);
-  ta.Set("tags", GetLabels(tags));
-  ta.Set("nb", timepoints->times.size());
-  syd::RecordWithMD5Signature::DumpInTable(ta);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 std::string syd::FitTimepoints::ToStringForMD5() const
 {
   std::stringstream ss;
   for(auto p:params) ss << std::setprecision(30) << p;
-  ss << auc << r2 << model_name << first_index << timepoints->ToStringForMD5() << iterations;
+  ss << auc << r2 << GetLabels(tags) << GetModelsName() << first_index
+     << timepoints->ToStringForMD5() << iterations;
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -175,6 +106,7 @@ syd::FitModelBase::pointer syd::FitTimepoints::NewModel() const
   if (model_name == "f4a") model = std::make_shared<syd::FitModel_f4a>();
   if (model_name == "f4b") model = std::make_shared<syd::FitModel_f4b>();
   if (model_name == "f4") model = std::make_shared<syd::FitModel_f4>();
+  if (model_name == "f5") model = std::make_shared<syd::FitModel_f5>();
   if (model == nullptr) {
     LOG(FATAL) << "Model " << model_name << " unknown.";
   }

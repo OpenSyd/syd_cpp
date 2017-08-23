@@ -19,10 +19,6 @@
 #ifndef SYDIMAGEGEOMETRICALMEAN_H
 #define SYDIMAGEGEOMETRICALMEAN_H
 
-#include "sydImageFlip.h"
-
-#include <itkRecursiveGaussianImageFilter.h>
-
 //--------------------------------------------------------------------
 namespace syd {
 

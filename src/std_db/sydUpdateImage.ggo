@@ -5,9 +5,24 @@ version "0.2"
 usage "sydUpdateImage <image_ids>"
 description "Update information associated with an image, and/or scale.
 - <image_ids>      ids of the images to update
-
 "
 
 option "file"          -  "Content of the file will replace the image in the db"  string multiple no
 option "scale"         s  "Multiply the pixel by this value"                      double no
 option "pixel_type"    -  "Convert the current image to the given pixel_type"     string no
+
+option "fill_holes"      -  "Fill holes according to neighboring voxels (radius)"     int default="0" no
+option "fill_mask_image" -  "The 'holes' are given in this mask image"                int default="0" no
+option "fill_mask_value" -  "Values of the 'holes' in the mask image"                 float default="0" no
+
+
+option "gauss" g "Smooth the image with a Gaussian filter, the parameter is the sigma in mm (0=no smooth)" float default="0" no
+option "copy" - "Make a copy of the image before update. The initial image is not modified" flag off
+
+option "rename"    -  "Rename internal file with patient info (advanced)"       flag off
+
+
+section "Resample/Crop info"
+option "resample_like"   r  "Resample like the given image id"   int no 
+option "interpolation"   i  "Interpolation type 0=NN, 1=Lin"     int default = "1" no
+option "default_value"   d  "default value"                      double default = "-1000" no

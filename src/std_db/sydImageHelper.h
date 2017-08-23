@@ -35,9 +35,9 @@ namespace syd {
 
   /// Create a new image and save the itk as a mhd in the db
   template<typename ImageType>
-  syd::Image::pointer InsertImage(typename ImageType::Pointer itk_image,
-                                  syd::Patient::pointer patient,
-                                  std::string modality="image");
+    syd::Image::pointer InsertImage(typename ImageType::Pointer itk_image,
+                                    syd::Patient::pointer patient,
+                                    std::string modality="image");
 
   /// Create a new image from a DicomSerie. Pixel type could be float,
   /// short, auto etc
@@ -57,7 +57,7 @@ namespace syd {
                                        std::string to_filename);
 
   /// Copy an image
-  syd::Image::pointer CopyImage(syd::Image::pointer image);
+  syd::Image::pointer InsertCopyImage(syd::Image::pointer image);
 
   /// Read the attached file and set image spacing, size dimension,
   /// and pixel_type. The image is not updated
@@ -73,8 +73,8 @@ namespace syd {
 
   /// Fill som image properties from option given in args_info
   template<class ArgsInfo>
-  void SetImageInfoFromCommandLine(syd::Image::pointer image,
-                                   ArgsInfo & args_info);
+    void SetImageInfoFromCommandLine(syd::Image::pointer image,
+                                     ArgsInfo & args_info);
 
   /// Retrieve the syd::PixelUnit and set to the image
   void SetPixelUnit(syd::Image::pointer image, std::string pixel_unit);
@@ -121,7 +121,11 @@ namespace syd {
 
   // Compute the manual registration of an image.
   syd::Image::pointer InsertManualRegistration(const syd::Image::pointer inputImage,
-                                               double x, double y, double z, bool translateOrigin);
+                                               double x, double y, double z);
+
+  // Compute the flip of an image.
+  void InsertFlip(const syd::Image::pointer inputImage,
+                                 std::vector<char> axis, bool flipOrigin);
 
   // Compute the attenuation correction of an projection image.
   syd::Image::pointer InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,
@@ -133,6 +137,12 @@ namespace syd {
   void CropImageLike(syd::Image::pointer image,
                      const syd::Image::pointer like);
 
+  /// Resample and crop an image like another one
+  void ResampleAndCropImageLike(syd::Image::pointer image,
+                                syd::Image::pointer like,
+                                int interpolationType,
+                                double defaultValue);
+
   /// Compute the activity in MBq by detected counts
   double ComputeActivityInMBqByDetectedCounts(syd::Image::pointer image);
 
@@ -142,10 +152,51 @@ namespace syd {
   /// Substitute a radionuclide with another one. Create a new
   /// artificial injection
   void SubstituteRadionuclide(syd::Image::pointer image,
-                              syd::Radionuclide::pointer rad);
+                              syd::Injection::pointer injection);
 
-  /// Get the times between injection and acquisition for a set of images. 
+  /// Get the times between injection and acquisition for a set of images.
   std::vector<double> GetTimesFromInjection(const syd::Image::vector images);
+
+  /// Fill holes in an image for the pixel in the background
+  void FillHoles(syd::Image::pointer image,
+                 syd::Image::pointer mask,
+                 int radius,
+                 double mask_value,
+                 int & nb_failures,
+                 int & nb_changed);
+
+  /// Apply a gaussian filter to the image
+  void ApplyGaussianFilter(syd::Image::pointer image, double sigma_in_mm);
+
+  /// Retrieve all images for this patient
+  syd::Image::vector FindImages(const syd::Patient::pointer patient);
+
+  /// Retrieve all images for this injection
+  syd::Image::vector FindImages(const syd::Injection::pointer injection);
+
+  /// Retrieve all images for this patient
+  syd::Image::vector FindImages(syd::StandardDatabase * db, const std::string & patient_name);
+
+  /// Retrieve all images linked to this dicom
+  syd::Image::vector FindImagesFromDicom(const syd::DicomSerie::pointer dicom);
+
+  /// Move the file internally
+  void Move(syd::Image::pointer image, std::string relative_folder);
+
+  /// Helper to build query
+  odb::query<syd::Image> QueryImage(syd::Patient::pointer patient);
+
+  /// Helper to build query
+  odb::query<syd::Image> QueryImageModality(std::string modalities);
+
+  /// Helper to build query
+  odb::query<syd::Image> QueryImagePixelUnit(std::string);
+
+  /// Retrieve all images
+  syd::Image::vector FindImages(syd::Patient::pointer patient,
+                                odb::query<syd::Image> q,
+                                const syd::Tag::vector & tags);
+
 
 } // namespace syd
 

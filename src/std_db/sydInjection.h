@@ -26,51 +26,49 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  class InjectionStat;
-
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::Injection") callback(Callback)
   /// Store information about a radionuclide injection (date, etc).
   class Injection :
     public syd::Record,
-    public syd::RecordWithComments {
+    public syd::RecordWithComments,
+    public syd::RecordWithTags {
   public:
 
-    virtual ~Injection() { }
+      DEFINE_TABLE_CLASS(Injection);
 
 #pragma db not_null
-    /// Foreign key, linked to Patient table.
-    syd::Patient::pointer patient;
+      /// Foreign key, linked to Patient table.
+      syd::Patient::pointer patient;
 
 #pragma db not_null
-    /// Foreign key, linked to Radionuclide table.
-    syd::Radionuclide::pointer radionuclide;
+      /// Foreign key, linked to Radionuclide table.
+      syd::Radionuclide::pointer radionuclide;
 
-    /// Date of the injection
-    std::string date;
+      /// Date of the injection
+      std::string date;
+      int GetYear();
+      int GetMonth();
+      int GetDay();
+      int GetHour();
+      int GetMinute();
 
-    /// Injected activity in MBq
-    double activity_in_MBq;
+      /// Injected activity in MBq
+      double activity_in_MBq;
 
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(Injection, syd::Injection);
-    // ------------------------------------------------------------------------
+      /// Write the element as a string
+      virtual std::string ToString() const;
 
-    /// Write the element as a string
-    virtual std::string ToString() const;
+      void Set(const std::vector<std::string> & args);
 
-    void Set(const std::vector<std::string> & args);
+      virtual void Callback(odb::callback_event, odb::database&) const;
+      virtual void Callback(odb::callback_event, odb::database&);
 
-    virtual void Callback(odb::callback_event, odb::database&) const;
-    virtual void Callback(odb::callback_event, odb::database&);
-
-    virtual void DumpInTable(syd::PrintTable & table) const;
-
-    double GetLambdaDecayConstantInHours() const;
+      double GetLambdaDecayConstantInHours() const;
 
   protected:
-    Injection();
+      Injection();
 
-  }; // end of class
+    }; // end of class
 
 } // end of namespace
 // --------------------------------------------------------------------

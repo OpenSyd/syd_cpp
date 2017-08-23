@@ -27,5 +27,6 @@
 #include "sydFitModel_f4a.h"
 #include "sydFitModel_f4b.h"
 #include "sydFitModel_f4c.h"
+#include "sydFitModel_f5.h"
 
 #endif

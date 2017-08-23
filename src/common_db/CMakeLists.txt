@@ -20,12 +20,10 @@ wrap_odb(sydCore sydRecordWithMD5Signature.h)
 set(sydCommonDatabase_src
   sydVersion.h
   sydPrintTable.cxx
-  sydPrintTableRow.cxx
-  sydPrintTableColumnInfo.cxx
 
-  sydDatabaseDescription.cxx
-  sydTableDescription.cxx
-  sydFieldDescription.cxx
+  # sydDatabaseDescription.cxx
+  # sydTableDescription.cxx
+  # sydFieldDescription.cxx
 
   sydDatabaseSchemaName-odb.cxx
   sydDatabaseSchemaName-schema.cxx
@@ -35,6 +33,16 @@ set(sydCommonDatabase_src
   sydRecord-odb.cxx
   sydRecord-schema.cxx
   sydRecord.cxx
+  sydRecordTraitsBase.cxx
+
+  sydFieldBase.cxx
+  sydFieldType.cxx
+
+  ## must be before the next files !
+  sydTagTraits.cxx
+  sydFileTraits.cxx
+  sydRecordHistoryTraits.cxx
+
   sydRecordHistory-odb.cxx
   sydRecordHistory-schema.cxx
   sydRecordHistory.cxx
@@ -62,6 +70,8 @@ set(sydCommonDatabase_src
   sydDatabaseInformation.cxx
   sydPluginManager.cxx
   sydDatabaseInformation.cxx
+
+  sydCommonDatabase.cxx
 
   sydRecordHelper.cxx
   sydTagHelper.cxx
@@ -120,3 +130,16 @@ wrap_ggo(sydInfo_GGO_C sydInfo.ggo sydCommandLineDefault.ggo)
 add_executable(sydInfo sydInfo.cxx ${sydInfo_GGO_C})
 target_link_libraries(sydInfo ${SYD_COMMON_DB_LIBRARY})
 #----------------------------------------------------------
+
+
+#----------------------------------------------------------
+# Update tags
+wrap_ggo(sydUpdateTags_GGO_C
+  sydUpdateTags.ggo
+  sydCommandLineWithTags.ggo
+  sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydUpdateTags sydUpdateTags.cxx ${sydUpdateTags_GGO_C})
+target_link_libraries(sydUpdateTags ${SYD_COMMON_DB_LIBRARY})
+#----------------------------------------------------------
+

@@ -17,6 +17,7 @@ add_library(sydCore SHARED
   kmeans/KMeans.cpp
   kmeans/KmTree.cpp
   kmeans/KmUtils.cpp
+  ../edlib/edlib/src/edlib.cpp
   )
 
 if (APPLE) ## needed on osx
@@ -25,13 +26,13 @@ endif(APPLE)
 
 #----------------------------------------------------------
 # ITK tools library
-add_library(sydItkUtils
+add_library(sydItkUtils SHARED
   sydImageUtils.cxx
   sydDicomUtils.cxx
   sydKmeansFilter.cxx
   )
 
-target_link_libraries(sydItkUtils ${ITK_LIBRARIES})
+target_link_libraries(sydItkUtils sydCore ${ITK_LIBRARIES})
 #----------------------------------------------------------
 
 
@@ -47,6 +48,7 @@ add_library(sydFit
   sydFitModel_f4a.cxx
   sydFitModel_f4b.cxx
   sydFitModel_f4c.cxx
+  sydFitModel_f5.cxx
   sydFitOutputImage.cxx
   sydTimeIntegratedActivityFilter.cxx
   sydTimeIntegratedActivityImageFilter.cxx

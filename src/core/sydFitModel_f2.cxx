@@ -69,7 +69,7 @@ void syd::FitModel_f2::SetProblemResidual(ceres::Problem * problem, syd::TimeAct
     problem->AddResidualBlock(new CostFctType(residuals_[i]), NULL, &params_[0], &params_[1]);
   }
 
-  //problem->SetParameterLowerBound(&params_[0], 0, 0); // A positive
+  problem->SetParameterLowerBound(&params_[0], 0, 0); // A positive
   problem->SetParameterLowerBound(&params_[1], 0, 0); // l positive
   problem->SetParameterUpperBound(&params_[1], 0, 100*GetLambdaDecayConstantInHours()); // lambda
 }

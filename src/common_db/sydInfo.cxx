@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
       os << warningColor << " -> does not exist ("
          << db->GetDatabaseAbsoluteFolder() << ")" << resetColor;
     os << std::endl;
-    auto map = db->GetMapOfTables();
+    auto map = db->GetTraitsMap();
     if (map.size() > 1) os << map.size() << " tables" << std::endl;
     else os << map.size() << " table" << std::endl;
     for(auto i=map.begin(); i != map.end(); i++) {
@@ -71,16 +71,23 @@ int main(int argc, char* argv[])
   }
 
   // Info about table
-  auto dd = db->GetDatabaseDescription();
   for(auto i=0; i<args_info.inputs_num; i++) {
     auto table_name = args_info.inputs[i];
-    syd::TableDescription * dt;
-    bool b = dd->FindTableDescription(table_name, &dt);
-    if (!b) {
-      LOG(FATAL) << "Cannot find the table " << table_name;
+    std::ostringstream oss;
+    auto map = db->GetTraits(table_name)->GetFieldsMap(db);
+    oss << "Table " << table_name << " has " << map.size() << " fields" << std::endl;
+    for(auto m:map) {
+      if (m.first == m.second->name) oss << "\t" << m.first << " ";
+      else oss << "\t" << m.second->name << "[" << m.first << "] ";
+      oss << "(" << m.second->type << ")" << std::endl;
     }
-    dt->Print(os);
-    os << "The table contains " << db->GetNumberOfElements(table_name) << " elements." << std::endl;
+    auto fmap = db->GetTraits(table_name)->GetFieldFormatsMap(db);
+    if (fmap.size() > 0) {
+      oss << "Available formats : " << std::endl;
+      for(auto m:fmap) oss << " - '" << m.first << "': " << m.second << std::endl;
+    }
+    oss << "The table contains " << db->GetNumberOfElements(table_name) << " elements." << std::endl;
+    std::cout << oss.str();
   }
 
   // This is the end, my friend.

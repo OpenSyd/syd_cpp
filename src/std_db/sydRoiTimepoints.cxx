@@ -18,6 +18,10 @@
 
 // syd
 #include "sydRoiTimepoints.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(RoiTimepoints);
 
 // --------------------------------------------------------------------
 syd::RoiTimepoints::RoiTimepoints():syd::Timepoints()
@@ -35,17 +39,6 @@ std::string syd::RoiTimepoints::ToString() const
     ss << stat->id << " ";
   ss << ")";
   return ss.str();
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::RoiTimepoints::DumpInTable_default(syd::PrintTable & ta) const
-{
-  syd::Timepoints::DumpInTable_default(ta);
-  std::string ids = "";
-  for(auto stat:roi_statistics) ids = std::to_string(stat->id)+" ";
-  ta.Set("stat", ids);
 }
 // --------------------------------------------------------------------
 

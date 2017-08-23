@@ -204,7 +204,7 @@ void syd::TimeIntegratedActivityImageFilter::Init4DInput()
       ++it;
     }
   }
-  syd::WriteImage<Image4DType>(tac_image_, "s4d.mhd");
+  //  syd::WriteImage<Image4DType>(tac_image_, "s4d.mhd");
 }
 // --------------------------------------------------------------------
 

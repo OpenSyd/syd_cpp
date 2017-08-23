@@ -19,6 +19,9 @@
 // syd
 #include "sydFitImages.h"
 #include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(FitImages);
 
 // --------------------------------------------------------------------
 syd::FitImages::FitImages():
@@ -37,24 +40,23 @@ syd::FitImages::FitImages():
 
 
 // --------------------------------------------------------------------
-syd::FitImages::~FitImages()
-{
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 std::string syd::FitImages::ToString() const
 {
   std::stringstream ss;
   ss << id << " ";
   if (images.size() == 0) ss << " no images ";
-  else ss << images[0]->GetPatientName() << " ";
-  ss << images.size() << " imgs ["
+  else {
+    ss << images[0]->GetPatientName() << " ";
+    if( images[0]->injection != nullptr) {
+      ss << images[0]->injection->radionuclide->name << " ";
+    }
+  }
+  ss << images.size() << " ["
      << syd::FitOptions::ToString() << "] "
      << GetAllComments() << " "
      << " pix: "
-     << nb_success_pixels << "/" << nb_pixels;
+     << nb_success_pixels << "/" << nb_pixels
+     << " output=" << outputs.size();
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -69,43 +71,6 @@ std::string syd::FitImages::GetOutputNames() const
   }
   auto s = ss.str();
   return trim(s);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::FitImages::DumpInTable(syd::PrintTable & ta) const
-{
-  auto format = ta.GetFormat();
-  if (format == "default") DumpInTable_default(ta);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::FitImages::DumpInTable_default(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("p", images[0]->GetPatientName());
-  ta.Set("n", images.size());
-  if (images.size() == 0) return;
-  ta.Set("min", min_activity);
-  ta.Set("R2min", r2_min, 3);
-  ta.Set("rest", (restricted_tac? "Y":"N"));
-  ta.Set("Ak", akaike_criterion);
-  ta.Set("itm", max_iteration);
-  ta.Set("models", GetModelsName());
-  std::stringstream ss;
-  ss << nb_success_pixels << "/" << nb_pixels
-     << std::setprecision(3)
-     << "(" << (double)nb_success_pixels/(double)nb_pixels*100.0 << "%)";
-  ta.Set("res", ss.str());
-  ta.Set("out", GetOutputNames(), 150);
-  std::stringstream sss;
-  for(auto im:images) sss << im->id << " ";
-  ta.Set("img", sss.str());
-  auto c = GetAllComments();
-  if (c.size() > 0) ta.Set("com", c);
 }
 // --------------------------------------------------------------------
 
@@ -127,6 +92,8 @@ syd::Image::pointer syd::FitImages::GetOutput(std::string name)
     if (n == name) return outputs[i];
     ++i;
   }
+  EXCEPTION("Cannot find the output named " << name
+            << " in this FitImage: " << ToString());
   return nullptr;
 }
 // --------------------------------------------------------------------

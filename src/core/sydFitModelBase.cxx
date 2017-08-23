@@ -195,6 +195,7 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve::pointer tac, 
 // --------------------------------------------------------------------
 double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve::pointer tac) const
 {
+  // https://en.wikipedia.org/wiki/Coefficient_of_determination
   double mean = 0.0;
   for(auto i=0; i<tac->size(); i++) mean += tac->GetValue(i);
   mean = mean / (double)tac->size();
@@ -327,5 +328,22 @@ void syd::FitModelBase::LogLinearFit(Eigen::Vector2d & x,
   }
   x = A.householderQr().solve(b);
   x(0) = exp(x(0));
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::FitModelBase::ComputeMRT() const
+{
+  double auc = Integrate();
+  double x=0.0;
+  for(auto k=0; k<GetNumberOfExpo(); k++) {
+    double A = GetA(k);
+    double l = GetLambda(k) + GetLambdaDecayConstantInHours();
+    x += A/(l*l);
+  }
+  x = x/auc;
+  x = log(2.0)*x; // to get MRT in hours
+  return x;
 }
 // --------------------------------------------------------------------

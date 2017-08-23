@@ -26,8 +26,7 @@ syd::NewFile(syd::Database * db,
              std::string path,
              std::string filename)
 {
-  syd::File::pointer f;
-  db->New(f);
+  auto f = db->New<syd::File>();
   f->path = path;
   // Create the folder in the db
   auto absolute_folder = db->ConvertToAbsolutePath(path);
@@ -35,4 +34,43 @@ syd::NewFile(syd::Database * db,
   f->filename = filename;
   return f;
 }
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetFilenames(syd::File::vector files)
+{
+  if (files.size() == 0) return syd::empty_value;
+  std::ostringstream ss;
+  for(auto f:files) ss << f->filename << " ";
+  return ss.str();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetRelativeFolder(syd::File::vector files)
+{
+  if (files.size() == 0) return syd::empty_value;
+  return files[0]->path+PATH_SEPARATOR;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+/*
+void syd::Move(syd::File::pointer file, std::string relative_folder)
+{
+  // Set folder
+  auto old_file = f->GetAbsolutePath();
+  f->path = relative_folder;
+  // Create folder (if does not exist)
+  auto absolute_folder = db->ConvertToAbsolutePath(path);
+  fs::create_directories(absolute_folder);
+  // Rename file
+  auto new_file = f->GetAbsolutePath();
+  fs::rename(old_file, new_file);
+  RenameMHDImage FIXME
+}
+*/
 // --------------------------------------------------------------------

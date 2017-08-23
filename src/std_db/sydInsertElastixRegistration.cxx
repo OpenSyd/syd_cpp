@@ -74,8 +74,7 @@ int main(int argc, char* argv[])
     }
 
     // Create the object
-    syd::Elastix::pointer elastix;
-    db->New(elastix);
+    auto elastix = db->New<syd::Elastix>();
     elastix->fixed_image = fixed_image;
     elastix->fixed_mask = fixed_mask;
     elastix->moving_image = moving_image;

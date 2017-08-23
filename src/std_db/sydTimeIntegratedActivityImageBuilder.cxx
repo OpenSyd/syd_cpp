@@ -20,6 +20,10 @@
 #include "sydTimeIntegratedActivityImageBuilder.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydImageUtils.h"
+#include "sydImageAnd.h"
+#include "sydRoiMaskImageHelper.h"
+#include "sydImageCrop.h"
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityImageBuilder::
@@ -27,6 +31,7 @@ TimeIntegratedActivityImageBuilder()
 {
   min_activity_ = 0.0;
   debug_images_flag_ = false;
+  additional_mask_name_ = "body";
 
   // Create FitOutputImage
   auc = std::make_shared<syd::FitOutputImage_AUC>();
@@ -35,12 +40,16 @@ TimeIntegratedActivityImageBuilder()
   best_model = std::make_shared<syd::FitOutputImage_Model>();
   iter = std::make_shared<syd::FitOutputImage_Iteration>();
   success = std::make_shared<syd::FitOutputImage_Success>();
+  params = std::make_shared<syd::FitOutputImage_ModelParams>();
+  mrt = std::make_shared<syd::FitOutputImage_MRT>();
   all_outputs_.push_back(auc);
   all_outputs_.push_back(integrate);
   all_outputs_.push_back(r2);
   all_outputs_.push_back(best_model);
   all_outputs_.push_back(iter);
   all_outputs_.push_back(success);
+  all_outputs_.push_back(params);
+  all_outputs_.push_back(mrt);
 }
 // --------------------------------------------------------------------
 
@@ -122,13 +131,26 @@ InsertOutputAUCImage()
 
 // --------------------------------------------------------------------
 syd::Image::pointer syd::TimeIntegratedActivityImageBuilder::
-InsertOutputSuccessFitImage()
+InsertOutputSuccessFitImage(typename MaskImageType::Pointer mask_itk)
 {
   CheckInputs();
   auto img = images_[0];
+  auto success_img_itk = success->GetImage();//syd::ReadImage<ImageType>(img->GetAbsolutePath());
+
+  // Modify the image according to the mask (put -1)
+  MaskIterator it_mask(mask_itk, mask_itk->GetLargestPossibleRegion());
+  Iterator it_img(success_img_itk, success_img_itk->GetLargestPossibleRegion());
+  it_mask.GoToBegin();
+  it_img.GoToBegin();
+  while (!it_mask.IsAtEnd()) {
+    if (it_mask.Get() == 0) it_img.Set(-1);
+    ++it_mask;
+    ++it_img;
+  }
+
   // Create output image
   typedef syd::FitOutputImage::ImageType ImageType;
-  auto output = syd::InsertImage<ImageType>(success->GetImage(), img->patient);
+  auto output = syd::InsertImage<ImageType>(success_img_itk, img->patient);
   syd::SetImageInfoFromImage(output, img);
   output->tags.clear(); // remove all tags
   auto db = img->GetDatabase<syd::StandardDatabase>();
@@ -145,27 +167,33 @@ InsertOutputSuccessFitImage()
 syd::Image::vector syd::TimeIntegratedActivityImageBuilder::
 InsertDebugOutputImages(std::vector<std::string> & names)
 {
-  //outputs_.clear();
   syd::Image::vector outputs;
-  syd::FitOutputImage::pointer main_output = auc;
-  if (options_.GetRestrictedFlag()) main_output = auc;
-  else main_output = integrate;
   auto img = images_[0];
   auto db = img->GetDatabase<syd::StandardDatabase>();
 
   for(auto o:all_outputs_) {
-    if (o->GetTagName() != main_output->GetTagName() and
-        o->GetTagName() != success->GetTagName()) {
-      auto output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
-      syd::SetImageInfoFromImage(output, img);
-      output->tags.clear(); // remove all tags for the debug images
-      auto t = syd::FindOrCreateTag(db, o->GetTagName());
-      syd::AddTag(output->tags, t);
-      output->pixel_unit = syd::FindPixelUnit(db, "no_unit");
-      db->Update(output);
-      outputs.push_back(output);
-      names.push_back(o->GetTagName());
+    // do nothing for auc or integrate or success output
+    if (o->GetTagName() == auc->GetTagName() or
+        o->GetTagName() == success->GetTagName() or
+        o->GetTagName() == integrate->GetTagName()) continue;
+
+    syd::Image::pointer output;
+    if (o->GetTagName() != params->GetTagName()) {
+      output = syd::InsertImage<ImageType>(o->GetImage(), img->patient);
     }
+    if (o->GetTagName() == params->GetTagName()) {
+      auto oo = std::dynamic_pointer_cast<syd::FitOutputImage_ModelParams>(o);
+      typedef FitOutputImage_ModelParams::Image4DType Image4DType;
+      output = syd::InsertImage<Image4DType>(oo->GetImage4D(), img->patient);
+    }
+    syd::SetImageInfoFromImage(output, img);
+    output->tags.clear(); // remove all tags for the debug images
+    auto t = syd::FindOrCreateTag(db, o->GetTagName());
+    syd::AddTag(output->tags, t);
+    output->pixel_unit = syd::FindPixelUnit(db, "no_unit");
+    db->Update(output);
+    outputs.push_back(output);
+    names.push_back(o->GetTagName());
   }
   return outputs;
 }
@@ -185,6 +213,12 @@ Run()
 
   // Build mask
   auto mask = CreateMaskFromThreshold(itk_images, min_activity_);
+  auto additional_mask = FindAdditionalMask();
+  if (additional_mask != nullptr) {
+    if (!syd::ImagesHaveSameSupport<MaskImageType,MaskImageType>(mask, additional_mask))
+      additional_mask = syd::ResampleAndCropImageLike<MaskImageType>(additional_mask, mask, 0, 0);
+    mask = syd::AndImage<MaskImageType>(mask, additional_mask);
+  }
   int nb_pixels = syd::ComputeSumOfPixelValues<MaskImageType>(mask);
 
   // set filter info
@@ -204,6 +238,8 @@ Run()
     filter_.AddOutputImage(r2);
     filter_.AddOutputImage(best_model);
     filter_.AddOutputImage(iter);
+    filter_.AddOutputImage(params);
+    filter_.AddOutputImage(mrt);
   }
   filter_.SetOptions(options_);
 
@@ -224,10 +260,9 @@ Run()
   // Go !
   filter_.Run();
 
-  // Create output
-  auto db = images_[0]->GetDatabase<syd::StandardDatabase>();
-  syd::FitImages::pointer tia;
-  db->New(tia);
+  // Create output (FitImages)
+  auto db = images_[0]->GetDatabase();
+  auto tia = db->New<syd::FitImages>();
   for(auto in:images_) tia->images.push_back(in);
   tia->min_activity = min_activity_;
   tia->SetFromOptions(options_);
@@ -236,7 +271,7 @@ Run()
 
   // Outputs
   auto output = InsertOutputAUCImage();
-  auto s = InsertOutputSuccessFitImage();
+  auto s = InsertOutputSuccessFitImage(mask);
   tia->AddOutput(output, "fit_auc");
   tia->AddOutput(s, success->GetTagName());
   syd::FitOutputImage::pointer main_output = auc;
@@ -250,6 +285,7 @@ Run()
     }
   }
   // tia->comments.push_back("tia builder "+Now());
+
   return tia;
 }
 // --------------------------------------------------------------------
@@ -278,10 +314,10 @@ CheckInputs()
   }
 
   // Sort images
-  auto db = images_[0]->GetDatabase<syd::StandardDatabase>();
+  auto db = images_[0]->GetDatabase();
   db->Sort<syd::Image>(images_);
 
-  // Get times 
+  // Get times
   auto times = syd::GetTimesFromInjection(images_);
 
   // Check times
@@ -321,3 +357,19 @@ CreateMaskFromThreshold(std::vector<ImageType::Pointer> images,
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+typename syd::TimeIntegratedActivityImageBuilder::MaskImageType::Pointer
+syd::TimeIntegratedActivityImageBuilder::FindAdditionalMask()
+{
+  if (additional_mask_name_ != "none") {
+    auto mask = syd::FindOneRoiMaskImage(images_[0], additional_mask_name_);
+    if (mask == nullptr) {
+      EXCEPTION("Cannot find mask " << additional_mask_name_
+                << " for this image " << images_[0]);
+    }
+    return syd::ReadImage<MaskImageType>(mask->GetAbsolutePath());
+  }
+  return nullptr;
+}
+// --------------------------------------------------------------------

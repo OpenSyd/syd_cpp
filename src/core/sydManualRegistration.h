@@ -25,7 +25,7 @@ namespace syd {
 
   template<class ImageType>
   typename ImageType::Pointer
-  ManualRegistration(const ImageType * inputImage, double x, double y, double z, bool translateOrigin);
+  ManualRegistration(const ImageType * inputImage, double x, double y, double z);
 
 } // end namespace
 

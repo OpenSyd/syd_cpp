@@ -18,6 +18,7 @@
 
 // syd
 #include "sydDicomSerieHelper.h"
+#include "edlib.h"
 
 // itk
 #include "gdcmUIDGenerator.h"
@@ -85,7 +86,7 @@ syd::DicomSerie::pointer
 syd::InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom)
 {
   // Get the db
-  auto db = dicom->GetDatabase<syd::StandardDatabase>();
+  auto db = dicom->GetDatabase();
 
   // FIXME --> put itk/gdcm related code into sydDicomUtils, not here
 
@@ -237,8 +238,7 @@ syd::InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom)
   }
 
   // Create a new dicom serie
-  syd::DicomSerie::pointer new_dicom;
-  db->New(new_dicom);
+  auto new_dicom = db->New<syd::DicomSerie>();
   new_dicom->patient = dicom->patient;
   new_dicom->dicom_acquisition_date = dicom->dicom_acquisition_date;
   new_dicom->dicom_reconstruction_date = dicom->dicom_reconstruction_date;
@@ -249,8 +249,7 @@ syd::InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom)
   new_dicom->dicom_description = dicom->dicom_description;
   db->Insert(new_dicom);
 
-  syd::DicomFile::pointer dicom_file;
-  db->New(dicom_file);
+  auto dicom_file = db->New<syd::DicomFile>();
   dicom_file->dicom_sop_uid = sopInstanceUID; // last one
   dicom_file->dicom_instance_number = 1;
   dicom_file->path = dicom->dicom_files[0]->path;
@@ -278,5 +277,261 @@ syd::InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom)
   new_dicom->dicom_files.push_back(dicom_file);
   db->Update(new_dicom);
   return new_dicom;
+}
+// --------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+std::string syd::GetDateOfOlderDicom(const syd::DicomSerie::vector & dicoms)
+{
+  auto d =
+    std::min_element(begin(dicoms), end(dicoms),
+                     [] (const syd::DicomSerie::pointer & s1, const syd::DicomSerie::pointer & s2) {
+                       return s1->dicom_acquisition_date < s2->dicom_acquisition_date;
+                     });
+  return (*d)->dicom_acquisition_date;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+bool syd::IsDicomStitchable(const syd::DicomSerie::pointer a,
+                            const syd::DicomSerie::pointer b,
+                            double max_reconstruction_delay)
+{
+  // Must be same frame_of_reference_uid and modality
+  if (a->dicom_frame_of_reference_uid != b->dicom_frame_of_reference_uid) return false;
+  if (a->dicom_modality != b->dicom_modality) return false;
+
+  // if same series_uid, it is ok
+  if (a->dicom_series_uid == b->dicom_series_uid) return true;
+
+  // Cannot be acquired at the same time
+  if (a->dicom_acquisition_date == b->dicom_acquisition_date) return false;
+  // tentative with reconstruction_date
+  // if reconstruction date difference larger than x hour, probably not the same
+  double delay = syd::DateDifferenceInHours(a->dicom_reconstruction_date, b->dicom_reconstruction_date);
+  if (delay > max_reconstruction_delay) return false;
+
+  // Trial with description -> if too different, we consider it is not stichable
+  auto s1 = a->dicom_description;
+  auto s2 = b->dicom_description;
+  EdlibAlignResult result = edlibAlign(s1.c_str(), s1.size(),
+                                       s2.c_str(), s2.size(),
+                                       edlibDefaultAlignConfig());
+  int max = 10;
+  if (result.editDistance > max) return false;
+
+  // default
+  return true;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+std::vector<syd::DicomSerie::vector> syd::GroupByStitchableDicom(syd::DicomSerie::vector dicoms)
+{
+  std::vector<syd::DicomSerie::vector> final_dicoms;
+  std::list<syd::DicomSerie::pointer> list;
+  std::copy(dicoms.begin(), dicoms.end(), std::back_inserter(list));
+
+  // The algorithm is:
+  // 1. loop on the list of dicoms
+  // 2. Search in the remaning part of the list, if another dicom is stitchable.
+  // 3. If yes, group together, and remove both dicom from the list
+  // ONLY valid for 2 stitched dicom max !
+  // Use list instead of vector (should be faster to remove). 
+
+  while (!list.empty()) {
+    auto dicom1 = list.front();
+    list.pop_front();
+    syd::DicomSerie::vector a;
+    a.push_back(dicom1);
+    if (dicom1->dicom_modality != "CT") {
+      for(auto i = list.begin(); i != list.end();) {
+        // Check if stichable with all dicoms in the stitch group
+        bool stichable = true;
+        for(auto d:a) if (!IsDicomStitchable(d, *i)) stichable = false;
+        if (stichable) {
+          a.push_back(*i);
+          i = list.erase(i);
+        }
+        else ++i;
+      }
+    }
+    final_dicoms.push_back(a);
+  }
+
+  // Sort by date
+  std::sort(begin(final_dicoms), end(final_dicoms),
+            [](const syd::DicomSerie::vector & a,
+               const syd::DicomSerie::vector & b) -> bool {
+              auto first_date_a = syd::GetDateOfOlderDicom(a);
+              auto first_date_b = syd::GetDateOfOlderDicom(b);
+              return IsDateBefore(first_date_a, first_date_b);
+            });
+
+  // Remove if duplicate
+  final_dicoms.erase(unique(final_dicoms.begin(), final_dicoms.end()), final_dicoms.end());
+  return final_dicoms;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+void syd::CheckAndSetPatient(syd::DicomBase::pointer dicom,
+                             syd::Patient::pointer patient)
+{
+  dicom->patient = patient;
+  for(auto d:patient->dicom_patient_ids)
+    if (d == dicom->dicom_patient_id) return;
+  std::ostringstream ss;
+  for(auto d:patient->dicom_patient_ids) ss << d << " ";
+  LOG(WARNING) << "Different dicom_patient_id in db and in the Dicom file " << std::endl
+               << "Patient    patient dicom ids : " << ss.str() << std::endl
+               << "Dicom file patient dicom id  : " << dicom->dicom_patient_id;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+syd::Patient::pointer syd::FindPatientFromDicomInfo(syd::StandardDatabase * db, syd::DicomBase::pointer dicom)
+{
+  // Search for a patient with the same dicom_patient_id (brute force search)
+  syd::Patient::vector patients;
+  db->Query(patients);
+  for(auto p:patients)
+    for(auto d:p->dicom_patient_ids)
+      if (d == dicom->dicom_patient_id) return p;
+  return nullptr;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+syd::Patient::pointer syd::NewPatientFromDicomInfo(syd::StandardDatabase * db, syd::DicomBase::pointer dicom)
+{
+  // Create a patient
+  auto patient = db->New<syd::Patient>();
+  syd::SetPatientInfoFromDicom(dicom, patient);
+  // Look for max study_id value
+  syd::Patient::vector patients;
+  db->Query(patients);
+  int max = 0;
+  for(auto p:patients) if (p->study_id > max) max = p->study_id;
+  patient->study_id = max+1;
+  dicom->patient = patient;
+  return patient;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+void syd::SetPatientInfoFromDicom(const syd::DicomBase::pointer dicom,
+                                  syd::Patient::pointer patient)
+{
+  patient->dicom_patient_ids.push_back(dicom->dicom_patient_id);
+  // Eliminate duplicate ids (1) sort (2) unique (3) remove last indeterminate values
+  std::sort(patient->dicom_patient_ids.begin(), patient->dicom_patient_ids.end());
+  auto last = std::unique(patient->dicom_patient_ids.begin(), patient->dicom_patient_ids.end());
+  patient->dicom_patient_ids.erase(last, patient->dicom_patient_ids.end());
+  patient->name = dicom->dicom_patient_name;
+  patient->sex = dicom->dicom_patient_sex;
+}
+//--------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::CreateDicomFolder(const syd::StandardDatabase * db,
+                            const syd::DicomBase::pointer dicom)
+{
+  std::string relative_folder = dicom->ComputeRelativeFolder();
+  std::string absolute_folder = db->ConvertToAbsolutePath(relative_folder);
+  if (!fs::exists(absolute_folder)) fs::create_directories(absolute_folder);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::CopyFileToDicomFile(const std::string & filename,
+                              const syd::DicomFile::pointer dicom_file,
+                              int log_level,
+                              bool ignore_if_exist)
+{
+  auto destination = dicom_file->GetAbsolutePath();
+  if (ignore_if_exist and fs::exists(destination)) {
+    LOG(log_level) << "Destination file already exist, ignoring";
+    return false;
+  }
+  fs::copy_file(filename.c_str(), destination);
+  LOG(log_level) << "Copying " << filename << " to " << dicom_file->path << std::endl;
+  return true;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
+                                      const std::string & filename,
+                                      const syd::DicomSerie::pointer & serie)
+{
+  if (file->id == 0) {
+    LOG(FATAL) << "Cannot SetDicomFilePathAndFilename, DicomFile is not persistant: " << file;
+  }
+
+  // check if the prefix already exist
+  auto f = GetFilenameFromPath(filename);
+  if (f.substr(0, 4) == "dcm_") {
+    f = f.substr(4, f.size()); // remove dcm_
+    f = f.substr(f.find("_")+1, f.size()); // remove id_
+  }
+
+  // Build the filename
+  std::ostringstream oss;
+  oss << "dcm_" << file->id << "_" << f;
+  file->filename = oss.str();
+
+  // Build the relative folder
+  file->path = serie->ComputeRelativeFolder();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
+                                      const std::string & filename,
+                                      const syd::DicomStruct::pointer & dicom_struct)
+{
+  if (file->id == 0) {
+    LOG(FATAL) << "Cannot SetDicomFilePathAndFilename, DicomFile is not persistant: " << file;
+  }
+
+  // check if the prefix already exist
+  auto f = GetFilenameFromPath(filename);
+  if (f.substr(0, 10) == "dcm_struct") {
+    f = f.substr(4, f.size()); // remove dcm_struct
+    f = f.substr(f.find("_")+1, f.size()); // remove id_
+  }
+
+  // Build the filename
+  std::ostringstream oss;
+  oss << "dcm_struct_" << file->id << "_" << GetFilenameFromPath(filename);
+  file->filename = oss.str();
+
+  // Build the relative folder
+  file->path = dicom_struct->ComputeRelativeFolder();
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::DicomSerie::vector syd::FindDicomSeries(const syd::Patient::pointer patient)
+{
+  auto db = patient->GetDatabase();
+  syd::DicomSerie::vector dicoms;
+  typedef odb::query<syd::DicomSerie> QI;
+  QI q = QI::patient == patient->id;
+  db->Query(dicoms, q);
+  return dicoms;
 }
 // --------------------------------------------------------------------

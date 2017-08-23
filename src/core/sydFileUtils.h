@@ -32,13 +32,6 @@
 #define GetCurrentDir getcwd
 #endif
 
-// syd
-#include "sydDD.h"
-#include "sydLog.h"
-#include "sydException.h"
-
-using namespace sydlog;
-
 // boost
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>

@@ -18,7 +18,7 @@
 
 //--------------------------------------------------------------------
 template<class ImageType>
-typename ImageType::Pointer syd::FlipImage(const ImageType * input, int axe)
+typename ImageType::Pointer syd::FlipImage(const ImageType * input, int axe, bool flipOrigin)
 {
   // Filter
   typedef itk::FlipImageFilter<ImageType> FlipImageFilterType;
@@ -32,9 +32,21 @@ typename ImageType::Pointer syd::FlipImage(const ImageType * input, int axe)
   axes.Fill(false);
   axes[axe]=true;
   flipFilter->SetFlipAxes(axes);
-  flipFilter->SetFlipAboutOrigin(false);
+  flipFilter->SetFlipAboutOrigin(flipOrigin);
   flipFilter->Update();
   return flipFilter->GetOutput();
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
+void syd::FlipImage(typename ImageType::Pointer & input, std::vector<char> axes, bool flipOrigin)
+{
+  for (auto axe:axes) {
+    input = syd::FlipImage<ImageType>(input, axe, flipOrigin);
+  }
+  return;
 }
 //--------------------------------------------------------------------
 

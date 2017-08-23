@@ -20,18 +20,15 @@
 #define SYDSTANDARDDATABASE_H
 
 // syd
-#include "sydDatabase.h"
-#include "sydTable.h"
+#include "sydCommonDatabase.h"
 #include "sydImageUtils.h"
 
 // syd tables
-#include "sydRecordHistory-odb.hxx"
 #include "sydPatient-odb.hxx"
 #include "sydInjection-odb.hxx"
 #include "sydRadionuclide-odb.hxx"
-#include "sydTag-odb.hxx"
-#include "sydFile-odb.hxx"
 #include "sydDicomSerie-odb.hxx"
+#include "sydDicomStruct-odb.hxx"
 #include "sydDicomFile-odb.hxx"
 #include "sydPixelUnit-odb.hxx"
 #include "sydImage-odb.hxx"
@@ -44,6 +41,23 @@
 #include "sydRoiTimepoints-odb.hxx"
 #include "sydFitTimepoints-odb.hxx"
 
+#include "sydPatientTraits.h"
+#include "sydInjectionTraits.h"
+#include "sydRadionuclideTraits.h"
+#include "sydDicomFileTraits.h"
+#include "sydDicomSerieTraits.h"
+#include "sydDicomStructTraits.h"
+#include "sydPixelUnitTraits.h"
+#include "sydRoiTypeTraits.h"
+#include "sydImageTraits.h"
+#include "sydRoiMaskImageTraits.h"
+#include "sydRoiStatisticTraits.h"
+#include "sydFitImagesTraits.h"
+#include "sydTimepointsTraits.h"
+#include "sydRoiTimepointsTraits.h"
+#include "sydFitTimepointsTraits.h"
+#include "sydElastixTraits.h"
+
 // itk
 #include <itkImage.h>
 
@@ -51,19 +65,13 @@
 namespace syd {
 
   /// This database manages a set of 'standard' tables: Patient, Injection etc.
-  class StandardDatabase: public Database {
+  class StandardDatabase: public CommonDatabase {
   public:
-
+    StandardDatabase();
     virtual ~StandardDatabase();
 
     // Search for a patient by name (or id)
     syd::Patient::pointer FindPatient(const std::string & name_or_study_id) const;
-
-    // Search images for this patient name
-    syd::Image::vector FindImages(const std::string & patient_name) const;
-
-    // Search images for this patient
-    syd::Image::vector FindImages(const syd::Patient::pointer patient) const;
 
     /// Automatically insert some default records
     void InsertDefaultRecords(const std::string & def);
@@ -84,30 +92,9 @@ namespace syd {
 
   }; // class StandardDatabase
 
-#include "sydStandardDatabase.txx"
-
-
-  template<> void syd::Table<syd::Image>::Sort(syd::Image::vector & records,
-                                               const std::string & type) const;
-  template<> void syd::Table<syd::Injection>::Sort(syd::Injection::vector & records,
-                                                   const std::string & type) const;
-  template<> void syd::Table<syd::RoiMaskImage>::Sort(syd::RoiMaskImage::vector & records,
-                                                      const std::string & type) const;
-  template<> void syd::Table<syd::DicomSerie>::Sort(syd::DicomSerie::vector & records,
-                                                    const std::string & type) const;
-  template<> void syd::Table<syd::Patient>::Sort(syd::Patient::vector & records,
-                                                 const std::string & type) const;
-  template<> void syd::Table<syd::Radionuclide>::Sort(syd::Radionuclide::vector & records,
-                                                      const std::string & type) const;
-  // template<> void syd::Table<syd::Calibration>::Sort(syd::Calibration::vector & records,
-  //                                                    const std::string & type) const;
-  template<> void syd::Table<syd::PixelUnit>::Sort(syd::PixelUnit::vector & records,
-                                                   const std::string & type) const;
-  template<> void syd::Table<syd::RoiStatistic>::Sort(syd::RoiStatistic::vector & records,
-                                                      const std::string & type) const;
-
 } // namespace syd
 
-// --------------------------------------------------------------------
+#include "sydStandardDatabase.txx"
 
+// --------------------------------------------------------------------
 #endif

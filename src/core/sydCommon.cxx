@@ -16,8 +16,15 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+// syd
 #include "sydCommon.h"
+
+// http://pstreams.sourceforge.net/
 #include "pstream.h"
+
+// std
+#include <chrono>
+#include <thread>
 
 // --------------------------------------------------------------------
 std::string syd::ConvertDateTime(std::string date, std::string time)
@@ -199,13 +206,26 @@ void syd::SkipComment(std::istream & is)
 
 
 //------------------------------------------------------------------
-//http://stackoverflow.com/questions/3418231/replace-part-of-a-string-with-another-string
+// http://stackoverflow.com/questions/3418231/replace-part-of-a-string-with-another-string
 bool syd::Replace(std::string& str, const std::string& from, const std::string& to) {
   size_t start_pos = str.find(from);
-  if(start_pos == std::string::npos)
+  if (start_pos == std::string::npos)
     return false;
   str.replace(start_pos, from.length(), to);
   return true;
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+// http://stackoverflow.com/questions/3418231/replace-part-of-a-string-with-another-string
+void syd::ReplaceAll(std::string& str, const std::string& from, const std::string& to) {
+  if (from.empty()) return;
+  size_t start_pos = 0;
+  while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+    str.replace(start_pos, from.length(), to);
+    start_pos += to.length(); // In case 'to' contains 'from', like replacing 'x' with 'yx'
+  }
 }
 //------------------------------------------------------------------
 
@@ -289,20 +309,35 @@ void syd::ReadIdsFromInputPipe(std::vector<syd::IdType> & ids)
 //------------------------------------------------------------------
 int syd::ExecuteCommandLine(const std::string & cmd, int logLevel)
 {
+  std::string output;
+  std::string error_output;
+  return ExecuteCommandLine(cmd, logLevel, error_output, output);
+}
+//------------------------------------------------------------------
+
+
+//------------------------------------------------------------------
+int syd::ExecuteCommandLine(const std::string & cmd,
+                            int logLevel,
+                            std::string & error_output,
+                            std::string & output)
+{
   const redi::pstreams::pmode mode = redi::pstreams::pstdout|redi::pstreams::pstderr;
   redi::ipstream child(cmd, mode);
   char buf[1024];
+  output.clear();
+  error_output.clear();
   std::streamsize n;
   bool finished[2] = { false, false };
   const std::string color = "\x1b[32m"; // green
   std::cout << color;
   bool error = false;
-  while (!finished[0] || !finished[1]) {
+  while (!finished[0] and !finished[1]) { // if one is finished, we stop
     if (!finished[0]) {
       while ((n = child.err().readsome(buf, sizeof(buf))) > 0) {
         error = true;
-        std::cerr << fatalColor;
-        std::cerr.write(buf, n);
+        error_output.insert(error_output.size(), buf, n);
+        if (Log::LogLevel() >= logLevel) std::cout.write(buf, n).flush(); // only print if level ok
       }
       if (child.eof()) {
         finished[0] = true;
@@ -312,6 +347,7 @@ int syd::ExecuteCommandLine(const std::string & cmd, int logLevel)
 
     if (!finished[1]) {
       while ((n = child.out().readsome(buf, sizeof(buf))) > 0) {
+        output.insert(output.size(), buf, n);
         if (Log::LogLevel() >= logLevel) std::cout.write(buf, n).flush(); // only print if level ok
       }
       if (child.eof()) {
@@ -319,6 +355,8 @@ int syd::ExecuteCommandLine(const std::string & cmd, int logLevel)
         if (!finished[0]) child.clear();
       }
     }
+    if (!finished[0] and !finished[1])
+      std::this_thread::sleep_for(std::chrono::seconds(3));
   }
   std::cout << DD_RESET;
   if (error) return -1; // Error
@@ -411,6 +449,7 @@ double syd::Rescale(const double v,
 }
 //--------------------------------------------------------------------
 
+
 //--------------------------------------------------------------------
 double syd::ComputeMedian(std::vector<double> values)
 {
@@ -421,4 +460,48 @@ double syd::ComputeMedian(std::vector<double> values)
   else median = values[N/2];
   return median;
 }
+//--------------------------------------------------------------------
+
+
+
+//--------------------------------------------------------------------
+std::string syd::ToString(double a, int precision)
+{
+  std::stringstream str;
+  str << std::fixed << std::setprecision(precision) << a;
+  return str.str();
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+std::string syd::ToString(bool b)
+{
+  if (b) return "Y";
+  return "N";
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+// http://stackoverflow.com/questions/281818/unmangling-the-result-of-stdtype-infoname
+#ifdef __GNUG__
+#include <cstdlib>
+#include <memory>
+#include <cxxabi.h>
+std::string syd::demangle(const char* name) {
+  int status = -4; // some arbitrary value to eliminate the compiler warning
+  // enable c++11 by passing the flag -std=c++11 to g++
+  std::unique_ptr<char, void(*)(void*)> res {
+    abi::__cxa_demangle(name, NULL, NULL, &status),
+      std::free
+      };
+  return (status==0) ? res.get() : name ;
+}
+#else
+// does nothing if not g++
+std::string syd::demangle(const char* name) {
+  return name;
+}
+#endif
 //--------------------------------------------------------------------

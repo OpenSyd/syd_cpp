@@ -40,7 +40,7 @@ namespace syd {
   /// Create a TAC from a tp
   syd::TimeActivityCurve::pointer GetTAC(const syd::Timepoints::pointer tp);
   void GetTAC(const syd::Timepoints::pointer tp, syd::TimeActivityCurve::pointer tac);
-  /// Set timepoints from a given TAC //FIXME 
+  /// Set timepoints from a given TAC //FIXME
 
   // Copy patient + times + values + std
   void CopyTimepoints(const syd::Timepoints::pointer from, syd::Timepoints::pointer to);
@@ -52,6 +52,10 @@ namespace syd {
 
   /// Fit timepoints
   void ComputeFitTimepoints(syd::FitTimepoints::pointer fit);
+
+  /// Create the timepoints at the pixel coord, from a list of images
+  syd::Timepoints::pointer NewTimepointsAtPixel(const syd::Image::vector & images,
+                                                const std::vector<double> & pixel);
 
 } // end namespace
 // --------------------------------------------------------------------

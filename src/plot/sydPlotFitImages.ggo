@@ -1,0 +1,15 @@
+#File sydPlotFitImages.ggo
+
+package "syd"
+version "0.1"
+usage "sydPlotFitImages <id> --pixel x,y,z"
+description "Plot TAC and fit from a FitImages at the given pixel (mm)
+- <id>     FitImages id to plot
+"
+
+
+option "pixel"      - "Pixel coord in mm"       float yes multiple(3)
+option "fit"	      f	"If given, try to fit instead of getting FitImage results" flag off
+
+option "output"	    o	"Output python file for script" string no
+option "pdf"	      p	"Output pdf file" string no

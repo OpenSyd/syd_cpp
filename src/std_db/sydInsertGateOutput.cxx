@@ -21,11 +21,12 @@
 #include "sydPluginManager.h"
 #include "sydDatabaseManager.h"
 #include "sydCommonGengetopt.h"
-#include "sydRoiStatisticBuilder.h"
-#include "sydScaleImageBuilder.h"
-#include "sydRecordHelpers.h"
-
-#include <boost/tokenizer.hpp>
+#include "sydStandardDatabase.h"
+#include "sydGateHelper.h"
+#include "sydPixelUnitHelper.h"
+#include "sydImageHelper.h"
+#include "sydTagHelper.h"
+#include "sydCommentsHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -40,150 +41,36 @@ int main(int argc, char* argv[])
   // Get the database
   syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Get the study and patient name
-  std::string study_name = args_info.inputs[0];
-  std::string folder_name = args_info.inputs[1];
+  // Get the folder
+  std::string folder_name = args_info.inputs[0];
 
-  // Loop on mhd files and txt (no folder recursive yet)
-  fs::path folder(folder_name);
-  if (!fs::exists(folder)) {
-    LOG(FATAL) << "Folder '" << folder << "' does not exist.";
+  // Get the injection
+  syd::IdType id = atoi(args_info.inputs[1]);
+  auto source = db->QueryOne<syd::Image>(id);
+
+  // Get the images (dose+edep+uncert)
+  auto images = syd::GateInsertOutputImages(folder_name, source);
+
+  // Get the stat file
+  auto stat_file = syd::GateInsertStatFile(folder_name, source->patient);
+  if (stat_file != nullptr) {
+    syd::GateScaleImageAccordingToStatFile(images, source, stat_file);
   }
-  if (!fs::is_directory(folder)) {
-    LOG(FATAL) << "The file '" << folder << "' is not a directory.";
-  }
-
-  std::vector<fs::path> files;
-  std::copy(fs::directory_iterator(folder), fs::directory_iterator(), std::back_inserter(files));
-
-  syd::Image::pointer tia;
-  std::map<std::string, syd::Image::pointer> map_images;
-  double N = 0; // number of primary
-  for(auto & file:files) {
-    // Insert image
-    if (file.extension() == ".mhd") {
-      std::string patient_name;
-      std::string rad_name;
-      std::string type="";
-
-      // Parse the filename {patient}-{radionuclide}-Dose etc
-      auto f(file);
-      f.replace_extension();
-      std::string s = f.filename().string(); // (needed in tokens, cannot use .string directly)
-      boost::char_separator<char> sep("-");
-      boost::tokenizer< boost::char_separator<char> > tokens(s, sep);
-      std::vector<std::string> words;
-      for(auto t:tokens) words.push_back(t);
-      if (words.size() >= 4) {
-        patient_name = words[0];
-        rad_name = words[1]+"-"+words[2];
-        if (words[3] == "Edep") type = "edep";
-        if (words[3] == "Dose") type = "dose";
-        if (words.size()>4) {
-          if (words[4] == "Uncertainty") type = type+"_uncertainty";
-          if (words[4] == "Squared") type = type+"_squared";
-        }
-      }
-
-      if (type != "") {
-        // Find image to copy info (dicom etc)
-        syd::Image::vector inputs = db->FindImages(patient_name);
-        std::vector<std::string> tag_names = {rad_name, study_name, "tia"};
-        inputs = syd::KeepRecordIfContainsAllTags<syd::Image>(inputs, tag_names);
-        if (inputs.size() < 1) {
-          LOG(FATAL) << "Cannot find initial image to copy";
-        }
-        if (inputs.size() > 1) {
-          LOG(FATAL) << inputs.size() << " images found. Try to select the one by adding tags selection.";
-        }
-        tia = inputs[0];
-
-        // Check if such an image already exist
-        tag_names = {rad_name, study_name, type};
-        inputs = db->FindImages(patient_name);
-        inputs = syd::KeepRecordIfContainsAllTags<syd::Image>(inputs, tag_names);
-        if (inputs.size() != 0) {
-          LOG(WARNING) << "Image " << type << " already exist for this patient/rad: " << inputs[0] << " (skip)";
-          continue;
-        }
-
-        // Create image
-        syd::ImageBuilder builder(db);
-        syd::Image::pointer output = builder.NewMHDImageLike(tia);
-        builder.CopyImageFromFile(output, file.string());
-
-        // Set tags
-        output->tags.clear(); // remove copied tags
-        syd::Tag::vector tags;
-        db->FindTags(tags, tag_names);
-        syd::AddTag(output->tags, tags); // set default tags
-        db->UpdateTagsFromCommandLine(output->tags, args_info); // user defined tags
-
-        // Unity ? edep -> MeV ; dose -> Gy to change in "cGy/kBq.h/IA[MBq]"
-        // uncer ? %
-        // squared ? idem edep/dose
-        syd::PixelValueUnit::pointer u;
-        if (type == "dose") u = db->FindPixelUnit("Gy");
-        if (type == "edep") u = db->FindPixelUnit("MeV");
-        if (type == "dose_uncertainty" or type == "edep_uncertainty") u = db->FindPixelUnit("%");
-        if (type == "dose_squared") u = db->FindPixelUnit("Gy");
-        if (type == "edep_squared") u = db->FindPixelUnit("MeV");
-        output->pixel_unit = u;
-
-        // Insert in the db
-        if (!args_info.dry_run_flag) builder.InsertAndRename(output);
-        LOG(1) << "File: " << file;
-        LOG(1) << "      "  << output;
-        map_images[type] = output;
-      }
-    }
-    if (file.extension() == ".txt") {
-      std::ifstream f(file.string());
-      std::string line;
-      bool found = false;
-      while (std::getline(f, line)) {
-        std::istringstream iss(line);
-        std::string s;
-        iss >> s; // first #
-        iss >> s; // second word
-        if (s == "NumberOfEvents") {
-          iss >> s; // read '='
-          iss >> N; // read value
-          found = true;
-          LOG(1) << "Found nb of particules: " << N << " in " << file;
-          continue;
-        }
-      }
-      if (!found) { LOG(WARNING) << "Ignoring file " << file; }
-    }
+  else {
+    LOG(WARNING) << "Cannot find stat file, no scaling.";
   }
 
-  // Scale dose if needed
-  if (N != 0) {
-    syd::RoiStatisticBuilder rsbuilder(db);
-    syd::RoiStatistic::pointer stat;
-    db->New(stat);
-    stat->image = tia;
-    rsbuilder.ComputeStatistic(stat);// no mask
-    N = N/1000.0; // 1000 because tia is in kBq.h
-    double scale = (3600 * 100) * (stat->sum/N); // 100 because in cGy
-    for(auto & m:map_images) {
-      syd::Image::pointer image = m.second;
-      std::string type = m.first;
-      // Scale
-      double s = scale;
-      if (type == "dose_squared" or type == "edep_squared") s = scale*scale;
-      if (type == "dose" or type == "edep" or
-          type == "dose_squared" or type == "edep_squared") {
-        syd::ScaleImageBuilder builder(db);
-        builder.Scale(image, s);
-        // unit
-        image->pixel_unit = db->FindPixelUnit("cGy/IA[MBq]");
-        // Update
-        LOG(1) << "Scaling: " << image;
-        if (!args_info.dry_run_flag) db->Update(image);
-      }
-    }
+  // Tags and info from cmd line
+  for(auto & image:images) {
+    syd::SetTagsFromCommandLine(image->tags, db, args_info);
+    syd::SetImageInfoFromCommandLine(image, args_info);
+    syd::SetCommentsFromCommandLine(image->comments, db, args_info);
+  }
+  db->Update(images);
+
+  LOG(1) << "Inserted: " << images.size() << " images.";
+  for(auto & image:images) {
+    LOG(2) << image;
   }
 
   // This is the end, my friend.

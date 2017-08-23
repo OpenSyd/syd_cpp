@@ -74,6 +74,21 @@ int main(int argc, char* argv[])
       }
     }
 
+    if (args_info.copy_flag) {
+      auto copy = syd::InsertCopyImage(image);
+      image = copy;
+    }
+
+    if (args_info.rename_flag) {
+      auto folder = image->patient->ComputeRelativeFolder();
+      syd::Move(image, folder);
+    }
+
+    if (args_info.gauss_arg != 0) {
+      double sigma_in_mm = args_info.gauss_arg;
+      syd::ApplyGaussianFilter(image, sigma_in_mm);
+    }
+
     // Need to import a new mhd ?
     if (args_info.file_given) {
       if (image->type != "mhd") {
@@ -99,10 +114,21 @@ int main(int argc, char* argv[])
     }
 
     // Need to scale ?
-    double s = 1.0;
     if (args_info.scale_given) {
-      s = args_info.scale_arg;
-      if (s != 1.0) syd::ScaleImage(image, s);
+      double s = args_info.scale_arg;
+      if (s != 1.0) {
+        syd::ScaleImage(image, s);
+        LOG(1) << "Image was scaled by " << s << ": " << image;
+      }
+    }
+
+    // Need to resample/crop
+    if (args_info.resample_like_given) {
+      auto id = args_info.resample_like_arg;
+      auto like = db->QueryOne<syd::Image>(id);
+      auto interpolation = args_info.interpolation_arg;
+      auto defaultValue = args_info.default_value_arg;
+      syd::ResampleAndCropImageLike(image, like, interpolation, defaultValue);
     }
 
     // Need to convert to another pixel_type ?
@@ -111,13 +137,29 @@ int main(int argc, char* argv[])
       //syd::CastImage(image, args_info.pixel_type_arg);
     }
 
+    // Need to fill empty pixels
+    if (args_info.fill_holes_arg > 0) {
+      syd::Image::pointer mask;
+      syd::IdType id = args_info.fill_mask_image_arg;
+      db->QueryOne(mask, id);
+      double value = args_info.fill_mask_value_arg;
+      int nb_fail;
+      int nb_changed;
+      syd::FillHoles(image, mask, args_info.fill_holes_arg, value, nb_fail, nb_changed);
+      LOG(1) << "Fill holes terminated with " << nb_fail << " fails and " << nb_changed << " voxels changed.";
+    }
+
     // update db
     syd::SetImageInfoFromCommandLine(image, args_info);
     syd::SetTagsFromCommandLine(image->tags, db, args_info);
     syd::SetCommentsFromCommandLine(image->comments, db, args_info);
     db->Update(image);
-    if (s != 1) LOG(1) << "Image was scaled by " << s << ": " << image;
-    else LOG(1) << "Image was updated: " << image;
+    if (args_info.copy_flag) {
+      LOG(1) << "A new image was created: " << image;
+    }
+    else {
+      LOG(1) << "Image was updated: " << image;
+    }
   }
 
   // This is the end, my friend.

@@ -1,4 +1,126 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="304">
+    <alter-table name="syd::DicomSerie">
+      <add-column name="dicom_real_world_value_slope" type="REAL" null="true"/>
+      <add-column name="dicom_real_world_value_intercept" type="REAL" null="true"/>
+    </alter-table>
+  </changeset>
+
+  <changeset version="297"/>
+
+  <changeset version="296"/>
+
+  <changeset version="295"/>
+
+  <changeset version="294">
+    <alter-table name="syd::DicomSerie">
+      <add-column name="injection" type="INTEGER" null="true"/>
+      <add-foreign-key name="injection_fk" deferrable="DEFERRED">
+        <column name="injection"/>
+        <references table="syd::Injection">
+          <column name="id"/>
+        </references>
+      </add-foreign-key>
+    </alter-table>
+  </changeset>
+
+  <changeset version="293">
+    <alter-table name="syd::DicomSerie">
+      <add-column name="dicom_study_name" type="TEXT" null="true"/>
+      <add-column name="dicom_window_center" type="REAL" null="true"/>
+      <add-column name="dicom_window_width" type="REAL" null="true"/>
+    </alter-table>
+  </changeset>
+
+  <changeset version="292">
+    <alter-table name="syd::DicomSerie">
+      <add-column name="dicom_series_description" type="TEXT" null="true"/>
+      <add-column name="dicom_study_description" type="TEXT" null="true"/>
+      <add-column name="dicom_image_id" type="TEXT" null="true"/>
+      <add-column name="dicom_dataset_name" type="TEXT" null="true"/>
+      <add-column name="dicom_manufacturer" type="TEXT" null="true"/>
+      <add-column name="dicom_manufacturer_model_name" type="TEXT" null="true"/>
+      <add-column name="dicom_study_id" type="TEXT" null="true"/>
+      <add-column name="dicom_software_version" type="TEXT" null="true"/>
+      <add-column name="dicom_patient_name" type="TEXT" null="true"/>
+      <add-column name="dicom_patient_id" type="TEXT" null="true"/>
+      <add-column name="dicom_patient_birth_date" type="TEXT" null="true"/>
+      <add-column name="dicom_patient_sex" type="TEXT" null="true"/>
+      <add-column name="dicom_pixel_scale" type="REAL" null="true"/>
+      <add-column name="dicom_pixel_offset" type="REAL" null="true"/>
+      <add-column name="dicom_radionuclide_name" type="TEXT" null="true"/>
+      <add-column name="dicom_counts_accumulated" type="REAL" null="true"/>
+      <add-column name="dicom_actual_frame_duration_in_msec" type="REAL" null="true"/>
+      <add-column name="dicom_number_of_frames_in_rotation" type="INTEGER" null="true"/>
+      <add-column name="dicom_number_of_rotations" type="INTEGER" null="true"/>
+      <add-column name="dicom_table_traverse_in_mm" type="REAL" null="true"/>
+      <add-column name="dicom_table_height_in_mm" type="REAL" null="true"/>
+      <add-column name="dicom_rotation_angle" type="REAL" null="true"/>
+    </alter-table>
+    <add-table name="syd::DicomSerie_dicom_size" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::DicomSerie">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::DicomSerie_dicom_size_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::DicomSerie_dicom_size_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+    <add-table name="syd::DicomSerie_dicom_spacing" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="REAL" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::DicomSerie">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::DicomSerie_dicom_spacing_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::DicomSerie_dicom_spacing_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+  </changeset>
+
+  <changeset version="291">
+    <add-table name="syd::DicomSerie_tags" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::DicomSerie">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::DicomSerie_tags_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::DicomSerie_tags_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::Tag">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
+  <changeset version="290"/>
+
   <changeset version="289"/>
 
   <changeset version="288"/>

@@ -180,6 +180,7 @@ itk::ImageIOBase::Pointer syd::ReadImageHeader(const std::string & filename)
   try {
     reader = itk::ImageIOFactory::CreateImageIO(filename.c_str(), itk::ImageIOFactory::ReadMode);
     reader->SetFileName(filename);
+    gdcm::ImageHelper::SetForcePixelSpacing(true);
     reader->ReadImageInformation();
   } catch(std::exception & e) {
     EXCEPTION("Error while reading header of image file " << filename << ". Error is: " << e.what());

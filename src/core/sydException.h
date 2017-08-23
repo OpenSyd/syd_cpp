@@ -19,13 +19,8 @@
 #ifndef SYDEXCEPTION_H
 #define SYDEXCEPTION_H
 
-// syd
-#include "sydDD.h"
-#include "sydLog.h"
-
-using namespace sydlog;
-
 // std
+#include <string>
 #include <exception>
 
 namespace syd {

@@ -20,6 +20,8 @@
 #include "sydDicomFile.h"
 #include "sydStandardDatabase.h"
 
+DEFINE_TABLE_IMPL(DicomFile);
+
 // --------------------------------------------------------------------
 syd::DicomFile::DicomFile():syd::File()
 {
@@ -41,13 +43,3 @@ std::string syd::DicomFile::ToString() const
 // --------------------------------------------------------------------
 
 
-// --------------------------------------------------------------------
-void syd::DicomFile::DumpInTable(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("nb", dicom_instance_number);
-  ta.Set("file", filename, 100);
-  ta.Set("folder", path);
-  ta.Set("sop_uid", dicom_sop_uid);
-}
-// --------------------------------------------------------------------

@@ -67,9 +67,8 @@ syd::Image::pointer syd::InsertImage(typename ImageType::Pointer itk_image,
                                      std::string modality)
 {
   // New image
-  auto db = patient->GetDatabase<syd::StandardDatabase>();
-  syd::Image::pointer image;
-  db->New(image);
+  auto db = patient->GetDatabase();
+  auto image = db->New<syd::Image>();
   image->patient = patient;
   image->modality = modality;
   image->type = "mhd";

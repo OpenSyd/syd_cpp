@@ -28,6 +28,7 @@
 #include <fstream>
 #include <algorithm>
 #include <numeric>
+#include <typeinfo>
 
 // To get current working directory
 // http://stackoverflow.com/questions/143174/how-do-i-get-the-directory-that-a-program-is-running-from
@@ -42,6 +43,7 @@
 // syd
 #include "sydDD.h"
 #include "sydLog.h"
+using namespace sydlog;
 #include "sydException.h"
 #include "md5.h"
 
@@ -87,6 +89,7 @@ namespace syd {
   std::string ArrayToString(const std::vector<T> & t, int precision=1);
   void SkipComment(std::istream & is);
   bool Replace(std::string& str, const std::string& from, const std::string& to);
+  void ReplaceAll(std::string& str, const std::string& from, const std::string& to);
   void GetWords(std::vector<std::string> & words, const std::string & phrase);
   void SetWords(std::string & phrase, const std::vector<std::string> & words);
   // trim from start
@@ -97,6 +100,8 @@ namespace syd {
   std::string &trim(std::string &s);
   std::string AddDoubleQuoteAround(const std::string & s);
   std::string ToLowerCase(const std::string & s);
+  std::string ToString(double a, int precision);
+  std::string ToString(bool b);
   //--------------------------------------------------------------------
 
 
@@ -122,6 +127,10 @@ namespace syd {
 
 
   //--------------------------------------------------------------------
+  int ExecuteCommandLine(const std::string & cmd,
+                         int logLevel,
+                         std::string & error_output,
+                         std::string & output);
   int ExecuteCommandLine(const std::string & cmd, int logLevel);
   //--------------------------------------------------------------------
 
@@ -154,8 +163,11 @@ namespace syd {
   // --------------------------------------------------------------------
 
 
-#include "sydCommon.txx"
+  // --------------------------------------------------------------------
+  std::string demangle(const char* name);
 
+
+#include "sydCommon.txx"
 } // end namespace
 
 #endif /* end #define SYDCOMMON_H */

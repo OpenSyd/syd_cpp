@@ -36,22 +36,71 @@ namespace syd {
 
   // Write the dicom in the DicomSerie to a mhd file
   template<class ImageType>
-  void WriteDicomToMhd(syd::DicomSerie::pointer dicom,
-                       std::string mhd_filename);
+    void WriteDicomToMhd(syd::DicomSerie::pointer dicom,
+                         std::string mhd_filename);
 
   // Read a dicom into an itk_image
   template<class ImageType>
-  typename ImageType::Pointer
-  ReadDicomSerieImage(syd::DicomSerie::pointer dicom);
+    typename ImageType::Pointer
+    ReadDicomSerieImage(syd::DicomSerie::pointer dicom);
 
   /// Helper function (will change)
   template<typename F>
-  F GetFctByPixelType(std::map<std::string, F> & map,
-                           std::string pixel_type);
+    F GetFctByPixelType(std::map<std::string, F> & map,
+                        std::string pixel_type);
 
   /// Anonymize dicom serie
   void CopyDictionary (itk::MetaDataDictionary &fromDict, itk::MetaDataDictionary &toDict);
   syd::DicomSerie::pointer InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom);
+
+  /// Return the date of the older dicom in the list
+  std::string GetDateOfOlderDicom(const syd::DicomSerie::vector & dicoms);
+
+  /// Try to guess if the 2 dicoms can be stitched
+  bool IsDicomStitchable(const syd::DicomSerie::pointer a,
+                         const syd::DicomSerie::pointer b,
+                         double max_reconstruction_delay=1.0);
+
+  /// Group dicoms by stitchable dicom
+  std::vector<syd::DicomSerie::vector> GroupByStitchableDicom(syd::DicomSerie::vector dicoms);
+
+
+
+  /// Set the dicom patient (display warning is different dicomID)
+  void CheckAndSetPatient(syd::DicomBase::pointer dicom,
+                          syd::Patient::pointer patient);
+
+  /// Try to Find an existing patient from the dicom tag patient_dicom_id
+  syd::Patient::pointer FindPatientFromDicomInfo(syd::StandardDatabase * db, syd::DicomBase::pointer dicom);
+
+  /// Create a new patient according to patient_dicom_ids
+  syd::Patient::pointer NewPatientFromDicomInfo(syd::StandardDatabase * db, syd::DicomBase::pointer dicom);
+
+  /// Set patient info from the dicom (name, id, sex)
+  void SetPatientInfoFromDicom(const syd::DicomBase::pointer dicom, syd::Patient::pointer patient);
+
+
+  /// Create if needed the folder that will store the dicom
+  void CreateDicomFolder(const syd::StandardDatabase * db, const syd::DicomBase::pointer dicom);
+
+  /// Copy the filename according to dicom_file path
+  bool CopyFileToDicomFile(const std::string & filename,
+                           const syd::DicomFile::pointer dicom_file,
+                           int log_level=3,
+                           bool ignore_if_exist=true);
+
+  /// Create file/path of DicomFile according to serie
+  void SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
+                                   const std::string & filename,
+                                   const syd::DicomSerie::pointer & serie);
+
+  /// Create file/path of DicomFile according to struct
+  void SetDicomFilePathAndFilename(syd::DicomFile::pointer file,
+                                   const std::string & filename,
+                                   const syd::DicomStruct::pointer & dicom_struct);
+
+  /// Retrieve all Dicom for this patient
+  syd::DicomSerie::vector FindDicomSeries(const syd::Patient::pointer patient);
 
 }
 #include "sydDicomSerieHelper.txx"

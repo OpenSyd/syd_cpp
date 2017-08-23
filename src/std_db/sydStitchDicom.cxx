@@ -48,33 +48,28 @@ int main(int argc, char* argv[])
   db->Query(dicoms, ids);
 
   // Make pair, group by ids with the same dicom_frame_of_reference_uid
-  std::vector<std::pair<syd::DicomSerie::pointer, syd::DicomSerie::pointer>> pairs;
-  while (dicoms.size() > 0) {
-    syd::DicomSerie::pointer d = dicoms.back();
-    dicoms.pop_back();
-    std::string n = d->dicom_frame_of_reference_uid;
-    bool found = false;
-    int j=0;
-    while (j<dicoms.size() and !found) {
-      if (dicoms[j]->dicom_frame_of_reference_uid == n) {
-        syd::DicomSerie::pointer d2 = dicoms[j];
-        dicoms.erase(dicoms.begin()+j);
-        pairs.push_back(std::make_pair(d,d2));
-        found = true;
-      }
-      ++j;
-    }
-    if (!found) {
-      LOG(1) << "Dicom " << d->id << " ignored (cannot find pair dicom with same frame_of_reference_uid).";
+  std::vector<syd::DicomSerie::vector> temp = GroupByStitchableDicom(dicoms);
+  std::vector<syd::DicomSerie::vector> groups;
+  for(auto &t:temp) {
+    if (t.size() > 1) groups.push_back(t);
+    else {
+      LOG(1) << "Dicom " << t[0]->id << " ignored (cannot find stitchable dicom).";
     }
   }
 
   // Build stitched images
-  for(auto p:pairs) {
+  for(auto & g:groups) {
+    auto d1 = g[0];
+    auto d2 = g[1];
+    if (g.size() > 2) {
+      LOG(WARNING) << "Cannot stitch more than 2 dicoms yet";
+      continue;
+    }
     LOG(2) << "Stitching dicoms:" << std::endl
-           << p.first << std::endl
-           << p.second << std::endl;
-    auto image = syd::InsertStitchDicomImage(p.first, p.second,
+           << d1 << std::endl
+           << d2 << std::endl;
+    if (args_info.dry_run_flag) continue;
+    auto image = syd::InsertStitchDicomImage(d1, d2,
                                              args_info.t_cumul_arg,
                                              args_info.skip_slices_arg);
     syd::SetImageInfoFromCommandLine(image, args_info);

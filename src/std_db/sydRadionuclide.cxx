@@ -18,7 +18,10 @@
 
 // syd
 #include "sydRadionuclide.h"
-#include "sydPrintTable.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(Radionuclide);
 
 // --------------------------------------------------------------------
 syd::Radionuclide::Radionuclide():syd::Record()
@@ -60,21 +63,6 @@ void syd::Radionuclide::Set(const std::vector<std::string> & arg)
   mass_number = atoi(arg[4].c_str());
   metastable = (std::string(arg[5]) == "Y"? true:false);
   max_beta_minus_energy_in_kev = atof(arg[6].c_str());
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::Radionuclide::DumpInTable(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("name", name);
-  ta.Set("HL(h)", half_life_in_hours, 2);
-  ta.Set("element", element);
-  ta.Set("Z", atomic_number, 0);
-  ta.Set("A", mass_number, 0);
-  ta.Set("metastable", (metastable? "Y":"N"));
-  ta.Set("Q-(keV)", max_beta_minus_energy_in_kev, 2);
 }
 // --------------------------------------------------
 

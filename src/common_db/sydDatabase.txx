@@ -16,33 +16,7 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-//#include "sydPrintTable.h"
-
-
-// ------------------------------------------------------------------------
-template<class RecordType>
-Table<RecordType> * syd::Database::GetTable() const
-{
-  auto t = GetTable(RecordType::GetStaticTableName());
-  return static_cast<Table<RecordType>*>(t);
-}
-// ------------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-template<class RecordType>
-void syd::Database::Dump(const std::vector<std::shared_ptr<RecordType>> & records,
-                         const std::string & format,
-                         std::ostream & os)
-{
-  syd::PrintTable table;
-  table.SetFormat(format);
-  //table.SetHeaderFlag(!args_info.noheader_flag);
-  table.Build(records.begin(), records.end());
-  table.Print(os);
-}
-// --------------------------------------------------------------------
-
+#include "sydRecordTraits.h"
 
 // --------------------------------------------------------------------
 template<class RecordType>
@@ -66,7 +40,8 @@ void syd::Database::Insert(std::vector<std::shared_ptr<RecordType>> records)
   }
   catch (const odb::exception& e) {
     EXCEPTION("Cannot insert " << records.size()
-              << " element(s) in the table '" << RecordType::GetStaticTableName()
+              << " element(s) in the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "'. The error is: "  << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());
@@ -97,7 +72,8 @@ void syd::Database::Update(std::vector<std::shared_ptr<RecordType>> records)
   }
   catch (const odb::exception& e) {
     EXCEPTION("Cannot update " << records.size()
-              << " element(s) in the table '" << RecordType::GetStaticTableName()
+              << " element(s) in the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "'. The error is: "  << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());
@@ -108,46 +84,53 @@ void syd::Database::Update(std::vector<std::shared_ptr<RecordType>> records)
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Database::AddTable()
+void syd::Database::UpdateField(std::shared_ptr<RecordType> & record,
+                                std::string field_name,
+                                std::string value_name)
 {
-  // No exception handling here, fatal error if fail.
-  if (odb_db_ == NULL) {
-    LOG(FATAL) << "Could not AddTable, open a db before";
-  }
-  std::string tablename = RecordType::GetStaticTableName();
-  std::string str = tablename;
-  std::transform(str.begin(), str.end(),str.begin(), ::tolower);
-  auto it = map_lowercase_.find(str);
-  if (it != map_lowercase_.end()) {
-    LOG(FATAL) << "When creating the database, a table with the same name '" << tablename
-               << "' already exist.";
-  }
-  auto * t = new Table<RecordType>(this);
-  map_[tablename] = t;
-  map_lowercase_[str] = t;
+  RecordBasePointer r = record;
+  UpdateField(r, field_name, value_name);
+  record = std::static_pointer_cast<RecordType>(r);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
-                             const odb::query<RecordType> & q) const
+void syd::Database::AddTable()
+{
+  auto traits = syd::RecordTraits<RecordType>::GetTraits();
+  auto table_name = traits->GetTableName();
+  if (map_of_traits_.find(table_name) != map_of_traits_.end()) {
+    LOG(FATAL) << "When creating the database, a table with the same name '" << table_name
+               << "' already exist.";
+  }
+  map_of_traits_[table_name] = traits;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+/// Query a single record according to query
+template<class RecordType>
+typename RecordType::pointer
+syd::Database::QueryOne(const odb::query<RecordType> & q) const
 {
   try {
     odb::transaction transaction (odb_db_->begin());
     typename RecordType::pointer r(odb_db_->query_one<RecordType>(q));
     if (r.get() == 0) {
       EXCEPTION("No matching record in QueryOne(q) for the table '"
-                << RecordType::GetStaticTableName()
+                << RecordTraits<RecordType>::GetTraits()->GetTableName()
                 << "'. Last sql query is: "
                 << std::endl << GetLastSQLQuery());
     }
-    record = r;
     transaction.commit();
+    return r;
   }
   catch (const odb::exception& e) {
-    EXCEPTION("Error in QueryOne(q) for the table '" << RecordType::GetStaticTableName()
+    EXCEPTION("Error in QueryOne(q) for the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "', cannot find the record. Last sql query is: "
               << std::endl << GetLastSQLQuery());
   }
@@ -156,18 +139,21 @@ void syd::Database::QueryOne(std::shared_ptr<RecordType> & record,
 
 
 // --------------------------------------------------------------------
+/// Query a single record according to the id
 template<class RecordType>
-void syd::Database::QueryOne(std::shared_ptr<RecordType> & record, const IdType & id) const
+typename RecordType::pointer
+syd::Database::QueryOne(IdType id) const
 {
   try {
     odb::transaction transaction (odb_db_->begin());
     typename RecordType::pointer s;
     s = odb_db_->load<RecordType>(id);
-    record = s;
     transaction.commit();
+    return s;
   }
   catch (const odb::exception& e) {
-    EXCEPTION("Error in QueryOne sql query for the table '" << RecordType::GetStaticTableName()
+    EXCEPTION("Error in QueryOne(id) for the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "' and id = " << id << std::endl
               << "\t odb message: " << e.what() << std::endl
               << "\t last sql query: " << GetLastSQLQuery());
@@ -193,7 +179,8 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
     transaction.commit();
   }
   catch (const odb::exception& e) {
-    EXCEPTION("Error during Query(r, q) for the table '" << RecordType::GetStaticTableName()
+    EXCEPTION("Error during Query(r, q) for the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "'. ODB error is:" << e.what() << std::endl
               << "Last sql query is: " << GetLastSQLQuery());
   }
@@ -228,18 +215,18 @@ void syd::Database::Query(std::vector<std::shared_ptr<RecordType>> & records,
 
 
 // --------------------------------------------------------------------
-template<class RecordType>
-long syd::Database::GetNumberOfElements()
-{
-  DD("GetNumberOfElements template");
+// template<class RecordType>
+// long syd::Database::GetNumberOfElements() const
+// {
+//   DD("GetNumberOfElements template");
 
-  // FIXME TO remove
-  // Brute force. This is inefficient. Should use view and count.
-  std::vector<std::shared_ptr<RecordType>> records;
-  Query(records);
-  DD(records.size());
-  return GetNumberOfElements<RecordType>();
-}
+//   // FIXME TO remove
+//   // Brute force. This is inefficient. Should use view and count.
+//   std::vector<std::shared_ptr<RecordType>> records;
+//   Query(records);
+//   DD(records.size());
+//   return GetNumberOfElements<RecordType>();
+// }
 // --------------------------------------------------------------------
 
 
@@ -277,20 +264,18 @@ void syd::Database::Sort(std::vector<std::shared_ptr<RecordType>> & records,
                          const std::string & order) const
 {
   if (records.size() == 0) return;
-  auto t = GetTable<RecordType>();
-  t->Sort(records, order);
+  RecordBaseVector v = ConvertToVectorOfRecords(records);
+  Sort(v, RecordTraits<RecordType>::GetTraits()->GetTableName(), order);
+  records = CastFromVectorOfRecords<RecordType>(v);
 }
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
 template<class RecordType>
-void syd::Database::New(std::shared_ptr<RecordType> & record)
+typename RecordType::pointer syd::Database::New()
 {
-  // We consider the tablename of the given type.
-  auto p = GetTable(RecordType::GetStaticTableName())->New();
-  // the type of the created record could be of a class that inherit from RecordType
-  record = std::dynamic_pointer_cast<RecordType>(p);
+  return syd::RecordTraits<RecordType>::New(this); // FIXME change to not static ?
 }
 // --------------------------------------------------------------------
 
@@ -307,7 +292,8 @@ void syd::Database::Delete(std::shared_ptr<RecordType> record)
   catch (const odb::exception& e) {
     files_to_delete_.clear();
     EXCEPTION("Error while deleting element "
-              << record << " in the table '" << RecordType::GetStaticTableName()
+              << record << " in the table '"
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "', message is: " << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());
@@ -332,7 +318,7 @@ void syd::Database::Delete(std::vector<std::shared_ptr<RecordType>> & records)
     files_to_delete_.clear();
     EXCEPTION("Error while deleting "
               << records.size() << " elements in the table '"
-              << RecordType::GetStaticTableName()
+              << RecordTraits<RecordType>::GetTraits()->GetTableName()
               << "', message is: " << e.what()
               << std::endl << "And last sql query is: "
               << std::endl << GetLastSQLQuery());

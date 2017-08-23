@@ -20,6 +20,7 @@
 #include "sydTimeIntegratedActivityFitOptions.h"
 #include "sydException.h"
 #include "sydCommon.h"
+#include "sydFitModels.h"
 
 // --------------------------------------------------------------------
 syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
@@ -29,6 +30,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   SetMaxNumIterations(100);
   SetAkaikeCriterion("AICc");
   SetLambdaDecayConstantInHours(0.0);
+  SetFitVerboseFlag(false);
   auto f1  = std::make_shared<syd::FitModel_f1>();
   auto f2  = std::make_shared<syd::FitModel_f2>();
   auto f3  = std::make_shared<syd::FitModel_f3>();
@@ -36,6 +38,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   auto f4b = std::make_shared<syd::FitModel_f4b>();
   auto f4c = std::make_shared<syd::FitModel_f4c>();
   auto f4  = std::make_shared<syd::FitModel_f4>();
+  auto f5  = std::make_shared<syd::FitModel_f5>();
   all_models_.push_back(f1);
   all_models_.push_back(f2);
   all_models_.push_back(f3);
@@ -43,6 +46,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   all_models_.push_back(f4b);
   all_models_.push_back(f4c);
   all_models_.push_back(f4);
+  all_models_.push_back(f5);
 }
 // --------------------------------------------------------------------
 
@@ -63,7 +67,8 @@ std::string syd::TimeIntegratedActivityFitOptions::ToString() const
      << (GetRestrictedFlag() ? "restricted":"non_restricted") << " "
      << GetMaxNumIterations() << " "
      << GetAkaikeCriterion() << " "
-     << GetLambdaDecayConstantInHours() << "h ";
+     << GetLambdaDecayConstantInHours() << "h "
+     << (GetFitVerboseFlag() ? "verbose ":"");
   for(auto & m:model_names_) ss << m << " ";
   return ss.str();
 }
@@ -144,5 +149,19 @@ void syd::TimeIntegratedActivityFitOptions::Check() const
                << GetAkaikeCriterion() << "' not known"
                << ". Use AIC or AICc";
   }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::TimeIntegratedActivityFitOptions::operator==(const TimeIntegratedActivityFitOptions & other) const
+{
+  if (fit_verbose_flag_ != other.GetFitVerboseFlag()) return false;
+  if (restricted_flag_ != other.GetRestrictedFlag()) return false;
+  if (R2_min_threshold_ != other.GetR2MinThreshold()) return false;
+  if (max_num_iterations_ != other.GetMaxNumIterations()) return false;
+  if (lambda_in_hours_ != other.GetLambdaDecayConstantInHours()) return false;
+  if (GetModelsName() != other.GetModelsName()) return false;
+  return true;
 }
 // --------------------------------------------------------------------

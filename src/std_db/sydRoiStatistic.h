@@ -34,6 +34,8 @@ namespace syd {
     public syd::RecordWithComments {
   public:
 
+      DEFINE_TABLE_CLASS(RoiStatistic);
+
 #pragma db not_null on_delete(cascade)
       /// Linked image. If the image is deleted, the RoiStatistic also.
       syd::Image::pointer image;
@@ -51,15 +53,8 @@ namespace syd {
       double max;
       double sum;
 
-      // ------------------------------------------------------------------------
-      TABLE_DEFINE(RoiStatistic, syd::RoiStatistic);
-      // ------------------------------------------------------------------------
-
       /// Write the element as a string
       virtual std::string ToString() const;
-
-      /// Add a line in the given PrintTable
-      virtual void DumpInTable(syd::PrintTable & table) const;
 
       /// Callback : delete the associated files when the image is deleted.
       void Callback(odb::callback_event, odb::database&) const;

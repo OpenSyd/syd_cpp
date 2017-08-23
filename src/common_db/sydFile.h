@@ -22,61 +22,57 @@
 // syd
 #include "sydRecord.h"
 #include "sydFileUtils.h"
+#include "sydRecordWithTags.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
 #pragma db object polymorphic pointer(std::shared_ptr) table("syd::File") callback(Callback)
   /// Store information about a file linked to a database.
-  class File: public syd::Record,
-              public std::enable_shared_from_this<File> {
+  class File:
+    public syd::Record,
+    public syd::RecordWithTags {
   public:
 
-    virtual ~File();
+      DEFINE_TABLE_CLASS(File);
 
-    /// File name
-    std::string filename;
+      // Destructor needed to remove the file on disk
+      virtual ~File();
 
-    /// File (relative) path
-    std::string path;
+      /// File name
+      std::string filename;
 
-    /// Associated md5 (not always computed)
-    std::string md5;
+      /// File (relative) path
+      std::string path;
 
-    // ------------------------------------------------------------------------
-    TABLE_DEFINE(File, syd::File);
-    // ------------------------------------------------------------------------
+      /// Associated md5 (not always computed)
+      std::string md5;
 
-    /// Write the element as a string
-    virtual std::string ToString() const;
+      /// Write the element as a string
+      virtual std::string ToString() const;
 
-    void Callback(odb::callback_event, odb::database&) const;
-    void Callback(odb::callback_event, odb::database&);
+      void Callback(odb::callback_event, odb::database&) const;
+      void Callback(odb::callback_event, odb::database&);
 
-    virtual void DumpInTable(syd::PrintTable & table) const;
-    virtual void DumpInTable_default(syd::PrintTable & table) const;
-    virtual void DumpInTable_file(syd::PrintTable & table) const;
-    virtual void DumpInTable_md5(syd::PrintTable & table) const;
+      /// Return the full absolute path of the file inside the db (must be persistent)
+      std::string GetAbsolutePath() const;
 
-    /// Return the full absolute path of the file inside the db (must be persistent)
-    std::string GetAbsolutePath() const;
+      virtual syd::CheckResult Check() const;
 
-    virtual syd::CheckResult Check() const;
-
-    /// Rename the associated file. Warning, could leave the db in a
-    /// wrong state if the file on disk and the object is not updated
-    /// accordingly in the db. In doubt use renameFileOnDiskFlag=true,
-    /// updateDBFlag=true
-    void RenameFile(std::string relative_path,
-                    std::string filename,
-                    bool renameFileOnDiskFlag,
-                    bool updateDBFlag);
+      /// Rename the associated file. Warning, could leave the db in a
+      /// wrong state if the file on disk and the object is not updated
+      /// accordingly in the db. In doubt use renameFileOnDiskFlag=true,
+      /// updateDBFlag=true
+      void RenameFile(std::string relative_path,
+                      std::string filename,
+                      bool renameFileOnDiskFlag,
+                      bool updateDBFlag);
   protected:
-    File();
+      File();
 
-    void SetFilenamesToErase() const;
+      void SetFilenamesToErase() const;
 
-  }; // end of class
+    }; // end of class
 } // end namespace
 // --------------------------------------------------------------------
 

@@ -18,23 +18,19 @@
 
 // syd
 #include "sydPixelUnit.h"
-#include "sydPrintTable.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
 
 // std
 #include <set>
+
+DEFINE_TABLE_IMPL(PixelUnit);
 
 // --------------------------------------------------
 syd::PixelUnit::PixelUnit():syd::Record()
 {
   name = empty_value;
   description = empty_value;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-syd::PixelUnit::~PixelUnit()
-{
 }
 // --------------------------------------------------
 
@@ -59,15 +55,5 @@ void syd::PixelUnit::Set(const std::vector<std::string> & arg)
   }
   name = arg[0];
   description = arg[1];
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
-void syd::PixelUnit::DumpInTable(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("name", name);
-  ta.Set("description", description);
 }
 // --------------------------------------------------

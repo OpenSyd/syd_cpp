@@ -20,15 +20,19 @@
 #define SYDDICOMUTILS_H
 
 // syd
-#include "sydCommon.h"
+//#include "sydCommon.h"
 
-// itk (gdcm)
+// itk
 #include <itkImage.h>
 #include <itkMetaDataObject.h>
 #include <itkGDCMImageIO.h>
+
+// gdcm
 #include "gdcmGlobal.h"
 #include "gdcmDictEntry.h"
 #include "gdcmDicts.h"
+#include "gdcmReader.h"
+#include "gdcmAttribute.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -43,11 +47,23 @@ namespace syd {
   /// Open dicom header
   itk::GDCMImageIO::Pointer ReadDicomHeader(std::string filename);
 
+  /// Open dicom struct header
+  gdcm::Reader ReadDicomStructHeader(std::string filename);
+
   /// Retrive the tag value with the correct type
   template<class TagType>
-  TagType GetTagValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
-                                const std::string & key,
-                                const TagType & defaultValue);
+    TagType GetTagValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
+                                  const std::string & key,
+                                  const TagType & defaultValue);
+
+  /// Retrive the tag value with the correct type
+  double GetTagDoubleValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
+                                     const std::string & key,
+                                     const double & defaultValue);
+
+  /// Retrive tag value
+  template<uint16_t Group, uint16_t Element>
+    std::string GetTagValueAsString(const gdcm::DataSet & dataset);
 
 #include "sydDicomUtils.txx"
 

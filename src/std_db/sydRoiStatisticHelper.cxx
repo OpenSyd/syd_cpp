@@ -36,7 +36,7 @@ syd::FindRoiStatistic(const syd::Image::pointer image,
   Q q = Q::image == image->id;
   if (mask != nullptr) q = q and (Q::mask == mask->id);
   syd::RoiStatistic::vector stats;
-  auto db = image->GetDatabase<syd::StandardDatabase>();
+  auto db = image->GetDatabase();
   db->Query(stats, q);
   if (mask==nullptr) {
     auto stats_copy = stats;
@@ -52,15 +52,30 @@ syd::FindRoiStatistic(const syd::Image::pointer image,
 
 // --------------------------------------------------------------------
 syd::RoiStatistic::pointer
+syd::FindOneRoiStatistic(const syd::Image::pointer image,
+                         const syd::RoiMaskImage::pointer mask)
+{
+  syd::RoiStatistic::vector stats = FindRoiStatistic(image, mask);
+  if (stats.size() == 1) return stats[0];
+  if (stats.size() == 0) {
+    EXCEPTION("No RoiStatistic found with this image and mask: " << image << "; " << mask);
+  }
+  EXCEPTION("Several RoiStatistic found with this image and mask: " << image << "; " << mask);
+  //return stats[0];// to avoid warning.
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiStatistic::pointer
 syd::NewRoiStatistic(const syd::Image::pointer image,
                      const syd::RoiMaskImage::pointer mask,
                      const syd::Image::pointer mask2,
                      const std::string mask_output_filename)
 {
   // new
-  auto db = image->GetDatabase<syd::StandardDatabase>();
-  syd::RoiStatistic::pointer stat;
-  db->New(stat);
+  auto db = image->GetDatabase();
+  auto stat = db->New<syd::RoiStatistic>();
   stat->image = image;
   stat->mask = mask;
 

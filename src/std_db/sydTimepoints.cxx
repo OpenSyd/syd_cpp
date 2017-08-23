@@ -19,6 +19,10 @@
 // syd
 #include "sydTimepoints.h"
 #include "sydTagHelper.h"
+#include "sydStandardDatabase.h"
+#include "sydRecordTraits.h"
+
+DEFINE_TABLE_IMPL(Timepoints);
 
 // --------------------------------------------------------------------
 syd::Timepoints::Timepoints():
@@ -63,63 +67,6 @@ void syd::Timepoints::Callback(odb::callback_event event, odb::database & db)
   syd::Record::Callback(event, db);
   syd::RecordWithHistory::Callback(event, db, db_);
   syd::RecordWithMD5Signature::Callback(event, db, db_);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Timepoints::DumpInTable(syd::PrintTable & ta) const
-{
-  //  syd::RecordWithHistory::DumpInTable(ta);
-  auto format = ta.GetFormat();
-
-  if (format == "default") DumpInTable_default(ta);
-  else if (format == "history") DumpInTable_history(ta);
-  else if (format == "md5") DumpInTable_md5(ta);
-  else {
-    ta.AddFormat("default", "id, date, tags, size etc");
-    ta.AddFormat("history", "with date inserted/updated");
-    ta.AddFormat("md5", "with md5");
-  }
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Timepoints::DumpInTable_default(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("p", patient->name);
-  ta.Set("tags", GetLabels(tags));
-  ta.Set("nb", times.size());
-  for(auto i=0; i<times.size(); i++)
-    ta.Set("t"+std::to_string(i), times[i], 2);
-  for(auto i=0; i<times.size(); i++)
-    ta.Set("v"+std::to_string(i), values[i], 6);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Timepoints::DumpInTable_history(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("p", patient->name);
-  syd::RecordWithHistory::DumpInTable(ta);
-  ta.Set("tags", GetLabels(tags));
-  ta.Set("nb", times.size());
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Timepoints::DumpInTable_md5(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("p", patient->name);
-  ta.Set("tags", GetLabels(tags));
-  ta.Set("nb", times.size());
-  syd::RecordWithMD5Signature::DumpInTable(ta);
 }
 // --------------------------------------------------------------------
 

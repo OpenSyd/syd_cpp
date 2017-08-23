@@ -25,6 +25,7 @@
 #include "sydTagHelper.h"
 #include "sydPixelUnitHelper.h"
 #include "sydRadionuclideHelper.h"
+#include "sydInjectionHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -56,18 +57,30 @@ int main(int argc, char* argv[])
   // Loop over the images
   for(auto image:images) {
     // Make a copy
-    auto output = syd::CopyImage(image);
+    auto output = syd::InsertCopyImage(image);
+
+    // Get/create injection
+    auto new_injection = syd::CopyInjection(image->injection);
+    new_injection->radionuclide = rad;
+    //    new_injection->activity_in_MBq = 1.0;
+    auto inj = syd::GetSimilarInjection(db, new_injection);
+    if (inj.size() != 0) {
+      LOG(2) << "Similar injection exist, do not add " << std::endl
+             << new_injection << std::endl
+             << inj[0];
+      new_injection = inj[0];
+    }
+    else db->Insert(new_injection);
 
     // Change the radionuclide
-    syd::SubstituteRadionuclide(output, rad);
-    inj = output->injection;
+    syd::SubstituteRadionuclide(output, new_injection);
 
     // Apply user information
     syd::SetImageInfoFromCommandLine(output, args_info);
     syd::SetTagsFromCommandLine(output->tags, db, args_info);
     db->Update(output);
     LOG(1) << "Image with new radionuclide is " << output << ": "
-           << std::endl << "Injection : " << inj;
+           << std::endl << "Injection : " << new_injection;
   }
 
   // This is the end, my friend.

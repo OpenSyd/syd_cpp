@@ -1,4 +1,20 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="304"/>
+
+  <changeset version="297"/>
+
+  <changeset version="296"/>
+
+  <changeset version="295"/>
+
+  <changeset version="294"/>
+
+  <changeset version="293"/>
+
+  <changeset version="292"/>
+
+  <changeset version="290"/>
+
   <changeset version="289">
     <add-table name="syd::FitImages" kind="polymorphic root object">
       <column name="id" type="INTEGER" null="true"/>

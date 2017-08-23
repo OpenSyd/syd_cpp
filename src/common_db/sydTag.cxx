@@ -18,10 +18,12 @@
 
 // syd
 #include "sydTag.h"
-#include "sydPrintTable.h"
+#include "sydRecordTraits.h"
 
 // std
 #include <set>
+
+DEFINE_TABLE_IMPL(Tag);
 
 // --------------------------------------------------------------------
 syd::Tag::Tag():syd::Record()
@@ -52,15 +54,5 @@ void syd::Tag::Set(const std::vector<std::string> & arg)
   }
   label = arg[0];
   description = arg[1];
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-void syd::Tag::DumpInTable(syd::PrintTable & ta) const
-{
-  ta.Set("id", id);
-  ta.Set("label", label);
-  ta.Set("description", description);
 }
 // --------------------------------------------------------------------

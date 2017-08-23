@@ -16,8 +16,13 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+// syd
 #include "sydImageUtils.h"
 #include <itkThresholdImageFilter.h>
+#include "sydImageFlip.h"
+
+// itk
+#include <itkRecursiveGaussianImageFilter.h>
 
 //--------------------------------------------------------------------
 template<class ImageType>
@@ -50,7 +55,10 @@ syd::RemoveScatter(const ImageType * em, const ImageType * sc, double k)
   iter_sc.GoToBegin();
   iter_output.GoToBegin();
   while (!iter_em.IsAtEnd()) {
-    iter_output.Set(iter_em.Get()-k*iter_sc.Get());
+    double tempGeometricalMean = iter_em.Get()-k*iter_sc.Get();
+    if (tempGeometricalMean < 0)
+      tempGeometricalMean = 0;
+    iter_output.Set(tempGeometricalMean);
     ++iter_em;
     ++iter_sc;
     ++iter_output;
@@ -79,7 +87,7 @@ syd::GeometricalMean(const ImageType * ant, const ImageType * post)
     ++iter_post;
     ++iter_output;
   }
-  
+
   //Be sure to have correct values (avoid -nan values)
   typedef itk::ThresholdImageFilter <ImageType> ThresholdImageFilterType;
   typename ThresholdImageFilterType::Pointer thresholdFilter = ThresholdImageFilterType::New();
@@ -87,7 +95,7 @@ syd::GeometricalMean(const ImageType * ant, const ImageType * post)
   thresholdFilter->ThresholdBelow(0);
   thresholdFilter->SetOutsideValue(0);
   thresholdFilter->Update();
-  
+
   return thresholdFilter->GetOutput();
 }
 //--------------------------------------------------------------------

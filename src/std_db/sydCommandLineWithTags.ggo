@@ -1,5 +1,0 @@
-
-section "Tags option"
-option "tag"	          -  "Add a tag (or a list if given in \" \")" string multiple no
-option "remove_tag"       -  "Remove a tag (or a list if given in \" \")" string multiple no
-option "remove_all_tag"   -  "Remove all tags" flag off

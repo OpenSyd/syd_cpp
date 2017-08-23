@@ -68,8 +68,7 @@ namespace sydlog {
   };
   // --------------------------------------------------------------------
 
-#include "sydLogMacro.h"
+  #include "sydLogMacro.h"
 
 }
-
 #endif /* end #define SYDLOG_H */

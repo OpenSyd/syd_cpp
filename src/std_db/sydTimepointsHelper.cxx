@@ -20,6 +20,7 @@
 #include "sydTimepointsHelper.h"
 #include "sydStandardDatabase.h"
 #include "sydTimeIntegratedActivityFilter.h"
+#include "sydImageHelper.h"
 
 // --------------------------------------------------------------------
 syd::RoiTimepoints::vector syd::FindRoiTimepoints(const syd::RoiStatistic::vector stats)
@@ -28,7 +29,7 @@ syd::RoiTimepoints::vector syd::FindRoiTimepoints(const syd::RoiStatistic::vecto
   if (stats.size() == 0) {
     EXCEPTION("Cannot FindRoiTimepoints with empty stats vector");
   }
-  auto db = stats[0]->GetDatabase<syd::StandardDatabase>();
+  auto db = stats[0]->GetDatabase();
   db->Query(rtp);
   syd::RoiTimepoints::vector tp;
   for(auto r:rtp) {
@@ -42,12 +43,13 @@ syd::RoiTimepoints::vector syd::FindRoiTimepoints(const syd::RoiStatistic::vecto
 
 // --------------------------------------------------------------------
 syd::FitTimepoints::vector syd::FindFitTimepoints(const syd::Timepoints::pointer tp,
-                                             const syd::TimeIntegratedActivityFitOptions & options)
+                                                  const syd::TimeIntegratedActivityFitOptions & options)
 {
   syd::FitTimepoints::vector ftp;
-  auto db = tp->GetDatabase<syd::StandardDatabase>();
+  auto db = tp->GetDatabase();
   typedef odb::query<syd::FitTimepoints> Q;
-  Q q = Q::timepoints == tp->id and
+  Q q =
+    Q::timepoints == tp->id and
     Q::r2_min == options.GetR2MinThreshold() and
     Q::max_iteration == options.GetMaxNumIterations() and
     Q::restricted_tac == options.GetRestrictedFlag() and
@@ -63,18 +65,18 @@ syd::FitTimepoints::vector syd::FindFitTimepoints(const syd::Timepoints::pointer
 
 
 // --------------------------------------------------------------------
-syd::RoiTimepoints::pointer syd::NewTimepoints(const syd::RoiStatistic::vector stats)
+syd::RoiTimepoints::pointer
+syd::NewTimepoints(const syd::RoiStatistic::vector stats)
 {
   if (stats.size() == 0) {
     EXCEPTION("Cannot create timepoints from empty vector of RoiStatistic");
   }
-  syd::RoiTimepoints::pointer rtp;
-  auto db = stats[0]->GetDatabase<syd::StandardDatabase>();
+  auto db = stats[0]->GetDatabase();
   auto patient = stats[0]->image->patient;
   auto mask = stats[0]->mask; // maybe nullptr
   auto injection = stats[0]->image->injection;
 
-  db->New(rtp);
+  auto rtp = db->New<syd::RoiTimepoints>();
   rtp->patient = patient;
   rtp->injection = injection;
 
@@ -182,14 +184,68 @@ syd::NewFitTimepoints(const syd::Timepoints::pointer tp,
     options.SetLambdaDecayConstantInHours(tp->injection->GetLambdaDecayConstantInHours());
 
   // Create FitTimepoints
-  syd::FitTimepoints::pointer ft;
-  auto db = tp->GetDatabase<syd::StandardDatabase>();
-  db->New(ft);
+  auto db = tp->GetDatabase();
+  auto ft = db->New<syd::FitTimepoints>();
   ft->timepoints = tp;
   ft->SetFromOptions(options);
 
   // Compute
   ComputeFitTimepoints(ft);
   return ft;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Timepoints::pointer
+syd::NewTimepointsAtPixel(const syd::Image::vector & images,
+                          const std::vector<double> & pixel)
+{
+  if (images.size() == 0) return nullptr;
+
+  // Get the db pointer
+  auto db = images[0]->GetDatabase<syd::StandardDatabase>();
+
+  // Check images ? (same patient etc ?) FIXME LATER
+  auto patient = images[0]->patient;
+  auto injection = images[0]->injection; // could be null
+  if (injection == nullptr) return nullptr;
+
+  // Create a tp
+  auto tp = db->New<syd::Timepoints>();
+  tp->patient = patient;
+  tp->injection = injection;
+
+  // Get the times
+  tp->times = syd::GetTimesFromInjection(images);
+
+  // Read all itk images
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  std::vector<ImageType::Pointer> itk_images;
+  for(auto image:images) {
+    auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+    itk_images.push_back(itk_image);
+  }
+
+  // Get pixel index
+  ImageType::IndexType index;
+  ImageType::PointType point;
+  point[0] = pixel[0];
+  point[1] = pixel[1];
+  point[2] = pixel[2];
+  itk_images[0]->TransformPhysicalPointToIndex(point, index);
+
+  // Set tac values
+  auto n = itk_images.size();
+  tp->values.resize(n);
+  tp->std_deviations.resize(n);
+  for(auto i=0; i<n; i++) {
+    tp->values[i] = itk_images[i]->GetPixel(index);
+    tp->std_deviations[i] = 0.0;
+  }
+
+  // Return
+  return tp;
 }
 // --------------------------------------------------------------------

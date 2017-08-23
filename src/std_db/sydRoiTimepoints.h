@@ -31,22 +31,17 @@ namespace syd {
   class RoiTimepoints: public syd::Timepoints {
   public:
 
+    DEFINE_TABLE_CLASS(RoiTimepoints);
+
     /// list of RoiStatistic. (note: on_delete cascade does not work here because vector)
 #pragma db not_null on_delete(cascade)
     syd::RoiStatistic::vector roi_statistics;
-
-    // ----------------------------------------------------------------
-    TABLE_DEFINE(RoiTimepoints, syd::RoiTimepoints);
-    // ----------------------------------------------------------------
 
     /// Write the element as a string
     virtual std::string ToString() const;
 
     /// Build a string to compute MD5
     virtual std::string ToStringForMD5() const;
-
-    /// Add a line in the given PrintTable
-    virtual void DumpInTable_default(syd::PrintTable & table) const;
 
   protected:
     RoiTimepoints();
