@@ -51,7 +51,6 @@ ConvertRoiToImage(const gdcm::DataSet & dataset, int roi_id, MaskImageType * ima
 
   // Loop on the list of contours
   for(auto i=1; i<=seq->GetNumberOfItems(); ++i) { // item start at #1
-    DD(i);
 
     // Retrieve contour points
     unsigned int npts;

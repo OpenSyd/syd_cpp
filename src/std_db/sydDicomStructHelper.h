@@ -35,15 +35,9 @@ namespace syd {
 
   /// Create and insert a mask from a dicom struct
   syd::RoiMaskImage::pointer InsertRoiMaskImageFromDicomStruct(syd::DicomStruct::pointer dicom_struct,
-                                                               syd::RoiType::pointer roitype,
-                                                               itk::ImageIOBase * image_header,
-                                                               std::string roi_name);
-
-  /// Create and insert a mask from a dicom struct
-  syd::RoiMaskImage::pointer InsertRoiMaskImageFromDicomStruct(syd::DicomStruct::pointer dicom_struct,
-                                                                    syd::RoiType::pointer roi_type,
-                                                                    syd::Image::pointer image,
-                                                                    std::string roi_name);
+                                                               itk::ImageIOBase * header,
+                                                               int roi_id,
+                                                               syd::RoiType::pointer roi_type);
 }
 // --------------------------------------------------------------------
 

@@ -38,33 +38,6 @@ int main(int argc, char* argv[])
   // -----------------------------------------------------------------
 
 
-  auto dicom_struct_id = atoi(args_info.inputs[0]);
-  auto roitype_id = atoi(args_info.inputs[1]);
-  auto dicom_serie_id = atoi(args_info.inputs[2]);
-  DD(dicom_struct_id);
-  DD(roitype_id);
-  DD(dicom_serie_id);
-
-  auto dicom_struct = db->QueryOne<syd::DicomStruct>(dicom_struct_id);
-  DD(dicom_struct);
-  auto roitype = db->QueryOne<syd::RoiType>(roitype_id);
-  DD(roitype);
-
-  /* LATER
-  auto dicom_serie = syd::FindAssociatedDicomSerie(dicom_struct);
-  DD(dicom_serie);
-
-  auto dicom_serie = db->QueryOne<syd::DicomSerie>(dicom_serie_id);
-  DD(dicom_serie);
-  */
-  auto image = db->QueryOne<syd::Image>(dicom_serie_id); // FIXME
-  DD(image);
-  auto image_header = syd::ReadImageHeader(image->GetAbsolutePath());
-
-  auto mask = syd::InsertRoiMaskImageFromDicomStruct(dicom_struct, roitype, image_header, "Liver");
-  DD(mask);
-
-
   // -----------------------------------------------------------------
   DD("end");
   // This is the end, my friend.

@@ -264,6 +264,18 @@ add_executable(sydInsertRoiMaskImage
   ${sydInsertRoiMaskImage_GGO_C})
 target_link_libraries(sydInsertRoiMaskImage ${SYD_STD_DB_LIBRARY})
 
+# Insert a new RoiMaskImage from a struct
+wrap_ggo(sydInsertRoiMaskImageFromDicomStruct_GGO_C
+  sydInsertRoiMaskImageFromDicomStruct.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertRoiMaskImageFromDicomStruct
+  sydInsertRoiMaskImageFromDicomStruct.cxx
+  ${sydInsertRoiMaskImageFromDicomStruct_GGO_C})
+target_link_libraries(sydInsertRoiMaskImageFromDicomStruct ${SYD_STD_DB_LIBRARY})
+
 # Insert a new RoiStatistic
 wrap_ggo(sydInsertRoiStatistic_GGO_C
   sydInsertRoiStatistic.ggo

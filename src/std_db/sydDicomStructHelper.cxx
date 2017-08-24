@@ -20,6 +20,8 @@
 #include "sydDicomStructHelper.h"
 #include "sydDicomStructToImage.h"
 #include "sydImageUtils.h"
+#include "sydRoiMaskImageHelper.h"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 syd::DicomSerie::pointer syd::FindAssociatedDicomSerie(syd::DicomStruct::pointer dicom_struct)
@@ -64,29 +66,13 @@ syd::DicomSerie::pointer syd::FindAssociatedDicomSerie(syd::DicomStruct::pointer
 
 // --------------------------------------------------------------------
 syd::RoiMaskImage::pointer syd::InsertRoiMaskImageFromDicomStruct(syd::DicomStruct::pointer dicom_struct,
-                                                                  syd::RoiType::pointer roi_type,
-                                                                  syd::Image::pointer image,
-                                                                  std::string roi_name)
-{
-  auto image_header = syd::ReadImageHeader(image->GetAbsolutePath());
-  return syd::InsertRoiMaskImageFromDicomStruct(dicom_struct, roi_type, image_header, roi_name);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::RoiMaskImage::pointer syd::InsertRoiMaskImageFromDicomStruct(syd::DicomStruct::pointer dicom_struct,
-                                                                  syd::RoiType::pointer roi_type,
                                                                   itk::ImageIOBase * header,
-                                                                  std::string roi_name)
+                                                                  int roi_id,
+                                                                  syd::RoiType::pointer roi_type)
 {
   DDF();
   DD(dicom_struct);
   DD(roi_type);
-  DD(roi_name);
-
-  // roi_name --> roi id
-  int roi_id = 1;
   DD(roi_id);
 
   // Get dicom dataset
@@ -101,17 +87,22 @@ syd::RoiMaskImage::pointer syd::InsertRoiMaskImageFromDicomStruct(syd::DicomStru
   // Create empty 3D image
   typedef syd::DicomStructToImageBuilder::MaskImageType ImageType;
   auto image = syd::CreateImageLike<ImageType>(header);
-  syd::WriteImage<ImageType>(image, "bidon_empty.mhd");
 
   // Create the mask
   syd::DicomStructToImageBuilder builder;
   builder.ConvertRoiToImage(dataset, roi_id, image);
 
-  // Create a roi mask image FIXME later
-  syd::WriteImage<ImageType>(image, "bidon.mhd");
+  // Create the RoiMaskImage
+  auto db = dicom_struct->GetDatabase<syd::StandardDatabase>();
+  filename = db->GetUniqueTempFilename(".mhd");
+  syd::WriteImage<ImageType>(image, filename);
+  DD(filename);
+  auto mask = syd::InsertRoiMaskImageFromFile(filename, dicom_struct->patient, roi_type);
+  mask->frame_of_reference_uid = dicom_struct->dicom_frame_of_reference_uid;
+  mask->acquisition_date = dicom_struct->dicom_structure_set_date;
+  DD(mask);
+  fs::remove(filename);
 
-  DD("OK");
-  exit(0);
-
+  return mask;
 }
 // --------------------------------------------------------------------
