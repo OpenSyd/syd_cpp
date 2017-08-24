@@ -78,3 +78,4 @@ void syd::WriteDicomToMhd(syd::DicomSerie::pointer dicom,
   syd::WriteImage<ImageType>(itk_image, mhd_filename);
 }
 // --------------------------------------------------------------------
+

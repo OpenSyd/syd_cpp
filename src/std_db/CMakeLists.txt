@@ -78,6 +78,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydTimepointsHelper.cxx
   sydFitImagesHelper.cxx
   sydGateHelper.cxx
+  sydDicomStructHelper.cxx
 
   sydImageType.cxx
   sydThumbnail.cxx
