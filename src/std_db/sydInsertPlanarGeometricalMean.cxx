@@ -48,7 +48,8 @@ int main(int argc, char* argv[])
 
   // Main computation
   double k = args_info.k_arg;
-  auto image = syd::InsertImageGeometricalMean(input, k);
+  double crop = args_info.crop_flag;
+  auto image = syd::InsertImageGeometricalMean(input, k, crop);
 
   // set properties from the image
   syd::SetImageInfoFromImage(image, input);

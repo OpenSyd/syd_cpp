@@ -329,7 +329,7 @@ void syd::SetImageInfoFromImage(syd::Image::pointer image,
 // --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertImageGeometricalMean(const syd::Image::pointer input,
-                                double k)
+                                double k, bool crop)
 {
   // Force to float
   typedef float PixelType;
@@ -345,14 +345,25 @@ syd::InsertImageGeometricalMean(const syd::Image::pointer input,
 
   std::vector<ImageType::Pointer> itk_images;
   syd::ExtractSlices<ImageType>(itk_input, 2, itk_images); // Direction = Z (2)
-  auto ant_em = syd::RemoveThirdDimension<PixelType>(itk_images[0]);
-  auto post_em = syd::RemoveThirdDimension<PixelType>(itk_images[1]);
-  auto ant_sc = syd::RemoveThirdDimension<PixelType>(itk_images[2]);
-  auto post_sc = syd::RemoveThirdDimension<PixelType>(itk_images[3]);
-  auto gmean = syd::GeometricalMean<OutputImageType>(ant_em, post_em, ant_sc, post_sc, k);
+  if (crop) {
+    auto ant_em = syd::RemoveThirdDimension<PixelType>(itk_images[0]);
+    auto post_em = syd::RemoveThirdDimension<PixelType>(itk_images[1]);
+    auto ant_sc = syd::RemoveThirdDimension<PixelType>(itk_images[2]);
+    auto post_sc = syd::RemoveThirdDimension<PixelType>(itk_images[3]);
+    auto gmean = syd::GeometricalMean<OutputImageType>(ant_em, post_em, ant_sc, post_sc, k);
 
-  // Create the syd image
-  return syd::InsertImage<OutputImageType>(gmean, input->patient, input->modality);
+    // Create the syd image
+    return syd::InsertImage<OutputImageType>(gmean, input->patient, input->modality);
+  } else {
+    auto ant_em = itk_images[0];
+    auto post_em = itk_images[1];
+    auto ant_sc = itk_images[2];
+    auto post_sc = itk_images[3];
+    auto gmean = syd::GeometricalMean<ImageType>(ant_em, post_em, ant_sc, post_sc, k);
+
+    // Create the syd image
+    return syd::InsertImage<ImageType>(gmean, input->patient, input->modality);
+  }
 }
 // --------------------------------------------------------------------
 
