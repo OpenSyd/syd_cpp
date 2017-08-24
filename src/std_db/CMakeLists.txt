@@ -234,6 +234,7 @@ wrap_ggo(sydInsertProjectionImage_GGO_C
   sydInsertProjectionImage.ggo
   ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
 add_executable(sydInsertProjectionImage
   sydInsertProjectionImage.cxx
@@ -245,6 +246,7 @@ wrap_ggo(sydInsertAttenuationImage_GGO_C
   sydInsertAttenuationImage.ggo
   ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
 add_executable(sydInsertAttenuationImage
   sydInsertAttenuationImage.cxx
@@ -256,6 +258,7 @@ wrap_ggo(sydInsertRegisterPlanarSPECT_GGO_C
   sydInsertRegisterPlanarSPECT.ggo
   ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
 add_executable(sydInsertRegisterPlanarSPECT
   sydInsertRegisterPlanarSPECT.cxx
@@ -267,6 +270,7 @@ wrap_ggo(sydInsertAttenuationCorrectedProjectionImage_GGO_C
   sydInsertAttenuationCorrectedProjectionImage.ggo
   ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
 add_executable(sydInsertAttenuationCorrectedProjectionImage
   sydInsertAttenuationCorrectedProjectionImage.cxx
@@ -278,6 +282,7 @@ wrap_ggo(sydInsertManualRegisteredImage_GGO_C
   sydInsertManualRegisteredImage.ggo
   ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
 add_executable(sydInsertManualRegisteredImage
   sydInsertManualRegisteredImage.cxx
@@ -289,6 +294,7 @@ wrap_ggo(sydInsertFlippedImage_GGO_C
   sydInsertFlippedImage.ggo
   ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
 add_executable(sydInsertFlippedImage
   sydInsertFlippedImage.cxx

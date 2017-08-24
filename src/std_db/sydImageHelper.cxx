@@ -467,7 +467,7 @@ syd::InsertManualRegistration(const syd::Image::pointer inputImage,
 
 
 // --------------------------------------------------------------------
-void
+syd::Image::pointer
 syd::InsertFlip(const syd::Image::pointer inputImage,
                 std::vector<char> axis, bool flipOrigin)
 {
@@ -488,6 +488,7 @@ syd::InsertFlip(const syd::Image::pointer inputImage,
   syd::SetImageInfoFromFile(imageFlipped);
   auto db = imageFlipped->GetDatabase();
   db->Update(imageFlipped); // for changed spacing , history
+  return(imageFlipped);
 }
 // --------------------------------------------------------------------
 

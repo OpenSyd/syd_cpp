@@ -22,6 +22,7 @@
 #include "sydPluginManager.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"
 #include "sydManualRegistration.h"
 #include <numeric>
@@ -69,8 +70,17 @@ int main(int argc, char* argv[])
       return -1;
     }
   }
-  syd::InsertFlip(image, axisChar, flipOrigin);
+  auto flippedImage = syd::InsertFlip(image, axisChar, flipOrigin);
 
+  // set properties from the image
+  syd::SetImageInfoFromImage(flippedImage, inputImage);
+
+  // Update image info
+  syd::SetTagsFromCommandLine(flippedImage->tags, db, args_info);
+  syd::SetImageInfoFromCommandLine(flippedImage, args_info);
+  syd::SetCommentsFromCommandLine(flippedImage->comments, db, args_info);
+  db->Update(flippedImage);
+  LOG(1) << "Inserting Image " << flippedImage;
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

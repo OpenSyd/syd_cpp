@@ -22,6 +22,7 @@
 #include "sydPluginManager.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
+#include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"
 #include "sydProjectionImage.h"
 
@@ -53,6 +54,7 @@ int main(int argc, char* argv[])
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);
   syd::SetImageInfoFromCommandLine(image, args_info);
+  syd::SetCommentsFromCommandLine(image->comments, db, args_info);
   db->Update(image);
   LOG(1) << "Inserting Image " << image;
 
