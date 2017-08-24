@@ -134,11 +134,13 @@ CropImageWithLowerThreshold(const ImageType * input, typename ImageType::PixelTy
 
 
 //--------------------------------------------------------------------
-template<class InputImageType, class OutputImageType>
-typename OutputImageType::Pointer
-RemoveLastDimension(const InputImageType * input)
+template<class PixelType>
+typename itk::Image<PixelType, 2>::Pointer
+RemoveThirdDimension(const itk::Image<PixelType, 3> * input)
 {
   //Compute the region whithout the last (3rd) dimension
+  typedef itk::Image<PixelType, 3> InputImageType;
+  typedef itk::Image<PixelType, 2> OutputImageType;
   typename InputImageType::IndexType start;
   typename InputImageType::SizeType size;
 

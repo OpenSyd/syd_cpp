@@ -345,10 +345,10 @@ syd::InsertImageGeometricalMean(const syd::Image::pointer input,
 
   std::vector<ImageType::Pointer> itk_images;
   syd::ExtractSlices<ImageType>(itk_input, 2, itk_images); // Direction = Z (2)
-  auto ant_em = syd::RemoveLastDimension<ImageType, OutputImageType>(itk_images[0]);
-  auto post_em = syd::RemoveLastDimension<ImageType, OutputImageType>(itk_images[1]);
-  auto ant_sc = syd::RemoveLastDimension<ImageType, OutputImageType>(itk_images[2]);
-  auto post_sc = syd::RemoveLastDimension<ImageType, OutputImageType>(itk_images[3]);
+  auto ant_em = syd::RemoveThirdDimension<PixelType>(itk_images[0]);
+  auto post_em = syd::RemoveThirdDimension<PixelType>(itk_images[1]);
+  auto ant_sc = syd::RemoveThirdDimension<PixelType>(itk_images[2]);
+  auto post_sc = syd::RemoveThirdDimension<PixelType>(itk_images[3]);
   auto gmean = syd::GeometricalMean<OutputImageType>(ant_em, post_em, ant_sc, post_sc, k);
 
   // Create the syd image
