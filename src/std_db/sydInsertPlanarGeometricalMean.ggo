@@ -8,4 +8,3 @@ description "Create a new (mhd) image with the geometrical mean of planar images
 "
 
 option "k"   k "Weight parameters to remove scatter : EM-k*Sc" double default="0.5" no
-option "like" l "Id of the image to copy information (patient, dicoms, ...)" int no
