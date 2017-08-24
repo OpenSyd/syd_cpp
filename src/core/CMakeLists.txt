@@ -30,6 +30,7 @@ add_library(sydItkUtils SHARED
   sydImageUtils.cxx
   sydDicomUtils.cxx
   sydKmeansFilter.cxx
+  sydDicomStructToImage.cxx
   )
 
 target_link_libraries(sydItkUtils sydCore ${ITK_LIBRARIES})
