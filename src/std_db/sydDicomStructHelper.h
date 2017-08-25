@@ -37,7 +37,8 @@ namespace syd {
   syd::RoiMaskImage::pointer InsertRoiMaskImageFromDicomStruct(syd::DicomStruct::pointer dicom_struct,
                                                                itk::ImageIOBase * header,
                                                                int roi_id,
-                                                               syd::RoiType::pointer roi_type);
+                                                               syd::RoiType::pointer roi_type,
+                                                               bool crop);
 }
 // --------------------------------------------------------------------
 

@@ -21,11 +21,11 @@
 
 // syd
 #include "sydImageUtils.h"
-#include "sydDicomUtils.h"
 
 // itk
 #include <itkPolygonSpatialObject.h>
 #include <itkGroupSpatialObject.h>
+#include <itkSpatialObjectToImageFilter.h>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -44,12 +44,13 @@ namespace syd {
     typedef itk::SpatialObjectPoint<2> PolygonPointType;
     typedef itk::GroupSpatialObject<2> GroupType;
     typedef PolygonType::PointListType PolygonPointListType;
+    typedef itk::SpatialObjectToImageFilter<GroupType, MaskImageSliceType> SpatialObjectToImageFilterType;
 
     /// Read dicom contour seq of the given roi
     gdcm::SmartPointer<gdcm::SequenceOfItems> ReadContourSequence(const gdcm::DataSet & dataset, int roi_id);
 
     /// Read the points from a dicom contour
-    const double * ReadContourPoints(gdcm::SmartPointer<gdcm::SequenceOfItems> seq, int i, unsigned int & npts);
+    double * ReadContourPoints(gdcm::SmartPointer<gdcm::SequenceOfItems> seq, int i, unsigned int & npts);
 
     /// Create the list of index; return the slice nb
     int ConvertContourPointToIndex(const double * pts,
@@ -59,7 +60,9 @@ namespace syd {
                                    unsigned int & nb_of_points_outside);
 
     /// Create a slice from the contour
-    void InsertSliceFromContour(PolygonPointListType & pointList,
+    void InsertSliceFromContour(PolygonType * polygon,
+                                SpatialObjectToImageFilterType * imageFilter,
+                                PolygonPointListType & pointList,
                                 GroupType * group,
                                 MaskImageSliceType * temp2Dimage,
                                 MaskImageType * image,

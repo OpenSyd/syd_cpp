@@ -22,6 +22,7 @@
 #include "sydImageUtils.h"
 #include "sydRoiMaskImageHelper.h"
 #include "sydStandardDatabase.h"
+#include "sydImageCrop.h"
 
 // --------------------------------------------------------------------
 syd::DicomSerie::pointer syd::FindAssociatedDicomSerie(syd::DicomStruct::pointer dicom_struct)
@@ -68,13 +69,9 @@ syd::DicomSerie::pointer syd::FindAssociatedDicomSerie(syd::DicomStruct::pointer
 syd::RoiMaskImage::pointer syd::InsertRoiMaskImageFromDicomStruct(syd::DicomStruct::pointer dicom_struct,
                                                                   itk::ImageIOBase * header,
                                                                   int roi_id,
-                                                                  syd::RoiType::pointer roi_type)
+                                                                  syd::RoiType::pointer roi_type,
+                                                                  bool crop)
 {
-  DDF();
-  DD(dicom_struct);
-  DD(roi_type);
-  DD(roi_id);
-
   // Get dicom dataset
   if (dicom_struct->dicom_files.size() != 1) {
     EXCEPTION("Error while reading datase in DicomStruct file. Expect a single file, found "
@@ -92,15 +89,17 @@ syd::RoiMaskImage::pointer syd::InsertRoiMaskImageFromDicomStruct(syd::DicomStru
   syd::DicomStructToImageBuilder builder;
   builder.ConvertRoiToImage(dataset, roi_id, image);
 
+  // Crop
+  if (crop)
+    image = syd::CropImageWithLowerThreshold<ImageType>(image, 1);
+
   // Create the RoiMaskImage
   auto db = dicom_struct->GetDatabase<syd::StandardDatabase>();
   filename = db->GetUniqueTempFilename(".mhd");
   syd::WriteImage<ImageType>(image, filename);
-  DD(filename);
   auto mask = syd::InsertRoiMaskImageFromFile(filename, dicom_struct->patient, roi_type);
   mask->frame_of_reference_uid = dicom_struct->dicom_frame_of_reference_uid;
   mask->acquisition_date = dicom_struct->dicom_structure_set_date;
-  DD(mask);
   fs::remove(filename);
 
   return mask;

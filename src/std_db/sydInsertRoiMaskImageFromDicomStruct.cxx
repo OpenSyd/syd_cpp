@@ -43,12 +43,10 @@ int main(int argc, char* argv[])
   // Get the dicom struct
   syd::IdType dicom_id = atoi(args_info.inputs[0]);
   auto dicom_struct = db->QueryOne<syd::DicomStruct>(dicom_id);
-  DD(dicom_struct);
 
   // Get the image
   syd::IdType id = atoi(args_info.inputs[1]);
   auto image = db->QueryOne<syd::Image>(id);
-  DD(image);
 
   // Get list of rois to create
   if (args_info.roi_id_given != args_info.roi_type_given) {
@@ -62,7 +60,6 @@ int main(int argc, char* argv[])
   std::vector<int> roi_ids;
   for(auto i=0; i<args_info.roi_id_given; i++)
     roi_ids.push_back(args_info.roi_id_arg[i]);
-  DDS(roi_ids);
 
   // Create list of roitype
   syd::RoiType::vector roi_types;
@@ -70,17 +67,17 @@ int main(int argc, char* argv[])
     auto roi_type = syd::FindRoiType(args_info.roi_type_arg[i], db);
     roi_types.push_back(roi_type);
   }
-  DDS(roi_types);
 
   // Read image header
   auto image_header = syd::ReadImageHeader(image->GetAbsolutePath());
 
   // Loop
   for(auto i=0; i<roi_ids.size(); i++) {
-    DD(i);
-    auto mask = syd::InsertRoiMaskImageFromDicomStruct(dicom_struct, image_header, roi_ids[i], roi_types[i]);
-    DD(mask);
-
+    auto mask = syd::InsertRoiMaskImageFromDicomStruct(dicom_struct,
+                                                       image_header,
+                                                       roi_ids[i],
+                                                       roi_types[i],
+                                                       args_info.crop_flag);
     // update user info
     syd::AddTag(mask->tags, image->tags);
     syd::SetImageInfoFromCommandLine(mask, args_info);

@@ -10,7 +10,5 @@ description "Create a new RoiMaskImage by converting a dicom_struct
 
 option "roi_id"     i  "Id of the roi in the dicom to convert"      int yes multiple
 option "roi_type"   r  "Id or name of the RoiType in the database"  string yes multiple
-
-## crop ?
-
+option "crop"       c  "Crop mask image"                            flag on
 
