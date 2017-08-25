@@ -1,0 +1,9 @@
+#File sydInsertChangAttenuationImage.ggo
+
+package "syd"
+version "0.4"
+usage "sydChangAttenuationImage <image1> -a <nbAngles>"
+description "Create a new (mhd) image computed from an attenuation map <image1>
+with Chang method. <nbAngles> is the number of Angles of projection"
+
+option "angles"  a "Number of angles"  int yes

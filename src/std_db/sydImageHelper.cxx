@@ -30,6 +30,7 @@
 #include "sydImageFillHoles.h"
 #include "sydImage_GaussianFilter.h"
 #include "sydManualRegistration.h"
+#include "sydChangAttenuationImage.h"
 #include "sydTagHelper.h"
 #include "sydImageCrop.h"
 
@@ -489,6 +490,24 @@ syd::InsertFlip(const syd::Image::pointer inputImage,
   auto db = imageFlipped->GetDatabase();
   db->Update(imageFlipped); // for changed spacing , history
   return(imageFlipped);
+}
+// --------------------------------------------------------------------
+
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertChangAttenuation(const syd::Image::pointer inputImage,
+                            int nbAngles)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  auto itk_inputImage = syd::ReadImage<ImageType3D>(inputImage->GetAbsolutePath());
+  auto changImage = syd::ChangAttenuationImage<ImageType3D>(itk_inputImage, nbAngles);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType3D>(changImage, inputImage->patient, inputImage->modality);
 }
 // --------------------------------------------------------------------
 

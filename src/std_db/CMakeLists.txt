@@ -324,6 +324,17 @@ add_executable(sydInsertRoiStatistic
   ${sydInsertRoiStatistic_GGO_C})
 target_link_libraries(sydInsertRoiStatistic ${SYD_STD_DB_LIBRARY})
 
+# Create the Chang attenuation image
+wrap_ggo(sydInsertChangAttenuationImage_GGO_C
+  sydInsertChangAttenuationImage.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertChangAttenuationImage
+  sydInsertChangAttenuationImage.cxx
+  ${sydInsertChangAttenuationImage_GGO_C})
+target_link_libraries(sydInsertChangAttenuationImage ${SYD_STD_DB_LIBRARY})
 
 # ComputeActivityInMBqByDetectedCounts
 wrap_ggo(sydComputeActivityInMBqByDetectedCounts_GGO_C
