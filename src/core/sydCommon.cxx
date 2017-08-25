@@ -505,3 +505,35 @@ std::string syd::demangle(const char* name) {
 }
 #endif
 //--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+std::clock_t syd::StartTimer(double & duration)
+{
+  std::clock_t c_start = std::clock();
+  auto t_start = std::chrono::high_resolution_clock::now();
+  return c_start;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+void syd::StopTimer(const std::clock_t & c_start, double & duration)
+{
+  std::clock_t c_end = std::clock();
+  auto t_end = std::chrono::high_resolution_clock::now();
+  duration += (c_end-c_start);
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+void syd::PrintTimerDuration(double duration)
+{
+  std::cout << std::fixed << std::setprecision(2) << "CPU time used: "
+            << 1000.0 * (duration) / CLOCKS_PER_SEC << " ms        "
+            << "Wall clock time passed: "
+            << std::chrono::duration<double, std::milli>(duration).count()
+            << " ms\n";
+}
+//--------------------------------------------------------------------

@@ -1,0 +1,14 @@
+#File sydInsertRoiMaskImageFromDicomStruct.ggo
+
+package "sydInsertRoiMaskImageFromDicomStruct"
+usage "sydInsertRoiMaskImageFromDicomStruct <dicom_struct_id> <image_id>"
+version "0.4"
+description "Create a new RoiMaskImage by converting a dicom_struct
+- <dicom_struct_id>   id of the dicom struct in the db
+- <image_id>          id of the image to copy information from (frame_of_reference_uid etc)
+"
+
+option "roi_id"     i  "Id of the roi in the dicom to convert"      int yes multiple
+option "roi_type"   r  "Id or name of the RoiType in the database"  string yes multiple
+option "crop"       c  "Crop mask image"                            flag on
+

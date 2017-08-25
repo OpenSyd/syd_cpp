@@ -117,6 +117,39 @@ typename ImageType::Pointer CreateImageLike(const typename itk::ImageBase<ImageT
 
 //--------------------------------------------------------------------
 template<class ImageType>
+typename ImageType::Pointer CreateImageLike(const itk::ImageIOBase * header)
+{
+  typename ImageType::Pointer image = ImageType::New();
+  typename ImageType::RegionType region;
+  typename ImageType::IndexType start;
+  typename ImageType::SizeType size;
+  typename ImageType::SpacingType spacing;
+  typename ImageType::PointType origin;
+  typename ImageType::DirectionType direction;
+  auto dim = header->GetNumberOfDimensions();
+  for(auto i=0; i<dim; i++) {
+    start[i] = 0;
+    size[i] = header->GetDimensions(i);
+    spacing[i] = header->GetSpacing(i);
+    origin[i] = header->GetOrigin(i);
+    auto dir = header->GetDefaultDirection(i);
+    int col=0;
+    for(auto d:dir) direction(i,col++) = d;
+  }
+  region.SetSize(size);
+  region.SetIndex(start);
+  image->SetRegions(region);
+  image->SetSpacing(spacing);
+  image->SetOrigin(origin);
+  image->SetDirection(direction);
+  image->Allocate();
+  return image;
+}
+//--------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------
+template<class ImageType>
 typename ImageType::Pointer ComputeAverageImage(std::vector<std::string> & filenames)
 {
   // Read image one after the other to limit a bit the used memory
@@ -468,7 +501,7 @@ void UpdateDicomImageInformation(typename itk::Image<PixelType,3>::Pointer image
 //--------------------------------------------------------------------
 template<class ImageType1, class ImageType2>
 bool ImagesHaveSameSize(const ImageType1 * a,
-                       const ImageType2 * b)
+                        const ImageType2 * b)
 {
   if (a->GetImageDimension() != b->GetImageDimension()) return false;
   bool r = true;
@@ -484,7 +517,7 @@ bool ImagesHaveSameSize(const ImageType1 * a,
 //--------------------------------------------------------------------
 template<class ImageType1, class ImageType2>
 bool ImagesHaveSameSpacing(const ImageType1 * a,
-                          const ImageType2 * b)
+                           const ImageType2 * b)
 {
   if (a->GetImageDimension() != b->GetImageDimension()) return false;
   bool r = true;
@@ -500,7 +533,7 @@ bool ImagesHaveSameSpacing(const ImageType1 * a,
 //--------------------------------------------------------------------
 template<class ImageType1, class ImageType2>
 bool ImagesHaveSameOrigin(const ImageType1 * a,
-                         const ImageType2 * b)
+                          const ImageType2 * b)
 {
   if (a->GetImageDimension() != b->GetImageDimension()) return false;
   bool r = true;
@@ -516,7 +549,7 @@ bool ImagesHaveSameOrigin(const ImageType1 * a,
 //--------------------------------------------------------------------
 template<class ImageType1, class ImageType2>
 bool ImagesHaveSameSupport(const ImageType1 * a,
-                          const ImageType2 * b)
+                           const ImageType2 * b)
 {
   return (ImagesHaveSameSize(a,b) and
           ImagesHaveSameSpacing(a,b) and

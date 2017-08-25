@@ -16,30 +16,30 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SYDDICOMSTRUCTHELPER_H
+#define SYDDICOMSTRUCTHELPER_H
+
 // syd
-#include "sydTest_ggo.h"
-#include "sydPluginManager.h"
-#include "sydDatabaseManager.h"
-#include "sydCommonGengetopt.h"
-#include "sydStandardDatabase.h"
-#include "sydDicomStructHelper.h"
-//#include "gdcmReader.h"
+#include "sydDicomStruct.h"
+#include "sydDicomSerie.h"
+#include "sydRoiMaskImage.h"
+
+// itk
+#include <itkImageIOBase.h>
 
 // --------------------------------------------------------------------
-int main(int argc, char* argv[])
-{
-  // Init command line
-  SYD_INIT_GGO(sydTest, 1);
+namespace syd {
 
-  // Load plugin and db
-  syd::PluginManager::GetInstance()->Load();
-  syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
-  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
-  // -----------------------------------------------------------------
+  /// Search for the dicom associated with the struct
+  syd::DicomSerie::pointer FindAssociatedDicomSerie(syd::DicomStruct::pointer s);
 
-
-  // -----------------------------------------------------------------
-  DD("end");
-  // This is the end, my friend.
+  /// Create and insert a mask from a dicom struct
+  syd::RoiMaskImage::pointer InsertRoiMaskImageFromDicomStruct(syd::DicomStruct::pointer dicom_struct,
+                                                               itk::ImageIOBase * header,
+                                                               int roi_id,
+                                                               syd::RoiType::pointer roi_type,
+                                                               bool crop);
 }
 // --------------------------------------------------------------------
+
+#endif
