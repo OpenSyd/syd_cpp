@@ -11,6 +11,13 @@ cd ../bin/bin
 sydTools=`ls syd*`
 echo "# This page contains additional information on how to use syd tools:" > $tempFile
 echo "" >> $tempFile
+echo "## Table of contents" >> $tempFile
+for tool in $sydTools
+do
+  lowercase=`echo "$tool" | tr '[:upper:]' '[:lower:]'`;
+  echo " * [$tool](#$lowercase)" >> $tempFile
+done
+echo "" >> $tempFile
 for tool in $sydTools
 do
   echo "## " $tool >> $tempFile
@@ -21,7 +28,7 @@ done
 
 #Write the .md file
 docFile="$currentFolder/sydTool.md"
-rm $docFile
+rm -f $docFile
 helpLine=false  #Boolean to know if we are reading the command lines starting with '-h, --help' and finishing with '##' or just the help
 echoLine=""
 writeLine=false;
@@ -30,7 +37,7 @@ while IFS='' read -r line || [[ -n "$line" ]]; do #read all lines
     line=`echo "$line" | sed -e 's/^[ \t]*//'`; # prevent whitespace at the begining of the line
     if [[ $line == *"-h, --help"* ]]; then
       helpLine=true;
-      echo "|little tag|tag|commment|" >> $docFile;
+      echo "|short option|option|commment|" >> $docFile;
       echo "|---|---|---|" >> $docFile;
     fi
     if [[ $line == *"##"* ]]; then
