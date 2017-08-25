@@ -23,6 +23,10 @@
 #include "sydInjectionHelper.h"
 #include "sydImageStitch.h"
 #include "sydRoiStatisticHelper.h"
+#include "sydProjectionImage.h"
+#include "sydAttenuationImage.h"
+#include "sydRegisterPlanarSPECT.h"
+#include "sydAttenuationCorrectedProjectionImage.h"
 #include "sydImageFillHoles.h"
 #include "sydImage_GaussianFilter.h"
 #include "sydManualRegistration.h"
@@ -325,11 +329,12 @@ void syd::SetImageInfoFromImage(syd::Image::pointer image,
 // --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertImageGeometricalMean(const syd::Image::pointer input,
-                                double k)
+                                double k, bool crop)
 {
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
+  typedef itk::Image<PixelType, 2> OutputImageType;
   auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
 
   // Check only 4 slices
@@ -340,14 +345,106 @@ syd::InsertImageGeometricalMean(const syd::Image::pointer input,
 
   std::vector<ImageType::Pointer> itk_images;
   syd::ExtractSlices<ImageType>(itk_input, 2, itk_images); // Direction = Z (2)
-  auto ant_em = itk_images[0];
-  auto post_em = itk_images[1];
-  auto ant_sc = itk_images[2];
-  auto post_sc = itk_images[3];
-  auto gmean = syd::GeometricalMean<ImageType>(ant_em, post_em, ant_sc, post_sc, k);
+  if (crop) {
+    auto ant_em = syd::RemoveThirdDimension<PixelType>(itk_images[0]);
+    auto post_em = syd::RemoveThirdDimension<PixelType>(itk_images[1]);
+    auto ant_sc = syd::RemoveThirdDimension<PixelType>(itk_images[2]);
+    auto post_sc = syd::RemoveThirdDimension<PixelType>(itk_images[3]);
+    auto gmean = syd::GeometricalMean<OutputImageType>(ant_em, post_em, ant_sc, post_sc, k);
+
+    // Create the syd image
+    return syd::InsertImage<OutputImageType>(gmean, input->patient, input->modality);
+  } else {
+    auto ant_em = itk_images[0];
+    auto post_em = itk_images[1];
+    auto ant_sc = itk_images[2];
+    auto post_sc = itk_images[3];
+    auto gmean = syd::GeometricalMean<ImageType>(ant_em, post_em, ant_sc, post_sc, k);
+
+    // Create the syd image
+    return syd::InsertImage<ImageType>(gmean, input->patient, input->modality);
+  }
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertProjectionImage(const syd::Image::pointer input,
+                           double dimension, bool mean, bool flip)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  typedef itk::Image<PixelType, 2> OutputImageType;
+  auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
+  auto projection = syd::Projection<ImageType, OutputImageType>(itk_input, dimension, mean, flip);
 
   // Create the syd image
-  return syd::InsertImage<ImageType>(gmean, input->patient, input->modality);
+  return syd::InsertImage<OutputImageType>(projection, input->patient, input->modality);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertAttenuationImage(const syd::Image::pointer input, double numberEnergySPECT,
+                            double attenuationWaterCT, double attenuationBoneCT,
+                            std::vector<double>& attenuationAirSPECT,
+                            std::vector<double>& attenuationWaterSPECT,
+                            std::vector<double>& attenuationBoneSPECT,
+                            std::vector<double>& weight)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
+  auto attenuation = syd::Attenuation<ImageType>(itk_input, numberEnergySPECT,
+                     attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT,
+                     attenuationWaterSPECT, attenuationBoneSPECT, weight);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType>(attenuation, input->patient, input->modality);
+}
+// --------------------------------------------------------------------
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
+                               const syd::Image::pointer inputSPECT,
+                               const syd::Image::pointer inputAM)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 2> ImageType2D;
+  auto itk_inputPlanar = syd::ReadImage<ImageType2D>(inputPlanar->GetAbsolutePath());
+  auto itk_inputSPECT = syd::ReadImage<ImageType2D>(inputSPECT->GetAbsolutePath());
+  auto itk_inputAM = syd::ReadImage<ImageType2D>(inputAM->GetAbsolutePath());
+  auto AM_register = syd::RegisterPlanarSPECT<ImageType2D>(itk_inputPlanar, itk_inputSPECT, itk_inputAM);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType2D>(AM_register, inputAM->patient, inputAM->modality);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,
+                                               const syd::Image::pointer input_AM,
+                                               const syd::Image::pointer input_AM_model,
+                                               int dimension)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 2> ImageType2D;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  auto itk_input_GM = syd::ReadImage<ImageType2D>(input_GM->GetAbsolutePath());
+  auto itk_input_AM = syd::ReadImage<ImageType2D>(input_AM->GetAbsolutePath());
+  auto itk_input_AM_model = syd::ReadImage<ImageType3D>(input_AM_model->GetAbsolutePath());
+  auto attenuationCorrected = syd::AttenuationCorrectedProjection<ImageType2D, ImageType3D>(itk_input_GM, itk_input_AM, itk_input_AM_model, dimension);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType2D>(attenuationCorrected, input_GM->patient, input_GM->modality);
 }
 // --------------------------------------------------------------------
 
@@ -370,7 +467,7 @@ syd::InsertManualRegistration(const syd::Image::pointer inputImage,
 
 
 // --------------------------------------------------------------------
-void
+syd::Image::pointer
 syd::InsertFlip(const syd::Image::pointer inputImage,
                 std::vector<char> axis, bool flipOrigin)
 {
@@ -391,6 +488,7 @@ syd::InsertFlip(const syd::Image::pointer inputImage,
   syd::SetImageInfoFromFile(imageFlipped);
   auto db = imageFlipped->GetDatabase();
   db->Update(imageFlipped); // for changed spacing , history
+  return(imageFlipped);
 }
 // --------------------------------------------------------------------
 

@@ -117,3 +117,43 @@ double syd::Injection::GetLambdaDecayConstantInHours() const
   return radionuclide->GetLambdaDecayConstantInHours();
 }
 // --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::Injection::GetYear()
+{
+  return(std::stoi(date.substr(0,4)));
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::Injection::GetMonth()
+{
+  return(std::stoi(date.substr(5,2)));
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::Injection::GetDay()
+{
+  return(std::stoi(date.substr(8,2)));
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::Injection::GetHour()
+{
+  return(std::stoi(date.substr(11,2)));
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::Injection::GetMinute()
+{
+  return(std::stoi(date.substr(14,2)));
+}
+// --------------------------------------------------

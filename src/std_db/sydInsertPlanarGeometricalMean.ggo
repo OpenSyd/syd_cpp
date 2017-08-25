@@ -7,5 +7,5 @@ description "Create a new (mhd) image with the geometrical mean of planar images
 - <images>  must be a single image with 4 slices (ANT_EM, POST_EM, ANT_SC, POST_SC)
 "
 
-option "k"   k "Weight parameters to remove scatter : EM-k*Sc" double default="0.5" no
-option "like" l "Id of the image to copy information (patient, dicoms, ...)" int no
+option "k"    k   "Weight parameters to remove scatter : EM-k*Sc" double default="1.1" no
+option "crop" c   "Crop the third dimension for 3D image with a one-size 3rd dimension (default = true)" flag on

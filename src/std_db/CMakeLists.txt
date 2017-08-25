@@ -230,11 +230,60 @@ add_executable(sydInsertPlanarGeometricalMean
   ${sydInsertPlanarGeometricalMean_GGO_C})
 target_link_libraries(sydInsertPlanarGeometricalMean ${SYD_STD_DB_LIBRARY})
 
+# Create the projection of an image along a dimension
+wrap_ggo(sydInsertProjectionImage_GGO_C
+  sydInsertProjectionImage.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertProjectionImage
+  sydInsertProjectionImage.cxx
+  ${sydInsertProjectionImage_GGO_C})
+target_link_libraries(sydInsertProjectionImage ${SYD_STD_DB_LIBRARY})
+
+# Create the attenuation map of an image
+wrap_ggo(sydInsertAttenuationImage_GGO_C
+  sydInsertAttenuationImage.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertAttenuationImage
+  sydInsertAttenuationImage.cxx
+  ${sydInsertAttenuationImage_GGO_C})
+target_link_libraries(sydInsertAttenuationImage ${SYD_STD_DB_LIBRARY})
+
+# Create the registered attenuation map of an image
+wrap_ggo(sydInsertRegisterPlanarSPECT_GGO_C
+  sydInsertRegisterPlanarSPECT.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertRegisterPlanarSPECT
+  sydInsertRegisterPlanarSPECT.cxx
+  ${sydInsertRegisterPlanarSPECT_GGO_C})
+target_link_libraries(sydInsertRegisterPlanarSPECT ${SYD_STD_DB_LIBRARY})
+
+# Create the attenuation corrected of a projection image
+wrap_ggo(sydInsertAttenuationCorrectedProjectionImage_GGO_C
+  sydInsertAttenuationCorrectedProjectionImage.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertAttenuationCorrectedProjectionImage
+  sydInsertAttenuationCorrectedProjectionImage.cxx
+  ${sydInsertAttenuationCorrectedProjectionImage_GGO_C})
+target_link_libraries(sydInsertAttenuationCorrectedProjectionImage ${SYD_STD_DB_LIBRARY})
+
 # Create the manual registered image
 wrap_ggo(sydInsertManualRegisteredImage_GGO_C
   sydInsertManualRegisteredImage.ggo
   ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
 add_executable(sydInsertManualRegisteredImage
   sydInsertManualRegisteredImage.cxx
@@ -246,6 +295,7 @@ wrap_ggo(sydInsertFlippedImage_GGO_C
   sydInsertFlippedImage.ggo
   ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
 add_executable(sydInsertFlippedImage
   sydInsertFlippedImage.cxx

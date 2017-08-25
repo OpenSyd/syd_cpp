@@ -46,6 +46,11 @@ namespace syd {
 
       /// Date of the injection
       std::string date;
+      int GetYear();
+      int GetMonth();
+      int GetDay();
+      int GetHour();
+      int GetMinute();
 
       /// Injected activity in MBq
       double activity_in_MBq;

@@ -18,11 +18,11 @@
 
 // syd
 #include "sydImageUtils.h"
+#include <itkThresholdImageFilter.h>
 #include "sydImageFlip.h"
 
 // itk
 #include <itkRecursiveGaussianImageFilter.h>
-
 
 //--------------------------------------------------------------------
 template<class ImageType>
@@ -87,6 +87,15 @@ syd::GeometricalMean(const ImageType * ant, const ImageType * post)
     ++iter_post;
     ++iter_output;
   }
-  return output;
+
+  //Be sure to have correct values (avoid -nan values)
+  typedef itk::ThresholdImageFilter <ImageType> ThresholdImageFilterType;
+  typename ThresholdImageFilterType::Pointer thresholdFilter = ThresholdImageFilterType::New();
+  thresholdFilter->SetInput(output);
+  thresholdFilter->ThresholdBelow(0);
+  thresholdFilter->SetOutsideValue(0);
+  thresholdFilter->Update();
+
+  return thresholdFilter->GetOutput();
 }
 //--------------------------------------------------------------------

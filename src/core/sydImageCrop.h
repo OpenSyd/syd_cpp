@@ -33,6 +33,7 @@
 #include <itkStatisticsLabelObject.h>
 #include <itkLabelImageToLabelMapFilter.h>
 #include <itkLabelMapToLabelImageFilter.h>
+#include <itkExtractImageFilter.h>
 
 
 // --------------------------------------------------------------------
@@ -58,7 +59,10 @@ namespace syd {
   CropImageWithLowerThreshold(const ImageType * input, typename ImageType::PixelType lower_threshold);
   //--------------------------------------------------------------------
 
-
+  //Crop an image reducing it by removing the last (3rd) dimension
+  template<class PixelType>
+  typename itk::Image<PixelType, 2>::Pointer
+  RemoveThirdDimension(const itk::Image<PixelType, 3> * input);
 #include "sydImageCrop.txx"
 
 } // end namespace

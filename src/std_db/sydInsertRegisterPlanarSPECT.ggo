@@ -1,0 +1,8 @@
+#File sydInsertRegisterPlanarSPECT.ggo
+
+package "syd"
+version "0.4"
+usage "sydInsertRegisterPlanarSPECT <image1> <image2> <image3>"
+description "Create a new (mhd) attenuation map image from the non-registered attenuation map <image3>.
+The registration takes the Planar image <image1> and the projected SPECT image <image2>, it centers around the x-axis and search for the best y-axis translation to maximize the correlation coefficient.
+"

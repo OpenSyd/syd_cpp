@@ -100,14 +100,31 @@ namespace syd {
   // Compute the geometrical mean of a planar image. Consider composed
   // of 4 slices
   syd::Image::pointer InsertImageGeometricalMean(const syd::Image::pointer input,
-                                                 double k=0.5);
+                                                 double k=1.1, bool crop=true);
+
+  // Compute the projection of an image.
+  syd::Image::pointer InsertProjectionImage(const syd::Image::pointer input,
+                                            double dimension=0, bool mean=false, bool flip=false);
+
+  // Compute the attenuation map of an image.
+  syd::Image::pointer InsertAttenuationImage(const syd::Image::pointer input, double numberEnergySPECT,
+                                             double attenuationWaterCT, double attenuationBoneCT,
+                                             std::vector<double>& attenuationAirSPECT,
+                                             std::vector<double>& attenuationWaterSPECT,
+                                             std::vector<double>& attenuationBoneSPECT,
+                                             std::vector<double>& weight);
+
+  // Compute the registered attenuation map of an image.
+  syd::Image::pointer InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
+                                                const syd::Image::pointer inputSPECT,
+                                                const syd::Image::pointer inputAM);
 
   // Compute the manual registration of an image.
   syd::Image::pointer InsertManualRegistration(const syd::Image::pointer inputImage,
                                                double x, double y, double z);
 
   // Compute the flip of an image.
-  void InsertFlip(const syd::Image::pointer inputImage,
+  syd::Image::pointer InsertFlip(const syd::Image::pointer inputImage,
                                  std::vector<char> axis, bool flipOrigin);
 
   // Compute the attenuation correction of an projection image.
