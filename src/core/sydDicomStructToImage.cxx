@@ -19,6 +19,12 @@
 // syd
 #include "sydDicomStructToImage.h"
 
+#include <iostream>
+#include <iomanip>
+#include <chrono>
+#include <ctime>
+#include <thread>
+
 // --------------------------------------------------------------------
 void syd::DicomStructToImageBuilder::
 ConvertRoiToImage(const gdcm::DataSet & dataset, int roi_id, MaskImageType * image)
@@ -48,23 +54,37 @@ ConvertRoiToImage(const gdcm::DataSet & dataset, int roi_id, MaskImageType * ima
   PolygonType::Pointer polygon = PolygonType::New();
   SpatialObjectToImageFilterType::Pointer imageFilter = SpatialObjectToImageFilterType::New();
 
+  double step1 = 0.0;
+  double step2 = 0.0;
+  double step3 = 0.0;
+
   // Loop on the list of contours
   for(auto i=1; i<=seq->GetNumberOfItems(); ++i) { // item start at #1
 
     // Retrieve contour points
     unsigned int npts;
+    auto start = StartTimer(step1);
     auto pts = ReadContourPoints(seq, i, npts);
+    StopTimer(start, step1);
 
     // create list of discrete index from points
+    start = StartTimer(step2);
     auto slice_index = ConvertContourPointToIndex(pts, npts, image, pointList, nb_of_points_outside);
     delete pts;
+    StopTimer(start, step2);
 
     // Insert a slice in the image
+    start = StartTimer(step3);
     InsertSliceFromContour(polygon, imageFilter, pointList, group, slice, image, slice_index);
+    StopTimer(start, step3);
 
     // Clean up
     pointList.clear();
   }
+
+  PrintTimerDuration(step1);
+  PrintTimerDuration(step2);
+  PrintTimerDuration(step3);
   //  DD(nb_of_points_outside); // not use yet
 }
 // --------------------------------------------------------------------
@@ -201,8 +221,8 @@ InsertSliceFromContour(PolygonType * polygon,
   // reset 2D slice
   slice->FillBuffer(itk::NumericTraits<MaskPixelType>::Zero);
 
-  // need to create a 2D slice here, put the polygon on it, and insert it back
-  // into the 3D volume.
+  /// need to create a 2D slice here, put the polygon on it, and insert it back
+  /// into the 3D volume. This is the slowest part of the whole process
   group->AddSpatialObject(polygon); // add a new polygon group
   polygon->SetPoints(pointList);    // so copy them to a polygon object
   imageFilter->SetInput(group);

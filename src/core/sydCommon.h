@@ -29,6 +29,8 @@
 #include <algorithm>
 #include <numeric>
 #include <typeinfo>
+#include <chrono>
+#include <ctime>
 
 // To get current working directory
 // http://stackoverflow.com/questions/143174/how-do-i-get-the-directory-that-a-program-is-running-from
@@ -166,6 +168,10 @@ namespace syd {
   // --------------------------------------------------------------------
   std::string demangle(const char* name);
 
+  // --------------------------------------------------------------------
+  std::clock_t StartTimer(double & duration);
+  void StopTimer(const std::clock_t & c_start, double & duration);
+  void PrintTimerDuration(double duration);
 
 #include "sydCommon.txx"
 } // end namespace
