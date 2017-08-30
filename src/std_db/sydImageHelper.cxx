@@ -399,8 +399,8 @@ syd::InsertAttenuationImage(const syd::Image::pointer input, double numberEnergy
   typedef itk::Image<PixelType, 3> ImageType;
   auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
   auto attenuation = syd::Attenuation<ImageType>(itk_input, numberEnergySPECT,
-                     attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT,
-                     attenuationWaterSPECT, attenuationBoneSPECT, weight);
+                                                 attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT,
+                                                 attenuationWaterSPECT, attenuationBoneSPECT, weight);
 
   // Create the syd image
   return syd::InsertImage<ImageType>(attenuation, input->patient, input->modality);
@@ -739,22 +739,6 @@ syd::Image::vector syd::FindImages(const syd::Injection::pointer injection)
 
 
 // --------------------------------------------------------------------
-syd::Image::vector syd::FindImagesFromDicom(const syd::DicomSerie::pointer dicom)
-{
-  auto patient = dicom->patient;
-  auto images = syd::FindImages(patient);
-  syd::Image::vector images_from_dicom;
-  for(auto im:images) {
-    bool imageIsFromThisDicom = false;
-    for(auto d:im->dicoms) if (d->id == dicom->id) imageIsFromThisDicom = true;
-    if (imageIsFromThisDicom) images_from_dicom.push_back(im);
-  }
-  return images_from_dicom;
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
 void syd::Move(syd::Image::pointer image, std::string relative_folder)
 {
   // Get old path
@@ -833,3 +817,69 @@ syd::Image::vector syd::FindImages(syd::Patient::pointer patient,
   return images;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------
+bool AlmostEquals(double a, double b, double tol = 0.000001)
+{
+  //std::numeric_limits<double>::epsilon();
+  return std::abs(a - b) < tol;
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::SameSizeAndSpacing(const syd::Image::pointer a,
+                                    const syd::Image::pointer b)
+{
+  bool r = true;
+  for(auto i=0; i<a->size.size(); i++) {
+    r = r and
+      AlmostEquals(a->size[i], b->size[i]) and
+      AlmostEquals(a->spacing[i], b->spacing[i]);
+    if (!r) return r;
+  }
+  return r;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+bool syd::SameSizeAndSpacing(const syd::Image::pointer image,
+                                    const syd::DicomSerie::pointer serie)
+{
+  bool b = true;
+  for(auto i=0; i<image->size.size(); i++) {
+    b = b and
+      AlmostEquals(image->size[i], serie->dicom_size[i]) and
+      AlmostEquals(image->spacing[i], serie->dicom_spacing[i]);
+    if (!b) return b;
+  }
+  return b;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::vector syd::FindImagesLike(syd::DicomSerie::pointer serie)
+{
+  auto db = serie->GetDatabase<syd::StandardDatabase>();
+  syd::Image::vector temp;
+  odb::query<syd::Image> q =
+    // odb::query<syd::Image>::patient == serie->patient->id and
+    odb::query<syd::Image>::injection == serie->injection->id and
+    odb::query<syd::Image>::frame_of_reference_uid == serie->dicom_frame_of_reference_uid and
+    odb::query<syd::Image>::acquisition_date == serie->dicom_acquisition_date and
+    odb::query<syd::Image>::modality == serie->dicom_modality;
+  db->Query(temp, q);
+  syd::Image::vector images;
+  // Check dicom id exist in the list
+  for(auto image:temp) {
+    auto it = std::find(image->dicoms.begin(), image->dicoms.end(), serie);
+    if (it == image->dicoms.end()) continue; // does not exist: we continue the loop
+    if (syd::SameSizeAndSpacing(image, serie)) images.push_back(image); // kepp only if found
+  }
+  return images;
+}
+// --------------------------------------------------------------------
+

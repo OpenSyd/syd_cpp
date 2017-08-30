@@ -1,11 +1,11 @@
 #File sydInsertRoiMaskImageFromDicomStruct.ggo
 
 package "sydInsertRoiMaskImageFromDicomStruct"
-usage "sydInsertRoiMaskImageFromDicomStruct <dicom_struct_id> <image_id>"
+usage "sydInsertRoiMaskImageFromDicomStruct <dicom_struct_id>"
 version "0.4"
-description "Create a new RoiMaskImage by converting a dicom_struct
+description "Create a new RoiMaskImage by converting a dicom_struct. We search for the associated DicomSerie (that must exist in the db) and the Image corresponding to this DicomSerie to define the size of the created RoiMaskImage. If the Image does not exist in the db, it is created but not inserted in the db (slower).
+
 - <dicom_struct_id>   id of the dicom struct in the db
-- <image_id>          id of the image to copy information from (frame_of_reference_uid etc)
 "
 
 option "roi_id"     i  "Id of the roi in the dicom to convert"      int yes multiple

@@ -201,19 +201,6 @@ void syd::Image::Callback(odb::callback_event event,
 
 
 // --------------------------------------------------
-bool syd::Image::IsSameSizeAndSpacingThan(const syd::Image::pointer image) const
-{
-  bool b = true;
-  for(auto i=0; i<size.size(); i++) {
-    b = b and size[i] == image->size[i] and
-      spacing[i] == image->spacing[i];
-  }
-  return b;
-}
-// --------------------------------------------------
-
-
-// --------------------------------------------------
 void syd::Image::FatalIfNoDicom() const
 {
   if (dicoms.size() == 0) {

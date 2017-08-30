@@ -156,28 +156,13 @@ void syd::StandardDatabase::InsertDefaultRecords(const std::string & def)
   tags.push_back(NewTag("ct", "CT image"));
   tags.push_back(NewTag("spect", "SPECT image"));
   tags.push_back(NewTag("pet", "PET image"));
-  tags.push_back(NewTag("init", "Initial data"));
-  tags.push_back(NewTag("register", "Registered and warped image"));
-  tags.push_back(NewTag("stitch", "Image computed by stitching 2 images"));
   tags.push_back(NewTag("dose", "Dose distribution image"));
   tags.push_back(NewTag("edep", "Edep distribution image"));
   tags.push_back(NewTag("dose_squared", "Squared dose distribution image (for MC simulations)"));
   tags.push_back(NewTag("edep_squared", "Squared edep distribution image (for MC simulations)"));
   tags.push_back(NewTag("dose_uncertainty", "Dose relative uncertainty distribution image (for MC simulations)"));
   tags.push_back(NewTag("edep_uncertainty", "Edep relative uncertainty distribution image (for MC simulations)"));
-  tags.push_back(NewTag("spect_dc", "Decay corrected activity image"));
-  tags.push_back(NewTag("activity", "Activity image (calibrated)"));
-  tags.push_back(NewTag("S-matrix", "S-matrix image"));
-  tags.push_back(NewTag("dose_rate", "Dose rate image"));
-  tags.push_back(NewTag("tia", "Time Integrated Activity"));
-  tags.push_back(NewTag("mask", "Mask image"));
-
-  tags.push_back(NewTag("fit_auc", "Fit AUC result"));
-  tags.push_back(NewTag("fit_r2", "Fit R2 result"));
-  tags.push_back(NewTag("fit_mo", "Fit nb of best model result"));
-  tags.push_back(NewTag("fit_it", "Fit nb of iterations"));
-  tags.push_back(NewTag("fit_1", "Fit binary success/fail"));
-  tags.push_back(NewTag("fit_p", "Fit 4D parameters"));
+  tags.push_back(NewTag("debug", "debug"));
 
   for(auto r:radionuclides) {
     tags.push_back(NewTag(r->name, "Radionuclide " + r->name));

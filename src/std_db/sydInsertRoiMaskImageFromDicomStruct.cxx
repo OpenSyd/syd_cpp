@@ -30,7 +30,7 @@
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertRoiMaskImageFromDicomStruct, 2);
+  SYD_INIT_GGO(sydInsertRoiMaskImageFromDicomStruct, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -44,11 +44,7 @@ int main(int argc, char* argv[])
   syd::IdType dicom_id = atoi(args_info.inputs[0]);
   auto dicom_struct = db->QueryOne<syd::DicomStruct>(dicom_id);
 
-  // Get the image
-  syd::IdType id = atoi(args_info.inputs[1]);
-  auto image = db->QueryOne<syd::Image>(id);
-
-  // Get list of rois to create
+   // Get list of rois to create
   if (args_info.roi_id_given != args_info.roi_type_given) {
     LOG(FATAL) << "You must give the same number of --dicom_roi_id and --roi";
   }
@@ -68,6 +64,25 @@ int main(int argc, char* argv[])
     roi_types.push_back(roi_type);
   }
 
+  // Find the image
+  syd::DicomSerie::pointer serie;
+  try {
+    serie = syd::FindAssociatedDicomSerie(dicom_struct);
+  } catch(std::exception & e) {
+    LOG(0) << e.what();
+    LOG(FATAL) << "Cannot find an associated DicomSerie.";
+  }
+  auto images = syd::FindImagesLike(serie);
+  if (images.size() == 0) {
+    LOG(0) << "Creating image from DicomSerie: " << serie;
+    auto image = syd::InsertImageFromDicomSerie(serie, "float");
+    images.push_back(image);
+    auto tag = syd::FindOrCreateTag(db, "debug", "debug");
+    syd::AddTag(image->tags, tag);
+    db->Update(image);
+  }
+  auto image = images[0]; // consider the first one
+
   // Read image header
   auto image_header = syd::ReadImageHeader(image->GetAbsolutePath());
 
@@ -79,7 +94,7 @@ int main(int argc, char* argv[])
                                                        roi_types[i],
                                                        args_info.crop_flag);
     // update user info
-    syd::AddTag(mask->tags, image->tags);
+    // syd::AddTag(mask->tags, image->tags); // needed ?
     syd::SetImageInfoFromCommandLine(mask, args_info);
     syd::SetTagsFromCommandLine(mask->tags, db, args_info);
     syd::SetCommentsFromCommandLine(mask->comments, db, args_info);

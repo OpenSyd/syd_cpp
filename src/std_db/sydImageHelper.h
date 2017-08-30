@@ -178,7 +178,7 @@ namespace syd {
   syd::Image::vector FindImages(syd::StandardDatabase * db, const std::string & patient_name);
 
   /// Retrieve all images linked to this dicom
-  syd::Image::vector FindImagesFromDicom(const syd::DicomSerie::pointer dicom);
+  syd::Image::vector FindImagesLike(const syd::DicomSerie::pointer dicom);
 
   /// Move the file internally
   void Move(syd::Image::pointer image, std::string relative_folder);
@@ -197,6 +197,11 @@ namespace syd {
                                 odb::query<syd::Image> q,
                                 const syd::Tag::vector & tags);
 
+  /// Test if the images have (almost) the same size and spacing
+  bool SameSizeAndSpacing(const syd::Image::pointer a, const syd::Image::pointer b);
+
+  /// Test if the images have (almost) the same size and spacing
+  bool SameSizeAndSpacing(const syd::Image::pointer image, const syd::DicomSerie::pointer dicom);
 
 } // namespace syd
 

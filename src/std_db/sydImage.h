@@ -126,10 +126,6 @@ namespace syd {
       void Callback(odb::callback_event, odb::database&) const;
       void Callback(odb::callback_event, odb::database&);
 
-      /// Test if the image is the same size and spacing than the param
-      /// FIXME --> not in class !!
-      bool IsSameSizeAndSpacingThan(const syd::Image::pointer image) const;
-
       /// Return size as string such like 128x128x64
       std::string SizeAsString() const { return syd::ArrayToString(size); }
 

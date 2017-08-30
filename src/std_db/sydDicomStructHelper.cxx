@@ -24,43 +24,42 @@
 #include "sydStandardDatabase.h"
 #include "sydImageCrop.h"
 
+
 // --------------------------------------------------------------------
 syd::DicomSerie::pointer syd::FindAssociatedDicomSerie(syd::DicomStruct::pointer dicom_struct)
 {
-  DDF();
-
+  // Get the dicom file and read diom tags
   auto filename = dicom_struct->dicom_files[0]->GetAbsolutePath();
-  DD(filename);
-
   auto reader = syd::ReadDicomStructHeader(filename); // will raise exception if not ok
-  auto dataset = reader.GetFile().GetDataSet();
+  auto & dataset = reader.GetFile().GetDataSet();
 
-  DD("here");
+  // Get Referenced Frame of Reference Sequence
+  auto seq = GetSequence(dataset, 0x3006,0x0010);
+  auto item = seq->GetItem(1);
 
-  gdcm::Tag tsssq(0x3006,0x0014);
-  if (!dataset.FindDataElement(tsssq)) {
-    LOG(FATAL) << "Problem locating XXXX?" << std::endl; /// FIXME bug here
-  }
-  DD("here");
-  auto & sssq = dataset.GetDataElement(tsssq);
-  DD("here");
-  auto seq = sssq.GetValueAsSQ();
-  DD("here");
-  // for(auto i = 0; i < seq->GetNumberOfItems(); ++i){
-  //   DD(i);
-  auto & item = seq->GetItem(0); // Item starts at 1
-  DD("here");
+  // Get RT Referenced Study Sequence
+  seq = GetSequence(item.GetNestedDataSet(), 0x3006,0x0012);
+  item = seq->GetItem(1);
+
+  // Get RT Referenced Series Sequence
+  seq = GetSequence(item.GetNestedDataSet(), 0x3006,0x0014);
+  item = seq->GetItem(1);
+
+  // Get Series Instance UID
   auto & nested_dataset = item.GetNestedDataSet();
-  DD("here");
   auto s = syd::GetTagValueAsString<0x20,0x0e>(nested_dataset);
-  DD(s);
-  // }
 
-  // std::string s =
-  //   syd::GetTagValueAsString<0x20,0x0e>(dataset);
-  // DD(s);
+  // Look for DicomSerie with the same UID
+  syd::DicomSerie::vector dicoms;
+  typedef odb::query<syd::DicomSerie> QI;
+  QI q = QI::patient == dicom_struct->patient->id and QI::dicom_series_uid == s;
+  auto db = dicom_struct->GetDatabase();
+  db->Query(dicoms, q);
 
-
+  // There can be only one!
+  if (dicoms.size() == 1) return dicoms[0];
+  DDS(dicoms);
+  EXCEPTION("Error not only one dicom seems associated with this struct " << s);
 }
 // --------------------------------------------------------------------
 
@@ -103,5 +102,18 @@ syd::RoiMaskImage::pointer syd::InsertRoiMaskImageFromDicomStruct(syd::DicomStru
   fs::remove(filename);
 
   return mask;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::DicomStruct::vector syd::FindDicomStruct(const syd::Patient::pointer patient)
+{
+  auto db = patient->GetDatabase();
+  syd::DicomStruct::vector dicoms;
+  typedef odb::query<syd::DicomStruct> QI;
+  QI q = QI::patient == patient->id;
+  db->Query(dicoms, q);
+  return dicoms;
 }
 // --------------------------------------------------------------------

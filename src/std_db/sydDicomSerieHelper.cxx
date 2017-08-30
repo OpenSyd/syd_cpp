@@ -60,7 +60,7 @@ void syd::WriteDicomToMhd(syd::DicomSerie::pointer dicom,
 
 
 // --------------------------------------------------------------------
-void syd::CopyDictionary (itk::MetaDataDictionary &fromDict, itk::MetaDataDictionary &toDict)
+void syd::CopyDictionary(itk::MetaDataDictionary &fromDict, itk::MetaDataDictionary &toDict)
 {
   typedef itk::MetaDataDictionary DictionaryType;
   DictionaryType::ConstIterator itr = fromDict.Begin();

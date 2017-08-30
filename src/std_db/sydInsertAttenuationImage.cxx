@@ -47,21 +47,24 @@ int main(int argc, char* argv[])
   LOG(2) << "Read image :" << input;
 
   //Verify inputs
-  if (args_info.attenuationCT_given != 2)
+  if (args_info.attenuationCT_given != 2) {
     LOG(FATAL) << "The numbers of attenuationCT inputs is not 2.";
+  }
 
   double numberEnergySPECT(1);
   if (args_info.weight_given)
     numberEnergySPECT = args_info.weight_given;
-  if (3*numberEnergySPECT != args_info.attenuationSPECT_given)
+  if (3*numberEnergySPECT != args_info.attenuationSPECT_given) {
     LOG(FATAL) << "The numbers of weight and attenuationSPECT inputs do not match.";
+  }
 
   double attenuationWaterCT(0);
   double attenuationBoneCT(0);
   attenuationWaterCT = args_info.attenuationCT_arg[0];
   attenuationBoneCT = args_info.attenuationCT_arg[1];
-  if (attenuationWaterCT > attenuationBoneCT)
+  if (attenuationWaterCT > attenuationBoneCT) {
     LOG(FATAL) << "Attenuation water coefficient > Attenuation bone coefficient (check the order of attenuationCT)";
+  }
 
   std::vector<double> attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT;
   for(unsigned int i=0; i<numberEnergySPECT; ++i) {
@@ -84,8 +87,9 @@ int main(int argc, char* argv[])
   else
     weight.push_back(1.0);
 
-  if (std::abs(std::accumulate(weight.begin(), weight.end(), 0.0)-1.0) > 0.000001)
+  if (std::abs(std::accumulate(weight.begin(), weight.end(), 0.0)-1.0) > 0.000001) {
     LOG(FATAL) << "The sum of weights is not equal to 1.0";
+  }
 
   // Main computation
   auto image = syd::InsertAttenuationImage(input, numberEnergySPECT, attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT, weight);
