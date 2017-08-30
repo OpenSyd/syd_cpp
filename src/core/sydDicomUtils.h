@@ -65,6 +65,10 @@ namespace syd {
   template<uint16_t Group, uint16_t Element>
     std::string GetTagValueAsString(const gdcm::DataSet & dataset);
 
+  /// Get a sequence
+  gdcm::SmartPointer<gdcm::SequenceOfItems>
+    GetSequence(gdcm::DataSet & dataset, uint16_t group, uint16_t element);
+
 #include "sydDicomUtils.txx"
 
 } // end namespace

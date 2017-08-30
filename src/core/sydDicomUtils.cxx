@@ -142,3 +142,17 @@ gdcm::Reader syd::ReadDicomStructHeader(std::string filename)
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+gdcm::SmartPointer<gdcm::SequenceOfItems>
+syd::GetSequence(gdcm::DataSet & dataset, uint16_t group, uint16_t element)
+{
+  gdcm::Tag tag(group, element);
+  if (!dataset.FindDataElement(tag)) {
+    EXCEPTION("Problem locating dicom tag " << group << "|" << element << std::endl);
+  }
+  auto & elem = dataset.GetDataElement(tag);
+  auto seq = elem.GetValueAsSQ();
+  return seq;
+}
+// --------------------------------------------------------------------
+
