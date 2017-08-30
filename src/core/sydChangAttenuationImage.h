@@ -43,6 +43,16 @@ namespace syd {
   typename ImageType::PixelType
   ChangAttenuation(const ImageType * input, int nbAngles, typename ImageType::IndexType voxel);
 
+  //Compute the angles between voxel and the corners (for voxels or the image)
+  template<class T>
+  std::vector<double>
+  ComputeDiagonalAngles(const double Xmin, const double Xmax, const double Ymin, const double Ymax, const T voxel);
+
+  //Compute the exit point (for voxels or the image)
+  template<class ImageType, class T>
+  typename ImageType::PointType
+  ComputeExitPoint(const double Xmin, const double Xmax, const double Ymin, const double Ymax, T voxel, double angleRad, std::vector<double>& diagonalAngles);
+
 } // end namespace
 
 #include "sydChangAttenuationImage.txx"
