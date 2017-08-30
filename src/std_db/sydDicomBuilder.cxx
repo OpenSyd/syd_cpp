@@ -318,7 +318,6 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
 
   // Store description
   serie->dicom_description = description;
-
   serie->dicom_series_description = SeriesDescription;
   serie->dicom_study_description = StudyDescription;
   serie->dicom_image_id = ImageID;

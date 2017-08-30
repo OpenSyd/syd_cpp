@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
   syd::IdType dicom_id = atoi(args_info.inputs[0]);
   auto dicom_struct = db->QueryOne<syd::DicomStruct>(dicom_id);
 
-   // Get list of rois to create
+  // Get list of rois to create
   if (args_info.roi_id_given != args_info.roi_type_given) {
     LOG(FATAL) << "You must give the same number of --dicom_roi_id and --roi";
   }
@@ -65,23 +65,30 @@ int main(int argc, char* argv[])
   }
 
   // Find the image
-  syd::DicomSerie::pointer serie;
-  try {
-    serie = syd::FindAssociatedDicomSerie(dicom_struct);
-  } catch(std::exception & e) {
-    LOG(0) << e.what();
-    LOG(FATAL) << "Cannot find an associated DicomSerie.";
+  syd::Image::pointer image;
+  if (args_info.image_given) {
+    auto id = args_info.image_arg;
+    image = db->QueryOne<syd::Image>(id);
   }
-  auto images = syd::FindImagesLike(serie);
-  if (images.size() == 0) {
-    LOG(0) << "Creating image from DicomSerie: " << serie;
-    auto image = syd::InsertImageFromDicomSerie(serie, "float");
-    images.push_back(image);
-    auto tag = syd::FindOrCreateTag(db, "debug", "debug");
-    syd::AddTag(image->tags, tag);
-    db->Update(image);
+  else {
+    syd::DicomSerie::pointer serie;
+    try {
+      serie = syd::FindAssociatedDicomSerie(dicom_struct);
+    } catch(std::exception & e) {
+      LOG(0) << e.what();
+      LOG(FATAL) << "Cannot find an associated DicomSerie.";
+    }
+    auto images = syd::FindImagesLike(serie);
+    if (images.size() == 0) {
+      LOG(0) << "Creating image from DicomSerie: " << serie;
+      auto image = syd::InsertImageFromDicomSerie(serie, "float");
+      images.push_back(image);
+      auto tag = syd::FindOrCreateTag(db, "debug", "debug");
+      syd::AddTag(image->tags, tag);
+      db->Update(image);
+    }
+    image = images[0]; // consider the first one
   }
-  auto image = images[0]; // consider the first one
 
   // Read image header
   auto image_header = syd::ReadImageHeader(image->GetAbsolutePath());

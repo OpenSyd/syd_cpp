@@ -3,12 +3,13 @@
 package "sydInsertRoiMaskImageFromDicomStruct"
 usage "sydInsertRoiMaskImageFromDicomStruct <dicom_struct_id>"
 version "0.4"
-description "Create a new RoiMaskImage by converting a dicom_struct. We search for the associated DicomSerie (that must exist in the db) and the Image corresponding to this DicomSerie to define the size of the created RoiMaskImage. If the Image does not exist in the db, it is created but not inserted in the db (slower).
+description "Create a new RoiMaskImage by converting a dicom_struct. If the option --image is not given, search for the associated DicomSerie (that must exist in the db) and the Image corresponding to this DicomSerie to define the size of the created RoiMaskImage. If the Image does not exist in the db, it is created (slower). If the option --image is given, this image is used to build the mask (it is the user responsability to ensure the size/spacing are correct). 
 
 - <dicom_struct_id>   id of the dicom struct in the db
 "
 
-option "roi_id"     i  "Id of the roi in the dicom to convert"      int yes multiple
-option "roi_type"   r  "Id or name of the RoiType in the database"  string yes multiple
-option "crop"       c  "Crop mask image"                            flag on
+option "roi_id"     i  "Id of the roi in the dicom to convert"        int yes multiple
+option "roi_type"   r  "Id or name of the RoiType in the database"    string yes multiple
+option "crop"       c  "Crop mask image"                              flag on
+option "image"      -  "Id of the image if a dicomserie is not found" int no
 
