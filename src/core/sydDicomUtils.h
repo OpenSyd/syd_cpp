@@ -67,7 +67,7 @@ namespace syd {
 
   /// Get a sequence
   gdcm::SmartPointer<gdcm::SequenceOfItems>
-    GetSequence(gdcm::DataSet & dataset, uint16_t group, uint16_t element);
+    GetSequence(const gdcm::DataSet & dataset, uint16_t group, uint16_t element);
 
 #include "sydDicomUtils.txx"
 

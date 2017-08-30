@@ -144,7 +144,7 @@ gdcm::Reader syd::ReadDicomStructHeader(std::string filename)
 
 // --------------------------------------------------------------------
 gdcm::SmartPointer<gdcm::SequenceOfItems>
-syd::GetSequence(gdcm::DataSet & dataset, uint16_t group, uint16_t element)
+syd::GetSequence(const gdcm::DataSet & dataset, uint16_t group, uint16_t element)
 {
   gdcm::Tag tag(group, element);
   if (!dataset.FindDataElement(tag)) {

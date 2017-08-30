@@ -522,9 +522,10 @@ void syd::DicomBuilder::UpdateDicomStruct(syd::DicomStruct::pointer dicom_struct
 {
   dicom_struct->dicom_study_uid = syd::GetTagValueAsString<0x20,0x0d>(dataset);
   dicom_struct->dicom_series_uid = syd::GetTagValueAsString<0x20,0x0e>(dataset);
-  dicom_struct->dicom_frame_of_reference_uid = syd::GetTagValueAsString<0x20,0x52>(dataset);
+  auto seq = GetSequence(dataset, 0x3006,0x0010);
+  auto item = seq->GetItem(1);
+  dicom_struct->dicom_frame_of_reference_uid = syd::GetTagValueAsString<0x20,0x52>(item.GetNestedDataSet());
   dicom_struct->dicom_modality = syd::GetTagValueAsString<0x08,0x60>(dataset);
-
   dicom_struct->dicom_series_description = syd::GetTagValueAsString<0x08,0x103e>(dataset);
   dicom_struct->dicom_study_description = syd::GetTagValueAsString<0x08,0x1030>(dataset);
   //dicom_struct->dicom_study_name = syd::GetTagValueAsString<0x09,0x1010>(dataset);
@@ -552,7 +553,7 @@ void syd::DicomBuilder::UpdateDicomStruct(syd::DicomStruct::pointer dicom_struct
   dicom_file->dicom_sop_uid = syd::GetTagValueAsString<0x08,0x18>(dataset);
   dicom_file->dicom_instance_number = 1;
 
-  // Contours ?
+  // Get Structure Set ROI Sequence
   gdcm::Tag tssroisq(0x3006,0x0020);
   if (!dataset.FindDataElement(tssroisq)) {
     LOG(WARNING) << "Problem locating 0x3006,0x0020 - Is this a valid RT Struct file?" << std::endl;
