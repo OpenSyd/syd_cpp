@@ -90,7 +90,8 @@ syd::ChangAttenuation(const ImageType * input, int nbAngles, typename ImageType:
       lastVoxel[i] = std::round(tempLastVoxel[i]);
 
     //Iterate between voxel and lastVoxel over a line (Bresenham line)
-    //Add all attenuation value along the line
+    //Add all attenuation value along the line x distance into this pixel
+    // For the first pixel compute it alone because the start point is the center
     itk::LineConstIterator<ImageType> lineIterator(input, voxel, lastVoxel);
     lineIterator.GoToBegin();
     typename ImageType::PointType entryVoxelPoint;
@@ -98,9 +99,10 @@ syd::ChangAttenuation(const ImageType * input, int nbAngles, typename ImageType:
     input->TransformIndexToPhysicalPoint(lineIterator.GetIndex(), entryVoxelPoint);
     typename ImageType::PixelType valueAlongLine(0);
     while (!lineIterator.IsAtEnd()) {
-      typename ImageType::IndexType centerVoxel = lineIterator.GetIndex();
-      std::vector<double> diagonalVoxelAngles = syd::ComputeDiagonalAngles<typename ImageType::PointType>(centerVoxel[0] - input->GetSpacing()[0], centerVoxel[0] + input->GetSpacing()[0], centerVoxel[1] - input->GetSpacing()[1], centerVoxel[1] + input->GetSpacing()[1], entryVoxelPoint);
-      exitVoxelPoint = ComputeExitPoint<ImageType, typename ImageType::PointType>(centerVoxel[0] - input->GetSpacing()[0], centerVoxel[0] + input->GetSpacing()[0], centerVoxel[1] - input->GetSpacing()[1], centerVoxel[1] + input->GetSpacing()[1], entryVoxelPoint, angleRad, diagonalVoxelAngles);
+      typename ImageType::PointType centerVoxel;
+      input->TransformIndexToPhysicalPoint(lineIterator.GetIndex(), centerVoxel);
+      std::vector<double> diagonalVoxelAngles = syd::ComputeDiagonalAngles<typename ImageType::PointType>(centerVoxel[0] - (double)(input->GetSpacing()[0])/2.0, centerVoxel[0] + (double)(input->GetSpacing()[0])/2.0, centerVoxel[1] - (double)(input->GetSpacing()[1])/2.0, centerVoxel[1] + (double)(input->GetSpacing()[1])/2.0, entryVoxelPoint);
+      exitVoxelPoint = ComputeExitPoint<ImageType, typename ImageType::PointType>(centerVoxel[0] - (double)(input->GetSpacing()[0])/2.0, centerVoxel[0] + (double)(input->GetSpacing()[0])/2.0, centerVoxel[1] - (double)(input->GetSpacing()[1])/2.0, centerVoxel[1] + (double)(input->GetSpacing()[1])/2.0, entryVoxelPoint, angleRad, diagonalVoxelAngles);
       double distance = entryVoxelPoint.EuclideanDistanceTo(exitVoxelPoint);
       valueAlongLine += lineIterator.Get()*distance;
       entryVoxelPoint = exitVoxelPoint;
@@ -126,14 +128,13 @@ syd::ComputeDiagonalAngles(const double Xmin, const double Xmax, const double Ym
   double cosAngle(0);
   //1nd: for (Xmin, Ymax)
   //cosAngle = (Xmax - voxel[0])*(Xmin - voxel[0])/((Xmax - voxel[0])*std::sqrt(std::pow(Xmin - voxel[0],2)+std::pow(Ymax - voxel[1],2)));
-  if (std::pow(voxel[0],2)+std::pow(Ymax - voxel[1],2) == 0)
+  if (std::pow(Xmin - voxel[0],2)+std::pow(Ymax - voxel[1],2) == 0)
     diagonalAngles[0] = std::acos(-1)/2;
   else {
     cosAngle = ((double) Xmin-voxel[0])/std::sqrt(std::pow(Xmin - voxel[0],2)+std::pow(Ymax - voxel[1],2));
     diagonalAngles[0] = std::acos(cosAngle);
   }
-  if (diagonalAngles[0] != std::acos(-1))
-    diagonalAngles[0] = -diagonalAngles[0];
+  diagonalAngles[0] = -diagonalAngles[0];
   //2rd: for (Xmax, Ymax)
   //cosAngle = (Xmax - voxel[0])*(Xmax - voxel[0])/((Xmax - voxel[0])*std::sqrt(std::pow(Xmax - voxel[0],2)+std::pow(Ymax - voxel[1],2)));
   if (std::pow(Xmax - voxel[0],2)+std::pow(Ymax - voxel[1],2) == 0)
@@ -142,19 +143,18 @@ syd::ComputeDiagonalAngles(const double Xmin, const double Xmax, const double Ym
     cosAngle = ((double) (Xmax - voxel[0]))/std::sqrt(std::pow(Xmax - voxel[0],2)+std::pow(Ymax - voxel[1],2));
     diagonalAngles[1] = std::acos(cosAngle);
   }
-  if (diagonalAngles[1] != 0)
-    diagonalAngles[1] = -diagonalAngles[1];
+  diagonalAngles[1] = -diagonalAngles[1];
   //3rd: for (Xmax, Ymin)
-  //cosAngle = (Xmax - voxel[0])*(Xmax - voxel[0])/((Xmax - voxel[0])*std::sqrt(std::pow(Xmax - voxel[0],2)+std::pow(voxel[1]-Ymin,2)));
+  //cosAngle = (Xmax - voxel[0])*(Xmax - voxel[0])/((Xmax - voxel[0])*std::sqrt(std::pow(Xmax - voxel[0],2)+std::pow(voxel[1] - Ymin,2)));
   if (std::pow(Xmax - voxel[0],2)+std::pow(voxel[1] - Ymin,2) == 0)
     diagonalAngles[2] = std::acos(-1)/2;
   else {
-    cosAngle = ((double) (Xmax - voxel[0]))/std::sqrt(std::pow(Xmax - voxel[0],2)+std::pow(voxel[1],2));
+    cosAngle = ((double) (Xmax - voxel[0]))/std::sqrt(std::pow(Xmax - voxel[0],2)+std::pow(voxel[1] - Ymin,2));
     diagonalAngles[2] = std::acos(cosAngle);
   }
   //4st: for (Xmin, Ymin)
-  //cosAngle = (Xmax - voxel[0])*(Xmin - voxel[0])/((Xmax - voxel[0])*std::sqrt(std::pow(voxel[0]-Xmin,2)+std::pow(voxel[1]-Ymin,2)));
-  if (std::pow(voxel[0],2)+std::pow(voxel[1],2) == 0)
+  //cosAngle = (Xmax - voxel[0])*(Xmin - voxel[0])/((Xmax - voxel[0])*std::sqrt(std::pow(voxel[0] - Xmin,2)+std::pow(voxel[1] - Ymin,2)));
+  if (std::pow(voxel[0] - Xmin,2)+std::pow(voxel[1] - Ymin,2) == 0)
     diagonalAngles[3] = std::acos(-1)/2;
   else {
     cosAngle = ((double) Xmin - voxel[0])/std::sqrt(std::pow(voxel[0] - Xmin,2)+std::pow(voxel[1] - Ymin,2));
@@ -179,7 +179,7 @@ syd::ComputeExitPoint(const double Xmin, const double Xmax, const double Ymin, c
     if (angleRad == -std::acos(-1)/2)
       lastVoxel[1] = Ymax;
     else {
-      lastVoxel[1] = voxel[1] + (voxel[0]-Xmin)*tan(angleRad);
+      lastVoxel[1] = voxel[1] + (voxel[0] - Xmin)*tan(angleRad);
     }
   } else if (diagonalAngles[0] < angleRad && angleRad <= diagonalAngles[1]) {
     lastVoxel[1] = Ymax;
@@ -200,11 +200,11 @@ syd::ComputeExitPoint(const double Xmin, const double Xmax, const double Ymin, c
     if (angleRad == std::acos(-1))
       lastVoxel[0] = Xmin;
     else {
-      lastVoxel[0] = voxel[0] - (voxel[1]-Ymin)*tan(angleRad - std::acos(-1)/2);
+      lastVoxel[0] = voxel[0] - (voxel[1] - Ymin)*tan(angleRad - std::acos(-1)/2);
     }
   } else if (diagonalAngles[3] < angleRad && angleRad <= std::acos(-1)) {
     lastVoxel[0] = Xmin;
-    lastVoxel[1] = voxel[1] + (voxel[0]-Xmin)*tan(angleRad);
+    lastVoxel[1] = voxel[1] + (voxel[0] - Xmin)*tan(angleRad);
   }
   return(lastVoxel);
 }
