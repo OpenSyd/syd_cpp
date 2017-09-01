@@ -104,6 +104,7 @@ namespace syd {
   std::string ToLowerCase(const std::string & s);
   std::string ToString(double a, int precision);
   std::string ToString(bool b);
+  void StripNullTerminatedChar(std::string & str);
   //--------------------------------------------------------------------
 
 
