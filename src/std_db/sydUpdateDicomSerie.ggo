@@ -3,7 +3,7 @@
 package "syd"
 version "0.2"
 usage "sydUpdateDicomSerie <dicom_ids>"
-description "Update information associated with a DicomSerie (read again the file)
+description "Update information associated with a DicomSerie: it reads again the file. Mainly for debug purpose.
 - <dicom_ids>      ids of the dicom to update
 
 "

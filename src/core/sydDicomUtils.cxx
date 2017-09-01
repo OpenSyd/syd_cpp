@@ -70,7 +70,9 @@ std::string syd::SearchDicomTagNameFromTagKey(std::string tagkey)
     tag.SetOwner(owner.c_str());
     if (pdict.FindDictEntry(tag)) {
       const gdcm::DictEntry & entry = pdict.GetDictEntry(tag);
-      return entry.GetName();
+      std::string r = entry.GetName();
+      StripNullTerminatedChar(r);
+      return r;
     }
   }
   return "Unknown";
@@ -105,8 +107,8 @@ double syd::GetTagDoubleValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
   std::ostringstream oss;
   oss << defaultValue;
   std::string r = GetTagValueFromTagKey(dicomIO, key, oss.str());
-  if (r == "")
-   return defaultValue;
+  if (r == "") return defaultValue;
+  StripNullTerminatedChar(r);
   double rr = stod(r);
   return rr;
 }
@@ -156,3 +158,27 @@ syd::GetSequence(const gdcm::DataSet & dataset, uint16_t group, uint16_t element
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+template<>
+std::string syd::GetTagValueFromTagKey<std::string>(itk::GDCMImageIO::Pointer dicomIO,
+                                                    const std::string & key,
+                                                    const std::string & defaultValue)
+{
+  std::string v = defaultValue;
+  typedef itk::MetaDataDictionary DictionaryType;
+  const DictionaryType & dictionary = dicomIO->GetMetaDataDictionary();
+  typedef itk::MetaDataObject< std::string > MetaDataTagType;
+  DictionaryType::ConstIterator tagItr = dictionary.Find(key);
+  DictionaryType::ConstIterator end = dictionary.End();
+  if (tagItr != end) {
+    typename MetaDataTagType::ConstPointer entryvalue =
+      dynamic_cast<const MetaDataTagType *>(tagItr->second.GetPointer());
+    if (entryvalue) {
+      v = entryvalue->GetMetaDataObjectValue();
+    }
+  }
+  StripNullTerminatedChar(v);
+  return v;
+}
+// --------------------------------------------------------------------

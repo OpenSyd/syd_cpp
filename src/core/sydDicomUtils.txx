@@ -46,7 +46,9 @@ std::string GetTagValueAsString(const gdcm::DataSet & dataset)
 {
   gdcm::Attribute<Group,Element> tag;
   tag.SetFromDataSet(dataset);
-  return tag.GetValue();
+  auto s = tag.GetValue();
+  StripNullTerminatedChar(s);
+  return s;
 }
 // --------------------------------------------------------------------
 

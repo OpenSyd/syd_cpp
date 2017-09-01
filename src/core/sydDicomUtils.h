@@ -61,6 +61,12 @@ namespace syd {
                                      const std::string & key,
                                      const double & defaultValue);
 
+  /// Retrive the tag value with the correct type
+  template<>
+    std::string GetTagValueFromTagKey<std::string>(itk::GDCMImageIO::Pointer dicomIO,
+                                                   const std::string & key,
+                                                   const std::string & defaultValue);
+
   /// Retrive tag value
   template<uint16_t Group, uint16_t Element>
     std::string GetTagValueAsString(const gdcm::DataSet & dataset);

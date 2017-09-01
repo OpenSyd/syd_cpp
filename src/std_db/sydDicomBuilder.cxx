@@ -74,6 +74,7 @@ void syd::DicomBuilder::SearchDicomSerieInFile(std::string filename,
     nb_of_skip_files++;
     return;
   }
+  StripNullTerminatedChar(sop_uid);
   if (FindDicomFile(sop_uid) != nullptr) {
     if (!force_overwrite_existing_dicomfile_flag) {
       LOG(WARNING) << "Dicom file with same sop_uid already exist in the db. Skipping " << filename;
@@ -142,6 +143,7 @@ bool syd::DicomBuilder::GuessDicomSerieForThisFile(const std::string & filename,
     nb_of_skip_files++;
     return false;
   }
+  StripNullTerminatedChar(series_uid);
   std::string modality;
   b = dicomIO->GetValueFromTag("0008|0060", modality); // Modality
   if (!b) {
@@ -149,7 +151,7 @@ bool syd::DicomBuilder::GuessDicomSerieForThisFile(const std::string & filename,
     nb_of_skip_files++;
     return false;
   }
-
+  StripNullTerminatedChar(modality);
   int index = -1;
   for(auto i=0; i<dicom_series_to_insert.size(); i++) {
     DicomSerie::pointer s = dicom_series_to_insert[i];
@@ -524,7 +526,8 @@ void syd::DicomBuilder::UpdateDicomStruct(syd::DicomStruct::pointer dicom_struct
   dicom_struct->dicom_series_uid = syd::GetTagValueAsString<0x20,0x0e>(dataset);
   auto seq = GetSequence(dataset, 0x3006,0x0010);
   auto item = seq->GetItem(1);
-  dicom_struct->dicom_frame_of_reference_uid = syd::GetTagValueAsString<0x20,0x52>(item.GetNestedDataSet());
+  auto s = syd::GetTagValueAsString<0x20,0x52>(item.GetNestedDataSet());
+  dicom_struct->dicom_frame_of_reference_uid = s;
   dicom_struct->dicom_modality = syd::GetTagValueAsString<0x08,0x60>(dataset);
   dicom_struct->dicom_series_description = syd::GetTagValueAsString<0x08,0x103e>(dataset);
   dicom_struct->dicom_study_description = syd::GetTagValueAsString<0x08,0x1030>(dataset);
@@ -689,9 +692,3 @@ int syd::DicomBuilder::InsertDicomStruct()
   return n;
 }
 // --------------------------------------------------------------------
-
-
-
-
-
-

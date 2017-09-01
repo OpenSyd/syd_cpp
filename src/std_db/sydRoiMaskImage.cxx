@@ -37,7 +37,8 @@ std::string syd::RoiMaskImage::ToShortString() const
   std::stringstream ss ;
   ss << syd::Image::ToString() << " "
      << (roitype == nullptr ? empty_value:roitype->name);
-  return ss.str();
+  auto s = ss.str();
+  return s;
 }
 // --------------------------------------------------------------------
 
