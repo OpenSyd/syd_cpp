@@ -376,24 +376,16 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   // Real world value intercept/slope (for NM)
   double slope = 0.0;
   double intercept = 0.0;
-  slope = GetTagDoubleValueFromTagKey(dicomIO, "0040|9225", 1.0); // Real world value slope
+  slope = GetTagDoubleValueFromTagKey(dicomIO, "0040|9225", 0.0); // Real world value slope
   intercept = GetTagDoubleValueFromTagKey(dicomIO, "0040|9224", 0.0); // Real world value intercept
-  std::cout << " VALUE " << slope << " VALUE " << std::endl;
   if (slope == 0.0) { //look with gdcm
     gdcm::Reader reader;
     reader.SetFileName(filename.c_str());
     reader.Read();
-    gdcm::File &file = reader.GetFile();
-    gdcm::DataSet &ds = file.GetDataSet();
-    const gdcm::Tag sequenceTag(0x0040, 0x9096);
-    const gdcm::Tag subSlopeTag(0x40, 0x9225);
-    const gdcm::Tag subInterceptTag(0x40, 0x9224);
-    const gdcm::DataElement &seq = ds.GetDataElement(sequenceTag);
-    gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = seq.GetValueAsSQ();
-    gdcm::Item &item = sqi->GetItem(1);
-    gdcm::DataSet &subds = item.GetNestedDataSet();
-    double slope = *((double *) item.GetDataElement(subSlopeTag).GetByteValue()->GetPointer());
-    double intercept = *((double *) item.GetDataElement(subInterceptTag).GetByteValue()->GetPointer());
+    auto dataset = reader.GetFile().GetDataSet();
+    gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0040, 0x9096);
+    slope = GetTagValueFromSequence<double>(sqi, 0x0040, 0x9225);
+    intercept = GetTagValueFromSequence<double>(sqi, 0x0040, 0x9224);
   }
   else
     slope = 1.0;
@@ -419,10 +411,18 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
     GetTagDoubleValueFromTagKey(dicomIO, "0018|1242", 0.0); // ActualFrameDuration
   serie->dicom_number_of_frames_in_rotation =
     GetTagDoubleValueFromTagKey(dicomIO, "0054|0053", 0); // NumberOfFramesInRotation
-  serie->dicom_number_of_rotations =
-    GetTagDoubleValueFromTagKey(dicomIO, "0054|0051", 0); // NumberOfRotations
   serie->dicom_rotation_angle =
     GetTagDoubleValueFromTagKey(dicomIO, "0070|0230", 0.0); // RotationAngle
+  int NumberOfRotations = GetTagDoubleValueFromTagKey(dicomIO, "0054|0051", 0); // NumberOfRotations
+  if (NumberOfRotations == 0) { //try with gdcm
+    gdcm::Reader reader;
+    reader.SetFileName(filename.c_str());
+    reader.Read();
+    auto dataset = reader.GetFile().GetDataSet();
+    gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0040, 0x9096);
+    NumberOfRotations = GetTagValueFromSequence<int>(sqi, 0x0054, 0x0051);
+  }
+  serie->dicom_number_of_rotations = NumberOfRotations;
 }
 // --------------------------------------------------------------------
 

@@ -22,6 +22,8 @@
 // syd
 //#include "sydCommon.h"
 #include "sydLog.h"
+#include "sydDicomUtils.h"
+#include "sydCommon.h"
 
 // itk
 #include <itkImage.h>
@@ -75,6 +77,11 @@ namespace syd {
   /// Get a sequence
   gdcm::SmartPointer<gdcm::SequenceOfItems>
     GetSequence(const gdcm::DataSet & dataset, uint16_t group, uint16_t element);
+
+  // Retrive the tag value with the correct type from a sequence
+  template<class TagType>
+  TagType GetTagValueFromSequence(const gdcm::SequenceOfItems* sequence,
+                                  uint16_t group, uint16_t element);
 
 #include "sydDicomUtils.txx"
 
