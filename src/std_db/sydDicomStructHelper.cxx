@@ -58,6 +58,7 @@ syd::DicomSerie::pointer syd::FindAssociatedDicomSerie(syd::DicomStruct::pointer
 
   // There can be only one!
   if (dicoms.size() == 1) return dicoms[0];
+  if (dicoms.size() == 0) return nullptr;
   DDS(dicoms);
   EXCEPTION("Error not only one dicom seems associated with this struct " << s);
 }

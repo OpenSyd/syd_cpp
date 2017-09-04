@@ -42,7 +42,7 @@ namespace syd {
 
   /// Retrieve all Dicom for this patient
   syd::DicomStruct::vector FindDicomStruct(const syd::Patient::pointer patient);
-  
+
 }
 // --------------------------------------------------------------------
 
