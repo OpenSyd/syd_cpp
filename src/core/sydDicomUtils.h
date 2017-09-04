@@ -21,6 +21,7 @@
 
 // syd
 //#include "sydCommon.h"
+#include "sydLog.h"
 
 // itk
 #include <itkImage.h>

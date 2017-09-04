@@ -20,6 +20,11 @@
 #include "sydDicomBuilder.h"
 #include "sydDicomSerieHelper.h"
 
+//gdcm
+#include "gdcmReader.h"
+#include "gdcmDataElement.h"
+#include "gdcmTag.h"
+
 // --------------------------------------------------------------------
 syd::DicomBuilder::DicomBuilder(syd::StandardDatabase * db_,
                                 bool update_patient_info_from_file_flag_)
@@ -368,12 +373,30 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   serie->dicom_pixel_offset = po;
 
   // Real world value intercept/slope (for NM)
-  double slope = 1.0;
-  slope = GetTagDoubleValueFromTagKey(dicomIO, "0040|9225", 1.0); // Real world value slope
-  if (slope == 0.0) slope = 1.0;
-  serie->dicom_real_world_value_slope = slope;
+  double slope = 0.0;
   double intercept = 0.0;
+  slope = GetTagDoubleValueFromTagKey(dicomIO, "0040|9225", 1.0); // Real world value slope
   intercept = GetTagDoubleValueFromTagKey(dicomIO, "0040|9224", 0.0); // Real world value intercept
+  std::cout << " VALUE " << slope << " VALUE " << std::endl;
+  if (slope == 0.0) { //look with gdcm
+    gdcm::Reader reader;
+    reader.SetFileName(filename.c_str());
+    reader.Read();
+    gdcm::File &file = reader.GetFile();
+    gdcm::DataSet &ds = file.GetDataSet();
+    const gdcm::Tag sequenceTag(0x0040, 0x9096);
+    const gdcm::Tag subSlopeTag(0x40, 0x9225);
+    const gdcm::Tag subInterceptTag(0x40, 0x9224);
+    const gdcm::DataElement &seq = ds.GetDataElement(sequenceTag);
+    gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = seq.GetValueAsSQ();
+    gdcm::Item &item = sqi->GetItem(1);
+    gdcm::DataSet &subds = item.GetNestedDataSet();
+    double slope = *((double *) item.GetDataElement(subSlopeTag).GetByteValue()->GetPointer());
+    double intercept = *((double *) item.GetDataElement(subInterceptTag).GetByteValue()->GetPointer());
+  }
+  else
+    slope = 1.0;
+  serie->dicom_real_world_value_slope = slope;
   serie->dicom_real_world_value_intercept = intercept;
 
   // Window/level

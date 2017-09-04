@@ -35,6 +35,8 @@ TagType GetTagValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
       v = entryvalue->GetMetaDataObjectValue();
     }
   }
+  else
+    LOG(sydlog::WARNING) << "Tag is not found or does not exist: " << key << std::endl;
   return v;
 }
 // --------------------------------------------------------------------
