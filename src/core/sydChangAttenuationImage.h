@@ -29,6 +29,8 @@
 #include <itkImageRegionConstIterator.h>
 #include <itkImageRegionIterator.h>
 #include <itkLineConstIterator.h>
+#include <itkContinuousIndex.h>
+#include <chrono>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -46,13 +48,17 @@ namespace syd {
   //Compute the angles between voxel and the corners (for voxels or the image)
   template<class T>
   std::vector<double>
-  ComputeDiagonalAngles(const double Xmin, const double Xmax, const double Ymin, const double Ymax, const T voxel);
+  ComputeDiagonalAngles(const double Xmin, const double Xmax, const double Ymin, const double Ymax, const T& voxel);
 
   //Compute the exit point (for voxels or the image)
   template<class ImageType, class T>
   typename ImageType::PointType
-  ComputeExitPoint(const double Xmin, const double Xmax, const double Ymin, const double Ymax, T voxel, double angleRad, std::vector<double>& diagonalAngles);
+  ComputeExitPoint(const double Xmin, const double Xmax, const double Ymin, const double Ymax, const T& voxel, const int angle, const std::vector<double>& diagonalAngles);
 
+  double PI=std::acos(-1);
+  std::vector<double> anglesRad;
+  std::vector<double> tanAngles;
+  std::vector<double> tanAnglesPi;
 } // end namespace
 
 #include "sydChangAttenuationImage.txx"
