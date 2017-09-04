@@ -124,7 +124,15 @@ gdcm::Reader syd::ReadDicomStructHeader(std::string filename)
     EXCEPTION("Error cannot read '" << filename
               << "' (it is not a dicom struct file ?)");
   }
+  return reader;
+}
+// --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+gdcm::Reader syd::ReadDicomStructHeaderIfRTStruct(std::string filename)
+{
+  auto reader = ReadDicomStructHeader(filename);
   const gdcm::DataSet & dataset = reader.GetFile().GetDataSet();
   gdcm::MediaStorage ms;
   ms.SetFromFile(reader.GetFile());
