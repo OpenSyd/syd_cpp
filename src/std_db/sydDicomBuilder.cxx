@@ -386,7 +386,9 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
       slope = GetTagValueFromSequence<double>(sqi, 0x0040, 0x9225);
       intercept = GetTagValueFromSequence<double>(sqi, 0x0040, 0x9224);
     }
-    catch(const std::exception & e){}
+    catch(const std::exception & e) {
+      slope = 1.0;
+    }
   }
   else
     slope = 1.0;
