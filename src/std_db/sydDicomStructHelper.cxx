@@ -30,7 +30,7 @@ syd::DicomSerie::pointer syd::FindAssociatedDicomSerie(syd::DicomStruct::pointer
 {
   // Get the dicom file and read diom tags
   auto filename = dicom_struct->dicom_files[0]->GetAbsolutePath();
-  auto reader = syd::ReadDicomStructHeaderIfRTStruct(filename); // will raise exception if not ok
+  auto reader = syd::ReadDicomStructHeader(filename); // will raise exception if not ok
   auto & dataset = reader.GetFile().GetDataSet();
 
   // Get Referenced Frame of Reference Sequence
@@ -78,7 +78,7 @@ syd::RoiMaskImage::pointer syd::InsertRoiMaskImageFromDicomStruct(syd::DicomStru
               << dicom_struct->dicom_files.size());
   }
   auto filename = dicom_struct->dicom_files[0]->GetAbsolutePath();
-  auto reader = syd::ReadDicomStructHeaderIfRTStruct(filename);
+  auto reader = syd::ReadDicomStructHeader(filename);
   auto & dataset = reader.GetFile().GetDataSet(); // reader object must not be destroyed to use dataset
 
   // Create empty 3D image

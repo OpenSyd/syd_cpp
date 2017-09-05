@@ -379,7 +379,7 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   slope = GetTagDoubleValueFromTagKey(dicomIO, "0040|9225", 0.0); // Real world value slope
   intercept = GetTagDoubleValueFromTagKey(dicomIO, "0040|9224", 0.0); // Real world value intercept
   if (slope == 0.0) { //look with gdcm
-    auto reader = syd::ReadDicomStructHeader(filename);
+    auto reader = syd::GetDicomReader(filename);
     auto dataset = reader.GetFile().GetDataSet();
     gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0040, 0x9096);
     slope = GetTagValueFromSequence<double>(sqi, 0x0040, 0x9225);
@@ -413,7 +413,7 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
     GetTagDoubleValueFromTagKey(dicomIO, "0070|0230", 0.0); // RotationAngle
   int NumberOfRotations = GetTagDoubleValueFromTagKey(dicomIO, "0054|0051", 0); // NumberOfRotations
   if (NumberOfRotations == 0) { //try with gdcm
-    auto reader = syd::ReadDicomStructHeader(filename);
+    auto reader = syd::GetDicomReader(filename);
     auto dataset = reader.GetFile().GetDataSet();
     gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0040, 0x9096);
     NumberOfRotations = GetTagValueFromSequence<int>(sqi, 0x0054, 0x0051);
@@ -462,7 +462,7 @@ CreateDicomFile(const std::string & filename,
 void syd::DicomBuilder::SearchDicomStructInFile(std::string filename,
                                                 syd::Patient::pointer patient)
 {
-  auto reader = syd::ReadDicomStructHeaderIfRTStruct(filename); // will raise exception if not ok
+  auto reader = syd::ReadDicomStructHeader(filename); // will raise exception if not ok
   auto dataset = reader.GetFile().GetDataSet();
 
   // Test if this dicom file already exist in the db

@@ -50,11 +50,11 @@ namespace syd {
   /// Open dicom header
   itk::GDCMImageIO::Pointer ReadDicomHeader(std::string filename);
 
-  /// Open dicom struct header
-  gdcm::Reader ReadDicomStructHeader(std::string filename);
+  /// Open dicom header with gdcm::reader
+  gdcm::Reader GetDicomReader(std::string filename);
 
   /// Open dicom struct header and check if RTStruct
-  gdcm::Reader ReadDicomStructHeaderIfRTStruct(std::string filename);
+  gdcm::Reader ReadDicomStructHeader(std::string filename);
 
   /// Retrive the tag value with the correct type
   template<class TagType>

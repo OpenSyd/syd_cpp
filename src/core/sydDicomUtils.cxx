@@ -116,7 +116,7 @@ double syd::GetTagDoubleValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
 
 
 // --------------------------------------------------------------------
-gdcm::Reader syd::ReadDicomStructHeader(std::string filename)
+gdcm::Reader syd::GetDicomReader(std::string filename)
 {
   gdcm::Reader reader;
   reader.SetFileName(filename.c_str());
@@ -130,9 +130,9 @@ gdcm::Reader syd::ReadDicomStructHeader(std::string filename)
 
 
 // --------------------------------------------------------------------
-gdcm::Reader syd::ReadDicomStructHeaderIfRTStruct(std::string filename)
+gdcm::Reader syd::ReadDicomStructHeader(std::string filename)
 {
-  auto reader = ReadDicomStructHeader(filename);
+  auto reader = GetDicomReader(filename);
   const gdcm::DataSet & dataset = reader.GetFile().GetDataSet();
   gdcm::MediaStorage ms;
   ms.SetFromFile(reader.GetFile());
