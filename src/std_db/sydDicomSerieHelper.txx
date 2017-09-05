@@ -17,6 +17,9 @@
   ===========================================================================**/
 
 
+#include "itkAddImageFilter.h"
+#include "itkMultiplyImageFilter.h"
+
 // --------------------------------------------------------------------
 template<typename F>
 F syd::GetFctByPixelType(std::map<std::string, F> & map,
@@ -62,6 +65,23 @@ syd::ReadDicomSerieImage(syd::DicomSerie::pointer dicom)
   } catch (std::exception & e) {
     EXCEPTION("Error '" << e.what()
               << "' during ReadImage of dicom: " << dicom);
+  }
+
+  //Multiply the image by Real_world_value_slope and add Real_world_value_intercept
+  if (dicom->dicom_real_world_value_slope != 1.0 || dicom->dicom_real_world_value_intercept != 0.0) {
+    LOG(WARNING) << "Mutliply the image by " << dicom->dicom_real_world_value_slope << " and add " << dicom->dicom_real_world_value_intercept << std::endl;
+    typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> MultiplyImageFilterType;
+    typename MultiplyImageFilterType::Pointer multiplyImageFilter = MultiplyImageFilterType::New();
+    multiplyImageFilter->SetInput(itk_image);
+    multiplyImageFilter->SetConstant(dicom->dicom_real_world_value_slope);
+
+    typedef itk::AddImageFilter <ImageType, ImageType, ImageType> AddImageFilterType;
+    typename AddImageFilterType::Pointer addImageFilter = AddImageFilterType::New();
+    addImageFilter->SetInput(multiplyImageFilter->GetOutput());
+    addImageFilter->SetConstant2(dicom->dicom_real_world_value_intercept);
+    addImageFilter->Update();
+
+    return(addImageFilter->GetOutput());
   }
 
   return itk_image;
