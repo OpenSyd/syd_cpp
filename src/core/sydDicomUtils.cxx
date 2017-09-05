@@ -122,7 +122,7 @@ gdcm::Reader syd::GetDicomReader(std::string filename)
   reader.SetFileName(filename.c_str());
   if (!reader.Read()) {
     EXCEPTION("Error cannot read '" << filename
-              << "' (it is not a dicom struct file ?)");
+              << "' (it is not a dicom file ?)");
   }
   return reader;
 }
