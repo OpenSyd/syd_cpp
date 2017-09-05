@@ -381,9 +381,12 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   if (slope == 0.0) { //look with gdcm
     auto reader = syd::GetDicomReader(filename);
     auto dataset = reader.GetFile().GetDataSet();
-    gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0040, 0x9096);
-    slope = GetTagValueFromSequence<double>(sqi, 0x0040, 0x9225);
-    intercept = GetTagValueFromSequence<double>(sqi, 0x0040, 0x9224);
+    try {
+      gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0040, 0x9096);
+      slope = GetTagValueFromSequence<double>(sqi, 0x0040, 0x9225);
+      intercept = GetTagValueFromSequence<double>(sqi, 0x0040, 0x9224);
+    }
+    catch(const std::exception & e){}
   }
   else
     slope = 1.0;
@@ -415,8 +418,11 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   if (NumberOfRotations == 0) { //try with gdcm
     auto reader = syd::GetDicomReader(filename);
     auto dataset = reader.GetFile().GetDataSet();
-    gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0040, 0x9096);
-    NumberOfRotations = GetTagValueFromSequence<int>(sqi, 0x0054, 0x0051);
+    try {
+      gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0040, 0x9096);
+      NumberOfRotations = GetTagValueFromSequence<int>(sqi, 0x0054, 0x0051);
+    }
+    catch(const std::exception & e){}
   }
   serie->dicom_number_of_rotations = NumberOfRotations;
 }
