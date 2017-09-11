@@ -17,7 +17,6 @@
   ===========================================================================**/
 
 #include "sydImageUtils.h"
-#include "sydProjectionImage.h"
 #include <itkMultiplyImageFilter.h>
 #include <itkExpImageFilter.h>
 #include <itkImageDuplicator.h>
