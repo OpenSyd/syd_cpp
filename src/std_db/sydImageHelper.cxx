@@ -388,8 +388,8 @@ syd::InsertProjectionImage(const syd::Image::pointer input,
 
 // --------------------------------------------------------------------
 syd::Image::pointer
-syd::InsertAttenuationImage(const syd::Image::pointer input, double numberEnergySPECT,
-                            double attenuationWaterCT, double attenuationBoneCT,
+syd::InsertAttenuationImage(const syd::Image::pointer input, const syd::Image::pointer input_like,
+                            double numberEnergySPECT, double attenuationWaterCT, double attenuationBoneCT,
                             std::vector<double>& attenuationAirSPECT,
                             std::vector<double>& attenuationWaterSPECT,
                             std::vector<double>& attenuationBoneSPECT,
@@ -398,13 +398,16 @@ syd::InsertAttenuationImage(const syd::Image::pointer input, double numberEnergy
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
+  typedef itk::Image<PixelType, 2> OutputImageType;
   auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
-  auto attenuation = syd::Attenuation<ImageType>(itk_input, numberEnergySPECT,
-                                                 attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT,
-                                                 attenuationWaterSPECT, attenuationBoneSPECT, weight);
+  auto itk_input_like = syd::ReadImage<OutputImageType>(input->GetAbsolutePath());
+  auto attenuation = syd::Attenuation<ImageType, OutputImageType>(itk_input, itk_input_like,
+                                                                  numberEnergySPECT, attenuationWaterCT, attenuationBoneCT,
+                                                                  attenuationAirSPECT, attenuationWaterSPECT,
+                                                                  attenuationBoneSPECT, weight);
 
   // Create the syd image
-  return syd::InsertImage<ImageType>(attenuation, input->patient, input->modality);
+  return syd::InsertImage<OutputImageType>(attenuation, input->patient, input->modality);
 }
 // --------------------------------------------------------------------
 

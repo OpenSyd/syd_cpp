@@ -91,8 +91,19 @@ int main(int argc, char* argv[])
     LOG(FATAL) << "The sum of weights is not equal to 1.0";
   }
 
+  // Get the image id to have the spacing model
+  syd::Image::pointer input_like;
+  if (args_info.like_given) {
+    syd::IdType id_like = args_info.like_arg;
+    db->QueryOne(input_like, id_like); // will fail if not found
+    LOG(2) << "Read image :" << input_like;
+  } else
+    LOG(FATAL) << "Set the id of the model image to have the resampled spacing";
+
   // Main computation
-  auto image = syd::InsertAttenuationImage(input, numberEnergySPECT, attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT, weight);
+  auto image = syd::InsertAttenuationImage(input, input_like, numberEnergySPECT, attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT, weight);
+  syd::FindOrCreatePixelUnit(db, "attenuation", "Attenuation Factor");
+  syd::SetPixelUnit(image, "attenuation");
 
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);

@@ -23,10 +23,10 @@
 //--------------------------------------------------------------------
 namespace syd {
 
-  template<class ImageType>
-  typename ImageType::Pointer
-  Attenuation(const ImageType * input, double numberEnergySPECT,
-              double attenuationWaterCT, double attenuationBoneCT,
+  template<class InputImageType, class OutputImageType>
+  typename OutputImageType::Pointer
+  Attenuation(const InputImageType * input, const OutputImageType * likeImage,
+              double numberEnergySPECT, double attenuationWaterCT, double attenuationBoneCT,
               std::vector<double>& attenuationAirSPECT,
               std::vector<double>& attenuationWaterSPECT,
               std::vector<double>& attenuationBoneSPECT,
