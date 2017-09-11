@@ -117,7 +117,8 @@ syd::Attenuation(const InputImageType * input, const OutputImageType * likeImage
 
   typename InputImageType::PointType outputOrigin;
   for(unsigned int i=0; i<InputImageType::ImageDimension; i++) {
-    outputOrigin[i] = 0.5 * attenuation->GetSpacing()[i];
+    outputOrigin[i] = attenuation->GetOrigin()[i];
+    outputOrigin[i] -= 0.5 * attenuation->GetSpacing()[i];
     outputOrigin[i] += 0.5 * outputSpacing[i];
   }
 
@@ -127,19 +128,21 @@ syd::Attenuation(const InputImageType * input, const OutputImageType * likeImage
 
   typedef itk::ResampleImageFilter<InputImageType,InputImageType> FilterType;
   typedef itk::LinearInterpolateImageFunction<InputImageType, double> InterpolatorType;
-  //typedef itk::IdentityTransform<typename InputImageType::PixelType, InputImageType::ImageDimension> TransformType;
+  typedef itk::IdentityTransform<double, 3> TransformType;
   typename FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(attenuation);
   filter->SetSize(outputSize);
   filter->SetOutputSpacing(outputSpacing);
   filter->SetOutputOrigin(outputOrigin);
   filter->SetDefaultPixelValue(0.0);
   filter->SetOutputDirection(attenuation->GetDirection());
-  //filter->SetTransform(TransformType::New());
+  filter->SetTransform(TransformType::New());
   filter->SetInterpolator(InterpolatorType::New());
+  filter->Update();
 
   //Sum attenuation along the 2nd dimension:
   int projectionDimension = 1;
-  auto projection = syd::Projection<InputImageType, OutputImageType>(attenuation, projectionDimension, false, true);
+  auto projection = syd::Projection<InputImageType, OutputImageType>(filter->GetOutput(), projectionDimension, false, true);
 
   //Prepare variables
   double size = attenuation->GetLargestPossibleRegion().GetSize()[projectionDimension];
