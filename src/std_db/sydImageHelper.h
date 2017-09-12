@@ -132,10 +132,8 @@ namespace syd {
                                              int nbAngles);
 
   // Compute the attenuation correction of an projection image.
-  syd::Image::pointer InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,
-                                                                const syd::Image::pointer input_AM,
-                                                                const syd::Image::pointer input_AM_model,
-                                                                int dimension);
+  syd::Image::pointer InsertAttenuationCorrectedImage(const syd::Image::pointer input_GM,
+                                                      const syd::Image::pointer input_AM);
 
   /// Crop an image like another one
   void CropImageLike(syd::Image::pointer image,

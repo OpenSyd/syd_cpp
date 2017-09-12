@@ -17,21 +17,21 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertAttenuationCorrectedProjectionImage_ggo.h"
+#include "sydInsertAttenuationCorrectedImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
 #include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"
-#include "sydAttenuationCorrectedProjectionImage.h"
+#include "sydAttenuationCorrectedImage.h"
 #include <numeric>
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertAttenuationCorrectedProjectionImage, 1);
+  SYD_INIT_GGO(sydInsertAttenuationCorrectedImage, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -46,25 +46,14 @@ int main(int argc, char* argv[])
   db->QueryOne(input_GM, id_GM); // will fail if not found
   LOG(2) << "Read geometrical mean image :" << input_GM;
 
-  // Get the projected attenuation map (AM) id
+  // Get the projected factor attenuation map (AM) id
   syd::IdType id_AM = atoi(args_info.inputs[1]);
   syd::Image::pointer input_AM;
   db->QueryOne(input_AM, id_AM); // will fail if not found
-  LOG(2) << "Read projected attenuation map :" << input_AM;
-
-  // Get the 3D attenuation map (AM_model) id
-  syd::IdType id_AM_model = atoi(args_info.inputs[2]);
-  syd::Image::pointer input_AM_model;
-  db->QueryOne(input_AM_model, id_AM_model); // will fail if not found
-  LOG(2) << "Read 3D attenuation map :" << input_AM_model;
-
-  //Read the projection dimension
-  int dimension(0);
-  if (args_info.dimension_given)
-    dimension = args_info.dimension_arg;
+  LOG(2) << "Read projected factor attenuation map :" << input_AM;
 
   // Main computation
-  auto image = syd::InsertAttenuationCorrectedProjectionImage(input_GM, input_AM, input_AM_model, dimension);
+  auto image = syd::InsertAttenuationCorrectedImage(input_GM, input_AM);
 
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);
