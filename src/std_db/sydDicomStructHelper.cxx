@@ -118,3 +118,28 @@ syd::DicomStruct::vector syd::FindDicomStruct(const syd::Patient::pointer patien
   return dicoms;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+int syd::GetRoiIndexFromName(syd::DicomStruct::pointer dicom,
+                             std::string dicom_roi_name)
+{
+  auto filename = dicom->dicom_files[0]->GetAbsolutePath();
+  auto reader = syd::ReadDicomStructHeader(filename);
+  auto & dataset = reader.GetFile().GetDataSet(); // reader object must not be destroyed to use dataset
+
+  // Get Structure Set ROI Sequence
+  auto roi_seq = syd::GetSequence(dataset, 0x3006,0x0020);
+  for(auto i = 0; i < roi_seq->GetNumberOfItems(); ++i){
+    auto & item = roi_seq->GetItem(i+1); // Item starts at 1
+    auto & nested_dataset = item.GetNestedDataSet();
+    auto name = syd::GetTagValueAsString<0x3006,0x26>(nested_dataset);
+    if (name == dicom_roi_name) {
+      return i+1; // Start at 1 not zero
+    }
+  }
+  return -1;
+}
+// --------------------------------------------------------------------
+
+

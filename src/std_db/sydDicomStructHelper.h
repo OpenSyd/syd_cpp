@@ -43,6 +43,9 @@ namespace syd {
   /// Retrieve all Dicom for this patient
   syd::DicomStruct::vector FindDicomStruct(const syd::Patient::pointer patient);
 
+  /// Get the index of the roi in the dicom struct
+  int GetRoiIndexFromName(syd::DicomStruct::pointer dicom, std::string dicom_roi_name);
+
 }
 // --------------------------------------------------------------------
 

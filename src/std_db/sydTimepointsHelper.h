@@ -28,7 +28,7 @@
 namespace syd {
 
   /// Create a new timepoints from a set of RoiStatistics
-  syd::RoiTimepoints::pointer NewTimepoints(const syd::RoiStatistic::vector stats);
+  syd::RoiTimepoints::pointer NewRoiTimepoints(const syd::RoiStatistic::vector stats);
 
   /// Retrive similar RoiTimepoints sharing the same list of stats
   syd::RoiTimepoints::vector FindRoiTimepoints(const syd::RoiStatistic::vector stats);

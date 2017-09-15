@@ -66,7 +66,7 @@ syd::FitTimepoints::vector syd::FindFitTimepoints(const syd::Timepoints::pointer
 
 // --------------------------------------------------------------------
 syd::RoiTimepoints::pointer
-syd::NewTimepoints(const syd::RoiStatistic::vector stats)
+syd::NewRoiTimepoints(const syd::RoiStatistic::vector stats)
 {
   if (stats.size() == 0) {
     EXCEPTION("Cannot create timepoints from empty vector of RoiStatistic");

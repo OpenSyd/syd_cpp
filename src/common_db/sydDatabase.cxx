@@ -114,8 +114,6 @@ void syd::Database::OpenFromFile(std::string filename)
   sqlite3_trace (handle, trace_callback, this);
 
   // timeout
-  //  int timeout_ms =
-  //auto ret = sqlite3_busy_timeout(handle, timeout_ms);
   sqlite3_busy_handler(handle, busy_handler_callback, this);
 
   // Check version etc

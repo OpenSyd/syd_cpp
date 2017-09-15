@@ -116,7 +116,7 @@ int main(int argc, char* argv[])
         auto ertp = syd::FindRoiTimepoints(stats);
         if (ertp.size() == 1) rtp = ertp[0];
         if (ertp.size() == 0) {
-          rtp = syd::NewTimepoints(stats); // RoiTimepoints
+          rtp = syd::NewRoiTimepoints(stats); // RoiTimepoints
           LOG(1) << "Insert Timepoints: " << rtp;
           db->Insert(rtp);
         }
