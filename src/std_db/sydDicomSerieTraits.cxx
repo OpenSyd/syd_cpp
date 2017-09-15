@@ -66,6 +66,8 @@ BuildFields(const syd::Database * db) const
 
   ADD_FIELD_A(dicom_pixel_scale, double, "ps");
   ADD_FIELD_A(dicom_pixel_offset, double, "po");
+  ADD_FIELD_A(dicom_real_world_value_slope, double, "slope");
+  ADD_FIELD_A(dicom_real_world_value_intercept, double, "intercept");
   ADD_FIELD_A(dicom_window_center, double, "wc");
   ADD_FIELD_A(dicom_window_width, double, "wl");
 

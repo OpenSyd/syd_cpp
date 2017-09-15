@@ -267,16 +267,16 @@ add_executable(sydInsertRegisterPlanarSPECT
 target_link_libraries(sydInsertRegisterPlanarSPECT ${SYD_STD_DB_LIBRARY})
 
 # Create the attenuation corrected of a projection image
-wrap_ggo(sydInsertAttenuationCorrectedProjectionImage_GGO_C
-  sydInsertAttenuationCorrectedProjectionImage.ggo
+wrap_ggo(sydInsertAttenuationCorrectedImage_GGO_C
+  sydInsertAttenuationCorrectedImage.ggo
   ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
-add_executable(sydInsertAttenuationCorrectedProjectionImage
-  sydInsertAttenuationCorrectedProjectionImage.cxx
-  ${sydInsertAttenuationCorrectedProjectionImage_GGO_C})
-target_link_libraries(sydInsertAttenuationCorrectedProjectionImage ${SYD_STD_DB_LIBRARY})
+add_executable(sydInsertAttenuationCorrectedImage
+  sydInsertAttenuationCorrectedImage.cxx
+  ${sydInsertAttenuationCorrectedImage_GGO_C})
+target_link_libraries(sydInsertAttenuationCorrectedImage ${SYD_STD_DB_LIBRARY})
 
 # Create the manual registered image
 wrap_ggo(sydInsertManualRegisteredImage_GGO_C

@@ -60,7 +60,7 @@ typename ImageType::Pointer CropImageLike(const ImageType * input,
   typename ImageType::IndexType start;
   input->TransformPhysicalPointToIndex(like->GetOrigin(), start);
   typename ImageType::SizeType size;
-  for(auto i=0; i<3; i++) {
+  for(auto i=0; i<ImageType::ImageDimension; i++) {
     size[i] = (int)ceil((double)like->GetLargestPossibleRegion().GetSize()[i]*
                         like->GetSpacing()[i]/input->GetSpacing()[i]);
     // Could not be larger than the initial image

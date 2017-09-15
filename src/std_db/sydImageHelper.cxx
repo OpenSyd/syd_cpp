@@ -26,7 +26,7 @@
 #include "sydProjectionImage.h"
 #include "sydAttenuationImage.h"
 #include "sydRegisterPlanarSPECT.h"
-#include "sydAttenuationCorrectedProjectionImage.h"
+#include "sydAttenuationCorrectedImage.h"
 #include "sydImageFillHoles.h"
 #include "sydImage_GaussianFilter.h"
 #include "sydManualRegistration.h"
@@ -388,8 +388,8 @@ syd::InsertProjectionImage(const syd::Image::pointer input,
 
 // --------------------------------------------------------------------
 syd::Image::pointer
-syd::InsertAttenuationImage(const syd::Image::pointer input, double numberEnergySPECT,
-                            double attenuationWaterCT, double attenuationBoneCT,
+syd::InsertAttenuationImage(const syd::Image::pointer input, const syd::Image::pointer input_like,
+                            double numberEnergySPECT, double attenuationWaterCT, double attenuationBoneCT,
                             std::vector<double>& attenuationAirSPECT,
                             std::vector<double>& attenuationWaterSPECT,
                             std::vector<double>& attenuationBoneSPECT,
@@ -398,13 +398,16 @@ syd::InsertAttenuationImage(const syd::Image::pointer input, double numberEnergy
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
+  typedef itk::Image<PixelType, 2> OutputImageType;
   auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
-  auto attenuation = syd::Attenuation<ImageType>(itk_input, numberEnergySPECT,
-                                                 attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT,
-                                                 attenuationWaterSPECT, attenuationBoneSPECT, weight);
+  auto itk_input_like = syd::ReadImage<OutputImageType>(input_like->GetAbsolutePath());
+  auto attenuation = syd::Attenuation<ImageType, OutputImageType>(itk_input, itk_input_like,
+                                                                  numberEnergySPECT, attenuationWaterCT, attenuationBoneCT,
+                                                                  attenuationAirSPECT, attenuationWaterSPECT,
+                                                                  attenuationBoneSPECT, weight);
 
   // Create the syd image
-  return syd::InsertImage<ImageType>(attenuation, input->patient, input->modality);
+  return syd::InsertImage<OutputImageType>(attenuation, input->patient, input->modality);
 }
 // --------------------------------------------------------------------
 
@@ -430,19 +433,15 @@ syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
 
 // --------------------------------------------------------------------
 syd::Image::pointer
-syd::InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,
-                                               const syd::Image::pointer input_AM,
-                                               const syd::Image::pointer input_AM_model,
-                                               int dimension)
+syd::InsertAttenuationCorrectedImage(const syd::Image::pointer input_GM,
+                                     const syd::Image::pointer input_AM)
 {
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 2> ImageType2D;
-  typedef itk::Image<PixelType, 3> ImageType3D;
   auto itk_input_GM = syd::ReadImage<ImageType2D>(input_GM->GetAbsolutePath());
   auto itk_input_AM = syd::ReadImage<ImageType2D>(input_AM->GetAbsolutePath());
-  auto itk_input_AM_model = syd::ReadImage<ImageType3D>(input_AM_model->GetAbsolutePath());
-  auto attenuationCorrected = syd::AttenuationCorrectedProjection<ImageType2D, ImageType3D>(itk_input_GM, itk_input_AM, itk_input_AM_model, dimension);
+  auto attenuationCorrected = syd::AttenuationCorrectedImage<ImageType2D>(itk_input_GM, itk_input_AM);
 
   // Create the syd image
   return syd::InsertImage<ImageType2D>(attenuationCorrected, input_GM->patient, input_GM->modality);

@@ -35,7 +35,25 @@ TagType GetTagValueFromTagKey(itk::GDCMImageIO::Pointer dicomIO,
       v = entryvalue->GetMetaDataObjectValue();
     }
   }
+  else
+    LOG(sydlog::WARNING) << "Tag is not found or does not exist: " << key << std::endl;
   return v;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class TagType>
+TagType GetTagValueFromSequence(const gdcm::SequenceOfItems* sequence,
+                                uint16_t group, uint16_t element)
+{
+  gdcm::Item item = sequence->GetItem(1);
+  gdcm::Tag tag(group, element);
+  if (!item.FindDataElement(tag)) {
+    EXCEPTION("Problem locating dicom tag " << group << "|" << element << std::endl);
+  }
+  TagType value = *((TagType *) item.GetDataElement(tag).GetByteValue()->GetPointer());
+  return value;
 }
 // --------------------------------------------------------------------
 

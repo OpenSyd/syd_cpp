@@ -3,7 +3,9 @@
 package "syd"
 version "0.4"
 usage "sydChangAttenuationImage <image1> -a <nbAngles>"
-description "Create a new (mhd) image computed from an attenuation map <image1>
-with Chang method. <nbAngles> is the number of Angles of projection"
+description "Create a new (mhd) image computed from an attenuation coefficient map <image1>
+with Chang method. <nbAngles> is the number of Angles of projection
+The unit of attenuation coefficient in <image1> is 1/cm and the spacing is mm.
+The pixel unit of the output is attenuation."
 
 option "angles"  a "Number of angles"  int yes

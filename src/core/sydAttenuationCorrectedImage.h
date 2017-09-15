@@ -16,25 +16,20 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDATTENUATIONIMAGE_H
-#define SYDATTENUATIONIMAGE_H
+#ifndef SYDATTENUATIONCORRECTEDIMAGE_H
+#define SYDATTENUATIONCORRECTEDIMAGE_H
 
 
 //--------------------------------------------------------------------
 namespace syd {
 
-  template<class InputImageType, class OutputImageType>
-  typename OutputImageType::Pointer
-  Attenuation(const InputImageType * input, const OutputImageType * likeImage,
-              double numberEnergySPECT, double attenuationWaterCT, double attenuationBoneCT,
-              std::vector<double>& attenuationAirSPECT,
-              std::vector<double>& attenuationWaterSPECT,
-              std::vector<double>& attenuationBoneSPECT,
-              std::vector<double>& weight);
+  template<class ImageType2D>
+  typename ImageType2D::Pointer
+  AttenuationCorrectedImage(const ImageType2D * input_GM, const ImageType2D * input_AM);
 
 } // end namespace
 
-#include "sydAttenuationImage.txx"
+#include "sydAttenuationCorrectedImage.txx"
 //--------------------------------------------------------------------
 
 #endif

@@ -56,6 +56,8 @@ int main(int argc, char* argv[])
 
   // set properties from the image
   syd::SetImageInfoFromImage(changImage, inputImage);
+  syd::FindOrCreatePixelUnit(db, "attenuation", "Attenuation Factor");
+  syd::SetPixelUnit(changImage, "attenuation");
 
   // Update image info
   syd::SetTagsFromCommandLine(changImage->tags, db, args_info);

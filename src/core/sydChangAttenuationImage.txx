@@ -111,6 +111,7 @@ syd::ChangAttenuation(const ImageType * input, int nbAngles, typename ImageType:
 
     //Approximation: Multiply by the mean distance of voxel at the end,
     //ie. mulitpliy by the distance and divide by the number of voxel (-0.5 because for the first voxel, we start at the center)
+    //The distance is divided by 10 because usually, mu is [1/cm] and image spacing is [mm]
     //This approximation is exact for nbAngles <= 8 and nbAngles%2=0
 
     itk::LineConstIterator<ImageType> lineIterator(input, voxel, lastVoxel);
@@ -120,6 +121,7 @@ syd::ChangAttenuation(const ImageType * input, int nbAngles, typename ImageType:
     input->TransformIndexToPhysicalPoint(voxel, entryVoxelPoint);
     input->TransformContinuousIndexToPhysicalPoint(lastContinuousVoxel, exitVoxelPoint);
     double distance = entryVoxelPoint.EuclideanDistanceTo(exitVoxelPoint);
+    distance /= 10.0;
     typename ImageType::PixelType valueAlongLine(lineIterator.Get()/2);
     int numberVoxel(1);
     ++lineIterator;
@@ -130,7 +132,7 @@ syd::ChangAttenuation(const ImageType * input, int nbAngles, typename ImageType:
       input->TransformIndexToPhysicalPoint(lineIterator.GetIndex(), centerVoxel);
       std::vector<double> diagonalVoxelAngles = syd::ComputeDiagonalAngles<typename ImageType::PointType>(centerVoxel[0] - input->GetSpacing()[0]/2.0, centerVoxel[0] + input->GetSpacing()[0]/2.0, centerVoxel[1] - input->GetSpacing()[1]/2.0, centerVoxel[1] + input->GetSpacing()[1]/2.0, entryVoxelPoint);
       exitVoxelPoint = ComputeExitPoint<ImageType, typename ImageType::PointType>(centerVoxel[0] - input->GetSpacing()[0]/2.0, centerVoxel[0] + input->GetSpacing()[0]/2.0, centerVoxel[1] - input->GetSpacing()[1]/2.0, centerVoxel[1] + input->GetSpacing()[1]/2.0, entryVoxelPoint, angle, diagonalVoxelAngles);
-      double distance = entryVoxelPoint.EuclideanDistanceTo(exitVoxelPoint);*/
+      double distance = entryVoxelPoint.EuclideanDistanceTo(exitVoxelPoint)/10.0;*/
 
       valueAlongLine += lineIterator.Get();
       ++lineIterator;

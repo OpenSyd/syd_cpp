@@ -17,29 +17,35 @@
   ===========================================================================**/
 
 #include "sydImageUtils.h"
+#include "sydProjectionImage.h"
+
 #include <itkImageRegionIterator.h>
 #include <itkImageRegionConstIterator.h>
 #include <itkMultiplyImageFilter.h>
 #include <itkAddImageFilter.h>
 #include <itkThresholdImageFilter.h>
-#include "itkImageDuplicator.h"
+#include <itkImageDuplicator.h>
+#include <itkExpImageFilter.h>
+#include <itkResampleImageFilter.h>
+#include <itkLinearInterpolateImageFunction.h>
+#include <itkIdentityTransform.h>
 
 //--------------------------------------------------------------------
-template<class ImageType>
-typename ImageType::Pointer
-syd::Attenuation(const ImageType * input, double numberEnergySPECT,
-                 double attenuationWaterCT, double attenuationBoneCT,
+template<class InputImageType, class OutputImageType>
+typename OutputImageType::Pointer
+syd::Attenuation(const InputImageType * input, const OutputImageType * likeImage,
+                 double numberEnergySPECT, double attenuationWaterCT, double attenuationBoneCT,
                  std::vector<double>& attenuationAirSPECT,
                  std::vector<double>& attenuationWaterSPECT,
                  std::vector<double>& attenuationBoneSPECT,
                  std::vector<double>& weight)
 {
   //Create the output like the input (fill with 0)
-  typedef itk::ImageDuplicator< ImageType > DuplicatorType;
+  typedef itk::ImageDuplicator< InputImageType > DuplicatorType;
   typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
   duplicator->SetInputImage(input);
   duplicator->Update();
-  typename ImageType::Pointer attenuation = duplicator->GetModifiableOutput();
+  typename InputImageType::Pointer attenuation = duplicator->GetModifiableOutput();
   attenuation->FillBuffer(0.0);
 
   for (unsigned int i=0; i < numberEnergySPECT; ++i)
@@ -48,12 +54,12 @@ syd::Attenuation(const ImageType * input, double numberEnergySPECT,
     typename DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
     duplicator2->SetInputImage(input);
     duplicator2->Update();
-    typename ImageType::Pointer attenuationTemp = duplicator2->GetModifiableOutput();
+    typename InputImageType::Pointer attenuationTemp = duplicator2->GetModifiableOutput();
     attenuationTemp->FillBuffer(0.0);
 
     //Compute the attenuation map for one energy
-    typename itk::ImageRegionIterator<ImageType> imageIteratorTemp(attenuationTemp, attenuationTemp->GetLargestPossibleRegion());
-    typename itk::ImageRegionConstIterator<ImageType> imageIteratorInput(input, input->GetLargestPossibleRegion());
+    typename itk::ImageRegionIterator<InputImageType> imageIteratorTemp(attenuationTemp, attenuationTemp->GetLargestPossibleRegion());
+    typename itk::ImageRegionConstIterator<InputImageType> imageIteratorInput(input, input->GetLargestPossibleRegion());
     while(!imageIteratorTemp.IsAtEnd())
     {
 
@@ -73,12 +79,12 @@ syd::Attenuation(const ImageType * input, double numberEnergySPECT,
     }
 
     //Sum the temp image with weight and the attenuation map
-    typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> MultiplyFilterType;
+    typedef itk::MultiplyImageFilter<InputImageType, InputImageType, InputImageType> MultiplyFilterType;
     typename MultiplyFilterType::Pointer multiplyFilter = MultiplyFilterType::New();
     multiplyFilter->SetInput(attenuationTemp);
     multiplyFilter->SetConstant(weight[i]);
 
-    typedef itk::AddImageFilter<ImageType, ImageType> AddFilterType;
+    typedef itk::AddImageFilter<InputImageType, InputImageType> AddFilterType;
     typename AddFilterType::Pointer addFilter = AddFilterType::New();
     addFilter->SetInput1(attenuation);
     addFilter->SetInput2(multiplyFilter->GetOutput());
@@ -87,7 +93,7 @@ syd::Attenuation(const ImageType * input, double numberEnergySPECT,
   }
 
   //If the attenuation is <0, set it to 0
-  typedef itk::ThresholdImageFilter <ImageType> ThresholdImageFilterType;
+  typedef itk::ThresholdImageFilter <InputImageType> ThresholdImageFilterType;
   typename ThresholdImageFilterType::Pointer thresholdFilter = ThresholdImageFilterType::New();
   thresholdFilter->SetInput(attenuation);
   thresholdFilter->ThresholdBelow(0);
@@ -95,8 +101,68 @@ syd::Attenuation(const ImageType * input, double numberEnergySPECT,
   thresholdFilter->Update();
   attenuation = thresholdFilter->GetOutput();
 
-  return attenuation;
+  //Now attenuation is the attenuation coefficient map.
+  //We want the attenuation factor map:
+  //First we will resample it like the likeImage
+  //We will sum it and compute an exponential
 
+  //Resample like the likeImage
+  //Restriction like image has an isospacing
+  typename InputImageType::SpacingType outputSpacing;
+  /*outputSpacing[0] = likeImage->GetSpacing()[0];
+  outputSpacing[1] = attenuation->GetSpacing()[1];
+  outputSpacing[2] = likeImage->GetSpacing()[1];*/
+  for(unsigned int i=0; i<InputImageType::ImageDimension; i++)
+    outputSpacing[i] = likeImage->GetSpacing()[0];
+
+  typename InputImageType::PointType outputOrigin;
+  for(unsigned int i=0; i<InputImageType::ImageDimension; i++) {
+    outputOrigin[i] = attenuation->GetOrigin()[i];
+    outputOrigin[i] -= 0.5 * attenuation->GetSpacing()[i];
+    outputOrigin[i] += 0.5 * outputSpacing[i];
+  }
+
+  typename InputImageType::SizeType outputSize;
+  for(unsigned int i=0; i<InputImageType::ImageDimension; i++)
+    outputSize[i] = (int)floor(attenuation->GetLargestPossibleRegion().GetSize()[i]*attenuation->GetSpacing()[i]/outputSpacing[i]);
+
+  typedef itk::ResampleImageFilter<InputImageType,InputImageType> FilterType;
+  typedef itk::LinearInterpolateImageFunction<InputImageType, double> InterpolatorType;
+  typedef itk::IdentityTransform<double, 3> TransformType;
+  typename FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(attenuation);
+  filter->SetSize(outputSize);
+  filter->SetOutputSpacing(outputSpacing);
+  filter->SetOutputOrigin(outputOrigin);
+  filter->SetDefaultPixelValue(0.0);
+  filter->SetOutputDirection(attenuation->GetDirection());
+  filter->SetTransform(TransformType::New());
+  filter->SetInterpolator(InterpolatorType::New());
+  filter->Update();
+
+  //Sum attenuation along the 2nd dimension:
+  int projectionDimension = 1;
+  auto projection = syd::Projection<InputImageType, OutputImageType>(filter->GetOutput(), projectionDimension, false, true);
+
+  //Prepare variables
+  double size = attenuation->GetLargestPossibleRegion().GetSize()[projectionDimension];
+  double spacing = attenuation->GetSpacing()[projectionDimension];
+  double tempValue = spacing/(2.0*10.0);
+
+  //Multiply the projected attenuation map by variables
+  typedef itk::MultiplyImageFilter<OutputImageType, OutputImageType, OutputImageType> MultiplyImageFilterType;
+  typename MultiplyImageFilterType::Pointer multiplyImageFilterAM = MultiplyImageFilterType::New();
+  multiplyImageFilterAM->SetInput(projection);
+  multiplyImageFilterAM->SetConstant(tempValue);
+  multiplyImageFilterAM->Update();
+
+  //Exponential
+  typedef itk::ExpImageFilter<OutputImageType, OutputImageType> ExpImageFilterType;
+  typename ExpImageFilterType::Pointer expImageFilter = ExpImageFilterType::New();
+  expImageFilter->SetInput(multiplyImageFilterAM->GetOutput());
+  expImageFilter->Update();
+
+  return(expImageFilter->GetOutput());
 }
 //--------------------------------------------------------------------
 

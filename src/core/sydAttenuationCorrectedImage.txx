@@ -16,21 +16,18 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDATTENUATIONCORRECTEDPROJECTIONIMAGE_H
-#define SYDATTENUATIONCORRECTEDPROJECTIONIMAGE_H
-
+#include "sydImageUtils.h"
+#include "sydImageCrop.h"
 
 //--------------------------------------------------------------------
-namespace syd {
+template<class ImageType2D>
+typename ImageType2D::Pointer
+syd::AttenuationCorrectedImage(const ImageType2D * input_GM, const ImageType2D * input_AM)
+{
 
-  template<class ImageType2D, class ImageType3D>
-  typename ImageType2D::Pointer
-  AttenuationCorrectedProjection(const ImageType2D * input_GM, const ImageType2D * input_AM,
-                                 const ImageType3D * input_AM_model, int dimension);
+  auto geoMeanCropped = syd::CropImageLike(input_GM, input_AM);
 
-} // end namespace
-
-#include "sydAttenuationCorrectedProjectionImage.txx"
+  return (geoMeanCropped);
+}
 //--------------------------------------------------------------------
 
-#endif

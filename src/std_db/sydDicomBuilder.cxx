@@ -20,6 +20,11 @@
 #include "sydDicomBuilder.h"
 #include "sydDicomSerieHelper.h"
 
+//gdcm
+#include "gdcmReader.h"
+#include "gdcmDataElement.h"
+#include "gdcmTag.h"
+
 // --------------------------------------------------------------------
 syd::DicomBuilder::DicomBuilder(syd::StandardDatabase * db_,
                                 bool update_patient_info_from_file_flag_)
@@ -369,12 +374,25 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   serie->dicom_pixel_offset = po;
 
   // Real world value intercept/slope (for NM)
-  double slope = 1.0;
-  slope = GetTagDoubleValueFromTagKey(dicomIO, "0040|9225", 1.0); // Real world value slope
-  if (slope == 0.0) slope = 1.0;
-  serie->dicom_real_world_value_slope = slope;
+  double slope = 0.0;
   double intercept = 0.0;
+  slope = GetTagDoubleValueFromTagKey(dicomIO, "0040|9225", 0.0); // Real world value slope
   intercept = GetTagDoubleValueFromTagKey(dicomIO, "0040|9224", 0.0); // Real world value intercept
+  if (slope == 0.0) { //look with gdcm
+    auto reader = syd::GetDicomReader(filename);
+    auto dataset = reader.GetFile().GetDataSet();
+    try {
+      gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0040, 0x9096);
+      slope = GetTagValueFromSequence<double>(sqi, 0x0040, 0x9225);
+      intercept = GetTagValueFromSequence<double>(sqi, 0x0040, 0x9224);
+    }
+    catch(const std::exception & e) {
+      slope = 1.0;
+    }
+  }
+  else
+    slope = 1.0;
+  serie->dicom_real_world_value_slope = slope;
   serie->dicom_real_world_value_intercept = intercept;
 
   // Window/level
@@ -396,10 +414,19 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
     GetTagDoubleValueFromTagKey(dicomIO, "0018|1242", 0.0); // ActualFrameDuration
   serie->dicom_number_of_frames_in_rotation =
     GetTagDoubleValueFromTagKey(dicomIO, "0054|0053", 0); // NumberOfFramesInRotation
-  serie->dicom_number_of_rotations =
-    GetTagDoubleValueFromTagKey(dicomIO, "0054|0051", 0); // NumberOfRotations
   serie->dicom_rotation_angle =
     GetTagDoubleValueFromTagKey(dicomIO, "0070|0230", 0.0); // RotationAngle
+  int NumberOfRotations = GetTagDoubleValueFromTagKey(dicomIO, "0054|0051", 0); // NumberOfRotations
+  if (NumberOfRotations == 0) { //try with gdcm
+    auto reader = syd::GetDicomReader(filename);
+    auto dataset = reader.GetFile().GetDataSet();
+    try {
+      gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0040, 0x9096);
+      NumberOfRotations = GetTagValueFromSequence<int>(sqi, 0x0054, 0x0051);
+    }
+    catch(const std::exception & e){}
+  }
+  serie->dicom_number_of_rotations = NumberOfRotations;
 }
 // --------------------------------------------------------------------
 

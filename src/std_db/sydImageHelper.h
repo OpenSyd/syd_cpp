@@ -107,8 +107,8 @@ namespace syd {
                                             double dimension=0, bool mean=false, bool flip=false);
 
   // Compute the attenuation map of an image.
-  syd::Image::pointer InsertAttenuationImage(const syd::Image::pointer input, double numberEnergySPECT,
-                                             double attenuationWaterCT, double attenuationBoneCT,
+  syd::Image::pointer InsertAttenuationImage(const syd::Image::pointer input, const syd::Image::pointer input_like,
+                                             double numberEnergySPECT, double attenuationWaterCT, double attenuationBoneCT,
                                              std::vector<double>& attenuationAirSPECT,
                                              std::vector<double>& attenuationWaterSPECT,
                                              std::vector<double>& attenuationBoneSPECT,
@@ -132,10 +132,8 @@ namespace syd {
                                              int nbAngles);
 
   // Compute the attenuation correction of an projection image.
-  syd::Image::pointer InsertAttenuationCorrectedProjectionImage(const syd::Image::pointer input_GM,
-                                                                const syd::Image::pointer input_AM,
-                                                                const syd::Image::pointer input_AM_model,
-                                                                int dimension);
+  syd::Image::pointer InsertAttenuationCorrectedImage(const syd::Image::pointer input_GM,
+                                                      const syd::Image::pointer input_AM);
 
   /// Crop an image like another one
   void CropImageLike(syd::Image::pointer image,
