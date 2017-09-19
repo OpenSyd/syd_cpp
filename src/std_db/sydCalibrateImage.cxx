@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
   }
 
   // Sort according to date
-  db->Sort(images);
+  db->Sort(images, "acquisition_date");
   auto ref = images[0];
 
   // Check same injection

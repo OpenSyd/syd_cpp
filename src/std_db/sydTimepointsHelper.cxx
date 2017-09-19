@@ -82,7 +82,7 @@ syd::NewRoiTimepoints(const syd::RoiStatistic::vector stats)
 
   // sort the roistat according to their times
   auto sorted_stats = stats;
-  db->Sort<syd::RoiStatistic>(sorted_stats);
+  db->Sort<syd::RoiStatistic>(sorted_stats, "image.acquisition_date");
   rtp->roi_statistics = sorted_stats;
 
   for(auto stat:sorted_stats) {
@@ -216,7 +216,7 @@ syd::NewTimepointsAtPixel(const syd::Image::vector & images,
   tp->patient = patient;
   tp->injection = injection;
 
-  // Get the times
+  // Get the times (no values yet)
   tp->times = syd::GetTimesFromInjection(images);
 
   // Read all itk images
