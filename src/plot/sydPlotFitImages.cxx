@@ -53,7 +53,6 @@ int main(int argc, char* argv[])
   syd::FitTimepoints::pointer ftp;
   syd::Timepoints::pointer tp;
 
-  //
   if (args_info.fit_flag) {
     tp = syd::NewTimepointsAtPixel(fitimages->images, p);
     syd::TimeIntegratedActivityFitOptions options;

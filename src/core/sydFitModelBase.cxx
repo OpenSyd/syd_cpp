@@ -177,8 +177,8 @@ double syd::FitModelBase::ComputeAUC(const syd::TimeActivityCurve::pointer tac, 
   // Final AUC is total integration, minus start model integration, plus trapez part.
   AUC = total - starting_part_model + paralelogram_part + r;
 
-  //DDS(GetParameters());
   /*
+    DDS(GetParameters());
     std::cout << "Compute auc tmax=" << tac->GetTime(index)
     << " total= " << total
     << " start_part=" << starting_part_model
