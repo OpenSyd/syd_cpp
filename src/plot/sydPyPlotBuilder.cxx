@@ -35,8 +35,8 @@ void syd::PyPlotBuilder::Initialize()
   script_ << "import numpy as np" << std::endl
           << "import matplotlib"  << std::endl
           << "import platform" << std::endl
-          // << "if (platform.system() == 'Linux'):" << std::endl
-          // << "\tmatplotlib.use('Qt5Agg') # only for linux, not on mac" << std::endl
+          << "if (platform.system() == 'Linux'):" << std::endl
+          << "\tmatplotlib.use('Qt5Agg') # only for linux, not on mac" << std::endl
           << "import matplotlib.pyplot as plt" << std::endl
           << "fig, ax1 = plt.subplots()" << std::endl
           // << "ax2 = ax1.twinx()" << std::endl
