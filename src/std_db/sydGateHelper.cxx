@@ -256,11 +256,11 @@ double syd::GateComputeDoseScalingFactor(syd::Image::pointer source, double nb_e
   // Check source unit
   auto db = source->GetDatabase<syd::StandardDatabase>();
   double Bq_unit_scale = 0.0;
-  if (source->pixel_unit->id != syd::FindOrCreatePixelUnit(db, "Bq.h")->id)
+  if (source->pixel_unit->id == syd::FindOrCreatePixelUnit(db, "Bq.h")->id)
     Bq_unit_scale = 1.0;
-  if (source->pixel_unit->id != syd::FindOrCreatePixelUnit(db, "kBq.h")->id)
+  if (source->pixel_unit->id == syd::FindOrCreatePixelUnit(db, "kBq.h")->id)
     Bq_unit_scale = 1000.0;
-  if (source->pixel_unit->id != syd::FindOrCreatePixelUnit(db, "MBq.h")->id)
+  if (source->pixel_unit->id == syd::FindOrCreatePixelUnit(db, "MBq.h")->id)
     Bq_unit_scale = 1000000.0;
 
   if (Bq_unit_scale == 0.0) {
@@ -275,6 +275,12 @@ double syd::GateComputeDoseScalingFactor(syd::Image::pointer source, double nb_e
   // Compute final scaling factor
   double injected_activity = source->injection->activity_in_MBq;
   double scale = (Bq_unit_scale * 3600.0 * total_activity / injected_activity)/nb_events;
+
+  LOG(2) << "Dose scaling factor: " << std::endl
+         << "\t total_activity     = " << total_activity << " Bq.h " << std::endl
+         << "\t injected_activity  = " << injected_activity << " MBq" << std::endl
+         << "\t nb_events          = " << nb_events << std::endl
+         << "\t scaling            = " << scale;
   return scale;
 }
 // --------------------------------------------------------------------
