@@ -1,0 +1,15 @@
+#File sydOrganAbsorbedDose.ggo
+
+package "sydOrganAbsorbedDose"
+usage "sydOrganAbsorbedDose source target radionuclide"
+version "0.1"
+description "Use ICRP 133 framework to estimate dose from source organ to target organ.
+
+Expected data files are:
+  ICRP_2017_Nuclear_Data/ICRP-07.RAD
+and
+  ICRP_133_SA/rcp-am_photon_2016-08-12.SAF
+"
+
+
+option "folder"             - "Folder to search for ICRP data"     string default="" no

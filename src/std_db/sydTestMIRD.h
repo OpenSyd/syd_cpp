@@ -42,7 +42,7 @@ namespace syd {
   class SpecificAbsorbedFractionData {
   public:
 
-    void Read();
+    void Read(std::string filename);
     std::shared_ptr<SpecificAbsorbedFraction>
       Get(std::string source, std::string target);
 
@@ -53,21 +53,38 @@ namespace syd {
 
   };
 
-  class RadiationData {
+  class RadiationTypeData
+  {
   public:
-
-    void Read();
-
-    const std::vector<double> & GetEnergies(std::string rad);
-    const std::vector<double> & GetYields(std::string rad);
-
-    typedef std::map<std::string, std::vector<double>> ValuesMapType;
-    ValuesMapType mEnergiesMap;
-    ValuesMapType mYieldsMap;
-
+    int mId;
+    // std::string mTypeName;
+    double mYield;
+    double mEnergy;
+    /* ICODE radiation type
+     1 G, PG, DG (Gamma rays)
+     2 X
+     3 AQ Annihilation photons
+     4 B+ Beta + particles
+     5 B- BD Beta – particles Delayed beta particles*
+     6 IE IC electrons
+     7 AE Auger electrons
+     8 A Alpha particles
+     9 AR Alpha recoil nuclei
+     10 FF Fission fragments
+     11 N Neutrons
+    */
   };
 
-  class AbsorbedDoseMIRDCalculator {
+ class RadiationData {
+  public:
+    void Read();
+    const std::vector<RadiationTypeData> & GetData(std::string rad);
+    typedef std::map<std::string, std::vector<RadiationTypeData>> ValuesMapType;
+    ValuesMapType mRadiationMap;
+  };
+
+
+ class AbsorbedDoseMIRDCalculator {
   public:
 
     AbsorbedDoseMIRDCalculator();
@@ -99,7 +116,7 @@ namespace syd {
     std::string mRadionuclideName;
     std::string mPhantomName;
 
-    std::shared_ptr<syd::SpecificAbsorbedFractionData> mSAFData;
+    std::vector<std::shared_ptr<syd::SpecificAbsorbedFractionData>> mSAFData;
     std::shared_ptr<syd::RadiationData> mRadiationData;
   };
 

@@ -17,46 +17,33 @@
   ===========================================================================**/
 
 // syd
-#include "sydTest_ggo.h"
-#include "sydPluginManager.h"
-#include "sydDatabaseManager.h"
+#include "sydOrganAbsorbedDose_ggo.h"
 #include "sydCommonGengetopt.h"
-#include "sydStandardDatabase.h"
-
-#include "sydTestMIRD.h"
+#include "sydSCoefficientCalculator.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(sydTest, 0);
+  SYD_INIT_GGO(sydOrganAbsorbedDose, 3);
 
-  // Load plugin and db
-  syd::PluginManager::GetInstance()->Load();
-  syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
-  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
-  // -----------------------------------------------------------------
+  // Parameters
+  auto source_name = args_info.inputs[0];
+  auto target_name = args_info.inputs[1];
+  auto rad_name = args_info.inputs[2];
+  auto phantom_name = "AM"; // Adult Male FIXME --> will be in ggo
+  auto folder = args_info.folder_arg;
 
-  // test mrd icrp
-  /* kidney self-dose factor of 8.03 mGy/MBq⋅s
-     To be multplied 3600 s and by the organ volume of 300 mL
-     (Adult Male model, assuming 1 g = 1 mL).
-  */
-
-  double activity_in_MBq = 1.0;
-  std::string organ_name = "Kidneys";// Kidneys
-  std::vector<std::string> organ_names;
-  organ_names.push_back("Kidneys");
-  std::string phantom_name = "AM"; // Adult Male
-  std::string rad_name = "Lu-177";//"Tc-99m";//"Lu-177";
-
-  syd::AbsorbedDoseMIRDCalculator * c = new syd::AbsorbedDoseMIRDCalculator;
-  c->SetActivity(activity_in_MBq);
-  c->SetSourceOrgan(organ_name);
-  c->SetTargetOrgan(organ_names[0]); // FIXME AddTargetOrgan
+  // Compute the S coefficient
+  syd::SCoefficientCalculator * c = new syd::SCoefficientCalculator;
+  c->Initialise(folder);
+  c->SetSourceOrgan(source_name);
+  c->SetTargetOrgan(target_name);
   c->SetRadionuclide(rad_name);
   c->SetPhantomName(phantom_name);
-  c->Run();
+  auto s = c->Run();
+
+  LOG(0) << s << " mGy/MBq.h";
 
   // -----------------------------------------------------------------
   DD("end");

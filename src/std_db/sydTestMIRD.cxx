@@ -62,8 +62,44 @@ void syd::AbsorbedDoseMIRDCalculator::Run()
   mRadiationData->Read();
 
   // Read SAF data
-  mSAFData = std::make_shared<syd::SpecificAbsorbedFractionData>();
-  mSAFData->Read();
+  mSAFData.resize(8);
+  mSAFData[0] = nullptr;
+  std::string folder = "/home/dsarrut/src/syd/syd-devel/icrp/ICRP_133_SAF";
+  {
+    std::string filename = "rcp-am_photon_2016-08-12.SAF";
+    fs::path p(folder);
+    p = p/filename;
+    DD(p.string());
+    auto saf = std::make_shared<syd::SpecificAbsorbedFractionData>();
+    saf->Read(p.string());
+    mSAFData[1] = saf; // G PG DG
+    mSAFData[2] = saf; // X
+    mSAFData[3] = saf; // X
+  }
+  {
+    std::string filename = "rcp-am_electron_2016-08-12.SAF";
+    fs::path p(folder);
+    p = p/filename;
+    DD(p.string());
+    auto saf = std::make_shared<syd::SpecificAbsorbedFractionData>();
+    saf->Read(p.string());
+    mSAFData[4] = saf; // B+
+    mSAFData[5] = saf; // B- BD
+    mSAFData[6] = saf; // IC electrons
+    mSAFData[7] = saf; // Auger electrons
+  }
+  DD(mSAFData.size());
+  // {
+  //   std::string filename = "rcp-am_alpha_2016-08-12.SAF";
+  //   fs::path p(folder);
+  //   p = p/filename;
+  //   DD(p.string());
+  //   auto saf = std::make_shared<syd::SpecificAbsorbedFractionData>();
+  //   saf->Read(p.string());
+  //   mSAFData[8] = saf; // Alpha particles
+  //   mSAFData[9] = saf; // Alpha recoil nuclei
+  // }
+
 
   // Get S Coefficients
   auto s = GetSCoefficient();
@@ -95,18 +131,39 @@ double syd::AbsorbedDoseMIRDCalculator::GetSCoefficient()
   DDF();
 
   double s = 0.0;
-  const auto & energy = mRadiationData->GetEnergies(mRadionuclideName);
-  const auto & yield  = mRadiationData->GetYields(mRadionuclideName);
-  const auto & safd = mSAFData->Get(mSourceOrganName, mTargetOrganName);
-  // electron only for the moment FIXME --> saf will need type of particle
+  // const auto & energies = mRadiationData->GetEnergies(mRadionuclideName);
+  // const auto & yields  = mRadiationData->GetYields(mRadionuclideName);
+  const auto & rad = mRadiationData->GetData(mRadionuclideName);
 
-  auto nb_E = energy.size();
-  for(int i=0; i<nb_E; ++i) {
-    DD(i);
-    auto saf = safd->Compute(energy[i]);
-    DD(saf);
-    s += saf * yield[i];
+  std::vector<std::shared_ptr<SpecificAbsorbedFraction>> safd;
+  safd.resize(8);
+  for(auto i=0; i<safd.size(); i++) {
+    if (mSAFData[i] != nullptr)
+      safd[i] = mSAFData[i]->Get(mSourceOrganName, mTargetOrganName);
   }
+
+  auto n = rad.size();
+  for(int i=0; i<n; ++i) {
+    auto & r = rad[i];
+    //if (r.mId != 1 and r.mId != 2 and r.mId != 5) continue;
+    auto energy = r.mEnergy;
+    auto yield = r.mYield;
+    auto ss = safd[r.mId];
+    auto saf = ss->Compute(energy);
+    s += (energy * yield * saf);
+    if (yield>0.05) {
+      DD("----------");
+      DD(i);
+      DD(energy);
+      DD(yield);
+      DD(rad[i].mId);
+      DD(saf);
+      DD(energy * yield * saf);
+      DD(s);
+    }
+  }
+  DD(s);
+  s = s*1.6e-13*1e3*1e6*3600;
   return s;
 }
 // --------------------------------------------------------------------
@@ -123,36 +180,35 @@ syd::SpecificAbsorbedFraction::SpecificAbsorbedFraction(std::vector<double> & v)
 // --------------------------------------------------------------------
 double syd::SpecificAbsorbedFraction::Compute(double energy)
 {
-  DDF();
-
+  // Search for first energy larger than the given energy
   auto search = std::lower_bound(mEnergies.begin(), mEnergies.end(), energy);
   if (search == mEnergies.end()) {
     LOG(FATAL) << "too large " << energy;
   }
 
-  if (search == mEnergies.begin()) { // first element
-    return mSAFvalues[0];
-  }
+  // If this is the first, no interpolation
+  if (search == mEnergies.begin()) return mSAFvalues[0];
 
+  // Interpolation interpolation of SAF values according to energy interval
   double before = *(search-1);
   double after = *(search);
   int index_after = search-mEnergies.begin();
   int index_before = index_after-1;
-  DD(index_before);
-  DD(index_after);
-
-  // Interpolation
   double saf_before = mSAFvalues[index_before];
   double saf_after = mSAFvalues[index_after];
-  DD(saf_before);
-  DD(saf_after);
   double w = after-before;
-  DD(w);
   double w1 = (energy-before)/w;
   double w2 = 1.0-w1;
-  DD(w1);
-  DD(w2);
   double saf = saf_before*w2 + saf_after*w1;
+
+  // if (energy > 0.14 and energy <0.16) {
+  //   DD(energy);
+  //   DD(before);
+  //   DD(after);
+  //   DD(saf_before);
+  //   DD(saf_after);
+  //   DD(saf);
+  // }
 
   return saf;
 }
@@ -160,21 +216,12 @@ double syd::SpecificAbsorbedFraction::Compute(double energy)
 
 
 // --------------------------------------------------------------------
-void syd::SpecificAbsorbedFractionData::Read()
+void syd::SpecificAbsorbedFractionData::Read(std::string filename)
 {
   DDF();
 
-  std::string folder = "/home/dsarrut/src/syd/syd-devel/icrp/ICRP_133_SAF";
-  std::string filename = "rcp-am_photon_2016-08-12.SAF";
-  DD(folder);
-  DD(filename);
-
-  fs::path p(folder);
-  p = p/filename;
-  DD(p.string());
-
   // Read first lines header
-  std::ifstream is(p.string());
+  std::ifstream is(filename);
   std::string line;
   std::getline(is, line);
   std::getline(is, line);
@@ -211,7 +258,6 @@ void syd::SpecificAbsorbedFractionData::Read()
   std::locale x(std::locale::classic(), new my_ctype);
   is.imbue(x);
 
-
   auto ne = mEnergies.size();
   while (is) {
     is >> target;
@@ -242,7 +288,7 @@ void syd::RadiationData::Read()
 {
   DDF();
   std::string folder = "/home/dsarrut/src/syd/syd-devel/icrp/ICRP_2017_Nuclear_Data";
-  std::string filename = "ICRP-07.BET";
+  std::string filename = "ICRP-07.RAD";
   DD(folder);
   DD(filename);
 
@@ -253,19 +299,24 @@ void syd::RadiationData::Read()
   std::ifstream is(p.string());
   std::string rad;
   int n;
+  std::string hl;
   double e;
   double y;
+  std::string type;
   while (is >> rad) {
+    is >> hl; // half life (as string because unit)
     // Read nb of values
     is >> n;
-    mEnergiesMap[rad].resize(n);
-    mYieldsMap[rad].resize(n);
-    auto & energies = mEnergiesMap[rad];
-    auto & yields = mYieldsMap[rad];
+    std::vector<RadiationTypeData> radiations(n);
     for(auto i=0; i<n; ++i) {
-      is >> energies[i];
-      is >> yields[i];
+      RadiationTypeData d;
+      is >> d.mId;
+      is >> d.mYield;
+      is >> d.mEnergy;
+      is >> type;
+      radiations[i] = d;
     }
+    mRadiationMap[rad] = radiations;
   }
 }
 // --------------------------------------------------------------------
@@ -290,25 +341,39 @@ syd::SpecificAbsorbedFractionData::Get(std::string source, std::string target)
 
 
 // --------------------------------------------------------------------
-const std::vector<double> & syd::RadiationData::GetEnergies(std::string rad)
-{
+/*const std::vector<double> & syd::RadiationData::GetEnergies(std::string rad)
+  {
   DDF();
   auto search = mEnergiesMap.find(rad);
   if (search == mEnergiesMap.end()) {
-    LOG(FATAL) << "Cannot find radiation energy data for " << rad;
+  LOG(FATAL) << "Cannot find radiation energy data for " << rad;
   }
   return search->second;
-}
+  }*/
 // --------------------------------------------------------------------
 
 
 // --------------------------------------------------------------------
-const std::vector<double> & syd::RadiationData::GetYields(std::string rad)
-{
+/*const std::vector<double> & syd::RadiationData::GetYields(std::string rad)
+  {
   DDF();
   auto search = mYieldsMap.find(rad);
   if (search == mYieldsMap.end()) {
-    LOG(FATAL) << "Cannot find radiation yields data for " << rad;
+  LOG(FATAL) << "Cannot find radiation yields data for " << rad;
+  }
+  return search->second;
+  }*/
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+const std::vector<syd::RadiationTypeData> &
+syd::RadiationData::GetData(std::string rad)
+{
+  DDF();
+  auto search = mRadiationMap.find(rad);
+  if (search == mRadiationMap.end()) {
+    LOG(FATAL) << "Cannot find radiation data for " << rad;
   }
   return search->second;
 }

@@ -477,6 +477,18 @@ wrap_ggo(sydInsertGateOutput_GGO_C
 add_executable(sydInsertGateOutput sydInsertGateOutput.cxx ${sydInsertGateOutput_GGO_C})
 target_link_libraries(sydInsertGateOutput ${SYD_STD_DB_LIBRARY})
 
+wrap_ggo(sydOrganAbsorbedDose_GGO_C
+  sydOrganAbsorbedDose.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydOrganAbsorbedDose
+  sydOrganAbsorbedDose.cxx
+  sydICRP_RadiationData.cxx
+  sydICRP_SpecificAbsorbedFraction.cxx
+  sydSCoefficientCalculator.cxx
+  ${sydOrganAbsorbedDose_GGO_C})
+target_link_libraries(sydOrganAbsorbedDose ${SYD_STD_DB_LIBRARY})
+
+
 
 # -----------------------------------------------------
 # -----------------------------------------------------
