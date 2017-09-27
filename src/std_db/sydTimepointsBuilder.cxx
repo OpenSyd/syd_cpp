@@ -31,7 +31,7 @@ syd::TimepointsBuilder::TimepointsBuilder(syd::StandardDatabase * db):
 void syd::TimepointsBuilder::SetImages(const syd::Image::vector im)
 {
   images = im;
-  db_->Sort<syd::Image>(images);
+  db_->Sort<syd::Image>(images, "acquisition_date");
 }
 // --------------------------------------------------------------------
 

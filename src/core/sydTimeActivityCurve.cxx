@@ -119,6 +119,16 @@ double syd::TimeActivityCurve::ComputeIntegralBeforeFirstTimepoint() const
   double m = (vb-va)/(b-a);
   double c = va - m*a;
   double r = a*(va + c)/2.0;
+  /*
+    std::cout << "ComputeIntegralBeforeFirstTimepoint "
+    << "a=" << a << " "
+    << "b=" << b << " "
+    << "va=" << va << " "
+    << "vb=" << vb << " "
+    << "m=" << m << " "
+    << "c=" << c <<  " "
+    << "r=" << r <<  " " << std::endl;
+  */
   return r;
 }
 // --------------------------------------------------------------------

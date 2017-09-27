@@ -17,49 +17,53 @@
   ===========================================================================**/
 
 // syd
-#include "sydTest_ggo.h"
-#include "sydPluginManager.h"
-#include "sydDatabaseManager.h"
+#include "sydOrganAbsorbedDose_ggo.h"
 #include "sydCommonGengetopt.h"
-#include "sydStandardDatabase.h"
-
-#include "sydTestMIRD.h"
+#include "sydSCoefficientCalculator.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(sydTest, 0);
+  SYD_INIT_GGO(sydOrganAbsorbedDose, 3);
 
-  // Load plugin and db
-  syd::PluginManager::GetInstance()->Load();
-  syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
-  syd::StandardDatabase * db = m->Open<syd::StandardDatabase>(args_info.db_arg);
-  // -----------------------------------------------------------------
+  // Parameters
+  auto source_name = args_info.inputs[0];
+  auto target_name = args_info.inputs[1];
+  auto rad_name = args_info.inputs[2];
+  auto phantom_name = args_info.phantom_arg;
+  auto folder = args_info.folder_arg;
 
-  // test mrd icrp
-  /* kidney self-dose factor of 8.03 mGy/MBq⋅s
-     To be multplied 3600 s and by the organ volume of 300 mL
-     (Adult Male model, assuming 1 g = 1 mL).
-  */
-
-  double activity_in_MBq = 1.0;
-  std::string organ_name = "Kidneys";// Kidneys
-  std::vector<std::string> organ_names;
-  organ_names.push_back("Kidneys");
-  std::string phantom_name = "AM"; // Adult Male
-  std::string rad_name = "Lu-177";//"Tc-99m";//"Lu-177";
-
-  syd::AbsorbedDoseMIRDCalculator * c = new syd::AbsorbedDoseMIRDCalculator;
-  c->SetActivity(activity_in_MBq);
-  c->SetSourceOrgan(organ_name);
-  c->SetTargetOrgan(organ_names[0]); // FIXME AddTargetOrgan
+  // Initialise the calculator
+  syd::SCoefficientCalculator * c = new syd::SCoefficientCalculator;
+  c->Initialise(folder);
+  c->SetSourceOrgan(source_name);
+  c->SetTargetOrgan(target_name);
   c->SetRadionuclide(rad_name);
   c->SetPhantomName(phantom_name);
-  c->Run();
+
+  // print if needed
+  if (args_info.printOrgans_flag) {
+    auto list = c->GetListOfSourceOrgans();
+    std::cout << "Source: ";
+    for(auto l:list)
+      std::cout << l << " ";
+    std::cout << std::endl;
+    list= c->GetListOfTargetOrgans();
+    std::cout << "Target: ";
+    for(auto l:list)
+      std::cout << l << " ";
+    std::cout << std::endl;
+  }
+
+  // Compute the S coefficient
+  auto s = c->Run();
 
   // -----------------------------------------------------------------
-  DD("end");
+  std::cout << source_name << " "
+            << target_name << " "
+            << rad_name << " "
+            << s << " mGy/MBq.h" << std::endl;
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

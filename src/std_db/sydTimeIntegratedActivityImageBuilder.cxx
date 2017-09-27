@@ -315,7 +315,7 @@ CheckInputs()
 
   // Sort images
   auto db = images_[0]->GetDatabase();
-  db->Sort<syd::Image>(images_);
+  db->Sort(images_, "acquisition_date");
 
   // Get times
   auto times = syd::GetTimesFromInjection(images_);

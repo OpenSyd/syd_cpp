@@ -38,7 +38,6 @@ void syd::PyPlotBuilder::Initialize()
           << "if (platform.system() == 'Linux'):" << std::endl
           << "\tmatplotlib.use('Qt5Agg') # only for linux, not on mac" << std::endl
           << "import matplotlib.pyplot as plt" << std::endl
-          << "import matplotlib.pyplot as plt" << std::endl
           << "fig, ax1 = plt.subplots()" << std::endl
           // << "ax2 = ax1.twinx()" << std::endl
           // << "current_palette = sns.color_palette('Set1', n)"<< std::endl

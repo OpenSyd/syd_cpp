@@ -41,11 +41,13 @@ std::string syd::Timepoints::ToString() const
 {
   std::stringstream ss ;
   ss << id << " "
-     << (patient == NULL ? "no_patient":patient->name) << " "
+     << (patient == nullptr ? "no_patient":patient->name) << " "
      << times.size() << " "
      << syd::GetLabels(tags) << " ";
-  for(auto i=0; i<times.size(); i++)
-    ss << times[i] << " " << values[i] << " ";
+  if (times.size() == values.size()) {
+    for(auto i=0; i<times.size(); ++i)
+      ss << times[i] << " " << values[i] << " ";
+  }
   return ss.str();
 }
 // --------------------------------------------------------------------

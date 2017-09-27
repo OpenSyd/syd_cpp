@@ -256,25 +256,40 @@ double syd::GateComputeDoseScalingFactor(syd::Image::pointer source, double nb_e
   // Check source unit
   auto db = source->GetDatabase<syd::StandardDatabase>();
   double Bq_unit_scale = 0.0;
-  if (source->pixel_unit->id != syd::FindOrCreatePixelUnit(db, "Bq.h")->id)
+  if (source->pixel_unit->id == syd::FindOrCreatePixelUnit(db, "Bq.h")->id)
     Bq_unit_scale = 1.0;
-  if (source->pixel_unit->id != syd::FindOrCreatePixelUnit(db, "kBq.h")->id)
+  if (source->pixel_unit->id == syd::FindOrCreatePixelUnit(db, "kBq.h")->id)
     Bq_unit_scale = 1000.0;
-  if (source->pixel_unit->id != syd::FindOrCreatePixelUnit(db, "MBq.h")->id)
+  if (source->pixel_unit->id == syd::FindOrCreatePixelUnit(db, "MBq.h")->id)
     Bq_unit_scale = 1000000.0;
 
   if (Bq_unit_scale == 0.0) {
-    LOG(WARNING) << "Only scale possible if source unit is Bq.h. Images were not scaled";
+    LOG(WARNING) << "Scaling only possible if source unit is Bq.h. Images were not scaled";
     return 1.0;
   }
 
-  // Compute total activity in the image
+  // Compute total activity in the image in Bq.h
   auto stat = syd::NewRoiStatistic(source);
   double total_activity = stat->sum;
 
-  // Compute final scaling factor
+  // Compute the activity at acquisition
   double injected_activity = source->injection->activity_in_MBq;
-  double scale = (Bq_unit_scale * 3600.0 * total_activity / injected_activity)/nb_events;
+  double lambda = source->injection->GetLambdaDecayConstantInHours();
+  double time = syd::DateDifferenceInHours(source->acquisition_date, source->injection->date);
+  DD(time);
+  double activity_at_acquisition =injected_activity * exp(-lambda * time);
+  DD(activity_at_acquisition);
+
+  // Compute final scaling factor
+  //  double scale = (Bq_unit_scale * 3600.0 * total_activity / injected_activity)/nb_events;
+  double scale = (Bq_unit_scale * (total_activity*3600)/nb_events) / activity_at_acquisition;
+  DD(scale);
+  
+  LOG(2) << "Dose scaling factor: " << std::endl
+         << "\t total_activity     = " << total_activity << " Bq.h " << std::endl
+         << "\t injected_activity  = " << injected_activity << " MBq" << std::endl
+         << "\t nb_events          = " << nb_events << std::endl
+         << "\t scaling            = " << scale;
   return scale;
 }
 // --------------------------------------------------------------------

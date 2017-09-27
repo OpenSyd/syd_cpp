@@ -1,0 +1,11 @@
+
+ICRP data are available: https://goo.gl/XP8f8a
+
+Contains:
+- ICRP_133_SAF 
+- ICRP_2017_Nuclear_Data 
+- ICRP_107_2008.pdf 
+- ICRP_110_2008.pdf 
+- ICRP_133_2016.pdf 
+
+
