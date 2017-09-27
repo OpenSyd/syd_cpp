@@ -145,8 +145,8 @@ syd::Attenuation(const InputImageType * input, const OutputImageType * likeImage
   auto projection = syd::Projection<InputImageType, OutputImageType>(filter->GetOutput(), projectionDimension, false, true);
 
   //Prepare variables
-  double size = attenuation->GetLargestPossibleRegion().GetSize()[projectionDimension];
-  double spacing = attenuation->GetSpacing()[projectionDimension];
+  double size = filter->GetOutput()->GetLargestPossibleRegion().GetSize()[projectionDimension];
+  double spacing = filter->GetOutput()->GetSpacing()[projectionDimension];
   double tempValue = spacing/(2.0*10.0);
 
   //Multiply the projected attenuation map by variables
