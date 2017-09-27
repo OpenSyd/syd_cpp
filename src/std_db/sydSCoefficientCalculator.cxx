@@ -30,9 +30,22 @@ namespace fs = boost::filesystem;
 // --------------------------------------------------------------------
 syd::SCoefficientCalculator::SCoefficientCalculator()
 {
-  DDF();
   mRadiationData = nullptr;
   mSAFData.clear();
+  SetPhantomName("am");
+  SetSourceOrgan("Liver");
+  SetTargetOrgan("Liver");
+  SetRadionuclide("Y-90");
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::SCoefficientCalculator::SetPhantomName(std::string s)
+{
+  mPhantomName = s;
+  // lower case
+  std::transform(mPhantomName.begin(), mPhantomName.end(), mPhantomName.begin(), ::tolower);
 }
 // --------------------------------------------------------------------
 
@@ -40,8 +53,6 @@ syd::SCoefficientCalculator::SCoefficientCalculator()
 // --------------------------------------------------------------------
 void syd::SCoefficientCalculator::Initialise(std::string folder)
 {
-  DDF();
-
   if (folder == "") {
     char * env = getenv ("SYD_PLUGIN");
     if (!env) {
@@ -57,24 +68,26 @@ void syd::SCoefficientCalculator::Initialise(std::string folder)
     }
     folder = ll[0];
   }
-  DD(folder);
 
   // Read radionuclide yields data
   fs::path rad_path(folder);
   rad_path = rad_path/"ICRP_2017_Nuclear_Data"/"ICRP-07.RAD";
   mRadiationData = std::make_shared<syd::ICRP_RadiationData>();
   mRadiationData->Read(rad_path.string());
+  LOG(5) << "Reading Radiation data in " << rad_path.string();
 
   // Prepare SAF filenames
+  fs::path saf_folder = fs::path(folder)/"ICRP_133_SAF";
   mSAFData.resize(8);
   mSAFData[0] = nullptr; // No data with ICODE==0
   fs::path saf_path(folder);
   std::string filename = "rcp-am_photon_2016-08-12.SAF";
-  DD(filename);
   if (mPhantomName == "AF") syd::Replace(filename, "rcp-am_", "rcp-af");
-  saf_path = saf_path/"ICRP_133_SAF"/filename;
+  saf_path = saf_folder/filename;
 
   // Read SAF data (photon)
+  saf_path = saf_folder/filename;
+  LOG(5) << "Reading SAF data in " << saf_path.string();
   auto saf = std::make_shared<syd::ICRP_SpecificAbsorbedFractionData>();
   saf->Read(saf_path.string());
   mSAFData[1] = saf; // G PG DG (Gamma rays, Prompt Gamma rays, Delayed Gamma rays)
@@ -83,17 +96,16 @@ void syd::SCoefficientCalculator::Initialise(std::string folder)
 
   // Read SAF data (electron)
   syd::Replace(filename, "photon", "electron");
-  DD(filename);
+  saf_path = saf_folder/filename;
+  LOG(5) << "Reading SAF data in " << saf_path.string();
   saf = std::make_shared<syd::ICRP_SpecificAbsorbedFractionData>();
   saf->Read(saf_path.string());
   mSAFData[4] = saf; // B+ (Beta+ particles
   mSAFData[5] = saf; // B- (Beta- particles, Delayed Beta particles)
   mSAFData[6] = saf; // IE (IC electrons)
   mSAFData[7] = saf; // AE (Auger electrons)
-
+ 
   // FIXME no auger + neutron yet
-
-  DD(mSAFData.size());
 }
 // --------------------------------------------------------------------
 
@@ -114,8 +126,6 @@ std::string syd::SCoefficientCalculator::ToString() const
 // --------------------------------------------------------------------
 double syd::SCoefficientCalculator::Run()
 {
-  DDF();
-  DD(ToString());
   if (mRadiationData == nullptr or mSAFData.size() == 0) Initialise();
 
   // Consider the radionuclide and get the saf for the source/target
@@ -140,7 +150,7 @@ double syd::SCoefficientCalculator::Run()
     }
     auto saf = ss->Compute(energy);
     s += (energy * yield * saf);
-    if (yield>0.05) {
+    if (yield>10.05) {
       DD("----------");
       DD(i);
       DD(energy);
@@ -151,15 +161,45 @@ double syd::SCoefficientCalculator::Run()
       DD(s);
     }
   }
-  DD(s);
   // Conversion from Joule Gy/Bq.s in mGy/MBq.h
   // J    -> Gy   = 1.6e-13
   // Gy   -> mGy  = 1e3
   // Bq   -> MBq  = 1e6
   // Bq.s -> Bq.h = 3600
-  s = s*1.6e-13*1e3*1e6*3600;
-  DD(s);
+  s = s*1.6e-13*1e3*1e6*3600.0;
   return s;
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+std::vector<std::string> syd::SCoefficientCalculator::GetListOfSourceOrgans()
+{
+  if (mRadiationData == nullptr or mSAFData.size() == 0) Initialise();
+
+  auto m = mSAFData[1];
+  auto map = m->mSourcesMap;
+  std::vector<std::string> l;
+  for(auto m:map) l.push_back(m.first);
+  return l;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::vector<std::string> syd::SCoefficientCalculator::GetListOfTargetOrgans()
+{
+  if (mRadiationData == nullptr or mSAFData.size() == 0) Initialise();
+
+  auto m = mSAFData[1];
+  auto smap = m->mSourcesMap;
+  std::set<std::string> l;
+  for(auto m:smap) {
+    auto tmap = m.second;
+    for(auto t:tmap) l.insert(t.first);
+  }
+  std::vector<std::string> list;
+  std::copy(l.begin(), l.end(), std::back_inserter(list));
+  return list;
+}
+// --------------------------------------------------------------------

@@ -24,36 +24,62 @@
 // --------------------------------------------------------------------
 namespace syd {
 
- class SCoefficientCalculator {
+  class SCoefficientCalculator {
   public:
 
+    /// Constructor
     SCoefficientCalculator();
+
+    /// Set the name of the source organ
     void SetSourceOrgan(std::string s) { mSourceOrganName = s; }
+
+    /// Set the name of the target organ
     void SetTargetOrgan(std::string s) { mTargetOrganName = s; }
+
+    /// Set the name of the radionuclide
     void SetRadionuclide(std::string s) { mRadionuclideName = s; }
-    void SetPhantomName(std::string s) { mPhantomName = s; }
+
+    /// Set the name of the phantom (AF or AM, Adult Female/Male)
+    void SetPhantomName(std::string s);
+
+    /// Return the list of source organs
+    std::vector<std::string> GetListOfSourceOrgans();
+
+    /// Return the list of target organs
+    std::vector<std::string> GetListOfTargetOrgans();
+
+    /// To print as a string
     std::string ToString() const;
+
+    /// Read ICRP data
     void Initialise(std::string folder="");
+
+    /// Compute the S coefficients
     double Run();
 
+    /// Print streaming
     friend std::ostream& operator<<(std::ostream& os, const SCoefficientCalculator & p) {
       os << p.ToString();
       return os;
     }
+
+    /// Print streaming
     friend std::ostream& operator<<(std::ostream& os, const SCoefficientCalculator * p) {
       os << p->ToString();
       return os;
     }
 
   protected:
-    double GetSCoefficient();
     std::string mSourceOrganName;
     std::string mTargetOrganName;
     std::string mRadionuclideName;
     std::string mPhantomName;
 
-    std::vector<std::shared_ptr<syd::ICRP_SpecificAbsorbedFractionData>> mSAFData;
+    /// ICRP radiation data
     std::shared_ptr<syd::ICRP_RadiationData> mRadiationData;
+
+    /// ICRP vector of SAF for all radiation type (photon, electron etc)
+    std::vector<std::shared_ptr<syd::ICRP_SpecificAbsorbedFractionData>> mSAFData;
   };
 
 } // end namespace

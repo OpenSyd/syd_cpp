@@ -59,7 +59,6 @@ void syd::ICRP_RadiationData::Read(std::string filename)
 const std::vector<syd::ICRP_RadiationTypeData> &
 syd::ICRP_RadiationData::GetData(std::string rad)
 {
-  DDF();
   auto search = mRadiationMap.find(rad);
   if (search == mRadiationMap.end()) {
     LOG(FATAL) << "Cannot find radiation data for " << rad;

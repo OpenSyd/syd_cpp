@@ -22,6 +22,7 @@
 
 // std
 #include <fstream>
+#include <algorithm>
 
 // --------------------------------------------------------------------
 // Convenient function to read stream with additional token delimitor. Here we
@@ -82,8 +83,6 @@ double syd::ICRP_SpecificAbsorbedFraction::Compute(double energy)
 // --------------------------------------------------------------------
 void syd::ICRP_SpecificAbsorbedFractionData::Read(std::string filename)
 {
-  DDF();
-
   // Read first lines header
   std::ifstream is(filename);
   if (!is) {
@@ -109,8 +108,6 @@ void syd::ICRP_SpecificAbsorbedFractionData::Read(std::string filename)
     mEnergies.push_back(e);
     is >> w;
   }
-  DDS(mEnergies);
-  DD(mEnergies.size());
 
   // Skip lines
   std::getline(is, line);
@@ -154,7 +151,6 @@ void syd::ICRP_SpecificAbsorbedFractionData::Read(std::string filename)
 std::shared_ptr<syd::ICRP_SpecificAbsorbedFraction>
 syd::ICRP_SpecificAbsorbedFractionData::Get(std::string source, std::string target)
 {
-  DDF();
   auto search_source = mSourcesMap.find(source);
   if (search_source == mSourcesMap.end()) {
     LOG(FATAL) << "Cannot find source " << source;

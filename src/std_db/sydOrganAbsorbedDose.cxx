@@ -31,22 +31,39 @@ int main(int argc, char* argv[])
   auto source_name = args_info.inputs[0];
   auto target_name = args_info.inputs[1];
   auto rad_name = args_info.inputs[2];
-  auto phantom_name = "AM"; // Adult Male FIXME --> will be in ggo
+  auto phantom_name = args_info.phantom_arg;
   auto folder = args_info.folder_arg;
 
-  // Compute the S coefficient
+  // Initialise the calculator
   syd::SCoefficientCalculator * c = new syd::SCoefficientCalculator;
   c->Initialise(folder);
   c->SetSourceOrgan(source_name);
   c->SetTargetOrgan(target_name);
   c->SetRadionuclide(rad_name);
   c->SetPhantomName(phantom_name);
+
+  // print if needed
+  if (args_info.printOrgans_flag) {
+    auto list = c->GetListOfSourceOrgans();
+    std::cout << "Source: ";
+    for(auto l:list)
+      std::cout << l << " ";
+    std::cout << std::endl;
+    list= c->GetListOfTargetOrgans();
+    std::cout << "Target: ";
+    for(auto l:list)
+      std::cout << l << " ";
+    std::cout << std::endl;
+  }
+
+  // Compute the S coefficient
   auto s = c->Run();
 
-  LOG(0) << s << " mGy/MBq.h";
-
   // -----------------------------------------------------------------
-  DD("end");
+  std::cout << source_name << " "
+            << target_name << " "
+            << rad_name << " "
+            << s << " mGy/MBq.h" << std::endl;
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------
