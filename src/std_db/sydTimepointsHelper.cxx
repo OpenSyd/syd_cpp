@@ -142,6 +142,12 @@ void syd::ComputeFitTimepoints(syd::FitTimepoints::pointer ft)
   syd::TimeIntegratedActivityFilter filter;
   auto tac = syd::GetTAC(ft->timepoints);
   auto options = ft->GetOptions();
+
+  // Set or check lambda
+  if (options.GetLambdaDecayConstantInHours() == 0.0)
+    options.SetLambdaDecayConstantInHours(ft->timepoints->injection->GetLambdaDecayConstantInHours());
+
+  // Run the filter
   filter.SetTAC(tac);
   filter.SetOptions(options);
   filter.Run();

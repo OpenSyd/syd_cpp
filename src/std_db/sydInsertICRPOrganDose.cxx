@@ -17,53 +17,44 @@
   ===========================================================================**/
 
 // syd
-#include "sydOrganAbsorbedDose_ggo.h"
+#include "sydInsertICRPOrganDose_ggo.h"
 #include "sydCommonGengetopt.h"
 #include "sydSCoefficientCalculator.h"
+#include "sydStandardDatabase.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(sydOrganAbsorbedDose, 3);
+  SYD_INIT_GGO(sydInsertICRPOrganDose, 3);
+
+  // Load plugin
+  syd::PluginManager::GetInstance()->Load();
+  syd::DatabaseManager* m = syd::DatabaseManager::GetInstance();
+
+  // Get the database
+  syd::StandardDatabase * db =
+    m->Open<syd::StandardDatabase>(args_info.db_arg);
 
   // Parameters
-  auto source_name = args_info.inputs[0];
-  auto target_name = args_info.inputs[1];
-  auto rad_name = args_info.inputs[2];
+  syd::IdType id = atoi(args_info.inputs[0]);
   auto phantom_name = args_info.phantom_arg;
   auto folder = args_info.folder_arg;
 
+  // Get the FitTimepoint
+  syd::FitTimepoints::pointer fittimepoint;
+  db->QueryOne(fittimepoint, id);
+  DD(fittimepoint);
+
   // Initialise the calculator
-  syd::SCoefficientCalculator * c = new syd::SCoefficientCalculator;
+  auto c = std::make_shared<syd::SCoefficientCalculator>();
   c->Initialise(folder);
-  c->SetSourceOrgan(source_name);
-  c->SetTargetOrgan(target_name);
-  c->SetRadionuclide(rad_name);
   c->SetPhantomName(phantom_name);
 
-  // print if needed
-  if (args_info.printOrgans_flag) {
-    auto list = c->GetListOfSourceOrgans();
-    std::cout << "Source: ";
-    for(auto l:list)
-      std::cout << l << " ";
-    std::cout << std::endl;
-    list= c->GetListOfTargetOrgans();
-    std::cout << "Target: ";
-    for(auto l:list)
-      std::cout << l << " ";
-    std::cout << std::endl;
-  }
+  // FIXME
+  //  auto od = syd::NewOrganICRPDose(c, ft);
+  //DD(od);
 
-  // Compute the S coefficient
-  auto s = c->Run();
-
-  // -----------------------------------------------------------------
-  std::cout << source_name << " "
-            << target_name << " "
-            << rad_name << " "
-            << s << " mGy/MBq.h" << std::endl;
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

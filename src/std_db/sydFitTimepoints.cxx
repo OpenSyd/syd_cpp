@@ -91,7 +91,7 @@ std::string syd::FitTimepoints::ToStringForMD5() const
   std::stringstream ss;
   for(auto p:params) ss << std::setprecision(30) << p;
   ss << auc << r2 << GetLabels(tags) << GetModelsName() << first_index
-     << timepoints->ToStringForMD5() << iterations;
+     << timepoints->ToStringForMD5() << GetOptions() << iterations;
   return ss.str();
 }
 // --------------------------------------------------------------------

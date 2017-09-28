@@ -1,0 +1,10 @@
+#File sydInsertTimeIntegratedActivityTimepoints.ggo
+
+package "sydInsertTimeIntegratedActivityTimepoints"
+usage "sydInsertTimeIntegratedActivityTimepoints <timepoint_ids>"
+version "0.1"
+description "Consider the given TAC and fit a model. Create a FitTimepoint per Timepoints.
+
+"
+
+

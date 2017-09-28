@@ -84,6 +84,9 @@ set(SYD_STANDARD_DATABASE_SRC
   sydThumbnail.cxx
   sydTimeIntegratedActivityImageBuilder.cxx
 
+  sydICRP_RadiationData.cxx
+  sydICRP_SpecificAbsorbedFraction.cxx
+  sydSCoefficientCalculator.cxx
   #  sydCropImageBuilder.cxx
   #  sydDecayCorrectedImageBuilder.cxx
   #  sydSubstituteRadionuclideImageBuilder.cxx
@@ -423,6 +426,35 @@ add_executable(sydInsertRoiBasedTimeIntegratedActivity
   ${sydInsertRoiBasedTimeIntegratedActivity_GGO_C})
 target_link_libraries(sydInsertRoiBasedTimeIntegratedActivity ${SYD_STD_DB_LIBRARY})
 
+wrap_ggo(sydComputeICRPSCoefficient_GGO_C
+  sydComputeICRPSCoefficient.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydComputeICRPSCoefficient
+  sydComputeICRPSCoefficient.cxx
+  ${sydComputeICRPSCoefficient_GGO_C})
+target_link_libraries(sydComputeICRPSCoefficient ${SYD_STD_DB_LIBRARY})
+
+wrap_ggo(sydInsertTimeIntegratedActivityTimepoints_GGO_C
+  sydInsertTimeIntegratedActivityTimepoints.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineWithFitOptions.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertTimeIntegratedActivityTimepoints
+  sydInsertTimeIntegratedActivityTimepoints.cxx
+  ${sydInsertTimeIntegratedActivityTimepoints_GGO_C})
+target_link_libraries(sydInsertTimeIntegratedActivityTimepoints ${SYD_STD_DB_LIBRARY})
+
+wrap_ggo(sydInsertICRPOrganDose_GGO_C
+  sydInsertICRPOrganDose.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertICRPOrganDose
+  sydInsertICRPOrganDose.cxx
+  ${sydInsertICRPOrganDose_GGO_C})
+target_link_libraries(sydInsertICRPOrganDose ${SYD_STD_DB_LIBRARY})
+
 #----------------------------------------------------------
 # External tool: clitkExtractPatient
 wrap_ggo(syd_clitkExtractPatient_GGO_C
@@ -476,18 +508,6 @@ wrap_ggo(sydInsertGateOutput_GGO_C
   sydCommandLineDefault.ggo)
 add_executable(sydInsertGateOutput sydInsertGateOutput.cxx ${sydInsertGateOutput_GGO_C})
 target_link_libraries(sydInsertGateOutput ${SYD_STD_DB_LIBRARY})
-
-wrap_ggo(sydOrganAbsorbedDose_GGO_C
-  sydOrganAbsorbedDose.ggo
-  sydCommandLineDefault.ggo)
-add_executable(sydOrganAbsorbedDose
-  sydOrganAbsorbedDose.cxx
-  sydICRP_RadiationData.cxx
-  sydICRP_SpecificAbsorbedFraction.cxx
-  sydSCoefficientCalculator.cxx
-  ${sydOrganAbsorbedDose_GGO_C})
-target_link_libraries(sydOrganAbsorbedDose ${SYD_STD_DB_LIBRARY})
-
 
 
 # -----------------------------------------------------

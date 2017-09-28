@@ -1,0 +1,18 @@
+#File sydInsertICRPOrganDose.ggo
+
+package "sydInsertICRPOrganDose"
+usage "sydInsertICRPOrganDose <FitTimepoint_id>"
+version "0.1"
+description "Use ICRP 133 framework to estimate dose from source organ to target organ.
+
+Consider the given FitTimepoint (usually in MBq.h) and estimate the dose according to source/target organs and ICRP methodology. Try to guess the radionuclide and the organ names from the RoiTimepoints associated with the FitImages. 
+
+Expected data files are: ICRP_2017_Nuclear_Data/ICRP-07.RAD, ICRP_133_SA/rcp-am_photon_2016-08-12.SAF
+If no folder is given, those 2 folders are search in the $SYD_PLUGIN environment variable.
+
+"
+
+option "folder"       f "Folder to search for ICRP data"              string default="" no
+option "phantom"      p "Phantom name AF or AM (Adult Female, Male)"  string default="AM" no
+
+

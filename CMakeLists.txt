@@ -75,7 +75,7 @@ set(SYD_BIN_FILES " ")
 # build process of CMake based build systems by fully automating
 # techniques as precompiled header usage and single compilation unit
 # builds for C and C++.
-include(cmake/cotire.cmake)
+#include(cmake/cotire.cmake)
 #----------------------------------------------------------
 
 

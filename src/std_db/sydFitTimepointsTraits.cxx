@@ -56,13 +56,21 @@ BuildFields(const syd::Database * db) const
   AddField<std::string>("models", f_mo);
   ADD_FIELD_A(akaike_criterion, std::string, "ak");
 
+  // if timepoints is a RoiTimepoints, display the roi
+  auto f_roi = [](pointer p) -> std::string {
+    auto roitp = std::dynamic_pointer_cast<syd::RoiTimepoints>(p->timepoints);
+    if (!roitp) return empty_value;
+    if (roitp->roi_statistics.size() == 0) return empty_value;
+    return roitp->roi_statistics[0]->mask->roitype->name; };
+  AddField<std::string>("roi", f_roi);
+
   // tags
   auto f_t = [](pointer p) -> std::string { return syd::GetLabels(p->tags); };
   AddField<std::string>("tags", f_t);
 
   // Format lists
   field_format_map_["default"] =
-    "id timepoints.id[tid] timepoints.patient.name[pat] timepoints.injection.radionuclide.name[rad] tags model_name[model] auc r2 first_index iterations[it] params r2_min akaike_criterion restricted_tac max_iteration models";
+    "id timepoints.id[tid] timepoints.patient.name[pat] timepoints.injection.radionuclide.name[rad] roi tags model_name[model] auc r2 first_index iterations[it] params r2_min akaike_criterion restricted_tac max_iteration models";
 
   field_format_map_["hist"] =
     "default history.insertion_date[insert] history.update_date[update]";
