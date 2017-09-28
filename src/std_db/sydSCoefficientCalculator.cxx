@@ -175,13 +175,12 @@ double syd::SCoefficientCalculator::Run()
 // --------------------------------------------------------------------
 std::vector<std::string> syd::SCoefficientCalculator::GetListOfSourceOrgans()
 {
+  if (mListOfSourceOrgansNames.size() != 0) return mListOfSourceOrgansNames;
   if (mRadiationData == nullptr or mSAFData.size() == 0) Initialise();
-
   auto m = mSAFData[1];
   auto map = m->mSourcesMap;
-  std::vector<std::string> l;
-  for(auto m:map) l.push_back(m.first);
-  return l;
+  for(auto m:map) mListOfSourceOrgansNames.push_back(m.first);
+  return mListOfSourceOrgansNames;
 }
 // --------------------------------------------------------------------
 
@@ -189,8 +188,8 @@ std::vector<std::string> syd::SCoefficientCalculator::GetListOfSourceOrgans()
 // --------------------------------------------------------------------
 std::vector<std::string> syd::SCoefficientCalculator::GetListOfTargetOrgans()
 {
+  if (mListOfTargetOrgansNames.size() != 0) return mListOfTargetOrgansNames;
   if (mRadiationData == nullptr or mSAFData.size() == 0) Initialise();
-
   auto m = mSAFData[1];
   auto smap = m->mSourcesMap;
   std::set<std::string> l;
@@ -198,8 +197,7 @@ std::vector<std::string> syd::SCoefficientCalculator::GetListOfTargetOrgans()
     auto tmap = m.second;
     for(auto t:tmap) l.insert(t.first);
   }
-  std::vector<std::string> list;
-  std::copy(l.begin(), l.end(), std::back_inserter(list));
-  return list;
+  std::copy(l.begin(), l.end(), std::back_inserter(mListOfTargetOrgansNames));
+  return mListOfTargetOrgansNames;
 }
 // --------------------------------------------------------------------

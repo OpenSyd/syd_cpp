@@ -26,10 +26,11 @@
 // the change is legitimate: 1) open and 2) increment the
 // version. 3) Once checked, close again.
 // It  means that we can migrate from base version to current version)
-#define SYD_VERSION      0130 // version 1.30 (current version)
+#define SYD_VERSION      0131 // version 1.31 (current version)
 #define SYD_BASE_VERSION 0101 // version 1.1 (base version)
 
 // Log:
+// 1.31 : add table OrganICRPDose
 // 1.30 : add tag dicom real world value intercept/slope
 // 1.29 : add tag to File
 // 1.28 : add DicomStruct (and refactor DicomSerie)
@@ -71,8 +72,8 @@
 #define BUILD_VERSION(x,y)  PASTER(x,y)
 
 #ifdef ODB_COMPILER
-#pragma db model version(BUILD_VERSION(,SYD_BASE_VERSION), BUILD_VERSION(,SYD_VERSION), closed)
-//#pragma db model version(BUILD_VERSION(,SYD_BASE_VERSION), BUILD_VERSION(,SYD_VERSION), open)
+//#pragma db model version(BUILD_VERSION(,SYD_BASE_VERSION), BUILD_VERSION(,SYD_VERSION), closed)
+#pragma db model version(BUILD_VERSION(,SYD_BASE_VERSION), BUILD_VERSION(,SYD_VERSION), open)
 #endif
 
 #endif

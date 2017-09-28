@@ -16,6 +16,9 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
+#ifndef SYDSCOEFFICIENTCALCULATOR_H
+#define  SYDSCOEFFICIENTCALCULATOR_H
+
 // syd
 #include "sydPluginManager.h"
 #include "sydICRP_RadiationData.h"
@@ -26,6 +29,9 @@ namespace syd {
 
   class SCoefficientCalculator {
   public:
+
+    /// Define pointer type
+    typedef std::shared_ptr<SCoefficientCalculator> pointer;
 
     /// Constructor
     SCoefficientCalculator();
@@ -80,7 +86,14 @@ namespace syd {
 
     /// ICRP vector of SAF for all radiation type (photon, electron etc)
     std::vector<std::shared_ptr<syd::ICRP_SpecificAbsorbedFractionData>> mSAFData;
+
+    /// Cache for list of organs
+    std::vector<std::string> mListOfSourceOrgansNames;
+    std::vector<std::string> mListOfTargetOrgansNames;
   };
 
 } // end namespace
 // --------------------------------------------------------------------
+
+
+#endif // SYDSCOEFFICIENTCALCULATOR_H

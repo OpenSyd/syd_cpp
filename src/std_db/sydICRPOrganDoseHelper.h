@@ -16,53 +16,30 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDICRP_RADIATIONDATA_H
-#define SYDICRP_RADIATIONDATA_H
+#ifndef SYDORGANICRPDOSEHELPER_H
+#define SYDORGANICRPDOSEHELPER_H
 
 // syd
-#include "sydDD.h"
-#include "sydLog.h"
-using namespace sydlog;
-
-// std
-#include <map>
-#include <vector>
+//#include "sydICRPOrganDose.h"
+#include "sydStandardDatabase.h"
+#include "sydSCoefficientCalculator.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
-  class ICRP_RadiationTypeData
-  {
-  public:
-    int mId;
-    // std::string mTypeName;
-    double mYield;
-    double mEnergy;
-    /* ICODE radiation type
-     1 G, PG, DG (Gamma rays)
-     2 X
-     3 AQ Annihilation photons
-     4 B+ Beta + particles
-     5 B- BD Beta – particles Delayed beta particles*
-     6 IE IC electrons
-     7 AE Auger electrons
-     8 A Alpha particles
-     9 AR Alpha recoil nuclei
-     10 FF Fission fragments
-     11 N Neutrons
-    */
-  };
+  /// FIXME
+  //  syd::ICRPOrganDose::pointer
+  void NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
+                        syd::FitTimepoints::pointer ftp,
+                        syd::FitTimepoints::vector ftps);
 
- class ICRP_RadiationData {
-  public:
-   void Read(std::string filename);
-    const std::vector<ICRP_RadiationTypeData> & GetData(std::string rad);
-    typedef std::map<std::string, std::vector<ICRP_RadiationTypeData>> ValuesMapType;
-    ValuesMapType mRadiationMap;
-  };
+  std::string GuessTargetRoiName(syd::SCoefficientCalculator::pointer c,
+                                 syd::Timepoints::pointer tp);
+  std::string GuessSourceRoiName(syd::SCoefficientCalculator::pointer c,
+                                 syd::Timepoints::pointer tp);
 
 
 } // end namespace
 // --------------------------------------------------------------------
 
-#endif // SYDICRP_RADIATIONDATA_H
+#endif

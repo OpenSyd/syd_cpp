@@ -20,13 +20,13 @@
 #include "sydInsertICRPOrganDose_ggo.h"
 #include "sydCommonGengetopt.h"
 #include "sydSCoefficientCalculator.h"
-#include "sydStandardDatabase.h"
+#include "sydICRPOrganDoseHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(sydInsertICRPOrganDose, 3);
+  SYD_INIT_GGO(sydInsertICRPOrganDose, 2);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -36,15 +36,25 @@ int main(int argc, char* argv[])
   syd::StandardDatabase * db =
     m->Open<syd::StandardDatabase>(args_info.db_arg);
 
-  // Parameters
-  syd::IdType id = atoi(args_info.inputs[0]);
+  // Get the list of FitTimepoints (the first is target)
+  std::vector<syd::IdType> ids;
+  syd::ReadIdsFromInputPipe(ids);
+  for(auto i=0; i<args_info.inputs_num; i++) {
+    std::string s = args_info.inputs[i];
+    auto v = std::stoi(s);
+    ids.push_back(v);
+  }
+  syd::FitTimepoints::vector ftps;
+  db->Query(ftps, ids);
+  if (ftps.size() == 0) {
+    LOG(1) << "No Timepoints.";
+    return EXIT_SUCCESS;
+  }
+  DDS(ftps);
+
+  // Other params
   auto phantom_name = args_info.phantom_arg;
   auto folder = args_info.folder_arg;
-
-  // Get the FitTimepoint
-  syd::FitTimepoints::pointer fittimepoint;
-  db->QueryOne(fittimepoint, id);
-  DD(fittimepoint);
 
   // Initialise the calculator
   auto c = std::make_shared<syd::SCoefficientCalculator>();
@@ -52,8 +62,9 @@ int main(int argc, char* argv[])
   c->SetPhantomName(phantom_name);
 
   // FIXME
-  //  auto od = syd::NewOrganICRPDose(c, ft);
-  //DD(od);
+  //auto od =
+    syd::NewICRPOrganDose(c, ftps[0], ftps);
+    //DD(od);
 
   // This is the end, my friend.
 }

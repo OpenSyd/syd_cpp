@@ -79,6 +79,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydFitImagesHelper.cxx
   sydGateHelper.cxx
   sydDicomStructHelper.cxx
+  sydICRPOrganDoseHelper.cxx
 
   sydImageType.cxx
   sydThumbnail.cxx
