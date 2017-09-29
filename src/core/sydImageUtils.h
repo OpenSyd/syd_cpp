@@ -23,6 +23,7 @@
 #include "sydCommon.h"
 #include "sydFileUtils.h"
 #include "sydDicomUtils.h"
+#include "sydImageCrop.h"
 
 // itk
 #include <itkImageFileReader.h>
@@ -37,6 +38,7 @@
 #include <itkImageSliceIteratorWithIndex.h>
 #include <itkImageSliceConstIteratorWithIndex.h>
 #include <itkConvolutionImageFilter.h>
+#include <itkJoinSeriesImageFilter.h>
 #include "gdcmImageHelper.h"
 
 // --------------------------------------------------------------------
@@ -63,12 +65,12 @@ namespace syd {
 
   //--------------------------------------------------------------------
   template<class ImageType>
-    void WriteImage(typename ImageType::Pointer image, std::string filename);
+    void WriteImage(typename ImageType::Pointer image, std::string filename, int dimension = 3);
 
   void WriteImage(typename itk::ImageBase<3>::Pointer image, std::string filename);
 
   template<class ImageType>
-    typename ImageType::Pointer ReadImage(std::string filename);
+    typename ImageType::Pointer ReadImage(std::string filename, int dimension = 3);
 
   itk::ImageIOBase::Pointer ReadImageHeader(const std::string & filename);
 

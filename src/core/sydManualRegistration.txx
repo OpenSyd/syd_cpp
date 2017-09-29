@@ -35,21 +35,23 @@ syd::ManualRegistration(const ImageType * inputImage, double x, double y, double
   resampleFilter->SetOutputDirection(inputImage->GetDirection());
 
   // Instantiate the transform
-  typedef itk::TranslationTransform<double,3> TranslationTransformType;
-  TranslationTransformType::Pointer transform = TranslationTransformType::New();
+  typedef itk::TranslationTransform<double,ImageType::ImageDimension> TranslationTransformType;
+  typename TranslationTransformType::Pointer transform = TranslationTransformType::New();
   transform->SetIdentity();
 
-  TranslationTransformType::OutputVectorType translation;
+  typename TranslationTransformType::OutputVectorType translation;
   translation[0] = -x;
   translation[1] = -y;
-  translation[2] = -z;
+  if (ImageType::ImageDimension > 2)
+    translation[2] = -z;
   transform->Translate(translation);
 
   //Update the origin
   typename ImageType::PointType origin = inputImage->GetOrigin();
   origin[0] += x;
   origin[1] += y;
-  origin[2] += z;
+  if (ImageType::ImageDimension > 2)
+    origin[2] += z;
 
   resampleFilter->SetTransform(transform.GetPointer());
   resampleFilter->SetOutputOrigin(origin);

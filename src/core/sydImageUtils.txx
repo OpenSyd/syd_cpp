@@ -18,15 +18,28 @@
 
 // --------------------------------------------------------------------
 template<class ImageType>
-void WriteImage(typename ImageType::Pointer image, std::string filename)
+void WriteImage(typename ImageType::Pointer image, std::string filename, int dimension)
 {
-  typedef itk::ImageFileWriter<ImageType> WriterType;
-  typename WriterType::Pointer writer = WriterType::New();
-  writer->SetFileName(filename.c_str());
-  writer->SetInput(image);
-  try { writer->Update(); }
-  catch(itk::ExceptionObject & err) {
-    EXCEPTION("Error in 'WriteImage' while writing [" << filename << "]");
+  if (dimension == 2 && dimension != ImageType::ImageDimension) {
+    typedef typename ImageType::PixelType PixelType;
+    typedef itk::Image<PixelType, 2> ImageType2D;
+    typedef itk::ImageFileWriter<ImageType2D> WriterType;
+    typename WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName(filename.c_str());
+    writer->SetInput(syd::RemoveThirdDimension<ImageType, ImageType2D>(image));
+    try { writer->Update(); }
+    catch(itk::ExceptionObject & err) {
+      EXCEPTION("Error in 'WriteImage' while writing [" << filename << "]");
+    }
+  } else {
+    typedef itk::ImageFileWriter<ImageType> WriterType;
+    typename WriterType::Pointer writer = WriterType::New();
+    writer->SetFileName(filename.c_str());
+    writer->SetInput(image);
+    try { writer->Update(); }
+    catch(itk::ExceptionObject & err) {
+      EXCEPTION("Error in 'WriteImage' while writing [" << filename << "]");
+    }
   }
 }
 //--------------------------------------------------------------------
@@ -34,17 +47,38 @@ void WriteImage(typename ImageType::Pointer image, std::string filename)
 
 // --------------------------------------------------------------------
 template<class ImageType>
-typename ImageType::Pointer ReadImage(std::string filename)
+typename ImageType::Pointer ReadImage(std::string filename, int dimension)
 {
-  typedef itk::ImageFileReader<ImageType> ReaderType;
-  typename ReaderType::Pointer reader = ReaderType::New();
-  reader->SetFileName(filename.c_str());
-  gdcm::ImageHelper::SetForcePixelSpacing(true);
-  try { reader->Update(); }
-  catch(itk::ExceptionObject & err) {
-    EXCEPTION("Error in 'ReadImage' while reading [" << filename << "]");
+  if (dimension == 2 && dimension != ImageType::ImageDimension) {
+    typedef typename ImageType::PixelType PixelType;
+    typedef itk::Image<PixelType, 2> ImageType2D;
+    typedef itk::ImageFileReader<ImageType2D> ReaderType;
+    typename ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName(filename.c_str());
+    gdcm::ImageHelper::SetForcePixelSpacing(true);
+    try { reader->Update(); }
+    catch(itk::ExceptionObject & err) {
+      EXCEPTION("Error in 'ReadImage' while reading [" << filename << "]");
+    }
+
+    typedef itk::JoinSeriesImageFilter<ImageType2D, ImageType> JoinType;
+    typename JoinType::Pointer joiner = JoinType::New();
+    joiner->SetOrigin(0.0);
+    joiner->SetSpacing(1.0);
+    joiner->SetInput(reader->GetOutput());
+    joiner->Update();
+    return joiner->GetOutput();
+  } else {
+    typedef itk::ImageFileReader<ImageType> ReaderType;
+    typename ReaderType::Pointer reader = ReaderType::New();
+    reader->SetFileName(filename.c_str());
+    gdcm::ImageHelper::SetForcePixelSpacing(true);
+    try { reader->Update(); }
+    catch(itk::ExceptionObject & err) {
+      EXCEPTION("Error in 'ReadImage' while reading [" << filename << "]");
+    }
+    return reader->GetOutput();
   }
-  return reader->GetOutput();
 }
 //--------------------------------------------------------------------
 

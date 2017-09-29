@@ -24,6 +24,7 @@
 #include "sydImageExtractSlices.h"
 #include "sydImageGeometricalMean.h"
 #include "sydPixelUnitHelper.h"
+#include "sydImageCrop.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -37,7 +38,8 @@ namespace syd {
   template<typename ImageType>
     syd::Image::pointer InsertImage(typename ImageType::Pointer itk_image,
                                     syd::Patient::pointer patient,
-                                    std::string modality="image");
+                                    std::string modality="image",
+                                    int dimension = 3);
 
   /// Create a new image from a DicomSerie. Pixel type could be float,
   /// short, auto etc
@@ -121,7 +123,8 @@ namespace syd {
 
   // Compute the manual registration of an image.
   syd::Image::pointer InsertManualRegistration(const syd::Image::pointer inputImage,
-                                               double x, double y, double z);
+                                               double x, double y, double z,
+                                               int center, bool inPlace);
 
   // Compute the flip of an image.
   syd::Image::pointer InsertFlip(const syd::Image::pointer inputImage,

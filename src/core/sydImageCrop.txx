@@ -134,15 +134,16 @@ CropImageWithLowerThreshold(const ImageType * input, typename ImageType::PixelTy
 
 
 //--------------------------------------------------------------------
-template<class PixelType>
-typename itk::Image<PixelType, 2>::Pointer
-RemoveThirdDimension(const itk::Image<PixelType, 3> * input)
+template<class InputType, class OutputType>
+typename OutputType::Pointer
+RemoveThirdDimension(const InputType* input)
 {
+  assert(InputType::ImageDimension == 3);
+  assert(OutputType::ImageDimension == 2);
+
   //Compute the region whithout the last (3rd) dimension
-  typedef itk::Image<PixelType, 3> InputImageType;
-  typedef itk::Image<PixelType, 2> OutputImageType;
-  typename InputImageType::IndexType start;
-  typename InputImageType::SizeType size;
+  typename InputType::IndexType start;
+  typename InputType::SizeType size;
 
   start[0] = input->GetLargestPossibleRegion().GetIndex()[0];
   start[1] = input->GetLargestPossibleRegion().GetIndex()[1];
@@ -150,10 +151,10 @@ RemoveThirdDimension(const itk::Image<PixelType, 3> * input)
   size[0] = input->GetLargestPossibleRegion().GetSize()[0];
   size[1] = input->GetLargestPossibleRegion().GetSize()[1];
   size[2] = 0;
-  typename InputImageType::RegionType region(start, size);
+  typename InputType::RegionType region(start, size);
 
   // Crop without the last dimension
-  typedef itk::ExtractImageFilter<InputImageType, OutputImageType> CropFilterType;
+  typedef itk::ExtractImageFilter<InputType, OutputType> CropFilterType;
   typename CropFilterType::Pointer cropFilter = CropFilterType::New();
   cropFilter->SetInput(input);
   cropFilter->SetDirectionCollapseToIdentity();

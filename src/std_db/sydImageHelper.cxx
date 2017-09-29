@@ -347,10 +347,10 @@ syd::InsertImageGeometricalMean(const syd::Image::pointer input,
   std::vector<ImageType::Pointer> itk_images;
   syd::ExtractSlices<ImageType>(itk_input, 2, itk_images); // Direction = Z (2)
   if (crop) {
-    auto ant_em = syd::RemoveThirdDimension<PixelType>(itk_images[0]);
-    auto post_em = syd::RemoveThirdDimension<PixelType>(itk_images[1]);
-    auto ant_sc = syd::RemoveThirdDimension<PixelType>(itk_images[2]);
-    auto post_sc = syd::RemoveThirdDimension<PixelType>(itk_images[3]);
+    auto ant_em = syd::RemoveThirdDimension<ImageType, OutputImageType>(itk_images[0]);
+    auto post_em = syd::RemoveThirdDimension<ImageType, OutputImageType>(itk_images[1]);
+    auto ant_sc = syd::RemoveThirdDimension<ImageType, OutputImageType>(itk_images[2]);
+    auto post_sc = syd::RemoveThirdDimension<ImageType, OutputImageType>(itk_images[3]);
     auto gmean = syd::GeometricalMean<OutputImageType>(ant_em, post_em, ant_sc, post_sc, k);
 
     // Create the syd image
@@ -452,16 +452,37 @@ syd::InsertAttenuationCorrectedImage(const syd::Image::pointer input_GM,
 // --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertManualRegistration(const syd::Image::pointer inputImage,
-                              double x, double y, double z)
+                              double x, double y, double z,
+                              int center, bool inPlace)
 {
   // Force to float
   typedef float PixelType;
-  typedef itk::Image<PixelType, 3> ImageType3D;
-  auto itk_inputImage = syd::ReadImage<ImageType3D>(inputImage->GetAbsolutePath());
-  auto imageRegister = syd::ManualRegistration<ImageType3D>(itk_inputImage, x, y, z);
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto db = inputImage->GetDatabase();
+  auto itk_inputImage = syd::ReadImage<ImageType>(inputImage->GetAbsolutePath(), inputImage->dimension);
+
+  //Centerized the image
+  if (center != 0) {
+    syd::IdType idCenterImage = center;
+    syd::Image::pointer centerImage;
+    db->QueryOne(centerImage, idCenterImage); // will fail if not found
+    LOG(2) << "Read image :" << centerImage;
+    auto itk_centerImage = syd::ReadImage<ImageType>(centerImage->GetAbsolutePath(), centerImage->dimension);
+    x += itk_centerImage->GetOrigin()[0] + itk_centerImage->GetLargestPossibleRegion().GetSize()[0]*itk_centerImage->GetSpacing()[0]/2 - itk_inputImage->GetOrigin()[0] - itk_inputImage->GetLargestPossibleRegion().GetSize()[0]*itk_inputImage->GetSpacing()[0]/2 +x;
+    y += itk_centerImage->GetOrigin()[1] + itk_centerImage->GetLargestPossibleRegion().GetSize()[1]*itk_centerImage->GetSpacing()[1]/2 - itk_inputImage->GetOrigin()[1] - itk_inputImage->GetLargestPossibleRegion().GetSize()[1]*itk_inputImage->GetSpacing()[1]/2 +y;
+    if (inputImage->dimension >= 3)
+      z += itk_centerImage->GetOrigin()[2] + itk_centerImage->GetLargestPossibleRegion().GetSize()[2]*itk_centerImage->GetSpacing()[2]/2 - itk_inputImage->GetOrigin()[2] - itk_inputImage->GetLargestPossibleRegion().GetSize()[2]*itk_inputImage->GetSpacing()[2]/2 +z;
+  }
+
+  //Register the image
+  auto imageRegister = syd::ManualRegistration<ImageType>(itk_inputImage, x, y, z);
 
   // Create the syd image
-  return syd::InsertImage<ImageType3D>(imageRegister, inputImage->patient, inputImage->modality);
+  if (inPlace) {
+    syd::WriteImage<ImageType>(imageRegister, inputImage->GetAbsolutePath(), inputImage->dimension);
+    return inputImage;
+  } else
+    return syd::InsertImage<ImageType>(imageRegister, inputImage->patient, inputImage->modality, inputImage->dimension);
 }
 // --------------------------------------------------------------------
 

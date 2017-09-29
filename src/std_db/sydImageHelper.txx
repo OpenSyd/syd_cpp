@@ -64,7 +64,8 @@ void syd::SetImageInfoFromCommandLine(syd::Image::pointer image,
 template<typename ImageType>
 syd::Image::pointer syd::InsertImage(typename ImageType::Pointer itk_image,
                                      syd::Patient::pointer patient,
-                                     std::string modality)
+                                     std::string modality,
+                                     int dimension)
 {
   // New image
   auto db = patient->GetDatabase();
@@ -76,7 +77,7 @@ syd::Image::pointer syd::InsertImage(typename ImageType::Pointer itk_image,
 
   // save the image
   std::string filename = db->GetUniqueTempFilename();
-  syd::WriteImage<ImageType>(itk_image, filename);
+  syd::WriteImage<ImageType>(itk_image, filename, dimension);
 
   // insert the files
   image->files = syd::InsertFilesFromMhd(db, filename,
