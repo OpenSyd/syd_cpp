@@ -58,6 +58,8 @@ void syd::StandardDatabase::CreateTables()
   AddTable<syd::Timepoints>();
   AddTable<syd::RoiTimepoints>();
   AddTable<syd::FitTimepoints>();
+
+  AddTable<syd::ICRPOrganDose>();
 }
 // --------------------------------------------------------------------
 

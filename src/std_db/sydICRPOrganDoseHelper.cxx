@@ -48,12 +48,15 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
 
   int i=0;
   double dose = 0.0;
+  std::vector<double> S;
   for(auto source_name:source_names) {
     c->SetSourceOrgan(source_name);
     auto s = c->Run();
+    S.push_back(s);
 
-    // Get the TIA in the Source
+    // Get the TIA in the source (with correct unit)
     auto auc = source_fts[i]->auc;
+    //    DD(source_fts[i]->unit);
 
     // Compute dose
     dose += auc*s;
@@ -61,6 +64,32 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
     ++i;
   }
   DD(dose);
+
+  // unity
+  // S are in mGy/MBq.h
+  // auc -> ? MUST be in MBq.h
+
+
+  // Create a new ICRPOrganDose
+  auto db = target_ft->GetDatabase();
+  auto od = db->New<syd::ICRPOrganDose>();
+  od->target_fit_timepoints = target_ft;
+  od->sources_fit_timepoints = source_fts;
+  od->radionuclide =  rad;
+  od->S_coefficients = S;
+  od->absorbed_dose_in_Gy = dose;
+  // target_fit_timepoints;
+  // sources_fit_timepoints;
+  // radionuclide;
+  // SCoefficients;
+  // absorbed_dose_in_Gy;
+  // phantom_name;
+  // target_organ_name;
+  // target_roitype;
+  // source_organ_names;
+  // source_roitypes;
+
+  DD(od);
 }
 // --------------------------------------------------------------------
 

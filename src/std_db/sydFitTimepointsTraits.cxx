@@ -33,6 +33,7 @@ BuildFields(const syd::Database * db) const
   InitCommonFields();
   ADD_TABLE_FIELD(timepoints, syd::Timepoints);
   ADD_TABLE_FIELD(history, syd::RecordHistory);
+  ADD_TABLE_FIELD(unit, syd::PixelUnit);
 
   ADD_RO_FIELD(auc, double);
   ADD_RO_FIELD(r2, double);
@@ -70,7 +71,7 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["default"] =
-    "id timepoints.id[tid] timepoints.patient.name[pat] timepoints.injection.radionuclide.name[rad] roi tags model_name[model] auc r2 first_index iterations[it] params r2_min akaike_criterion restricted_tac max_iteration models";
+    "id timepoints.id[tid] timepoints.patient.name[pat] timepoints.injection.radionuclide.name[rad] roi tags model_name[model] auc unit.name[unit] r2 first_index iterations[it] params r2_min akaike_criterion restricted_tac max_iteration models";
 
   field_format_map_["hist"] =
     "default history.insertion_date[insert] history.update_date[update]";

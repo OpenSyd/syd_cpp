@@ -34,6 +34,7 @@ BuildFields(const syd::Database * db) const
   ADD_TABLE_FIELD(patient, syd::Patient);
   ADD_TABLE_FIELD(injection, syd::Injection);
   ADD_TABLE_FIELD(history, syd::RecordHistory);
+  ADD_TABLE_FIELD(unit, syd::PixelUnit);
 
   // times
   auto f_times = [](pointer p) -> std::string {
@@ -72,7 +73,7 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["default"] =
-    "id patient.name[pat] injection.radionuclide.name[rad] injection.id[inj] times values std_deviations[std] comments[com]";
+    "id patient.name[pat] injection.radionuclide.name[rad] injection.id[inj] times values unit.name[unit] std_deviations[std] comments[com]";
 }
 // --------------------------------------------------------------------
 

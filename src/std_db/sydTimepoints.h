@@ -60,6 +60,9 @@ namespace syd {
       /// Associated std dev (not required)
       std::vector<double> std_deviations;
 
+      /// Unity (e.g. MBq.h)
+      syd::PixelUnit::pointer unit;
+
       /// Write the element as a string
       virtual std::string ToString() const;
 

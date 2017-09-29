@@ -1,4 +1,16 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="305">
+    <alter-table name="syd::FitTimepoints">
+      <add-column name="unit" type="INTEGER" null="true"/>
+      <add-foreign-key name="unit_fk" deferrable="DEFERRED">
+        <column name="unit"/>
+        <references table="syd::PixelUnit">
+          <column name="id"/>
+        </references>
+      </add-foreign-key>
+    </alter-table>
+  </changeset>
+
   <changeset version="304"/>
 
   <changeset version="297"/>

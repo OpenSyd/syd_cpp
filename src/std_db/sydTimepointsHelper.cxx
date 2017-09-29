@@ -21,6 +21,7 @@
 #include "sydStandardDatabase.h"
 #include "sydTimeIntegratedActivityFilter.h"
 #include "sydImageHelper.h"
+#include "sydPixelUnitHelper.h"
 
 // --------------------------------------------------------------------
 syd::RoiTimepoints::vector syd::FindRoiTimepoints(const syd::RoiStatistic::vector stats)
@@ -79,6 +80,7 @@ syd::NewRoiTimepoints(const syd::RoiStatistic::vector stats)
   auto rtp = db->New<syd::RoiTimepoints>();
   rtp->patient = patient;
   rtp->injection = injection;
+  rtp->unit = stats[0]->image->pixel_unit;
 
   // sort the roistat according to their times
   auto sorted_stats = stats;
@@ -176,6 +178,19 @@ void syd::ComputeFitTimepoints(syd::FitTimepoints::pointer ft)
     ft->params = model->GetParameters();
   }
   ft->iterations = filter.GetNbOfIterations();
+
+  // Unit
+  auto tp = ft->timepoints;
+  DD(tp);
+  auto unit = tp->unit;
+  DD(unit);
+  auto a = unit->name+".h";
+  auto db = ft->GetDatabase<syd::StandardDatabase>();
+  auto u = syd::FindOrCreatePixelUnit(db, a);
+  DD(u);
+  tp->unit = u;
+  DD(tp);
+
 }
 // --------------------------------------------------------------------
 
@@ -224,6 +239,7 @@ syd::NewTimepointsAtPixel(const syd::Image::vector & images,
 
   // Get the times (no values yet)
   tp->times = syd::GetTimesFromInjection(images);
+  tp->unit = images[0]->pixel_unit;
 
   // Read all itk images
   typedef float PixelType;

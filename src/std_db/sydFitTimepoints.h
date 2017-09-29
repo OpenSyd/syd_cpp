@@ -62,6 +62,9 @@ namespace syd {
       /// Number of iterations
       int iterations;
 
+      /// Unity (e.g. MBq.h)
+      syd::PixelUnit::pointer unit;
+
       /// Write the element as a string
       virtual std::string ToString() const;
 

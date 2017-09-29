@@ -40,6 +40,7 @@
 #include "sydTimepoints-odb.hxx"
 #include "sydRoiTimepoints-odb.hxx"
 #include "sydFitTimepoints-odb.hxx"
+#include "sydICRPOrganDose-odb.hxx"
 
 #include "sydPatientTraits.h"
 #include "sydInjectionTraits.h"
@@ -57,6 +58,7 @@
 #include "sydRoiTimepointsTraits.h"
 #include "sydFitTimepointsTraits.h"
 #include "sydElastixTraits.h"
+#include "sydICRPOrganDoseTraits.h"
 
 // itk
 #include <itkImage.h>

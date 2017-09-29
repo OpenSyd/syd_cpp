@@ -48,6 +48,7 @@ std::string syd::Timepoints::ToString() const
     for(auto i=0; i<times.size(); ++i)
       ss << times[i] << " " << values[i] << " ";
   }
+  ss << (unit==nullptr ? empty_value:unit->name);
   return ss.str();
 }
 // --------------------------------------------------------------------
