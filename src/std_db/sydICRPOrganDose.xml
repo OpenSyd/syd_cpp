@@ -1,0 +1,148 @@
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="305">
+    <add-table name="syd::ICRPOrganDose" kind="polymorphic root object">
+      <column name="id" type="INTEGER" null="true"/>
+      <column name="history" type="INTEGER" null="true"/>
+      <column name="md5" type="TEXT" null="true" options="UNIQUE"/>
+      <column name="typeid" type="TEXT" null="true"/>
+      <column name="target_fit_timepoints" type="INTEGER" null="true"/>
+      <column name="radionuclide" type="INTEGER" null="true"/>
+      <column name="absorbed_dose_in_Gy" type="REAL" null="true"/>
+      <column name="phantom_name" type="TEXT" null="true"/>
+      <column name="target_organ_name" type="TEXT" null="true"/>
+      <column name="target_roitype" type="INTEGER" null="true"/>
+      <primary-key auto="true">
+        <column name="id"/>
+      </primary-key>
+      <foreign-key name="history_fk" deferrable="DEFERRED">
+        <column name="history"/>
+        <references table="syd::RecordHistory">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <foreign-key name="target_fit_timepoints_fk" deferrable="DEFERRED" on-delete="CASCADE">
+        <column name="target_fit_timepoints"/>
+        <references table="syd::FitTimepoints">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <foreign-key name="radionuclide_fk" deferrable="DEFERRED">
+        <column name="radionuclide"/>
+        <references table="syd::Radionuclide">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <foreign-key name="target_roitype_fk" deferrable="DEFERRED">
+        <column name="target_roitype"/>
+        <references table="syd::RoiType">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::ICRPOrganDose_tags" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::ICRPOrganDose">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::ICRPOrganDose_tags_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::ICRPOrganDose_tags_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::Tag">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::ICRPOrganDose_sources_fit_timepoints" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::ICRPOrganDose">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::ICRPOrganDose_sources_fit_timepoints_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::ICRPOrganDose_sources_fit_timepoints_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED" on-delete="CASCADE">
+        <column name="value"/>
+        <references table="syd::FitTimepoints">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+    <add-table name="syd::ICRPOrganDose_S_coefficients" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="REAL" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::ICRPOrganDose">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::ICRPOrganDose_S_coefficients_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::ICRPOrganDose_S_coefficients_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+    <add-table name="syd::ICRPOrganDose_source_organ_names" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="TEXT" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::ICRPOrganDose">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::ICRPOrganDose_source_organ_names_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::ICRPOrganDose_source_organ_names_index_i">
+        <column name="index"/>
+      </index>
+    </add-table>
+    <add-table name="syd::ICRPOrganDose_source_roitypes" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::ICRPOrganDose">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::ICRPOrganDose_source_roitypes_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::ICRPOrganDose_source_roitypes_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::RoiType">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
+  <model version="257"/>
+</changelog>
