@@ -60,9 +60,9 @@ namespace syd {
   //--------------------------------------------------------------------
 
   //Crop an image reducing it by removing the last (3rd) dimension
-  template<class PixelType>
-  typename itk::Image<PixelType, 2>::Pointer
-  RemoveThirdDimension(const itk::Image<PixelType, 3> * input);
+  template<class InputType, class OutputType>
+  typename OutputType::Pointer
+  RemoveThirdDimension(const InputType* input);
 #include "sydImageCrop.txx"
 
 } // end namespace

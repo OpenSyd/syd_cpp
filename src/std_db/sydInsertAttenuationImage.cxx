@@ -102,10 +102,13 @@ int main(int argc, char* argv[])
 
   // Main computation
   auto image = syd::InsertAttenuationImage(input, input_like, numberEnergySPECT, attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT, weight);
-  syd::FindOrCreatePixelUnit(db, "attenuation", "Attenuation Factor");
-  syd::SetPixelUnit(image, "attenuation");
+
+  // set properties from the image
+  syd::SetImageInfoFromImage(image, input);
 
   // Update image info
+  syd::FindOrCreatePixelUnit(db, "attenuation", "Attenuation Factor");
+  syd::SetPixelUnit(image, "attenuation");
   syd::SetTagsFromCommandLine(image->tags, db, args_info);
   syd::SetImageInfoFromCommandLine(image, args_info);
   syd::SetCommentsFromCommandLine(image->comments, db, args_info);
