@@ -21,8 +21,7 @@
 #include "../levenshtein-sse/levenshtein-sse.hpp"
 
 // --------------------------------------------------------------------
-//syd::ICRPOrganDose::pointer
-void
+syd::ICRPOrganDose::pointer
 syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
                       syd::FitTimepoints::pointer target_ft,
                       syd::FitTimepoints::vector source_fts)
@@ -56,19 +55,35 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
 
     // Get the TIA in the source (with correct unit)
     auto auc = source_fts[i]->auc;
-    //    DD(source_fts[i]->unit);
+    auto unit = source_fts[i]->unit;
+    double scaling_to_MB = 1.0;
+    if (unit->name == "Bq.h") scaling_to_MB = 1.0/1000000.0;
+    else {
+      if (unit->name == "kBq.h") scaling_to_MB = 1.0/1000.0;
+      else {
+        if (unit->name == "MBq.h") scaling_to_MB = 1.0;
+        else {
+          LOG(WARNING) << "Unit of the FitTimepoints is unknown.";
+        }
+      }
+    }
+    auc = auc * scaling_to_MB;
 
     // Compute dose
     dose += auc*s;
 
     ++i;
   }
-  DD(dose);
 
   // unity
   // S are in mGy/MBq.h
-  // auc -> ? MUST be in MBq.h
+  // auc must be in MBq.h
+  dose = dose/1000.0;// to convert in Gy
 
+  auto target_rtp = std::dynamic_pointer_cast<syd::RoiTimepoints>(target_ft->timepoints);
+  if (!target_rtp or target_rtp->roi_statistics.size() == 0) {
+    EXCEPTION("Cannot guess the (target) roitype for this FitTimepoint " << target_ft);
+  }
 
   // Create a new ICRPOrganDose
   auto db = target_ft->GetDatabase();
@@ -78,18 +93,19 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
   od->radionuclide =  rad;
   od->S_coefficients = S;
   od->absorbed_dose_in_Gy = dose;
-  // target_fit_timepoints;
-  // sources_fit_timepoints;
-  // radionuclide;
-  // SCoefficients;
-  // absorbed_dose_in_Gy;
-  // phantom_name;
-  // target_organ_name;
-  // target_roitype;
-  // source_organ_names;
+  od->phantom_name = c->GetPhantomName();
+  od->target_organ_name = target_name;
+  od->target_roitype = target_rtp->roi_statistics[0]->mask->roitype;
+  for(auto ft:source_fts) {
+     auto source_rtp = std::dynamic_pointer_cast<syd::RoiTimepoints>(ft->timepoints);
+     if (!source_rtp or source_rtp->roi_statistics.size() == 0) {
+       EXCEPTION("Cannot guess the (target) roitype for this FitTimepoint " << ft);
+     }
+     od->source_roitypes.push_back(source_rtp->roi_statistics[0]->mask->roitype);
+  }
   // source_roitypes;
-
-  DD(od);
+  od->source_organ_names = source_names;
+  return od;
 }
 // --------------------------------------------------------------------
 

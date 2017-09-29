@@ -150,7 +150,7 @@ double syd::SCoefficientCalculator::Run()
     }
     auto saf = ss->Compute(energy);
     s += (energy * yield * saf);
-    if (yield>10.05) {
+    if (0) {//}yield>10.05) {
       DD("----------");
       DD(i);
       DD(energy);

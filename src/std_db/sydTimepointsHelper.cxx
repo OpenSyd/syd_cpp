@@ -179,17 +179,13 @@ void syd::ComputeFitTimepoints(syd::FitTimepoints::pointer ft)
   }
   ft->iterations = filter.GetNbOfIterations();
 
-  // Unit
+  // Unit (idem to timepoints but integrated in time in hours)
   auto tp = ft->timepoints;
-  DD(tp);
   auto unit = tp->unit;
-  DD(unit);
   auto a = unit->name+".h";
   auto db = ft->GetDatabase<syd::StandardDatabase>();
   auto u = syd::FindOrCreatePixelUnit(db, a);
-  DD(u);
-  tp->unit = u;
-  DD(tp);
+  ft->unit = u;
 
 }
 // --------------------------------------------------------------------

@@ -27,14 +27,17 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-  /// FIXME
-  //  syd::ICRPOrganDose::pointer
-  void NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
-                        syd::FitTimepoints::pointer ftp,
-                        syd::FitTimepoints::vector ftps);
+  /// Create a ICRPOrganDose for a target/sources FitTimepoint
+  syd::ICRPOrganDose::pointer
+    NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
+                     syd::FitTimepoints::pointer ftp,
+                     syd::FitTimepoints::vector ftps);
 
+  /// Try to guess the ICRP name from the RoiTimepoints roitype
   std::string GuessTargetRoiName(syd::SCoefficientCalculator::pointer c,
                                  syd::Timepoints::pointer tp);
+
+  /// Try to guess the ICRP name from the RoiTimepoints roitype
   std::string GuessSourceRoiName(syd::SCoefficientCalculator::pointer c,
                                  syd::Timepoints::pointer tp);
 

@@ -54,17 +54,17 @@ std::string syd::ICRPOrganDose::ToString() const
     ss << "no target fit_timepoints";
     return ss.str();
   }
-  ss << "T: " << target_fit_timepoints->id << " S: ";
+  ss << "T:" << target_fit_timepoints->id << " S:";
   for(auto s:sources_fit_timepoints)
     ss << s->id << " ";
   ss << syd::GetLabels(tags) << " "
      << radionuclide->name << " "
-     << "d= " << absorbed_dose_in_Gy << " Gy "
-     << "T: " << target_organ_name << " S: ";
+     << "d:" << absorbed_dose_in_Gy << " Gy "
+     << "T:" << target_organ_name << " S:";
   for(auto s:source_organ_names)
-    ss << "S:" << s << " ";
+    ss << s << " ";
   ss << phantom_name << " "
-     << "Scoeff: ";
+     << "Scoeff:";
   for(auto s:S_coefficients)
     ss << s << " ";
   return ss.str();
@@ -104,6 +104,7 @@ std::string syd::ICRPOrganDose::ToStringForMD5() const
   for(auto s:sources_fit_timepoints) ss << s;
   for(auto s:S_coefficients) ss << s;
   for(auto s:source_organ_names) ss << s;
+  DD(ss.str());
   return ss.str();
 }
 // --------------------------------------------------------------------

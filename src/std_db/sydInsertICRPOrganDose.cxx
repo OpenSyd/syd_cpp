@@ -26,7 +26,7 @@
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(sydInsertICRPOrganDose, 2);
+  SYD_INIT_GGO(sydInsertICRPOrganDose, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -47,10 +47,14 @@ int main(int argc, char* argv[])
   syd::FitTimepoints::vector ftps;
   db->Query(ftps, ids);
   if (ftps.size() == 0) {
-    LOG(1) << "No Timepoints.";
+    LOG(1) << "No FitTimepoints.";
     return EXIT_SUCCESS;
   }
-  DDS(ftps);
+  if (ids.size() != ftps.size()) {
+    DDS(ids);
+    DDS(ftps);
+    LOG(FATAL) << "Error, cannot find some FitTimepoints ids.";
+  }
 
   // Other params
   auto phantom_name = args_info.phantom_arg;
@@ -61,10 +65,19 @@ int main(int argc, char* argv[])
   c->Initialise(folder);
   c->SetPhantomName(phantom_name);
 
-  // FIXME
-  //auto od =
-    syd::NewICRPOrganDose(c, ftps[0], ftps);
-    //DD(od);
+  // New ICRPOrganDose
+  auto od = syd::NewICRPOrganDose(c, ftps[0], ftps);
+  od->md5 = od->ComputeMD5();
+  odb::query<syd::ICRPOrganDose> q = odb::query<syd::ICRPOrganDose>::md5 == od->md5;
+  syd::ICRPOrganDose::vector ods;
+  db->Query(ods, q);
+  if (ods.size() == 0) {
+    db->Insert(od);
+    LOG(1) << "Insert new ICRPOrganDose: " << od;
+  }
+  else {
+    LOG(1) << "Already existing ICRPOrganDose: " << ods[0];
+  }
 
   // This is the end, my friend.
 }

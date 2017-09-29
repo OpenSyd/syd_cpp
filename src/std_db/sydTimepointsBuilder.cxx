@@ -197,8 +197,6 @@ void syd::TimepointsBuilder::SetFromModel(syd::Timepoints::pointer timepoints,
 syd::Timepoints::pointer
 syd::TimepointsBuilder::ComputeTimepointsForPixel()
 {
-  DDS(pixel);
-
   // Create tac
   syd::Timepoints::pointer tac;
   db_->New(tac);
@@ -222,7 +220,6 @@ syd::TimepointsBuilder::ComputeTimepointsForPixel()
   point[1] = pixel[1];
   point[2] = pixel[2];
   itk_images[0]->TransformPhysicalPointToIndex(point, index);
-  DD(index);
 
   // Set tac
   auto n = itk_images.size();

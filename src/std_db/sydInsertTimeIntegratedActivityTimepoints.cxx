@@ -52,20 +52,16 @@ int main(int argc, char* argv[])
     LOG(1) << "No Timepoints.";
     return EXIT_SUCCESS;
   }
-  DDS(tps);
 
   /// Read the options
   syd::TimeIntegratedActivityFitOptions options;
   syd::SetOptionsFromCommandLine(options, args_info);
-  DD(options);
 
   // Loop on all timepoints
   for(auto tp:tps) {
-    DD(tp);
     options.SetLambdaDecayConstantInHours(tps[0]->injection->GetLambdaDecayConstantInHours());
     // Try to see if already exist
     auto ftps = syd::FindFitTimepoints(tp, options);
-    DDS(ftps);
     if (ftps.size() == 0) {
       auto ftp = syd::NewFitTimepoints(tp, options);
       db->Insert(ftp);

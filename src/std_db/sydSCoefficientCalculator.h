@@ -47,6 +47,7 @@ namespace syd {
 
     /// Set the name of the phantom (AF or AM, Adult Female/Male)
     void SetPhantomName(std::string s);
+    std::string GetPhantomName() const { return mPhantomName; }
 
     /// Return the list of source organs
     std::vector<std::string> GetListOfSourceOrgans();
