@@ -56,6 +56,7 @@ int main(int argc, char* argv[])
   auto image = syd::InsertAttenuationCorrectedImage(input_GM, input_AM);
 
   // Update image info
+  syd::SetImageInfoFromImage(image, input_GM);
   syd::SetTagsFromCommandLine(image->tags, db, args_info);
   syd::SetImageInfoFromCommandLine(image, args_info);
   syd::SetCommentsFromCommandLine(image->comments, db, args_info);
