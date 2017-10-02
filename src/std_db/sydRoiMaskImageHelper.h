@@ -50,10 +50,16 @@ namespace syd {
                                                         syd::Patient::pointer patient,
                                                         syd::RoiType::pointer roitype);
 
-  /// Create a new roi mask image
-  syd::RoiMaskImage::pointer InsertRoiMaskImageFromFile(std::string filename,
-                                                        syd::Image::pointer image,
-                                                        syd::RoiType::pointer roitype);
+  // Insert a new ROI mask image
+  template<typename MaskType>
+  syd::RoiMaskImage::pointer InsertRoiMask(typename MaskType::Pointer itk_mask,
+                                           syd::Patient::pointer patient,
+                                           syd::RoiType::pointer roitype);
+
+  // Compute the FAF Mask.
+  syd::RoiMaskImage::pointer InsertFAFMask(const syd::Image::pointer input_SPECT,
+                                           const syd::Image::pointer input_planar);
+
 
 } // namespace syd
 // --------------------------------------------------------------------

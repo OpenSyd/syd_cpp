@@ -21,6 +21,7 @@
 #include "sydTagHelper.h"
 #include "sydImageCrop.h"
 #include "sydImageAnd.h"
+#include "sydFAFMask.h"
 
 // itk
 #include <itkLabelStatisticsImageFilter.h>
@@ -100,3 +101,46 @@ syd::InsertRoiMaskImageFromFile(std::string filename,
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+template<typename MaskType>
+syd::RoiMaskImage::pointer
+syd::InsertRoiMask(typename MaskType::Pointer itk_mask,
+                   syd::Patient::pointer patient,
+                   syd::RoiType::pointer roitype)
+{
+  // save the image
+  auto db = patient->GetDatabase();
+  std::string filename = db->GetUniqueTempFilename();
+  syd::WriteImage<MaskType>(itk_mask, filename);
+
+  // insert the files
+  auto image = syd::InsertRoiMaskImageFromFile(filename, patient, roitype);
+
+  // Update size and spacing
+  syd::DeleteMHDImage(filename);
+  syd::SetImageInfoFromFile(image);
+  db->Update(image);
+  return image;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::RoiMaskImage::pointer
+syd::InsertFAFMask(const syd::Image::pointer input_SPECT,
+                   const syd::Image::pointer input_planar)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  typedef itk::Image<PixelType, 2> ImageType2D;
+  auto itk_input_SPECT = syd::ReadImage<ImageType3D>(input_SPECT->GetAbsolutePath());
+  auto itk_input_planar = syd::ReadImage<ImageType2D>(input_planar->GetAbsolutePath());
+  auto attenuationCorrected = syd::FAFMask<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar);
+
+  // Create the syd image
+  auto db = input_planar->patient->GetDatabase<syd::StandardDatabase>();
+  auto roiType = syd::FindRoiType("FAF", db);
+  return syd::InsertRoiMask<ImageType2D>(attenuationCorrected, input_planar->patient, roiType);
+}
+// --------------------------------------------------------------------

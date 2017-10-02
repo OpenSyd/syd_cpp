@@ -278,6 +278,18 @@ add_executable(sydInsertAttenuationCorrectedImage
   ${sydInsertAttenuationCorrectedImage_GGO_C})
 target_link_libraries(sydInsertAttenuationCorrectedImage ${SYD_STD_DB_LIBRARY})
 
+# Create the attenuation corrected of a projection image
+wrap_ggo(sydInsertFAFMask_GGO_C
+  sydInsertFAFMask.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertFAFMask
+  sydInsertFAFMask.cxx
+  ${sydInsertFAFMask_GGO_C})
+target_link_libraries(sydInsertFAFMask ${SYD_STD_DB_LIBRARY})
+
 # Create the manual registered image
 wrap_ggo(sydInsertManualRegisteredImage_GGO_C
   sydInsertManualRegisteredImage.ggo
