@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
   syd::IdType id_planar = atoi(args_info.inputs[1]);
   syd::Image::pointer input_planar;
   db->QueryOne(input_planar, id_planar); // will fail if not found
-  LOG(2) << "Read SPECT image :" << input_planar;
+  LOG(2) << "Read attenuation corrected planar image :" << input_planar;
 
   // Main computation
   auto image = syd::InsertFAFMask(input_SPECT, input_planar);

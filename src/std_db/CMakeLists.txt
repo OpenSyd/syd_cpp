@@ -278,7 +278,7 @@ add_executable(sydInsertAttenuationCorrectedImage
   ${sydInsertAttenuationCorrectedImage_GGO_C})
 target_link_libraries(sydInsertAttenuationCorrectedImage ${SYD_STD_DB_LIBRARY})
 
-# Create the attenuation corrected of a projection image
+# Create the FAF mask
 wrap_ggo(sydInsertFAFMask_GGO_C
   sydInsertFAFMask.ggo
   ../common_db/sydCommandLineWithTags.ggo
