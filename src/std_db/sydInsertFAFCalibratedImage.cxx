@@ -30,7 +30,7 @@
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertFAFCorrectedImage, 1);
+  SYD_INIT_GGO(sydInsertFAFCalibratedImage, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
   LOG(2) << "Read FAF mask image :" << input_mask;
 
   // Main computation
-  auto image = syd::InsertFAFCalibratedImage(input_SPECT, input_planar, input_FAF);
+  auto image = syd::InsertFAFCalibratedImage(input_SPECT, input_planar, input_mask);
 
   // Update image info
   syd::SetImageInfoFromImage(image, input_SPECT);
