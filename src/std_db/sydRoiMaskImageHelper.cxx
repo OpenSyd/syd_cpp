@@ -136,11 +136,11 @@ syd::InsertFAFMask(const syd::Image::pointer input_SPECT,
   typedef itk::Image<PixelType, 2> ImageType2D;
   auto itk_input_SPECT = syd::ReadImage<ImageType3D>(input_SPECT->GetAbsolutePath());
   auto itk_input_planar = syd::ReadImage<ImageType2D>(input_planar->GetAbsolutePath());
-  auto attenuationCorrected = syd::FAFMask<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar);
+  auto fafMask = syd::FAFMask<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar);
 
   // Create the syd image
   auto db = input_planar->patient->GetDatabase<syd::StandardDatabase>();
   auto roiType = syd::FindRoiType("FAF", db);
-  return syd::InsertRoiMask<ImageType2D>(attenuationCorrected, input_planar->patient, roiType);
+  return syd::InsertRoiMask<ImageType2D>(fafMask, input_planar->patient, roiType);
 }
 // --------------------------------------------------------------------
