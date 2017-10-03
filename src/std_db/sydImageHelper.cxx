@@ -31,6 +31,7 @@
 #include "sydImage_GaussianFilter.h"
 #include "sydManualRegistration.h"
 #include "sydFAFCalibratedImage.h"
+#include "sydFAFHelper.h"
 #include "sydChangAttenuationImage.h"
 #include "sydTagHelper.h"
 #include "sydImageCrop.h"
@@ -463,7 +464,8 @@ syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
   auto itk_input_SPECT = syd::ReadImage<ImageType3D>(input_SPECT->GetAbsolutePath());
   auto itk_input_planar = syd::ReadImage<ImageType2D>(input_planar->GetAbsolutePath());
   auto itk_input_mask = syd::ReadImage<ImageType2D>(input_mask->GetAbsolutePath());
-  auto fafCalibrated = syd::FAFCalibratedImage<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar, itk_input_mask);
+  double integral = syd::ComputeFafIntegral(input_SPECT);
+  auto fafCalibrated = syd::FAFCalibratedImage<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar, itk_input_mask, integral);
 
   // Create the syd image
   return syd::InsertImage<ImageType3D>(fafCalibrated, input_SPECT->patient, input_SPECT->modality);

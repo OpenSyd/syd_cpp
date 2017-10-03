@@ -24,7 +24,7 @@
 //--------------------------------------------------------------------
 template<class ImageType2D, class ImageType3D>
 typename ImageType3D::Pointer
-syd::FAFCalibratedImage(const ImageType3D * input_SPECT, const ImageType2D * input_planar, const ImageType2D * input_mask)
+syd::FAFCalibratedImage(const ImageType3D * input_SPECT, const ImageType2D * input_planar, const ImageType2D * input_mask, double integral)
 {
   //Compute the total sum of the voxel in SPECT image
   typedef itk::StatisticsImageFilter<ImageType3D> StatisticsImage3DFilterType;
@@ -51,16 +51,18 @@ syd::FAFCalibratedImage(const ImageType3D * input_SPECT, const ImageType2D * inp
   typename StatisticsImage2DFilterType::Pointer statisticsMaskFilter = StatisticsImage2DFilterType::New();
   statisticsMaskFilter->SetInput(multiplyFilter->GetOutput());
   statisticsMaskFilter->Update();
-  double MaskSum = statisticsMaskFilter->GetSum();
+  double maskSum = statisticsMaskFilter->GetSum();
 
   //Compute the FAF value
-  double faf = SPECTSum * MaskSum / planarSum;
+  double faf = maskSum / planarSum;
+  double sensitivityFaf = SPECTSum/(integral * faf) ;
+  std::cout << sensitivityFaf << std::endl;
 
   //Compute the FAF corrected image
   typedef itk::MultiplyImageFilter<ImageType3D, ImageType3D, ImageType3D> MultiplyImage3DFilterType;
   typename MultiplyImage3DFilterType::Pointer multiplySPECTFilter = MultiplyImage3DFilterType::New();
   multiplySPECTFilter->SetInput(input_SPECT);
-  multiplySPECTFilter->SetConstant(faf);
+  multiplySPECTFilter->SetConstant(sensitivityFaf);
   multiplySPECTFilter->Update();
 
   return (multiplySPECTFilter->GetOutput());

@@ -16,21 +16,18 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDFAFCALIBRATEDIMAGE_H
-#define SYDFAFCALIBRATEDIMAGE_H
-
+// syd
+#include "sydFAFHelper.h"
 
 //--------------------------------------------------------------------
-namespace syd {
+double syd::ComputeFafIntegral(const syd::Image::pointer input_SPECT)
+{
+  //Get the different important value
+  double injectedActivity = input_SPECT->injection->activity_in_MBq*1000000.0; //injected activity in Bq
+  double lambdaDecay = input_SPECT->injection->GetLambdaDecayConstantInHours(); //lambda decay in 1/h
+  double timeInjectionSPECT = input_SPECT->GetHoursFromInjection(); //Time between injection and the beginning of the SPECT acquisition in h
 
-  //Calibrate the image
-  template<class ImageType2D, class ImageType3D>
-  typename ImageType3D::Pointer
-  FAFCalibratedImage(const ImageType3D * input_SPECT, const ImageType2D * input_planar, const ImageType2D * input_mask, double integral);
-
-} // end namespace
-
-#include "sydFAFCalibratedImage.txx"
+  return (0);
+}
 //--------------------------------------------------------------------
 
-#endif

@@ -16,21 +16,19 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDFAFCALIBRATEDIMAGE_H
-#define SYDFAFCALIBRATEDIMAGE_H
+#ifndef SYDFAFHELPER_H
+#define SYDFAFHELPER_H
 
+// syd
+#include "sydImage.h"
 
-//--------------------------------------------------------------------
+// --------------------------------------------------------------------
 namespace syd {
 
-  //Calibrate the image
-  template<class ImageType2D, class ImageType3D>
-  typename ImageType3D::Pointer
-  FAFCalibratedImage(const ImageType3D * input_SPECT, const ImageType2D * input_planar, const ImageType2D * input_mask, double integral);
+  //Compute the FAF Integral
+  double ComputeFafIntegral(const syd::Image::pointer input_SPECT);
 
-} // end namespace
-
-#include "sydFAFCalibratedImage.txx"
-//--------------------------------------------------------------------
+}
+// --------------------------------------------------------------------
 
 #endif
