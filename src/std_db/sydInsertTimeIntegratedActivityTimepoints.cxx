@@ -28,7 +28,7 @@
 int main(int argc, char* argv[])
 {
   // Init command line
-  SYD_INIT_GGO(sydInsertTimeIntegratedActivityTimepoints, 1);
+  SYD_INIT_GGO(sydInsertTimeIntegratedActivityTimepoints, 0);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
