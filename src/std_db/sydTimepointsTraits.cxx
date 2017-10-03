@@ -73,7 +73,7 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["default"] =
-    "id patient.name[pat] injection.radionuclide.name[rad] injection.id[inj] times values unit.name[unit] std_deviations[std] comments[com]";
+    "id patient.name[pat] injection.radionuclide.name[rad] injection.id[inj] times values unit.name[unit] std_deviations[std] comments[com] tags";
 }
 // --------------------------------------------------------------------
 

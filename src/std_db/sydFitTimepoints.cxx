@@ -55,7 +55,7 @@ std::string syd::FitTimepoints::ToString() const
   ss << syd::GetLabels(tags) << " "
      << model_name << " "
      << "auc=" << auc << " "
-     << (unit==nullptr ? empty_value:unit->name)
+     << (unit==nullptr ? empty_value:unit->name) << " "
      << "r2=" << r2 << " "
      << "i=" << first_index << " "
      << "it=" << iterations

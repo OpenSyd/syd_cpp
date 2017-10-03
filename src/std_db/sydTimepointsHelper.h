@@ -27,6 +27,10 @@
 // --------------------------------------------------------------------
 namespace syd {
 
+  /// Compute a RoiTimepoints from a set of RoiStatistic
+  void UpdateRoiTimepoints(const syd::RoiStatistic::vector stats,
+                           syd::RoiTimepoints::pointer rtp);
+
   /// Create a new timepoints from a set of RoiStatistics
   syd::RoiTimepoints::pointer NewRoiTimepoints(const syd::RoiStatistic::vector stats);
 

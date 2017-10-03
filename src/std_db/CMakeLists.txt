@@ -430,6 +430,18 @@ add_executable(sydInsertRoiBasedTimeIntegratedActivity
   ${sydInsertRoiBasedTimeIntegratedActivity_GGO_C})
 target_link_libraries(sydInsertRoiBasedTimeIntegratedActivity ${SYD_STD_DB_LIBRARY})
 
+# Create a RoiTimepoints from a list of RoiStatistics
+wrap_ggo(sydInsertRoiTimepoints_GGO_C
+  sydInsertRoiTimepoints.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo)
+add_executable(sydInsertRoiTimepoints
+  sydInsertRoiTimepoints.cxx
+  sydTimeIntegratedActivityImageBuilder.cxx
+  ${sydInsertRoiTimepoints_GGO_C})
+target_link_libraries(sydInsertRoiTimepoints ${SYD_STD_DB_LIBRARY})
+
 wrap_ggo(sydComputeICRPSCoefficient_GGO_C
   sydComputeICRPSCoefficient.ggo
   sydCommandLineDefault.ggo)

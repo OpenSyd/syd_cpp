@@ -1,0 +1,11 @@
+#File sydInsertRoiTimepoints.ggo
+
+package "syd"
+version "0.1"
+usage "sydInsertRoiTimepoints <roi_statistic_ids>"
+description "Create a RoiTimepoints from the given list of RoiStatistics.
+
+Check that all image of the list of RoiStatistics have the same frame_of_reference_uid and pixel_unit. 
+
+"
+

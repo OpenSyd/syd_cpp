@@ -73,11 +73,25 @@ syd::NewRoiTimepoints(const syd::RoiStatistic::vector stats)
     EXCEPTION("Cannot create timepoints from empty vector of RoiStatistic");
   }
   auto db = stats[0]->GetDatabase();
+  auto rtp = db->New<syd::RoiTimepoints>();
+  UpdateRoiTimepoints(stats, rtp);
+  return rtp;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::UpdateRoiTimepoints(const syd::RoiStatistic::vector stats,
+                              syd::RoiTimepoints::pointer rtp)
+{
+  if (stats.size() == 0) {
+    EXCEPTION("Cannot update timepoints from empty vector of RoiStatistic");
+  }
+  auto db = stats[0]->GetDatabase();
   auto patient = stats[0]->image->patient;
   auto mask = stats[0]->mask; // maybe nullptr
   auto injection = stats[0]->image->injection;
 
-  auto rtp = db->New<syd::RoiTimepoints>();
   rtp->patient = patient;
   rtp->injection = injection;
   rtp->unit = stats[0]->image->pixel_unit;
@@ -86,6 +100,8 @@ syd::NewRoiTimepoints(const syd::RoiStatistic::vector stats)
   auto sorted_stats = stats;
   db->Sort<syd::RoiStatistic>(sorted_stats, "image.acquisition_date");
   rtp->roi_statistics = sorted_stats;
+  rtp->times.clear();
+  rtp->values.clear();
 
   for(auto stat:sorted_stats) {
     if (stat->image->patient->id != patient->id) {
@@ -100,9 +116,8 @@ syd::NewRoiTimepoints(const syd::RoiStatistic::vector stats)
       EXCEPTION("The RoiStatistic do not have the same mask");
     }
     rtp->times.push_back(stat->image->GetHoursFromInjection());
-    rtp->values.push_back(stat->mean);
+    rtp->values.push_back(stat->mean);// FIXME mean or total !!!
   }
-  return rtp;
 }
 // --------------------------------------------------------------------
 

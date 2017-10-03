@@ -21,7 +21,10 @@ GTAGS
 save/
 superbuild.save/
 /save*
-
+/old*
+/src/std_db/syd_gate.copy.cxx
+/src/old/
+/src/std_db/old/
 /src/edlib/.gitignore
 /src/edlib/.travis.yml
 /src/edlib/CMakeLists.txt
