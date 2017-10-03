@@ -37,7 +37,10 @@ std::string syd::RoiTimepoints::ToString() const
   ss << syd::Timepoints::ToString() << " (";
   for(auto stat:roi_statistics)
     ss << stat->id << " ";
-  ss << ")";
+  ss << ") ";
+  if (roi_statistics.size() != 0) {
+    ss << roi_statistics[0]->mask->roitype->name;
+  }
   return ss.str();
 }
 // --------------------------------------------------------------------
