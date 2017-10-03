@@ -251,7 +251,7 @@ Run()
   LOG(1) << "Starting fit: "
          << "t= " << syd::ArrayToString(filter_.GetTimes(), 2)
          << " ; m= " << sm << "; "
-         << (min_activity_>0.0 ? "with mask":"no_mask")
+         << (min_activity_>0.0 ? "with mask_min_activity":"no_mask_min_activity")
          << " ; pixels= " << nb_pixels
          << " ; R2_min= " << options_.GetR2MinThreshold() << " ; "
          << (options_.GetRestrictedFlag() ? "restricted":"non restricted")

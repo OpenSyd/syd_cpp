@@ -18,6 +18,7 @@
 
 // syd
 #include "sydRoiMaskImageHelper.h"
+#include "sydRoiStatisticHelper.h"
 #include "sydTagHelper.h"
 #include "sydImageCrop.h"
 #include "sydImageAnd.h"
@@ -100,3 +101,42 @@ syd::InsertRoiMaskImageFromFile(std::string filename,
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+double syd::ComputeMass(syd::Image::pointer ct, std::string roi_name)
+{
+  // Check
+  if (ct->modality != "CT" or ct->pixel_unit->name != "HU") {
+    EXCEPTION("Cannot estimate the mass from this image " << ct);
+  }
+
+  // find roimask
+  auto mask = syd::FindOneRoiMaskImage(ct, roi_name);
+  if (!mask) {
+    EXCEPTION("In ComputeScalingFactorToMBperKg, cannot find a mask '"
+              << roi_name << "' for the image " << ct);
+  }
+
+  // find roistatistic or compute it
+  auto stat = syd::FindOneRoiStatistic(ct, mask);
+  if (!stat) {
+    stat = syd::NewRoiStatistic(ct, mask);
+    auto db = ct->GetDatabase<syd::StandardDatabase>();
+    db->Insert(stat);
+    LOG(1) << "Create RoiStatistic " << stat;
+  }
+
+  // Get the mean HU, convert to mean density in g/cm3
+  auto mean_hu = stat->mean;
+  double mu_water = 1.0;
+  double mu_air = 0.0;
+  auto density = mean_hu/1000.0*(mu_water-mu_air)+mu_water;
+
+  // Get the volume
+  double voxel_vol_mm3 = ct->spacing[0]*ct->spacing[1]*ct->spacing[2];
+  double vol_cc = voxel_vol_mm3*stat->n*0.001;
+
+  // Compute the mass in kg
+  double mass = vol_cc * density / 1000.0;
+  return mass;
+}
+// --------------------------------------------------------------------

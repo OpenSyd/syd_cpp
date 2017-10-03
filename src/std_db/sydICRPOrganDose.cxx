@@ -104,7 +104,6 @@ std::string syd::ICRPOrganDose::ToStringForMD5() const
   for(auto s:sources_fit_timepoints) ss << s;
   for(auto s:S_coefficients) ss << s;
   for(auto s:source_organ_names) ss << s;
-  DD(ss.str());
   return ss.str();
 }
 // --------------------------------------------------------------------

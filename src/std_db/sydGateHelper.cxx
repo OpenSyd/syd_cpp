@@ -274,17 +274,17 @@ double syd::GateComputeDoseScalingFactor(syd::Image::pointer source, double nb_e
 
   // Compute the activity at acquisition
   double injected_activity = source->injection->activity_in_MBq;
-  double lambda = source->injection->GetLambdaDecayConstantInHours();
-  double time = syd::DateDifferenceInHours(source->acquisition_date, source->injection->date);
-  DD(time);
-  double activity_at_acquisition =injected_activity * exp(-lambda * time);
-  DD(activity_at_acquisition);
+  // double lambda = source->injection->GetLambdaDecayConstantInHours();
+  // double time = syd::DateDifferenceInHours(source->acquisition_date, source->injection->date);
+  // DD(time);
+  // double activity_at_acquisition =injected_activity * exp(-lambda * time);
+  // DD(activity_at_acquisition);
 
   // Compute final scaling factor
   //  double scale = (Bq_unit_scale * 3600.0 * total_activity / injected_activity)/nb_events;
-  double scale = (Bq_unit_scale * (total_activity*3600)/nb_events) / activity_at_acquisition;
+  double scale = (Bq_unit_scale * (total_activity*3600)/nb_events) / injected_activity;
   DD(scale);
-  
+
   LOG(2) << "Dose scaling factor: " << std::endl
          << "\t total_activity     = " << total_activity << " Bq.h " << std::endl
          << "\t injected_activity  = " << injected_activity << " MBq" << std::endl

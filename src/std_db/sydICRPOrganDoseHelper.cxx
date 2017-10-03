@@ -18,6 +18,7 @@
 
 // syd
 #include "sydICRPOrganDoseHelper.h"
+#include "sydRoiMaskImageHelper.h"
 #include "../levenshtein-sse/levenshtein-sse.hpp"
 
 // --------------------------------------------------------------------
@@ -28,6 +29,7 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
 {
   // Guess target ROI name
   auto target_name = syd::GuessTargetRoiName(c, target_ft->timepoints);
+  auto rtp = std::dynamic_pointer_cast<syd::RoiTimepoints>(target_ft->timepoints);
 
   // Guess target ROI name
   std::vector<std::string> source_names;
@@ -44,6 +46,32 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
   // Setup the calculator
   c->SetTargetOrgan(target_name);
   c->SetRadionuclide(rad_name);
+
+  // Get the CT image for the mass
+  auto db = target_ft->GetDatabase<syd::StandardDatabase>();
+  auto frame_of_reference_uid = rtp->roi_statistics[0]->image->frame_of_reference_uid;
+  odb::query<syd::Image> q =
+    syd::QueryImageModality("CT") and
+    odb::query<syd::Image>::frame_of_reference_uid == frame_of_reference_uid;
+  syd::Image::vector images;
+  db->Query<syd::Image>(images, q);
+  if (images.size() == 0) {
+    EXCEPTION("Cannot find corresponding CT image (to compute the mass)");
+  }
+  if (images.size() > 1) {
+    std::ostringstream ss;
+    for(auto im:images) ss << im << std::endl;
+    std::string s = ss.str();
+    s.pop_back();
+    LOG(WARNING) << "Several CT were found. I consider the first one "
+                 << std::endl << s;
+  }
+  auto ct = images[0];
+
+  // Get the mass
+  auto target_roistat = rtp->roi_statistics[0];
+  auto roi_name = target_roistat->mask->roitype->name;
+  auto target_mass_kg = syd::ComputeMass(ct, roi_name);
 
   int i=0;
   double dose = 0.0;
@@ -70,14 +98,14 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
     auc = auc * scaling_to_MB;
 
     // Compute dose
-    dose += auc*s;
+    dose += auc/target_mass_kg*s;
 
     ++i;
   }
 
   // unity
-  // S are in mGy/MBq.h
-  // auc must be in MBq.h
+  // S are in mGy/MBq.h 
+  // auc must be in MBq.h / kg
   dose = dose/1000.0;// to convert in Gy
 
   auto target_rtp = std::dynamic_pointer_cast<syd::RoiTimepoints>(target_ft->timepoints);
@@ -86,7 +114,6 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
   }
 
   // Create a new ICRPOrganDose
-  auto db = target_ft->GetDatabase();
   auto od = db->New<syd::ICRPOrganDose>();
   od->target_fit_timepoints = target_ft;
   od->sources_fit_timepoints = source_fts;
@@ -97,11 +124,11 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
   od->target_organ_name = target_name;
   od->target_roitype = target_rtp->roi_statistics[0]->mask->roitype;
   for(auto ft:source_fts) {
-     auto source_rtp = std::dynamic_pointer_cast<syd::RoiTimepoints>(ft->timepoints);
-     if (!source_rtp or source_rtp->roi_statistics.size() == 0) {
-       EXCEPTION("Cannot guess the (target) roitype for this FitTimepoint " << ft);
-     }
-     od->source_roitypes.push_back(source_rtp->roi_statistics[0]->mask->roitype);
+    auto source_rtp = std::dynamic_pointer_cast<syd::RoiTimepoints>(ft->timepoints);
+    if (!source_rtp or source_rtp->roi_statistics.size() == 0) {
+      EXCEPTION("Cannot guess the (target) roitype for this FitTimepoint " << ft);
+    }
+    od->source_roitypes.push_back(source_rtp->roi_statistics[0]->mask->roitype);
   }
   // source_roitypes;
   od->source_organ_names = source_names;

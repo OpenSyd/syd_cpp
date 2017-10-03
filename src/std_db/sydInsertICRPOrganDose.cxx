@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     LOG(1) << "Insert new ICRPOrganDose: " << od;
   }
   else {
-    LOG(1) << "Already existing ICRPOrganDose: " << ods[0];
+    LOG(1) << "Update existing ICRPOrganDose: " << ods[0];
   }
 
   // This is the end, my friend.

@@ -79,7 +79,7 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["default"] =
-    "id target_fit_timepoints.id[t_fit_tp] tags sources_ftp[s_fit_tp] absorbed_dose_in_Gy[dose] S phantom_name[ph] target_organ_name[target] source_organs[sources] target_roitype.name[target] sources_rt[sources]";
+    "id target_fit_timepoints.id[t_fit_tp] tags sources_ftp[s_fit_tp] absorbed_dose_in_Gy[Gy] S phantom_name[ph] target_organ_name[target] source_organs[sources] target_roitype.name[target] sources_rt[sources]";
 
   field_format_map_["hist"] =
     "default history.insertion_date[insert] history.update_date[update]";

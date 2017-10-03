@@ -55,6 +55,9 @@ namespace syd {
                                                         syd::Image::pointer image,
                                                         syd::RoiType::pointer roitype);
 
+  /// Compute the mass of an roi according to the ct image
+  double ComputeMass(syd::Image::pointer ct, std::string roi_name);
+
 } // namespace syd
 // --------------------------------------------------------------------
 

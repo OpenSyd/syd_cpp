@@ -116,7 +116,7 @@ void syd::UpdateRoiTimepoints(const syd::RoiStatistic::vector stats,
       EXCEPTION("The RoiStatistic do not have the same mask");
     }
     rtp->times.push_back(stat->image->GetHoursFromInjection());
-    rtp->values.push_back(stat->mean);// FIXME mean or total !!!
+    rtp->values.push_back(stat->sum);
   }
 }
 // --------------------------------------------------------------------
@@ -282,3 +282,5 @@ syd::NewTimepointsAtPixel(const syd::Image::vector & images,
   return tp;
 }
 // --------------------------------------------------------------------
+
+
