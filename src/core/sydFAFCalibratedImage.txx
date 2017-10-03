@@ -56,7 +56,10 @@ syd::FAFCalibratedImage(const ImageType3D * input_SPECT, const ImageType2D * inp
   //Compute the FAF value
   double faf = maskSum / planarSum;
   double sensitivityFaf = SPECTSum/(integral * faf) ;
-  std::cout << sensitivityFaf << std::endl;
+  std::cout << "maskSum " << maskSum << std::endl;
+  std::cout << "planarSum " << planarSum << std::endl;
+  std::cout << "SPECTSum " << SPECTSum << std::endl;
+  std::cout << "sensitivity " << sensitivityFaf << std::endl;
 
   //Compute the FAF corrected image
   typedef itk::MultiplyImageFilter<ImageType3D, ImageType3D, ImageType3D> MultiplyImage3DFilterType;
