@@ -99,7 +99,6 @@ int main(int argc, char* argv[])
     db->Update(tp);
     LOG(1) << "Update RoiTimepoints: " << tp;
   }
-  DD("done");
 
   // This is the end, my friend.
 }
