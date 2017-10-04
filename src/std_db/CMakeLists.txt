@@ -285,6 +285,30 @@ add_executable(sydInsertAttenuationCorrectedImage
   ${sydInsertAttenuationCorrectedImage_GGO_C})
 target_link_libraries(sydInsertAttenuationCorrectedImage ${SYD_STD_DB_LIBRARY})
 
+# Create the FAF mask
+wrap_ggo(sydInsertFAFMask_GGO_C
+  sydInsertFAFMask.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertFAFMask
+  sydInsertFAFMask.cxx
+  ${sydInsertFAFMask_GGO_C})
+target_link_libraries(sydInsertFAFMask ${SYD_STD_DB_LIBRARY})
+
+# Create the FAF corrected of a SPECT image
+wrap_ggo(sydInsertFAFCalibratedImage_GGO_C
+  sydInsertFAFCalibratedImage.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertFAFCalibratedImage
+  sydInsertFAFCalibratedImage.cxx
+  ${sydInsertFAFCalibratedImage_GGO_C})
+target_link_libraries(sydInsertFAFCalibratedImage ${SYD_STD_DB_LIBRARY})
+
 # Create the manual registered image
 wrap_ggo(sydInsertManualRegisteredImage_GGO_C
   sydInsertManualRegisteredImage.ggo

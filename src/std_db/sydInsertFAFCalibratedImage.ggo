@@ -1,0 +1,9 @@
+#File sydInsertFAFCalibratedImage.ggo
+
+package "syd"
+version "0.2"
+usage "sydInsertFAFCalibratedImage <image_tomo_1> <image_planar_2> <mask>"
+description "Create a new (mhd) image from the <image_tomo_1> SPECT image using 
+the <mask> mask image (output of sydInsertFAFMask) and the attenuation corrected planar image <image_planar_2>.
+The output is the calibrated SPECT with the FAF method, in Bq. It is assumed that all the injected activity is inside the planar image field of view."
+

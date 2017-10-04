@@ -30,6 +30,7 @@
 #include "sydImageFillHoles.h"
 #include "sydImage_GaussianFilter.h"
 #include "sydManualRegistration.h"
+#include "sydFAFCalibratedImage.h"
 #include "sydChangAttenuationImage.h"
 #include "sydTagHelper.h"
 #include "sydImageCrop.h"
@@ -447,6 +448,42 @@ syd::InsertAttenuationCorrectedImage(const syd::Image::pointer input_GM,
   return syd::InsertImage<ImageType2D>(attenuationCorrected, input_GM->patient, input_GM->modality);
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
+                              const syd::Image::pointer input_planar,
+                              const syd::RoiMaskImage::pointer input_mask)
+{
+  // Check input image pixel unit
+  auto unit = input_SPECT->pixel_unit;
+  if (unit->name != "counts") {
+    LOG(WARNING) << "Input SPECT image should be of unit 'counts', but it is: "
+                 << unit << ". Results may be wrong !";
+  }
+
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 2> ImageType2D;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  auto itk_input_SPECT = syd::ReadImage<ImageType3D>(input_SPECT->GetAbsolutePath());
+  auto itk_input_planar = syd::ReadImage<ImageType2D>(input_planar->GetAbsolutePath());
+  auto itk_input_mask = syd::ReadImage<ImageType2D>(input_mask->GetAbsolutePath());
+  auto fafCalibrated =
+    syd::ComputeFAFCalibratedImage<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar, itk_input_mask);
+
+  // Create the syd image
+  auto faf = syd::InsertImage<ImageType3D>(fafCalibrated, input_SPECT->patient, input_SPECT->modality);
+
+  // Set image properties
+  auto db = input_SPECT->GetDatabase<syd::StandardDatabase>();
+  syd::SetImageInfoFromImage(faf, input_SPECT);
+  faf->pixel_unit = syd::FindPixelUnit(db, "Bq");
+  return faf;
+}
+// --------------------------------------------------------------------
+
 
 
 // --------------------------------------------------------------------
