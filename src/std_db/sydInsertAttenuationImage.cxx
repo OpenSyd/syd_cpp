@@ -101,7 +101,14 @@ int main(int argc, char* argv[])
     LOG(FATAL) << "Set the id of the model image to have the resampled spacing";
 
   // Main computation
-  auto image = syd::InsertAttenuationImage(input, input_like, numberEnergySPECT, attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT, weight);
+  auto image = syd::InsertAttenuationImage(input, input_like,
+                                           numberEnergySPECT,
+                                           attenuationWaterCT,
+                                           attenuationBoneCT,
+                                           attenuationAirSPECT,
+                                           attenuationWaterSPECT,
+                                           attenuationBoneSPECT,
+                                           weight);
 
   // set properties from the image
   syd::SetImageInfoFromImage(image, input);

@@ -442,7 +442,8 @@ syd::InsertAttenuationCorrectedImage(const syd::Image::pointer input_GM,
   typedef itk::Image<PixelType, 2> ImageType2D;
   auto itk_input_GM = syd::ReadImage<ImageType2D>(input_GM->GetAbsolutePath());
   auto itk_input_AM = syd::ReadImage<ImageType2D>(input_AM->GetAbsolutePath());
-  auto attenuationCorrected = syd::AttenuationCorrectedImage<ImageType2D>(itk_input_GM, itk_input_AM);
+  auto attenuationCorrected =
+    syd::ComputeAttenuationCorrectedImage<ImageType2D>(itk_input_GM, itk_input_AM);
 
   // Create the syd image
   return syd::InsertImage<ImageType2D>(attenuationCorrected, input_GM->patient, input_GM->modality);
