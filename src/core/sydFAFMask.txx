@@ -27,7 +27,7 @@
 //--------------------------------------------------------------------
 template<class ImageType2D, class ImageType3D>
 typename ImageType2D::Pointer
-syd::FAFMask(const ImageType3D * input_SPECT, const ImageType2D * input_planar)
+syd::ComputeFAFMask(const ImageType3D * input_SPECT, const ImageType2D * input_planar)
 {
   // Project the image.
   int projectionDimension = 1;
