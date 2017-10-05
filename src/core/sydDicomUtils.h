@@ -85,6 +85,9 @@ namespace syd {
   template<class TagType>
   TagType GetTagValueFromSequence(const gdcm::SequenceOfItems* sequence,
                                   uint16_t group, uint16_t element);
+  template<class TagType>
+  TagType GetTagValueFromStringSequence(const gdcm::SequenceOfItems* sequence,
+                                        uint16_t group, uint16_t element);
 
 #include "sydDicomUtils.txx"
 
