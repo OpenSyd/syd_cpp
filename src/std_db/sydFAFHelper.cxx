@@ -26,14 +26,13 @@ double syd::ComputeFafIntegral(const syd::Image::pointer input_SPECT)
   double injectedActivity = input_SPECT->injection->activity_in_MBq; //injected activity in MBq
   double lambdaDecay = input_SPECT->injection->GetLambdaDecayConstantInHours()/3600.0; //lambda decay in 1/s
   double timeInjectionSPECT = input_SPECT->GetHoursFromInjection()*3600.0; //Time between injection and the beginning of the SPECT acquisition in s
-  double totalAcquisitionTime = 0.2*3600.0; //Total acquisition time in s
+  double totalAcquisitionTime = input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec/1000.0*input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation/4*input_SPECT->dicoms[0]->dicom_number_of_rotations; //Total acquisition time in s (for 4 heads)
 
   //Compute A0
   double A0 = injectedActivity*std::exp(-lambdaDecay*timeInjectionSPECT);
-  std::cout << "A0 " << A0 << std::endl;
+
   //Compute the integral between 0 and totalAcquisitionTime of exp(-lambdaDecay*t)
   double integral = (1 - std::exp(-lambdaDecay*totalAcquisitionTime))/lambdaDecay;
-  std::cout << "integral " << integral << std::endl;
 
   return (A0*integral);
 }
