@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
     syd::GateScaleImageAccordingToStatFile(images, source, stat_file);
   }
   else {
-    LOG(WARNING) << "Cannot find stat file, no scaling.";
+    LOG(WARNING) << "Cannot find results.XXXX folder or stat file, no scaling.";
   }
 
   // Tags and info from cmd line
