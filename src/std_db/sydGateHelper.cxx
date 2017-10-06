@@ -274,7 +274,7 @@ double syd::GateComputeDoseScalingFactor(syd::Image::pointer source, double nb_e
 
   // Compute the activity at acquisition
   double injected_activity = source->injection->activity_in_MBq;
-  double scale = (Bq_unit_scale * (total_activity*3600.0)/(double)nb_events) / injected_activity;
+  double scale = (Bq_unit_scale * (total_activity*3600.0)/(double)nb_events);// /injected_activity;
   DD(scale);
 
   LOG(2) << "Dose scaling factor (Gy/[IA]MBq): " << std::endl
@@ -307,7 +307,7 @@ syd::File::pointer syd::GateInsertStatFile(std::string folder, syd::Patient::poi
     std::ifstream is(filename.string());
     std::string line;
     std::getline(is,line);
-    if (line.find("# NumberOfRun = ") == 0) break;
+    if (line.find("# NumberOfRun") == 0) break;
     ++i;
   }
   if (i == txt_files.size()) return nullptr;
@@ -384,11 +384,9 @@ void syd::GateScaleImageAccordingToStatFile(syd::Image::vector images,
 
   // Scale the image to get it in cGy by injection MBq
   double s = syd::GateComputeDoseScalingFactor(source, nb_events);
-  double s_dose = s * 100.0;  // Gy  --> cGy
-  double s_edep = s * 1000.0; // MeV --> keV
   auto db = source->GetDatabase<syd::StandardDatabase>();
-  auto unit_dose = syd::FindOrCreatePixelUnit(db, "cGy/IA[MBq]");
-  auto unit_edep = syd::FindOrCreatePixelUnit(db, "keV/IA[MBq]");
+  auto unit_dose = syd::FindOrCreatePixelUnit(db, "Gy/IA[MBq]");
+  auto unit_edep = syd::FindOrCreatePixelUnit(db, "MeV/IA[MBq]");
   LOG(1) << "Found " << nb_events << " events. Scaling factor is " << s;
 
   // Scale images
