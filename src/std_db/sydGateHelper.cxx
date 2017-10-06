@@ -274,8 +274,7 @@ double syd::GateComputeDoseScalingFactor(syd::Image::pointer source, double nb_e
 
   // Compute the activity at acquisition
   double injected_activity = source->injection->activity_in_MBq;
-  double scale = (Bq_unit_scale * (total_activity*3600.0)/(double)nb_events);// /injected_activity;
-  DD(scale);
+  double scale = (Bq_unit_scale * (total_activity*3600.0)/(double)nb_events)/injected_activity;
 
   LOG(2) << "Dose scaling factor (Gy/[IA]MBq): " << std::endl
          << "\t total_activity     = " << total_activity << " Bq.h " << std::endl
