@@ -2,8 +2,8 @@
 
 package "syd"
 version "0.4"
-usage "sydInsertAttenuationCorrectedImage <image_tomo_1> <image_planar_2>"
+usage "sydInsertAttenuationCorrectedImage <image1> <image2>"
 description "Create a new (mhd) 2D mask from the 3D SPECT image <image>.
-The mask is projected and corresponds to region were FAF should be computed.
-It is resampled like the attenuation corrected planar image (output of sydInsertAttenuationCorrectedImage) <image_planar_2>>"
+The mask is projected and corresponds to the positive value to compute FAF in this area.
+It is resample like the attenuation corrected planar image (output of sydInsertAttenuationCorrectedImage) <image2>"
 

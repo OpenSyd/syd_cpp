@@ -401,18 +401,64 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   serie->dicom_window_width = ww;
 
   // Specific tag for NM
-  serie->dicom_table_traverse_in_mm =
-    GetTagDoubleValueFromTagKey(dicomIO, "0018|1131", 0.0); // TableTraverse
-  serie->dicom_table_height_in_mm =
-    GetTagDoubleValueFromTagKey(dicomIO, "0018|1130", 0.0); // TableHeight
   serie->dicom_radionuclide_name =
     GetTagValueFromTagKey(dicomIO, "0011|100d", empty_value); // RadionuclideName
   serie->dicom_counts_accumulated =
     GetTagDoubleValueFromTagKey(dicomIO, "0018|0070", 0); // CountsAccumulated
-  serie->dicom_actual_frame_duration_in_msec =
-    GetTagDoubleValueFromTagKey(dicomIO, "0018|1242", 0.0); // ActualFrameDuration
-  serie->dicom_number_of_frames_in_rotation =
-    GetTagDoubleValueFromTagKey(dicomIO, "0054|0053", 0); // NumberOfFramesInRotation
+  double tableHeight(0.0), tableTraverse(0.0), frameDuration(0.0);
+  unsigned short nbFrameInRotation(0);
+  tableHeight = GetTagDoubleValueFromTagKey(dicomIO, "0018|1130", 0.0); // TableHeight
+  if (tableHeight == 0.0) { //look with gdcm
+    auto reader = syd::GetDicomReader(filename);
+    auto dataset = reader.GetFile().GetDataSet();
+    try {
+      gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0054, 0x0052);
+      tableHeight = GetTagValueFromStringSequence<double>(sqi, 0x0018, 0x1130);
+    }
+    catch(const std::exception & e) {
+      tableHeight = 0.0;
+    }
+  }
+  tableTraverse = GetTagDoubleValueFromTagKey(dicomIO, "0018|1131", 0.0); // TableTraverse
+  if (tableTraverse == 0.0) { //look with gdcm
+    auto reader = syd::GetDicomReader(filename);
+    auto dataset = reader.GetFile().GetDataSet();
+    try {
+      gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0054, 0x0052);
+      tableTraverse = GetTagValueFromStringSequence<double>(sqi, 0x0018, 0x1131);
+    }
+    catch(const std::exception & e) {
+      tableTraverse = 0.0;
+    }
+  }
+  frameDuration = GetTagDoubleValueFromTagKey(dicomIO, "0018|1242", 0.0); // ActualFrameDuration
+  if (frameDuration == 0.0) { //look with gdcm
+    auto reader = syd::GetDicomReader(filename);
+    auto dataset = reader.GetFile().GetDataSet();
+    try {
+      gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0054, 0x0052);
+      frameDuration = GetTagValueFromStringSequence<double>(sqi, 0x0018, 0x1242);
+    }
+    catch(const std::exception & e) {
+      frameDuration = 1;
+    }
+  }
+  nbFrameInRotation = GetTagDoubleValueFromTagKey(dicomIO, "0054|0053", 0); // NumberOfFramesInRotation
+  if (nbFrameInRotation == 0) { //look with gdcm
+    auto reader = syd::GetDicomReader(filename);
+    auto dataset = reader.GetFile().GetDataSet();
+    try {
+      gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0054, 0x0052);
+      nbFrameInRotation = GetTagValueFromSequence<unsigned short>(sqi, 0x0054, 0x0053);
+    }
+    catch(const std::exception & e) {
+      nbFrameInRotation = 1;
+    }
+  }
+  serie->dicom_table_height_in_mm = tableHeight;
+  serie->dicom_table_traverse_in_mm = tableTraverse;
+  serie->dicom_actual_frame_duration_in_msec = frameDuration;
+  serie->dicom_number_of_frames_in_rotation = nbFrameInRotation;
   serie->dicom_rotation_angle =
     GetTagDoubleValueFromTagKey(dicomIO, "0070|0230", 0.0); // RotationAngle
   int NumberOfRotations = GetTagDoubleValueFromTagKey(dicomIO, "0054|0051", 0); // NumberOfRotations

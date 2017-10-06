@@ -25,7 +25,7 @@ namespace syd {
 
   template<class ImageType2D, class ImageType3D>
   typename ImageType2D::Pointer
-  ComputeFAFMask(const ImageType3D * input_SPECT, const ImageType2D * input_planar);
+  FAFMask(const ImageType3D * input_SPECT, const ImageType2D * input_planar);
 
 } // end namespace
 

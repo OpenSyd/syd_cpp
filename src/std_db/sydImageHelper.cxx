@@ -31,9 +31,11 @@
 #include "sydImage_GaussianFilter.h"
 #include "sydManualRegistration.h"
 #include "sydFAFCalibratedImage.h"
+#include "sydFAFHelper.h"
 #include "sydChangAttenuationImage.h"
 #include "sydTagHelper.h"
 #include "sydImageCrop.h"
+#include "sydPixelUnitHelper.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -442,8 +444,7 @@ syd::InsertAttenuationCorrectedImage(const syd::Image::pointer input_GM,
   typedef itk::Image<PixelType, 2> ImageType2D;
   auto itk_input_GM = syd::ReadImage<ImageType2D>(input_GM->GetAbsolutePath());
   auto itk_input_AM = syd::ReadImage<ImageType2D>(input_AM->GetAbsolutePath());
-  auto attenuationCorrected =
-    syd::ComputeAttenuationCorrectedImage<ImageType2D>(itk_input_GM, itk_input_AM);
+  auto attenuationCorrected = syd::AttenuationCorrectedImage<ImageType2D>(itk_input_GM, itk_input_AM);
 
   // Create the syd image
   return syd::InsertImage<ImageType2D>(attenuationCorrected, input_GM->patient, input_GM->modality);
@@ -457,13 +458,6 @@ syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
                               const syd::Image::pointer input_planar,
                               const syd::RoiMaskImage::pointer input_mask)
 {
-  // Check input image pixel unit
-  auto unit = input_SPECT->pixel_unit;
-  if (unit->name != "counts") {
-    LOG(WARNING) << "Input SPECT image should be of unit 'counts', but it is: "
-                 << unit << ". Results may be wrong !";
-  }
-
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 2> ImageType2D;
@@ -471,16 +465,15 @@ syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
   auto itk_input_SPECT = syd::ReadImage<ImageType3D>(input_SPECT->GetAbsolutePath());
   auto itk_input_planar = syd::ReadImage<ImageType2D>(input_planar->GetAbsolutePath());
   auto itk_input_mask = syd::ReadImage<ImageType2D>(input_mask->GetAbsolutePath());
-  auto fafCalibrated =
-    syd::ComputeFAFCalibratedImage<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar, itk_input_mask);
+  double integral = syd::ComputeFafIntegral(input_SPECT);
+  auto fafCalibrated = syd::FAFCalibratedImage<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar, itk_input_mask, integral);
 
   // Create the syd image
   auto faf = syd::InsertImage<ImageType3D>(fafCalibrated, input_SPECT->patient, input_SPECT->modality);
-
-  // Set image properties
-  auto db = input_SPECT->GetDatabase<syd::StandardDatabase>();
   syd::SetImageInfoFromImage(faf, input_SPECT);
-  faf->pixel_unit = syd::FindPixelUnit(db, "Bq");
+  auto db = input_SPECT->GetDatabase<syd::StandardDatabase>();
+  faf->pixel_unit = syd::FindOrCreatePixelUnit(db, "Bq"); //FIXME
+  db->Update(faf);
   return faf;
 }
 // --------------------------------------------------------------------

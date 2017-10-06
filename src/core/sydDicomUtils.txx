@@ -59,6 +59,23 @@ TagType GetTagValueFromSequence(const gdcm::SequenceOfItems* sequence,
 
 
 // --------------------------------------------------------------------
+template<class TagType>
+TagType GetTagValueFromStringSequence(const gdcm::SequenceOfItems* sequence,
+                                      uint16_t group, uint16_t element)
+{
+  gdcm::Item item = sequence->GetItem(1);
+  gdcm::Tag tag(group, element);
+  if (!item.FindDataElement(tag)) {
+    EXCEPTION("Problem locating dicom tag " << group << "|" << element << std::endl);
+  }
+  std::string p_value( item.GetDataElement(tag).GetByteValue()->GetPointer(), item.GetDataElement(tag).GetByteValue()->GetLength() );
+  TagType value = (TagType)atof(p_value.c_str());
+  return value;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 template<uint16_t Group, uint16_t Element>
 std::string GetTagValueAsString(const gdcm::DataSet & dataset)
 {

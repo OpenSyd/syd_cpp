@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------
 template<class ImageType2D>
 typename ImageType2D::Pointer
-syd::ComputeAttenuationCorrectedImage(const ImageType2D * input_GM, const ImageType2D * input_AM)
+syd::AttenuationCorrectedImage(const ImageType2D * input_GM, const ImageType2D * input_AM)
 {
   // Create an image with 2 connected components
   typename ImageType2D::Pointer geoMeanACSC = ImageType2D::New();

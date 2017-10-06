@@ -111,7 +111,7 @@ namespace syd {
       /// Convenient fct (check if injection is set)
       std::string GetInjectionName() const;
 
-      /// Add a DicomSerie to the list (check is already exist) ; do not
+      /// Add a DicomSerie to the list (check if already exists) ; do not
       /// update in the db.
       void AddDicomSerie(const syd::DicomSerie::pointer dicom);
 

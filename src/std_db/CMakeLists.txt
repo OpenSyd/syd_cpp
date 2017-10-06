@@ -72,6 +72,7 @@ set(SYD_STANDARD_DATABASE_SRC
   sydDicomBuilder.cxx
   sydDicomSerieHelper.cxx
   sydImageHelper.cxx
+  sydFAFHelper.cxx
   sydInjectionHelper.cxx
   sydRoiMaskImageHelper.cxx
   sydUpdateRadionuclideFilter.cxx

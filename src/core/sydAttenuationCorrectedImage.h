@@ -25,7 +25,7 @@ namespace syd {
 
   template<class ImageType2D>
   typename ImageType2D::Pointer
-  ComputeAttenuationCorrectedImage(const ImageType2D * input_GM, const ImageType2D * input_AM);
+  AttenuationCorrectedImage(const ImageType2D * input_GM, const ImageType2D * input_AM);
 
 } // end namespace
 
