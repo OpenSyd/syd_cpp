@@ -21,12 +21,19 @@
 
 // syd
 #include "sydImage.h"
+#include "sydRoiMaskImageHelper.h"
 
 // --------------------------------------------------------------------
 namespace syd {
 
   //Compute the FAF Integral
   double ComputeFafIntegral(const syd::Image::pointer input_SPECT);
+
+  // Compute the FAF calibrated of a SPECT image.
+  syd::Image::pointer InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
+                                               const syd::Image::pointer input_planar,
+                                               const syd::RoiMaskImage::pointer input_mask);
+
 
 }
 // --------------------------------------------------------------------

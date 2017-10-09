@@ -21,6 +21,7 @@
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydImageHelper.h"
+#include "sydFAFHelper.h"
 #include "sydTagHelper.h"
 #include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"

@@ -18,6 +18,7 @@
 
 // syd
 #include "sydFAFHelper.h"
+#include "sydFAFCalibratedImage.h"
 
 //--------------------------------------------------------------------
 double syd::ComputeFafIntegral(const syd::Image::pointer input_SPECT)
@@ -38,3 +39,29 @@ double syd::ComputeFafIntegral(const syd::Image::pointer input_SPECT)
 }
 //--------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
+                              const syd::Image::pointer input_planar,
+                              const syd::RoiMaskImage::pointer input_mask)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 2> ImageType2D;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  auto itk_input_SPECT = syd::ReadImage<ImageType3D>(input_SPECT->GetAbsolutePath());
+  auto itk_input_planar = syd::ReadImage<ImageType2D>(input_planar->GetAbsolutePath());
+  auto itk_input_mask = syd::ReadImage<ImageType2D>(input_mask->GetAbsolutePath());
+  double integral = syd::ComputeFafIntegral(input_SPECT);
+  auto fafCalibrated = syd::FAFCalibratedImage<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar, itk_input_mask, integral);
+
+  // Create the syd image
+  auto faf = syd::InsertImage<ImageType3D>(fafCalibrated, input_SPECT->patient, input_SPECT->modality);
+  syd::SetImageInfoFromImage(faf, input_SPECT);
+  auto db = input_SPECT->GetDatabase<syd::StandardDatabase>();
+  faf->pixel_unit = syd::FindOrCreatePixelUnit(db, "MBq"); //FIXME
+  db->Update(faf);
+  return faf;
+}
+// --------------------------------------------------------------------

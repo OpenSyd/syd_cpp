@@ -138,11 +138,6 @@ namespace syd {
   syd::Image::pointer InsertAttenuationCorrectedImage(const syd::Image::pointer input_GM,
                                                       const syd::Image::pointer input_AM);
 
-  // Compute the FAF calibrated of a SPECT image.
-  syd::Image::pointer InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
-                                               const syd::Image::pointer input_planar,
-                                               const syd::RoiMaskImage::pointer input_mask);
-
   /// Crop an image like another one
   void CropImageLike(syd::Image::pointer image,
                      const syd::Image::pointer like);
