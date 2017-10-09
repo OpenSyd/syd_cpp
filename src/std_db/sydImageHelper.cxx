@@ -436,14 +436,15 @@ syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
 // --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertAttenuationCorrectedPlanarImage(const syd::Image::pointer input_GM,
-                                     const syd::Image::pointer input_AM)
+                                           const syd::Image::pointer input_AM,
+                                           double ratio)
 {
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 2> ImageType2D;
   auto itk_input_GM = syd::ReadImage<ImageType2D>(input_GM->GetAbsolutePath());
   auto itk_input_AM = syd::ReadImage<ImageType2D>(input_AM->GetAbsolutePath());
-  auto attenuationCorrected = syd::AttenuationCorrectedPlanarImage<ImageType2D>(itk_input_GM, itk_input_AM);
+  auto attenuationCorrected = syd::AttenuationCorrectedPlanarImage<ImageType2D>(itk_input_GM, itk_input_AM, ratio);
 
   // Create the syd image
   return syd::InsertImage<ImageType2D>(attenuationCorrected, input_GM->patient, input_GM->modality);

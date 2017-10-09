@@ -136,7 +136,8 @@ namespace syd {
 
   // Compute the attenuation correction of an planar image.
   syd::Image::pointer InsertAttenuationCorrectedPlanarImage(const syd::Image::pointer input_GM,
-                                                            const syd::Image::pointer input_AM);
+                                                            const syd::Image::pointer input_AM,
+                                                            double ratio);
 
   /// Crop an image like another one
   void CropImageLike(syd::Image::pointer image,

@@ -52,8 +52,13 @@ int main(int argc, char* argv[])
   db->QueryOne(input_AM, id_AM); // will fail if not found
   LOG(2) << "Read projected factor attenuation map :" << input_AM;
 
+  // Get the default ratio
+  double ratio(1.0);
+  if (args_info.ratio_given)
+    ratio = args_info.ratio_arg;
+
   // Main computation
-  auto image = syd::InsertAttenuationCorrectedPlanarImage(input_GM, input_AM);
+  auto image = syd::InsertAttenuationCorrectedPlanarImage(input_GM, input_AM, ratio);
 
   // Update image info
   syd::SetImageInfoFromImage(image, input_GM);

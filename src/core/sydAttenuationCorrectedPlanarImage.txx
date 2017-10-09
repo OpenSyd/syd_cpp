@@ -26,7 +26,7 @@
 //--------------------------------------------------------------------
 template<class ImageType2D>
 typename ImageType2D::Pointer
-syd::AttenuationCorrectedPlanarImage(const ImageType2D * input_GM, const ImageType2D * input_AM)
+syd::AttenuationCorrectedPlanarImage(const ImageType2D * input_GM, const ImageType2D * input_AM, double ratio)
 {
   // Create an image with 2 connected components
   typename ImageType2D::Pointer geoMeanACSC = ImageType2D::New();
@@ -36,9 +36,6 @@ syd::AttenuationCorrectedPlanarImage(const ImageType2D * input_GM, const ImageTy
   geoMeanACSC->SetSpacing(input_GM->GetSpacing());
   geoMeanACSC->Allocate();
   geoMeanACSC->FillBuffer(0);
-
-  //default ratio
-  double ratio = 4.168696975;
 
   typedef typename  ImageType2D::PixelType PixelType;
   typedef typename itk::LinearInterpolateImageFunction <ImageType2D, PixelType> ImageInterpolatorType;

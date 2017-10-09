@@ -2,7 +2,10 @@
 
 package "syd"
 version "0.4"
-usage "sydInsertAttenuationCorrectedPlanarImage <image1> <image2>"
+usage "sydInsertAttenuationCorrectedPlanarImage <image1> <image2> -r <ratio>"
 description "Create a new (mhd) image from the 2D Geometric Mean (GM) using the projected attenuation map.
-[image1] is a GM image id and [image2] is the projected attenuation factor map id (eg. the output of sydInsertAttenuationImage)."
+[image1] is a GM image id and [image2] is the projected attenuation factor map id (eg. the output of sydInsertAttenuationImage).
+[image1] is corrected from attenuation using the value of [image2]
+The ratio is the default ratio value applied to correct from attenuation when [image1] and [image2] are not well superimposed."
 
+option "ratio"  r "Default ratio" double  default="1.0"
