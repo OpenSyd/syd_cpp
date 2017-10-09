@@ -274,17 +274,17 @@ add_executable(sydInsertRegisterPlanarSPECT
   ${sydInsertRegisterPlanarSPECT_GGO_C})
 target_link_libraries(sydInsertRegisterPlanarSPECT ${SYD_STD_DB_LIBRARY})
 
-# Create the attenuation corrected of a projection image
-wrap_ggo(sydInsertAttenuationCorrectedImage_GGO_C
-  sydInsertAttenuationCorrectedImage.ggo
+# Create the attenuation corrected of a planar image
+wrap_ggo(sydInsertAttenuationCorrectedPlanarImage_GGO_C
+  sydInsertAttenuationCorrectedPlanarImage.ggo
   ../common_db/sydCommandLineWithTags.ggo
   sydCommandLineWithImageInfo.ggo
   ../common_db/sydCommandLineWithComments.ggo
   sydCommandLineDefault.ggo )
-add_executable(sydInsertAttenuationCorrectedImage
-  sydInsertAttenuationCorrectedImage.cxx
-  ${sydInsertAttenuationCorrectedImage_GGO_C})
-target_link_libraries(sydInsertAttenuationCorrectedImage ${SYD_STD_DB_LIBRARY})
+add_executable(sydInsertAttenuationCorrectedPlanarImage
+  sydInsertAttenuationCorrectedPlanarImage.cxx
+  ${sydInsertAttenuationCorrectedPlanarImage_GGO_C})
+target_link_libraries(sydInsertAttenuationCorrectedPlanarImage ${SYD_STD_DB_LIBRARY})
 
 # Create the FAF mask
 wrap_ggo(sydInsertFAFMask_GGO_C

@@ -1,0 +1,8 @@
+#File sydInsertAttenuationCorrectedPlanarImage.ggo
+
+package "syd"
+version "0.4"
+usage "sydInsertAttenuationCorrectedPlanarImage <image1> <image2>"
+description "Create a new (mhd) image from the 2D Geometric Mean (GM) using the projected attenuation map.
+[image1] is a GM image id and [image2] is the projected attenuation factor map id (eg. the output of sydInsertAttenuationImage)."
+

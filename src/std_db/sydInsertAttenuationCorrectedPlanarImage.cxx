@@ -17,21 +17,21 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertAttenuationCorrectedImage_ggo.h"
+#include "sydInsertAttenuationCorrectedPlanarImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
 #include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"
-#include "sydAttenuationCorrectedImage.h"
+#include "sydAttenuationCorrectedPlanarImage.h"
 #include <numeric>
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertAttenuationCorrectedImage, 1);
+  SYD_INIT_GGO(sydInsertAttenuationCorrectedPlanarImage, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
   LOG(2) << "Read projected factor attenuation map :" << input_AM;
 
   // Main computation
-  auto image = syd::InsertAttenuationCorrectedImage(input_GM, input_AM);
+  auto image = syd::InsertAttenuationCorrectedPlanarImage(input_GM, input_AM);
 
   // Update image info
   syd::SetImageInfoFromImage(image, input_GM);

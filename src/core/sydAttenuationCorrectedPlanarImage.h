@@ -16,8 +16,8 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDATTENUATIONCORRECTEDIMAGE_H
-#define SYDATTENUATIONCORRECTEDIMAGE_H
+#ifndef SYDATTENUATIONCORRECTEDPLANARIMAGE_H
+#define SYDATTENUATIONCORRECTEDPLANARIMAGE_H
 
 
 //--------------------------------------------------------------------
@@ -25,11 +25,11 @@ namespace syd {
 
   template<class ImageType2D>
   typename ImageType2D::Pointer
-  AttenuationCorrectedImage(const ImageType2D * input_GM, const ImageType2D * input_AM);
+  AttenuationCorrectedPlanarImage(const ImageType2D * input_GM, const ImageType2D * input_AM);
 
 } // end namespace
 
-#include "sydAttenuationCorrectedImage.txx"
+#include "sydAttenuationCorrectedPlanarImage.txx"
 //--------------------------------------------------------------------
 
 #endif
