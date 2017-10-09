@@ -60,7 +60,8 @@ syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
   auto faf = syd::InsertImage<ImageType3D>(fafCalibrated, input_SPECT->patient, input_SPECT->modality);
   syd::SetImageInfoFromImage(faf, input_SPECT);
   auto db = input_SPECT->GetDatabase<syd::StandardDatabase>();
-  faf->pixel_unit = syd::FindOrCreatePixelUnit(db, "MBq/mm3");
+  faf->pixel_unit = syd::FindOrCreatePixelUnit(db, "MBq/mm3", "FAF calibrated image unit");
+  syd::SetPixelUnit(faf, "MBq/mm3");
   db->Update(faf);
   return faf;
 }
