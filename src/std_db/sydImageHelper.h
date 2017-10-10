@@ -119,7 +119,7 @@ namespace syd {
   // Compute the registered attenuation map of an image.
   syd::Image::pointer InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
                                                 const syd::Image::pointer inputSPECT,
-                                                const syd::Image::pointer inputAM);
+                                                int dimension);
 
   // Compute the manual registration of an image.
   syd::Image::pointer InsertManualRegistration(const syd::Image::pointer inputImage,

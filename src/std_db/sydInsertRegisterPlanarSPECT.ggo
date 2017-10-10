@@ -2,7 +2,11 @@
 
 package "syd"
 version "0.4"
-usage "sydInsertRegisterPlanarSPECT <image1> <image2> <image3>"
-description "Create a new (mhd) attenuation map image from the non-registered attenuation map <image3>.
-The registration takes the Planar image <image1> and the projected SPECT image <image2>, it centers around the x-axis and search for the best y-axis translation to maximize the correlation coefficient.
+usage "sydInsertRegisterPlanarSPECT <image1> <image2> -d [dimension]"
+description "Register Planar image and SPECT image (in place function) to align the planar image with the CT (and attenuation map).
+The registration takes the Planar image <image1> (eg. output of sydInsertPlanarGeometricalMean)
+and the SPECT image <image2> projected along the dimension d.
+It centers around the x-axis and search for the best y-axis translation to maximize the correlation coefficient.
 "
+
+option "dimension"   d "Projection along dimension d" int default="0" no

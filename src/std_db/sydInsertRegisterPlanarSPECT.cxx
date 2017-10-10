@@ -51,13 +51,13 @@ int main(int argc, char* argv[])
   db->QueryOne(inputSPECT, idSPECT); // will fail if not found
   LOG(2) << "Read image :" << inputSPECT;
 
-  syd::IdType idAM = atoi(args_info.inputs[2]);
-  syd::Image::pointer inputAM;
-  db->QueryOne(inputAM, idAM); // will fail if not found
-  LOG(2) << "Read image :" << inputAM;
+  // Main computation
+  int dimension(0);
+  if (args_info.dimension_given)
+    dimension = args_info.dimension_arg;
 
   // Main computation
-  auto image = syd::InsertRegisterPlanarSPECT(inputPlanar, inputSPECT, inputAM);
+  auto image = syd::InsertRegisterPlanarSPECT(inputPlanar, inputSPECT, dimension);
 
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);

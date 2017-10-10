@@ -17,16 +17,16 @@
   ===========================================================================**/
 
 #include "sydImageUtils.h"
+#include "itkImageAlgorithm.h"
 #include "itkResampleImageFilter.h"
 #include "itkIdentityTransform.h"
 #include "itkBSplineInterpolateImageFunction.h"
-#include "itkNormalizedCorrelationImageToImageMetric.h"
+#include "itkMattesMutualInformationImageToImageMetric.h"
 
 //--------------------------------------------------------------------
 template<class ImageType>
 typename ImageType::Pointer
-syd::RegisterPlanarSPECT(const ImageType * inputPlanar, const ImageType * inputSPECT,
-                 const ImageType * inputAM)
+syd::RegisterPlanarSPECT(ImageType * inputPlanar, const ImageType * inputSPECT)
 {
   //Create output
   /*typename ImageType::Pointer output = ImageType::New();
@@ -39,8 +39,6 @@ syd::RegisterPlanarSPECT(const ImageType * inputPlanar, const ImageType * inputS
   // Instantiate the resampler. Wire in the transform and the interpolator.
   typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;
   typename ResampleFilterType::Pointer resampleFilterSPECT = ResampleFilterType::New();
-  typename ResampleFilterType::Pointer resampleFilterAM = ResampleFilterType::New();
-
   // Instantiate the b-spline interpolator and set it as the third order for bicubic.
   typedef itk::BSplineInterpolateImageFunction<ImageType, double, double> InterpolatorType;
   typename InterpolatorType::Pointer interpolator = InterpolatorType::New();
@@ -52,80 +50,57 @@ syd::RegisterPlanarSPECT(const ImageType * inputPlanar, const ImageType * inputS
   transform->SetIdentity();
 
   resampleFilterSPECT->SetInput(inputSPECT);
-  resampleFilterAM->SetInput(inputAM);
   resampleFilterSPECT->SetTransform(transform);
-  resampleFilterAM->SetTransform(transform);
   resampleFilterSPECT->SetInterpolator(interpolator);
-  resampleFilterAM->SetInterpolator(interpolator);
   resampleFilterSPECT->SetOutputOrigin(inputSPECT->GetOrigin());
-  resampleFilterAM->SetOutputOrigin(inputAM->GetOrigin());
   resampleFilterSPECT->SetOutputSpacing(inputPlanar->GetSpacing());
-  resampleFilterAM->SetOutputSpacing(inputPlanar->GetSpacing());
 
-  // Set the output size as specified on the command line.
+  // Set the output size.
   typename ImageType::SizeType sizeSPECT, sizeAM;
   sizeSPECT[0] = inputSPECT->GetLargestPossibleRegion().GetSize(0)*inputSPECT->GetSpacing()[0]/inputPlanar->GetSpacing()[0];
   sizeSPECT[1] = inputSPECT->GetLargestPossibleRegion().GetSize(1)*inputSPECT->GetSpacing()[1]/inputPlanar->GetSpacing()[1];
-  sizeAM[0] = inputAM->GetLargestPossibleRegion().GetSize(0)*inputAM->GetSpacing()[0]/inputPlanar->GetSpacing()[0];
-  sizeAM[1] = inputAM->GetLargestPossibleRegion().GetSize(1)*inputAM->GetSpacing()[1]/inputPlanar->GetSpacing()[1];
   resampleFilterSPECT->SetSize(sizeSPECT);
-  resampleFilterAM->SetSize(sizeAM);
   resampleFilterSPECT->Update();
-  resampleFilterAM->Update();
 
   typename ImageType::Pointer SPECTresample = ImageType::New();
-  typename ImageType::Pointer AMresample = ImageType::New();
   SPECTresample = resampleFilterSPECT->GetOutput();
-  AMresample = resampleFilterAM->GetOutput();
 
   //Center along x
+  double spectCenter = SPECTresample->GetOrigin()[0] + SPECTresample->GetLargestPossibleRegion().GetSize(0)*SPECTresample->GetSpacing()[0]/2;
+  typename ImageType::PointType originPlanar = inputPlanar->GetOrigin();
+  originPlanar[0] += spectCenter - originPlanar[0] - inputPlanar->GetLargestPossibleRegion().GetSize(0)*inputPlanar->GetSpacing()[0]/2;
+  inputPlanar->SetOrigin(originPlanar);
 
-  double planarCenter = inputPlanar->GetOrigin()[0] + inputPlanar->GetLargestPossibleRegion().GetSize(0)*inputPlanar->GetSpacing()[0]/2;
-  typename ImageType::PointType originSPECT = SPECTresample->GetOrigin();
-  originSPECT[0] += planarCenter - originSPECT[0] - SPECTresample->GetLargestPossibleRegion().GetSize(0)*SPECTresample->GetSpacing()[0]/2;
-  SPECTresample->SetOrigin(originSPECT);
-  typename ImageType::PointType originAM = AMresample->GetOrigin();
-  originAM[0] += planarCenter - originAM[0] - AMresample->GetLargestPossibleRegion().GetSize(0)*AMresample->GetSpacing()[0]/2;
-  AMresample->SetOrigin(originAM);
-
-  //Compute correlation coeff for different y-offset between inputPlanar and inputSPECT
-  //typedef itk::NormalizedCorrelationImageToImageMetric<ImageType, ImageType> CorrelationCoeffFilterType;
-  typedef itk::NormalizedCorrelationImageToImageMetric<ImageType, ImageType> CorrelationCoeffFilterType;
-  double maxCorrelation(-1);
-  unsigned int maxTranslation(0);
-  for (unsigned int translation=0 ; translation < inputPlanar->GetLargestPossibleRegion().GetSize()[1] - SPECTresample->GetLargestPossibleRegion().GetSize()[1] +1; ++translation)
+  //Compute correlation coeff for different y-offset between inputPlanar and SPECTResample
+  typedef itk::MattesMutualInformationImageToImageMetric<ImageType, ImageType> MICoeffFilterType;
+  double minCorrelation(itk::NumericTraits<double >::infinity());
+  unsigned int minTranslation(0);
+  for (unsigned int translation=1 ; translation < SPECTresample->GetLargestPossibleRegion().GetSize()[1] + inputPlanar->GetLargestPossibleRegion().GetSize()[1]; ++translation)
   {
-    originSPECT[1] = inputPlanar->GetOrigin()[1] + translation;
-    SPECTresample->SetOrigin(originSPECT);
-    typename CorrelationCoeffFilterType::Pointer correlationCoeffFilter = CorrelationCoeffFilterType::New();
-    correlationCoeffFilter->SetMovingImage(SPECTresample);
-    correlationCoeffFilter->SetFixedImage(inputPlanar);
-    correlationCoeffFilter->SetTransform(transform);
-    correlationCoeffFilter->SetInterpolator(interpolator);
-    typename ImageType::RegionType smallRegion;
-    smallRegion = inputPlanar->GetLargestPossibleRegion();
-    smallRegion.Crop(SPECTresample->GetLargestPossibleRegion());
-    correlationCoeffFilter->SetFixedImageRegion(smallRegion);
-    correlationCoeffFilter->Initialize();
-    correlationCoeffFilter->UseAllPixelsOn();
-    std::cout << correlationCoeffFilter->GetValue(transform->GetParameters()) << std::endl;
-    if (correlationCoeffFilter->GetValue(transform->GetParameters()) > maxCorrelation) maxTranslation = translation;
+    originPlanar[1] = SPECTresample->GetOrigin()[1] - inputPlanar->GetLargestPossibleRegion().GetSize()[1]*inputPlanar->GetSpacing()[1] + translation*inputPlanar->GetSpacing()[1];
+    inputPlanar->SetOrigin(originPlanar);
+    typename MICoeffFilterType::Pointer miCoeffFilter = MICoeffFilterType::New();
+    miCoeffFilter->SetMovingImage(inputPlanar);
+    miCoeffFilter->SetFixedImage(SPECTresample);
+    miCoeffFilter->SetTransform(transform);
+    miCoeffFilter->SetInterpolator(interpolator);
+    typename ImageType::RegionType smallRegion = itk::ImageAlgorithm::EnlargeRegionOverBox(inputPlanar->GetLargestPossibleRegion(), inputPlanar, SPECTresample.GetPointer());
+    miCoeffFilter->SetFixedImageRegion(smallRegion);
+    miCoeffFilter->UseAllPixelsOn();
+    miCoeffFilter->SetNumberOfHistogramBins(50);
+    miCoeffFilter->ReinitializeSeed();
+    miCoeffFilter->Initialize();
+    if (miCoeffFilter->GetValue(transform->GetParameters()) < minCorrelation) {
+      minCorrelation = miCoeffFilter->GetValue(transform->GetParameters());
+      minTranslation = translation;
+    }
   }
 
   //Choose the best y-offset and resample the image to fit with planar image
-  originAM[1] = inputPlanar->GetOrigin()[1] + maxTranslation - inputSPECT->GetOrigin()[1] + inputAM->GetOrigin()[1]; //Remove gap between SPECT and CT
-  AMresample->SetOrigin(originAM);
+  originPlanar[1] = SPECTresample->GetOrigin()[1] - inputPlanar->GetLargestPossibleRegion().GetSize()[1]*inputPlanar->GetSpacing()[1] + minTranslation*inputPlanar->GetSpacing()[1];
+  inputPlanar->SetOrigin(originPlanar);
 
-  typename ResampleFilterType::Pointer resampleFilter = ResampleFilterType::New();
-  resampleFilter->SetTransform(transform.GetPointer());
-  resampleFilter->SetInput(AMresample);
-  resampleFilter->SetOutputSpacing(inputPlanar->GetSpacing());
-  resampleFilter->SetOutputOrigin(inputPlanar->GetOrigin());
-  resampleFilter->SetSize(inputPlanar->GetLargestPossibleRegion().GetSize());
-  resampleFilter->Update();
-
-  return resampleFilter->GetOutput();
-
+  return inputPlanar;
 }
 //--------------------------------------------------------------------
 

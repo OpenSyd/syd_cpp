@@ -417,18 +417,20 @@ syd::InsertAttenuationImage(const syd::Image::pointer input, const syd::Image::p
 syd::Image::pointer
 syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
                                const syd::Image::pointer inputSPECT,
-                               const syd::Image::pointer inputAM)
+                               int dimension)
 {
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 2> ImageType2D;
+  typedef itk::Image<PixelType, 3> ImageType3D;
   auto itk_inputPlanar = syd::ReadImage<ImageType2D>(inputPlanar->GetAbsolutePath());
-  auto itk_inputSPECT = syd::ReadImage<ImageType2D>(inputSPECT->GetAbsolutePath());
-  auto itk_inputAM = syd::ReadImage<ImageType2D>(inputAM->GetAbsolutePath());
-  auto AM_register = syd::RegisterPlanarSPECT<ImageType2D>(itk_inputPlanar, itk_inputSPECT, itk_inputAM);
+  auto itk_inputSPECT = syd::ReadImage<ImageType3D>(inputSPECT->GetAbsolutePath());
+  auto projectionSPECT = syd::Projection<ImageType3D, ImageType2D>(itk_inputSPECT, dimension,0, 1);
+  auto imageRegister = syd::RegisterPlanarSPECT<ImageType2D>(itk_inputPlanar, projectionSPECT);
 
-  // Create the syd image
-  return syd::InsertImage<ImageType2D>(AM_register, inputAM->patient, inputAM->modality);
+  // Update the syd image
+  syd::WriteImage<ImageType2D>(imageRegister, inputPlanar->GetAbsolutePath(), inputPlanar->dimension);
+  return inputPlanar;
 }
 // --------------------------------------------------------------------
 
