@@ -321,7 +321,7 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
     GetTagValueFromTagKey(dicomIO, "0008|1090", empty_value); //ManufacturerModelName
   description = description + " " + Manufacturer + " " + ManufacturerModelName;
   description = trim(description);
-
+  
   // Store description
   serie->dicom_description = description;
   serie->dicom_series_description = SeriesDescription;
@@ -389,8 +389,7 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
       slope = 1.0;
     }
   }
-  else
-    slope = 1.0;
+  else slope = 1.0;
   serie->dicom_real_world_value_slope = slope;
   serie->dicom_real_world_value_intercept = intercept;
 

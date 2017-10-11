@@ -162,6 +162,9 @@ syd::GetSequence(const gdcm::DataSet & dataset, uint16_t group, uint16_t element
   }
   auto & elem = dataset.GetDataElement(tag);
   auto seq = elem.GetValueAsSQ();
+  if (!seq) {
+    EXCEPTION("Problem locating dicom seq tag " << group << "|" << element << std::endl);
+  }
   return seq;
 }
 // --------------------------------------------------------------------
