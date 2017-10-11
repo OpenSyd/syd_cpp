@@ -430,6 +430,7 @@ syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
 
   // Update the syd image
   syd::WriteImage<ImageType2D>(imageRegister, inputPlanar->GetAbsolutePath(), inputPlanar->dimension);
+  inputPlanar->frame_of_reference_uid = inputSPECT->frame_of_reference_uid;
   return inputPlanar;
 }
 // --------------------------------------------------------------------
