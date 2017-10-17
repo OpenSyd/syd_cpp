@@ -155,16 +155,18 @@ double syd::ComputeMass(syd::Image::pointer ct, std::string roi_name)
     EXCEPTION("Cannot estimate the mass from this image " << ct);
   }
 
-  // find roimask
+  // Find roimask
   auto mask = syd::FindOneRoiMaskImage(ct, roi_name);
   if (!mask) {
     EXCEPTION("In ComputeScalingFactorToMBperKg, cannot find a mask '"
               << roi_name << "' for the image " << ct);
   }
 
-  // find roistatistic or compute it
-  auto stat = syd::FindOneRoiStatistic(ct, mask);
-  if (!stat) {
+  // Find roistatistic or compute it
+  syd::RoiStatistic::pointer stat;
+  try {
+    stat = syd::FindOneRoiStatistic(ct, mask);
+  } catch (std::exception & e) {
     stat = syd::NewRoiStatistic(ct, mask);
     auto db = ct->GetDatabase<syd::StandardDatabase>();
     db->Insert(stat);
