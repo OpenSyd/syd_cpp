@@ -284,9 +284,11 @@ syd::InsertAnonymizedDicomSerie(const syd::DicomSerie::pointer dicom)
 //--------------------------------------------------------------------
 std::string syd::GetDateOfOlderDicom(const syd::DicomSerie::vector & dicoms)
 {
+  if (dicoms.size() == 0) return "";
   auto d =
     std::min_element(begin(dicoms), end(dicoms),
-                     [] (const syd::DicomSerie::pointer & s1, const syd::DicomSerie::pointer & s2) {
+                     [] (const syd::DicomSerie::pointer & s1,
+                         const syd::DicomSerie::pointer & s2) {
                        return s1->dicom_acquisition_date < s2->dicom_acquisition_date;
                      });
   return (*d)->dicom_acquisition_date;
@@ -332,6 +334,7 @@ bool syd::IsDicomStitchable(const syd::DicomSerie::pointer a,
 std::vector<syd::DicomSerie::vector> syd::GroupByStitchableDicom(syd::DicomSerie::vector dicoms)
 {
   std::vector<syd::DicomSerie::vector> final_dicoms;
+  if (dicoms.size() == 0) return final_dicoms;
   std::list<syd::DicomSerie::pointer> list;
   std::copy(dicoms.begin(), dicoms.end(), std::back_inserter(list));
 
@@ -340,7 +343,7 @@ std::vector<syd::DicomSerie::vector> syd::GroupByStitchableDicom(syd::DicomSerie
   // 2. Search in the remaning part of the list, if another dicom is stitchable.
   // 3. If yes, group together, and remove both dicom from the list
   // ONLY valid for 2 stitched dicom max !
-  // Use list instead of vector (should be faster to remove). 
+  // Use list instead of vector (should be faster to remove).
 
   while (!list.empty()) {
     auto dicom1 = list.front();

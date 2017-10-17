@@ -32,7 +32,11 @@ syd::ImageType::pointer syd::IdentifyImageType(syd::DicomSerie::pointer dicom)
   // FIXME later --> warning if some test or not zero
   for(auto & type:types) {
     double v = type->Identify(dicom);
-    if (v >= 1.0) {//}best_value) {
+    if (v == best_value and v != 0) {
+      // We dont know
+      best_type = syd::ImageType::GetNotFoundImageType();
+    }
+    if (v >= best_value) {
       best_value = v;
       // do a copy because the identify function may have set some option
       best_type = type->Clone();
@@ -175,6 +179,7 @@ syd::ImageType::pointer syd::ImageType::BuildImageType_SPECT()
     if (dicom->dicom_modality == "ST") v = 1.0; // Sure it is a SPECT
     if (dicom->dicom_modality == "OT") v = 0.5; // Maybe a SPECT
     if (dicom->dicom_modality == "NM") v = 0.5; // Maybe a SPECT
+    if (dicom->dicom_modality == "PT") v = 0.5; // Maybe a SPECT
     if (v<0.5) return v; // Sure not a spect
 
     // CHeck properties
@@ -236,7 +241,17 @@ syd::ImageType::pointer syd::ImageType::BuildImageType_SPECT()
       p->properties["S2"] = PropertiesValue::Yes;
     }
     found = d.find("SPECT_KNITTED");
-    if (found != std::string::npos) v = 1.0; // We know it is a spect
+    if (found != std::string::npos) v = 1.0; // This is a spect
+
+    found = d.find("QSPECT");
+    if (found != std::string::npos) v = 1.0; // This is a spect
+
+    found = d.find("SC - AC");
+    if (found != std::string::npos) {
+      p->properties["AC"] = PropertiesValue::Yes;
+      p->properties["SC"] = PropertiesValue::Yes;
+      v = 1.0; // This is a spect
+    }
 
     if (p->properties.size() > 0) v = 1.0; // Sure it is a SPECT
     return v;
@@ -336,6 +351,8 @@ syd::ImageType::pointer syd::ImageType::BuildImageType_AttMap()
     auto d = dicom->dicom_description;
     size_t found;
     found = d.find("ATT MAP");
+    if (found != std::string::npos) v = 1.0;
+    found = d.find("ACCT");
     if (found != std::string::npos) v = 1.0;
     return v;
   };

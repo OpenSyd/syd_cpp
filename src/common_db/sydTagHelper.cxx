@@ -31,6 +31,7 @@ syd::Tag::vector syd::FindTags(const syd::Database * db,
 }
 // --------------------------------------------------------------------
 
+
 // --------------------------------------------------------------------
 syd::Tag::pointer syd::FindTag(const syd::Database * db,
                                const std::string & name)
