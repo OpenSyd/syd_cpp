@@ -57,7 +57,7 @@ double syd::ICRP_SpecificAbsorbedFraction::Compute(double energy)
   // Search for first energy larger than the given energy
   auto search = std::lower_bound(mEnergies.begin(), mEnergies.end(), energy);
   if (search == mEnergies.end()) {
-    LOG(FATAL) << "too large " << energy;
+    EXCEPTION("too large " << energy);
   }
 
   // If this is the first, no interpolation
@@ -124,11 +124,11 @@ void syd::ICRP_SpecificAbsorbedFractionData::Read(std::string filename)
 
   auto ne = mEnergies.size();
   while (is) {
+    // Read target and source name
     is >> target;
-
     is >> source;
+    // Sometimes the source start with a '-', remove it
     if (source[0]=='-') source.erase(0,1);
-    else source.erase(0,2);
 
     auto saf = std::make_shared<ICRP_SpecificAbsorbedFraction>(mEnergies);
 
@@ -153,11 +153,11 @@ syd::ICRP_SpecificAbsorbedFractionData::Get(std::string source, std::string targ
 {
   auto search_source = mSourcesMap.find(source);
   if (search_source == mSourcesMap.end()) {
-    LOG(FATAL) << "Cannot find source " << source;
+    EXCEPTION("Cannot find SAF with source. Source/Target: " << source << "/" << target);
   }
   auto search_target = search_source->second.find(target);
   if (search_target == search_source->second.end()) {
-    LOG(FATAL) << "Cannot find target " << target;
+    EXCEPTION("Cannot find SAF with target. Source/Target: " << source << "/" << target);
   }
   return search_target->second;
 }

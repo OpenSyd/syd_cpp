@@ -134,8 +134,16 @@ double syd::SCoefficientCalculator::Run()
   std::vector<std::shared_ptr<ICRP_SpecificAbsorbedFraction>> safd;
   safd.resize(8);
   for(auto i=0; i<safd.size(); i++) {
-    if (mSAFData[i] != nullptr)
-      safd[i] = mSAFData[i]->Get(mSourceOrganName, mTargetOrganName);
+    if (mSAFData[i] != nullptr) {
+      try{
+        safd[i] = mSAFData[i]->Get(mSourceOrganName, mTargetOrganName);
+      } catch(std::exception & e) {
+        LOG(WARNING) << "Cannot find SAF for T/S: "
+                     << mTargetOrganName << "/"
+                     << mSourceOrganName << " (ignored)";
+        safd[i] = nullptr;
+      }
+    }
   }
 
   // Loop on the energies list
@@ -145,8 +153,9 @@ double syd::SCoefficientCalculator::Run()
     auto energy = r.mEnergy;
     auto yield = r.mYield;
     auto ss = safd[r.mId];
-    if (safd[r.mId] == nullptr) {
-      EXCEPTION("Error, ICODE " << i << " not read in SCoefficientCalculator::Run.");
+    if (ss == nullptr) {
+      continue;
+      //EXCEPTION("Error, ICODE " << i << " not read in SCoefficientCalculator::Run.");
     }
     auto saf = ss->Compute(energy);
     s += (energy * yield * saf);

@@ -25,17 +25,18 @@
 syd::ICRPOrganDose::pointer
 syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
                       syd::FitTimepoints::pointer target_ft,
-                      syd::FitTimepoints::vector source_fts)
+                      std::string target_name,
+                      syd::FitTimepoints::vector source_fts,
+                      std::vector<std::string> source_names)
 {
-  // Guess target ROI name
-  auto target_name = syd::GuessTargetRoiName(c, target_ft->timepoints);
+  // Get roitimepoints
   auto rtp = std::dynamic_pointer_cast<syd::RoiTimepoints>(target_ft->timepoints);
 
-  // Guess target ROI name
-  std::vector<std::string> source_names;
-  for(auto ft:source_fts) {
-    auto t = syd::GuessSourceRoiName(c, ft->timepoints);
-    source_names.push_back(t);
+  // check
+  if (source_names.size() != source_fts.size()) {
+    DDS(source_fts);
+    DDS(source_names);
+    EXCEPTION("Error in NewICRPOrganDose, source_fts must have the same size than source_names.");
   }
 
   // Get the rad
@@ -104,7 +105,7 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
   }
 
   // unity
-  // S are in mGy/MBq.h 
+  // S are in mGy/MBq.h
   // auc must be in MBq.h / kg
   dose = dose/1000.0;// to convert in Gy
 
@@ -133,6 +134,30 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
   // source_roitypes;
   od->source_organ_names = source_names;
   return od;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::ICRPOrganDose::pointer
+syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
+                      syd::FitTimepoints::pointer target_ft,
+                      syd::FitTimepoints::vector source_fts)
+{
+  DDF();
+  // Guess target ROI name
+  auto target_name = syd::GuessTargetRoiName(c, target_ft->timepoints);
+  DD(target_name);
+
+  // Guess target ROI name
+  std::vector<std::string> source_names;
+  for(auto ft:source_fts) {
+    auto t = syd::GuessSourceRoiName(c, ft->timepoints);
+    source_names.push_back(t);
+  }
+  DDS(source_names);
+
+  return NewICRPOrganDose(c, target_ft, target_name, source_fts, source_names);
 }
 // --------------------------------------------------------------------
 
@@ -188,3 +213,122 @@ std::string syd::GuessSourceRoiName(syd::SCoefficientCalculator::pointer c,
   return mint;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::GetICRPNamesFromComments(const syd::FitTimepoints::vector & ftps,
+                                   syd::FitTimepoints::vector & tftps,
+                                   std::vector<std::string> & target_names,
+                                   syd::FitTimepoints::vector & sftps,
+                                   std::vector<std::string> & source_names)
+{
+  DDF();
+  DDS(ftps);
+
+  tftps.clear();
+  sftps.clear();
+  target_names.clear();
+  source_names.clear();
+  for(auto tp:ftps) {
+    DD(tp);
+    auto com = tp->timepoints->comments;
+    DDS(com);
+
+    auto target = GetAssociatedTargetName(com);
+    if (target != "") {
+      DD(target);
+      target_names.push_back(target);
+      tftps.push_back(tp);
+    }
+
+    auto source = GetAssociatedSourceName(com);
+    if (source != "") {
+      DD(source);
+      source_names.push_back(source);
+      sftps.push_back(tp);
+    }
+
+  }
+  DDS(target_names);
+  DDS(source_names);
+  DDS(tftps);
+  DDS(sftps);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::SetAssociatedSourceName(std::vector<std::string> & com, std::string name)
+{
+  syd::RemoveAssociatedSourceName(com);
+  std::ostringstream ss;
+  ss << AssociatedSourceNameComment << name;
+  com.push_back(ss.str());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::SetAssociatedTargetName(std::vector<std::string> & com, std::string name)
+{
+  syd::RemoveAssociatedTargetName(com);
+  std::ostringstream ss;
+  ss << AssociatedTargetNameComment << name;
+  com.push_back(ss.str());
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::RemoveAssociatedSourceName(std::vector<std::string> & com)
+{
+  std::vector<std::string> temp;
+  for(auto c:com) {
+    auto it = c.find(AssociatedSourceNameComment);
+    if (it == std::string::npos) temp.push_back(c);
+  }
+  com = temp;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::RemoveAssociatedTargetName(std::vector<std::string> & com)
+{
+  std::vector<std::string> temp;
+  for(auto c:com) {
+    auto it = c.find(AssociatedTargetNameComment);
+    if (it == std::string::npos) temp.push_back(c);
+  }
+  com = temp;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetAssociatedSourceName(std::vector<std::string> & com)
+{
+  std::string name = "";
+  for(auto c:com) {
+    auto it = c.find(AssociatedSourceNameComment);
+    if (it == std::string::npos) continue;
+    name = c.substr(it+AssociatedSourceNameComment.size(), c.size());
+  }
+  return name;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::GetAssociatedTargetName(std::vector<std::string> & com)
+{
+  std::string name = "";
+  for(auto c:com) {
+    auto it = c.find(AssociatedTargetNameComment);
+    if (it == std::string::npos) continue;
+    name = c.substr(it+AssociatedTargetNameComment.size(), c.size());
+  }
+  return name;
+}
+// --------------------------------------------------------------------
+
