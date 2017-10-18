@@ -24,6 +24,7 @@
 #include "sydCommonGengetopt.h"
 #include "sydTagHelper.h"
 #include "sydCommentsHelper.h"
+#include "sydRecordWithComments.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -58,6 +59,12 @@ int main(int argc, char* argv[])
                  << " do not have tags";
     }
     syd::SetTagsFromCommandLine(r->tags, db, args_info);
+    auto rc = std::dynamic_pointer_cast<syd::RecordWithComments>(record);
+    if (rc == nullptr) {
+      LOG(FATAL) << "Error, the records of table " << record->GetTableName()
+                 << " do not have comments";
+    }
+    syd::SetCommentsFromCommandLine(rc->comments, db, args_info);
   }
 
   db->Update(records, table_name);
