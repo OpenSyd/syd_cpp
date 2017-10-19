@@ -104,7 +104,7 @@ void syd::SCoefficientCalculator::Initialise(std::string folder)
   mSAFData[5] = saf; // B- (Beta- particles, Delayed Beta particles)
   mSAFData[6] = saf; // IE (IC electrons)
   mSAFData[7] = saf; // AE (Auger electrons)
- 
+
   // FIXME no auger + neutron yet
 }
 // --------------------------------------------------------------------
@@ -142,6 +142,7 @@ double syd::SCoefficientCalculator::Run()
                      << mTargetOrganName << "/"
                      << mSourceOrganName << " (ignored)";
         safd[i] = nullptr;
+        return 0;
       }
     }
   }

@@ -60,7 +60,9 @@ std::string syd::ICRPOrganDose::ToString() const
   ss << syd::GetLabels(tags) << " "
      << radionuclide->name << " "
      << "d:" << absorbed_dose_in_Gy << " Gy "
-     << "T:" << target_organ_name << " S:";
+     << "T:" << target_organ_name
+     << " (" << target_mass_in_kg << " kg)"
+     << " S:";
   for(auto s:source_organ_names)
     ss << s << " ";
   ss << phantom_name << " "
@@ -100,6 +102,7 @@ std::string syd::ICRPOrganDose::ToStringForMD5() const
      << radionuclide
      << absorbed_dose_in_Gy
      << phantom_name
+     << target_mass_in_kg
      << target_organ_name;
   for(auto s:sources_fit_timepoints) ss << s;
   for(auto s:S_coefficients) ss << s;

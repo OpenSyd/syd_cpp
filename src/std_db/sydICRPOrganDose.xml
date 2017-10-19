@@ -1,4 +1,10 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="306">
+    <alter-table name="syd::ICRPOrganDose">
+      <add-column name="target_mass_in_kg" type="REAL" null="true"/>
+    </alter-table>
+  </changeset>
+
   <changeset version="305">
     <add-table name="syd::ICRPOrganDose" kind="polymorphic root object">
       <column name="id" type="INTEGER" null="true"/>

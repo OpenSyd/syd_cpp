@@ -62,6 +62,9 @@ namespace syd {
       /// Corresponding target RoiType
       syd::RoiType::pointer target_roitype;
 
+      /// Target mass
+      double target_mass_in_kg;
+
       /// Name of the source organs used in the ICRP
       std::vector<std::string> source_organ_names;
 

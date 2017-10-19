@@ -77,9 +77,14 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
   int i=0;
   double dose = 0.0;
   std::vector<double> S;
+  std::vector<std::string> curated_source_names;
+  syd::FitTimepoints::vector curated_source_fts;
   for(auto source_name:source_names) {
     c->SetSourceOrgan(source_name);
     auto s = c->Run();
+    if (s == 0) continue;
+    curated_source_fts.push_back(source_fts[i]);
+    curated_source_names.push_back(source_name);
     S.push_back(s);
 
     // Get the TIA in the source (with correct unit)
@@ -123,8 +128,9 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
   od->absorbed_dose_in_Gy = dose;
   od->phantom_name = c->GetPhantomName();
   od->target_organ_name = target_name;
+  od->target_mass_in_kg = target_mass_kg;
   od->target_roitype = target_rtp->roi_statistics[0]->mask->roitype;
-  for(auto ft:source_fts) {
+  for(auto ft:curated_source_fts) {
     auto source_rtp = std::dynamic_pointer_cast<syd::RoiTimepoints>(ft->timepoints);
     if (!source_rtp or source_rtp->roi_statistics.size() == 0) {
       EXCEPTION("Cannot guess the (target) roitype for this FitTimepoint " << ft);
@@ -132,7 +138,7 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
     od->source_roitypes.push_back(source_rtp->roi_statistics[0]->mask->roitype);
   }
   // source_roitypes;
-  od->source_organ_names = source_names;
+  od->source_organ_names = curated_source_names;
   return od;
 }
 // --------------------------------------------------------------------
@@ -144,10 +150,8 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
                       syd::FitTimepoints::pointer target_ft,
                       syd::FitTimepoints::vector source_fts)
 {
-  DDF();
   // Guess target ROI name
   auto target_name = syd::GuessTargetRoiName(c, target_ft->timepoints);
-  DD(target_name);
 
   // Guess target ROI name
   std::vector<std::string> source_names;
@@ -155,7 +159,6 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
     auto t = syd::GuessSourceRoiName(c, ft->timepoints);
     source_names.push_back(t);
   }
-  DDS(source_names);
 
   return NewICRPOrganDose(c, target_ft, target_name, source_fts, source_names);
 }
@@ -222,37 +225,23 @@ void syd::GetICRPNamesFromComments(const syd::FitTimepoints::vector & ftps,
                                    syd::FitTimepoints::vector & sftps,
                                    std::vector<std::string> & source_names)
 {
-  DDF();
-  DDS(ftps);
-
   tftps.clear();
   sftps.clear();
   target_names.clear();
   source_names.clear();
   for(auto tp:ftps) {
-    DD(tp);
     auto com = tp->timepoints->comments;
-    DDS(com);
-
     auto target = GetAssociatedTargetName(com);
     if (target != "") {
-      DD(target);
       target_names.push_back(target);
       tftps.push_back(tp);
     }
-
     auto source = GetAssociatedSourceName(com);
     if (source != "") {
-      DD(source);
       source_names.push_back(source);
       sftps.push_back(tp);
     }
-
   }
-  DDS(target_names);
-  DDS(source_names);
-  DDS(tftps);
-  DDS(sftps);
 }
 // --------------------------------------------------------------------
 

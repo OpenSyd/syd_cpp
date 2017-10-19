@@ -55,8 +55,8 @@ namespace syd {
                                 syd::FitTimepoints::vector & sftps,
                                 std::vector<std::string> & source_names);
 
-  static const std::string AssociatedSourceNameComment = "AssociatedSource: ";
-  static const std::string AssociatedTargetNameComment = "AssociatedTarget: ";
+  static const std::string AssociatedSourceNameComment = "NameAsSource: ";
+  static const std::string AssociatedTargetNameComment = "NameAsTarget: ";
 
   void SetAssociatedSourceName(std::vector<std::string> & com, std::string name);
   void SetAssociatedTargetName(std::vector<std::string> & com, std::string name);

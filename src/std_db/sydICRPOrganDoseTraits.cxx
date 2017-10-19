@@ -36,6 +36,7 @@ BuildFields(const syd::Database * db) const
   ADD_TABLE_FIELD(target_roitype, syd::RoiType);
 
   ADD_RO_FIELD(absorbed_dose_in_Gy, double);
+  ADD_RO_FIELD(target_mass_in_kg, double);
   ADD_RO_FIELD(phantom_name, std::string);
   ADD_RO_FIELD(target_organ_name, std::string);
 
@@ -79,7 +80,7 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["default"] =
-    "id target_fit_timepoints.id[t_fit_tp] tags sources_ftp[s_fit_tp] absorbed_dose_in_Gy[Gy] S phantom_name[ph] target_organ_name[target] source_organs[sources] target_roitype.name[target] sources_rt[sources]";
+    "id target_fit_timepoints.id[t_fit_tp] tags sources_ftp[s_fit_tp] absorbed_dose_in_Gy[Gy] target_mass_in_kg[mass] S phantom_name[ph] target_organ_name[target] source_organs[sources] target_roitype.name[target] sources_rt[sources]";
 
   field_format_map_["hist"] =
     "default history.insertion_date[insert] history.update_date[update]";
