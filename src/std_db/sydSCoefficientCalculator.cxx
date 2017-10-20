@@ -126,6 +126,7 @@ std::string syd::SCoefficientCalculator::ToString() const
 // --------------------------------------------------------------------
 double syd::SCoefficientCalculator::Run()
 {
+  DDF();
   if (mRadiationData == nullptr or mSAFData.size() == 0) Initialise();
 
   // Consider the radionuclide and get the saf for the source/target

@@ -38,13 +38,21 @@ ConvertRoiToImage(const gdcm::DataSet & dataset, int roi_id, MaskImageType * ima
   MaskImageSliceType::RegionType region;
   MaskImageSliceType::IndexType start;
   MaskImageSliceType::SizeType size;
+  MaskImageSliceType::PointType origin;
+  MaskImageSliceType::SpacingType spacing;
   start[0] = image->GetLargestPossibleRegion().GetIndex()[0];
   start[1] = image->GetLargestPossibleRegion().GetIndex()[1];
   size[0] = image->GetLargestPossibleRegion().GetSize()[0];
   size[1] = image->GetLargestPossibleRegion().GetSize()[1];
+  origin[0] = image->GetOrigin()[0];
+  origin[1] = image->GetOrigin()[1];
+  spacing[0] = image->GetSpacing()[0];
+  spacing[1] = image->GetSpacing()[1];
   region.SetSize(size);
   region.SetIndex(start);
+  slice->SetOrigin(origin);
   slice->SetRegions(region);
+  slice->SetSpacing(spacing);
   slice->Allocate();
 
   // Get the sequence
@@ -74,6 +82,7 @@ ConvertRoiToImage(const gdcm::DataSet & dataset, int roi_id, MaskImageType * ima
   //  DD(nb_of_points_outside); // not use yet
 }
 // --------------------------------------------------------------------
+
 
 // --------------------------------------------------------------------
 gdcm::SmartPointer<gdcm::SequenceOfItems>
@@ -182,12 +191,14 @@ MergeSliceInImage(MaskImageSliceType * slice,
   if (slice_nb <=0) return;
   pixelIndex[2] = slice_nb;
   auto pslice = slice->GetBufferPointer();
-  for (int i=0;i<iX;i++)
-    for (int j=0;j<iY;j++) {
-      pixelIndex[0] = i;
-      pixelIndex[1] = j;
+  for (int i=0;i<iY;i++)
+    for (int j=0;j<iX;j++) {
+      pixelIndex[0] = j;
+      pixelIndex[1] = i;
       pixelValue = *pslice;
-      image->SetPixel(pixelIndex, pixelValue);
+      auto v = image->GetPixel(pixelIndex);
+      // Add the current contour because another contour may already be on the same slice
+      image->SetPixel(pixelIndex, v+pixelValue);
       ++pslice;
     }
 }
