@@ -30,7 +30,8 @@ namespace syd {
   syd::ICRPOrganDose::pointer
     NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
                      syd::FitTimepoints::pointer ftp,
-                     syd::FitTimepoints::vector ftps);
+                     syd::FitTimepoints::vector ftps,
+                     bool scale_mass);
 
   /// Create a ICRPOrganDose for a target/sources FitTimepoint
   syd::ICRPOrganDose::pointer
@@ -38,7 +39,8 @@ namespace syd {
                      syd::FitTimepoints::pointer target_ft,
                      std::string target_name,
                      syd::FitTimepoints::vector source_fts,
-                     std::vector<std::string> source_names);
+                     std::vector<std::string> source_names,
+                     bool scale_mass);
 
   /// Try to guess the ICRP name from the RoiTimepoints roitype
   std::string GuessTargetRoiName(syd::SCoefficientCalculator::pointer c,

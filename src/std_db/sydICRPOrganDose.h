@@ -65,6 +65,9 @@ namespace syd {
       /// Target mass
       double target_mass_in_kg;
 
+      /// Mass scaling that was applied
+      double mass_scaling;
+
       /// Name of the source organs used in the ICRP
       std::vector<std::string> source_organ_names;
 

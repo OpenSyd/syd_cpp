@@ -27,7 +27,8 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
                       syd::FitTimepoints::pointer target_ft,
                       std::string target_name,
                       syd::FitTimepoints::vector source_fts,
-                      std::vector<std::string> source_names)
+                      std::vector<std::string> source_names,
+                      bool scale_mass)
 {
   // Get roitimepoints
   auto rtp = std::dynamic_pointer_cast<syd::RoiTimepoints>(target_ft->timepoints);
@@ -69,10 +70,9 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
   }
   auto ct = images[0];
 
-  // Get the mass
+  // Get the mass and indicate to the SCoefficientCalculator
   auto target_roistat = rtp->roi_statistics[0];
   auto roi_name = target_roistat->mask->roitype->name;
-  auto target_mass_kg = syd::ComputeMass(ct, roi_name);
 
   int i=0;
   double dose = 0.0;
@@ -91,6 +91,7 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
     auto auc = source_fts[i]->auc;
     auto unit = source_fts[i]->unit;
     double scaling_to_MB = 1.0;
+
     if (unit->name == "Bq.h") scaling_to_MB = 1.0/1000000.0;
     else {
       if (unit->name == "kBq.h") scaling_to_MB = 1.0/1000.0;
@@ -104,9 +105,18 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
     auc = auc * scaling_to_MB;
 
     // Compute dose
-    dose += auc/target_mass_kg*s;
+    dose += auc*s;
 
     ++i;
+  }
+
+  // Mass scaling
+  double mass_scaling = 1.0;
+  double target_mass_kg = 0.0;
+  if (scale_mass) {
+    target_mass_kg = syd::ComputeMass(ct, roi_name);
+    mass_scaling = c->GetTargetMassInKg()/target_mass_kg;
+    dose *= mass_scaling;
   }
 
   // unity
@@ -129,6 +139,7 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
   od->phantom_name = c->GetPhantomName();
   od->target_organ_name = target_name;
   od->target_mass_in_kg = target_mass_kg;
+  od->mass_scaling = mass_scaling;
   od->target_roitype = target_rtp->roi_statistics[0]->mask->roitype;
   for(auto ft:curated_source_fts) {
     auto source_rtp = std::dynamic_pointer_cast<syd::RoiTimepoints>(ft->timepoints);
@@ -148,7 +159,8 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
 syd::ICRPOrganDose::pointer
 syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
                       syd::FitTimepoints::pointer target_ft,
-                      syd::FitTimepoints::vector source_fts)
+                      syd::FitTimepoints::vector source_fts,
+                      bool scale_mass)
 {
   // Guess target ROI name
   auto target_name = syd::GuessTargetRoiName(c, target_ft->timepoints);
@@ -160,7 +172,7 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
     source_names.push_back(t);
   }
 
-  return NewICRPOrganDose(c, target_ft, target_name, source_fts, source_names);
+  return NewICRPOrganDose(c, target_ft, target_name, source_fts, source_names, scale_mass);
 }
 // --------------------------------------------------------------------
 

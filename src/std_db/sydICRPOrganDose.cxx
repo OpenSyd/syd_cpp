@@ -41,6 +41,7 @@ syd::ICRPOrganDose::ICRPOrganDose():
   // target_roitype;
   // source_organ_names;
   // source_roitypes;
+  mass_scaling = 1.0;
 }
 // --------------------------------------------------------------------
 
@@ -69,6 +70,7 @@ std::string syd::ICRPOrganDose::ToString() const
      << "Scoeff:";
   for(auto s:S_coefficients)
     ss << s << " ";
+  ss << "ms: " << mass_scaling;
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -103,7 +105,8 @@ std::string syd::ICRPOrganDose::ToStringForMD5() const
      << absorbed_dose_in_Gy
      << phantom_name
      << target_mass_in_kg
-     << target_organ_name;
+     << target_organ_name
+     << mass_scaling;
   for(auto s:sources_fit_timepoints) ss << s;
   for(auto s:S_coefficients) ss << s;
   for(auto s:source_organ_names) ss << s;

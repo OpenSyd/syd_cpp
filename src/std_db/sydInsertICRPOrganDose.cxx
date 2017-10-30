@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
   c->Initialise(folder);
 
   // New ICRPOrganDose
-  auto od = syd::NewICRPOrganDose(c, ftps[0], ftps);
+  auto od = syd::NewICRPOrganDose(c, ftps[0], ftps, args_info.scale_mass_flag);
   od->md5 = od->ComputeMD5();
   odb::query<syd::ICRPOrganDose> q = odb::query<syd::ICRPOrganDose>::md5 == od->md5;
   syd::ICRPOrganDose::vector ods;
