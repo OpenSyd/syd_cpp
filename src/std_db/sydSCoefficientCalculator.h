@@ -39,6 +39,12 @@ namespace syd {
     /// Set the name of the source organ
     void SetSourceOrgan(std::string s) { mSourceOrganName = s; }
 
+    /// Get the mass of the target organ in kg
+    double GetTargetMassInKg() const;
+
+    /// Get the mass of the source organ in kg
+    double GetSourceMassInKg() const;
+
     /// Set the name of the target organ
     void SetTargetOrgan(std::string s) { mTargetOrganName = s; }
 
@@ -91,6 +97,12 @@ namespace syd {
     /// Cache for list of organs
     std::vector<std::string> mListOfSourceOrgansNames;
     std::vector<std::string> mListOfTargetOrgansNames;
+
+    /// Mass
+    std::map<std::string, double> mSourceMass_AM;
+    std::map<std::string, double> mSourceMass_AF;
+    std::map<std::string, double> mTargetMass_AM;
+    std::map<std::string, double> mTargetMass_AF;
   };
 
 } // end namespace

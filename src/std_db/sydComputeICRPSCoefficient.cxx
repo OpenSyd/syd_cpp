@@ -36,11 +36,11 @@ int main(int argc, char* argv[])
 
   // Initialise the calculator
   syd::SCoefficientCalculator * c = new syd::SCoefficientCalculator;
-  c->Initialise(folder);
   c->SetSourceOrgan(source_name);
   c->SetTargetOrgan(target_name);
   c->SetRadionuclide(rad_name);
   c->SetPhantomName(phantom_name);
+  c->Initialise(folder); // must be after SetPhantomName
 
   // print if needed
   if (args_info.printOrgans_flag) {
@@ -60,10 +60,11 @@ int main(int argc, char* argv[])
   auto s = c->Run();
 
   // -----------------------------------------------------------------
-  std::cout << source_name << " "
-            << target_name << " "
-            << rad_name << " "
-            << s << " mGy/MBq.h" << std::endl;
+  LOG(1) << std::endl << c->ToString();
+  LOG(0) << source_name << " "
+         << target_name << " "
+         << rad_name << " "
+         << s << " mGy/MBq.h" << std::endl;
   // This is the end, my friend.
 }
 // --------------------------------------------------------------------

@@ -164,3 +164,79 @@ syd::ICRP_SpecificAbsorbedFractionData::Get(std::string source, std::string targ
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+void syd::ICRP_SpecificAbsorbedFractionData::ReadSourceMass(std::string filename)
+{
+  // Read first lines header
+  std::ifstream is(filename);
+  if (!is) {
+    EXCEPTION("Error, cannot open " << filename);
+  }
+
+  // Skip first lines
+  std::string line;
+  for(auto i=0; i<3; i++) std::getline(is, line);
+
+  // Read nb of organs
+  int n;
+  is >> n;
+  std::getline(is, line);
+  std::getline(is, line);
+
+  // Loop on organs
+  mSourceMass_AM.clear();
+  mSourceMass_AF.clear();
+  for(auto i=0; i<n; ++i) {
+    std::string name;
+    double mass_AM;
+    int id_AM;
+    double mass_AF;
+    int id_AF;
+    is >> name;
+    is >> mass_AM;
+    is >> id_AM;
+    is >> mass_AF;
+    is >> id_AF;
+    mSourceMass_AM[name] = mass_AM;
+    mSourceMass_AF[name] = mass_AF;
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+void syd::ICRP_SpecificAbsorbedFractionData::ReadTargetMass(std::string filename)
+{
+  // Read first lines header
+  std::ifstream is(filename);
+  if (!is) {
+    EXCEPTION("Error, cannot open " << filename);
+  }
+
+  // Skip first lines
+  std::string line;
+  for(auto i=0; i<2; i++) std::getline(is, line);
+
+  // Read nb of organs
+  int n;
+  is >> n;
+  std::getline(is, line);
+  std::getline(is, line);
+
+  // Loop on organs
+  mTargetMass_AM.clear();
+  mTargetMass_AF.clear();
+  for(auto i=0; i<n; ++i) {
+    std::string name;
+    double mass_AM;
+    double mass_AF;
+    is >> name;
+    is >> mass_AM;
+    is >> mass_AF;
+    mTargetMass_AM[name] = mass_AM;
+    mTargetMass_AF[name] = mass_AF;
+  }
+}
+// --------------------------------------------------------------------
+
+

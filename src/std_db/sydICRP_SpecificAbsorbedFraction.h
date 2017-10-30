@@ -42,17 +42,23 @@ namespace syd {
 
   /*
     Store all the data for every couple source-target.
-   */
+  */
   class ICRP_SpecificAbsorbedFractionData {
   public:
 
     void Read(std::string filename);
+    void ReadSourceMass(std::string filename);
+    void ReadTargetMass(std::string filename);
     std::shared_ptr<ICRP_SpecificAbsorbedFraction> Get(std::string source, std::string target);
 
     typedef std::map<std::string, std::shared_ptr<ICRP_SpecificAbsorbedFraction>> TargetMapType;
     typedef std::map<std::string, TargetMapType> SourceMapType;
     SourceMapType mSourcesMap;
     std::vector<double> mEnergies;
+    std::map<std::string, double> mSourceMass_AM;
+    std::map<std::string, double> mSourceMass_AF;
+    std::map<std::string, double> mTargetMass_AM;
+    std::map<std::string, double> mTargetMass_AF;
 
   };
 

@@ -7,6 +7,8 @@ description "Use ICRP 133 framework to estimate S coefficient from source organ 
 
 Expected data files are: ICRP_2017_Nuclear_Data/ICRP-07.RAD, ICRP_133_SA/rcp-am_photon_2016-08-12.SAF
 If no folder is given, those 2 folders are search in the $SYD_PLUGIN environment variable.
+
+The S value is scaled according to the mass of the source organ. The ratio between mass in ICRP and given mass is used to scale the value for e-, the ratio at the power 2/3 for photon. A negative value means no scaling. 
 "
 
 option "folder"       f "Folder to search for ICRP data"              string default="" no

@@ -46,6 +46,9 @@ void syd::SCoefficientCalculator::SetPhantomName(std::string s)
   mPhantomName = s;
   // lower case
   std::transform(mPhantomName.begin(), mPhantomName.end(), mPhantomName.begin(), ::tolower);
+  if (mPhantomName != "am" and mPhantomName != "af") {
+    EXCEPTION("Dont know phantom: " << mPhantomName << " (use only 'am' or 'af', adult male/female).");
+  }
 }
 // --------------------------------------------------------------------
 
@@ -82,7 +85,7 @@ void syd::SCoefficientCalculator::Initialise(std::string folder)
   mSAFData[0] = nullptr; // No data with ICODE==0
   fs::path saf_path(folder);
   std::string filename = "rcp-am_photon_2016-08-12.SAF";
-  if (mPhantomName == "AF") syd::Replace(filename, "rcp-am_", "rcp-af");
+  if (mPhantomName == "af") syd::Replace(filename, "rcp-am_", "rcp-af_");
   saf_path = saf_folder/filename;
 
   // Read SAF data (photon)
@@ -106,6 +109,23 @@ void syd::SCoefficientCalculator::Initialise(std::string folder)
   mSAFData[7] = saf; // AE (Auger electrons)
 
   // FIXME no auger + neutron yet
+
+  // Read mass
+  filename = "sregions_2016-08-12.NDX";
+  saf_path = saf_folder/filename;
+  LOG(5) << "Reading source mass data in " << saf_path.string();
+  saf = std::make_shared<syd::ICRP_SpecificAbsorbedFractionData>();
+  saf->ReadSourceMass(saf_path.string());
+  mSourceMass_AM = saf->mSourceMass_AM;
+  mSourceMass_AF = saf->mSourceMass_AF;
+
+  filename = "torgans_2016-08-12.NDX";
+  saf_path = saf_folder/filename;
+  LOG(5) << "Reading target mass data in " << saf_path.string();
+  saf = std::make_shared<syd::ICRP_SpecificAbsorbedFractionData>();
+  saf->ReadTargetMass(saf_path.string());
+  mTargetMass_AM = saf->mTargetMass_AM;
+  mTargetMass_AF = saf->mTargetMass_AF;
 }
 // --------------------------------------------------------------------
 
@@ -117,7 +137,9 @@ std::string syd::SCoefficientCalculator::ToString() const
   ss << "Phantom      " << mPhantomName << std::endl
      << "Source organ " << mSourceOrganName << std::endl
      << "Target organ " << mTargetOrganName << std::endl
-     << "Radionuclide " << mRadionuclideName << std::endl;
+     << "Radionuclide " << mRadionuclideName << std::endl
+     << "Target mass  " << GetTargetMassInKg() << " kg" << std::endl
+     << "Source mass  " << GetSourceMassInKg() << " kg";
   return ss.str();
 }
 // --------------------------------------------------------------------
@@ -126,12 +148,10 @@ std::string syd::SCoefficientCalculator::ToString() const
 // --------------------------------------------------------------------
 double syd::SCoefficientCalculator::Run()
 {
-  DDF();
   if (mRadiationData == nullptr or mSAFData.size() == 0) Initialise();
 
   // Consider the radionuclide and get the saf for the source/target
   const auto & rad = mRadiationData->GetData(mRadionuclideName);
-  double s = 0.0;
   std::vector<std::shared_ptr<ICRP_SpecificAbsorbedFraction>> safd;
   safd.resize(8);
   for(auto i=0; i<safd.size(); i++) {
@@ -150,27 +170,22 @@ double syd::SCoefficientCalculator::Run()
 
   // Loop on the energies list
   auto n = rad.size();
+  double s = 0.0;
   for(int i=0; i<n; ++i) {
     auto & r = rad[i];
     auto energy = r.mEnergy;
     auto yield = r.mYield;
     auto ss = safd[r.mId];
     if (ss == nullptr) {
+      LOG(WARNING) << "Error, ICODE " << i << " not read in SCoefficientCalculator::Run.";
       continue;
-      //EXCEPTION("Error, ICODE " << i << " not read in SCoefficientCalculator::Run.");
     }
     auto saf = ss->Compute(energy);
-    s += (energy * yield * saf);
-    if (0) {//}yield>10.05) {
-      DD("----------");
-      DD(i);
-      DD(energy);
-      DD(yield);
-      DD(rad[i].mId);
-      DD(saf);
-      DD(energy * yield * saf);
-      DD(s);
-    }
+    auto ds = (energy * yield * saf);
+
+    // Add to current
+    s += ds;
+
   }
   // Conversion from Joule Gy/Bq.s in mGy/MBq.h
   // J    -> Gy   = 1.6e-13
@@ -212,3 +227,52 @@ std::vector<std::string> syd::SCoefficientCalculator::GetListOfTargetOrgans()
   return mListOfTargetOrgansNames;
 }
 // --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::SCoefficientCalculator::GetTargetMassInKg() const
+{
+  double m;
+  // Get target mass
+  if (mPhantomName == "am") {
+    auto it = mTargetMass_AM.find(mTargetOrganName);
+    if (it == mTargetMass_AM.end()) {
+      EXCEPTION("Cannot find the target organ mass (AM): "<< mTargetOrganName);
+    }
+    m = it->second;
+  }
+  else {
+    auto it = mTargetMass_AF.find(mTargetOrganName);
+    if (it == mTargetMass_AF.end()) {
+      EXCEPTION("Cannot find the target organ mass (AF): "<< mTargetOrganName);
+    }
+    m = it->second;
+  }
+  return m;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+double syd::SCoefficientCalculator::GetSourceMassInKg() const
+{
+  double m;
+  // Get source mass
+  if (mPhantomName == "am") {
+    auto it = mSourceMass_AM.find(mSourceOrganName);
+    if (it == mSourceMass_AM.end()) {
+      EXCEPTION("Cannot find the source organ mass (AM): "<< mSourceOrganName);
+    }
+    m = it->second;
+  }
+  else {
+    auto it = mSourceMass_AF.find(mSourceOrganName);
+    if (it == mSourceMass_AF.end()) {
+      EXCEPTION("Cannot find the source organ mass (AF): "<< mSourceOrganName);
+    }
+    m = it->second;
+  }
+  return m;
+}
+// --------------------------------------------------------------------
+

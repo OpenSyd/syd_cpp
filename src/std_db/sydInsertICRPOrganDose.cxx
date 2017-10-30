@@ -62,8 +62,8 @@ int main(int argc, char* argv[])
 
   // Initialise the calculator
   auto c = std::make_shared<syd::SCoefficientCalculator>();
-  c->Initialise(folder);
   c->SetPhantomName(phantom_name);
+  c->Initialise(folder);
 
   // New ICRPOrganDose
   auto od = syd::NewICRPOrganDose(c, ftps[0], ftps);
