@@ -70,7 +70,8 @@ std::string syd::ICRPOrganDose::ToString() const
      << "Scoeff:";
   for(auto s:S_coefficients)
     ss << s << " ";
-  ss << "ms: " << mass_scaling;
+  ss << "ms: " << mass_scaling
+     << " " << target_fit_timepoints->timepoints->patient;
   return ss.str();
 }
 // --------------------------------------------------------------------
