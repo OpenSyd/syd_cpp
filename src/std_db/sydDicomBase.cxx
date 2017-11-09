@@ -28,7 +28,7 @@ syd::DicomBase::DicomBase():
   syd::RecordWithComments(),
   syd::RecordWithTags()
 {
-  patient = NULL;
+  patient = nullptr;
   dicom_modality = empty_value;
   dicom_description = empty_value;
   dicom_frame_of_reference_uid = empty_value;
@@ -54,8 +54,8 @@ syd::DicomBase::DicomBase():
 // --------------------------------------------------------------------
 std::string syd::DicomBase::ToString() const
 {
-  std::stringstream ss ;
-  ss << (patient != NULL? patient->name:empty_value) << " "
+  std::stringstream ss;
+  ss << (patient != nullptr? patient->name:empty_value) << " "
      << dicom_files.size() << " "
      << dicom_modality << " "
      << dicom_description << " "
