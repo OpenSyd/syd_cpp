@@ -82,7 +82,11 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
   for(auto source_name:source_names) {
     c->SetSourceOrgan(source_name);
     auto s = c->Run();
-    if (s == 0) continue;
+    if (s == 0) {
+      // if the source is not found, it is ignored
+      ++i;
+      continue;
+    }
     curated_source_fts.push_back(source_fts[i]);
     curated_source_names.push_back(source_name);
     S.push_back(s);
@@ -107,14 +111,14 @@ syd::NewICRPOrganDose(syd::SCoefficientCalculator::pointer c,
     // Compute dose
     dose += auc*s;
 
+    // next
     ++i;
   }
 
   // Mass scaling
   double mass_scaling = 1.0;
-  double target_mass_kg = 0.0;
+  double target_mass_kg = syd::ComputeMass(ct, roi_name);
   if (scale_mass) {
-    target_mass_kg = syd::ComputeMass(ct, roi_name);
     mass_scaling = c->GetTargetMassInKg()/target_mass_kg;
     dose *= mass_scaling;
   }
@@ -332,4 +336,3 @@ std::string syd::GetAssociatedTargetName(std::vector<std::string> & com)
   return name;
 }
 // --------------------------------------------------------------------
-

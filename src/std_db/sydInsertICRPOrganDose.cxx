@@ -44,6 +44,8 @@ int main(int argc, char* argv[])
     auto v = std::stoi(s);
     ids.push_back(v);
   }
+  syd::IdType first_id;
+  first_id = ids[0];
   syd::FitTimepoints::vector ftps;
   db->Query(ftps, ids);
   if (ftps.size() == 0) {
@@ -55,6 +57,7 @@ int main(int argc, char* argv[])
     DDS(ftps);
     LOG(FATAL) << "Error, cannot find some FitTimepoints ids.";
   }
+  auto first_ftp = db->QueryOne<syd::FitTimepoints>(first_id);
 
   // Other params
   auto phantom_name = args_info.phantom_arg;
@@ -66,7 +69,9 @@ int main(int argc, char* argv[])
   c->Initialise(folder);
 
   // New ICRPOrganDose
-  auto od = syd::NewICRPOrganDose(c, ftps[0], ftps, args_info.scale_mass_flag);
+  auto rtp = std::dynamic_pointer_cast<syd::RoiTimepoints>(first_ftp->timepoints);
+  LOG(2) << "Target is " << rtp->roi_statistics[0]->mask->roitype->name;
+  auto od = syd::NewICRPOrganDose(c, first_ftp, ftps, args_info.scale_mass_flag);
   od->md5 = od->ComputeMD5();
   odb::query<syd::ICRPOrganDose> q = odb::query<syd::ICRPOrganDose>::md5 == od->md5;
   syd::ICRPOrganDose::vector ods;
