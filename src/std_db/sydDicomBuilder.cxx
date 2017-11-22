@@ -157,15 +157,22 @@ bool syd::DicomBuilder::GuessDicomSerieForThisFile(const std::string & filename,
     return false;
   }
   StripNullTerminatedChar(modality);
+  std::string nbSlice;
+  b = dicomIO->GetValueFromTag("0028|0008", nbSlice); // Modality
+  if (!b)
+    nbSlice = "1"; //For CT slices the tag doesn't exist
+  StripNullTerminatedChar(nbSlice);
   int index = -1;
   for(auto i=0; i<dicom_series_to_insert.size(); i++) {
     DicomSerie::pointer s = dicom_series_to_insert[i];
     // First check series_uid and modality
     if (s->dicom_series_uid != series_uid) continue;
     if (modality != s->dicom_modality) continue;
+    if (nbSlice != "1") continue;
 
     // Here we found a DicomSerie with the same series_uid
     // Very simple heuristic based on the modality
+    // And the number of slices of dicomIO has to be 1 (to avoid to merge 2 different and complete images)
     //    if (s->dicom_modality == "CT" or s->dicom_modality == "PT") {
     if (index != -1) {
       LOG(FATAL) << "Error two different DicomSerie with the same series_uid exist. Database corrupted."
