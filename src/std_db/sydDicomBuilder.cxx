@@ -173,15 +173,15 @@ bool syd::DicomBuilder::GuessDicomSerieForThisFile(const std::string & filename,
     // Here we found a DicomSerie with the same series_uid
     // Very simple heuristic based on the modality
     // And the number of slices of dicomIO has to be 1 (to avoid to merge 2 different and complete images)
-    //    if (s->dicom_modality == "CT" or s->dicom_modality == "PT") {
-    if (index != -1) {
-      LOG(FATAL) << "Error two different DicomSerie with the same series_uid exist. Database corrupted."
-                 << std::endl
-                 << "First serie: " << dicom_series_to_insert[index] << std::endl
-                 << "Second serie: " << dicom_series_to_insert[i] << std::endl;
+    if (s->dicom_modality == "CT" or s->dicom_modality == "PT") {
+      if (index != -1) {
+        LOG(FATAL) << "Error two different DicomSerie with the same series_uid exist. Database corrupted."
+                   << std::endl
+                   << "First serie: " << dicom_series_to_insert[index] << std::endl
+                   << "Second serie: " << dicom_series_to_insert[i] << std::endl;
+      }
+      index = i;
     }
-    index = i;
-    //}
   }
   // We find a corresponding serie
   if (index != -1) {
@@ -197,17 +197,18 @@ bool syd::DicomBuilder::GuessDicomSerieForThisFile(const std::string & filename,
   for(auto i=0; i<series.size(); i++) {
     auto s = series[i];
     if (modality != s->dicom_modality) continue;
+
     // Here we found a DicomSerie with the same series_uid
     // Very simple heuristic based on the modality
-    // if (s->dicom_modality == "CT") {
-    if (index != -1) {
-      LOG(FATAL) << "Error two different DicomSerie with the same series_uid exist. Database corrupted."
-                 << std::endl
-                 << "First serie: " << series[index] << std::endl
-                 << "Second serie: " << s << std::endl;
+    if (s->dicom_modality == "CT") {
+      if (index != -1) {
+        LOG(FATAL) << "Error two different DicomSerie with the same series_uid exist. Database corrupted."
+                   << std::endl
+                   << "First serie: " << series[index] << std::endl
+                   << "Second serie: " << s << std::endl;
+      }
+      index = i;
     }
-    index = i;
-    // }
   }
   // We find a corresponding serie
   if (index != -1) {

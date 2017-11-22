@@ -49,6 +49,10 @@ int main(int argc, char* argv[])
 
   // Make pair, group by ids with the same dicom_frame_of_reference_uid
   std::vector<syd::DicomSerie::vector> temp = GroupByStitchableDicom(dicoms);
+  if (args_info.force_flag and dicoms.size() == 2) {
+    temp.clear();
+    temp.push_back(dicoms);
+  }
   std::vector<syd::DicomSerie::vector> groups;
   for(auto &t:temp) {
     if (t.size() > 1) groups.push_back(t);
