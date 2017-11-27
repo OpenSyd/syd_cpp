@@ -912,7 +912,7 @@ syd::Image::vector syd::FindImagesLike(syd::DicomSerie::pointer serie)
   syd::Image::vector temp;
   odb::query<syd::Image> q =
     // odb::query<syd::Image>::patient == serie->patient->id and
-    odb::query<syd::Image>::injection == serie->injection->id and
+    //odb::query<syd::Image>::injection == serie->injection->id and
     odb::query<syd::Image>::frame_of_reference_uid == serie->dicom_frame_of_reference_uid and
     odb::query<syd::Image>::acquisition_date == serie->dicom_acquisition_date and
     odb::query<syd::Image>::modality == serie->dicom_modality;
