@@ -24,8 +24,10 @@
 namespace syd {
 
   template<class ImageType>
-  typename ImageType::Pointer
-  RegisterPlanarSPECT(ImageType * inputPlanar, const ImageType * inputSPECT);
+    typename ImageType::Pointer
+    RegisterPlanarSPECT(ImageType * inputPlanar,
+                        const ImageType * inputSPECT,
+                        double & output_y_translation);
 
 } // end namespace
 

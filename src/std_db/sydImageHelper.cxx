@@ -404,20 +404,28 @@ syd::InsertAttenuationImage(const syd::Image::pointer input, const syd::Image::p
   auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
   auto itk_input_like = syd::ReadImage<OutputImageType>(input_like->GetAbsolutePath());
   auto attenuation = syd::Attenuation<ImageType, OutputImageType>(itk_input, itk_input_like,
-                                                                  numberEnergySPECT, attenuationWaterCT, attenuationBoneCT,
-                                                                  attenuationAirSPECT, attenuationWaterSPECT,
-                                                                  attenuationBoneSPECT, weight);
+                                                                  numberEnergySPECT,
+                                                                  attenuationWaterCT,
+                                                                  attenuationBoneCT,
+                                                                  attenuationAirSPECT,
+                                                                  attenuationWaterSPECT,
+                                                                  attenuationBoneSPECT,
+                                                                  weight);
 
   // Create the syd image
   return syd::InsertImage<OutputImageType>(attenuation, input->patient, input->modality);
 }
 // --------------------------------------------------------------------
 
+
 // --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
                                const syd::Image::pointer inputSPECT,
-                               int dimension)
+                               int dimension,
+                               double & translation,
+                               bool flip,
+                               std::string intermediate_result)
 {
   // Force to float
   typedef float PixelType;
@@ -425,13 +433,23 @@ syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
   typedef itk::Image<PixelType, 3> ImageType3D;
   auto itk_inputPlanar = syd::ReadImage<ImageType2D>(inputPlanar->GetAbsolutePath());
   auto itk_inputSPECT = syd::ReadImage<ImageType3D>(inputSPECT->GetAbsolutePath());
-  auto projectionSPECT = syd::Projection<ImageType3D, ImageType2D>(itk_inputSPECT, dimension,0, 1);
-  auto imageRegister = syd::RegisterPlanarSPECT<ImageType2D>(itk_inputPlanar, projectionSPECT);
+  auto projectionSPECT =
+    syd::Projection<ImageType3D, ImageType2D>(itk_inputSPECT, dimension, 0, flip);
 
-  // Update the syd image
-  syd::WriteImage<ImageType2D>(imageRegister, inputPlanar->GetAbsolutePath(), inputPlanar->dimension);
-  inputPlanar->frame_of_reference_uid = inputSPECT->frame_of_reference_uid;
-  return inputPlanar;
+  auto imageRegister = syd::RegisterPlanarSPECT<ImageType2D>(itk_inputPlanar,
+                                                             projectionSPECT,
+                                                             translation);
+  if (intermediate_result != "") {
+    syd::WriteImage<ImageType2D>(itk_inputPlanar, intermediate_result+"_input1.mhd");
+    syd::WriteImage<ImageType2D>(projectionSPECT, intermediate_result+"_input2.mhd");
+    syd::WriteImage<ImageType2D>(imageRegister, intermediate_result+"_output.mhd");
+  }
+
+  // Insert a new image
+  auto copy = syd::InsertCopyImage(inputPlanar);
+  syd::WriteImage<ImageType2D>(imageRegister, copy->GetAbsolutePath(), copy->dimension);
+  copy->frame_of_reference_uid = inputSPECT->frame_of_reference_uid;
+  return copy;
 }
 // --------------------------------------------------------------------
 
@@ -875,7 +893,7 @@ bool AlmostEquals(double a, double b, double tol = 0.000001)
 
 // --------------------------------------------------------------------
 bool syd::SameSizeAndSpacing(const syd::Image::pointer a,
-                                    const syd::Image::pointer b)
+                             const syd::Image::pointer b)
 {
   bool r = true;
   for(auto i=0; i<a->size.size(); i++) {
@@ -891,7 +909,7 @@ bool syd::SameSizeAndSpacing(const syd::Image::pointer a,
 
 // --------------------------------------------------------------------
 bool syd::SameSizeAndSpacing(const syd::Image::pointer image,
-                                    const syd::DicomSerie::pointer serie)
+                             const syd::DicomSerie::pointer serie)
 {
   bool b = true;
   for(auto i=0; i<image->size.size(); i++) {
@@ -927,4 +945,3 @@ syd::Image::vector syd::FindImagesLike(syd::DicomSerie::pointer serie)
   return images;
 }
 // --------------------------------------------------------------------
-

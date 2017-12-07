@@ -26,14 +26,16 @@
 //--------------------------------------------------------------------
 template<class ImageType>
 typename ImageType::Pointer
-syd::RegisterPlanarSPECT(ImageType * inputPlanar, const ImageType * inputSPECT)
+syd::RegisterPlanarSPECT(ImageType * inputPlanar,
+                         const ImageType * inputSPECT,
+                         double & output_y_translation)
 {
   //Create output
   /*typename ImageType::Pointer output = ImageType::New();
-  output->SetRegions(inputPlanar->GetLargestPossibleRegion());
-  output->SetOrigin(inputPlanar->GetOrigin());
-  output->SetSpacing(inputPlanar->GetSpacing());
-  output->Allocate(); */
+    output->SetRegions(inputPlanar->GetLargestPossibleRegion());
+    output->SetOrigin(inputPlanar->GetOrigin());
+    output->SetSpacing(inputPlanar->GetSpacing());
+    output->Allocate(); */
 
   //---Resample inputSPECT and inputAM like inputPlanar (same spacing)---
   // Instantiate the resampler. Wire in the transform and the interpolator.
@@ -75,8 +77,7 @@ syd::RegisterPlanarSPECT(ImageType * inputPlanar, const ImageType * inputSPECT)
   typedef itk::MattesMutualInformationImageToImageMetric<ImageType, ImageType> MICoeffFilterType;
   double minCorrelation(itk::NumericTraits<double >::infinity());
   unsigned int minTranslation(0);
-  for (unsigned int translation=1 ; translation < SPECTresample->GetLargestPossibleRegion().GetSize()[1] + inputPlanar->GetLargestPossibleRegion().GetSize()[1]; ++translation)
-  {
+  for (unsigned int translation=1 ; translation < SPECTresample->GetLargestPossibleRegion().GetSize()[1] + inputPlanar->GetLargestPossibleRegion().GetSize()[1]; ++translation) {
     originPlanar[1] = SPECTresample->GetOrigin()[1] - inputPlanar->GetLargestPossibleRegion().GetSize()[1]*inputPlanar->GetSpacing()[1] + translation*inputPlanar->GetSpacing()[1];
     inputPlanar->SetOrigin(originPlanar);
     typename MICoeffFilterType::Pointer miCoeffFilter = MICoeffFilterType::New();
@@ -95,6 +96,7 @@ syd::RegisterPlanarSPECT(ImageType * inputPlanar, const ImageType * inputSPECT)
       minTranslation = translation;
     }
   }
+  output_y_translation = minTranslation;
 
   //Choose the best y-offset and resample the image to fit with planar image
   originPlanar[1] = SPECTresample->GetOrigin()[1] - inputPlanar->GetLargestPossibleRegion().GetSize()[1]*inputPlanar->GetSpacing()[1] + minTranslation*inputPlanar->GetSpacing()[1];
@@ -103,4 +105,3 @@ syd::RegisterPlanarSPECT(ImageType * inputPlanar, const ImageType * inputSPECT)
   return inputPlanar;
 }
 //--------------------------------------------------------------------
-

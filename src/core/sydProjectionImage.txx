@@ -26,14 +26,15 @@
 template<class ImageType, class OutputImageType>
 typename OutputImageType::Pointer
 syd::Projection(const ImageType * input,
-                double dimension, bool mean, bool flip)
+                double dimension,
+                bool mean,
+                bool flip)
 {
   //Project the image along dimension
   auto projection = syd::Projection<ImageType, OutputImageType>(input, dimension);
 
   //Compute the mean if the flag is on
-  if(mean)
-  {
+  if(mean) {
     double size;
     size = input->GetLargestPossibleRegion().GetSize(dimension);
 
@@ -46,10 +47,8 @@ syd::Projection(const ImageType * input,
   }
 
   //Flip the image in order to have the head at the top and the feet at the bottom (flag ? car pas intéressant tout le temps)
-  if(flip)
-  {
-    if (dimension == 0)
-    {
+  if(flip) {
+    if (dimension == 0) {
       //I don't want to use AffineRegistration because I don't know the center of rotation but now it's more complicated:
       //I wanted to use PermuteAxesImageFilter but to have the correct orientation (ie. head at the top),
       //I have to use FlipImageFilter twice.
@@ -97,8 +96,7 @@ syd::Projection(const ImageType * input,
       projection->SetDirection(matrix);
 
     }
-    else if (dimension == 1)
-    {
+    else if (dimension == 1) {
       //A single flip around y-axis
       itk::FixedArray<bool, 2> flipAxes;
       flipAxes[0] = false;
@@ -117,7 +115,6 @@ syd::Projection(const ImageType * input,
   }
 
   return projection;
-
 }
 //--------------------------------------------------------------------
 

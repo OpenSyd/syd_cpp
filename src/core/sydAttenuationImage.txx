@@ -48,8 +48,7 @@ syd::Attenuation(const InputImageType * input, const OutputImageType * likeImage
   typename InputImageType::Pointer attenuation = duplicator->GetModifiableOutput();
   attenuation->FillBuffer(0.0);
 
-  for (unsigned int i=0; i < numberEnergySPECT; ++i)
-  {
+  for (unsigned int i=0; i < numberEnergySPECT; ++i) {
     //create a temp image
     typename DuplicatorType::Pointer duplicator2 = DuplicatorType::New();
     duplicator2->SetInputImage(input);
@@ -58,18 +57,16 @@ syd::Attenuation(const InputImageType * input, const OutputImageType * likeImage
     attenuationTemp->FillBuffer(0.0);
 
     //Compute the attenuation map for one energy
-    typename itk::ImageRegionIterator<InputImageType> imageIteratorTemp(attenuationTemp, attenuationTemp->GetLargestPossibleRegion());
-    typename itk::ImageRegionConstIterator<InputImageType> imageIteratorInput(input, input->GetLargestPossibleRegion());
-    while(!imageIteratorTemp.IsAtEnd())
-    {
-
+    typename itk::ImageRegionIterator<InputImageType>
+      imageIteratorTemp(attenuationTemp, attenuationTemp->GetLargestPossibleRegion());
+    typename itk::ImageRegionConstIterator<InputImageType>
+      imageIteratorInput(input, input->GetLargestPossibleRegion());
+    while(!imageIteratorTemp.IsAtEnd()) {
       double mu(0);
-      if (imageIteratorInput.Get() >0)
-      {
+      if (imageIteratorInput.Get() >0) {
         mu = attenuationWaterSPECT[i] + attenuationWaterCT/(attenuationBoneCT - attenuationWaterCT) * (attenuationBoneSPECT[i] - attenuationWaterSPECT[i])/1000.0 * imageIteratorInput.Get();
       }
-      else
-      {
+      else {
         mu = attenuationWaterSPECT[i] + (attenuationWaterSPECT[i] - attenuationAirSPECT[i])/1000.0 * imageIteratorInput.Get();
       }
       imageIteratorTemp.Set(mu);
@@ -110,8 +107,8 @@ syd::Attenuation(const InputImageType * input, const OutputImageType * likeImage
   //Restriction like image has an isospacing
   typename InputImageType::SpacingType outputSpacing;
   /*outputSpacing[0] = likeImage->GetSpacing()[0];
-  outputSpacing[1] = attenuation->GetSpacing()[1];
-  outputSpacing[2] = likeImage->GetSpacing()[1];*/
+    outputSpacing[1] = attenuation->GetSpacing()[1];
+    outputSpacing[2] = likeImage->GetSpacing()[1];*/
   for(unsigned int i=0; i<InputImageType::ImageDimension; i++)
     outputSpacing[i] = likeImage->GetSpacing()[0];
 

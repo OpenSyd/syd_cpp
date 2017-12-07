@@ -57,14 +57,18 @@ int main(int argc, char* argv[])
     dimension = args_info.dimension_arg;
 
   // Main computation
-  auto image = syd::InsertRegisterPlanarSPECT(inputPlanar, inputSPECT, dimension);
+  double t = 0.0;
+  auto image = syd::InsertRegisterPlanarSPECT(inputPlanar, inputSPECT,
+                                              dimension, t, args_info.flip_flag,
+                                              args_info.debug_output_arg);
+  LOG(1) << "Translation Sup-Inf (Y) is " << t << " mm.";
 
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);
   syd::SetImageInfoFromCommandLine(image, args_info);
   syd::SetCommentsFromCommandLine(image->comments, db, args_info);
   db->Update(image);
-  LOG(1) << "Inserting Image " << image;
+  LOG(1) << "Insert new image " << image;
 
   // This is the end, my friend.
 }

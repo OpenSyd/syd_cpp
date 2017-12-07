@@ -2,11 +2,13 @@
 
 package "syd"
 version "0.4"
-usage "sydInsertRegisterPlanarSPECT <image1> <image2> -d [dimension]"
-description "Register Planar image and SPECT image (in place function) to align the planar image with the CT (and attenuation map).
-The registration takes the Planar image <image1> (eg. output of sydInsertPlanarGeometricalMean)
-and the SPECT image <image2> projected along the dimension d.
-It centers around the x-axis and search for the best y-axis translation to maximize the correlation coefficient.
+usage "sydInsertRegisterPlanarSPECT <image_planar> <image_spect> -d [dimension]"
+description "Register a planar image and the projection of a SPECT image such as to align the planar image with the CT and attenuation map.
+The registration takes as input the planar image <image_planar> (eg. output of sydInsertPlanarGeometricalMean) and the SPECT image <image_spect>. The SPECT image is projected along the dimension d (often d==1, projection along Y axis). It centers around the x-axis and search for the best y-axis translation to maximize the correlation coefficient.
 "
 
-option "dimension"   d "Projection along dimension d" int default="0" no
+option "dimension"   d "Projection along dimension d" int default="1" no
+option "flip" f "Flip & Rotate the image (conserve coordinates)" flag off
+option "debug_output" - "Basename for debug images" string default="" no
+
+

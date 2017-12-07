@@ -10,4 +10,4 @@ The tag --mean (or -m) can be set to compute the mean (eg.: for CT) instead of t
 
 option "dimension"   d "Projection along dimension d" double default="0" no
 option "mean"   m "Mean of voxels instead of sum" flag off
-option "no-flip"   f "Do not Flip & Rotate the image (conserve coordinates)" flag off
+option "flip"   f "Flip & Rotate the image (conserve coordinates)" flag off
