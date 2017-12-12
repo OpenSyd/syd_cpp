@@ -106,9 +106,9 @@ syd::Image::pointer syd::InsertTransformixImage(const syd::Elastix::pointer elas
       << image->size[1] << " "
       << image->size[2] << ")" << std::endl;
   out << "(Spacing "
-      << image->spacing[0] << " "
-      << image->spacing[1] << " "
-      << image->spacing[2] << ")" << std::endl;
+      << std::abs(image->spacing[0]) << " "
+      << std::abs(image->spacing[1]) << " "
+      << std::abs(image->spacing[2]) << ")" << std::endl;
   // out << "(FixedInternalImagePixelType " << input_image->pixel_type << ")" << std::endl;
   // out << "(MovingInternalImagePixelType " << input_image->pixel_type << ")" << std::endl;
   out << "(DefaultPixelValue " << default_pixel_value << ")" << std::endl;
