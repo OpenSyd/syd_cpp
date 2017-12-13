@@ -110,7 +110,7 @@ syd::Attenuation(const InputImageType * input, const OutputImageType * likeImage
     outputSpacing[1] = attenuation->GetSpacing()[1];
     outputSpacing[2] = likeImage->GetSpacing()[1];*/
   for(unsigned int i=0; i<InputImageType::ImageDimension; i++)
-    outputSpacing[i] = likeImage->GetSpacing()[0];
+    outputSpacing[i] = likeImage->GetSpacing()[i];
 
   typename InputImageType::PointType outputOrigin;
   for(unsigned int i=0; i<InputImageType::ImageDimension; i++) {
