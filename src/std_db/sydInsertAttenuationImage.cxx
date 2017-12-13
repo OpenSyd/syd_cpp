@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
 
   /*  if (std::abs(std::accumulate(weight.begin(), weight.end(), 0.0)-1.0) > 0.000001) {
     LOG(FATAL) << "The sum of weights is not equal to 1.0";
-    }*/ // FIXME 
+    }*/ // FIXME
 
   // Get the image id to have the spacing model
   syd::Image::pointer input_like;
