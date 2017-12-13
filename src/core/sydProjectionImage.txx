@@ -30,11 +30,12 @@ syd::Projection(const ImageType * input,
                 bool mean,
                 bool flip)
 {
+  DDF();
   //Project the image along dimension
   auto projection = syd::Projection<ImageType, OutputImageType>(input, dimension);
 
   //Compute the mean if the flag is on
-  if(mean) {
+  if (mean) {
     double size;
     size = input->GetLargestPossibleRegion().GetSize(dimension);
 
@@ -47,7 +48,7 @@ syd::Projection(const ImageType * input,
   }
 
   //Flip the image in order to have the head at the top and the feet at the bottom (flag ? car pas intéressant tout le temps)
-  if(flip) {
+  if (flip) {
     if (dimension == 0) {
       //I don't want to use AffineRegistration because I don't know the center of rotation but now it's more complicated:
       //I wanted to use PermuteAxesImageFilter but to have the correct orientation (ie. head at the top),
@@ -104,7 +105,7 @@ syd::Projection(const ImageType * input,
 
       typedef itk::FlipImageFilter <OutputImageType> FlipImageFilterType;
       typename FlipImageFilterType::Pointer flipFilter = FlipImageFilterType::New ();
-      flipFilter->DebugOn();
+      // flipFilter->DebugOn();
       flipFilter->SetInput(projection);
       flipFilter->SetFlipAxes(flipAxes);
       if (projection->GetSpacing()[0] < 0)
@@ -124,18 +125,45 @@ template<class ImageType, class OutputImageType>
 typename OutputImageType::Pointer
 syd::Projection(const ImageType * input, double dimension)
 {
-
-  //typedef typename ImageType::PixelType PixelType;
-  //const int Dim = ImageType::ImageDimension;
-  //typedef itk::Image<PixelType,Dim-1> OutputImageType;
-
+  DD(dimension);
   // Filter
   typedef itk::SumProjectionImageFilter<ImageType,OutputImageType> FilterType;
   typename FilterType::Pointer filter = FilterType::New();
   filter->SetProjectionDimension(dimension);
   filter->SetInput(input);
   filter->Update();
-  return filter->GetOutput();
+  auto output = filter->GetOutput();
+  DD(input->GetSpacing());
+  DD(input->GetLargestPossibleRegion());
+  DD(input->GetOrigin());
+  DD(input->GetDirection());
 
+  DD(output->GetSpacing());
+  DD(output->GetLargestPossibleRegion());
+  DD(output->GetOrigin());
+  DD(output->GetDirection());
+  auto dir = output->GetDirection();
+  int ik = 0;
+  for(auto i=0; i<3; i++) {
+    DD(i);
+    if (i!=dimension) {
+      int jk = 0;
+      for(auto j=0; j<3; j++) {
+        DD(j);
+        if (j!=dimension) {
+          DD(ik);
+          DD(jk);
+          dir[ik][jk] = input->GetDirection()[i][j];
+          ++jk;
+        }
+      }
+      ++ik;
+    }
+  }
+  DD(dir);
+  // output->SetDirection(dir);
+  DD(output->GetDirection());
+
+  return output;
 }
 //--------------------------------------------------------------------

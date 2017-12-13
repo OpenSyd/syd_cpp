@@ -35,6 +35,7 @@
 #include "sydTagHelper.h"
 #include "sydImageCrop.h"
 #include "sydPixelUnitHelper.h"
+#include "sydImageRemoveNegativeDirection.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -271,6 +272,9 @@ syd::Image::pointer syd::InsertStitchDicomImage(syd::DicomSerie::pointer a,
   // Stitch (default values for now, to be changed!)
   auto output = syd::StitchImages<ImageType>(image_a, image_b,
                                              threshold_cumul, skip_slices);
+
+  // If a direction is negative, resample
+  output = syd::ImageRemoveNegativeDirection<ImageType>(output);
 
   // Write on disk
   std::string temp_filename = db->GetUniqueTempFilename();

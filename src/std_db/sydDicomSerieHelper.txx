@@ -19,6 +19,7 @@
 
 #include "itkAddImageFilter.h"
 #include "itkMultiplyImageFilter.h"
+#include "sydImageRemoveNegativeDirection.h"
 
 // --------------------------------------------------------------------
 template<typename F>
@@ -66,6 +67,9 @@ syd::ReadDicomSerieImage(syd::DicomSerie::pointer dicom)
     EXCEPTION("Error '" << e.what()
               << "' during ReadImage of dicom: " << dicom);
   }
+
+  // If a direction is negative, resample
+  itk_image = syd::ImageRemoveNegativeDirection<ImageType>(itk_image);
 
   //Multiply the image by Real_world_value_slope and add Real_world_value_intercept
   //Just check if it's needed or values != nan
