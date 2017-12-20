@@ -39,7 +39,7 @@ namespace syd {
                                                 std::string intermediate_result="");
 
   //Compute the FAF Integral
-  double ComputeFafIntegral(const syd::Image::pointer input_SPECT);
+  double ComputeFAFIntegral(const syd::Image::pointer input_SPECT);
 
   // Compute the FAF calibrated of a SPECT image.
   syd::Image::pointer InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,

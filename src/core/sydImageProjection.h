@@ -28,7 +28,7 @@ namespace syd {
   {
     int projectionDimension;
     bool flipProjectionFlag;
-    bool meanFlag;
+    bool meanFlag = false;
   };
 
   template<class ImageType, class OutputImageType>

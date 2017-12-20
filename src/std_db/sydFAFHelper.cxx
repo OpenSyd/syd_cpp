@@ -78,13 +78,13 @@ syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
 
 
 //--------------------------------------------------------------------
-double syd::ComputeFafIntegral(const syd::Image::pointer input_SPECT)
+double syd::ComputeFAFIntegral(const syd::Image::pointer input_SPECT)
 {
   //Get the different important value
   double injectedActivity = input_SPECT->injection->activity_in_MBq; //injected activity in MBq
   double lambdaDecay = input_SPECT->injection->GetLambdaDecayConstantInHours()/3600.0; //lambda decay in 1/s
   double timeInjectionSPECT = input_SPECT->GetHoursFromInjection()*3600.0; //Time between injection and the beginning of the SPECT acquisition in s
-  double totalAcquisitionTime = input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec/1000.0*input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation/4*input_SPECT->dicoms[0]->dicom_number_of_rotations; //Total acquisition time in s (for 4 heads) FIXME 
+  double totalAcquisitionTime = input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec/1000.0*input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation/4*input_SPECT->dicoms[0]->dicom_number_of_rotations; //Total acquisition time in s (for 4 heads) FIXME
 
   //Compute A0
   double A0 = injectedActivity*std::exp(-lambdaDecay*timeInjectionSPECT);
@@ -110,7 +110,7 @@ syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
   auto itk_input_SPECT = syd::ReadImage<ImageType3D>(input_SPECT->GetAbsolutePath());
   auto itk_input_planar = syd::ReadImage<ImageType2D>(input_planar->GetAbsolutePath());
   auto itk_input_mask = syd::ReadImage<ImageType2D>(input_mask->GetAbsolutePath());
-  double integral = syd::ComputeFafIntegral(input_SPECT);
+  double integral = syd::ComputeFAFIntegral(input_SPECT);
   auto fafCalibrated = syd::FAFCalibratedImage<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar, itk_input_mask, integral);
 
   // Create the syd image

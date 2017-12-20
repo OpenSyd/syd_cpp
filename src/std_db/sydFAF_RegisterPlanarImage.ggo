@@ -1,0 +1,16 @@
+#File sydFAF_RegisterPlanarImage.ggo
+
+package "syd"
+
+version "0.5"
+
+usage "sydFAF_RegisterPlanarImage <image_planar> <image_spect> -d [dimension]"
+
+description "Register a planar image and the projection of a SPECT image such as to align the planar image to the projected image. In the FAF process, <image_planar> is the output of sydInsertPlanarGeometricalMean and <image_spect> is the 3D SPECT image. The SPECT image is projected along the dimension d (often d==1, projection along Y axis). It centers around the x-axis and search for the best y-axis translation to maximize the correlation coefficient.
+"
+
+option "dimension"        d "Projection along dimension d" int default="1" no
+option "flip"             f "Flip & Rotate the image (conserve coordinates)" flag off
+option "debug_output"     - "Basename for debug images" string default="" no
+
+

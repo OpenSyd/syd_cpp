@@ -263,16 +263,16 @@ add_executable(sydFAF_ACF_Image
 target_link_libraries(sydFAF_ACF_Image ${SYD_STD_DB_LIBRARY})
 
 # Create the registered attenuation map of an image
-# wrap_ggo(sydInsertRegisterPlanarSPECT_GGO_C
-#   sydInsertRegisterPlanarSPECT.ggo
-#   ../common_db/sydCommandLineWithTags.ggo
-#   sydCommandLineWithImageInfo.ggo
-#   ../common_db/sydCommandLineWithComments.ggo
-#   sydCommandLineDefault.ggo )
-# add_executable(sydInsertRegisterPlanarSPECT
-#   sydInsertRegisterPlanarSPECT.cxx
-#   ${sydInsertRegisterPlanarSPECT_GGO_C})
-# target_link_libraries(sydInsertRegisterPlanarSPECT ${SYD_STD_DB_LIBRARY})
+wrap_ggo(sydFAF_RegisterPlanarImage_GGO_C
+  sydFAF_RegisterPlanarImage.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydFAF_RegisterPlanarImage
+  sydFAF_RegisterPlanarImage.cxx
+  ${sydFAF_RegisterPlanarImage_GGO_C})
+target_link_libraries(sydFAF_RegisterPlanarImage ${SYD_STD_DB_LIBRARY})
 
 # Create the attenuation corrected of a planar image
 # wrap_ggo(sydInsertAttenuationCorrectedPlanarImage_GGO_C

@@ -17,21 +17,20 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertRegisterPlanarSPECT_ggo.h"
+#include "sydFAF_RegisterPlanarImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
 #include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"
-#include "sydRegisterPlanarSPECT.h"
-#include <numeric>
+#include "sydFAFHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertRegisterPlanarSPECT, 1);
+  SYD_INIT_GGO(sydFAF_RegisterPlanarImage, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -52,15 +51,12 @@ int main(int argc, char* argv[])
   LOG(2) << "Read image :" << inputSPECT;
 
   // Main computation
-  int dimension(0);
-  if (args_info.dimension_given)
-    dimension = args_info.dimension_arg;
-
-  // Main computation
   double t = 0.0;
-  auto image = syd::InsertRegisterPlanarSPECT(inputPlanar, inputSPECT,
-                                              dimension, t, args_info.flip_flag,
-                                              args_info.debug_output_arg);
+  syd::ImageProjection_Parameters p;
+  p.projectionDimension = args_info.dimension_arg;
+  p.flipProjectionFlag = args_info.flip_flag;
+  p.meanFlag = false;
+  auto image = syd::InsertRegisterPlanarSPECT(inputPlanar, inputSPECT, p, t, args_info.debug_output_arg);
   LOG(1) << "Translation Sup-Inf (Y) is " << t << " mm.";
 
   // Update image info
