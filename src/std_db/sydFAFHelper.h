@@ -22,9 +22,21 @@
 // syd
 #include "sydImage.h"
 #include "sydRoiMaskImageHelper.h"
+#include "sydImageACF.h"
 
 // --------------------------------------------------------------------
 namespace syd {
+
+  // Compute the attenuation map of an image.
+  syd::Image::pointer InsertAttenuationCorrectionFactorImage(const syd::Image::pointer input,
+                                                             const ACF_Parameters & p);
+
+  // Compute the registered attenuation map of an image.
+  syd::Image::pointer InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
+                                                const syd::Image::pointer inputSPECT,
+                                                const syd::ImageProjection_Parameters & p,
+                                                double & translation,
+                                                std::string intermediate_result="");
 
   //Compute the FAF Integral
   double ComputeFafIntegral(const syd::Image::pointer input_SPECT);

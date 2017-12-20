@@ -56,7 +56,7 @@ syd::FAFCalibratedImage(const ImageType3D * input_SPECT, const ImageType2D * inp
   //Compute the FAF value (divide by the pixel volume to have MBq/mm³)
   double faf = maskSum / planarSum;
   double volume = input_SPECT->GetSpacing()[0] * input_SPECT->GetSpacing()[1] * input_SPECT->GetSpacing()[2];
-  double sensitivityFaf = SPECTSum/(integral * faf * volume);
+  double sensitivityFaf = SPECTSum/(integral * faf * volume); //FIXME (option)
 
   //Compute the FAF corrected image
   typedef itk::MultiplyImageFilter<ImageType3D, ImageType3D, ImageType3D> MultiplyImage3DFilterType;

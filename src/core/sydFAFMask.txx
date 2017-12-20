@@ -17,7 +17,7 @@
   ===========================================================================**/
 
 #include "sydImageUtils.h"
-#include "sydProjectionImage.h"
+#include "sydImageProjection.h"
 
 #include <itkResampleImageFilter.h>
 #include <itkLinearInterpolateImageFunction.h>
@@ -29,9 +29,17 @@ template<class ImageType2D, class ImageType3D>
 typename ImageType2D::Pointer
 syd::FAFMask(const ImageType3D * input_SPECT, const ImageType2D * input_planar)
 {
+  DDF();
   // Project the image.
-  int projectionDimension = 1;
-  auto projection = syd::Projection<ImageType3D, ImageType2D>(input_SPECT, projectionDimension, false, true);
+
+  ImageProjection_Parameters p;
+  p.projectionDimension = 1;
+  p.flipProjectionFlag = false;
+  p.meanFlag = false;
+  auto projection = syd::Projection<ImageType3D, ImageType2D>(input_SPECT, p);
+
+  syd::WriteImage<ImageType2D>(projection, "proj.mhd");
+
 
   //Resample the projected image like the planar image
   typedef itk::ResampleImageFilter<ImageType2D,ImageType2D> FilterType;
@@ -47,6 +55,9 @@ syd::FAFMask(const ImageType3D * input_SPECT, const ImageType2D * input_planar)
   filter->SetTransform(TransformType::New());
   filter->SetInterpolator(InterpolatorType::New());
   filter->Update();
+
+  syd::WriteImage<ImageType2D>(filter->GetOutput(), "proj_res.mhd");
+
 
   //Binarize to obtain the positive value
   typedef itk::BinaryThresholdImageFilter <ImageType2D, ImageType2D> ThresholdImageFilterType;

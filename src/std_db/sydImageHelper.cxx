@@ -23,9 +23,7 @@
 #include "sydInjectionHelper.h"
 #include "sydImageStitch.h"
 #include "sydRoiStatisticHelper.h"
-#include "sydProjectionImage.h"
-#include "sydAttenuationImage.h"
-#include "sydRegisterPlanarSPECT.h"
+#include "sydImageProjection.h"
 #include "sydAttenuationCorrectedPlanarImage.h"
 #include "sydImageFillHoles.h"
 #include "sydImage_GaussianFilter.h"
@@ -374,86 +372,21 @@ syd::InsertImageGeometricalMean(const syd::Image::pointer input,
 }
 // --------------------------------------------------------------------
 
+
 // --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertProjectionImage(const syd::Image::pointer input,
-                           double dimension, bool mean, bool flip)
+                           const syd::ImageProjection_Parameters & p)
 {
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
   typedef itk::Image<PixelType, 2> OutputImageType;
   auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
-  auto projection = syd::Projection<ImageType, OutputImageType>(itk_input, dimension, mean, flip);
+  auto projection = syd::Projection<ImageType, OutputImageType>(itk_input, p);
 
   // Create the syd image
   return syd::InsertImage<OutputImageType>(projection, input->patient, input->modality);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Image::pointer
-syd::InsertAttenuationImage(const syd::Image::pointer input, const syd::Image::pointer input_like,
-                            double numberEnergySPECT, double attenuationWaterCT, double attenuationBoneCT,
-                            std::vector<double>& attenuationAirSPECT,
-                            std::vector<double>& attenuationWaterSPECT,
-                            std::vector<double>& attenuationBoneSPECT,
-                            std::vector<double>& weight)
-{
-  // Force to float
-  typedef float PixelType;
-  typedef itk::Image<PixelType, 3> ImageType;
-  typedef itk::Image<PixelType, 2> OutputImageType;
-  auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
-  auto itk_input_like = syd::ReadImage<OutputImageType>(input_like->GetAbsolutePath());
-  auto attenuation = syd::Attenuation<ImageType, OutputImageType>(itk_input, itk_input_like,
-                                                                  numberEnergySPECT,
-                                                                  attenuationWaterCT,
-                                                                  attenuationBoneCT,
-                                                                  attenuationAirSPECT,
-                                                                  attenuationWaterSPECT,
-                                                                  attenuationBoneSPECT,
-                                                                  weight);
-
-  // Create the syd image
-  return syd::InsertImage<OutputImageType>(attenuation, input->patient, input->modality);
-}
-// --------------------------------------------------------------------
-
-
-// --------------------------------------------------------------------
-syd::Image::pointer
-syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
-                               const syd::Image::pointer inputSPECT,
-                               int dimension,
-                               double & translation,
-                               bool flip,
-                               std::string intermediate_result)
-{
-  // Force to float
-  typedef float PixelType;
-  typedef itk::Image<PixelType, 2> ImageType2D;
-  typedef itk::Image<PixelType, 3> ImageType3D;
-  auto itk_inputPlanar = syd::ReadImage<ImageType2D>(inputPlanar->GetAbsolutePath());
-  auto itk_inputSPECT = syd::ReadImage<ImageType3D>(inputSPECT->GetAbsolutePath());
-  auto projectionSPECT =
-    syd::Projection<ImageType3D, ImageType2D>(itk_inputSPECT, dimension, 0, flip);
-
-  auto imageRegister = syd::RegisterPlanarSPECT<ImageType2D>(itk_inputPlanar,
-                                                             projectionSPECT,
-                                                             translation);
-  if (intermediate_result != "") {
-    syd::WriteImage<ImageType2D>(itk_inputPlanar, intermediate_result+"_input1.mhd");
-    syd::WriteImage<ImageType2D>(projectionSPECT, intermediate_result+"_input2.mhd");
-    syd::WriteImage<ImageType2D>(imageRegister, intermediate_result+"_output.mhd");
-  }
-
-  // Insert a new image
-  auto copy = syd::InsertCopyImage(inputPlanar);
-  syd::WriteImage<ImageType2D>(imageRegister, copy->GetAbsolutePath(), copy->dimension);
-  copy->frame_of_reference_uid = inputSPECT->frame_of_reference_uid;
-  return copy;
 }
 // --------------------------------------------------------------------
 
@@ -496,10 +429,13 @@ syd::InsertManualRegistration(const syd::Image::pointer inputImage,
     db->QueryOne(centerImage, idCenterImage); // will fail if not found
     LOG(2) << "Read image :" << centerImage;
     auto itk_centerImage = syd::ReadImage<ImageType>(centerImage->GetAbsolutePath(), centerImage->dimension);
-    x += itk_centerImage->GetOrigin()[0] + itk_centerImage->GetLargestPossibleRegion().GetSize()[0]*itk_centerImage->GetSpacing()[0]/2 - itk_inputImage->GetOrigin()[0] - itk_inputImage->GetLargestPossibleRegion().GetSize()[0]*itk_inputImage->GetSpacing()[0]/2 +x;
-    y += itk_centerImage->GetOrigin()[1] + itk_centerImage->GetLargestPossibleRegion().GetSize()[1]*itk_centerImage->GetSpacing()[1]/2 - itk_inputImage->GetOrigin()[1] - itk_inputImage->GetLargestPossibleRegion().GetSize()[1]*itk_inputImage->GetSpacing()[1]/2 +y;
+    x += itk_centerImage->GetOrigin()[0] + itk_centerImage->GetLargestPossibleRegion().GetSize()[0]*itk_centerImage->GetSpacing()[0]/2
+      - itk_inputImage->GetOrigin()[0] - itk_inputImage->GetLargestPossibleRegion().GetSize()[0]*itk_inputImage->GetSpacing()[0]/2 +x;
+    y += itk_centerImage->GetOrigin()[1] + itk_centerImage->GetLargestPossibleRegion().GetSize()[1]*itk_centerImage->GetSpacing()[1]/2
+      - itk_inputImage->GetOrigin()[1] - itk_inputImage->GetLargestPossibleRegion().GetSize()[1]*itk_inputImage->GetSpacing()[1]/2 +y;
     if (inputImage->dimension >= 3)
-      z += itk_centerImage->GetOrigin()[2] + itk_centerImage->GetLargestPossibleRegion().GetSize()[2]*itk_centerImage->GetSpacing()[2]/2 - itk_inputImage->GetOrigin()[2] - itk_inputImage->GetLargestPossibleRegion().GetSize()[2]*itk_inputImage->GetSpacing()[2]/2 +z;
+      z += itk_centerImage->GetOrigin()[2] + itk_centerImage->GetLargestPossibleRegion().GetSize()[2]*itk_centerImage->GetSpacing()[2]/2
+        - itk_inputImage->GetOrigin()[2] - itk_inputImage->GetLargestPossibleRegion().GetSize()[2]*itk_inputImage->GetSpacing()[2]/2 +z;
   }
 
   //Register the image

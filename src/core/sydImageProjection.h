@@ -16,25 +16,32 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDATTENUATIONIMAGE_H
-#define SYDATTENUATIONIMAGE_H
+#ifndef SYDIMAGEPROJECTION_H
+#define SYDIMAGEPROJECTION_H
 
 
 //--------------------------------------------------------------------
 namespace syd {
 
-  template<class InputImageType, class OutputImageType>
+  // Option struct
+  struct ImageProjection_Parameters
+  {
+    int projectionDimension;
+    bool flipProjectionFlag;
+    bool meanFlag;
+  };
+
+  template<class ImageType, class OutputImageType>
   typename OutputImageType::Pointer
-  Attenuation(const InputImageType * input, const OutputImageType * likeImage,
-              double numberEnergySPECT, double attenuationWaterCT, double attenuationBoneCT,
-              std::vector<double>& attenuationAirSPECT,
-              std::vector<double>& attenuationWaterSPECT,
-              std::vector<double>& attenuationBoneSPECT,
-              std::vector<double>& weight);
+    Projection(const ImageType * input, const ImageProjection_Parameters & p);
+
+  template<class ImageType, class OutputImageType>
+  typename OutputImageType::Pointer
+  Projection(const ImageType * input, double dimension);
 
 } // end namespace
 
-#include "sydAttenuationImage.txx"
+#include "sydImageProjection.txx"
 //--------------------------------------------------------------------
 
 #endif

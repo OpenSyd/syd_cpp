@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
   if (!args_info.tia_flag) db->Query(images, ids);
   else {
     db->Query(tias, ids);
-    for(auto tia:tias) images.push_back(tia->GetOutput(fit_output_name)); 
+    for(auto tia:tias) images.push_back(tia->GetOutput(fit_output_name));
   }
   if (images.size() == 0) {
     LOG(FATAL) << "No image ids given. I do nothing.";

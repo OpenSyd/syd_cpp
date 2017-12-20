@@ -17,21 +17,21 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertAttenuationImage_ggo.h"
+#include "sydFAF_ACF_Image_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
 #include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"
-#include "sydAttenuationImage.h"
+#include "sydFAFHelper.h"
 #include <numeric>
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertAttenuationImage, 1);
+  SYD_INIT_GGO(sydFAF_ACF_Image, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -51,24 +51,24 @@ int main(int argc, char* argv[])
     LOG(FATAL) << "The numbers of attenuationCT inputs is not 2.";
   }
 
-  double numberEnergySPECT(1);
-  if (args_info.weight_given)
-    numberEnergySPECT = args_info.weight_given;
+  unsigned int numberEnergySPECT(1);
+  if (args_info.weights_given)
+    numberEnergySPECT = args_info.weights_given;
   if (3*numberEnergySPECT != args_info.attenuationSPECT_given) {
     LOG(FATAL) << "The numbers of weight and attenuationSPECT inputs do not match.";
   }
 
-  double attenuationWaterCT(0);
-  double attenuationBoneCT(0);
-  attenuationWaterCT = args_info.attenuationCT_arg[0];
-  attenuationBoneCT = args_info.attenuationCT_arg[1];
+  double attWaterCT(0);
+  double attenuationWaterCT = args_info.attenuationCT_arg[0];
+  double attenuationBoneCT = args_info.attenuationCT_arg[1];
   if (attenuationWaterCT > attenuationBoneCT) {
     LOG(FATAL) << "Attenuation water coefficient > Attenuation bone coefficient (check the order of attenuationCT)";
   }
 
   std::vector<double> attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT;
   for(unsigned int i=0; i<numberEnergySPECT; ++i) {
-    if (args_info.attenuationSPECT_arg[3*i] <= args_info.attenuationSPECT_arg[3*i+1] && args_info.attenuationSPECT_arg[3*i+1] <= args_info.attenuationSPECT_arg[3*i+2]) {
+    if (args_info.attenuationSPECT_arg[3*i] <= args_info.attenuationSPECT_arg[3*i+1] &&
+        args_info.attenuationSPECT_arg[3*i+1] <= args_info.attenuationSPECT_arg[3*i+2]) {
       attenuationAirSPECT.push_back(args_info.attenuationSPECT_arg[3*i]);
       attenuationWaterSPECT.push_back(args_info.attenuationSPECT_arg[3*i+1]);
       attenuationBoneSPECT.push_back(args_info.attenuationSPECT_arg[3*i+2]);
@@ -79,43 +79,36 @@ int main(int argc, char* argv[])
     }
   }
 
-  std::vector<double> weight;
-  if (args_info.weight_given) {
+  std::vector<double> weights;
+  if (args_info.weights_given) {
     for(unsigned int i=0; i<numberEnergySPECT; ++i)
-      weight.push_back(args_info.weight_arg[i]);
+      weights.push_back(args_info.weights_arg[i]);
   }
   else
-    weight.push_back(1.0);
+    weights.push_back(1.0);
 
-  /*  if (std::abs(std::accumulate(weight.begin(), weight.end(), 0.0)-1.0) > 0.000001) {
-    LOG(FATAL) << "The sum of weights is not equal to 1.0";
-    }*/ // FIXME
-
-  // Get the image id to have the spacing model
-  syd::Image::pointer input_like;
-  if (args_info.like_given) {
-    syd::IdType id_like = args_info.like_arg;
-    db->QueryOne(input_like, id_like); // will fail if not found
-    LOG(2) << "Read image :" << input_like;
-  } else
-    LOG(FATAL) << "Set the id of the model image to have the resampled spacing";
+  // Parameters
+  syd::ACF_Parameters p;
+  p.numberEnergySPECT = numberEnergySPECT;
+  p.attenuationWaterCT = attenuationWaterCT;
+  p.attenuationBoneSPECT = attenuationBoneSPECT;
+  p.attenuationAirSPECT = attenuationAirSPECT;
+  p.attenuationWaterSPECT = attenuationWaterSPECT;
+  p.attenuationBoneSPECT = attenuationBoneSPECT;
+  p.weights = weights;
+  p.proj.projectionDimension = args_info.dim_arg;
+  p.proj.flipProjectionFlag = args_info.flip_flag;
+  p.proj.meanFlag = false;
 
   // Main computation
-  auto image = syd::InsertAttenuationImage(input, input_like,
-                                           numberEnergySPECT,
-                                           attenuationWaterCT,
-                                           attenuationBoneCT,
-                                           attenuationAirSPECT,
-                                           attenuationWaterSPECT,
-                                           attenuationBoneSPECT,
-                                           weight);
+  auto image = syd::InsertAttenuationCorrectionFactorImage(input, p);
 
   // set properties from the image
   syd::SetImageInfoFromImage(image, input);
 
   // Update image info
-  syd::FindOrCreatePixelUnit(db, "attenuation", "Attenuation Factor");
-  syd::SetPixelUnit(image, "attenuation");
+  syd::FindOrCreatePixelUnit(db, "ACF", "Attenuation Correction Factor");
+  syd::SetPixelUnit(image, "ACF");
   syd::SetTagsFromCommandLine(image->tags, db, args_info);
   syd::SetImageInfoFromCommandLine(image, args_info);
   syd::SetCommentsFromCommandLine(image->comments, db, args_info);

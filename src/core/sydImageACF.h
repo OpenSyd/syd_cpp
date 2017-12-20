@@ -16,25 +16,35 @@
   - CeCILL-B   http://www.cecill.info/licences/Licence_CeCILL-B_V1-en.html
   ===========================================================================**/
 
-#ifndef SYDPROJECTIONIMAGE_H
-#define SYDPROJECTIONIMAGE_H
+#ifndef SYDIMAGEACF_H
+#define SYDIMAGEACF_H
 
+#include "sydImageProjection.h"
 
 //--------------------------------------------------------------------
-namespace syd {
+namespace syd
+{
+  // Option struct
+  struct ACF_Parameters
+  {
+    int numberEnergySPECT;
+    double attenuationWaterCT;
+    double attenuationBoneCT;
+    std::vector<double> attenuationAirSPECT;
+    std::vector<double> attenuationWaterSPECT;
+    std::vector<double> attenuationBoneSPECT;
+    std::vector<double> weights;
+    ImageProjection_Parameters proj;
+  };
 
-  template<class ImageType, class OutputImageType>
-  typename OutputImageType::Pointer
-  Projection(const ImageType * input,
-             double dimension, bool mean, bool flip);
-
-  template<class ImageType, class OutputImageType>
-  typename OutputImageType::Pointer
-  Projection(const ImageType * input, double dimension);
+  // main function
+  template<class InputImageType, class OutputImageType>
+    typename OutputImageType::Pointer
+    ComputeImageACF(const InputImageType * input, const ACF_Parameters & p);
 
 } // end namespace
 
-#include "sydProjectionImage.txx"
+#include "sydImageACF.txx"
 //--------------------------------------------------------------------
 
 #endif

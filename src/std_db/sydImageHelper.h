@@ -25,6 +25,7 @@
 #include "sydImageGeometricalMean.h"
 #include "sydPixelUnitHelper.h"
 #include "sydImageCrop.h"
+#include "sydImageProjection.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -106,23 +107,7 @@ namespace syd {
 
   // Compute the projection of an image.
   syd::Image::pointer InsertProjectionImage(const syd::Image::pointer input,
-                                            double dimension=0, bool mean=false, bool flip=false);
-
-  // Compute the attenuation map of an image.
-  syd::Image::pointer InsertAttenuationImage(const syd::Image::pointer input, const syd::Image::pointer input_like,
-                                             double numberEnergySPECT, double attenuationWaterCT, double attenuationBoneCT,
-                                             std::vector<double>& attenuationAirSPECT,
-                                             std::vector<double>& attenuationWaterSPECT,
-                                             std::vector<double>& attenuationBoneSPECT,
-                                             std::vector<double>& weight);
-
-  // Compute the registered attenuation map of an image.
-  syd::Image::pointer InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
-                                                const syd::Image::pointer inputSPECT,
-                                                int dimension,
-                                                double & translation,
-                                                bool flip,
-                                                std::string intermediate_result="");
+                                            const syd::ImageProjection_Parameters & p);
 
   // Compute the manual registration of an image.
   syd::Image::pointer InsertManualRegistration(const syd::Image::pointer inputImage,

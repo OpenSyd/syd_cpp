@@ -73,7 +73,9 @@ syd::ReadDicomSerieImage(syd::DicomSerie::pointer dicom)
 
   //Multiply the image by Real_world_value_slope and add Real_world_value_intercept
   //Just check if it's needed or values != nan
-  if ((dicom->dicom_real_world_value_slope != 1.0 || dicom->dicom_real_world_value_intercept != 0.0) &&  dicom->dicom_real_world_value_slope == dicom->dicom_real_world_value_slope && dicom->dicom_real_world_value_intercept == dicom->dicom_real_world_value_intercept) {
+  if ((dicom->dicom_real_world_value_slope != 1.0 || dicom->dicom_real_world_value_intercept != 0.0)
+      && dicom->dicom_real_world_value_slope == dicom->dicom_real_world_value_slope
+      && dicom->dicom_real_world_value_intercept == dicom->dicom_real_world_value_intercept) {
     LOG(WARNING) << "Mutliply the image by " << dicom->dicom_real_world_value_slope << " and add " << dicom->dicom_real_world_value_intercept << std::endl;
     typedef itk::MultiplyImageFilter<ImageType, ImageType, ImageType> MultiplyImageFilterType;
     typename MultiplyImageFilterType::Pointer multiplyImageFilter = MultiplyImageFilterType::New();

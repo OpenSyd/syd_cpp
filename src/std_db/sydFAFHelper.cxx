@@ -18,7 +18,64 @@
 
 // syd
 #include "sydFAFHelper.h"
+#include "sydImageACF.h"
 #include "sydFAFCalibratedImage.h"
+#include "sydRegisterPlanarSPECT.h"
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertAttenuationCorrectionFactorImage(const syd::Image::pointer input,
+                                            const syd::ACF_Parameters & p)
+{
+  DDF();
+
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  typedef itk::Image<PixelType, 2> OutputImageType;
+  auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
+  auto attenuation = syd::ComputeImageACF<ImageType, OutputImageType>(itk_input, p);
+
+  // Create the syd image
+  return syd::InsertImage<OutputImageType>(attenuation, input->patient, input->modality);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
+                               const syd::Image::pointer inputSPECT,
+                               const syd::ImageProjection_Parameters & p,
+                               double & translation,
+                               std::string intermediate_result)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 2> ImageType2D;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  auto itk_inputPlanar = syd::ReadImage<ImageType2D>(inputPlanar->GetAbsolutePath());
+  auto itk_inputSPECT = syd::ReadImage<ImageType3D>(inputSPECT->GetAbsolutePath());
+  auto projectionSPECT =
+    syd::Projection<ImageType3D, ImageType2D>(itk_inputSPECT, p);
+
+  auto imageRegister = syd::RegisterPlanarSPECT<ImageType2D>(itk_inputPlanar,
+                                                             projectionSPECT,
+                                                             translation);
+  if (intermediate_result != "") {
+    syd::WriteImage<ImageType2D>(itk_inputPlanar, intermediate_result+"_input1.mhd");
+    syd::WriteImage<ImageType2D>(projectionSPECT, intermediate_result+"_input2.mhd");
+    syd::WriteImage<ImageType2D>(imageRegister, intermediate_result+"_output.mhd");
+  }
+
+  // Insert a new image
+  auto copy = syd::InsertCopyImage(inputPlanar);
+  syd::WriteImage<ImageType2D>(imageRegister, copy->GetAbsolutePath(), copy->dimension);
+  copy->frame_of_reference_uid = inputSPECT->frame_of_reference_uid;
+  return copy;
+}
+// --------------------------------------------------------------------
+
 
 //--------------------------------------------------------------------
 double syd::ComputeFafIntegral(const syd::Image::pointer input_SPECT)
@@ -27,7 +84,7 @@ double syd::ComputeFafIntegral(const syd::Image::pointer input_SPECT)
   double injectedActivity = input_SPECT->injection->activity_in_MBq; //injected activity in MBq
   double lambdaDecay = input_SPECT->injection->GetLambdaDecayConstantInHours()/3600.0; //lambda decay in 1/s
   double timeInjectionSPECT = input_SPECT->GetHoursFromInjection()*3600.0; //Time between injection and the beginning of the SPECT acquisition in s
-  double totalAcquisitionTime = input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec/1000.0*input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation/4*input_SPECT->dicoms[0]->dicom_number_of_rotations; //Total acquisition time in s (for 4 heads)
+  double totalAcquisitionTime = input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec/1000.0*input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation/4*input_SPECT->dicoms[0]->dicom_number_of_rotations; //Total acquisition time in s (for 4 heads) FIXME 
 
   //Compute A0
   double A0 = injectedActivity*std::exp(-lambdaDecay*timeInjectionSPECT);

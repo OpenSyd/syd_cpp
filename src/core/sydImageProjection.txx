@@ -25,19 +25,15 @@
 //--------------------------------------------------------------------
 template<class ImageType, class OutputImageType>
 typename OutputImageType::Pointer
-syd::Projection(const ImageType * input,
-                double dimension,
-                bool mean,
-                bool flip)
+syd::Projection(const ImageType * input, const ImageProjection_Parameters & p)
 {
-  DDF();
-  //Project the image along dimension
-  auto projection = syd::Projection<ImageType, OutputImageType>(input, dimension);
+  // Project the image along dimension
+  auto projection = syd::Projection<ImageType, OutputImageType>(input, p.projectionDimension);
 
-  //Compute the mean if the flag is on
-  if (mean) {
+  // Compute the mean if the flag is on
+  if (p.meanFlag) {
     double size;
-    size = input->GetLargestPossibleRegion().GetSize(dimension);
+    size = input->GetLargestPossibleRegion().GetSize(p.projectionDimension);
 
     typedef itk::ShiftScaleImageFilter <OutputImageType, OutputImageType > DivideImageFilterType;
     typename DivideImageFilterType::Pointer divideImageFilter = DivideImageFilterType::New ();
@@ -47,9 +43,9 @@ syd::Projection(const ImageType * input,
     projection = divideImageFilter->GetOutput();
   }
 
-  //Flip the image in order to have the head at the top and the feet at the bottom (flag ? car pas intéressant tout le temps)
-  if (flip) {
-    if (dimension == 0) {
+  // Flip the image in order to have the head at the top and the feet at the bottom (flag ? car pas intéressant tout le temps)
+  if (p.flipProjectionFlag) {
+    if (p.projectionDimension == 0) {
       //I don't want to use AffineRegistration because I don't know the center of rotation but now it's more complicated:
       //I wanted to use PermuteAxesImageFilter but to have the correct orientation (ie. head at the top),
       //I have to use FlipImageFilter twice.
@@ -97,7 +93,7 @@ syd::Projection(const ImageType * input,
       projection->SetDirection(matrix);
 
     }
-    else if (dimension == 1) {
+    else if (p.projectionDimension == 1) {
       //A single flip around y-axis
       itk::FixedArray<bool, 2> flipAxes;
       flipAxes[0] = false;
@@ -125,7 +121,6 @@ template<class ImageType, class OutputImageType>
 typename OutputImageType::Pointer
 syd::Projection(const ImageType * input, double dimension)
 {
-  DD(dimension);
   // Filter
   typedef itk::SumProjectionImageFilter<ImageType,OutputImageType> FilterType;
   typename FilterType::Pointer filter = FilterType::New();
@@ -133,26 +128,15 @@ syd::Projection(const ImageType * input, double dimension)
   filter->SetInput(input);
   filter->Update();
   auto output = filter->GetOutput();
-  DD(input->GetSpacing());
-  DD(input->GetLargestPossibleRegion());
-  DD(input->GetOrigin());
-  DD(input->GetDirection());
 
-  DD(output->GetSpacing());
-  DD(output->GetLargestPossibleRegion());
-  DD(output->GetOrigin());
-  DD(output->GetDirection());
+  // Set directions
   auto dir = output->GetDirection();
   int ik = 0;
   for(auto i=0; i<3; i++) {
-    DD(i);
     if (i!=dimension) {
       int jk = 0;
       for(auto j=0; j<3; j++) {
-        DD(j);
         if (j!=dimension) {
-          DD(ik);
-          DD(jk);
           dir[ik][jk] = input->GetDirection()[i][j];
           ++jk;
         }
@@ -160,9 +144,7 @@ syd::Projection(const ImageType * input, double dimension)
       ++ik;
     }
   }
-  DD(dir);
-  // output->SetDirection(dir);
-  DD(output->GetDirection());
+  output->SetDirection(dir);
 
   return output;
 }
