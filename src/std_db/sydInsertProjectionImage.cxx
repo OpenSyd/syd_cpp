@@ -24,7 +24,7 @@
 #include "sydTagHelper.h"
 #include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"
-#include "sydProjectionImage.h"
+#include "sydImageProjection.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
@@ -46,10 +46,11 @@ int main(int argc, char* argv[])
   LOG(2) << "Read image :" << input;
 
   // Main computation
-  double dimension = args_info.dimension_arg;
-  bool mean = args_info.mean_flag;
-  bool flip = args_info.flip_flag;
-  auto image = syd::InsertProjectionImage(input, dimension, mean, flip);
+  syd::ImageProjection_Parameters p;
+  p.projectionDimension = args_info.dimension_arg;
+  p.flipProjectionFlag = args_info.flip_flag;
+  p.meanFlag = args_info.mean_flag;
+  auto image = syd::InsertProjectionImage(input, p);
 
   // Update image info
   syd::SetTagsFromCommandLine(image->tags, db, args_info);

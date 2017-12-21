@@ -103,8 +103,9 @@ int main(int argc, char* argv[])
   // Main computation
   auto image = syd::InsertAttenuationCorrectionFactorImage(input, p);
 
-  // set properties from the image
+  // set properties from the image (except pixel type that is forced to float)
   syd::SetImageInfoFromImage(image, input);
+  image->pixel_type = "float";
 
   // Update image info
   syd::FindOrCreatePixelUnit(db, "ACF", "Attenuation Correction Factor");

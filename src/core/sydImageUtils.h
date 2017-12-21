@@ -39,6 +39,8 @@
 #include <itkImageSliceConstIteratorWithIndex.h>
 #include <itkConvolutionImageFilter.h>
 #include <itkJoinSeriesImageFilter.h>
+
+// gdcm
 #include "gdcmImageHelper.h"
 
 // --------------------------------------------------------------------
@@ -65,7 +67,7 @@ namespace syd {
 
   //--------------------------------------------------------------------
   template<class ImageType>
-    void WriteImage(typename ImageType::Pointer image, std::string filename, int dimension = 3);
+    void WriteImage(const ImageType * image, std::string filename, int dimension = 3);
 
   void WriteImage(typename itk::ImageBase<3>::Pointer image, std::string filename);
 

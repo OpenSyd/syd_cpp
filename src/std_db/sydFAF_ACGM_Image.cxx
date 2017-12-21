@@ -17,21 +17,20 @@
   ===========================================================================**/
 
 // syd
-#include "sydInsertAttenuationCorrectedPlanarImage_ggo.h"
+#include "sydFAF_ACGM_Image_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
 #include "sydImageHelper.h"
 #include "sydTagHelper.h"
 #include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"
-#include "sydAttenuationCorrectedPlanarImage.h"
-#include <numeric>
+#include "sydFAFHelper.h"
 
 // --------------------------------------------------------------------
 int main(int argc, char* argv[])
 {
   // Init
-  SYD_INIT_GGO(sydInsertAttenuationCorrectedPlanarImage, 1);
+  SYD_INIT_GGO(sydFAF_ACGM_Image, 1);
 
   // Load plugin
   syd::PluginManager::GetInstance()->Load();
@@ -48,17 +47,12 @@ int main(int argc, char* argv[])
 
   // Get the projected factor attenuation map (AM) id
   syd::IdType id_AM = atoi(args_info.inputs[1]);
-  syd::Image::pointer input_AM;
-  db->QueryOne(input_AM, id_AM); // will fail if not found
-  LOG(2) << "Read projected factor attenuation map :" << input_AM;
-
-  // Get the default ratio
-  double ratio(1.0);
-  if (args_info.ratio_given)
-    ratio = args_info.ratio_arg;
+  syd::Image::pointer input_ACF;
+  db->QueryOne(input_ACF, id_AM); // will fail if not found
+  LOG(2) << "Read projected factor attenuation map :" << input_ACF;
 
   // Main computation
-  auto image = syd::InsertAttenuationCorrectedPlanarImage(input_GM, input_AM, ratio);
+  auto image = syd::InsertAttenuationCorrectedPlanarImage(input_GM, input_ACF, args_info.factor_arg);
 
   // Update image info
   syd::SetImageInfoFromImage(image, input_GM);

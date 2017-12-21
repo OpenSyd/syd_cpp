@@ -275,16 +275,16 @@ add_executable(sydFAF_RegisterPlanarImage
 target_link_libraries(sydFAF_RegisterPlanarImage ${SYD_STD_DB_LIBRARY})
 
 # Create the attenuation corrected of a planar image
-# wrap_ggo(sydInsertAttenuationCorrectedPlanarImage_GGO_C
-#   sydInsertAttenuationCorrectedPlanarImage.ggo
-#   ../common_db/sydCommandLineWithTags.ggo
-#   sydCommandLineWithImageInfo.ggo
-#   ../common_db/sydCommandLineWithComments.ggo
-#   sydCommandLineDefault.ggo )
-# add_executable(sydInsertAttenuationCorrectedPlanarImage
-#   sydInsertAttenuationCorrectedPlanarImage.cxx
-#   ${sydInsertAttenuationCorrectedPlanarImage_GGO_C})
-# target_link_libraries(sydInsertAttenuationCorrectedPlanarImage ${SYD_STD_DB_LIBRARY})
+wrap_ggo(sydFAF_ACGM_Image_GGO_C
+  sydFAF_ACGM_Image.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydFAF_ACGM_Image
+  sydFAF_ACGM_Image.cxx
+  ${sydFAF_ACGM_Image_GGO_C})
+target_link_libraries(sydFAF_ACGM_Image ${SYD_STD_DB_LIBRARY})
 
 # # Create the FAF mask
 # wrap_ggo(sydInsertFAFMask_GGO_C

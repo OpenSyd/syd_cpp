@@ -30,13 +30,6 @@ syd::RegisterPlanarSPECT(ImageType * inputPlanar,
                          const ImageType * inputSPECT,
                          double & output_y_translation)
 {
-  //Create output
-  /*typename ImageType::Pointer output = ImageType::New();
-    output->SetRegions(inputPlanar->GetLargestPossibleRegion());
-    output->SetOrigin(inputPlanar->GetOrigin());
-    output->SetSpacing(inputPlanar->GetSpacing());
-    output->Allocate(); */
-
   //---Resample inputSPECT and inputAM like inputPlanar (same spacing)---
   // Instantiate the resampler. Wire in the transform and the interpolator.
   typedef itk::ResampleImageFilter<ImageType, ImageType> ResampleFilterType;
@@ -64,8 +57,11 @@ syd::RegisterPlanarSPECT(ImageType * inputPlanar,
   resampleFilterSPECT->SetSize(sizeSPECT);
   resampleFilterSPECT->Update();
 
-  typename ImageType::Pointer SPECTresample = ImageType::New();
-  SPECTresample = resampleFilterSPECT->GetOutput();
+  //typename ImageType::Pointer SPECTresample = ImageType::New();
+  auto SPECTresample = resampleFilterSPECT->GetOutput();
+
+  syd::WriteImage<ImageType>(SPECTresample, "spect_resampled.mhd");
+
 
   //Center along x
   double spectCenter = SPECTresample->GetOrigin()[0] + SPECTresample->GetLargestPossibleRegion().GetSize(0)*SPECTresample->GetSpacing()[0]/2;
@@ -77,7 +73,8 @@ syd::RegisterPlanarSPECT(ImageType * inputPlanar,
   typedef itk::MattesMutualInformationImageToImageMetric<ImageType, ImageType> MICoeffFilterType;
   double minCorrelation(itk::NumericTraits<double >::infinity());
   unsigned int minTranslation(0);
-  for (unsigned int translation=1 ; translation < SPECTresample->GetLargestPossibleRegion().GetSize()[1] + inputPlanar->GetLargestPossibleRegion().GetSize()[1]; ++translation) {
+  auto tmax = SPECTresample->GetLargestPossibleRegion().GetSize()[1] + inputPlanar->GetLargestPossibleRegion().GetSize()[1];
+  for (unsigned int translation=1 ; translation < tmax ; ++translation) {
     originPlanar[1] = SPECTresample->GetOrigin()[1] - inputPlanar->GetLargestPossibleRegion().GetSize()[1]*inputPlanar->GetSpacing()[1] + translation*inputPlanar->GetSpacing()[1];
     inputPlanar->SetOrigin(originPlanar);
     typename MICoeffFilterType::Pointer miCoeffFilter = MICoeffFilterType::New();
@@ -85,7 +82,8 @@ syd::RegisterPlanarSPECT(ImageType * inputPlanar,
     miCoeffFilter->SetFixedImage(SPECTresample);
     miCoeffFilter->SetTransform(transform);
     miCoeffFilter->SetInterpolator(interpolator);
-    typename ImageType::RegionType smallRegion = itk::ImageAlgorithm::EnlargeRegionOverBox(inputPlanar->GetLargestPossibleRegion(), inputPlanar, SPECTresample.GetPointer());
+    typename ImageType::RegionType smallRegion =
+      itk::ImageAlgorithm::EnlargeRegionOverBox(inputPlanar->GetLargestPossibleRegion(), inputPlanar, SPECTresample);//.GetPointer());
     miCoeffFilter->SetFixedImageRegion(smallRegion);
     miCoeffFilter->UseAllPixelsOn();
     miCoeffFilter->SetNumberOfHistogramBins(50);

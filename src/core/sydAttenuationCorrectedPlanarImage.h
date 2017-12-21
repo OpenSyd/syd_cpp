@@ -25,7 +25,7 @@ namespace syd {
 
   template<class ImageType2D>
   typename ImageType2D::Pointer
-  AttenuationCorrectedPlanarImage(const ImageType2D * input_GM, const ImageType2D * input_AM, double ratio);
+  AttenuationCorrectedPlanarImage(const ImageType2D * input_GM, const ImageType2D * input_ACF, double outside_factor);
 
 } // end namespace
 

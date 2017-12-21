@@ -21,14 +21,13 @@
 #include "sydImageACF.h"
 #include "sydFAFCalibratedImage.h"
 #include "sydRegisterPlanarSPECT.h"
+#include "sydAttenuationCorrectedPlanarImage.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertAttenuationCorrectionFactorImage(const syd::Image::pointer input,
                                             const syd::ACF_Parameters & p)
 {
-  DDF();
-
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 3> ImageType;
@@ -77,6 +76,25 @@ syd::InsertRegisterPlanarSPECT(const syd::Image::pointer inputPlanar,
 // --------------------------------------------------------------------
 
 
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertAttenuationCorrectedPlanarImage(const syd::Image::pointer input_GM,
+                                           const syd::Image::pointer input_ACF,
+                                           double outside_factor)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 2> ImageType2D;
+  auto itk_input_GM = syd::ReadImage<ImageType2D>(input_GM->GetAbsolutePath());
+  auto itk_input_ACF = syd::ReadImage<ImageType2D>(input_ACF->GetAbsolutePath());
+  auto attenuationCorrected = syd::AttenuationCorrectedPlanarImage<ImageType2D>(itk_input_GM, itk_input_ACF, outside_factor);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType2D>(attenuationCorrected, input_GM->patient, input_GM->modality);
+}
+// --------------------------------------------------------------------
+
+
 //--------------------------------------------------------------------
 double syd::ComputeFAFIntegral(const syd::Image::pointer input_SPECT)
 {
@@ -84,7 +102,9 @@ double syd::ComputeFAFIntegral(const syd::Image::pointer input_SPECT)
   double injectedActivity = input_SPECT->injection->activity_in_MBq; //injected activity in MBq
   double lambdaDecay = input_SPECT->injection->GetLambdaDecayConstantInHours()/3600.0; //lambda decay in 1/s
   double timeInjectionSPECT = input_SPECT->GetHoursFromInjection()*3600.0; //Time between injection and the beginning of the SPECT acquisition in s
-  double totalAcquisitionTime = input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec/1000.0*input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation/4*input_SPECT->dicoms[0]->dicom_number_of_rotations; //Total acquisition time in s (for 4 heads) FIXME
+  double totalAcquisitionTime = input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec/1000.0*
+    input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation/4*input_SPECT->dicoms[0]->dicom_number_of_rotations;
+  //Total acquisition time in s (for 4 heads) FIXME
 
   //Compute A0
   double A0 = injectedActivity*std::exp(-lambdaDecay*timeInjectionSPECT);

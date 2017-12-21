@@ -27,9 +27,29 @@
 template<class ImageType2D>
 typename ImageType2D::Pointer
 syd::AttenuationCorrectedPlanarImage(const ImageType2D * input_GM,
-                                     const ImageType2D * input_AM,
-                                     double ratio)
+                                     const ImageType2D * input_ACF,
+                                     double outside_factor)
 {
+  // Resample ACF like GM (images must be in the same frame of reference)
+  typedef itk::ResampleImageFilter<ImageType2D,ImageType2D> FilterType;
+  typedef itk::LinearInterpolateImageFunction<ImageType2D, double> InterpolatorType;
+  typedef itk::IdentityTransform<double, 2> TransformType;
+  typename FilterType::Pointer filter = FilterType::New();
+  filter->SetInput(input_ACF);
+  filter->SetSize(input_GM->GetLargestPossibleRegion().GetSize());
+  filter->SetOutputSpacing(input_GM->GetSpacing());
+  filter->SetOutputOrigin(input_GM->GetOrigin());
+  filter->SetDefaultPixelValue(0.0);
+  filter->SetOutputDirection(input_GM->GetDirection());
+  filter->SetTransform(TransformType::New());
+  filter->SetInterpolator(InterpolatorType::New());
+  filter->Update();
+  auto resampled_ACF = filter->GetOutput();
+
+  syd::WriteImage<ImageType2D>(input_ACF, "input_acf.mhd");
+  syd::WriteImage<ImageType2D>(input_GM, "input_gm.mhd");
+  syd::WriteImage<ImageType2D>(resampled_ACF, "resampled_acf.mhd");
+
   // Create an image with 2 connected components
   typename ImageType2D::Pointer geoMeanACSC = ImageType2D::New();
   geoMeanACSC->SetRegions(input_GM->GetLargestPossibleRegion());
@@ -42,7 +62,7 @@ syd::AttenuationCorrectedPlanarImage(const ImageType2D * input_GM,
   typedef typename  ImageType2D::PixelType PixelType;
   typedef typename itk::LinearInterpolateImageFunction <ImageType2D, PixelType> ImageInterpolatorType;
   typename ImageInterpolatorType::Pointer imageInterpolator = ImageInterpolatorType::New ();
-  imageInterpolator->SetInputImage(input_AM);
+  imageInterpolator->SetInputImage(resampled_ACF);
 
   itk::ImageRegionIterator<ImageType2D> geoMeanACSCIterator(geoMeanACSC,geoMeanACSC->GetLargestPossibleRegion());
   itk::ImageRegionConstIterator<ImageType2D> input_GMIterator(input_GM,input_GM->GetLargestPossibleRegion());
@@ -50,12 +70,12 @@ syd::AttenuationCorrectedPlanarImage(const ImageType2D * input_GM,
     typename ImageType2D::PointType point;
     geoMeanACSC->TransformIndexToPhysicalPoint(geoMeanACSCIterator.GetIndex(), point);
 
-    //If the physical point (not the voxel) is inside input_AM, multiply by the corresponding interpolated value in input_AM
-    //Else multiply it by a ratio value 4.168696975
+    //If the physical point (not the voxel) is inside resampled_ACF, multiply by the corresponding interpolated value in resampled_ACF
+    //Else multiply it by a outside_factor value 4.168696975
     if (imageInterpolator->IsInsideBuffer(point))
       geoMeanACSCIterator.Set(input_GMIterator.Get()*imageInterpolator->Evaluate(point));
     else
-      geoMeanACSCIterator.Set(input_GMIterator.Get()*ratio);
+      geoMeanACSCIterator.Set(input_GMIterator.Get()*outside_factor);
 
     ++geoMeanACSCIterator;
     ++input_GMIterator;

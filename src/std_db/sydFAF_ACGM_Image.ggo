@@ -1,13 +1,16 @@
-#File sydInsertAttenuationCorrectedPlanarImage.ggo
+#File sydFAF_ACGM_Image.ggo
 
 package "syd"
-version "0.4"
-usage "sydInsertAttenuationCorrectedPlanarImage <image1> <image2> -r <ratio>"
-description "Create a new image from the 2D Geometric Mean (GM) using the projected attenuation map. [image1] is corrected from attenuation using the values of [image2]
 
-- [image1] is a GM image id (eg. output of sydRegisterPlanarSpect)
-- [image2] is the projected attenuation factor map id (eg. the output of sydInsertAttenuationImage).
+version "0.5"
 
-The ratio is the default ratio value applied to correct from attenuation when [image1] and [image2] are not well superimposed."
+usage "sydFAF_ACGM_Image <GM_image> <ACF_image> -f <outside_factor>"
 
-option "ratio"  r "Default ratio" double  default="1.0"
+description "Multiply the Geometrical Mean (GM) image by the Attenuation Correction Factor (ACF) image. Images must be in the same reference frame. 
+
+- [GM_image]  is the output of sydFAF_RegisterPlanarImage
+- [ACF_image] is the output of sydFAF_ACGM_Image
+- <outside_factor> is the factor used for the pixel in GM that are outside the ACF field of view."
+
+option "factor"  f "Factor fo pixels outside the fov" double default="4.168696975" no
+

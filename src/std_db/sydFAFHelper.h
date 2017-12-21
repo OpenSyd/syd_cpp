@@ -38,6 +38,11 @@ namespace syd {
                                                 double & translation,
                                                 std::string intermediate_result="");
 
+  // Compute the attenuation correction of an planar image.
+  syd::Image::pointer InsertAttenuationCorrectedPlanarImage(const syd::Image::pointer input_GM,
+                                                            const syd::Image::pointer input_ACF,
+                                                            double outside_factor);
+
   //Compute the FAF Integral
   double ComputeFAFIntegral(const syd::Image::pointer input_SPECT);
 

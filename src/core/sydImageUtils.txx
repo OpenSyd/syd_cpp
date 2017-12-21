@@ -18,7 +18,7 @@
 
 // --------------------------------------------------------------------
 template<class ImageType>
-void WriteImage(typename ImageType::Pointer image, std::string filename, int dimension)
+void WriteImage(const ImageType * image, std::string filename, int dimension)
 {
   if (dimension == 2 && dimension != ImageType::ImageDimension) {
     typedef typename ImageType::PixelType PixelType;
