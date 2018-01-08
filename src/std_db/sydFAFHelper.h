@@ -43,13 +43,22 @@ namespace syd {
                                                             const syd::Image::pointer input_ACF,
                                                             double outside_factor);
 
-  //Compute the FAF Integral
-  double ComputeFAFIntegral(const syd::Image::pointer input_SPECT);
+  // Compute the FAF Integral
+  double ComputeFAFIntegral(const syd::Image::pointer input_SPECT, int nb_of_heads);
+
+
+  // Compute the FAF Mask.
+  syd::RoiMaskImage::pointer InsertFAFMask(const syd::Image::pointer input_SPECT,
+                                           const syd::Image::pointer input_planar,
+                                           syd::ImageProjection_Parameters & p);
+
+
 
   // Compute the FAF calibrated of a SPECT image.
   syd::Image::pointer InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
                                                const syd::Image::pointer input_planar,
-                                               const syd::RoiMaskImage::pointer input_mask);
+                                               int nb_of_heads,
+                                               syd::ImageProjection_Parameters & p);
 
 
 }

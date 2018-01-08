@@ -34,5 +34,5 @@ option "attenuationCT"      c "Attenuation for water and bone for kVeff"        
 option "attenuationSPECT"   s "Attenuation for air, water and bone for all kEV" double yes multiple
 option "weights"            w "Pourcentage of all energy peaks"                 double no  multiple
 option "dim"                d "Dimension for projection (0,1,2)"                int default = "1" no
-option "flip"               f "Flip projected image (debug)"                    flag   off
+option "flip"               f "Flip projected image (debug)"                    flag off
 

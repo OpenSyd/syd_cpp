@@ -27,15 +27,12 @@
 //--------------------------------------------------------------------
 template<class ImageType2D, class ImageType3D>
 typename ImageType2D::Pointer
-syd::FAFMask(const ImageType3D * input_SPECT, const ImageType2D * input_planar)
+syd::FAFMask(const ImageType3D * input_SPECT,
+             const ImageType2D * input_planar,
+             const ImageProjection_Parameters & p)
 {
   DDF();
   // Project the image.
-
-  ImageProjection_Parameters p;
-  p.projectionDimension = 1;
-  p.flipProjectionFlag = false;
-  p.meanFlag = false;
   auto projection = syd::Projection<ImageType3D, ImageType2D>(input_SPECT, p);
 
   syd::WriteImage<ImageType2D>(projection, "proj.mhd");

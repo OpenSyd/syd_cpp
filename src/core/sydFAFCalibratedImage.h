@@ -26,7 +26,10 @@ namespace syd {
   //Calibrate the image
   template<class ImageType2D, class ImageType3D>
   typename ImageType3D::Pointer
-  FAFCalibratedImage(const ImageType3D * input_SPECT, const ImageType2D * input_planar, const ImageType2D * input_mask, double integral);
+  FAFCalibratedImage(const ImageType3D * input_SPECT,
+                     const ImageType2D * input_planar,
+                     const ImageType2D * input_mask,
+                     double integral, double & faf);
 
 } // end namespace
 

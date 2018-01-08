@@ -1,9 +1,19 @@
-#File sydInsertFAFCalibratedImage.ggo
+#File sydFAF_Calibration.ggo
 
 package "syd"
-version "0.4"
-usage "sydInsertFAFCalibratedImage <image1> <image2> <mask>"
-description "Create a new (mhd) image from the <image1> SPECT image using 
-the <mask> mask image (output of sydInsertFAFMask) and the attenuation corrected planar image <image2>.
-The output is the calibrated SPECT with the FAF method in MBq/mm3."
 
+version "0.5"
+
+usage "sydFAF_Calibration <spect_image> <ACGM_image>"
+
+description "Create a new calibrated SPECT image with the FAF method, using the ACGM planar image.
+
+- <spect_image> is the input 3D SPECT, in counts
+- <ACGM_image>  is the output of sydFAF_ACF_Image
+
+The output is a 3D SPECT in MBq/mm3. Calibration factor is stored as a comments in the image. 
+"
+
+option "nb_heads"         n "Number of heads"                      int default="2" no
+option "dim"              d "Dimension for projection (0,1,2)"     int default = "1" no
+option "flip"             f "Flip projected image (debug)"         flag off

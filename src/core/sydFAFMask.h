@@ -19,13 +19,16 @@
 #ifndef SYDFAFMASK_H
 #define SYDFAFMASK_H
 
+#include "sydImageProjection.h"
 
 //--------------------------------------------------------------------
 namespace syd {
 
   template<class ImageType2D, class ImageType3D>
   typename ImageType2D::Pointer
-  FAFMask(const ImageType3D * input_SPECT, const ImageType2D * input_planar);
+    FAFMask(const ImageType3D * input_SPECT,
+            const ImageType2D * input_planar,
+            const ImageProjection_Parameters & p);
 
 } // end namespace
 

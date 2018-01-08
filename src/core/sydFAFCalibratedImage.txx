@@ -24,7 +24,11 @@
 //--------------------------------------------------------------------
 template<class ImageType2D, class ImageType3D>
 typename ImageType3D::Pointer
-syd::FAFCalibratedImage(const ImageType3D * input_SPECT, const ImageType2D * input_planar, const ImageType2D * input_mask, double integral)
+syd::FAFCalibratedImage(const ImageType3D * input_SPECT,
+                        const ImageType2D * input_planar,
+                        const ImageType2D * input_mask,
+                        double integral,
+                        double & f)
 {
   //Compute the total sum of the voxel in SPECT image
   typedef itk::StatisticsImageFilter<ImageType3D> StatisticsImage3DFilterType;
@@ -54,9 +58,16 @@ syd::FAFCalibratedImage(const ImageType3D * input_SPECT, const ImageType2D * inp
   double maskSum = statisticsMaskFilter->GetSum();
 
   //Compute the FAF value (divide by the pixel volume to have MBq/mm³)
+  DD(maskSum);
+  DD(planarSum);
+  DD(SPECTSum);
   double faf = maskSum / planarSum;
+  DD(faf);
   double volume = input_SPECT->GetSpacing()[0] * input_SPECT->GetSpacing()[1] * input_SPECT->GetSpacing()[2];
+  DD(volume);
   double sensitivityFaf = SPECTSum/(integral * faf * volume); //FIXME (option)
+  f = sensitivityFaf;
+  DD(f);
 
   //Compute the FAF corrected image
   typedef itk::MultiplyImageFilter<ImageType3D, ImageType3D, ImageType3D> MultiplyImage3DFilterType;

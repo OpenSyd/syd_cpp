@@ -18,10 +18,12 @@
 
 // syd
 #include "sydFAFHelper.h"
+#include "sydRoiMaskImageHelper.h"
 #include "sydImageACF.h"
 #include "sydFAFCalibratedImage.h"
 #include "sydRegisterPlanarSPECT.h"
 #include "sydAttenuationCorrectedPlanarImage.h"
+#include "sydFAFMask.h"
 
 // --------------------------------------------------------------------
 syd::Image::pointer
@@ -96,21 +98,37 @@ syd::InsertAttenuationCorrectedPlanarImage(const syd::Image::pointer input_GM,
 
 
 //--------------------------------------------------------------------
-double syd::ComputeFAFIntegral(const syd::Image::pointer input_SPECT)
+double syd::ComputeFAFIntegral(const syd::Image::pointer input_SPECT, int nb_of_heads)
 {
-  //Get the different important value
-  double injectedActivity = input_SPECT->injection->activity_in_MBq; //injected activity in MBq
-  double lambdaDecay = input_SPECT->injection->GetLambdaDecayConstantInHours()/3600.0; //lambda decay in 1/s
-  double timeInjectionSPECT = input_SPECT->GetHoursFromInjection()*3600.0; //Time between injection and the beginning of the SPECT acquisition in s
-  double totalAcquisitionTime = input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec/1000.0*
-    input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation/4*input_SPECT->dicoms[0]->dicom_number_of_rotations;
+  if (input_SPECT->injection == nullptr) {
+    EXCEPTION("In FAF Calibration: no injection associated to " <<  input_SPECT);
+  }
+
+  //injected activity in MBq
+  double injectedActivity = input_SPECT->injection->activity_in_MBq;
+  DD(injectedActivity);
+  //lambda decay in 1/s
+  double lambdaDecay = input_SPECT->injection->GetLambdaDecayConstantInHours()/3600.0;
+  DD(lambdaDecay);
+  //Time between injection and the beginning of the SPECT acquisition in s
+  double timeInjectionSPECT = input_SPECT->GetHoursFromInjection()*3600.0;
+  DD(timeInjectionSPECT);
+  // Acquisition duration
+  DD(input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec);
+  DD(input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation);
+  DD(input_SPECT->dicoms[0]->dicom_number_of_rotations);
+  double totalAcquisitionDuration = input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec/1000.0*
+    input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation/nb_of_heads*input_SPECT->dicoms[0]->dicom_number_of_rotations;
   //Total acquisition time in s (for 4 heads) FIXME
+  DD(totalAcquisitionDuration);
 
   //Compute A0
   double A0 = injectedActivity*std::exp(-lambdaDecay*timeInjectionSPECT);
+  DD(A0);
 
-  //Compute the integral between 0 and totalAcquisitionTime of exp(-lambdaDecay*t)
-  double integral = (1 - std::exp(-lambdaDecay*totalAcquisitionTime))/lambdaDecay;
+  //Compute the integral between 0 and totalAcquisitionDuration of exp(-lambdaDecay*t)
+  double integral = (1 - std::exp(-lambdaDecay*totalAcquisitionDuration))/lambdaDecay;
+  DD(integral);
 
   return (A0*integral);
 }
@@ -118,11 +136,39 @@ double syd::ComputeFAFIntegral(const syd::Image::pointer input_SPECT)
 
 
 // --------------------------------------------------------------------
+syd::RoiMaskImage::pointer
+syd::InsertFAFMask(const syd::Image::pointer input_SPECT,
+                   const syd::Image::pointer input_planar,
+                   syd::ImageProjection_Parameters & p)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  typedef itk::Image<PixelType, 2> ImageType2D;
+  auto itk_input_SPECT = syd::ReadImage<ImageType3D>(input_SPECT->GetAbsolutePath());
+  auto itk_input_planar = syd::ReadImage<ImageType2D>(input_planar->GetAbsolutePath());
+  auto fafMask = syd::FAFMask<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar, p);
+
+  // Create the syd image
+  auto db = input_planar->patient->GetDatabase<syd::StandardDatabase>();
+  auto roiType = syd::FindRoiType("FAF", db);
+  return syd::InsertRoiMask<ImageType2D>(fafMask, input_planar->patient, roiType);
+}
+// --------------------------------------------------------------------
+
+
+
+
+// --------------------------------------------------------------------
 syd::Image::pointer
 syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
                               const syd::Image::pointer input_planar,
-                              const syd::RoiMaskImage::pointer input_mask)
+                              int nb_of_heads,
+                              syd::ImageProjection_Parameters & p)
 {
+  // Compute the mask
+  auto input_mask = syd::InsertFAFMask(input_SPECT, input_planar, p);
+
   // Force to float
   typedef float PixelType;
   typedef itk::Image<PixelType, 2> ImageType2D;
@@ -130,16 +176,27 @@ syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
   auto itk_input_SPECT = syd::ReadImage<ImageType3D>(input_SPECT->GetAbsolutePath());
   auto itk_input_planar = syd::ReadImage<ImageType2D>(input_planar->GetAbsolutePath());
   auto itk_input_mask = syd::ReadImage<ImageType2D>(input_mask->GetAbsolutePath());
-  double integral = syd::ComputeFAFIntegral(input_SPECT);
-  auto fafCalibrated = syd::FAFCalibratedImage<ImageType2D, ImageType3D>(itk_input_SPECT, itk_input_planar, itk_input_mask, integral);
-
+  double integral = syd::ComputeFAFIntegral(input_SPECT, nb_of_heads);
+  double f = 1.0;
+  auto fafCalibrated = syd::FAFCalibratedImage<ImageType2D, ImageType3D>(itk_input_SPECT,
+                                                                         itk_input_planar,
+                                                                         itk_input_mask,
+                                                                         integral, f);
   // Create the syd image
   auto faf = syd::InsertImage<ImageType3D>(fafCalibrated, input_SPECT->patient, input_SPECT->modality);
   syd::SetImageInfoFromImage(faf, input_SPECT);
   auto db = input_SPECT->GetDatabase<syd::StandardDatabase>();
   faf->pixel_unit = syd::FindOrCreatePixelUnit(db, "MBq/mm3", "FAF calibrated image unit");
   syd::SetPixelUnit(faf, "MBq/mm3");
+  std::ostringstream oss;
+  oss << "FAF = " << f;
+  faf->comments.push_back(oss.str());
   db->Update(faf);
+
+  // Remove FAF mask
+  // db->Delete(input_mask);
+
+  // end
   return faf;
 }
 // --------------------------------------------------------------------
