@@ -56,14 +56,11 @@ namespace syd {
                                              syd::Patient::pointer patient,
                                              syd::RoiType::pointer roitype);
 
-  // Compute the FAF Mask.
-  syd::RoiMaskImage::pointer InsertFAFMask(const syd::Image::pointer input_SPECT,
-                                           const syd::Image::pointer input_planar);
-
   /// Compute the mass of an roi according to the ct image
   double ComputeMass(syd::Image::pointer ct, std::string roi_name);
 
 } // namespace syd
+#include "sydRoiMaskImageHelper.txx"
 // --------------------------------------------------------------------
 
 #endif
