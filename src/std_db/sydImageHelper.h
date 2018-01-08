@@ -126,6 +126,9 @@ namespace syd {
   void CropImageLike(syd::Image::pointer image,
                      const syd::Image::pointer like);
 
+  /// Crop an image with 3D size (start/end)
+  void CropImage(syd::Image::pointer image, int * crop);
+
   /// Resample and crop an image like another one
   void ResampleAndCropImageLike(syd::Image::pointer image,
                                 syd::Image::pointer like,

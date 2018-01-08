@@ -23,6 +23,7 @@ option "rename"    -  "Rename internal file with patient info (advanced)"       
 
 
 section "Resample/Crop info"
-option "resample_like"   r  "Resample like the given image id"   int no 
+option "resample_like"   r  "Resample like the given image id"   int no
+option "crop"            c  "Crop with xmin,xmax,ymin,ymax,zmin,zmax"   int no multiple(6)
 option "interpolation"   i  "Interpolation type 0=NN, 1=Lin"     int default = "1" no
 option "default_value"   d  "default value"                      double default = "-1000" no

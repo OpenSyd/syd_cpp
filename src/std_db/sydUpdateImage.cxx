@@ -64,6 +64,7 @@ int main(int argc, char* argv[])
   int i=0;
   for(auto index=0; index<images.size(); index++) {
     auto image = images[index];
+
     // check file exist
     for(auto file:image->files) {
       std::string s = file->GetAbsolutePath();
@@ -87,6 +88,10 @@ int main(int argc, char* argv[])
     if (args_info.gauss_arg != 0) {
       double sigma_in_mm = args_info.gauss_arg;
       syd::ApplyGaussianFilter(image, sigma_in_mm);
+    }
+
+    if (args_info.crop_arg != 0) {
+      syd::CropImage(image, args_info.crop_arg);
     }
 
     // Need to import a new mhd ?

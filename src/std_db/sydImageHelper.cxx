@@ -518,6 +518,45 @@ void syd::CropImageLike(syd::Image::pointer image,
 
 
 // --------------------------------------------------------------------
+void syd::CropImage(syd::Image::pointer image, int * crop)
+{
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  auto itk_image = syd::ReadImage<ImageType>(image->GetAbsolutePath());
+
+  // Region
+  ImageType::SizeType size;
+  size[0] = crop[1]-crop[0];
+  size[1] = crop[3]-crop[2];
+  size[2] = crop[5]-crop[4];
+  ImageType::IndexType start;
+  start[0] = crop[0];
+  start[1] = crop[2];
+  start[2] = crop[4];
+  ImageType::RegionType region;
+  region.SetSize(size);
+  region.SetIndex(start);
+
+  // Crop
+  typedef itk::RegionOfInterestImageFilter<ImageType, ImageType> CropFilterType;
+  typename CropFilterType::Pointer cropFilter = CropFilterType::New();
+  cropFilter->SetInput(itk_image);
+  cropFilter->SetRegionOfInterest(region);
+  cropFilter->Update();
+
+  // Replace image
+  itk_image = cropFilter->GetOutput();
+  syd::WriteImage<ImageType>(itk_image, image->GetAbsolutePath());
+
+  // Update image information (size etc)
+  syd::SetImageInfoFromFile(image);
+  auto db = image->GetDatabase();
+  db->Update(image);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::ResampleAndCropImageLike(syd::Image::pointer image,
                                    syd::Image::pointer like,
                                    int interpolationType,
