@@ -82,7 +82,7 @@ std::string syd::Image::ToString() const
   for(auto d:dicoms) ss << d->id << " ";
   if (dicoms.size() == 0) ss << empty_value << " ";
   ss << frame_of_reference_uid << " ";
-  if (pixel_unit != nullptr) ss << pixel_unit->name;
+  if (pixel_unit != nullptr) ss << pixel_unit->name << " ";
   else ss << empty_value << " ";
   if (history and print_history_flag_) {
     ss << " " << history->insertion_date << " "
@@ -114,11 +114,11 @@ std::string syd::Image::ToShortString() const
      << modality << " ";
   for(auto d:dicoms) ss << d->id << " ";
   if (dicoms.size() == 0) ss << empty_value << " ";
-  if (pixel_unit != nullptr) ss << pixel_unit->name;
+  if (pixel_unit != nullptr) ss << pixel_unit->name << " ";
   else ss << empty_value << " ";
   if (history and print_history_flag_) {
     ss << " " << history->insertion_date << " "
-       << history->update_date;
+       << history->update_date << " ";
   }
   else ss << empty_value;
   ss << GetAllComments() << std::endl;
