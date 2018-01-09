@@ -47,10 +47,6 @@ syd::AttenuationCorrectedPlanarImage(const ImageType2D * input_GM,
   filter->Update();
   auto resampled_ACF = filter->GetOutput();
 
-  syd::WriteImage<ImageType2D>(input_ACF, "input_acf.mhd");
-  syd::WriteImage<ImageType2D>(input_GM, "input_gm.mhd");
-  syd::WriteImage<ImageType2D>(resampled_ACF, "resampled_acf.mhd");
-
   // Create an image with the same size than GM
   typename ImageType2D::Pointer geoMeanACSC = ImageType2D::New();
   geoMeanACSC->SetRegions(input_GM->GetLargestPossibleRegion());
@@ -60,7 +56,7 @@ syd::AttenuationCorrectedPlanarImage(const ImageType2D * input_GM,
   geoMeanACSC->Allocate();
   geoMeanACSC->FillBuffer(0);
 
-   // Copy the values from GM. For values outside (-1), use the outside_factor
+  // Copy the values from GM. For values outside (-1), use the outside_factor
   itk::ImageRegionIterator<ImageType2D> geoMeanACSCIterator(geoMeanACSC,geoMeanACSC->GetLargestPossibleRegion());
   itk::ImageRegionConstIterator<ImageType2D> input_GMIterator(input_GM,input_GM->GetLargestPossibleRegion());
   itk::ImageRegionConstIterator<ImageType2D> input_resampledACFIterator(resampled_ACF,resampled_ACF->GetLargestPossibleRegion());

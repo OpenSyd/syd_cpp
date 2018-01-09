@@ -31,12 +31,8 @@ syd::FAFMask(const ImageType3D * input_SPECT,
              const ImageType2D * input_planar,
              const ImageProjection_Parameters & p)
 {
-  DDF();
   // Project the image.
   auto projection = syd::Projection<ImageType3D, ImageType2D>(input_SPECT, p);
-
-  syd::WriteImage<ImageType2D>(projection, "proj.mhd");
-
 
   //Resample the projected image like the planar image
   typedef itk::ResampleImageFilter<ImageType2D,ImageType2D> FilterType;
@@ -52,9 +48,6 @@ syd::FAFMask(const ImageType3D * input_SPECT,
   filter->SetTransform(TransformType::New());
   filter->SetInterpolator(InterpolatorType::New());
   filter->Update();
-
-  syd::WriteImage<ImageType2D>(filter->GetOutput(), "proj_res.mhd");
-
 
   //Binarize to obtain the positive value
   typedef itk::BinaryThresholdImageFilter <ImageType2D, ImageType2D> ThresholdImageFilterType;
