@@ -151,7 +151,7 @@ syd::InsertFAFMask(const syd::Image::pointer input_SPECT,
 
   // Create the syd image
   auto db = input_planar->patient->GetDatabase<syd::StandardDatabase>();
-  auto roiType = syd::FindRoiType("FAF", db);
+  auto roiType = syd::FindOrCreateRoiType("FAF", db);
   return syd::InsertRoiMask<ImageType2D>(fafMask, input_planar->patient, roiType);
 }
 // --------------------------------------------------------------------

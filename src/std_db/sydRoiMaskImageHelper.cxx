@@ -44,6 +44,24 @@ syd::RoiType::pointer syd::FindRoiType(const std::string & roiname,
 
 
 // --------------------------------------------------------------------
+syd::RoiType::pointer syd::FindOrCreateRoiType(const std::string & roiname,
+                                               syd::StandardDatabase * db)
+{
+  try {
+    auto r = syd::FindRoiType(roiname, db);
+    return r;
+  } catch (const std::exception& e) {
+  }
+  syd::RoiType::pointer r = db->New<syd::RoiType>();
+  r->name = roiname;
+  r->description = roiname;
+  db->Insert(r);
+  return r;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 syd::RoiMaskImage::vector
 syd::FindRoiMaskImage(const syd::Image::pointer image,
                       const std::string & roi_name)

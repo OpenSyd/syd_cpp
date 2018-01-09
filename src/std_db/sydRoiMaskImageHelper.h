@@ -25,11 +25,13 @@
 // --------------------------------------------------------------------
 namespace syd {
 
-
   // Search a roi type by name
   syd::RoiType::pointer FindRoiType(const std::string & roiname,
                                     syd::StandardDatabase * db);
 
+  // Search a roi type by name, or create it if does not exist
+  syd::RoiType::pointer FindOrCreateRoiType(const std::string & roiname,
+                                            syd::StandardDatabase * db);
 
   // Search a roi mask image by a roi name and the image
   syd::RoiMaskImage::vector FindRoiMaskImage(const syd::Image::pointer image,
