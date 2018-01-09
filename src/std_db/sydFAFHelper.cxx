@@ -106,29 +106,30 @@ double syd::ComputeFAFIntegral(const syd::Image::pointer input_SPECT, int nb_of_
 
   //injected activity in MBq
   double injectedActivity = input_SPECT->injection->activity_in_MBq;
-  DD(injectedActivity);
+
   //lambda decay in 1/s
   double lambdaDecay = input_SPECT->injection->GetLambdaDecayConstantInHours()/3600.0;
-  DD(lambdaDecay);
+
   //Time between injection and the beginning of the SPECT acquisition in s
   double timeInjectionSPECT = input_SPECT->GetHoursFromInjection()*3600.0;
-  DD(timeInjectionSPECT);
-  // Acquisition duration
-  DD(input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec);
-  DD(input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation);
-  DD(input_SPECT->dicoms[0]->dicom_number_of_rotations);
+
+  // Acquisition duration in sec
   double totalAcquisitionDuration = input_SPECT->dicoms[0]->dicom_actual_frame_duration_in_msec/1000.0*
     input_SPECT->dicoms[0]->dicom_number_of_frames_in_rotation/nb_of_heads*input_SPECT->dicoms[0]->dicom_number_of_rotations;
-  //Total acquisition time in s (for 4 heads) FIXME
-  DD(totalAcquisitionDuration);
 
   //Compute A0
   double A0 = injectedActivity*std::exp(-lambdaDecay*timeInjectionSPECT);
-  DD(A0);
 
   //Compute the integral between 0 and totalAcquisitionDuration of exp(-lambdaDecay*t)
   double integral = (1 - std::exp(-lambdaDecay*totalAcquisitionDuration))/lambdaDecay;
-  DD(integral);
+
+  // Output
+  LOG(2) << "Info:" << std::endl
+         << "Injected activity : " << injectedActivity << " MBq" << std::endl
+         << "Time from inj     : " << timeInjectionSPECT << " sec" << std::endl
+         << "Acq duration      : " << totalAcquisitionDuration << " sec" << std::endl
+         << "A0                : " << A0 << " MBq" << std::endl
+         << "Cumulated act     : " << integral << " MBq.s";
 
   return (A0*integral);
 }
@@ -193,8 +194,8 @@ syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
   faf->comments.push_back(oss.str());
   db->Update(faf);
 
-  // Remove FAF mask
-  // db->Delete(input_mask);
+  // Remove FAF mask (do not store in the db)
+  db->Delete(input_mask);
 
   // end
   return faf;
