@@ -22,8 +22,8 @@ Radionuclide  Energy (keV)  Air         Water       Cortical Bone   Weight
 F18           511           0.00010402  0.09658967  0.16740534      
 I131          364.5         0.00011938  0.11080844  0.19272457      
 Tc99m         140.5         0.0001668   0.15459051  0.28497715     
-In111         171.28        0.00015653  0.14515948  0.26067691     0.33
-In111         245.35        0.0001384   0.12842316  0.22564878     0.6
+In111         171.28        0.00015653  0.14515948  0.26067691     0.6
+In111         245.35        0.0001384   0.12842316  0.22564878     0.33
 
 Example for CT energy 120 KeV, ie. effective energy of 60 kEV
 Energy (keV)  Air         Water       Cortical Bone
