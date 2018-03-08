@@ -4,7 +4,7 @@ package "syd"
 version "0.5"
 usage "sydFAF_ACF_Image <ct> -c water,bone -s air1,water1,bone1,air2,water2,bone2 -w w1,w2"
 
-description "Create a ACF planar image (Attenuation Correction Factor) from the CT image <ct> taking into account the energies of the CT acquisition (-coption) and of the emitted gamma (-s option).
+description "Create a ACF planar image (Attenuation Correction Factor) from the CT image <ct> taking into account the energies of the CT acquisition (-c option) and of the emitted gamma (-s option).
 
 - -c: are the attenuation coefficients for water and bone for mean energy of the X-ray used for CT (2 expected values)
 
