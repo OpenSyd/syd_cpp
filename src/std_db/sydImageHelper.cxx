@@ -29,6 +29,7 @@
 #include "sydManualRegistration.h"
 #include "sydFAFHelper.h"
 #include "sydChangAttenuationImage.h"
+#include "sydAttenuationImage.h"
 #include "sydTagHelper.h"
 #include "sydImageCrop.h"
 #include "sydPixelUnitHelper.h"
@@ -472,6 +473,29 @@ syd::InsertChangAttenuation(const syd::Image::pointer inputImage,
 
   // Create the syd image
   return syd::InsertImage<ImageType3D>(changImage, inputImage->patient, inputImage->modality);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
+syd::InsertAttenuation(const syd::Image::pointer input, double numberEnergySPECT,
+                       double attenuationWaterCT, double attenuationBoneCT,
+                       std::vector<double>& attenuationAirSPECT,
+                       std::vector<double>& attenuationWaterSPECT,
+                       std::vector<double>& attenuationBoneSPECT,
+                       std::vector<double>& weight)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType3D;
+  auto itk_inputImage = syd::ReadImage<ImageType3D>(input->GetAbsolutePath());
+  auto image = syd::AttenuationImage<ImageType3D>(itk_inputImage, numberEnergySPECT,
+                                                  attenuationWaterCT, attenuationBoneCT, attenuationAirSPECT,
+                                                  attenuationWaterSPECT, attenuationBoneSPECT, weight);
+
+  // Create the syd image
+  return syd::InsertImage<ImageType3D>(image, input->patient, input->modality);
 }
 // --------------------------------------------------------------------
 

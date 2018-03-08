@@ -122,6 +122,14 @@ namespace syd {
   syd::Image::pointer InsertChangAttenuation(const syd::Image::pointer inputImage,
                                              int nbAngles);
 
+  // Compute the attenuation image
+  syd::Image::pointer InsertAttenuation(const syd::Image::pointer input, double numberEnergySPECT,
+                                        double attenuationWaterCT, double attenuationBoneCT,
+                                        std::vector<double>& attenuationAirSPECT,
+                                        std::vector<double>& attenuationWaterSPECT,
+                                        std::vector<double>& attenuationBoneSPECT,
+                                        std::vector<double>& weight);
+
   /// Crop an image like another one
   void CropImageLike(syd::Image::pointer image,
                      const syd::Image::pointer like);
