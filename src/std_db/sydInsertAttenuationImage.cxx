@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
   auto attenuationImage = syd::InsertAttenuation(inputImage,
                           numberEnergySPECT, attenuationWaterCT, attenuationBoneCT,
                           attenuationAirSPECT, attenuationWaterSPECT, attenuationBoneSPECT,
-                          weight);
+                          weights);
 
   // set properties from the image
   syd::SetImageInfoFromImage(attenuationImage, inputImage);

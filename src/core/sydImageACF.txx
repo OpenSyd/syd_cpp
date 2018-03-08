@@ -17,6 +17,7 @@
   ===========================================================================**/
 
 #include "sydImageUtils.h"
+#include "sydAttenuationImage.h"
 
 #include <itkImageRegionIterator.h>
 #include <itkImageRegionConstIterator.h>
@@ -35,7 +36,7 @@ typename OutputImageType::Pointer
 syd::ComputeImageACF(const InputImageType * input, const ACF_Parameters & p)
 {
   // Create the output like the input (fill with 0)
-  typedef itk::ImageDuplicator< InputImageType > DuplicatorType;
+  /*typedef itk::ImageDuplicator< InputImageType > DuplicatorType;
   typename DuplicatorType::Pointer duplicator = DuplicatorType::New();
   duplicator->SetInputImage(input);
   duplicator->Update();
@@ -92,7 +93,9 @@ syd::ComputeImageACF(const InputImageType * input, const ACF_Parameters & p)
   thresholdFilter->ThresholdBelow(0);
   thresholdFilter->SetOutsideValue(0);
   thresholdFilter->Update();
-  attenuation = thresholdFilter->GetOutput();
+  attenuation = thresholdFilter->GetOutput(); */
+  typename InputImageType::Pointer attenuation;
+  attenuation = syd::AttenuationImage(input, p.numberEnergySPECT, p.attenuationWaterCT, p.attenuationBoneCT, p.attenuationAirSPECT, p.attenuationWaterSPECT, p.attenuationBoneSPECT, p.weights);
 
   // Sum attenuation along the 2nd dimension:
   auto projection = syd::Projection<InputImageType, OutputImageType>(attenuation, p.proj);

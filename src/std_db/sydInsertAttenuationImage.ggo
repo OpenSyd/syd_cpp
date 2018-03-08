@@ -32,3 +32,9 @@ In111         245.35        0.0001384   0.12842316  0.22564878     0.33
 Example for CT energy 120 KeV, ie. effective energy of 60 kEV
 Energy (keV)  Air         Water       Cortical Bone
 60            0.00022586  0.2068007   0.57384408
+"
+
+option "attenuationCT"      c "Attenuation for water and bone for kVeff"        double yes multiple(2)
+option "attenuationSPECT"   s "Attenuation for air, water and bone for all kEV" double yes multiple
+option "weights"            w "Pourcentage of all energy peaks"                 double no  multiple
+

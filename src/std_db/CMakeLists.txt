@@ -381,6 +381,18 @@ add_executable(sydInsertChangAttenuationImage
   ${sydInsertChangAttenuationImage_GGO_C})
 target_link_libraries(sydInsertChangAttenuationImage ${SYD_STD_DB_LIBRARY})
 
+# Create the attenuation image
+wrap_ggo(sydInsertAttenuationImage_GGO_C
+  sydInsertAttenuationImage.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+add_executable(sydInsertAttenuationImage
+  sydInsertAttenuationImage.cxx
+  ${sydInsertAttenuationImage_GGO_C})
+target_link_libraries(sydInsertAttenuationImage ${SYD_STD_DB_LIBRARY})
+
 # ComputeActivityInMBqByDetectedCounts
 wrap_ggo(sydComputeActivityInMBqByDetectedCounts_GGO_C
   sydComputeActivityInMBqByDetectedCounts.ggo

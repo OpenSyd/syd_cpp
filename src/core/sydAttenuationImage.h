@@ -25,9 +25,6 @@
 #include "sydCommon.h"
 #include "sydFileUtils.h"
 
-// itk
-#include <itkImageRegionConstIterator.h>
-#include <itkImageRegionIterator.h>
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -35,12 +32,12 @@ namespace syd {
   //Main function to compute the attenuation image
   template<class ImageType>
   typename ImageType::Pointer
-  AttenuationImage(const ImageType * input, double numberEnergySPECT,
-                   double attenuationWaterCT, double attenuationBoneCT,
-                   std::vector<double>& attenuationAirSPECT,
-                   std::vector<double>& attenuationWaterSPECT,
-                   std::vector<double>& attenuationBoneSPECT,
-                   std::vector<double>& weight);
+  AttenuationImage(const ImageType * input, const double numberEnergySPECT,
+                   const double attenuationWaterCT, const double attenuationBoneCT,
+                   const std::vector<double>& attenuationAirSPECT,
+                   const std::vector<double>& attenuationWaterSPECT,
+                   const std::vector<double>& attenuationBoneSPECT,
+                   const std::vector<double>& weight);
 
 } // end namespace
 
