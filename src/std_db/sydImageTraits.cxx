@@ -82,6 +82,8 @@ BuildFields(const syd::Database * db) const
     "short history.insertion_date[insert] history.update_date[update]";
   field_format_map_["frame"] =
     "default frame_of_reference_uid[frame]";
+  field_format_map_["all"] =
+    "frame type dimension filepath";
 }
 // --------------------------------------------------------------------
 

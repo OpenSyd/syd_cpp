@@ -102,6 +102,8 @@ BuildFields(const syd::Database * db) const
     "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_description[description] dicom_reconstruction_date[rec_date] injection.id[inj] tags comments[com]";
   field_format_map_["image"] =
     "id patient.name[pat] dicom_acquisition_date[date] dicom_files[files] dicom_modality[mod] dicom_size[size] dicom_spacing[spacing] dicom_reconstruction_date[rec_date] tags comments[com]";
+  field_format_map_["all"] =
+    "id patient.name[pat] dicom_study_uid dicom_study_name dicom_series_uid dicom_frame_of_reference_uid dicom_modality[mod] dicom_description dicom_series_description[serie] dicom_study_description dicom_image_id[dii] dicom_dataset_name[dsn] dicom_manufacturer  dicom_manufacturer_model_name dicom_study_id dicom_software_version dicom_patient_name dicom_patient_id dicom_patient_birth_date dicom_patient_sex dicom_acquisition_date[date] dicom_reconstruction_date[rec_date] dicom_size[size] dicom_spacing[spacing] dicom_pixel_scale dicom_pixel_offset dicom_real_world_value_slope dicom_real_world_value_intercept dicom_window_center dicom_window_width dicom_radionuclide_name dicom_counts_accumulated dicom_actual_frame_duration_in_msec dicom_energy_window_name dicom_number_of_frames_in_rotation dicom_number_of_rotations dicom_table_traverse_in_mm dicom_table_height_in_mm dicom_rotation_angle dicom_files[files] tags comments[com]";
 }
 // --------------------------------------------------------------------
 

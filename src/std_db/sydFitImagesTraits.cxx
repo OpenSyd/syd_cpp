@@ -80,6 +80,8 @@ BuildFields(const syd::Database * db) const
   // Format lists
   field_format_map_["default"] =
     "id first_image.patient.name[pat] first_image.injection.radionuclide.name[rad] images models min_activity r2_min akaike_criterion restricted_tac max_iteration images_n success_rate outputs";
+  field_format_map_["all"] =
+    "id first_image.patient.name[pat] first_image.injection.radionuclide.name[rad] images models min_activity nb_pixels nb_success_pixels r2_min akaike_criterion restricted_tac max_iteration images_n success_rate outputs comments tags";
 }
 // --------------------------------------------------------------------
 

@@ -94,6 +94,8 @@ BuildFields(const syd::Database * db) const
   // Format lists
   field_format_map_["default"] =
     "id patient.name[pat] dicom_structure_set_date[date] dicom_modality[mod] dicom_roi_nb[roi] dicom_roi_names[rois] tags comments[com]";
+  field_format_map_["all"] =
+    "id patient.name[pat] dicom_structure_set_date[date] dicom_modality[mod] dicom_roi_nb[roi] dicom_roi_names[rois] dicom_study_uid dicom_study_name dicom_series_uid dicom_frame_of_reference_uid dicom_description dicom_series_description dicom_study_description dicom_image_id dicom_dataset_name dicom_manufacturer dicom_manufacturer_model_name dicom_study_id dicom_software_version dicom_patient_name dicom_patient_id dicom_patient_birth_date dicom_patient_sex dicom_structure_set_label dicom_structure_set_name dicom_station_name dicom_protocol_name filepath tags comments[com]";
 }
 // --------------------------------------------------------------------
 
