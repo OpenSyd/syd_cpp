@@ -26,10 +26,11 @@
 // the change is legitimate: 1) open and 2) increment the
 // version. 3) Once checked, close again.
 // It  means that we can migrate from base version to current version)
-#define SYD_VERSION      0133 // version 1.33 (current version)
+#define SYD_VERSION      0134 // version 1.34 (current version)
 #define SYD_BASE_VERSION 0101 // version 1.1 (base version)
 
 // Log:
+// 1.34 : add energy window name
 // 1.33 : add mass scaling to table OrganICRPDose
 // 1.32 : add mass to table OrganICRPDose
 // 1.31 : add table OrganICRPDose

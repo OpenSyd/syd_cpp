@@ -74,6 +74,7 @@ BuildFields(const syd::Database * db) const
   ADD_FIELD_A(dicom_radionuclide_name, std::string, "rad");
   ADD_FIELD_A(dicom_counts_accumulated, double, "cts");
   ADD_FIELD(dicom_actual_frame_duration_in_msec, double);
+  ADD_FIELD(dicom_energy_window_name, std::string);
   ADD_FIELD(dicom_number_of_frames_in_rotation, int);
   ADD_FIELD(dicom_number_of_rotations, int);
   ADD_FIELD(dicom_table_traverse_in_mm, double);

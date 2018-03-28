@@ -60,6 +60,7 @@ namespace syd {
 
       /// Specific NM
       std::string dicom_radionuclide_name;
+      std::string dicom_energy_window_name;
       double dicom_counts_accumulated;
       double dicom_actual_frame_duration_in_msec;
       int    dicom_number_of_frames_in_rotation;

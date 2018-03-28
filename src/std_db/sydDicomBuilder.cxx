@@ -329,18 +329,6 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
     GetTagValueFromTagKey(dicomIO, "0008|1090", empty_value); //ManufacturerModelName
   description = description + " " + Manufacturer + " " + ManufacturerModelName;
   description = trim(description);
-  
-  // Store description
-  serie->dicom_description = description;
-  serie->dicom_series_description = SeriesDescription;
-  serie->dicom_study_description = StudyDescription;
-  serie->dicom_image_id = ImageID;
-  serie->dicom_dataset_name = DatasetName;
-  serie->dicom_manufacturer = Manufacturer;
-  serie->dicom_manufacturer_model_name = ManufacturerModelName;
-  serie->dicom_study_id = StudyID;
-  serie->dicom_software_version =
-    GetTagValueFromTagKey(dicomIO, "0018|1020", empty_value); // Software version
 
   // Image spacing
   double sz = GetTagDoubleValueFromTagKey(dicomIO, "0018|0088", 0.0); // SpacingBetweenSlices
@@ -400,6 +388,26 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
   else slope = 1.0;
   serie->dicom_real_world_value_slope = slope;
   serie->dicom_real_world_value_intercept = intercept;
+
+  //Energy Window Name
+  int energyWindowNumber = 0;
+  energyWindowNumber = GetTagDoubleValueFromTagKey(dicomIO, "0054|0011", 0);
+  std::string tempEnergyWindowName = "";
+  if (energyWindowNumber > 0) {
+    auto reader = syd::GetDicomReader(filename);
+    auto dataset = reader.GetFile().GetDataSet();
+    for (int i=0; i<energyWindowNumber; ++i) {
+      try {
+        gdcm::SmartPointer<gdcm::SequenceOfItems> sqi = GetSequence(dataset, 0x0054, 0x0012);
+        gdcm::Item item = sqi->GetItem(i+1);
+        gdcm::Tag tag(0x0054, 0x0018);
+        tempEnergyWindowName = tempEnergyWindowName + item.GetDataElement(tag).GetByteValue()->GetPointer() + " ";
+      }
+      catch(const std::exception & e) {}
+    }
+    serie->dicom_energy_window_name = tempEnergyWindowName;
+    description = description + serie->dicom_energy_window_name;
+  }
 
   // Window/level
   double wc = GetTagDoubleValueFromTagKey(dicomIO, "0028|1050", 0.0); // WindowCenter
@@ -479,6 +487,19 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
     catch(const std::exception & e){}
   }
   serie->dicom_number_of_rotations = NumberOfRotations;
+
+  // Store description
+  serie->dicom_description = description;
+  serie->dicom_series_description = SeriesDescription;
+  serie->dicom_study_description = StudyDescription;
+  serie->dicom_image_id = ImageID;
+  serie->dicom_dataset_name = DatasetName;
+  serie->dicom_manufacturer = Manufacturer;
+  serie->dicom_manufacturer_model_name = ManufacturerModelName;
+  serie->dicom_study_id = StudyID;
+  serie->dicom_software_version =
+    GetTagValueFromTagKey(dicomIO, "0018|1020", empty_value); // Software version
+
 }
 // --------------------------------------------------------------------
 
