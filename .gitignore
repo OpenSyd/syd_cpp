@@ -1,4 +1,5 @@
 generated-odb
+CMakeLists.txt.user
 *~
 *backup
 *.save.*
