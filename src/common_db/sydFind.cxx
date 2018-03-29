@@ -94,7 +94,11 @@ int main(int argc, char* argv[])
 
   // Grep
   syd::Record::vector results;
-  db->Grep(results, records, patterns, exclude);
+  if (args_info.find_all_fields_flag) {
+    db->GrepAllFields(results, records, patterns, exclude);
+    args_info.field_arg = "all";
+  } else
+    db->Grep(results, records, patterns, exclude);
 
   // Sort
   db->Sort(results, table_name, args_info.sort_arg);

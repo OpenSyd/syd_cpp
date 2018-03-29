@@ -201,6 +201,14 @@ namespace syd {
                 const std::vector<std::shared_ptr<RecordType>> & input,
                 const std::vector<std::string> & patterns,
                 const std::vector<std::string> & exclude);
+    template<class RecordType>
+      void GrepAllFields(std::vector<std::shared_ptr<RecordType>> & output,
+                         const std::vector<std::shared_ptr<RecordType>> & input,
+                         const std::vector<std::string> & patterns,
+                         const std::vector<std::string> & exclude);
+    bool Grep(const std::string & s,
+              const std::vector<std::string> & patterns,
+              const std::vector<std::string> & exclude);
     // ------------------------------------------------------------------------
 
 

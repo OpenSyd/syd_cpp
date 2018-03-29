@@ -39,6 +39,7 @@ namespace syd {
 
     /// Write the element as a string
     virtual std::string ToString() const;
+    virtual std::string AllFieldsToString() const {return ToString();}
 
     /// Build a string to compute MD5
     virtual std::string ToStringForMD5() const;

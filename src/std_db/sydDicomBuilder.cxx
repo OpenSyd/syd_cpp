@@ -406,7 +406,6 @@ void syd::DicomBuilder::UpdateDicomSerie(DicomSerie::pointer serie,
       catch(const std::exception & e) {}
     }
     serie->dicom_energy_window_name = tempEnergyWindowName;
-    description = description + serie->dicom_energy_window_name;
   }
 
   // Window/level

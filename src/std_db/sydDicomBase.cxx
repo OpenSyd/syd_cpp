@@ -32,8 +32,6 @@ syd::DicomBase::DicomBase():
   dicom_modality = empty_value;
   dicom_description = empty_value;
   dicom_frame_of_reference_uid = empty_value;
-  dicom_modality = empty_value;
-  dicom_description = empty_value;
   dicom_series_description = empty_value;
   dicom_study_description = empty_value;
   dicom_study_name = empty_value;
@@ -47,6 +45,8 @@ syd::DicomBase::DicomBase():
   dicom_patient_id = empty_value;
   dicom_patient_birth_date = empty_value;
   dicom_patient_sex = empty_value;
+  dicom_study_uid = empty_value;
+  dicom_series_uid = empty_value;
 }
 // --------------------------------------------------------------------
 
@@ -64,6 +64,39 @@ std::string syd::DicomBase::ToString() const
      << dicom_series_uid << " "
      << syd::GetLabels(tags) << " "
      << GetAllComments();
+  auto s = ss.str();
+  return trim(s);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+std::string syd::DicomBase::AllFieldsToString() const
+{
+  std::stringstream ss;
+  ss << (patient != nullptr? patient->name:empty_value) << " "
+     << dicom_files.size() << " "
+     << dicom_modality << " "
+     << dicom_description << " "
+     << dicom_frame_of_reference_uid << " "
+     << dicom_study_uid << " "
+     << dicom_series_uid << " "
+     << dicom_series_description << " "
+     << dicom_study_description << " "
+     << dicom_study_name << " "
+     << dicom_study_id << " "
+     << dicom_image_id << " "
+     << dicom_dataset_name << " "
+     << dicom_manufacturer << " "
+     << dicom_manufacturer_model_name << " "
+     << dicom_software_version << " "
+     << dicom_patient_name << " "
+     << dicom_patient_id << " "
+     << dicom_patient_birth_date << " "
+     << dicom_patient_sex << " "
+     << syd::GetLabels(tags) << " "
+     << GetAllComments();
+
   auto s = ss.str();
   return trim(s);
 }

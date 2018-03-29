@@ -63,7 +63,6 @@ std::string syd::File::ToString() const
 }
 // --------------------------------------------------------------------
 
-
 // --------------------------------------------------------------------
 void syd::File::Callback(odb::callback_event event, odb::database & db) const
 {

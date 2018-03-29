@@ -55,6 +55,26 @@ std::string syd::DicomStruct::ToString() const
 
 
 // --------------------------------------------------------------------
+std::string syd::DicomStruct::AllFieldsToString() const
+{
+  std::stringstream ss ;
+  ss << id << " "
+     << syd::DicomBase::AllFieldsToString() << " "
+     << dicom_structure_set_date << " "
+     << dicom_structure_set_name << " "
+     << dicom_structure_set_label << " "
+     << dicom_roi_names.size() << " "
+     << dicom_station_name << " "
+     << dicom_protocol_name << " "
+     << syd::ArrayToString(dicom_roi_names);
+
+  auto s = ss.str();
+  return trim(s);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 std::string syd::DicomStruct::ComputeRelativeFolder() const
 {
   if (patient == NULL) {

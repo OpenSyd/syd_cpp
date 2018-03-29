@@ -64,6 +64,7 @@ namespace syd {
 
       /// Write the element as a string
       virtual std::string ToString() const;
+      virtual std::string AllFieldsToString() const {return ToString();}
 
       /// Return a string that describe all associated output (id + name)
       std::string GetOutputNames() const;

@@ -56,6 +56,7 @@ namespace syd {
 
       /// Write the element as a string
       virtual std::string ToString() const;
+      virtual std::string AllFieldsToString() const {return ToString();}
 
       /// Additional Set function to shorter patient inclusion
       virtual void Set(const std::vector<std::string> & args);

@@ -49,6 +49,38 @@ std::string syd::DicomSerie::ToString() const
 
 
 // --------------------------------------------------------------------
+std::string syd::DicomSerie::AllFieldsToString() const
+{
+  std::stringstream ss ;
+  ss << id << " "
+     << syd::DicomBase::AllFieldsToString() << " "
+     << dicom_reconstruction_date << " "
+     << syd::ArrayToString(dicom_size) << " "
+     << syd::ArrayToString(dicom_spacing) << " "
+     << dicom_pixel_scale << " "
+     << dicom_pixel_offset << " "
+     << dicom_real_world_value_slope << " "
+     << dicom_real_world_value_intercept << " "
+     << dicom_window_center << " "
+     << dicom_window_width << " "
+     << dicom_radionuclide_name << " "
+     << dicom_counts_accumulated << " "
+     << dicom_actual_frame_duration_in_msec << " "
+     << dicom_energy_window_name << " "
+     << dicom_number_of_frames_in_rotation << " "
+     << dicom_number_of_rotations << " "
+     << dicom_table_traverse_in_mm << " "
+     << dicom_table_height_in_mm << " "
+     << dicom_rotation_angle << " "
+     << dicom_acquisition_date;
+
+  auto s = ss.str();
+  return trim(s);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 std::string syd::DicomSerie::ComputeRelativeFolder() const
 {
   if (patient == NULL) {

@@ -80,6 +80,7 @@ namespace syd {
 
       /// Write the element as a string
       virtual std::string ToString() const;
+      virtual std::string AllFieldsToString() const;
 
       /// Check if the associated files exist on disk
       virtual syd::CheckResult Check() const;

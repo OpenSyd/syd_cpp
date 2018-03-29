@@ -41,6 +41,7 @@ namespace syd {
 
     /// Write the element as a string
     virtual std::string ToString() const;
+    virtual std::string AllFieldsToString() const {return ToString();}
 
     void Set(const std::vector<std::string> & arg);
 

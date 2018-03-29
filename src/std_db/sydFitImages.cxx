@@ -55,7 +55,8 @@ std::string syd::FitImages::ToString() const
      << syd::FitOptions::ToString() << "] "
      << GetAllComments() << " "
      << " pix: "
-     << nb_success_pixels << "/" << nb_pixels
+     << nb_success_pixels << "/" << nb_pixels << " "
+     << min_activity << " "
      << " output=" << outputs.size();
   return ss.str();
 }

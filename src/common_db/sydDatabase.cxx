@@ -665,3 +665,26 @@ GetFields(std::string table_name, std::string field_names) const
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+bool syd::Database::Grep(const std::string & s,
+                         const std::vector<std::string> & patterns,
+                         const std::vector<std::string> & exclude)
+{
+  // Very slow (for the moment)
+  std::size_t found = std::string::npos-1; // found
+  for(auto p:patterns) {
+    found = s.find(p);
+    if (found == std::string::npos) break; // not found
+  }
+  if (found != std::string::npos) { // still ok, we continue
+    found = std::string::npos;
+    for(auto e:exclude) {
+      found = s.find(e);
+      if (found != std::string::npos) break; // found, we stop
+    }
+    return (found == std::string::npos);
+  }
+  return (false);
+}
+// --------------------------------------------------------------------

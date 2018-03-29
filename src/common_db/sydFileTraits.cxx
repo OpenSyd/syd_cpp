@@ -44,7 +44,6 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["default"] = "id filename path md5 tags";
-  field_format_map_["all"] = "id filename path md5 filepath tags";
 }
 // --------------------------------------------------------------------
 

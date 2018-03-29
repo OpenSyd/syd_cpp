@@ -72,6 +72,9 @@ namespace syd {
     /// Use to write the element as a string (must be overloaded)
     virtual std::string ToString() const;
 
+    /// Use to write all fields as a string
+    virtual std::string AllFieldsToString() const { return ToString(); }
+
     /// Use to write the element as a string but more shortly than previous
     virtual std::string ToShortString() const { return ToString(); }
 

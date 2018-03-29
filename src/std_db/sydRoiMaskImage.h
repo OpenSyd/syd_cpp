@@ -41,6 +41,7 @@ namespace syd {
 
     /// Write the element as a string
     virtual std::string ToShortString() const;
+    virtual std::string AllFieldsToString() const {return ToShortString();}
 
     /// Callback : delete the associated image when the roimaskimage is deleted.
     void Callback(odb::callback_event, odb::database&) const;

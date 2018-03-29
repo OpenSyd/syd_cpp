@@ -62,6 +62,7 @@ namespace syd {
 
       /// Write the element as a string
       virtual std::string ToString() const;
+      virtual std::string AllFieldsToString() const { return ToString();}
 
       virtual void Callback(odb::callback_event, odb::database&) const;
 

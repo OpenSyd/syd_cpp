@@ -240,19 +240,23 @@ void syd::Database::Grep(std::vector<std::shared_ptr<RecordType>> & output,
   // Very slow (for the moment)
   for(auto r:input) {
     std::string s = r->ToString();
-    std::size_t found = std::string::npos-1; // found
-    for(auto p:patterns) {
-      found = s.find(p);
-      if (found == std::string::npos) break; // not found
-    }
-    if (found != std::string::npos) { // still ok, we continue
-      found = std::string::npos;
-      for(auto e:exclude) {
-        found = s.find(e);
-        if (found != std::string::npos) break; // found, we stop
-      }
-      if (found == std::string::npos) output.push_back(r);
-    }
+    if (Grep(s, patterns, exclude)) output.push_back(r);
+  }
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+template<class RecordType>
+void syd::Database::GrepAllFields(std::vector<std::shared_ptr<RecordType>> & output,
+                                  const std::vector<std::shared_ptr<RecordType>> & input,
+                                  const std::vector<std::string> & patterns,
+                                  const std::vector<std::string> & exclude)
+{
+  // Very slow (for the moment)
+  for(auto r:input) {
+    std::string s = r->AllFieldsToString();
+    if (Grep(s, patterns, exclude)) output.push_back(r);
   }
 }
 // --------------------------------------------------------------------

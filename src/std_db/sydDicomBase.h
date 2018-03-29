@@ -89,6 +89,7 @@ namespace syd {
 
       /// Write the element as a string
       virtual std::string ToString() const;
+      virtual std::string AllFieldsToString() const;
 
       /// Compute the folder to store the dicom
       virtual std::string ComputeRelativeFolder() const = 0;

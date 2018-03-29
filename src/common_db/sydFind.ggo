@@ -17,7 +17,8 @@ option "list"     l   "Dump list of ids only"  flag    off
 option "field"   f   "Field format when dump results"  string  default="default" no
 option "precision" p "Global precision for field (-1 for default)" float default="-1" no
 option "field_option" - "Set options for a given field, ie 'mean(2)' to set precision=2 for the field named 'mean'" string multiple no
-option "list_fields"   -   "Print the list of fields available for the given table and exit" flag off
+option "list_fields"  - "Print the list of fields available for the given table and exit" flag off
+option "find_all_fields" - "Find in all fields and print all fields" flag off
 option "check"    c   "Check files associated to found records"  flag    off
 option "noheader" -   "Do not display table header"              flag    off
 option "nofooter" -   "Do not display table footer"              flag    off
