@@ -295,8 +295,8 @@ Run()
 std::vector<double> syd::TimeIntegratedActivityImageBuilder::
 CheckInputs()
 {
-  // Check nb of images
-  if (images_.size() < 2) {
+  // for model >= f1, Check nb of images
+  if (options_.GetModelsName() != "f0" && images_.size() < 2) {
     EXCEPTION("Error at least 2 images needed");
   }
 

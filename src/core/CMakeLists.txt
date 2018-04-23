@@ -42,6 +42,7 @@ target_link_libraries(sydItkUtils sydCore ${ITK_LIBRARIES})
 add_library(sydFit
   sydTimeActivityCurve.cxx
   sydFitModelBase.cxx
+  sydFitModel_f0.cxx
   sydFitModel_f1.cxx
   sydFitModel_f2.cxx
   sydFitModel_f3.cxx
@@ -90,6 +91,7 @@ set(SYD_INCLUDE_FILES ${SYD_INCLUDE_FILES}
   sydFitModelBase.h
   sydFitModels.h
   sydFitOutputImage.h
+  sydFitModel_f0.h
   sydFitModel_f1.h
   sydFitModel_f2.h
   sydFitModel_f3.h

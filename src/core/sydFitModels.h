@@ -20,6 +20,7 @@
 #define SYDFITMODELS_H
 
 // syd
+#include "sydFitModel_f0.h"
 #include "sydFitModel_f1.h"
 #include "sydFitModel_f2.h"
 #include "sydFitModel_f3.h"

@@ -122,7 +122,6 @@ int syd::TimeIntegratedActivityImageFilter::FitOnePixel(Iterator4D it)
     initial_tac_->SetValue(i, it.Get());
     ++it; // next value
   }
-
   // FIXME: todo add value
 
   // Create working tac (restricted, + add value)
@@ -224,7 +223,7 @@ void syd::TimeIntegratedActivityImageFilter::InitMask()
 // --------------------------------------------------------------------
 void syd::TimeIntegratedActivityImageFilter::CheckInputs()
 {
-  if (images_.size() < 2) {
+  if (options_.GetModelsName() != "f0" && images_.size() < 2) {
     EXCEPTION("Provide at least 2 images before");
   }
 

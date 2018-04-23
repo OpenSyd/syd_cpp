@@ -207,7 +207,9 @@ double syd::FitModelBase::ComputeR2(const syd::TimeActivityCurve::pointer tac) c
     SS_tot += pow(tac->GetValue(i)-mean, 2);
   }
 
-  double R2 = 1.0 - (SS_res/SS_tot);
+  double R2 = 1.0;
+  if (SS_tot != 0)
+    R2 = 1.0 - (SS_res/SS_tot);
   return R2;
 }
 // --------------------------------------------------------------------

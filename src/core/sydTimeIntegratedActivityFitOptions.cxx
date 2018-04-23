@@ -31,6 +31,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   SetAkaikeCriterion("AICc");
   SetLambdaDecayConstantInHours(0.0);
   SetFitVerboseFlag(false);
+  auto f0  = std::make_shared<syd::FitModel_f0>();
   auto f1  = std::make_shared<syd::FitModel_f1>();
   auto f2  = std::make_shared<syd::FitModel_f2>();
   auto f3  = std::make_shared<syd::FitModel_f3>();
@@ -39,6 +40,7 @@ syd::TimeIntegratedActivityFitOptions::TimeIntegratedActivityFitOptions()
   auto f4c = std::make_shared<syd::FitModel_f4c>();
   auto f4  = std::make_shared<syd::FitModel_f4>();
   auto f5  = std::make_shared<syd::FitModel_f5>();
+  all_models_.push_back(f0);
   all_models_.push_back(f1);
   all_models_.push_back(f2);
   all_models_.push_back(f3);
