@@ -42,6 +42,8 @@ BuildFields(const syd::Database * db) const
   ADD_FIELD(min, double);
   ADD_FIELD(max, double);
   ADD_FIELD(sum, double);
+  ADD_FIELD(volume, double);
+  ADD_FIELD(volume_resample, double);
 
   // comments
   auto f_c = [](pointer p) -> std::string { return p->GetAllComments(); };
@@ -53,9 +55,9 @@ BuildFields(const syd::Database * db) const
 
   // Format lists
   field_format_map_["default"] =
-    "id image.patient.name mask.roitype.name image.id[im_id] image.pixel_unit.name[unit] tags mean std_dev n min max sum";
+    "id image.patient.name mask.roitype.name image.id[im_id] image.pixel_unit.name[unit] tags mean std_dev n min max sum volume volume_resample";
   field_format_map_["hist"] =
-    "id image.patient.name mask.roitype.name image.id[im_id] image.pixel_unit.name[unit] tags mean std_dev n min max sum history.insertion_date history.update_date";
+    "id image.patient.name mask.roitype.name image.id[im_id] image.pixel_unit.name[unit] tags mean std_dev n min max sum volume volume_resample history.insertion_date history.update_date";
 }
 // --------------------------------------------------------------------
 

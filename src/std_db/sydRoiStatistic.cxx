@@ -33,7 +33,7 @@ syd::RoiStatistic::RoiStatistic():
 {
   image = nullptr;
   mask = nullptr;
-  mean = std_dev = n = min = max = sum = 0.0;
+  mean = std_dev = n = min = max = sum = volume = volume_resample = 0.0;
 }
 // --------------------------------------------------
 

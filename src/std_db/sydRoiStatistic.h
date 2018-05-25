@@ -52,6 +52,8 @@ namespace syd {
       double min;
       double max;
       double sum;
+      double volume;//Volume of the Roi before resampling
+      double volume_resample; //Volume of the Roi after resampling
 
       /// Write the element as a string
       virtual std::string ToString() const;

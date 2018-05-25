@@ -137,6 +137,15 @@ syd::ComputeRoiStatistic(syd::RoiStatistic::pointer stat,
     LOG(2) << "Input mask: " << stat->mask->GetAbsolutePath();
   }
 
+  //Get Volume before resampling
+  typedef itk::LabelStatisticsImageFilter<RoiMaskImageType, RoiMaskImageType> FilterType2;
+  auto filter2 = FilterType2::New();
+  filter2->SetInput(itk_mask);
+  filter2->SetLabelInput(itk_mask);
+  filter2->Update();
+  double nbVoxel = filter2->GetCount(1);
+  double voxelVolume = itk_mask->GetSpacing()[0]*itk_mask->GetSpacing()[1]*itk_mask->GetSpacing()[2];
+
   // Resampling. Should resample mask or image ???
   // I decide here to resample the mask.
   // Resample do nothing if the image sizes are equal
@@ -164,6 +173,7 @@ syd::ComputeRoiStatistic(syd::RoiStatistic::pointer stat,
   double min = filter->GetMinimum(1);
   double max = filter->GetMaximum(1);
   double sum = filter->GetSum(1);
+  double voxelVolumeResample = itk_input->GetSpacing()[0]*itk_input->GetSpacing()[1]*itk_input->GetSpacing()[2];
 
   // Set the statistic values
   stat->mean = mean;
@@ -172,6 +182,8 @@ syd::ComputeRoiStatistic(syd::RoiStatistic::pointer stat,
   stat->min = min;
   stat->max = max;
   stat->sum = sum;
+  stat->volume = nbVoxel * voxelVolume;
+  stat->volume_resample = n * voxelVolumeResample;
 
   // return the used mask
   return itk_mask;
