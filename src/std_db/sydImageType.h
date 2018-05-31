@@ -64,6 +64,9 @@ namespace syd {
     /// Image type name
     std::string GetName() const { return name; }
 
+    /// Image type name
+    syd::PixelUnit::pointer GetPixelUnit() const { return pixel_unit; }
+
     /// make a copy
     pointer Clone() const;
 
