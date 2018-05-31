@@ -56,6 +56,7 @@ namespace syd {
       double activity_in_MBq;
 
       /// Write the element as a string
+      virtual std::string ToShortString() const;
       virtual std::string ToString() const;
       virtual std::string AllFieldsToString() const {return ToString();}
 

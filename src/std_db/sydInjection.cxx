@@ -37,6 +37,22 @@ syd::Injection::Injection():
 
 
 // --------------------------------------------------
+std::string syd::Injection::ToShortString() const
+{
+  std::string r;
+  if (radionuclide == NULL) r = empty_value;
+  else r = radionuclide->name;
+  std::stringstream ss ;
+  ss << r  << " "
+     << date << " "
+     << activity_in_MBq << " MBq ";
+  auto s = ss.str();
+  return trim(s);
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
 std::string syd::Injection::ToString() const
 {
   std::string name;
