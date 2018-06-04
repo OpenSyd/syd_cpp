@@ -305,6 +305,10 @@ bool syd::IsDicomStitchable(const syd::DicomSerie::pointer a,
   if (a->dicom_frame_of_reference_uid != b->dicom_frame_of_reference_uid) return false;
   if (a->dicom_modality != b->dicom_modality) return false;
 
+  //The size and spacing along x and y have to be the same
+  if (a->dicom_size[0] != b->dicom_size[0] || a->dicom_size[1] != b->dicom_size[1] ||
+      a->dicom_spacing[0] != b->dicom_spacing[1] || a->dicom_spacing[0] != b->dicom_spacing[1]) return false;
+
   // if same series_uid, it is ok
   if (a->dicom_series_uid == b->dicom_series_uid) return true;
 
