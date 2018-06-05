@@ -40,6 +40,9 @@ namespace syd {
   /// Look for all injection for a patient
   syd::Injection::vector FindInjections(const syd::Patient::pointer patient);
 
+  /// Look for all injection for a patient containing the tags
+  syd::Injection::vector FindInjectionsWithTags(const syd::Patient::pointer patient, const syd::Tag::vector tags);
+
   /// Check if a similar injection already exist (same date, quantity,
   /// rad, but different id)
   syd::Injection::vector GetSimilarInjection(syd::StandardDatabase * db,

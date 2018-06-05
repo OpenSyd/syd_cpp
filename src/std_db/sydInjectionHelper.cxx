@@ -18,6 +18,7 @@
 
 // syd
 #include "sydInjectionHelper.h"
+#include "sydTagHelper.h"
 
 // --------------------------------------------------------------------
 syd::Injection::pointer syd::CopyInjection(syd::Injection::pointer injection)
@@ -89,3 +90,19 @@ syd::Injection::vector syd::FindInjections(const syd::Patient::pointer patient)
 }
 // --------------------------------------------------------------------
 
+
+// --------------------------------------------------------------------
+syd::Injection::vector syd::FindInjectionsWithTags(const syd::Patient::pointer patient, const syd::Tag::vector tags)
+{
+  auto db = patient->GetDatabase();
+  syd::Injection::vector injections;
+  odb::query<syd::Injection> q = odb::query<syd::Injection>::patient == patient->id;
+  db->Query(injections, q);
+  syd::Injection::vector injectionOutput;
+  for (auto injection:injections) {
+    if (syd::IsAllTagsIn(injection->tags, tags))
+      injectionOutput.push_back(injection);
+  }
+  return injectionOutput;
+}
+// --------------------------------------------------------------------
