@@ -34,6 +34,7 @@ syd::DicomStruct::DicomStruct():
   dicom_structure_set_label = empty_value;
   dicom_structure_set_name = empty_value;
   dicom_structure_set_date = empty_value;
+  associatedImage = nullptr;
 }
 // --------------------------------------------------------------------
 

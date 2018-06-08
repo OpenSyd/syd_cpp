@@ -23,6 +23,7 @@
 #include "sydInjection.h"
 #include "sydDicomBase.h"
 #include "sydRoiType.h"
+#include "sydImage.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -49,6 +50,9 @@ namespace syd {
       /// Tentative corresponding contours information. Mutable to be able to
       /// synchronize with dicom_roi_names during const Callback
       mutable std::vector<syd::RoiType::pointer> roi_types;
+
+      //Associated Image
+      syd::Image::pointer associatedImage;
 
       /// Write the element as a string
       virtual std::string ToString() const;
