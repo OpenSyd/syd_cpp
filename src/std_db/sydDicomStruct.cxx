@@ -67,6 +67,7 @@ std::string syd::DicomStruct::AllFieldsToString() const
      << dicom_roi_names.size() << " "
      << dicom_station_name << " "
      << dicom_protocol_name << " "
+     << associatedImage->id << " "
      << syd::ArrayToString(dicom_roi_names);
 
   auto s = ss.str();
