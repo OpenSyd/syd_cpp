@@ -54,6 +54,7 @@ std::string syd::RoiStatistic::ToString() const
      << (mask != nullptr? mask->roitype->name:"no_mask") << " "
      << mean << " " << std_dev << " "  << n << " "
      << min << " " << max << " " << sum
+     << " " << volume << " " << volume_resample
      << " " << GetAllComments();
   return ss.str();  auto s = ss.str();
   return trim(s);
