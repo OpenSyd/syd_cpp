@@ -1,4 +1,30 @@
 <changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="StandardDatabase" version="1">
+  <changeset version="311">
+    <add-table name="syd::RoiMaskImage_dicomsStruct" kind="container">
+      <column name="object_id" type="INTEGER" null="true"/>
+      <column name="index" type="INTEGER" null="true"/>
+      <column name="value" type="INTEGER" null="true"/>
+      <foreign-key name="object_id_fk" on-delete="CASCADE">
+        <column name="object_id"/>
+        <references table="syd::RoiMaskImage">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+      <index name="syd::RoiMaskImage_dicomsStruct_object_id_i">
+        <column name="object_id"/>
+      </index>
+      <index name="syd::RoiMaskImage_dicomsStruct_index_i">
+        <column name="index"/>
+      </index>
+      <foreign-key name="value_fk" deferrable="DEFERRED">
+        <column name="value"/>
+        <references table="syd::DicomStruct">
+          <column name="id"/>
+        </references>
+      </foreign-key>
+    </add-table>
+  </changeset>
+
   <changeset version="310"/>
 
   <changeset version="309"/>

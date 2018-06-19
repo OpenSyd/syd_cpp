@@ -22,6 +22,7 @@
 // syd
 #include "sydImage.h"
 #include "sydRoiType.h"
+#include "sydDicomStruct.h"
 
 // --------------------------------------------------------------------
 namespace syd {
@@ -38,6 +39,10 @@ namespace syd {
 #pragma db not_null
     /// Foreign Key. Associated RoiType id
     syd::RoiType::pointer roitype;
+
+    // Link the mask to a dicomStruct if it was created from a DicomStruct (not necessarily)
+    // Cannot use the DicomSerie id from syd::Image
+    syd::DicomStruct::vector dicomsStruct;
 
     /// Write the element as a string
     virtual std::string ToShortString() const;

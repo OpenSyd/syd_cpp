@@ -36,7 +36,13 @@ std::string syd::RoiMaskImage::ToShortString() const
 {
   std::stringstream ss ;
   ss << syd::Image::ToString() << " "
-     << (roitype == nullptr ? empty_value:roitype->name);
+     << (roitype == nullptr ? empty_value:roitype->name) << " ";
+  if (dicomsStruct.size() == 0)
+    ss << empty_value;
+  else {
+    for (auto d:dicomsStruct)
+      ss << d->id << " ";
+  }
   auto s = ss.str();
   return s;
 }

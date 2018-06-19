@@ -100,6 +100,9 @@ syd::RoiMaskImage::pointer syd::InsertRoiMaskImageFromDicomStruct(syd::DicomStru
   auto mask = syd::InsertRoiMaskImageFromFile(filename, dicom_struct->patient, roi_type);
   mask->frame_of_reference_uid = dicom_struct->dicom_frame_of_reference_uid;
   mask->acquisition_date = dicom_struct->dicom_structure_set_date;
+  syd::DicomStruct::vector dicom_structs;
+  dicom_structs.push_back(dicom_struct);
+  mask->dicomsStruct = dicom_structs;
   fs::remove(filename); //Remove mhd file
   filename = filename.substr(0, filename.size()-3);
   filename += "raw";

@@ -26,10 +26,11 @@
 // the change is legitimate: 1) open and 2) increment the
 // version. 3) Once checked, close again.
 // It  means that we can migrate from base version to current version)
-#define SYD_VERSION      0136 // version 1.36 (current version)
+#define SYD_VERSION      0137 // version 1.37 (current version)
 #define SYD_BASE_VERSION 0101 // version 1.1 (base version)
 
 // Log:
+// 1.37 : add associated dicomStruct for RoiMaskImage
 // 1.36 : add associated image for DicomStruct
 // 1.35 : add ROI volume
 // 1.34 : add energy window name

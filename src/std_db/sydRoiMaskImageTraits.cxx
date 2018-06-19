@@ -33,6 +33,15 @@ BuildFields(const syd::Database * db) const
 
   ADD_TABLE_FIELD(roitype, syd::RoiType);
 
+  // dicomsStructs
+  auto f_dicoms = [](pointer p) -> std::string {
+    if (p->dicomsStruct.size() == 0) return empty_value;
+    std::ostringstream oss;
+    for(auto d:p->dicomsStruct) oss << d->id << " ";
+    auto s = oss.str();
+    return syd::trim(s); };
+  AddField<std::string>("dicomsStruct", f_dicoms);
+
   // Format lists
   field_format_map_["short"] =
     "id patient.name[pat] "
@@ -40,7 +49,7 @@ BuildFields(const syd::Database * db) const
     "acquisition_date[date] tags "
     "injection.radionuclide.name[rad]"; // no need for 'modality' here 
   field_format_map_["default"] =
-    "short size spacing dicoms comments[com]";
+    "short size spacing dicomsStruct comments[com]";
   field_format_map_["hist"] =
     "short history.insertion_date[insert] history.update_date[update]";
   field_format_map_["frame"] =
