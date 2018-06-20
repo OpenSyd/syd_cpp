@@ -41,6 +41,11 @@ namespace syd {
       /// Date when the image has been acquired. Dicom tag =
       /// AcquisitionTime & AcquisitionDate
       std::string dicom_acquisition_date;
+      int GetYear();
+      int GetMonth();
+      int GetDay();
+      int GetHour();
+      int GetMinute();
 
       /// Date when the image has been reconstructed. Dicom tag =
       /// ContentDate/Time or InstanceCreationDate/Tiem

@@ -130,3 +130,42 @@ syd::CheckResult syd::DicomSerie::Check() const
   return syd::DicomBase::Check();
 }
 // --------------------------------------------------------------------
+
+// --------------------------------------------------
+int syd::DicomSerie::GetYear()
+{
+  return(std::stoi(dicom_acquisition_date.substr(0,4)));
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::DicomSerie::GetMonth()
+{
+  return(std::stoi(dicom_acquisition_date.substr(5,2)));
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::DicomSerie::GetDay()
+{
+  return(std::stoi(dicom_acquisition_date.substr(8,2)));
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::DicomSerie::GetHour()
+{
+  return(std::stoi(dicom_acquisition_date.substr(11,2)));
+}
+// --------------------------------------------------
+
+
+// --------------------------------------------------
+int syd::DicomSerie::GetMinute()
+{
+  return(std::stoi(dicom_acquisition_date.substr(14,2)));
+}
+// --------------------------------------------------
