@@ -174,6 +174,9 @@ namespace syd {
   /// Retrieve all images for this injection
   syd::Image::vector FindImages(const syd::Injection::pointer injection);
 
+  /// Retrieve all images for these id
+  syd::Image::vector FindImages(syd::StandardDatabase * db, const std::vector<int> ids);
+
   /// Retrieve all images for this patient
   syd::Image::vector FindImages(syd::StandardDatabase * db, const std::string & patient_name);
 

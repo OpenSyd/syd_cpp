@@ -785,6 +785,21 @@ syd::Image::vector syd::FindImages(const syd::Injection::pointer injection)
 
 
 // --------------------------------------------------------------------
+syd::Image::vector syd::FindImages(syd::StandardDatabase * db, const std::vector<int> ids)
+{
+  syd::Image::vector images;
+  if (ids.size() != 0) {
+    odb::query<syd::Image> q = odb::query<syd::Image>::id == ids[0];
+    for (int i = 1; i<ids.size(); ++i)
+      q = q || odb::query<syd::Image>::id == ids[i];
+    db->Query(images, q);
+  }
+  return images;
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
 void syd::Move(syd::Image::pointer image, std::string relative_folder)
 {
   // Get old path
