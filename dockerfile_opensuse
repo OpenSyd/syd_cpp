@@ -1,0 +1,76 @@
+#Docker for syd
+#systemctl start docker
+#build: docker build --rm -t syd -f dockerfile_opensuse .
+#login: docker login
+#tag: docker tag syd tbaudier/syd
+#push: docker push tbaudier/syd
+#run: docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /home/tbaudier:/home tbaudier/syd /bin/bash
+
+
+FROM opensuse:42.3
+MAINTAINER Thomas Baudier <thomas.baudier@creatis.insa-lyon.fr>
+#Build C++ important files
+RUN     zypper install --type pattern -y devel_basis \
+    &&  zypper install -y gcc48-c++ \
+                          gcc-c++ \
+		                      glib2-devel \
+                          git \
+                          cmake \
+                          glog-devel \
+                          wget \
+                          libXrender1 \
+                          fontconfig \
+                          libGLU1 \
+                          libSM6 \
+                          libXt6 \
+
+#Create folder
+    &&  mkdir -p /Software/ITK/src /Software/ITK/bin /Software/ceres/src /Software/ceres/bin /Software/syd/src /Software/syd/bin /Software/elastix /Software/vv \
+
+#Compile ITK
+    &&  cd /Software/ITK \
+    &&  git clone https://github.com/InsightSoftwareConsortium/ITK.git src \
+    &&  cd src \
+    &&  git checkout tags/v4.13.0 \
+    &&  cd ../bin \
+    &&  cmake ../src -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF \
+    &&  make -j16 \
+    &&  make install \
+
+#1st run of syd to install hunter with dependencies (eigen, odb, ...)
+    &&  cd /Software/syd \
+    &&  git clone https://github.com/OpenSyd/syd.git src \
+    &&  cd bin \
+    &&  cmake ../src -DCMAKE_CXX_FLAGS=-std=c++11 -DITK_DIR=/Software/ITK/bin -DHUNTER_JOBS_NUMBER=4 \
+
+#Install ceres
+    &&  cd /Software/ceres \
+    &&  git clone https://ceres-solver.googlesource.com/ceres-solver src \
+    &&  cd bin \
+    &&  eigen3Path=`find /root/.hunter/_Base/*/*/*/Install/include -name "eigen3"` \
+    &&  cmake -DBUILD_SHARED_LIBS=ON -DEIGEN_INCLUDE_DIR="$eigen3Path" ../src \
+    &&  make -j16 \
+    &&  make install \
+
+#2nd run of syd to compile it
+    &&  cd /Software/syd/bin \
+    &&  cmake . \
+    &&  make -j16 \
+    &&  echo 'export PATH=/Software/syd/bin/bin:${PATH}' >> /root/.bashrc \
+    &&  echo 'export SYD_PLUGIN=/Software/syd/bin/lib:${SYD_PLUGIN}' >> /root/.bashrc \
+
+#Download elastix
+    &&  cd /Software/elastix \
+    &&  wget http://elastix.isi.uu.nl/download/elastix_linux64_v4.7.tar.bz2 \
+    &&  tar jxvf elastix_linux64_v4.7.tar.bz2 \
+    &&  echo 'export PATH=/Software/elastix/bin:${PATH}' >> /root/.bashrc \
+    &&  echo 'export LD_LIBRARY_PATH=/Software/elastix/lib:${LD_LIBRARY_PATH}' >> /root/.bashrc \
+
+#Download vv
+    &&  cd /Software/vv \
+    &&  wget "https://www.creatis.insa-lyon.fr/owncloud/index.php/s/MJgvJQagTuFSwmm/download" \
+    &&  tar xzvf download \
+    &&  rm download \
+    &&  echo 'export PATH=/Software/vv:${PATH}' >> /root/.bashrc \
+    &&  source /root/.bashrc \
+    &&  ldconfig
