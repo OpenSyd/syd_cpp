@@ -1,8 +1,7 @@
 #Docker for syd
 #systemctl start docker
-#build: docker build --rm -t syd -f dockerfile_opensuse .
 #login: docker login
-#tag: docker tag syd tbaudier/syd
+#build: docker build -t tbaudier/syd -f Dockerfile_syd .
 #push: docker push tbaudier/syd
 #run: docker run -ti --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix -v /home/tbaudier:/home tbaudier/syd /bin/bash
 
@@ -29,10 +28,8 @@ RUN     zypper install --type pattern -y devel_basis \
 
 #Compile ITK
     &&  cd /Software/ITK \
-    &&  git clone https://github.com/InsightSoftwareConsortium/ITK.git src \
-    &&  cd src \
-    &&  git checkout tags/v4.13.0 \
-    &&  cd ../bin \
+    &&  git clone --branch v4.13.0 https://github.com/InsightSoftwareConsortium/ITK.git src \
+    &&  cd bin \
     &&  cmake ../src -DBUILD_SHARED_LIBS=ON -DBUILD_TESTING=OFF \
     &&  make -j16 \
     &&  make install \
@@ -68,7 +65,7 @@ RUN     zypper install --type pattern -y devel_basis \
 
 #Download vv
     &&  cd /Software/vv \
-    &&  wget "https://www.creatis.insa-lyon.fr/owncloud/index.php/s/MJgvJQagTuFSwmm/download" \
+    &&  wget "https://www.creatis.insa-lyon.fr/owncloud/index.php/s/vLMEsujZ9j4bXci/download" \
     &&  tar xzvf download \
     &&  rm download \
     &&  echo 'export PATH=/Software/vv:${PATH}' >> /root/.bashrc \
