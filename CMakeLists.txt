@@ -6,9 +6,9 @@ option(HUNTER_ENABLED "Enable Hunter package manager" ON)
 include("cmake/HunterGate.cmake")
 #list(APPEND HUNTER_CACHE_SERVERS "https://github.com/ingenue/hunter-cache")
 HunterGate(
-  URL "https://github.com/ruslo/hunter/archive/v0.23.16.tar.gz"
-  SHA1 "dbe5b1c966414c4a055983c11d5251a2d8f2f16d"
-  )
+  URL "https://github.com/ruslo/hunter/archive/v0.23.59.tar.gz"
+  SHA1 "a14e262b762df438116bab185ca6d72191e05254"
+)
 # ---------------------------------------------------------
 
 
