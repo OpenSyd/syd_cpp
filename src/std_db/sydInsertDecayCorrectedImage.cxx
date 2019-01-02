@@ -20,7 +20,9 @@
 #include "sydInsertDecayCorrectedImage_ggo.h"
 #include "sydDatabaseManager.h"
 #include "sydPluginManager.h"
-#include "sydDecayCorrectedImageBuilder.h"
+#include "sydImageHelper.h"
+#include "sydTagHelper.h"
+#include "sydCommentsHelper.h"
 #include "sydCommonGengetopt.h"
 
 // --------------------------------------------------------------------
@@ -49,11 +51,14 @@ int main(int argc, char* argv[])
   }
 
   // Create main builder
-  syd::DecayCorrectedImageBuilder builder(db);
   for(auto image:images) {
-    syd::Image::pointer result = builder.NewDecayCorrectedImage(image);
-    db->UpdateTagsFromCommandLine(result->tags, args_info);
-    builder.InsertAndRename(result);
+    auto result = syd::InsertDecayCorrectedImage(image);
+    syd::SetImageInfoFromImage(result, image);
+    // Update image info
+    syd::SetTagsFromCommandLine(result->tags, db, args_info);
+    syd::SetImageInfoFromCommandLine(result, args_info);
+    syd::SetCommentsFromCommandLine(result->comments, db, args_info);
+    db->Update(result);
     LOG(1) << "Inserting Image " << result;
   }
 

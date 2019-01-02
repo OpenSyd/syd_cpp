@@ -105,6 +105,9 @@ namespace syd {
   syd::Image::pointer InsertImageGeometricalMean(const syd::Image::pointer input,
                                                  double k=1.1, bool crop=true);
 
+  // Compute the radionuclide decay corrected image.
+  syd::Image::pointer InsertDecayCorrectedImage(const syd::Image::pointer input);
+
   // Compute the projection of an image.
   syd::Image::pointer InsertProjectionImage(const syd::Image::pointer input,
                                             const syd::ImageProjection_Parameters & p);

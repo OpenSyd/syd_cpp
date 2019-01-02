@@ -93,7 +93,6 @@ set(SYD_STANDARD_DATABASE_SRC
   sydICRP_SpecificAbsorbedFraction.cxx
   sydSCoefficientCalculator.cxx
   #  sydCropImageBuilder.cxx
-  #  sydDecayCorrectedImageBuilder.cxx
   #  sydSubstituteRadionuclideImageBuilder.cxx
   )
 
@@ -508,6 +507,17 @@ add_executable(sydInsertICRPOrganDose
   ${sydInsertICRPOrganDose_GGO_C})
 target_link_libraries(sydInsertICRPOrganDose ${SYD_STD_DB_LIBRARY})
 
+# Create decay corrected image
+wrap_ggo(sydInsertDecayCorrectedImage_GGO_C
+   sydInsertDecayCorrectedImage.ggo
+  ../common_db/sydCommandLineWithTags.ggo
+  sydCommandLineWithImageInfo.ggo
+  ../common_db/sydCommandLineWithComments.ggo
+  sydCommandLineDefault.ggo )
+ add_executable(sydInsertDecayCorrectedImage sydInsertDecayCorrectedImage.cxx ${sydInsertDecayCorrectedImage_GGO_C})
+ target_link_libraries(sydInsertDecayCorrectedImage ${SYD_STD_DB_LIBRARY})
+
+
 #----------------------------------------------------------
 # External tool: clitkExtractPatient
 wrap_ggo(syd_clitkExtractPatient_GGO_C
@@ -589,13 +599,6 @@ target_link_libraries(sydInsertGateOutput ${SYD_STD_DB_LIBRARY})
 # add_executable(sydCropImage sydCropImage.cxx ${sydCropImage_GGO_C})
 # target_link_libraries(sydCropImage ${SYD_STD_DB_LIBRARY})
 
-# Create decay corrected image
-# wrap_ggo(sydInsertDecayCorrectedImage_GGO_C
-#   sydInsertDecayCorrectedImage.ggo
-#   sydCommandLineWithTags.ggo
-#   sydCommandLineDefault.ggo)
-# add_executable(sydInsertDecayCorrectedImage sydInsertDecayCorrectedImage.cxx ${sydInsertDecayCorrectedImage_GGO_C})
-# target_link_libraries(sydInsertDecayCorrectedImage ${SYD_STD_DB_LIBRARY})
 
 # Create image with a different radionuclide
 # wrap_ggo(sydInsertSubstituteRadionuclideImage_GGO_C

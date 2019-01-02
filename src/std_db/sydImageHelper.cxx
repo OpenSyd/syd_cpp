@@ -375,6 +375,27 @@ syd::InsertImageGeometricalMean(const syd::Image::pointer input,
 
 // --------------------------------------------------------------------
 syd::Image::pointer
+syd::InsertDecayCorrectedImage(const syd::Image::pointer input)
+{
+  // Force to float
+  typedef float PixelType;
+  typedef itk::Image<PixelType, 3> ImageType;
+  typedef itk::Image<PixelType, 2> OutputImageType;
+  auto itk_input = syd::ReadImage<ImageType>(input->GetAbsolutePath());
+
+  syd::Injection::pointer injection = input->injection;
+  double time = syd::DateDifferenceInHours(input->acquisition_date, injection->date);
+  double lambda = injection->GetLambdaDecayConstantInHours();
+	double f = exp(lambda * time); // decay correction: multiply by exp(lambda x time)
+	syd::ScaleImage<ImageType>(itk_input, f);
+  // Create the syd image
+  return syd::InsertImage<ImageType>(itk_input, input->patient, input->modality);
+}
+// --------------------------------------------------------------------
+
+
+// --------------------------------------------------------------------
+syd::Image::pointer
 syd::InsertProjectionImage(const syd::Image::pointer input,
                            const syd::ImageProjection_Parameters & p)
 {
