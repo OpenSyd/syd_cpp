@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
   syd::ACF_Parameters p;
   p.numberEnergySPECT = numberEnergySPECT;
   p.attenuationWaterCT = attenuationWaterCT;
-  p.attenuationBoneSPECT = attenuationBoneSPECT;
+  p.attenuationBoneCT = attenuationBoneCT;
   p.attenuationAirSPECT = attenuationAirSPECT;
   p.attenuationWaterSPECT = attenuationWaterSPECT;
   p.attenuationBoneSPECT = attenuationBoneSPECT;
