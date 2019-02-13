@@ -57,7 +57,8 @@ int main(int argc, char* argv[])
   p.projectionDimension = args_info.dim_arg;
   p.flipProjectionFlag = args_info.flip_flag;
   p.meanFlag = false;
-  auto image = syd::InsertFAFCalibratedImage(input_SPECT, input_planar, args_info.nb_heads_arg, p);
+  double f = 1.0;
+  auto image = syd::InsertFAFCalibratedImage(input_SPECT, input_planar, args_info.nb_heads_arg, p, f);
   DD(image);
 
   // Update image info

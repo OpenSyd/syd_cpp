@@ -165,7 +165,8 @@ syd::Image::pointer
 syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
                               const syd::Image::pointer input_planar,
                               int nb_of_heads,
-                              syd::ImageProjection_Parameters & p)
+                              syd::ImageProjection_Parameters & p,
+                              double & f)
 {
   // Compute the mask
   auto input_mask = syd::InsertFAFMask(input_SPECT, input_planar, p);
@@ -178,7 +179,6 @@ syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
   auto itk_input_planar = syd::ReadImage<ImageType2D>(input_planar->GetAbsolutePath());
   auto itk_input_mask = syd::ReadImage<ImageType2D>(input_mask->GetAbsolutePath());
   double integral = syd::ComputeFAFIntegral(input_SPECT, nb_of_heads);
-  double f = 1.0;
   auto fafCalibrated = syd::FAFCalibratedImage<ImageType2D, ImageType3D>(itk_input_SPECT,
                                                                          itk_input_planar,
                                                                          itk_input_mask,

@@ -58,7 +58,8 @@ namespace syd {
   syd::Image::pointer InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
                                                const syd::Image::pointer input_planar,
                                                int nb_of_heads,
-                                               syd::ImageProjection_Parameters & p);
+                                               syd::ImageProjection_Parameters & p,
+                                               double & f);
 
 
 }
