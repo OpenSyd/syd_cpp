@@ -6,9 +6,10 @@ option(HUNTER_ENABLED "Enable Hunter package manager" ON)
 include("cmake/HunterGate.cmake")
 #list(APPEND HUNTER_CACHE_SERVERS "https://github.com/ingenue/hunter-cache")
 HunterGate(
-  URL "https://github.com/ruslo/hunter/archive/v0.23.59.tar.gz"
-  SHA1 "a14e262b762df438116bab185ca6d72191e05254"
+    URL "https://github.com/ruslo/hunter/archive/v0.18.39.tar.gz"
+    SHA1 "a6fbc056c3d9d7acdaa0a07c575c9352951c2f6c"
 )
+
 # ---------------------------------------------------------
 
 
@@ -165,8 +166,9 @@ set(SYD_CORE_LIBRARIES
   ${ODB_SQLITE_LIBRARIES}
   ${ODB_LIBODB_LIBRARIES}
   z
-  ${Boost_LIBRARIES}
-  ${ITK_LIBRARIES})
+  ${ITK_LIBRARIES}
+  Boost::filesystem
+  Boost::system)
 
 set(SYD_COMMON_DB_LIBRARY sydCommonDatabase ${SYD_CORE_LIBRARIES})
 set(SYD_STD_DB_LIBRARY sydStandardDatabase ${SYD_COMMON_DB_LIBRARY})

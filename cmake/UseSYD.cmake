@@ -31,7 +31,7 @@ set(Boost_USE_STATIC_LIBS       ON) # only find static libs
 set(Boost_USE_MULTITHREADED     ON)
 set(Boost_USE_STATIC_RUNTIME    OFF)
 #set(Boost_NO_BOOST_CMAKE ON)
-find_package(Boost REQUIRED COMPONENTS date_time system filesystem)
+find_package(Boost CONFIG REQUIRED date_time system filesystem)
 include_directories( ${Boost_INCLUDE_DIR} )
 #----------------------------------------------------------
 
@@ -57,8 +57,9 @@ include_directories(${CERES_INCLUDE_DIRS})
 #----------------------------------------------------------
 # Find SQlite3 (for odb)
 cmake_policy(SET CMP0054 NEW)
-find_package(sqlite3 CONFIG REQUIRED)
-set(SQLITE3_LIBRARY "sqlite3::sqlite3")
+find_package(SQLite3)
+#find_package(sqlite3 CONFIG REQUIRED)
+#set(SQLITE3_LIBRARY "sqlite3::sqlite3")
 #----------------------------------------------------------
 
 #----------------------------------------------------------
