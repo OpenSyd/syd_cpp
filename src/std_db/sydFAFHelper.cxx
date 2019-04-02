@@ -190,7 +190,7 @@ syd::InsertFAFCalibratedImage(const syd::Image::pointer input_SPECT,
   faf->pixel_unit = syd::FindOrCreatePixelUnit(db, "MBq/mm3", "FAF calibrated image unit");
   syd::SetPixelUnit(faf, "MBq/mm3");
   std::ostringstream oss;
-  oss << "FAF = " << f;
+  oss << "FAF=" << f;
   faf->comments.push_back(oss.str());
   db->Update(faf);
 
